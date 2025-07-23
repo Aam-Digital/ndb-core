@@ -14,9 +14,8 @@ import {
   EventEmitter,
   Input,
   OnDestroy,
-  Optional,
   Output,
-  Self,
+  inject,
 } from "@angular/core";
 import { Subject } from "rxjs";
 import { coerceBooleanProperty } from "@angular/cdk/coercion";
@@ -36,6 +35,12 @@ import { ErrorStateMatcher } from "@angular/material/core";
 export abstract class CustomFormControlDirective<T>
   implements ControlValueAccessor, MatFormFieldControl<T>, OnDestroy, DoCheck
 {
+  elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  errorStateMatcher = inject(ErrorStateMatcher);
+  ngControl = inject(NgControl, { optional: true, self: true });
+  parentForm = inject(NgForm, { optional: true });
+  parentFormGroup = inject(FormGroupDirective, { optional: true });
+
   static nextId = 0;
   id = `custom-form-control-${CustomFormControlDirective.nextId++}`;
   // eslint-disable-next-line @angular-eslint/no-input-rename
@@ -99,13 +104,7 @@ export abstract class CustomFormControlDirective<T>
 
   @Output() valueChange = new EventEmitter<T>();
 
-  constructor(
-    public elementRef: ElementRef<HTMLElement>,
-    public errorStateMatcher: ErrorStateMatcher,
-    @Optional() @Self() public ngControl: NgControl,
-    @Optional() public parentForm: NgForm,
-    @Optional() public parentFormGroup: FormGroupDirective,
-  ) {
+  constructor() {
     if (this.ngControl != null) {
       this.ngControl.valueAccessor = this;
     }

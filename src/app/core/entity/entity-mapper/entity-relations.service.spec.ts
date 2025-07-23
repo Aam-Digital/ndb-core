@@ -2,20 +2,18 @@ import { TestBed } from "@angular/core/testing";
 
 import { EntityRelationsService } from "./entity-relations.service";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
-import { EntityMapperService } from "./entity-mapper.service";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "./mock-entity-mapper-service";
 import { DatabaseEntity, EntityRegistry } from "../database-entity.decorator";
 import { Entity } from "../model/entity";
 import { DatabaseField } from "../database-field.decorator";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { EntityMapperService } from "./entity-mapper.service";
 
 describe("EntityRelationsService", () => {
   let service: EntityRelationsService;
-
-  let entityMapper: MockEntityMapperService;
 
   @DatabaseEntity("EntityWithTestRelations")
   class EntityWithTestRelations extends Entity {
@@ -38,11 +36,10 @@ describe("EntityRelationsService", () => {
 
   beforeEach(() => {
     primaryEntity = TestEntity.create("Primary");
-    entityMapper = mockEntityMapper([primaryEntity]);
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
-      providers: [{ provide: EntityMapperService, useValue: entityMapper }],
+      providers: [...mockEntityMapperProvider([primaryEntity])],
     });
     service = TestBed.inject(EntityRelationsService);
   });
@@ -117,7 +114,7 @@ describe("EntityRelationsService", () => {
     const eTestRef = new TestEntity();
     eTestRef.ref = primaryEntity.getId();
 
-    entityMapper.addAll([
+    (TestBed.inject(EntityMapperService) as MockEntityMapperService).addAll([
       eSingleRef,
       eMultiRef,
       eDoubleRef,

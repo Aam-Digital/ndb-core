@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { AlertService } from "../../alerts/alert.service";
 import { BackupService } from "../backup/backup.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -10,11 +10,15 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 import { ExtendedAlertConfig } from "../../alerts/alert-config";
 import { MatButtonModule } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
-import { DatePipe, NgForOf } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { DownloadService } from "../../export/download-service/download.service";
 import { MatListModule } from "@angular/material/list";
 import { RouteTarget } from "../../../route-target";
 import { AdminOverviewService } from "./admin-overview.service";
+import { JsonEditorService } from "#src/app/core/admin/json-editor/json-editor.service";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { Config } from "#src/app/core/config/config";
+import moment from "moment";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -25,22 +29,22 @@ import { AdminOverviewService } from "./admin-overview.service";
   selector: "app-admin-overview",
   templateUrl: "./admin-overview.component.html",
   styleUrls: ["./admin-overview.component.scss"],
-  imports: [MatButtonModule, RouterLink, NgForOf, DatePipe, MatListModule],
+  imports: [MatButtonModule, RouterLink, DatePipe, MatListModule],
 })
 export class AdminOverviewComponent implements OnInit {
+  private alertService = inject(AlertService);
+  private backupService = inject(BackupService);
+  private downloadService = inject(DownloadService);
+  private dbResolver = inject(DatabaseResolverService);
+  private confirmationDialog = inject(ConfirmationDialogService);
+  private snackBar = inject(MatSnackBar);
+  private configService = inject(ConfigService);
+  protected adminOverviewService = inject(AdminOverviewService);
+  private jsonEditorService = inject(JsonEditorService);
+  private entityMapper = inject(EntityMapperService);
+
   /** all alerts */
   alerts: ExtendedAlertConfig[] = [];
-
-  constructor(
-    private alertService: AlertService,
-    private backupService: BackupService,
-    private downloadService: DownloadService,
-    private dbResolver: DatabaseResolverService,
-    private confirmationDialog: ConfirmationDialogService,
-    private snackBar: MatSnackBar,
-    private configService: ConfigService,
-    protected adminOverviewService: AdminOverviewService,
-  ) {}
 
   ngOnInit() {
     this.alerts = this.alertService.alerts;
@@ -81,6 +85,74 @@ export class AdminOverviewComponent implements OnInit {
   async uploadConfigFile(inputEvent: Event) {
     const loadedFile = await readFile(this.getFileFromInputEvent(inputEvent));
     await this.configService.saveConfig(JSON.parse(loadedFile));
+  }
+
+  editConfig() {
+    const originalData = this.configService.exportConfig(true);
+    this.jsonEditorService
+      .openJsonEditorDialog(originalData)
+      .subscribe(async (updatedData) => {
+        if (!updatedData) return;
+
+        const previousConfigBackup = new Config(
+          Config.CONFIG_KEY + ":" + moment().format("YYYY-MM-DD_HH-mm-ss"),
+          originalData,
+        );
+        await this.entityMapper.save(previousConfigBackup);
+
+        await this.configService.saveConfig(updatedData);
+
+        this.showConfirmationWithUndoOption(async () => {
+          await this.configService.saveConfig(originalData);
+          await this.entityMapper.remove(previousConfigBackup);
+        });
+      });
+  }
+
+  async editPermissions() {
+    const permissionsConfig = await this.entityMapper
+      .load(Config, Config.PERMISSION_KEY)
+      .catch(() => new Config(Config.PERMISSION_KEY, {}));
+
+    this.jsonEditorService
+      .openJsonEditorDialog(permissionsConfig.data)
+      .subscribe(async (updatedData) => {
+        if (!updatedData) return;
+
+        const previousConfigBackup = new Config(
+          Config.PERMISSION_KEY + ":" + moment().format("YYYY-MM-DD_HH-mm-ss"),
+          permissionsConfig.data,
+        );
+        await this.entityMapper.save(previousConfigBackup);
+
+        permissionsConfig.data = updatedData;
+        await this.entityMapper.save(permissionsConfig);
+
+        this.showConfirmationWithUndoOption(async () => {
+          permissionsConfig.data = previousConfigBackup.data;
+          await this.entityMapper.save(permissionsConfig);
+          await this.entityMapper.remove(previousConfigBackup);
+        });
+      });
+  }
+
+  /**
+   * Show a snack bar with undo option and handle undo callback with progress dialog.
+   */
+  private showConfirmationWithUndoOption(undoAction: () => Promise<void>) {
+    const snackBarRef = this.snackBar.open(
+      $localize`Configuration updated`,
+      $localize`Undo`,
+      { duration: 8000 },
+    );
+
+    snackBarRef.onAction().subscribe(async () => {
+      const progressRef = this.confirmationDialog.showProgressDialog(
+        $localize`Reverting configuration changes ...`,
+      );
+      await undoAction();
+      progressRef.close();
+    });
   }
 
   /**

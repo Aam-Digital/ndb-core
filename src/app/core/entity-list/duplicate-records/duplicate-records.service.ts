@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Entity } from "../../entity/model/entity";
@@ -10,12 +10,10 @@ import { Router } from "@angular/router";
   providedIn: "root",
 })
 export class DuplicateRecordService {
-  constructor(
-    private readonly entityMapperService: EntityMapperService,
-    private readonly entityService: EntitySchemaService,
-    private readonly alertService: AlertService,
-    private readonly router: Router,
-  ) {}
+  private readonly entityMapperService = inject(EntityMapperService);
+  private readonly entityService = inject(EntitySchemaService);
+  private readonly alertService = inject(AlertService);
+  private readonly router = inject(Router);
 
   async duplicateRecord(
     sourceData: Entity | Entity[],

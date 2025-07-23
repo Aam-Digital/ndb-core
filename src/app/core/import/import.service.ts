@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../entity/model/entity";
 import { ImportMetadata, ImportSettings } from "./import-metadata";
@@ -16,13 +16,11 @@ import { ImportProcessingContext } from "./import-processing-context";
   providedIn: "root",
 })
 export class ImportService {
-  constructor(
-    private readonly entityMapper: EntityMapperService,
-    private readonly entityTypes: EntityRegistry,
-    private readonly schemaService: EntitySchemaService,
-    private readonly importAdditionalService: ImportAdditionalService,
-    private readonly importExistingService: ImportExistingService,
-  ) {}
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly entityTypes = inject(EntityRegistry);
+  private readonly schemaService = inject(EntitySchemaService);
+  private readonly importAdditionalService = inject(ImportAdditionalService);
+  private readonly importExistingService = inject(ImportExistingService);
 
   async executeImport(
     entitiesToImport: Entity[],

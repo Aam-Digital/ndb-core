@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { Logging } from "../../../logging/logging.service";
 import { LOCATION_TOKEN } from "../../../../utils/di-tokens";
 import { MatButtonModule } from "@angular/material/button";
@@ -12,11 +12,10 @@ import { ConfigService } from "../../config.service";
   imports: [MatButtonModule, RouterLink],
 })
 export class NotFoundComponent implements OnInit {
+  private location = inject<Location>(LOCATION_TOKEN);
+  private configService = inject(ConfigService);
+
   isConfigReady: boolean = false;
-  constructor(
-    @Inject(LOCATION_TOKEN) private location: Location,
-    private configService: ConfigService,
-  ) {}
 
   ngOnInit() {
     // If user is logged in and config is ready, allow the 404 message to show

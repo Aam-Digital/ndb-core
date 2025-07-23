@@ -24,6 +24,12 @@ import { EntitySchemaField } from "./entity-schema-field";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
+import { SyncStateSubject } from "app/core/session/session-type";
+import { CurrentUserSubject } from "app/core/session/current-user-subject";
+import { entityRegistry, EntityRegistry } from "../database-entity.decorator";
+import { UserAdminService } from "app/core/user/user-admin-service/user-admin.service";
+import { FileService } from "app/features/file/file.service";
+import { of } from "rxjs";
 
 describe("EntitySchemaService", () => {
   let service: EntitySchemaService;
@@ -130,8 +136,14 @@ export function testDatatype<D extends DefaultDatatype>(
   additionalProviders?: any[],
 ) {
   let entitySchemaService: EntitySchemaService;
-
+  let mockFileService: jasmine.SpyObj<FileService>;
   describe("test datatype", () => {
+    mockFileService = jasmine.createSpyObj([
+      "uploadFile",
+      "loadFile",
+      "removeFile",
+    ]);
+    mockFileService.loadFile.and.returnValue(of("success"));
     beforeEach(waitForAsync(() => {
       additionalProviders = additionalProviders || [];
       if (dataType instanceof DefaultDatatype) {
@@ -149,7 +161,19 @@ export function testDatatype<D extends DefaultDatatype>(
       }
 
       TestBed.configureTestingModule({
-        providers: [EntitySchemaService, ...additionalProviders],
+        providers: [
+          EntitySchemaService,
+          ...additionalProviders,
+          SyncStateSubject,
+          CurrentUserSubject,
+          {
+            provide: EntityRegistry,
+            useValue: entityRegistry,
+          },
+          { provide: FileService, useValue: mockFileService },
+
+          UserAdminService,
+        ],
       });
 
       entitySchemaService = TestBed.inject(EntitySchemaService);

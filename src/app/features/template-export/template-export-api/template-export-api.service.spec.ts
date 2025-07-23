@@ -17,7 +17,7 @@ import {
 } from "@angular/common/http";
 import { TemplateExport } from "../template-export.entity";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 
@@ -27,11 +27,9 @@ describe("TemplateExportApiService", () => {
   let entityMapper: MockEntityMapperService;
 
   beforeEach(() => {
-    entityMapper = mockEntityMapper();
-
     TestBed.configureTestingModule({
       providers: [
-        { provide: EntityMapperService, useValue: entityMapper },
+        ...mockEntityMapperProvider(),
         EntityRegistry,
         {
           provide: SyncStateSubject,
@@ -43,6 +41,10 @@ describe("TemplateExportApiService", () => {
       ],
     });
     service = TestBed.inject(TemplateExportApiService);
+
+    entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
   });
 
   it("should be created", () => {

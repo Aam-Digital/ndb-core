@@ -7,9 +7,7 @@ import {
   Input,
   OnChanges,
   OnInit,
-  Optional,
   Output,
-  Self,
   signal,
   TemplateRef,
   TrackByFunction,
@@ -18,13 +16,7 @@ import {
 } from "@angular/core";
 import { NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatFormFieldControl } from "@angular/material/form-field";
-import {
-  FormControl,
-  FormGroupDirective,
-  NgControl,
-  NgForm,
-  ReactiveFormsModule,
-} from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatInput, MatInputModule } from "@angular/material/input";
 import {
   MatAutocompleteModule,
@@ -32,7 +24,6 @@ import {
 } from "@angular/material/autocomplete";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { filter, map, startWith } from "rxjs/operators";
-import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomFormControlDirective } from "./custom-form-control.directive";
 import { coerceBooleanProperty } from "@angular/cdk/coercion";
 import {
@@ -202,22 +193,6 @@ export class BasicAutocompleteComponent<O, V = O>
     i,
     o,
   ) => o?.asValue;
-
-  constructor(
-    elementRef: ElementRef<HTMLElement>,
-    errorStateMatcher: ErrorStateMatcher,
-    @Optional() @Self() ngControl: NgControl,
-    @Optional() parentForm: NgForm,
-    @Optional() parentFormGroup: FormGroupDirective,
-  ) {
-    super(
-      elementRef,
-      errorStateMatcher,
-      ngControl,
-      parentForm,
-      parentFormGroup,
-    );
-  }
 
   ngOnInit() {
     this.autocompleteSuggestedOptions.subscribe((options) => {

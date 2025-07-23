@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { map, mergeMap } from "rxjs/operators";
 import { LoginStateSubject } from "./core/session/session-type";
 import { LoginState } from "./core/session/session-states/login-state.enum";
@@ -41,13 +41,13 @@ import { from, merge, Observable, of } from "rxjs";
   standalone: false,
 })
 export class AppComponent {
+  private loginState = inject(LoginStateSubject);
+  private demoDataInitializer = inject(DemoDataInitializerService);
+  private setupService = inject(SetupService);
+
   configReady$: Observable<boolean>;
 
-  constructor(
-    private loginState: LoginStateSubject,
-    private demoDataInitializer: DemoDataInitializerService,
-    private setupService: SetupService,
-  ) {
+  constructor() {
     this.configReady$ = this.loginState.pipe(
       // if logged out, we don't wait for config and treat this separately
       map((loginState) => loginState !== LoginState.LOGGED_IN),

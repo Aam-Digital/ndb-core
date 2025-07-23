@@ -1,9 +1,8 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { FileService } from "../file.service";
 import { MatButtonModule } from "@angular/material/button";
-import { NgIf } from "@angular/common";
 
 /**
  * This component should be used as `viewComponent` when a property stores files.
@@ -14,12 +13,10 @@ import { NgIf } from "@angular/common";
   selector: "app-view-file",
   templateUrl: "./view-file.component.html",
   styleUrls: ["../edit-file/edit-file.component.scss"],
-  imports: [MatButtonModule, NgIf],
+  imports: [MatButtonModule],
 })
 export class ViewFileComponent extends ViewDirective<string> {
-  constructor(public fileService: FileService) {
-    super();
-  }
+  fileService = inject(FileService);
 
   showFile(event: Event) {
     // Prevent event bubbling

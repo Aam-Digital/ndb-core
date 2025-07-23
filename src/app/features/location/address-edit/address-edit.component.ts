@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import { AddressSearchComponent } from "../address-search/address-search.component";
 import { GeoResult } from "../geo.service";
@@ -8,6 +8,7 @@ import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { AddressGpsLocationComponent } from "../address-gps-location/address-gps-location.component";
+import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 /**
  * Edit a GeoLocation / Address, including options to search via API and customize the string location being saved.
@@ -29,6 +30,8 @@ import { AddressGpsLocationComponent } from "../address-gps-location/address-gps
   styleUrl: "./address-edit.component.scss",
 })
 export class AddressEditComponent {
+  private confirmationDialog = inject(ConfirmationDialogService);
+
   /**
    * Whenever the user selects an actual looked up location, it is emitted here.
    */

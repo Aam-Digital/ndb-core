@@ -5,6 +5,7 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  inject,
 } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
@@ -51,6 +52,10 @@ import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/
   ],
 })
 export class ImportReviewDataComponent implements OnChanges {
+  private importService = inject(ImportService);
+  private matDialog = inject(MatDialog);
+  private entityRegistry = inject(EntityRegistry);
+
   readonly IMPORT_STATUS_COLUMN = "_importStatus";
 
   @Input() rawData: any[];
@@ -67,12 +72,6 @@ export class ImportReviewDataComponent implements OnChanges {
   isLoading: boolean;
   mappedEntities: Entity[] = [];
   displayColumns: string[] = [];
-
-  constructor(
-    private importService: ImportService,
-    private matDialog: MatDialog,
-    private entityRegistry: EntityRegistry,
-  ) {}
 
   ngOnChanges(changes: SimpleChanges) {
     this.entityConstructor = this.entityRegistry.get(this.entityType);

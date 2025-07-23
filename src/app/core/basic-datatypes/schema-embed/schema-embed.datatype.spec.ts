@@ -31,10 +31,6 @@ describe("Schema data type: schema-embed", () => {
   class SchemaEmbedTestDatatype extends SchemaEmbedDatatype {
     static override dataType = "schema-embed-test";
     override embeddedType = InnerClass as unknown as EntityConstructor;
-
-    constructor(schemaService: EntitySchemaService) {
-      super(schemaService);
-    }
   }
 
   class TestEntity extends Entity {

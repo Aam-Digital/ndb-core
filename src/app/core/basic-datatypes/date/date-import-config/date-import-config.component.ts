@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -9,7 +9,7 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
 import { MatInputModule } from "@angular/material/input";
-import { DatePipe, NgClass, NgForOf, NgIf } from "@angular/common";
+import { DatePipe, NgClass } from "@angular/common";
 import { MatListModule } from "@angular/material/list";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
@@ -27,9 +27,7 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
     MatDialogModule,
     MatInputModule,
     ReactiveFormsModule,
-    NgIf,
     MatListModule,
-    NgForOf,
     NgClass,
     DatePipe,
     MatButtonModule,
@@ -37,15 +35,15 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   ],
 })
 export class DateImportConfigComponent {
+  data = inject<MappingDialogData>(MAT_DIALOG_DATA);
+  private confirmation = inject(ConfirmationDialogService);
+  private dialog = inject<MatDialogRef<any>>(MatDialogRef);
+
   format = new FormControl("");
   valid = false;
   values: { value: string; parsed?: Date }[] = [];
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: MappingDialogData,
-    private confirmation: ConfirmationDialogService,
-    private dialog: MatDialogRef<any>,
-  ) {
+  constructor() {
     this.values = this.data.values
       .filter((val) => !!val)
       .map((value) => ({ value }));
@@ -78,6 +76,7 @@ export class DateImportConfigComponent {
         $localize`Ignore values?`,
         $localize`Some values don't have a mapping and will not be imported. Are you sure you want to keep it like this?`,
       ));
+
     if (confirmed) {
       this.data.col.additional = this.format.value?.toUpperCase();
       this.dialog.close();

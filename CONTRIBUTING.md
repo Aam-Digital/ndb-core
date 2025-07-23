@@ -49,3 +49,9 @@ We organize our work using GitHub Projects' kanban boards and issue labels:
 - [Labels](https://github.com/Aam-Digital/ndb-core/labels)
   - Our labels are scoped into a few logical groups (e.g. "Status" or "Type" related labels), do check the descriptions shown beside the label name in the list of GitHub labels.
   - The same labels are maintained across all our repositories.
+
+---
+
+## Copyright
+Our project is licensed under GPL 3.0.
+Please note that by contributing, you also make your work available to the public for further use under the terms of that license (see [LICENSE.md](./LICENSE.md)).

@@ -1,19 +1,3 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
 import { Entity } from "../../../entity/model/entity";
 import { DatabaseField } from "../../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
@@ -27,8 +11,11 @@ import {
   ConfigurableEnumConfig,
   ConfigurableEnumValue,
 } from "../configurable-enum.types";
+import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 
 describe("Schema data type: configurable-enum", () => {
+  let dataType: ConfigurableEnumDatatype;
+
   const GENDER_MALE = genders.find((e) => e.id === "M");
 
   const TEST_CONFIG: ConfigurableEnumConfig = [
@@ -63,12 +50,16 @@ describe("Schema data type: configurable-enum", () => {
     enumService.getEnumValues.and.returnValue(TEST_CONFIG);
 
     TestBed.configureTestingModule({
-      imports: [MockedTestingModule],
+      imports: [MockedTestingModule.withState()],
       providers: [{ provide: ConfigurableEnumService, useValue: enumService }],
     });
 
     entitySchemaService =
       TestBed.inject<EntitySchemaService>(EntitySchemaService);
+
+    dataType = (
+      TestBed.inject(DefaultDatatype) as unknown as DefaultDatatype[]
+    ).find((x) => x instanceof ConfigurableEnumDatatype);
   }));
 
   it("converts objects to keys for database format", () => {
@@ -122,8 +113,6 @@ describe("Schema data type: configurable-enum", () => {
   });
 
   it("should not expand 'undefined' into a full INVALID_OPTION enum object", () => {
-    const dataType = new ConfigurableEnumDatatype(enumService);
-
     const undefinedToObjectFormat = dataType.transformToObjectFormat(
       undefined,
       TestEntity.schema.get("option"),
@@ -133,7 +122,6 @@ describe("Schema data type: configurable-enum", () => {
   });
 
   it("should map values using importMappingFunction", async () => {
-    const dataType = new ConfigurableEnumDatatype(enumService);
     enumService.getEnumValues.and.returnValue(genders);
 
     const input = "MALEx";
@@ -150,7 +138,6 @@ describe("Schema data type: configurable-enum", () => {
   });
 
   it("should map values using importMappingFunction for arrays", async () => {
-    const dataType = new ConfigurableEnumDatatype(enumService);
     enumService.getEnumValues.and.returnValue(genders);
 
     const input = "MALEx";

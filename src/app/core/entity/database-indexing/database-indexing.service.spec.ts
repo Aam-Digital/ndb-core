@@ -18,16 +18,20 @@
 import { DatabaseIndexingService } from "./database-indexing.service";
 import { Database } from "../../database/database";
 import { expectObservable } from "../../../utils/test-utils/observable-utils";
-import { fakeAsync, tick } from "@angular/core/testing";
-import { firstValueFrom } from "rxjs";
+import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { firstValueFrom, of } from "rxjs";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { Entity } from "../model/entity";
 import { DatabaseField } from "../database-field.decorator";
 import { DatabaseEntity } from "../database-entity.decorator";
+import { SyncStateSubject } from "app/core/session/session-type";
+import { SyncState } from "app/core/session/session-states/sync-state.enum";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
 
 describe("DatabaseIndexingService", () => {
   let service: DatabaseIndexingService;
   let mockDb: jasmine.SpyObj<Database>;
+  let mockDbResolver: jasmine.SpyObj<DatabaseResolverService>;
 
   @DatabaseEntity("TestEntityWithRelation")
   class TestEntityWithRelation extends Entity {
@@ -45,9 +49,22 @@ describe("DatabaseIndexingService", () => {
 
   beforeEach(() => {
     mockDb = jasmine.createSpyObj("mockDb", ["saveDatabaseIndex", "query"]);
-    const mockResolver = jasmine.createSpyObj("mockResolver", ["getDatabase"]);
-    mockResolver.getDatabase.and.callFake(() => mockDb);
-    service = new DatabaseIndexingService(mockResolver, null);
+    mockDb.saveDatabaseIndex.and.resolveTo();
+    mockDb.query.and.resolveTo({});
+
+    mockDbResolver = jasmine.createSpyObj("DatabaseResolverService", [
+      "getDatabase",
+    ]);
+    mockDbResolver.getDatabase.and.returnValue(mockDb);
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: SyncStateSubject, useValue: of(SyncState.COMPLETED) },
+        { provide: Database, useValue: mockDb },
+        { provide: DatabaseResolverService, useValue: mockDbResolver },
+      ],
+    });
+    service = TestBed.inject(DatabaseIndexingService);
   });
 
   it("should pass through any query to the database", async () => {

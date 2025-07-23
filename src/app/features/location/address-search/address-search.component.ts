@@ -6,6 +6,7 @@ import {
   Output,
   ViewChild,
   OnInit,
+  inject,
 } from "@angular/core";
 import {
   MatAutocomplete,
@@ -59,6 +60,9 @@ import { OkButton } from "app/core/common-components/confirmation-dialog/confirm
   styleUrl: "./address-search.component.scss",
 })
 export class AddressSearchComponent implements OnInit {
+  private location = inject(GeoService);
+  private confirmationDialog = inject(ConfirmationDialogService);
+
   /**
    * The search text, for which locations are looked up (as initial input to prefill the field).
    */
@@ -92,11 +96,6 @@ export class AddressSearchComponent implements OnInit {
 
   /** do not display selected item in the input field because this should be an empty search field */
   displayFn = () => "";
-
-  constructor(
-    private location: GeoService,
-    private confirmationDialog: ConfirmationDialogService,
-  ) {}
 
   ngOnInit() {
     this.initSearchPipeline();

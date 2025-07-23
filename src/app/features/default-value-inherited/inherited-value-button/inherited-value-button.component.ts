@@ -1,5 +1,11 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
-import { EntityForm } from "../../../core/common-components/entity-form/entity-form.service";
+import {
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from "@angular/core";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFieldLabelComponent } from "../../../core/common-components/entity-field-label/entity-field-label.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { TemplateTooltipDirective } from "../../../core/common-components/template-tooltip/template-tooltip.directive";
@@ -27,13 +33,13 @@ import { MatIconButton } from "@angular/material/button";
   styleUrl: "./inherited-value-button.component.scss",
 })
 export class InheritedValueButtonComponent implements OnChanges {
+  private defaultValueService = inject(DefaultValueService);
+
   @Input() form: EntityForm<any>;
   @Input() field: FormFieldConfig;
   @Input() entity: Entity;
 
   defaultValueHint: DefaultValueHint | undefined;
-
-  constructor(private defaultValueService: DefaultValueService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     this.defaultValueHint = this.defaultValueService.getDefaultValueUiHint(

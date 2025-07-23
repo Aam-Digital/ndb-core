@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { of } from "rxjs";
+import { MatDialog } from "@angular/material/dialog";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 import { AdminEntityDetailsComponent } from "./admin-entity-details.component";
 import { EntityDetailsConfig } from "../../../entity-details/EntityDetailsConfig";
@@ -7,14 +10,13 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DatabaseEntity } from "../../../entity/database-entity.decorator";
 import { DatabaseField } from "../../../entity/database-field.decorator";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AdminEntityDetailsComponent", () => {
   let component: AdminEntityDetailsComponent;
   let fixture: ComponentFixture<AdminEntityDetailsComponent>;
 
   let viewConfig: EntityDetailsConfig;
-  let viewConfigId, entityConfigId;
+  let mockDialog: jasmine.SpyObj<MatDialog>;
 
   @DatabaseEntity("AdminDetailsTest")
   class AdminDetailsTestEntity extends Entity {
@@ -24,12 +26,11 @@ describe("AdminEntityDetailsComponent", () => {
   }
 
   beforeEach(() => {
-    viewConfigId = `view:${AdminDetailsTestEntity.route.substring(1)}/:id`;
-    entityConfigId = `entity:${AdminDetailsTestEntity.ENTITY_TYPE}`;
     viewConfig = {
       entityType: AdminDetailsTestEntity.ENTITY_TYPE,
       panels: [{ title: "Tab 1", components: [] }],
     };
+    mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
 
     TestBed.configureTestingModule({
       imports: [
@@ -38,6 +39,7 @@ describe("AdminEntityDetailsComponent", () => {
         NoopAnimationsModule,
         FontAwesomeTestingModule,
       ],
+      providers: [{ provide: MatDialog, useValue: mockDialog }],
     });
     fixture = TestBed.createComponent(AdminEntityDetailsComponent);
     component = fixture.componentInstance;
@@ -52,9 +54,19 @@ describe("AdminEntityDetailsComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should add new section (component in panel) to config", () => {
-    component.addComponent(component.config.panels[0]);
+  it("should add new Default Section to config", () => {
+    const defaultConfig = {
+      title: "New Section",
+      component: "Form",
+      config: { fieldGroups: [] },
+    };
+    mockDialog.open.and.returnValue({
+      afterClosed: () => of(defaultConfig),
+    } as any);
 
+    component.addComponent(component.config.panels[0]);
     expect(component.config.panels[0].components.length).toBe(1);
+
+    expect(component.config.panels[0].components[0]).toEqual(defaultConfig);
   });
 });

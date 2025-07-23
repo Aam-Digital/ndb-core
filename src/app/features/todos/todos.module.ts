@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { Todo } from "./model/todo";
 import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
@@ -12,7 +12,9 @@ import { TimeIntervalDatatype } from "./recurring-interval/time-interval.datatyp
 export class TodosModule {
   static databaseEntities = [Todo];
 
-  constructor(components: ComponentRegistry) {
+  constructor() {
+    const components = inject(ComponentRegistry);
+
     components.addAll(dynamicComponents);
   }
 }

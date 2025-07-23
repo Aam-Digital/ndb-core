@@ -6,6 +6,7 @@ import {
   Renderer2,
   TemplateRef,
   ViewChild,
+  inject,
 } from "@angular/core";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgTemplateOutlet } from "@angular/common";
@@ -28,6 +29,8 @@ import { NgTemplateOutlet } from "@angular/common";
   imports: [MatTooltipModule, NgTemplateOutlet],
 })
 export class DisabledWrapperComponent implements AfterViewInit {
+  private renderer = inject(Renderer2);
+
   /**
    * A template of an HTMLElement that can be disabled.
    * See https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled
@@ -46,8 +49,6 @@ export class DisabledWrapperComponent implements AfterViewInit {
   @Input() elementDisabled: boolean;
 
   @ViewChild("wrapper") wrapper: ElementRef<HTMLDivElement>;
-
-  constructor(private renderer: Renderer2) {}
 
   ngAfterViewInit() {
     if (!this.wrapper) {

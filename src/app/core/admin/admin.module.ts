@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { ComponentRegistry } from "../../dynamic-components";
 import { CommonModule } from "@angular/common";
 import { ConflictResolutionModule } from "../../features/conflict-resolution/conflict-resolution.module";
@@ -17,7 +17,9 @@ import { adminRoutes } from "./admin.routing";
 export class AdminModule {
   static routes = adminRoutes;
 
-  constructor(components: ComponentRegistry) {
+  constructor() {
+    const components = inject(ComponentRegistry);
+
     components.addAll([
       [
         "AdminOverview",

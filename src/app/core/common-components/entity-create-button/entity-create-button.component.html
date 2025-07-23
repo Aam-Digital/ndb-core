@@ -21,5 +21,7 @@
     [class.standard-icon-with-text]="!iconOnly"
     [class.icon-only]="iconOnly"
   ></fa-icon>
-  <span *ngIf="!iconOnly" i18n>Add New</span>
+  @if (!iconOnly) {
+    <span i18n>Add New</span>
+  }
 </button>

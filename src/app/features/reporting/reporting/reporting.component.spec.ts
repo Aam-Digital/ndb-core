@@ -17,8 +17,7 @@ import { ReportRow } from "../report-row";
 import { RouterTestingModule } from "@angular/router/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { ReportEntity, SqlReport } from "../report-config";
 import {
   ReportCalculation,
@@ -26,6 +25,12 @@ import {
   SqlReportService,
 } from "../sql-report/sql-report.service";
 import { of } from "rxjs";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "app/core/entity/database-entity.decorator";
+import { JsonEditorService } from "#src/app/core/admin/json-editor/json-editor.service";
+import { Angulartics2Module } from "angulartics2";
 
 describe("ReportingComponent", () => {
   let component: ReportingComponent;
@@ -87,6 +92,7 @@ describe("ReportingComponent", () => {
         FontAwesomeTestingModule,
         MatNativeDateModule,
         RouterTestingModule,
+        Angulartics2Module.forRoot(),
       ],
       providers: [
         { provide: DataAggregationService, useValue: mockReportingService },
@@ -95,7 +101,15 @@ describe("ReportingComponent", () => {
           useValue: mockDataTransformationService,
         },
         { provide: SqlReportService, useValue: mockSqlReportService },
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        ...mockEntityMapperProvider(),
+        {
+          provide: EntityRegistry,
+          useValue: { entityRegistry },
+        },
+        {
+          provide: JsonEditorService,
+          useValue: jasmine.createSpyObj(["openJsonEditorDialog"]),
+        },
       ],
     }).compileComponents();
   });
@@ -238,6 +252,7 @@ describe("ReportingComponent", () => {
     mockDataTransformationService.queryAndTransformData.and.resolveTo(data);
     const report = new ReportEntity();
     report.mode = "exporting";
+    report.aggregationDefinitions = [];
 
     await component.calculateResults(report, new Date(), new Date());
 

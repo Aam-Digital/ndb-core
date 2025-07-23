@@ -11,9 +11,9 @@
         >(help)</a
       >
     </mat-hint>
-    <mat-error *ngIf="format.errors" i18n>
-      Format cannot parse all dates
-    </mat-error>
+    @if (format.errors) {
+      <mat-error i18n> Format cannot parse all dates </mat-error>
+    }
   </mat-form-field>
 
   <app-help-button
@@ -22,12 +22,11 @@
   ></app-help-button>
 
   <mat-list>
-    <mat-list-item
-      *ngFor="let val of values"
-      [ngClass]="{ invalid: !val.parsed }"
-    >
-      {{ val.value }} -> {{ val.parsed | date }}
-    </mat-list-item>
+    @for (val of values; track val) {
+      <mat-list-item [ngClass]="{ invalid: !val.parsed }">
+        {{ val.value }} -> {{ val.parsed | date }}
+      </mat-list-item>
+    }
   </mat-list>
 </mat-dialog-content>
 

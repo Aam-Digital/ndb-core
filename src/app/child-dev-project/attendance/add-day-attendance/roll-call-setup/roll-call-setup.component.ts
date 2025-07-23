@@ -4,6 +4,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from "@angular/core";
 import { AttendanceService } from "../../attendance.service";
 import { Note } from "../../../notes/model/note";
@@ -20,7 +21,6 @@ import { MatInputModule } from "@angular/material/input";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { Angulartics2OnModule } from "angulartics2";
 import { FilterComponent } from "../../../../core/filter/filter/filter.component";
-import { NgForOf, NgIf } from "@angular/common";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { ActivityCardComponent } from "../../activity-card/activity-card.component";
 import { MatButtonModule } from "@angular/material/button";
@@ -38,14 +38,19 @@ import { DataFilter } from "../../../../core/filter/filters/filters";
     MatDatepickerModule,
     Angulartics2OnModule,
     FilterComponent,
-    NgIf,
     MatProgressBarModule,
     ActivityCardComponent,
-    NgForOf,
     MatButtonModule,
   ],
 })
 export class RollCallSetupComponent implements OnInit {
+  private entityMapper = inject(EntityMapperService);
+  private attendanceService = inject(AttendanceService);
+  private currentUser = inject(CurrentUserSubject);
+  private formDialog = inject(FormDialogService);
+  private alertService = inject(AlertService);
+  private filerService = inject(FilterService);
+
   date = new Date();
 
   existingEvents: NoteForActivitySetup[] = [];
@@ -70,15 +75,6 @@ export class RollCallSetupComponent implements OnInit {
    * This avoids displaying irrelevant filters for an empty or very short list.
    */
   readonly FILTER_VISIBLE_THRESHOLD = 4;
-
-  constructor(
-    private entityMapper: EntityMapperService,
-    private attendanceService: AttendanceService,
-    private currentUser: CurrentUserSubject,
-    private formDialog: FormDialogService,
-    private alertService: AlertService,
-    private filerService: FilterService,
-  ) {}
 
   async ngOnInit() {
     await this.initAvailableEvents();

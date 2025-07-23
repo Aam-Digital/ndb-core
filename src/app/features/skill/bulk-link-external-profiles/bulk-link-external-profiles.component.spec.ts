@@ -11,7 +11,6 @@ import {
   SkillApiService,
 } from "../skill-api/skill-api.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { of, throwError } from "rxjs";
@@ -25,6 +24,7 @@ describe("BulkLinkExternalProfilesComponent", () => {
   let fixture: ComponentFixture<BulkLinkExternalProfilesComponent>;
 
   let mockSkillApi: jasmine.SpyObj<SkillApiService>;
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
   beforeEach(async () => {
     mockSkillApi = jasmine.createSpyObj("SkillApiService", [
@@ -39,6 +39,8 @@ describe("BulkLinkExternalProfilesComponent", () => {
     );
     mockSkillApi.getExternalProfileById.and.callFake((id) => of({ id } as any));
 
+    mockEntityMapper = jasmine.createSpyObj(["saveAll"]);
+
     await TestBed.configureTestingModule({
       imports: [
         BulkLinkExternalProfilesComponent,
@@ -47,10 +49,7 @@ describe("BulkLinkExternalProfilesComponent", () => {
       ],
       providers: [
         { provide: SkillApiService, useValue: mockSkillApi },
-        {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper(),
-        },
+        { provide: EntityMapperService, useValue: mockEntityMapper },
       ],
     }).compileComponents();
 
@@ -289,12 +288,11 @@ describe("BulkLinkExternalProfilesComponent", () => {
     component.records.data.find((r) => r.entity === entity3).selected = {
       id: "new-2",
     } as any;
-    const spySave = spyOn(TestBed.inject(EntityMapperService), "saveAll");
     component.save();
     tick();
 
-    expect(spySave).toHaveBeenCalled();
-    const savedEntities = spySave.calls.mostRecent().args[0];
+    expect(mockEntityMapper.saveAll).toHaveBeenCalled();
+    const savedEntities = mockEntityMapper.saveAll.calls.mostRecent().args[0];
     expect(savedEntities.length).toBe(3);
     expect(savedEntities).toContain(
       jasmine.objectContaining({
@@ -338,12 +336,11 @@ describe("BulkLinkExternalProfilesComponent", () => {
     component.records.data[0].entity["skills"] = ["old-skill"];
     component.records.data[1].selected = { id: "good-link" } as any;
 
-    const spySave = spyOn(TestBed.inject(EntityMapperService), "saveAll");
     component.save();
     tick();
 
-    expect(spySave).toHaveBeenCalled();
-    const savedEntities = spySave.calls.mostRecent().args[0];
+    expect(mockEntityMapper.saveAll).toHaveBeenCalled();
+    const savedEntities = mockEntityMapper.saveAll.calls.mostRecent().args[0];
     expect(savedEntities).toContain(
       jasmine.objectContaining({
         externalProfile: "good-link",

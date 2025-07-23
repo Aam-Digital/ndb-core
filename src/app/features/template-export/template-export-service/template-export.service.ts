@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Entity } from "../../../core/entity/model/entity";
 import { MatDialog } from "@angular/material/dialog";
 import { TemplateExportSelectionDialogComponent } from "../template-export-selection-dialog/template-export-selection-dialog.component";
@@ -11,7 +11,7 @@ import { TemplateExportSelectionDialogComponent } from "../template-export-selec
   providedIn: "root",
 })
 export class TemplateExportService {
-  constructor(private dialog: MatDialog) {}
+  private dialog = inject(MatDialog);
 
   /**
    * Open a dialog for the user to select a template and generate a file from it for the given entity.

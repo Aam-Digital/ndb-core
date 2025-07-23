@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatOptionModule } from "@angular/material/core";
@@ -15,7 +15,7 @@ import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-e
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
 import { EntityFieldLabelComponent } from "app/core/common-components/entity-field-label/entity-field-label.component";
-import { EntityForm } from "app/core/common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
@@ -43,6 +43,10 @@ import { DialogCloseComponent } from "../../../core/common-components/dialog-clo
   styleUrl: "./automated-field-mapping.component.scss",
 })
 export class AutomatedFieldMappingComponent implements OnInit {
+  private dialogRef = inject<MatDialogRef<any>>(MatDialogRef);
+  private configurableEnumService = inject(ConfigurableEnumService);
+  private schemaService = inject(EntitySchemaService);
+
   /** The currently selected relatedReferenceField on the related entity */
   selectedReferenceField: string;
   /** all fields for selection as selectedReferenceField */
@@ -80,13 +84,9 @@ export class AutomatedFieldMappingComponent implements OnInit {
 
   isInvalid: boolean = false;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA)
-    data: AutomatedFieldMappingDialogData,
-    private dialogRef: MatDialogRef<any>,
-    private configurableEnumService: ConfigurableEnumService,
-    private schemaService: EntitySchemaService,
-  ) {
+  constructor() {
+    const data = inject<AutomatedFieldMappingDialogData>(MAT_DIALOG_DATA);
+
     this.targetFieldConfig = data.currentField;
     this.relatedEntityType = data.relatedEntityType;
     this.availableReferenceFields = data.relatedReferenceFields;

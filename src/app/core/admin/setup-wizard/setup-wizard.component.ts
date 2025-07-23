@@ -1,5 +1,4 @@
-import { Component, OnInit, Optional } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { Component, OnInit, inject } from "@angular/core";
 import {
   MatStep,
   MatStepper,
@@ -24,7 +23,6 @@ import { MatDialogRef } from "@angular/material/dialog";
 @Component({
   selector: "app-setup-wizard",
   imports: [
-    CommonModule,
     MatStepper,
     MatStep,
     MatActionList,
@@ -40,6 +38,11 @@ import { MatDialogRef } from "@angular/material/dialog";
   styleUrl: "./setup-wizard.component.scss",
 })
 export class SetupWizardComponent implements OnInit {
+  private entityMapper = inject(EntityMapperService);
+  private dialogRef = inject<MatDialogRef<any>>(MatDialogRef, {
+    optional: true,
+  });
+
   readonly LOCAL_STORAGE_KEY = "SETUP_WIZARD_STATUS";
 
   steps: SetupWizardStep[];
@@ -47,11 +50,6 @@ export class SetupWizardComponent implements OnInit {
   completedSteps: number[] = [0];
 
   private configEntity: Config<SetupWizardConfig>;
-
-  constructor(
-    private entityMapper: EntityMapperService,
-    @Optional() private dialogRef: MatDialogRef<any>,
-  ) {}
 
   async ngOnInit() {
     await this.loadSetupConfig();

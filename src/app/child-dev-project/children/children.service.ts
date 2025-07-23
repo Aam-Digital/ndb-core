@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Note } from "../notes/model/note";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
@@ -9,10 +9,10 @@ import { groupBy } from "../../utils/utils";
 
 @Injectable({ providedIn: "root" })
 export class ChildrenService {
-  constructor(
-    private entityMapper: EntityMapperService,
-    private dbIndexing: DatabaseIndexingService,
-  ) {
+  private entityMapper = inject(EntityMapperService);
+  private dbIndexing = inject(DatabaseIndexingService);
+
+  constructor() {
     this.createDatabaseIndices();
   }
 

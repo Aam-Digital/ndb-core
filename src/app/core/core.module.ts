@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { ComponentRegistry } from "../dynamic-components";
 import { coreComponents } from "./core-components";
 import { Config } from "./config/config";
@@ -47,7 +47,9 @@ import { UrlDatatype } from "./basic-datatypes/string/url.datatype";
 export class CoreModule {
   static databaseEntities = [Entity, Config, TimePeriod];
 
-  constructor(components: ComponentRegistry) {
+  constructor() {
+    const components = inject(ComponentRegistry);
+
     components.addAll(coreComponents);
   }
 }

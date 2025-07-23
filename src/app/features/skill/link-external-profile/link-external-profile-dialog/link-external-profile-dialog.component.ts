@@ -1,4 +1,4 @@
-import { Component, inject, Inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -82,7 +82,9 @@ export class LinkExternalProfileDialogComponent implements OnInit {
   selected: ExternalProfile;
   error: { message?: string } & any;
 
-  constructor(@Inject(MAT_DIALOG_DATA) data: LinkExternalProfileDialogData) {
+  constructor() {
+    const data = inject<LinkExternalProfileDialogData>(MAT_DIALOG_DATA);
+
     this.entity = data.entity;
     this.config = data.config;
     if (data.possibleMatches) {

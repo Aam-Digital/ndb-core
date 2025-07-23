@@ -39,16 +39,22 @@
 <br />
 <hr />
 <h2>Application Configuration</h2>
-<p>
+<p class="flex-row flex-wrap gap-regular">
+  <button (click)="editConfig()" mat-stroked-button>Edit configuration</button>
+
+  <button (click)="editPermissions()" mat-stroked-button>
+    Edit permissions config
+  </button>
+
   <button (click)="downloadConfigClick()" mat-stroked-button>
     Download configuration
   </button>
-  &nbsp;
+
   <button (click)="configImport.click()" mat-stroked-button>
     Upload new configuration
   </button>
   <input #configImport type="file" hidden (change)="uploadConfigFile($event)" />
-  &nbsp;
+
   <button routerLink="config-import" mat-stroked-button>
     Generate configuration from spreadsheet
   </button>
@@ -76,10 +82,12 @@
     <th>Message</th>
   </thead>
   <tbody>
-    <tr *ngFor="let alert of alerts.reverse()">
-      <td>{{ alert.timestamp | date: "medium" }}</td>
-      <td>{{ alert.type }}</td>
-      <td>{{ alert.message }}</td>
-    </tr>
+    @for (alert of alerts.reverse(); track alert) {
+      <tr>
+        <td>{{ alert.timestamp | date: "medium" }}</td>
+        <td>{{ alert.type }}</td>
+        <td>{{ alert.message }}</td>
+      </tr>
+    }
   </tbody>
 </table>

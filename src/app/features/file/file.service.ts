@@ -18,7 +18,7 @@ import {
 } from "@angular/common/http";
 import { ProgressComponent } from "./progress/progress.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { inject, Optional } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { MatDialog } from "@angular/material/dialog";
 
@@ -26,18 +26,18 @@ import { MatDialog } from "@angular/material/dialog";
  * This service allow handles the logic for files/attachments.
  * Files can be uploaded, shown and removed.
  */
+@Injectable()
 export abstract class FileService {
   protected snackbar: MatSnackBar = inject(MatSnackBar);
   protected dialog: MatDialog = inject(MatDialog);
   protected httpClient: HttpClient = inject(HttpClient, {
     optional: true,
   });
+  protected entityMapper = inject(EntityMapperService);
+  protected entities = inject(EntityRegistry);
+  protected syncState = inject(SyncStateSubject);
 
-  protected constructor(
-    protected entityMapper: EntityMapperService,
-    protected entities: EntityRegistry,
-    protected syncState: SyncStateSubject,
-  ) {
+  constructor() {
     // TODO maybe registration is too late (only when component is rendered)
     this.syncState
       // Only start listening to changes once the initial sync has been completed

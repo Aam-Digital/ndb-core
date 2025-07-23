@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { Config } from "./config";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
@@ -30,7 +30,9 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   configUpdates = this.entityUpdated.pipe(shareReplay(1));
 
-  constructor(entityMapper: EntityMapperService) {
+  constructor() {
+    const entityMapper = inject(EntityMapperService);
+
     super(Config, Config.CONFIG_KEY, entityMapper);
     super.startLoading();
     this.entityUpdated.subscribe(async (config) => {
@@ -53,8 +55,15 @@ export class ConfigService extends LatestEntityLoader<Config> {
     return this.entityMapper.save(new Config(Config.CONFIG_KEY, config), true);
   }
 
-  public exportConfig(): string {
-    return JSON.stringify(this.currentConfig.data);
+  /**
+   * Export the current config as a JSON string.
+   * @param rawObject If true, returns the object instead of stringified value.
+   */
+  public exportConfig(rawObject: true): Object;
+  public exportConfig(rawObject?: false): string;
+  public exportConfig(rawObject?: boolean): string | Object {
+    const value = JSON.stringify(this.currentConfig.data);
+    return rawObject ? JSON.parse(value) : value;
   }
 
   public getConfig<T>(id: string): T | undefined {
@@ -449,7 +458,6 @@ const migrateActivitiesOverviewComponent: ConfigMigration = (
           additional: {
             entityType: "RecurringActivity",
             relevantProperty: "linkedGroups",
-            relevantValue: "",
           },
         },
         { id: "assignedTo" },

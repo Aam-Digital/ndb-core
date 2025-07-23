@@ -1,34 +1,33 @@
 <mat-dialog-content>
-  <form *ngIf="mergeForm">
-    <div class="merge-grid">
-      <div></div>
-      <div class="header" i18n>Record A</div>
-      <div class="header" i18n>Record B</div>
-      <div class="header" i18n>Merge Preview</div>
-
-      @for (field of fieldsToMerge; track field.id) {
-        <div class="label-cell">
-          <strong>{{ field.label }}</strong>
-        </div>
-
-        <app-merge-fields
-          [field]="field"
-          [entities]="entitiesToMerge"
-          [control]="mergeForm.formGroup.get(field.id)"
-        >
-        </app-merge-fields>
-
-        <!-- Merge Preview -->
-        <div class="preview-cell">
-          <app-entity-field-edit
+  @if (mergeForm) {
+    <form>
+      <div class="merge-grid">
+        <div></div>
+        <div class="header" i18n>Record A</div>
+        <div class="header" i18n>Record B</div>
+        <div class="header" i18n>Merge Preview</div>
+        @for (field of fieldsToMerge; track field.id) {
+          <div class="label-cell">
+            <strong>{{ field.label }}</strong>
+          </div>
+          <app-merge-fields
             [field]="field"
-            [entity]="mergedEntity"
-            [form]="mergeForm"
-          ></app-entity-field-edit>
-        </div>
-      }
-    </div>
-  </form>
+            [entities]="entitiesToMerge"
+            [control]="mergeForm.formGroup.get(field.id)"
+          >
+          </app-merge-fields>
+          <!-- Merge Preview -->
+          <div class="preview-cell">
+            <app-entity-field-edit
+              [field]="field"
+              [entity]="mergedEntity"
+              [form]="mergeForm"
+            ></app-entity-field-edit>
+          </div>
+        }
+      </div>
+    </form>
+  }
 </mat-dialog-content>
 
 <mat-dialog-actions>

@@ -18,8 +18,10 @@
     i18n-placeholder
   />
 
-  <mat-error *ngIf="formControl.invalid && formControl.touched">
-    <span i18n>Invalid URL format</span>
-    <app-error-hint [form]="formControl"></app-error-hint>
-  </mat-error>
+  @if (formControl.invalid && formControl.touched) {
+    <mat-error>
+      <span i18n>Invalid URL format</span>
+      <app-error-hint [form]="formControl"></app-error-hint>
+    </mat-error>
+  }
 </mat-form-field>

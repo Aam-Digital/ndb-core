@@ -3,7 +3,6 @@ import {
   fakeAsync,
   TestBed,
   tick,
-  waitForAsync,
 } from "@angular/core/testing";
 
 import { PublicFormComponent } from "./public-form.component";
@@ -18,6 +17,7 @@ import { InvalidFormFieldError } from "../../core/common-components/entity-form/
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
+import { getDefaultConfigEntity } from "../../core/config/testing-config-service";
 
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
@@ -27,7 +27,7 @@ describe("PublicFormComponent", () => {
 
   const FORM_ID = "form-id";
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(() => {
     testFormConfig = new PublicFormConfig(FORM_ID);
     testFormConfig.title = "test form";
     testFormConfig.entity = TestEntity.ENTITY_TYPE;
@@ -42,6 +42,7 @@ describe("PublicFormComponent", () => {
         ],
       },
     ];
+
     TestBed.configureTestingModule({
       imports: [PublicFormComponent, MockedTestingModule.withState()],
       providers: [
@@ -56,13 +57,10 @@ describe("PublicFormComponent", () => {
         },
       ],
     }).compileComponents();
-  }));
 
-  beforeEach(() => {
-    initRemoteDBSpy = spyOn(
-      TestBed.inject(DatabaseResolverService),
-      "initDatabasesForAnonymous",
-    );
+    const dbResolver = TestBed.inject(DatabaseResolverService);
+    dbResolver.initDatabasesForAnonymous = () => null;
+    initRemoteDBSpy = spyOn(dbResolver, "initDatabasesForAnonymous");
 
     fixture = TestBed.createComponent(PublicFormComponent<TestEntity>);
     component = fixture.componentInstance;
@@ -276,11 +274,11 @@ describe("PublicFormComponent", () => {
     );
   }));
 
-  function initComponent(config: PublicFormConfig = testFormConfig): void {
+  async function initComponent(config: PublicFormConfig = testFormConfig) {
     config.route = config.route ?? FORM_ID;
     config.entity = config.entity ?? TestEntity.ENTITY_TYPE;
-    TestBed.inject(EntityMapperService).save(config);
+    await TestBed.inject(EntityMapperService).save(config);
     const configService = TestBed.inject(ConfigService);
-    configService.entityUpdated.next(configService["currentConfig"]);
+    configService.entityUpdated.next(getDefaultConfigEntity());
   }
 });

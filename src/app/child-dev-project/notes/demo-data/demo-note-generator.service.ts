@@ -1,6 +1,6 @@
 import { DemoChildGenerator } from "../../children/demo-data-generators/demo-child-generator.service";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Note } from "../model/note";
 import { faker } from "../../../core/demo-data/faker";
 import { noteIndividualStories } from "./notes_individual-stories";
@@ -25,6 +25,10 @@ export class DemoNoteConfig {
  */
 @Injectable()
 export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
+  private config = inject(DemoNoteConfig);
+  private demoChildren = inject(DemoChildGenerator);
+  private demoUsers = inject(DemoUserGeneratorService);
+
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoNoteGeneratorService.provider()]`
@@ -40,14 +44,6 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
       { provide: DemoNoteGeneratorService, useClass: DemoNoteGeneratorService },
       { provide: DemoNoteConfig, useValue: config },
     ];
-  }
-
-  constructor(
-    private config: DemoNoteConfig,
-    private demoChildren: DemoChildGenerator,
-    private demoUsers: DemoUserGeneratorService,
-  ) {
-    super();
   }
 
   public generateEntities(): Note[] {

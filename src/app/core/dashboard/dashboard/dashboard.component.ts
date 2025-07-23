@@ -15,9 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Input } from "@angular/core";
+import { Component, Input, inject } from "@angular/core";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
-import { AsyncPipe } from "@angular/common";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { RouteTarget } from "../../../route-target";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
@@ -33,19 +32,17 @@ import { AblePurePipe } from "@casl/angular";
 @RouteTarget("Dashboard")
 @Component({
   selector: "app-dashboard",
-  templateUrl: "./dashboard.component.html",
+  template: ` @for (widgetConfig of _widgets; track widgetConfig) {
+    <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
+  }`,
   styleUrls: ["./dashboard.component.scss"],
-  imports: [
-    DynamicComponentDirective,
-    MatMenuModule,
-    MatIconButton,
-    FaIconComponent,
-    RouterLink,
-    AblePurePipe,
-    AsyncPipe,
-  ],
+  imports: [DynamicComponentDirective],
 })
 export class DashboardComponent implements DashboardConfig {
+  private ability = inject(EntityAbility);
+  private components = inject(ComponentRegistry);
+  private session = inject(SessionSubject);
+
   @Input() set widgets(widgets: DynamicComponentConfig[]) {
     this.filterPermittedWidgets(widgets).then((res) => (this._widgets = res));
   }
@@ -53,17 +50,6 @@ export class DashboardComponent implements DashboardConfig {
     return this._widgets;
   }
   _widgets: DynamicComponentConfig[] = [];
-
-  dashboardViewId: string;
-
-  constructor(
-    private ability: EntityAbility,
-    private components: ComponentRegistry,
-    private session: SessionSubject,
-    activeRoute: ActivatedRoute,
-  ) {
-    this.dashboardViewId = activeRoute.snapshot.url.join("/");
-  }
 
   private async filterPermittedWidgets(
     widgets: DynamicComponentConfig[],
