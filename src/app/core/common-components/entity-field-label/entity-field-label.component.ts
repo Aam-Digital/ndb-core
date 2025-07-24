@@ -7,7 +7,11 @@ import {
 } from "@angular/core";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityConstructor } from "../../entity/model/entity";
-import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+  toFormFieldConfig,
+} from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 
@@ -31,6 +35,17 @@ export class EntityFieldLabelComponent implements OnChanges {
 
   /** entity type to look up the schema details for the given field */
   @Input() entityType: EntityConstructor | string;
+
+  @Input() set customFields(value: ColumnConfig[]) {
+    this._customFields = (value ?? []).map((c) =>
+      this._entityType
+        ? this.entityFormService.extendFormFieldConfig(c, this._entityType)
+        : toFormFieldConfig(c),
+    );
+  }
+  /** Custom overwrites or additional fields to be displayed for example "Age", "School (Attendance)" */
+  _customFields: FormFieldConfig[] = [];
+
   _entityType: EntityConstructor;
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -50,9 +65,13 @@ export class EntityFieldLabelComponent implements OnChanges {
       this._field = undefined;
       return;
     }
+    console.log("tghis.field", this.field);
+    const customFieldConfig = this._customFields?.find(
+      (col) => col.id === this.field,
+    );
 
     this._field = this.entityFormService.extendFormFieldConfig(
-      this.field,
+      customFieldConfig ?? this.field,
       this._entityType,
     );
   }
