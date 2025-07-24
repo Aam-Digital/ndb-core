@@ -74,6 +74,5 @@ export class EntityFieldLabelComponent implements OnChanges {
       baseField,
       this._entityType,
     );
-    console.log("field", this._field);
   }
 }
