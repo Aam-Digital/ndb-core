@@ -65,13 +65,13 @@ export class EntityFieldLabelComponent implements OnChanges {
       this._field = undefined;
       return;
     }
-
-    const fieldId = typeof this.field === "string" ? this.field : this.field.id;
-    const matchedCustom = this._customFields?.find((col) => col.id === fieldId);
-    const baseField = matchedCustom ?? { id: fieldId };
+    console.log("tghis.field", this.field);
+    const customFieldConfig = this._customFields?.find(
+      (col) => col.id === this.field,
+    );
 
     this._field = this.entityFormService.extendFormFieldConfig(
-      baseField,
+      customFieldConfig ?? this.field,
       this._entityType,
     );
   }
