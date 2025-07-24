@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -39,20 +39,20 @@ export class AdminWidgetDialogComponent {
     explanation: "",
   };
 
-  constructor(
-    public dialogRef: MatDialogRef<AdminWidgetDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: AdminWidgetDialogData,
-  ) {
+  dialogRef = inject(MatDialogRef<AdminWidgetDialogComponent>);
+  data = inject(MAT_DIALOG_DATA) as AdminWidgetDialogData;
+
+  constructor() {
     this.commonConfig.subtitle = this.data.widgetConfig.config?.subtitle ?? "";
     this.commonConfig.explanation =
       this.data.widgetConfig.config?.explanation ?? "";
 
     this.settingsComponentConfig = {
-      component: data.settingsComponent,
-      config: data.widgetConfig.config || {},
+      component: this.data.settingsComponent,
+      config: this.data.widgetConfig.config || {},
     };
 
-    this.updatedConfig = { ...data.widgetConfig };
+    this.updatedConfig = { ...this.data.widgetConfig };
   }
 
   onConfigChange(newConfig: any) {
