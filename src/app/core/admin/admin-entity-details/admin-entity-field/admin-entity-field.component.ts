@@ -104,9 +104,6 @@ export class AdminEntityFieldComponent implements OnInit {
   fieldId: string;
   entityType: EntityConstructor;
 
-  /** current state of the field being edited */
-  entitySchemaField: EntitySchemaField;
-
   form: FormGroup;
   fieldIdForm: FormControl;
 
@@ -302,6 +299,8 @@ export class AdminEntityFieldComponent implements OnInit {
 
   async save() {
     this.form.markAllAsTouched();
+    // Recalculates the value and validation status of the control, also updates the value and validity of its ancestors.
+    this.schemaFieldsForm.updateValueAndValidity();
     if (this.form.invalid) return;
     this.data.entitySchemaField.id = this.fieldIdForm.getRawValue();
     this.dialogRef.close(this.data.entitySchemaField);
