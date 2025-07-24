@@ -1,21 +1,21 @@
-@if('update' | ablePure: 'Config' | async) {
-<button mat-icon-button color="primary" [matMenuTriggerFor]="additional"
-class="dashboard-menu-btn"
->
-  <fa-icon icon="ellipsis-v"></fa-icon>
-</button>
-<mat-menu #additional>
+@if ("update" | ablePure: "Config" | async) {
   <button
-    mat-menu-item
-    [routerLink]="['/admin/dashboard', dashboardViewId]"
+    mat-icon-button
+    color="primary"
+    [matMenuTriggerFor]="additional"
+    class="dashboard-menu-btn"
   >
-    <fa-icon
-      class="standard-icon-with-text color-accent"
-      icon="tools"
-    ></fa-icon>
-    <span i18n>Edit Dashboard</span>
+    <fa-icon icon="ellipsis-v"></fa-icon>
   </button>
-</mat-menu>
+  <mat-menu #additional>
+    <button mat-menu-item [routerLink]="['/admin/dashboard', dashboardViewId]">
+      <fa-icon
+        class="standard-icon-with-text color-accent"
+        icon="tools"
+      ></fa-icon>
+      <span i18n>Edit Dashboard</span>
+    </button>
+  </mat-menu>
 }
 
 <div class="widgets-container">

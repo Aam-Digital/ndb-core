@@ -35,7 +35,15 @@ import { AsyncPipe } from "@angular/common";
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
   styleUrls: ["./dashboard.component.scss"],
-  imports: [DynamicComponentDirective, MatMenuModule, MatIconButton, FaIconComponent, RouterLink, AblePurePipe, AsyncPipe],
+  imports: [
+    DynamicComponentDirective,
+    MatMenuModule,
+    MatIconButton,
+    FaIconComponent,
+    RouterLink,
+    AblePurePipe,
+    AsyncPipe,
+  ],
 })
 export class DashboardComponent implements DashboardConfig {
   private ability = inject(EntityAbility);
@@ -52,9 +60,7 @@ export class DashboardComponent implements DashboardConfig {
 
   dashboardViewId: string;
 
-  constructor(
-    activeRoute: ActivatedRoute,
-  ) {
+  constructor(activeRoute: ActivatedRoute) {
     this.dashboardViewId = activeRoute.snapshot.url.join("/");
   }
 

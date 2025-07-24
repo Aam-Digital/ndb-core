@@ -8,28 +8,32 @@
   </mat-form-field>
   <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Explanation</mat-label>
-    <textarea matInput rows="2" [(ngModel)]="commonConfig.explanation"></textarea>
+    <textarea
+      matInput
+      rows="2"
+      [(ngModel)]="commonConfig.explanation"
+    ></textarea>
   </mat-form-field>
 
   <!-- Widget-specific settings -->
   <ng-template
     [appDynamicComponent]="settingsComponentConfig"
-    (configChange)="onConfigChange($event)">
+    (configChange)="onConfigChange($event)"
+  >
   </ng-template>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="dialog-actions">
   <button mat-button (click)="onCancel()" i18n>
-    {{ data.settingsComponent === 'NotEditableWidgetSettings' ? 'Close' : 'Cancel' }}
+    {{
+      data.settingsComponent === "NotEditableWidgetSettings"
+        ? "Close"
+        : "Cancel"
+    }}
   </button>
-  @if (data.settingsComponent !== 'NotEditableWidgetSettings') {
-    <button
-      mat-raised-button
-      color="accent"
-      (click)="onSave()"
-      i18n
-    >
-    Save
+  @if (data.settingsComponent !== "NotEditableWidgetSettings") {
+    <button mat-raised-button color="accent" (click)="onSave()" i18n>
+      Save
     </button>
   }
 </mat-dialog-actions>

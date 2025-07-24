@@ -13,23 +13,20 @@ export interface AttendanceWeekDashboardSettingsConfig {
 @Component({
   selector: "app-attendance-week-dashboard-settings",
   standalone: true,
-  imports: [
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule
-  ],
+  imports: [MatFormFieldModule, MatInputModule, FormsModule],
   templateUrl: "./attendance-week-dashboard-settings.component.html",
-  styleUrls: ["./attendance-week-dashboard-settings.component.scss"]
+  styleUrls: ["./attendance-week-dashboard-settings.component.scss"],
 })
 export class AttendanceWeekDashboardSettingsComponent implements OnInit {
   @Input() config: AttendanceWeekDashboardSettingsConfig = {};
-  @Output() configChange = new EventEmitter<AttendanceWeekDashboardSettingsConfig>();
+  @Output() configChange =
+    new EventEmitter<AttendanceWeekDashboardSettingsConfig>();
 
   localConfig: AttendanceWeekDashboardSettingsConfig = {
     daysOffset: 0,
     periodLabel: "",
     label: "",
-    attendanceStatusType: ""
+    attendanceStatusType: "",
   };
 
   ngOnInit() {
@@ -37,7 +34,7 @@ export class AttendanceWeekDashboardSettingsComponent implements OnInit {
       daysOffset: this.config.daysOffset ?? 0,
       periodLabel: this.config.periodLabel ?? "",
       label: this.config.label ?? "",
-      attendanceStatusType: this.config.attendanceStatusType ?? ""
+      attendanceStatusType: this.config.attendanceStatusType ?? "",
     };
   }
 

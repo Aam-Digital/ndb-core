@@ -8,9 +8,7 @@
   </app-view-title>
 
   <div class="flex-row gap-small save-buttons">
-    <button mat-raised-button color="accent" (click)="save()" i18n>
-      Save
-    </button>
+    <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
     <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
   </div>
 </div>
@@ -24,48 +22,52 @@
     cdkDropListOrientation="mixed"
     class="widgets-container drop-list"
   >
-    @for (widgetConfig of dashboardConfig.widgets; track widgetConfig; let i = $index) {
-  <div class="widget-container">
-    <mat-card
-      cdkDrag
-      cdkDragBoundary=".overall-container"
-      class="widget-preview-card"
-    >
-      <fa-icon 
-        icon="grip-vertical" 
-        size="xl" 
-        class="drag-handle"
-        cdkDragHandle
-      ></fa-icon>
-      
-      <fa-icon 
-        icon="times" 
-        class="widget-remove-icon"
-        (click)="removeWidget(i)" 
-        matTooltip="Remove this widget"
-        i18n-matTooltip
-      ></fa-icon>
+    @for (
+      widgetConfig of dashboardConfig.widgets;
+      track widgetConfig;
+      let i = $index
+    ) {
+      <div class="widget-container">
+        <mat-card
+          cdkDrag
+          cdkDragBoundary=".overall-container"
+          class="widget-preview-card"
+        >
+          <fa-icon
+            icon="grip-vertical"
+            size="xl"
+            class="drag-handle"
+            cdkDragHandle
+          ></fa-icon>
 
-        <mat-card-content class="widget-preview-section">
-          <!-- Widget Content with Overlay Edit Button -->
-          <div class="widget-content-wrapper">
-            <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
-            
-            <!-- Centered Edit Button Overlay -->
-            <div class="field-hover-buttons">
-              <button
-                mat-stroked-button
-                color="accent"
-                class="field-edit-button"
-                (click)="editWidget(widgetConfig, i)"
-                i18n="Button label"
-              >
-                Edit Widget
-              </button>
+          <fa-icon
+            icon="times"
+            class="widget-remove-icon"
+            (click)="removeWidget(i)"
+            matTooltip="Remove this widget"
+            i18n-matTooltip
+          ></fa-icon>
+
+          <mat-card-content class="widget-preview-section">
+            <!-- Widget Content with Overlay Edit Button -->
+            <div class="widget-content-wrapper">
+              <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
+
+              <!-- Centered Edit Button Overlay -->
+              <div class="field-hover-buttons">
+                <button
+                  mat-stroked-button
+                  color="accent"
+                  class="field-edit-button"
+                  (click)="editWidget(widgetConfig, i)"
+                  i18n="Button label"
+                >
+                  Edit Widget
+                </button>
+              </div>
             </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
+          </mat-card-content>
+        </mat-card>
       </div>
     }
 

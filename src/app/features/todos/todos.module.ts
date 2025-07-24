@@ -63,10 +63,10 @@ const dynamicComponents: [string, AsyncComponent][] = [
       ).then((c) => c.DisplayTodoCompletionComponent),
   ],
   [
-  "NotEditableWidgetSettings",
-  () =>
-    import(
-      "../../not-editable-widget-settings.component/not-editable-widget-settings.component"
-    ).then((c) => c.NotEditableWidgetSettingsComponent),
-],
+    "NotEditableWidgetSettings",
+    () =>
+      import(
+        "../../not-editable-widget-settings.component/not-editable-widget-settings.component"
+      ).then((c) => c.NotEditableWidgetSettingsComponent),
+  ],
 ];

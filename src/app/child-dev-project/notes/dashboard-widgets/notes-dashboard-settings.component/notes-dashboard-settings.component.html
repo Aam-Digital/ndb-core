@@ -1,16 +1,28 @@
-<div style="padding: 16px;">
+<div style="padding: 16px">
   <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Days since last note</mat-label>
-    <input matInput type="number" min="1" [(ngModel)]="localConfig.sinceDays" (ngModelChange)="emitConfigChange()" />
+    <input
+      matInput
+      type="number"
+      min="1"
+      [(ngModel)]="localConfig.sinceDays"
+      (ngModelChange)="emitConfigChange()"
+    />
   </mat-form-field>
 
-  <mat-checkbox [(ngModel)]="localConfig.fromBeginningOfWeek" (ngModelChange)="emitConfigChange()">
+  <mat-checkbox
+    [(ngModel)]="localConfig.fromBeginningOfWeek"
+    (ngModelChange)="emitConfigChange()"
+  >
     From beginning of week
   </mat-checkbox>
 
   <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Mode</mat-label>
-    <mat-select [(ngModel)]="localConfig.mode" (ngModelChange)="emitConfigChange()">
+    <mat-select
+      [(ngModel)]="localConfig.mode"
+      (ngModelChange)="emitConfigChange()"
+    >
       <mat-option value="with-recent-notes">With recent notes</mat-option>
       <mat-option value="without-recent-notes">Without recent notes</mat-option>
     </mat-select>

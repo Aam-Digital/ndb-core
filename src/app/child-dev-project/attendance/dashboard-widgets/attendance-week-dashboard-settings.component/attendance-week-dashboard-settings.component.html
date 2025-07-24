@@ -1,14 +1,28 @@
-<div style="padding: 16px;">
+<div style="padding: 16px">
   <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Period Label</mat-label>
-    <input matInput [(ngModel)]="localConfig.periodLabel" (ngModelChange)="emitConfigChange()" />
+    <input
+      matInput
+      [(ngModel)]="localConfig.periodLabel"
+      (ngModelChange)="emitConfigChange()"
+    />
   </mat-form-field>
   <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Days Offset</mat-label>
-    <input matInput type="number" [(ngModel)]="localConfig.daysOffset" (ngModelChange)="emitConfigChange()" />
+    <input
+      matInput
+      type="number"
+      [(ngModel)]="localConfig.daysOffset"
+      (ngModelChange)="emitConfigChange()"
+    />
   </mat-form-field>
   <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Attendance Status Type</mat-label>
-    <input matInput [(ngModel)]="localConfig.attendanceStatusType" (ngModelChange)="emitConfigChange()" placeholder="(optional, e.g. LATE)" />
+    <input
+      matInput
+      [(ngModel)]="localConfig.attendanceStatusType"
+      (ngModelChange)="emitConfigChange()"
+      placeholder="(optional, e.g. LATE)"
+    />
   </mat-form-field>
 </div>

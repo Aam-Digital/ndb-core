@@ -1,23 +1,22 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { BirthdayDashboardSettingsComponent } from './birthday-dashboard-settings.component';
+import { BirthdayDashboardSettingsComponent } from "./birthday-dashboard-settings.component";
 
-describe('BirthdayDashboardSettingsComponent', () => {
+describe("BirthdayDashboardSettingsComponent", () => {
   let component: BirthdayDashboardSettingsComponent;
   let fixture: ComponentFixture<BirthdayDashboardSettingsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BirthdayDashboardSettingsComponent]
-    })
-    .compileComponents();
+      imports: [BirthdayDashboardSettingsComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(BirthdayDashboardSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

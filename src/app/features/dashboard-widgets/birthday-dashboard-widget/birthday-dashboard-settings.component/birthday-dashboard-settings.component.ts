@@ -19,10 +19,10 @@ export interface BirthdayDashboardSettingsConfig {
     MatInputModule,
     MatSelectModule,
     MatOptionModule,
-    FormsModule
+    FormsModule,
   ],
   templateUrl: "./birthday-dashboard-settings.component.html",
-  styleUrls: ["./birthday-dashboard-settings.component.scss"]
+  styleUrls: ["./birthday-dashboard-settings.component.scss"],
 })
 export class BirthdayDashboardSettingsComponent implements OnInit {
   @Input() config: BirthdayDashboardSettingsConfig = {};
@@ -31,14 +31,14 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
   localConfig: BirthdayDashboardSettingsConfig = {
     threshold: 32,
     entityType: "Child",
-    birthdayProperty: "dateOfBirth"
+    birthdayProperty: "dateOfBirth",
   };
 
   ngOnInit() {
     this.localConfig = {
       threshold: this.config.threshold ?? 32,
       entityType: this.config.entityType ?? "Child",
-      birthdayProperty: this.config.birthdayProperty ?? "dateOfBirth"
+      birthdayProperty: this.config.birthdayProperty ?? "dateOfBirth",
     };
   }
 

@@ -24,9 +24,9 @@ export class ShortcutDashboardWidgetModule {
       [
         "ShortcutDashboardSettings",
         () =>
-          import("./shortcut-dashboard-settings.component/shortcut-dashboard-settings.component").then(
-            (c) => c.ShortcutDashboardSettingsComponent,
-          ),
+          import(
+            "./shortcut-dashboard-settings.component/shortcut-dashboard-settings.component"
+          ).then((c) => c.ShortcutDashboardSettingsComponent),
       ],
     ]);
   }

@@ -21,10 +21,10 @@ export interface NotesDashboardSettingsConfig {
     MatSelectModule,
     MatOptionModule,
     MatCheckboxModule,
-    FormsModule
+    FormsModule,
   ],
   templateUrl: "./notes-dashboard-settings.component.html",
-  styleUrls: ["./notes-dashboard-settings.component.scss"]
+  styleUrls: ["./notes-dashboard-settings.component.scss"],
 })
 export class NotesDashboardSettingsComponent implements OnInit {
   @Input() config: NotesDashboardSettingsConfig = {};
@@ -33,14 +33,14 @@ export class NotesDashboardSettingsComponent implements OnInit {
   localConfig: NotesDashboardSettingsConfig = {
     sinceDays: 28,
     fromBeginningOfWeek: false,
-    mode: "with-recent-notes"
+    mode: "with-recent-notes",
   };
 
   ngOnInit() {
     this.localConfig = {
       sinceDays: this.config.sinceDays ?? 28,
       fromBeginningOfWeek: this.config.fromBeginningOfWeek ?? false,
-      mode: this.config.mode ?? "with-recent-notes"
+      mode: this.config.mode ?? "with-recent-notes",
     };
   }
 

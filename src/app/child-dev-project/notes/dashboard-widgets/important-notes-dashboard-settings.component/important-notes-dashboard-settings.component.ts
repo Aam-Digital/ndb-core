@@ -11,29 +11,27 @@ export interface ImportantNotesDashboardSettingsConfig {
 @Component({
   selector: "app-important-notes-dashboard-settings",
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    EnumDropdownComponent
-  ],
+  imports: [ReactiveFormsModule, EnumDropdownComponent],
   templateUrl: "./important-notes-dashboard-settings.component.html",
-  styleUrls: ["./important-notes-dashboard-settings.component.scss"]
+  styleUrls: ["./important-notes-dashboard-settings.component.scss"],
 })
 export class ImportantNotesDashboardSettingsComponent implements OnInit {
   @Input() config: ImportantNotesDashboardSettingsConfig = {};
-  @Output() configChange = new EventEmitter<ImportantNotesDashboardSettingsConfig>();
+  @Output() configChange =
+    new EventEmitter<ImportantNotesDashboardSettingsConfig>();
 
   localConfig: ImportantNotesDashboardSettingsConfig = {
-    warningLevels: []
+    warningLevels: [],
   };
 
   warningLevelsForm = new FormControl([]);
 
   ngOnInit() {
     this.localConfig = {
-      warningLevels: this.config.warningLevels ?? []
+      warningLevels: this.config.warningLevels ?? [],
     };
     this.warningLevelsForm.setValue(this.localConfig.warningLevels ?? []);
-    this.warningLevelsForm.valueChanges.subscribe(values => {
+    this.warningLevelsForm.valueChanges.subscribe((values) => {
       this.localConfig.warningLevels = values;
       this.emitConfigChange();
     });

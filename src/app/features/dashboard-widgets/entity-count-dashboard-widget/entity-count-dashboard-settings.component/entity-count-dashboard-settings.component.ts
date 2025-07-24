@@ -28,15 +28,15 @@ export interface EntityCountDashboardConfig {
     MatSelectModule,
     FormsModule,
     EntityTypeSelectComponent,
-    EntityFieldSelectComponent
+    EntityFieldSelectComponent,
   ],
   templateUrl: "./entity-count-dashboard-settings.component.html",
-  styleUrls: ["./entity-count-dashboard-settings.component.scss"]
+  styleUrls: ["./entity-count-dashboard-settings.component.scss"],
 })
 export class EntityCountDashboardSettingsComponent implements OnInit {
   @Input() entityType: string = "Child";
   @Input() groupBy: string[] = ["center", "gender"];
-  
+
   @Output() configChange = new EventEmitter<EntityCountDashboardConfig>();
 
   localConfig: EntityCountDashboardConfig;
@@ -44,7 +44,10 @@ export class EntityCountDashboardSettingsComponent implements OnInit {
   ngOnInit() {
     this.localConfig = {
       entityType: this.entityType || "Child",
-      groupBy: this.groupBy && this.groupBy.length > 0 ? [...this.groupBy] : ["center", "gender"]
+      groupBy:
+        this.groupBy && this.groupBy.length > 0
+          ? [...this.groupBy]
+          : ["center", "gender"],
     };
   }
 

@@ -1,23 +1,22 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { ShortcutDashboardSettingsComponent } from './shortcut-dashboard-settings.component';
+import { ShortcutDashboardSettingsComponent } from "./shortcut-dashboard-settings.component";
 
-describe('ShortcutDashboardSettingsComponent', () => {
+describe("ShortcutDashboardSettingsComponent", () => {
   let component: ShortcutDashboardSettingsComponent;
   let fixture: ComponentFixture<ShortcutDashboardSettingsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ShortcutDashboardSettingsComponent]
-    })
-    .compileComponents();
+      imports: [ShortcutDashboardSettingsComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ShortcutDashboardSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

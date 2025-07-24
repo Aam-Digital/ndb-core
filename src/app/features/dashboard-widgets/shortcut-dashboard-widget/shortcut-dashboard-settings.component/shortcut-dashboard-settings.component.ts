@@ -20,22 +20,23 @@ import { AdminIconComponent } from "#src/app/admin-icon-input/admin-icon-input.c
     MatIconModule,
     MatTooltipModule,
     FormsModule,
-    AdminIconComponent
+    AdminIconComponent,
   ],
   templateUrl: "./shortcut-dashboard-settings.component.html",
-  styleUrls: ["./shortcut-dashboard-settings.component.scss"]
+  styleUrls: ["./shortcut-dashboard-settings.component.scss"],
 })
 export class ShortcutDashboardSettingsComponent implements OnInit {
   @Input() shortcuts: MenuItem[] = [];
-  
+
   @Output() configChange = new EventEmitter<any>();
 
   localConfig: any;
 
   ngOnInit() {
-    
     this.localConfig = {
-      shortcuts: this.shortcuts ? [...this.shortcuts.map(s => ({ ...s }))] : [],
+      shortcuts: this.shortcuts
+        ? [...this.shortcuts.map((s) => ({ ...s }))]
+        : [],
     };
   }
 
@@ -43,7 +44,7 @@ export class ShortcutDashboardSettingsComponent implements OnInit {
     this.localConfig.shortcuts.push({
       label: "New Shortcut",
       icon: "link",
-      link: "/"
+      link: "/",
     });
     this.emitConfigChange();
   }
