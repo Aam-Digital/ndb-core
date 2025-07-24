@@ -28,15 +28,14 @@ import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { AblePurePipe } from "@casl/angular";
+import { AsyncPipe } from "@angular/common";
 
 @RouteTarget("Dashboard")
 @Component({
   selector: "app-dashboard",
-  template: ` @for (widgetConfig of _widgets; track widgetConfig) {
-    <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
-  }`,
+  templateUrl: "./dashboard.component.html",
   styleUrls: ["./dashboard.component.scss"],
-  imports: [DynamicComponentDirective],
+  imports: [DynamicComponentDirective, MatMenuModule, MatIconButton, FaIconComponent, RouterLink, AblePurePipe, AsyncPipe],
 })
 export class DashboardComponent implements DashboardConfig {
   private ability = inject(EntityAbility);
@@ -50,6 +49,14 @@ export class DashboardComponent implements DashboardConfig {
     return this._widgets;
   }
   _widgets: DynamicComponentConfig[] = [];
+
+  dashboardViewId: string;
+
+  constructor(
+    activeRoute: ActivatedRoute,
+  ) {
+    this.dashboardViewId = activeRoute.snapshot.url.join("/");
+  }
 
   private async filterPermittedWidgets(
     widgets: DynamicComponentConfig[],

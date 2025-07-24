@@ -12,7 +12,6 @@ $widget-height: 430px;
 .widgets-container {
   /* Make all rows be equal in height */
   grid-auto-rows: $widget-height;
-  margin-top: 60px;
 
   @include grid-layout.adaptive($min-widget-width, $max-screen-width);
 }

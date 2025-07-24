@@ -1,10 +1,10 @@
 import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { MatSelectModule } from "@angular/material/select";
-import { MatOptionModule } from "@angular/material/core";
 import { FormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
+import { EnumDropdownComponent } from "../../../../core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component";
 
 export interface ImportantNotesDashboardSettingsConfig {
   subtitle?: string;
@@ -19,9 +19,9 @@ export interface ImportantNotesDashboardSettingsConfig {
   imports: [
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
-    MatOptionModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    EnumDropdownComponent
   ],
   templateUrl: "./important-notes-dashboard-settings.component.html",
   styleUrls: ["./important-notes-dashboard-settings.component.scss"]
@@ -36,15 +36,27 @@ export class ImportantNotesDashboardSettingsComponent implements OnInit {
     warningLevels: []
   };
 
+  warningLevelsForm = new FormControl([]);
+
   ngOnInit() {
     this.localConfig = {
       subtitle: this.config.subtitle ?? "",
       explanation: this.config.explanation ?? "",
-      warningLevels: this.config.warningLevels ?? ["WARNING", "URGENT"]
+      warningLevels: this.config.warningLevels ?? []
     };
+    this.warningLevelsForm.setValue(this.localConfig.warningLevels ?? []);
+    this.warningLevelsForm.valueChanges.subscribe(values => {
+      this.localConfig.warningLevels = values;
+      this.emitConfigChange();
+    });
   }
 
   emitConfigChange() {
     this.configChange.emit({ ...this.localConfig });
+  }
+
+  onWarningLevelsChange(values: string[]) {
+    this.localConfig.warningLevels = values;
+    this.emitConfigChange();
   }
 }

@@ -10,12 +10,10 @@
   </mat-form-field>
 
   <h3>Warning Levels</h3>
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label i18n>Warning Levels</mat-label>
-    <mat-select multiple [(ngModel)]="localConfig.warningLevels" (ngModelChange)="emitConfigChange()">
-      <mat-option value="INFO">Info</mat-option>
-      <mat-option value="WARNING">Warning</mat-option>
-      <mat-option value="URGENT">Urgent</mat-option>
-    </mat-select>
-  </mat-form-field>
+  <app-enum-dropdown
+    [form]="warningLevelsForm"
+    [label]="'Warning Levels'"
+    [enumId]="'warning-levels'"
+    [multi]="true">
+  </app-enum-dropdown>
 </div>
