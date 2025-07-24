@@ -1,6 +1,17 @@
 <h2 mat-dialog-title>{{ data.title }}</h2>
 
 <mat-dialog-content class="dialog-content">
+  <!-- Common fields for all widgets -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label i18n>Subtitle</mat-label>
+    <input matInput [(ngModel)]="commonConfig.subtitle" />
+  </mat-form-field>
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label i18n>Explanation</mat-label>
+    <textarea matInput rows="2" [(ngModel)]="commonConfig.explanation"></textarea>
+  </mat-form-field>
+
+  <!-- Widget-specific settings -->
   <ng-template
     [appDynamicComponent]="settingsComponentConfig"
     (configChange)="onConfigChange($event)">

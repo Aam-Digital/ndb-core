@@ -1,64 +1,28 @@
 <div style="padding: 16px;">
-  
-  <!-- Display Settings Section -->
   <div style="margin-bottom: 32px;">
-    <h3>Display Settings</h3>
-    
+   <h3>Entity Type to Count</h3>
     <mat-form-field appearance="fill" class="full-width">
-      <mat-label i18n>Subtitle</mat-label>
-      <input 
-        matInput 
-        [(ngModel)]="localConfig.subtitle"
-        (ngModelChange)="onSubtitleChange()"
-      >
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label i18n>Explanation</mat-label>
-      <textarea 
-        matInput 
-        [(ngModel)]="localConfig.explanation"
-        (ngModelChange)="onExplanationChange()"
-        rows="3">
-      </textarea>
-    </mat-form-field>
-  </div>
-
-  <!-- Entity Configuration -->
-  <div style="margin-bottom: 32px;">
-    <h3>Entity Type to Count</h3>
-    
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label i18n>Entity Type</mat-label>
-      <mat-select 
+      <mat-label>Select Entity Type</mat-label>
+      <app-entity-type-select
         [(ngModel)]="localConfig.entityType"
-        (ngModelChange)="onEntityTypeChange()">
-        @for (entityType of availableEntityTypes; track entityType) {
-          <mat-option [value]="entityType">
-            {{ entityType }}
-          </mat-option>
-        }
-      </mat-select>
-      <mat-hint>Select which record type to count and display statistics for</mat-hint>
+        (ngModelChange)="onEntityTypeChange()"
+        [placeholder]="'Select Entity Type'"
+      ></app-entity-type-select>
     </mat-form-field>
+    <mat-hint>Select which record type to count and display statistics for</mat-hint>
   </div>
 
-  <!-- Group By Configuration -->
   <div>
     <h3>Group By Fields</h3>
-    
     <mat-form-field appearance="fill" class="full-width">
-      <mat-label i18n>Group By Fields</mat-label>
-      <mat-select 
-        multiple
+      <mat-label>Select Group By Fields</mat-label>
+      <app-entity-field-select
+        [entityType]="localConfig.entityType"
         [(ngModel)]="localConfig.groupBy"
-        (ngModelChange)="onGroupByChange()">
-        @for (field of availableGroupByFields; track field) {
-          <mat-option [value]="field">
-            {{ field }}
-          </mat-option>
-        }
-      </mat-select>
+        (ngModelChange)="onGroupByChange()"
+        [multi]="true"
+        [placeholder]="'Select Group By Fields'"
+      ></app-entity-field-select>
     </mat-form-field>
   </div>
 </div>

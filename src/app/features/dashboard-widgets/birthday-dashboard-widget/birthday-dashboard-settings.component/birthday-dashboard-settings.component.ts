@@ -6,8 +6,6 @@ import { MatOptionModule } from "@angular/material/core";
 import { FormsModule } from "@angular/forms";
 
 export interface BirthdayDashboardSettingsConfig {
-  subtitle?: string;
-  explanation?: string;
   threshold?: number;
   entityType?: string;
   birthdayProperty?: string;
@@ -31,8 +29,6 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
   @Output() configChange = new EventEmitter<BirthdayDashboardSettingsConfig>();
 
   localConfig: BirthdayDashboardSettingsConfig = {
-    subtitle: "",
-    explanation: "",
     threshold: 32,
     entityType: "Child",
     birthdayProperty: "dateOfBirth"
@@ -40,8 +36,6 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
 
   ngOnInit() {
     this.localConfig = {
-      subtitle: this.config.subtitle ?? "",
-      explanation: this.config.explanation ?? "",
       threshold: this.config.threshold ?? 32,
       entityType: this.config.entityType ?? "Child",
       birthdayProperty: this.config.birthdayProperty ?? "dateOfBirth"

@@ -2,30 +2,6 @@
   
   <!-- Display Settings Section -->
   <div style="margin-bottom: 32px;">
-    <h3>Display Settings</h3>
-    
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label i18n>Subtitle</mat-label>
-      <input 
-        matInput 
-        [(ngModel)]="localConfig.subtitle"
-        (ngModelChange)="onSubtitleChange()"
-        >
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label i18n>Explanation</mat-label>
-      <textarea 
-        matInput 
-        [(ngModel)]="localConfig.explanation"
-        (ngModelChange)="onExplanationChange()"
-        rows="2">
-      </textarea>
-    </mat-form-field>
-  </div>
-
-  <!-- Shortcuts Section -->
-  <div>
     <h3>Shortcuts</h3>
     
     @for (shortcut of localConfig.shortcuts; track $index; let i = $index) {

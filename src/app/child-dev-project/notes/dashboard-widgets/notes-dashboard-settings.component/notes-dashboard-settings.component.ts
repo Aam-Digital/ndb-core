@@ -7,8 +7,6 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { FormsModule } from "@angular/forms";
 
 export interface NotesDashboardSettingsConfig {
-  subtitle?: string;
-  explanation?: string;
   sinceDays?: number;
   fromBeginningOfWeek?: boolean;
   mode?: string;
@@ -33,8 +31,6 @@ export class NotesDashboardSettingsComponent implements OnInit {
   @Output() configChange = new EventEmitter<NotesDashboardSettingsConfig>();
 
   localConfig: NotesDashboardSettingsConfig = {
-    subtitle: "",
-    explanation: "",
     sinceDays: 28,
     fromBeginningOfWeek: false,
     mode: "with-recent-notes"
@@ -42,8 +38,6 @@ export class NotesDashboardSettingsComponent implements OnInit {
 
   ngOnInit() {
     this.localConfig = {
-      subtitle: this.config.subtitle ?? "",
-      explanation: this.config.explanation ?? "",
       sinceDays: this.config.sinceDays ?? 28,
       fromBeginningOfWeek: this.config.fromBeginningOfWeek ?? false,
       mode: this.config.mode ?? "with-recent-notes"

@@ -1,14 +1,4 @@
 <div style="padding: 16px;">
-  <h3>Display Settings</h3>
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label i18n>Subtitle</mat-label>
-    <input matInput [(ngModel)]="localConfig.subtitle" (ngModelChange)="emitConfigChange()" />
-  </mat-form-field>
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label i18n>Explanation</mat-label>
-    <textarea matInput rows="2" [(ngModel)]="localConfig.explanation" (ngModelChange)="emitConfigChange()"></textarea>
-  </mat-form-field>
-
   <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Days since last note</mat-label>
     <input matInput type="number" min="1" [(ngModel)]="localConfig.sinceDays" (ngModelChange)="emitConfigChange()" />

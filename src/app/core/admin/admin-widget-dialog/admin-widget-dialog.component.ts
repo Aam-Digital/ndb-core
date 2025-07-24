@@ -3,6 +3,9 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from "@angular/materia
 import { MatButtonModule } from "@angular/material/button";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
+import { FormsModule } from "@angular/forms";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 export interface AdminWidgetDialogData {
   widgetConfig: DynamicComponentConfig;
@@ -16,6 +19,9 @@ export interface AdminWidgetDialogData {
   imports: [
     MatDialogModule,
     MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule, 
+    FormsModule, 
     DynamicComponentDirective
   ],
   templateUrl: "./admin-widget-dialog.component.html",
@@ -24,36 +30,45 @@ export interface AdminWidgetDialogData {
 export class AdminWidgetDialogComponent {
   settingsComponentConfig: DynamicComponentConfig;
   updatedConfig: any;
+  commonConfig = {
+    subtitle: "",
+    explanation: ""
+  };
 
   constructor(
-  public dialogRef: MatDialogRef<AdminWidgetDialogComponent>,
-  @Inject(MAT_DIALOG_DATA) public data: AdminWidgetDialogData
-) {
-  console.log('=== DIALOG DEBUG ===');
-  console.log('Widget config:', this.data.widgetConfig);
-  console.log('Widget config.config:', this.data.widgetConfig.config);
+    public dialogRef: MatDialogRef<AdminWidgetDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: AdminWidgetDialogData
+  ) {
+    this.commonConfig.subtitle = this.data.widgetConfig.config?.subtitle ?? "";
+    this.commonConfig.explanation = this.data.widgetConfig.config?.explanation ?? "";
 
-  // Pass the config object as-is!
-  this.settingsComponentConfig = {
-    component: data.settingsComponent,
-    config: data.widgetConfig.config || {}
-  };
+    this.settingsComponentConfig = {
+      component: data.settingsComponent,
+      config: data.widgetConfig.config || {}
+    };
 
-  console.log('Settings component config being passed:', this.settingsComponentConfig);
-  this.updatedConfig = { ...data.widgetConfig };
-}
+    this.updatedConfig = { ...data.widgetConfig };
+  }
 
   onConfigChange(newConfig: any) {
-  this.updatedConfig = {
-    ...this.updatedConfig,
-    config: {
-      ...this.updatedConfig.config,
-      ...newConfig
-    }
-  };
-}
+    this.updatedConfig = {
+      ...this.updatedConfig,
+      config: {
+        ...this.updatedConfig.config,
+        ...newConfig
+      }
+    };
+  }
 
   onSave() {
+    this.updatedConfig = {
+      ...this.updatedConfig,
+      config: {
+        ...this.updatedConfig.config,
+        subtitle: this.commonConfig.subtitle,
+        explanation: this.commonConfig.explanation
+      }
+    };
     this.dialogRef.close(this.updatedConfig);
   }
 

@@ -26,29 +26,17 @@ import { AdminIconComponent } from "#src/app/admin-icon-input/admin-icon-input.c
   styleUrls: ["./shortcut-dashboard-settings.component.scss"]
 })
 export class ShortcutDashboardSettingsComponent implements OnInit {
-  // Try individual inputs instead of a single config object
   @Input() shortcuts: MenuItem[] = [];
-  @Input() subtitle: string = "Quick Actions";
-  @Input() explanation: string = "Shortcuts to quickly navigate to common actions";
   
   @Output() configChange = new EventEmitter<any>();
 
   localConfig: any;
 
   ngOnInit() {
-    console.log('=== SHORTCUT SETTINGS DEBUG ===');
-    console.log('Shortcuts input:', this.shortcuts);
-    console.log('Subtitle input:', this.subtitle);
-    console.log('Explanation input:', this.explanation);
     
     this.localConfig = {
       shortcuts: this.shortcuts ? [...this.shortcuts.map(s => ({ ...s }))] : [],
-      subtitle: this.subtitle || "Quick Actions",
-      explanation: this.explanation || "Shortcuts to quickly navigate to common actions"
     };
-    
-    console.log('Final local config:', this.localConfig);
-    console.log('Local shortcuts count:', this.localConfig.shortcuts.length);
   }
 
   addShortcut() {
@@ -85,16 +73,7 @@ export class ShortcutDashboardSettingsComponent implements OnInit {
     this.emitConfigChange();
   }
 
-  onSubtitleChange() {
-    this.emitConfigChange();
-  }
-
-  onExplanationChange() {
-    this.emitConfigChange();
-  }
-
   private emitConfigChange() {
-    console.log('Emitting config change:', this.localConfig);
     this.configChange.emit({ ...this.localConfig });
   }
 }
