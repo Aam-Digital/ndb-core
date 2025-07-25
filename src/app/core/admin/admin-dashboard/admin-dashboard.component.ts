@@ -87,7 +87,7 @@ export class AdminDashboardComponent implements OnInit {
     );
     if (updatedConfig) {
       this.dashboardConfig.widgets[idx] = updatedConfig;
-      this.dashboardConfig.widgets = [...this.dashboardConfig.widgets]; // <-- Add this line
+      this.dashboardConfig.widgets = [...this.dashboardConfig.widgets];
     }
   }
 
@@ -103,7 +103,7 @@ export class AdminDashboardComponent implements OnInit {
         return "ImportantNotesDashboardSettings";
 
       case "TodosDashboard":
-        return "NotEditableWidgetSettings";
+        return "TodosDashboardSettings";
 
       case "NotesDashboard":
         return "NotesDashboardSettings";
@@ -112,7 +112,7 @@ export class AdminDashboardComponent implements OnInit {
         return "AttendanceWeekDashboardSettings";
 
       case "ProgressDashboard":
-        return "NotEditableWidgetSettings";
+        return "ProgressDashboardSettings";
 
       case "BirthdayDashboard":
         return "BirthdayDashboardSettings";
@@ -147,7 +147,6 @@ export class AdminDashboardComponent implements OnInit {
 
   addNewWidget() {
     // TODO: Open dialog to select widget type
-    console.log("Add new widget");
   }
 
   save() {
