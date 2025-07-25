@@ -62,4 +62,11 @@ const dynamicComponents: [string, AsyncComponent][] = [
         "./todo-completion/display-todo-completion/display-todo-completion.component"
       ).then((c) => c.DisplayTodoCompletionComponent),
   ],
+  [
+    "TodosDashboardSettings",
+    () =>
+      import(
+        "./todos-dashboard-settings.component/todos-dashboard-settings.component"
+      ).then((c) => c.TodosDashboardSettingsComponent),
+  ],
 ];
