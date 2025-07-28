@@ -9,6 +9,7 @@ import {
   inject,
 } from "@angular/core";
 import * as L from "leaflet";
+import "leaflet.markercluster";
 import { BehaviorSubject, Observable, timeInterval } from "rxjs";
 import { debounceTime, filter, map } from "rxjs/operators";
 import { Coordinates } from "../coordinates";
@@ -37,7 +38,8 @@ export class MapComponent implements AfterViewInit {
 
   private readonly start_location: L.LatLngTuple = [52.4790412, 13.4319106];
 
-  @ViewChild("map") private mapElement: ElementRef<HTMLDivElement>;
+  @ViewChild("map", { static: false })
+  private mapElement: ElementRef<HTMLDivElement>;
 
   @Input() height = "200px";
   @Input() expandable = false;
@@ -46,10 +48,8 @@ export class MapComponent implements AfterViewInit {
     if (!coordinates) {
       return;
     }
-    this.clearMarkers(this.markers);
-    this.markers = this.createMarkers(coordinates);
-    this.showMarkersOnMap(this.markers);
     this._marked.next(coordinates);
+    this.updateMarkers();
   }
   private _marked = new BehaviorSubject<Coordinates[]>([]);
 
@@ -57,40 +57,36 @@ export class MapComponent implements AfterViewInit {
     if (!entities) {
       return;
     }
-    this.clearMarkers(this.markers);
-    this.markers = this.createEntityMarkers(entities);
-    this.showMarkersOnMap(this.markers);
     this._entities.next(entities);
+    this.updateMarkers();
   }
-
   private _entities = new BehaviorSubject<Entity[]>([]);
 
   @Input() set highlightedEntities(entities: Entity[]) {
     if (!entities) {
       return;
     }
-    this.clearMarkers(this.highlightedMarkers);
-    this.highlightedMarkers = this.createEntityMarkers(entities);
-    this.showMarkersOnMap(this.highlightedMarkers, true);
     this._highlightedEntities.next(entities);
+    this.updateMarkers();
   }
-
   private _highlightedEntities = new BehaviorSubject<Entity[]>([]);
 
   @Input() set displayedProperties(displayedProperties: LocationProperties) {
     if (displayedProperties) {
       this._displayedProperties = displayedProperties;
       this.showPropertySelection = Object.keys(displayedProperties).length > 0;
+      this.updateMarkers();
     }
   }
-
   private _displayedProperties: LocationProperties = {};
   @Output() displayedPropertiesChange = new EventEmitter<LocationProperties>();
   showPropertySelection = false;
 
   private map: L.Map;
   private markers: L.Marker[];
-  private highlightedMarkers: L.Marker[];
+  private regularClusterGroup: L.MarkerClusterGroup;
+  private highlightClusterGroup: L.MarkerClusterGroup;
+
   private clickStream = new EventEmitter<Coordinates>();
 
   @Output() mapClick: Observable<Coordinates> = this.clickStream.pipe(
@@ -120,40 +116,73 @@ export class MapComponent implements AfterViewInit {
           : this.start_location,
       zoom: 14,
     });
+
     this.map.addEventListener("click", (res) =>
       this.clickStream.emit({ lat: res.latlng.lat, lon: res.latlng.lng }),
     );
 
-    const tiles = L.tileLayer(
-      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      {
-        maxZoom: 18,
-        minZoom: 3,
-        attribution:
-          '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      },
-    );
-    tiles.addTo(this.map);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      minZoom: 3,
+      attribution:
+        '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }).addTo(this.map);
+
+    // Initialize two separate cluster groups:
+    this.regularClusterGroup = L.markerClusterGroup();
+    this.highlightClusterGroup = L.markerClusterGroup();
+
+    this.map.addLayer(this.regularClusterGroup);
+    this.map.addLayer(this.highlightClusterGroup);
+
     // this is necessary to remove gray spots when directly opening app on a page with the map
     setTimeout(() => this.map.invalidateSize());
 
-    this.showMarkersOnMap(this.markers);
-    this.showMarkersOnMap(this.highlightedMarkers, true);
+    // Initial markers
+    this.updateMarkers();
   }
 
-  private showMarkersOnMap(marker: L.Marker[], highlighted = false) {
-    if (!marker || !this.map || marker.length === 0) {
+  private updateMarkers() {
+    if (!this.map) {
       return;
     }
-    marker.forEach((m) => this.addMarker(m, highlighted));
-    const group = L.featureGroup(marker);
-    this.map.fitBounds(group.getBounds(), {
-      padding: [50, 50],
-      maxZoom: this.map.getZoom(),
-    });
+
+    this.regularClusterGroup.clearLayers();
+    this.highlightClusterGroup.clearLayers();
+
+
+    const highlightEntities = new Set(this._highlightedEntities.value || []);
+    const entitiesToShow = (this._entities.value || []).filter(
+      (e) => !highlightEntities.has(e),
+    );
+
+    const normalMarkers = this.createEntityMarkers(entitiesToShow, false);
+    const highlightMarkers = this.createEntityMarkers(
+      this._highlightedEntities.value || [],
+      true,
+    );
+
+    const coordinateMarkers = this.createMarkers(this._marked.value);
+
+    this.regularClusterGroup.addLayers(normalMarkers);
+    this.regularClusterGroup.addLayers(coordinateMarkers);
+    this.highlightClusterGroup.addLayers(highlightMarkers);
+
+    const allMarkers = [
+      ...normalMarkers,
+      ...highlightMarkers,
+      ...coordinateMarkers,
+    ];
+    if (allMarkers.length > 0) {
+      const group = L.featureGroup(allMarkers);
+      this.map.fitBounds(group.getBounds(), {
+        padding: [50, 50],
+        maxZoom: this.map.getZoom(),
+      });
+    }
   }
 
-  private createEntityMarkers(entities: Entity[]) {
+  private createEntityMarkers(entities: Entity[], highlighted: boolean) {
     const markers: L.Marker[] = [];
     entities
       .filter((entity) => !!entity)
@@ -184,28 +213,10 @@ export class MapComponent implements AfterViewInit {
     }
   }
 
-  private clearMarkers(markers: L.Marker[]) {
-    if (markers?.length > 0 && this.map) {
-      markers.forEach((marker) => marker.removeFrom(this.map));
-    }
-  }
-
   private createMarkers(coordinates: Coordinates[]) {
     return coordinates
       .filter((coord) => !!coord)
       .map((coord) => L.marker([coord.lat, coord.lon]));
-  }
-
-  private addMarker(m: L.Marker, highlighted: boolean = false) {
-    m.addTo(this.map);
-    const entity = m["entity"] as Entity;
-    if (highlighted || entity) {
-      const degree = entity ? getHueForEntity(entity) : "145";
-      const icon = m["_icon"] as HTMLElement;
-      icon.style.filter = `hue-rotate(${degree}deg)`;
-      icon.style.opacity = highlighted ? "1" : "0.5";
-    }
-    return m;
   }
 
   async openMapInPopup() {
