@@ -67,6 +67,7 @@ export class MapComponent implements AfterViewInit {
       return;
     }
     this._highlightedEntities.next(entities);
+    this.createEntityMarkers(entities, true);
     this.updateMarkers();
   }
   private _highlightedEntities = new BehaviorSubject<Entity[]>([]);
@@ -83,8 +84,8 @@ export class MapComponent implements AfterViewInit {
 
   private map: L.Map;
   private markerClusterGroup: L.MarkerClusterGroup;
-  private markers: L.Marker[] = [];
-  private highlightedMarkers: L.Marker[] = [];
+  private mapInitialized = false;
+
   private clickStream = new EventEmitter<Coordinates>();
 
   @Output() mapClick: Observable<Coordinates> = this.clickStream.pipe(
@@ -95,8 +96,6 @@ export class MapComponent implements AfterViewInit {
   );
 
   @Output() entityClick = new EventEmitter<Entity>();
-
-  private mapInitialized = false;
 
   constructor() {
     const configService = inject(ConfigService);
@@ -128,7 +127,7 @@ export class MapComponent implements AfterViewInit {
 
     // Initialize marker cluster group
     this.markerClusterGroup = L.markerClusterGroup({
-      spiderfyOnMaxZoom: false,
+      spiderfyOnMaxZoom: true,
       showCoverageOnHover: false,
       zoomToBoundsOnClick: true,
     });
@@ -136,7 +135,7 @@ export class MapComponent implements AfterViewInit {
 
     setTimeout(() => this.map.invalidateSize());
     this.mapInitialized = true;
-        // Initial markers
+    // Initial markers
     this.updateMarkers();
   }
 
@@ -144,30 +143,39 @@ export class MapComponent implements AfterViewInit {
     if (!this.mapInitialized) return;
 
     this.markerClusterGroup.clearLayers();
-    this.markers = [];
-    this.highlightedMarkers = [];
-    if (this._entities.value) {
-      this.markers = this.createEntityMarkers(this._entities.value);
-      this.markerClusterGroup.addLayers(this.markers);
-    }
 
-    if (this._highlightedEntities.value) {
-      this.highlightedMarkers = this.createEntityMarkers(
-        this._highlightedEntities.value,
-        true,
-      );
-      this.markerClusterGroup.addLayers(this.highlightedMarkers);
-    }
+    const highlightedIds = new Set(
+      this._highlightedEntities.value?.map((e) => e.getId()) || [],
+    );
 
-    if (this._marked.value) {
-      const coordinateMarkers = this.createMarkers(this._marked.value);
-      this.markerClusterGroup.addLayers(coordinateMarkers);
-    }
+    const normalEntities = (this._entities.value || []).filter(
+      (e) => !highlightedIds.has(e.getId()),
+    );
+    const normalMarkers = this.createEntityMarkers(normalEntities, false);
 
-    if (this.markers.length > 0 || this.highlightedMarkers.length > 0) {
+    const highlightedMarkers = this.createEntityMarkers(
+      this._highlightedEntities.value,
+      true,
+    );
+    const coordinateMarkers = this.createMarkers(this._marked.value);
+
+    this.markerClusterGroup.addLayers([
+      ...normalMarkers,
+      ...highlightedMarkers,
+      ...coordinateMarkers,
+    ]);
+
+    setTimeout(() => this.styleMarkers(), 100);
+
+    if (
+      normalMarkers.length > 0 ||
+      highlightedMarkers.length > 0 ||
+      coordinateMarkers.length > 0
+    ) {
       const group = L.featureGroup([
-        ...this.markers,
-        ...this.highlightedMarkers,
+        ...normalMarkers,
+        ...highlightedMarkers,
+        ...coordinateMarkers,
       ]);
       this.map.fitBounds(group.getBounds(), {
         padding: [50, 50],
@@ -176,9 +184,28 @@ export class MapComponent implements AfterViewInit {
     }
   }
 
-  private createEntityMarkers(entities: Entity[], highlighted = false) {
+  private styleMarkers() {
+    // Style normal markers
+    this.markerClusterGroup.getLayers().forEach((layer: L.Marker) => {
+      const entity = layer["entity"] as Entity;
+      const highlighted = layer["highlighted"] as boolean;
+
+      if (entity || highlighted) {
+        const icon = layer.getElement()?.querySelector("img");
+        if (icon) {
+          const degree = entity ? getHueForEntity(entity) : "145";
+          (icon as HTMLElement).style.filter = `hue-rotate(${degree}deg)`;
+          (icon as HTMLElement).style.opacity = highlighted ? "1" : "0.5";
+        }
+      }
+    });
+  }
+
+  private createEntityMarkers(
+    entities: Entity[],
+    highlighted: boolean,
+  ): L.Marker[] {
     const markers: L.Marker[] = [];
-    const locationMap = new Map<string, { entity: Entity; count: number }>();
 
     entities
       .filter((entity) => !!entity)
@@ -187,23 +214,14 @@ export class MapComponent implements AfterViewInit {
           .map((prop) => entity[prop]?.geoLookup)
           .filter((loc: GeoResult) => !!loc)
           .forEach((loc: GeoResult) => {
-            const locationKey = `${loc.lat.toFixed(6)}_${loc.lon.toFixed(6)}`;
-            if (!locationMap.has(locationKey)) {
-              locationMap.set(locationKey, { entity, count: 1 });
-            } else {
-              locationMap.get(locationKey).count++;
-            }
+            const marker = L.marker([loc.lat, loc.lon]);
+            marker.bindTooltip(entity.toString());
+            marker.on("click", () => this.entityClick.emit(entity));
+            marker["entity"] = entity;
+            marker["highlighted"] = highlighted;
+            markers.push(marker);
           });
       });
-
-    locationMap.forEach((value, key) => {
-      const [lat, lon] = key.split("_").map(parseFloat);
-      const marker = L.marker([lat, lon]);
-      marker.bindTooltip(value.entity.toString());
-      marker.on("click", () => this.entityClick.emit(value.entity));
-      marker["entity"] = value.entity;
-      markers.push(marker);
-    });
 
     return markers;
   }
@@ -220,10 +238,14 @@ export class MapComponent implements AfterViewInit {
     }
   }
 
-  private createMarkers(coordinates: Coordinates[]) {
+  private createMarkers(coordinates: Coordinates[]): L.Marker[] {
     return coordinates
       .filter((coord) => !!coord)
-      .map((coord) => L.marker([coord.lat, coord.lon]));
+      .map((coord) => {
+        const marker = L.marker([coord.lat, coord.lon]);
+        marker["highlighted"] = false; //todo or may be delete?
+        return marker;
+      });
   }
 
   async openMapInPopup() {
