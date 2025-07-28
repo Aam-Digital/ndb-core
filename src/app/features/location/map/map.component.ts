@@ -67,7 +67,6 @@ export class MapComponent implements AfterViewInit {
       return;
     }
     this._highlightedEntities.next(entities);
-    this.createEntityMarkers(entities, true);
     this.updateMarkers();
   }
   private _highlightedEntities = new BehaviorSubject<Entity[]>([]);
@@ -167,19 +166,15 @@ export class MapComponent implements AfterViewInit {
 
     setTimeout(() => this.styleMarkers(), 100);
 
-    if (
-      normalMarkers.length > 0 ||
-      highlightedMarkers.length > 0 ||
-      coordinateMarkers.length > 0
-    ) {
-      const group = L.featureGroup([
-        ...normalMarkers,
-        ...highlightedMarkers,
-        ...coordinateMarkers,
-      ]);
+    let markers =
+      highlightedMarkers.length > 0
+        ? highlightedMarkers
+        : [...normalMarkers, ...coordinateMarkers];
+    if (markers.length > 0) {
+      const group = L.featureGroup(markers);
       this.map.fitBounds(group.getBounds(), {
         padding: [50, 50],
-        maxZoom: this.map.getZoom(),
+        maxZoom: 46,
       });
     }
   }
