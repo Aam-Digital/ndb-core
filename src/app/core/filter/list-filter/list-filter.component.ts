@@ -41,30 +41,21 @@ export class ListFilterComponent<E extends Entity>
     this.autocompleteControl.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((values) => {
-        if (this.filterConfig) {
-          this.filterConfig.selectedOptionChange.emit(asArray(values));
-        }
+        this.filterConfig.selectedOptionChange.emit(asArray(values));
       });
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.filterConfig) {
-      if (this.filterConfig) {
-        this.autocompleteControl.setValue(
-          this.filterConfig.selectedOptionValues || [],
-          {
-            emitEvent: false,
-          },
-        );
+      this.autocompleteControl.setValue(this.filterConfig.selectedOptionValues);
 
-        this.filterConfig.selectedOptionChange
-          .pipe(untilDestroyed(this))
-          .subscribe((values) => {
-            this.autocompleteControl.setValue(asArray(values), {
-              emitEvent: false,
-            });
+      this.filterConfig.selectedOptionChange
+        .pipe(untilDestroyed(this))
+        .subscribe((values) => {
+          this.autocompleteControl.setValue(asArray(values), {
+            emitEvent: false,
           });
-      }
+        });
     }
   }
 
