@@ -15,7 +15,6 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { FormsModule } from "@angular/forms";
 import { dateToString, isValidDate } from "../../../../utils/utils";
 import { DateFilter } from "app/core/filter/filters/dateFilter";
-import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-date-range-filter",
@@ -25,7 +24,6 @@ import { Subscription } from "rxjs";
 })
 export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
   private dialog = inject(MatDialog);
-  private filterConfigSubscription: Subscription;
   fromDate: Date;
   toDate: Date;
 
@@ -34,24 +32,16 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.filterConfig) {
-      console.log("testetet")
-      // if (this.filterConfigSubscription) {
-      //   this.filterConfigSubscription.unsubscribe();
-      // }
-      // if (this.filterConfig) {
-      //   this.filterConfigSubscription = this.filterConfig.selectedOptionChange.subscribe(() => {
-      //     this.initDates();
-      //   });
-      // }
+      this.filterConfig.selectedOptionChange.subscribe(() => {
+        if (this.filterConfig.selectedOptionValues.length === 0) {
+          this.fromDate = undefined;
+          this.toDate = undefined;
+          this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
+        }
+      });
       this.initDates();
     }
   }
-
-  // ngOnDestroy(): void {
-  //   if (this.filterConfigSubscription) {
-  //     this.filterConfigSubscription.unsubscribe();
-  //   }
-  // }
 
   private initDates() {
     const range = this.filterConfig.getDateRange();
