@@ -10,6 +10,7 @@ import {
 } from "@angular/core";
 import * as L from "leaflet";
 import "leaflet.markercluster";
+
 import { BehaviorSubject, Observable, timeInterval } from "rxjs";
 import { debounceTime, filter, map } from "rxjs/operators";
 import { Coordinates } from "../coordinates";
@@ -38,8 +39,7 @@ export class MapComponent implements AfterViewInit {
 
   private readonly start_location: L.LatLngTuple = [52.4790412, 13.4319106];
 
-  @ViewChild("map", { static: false })
-  private mapElement: ElementRef<HTMLDivElement>;
+  @ViewChild("map") private mapElement: ElementRef<HTMLDivElement>;
 
   @Input() height = "200px";
   @Input() expandable = false;
@@ -75,7 +75,6 @@ export class MapComponent implements AfterViewInit {
     if (displayedProperties) {
       this._displayedProperties = displayedProperties;
       this.showPropertySelection = Object.keys(displayedProperties).length > 0;
-      this.updateMarkers();
     }
   }
   private _displayedProperties: LocationProperties = {};
@@ -83,10 +82,9 @@ export class MapComponent implements AfterViewInit {
   showPropertySelection = false;
 
   private map: L.Map;
-  private markers: L.Marker[];
-  private regularClusterGroup: L.MarkerClusterGroup;
-  private highlightClusterGroup: L.MarkerClusterGroup;
-
+  private markerClusterGroup: L.MarkerClusterGroup;
+  private markers: L.Marker[] = [];
+  private highlightedMarkers: L.Marker[] = [];
   private clickStream = new EventEmitter<Coordinates>();
 
   @Output() mapClick: Observable<Coordinates> = this.clickStream.pipe(
@@ -98,9 +96,10 @@ export class MapComponent implements AfterViewInit {
 
   @Output() entityClick = new EventEmitter<Entity>();
 
+  private mapInitialized = false;
+
   constructor() {
     const configService = inject(ConfigService);
-
     const config = configService.getConfig<MapConfig>(MAP_CONFIG_KEY);
     if (config?.start) {
       this.start_location = config.start;
@@ -108,73 +107,68 @@ export class MapComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // init Map
     this.map = L.map(this.mapElement.nativeElement, {
-      center:
-        this.markers?.length > 0
-          ? this.markers[0].getLatLng()
-          : this.start_location,
+      center: this.start_location,
       zoom: 14,
     });
-
     this.map.addEventListener("click", (res) =>
       this.clickStream.emit({ lat: res.latlng.lat, lon: res.latlng.lng }),
     );
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 18,
-      minZoom: 3,
-      attribution:
-        '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    }).addTo(this.map);
+    const tiles = L.tileLayer(
+      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      {
+        maxZoom: 18,
+        minZoom: 3,
+        attribution:
+          '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      },
+    );
+    tiles.addTo(this.map);
 
-    // Initialize two separate cluster groups:
-    this.regularClusterGroup = L.markerClusterGroup();
-    this.highlightClusterGroup = L.markerClusterGroup();
+    // Initialize marker cluster group
+    this.markerClusterGroup = L.markerClusterGroup({
+      spiderfyOnMaxZoom: false,
+      showCoverageOnHover: false,
+      zoomToBoundsOnClick: true,
+    });
+    this.map.addLayer(this.markerClusterGroup);
 
-    this.map.addLayer(this.regularClusterGroup);
-    this.map.addLayer(this.highlightClusterGroup);
-
-    // this is necessary to remove gray spots when directly opening app on a page with the map
     setTimeout(() => this.map.invalidateSize());
-
-    // Initial markers
+    this.mapInitialized = true;
+        // Initial markers
     this.updateMarkers();
   }
 
   private updateMarkers() {
-    if (!this.map) {
-      return;
+    if (!this.mapInitialized) return;
+
+    this.markerClusterGroup.clearLayers();
+    this.markers = [];
+    this.highlightedMarkers = [];
+    if (this._entities.value) {
+      this.markers = this.createEntityMarkers(this._entities.value);
+      this.markerClusterGroup.addLayers(this.markers);
     }
 
-    this.regularClusterGroup.clearLayers();
-    this.highlightClusterGroup.clearLayers();
+    if (this._highlightedEntities.value) {
+      this.highlightedMarkers = this.createEntityMarkers(
+        this._highlightedEntities.value,
+        true,
+      );
+      this.markerClusterGroup.addLayers(this.highlightedMarkers);
+    }
 
+    if (this._marked.value) {
+      const coordinateMarkers = this.createMarkers(this._marked.value);
+      this.markerClusterGroup.addLayers(coordinateMarkers);
+    }
 
-    const highlightEntities = new Set(this._highlightedEntities.value || []);
-    const entitiesToShow = (this._entities.value || []).filter(
-      (e) => !highlightEntities.has(e),
-    );
-
-    const normalMarkers = this.createEntityMarkers(entitiesToShow, false);
-    const highlightMarkers = this.createEntityMarkers(
-      this._highlightedEntities.value || [],
-      true,
-    );
-
-    const coordinateMarkers = this.createMarkers(this._marked.value);
-
-    this.regularClusterGroup.addLayers(normalMarkers);
-    this.regularClusterGroup.addLayers(coordinateMarkers);
-    this.highlightClusterGroup.addLayers(highlightMarkers);
-
-    const allMarkers = [
-      ...normalMarkers,
-      ...highlightMarkers,
-      ...coordinateMarkers,
-    ];
-    if (allMarkers.length > 0) {
-      const group = L.featureGroup(allMarkers);
+    if (this.markers.length > 0 || this.highlightedMarkers.length > 0) {
+      const group = L.featureGroup([
+        ...this.markers,
+        ...this.highlightedMarkers,
+      ]);
       this.map.fitBounds(group.getBounds(), {
         padding: [50, 50],
         maxZoom: this.map.getZoom(),
@@ -182,8 +176,10 @@ export class MapComponent implements AfterViewInit {
     }
   }
 
-  private createEntityMarkers(entities: Entity[], highlighted: boolean) {
+  private createEntityMarkers(entities: Entity[], highlighted = false) {
     const markers: L.Marker[] = [];
+    const locationMap = new Map<string, { entity: Entity; count: number }>();
+
     entities
       .filter((entity) => !!entity)
       .forEach((entity) => {
@@ -191,13 +187,24 @@ export class MapComponent implements AfterViewInit {
           .map((prop) => entity[prop]?.geoLookup)
           .filter((loc: GeoResult) => !!loc)
           .forEach((loc: GeoResult) => {
-            const marker = L.marker([loc.lat, loc.lon]);
-            marker.bindTooltip(entity.toString());
-            marker.on("click", () => this.entityClick.emit(entity));
-            marker["entity"] = entity;
-            markers.push(marker);
+            const locationKey = `${loc.lat.toFixed(6)}_${loc.lon.toFixed(6)}`;
+            if (!locationMap.has(locationKey)) {
+              locationMap.set(locationKey, { entity, count: 1 });
+            } else {
+              locationMap.get(locationKey).count++;
+            }
           });
       });
+
+    locationMap.forEach((value, key) => {
+      const [lat, lon] = key.split("_").map(parseFloat);
+      const marker = L.marker([lat, lon]);
+      marker.bindTooltip(value.entity.toString());
+      marker.on("click", () => this.entityClick.emit(value.entity));
+      marker["entity"] = value.entity;
+      markers.push(marker);
+    });
+
     return markers;
   }
 
