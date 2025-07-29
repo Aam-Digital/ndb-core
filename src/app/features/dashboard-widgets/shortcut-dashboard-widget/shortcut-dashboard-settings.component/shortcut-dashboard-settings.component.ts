@@ -7,7 +7,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FormsModule } from "@angular/forms";
-import { AdminIconComponent } from "#src/app/admin-icon-input/admin-icon-input.component";
+import { MenuItemFormComponent } from "#src/app/menu-item-form/menu-item-form.component";
 
 @DynamicComponent("ShortcutDashboardSettings")
 @Component({
@@ -20,7 +20,7 @@ import { AdminIconComponent } from "#src/app/admin-icon-input/admin-icon-input.c
     MatIconModule,
     MatTooltipModule,
     FormsModule,
-    AdminIconComponent,
+    MenuItemFormComponent,
   ],
   templateUrl: "./shortcut-dashboard-settings.component.html",
   styleUrls: ["./shortcut-dashboard-settings.component.scss"],
@@ -71,6 +71,11 @@ export class ShortcutDashboardSettingsComponent implements OnInit {
   }
 
   onShortcutChange() {
+    this.emitConfigChange();
+  }
+
+  onShortcutItemChange(item: MenuItem, index: number) {
+    this.localConfig.shortcuts[index] = { ...item };
     this.emitConfigChange();
   }
 

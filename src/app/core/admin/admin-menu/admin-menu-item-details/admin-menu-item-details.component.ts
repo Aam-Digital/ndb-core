@@ -10,13 +10,13 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.component";
 import { ConfigService } from "app/core/config/config.service";
 import {
   PREFIX_VIEW_CONFIG,
   ViewConfig,
 } from "app/core/config/dynamic-routing/view-config.interface";
 import { EntityTypeSelectComponent } from "../../../entity/entity-type-select/entity-type-select.component";
+import { MenuItemFormComponent } from "#src/app/menu-item-form/menu-item-form.component";
 
 /**
  * Dialog component to edit a single menu item's details.
@@ -31,9 +31,9 @@ import { EntityTypeSelectComponent } from "../../../entity/entity-type-select/en
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    AdminIconComponent,
     MatDialogModule,
     EntityTypeSelectComponent,
+    MenuItemFormComponent
   ],
   templateUrl: "./admin-menu-item-details.component.html",
   styleUrls: ["./admin-menu-item-details.component.scss"],

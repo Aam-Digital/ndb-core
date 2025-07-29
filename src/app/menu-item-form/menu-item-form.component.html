@@ -1,0 +1,21 @@
+<div class="menu-item-form">
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label i18n>Label</mat-label>
+    <input
+      matInput
+      [(ngModel)]="item.label"
+      (ngModelChange)="onChange()"
+    />
+  </mat-form-field>
+
+  <app-admin-icon-input [(icon)]="item.icon"></app-admin-icon-input>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label i18n>Link</mat-label>
+    <input
+      matInput
+      [(ngModel)]="item.link"
+      (ngModelChange)="onChange()"
+    />
+  </mat-form-field>
+</div>
