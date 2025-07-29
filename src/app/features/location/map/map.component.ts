@@ -105,6 +105,7 @@ export class MapComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+    // init Map
     this.map = L.map(this.mapElement.nativeElement, {
       center: this.start_location,
       zoom: 14,
@@ -123,6 +124,8 @@ export class MapComponent implements AfterViewInit {
       },
     );
     tiles.addTo(this.map);
+    // this is necessary to remove gray spots when directly opening app on a page with the map
+    setTimeout(() => this.map.invalidateSize());
 
     // Initialize marker cluster group
     this.markerClusterGroup = L.markerClusterGroup({
@@ -131,10 +134,7 @@ export class MapComponent implements AfterViewInit {
       zoomToBoundsOnClick: true,
     });
     this.map.addLayer(this.markerClusterGroup);
-
-    setTimeout(() => this.map.invalidateSize());
     this.mapInitialized = true;
-    // Initial markers
     this.updateMarkers();
   }
 
@@ -270,22 +270,14 @@ export class MapComponent implements AfterViewInit {
     }
   }
 
-  /**
-   * Creates Leaflet markers for the given entities.
-   * @param entities Entities to create markers for
-   * @param highlighted Whether these markers should be marked as highlighted
-   * @returns Array of Leaflet markers
-   */
   private createEntityMarkers(
     entities: Entity[],
     highlighted: boolean,
   ): L.Marker[] {
     const markers: L.Marker[] = [];
-
     entities
       .filter((entity) => !!entity)
       .forEach((entity) => {
-        // For each property that has a geo location, create a marker
         this.getMapProperties(entity)
           .map((prop) => entity[prop]?.geoLookup)
           .filter((loc: GeoResult) => !!loc)
@@ -319,7 +311,7 @@ export class MapComponent implements AfterViewInit {
       .filter((coord) => !!coord)
       .map((coord) => {
         const marker = L.marker([coord.lat, coord.lon]);
-        marker["highlighted"] = false; //todo or may be delete?
+        marker["highlighted"] = false;
         return marker;
       });
   }
