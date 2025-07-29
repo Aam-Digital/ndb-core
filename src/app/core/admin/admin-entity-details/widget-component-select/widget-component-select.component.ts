@@ -10,9 +10,10 @@ import {
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { DynamicComponentConfig } from "#src/app/core/config/dynamic-components/dynamic-component-config.interface";
 
 /**
- * Admin component to select components to be added to view configs.
+ * Admin component to select components to be added to view configs or dashboard.
  */
 @Component({
   selector: "app-widget-component-select",
@@ -29,17 +30,89 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 export class WidgetComponentSelectComponent implements OnInit {
   private entityRelationsService = inject(EntityRelationsService);
   private dialogRef =
-    inject<MatDialogRef<WidgetComponentSelectComponent, PanelComponent>>(
-      MatDialogRef,
-    );
+    inject<MatDialogRef<WidgetComponentSelectComponent, any>>(MatDialogRef);
+
   data = inject<{
-    entityType: string;
+    entityType?: string;
+    isDashboard?: boolean;
   }>(MAT_DIALOG_DATA);
 
-  options: WidgetOption[];
+  options: WidgetOption[] | DashboardWidgetOption[];
 
   ngOnInit() {
-    this.options = this.loadAvailableWidgets();
+    if (this.data.isDashboard) {
+      this.options = this.loadDashboardWidgets();
+    } else {
+      this.options = this.loadAvailableWidgets();
+    }
+  }
+
+  private loadDashboardWidgets(): DashboardWidgetOption[] {
+    return [
+      {
+        label: $localize`Shortcuts`,
+        value: {
+          component: "ShortcutDashboard",
+          config: { shortcuts: [] },
+        },
+      },
+      {
+        label: $localize`Entity Count`,
+        value: {
+          component: "EntityCountDashboard",
+          config: {},
+        },
+      },
+      {
+        label: $localize`Important Notes`,
+        value: {
+          component: "ImportantNotesDashboard",
+          config: { warningLevels: ["WARNING", "URGENT"] },
+        },
+      },
+      {
+        label: $localize`Todos`,
+        value: {
+          component: "TodosDashboard",
+          config: {},
+        },
+      },
+      {
+        label: $localize`Notes`,
+        value: {
+          component: "NotesDashboard",
+          config: { sinceDays: 28, fromBeginningOfWeek: false, mode: "with-recent-notes" },
+        },
+      },
+      {
+        label: $localize`Attendance (This Week)`,
+        value: {
+          component: "AttendanceWeekDashboard",
+          config: { daysOffset: 7, periodLabel: "this week" },
+        },
+      },
+      {
+        label: $localize`Attendance (Last Week)`,
+        value: {
+          component: "AttendanceWeekDashboard",
+          config: { daysOffset: 0, periodLabel: "last week" },
+        },
+      },
+      {
+        label: $localize`Progress`,
+        value: {
+          component: "ProgressDashboard",
+          config: { dashboardConfigId: "1" },
+        },
+      },
+      {
+        label: $localize`Birthdays`,
+        value: {
+          component: "BirthdayDashboard",
+          config: { entities: { Child: "dateOfBirth", School: "dateOfBirth" } },
+        },
+      },
+    ];
   }
 
   private loadAvailableWidgets(): WidgetOption[] {
@@ -74,7 +147,7 @@ export class WidgetComponentSelectComponent implements OnInit {
     ];
   }
 
-  selectSectionType(opt: PanelComponent) {
+  selectSectionType(opt: any) {
     this.dialogRef.close(opt);
   }
 }
@@ -87,5 +160,11 @@ export interface WidgetOption {
    * If the option is not available in the current context, mark it as disabled
    * by providing any string value describing the reason (displayed as tooltip).
    */
+  disabled?: string;
+}
+
+export interface DashboardWidgetOption {
+  label: string;
+  value: DynamicComponentConfig;
   disabled?: string;
 }

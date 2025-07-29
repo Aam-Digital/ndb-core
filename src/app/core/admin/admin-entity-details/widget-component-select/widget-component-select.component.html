@@ -1,11 +1,29 @@
-<h2 mat-dialog-title i18n>Select Section Type</h2>
+<h2 mat-dialog-title i18n>
+  @if (data.isDashboard) {
+    Select Dashboard Widget
+  } @else {
+    Select Section Type
+  }
+</h2>
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
 <mat-dialog-content>
-  <p i18n>Choose the widget you want to add:</p>
+  <p i18n>
+    @if (data.isDashboard) {
+      Choose the widget you want to add to your dashboard:
+    } @else {
+      Choose the section you want to add:
+    }
+  </p>
 
   <mat-form-field appearance="fill" class="full-width margin-bottom-regular">
-    <mat-label i18n>Select Section Type</mat-label>
+    <mat-label i18n>
+      @if (data.isDashboard) {
+        Select Widget Type
+      } @else {
+        Select Section Type
+      }
+    </mat-label>
     <mat-select (selectionChange)="selectSectionType($event.value)">
       @for (opt of options; track opt) {
         <mat-option [value]="opt.value" [disabled]="opt.disabled">

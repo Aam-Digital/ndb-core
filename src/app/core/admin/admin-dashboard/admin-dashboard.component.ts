@@ -22,6 +22,7 @@ import {
   AdminWidgetDialogData,
 } from "../admin-widget-dialog/admin-widget-dialog.component";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
+import { WidgetComponentSelectComponent } from "../admin-entity-details/widget-component-select/widget-component-select.component";
 
 @Component({
   selector: "app-admin-dashboard",
@@ -145,10 +146,18 @@ export class AdminDashboardComponent implements OnInit {
     //this.saveDashboardConfig();
   }
 
-  addNewWidget() {
-    // TODO: Open dialog to select widget type
-  }
+  async addNewWidget() {
+    // Open the widget selection dialog for dashboard widgets
+    const dialogRef = this.dialog.open(WidgetComponentSelectComponent, {
+      width: "400px",
+      data: { isDashboard: true },
+    });
 
+    const selectedWidget = await firstValueFrom(dialogRef.afterClosed());
+    if (selectedWidget) {
+      this.dashboardConfig.widgets.push(selectedWidget);
+    }
+  }
   save() {
     //TODO: Implement save logic
   }
