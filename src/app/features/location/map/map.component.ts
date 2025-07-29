@@ -174,7 +174,7 @@ export class MapComponent implements AfterViewInit {
       const group = L.featureGroup(markers);
       this.map.fitBounds(group.getBounds(), {
         padding: [50, 50],
-        maxZoom: 46,
+        maxZoom: 10,
       });
     }
   }
