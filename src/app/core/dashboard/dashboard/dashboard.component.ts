@@ -49,7 +49,7 @@ export class DashboardComponent implements DashboardConfig {
   private ability = inject(EntityAbility);
   private components = inject(ComponentRegistry);
   private session = inject(SessionSubject);
-  private activeRoute = inject(ActivatedRoute); // <-- Use inject here
+  private activeRoute = inject(ActivatedRoute);
 
   @Input() set widgets(widgets: DynamicComponentConfig[]) {
     this.filterPermittedWidgets(widgets).then((res) => (this._widgets = res));
