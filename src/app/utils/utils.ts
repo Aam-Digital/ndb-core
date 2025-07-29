@@ -43,6 +43,9 @@ export function getParentUrl(router: Router): string {
  * @param array A simple array to be grouped.
  * @param propertyToGroupBy The key of the property in the elements by whose value the result is grouped. If this is an array, grouped by individual elements.
  * @returns an array where the first entry is the value of this group and the second all entries that have this value.
+ *
+ * @deprecated Use `Object.groupBy` or `Map.groupBy` when the group values are
+ * primitives and not objects
  */
 export function groupBy<T, P extends keyof T, E>(
   array: T[],

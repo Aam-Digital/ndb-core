@@ -27,7 +27,7 @@
     "module": "ES2022",
     "resolveJsonModule": true,
     "lib": [
-      "ES2022",
+      "ES2024",
       "dom"
     ],
     "types": [
