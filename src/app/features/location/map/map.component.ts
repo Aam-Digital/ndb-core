@@ -138,63 +138,144 @@ export class MapComponent implements AfterViewInit {
     this.updateMarkers();
   }
 
+  /**
+   * Updates the markers on the map based on the current entities, highlighted entities, and marked coordinates.
+   * Clears all existing markers and adds new ones, then handles highlighting and zooming logic.
+   */
   private updateMarkers() {
     if (!this.mapInitialized) return;
 
+    // Remove all markers from the cluster group
     this.markerClusterGroup.clearLayers();
 
+    // Get IDs of highlighted entities for quick lookup
     const highlightedIds = new Set(
       this._highlightedEntities.value?.map((e) => e.getId()) || [],
     );
 
-    const normalEntities = (this._entities.value || []).filter(
+    // Split all entities into normal and highlighted based on IDs
+    const allEntities = this._entities.value || [];
+    const normalEntities = allEntities.filter(
       (e) => !highlightedIds.has(e.getId()),
     );
-    const normalMarkers = this.createEntityMarkers(normalEntities, false);
+    const highlightedEntities = allEntities.filter((e) =>
+      highlightedIds.has(e.getId()),
+    );
 
+    // Create markers for each group
+    const normalMarkers = this.createEntityMarkers(normalEntities, false);
     const highlightedMarkers = this.createEntityMarkers(
       this._highlightedEntities.value,
       true,
     );
     const coordinateMarkers = this.createMarkers(this._marked.value);
 
+    // Handle marker display and map view adjustment
+    this.handleMarkerHighlights(
+      normalMarkers,
+      highlightedMarkers,
+      coordinateMarkers,
+      highlightedEntities,
+    );
+  }
+
+  /**
+   * Handles adding markers to the cluster group and adjusting the map view
+   * based on the highlighted entities.
+   * - If one entity is highlighted, zoom to it.
+   * - If two entities are highlighted, fit bounds to both.
+   * - Otherwise, fit bounds to all visible markers.
+   * @param normalMarkers Markers for non-highlighted entities
+   * @param highlightedMarkers Markers for highlighted entities
+   * @param coordinateMarkers Markers for raw coordinates
+   * @param highlightedEntities Entities that are highlighted
+   */
+  private handleMarkerHighlights(
+    normalMarkers: L.Marker[],
+    highlightedMarkers: L.Marker[],
+    coordinateMarkers: L.Marker[],
+    highlightedEntities: Entity[],
+  ) {
+    // Add all markers to the cluster group
     this.markerClusterGroup.addLayers([
       ...normalMarkers,
       ...highlightedMarkers,
       ...coordinateMarkers,
     ]);
 
-    let markers =
-      highlightedMarkers.length > 0
-        ? highlightedMarkers
-        : [...normalMarkers, ...coordinateMarkers];
-    if (markers.length > 0) {
-      this.styleMarkers();
+    const getMarkersByEntities = (entities: Entity[]): L.Marker[] => {
+      const allLayers = this.markerClusterGroup.getLayers() as L.Marker[];
+      return entities
+        .map((entity) =>
+          allLayers.find(
+            (marker: any) =>
+              marker["entity"] && marker["entity"].getId() === entity.getId(),
+          ),
+        )
+        .filter((m): m is L.Marker => !!m);
+    };
 
-      const group = L.featureGroup(markers);
-      this.map.fitBounds(group.getBounds(), {
-        padding: [50, 50],
-        maxZoom: 18,
+    // Get markers for highlighted entities
+    const highlightMarkers = getMarkersByEntities(highlightedEntities).filter(
+      (m): m is L.Marker => !!m,
+    );
+
+    // If exactly one entity is highlighted, zoom to it and show only its marker
+    if (highlightedEntities.length === 1 && highlightMarkers.length === 1) {
+      this.markerClusterGroup.clearLayers();
+      this.markerClusterGroup.addLayer(highlightMarkers[0]);
+
+      (this.markerClusterGroup as any).zoomToShowLayer(
+        highlightMarkers[0],
+        () => {
+          const latlng = highlightMarkers[0].getLatLng();
+          this.map.setView(latlng, Math.max(this.map.getZoom(), 18), {
+            animate: true,
+          });
+        },
+      );
+      return;
+    }
+
+    // If exactly two entities are highlighted, show only their markers
+    // and zoom to the combined bounds of both
+    if (highlightedEntities.length === 2 && highlightMarkers.length === 2) {
+      this.markerClusterGroup.clearLayers();
+
+      // Only add markers not already present in the cluster group
+      const validHighlightMarkers = highlightMarkers.filter(
+        (marker): marker is L.Marker =>
+          !!marker && this.markerClusterGroup.hasLayer(marker) === false,
+      );
+
+      validHighlightMarkers.forEach((marker) => {
+        if (marker) this.markerClusterGroup.addLayer(marker);
       });
+
+      // Fit map bounds to both highlighted markers
+      const group = L.featureGroup(validHighlightMarkers);
+      this.map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 18 });
+      return;
+    }
+
+    // otherwise, show all markers Default cluster behavior
+    const targetMarkers =
+      highlightMarkers.length > 0
+        ? highlightMarkers
+        : [...normalMarkers, ...coordinateMarkers];
+
+    if (targetMarkers.length > 0) {
+      const group = L.featureGroup(targetMarkers);
+      this.map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 18 });
     }
   }
 
-  private styleMarkers() {
-    this.markerClusterGroup.getLayers().forEach((layer: L.Marker) => {
-      const entity = layer["entity"] as Entity;
-      const highlighted = layer["highlighted"] as boolean;
-
-      if (entity || highlighted) {
-        const icon = layer["_icon"] as HTMLElement;
-        if (icon) {
-          const degree = entity ? getHueForEntity(entity) : "145";
-          icon.style.filter = `hue-rotate(${degree}deg)`;
-          icon.style.opacity = highlighted ? "1" : "0.5";
-        }
-      }
-    });
-  }
-
+  /**
+   * Creates Leaflet markers for the given entities.
+   * @param entities Entities to create markers for
+   * @param highlighted Whether these markers should be marked as highlighted
+   * @returns Array of Leaflet markers
+   */
   private createEntityMarkers(
     entities: Entity[],
     highlighted: boolean,
@@ -204,6 +285,7 @@ export class MapComponent implements AfterViewInit {
     entities
       .filter((entity) => !!entity)
       .forEach((entity) => {
+        // For each property that has a geo location, create a marker
         this.getMapProperties(entity)
           .map((prop) => entity[prop]?.geoLookup)
           .filter((loc: GeoResult) => !!loc)
