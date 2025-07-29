@@ -164,33 +164,32 @@ export class MapComponent implements AfterViewInit {
       ...coordinateMarkers,
     ]);
 
-    setTimeout(() => this.styleMarkers(), 100);
-
     let markers =
       highlightedMarkers.length > 0
         ? highlightedMarkers
         : [...normalMarkers, ...coordinateMarkers];
     if (markers.length > 0) {
+      this.styleMarkers();
+
       const group = L.featureGroup(markers);
       this.map.fitBounds(group.getBounds(), {
         padding: [50, 50],
-        maxZoom: 10,
+        maxZoom: 18,
       });
     }
   }
 
   private styleMarkers() {
-    // Style normal markers
     this.markerClusterGroup.getLayers().forEach((layer: L.Marker) => {
       const entity = layer["entity"] as Entity;
       const highlighted = layer["highlighted"] as boolean;
 
       if (entity || highlighted) {
-        const icon = layer.getElement()?.querySelector("img");
+        const icon = layer["_icon"] as HTMLElement;
         if (icon) {
           const degree = entity ? getHueForEntity(entity) : "145";
-          (icon as HTMLElement).style.filter = `hue-rotate(${degree}deg)`;
-          (icon as HTMLElement).style.opacity = highlighted ? "1" : "0.5";
+          icon.style.filter = `hue-rotate(${degree}deg)`;
+          icon.style.opacity = highlighted ? "1" : "0.5";
         }
       }
     });
