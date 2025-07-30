@@ -71,7 +71,7 @@ export class RemotePouchDatabase extends PouchDatabase {
 
     // retry login if request failed with unauthorized
     if (
-      result.status === HttpStatusCode.Unauthorized &&
+      result?.status === HttpStatusCode.Unauthorized &&
       !this.unauthenticatedSession
     ) {
       try {
