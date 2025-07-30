@@ -36,15 +36,15 @@ export class EntityFieldLabelComponent implements OnChanges {
   /** entity type to look up the schema details for the given field */
   @Input() entityType: EntityConstructor | string;
 
-  @Input() set customFields(value: ColumnConfig[]) {
-    this._customFields = (value ?? []).map((c) =>
+  @Input() set additionalFields(value: ColumnConfig[]) {
+    this._additionalFields = (value ?? []).map((c) =>
       this._entityType
         ? this.entityFormService.extendFormFieldConfig(c, this._entityType)
         : toFormFieldConfig(c),
     );
   }
   /** Custom overwrites or additional fields to be displayed for example "Age", "School (Attendance)" */
-  _customFields: FormFieldConfig[] = [];
+  _additionalFields: FormFieldConfig[] = [];
 
   _entityType: EntityConstructor;
 
@@ -65,8 +65,7 @@ export class EntityFieldLabelComponent implements OnChanges {
       this._field = undefined;
       return;
     }
-    console.log("tghis.field", this.field);
-    const customFieldConfig = this._customFields?.find(
+    const customFieldConfig = this._additionalFields?.find(
       (col) => col.id === this.field,
     );
 

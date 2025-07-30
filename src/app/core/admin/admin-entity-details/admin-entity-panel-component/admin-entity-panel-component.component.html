@@ -30,7 +30,7 @@
 
     <app-admin-list-manager
       [items]="activeFields"
-      [activeFields]="activeFields"
+      [additionalFields]="config.config.columns"
       [entityType]="entityConstructor"
       fieldLabel="Columns shown:"
       i18n-fieldLabel

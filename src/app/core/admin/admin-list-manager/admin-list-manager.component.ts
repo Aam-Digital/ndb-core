@@ -6,17 +6,13 @@ import {
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
-import {
-  ColumnConfig,
-  FormFieldConfig,
-} from "app/core/common-components/entity-form/FormConfig";
+import { ColumnConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EntityFieldsMenuComponent } from "#src/app/core/common-components/entity-fields-menu/entity-fields-menu.component";
 import { EntityFieldLabelComponent } from "#src/app/core/common-components/entity-field-label/entity-field-label.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-
 /**
  * Component for Admin UI to edit table columns or fields in other contexts like filters.
  */
@@ -36,41 +32,61 @@ import { MatSelectModule } from "@angular/material/select";
   styleUrl: "./admin-list-manager.component.scss",
 })
 export class AdminListManagerComponent implements OnInit {
-  @Input() items: (string | ColumnConfig)[] = [];
+  @Input() items: ColumnConfig[] = [];
   @Input() entityType: EntityConstructor;
   @Input() fieldLabel: string;
   @Input() templateType: "default" | "filter" = "default";
-  @Input() activeFields: (string | FormFieldConfig)[] = [];
+  @Input() activeFields: ColumnConfig[] = [];
 
-  @Output() itemsChange = new EventEmitter<string[]>();
+  /** custom fields that will be added in addition to schema fields for users to select from */
+  @Input() additionalFields: ColumnConfig[] = [];
 
-  availableItems: (string | ColumnConfig)[] = [];
+  /** emits changes to the selected fields as field config objects or IDs */
+  @Output() itemsChange = new EventEmitter<ColumnConfig[]>();
+  /** emits changes to the selected fields only as field IDs (custom field configs are mapped to their ID only) */
+  @Output() idsChange = new EventEmitter<string[]>();
+
+  availableItems: ColumnConfig[] = [];
 
   ngOnInit(): void {
     if (!this.entityType) return;
     const targetEntitySchemaFields = Array.from(this.entityType.schema.keys());
-    this.availableItems = [
-      ...(this.activeFields ?? []),
-      ...targetEntitySchemaFields,
-    ];
+    this.availableItems = Array.from(
+      new Set([
+        ...(this.activeFields ?? []),
+        ...targetEntitySchemaFields,
+        ...this.additionalFields,
+      ]),
+    );
+    console.log("availableItems", this.availableItems);
   }
 
-  drop(event: CdkDragDrop<(string | ColumnConfig)[]>) {
+  drop(event: CdkDragDrop<ColumnConfig[]>) {
     moveItemInArray(this.items, event.previousIndex, event.currentIndex);
-    this.itemsChange.emit([...this.items] as string[]);
+    this.emitUpdatedConfig();
   }
 
-  remove(item: string | ColumnConfig) {
+  remove(item: ColumnConfig) {
     this.items = this.items.filter((i) => i !== item);
-    this.itemsChange.emit([...this.items] as string[]);
+    this.emitUpdatedConfig();
   }
 
   updateItems(updatedItems: (string | ColumnConfig)[]) {
-    this.items = [...updatedItems];
-    this.itemsChange.emit(this.items as string[]);
+    this.items = updatedItems;
+    this.emitUpdatedConfig();
   }
 
-  getFieldId(field: string | ColumnConfig): string {
+  /**
+   * Emits the current items and their IDs to the parent component.
+   * `itemsChange` provides the full `ColumnConfig` objects,
+   * `idsChanges`, provides a simplified array of just the IDs
+   */
+  private emitUpdatedConfig() {
+    this.itemsChange.emit(this.items);
+    this.idsChange.emit(this.items.map(this.getFieldId));
+  }
+
+  getFieldId(field: ColumnConfig): string {
     return typeof field === "string" ? field : field.id;
   }
 
