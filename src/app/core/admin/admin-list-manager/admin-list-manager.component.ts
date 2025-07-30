@@ -55,10 +55,9 @@ export class AdminListManagerComponent implements OnInit {
       new Set([
         ...(this.activeFields ?? []),
         ...targetEntitySchemaFields,
-        ...this.additionalFields,
+        ...(this.additionalFields ?? []),
       ]),
     );
-    console.log("availableItems", this.availableItems);
   }
 
   drop(event: CdkDragDrop<ColumnConfig[]>) {
