@@ -180,15 +180,11 @@ export class MapComponent implements AfterViewInit {
   }
 
   /**
-   * Handles adding markers to the cluster group and adjusting the map view
-   * based on the highlighted entities.
-   * - If one entity is highlighted, zoom to it.
-   * - If two entities are highlighted, fit bounds to both.
-   * - Otherwise, fit bounds to all visible markers.
-   * @param normalMarkers Markers for non-highlighted entities
-   * @param highlightedMarkers Markers for highlighted entities
-   * @param coordinateMarkers Markers for raw coordinates
-   * @param highlightedEntities Entities that are highlighted
+   * Handles highlighting logic for map markers based on highlighted entities.
+   * - Adds all normal, highlighted, and coordinate markers to the cluster.
+   * - If exactly one entity is highlighted, zoom to it.
+   * - If exactly two entities are highlighted, zoom to their combined bounds.
+   * - Otherwise, show all normal + coordinate markers or only highlighted markers if available.
    */
   private handleMarkerHighlights(
     normalMarkers: L.Marker[],
@@ -196,61 +192,50 @@ export class MapComponent implements AfterViewInit {
     coordinateMarkers: L.Marker[],
     highlightedEntities: Entity[],
   ) {
-    // Add all markers to the cluster group
-    this.markerClusterGroup.addLayers([
+    // Combine all markers and add to the cluster group initially
+    const allMarkers = [
       ...normalMarkers,
       ...highlightedMarkers,
       ...coordinateMarkers,
-    ]);
+    ];
+    this.markerClusterGroup.addLayers(allMarkers);
 
-    const getMarkersByEntities = (entities: Entity[]): L.Marker[] => {
-      const allLayers = this.markerClusterGroup.getLayers() as L.Marker[];
-      return entities
-        .map((entity) =>
-          allLayers.find(
-            (marker: any) =>
-              marker["entity"] && marker["entity"].getId() === entity.getId(),
-          ),
-        )
-        .filter((m): m is L.Marker => !!m);
-    };
+    const markerByEntityId = new Map<number | string, L.Marker>();
+    allMarkers.forEach((marker: any) => {
+      if (marker["entity"]) {
+        markerByEntityId.set(marker["entity"].getId(), marker);
+      }
+    });
 
-    // Get markers for highlighted entities
-    const highlightMarkers = getMarkersByEntities(highlightedEntities).filter(
-      (m): m is L.Marker => !!m,
-    );
+    const highlightMarkers: L.Marker[] = highlightedEntities
+      .map((entity) => markerByEntityId.get(entity.getId()))
+      .filter((m): m is L.Marker => !!m);
 
-    // If exactly one entity is highlighted, zoom to it and show only its marker
-    if (highlightedEntities.length === 1 && highlightMarkers.length === 1) {
-      this.markerClusterGroup.addLayer(highlightMarkers[0]);
-
-      const latlng = highlightMarkers[0].getLatLng();
-      this.map.setView(latlng, Math.max(this.map.getZoom(), 12), {
+    // If only one entity is highlighted, zoom to its marker
+    if (highlightMarkers.length === 1) {
+      const marker = highlightMarkers[0];
+      this.markerClusterGroup.addLayer(marker);
+      this.map.setView(marker.getLatLng(), Math.max(this.map.getZoom(), 12), {
         animate: true,
       });
+      return;
     }
 
-    // If exactly two entities are highlighted, show only their markers
-    // and zoom to the combined bounds of both
-    if (highlightedEntities.length === 2 && highlightMarkers.length === 2) {
-      this.markerClusterGroup.clearLayers();
+    // If exactly two entities are highlighted, show only their markers and fit bounds
+    if (highlightMarkers.length === 2) {
+      this.markerClusterGroup.clearLayers(); // remove all to show only the two
 
-      // Only add markers not already present in the cluster group
-      const validHighlightMarkers = highlightMarkers.filter(
-        (marker): marker is L.Marker =>
-          !!marker && this.markerClusterGroup.hasLayer(marker) === false,
-      );
-
-      validHighlightMarkers.forEach((marker) => {
-        if (marker) this.markerClusterGroup.addLayer(marker);
+      highlightMarkers.forEach((marker) => {
+        this.markerClusterGroup.addLayer(marker);
       });
 
-      // Fit map bounds to both highlighted markers
-      const group = L.featureGroup(validHighlightMarkers);
-      this.map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 18 });
+      const bounds = L.featureGroup(highlightMarkers).getBounds();
+      this.map.fitBounds(bounds, { padding: [50, 50], maxZoom: 18 });
+      return;
     }
 
-    // otherwise, show all markers Default cluster behavior
+    // If there are any highlight markers, prioritize showing them
+    // Else show normal and coordinate markers
     const targetMarkers =
       highlightMarkers.length > 0
         ? highlightMarkers
