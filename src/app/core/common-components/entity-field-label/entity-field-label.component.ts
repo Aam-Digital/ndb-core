@@ -36,6 +36,9 @@ export class EntityFieldLabelComponent implements OnChanges {
   /** entity type to look up the schema details for the given field */
   @Input() entityType: EntityConstructor | string;
 
+  /**
+   * Custom columns in addition to the entity type's schema
+   */
   @Input() set additionalFields(value: ColumnConfig[]) {
     this._additionalFields = (value ?? []).map((c) =>
       this._entityType
