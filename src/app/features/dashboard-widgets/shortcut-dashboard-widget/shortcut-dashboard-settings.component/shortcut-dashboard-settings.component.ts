@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { MenuItem } from "../../../../core/ui/navigation/menu-item";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { MatFormFieldModule } from "@angular/material/form-field";
