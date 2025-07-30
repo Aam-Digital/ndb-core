@@ -10,6 +10,12 @@ import { SyncStateSubject } from "app/core/session/session-type";
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
  */
 export class RemotePouchDatabase extends PouchDatabase {
+  /**
+   * Whether the session is not logging in any user (e.g. for public forms).
+   * @private
+   */
+  private unauthenticatedSession?: boolean;
+
   constructor(
     dbName: string,
     private authService: KeycloakAuthService,
@@ -23,7 +29,9 @@ export class RemotePouchDatabase extends PouchDatabase {
    * See {@link https://pouchdb.com/adapters.html#pouchdb_over_http}
    * @param dbName (relative) path to the remote database
    */
-  override init(dbName?: string) {
+  override init(dbName?: string, unauthenticatedSession?: boolean) {
+    this.unauthenticatedSession = unauthenticatedSession;
+
     if (dbName) {
       this.dbName = dbName;
     }
@@ -62,7 +70,10 @@ export class RemotePouchDatabase extends PouchDatabase {
     }
 
     // retry login if request failed with unauthorized
-    if (!result || result.status === HttpStatusCode.Unauthorized) {
+    if (
+      result.status === HttpStatusCode.Unauthorized &&
+      !this.unauthenticatedSession
+    ) {
       try {
         await this.authService.login();
         this.authService.addAuthHeader(opts.headers);
@@ -82,6 +93,7 @@ export class RemotePouchDatabase extends PouchDatabase {
         actualResponseBody: await result?.text(),
       });
     }
+
     return result;
   };
 }
