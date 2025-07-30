@@ -24,6 +24,7 @@ import { DateFilter } from "app/core/filter/filters/dateFilter";
 })
 export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
   private dialog = inject(MatDialog);
+
   fromDate: Date;
   toDate: Date;
 

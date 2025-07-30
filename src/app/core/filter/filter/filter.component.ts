@@ -113,6 +113,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
         (f) => f.selectedOptionValues?.length > 0,
       );
     });
+
     this.applyFilterSelections();
     if (this.useUrlQueryParams) {
       this.updateUrl(filter.name, selectedOptions.toString());
