@@ -1,10 +1,10 @@
-import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
+import { FormControl, FormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { MatOptionModule } from "@angular/material/core";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { FormsModule } from "@angular/forms";
 
 export interface NotesDashboardSettingsConfig {
   sinceDays?: number;
@@ -27,8 +27,7 @@ export interface NotesDashboardSettingsConfig {
   styleUrls: ["./notes-dashboard-settings.component.scss"],
 })
 export class NotesDashboardSettingsComponent implements OnInit {
-  @Input() config: NotesDashboardSettingsConfig = {};
-  @Output() configChange = new EventEmitter<NotesDashboardSettingsConfig>();
+  @Input() formControl: FormControl<NotesDashboardSettingsConfig>;
 
   localConfig: NotesDashboardSettingsConfig = {
     sinceDays: 28,
@@ -38,13 +37,25 @@ export class NotesDashboardSettingsComponent implements OnInit {
 
   ngOnInit() {
     this.localConfig = {
-      sinceDays: this.config.sinceDays ?? 28,
-      fromBeginningOfWeek: this.config.fromBeginningOfWeek ?? false,
-      mode: this.config.mode ?? "with-recent-notes",
+      sinceDays: this.formControl.value?.sinceDays ?? 28,
+      fromBeginningOfWeek: this.formControl.value?.fromBeginningOfWeek ?? false,
+      mode: this.formControl.value?.mode ?? "with-recent-notes",
     };
   }
 
+  onSinceDaysChange() {
+    this.emitConfigChange();
+  }
+
+  onFromBeginningOfWeekChange() {
+    this.emitConfigChange();
+  }
+
+  onModeChange() {
+    this.emitConfigChange();
+  }
+
   emitConfigChange() {
-    this.configChange.emit({ ...this.localConfig });
+    this.formControl.setValue({ ...this.localConfig });
   }
 }

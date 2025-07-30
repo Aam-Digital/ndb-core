@@ -1,7 +1,7 @@
-import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, FormControl } from "@angular/forms";
 
 export interface AttendanceWeekDashboardSettingsConfig {
   daysOffset?: number;
@@ -18,9 +18,7 @@ export interface AttendanceWeekDashboardSettingsConfig {
   styleUrls: ["./attendance-week-dashboard-settings.component.scss"],
 })
 export class AttendanceWeekDashboardSettingsComponent implements OnInit {
-  @Input() config: AttendanceWeekDashboardSettingsConfig = {};
-  @Output() configChange =
-    new EventEmitter<AttendanceWeekDashboardSettingsConfig>();
+  @Input() formControl: FormControl<AttendanceWeekDashboardSettingsConfig>;
 
   localConfig: AttendanceWeekDashboardSettingsConfig = {
     daysOffset: 0,
@@ -31,14 +29,14 @@ export class AttendanceWeekDashboardSettingsComponent implements OnInit {
 
   ngOnInit() {
     this.localConfig = {
-      daysOffset: this.config.daysOffset ?? 0,
-      periodLabel: this.config.periodLabel ?? "",
-      label: this.config.label ?? "",
-      attendanceStatusType: this.config.attendanceStatusType ?? "",
+      daysOffset: this.formControl.value?.daysOffset ?? 0,
+      periodLabel: this.formControl.value?.periodLabel ?? "",
+      label: this.formControl.value?.label ?? "",
+      attendanceStatusType: this.formControl.value?.attendanceStatusType ?? "",
     };
   }
 
   emitConfigChange() {
-    this.configChange.emit({ ...this.localConfig });
+    this.formControl.setValue({ ...this.localConfig });
   }
 }

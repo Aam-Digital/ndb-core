@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EnumDropdownComponent } from "../../../../core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component";
@@ -16,9 +16,7 @@ export interface ImportantNotesDashboardSettingsConfig {
   styleUrls: ["./important-notes-dashboard-settings.component.scss"],
 })
 export class ImportantNotesDashboardSettingsComponent implements OnInit {
-  @Input() config: ImportantNotesDashboardSettingsConfig = {};
-  @Output() configChange =
-    new EventEmitter<ImportantNotesDashboardSettingsConfig>();
+  @Input() formControl: FormControl<ImportantNotesDashboardSettingsConfig>;
 
   localConfig: ImportantNotesDashboardSettingsConfig = {
     warningLevels: [],
@@ -28,7 +26,7 @@ export class ImportantNotesDashboardSettingsComponent implements OnInit {
 
   ngOnInit() {
     this.localConfig = {
-      warningLevels: this.config.warningLevels ?? [],
+      warningLevels: this.formControl.value?.warningLevels ?? [],
     };
     this.warningLevelsForm.setValue(this.localConfig.warningLevels ?? []);
     this.warningLevelsForm.valueChanges.subscribe((values) => {
@@ -37,7 +35,7 @@ export class ImportantNotesDashboardSettingsComponent implements OnInit {
     });
   }
 
-  emitConfigChange() {
-    this.configChange.emit({ ...this.localConfig });
+  private emitConfigChange() {
+    this.formControl.setValue({ ...this.localConfig });
   }
 }

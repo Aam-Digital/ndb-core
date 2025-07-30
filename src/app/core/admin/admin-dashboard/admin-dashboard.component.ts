@@ -1,4 +1,5 @@
 import { Component, inject, Input, OnInit } from "@angular/core";
+import { Location } from "@angular/common";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { DashboardConfig } from "../../dashboard/dashboard/dashboard.component";
 import { ConfigService } from "../../config/config.service";
@@ -23,6 +24,7 @@ import {
 } from "../admin-widget-dialog/admin-widget-dialog.component";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { WidgetComponentSelectComponent } from "../admin-entity-details/widget-component-select/widget-component-select.component";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: "app-admin-dashboard",
@@ -49,9 +51,12 @@ export class AdminDashboardComponent implements OnInit {
   @Input() isDisabled: boolean = false;
 
   dashboardConfig: DashboardConfig;
+  private originalDashboardConfig: DashboardConfig;
 
   private readonly configService = inject(ConfigService);
   private readonly dialog = inject(MatDialog);
+  private readonly location = inject(Location);
+  private readonly snackBar = inject(MatSnackBar);
 
   ngOnInit() {
     this.loadDashboardViewConfig();
@@ -74,8 +79,6 @@ export class AdminDashboardComponent implements OnInit {
 
       this.dashboardConfig.widgets.splice(event.currentIndex, 0, newWidget);
     }
-
-    //this.saveDashboardConfig();
   }
 
   async editWidget(widgetConfig: DynamicComponentConfig, idx: number) {
@@ -143,7 +146,6 @@ export class AdminDashboardComponent implements OnInit {
 
   removeWidget(index: number) {
     this.dashboardConfig.widgets.splice(index, 1);
-    //this.saveDashboardConfig();
   }
 
   async addNewWidget() {
@@ -158,18 +160,38 @@ export class AdminDashboardComponent implements OnInit {
       this.dashboardConfig.widgets.push(selectedWidget);
     }
   }
-  save() {
-    //TODO: Implement save logic
-  }
 
   cancel() {
-    //TODO: Implement cancel logic
+    this.dashboardConfig = JSON.parse(JSON.stringify(this.originalDashboardConfig));
+    this.location.back();
+  }
+
+  async save() {
+    const currentConfig = this.configService.exportConfig(true);
+    
+    const updatedViewConfig: DynamicComponentConfig<DashboardConfig> = {
+      component: "Dashboard",
+      config: this.dashboardConfig
+    };
+    
+    currentConfig[PREFIX_VIEW_CONFIG + this.dashboardViewId] = updatedViewConfig;
+    
+    await this.configService.saveConfig(currentConfig);
+
+    this.snackBar.open(
+  $localize`:Save config confirmation message:Dashboard configuration updated`,
+  undefined,
+  { duration: 4000 }
+);
+
+    this.location.back();
   }
 
   private loadDashboardViewConfig() {
     const viewConfig: DynamicComponentConfig<DashboardConfig> =
       this.configService.getConfig(PREFIX_VIEW_CONFIG + this.dashboardViewId);
 
-    this.dashboardConfig = JSON.parse(JSON.stringify(viewConfig?.config));
+    this.dashboardConfig = JSON.parse(JSON.stringify(viewConfig?.config)) || { widgets: [] };
+    this.originalDashboardConfig = JSON.parse(JSON.stringify(this.dashboardConfig));
   }
 }

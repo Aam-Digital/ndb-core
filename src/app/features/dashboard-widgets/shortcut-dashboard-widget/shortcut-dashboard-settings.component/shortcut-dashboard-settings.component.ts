@@ -10,7 +10,6 @@ import { FormControl, FormsModule } from "@angular/forms";
 import { MenuItemFormComponent } from "#src/app/menu-item-form/menu-item-form.component";
 import { ShortcutDashboardConfig } from "../shortcut-dashboard-config";
 import { DynamicFormControlComponent } from "#src/app/core/admin/admin-widget-dialog/dynamic-form-control.interface";
-import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 @DynamicComponent("ShortcutDashboardSettings")
 @Component({

@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { Component, Input, OnInit } from "@angular/core";
+import { FormsModule, FormControl } from "@angular/forms";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntityTypeSelectComponent } from "../../../../core/entity/entity-type-select/entity-type-select.component";
 import { EntityFieldSelectComponent } from "../../../../core/entity/entity-field-select/entity-field-select.component";
@@ -34,19 +34,16 @@ export interface EntityCountDashboardConfig {
   styleUrls: ["./entity-count-dashboard-settings.component.scss"],
 })
 export class EntityCountDashboardSettingsComponent implements OnInit {
-  @Input() entityType: string = "Child";
-  @Input() groupBy: string[] = ["center", "gender"];
-
-  @Output() configChange = new EventEmitter<EntityCountDashboardConfig>();
+  @Input() formControl: FormControl<EntityCountDashboardConfig>;
 
   localConfig: EntityCountDashboardConfig;
 
   ngOnInit() {
     this.localConfig = {
-      entityType: this.entityType || "Child",
+      entityType: this.formControl.value?.entityType || "Child",
       groupBy:
-        this.groupBy && this.groupBy.length > 0
-          ? [...this.groupBy]
+        this.formControl.value?.groupBy && this.formControl.value.groupBy.length > 0
+          ? [...this.formControl.value.groupBy]
           : ["center", "gender"],
     };
   }
@@ -60,6 +57,6 @@ export class EntityCountDashboardSettingsComponent implements OnInit {
   }
 
   private emitConfigChange() {
-    this.configChange.emit({ ...this.localConfig });
+    this.formControl.setValue({ ...this.localConfig });
   }
 }

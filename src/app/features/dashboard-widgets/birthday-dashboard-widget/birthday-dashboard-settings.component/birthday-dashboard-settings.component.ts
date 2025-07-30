@@ -3,7 +3,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { MatOptionModule } from "@angular/material/core";
-import { FormsModule } from "@angular/forms";
+import { FormControl, FormsModule } from "@angular/forms";
 
 export interface BirthdayDashboardSettingsConfig {
   threshold?: number;
@@ -25,8 +25,7 @@ export interface BirthdayDashboardSettingsConfig {
   styleUrls: ["./birthday-dashboard-settings.component.scss"],
 })
 export class BirthdayDashboardSettingsComponent implements OnInit {
-  @Input() config: BirthdayDashboardSettingsConfig = {};
-  @Output() configChange = new EventEmitter<BirthdayDashboardSettingsConfig>();
+  @Input() formControl: FormControl<BirthdayDashboardSettingsConfig>;
 
   localConfig: BirthdayDashboardSettingsConfig = {
     threshold: 32,
@@ -36,13 +35,13 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
 
   ngOnInit() {
     this.localConfig = {
-      threshold: this.config.threshold ?? 32,
-      entityType: this.config.entityType ?? "Child",
-      birthdayProperty: this.config.birthdayProperty ?? "dateOfBirth",
+      threshold: this.formControl.value?.threshold ?? 32,
+      entityType: this.formControl.value?.entityType ?? "Child",
+      birthdayProperty: this.formControl.value?.birthdayProperty ?? "dateOfBirth",
     };
   }
 
   emitConfigChange() {
-    this.configChange.emit({ ...this.localConfig });
+    this.formControl.setValue({ ...this.localConfig });
   }
 }
