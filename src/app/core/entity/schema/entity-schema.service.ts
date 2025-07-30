@@ -23,12 +23,19 @@ import { DefaultDatatype } from "../default-datatype/default.datatype";
 import { asArray } from "app/utils/asArray";
 
 /**
- * Angular-independent implementation of the EntitySchemaService
- * to allow use in e2e setup and other non-Angular environments.
+ * Transform between entity instances and database objects
+ * based on the dataType set for properties in Entity classes using the {@link DatabaseField} annotation.
+ *
+ * You can inject the EntitySchemaService in your code to register your custom {@link DefaultDatatype} implementations.
+ *
+ * This service is used by the {@link EntityMapperService} to internally transform objects.
+ * You should normally use the EntityMapperService instead of transforming objects yourself with the EntitySchemaService.
+ *
+ * also see the How-To Guides:
+ * - [Create A New Entity Type]{@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
  */
-export class EntitySchemaTransformer {
-  constructor(private dataTypes?: DefaultDatatype[]) {}
-
+@Injectable({ providedIn: "root" })
+export class EntitySchemaService {
   /**
    * Internal cache of datatype implementations.
    */
@@ -36,14 +43,7 @@ export class EntitySchemaTransformer {
 
   private defaultDatatype: DefaultDatatype = new DefaultDatatype();
 
-  /**
-   * Override this method to inject all datatypes using Angular DI
-   * or any other dynamic method.
-   * @protected
-   */
-  protected injectAllDatatypes(): DefaultDatatype[] {
-    return this.dataTypes;
-  }
+  private injector = inject(Injector);
 
   /**
    * Get the datatype for the giving name (or the default datatype if no other registered type fits)
@@ -59,7 +59,9 @@ export class EntitySchemaTransformer {
     }
 
     // use Injector instead of normal dependency injection in the constructor, because some Datatypes use the SchemaService (--> Circular Dependency)
-    const dataTypes: DefaultDatatype[] = this.injectAllDatatypes();
+    const dataTypes: DefaultDatatype[] = this.injector.get(
+      DefaultDatatype,
+    ) as unknown as DefaultDatatype[];
 
     let dataType = dataTypes.find((d) => d.dataType === datatypeName);
     if (dataType) {
@@ -229,30 +231,5 @@ export class EntitySchemaTransformer {
     } else {
       return dataType.transformToObjectFormat(value, schemaField, dataObject);
     }
-  }
-}
-
-/**
- * Transform between entity instances and database objects
- * based on the dataType set for properties in Entity classes using the {@link DatabaseField} annotation.
- *
- * You can inject the EntitySchemaService in your code to register your custom {@link DefaultDatatype} implementations.
- *
- * This service is used by the {@link EntityMapperService} to internally transform objects.
- * You should normally use the EntityMapperService instead of transforming objects yourself with the EntitySchemaService.
- *
- * also see the How-To Guides:
- * - [Create A New Entity Type]{@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
- */
-@Injectable({ providedIn: "root" })
-export class EntitySchemaService extends EntitySchemaTransformer {
-  private injector = inject(Injector);
-
-  constructor() {
-    super();
-  }
-
-  protected override injectAllDatatypes(): DefaultDatatype[] {
-    return this.injector.get(DefaultDatatype) as unknown as DefaultDatatype[];
   }
 }
