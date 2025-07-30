@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
@@ -23,28 +29,34 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
     BasicAutocompleteComponent,
   ],
 })
-export class ListFilterComponent<E extends Entity> implements OnInit {
+export class ListFilterComponent<E extends Entity>
+  implements OnChanges, OnInit
+{
   @Input({ transform: (value: any) => value as SelectableFilter<E> })
   filterConfig: SelectableFilter<E>;
 
   autocompleteControl = new FormControl([]);
 
   ngOnInit() {
-    this.autocompleteControl.setValue(this.filterConfig.selectedOptionValues);
-
     this.autocompleteControl.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((values) => {
         this.filterConfig.selectedOptionChange.emit(asArray(values));
       });
+  }
 
-    this.filterConfig.selectedOptionChange
-      .pipe(untilDestroyed(this))
-      .subscribe((values) => {
-        this.autocompleteControl.setValue(asArray(values), {
-          emitEvent: false,
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.filterConfig) {
+      this.autocompleteControl.setValue(this.filterConfig.selectedOptionValues);
+
+      this.filterConfig.selectedOptionChange
+        .pipe(untilDestroyed(this))
+        .subscribe((values) => {
+          this.autocompleteControl.setValue(asArray(values), {
+            emitEvent: false,
+          });
         });
-      });
+    }
   }
 
   getOptionLabel = (option: any) => option.label;

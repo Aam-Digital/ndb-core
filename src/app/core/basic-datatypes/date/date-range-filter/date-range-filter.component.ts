@@ -1,11 +1,11 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   Output,
   SimpleChanges,
-  inject,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
@@ -15,7 +15,9 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { FormsModule } from "@angular/forms";
 import { dateToString, isValidDate } from "../../../../utils/utils";
 import { DateFilter } from "app/core/filter/filters/dateFilter";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-date-range-filter",
   templateUrl: "./date-range-filter.component.html",
@@ -33,6 +35,15 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.filterConfig) {
+      this.filterConfig.selectedOptionChange
+        .pipe(untilDestroyed(this))
+        .subscribe(() => {
+          if (this.filterConfig.selectedOptionValues.length === 0) {
+            this.fromDate = undefined;
+            this.toDate = undefined;
+            this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
+          }
+        });
       this.initDates();
     }
   }
