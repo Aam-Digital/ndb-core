@@ -16,11 +16,7 @@
   </mat-form-field>
 
   <!-- Widget-specific settings -->
-  <ng-template
-    [appDynamicComponent]="settingsComponentConfig"
-    (configChange)="onConfigChange($event)"
-  >
-  </ng-template>
+  <ng-template [appDynamicComponent]="settingsComponentConfig"></ng-template>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="dialog-actions">

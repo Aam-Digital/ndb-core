@@ -170,6 +170,6 @@ export class AdminDashboardComponent implements OnInit {
     const viewConfig: DynamicComponentConfig<DashboardConfig> =
       this.configService.getConfig(PREFIX_VIEW_CONFIG + this.dashboardViewId);
 
-    this.dashboardConfig = viewConfig?.config;
+    this.dashboardConfig = JSON.parse(JSON.stringify(viewConfig?.config));
   }
 }

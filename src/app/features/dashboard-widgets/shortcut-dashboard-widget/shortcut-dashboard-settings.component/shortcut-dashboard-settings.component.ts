@@ -6,8 +6,11 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { FormsModule } from "@angular/forms";
+import { FormControl, FormsModule } from "@angular/forms";
 import { MenuItemFormComponent } from "#src/app/menu-item-form/menu-item-form.component";
+import { ShortcutDashboardConfig } from "../shortcut-dashboard-config";
+import { DynamicFormControlComponent } from "#src/app/core/admin/admin-widget-dialog/dynamic-form-control.interface";
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 @DynamicComponent("ShortcutDashboardSettings")
 @Component({
@@ -25,17 +28,17 @@ import { MenuItemFormComponent } from "#src/app/menu-item-form/menu-item-form.co
   templateUrl: "./shortcut-dashboard-settings.component.html",
   styleUrls: ["./shortcut-dashboard-settings.component.scss"],
 })
-export class ShortcutDashboardSettingsComponent implements OnInit {
-  @Input() shortcuts: MenuItem[] = [];
+export class ShortcutDashboardSettingsComponent
+  implements OnInit, DynamicFormControlComponent<ShortcutDashboardConfig>
+{
+  @Input() formControl: FormControl<ShortcutDashboardConfig>;
 
-  @Output() configChange = new EventEmitter<any>();
-
-  localConfig: any;
+  localConfig: ShortcutDashboardConfig;
 
   ngOnInit() {
     this.localConfig = {
-      shortcuts: this.shortcuts
-        ? [...this.shortcuts.map((s) => ({ ...s }))]
+      shortcuts: this.formControl.value.shortcuts
+        ? [...this.formControl.value.shortcuts.map((s) => ({ ...s }))]
         : [],
     };
   }
@@ -80,6 +83,6 @@ export class ShortcutDashboardSettingsComponent implements OnInit {
   }
 
   private emitConfigChange() {
-    this.configChange.emit({ ...this.localConfig });
+    this.formControl.setValue(this.localConfig);
   }
 }
