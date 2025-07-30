@@ -5,7 +5,7 @@ import {
   argosScreenshot as argosScreenshotBase,
   ArgosScreenshotOptions,
 } from "@argos-ci/playwright";
-import { Injector, runInInjectionContext } from "@angular/core";
+import { Injector } from "@angular/core";
 import { EventAttendanceMapDatatype } from "#src/app/child-dev-project/attendance/model/event-attendance.datatype.js";
 import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype.js";
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.js";
@@ -23,10 +23,7 @@ import {
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype.js";
 import { EntityConfigService } from "#src/app/core/entity/entity-config.service.js";
 import type { Entity } from "#src/app/core/entity/model/entity.js";
-import {
-  EntitySchemaService,
-  EntitySchemaTransformer,
-} from "#src/app/core/entity/schema/entity-schema.service.js";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service.js";
 import { LocationDatatype } from "#src/app/features/location/location.datatype.js";
 import { type EntityConfig } from "#src/app/core/entity/entity-config.js";
 import { GeoService } from "#src/app/features/location/geo.service";
@@ -105,32 +102,33 @@ function serializeEntities(entities: Entity[]): unknown[] {
       { provide: GeoService, useValue: undefined },
       { provide: EntityMapperService, useValue: undefined },
       { provide: EntityActionsService, useValue: undefined },
-      { provide: EntitySchemaService, useValue: undefined },
       { provide: ConfigService, useValue: undefined },
+      { provide: EntitySchemaService, useClass: EntitySchemaService },
+      { provide: EntityConfigService, useClass: EntityConfigService },
       { provide: EntityRegistry, useValue: entityRegistry },
+      { provide: DefaultDatatype, useClass: DefaultDatatype, multi: true },
+      { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
+      { provide: DefaultDatatype, useClass: DateWithAgeDatatype, multi: true },
+      { provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true },
+      { provide: DefaultDatatype, useClass: LongTextDatatype, multi: true },
+      {
+        provide: DefaultDatatype,
+        useClass: ConfigurableEnumDatatype,
+        multi: true,
+      },
+      { provide: DefaultDatatype, useClass: LocationDatatype, multi: true },
+      { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
+      {
+        provide: DefaultDatatype,
+        useClass: EventAttendanceMapDatatype,
+        multi: true,
+      },
     ],
   });
 
-  const entitySchemaService = runInInjectionContext(
-    injector,
-    () =>
-      new EntitySchemaTransformer([
-        new DefaultDatatype(),
-        new StringDatatype(),
-        new DateWithAgeDatatype(),
-        new DateOnlyDatatype(),
-        new LongTextDatatype(),
-        new ConfigurableEnumDatatype(),
-        new LocationDatatype(),
-        new EntityDatatype(),
-        new EventAttendanceMapDatatype(),
-      ]),
-  );
+  const entitySchemaService = injector.get(EntitySchemaService);
+  const entityConfigService = injector.get(EntityConfigService);
 
-  const entityConfigService = runInInjectionContext(
-    injector,
-    () => new EntityConfigService(),
-  );
   entityConfigService.setupEntities(
     Object.entries(defaultJsonConfig.data).flatMap(([id, config]) => {
       if (id.startsWith("entity:")) {
