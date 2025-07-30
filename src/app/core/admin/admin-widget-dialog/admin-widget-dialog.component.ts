@@ -7,7 +7,7 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
-import { FormsModule } from "@angular/forms";
+import { FormControl, FormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 
@@ -33,7 +33,8 @@ export interface AdminWidgetDialogData {
 })
 export class AdminWidgetDialogComponent {
   settingsComponentConfig: DynamicComponentConfig;
-  updatedConfig: any;
+  widgetConfigForm: FormControl;
+
   commonConfig = {
     subtitle: "",
     explanation: "",
@@ -47,34 +48,25 @@ export class AdminWidgetDialogComponent {
     this.commonConfig.explanation =
       this.data.widgetConfig.config?.explanation ?? "";
 
+    this.widgetConfigForm = new FormControl(this.data.widgetConfig.config);
     this.settingsComponentConfig = {
       component: this.data.settingsComponent,
-      config: this.data.widgetConfig.config || {},
-    };
-
-    this.updatedConfig = { ...this.data.widgetConfig };
-  }
-
-  onConfigChange(newConfig: any) {
-    this.updatedConfig = {
-      ...this.updatedConfig,
       config: {
-        ...this.updatedConfig.config,
-        ...newConfig,
+        formControl: this.widgetConfigForm,
       },
     };
   }
 
   onSave() {
-    this.updatedConfig = {
-      ...this.updatedConfig,
+    const updatedConfig = {
+      ...this.data.widgetConfig,
       config: {
-        ...this.updatedConfig.config,
+        ...(this.widgetConfigForm.value ?? {}),
         subtitle: this.commonConfig.subtitle,
         explanation: this.commonConfig.explanation,
       },
     };
-    this.dialogRef.close(this.updatedConfig);
+    this.dialogRef.close(updatedConfig);
   }
 
   onCancel() {
