@@ -222,19 +222,12 @@ export class MapComponent implements AfterViewInit {
 
     // If exactly one entity is highlighted, zoom to it and show only its marker
     if (highlightedEntities.length === 1 && highlightMarkers.length === 1) {
-      this.markerClusterGroup.clearLayers();
       this.markerClusterGroup.addLayer(highlightMarkers[0]);
 
-      (this.markerClusterGroup as any).zoomToShowLayer(
-        highlightMarkers[0],
-        () => {
-          const latlng = highlightMarkers[0].getLatLng();
-          this.map.setView(latlng, Math.max(this.map.getZoom(), 18), {
-            animate: true,
-          });
-        },
-      );
-      return;
+      const latlng = highlightMarkers[0].getLatLng();
+      this.map.setView(latlng, Math.max(this.map.getZoom(), 12), {
+        animate: true,
+      });
     }
 
     // If exactly two entities are highlighted, show only their markers
@@ -255,7 +248,6 @@ export class MapComponent implements AfterViewInit {
       // Fit map bounds to both highlighted markers
       const group = L.featureGroup(validHighlightMarkers);
       this.map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 18 });
-      return;
     }
 
     // otherwise, show all markers Default cluster behavior
@@ -266,7 +258,7 @@ export class MapComponent implements AfterViewInit {
 
     if (targetMarkers.length > 0) {
       const group = L.featureGroup(targetMarkers);
-      this.map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 18 });
+      this.markerClusterGroup.addLayer(group);
     }
   }
 
