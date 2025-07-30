@@ -37,7 +37,8 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
     this.localConfig = {
       threshold: this.formControl.value?.threshold ?? 32,
       entityType: this.formControl.value?.entityType ?? "Child",
-      birthdayProperty: this.formControl.value?.birthdayProperty ?? "dateOfBirth",
+      birthdayProperty:
+        this.formControl.value?.birthdayProperty ?? "dateOfBirth",
     };
   }
 

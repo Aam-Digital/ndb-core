@@ -42,7 +42,8 @@ export class EntityCountDashboardSettingsComponent implements OnInit {
     this.localConfig = {
       entityType: this.formControl.value?.entityType || "Child",
       groupBy:
-        this.formControl.value?.groupBy && this.formControl.value.groupBy.length > 0
+        this.formControl.value?.groupBy &&
+        this.formControl.value.groupBy.length > 0
           ? [...this.formControl.value.groupBy]
           : ["center", "gender"],
     };

@@ -162,27 +162,30 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   cancel() {
-    this.dashboardConfig = JSON.parse(JSON.stringify(this.originalDashboardConfig));
+    this.dashboardConfig = JSON.parse(
+      JSON.stringify(this.originalDashboardConfig),
+    );
     this.location.back();
   }
 
   async save() {
     const currentConfig = this.configService.exportConfig(true);
-    
+
     const updatedViewConfig: DynamicComponentConfig<DashboardConfig> = {
       component: "Dashboard",
-      config: this.dashboardConfig
+      config: this.dashboardConfig,
     };
-    
-    currentConfig[PREFIX_VIEW_CONFIG + this.dashboardViewId] = updatedViewConfig;
-    
+
+    currentConfig[PREFIX_VIEW_CONFIG + this.dashboardViewId] =
+      updatedViewConfig;
+
     await this.configService.saveConfig(currentConfig);
 
     this.snackBar.open(
-  $localize`:Save config confirmation message:Dashboard configuration updated`,
-  undefined,
-  { duration: 4000 }
-);
+      $localize`:Save config confirmation message:Dashboard configuration updated`,
+      undefined,
+      { duration: 4000 },
+    );
 
     this.location.back();
   }
@@ -191,7 +194,11 @@ export class AdminDashboardComponent implements OnInit {
     const viewConfig: DynamicComponentConfig<DashboardConfig> =
       this.configService.getConfig(PREFIX_VIEW_CONFIG + this.dashboardViewId);
 
-    this.dashboardConfig = JSON.parse(JSON.stringify(viewConfig?.config)) || { widgets: [] };
-    this.originalDashboardConfig = JSON.parse(JSON.stringify(this.dashboardConfig));
+    this.dashboardConfig = JSON.parse(JSON.stringify(viewConfig?.config)) || {
+      widgets: [],
+    };
+    this.originalDashboardConfig = JSON.parse(
+      JSON.stringify(this.dashboardConfig),
+    );
   }
 }
