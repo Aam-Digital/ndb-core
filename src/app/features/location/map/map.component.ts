@@ -279,11 +279,37 @@ export class MapComponent implements AfterViewInit {
             marker.on("click", () => this.entityClick.emit(entity));
             marker["entity"] = entity;
             marker["highlighted"] = highlighted;
+
+            marker.on("add", () => {
+              this.addMarkerStyle(marker, entity, highlighted);
+              // TODO: Show tooltip its on testing phase we can remove it later based on feedback
+              if (highlighted) {
+                marker.openTooltip();
+              }
+            });
+
             markers.push(marker);
           });
       });
-
     return markers;
+  }
+
+  /**
+   * Applies custom styles to a marker icon based on entity and highlight status.
+   */
+  private addMarkerStyle(
+    marker: L.Marker,
+    entity: Entity,
+    highlighted: boolean,
+  ) {
+    const icon = marker["_icon"] as HTMLElement;
+    if (icon) {
+      icon.style.filter = "";
+      icon.style.opacity = "";
+      const degree = entity ? getHueForEntity(entity) : "145";
+      icon.style.filter = `hue-rotate(${degree}deg)`;
+      icon.style.opacity = highlighted ? "1" : "0.5";
+    }
   }
 
   private getMapProperties(entity: Entity) {
