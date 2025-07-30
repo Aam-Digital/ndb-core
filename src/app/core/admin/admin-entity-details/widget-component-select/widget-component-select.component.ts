@@ -81,7 +81,11 @@ export class WidgetComponentSelectComponent implements OnInit {
         label: $localize`Notes`,
         value: {
           component: "NotesDashboard",
-          config: { sinceDays: 28, fromBeginningOfWeek: false, mode: "with-recent-notes" },
+          config: {
+            sinceDays: 28,
+            fromBeginningOfWeek: false,
+            mode: "with-recent-notes",
+          },
         },
       },
       {

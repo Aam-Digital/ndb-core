@@ -8,7 +8,12 @@ import { AdminIconComponent } from "../admin-icon-input/admin-icon-input.compone
 @Component({
   selector: "app-menu-item-form",
   standalone: true,
-  imports: [MatFormFieldModule, MatInputModule, FormsModule, AdminIconComponent],
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    AdminIconComponent,
+  ],
   templateUrl: "./menu-item-form.component.html",
   styleUrls: ["./menu-item-form.component.scss"],
 })

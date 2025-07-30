@@ -33,7 +33,7 @@ import { MenuItemFormComponent } from "#src/app/menu-item-form/menu-item-form.co
     MatButtonModule,
     MatDialogModule,
     EntityTypeSelectComponent,
-    MenuItemFormComponent
+    MenuItemFormComponent,
   ],
   templateUrl: "./admin-menu-item-details.component.html",
   styleUrls: ["./admin-menu-item-details.component.scss"],

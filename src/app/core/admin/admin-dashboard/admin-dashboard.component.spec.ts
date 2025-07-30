@@ -12,7 +12,9 @@ import { WidgetComponentSelectComponent } from "../admin-entity-details/widget-c
 describe("AdminDashboardComponent", () => {
   let component: AdminDashboardComponent;
   let fixture: ComponentFixture<AdminDashboardComponent>;
-  const mockConfigService = jasmine.createSpyObj("ConfigService", ["getConfig"]);
+  const mockConfigService = jasmine.createSpyObj("ConfigService", [
+    "getConfig",
+  ]);
   const mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
 
   beforeEach(async () => {
