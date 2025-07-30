@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-
+import { FormControl } from "@angular/forms";
 import { NotesDashboardSettingsComponent } from "./notes-dashboard-settings.component";
 
 describe("NotesDashboardSettingsComponent", () => {
@@ -13,6 +13,13 @@ describe("NotesDashboardSettingsComponent", () => {
 
     fixture = TestBed.createComponent(NotesDashboardSettingsComponent);
     component = fixture.componentInstance;
+
+    component.formControl = new FormControl({
+      sinceDays: 28,
+      fromBeginningOfWeek: false,
+      mode: "with-recent-notes",
+    });
+
     fixture.detectChanges();
   });
 

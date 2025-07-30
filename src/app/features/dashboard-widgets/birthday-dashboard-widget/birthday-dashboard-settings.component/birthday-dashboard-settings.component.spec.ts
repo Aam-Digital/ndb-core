@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { BirthdayDashboardSettingsComponent } from "./birthday-dashboard-settings.component";
+import { FormControl } from "@angular/forms";
 
 describe("BirthdayDashboardSettingsComponent", () => {
   let component: BirthdayDashboardSettingsComponent;
@@ -13,6 +14,13 @@ describe("BirthdayDashboardSettingsComponent", () => {
 
     fixture = TestBed.createComponent(BirthdayDashboardSettingsComponent);
     component = fixture.componentInstance;
+
+    component.formControl = new FormControl({
+      threshold: 32,
+      entityType: "Child",
+      birthdayProperty: "dateOfBirth",
+    });
+
     fixture.detectChanges();
   });
 

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-
+import { FormControl } from "@angular/forms";
 import { ShortcutDashboardSettingsComponent } from "./shortcut-dashboard-settings.component";
 
 describe("ShortcutDashboardSettingsComponent", () => {
@@ -13,6 +13,11 @@ describe("ShortcutDashboardSettingsComponent", () => {
 
     fixture = TestBed.createComponent(ShortcutDashboardSettingsComponent);
     component = fixture.componentInstance;
+
+    component.formControl = new FormControl({
+      shortcuts: [],
+    });
+
     fixture.detectChanges();
   });
 
