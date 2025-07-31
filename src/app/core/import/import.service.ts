@@ -40,6 +40,8 @@ export class ImportService {
   ) {
     const importMeta = new ImportMetadata();
     importMeta.config = settings;
+    importMeta.filename = settings.filename;
+    importMeta.config.filename = settings.filename;
 
     importMeta.updatedEntities =
       this.importExistingService.getImportHistoryForUpdatedEntities(

@@ -94,6 +94,7 @@ export class ImportComponent {
 
   onDataLoaded(data: ParsedData) {
     this.rawData = data.data;
+    this.importSettings.filename = data.filename;
 
     if (this.importSettings.columnMapping) {
       this.alertService.addInfo(

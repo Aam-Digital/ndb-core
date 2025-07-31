@@ -42,7 +42,7 @@ export class InputFileComponent<T = any> {
       this.formControl.setValue(file.name);
 
       const fileContent = await readFile(file);
-      this.parsedData = this.parseContent(fileContent);
+      this.parsedData = this.parseContent(fileContent, file.name);
 
       this.fileLoad.emit(this.parsedData);
     } catch (errors) {
@@ -68,7 +68,7 @@ export class InputFileComponent<T = any> {
     return file;
   }
 
-  private parseContent(fileContent: string) {
+  private parseContent(fileContent: string, filename?: string) {
     let result;
 
     if (this.fileType === "csv") {
@@ -88,7 +88,7 @@ export class InputFileComponent<T = any> {
     if (result.data.length === 0) {
       throw { parsingError: "File has no content" };
     }
-
+    result.filename = filename;
     return result;
   }
 }
@@ -102,4 +102,5 @@ export interface ParsedData<T = any[]> {
 
   /** meta information listing the fields contained in data objects */
   fields?: string[];
+  filename?: string;
 }

@@ -20,7 +20,10 @@ export class ImportFileComponent {
   @ViewChild(InputFileComponent) inputFileField: InputFileComponent;
 
   onFileLoad(parsedData: ParsedData<any>) {
-    this.dataLoaded.emit(parsedData);
+    this.dataLoaded.emit({
+      ...parsedData,
+      filename: parsedData.filename,
+    });
     this.data = parsedData;
   }
 

@@ -24,6 +24,7 @@ export class ImportMetadata extends Entity {
   }
 
   @DatabaseField() config: ImportSettings;
+  @DatabaseField() filename?: string;
 
   /**
    * @deprecated renamed to `createdEntities`
@@ -72,4 +73,5 @@ export interface ImportSettings {
 
   /** IDs of fields used to match imported data to an existing record */
   matchExistingByFields?: string[];
+  filename?: string;
 }
