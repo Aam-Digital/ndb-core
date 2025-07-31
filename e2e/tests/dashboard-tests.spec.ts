@@ -9,8 +9,6 @@ import { generateTodo } from "#src/app/features/todos/model/demo-todo-generator.
 import { faker } from "#src/app/core/demo-data/faker.js";
 
 test("Dashboard widgets and actions", async ({ page }) => {
-  return; // TODO: fix the fixture to intiialize custom data without Angular dependencies to re-enable this test
-
   const users = generateUsers();
   const demoUser = users[0];
   const children = range(8).map(() => generateChild());
