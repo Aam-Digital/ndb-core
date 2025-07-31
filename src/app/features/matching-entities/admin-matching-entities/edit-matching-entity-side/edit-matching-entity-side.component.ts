@@ -45,7 +45,6 @@ export class EditMatchingEntitySideComponent implements OnChanges {
   @Input() form: FormGroup;
   @Input() controlName: string;
   @Input() sideConfig: MatchingSideConfig;
-  @Input() title: string;
 
   @Output() configChange = new EventEmitter<MatchingSideConfig>();
 
@@ -53,6 +52,7 @@ export class EditMatchingEntitySideComponent implements OnChanges {
    * Holds a predefined list of additional column options that can be appended to the entity view.
    */
   additionalFields: ColumnConfig[] = [];
+
   /**
    * Holds a list of available entity types for selection in the dropdown.
    */

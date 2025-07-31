@@ -1,20 +1,21 @@
-<h2 i18n>Matching View Settings</h2>
-<form [formGroup]="form">
-  <mat-expansion-panel class="padding-regular">
-    <mat-expansion-panel-header style="height: fit-content">
-      <div
-        class="flex-row align-baseline gap-regular margin-right-large full-width"
-      >
-        <p i18n>
-          Configure how entities should be matched— for example, defining which
-          fields from a School Enrollment record (like Child and School) are
-          used to detect relationships. Current matching entity type:
-          <strong>{{ form.value.newEntityType }}</strong>
-        </p>
-      </div>
-    </mat-expansion-panel-header>
+<mat-expansion-panel class="padding-regular">
+  <mat-expansion-panel-header style="height: fit-content">
+    <h2 i18n>Match Settings</h2>
+  </mat-expansion-panel-header>
 
-    <div class="flex-column gap-regular">
+  <div class="flex-column gap-regular">
+    <div
+      class="flex-row align-baseline gap-regular margin-right-large full-width"
+    >
+      <p i18n>
+        Configure how entities should be matched— for example, defining which
+        fields from a School Enrollment record (like Child and School) are used
+        to detect relationships. Current matching entity type:
+        <strong>{{ form.value.newEntityType }}</strong>
+      </p>
+    </div>
+
+    <form [formGroup]="form">
       <div class="flex-row">
         <mat-form-field class="full-width">
           <mat-label i18n>Show Matching View for:</mat-label>
@@ -72,6 +73,6 @@
         [activeFields]="fieldsAsStrings"
         (activeFieldsChange)="activeFields = $event"
       ></app-entity-fields-menu>
-    </div>
-  </mat-expansion-panel>
-</form>
+    </form>
+  </div>
+</mat-expansion-panel>

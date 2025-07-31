@@ -7,31 +7,32 @@
   </div>
 </app-view-actions>
 
-<div class="entity-config-container flex-wrap flex-row padding-regular">
-  <div class="entity-side padding-regular">
+<div class="entity-config-container padding-regular">
+  <p i18n>
+    Configure the details for each "side" of the matching. A side represents one
+    of the two entity types that will be matched.
+  </p>
+
+  <div class="flex-wrap flex-row gap-small">
     <app-edit-matching-entity-side
+      class="entity-side"
       [form]="configForm"
       controlName="leftType"
       [sideConfig]="sides.left"
-      title="Left"
-      i18n-title
       (configChange)="updateLeftSideConfig($event)"
     ></app-edit-matching-entity-side>
-  </div>
 
-  <div class="entity-side padding-regular">
     <app-edit-matching-entity-side
+      class="entity-side"
       [form]="configForm"
       controlName="rightType"
       [sideConfig]="sides.right"
-      title="Right"
-      i18n-title
       (configChange)="updateRightSideConfig($event)"
     ></app-edit-matching-entity-side>
   </div>
 </div>
 
-<div class="entity-match-container padding-regular">
+<div class="padding-top-regular">
   <app-edit-matching-view
     [value]="originalConfig.onMatch"
     [leftSideEntity]="entityRegistry.get(configForm.value.leftType)"
