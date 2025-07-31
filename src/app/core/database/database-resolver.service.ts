@@ -93,6 +93,7 @@ export class DatabaseResolverService {
 
   initDatabasesForAnonymous() {
     if (!this.getDatabase(Entity.DATABASE).isInitialized()) {
+      // this internally only uses the remote database of the SyncedPouchDatabase instance:
       this.getDatabase(Entity.DATABASE).init(null);
     }
   }
