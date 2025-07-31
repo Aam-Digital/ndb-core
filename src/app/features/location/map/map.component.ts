@@ -250,7 +250,7 @@ export class MapComponent implements AfterViewInit {
     }
 
     // If there are any highlight markers, prioritize showing them
-    // Else show normal and coordinate markers
+    // else show clustering
     const targetMarkers =
       highlightMarkers.length > 0
         ? highlightMarkers
@@ -259,6 +259,13 @@ export class MapComponent implements AfterViewInit {
     if (targetMarkers.length > 0) {
       const group = L.featureGroup(targetMarkers);
       this.markerClusterGroup.addLayer(group);
+      const bounds = group.getBounds();
+      if (bounds.isValid()) {
+        this.map.fitBounds(bounds, {
+          padding: [50, 50],
+          maxZoom: this.map.getZoom(),
+        });
+      }
     }
   }
 

@@ -179,12 +179,11 @@ describe("MapComponent", () => {
   });
 
   function getEntityMarkers(): L.Marker[] {
-    const markers: L.Marker[] = [];
-    map.eachLayer((layer) => {
-      if (layer["entity"]) {
-        markers.push(layer as L.Marker);
-      }
-    });
-    return markers;
+    const group = component["markerClusterGroup"] as L.MarkerClusterGroup;
+    return (
+      (group
+        ?.getLayers()
+        .filter((layer: any) => !!layer["entity"]) as L.Marker[]) || []
+    );
   }
 });
