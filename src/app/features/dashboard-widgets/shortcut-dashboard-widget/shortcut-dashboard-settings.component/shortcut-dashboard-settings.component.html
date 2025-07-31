@@ -1,9 +1,9 @@
 <div style="padding: 16px">
   <div style="margin-bottom: 32px">
-    <h3>Shortcuts</h3>
+    <h3 i18n>Shortcuts</h3>
     @for (shortcut of localConfig.shortcuts; track $index; let i = $index) {
       <div class="shortcut-item">
-        <h4>Shortcut {{ i + 1 }}</h4>
+        <h4 i18n>Shortcut {{ i + 1 }}</h4>
         <app-menu-item-form
           [item]="shortcut"
           (itemChange)="onShortcutItemChange($event, i)"

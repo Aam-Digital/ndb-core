@@ -13,6 +13,7 @@
   <mat-checkbox
     [(ngModel)]="localConfig.fromBeginningOfWeek"
     (ngModelChange)="emitConfigChange()"
+    i18n
   >
     From beginning of week
   </mat-checkbox>
@@ -23,8 +24,10 @@
       [(ngModel)]="localConfig.mode"
       (ngModelChange)="emitConfigChange()"
     >
-      <mat-option value="with-recent-notes">With recent notes</mat-option>
-      <mat-option value="without-recent-notes">Without recent notes</mat-option>
+      <mat-option value="with-recent-notes" i18n>With recent notes</mat-option>
+      <mat-option value="without-recent-notes" i18n
+        >Without recent notes</mat-option
+      >
     </mat-select>
   </mat-form-field>
 </div>

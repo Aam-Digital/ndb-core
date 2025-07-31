@@ -10,6 +10,11 @@ import { DynamicComponentDirective } from "../../config/dynamic-components/dynam
 import { FormControl, FormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import {
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
+} from "@angular/material/expansion";
 
 export interface AdminWidgetDialogData {
   widgetConfig: DynamicComponentConfig;
@@ -27,6 +32,9 @@ export interface AdminWidgetDialogData {
     MatInputModule,
     FormsModule,
     DynamicComponentDirective,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
   ],
   templateUrl: "./admin-widget-dialog.component.html",
   styleUrls: ["./admin-widget-dialog.component.scss"],
@@ -58,13 +66,20 @@ export class AdminWidgetDialogComponent {
   }
 
   onSave() {
+    const config: any = {
+      ...(this.widgetConfigForm.value ?? {}),
+    };
+
+    if (this.commonConfig.subtitle?.trim()) {
+      config.subtitle = this.commonConfig.subtitle;
+    }
+    if (this.commonConfig.explanation?.trim()) {
+      config.explanation = this.commonConfig.explanation;
+    }
+
     const updatedConfig = {
       ...this.data.widgetConfig,
-      config: {
-        ...(this.widgetConfigForm.value ?? {}),
-        subtitle: this.commonConfig.subtitle,
-        explanation: this.commonConfig.explanation,
-      },
+      config,
     };
     this.dialogRef.close(updatedConfig);
   }

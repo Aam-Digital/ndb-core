@@ -1,8 +1,8 @@
 <div style="padding: 16px">
   <div style="margin-bottom: 32px">
-    <h3>Entity Type to Count</h3>
+    <h3 i18n>Entity Type to Count</h3>
     <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Select Entity Type</mat-label>
+      <mat-label i18n>Select Entity Type</mat-label>
       <app-entity-type-select
         [(ngModel)]="localConfig.entityType"
         (ngModelChange)="onEntityTypeChange()"
@@ -14,15 +14,16 @@
   </div>
 
   <div>
-    <h3>Group By Fields</h3>
+    <h3 i18n>Group By Fields</h3>
     <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Select Group By Fields</mat-label>
+      <mat-label i18n>Select Group By Fields</mat-label>
       <app-entity-field-select
         [entityType]="localConfig.entityType"
         [(ngModel)]="localConfig.groupBy"
         (ngModelChange)="onGroupByChange()"
         [multi]="true"
         [placeholder]="'Select Group By Fields'"
+        i18n-placeholder
       ></app-entity-field-select>
     </mat-form-field>
   </div>

@@ -14,15 +14,15 @@
 
   <!-- Entity Type and Property -->
   <div>
-    <h3>Entity Type</h3>
+    <h3 i18n>Entity Type</h3>
     <mat-form-field appearance="fill" class="full-width">
       <mat-label i18n>Entity Type</mat-label>
       <mat-select
         [(ngModel)]="localConfig.entityType"
         (ngModelChange)="emitConfigChange()"
       >
-        <mat-option value="Child">Child</mat-option>
-        <mat-option value="School">School</mat-option>
+        <mat-option value="Child" i18n>Child</mat-option>
+        <mat-option value="School" i18n>School</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="fill" class="full-width">
@@ -32,6 +32,7 @@
         [(ngModel)]="localConfig.birthdayProperty"
         (ngModelChange)="emitConfigChange()"
         placeholder="dateOfBirth"
+        i18n-placeholder
       />
     </mat-form-field>
   </div>
