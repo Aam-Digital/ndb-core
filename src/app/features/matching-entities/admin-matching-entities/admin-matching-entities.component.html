@@ -1,13 +1,11 @@
-<div class="flex-row flex-wrap justify-space-between padding-regular">
-  <app-view-title i18n>Edit Matching View</app-view-title>
+<app-view-title i18n>Edit Matching View</app-view-title>
 
-  <app-view-actions
-    class="flex-row align-center gap-regular margin-bottom-regular"
-  >
+<app-view-actions>
+  <div class="flex-row gap-small">
     <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
     <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
-  </app-view-actions>
-</div>
+  </div>
+</app-view-actions>
 
 <div class="entity-config-container flex-wrap flex-row padding-regular">
   <div class="entity-side padding-regular">

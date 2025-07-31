@@ -7,7 +7,6 @@ import { UserRoleGuard } from "../permissions/permission-guard/user-role.guard";
 import { EntityPermissionGuard } from "../permissions/permission-guard/entity-permission.guard";
 import { SetupWizardComponent } from "./setup-wizard/setup-wizard.component";
 import { AdminMenuComponent } from "./admin-menu/admin-menu.component";
-import { AdminMatchingEntitiesComponent } from "#src/app/features/matching-entities/admin-matching-entities/admin-matching-entities.component";
 
 export const adminRoutes: Routes = [
   {
@@ -48,8 +47,9 @@ export const adminRoutes: Routes = [
   },
   {
     path: "matching",
-    component: AdminMatchingEntitiesComponent,
+    component: RoutedViewComponent,
     data: {
+      component: "AdminMatchingEntities",
       entityType: "Config",
       requiredPermissionOperation: "update",
     },
