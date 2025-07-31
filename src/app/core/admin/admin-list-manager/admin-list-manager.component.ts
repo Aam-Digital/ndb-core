@@ -56,7 +56,7 @@ export class AdminListManagerComponent implements OnInit {
       new Set([
         ...(this.activeFields ?? []),
         ...targetEntitySchemaFields,
-        ...this.additionalFields,
+        ...(this.additionalFields ?? []),
       ]),
     );
   }

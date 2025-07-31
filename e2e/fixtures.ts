@@ -5,14 +5,31 @@ import {
   argosScreenshot as argosScreenshotBase,
   ArgosScreenshotOptions,
 } from "@argos-ci/playwright";
+import { Injector } from "@angular/core";
+import { EventAttendanceMapDatatype } from "#src/app/child-dev-project/attendance/model/event-attendance.datatype.js";
+import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype.js";
+import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.js";
+import { DateOnlyDatatype } from "#src/app/core/basic-datatypes/date-only/date-only.datatype.js";
+import { DateWithAgeDatatype } from "#src/app/core/basic-datatypes/date-with-age/date-with-age.datatype.js";
+import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype.js";
+import { LongTextDatatype } from "#src/app/core/basic-datatypes/string/long-text.datatype.js";
+import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype.js";
+import defaultJsonConfig from "#src/assets/base-configs/education/Config_CONFIG_ENTITY.json";
 import { faker } from "#src/app/core/demo-data/faker.js";
-import { Entity } from "#src/app/core/entity/model/entity.js";
-import { EntitySchemaTransformer } from "#src/app/core/entity/schema/entity-schema.service.js";
-import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
-import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype";
-import { DateWithAgeDatatype } from "#src/app/core/basic-datatypes/date-with-age/date-with-age.datatype";
-import { DateOnlyDatatype } from "#src/app/core/basic-datatypes/date-only/date-only.datatype";
-import { LongTextDatatype } from "#src/app/core/basic-datatypes/string/long-text.datatype";
+import {
+  EntityRegistry,
+  entityRegistry,
+} from "#src/app/core/entity/database-entity.decorator.js";
+import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype.js";
+import { EntityConfigService } from "#src/app/core/entity/entity-config.service.js";
+import type { Entity } from "#src/app/core/entity/model/entity.js";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service.js";
+import { LocationDatatype } from "#src/app/features/location/location.datatype.js";
+import { type EntityConfig } from "#src/app/core/entity/entity-config.js";
+import { GeoService } from "#src/app/features/location/geo.service";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { EntityActionsService } from "#src/app/core/entity/entity-actions/entity-actions.service";
+import { ConfigService } from "#src/app/core/config/config.service";
 
 // eslint-disable-next-line no-restricted-imports
 export { expect } from "@playwright/test";
@@ -79,22 +96,48 @@ export async function loadApp(page: Page, entities?: Entity[]) {
  * This implementation is not fully compatible with serialization in the app.
  */
 function serializeEntities(entities: Entity[]): unknown[] {
-  const entitySchemaService = new EntitySchemaTransformer([
-    new DefaultDatatype(),
-    new StringDatatype(),
-    new DateWithAgeDatatype(),
-    new DateOnlyDatatype(),
-    new LongTextDatatype(),
+  const injector = Injector.create({
+    providers: [
+      { provide: ConfigurableEnumService, useValue: undefined },
+      { provide: GeoService, useValue: undefined },
+      { provide: EntityMapperService, useValue: undefined },
+      { provide: EntityActionsService, useValue: undefined },
+      { provide: ConfigService, useValue: undefined },
+      { provide: EntitySchemaService, useClass: EntitySchemaService },
+      { provide: EntityConfigService, useClass: EntityConfigService },
+      { provide: EntityRegistry, useValue: entityRegistry },
+      { provide: DefaultDatatype, useClass: DefaultDatatype, multi: true },
+      { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
+      { provide: DefaultDatatype, useClass: DateWithAgeDatatype, multi: true },
+      { provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true },
+      { provide: DefaultDatatype, useClass: LongTextDatatype, multi: true },
+      {
+        provide: DefaultDatatype,
+        useClass: ConfigurableEnumDatatype,
+        multi: true,
+      },
+      { provide: DefaultDatatype, useClass: LocationDatatype, multi: true },
+      { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
+      {
+        provide: DefaultDatatype,
+        useClass: EventAttendanceMapDatatype,
+        multi: true,
+      },
+    ],
+  });
 
-    // the following datatypes have dependencies through Angular DI - need workarounds in case they are needed for test data
-    //new ConfigurableEnumDatatype(null),
-    //new LocationDatatype(null),
-    //new EntityDatatype(null, null, null),
-    //new EventAttendanceMapDatatype(entitySchemaService),
-  ]);
+  const entitySchemaService = injector.get(EntitySchemaService);
+  const entityConfigService = injector.get(EntityConfigService);
 
-  // TODO: this somehow needs to also initialize config service?
-
+  entityConfigService.setupEntities(
+    Object.entries(defaultJsonConfig.data).flatMap(([id, config]) => {
+      if (id.startsWith("entity:")) {
+        return [[id.substring("entity:".length), config as EntityConfig]];
+      } else {
+        return [];
+      }
+    }),
+  );
   return entities.map(
     (e) => entitySchemaService.transformEntityToDatabaseFormat(e) as unknown,
   );
