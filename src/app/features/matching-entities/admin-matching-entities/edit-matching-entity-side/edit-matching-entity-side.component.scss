@@ -1,4 +1,4 @@
-@use "variables/breakpoints";
+@use "../../../../../styles/variables/breakpoints";
 
 @media screen and (min-width: breakpoints.$md) {
   :host

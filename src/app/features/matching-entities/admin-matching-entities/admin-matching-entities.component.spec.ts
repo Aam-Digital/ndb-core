@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AdminMatchingEntitiesComponent } from "./admin-matching-entities.component";
-import { ConfigService } from "../../config/config.service";
+import { ConfigService } from "../../../core/config/config.service";
 import { BehaviorSubject } from "rxjs";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { EntityRelationsService } from "../../entity/entity-mapper/entity-relations.service";
-import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
-import { Config } from "../../config/config";
+import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { EntityRelationsService } from "../../../core/entity/entity-mapper/entity-relations.service";
+import { EntityFormService } from "../../../core/common-components/entity-form/entity-form.service";
+import { Config } from "../../../core/config/config";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { FormBuilder } from "@angular/forms";

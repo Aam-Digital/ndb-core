@@ -8,19 +8,19 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { EntityConstructor } from "../../../entity/model/entity";
+import { EntityConstructor } from "../../../../core/entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatOptionModule } from "@angular/material/core";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
-import { AdminListManagerComponent } from "../../admin-list-manager/admin-list-manager.component";
+import { AdminListManagerComponent } from "../../../../core/admin/admin-list-manager/admin-list-manager.component";
 import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { MatchingSideConfig } from "#src/app/features/matching-entities/matching-entities/matching-entities-config";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
-import { JsonEditorDialogComponent } from "../../json-editor/json-editor-dialog/json-editor-dialog.component";
+import { JsonEditorDialogComponent } from "../../../../core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 
 @Component({
   selector: "app-edit-matching-entity-side",

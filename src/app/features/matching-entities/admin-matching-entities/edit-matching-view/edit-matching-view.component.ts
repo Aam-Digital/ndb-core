@@ -7,7 +7,7 @@ import {
   Output,
 } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
+import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
