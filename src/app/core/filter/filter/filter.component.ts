@@ -95,6 +95,10 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
           this.filterOptionSelected(filter, event),
         );
       }
+      // Check if there are any active filters which applied by codebase(for example in Todo List)
+      this.hasActiveFilters = this.filterSelections.some(
+        (f) => f.selectedOptionValues?.length > 0,
+      );
 
       this.loadUrlParams();
       this.applyFilterSelections();
