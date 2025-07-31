@@ -179,7 +179,7 @@ describe("MapComponent", () => {
   });
 
   function getEntityMarkers(): L.Marker[] {
-    const group = component["markerClusterGroup"] as L.MarkerClusterGroup;
+    const group = component["markerClusterGroup"];
     return (
       (group
         ?.getLayers()
