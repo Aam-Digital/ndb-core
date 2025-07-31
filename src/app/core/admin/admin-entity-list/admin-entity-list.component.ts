@@ -82,6 +82,16 @@ export class AdminEntityListComponent implements OnChanges {
     );
   }
 
+  updateColumns(columns: string[], group: GroupConfig) {
+    if (!Array.isArray(columns)) {
+      Logging.warn(
+        "AdminEntityListComponent: updateColumns: columns is not an array",
+      );
+      return;
+    }
+    group.columns = columns;
+  }
+
   newColumnGroupFactory(): GroupConfig {
     return { name: "", columns: [] };
   }
