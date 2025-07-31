@@ -16,6 +16,9 @@ import { ViewTitleComponent } from "#src/app/core/common-components/view-title/v
 import { ViewActionsComponent } from "#src/app/core/common-components/view-actions/view-actions.component";
 import { ColumnConfig } from "../../../core/common-components/entity-form/FormConfig";
 
+/**
+ * Configure the details of the MatchingEntitiesComponent.
+ */
 @Component({
   selector: "app-admin-matching-entities",
   imports: [

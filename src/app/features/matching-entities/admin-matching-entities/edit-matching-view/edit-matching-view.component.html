@@ -8,17 +8,16 @@
       class="flex-row align-baseline gap-regular margin-right-large full-width"
     >
       <p i18n>
-        Configure how entities should be matched— for example, defining which
-        fields from a School Enrollment record (like Child and School) are used
-        to detect relationships. Current matching entity type:
-        <strong>{{ form.value.newEntityType }}</strong>
+        Configure the details of the record that is created as a match. (e.g. A
+        "school enrollment" record that is created upon matching a student with
+        a school).
       </p>
     </div>
 
     <form [formGroup]="form">
       <div class="flex-row">
         <mat-form-field class="full-width">
-          <mat-label i18n>Show Matching View for:</mat-label>
+          <mat-label i18n>Record created as a match:</mat-label>
           <mat-select
             formControlName="newEntityType"
             (selectionChange)="onEntityTypeChange($event.value)"
@@ -33,10 +32,6 @@
             }
           </mat-select>
         </mat-form-field>
-        <app-help-button
-          text="Choose the entity to show matching view for"
-          i18n-text
-        ></app-help-button>
       </div>
 
       <div class="flex-row gap-regular margin-top-regular">
@@ -52,6 +47,7 @@
           i18n-text
           text="Select the field from the entity that will be used as the left-side key in matching comparison."
         ></app-help-button>
+
         <mat-form-field class="full-width">
           <mat-label i18n>Right Match Property</mat-label>
           <app-entity-field-select
@@ -66,7 +62,10 @@
         ></app-help-button>
       </div>
 
-      <span i18n>Add columns:</span>
+      <span i18n
+        >Fields shown in dialog for confirmation or editing when creating a
+        match:</span
+      >
       <app-entity-fields-menu
         [entityType]="entityConstructor"
         [availableFields]="availableFields"
