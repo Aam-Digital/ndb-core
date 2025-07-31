@@ -126,7 +126,11 @@ export class MapComponent implements AfterViewInit {
     tiles.addTo(this.map);
     // this is necessary to remove gray spots when directly opening app on a page with the map
     setTimeout(() => this.map.invalidateSize());
+    // Initialize the map with marker cluster group
+    this.initializeMap();
+  }
 
+  private initializeMap() {
     // Initialize marker cluster group
     this.markerClusterGroup = L.markerClusterGroup({
       spiderfyOnMaxZoom: true,
@@ -136,6 +140,17 @@ export class MapComponent implements AfterViewInit {
     this.map.addLayer(this.markerClusterGroup);
     this.mapInitialized = true;
     this.updateMarkers();
+
+    this.map.on("zoomend", () => {
+      const allMarkers = this.markerClusterGroup.getLayers() as L.Marker[];
+      allMarkers.forEach((marker: any) => {
+        const entity = marker["entity"];
+        const highlighted = marker["highlighted"];
+        if (entity) {
+          this.addMarkerStyle(marker, entity, highlighted);
+        }
+      });
+    });
   }
 
   /**
@@ -267,9 +282,9 @@ export class MapComponent implements AfterViewInit {
 
             marker.on("add", () => {
               this.addMarkerStyle(marker, entity, highlighted);
-              // TODO: Show tooltip its on testing phase we can remove it later based on feedback
               if (highlighted) {
                 marker.openTooltip();
+                marker.bindTooltip(entity.toString(), { permanent: true });
               }
             });
 
