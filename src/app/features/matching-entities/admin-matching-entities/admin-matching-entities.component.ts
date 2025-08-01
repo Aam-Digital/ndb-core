@@ -57,36 +57,8 @@ export class AdminMatchingEntitiesComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.initConfig();
-  }
-
-  private initConfig(): void {
     this.originalConfig =
       this.configService.getConfig("appConfig:matching-entities") || {};
-    const columns = this.originalConfig.columns ?? [];
-    this.initSide("left", columns, 0);
-    this.initSide("right", columns, 1);
-  }
-
-  /**
-   * Initializes the configuration for a side (left or right) of the matching entities.
-   * @param side - Identifier for the side ('left' or 'right').
-   * @param columns - Array of column configurations.
-   * @param index - Index to select the specific column configuration for the side.
-   */
-  private initSide(
-    side: "left" | "right",
-    columns: ColumnConfig[][],
-    index: number,
-  ): void {
-    const sideColumns = columns.map((col) => col[index]);
-    const originalSide = this.originalConfig[`${side}Side`];
-    this.sides[side] = {
-      entityType: originalSide?.entityType || null,
-      columns: sideColumns || [],
-      availableFilters: originalSide?.availableFilters || [],
-      prefilter: originalSide?.prefilter || {},
-    };
   }
 
   /**

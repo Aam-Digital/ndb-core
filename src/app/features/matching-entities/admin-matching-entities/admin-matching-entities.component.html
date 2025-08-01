@@ -16,23 +16,27 @@
   <div class="flex-wrap flex-row gap-small">
     <app-edit-matching-entity-side
       class="entity-side"
-      [sideConfig]="sides.left"
+      [index]="0"
+      [originalSideConfig]="originalConfig.leftSide"
+      [allColumns]="originalConfig.columns"
       (configChange)="updateLeftSideConfig($event)"
     ></app-edit-matching-entity-side>
 
     <app-edit-matching-entity-side
       class="entity-side"
-      [sideConfig]="sides.right"
+      [index]="1"
+      [originalSideConfig]="originalConfig.rightSide"
+      [allColumns]="originalConfig.columns"
       (configChange)="updateRightSideConfig($event)"
     ></app-edit-matching-entity-side>
   </div>
-</div>
 
-<div class="padding-top-regular">
-  <app-edit-matching-view
-    [value]="originalConfig.onMatch"
-    [leftSideEntity]="getEntityConstructor(sides.left.entityType)"
-    [rightSideEntity]="getEntityConstructor(sides.right.entityType)"
-    (valueChange)="originalConfig.onMatch = $event"
-  ></app-edit-matching-view>
+  <div class="padding-top-regular">
+    <app-edit-matching-view
+      [value]="originalConfig.onMatch"
+      [leftSideEntity]="getEntityConstructor(sides.left.entityType)"
+      [rightSideEntity]="getEntityConstructor(sides.right.entityType)"
+      (valueChange)="originalConfig.onMatch = $event"
+    ></app-edit-matching-view>
+  </div>
 </div>

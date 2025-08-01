@@ -3,9 +3,8 @@ import {
   EventEmitter,
   inject,
   Input,
-  OnChanges,
+  OnInit,
   Output,
-  SimpleChanges,
 } from "@angular/core";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -36,11 +35,13 @@ import { JsonEditorDialogComponent } from "../../../../core/admin/json-editor/js
   templateUrl: "./edit-matching-entity-side.component.html",
   styleUrls: ["./edit-matching-entity-side.component.scss"],
 })
-export class EditMatchingEntitySideComponent implements OnChanges {
+export class EditMatchingEntitySideComponent implements OnInit {
   readonly dialog = inject(MatDialog);
   readonly entityRegistry = inject(EntityRegistry);
 
-  @Input() sideConfig: MatchingSideConfig;
+  @Input() index: number;
+  @Input() originalSideConfig: MatchingSideConfig;
+  @Input() allColumns: ColumnConfig[][] = [];
 
   @Output() configChange = new EventEmitter<MatchingSideConfig>();
 
@@ -56,13 +57,27 @@ export class EditMatchingEntitySideComponent implements OnChanges {
   entityConstructor: EntityConstructor | null;
   columns: ColumnConfig[] = [];
   filters: string[] = [];
+  sideConfig: MatchingSideConfig;
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.sideConfig) {
-      this.initFormConfig();
-      this.availableEntityTypes = this.entityRegistry
-        .getEntityTypes()
-        .map((ctor) => ctor.value.ENTITY_TYPE);
+  ngOnInit(): void {
+    const sideColumns =
+      this.allColumns?.map((col) => col?.[this.index])?.filter(Boolean) ?? [];
+
+    this.sideConfig = {
+      entityType: this.originalSideConfig?.entityType ?? null,
+      columns: sideColumns,
+      availableFilters: this.originalSideConfig?.availableFilters ?? [],
+      prefilter: this.originalSideConfig?.prefilter ?? {},
+    };
+
+    this.configChange.emit(this.sideConfig);
+
+    this.availableEntityTypes = this.entityRegistry
+      .getEntityTypes()
+      .map((ctor) => ctor.value.ENTITY_TYPE);
+
+    // We use setTimeout to add additionalFields only after base fields are loaded
+    setTimeout(() => {
       this.additionalFields = [
         { id: "distance", label: "Distance" },
         {
@@ -73,58 +88,57 @@ export class EditMatchingEntitySideComponent implements OnChanges {
           viewComponent: "DisplayEntity",
         },
       ];
-    }
+    });
+
+    this.initFormConfig();
   }
 
   /**
    * Initializes the form configuration for columns and filters based on the current sideConfig.
    * Sets entityConstructor, columns, and filters properties accordingly.
    */
-  private initFormConfig() {
-    const sideEntityType = this.sideConfig.entityType;
+  private initFormConfig(): void {
+    const sideEntityType = this.sideConfig?.entityType;
     this.entityConstructor =
       typeof sideEntityType === "string"
         ? this.entityRegistry.get(sideEntityType)
         : sideEntityType;
 
-    this.columns =
-      this.sideConfig.columns?.filter((c): c is ColumnConfig => c != null) ??
-      [];
-    this.filters = this.sideConfig.availableFilters?.map((f) => f.id) ?? [];
+    this.columns = this.sideConfig?.columns ?? [];
+    this.filters = this.sideConfig?.availableFilters?.map((f) => f.id) ?? [];
   }
 
   onEntityTypeChange(entityType: string): void {
     if (this.sideConfig.entityType === entityType) return;
-    //  Resets configuration for the side when its entity type changes.
-    this.configChange.emit({
+    const updated: MatchingSideConfig = {
       entityType,
       columns: [],
       availableFilters: [],
       prefilter: {},
-    });
+    };
+    this.sideConfig = updated;
+    this.configChange.emit(updated);
   }
 
   onColumnsChange(newCols: ColumnConfig[]) {
-    this.configChange.emit({
+    this.sideConfig = {
       ...this.sideConfig,
       columns: newCols,
-    });
+    };
+    this.configChange.emit(this.sideConfig);
   }
 
   onFiltersChange(newFilters: ColumnConfig[]) {
     const updatedFilters = newFilters.map((f) =>
       typeof f === "string" ? f : f.id,
     );
-    this.configChange.emit({
+    this.sideConfig = {
       ...this.sideConfig,
       availableFilters: updatedFilters.map((id) => ({ id })),
-    });
+    };
+    this.configChange.emit(this.sideConfig);
   }
 
-  /**
-   * Opens a dialog for editing the prefilter JSON configuration.
-   * After the dialog is closed, emits the updated prefilter if provided.
-   */
   openPrefilterEditor() {
     const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
       data: { value: this.sideConfig.prefilter || {}, closeButton: true },
@@ -132,10 +146,11 @@ export class EditMatchingEntitySideComponent implements OnChanges {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result == null) return;
-      this.configChange.emit({
+      this.sideConfig = {
         ...this.sideConfig,
         prefilter: result,
-      });
+      };
+      this.configChange.emit(this.sideConfig);
     });
   }
 }
