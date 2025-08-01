@@ -5,13 +5,9 @@
     <mat-expansion-panel [expanded]="i === 0">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <span class="date-filename">
-            {{ item.date | date }}
-            @if (item.filename || item.config?.filename) {
-              <span class="filename"
-                >({{ item.filename || item.config?.filename }})</span
-              >
-            }
+          <span class="file-info">
+            <fa-icon [icon]="'file-alt'" class="margin-right-small"></fa-icon>
+            {{ item.filename || item.config?.filename }}
           </span>
         </mat-panel-title>
         <mat-panel-description i18n>

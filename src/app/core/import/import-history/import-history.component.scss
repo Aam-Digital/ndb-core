@@ -2,12 +2,8 @@
   font-style: italic;
 }
 
-.date-filename {
+.file-info {
   white-space: nowrap;
-  display: inline-block;
-}
-
-.filename {
-  margin-left: 0.5em;
-  color: #666;
+  display: inline-flex;
+  align-items: center;
 }
