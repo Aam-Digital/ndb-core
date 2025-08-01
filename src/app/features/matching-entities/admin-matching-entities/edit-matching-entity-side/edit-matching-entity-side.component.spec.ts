@@ -6,7 +6,6 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "#src/app/core/entity/database-entity.decorator";
-import { FormControl, FormGroup } from "@angular/forms";
 
 describe("EditMatchingEntitySideComponent", () => {
   let component: EditMatchingEntitySideComponent;
