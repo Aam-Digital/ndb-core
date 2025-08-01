@@ -36,17 +36,22 @@ export class EditPublicFormColumnsComponent
       this.formConfig = {
         fieldGroups: publicFormConfig.columns,
       };
-      this.formControl.valueChanges.subscribe(
-        (v) => (this.formConfig = { fieldGroups: v }),
-      );
+      const originalFormConfig = JSON.parse(JSON.stringify(this.formConfig));
+      if (this.entityForm) {
+        this.entityForm.onFormStateChange.subscribe((event) => {
+          if (event === "cancelled") {
+            this.formConfig = originalFormConfig;
+            this.formControl.setValue(originalFormConfig.fieldGroups);
+          }
+        });
+      }
     }
   }
 
   updateValue(newConfig: FormConfig) {
+    this.formConfig = newConfig;
     // setTimeout needed for change detection of disabling tabs
-    setTimeout(() =>
-      this.formControl.setValue(newConfig.fieldGroups, { emitEvent: false }),
-    );
+    setTimeout(() => this.formControl.setValue(newConfig.fieldGroups));
     this.formControl.markAsDirty();
   }
 }
