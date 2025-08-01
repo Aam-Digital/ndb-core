@@ -36,7 +36,6 @@ describe("EditMatchingEntitySideComponent", () => {
     component.form = new FormGroup({
       entityType: new FormControl(""),
     });
-    component.title = "Test Title";
     component.sideConfig = {
       entityType: "TestEntity1",
       columns: [],
