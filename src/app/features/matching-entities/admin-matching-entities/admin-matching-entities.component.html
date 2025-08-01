@@ -16,16 +16,12 @@
   <div class="flex-wrap flex-row gap-small">
     <app-edit-matching-entity-side
       class="entity-side"
-      [form]="configForm"
-      controlName="leftType"
       [sideConfig]="sides.left"
       (configChange)="updateLeftSideConfig($event)"
     ></app-edit-matching-entity-side>
 
     <app-edit-matching-entity-side
       class="entity-side"
-      [form]="configForm"
-      controlName="rightType"
       [sideConfig]="sides.right"
       (configChange)="updateRightSideConfig($event)"
     ></app-edit-matching-entity-side>
@@ -35,8 +31,8 @@
 <div class="padding-top-regular">
   <app-edit-matching-view
     [value]="originalConfig.onMatch"
-    [leftSideEntity]="entityRegistry.get(configForm.value.leftType)"
-    [rightSideEntity]="entityRegistry.get(configForm.value.rightType)"
+    [leftSideEntity]="getEntityConstructor(sides.left.entityType)"
+    [rightSideEntity]="getEntityConstructor(sides.right.entityType)"
     (valueChange)="originalConfig.onMatch = $event"
   ></app-edit-matching-view>
 </div>

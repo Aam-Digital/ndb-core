@@ -1,7 +1,10 @@
-<div class="padding-regular" [formGroup]="form">
+<div class="padding-regular">
   <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Select Entity Type</mat-label>
-    <mat-select [formControlName]="controlName">
+    <mat-select
+      [value]="sideConfig.entityType"
+      (selectionChange)="onEntityTypeChange($event.value)"
+    >
       @for (entityType of availableEntityTypes; track entityType) {
         <mat-option [value]="entityType">
           {{ entityType }}

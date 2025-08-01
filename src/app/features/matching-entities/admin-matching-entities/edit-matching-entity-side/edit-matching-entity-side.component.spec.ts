@@ -32,10 +32,6 @@ describe("EditMatchingEntitySideComponent", () => {
     fixture = TestBed.createComponent(EditMatchingEntitySideComponent);
     component = fixture.componentInstance;
 
-    component.controlName = "entityType";
-    component.form = new FormGroup({
-      entityType: new FormControl(""),
-    });
     component.sideConfig = {
       entityType: "TestEntity1",
       columns: [],

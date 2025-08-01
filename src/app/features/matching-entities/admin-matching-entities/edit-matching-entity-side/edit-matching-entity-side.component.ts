@@ -7,8 +7,7 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
-import { FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { EntityConstructor } from "../../../../core/entity/model/entity";
+import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatOptionModule } from "@angular/material/core";
@@ -27,13 +26,12 @@ import { JsonEditorDialogComponent } from "../../../../core/admin/json-editor/js
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,
     MatOptionModule,
-    AdminListManagerComponent,
-    FontAwesomeModule,
     MatButtonModule,
+    FontAwesomeModule,
+    AdminListManagerComponent,
   ],
   templateUrl: "./edit-matching-entity-side.component.html",
   styleUrls: ["./edit-matching-entity-side.component.scss"],
@@ -42,8 +40,6 @@ export class EditMatchingEntitySideComponent implements OnChanges {
   readonly dialog = inject(MatDialog);
   readonly entityRegistry = inject(EntityRegistry);
 
-  @Input() form: FormGroup;
-  @Input() controlName: string;
   @Input() sideConfig: MatchingSideConfig;
 
   @Output() configChange = new EventEmitter<MatchingSideConfig>();
@@ -97,11 +93,25 @@ export class EditMatchingEntitySideComponent implements OnChanges {
     this.filters = this.sideConfig.availableFilters?.map((f) => f.id) ?? [];
   }
 
-  onColumnsChange(newCols: ColumnConfig[]) {
-    this.configChange.emit({ ...this.sideConfig, columns: newCols });
+  onEntityTypeChange(entityType: string): void {
+    if (this.sideConfig.entityType === entityType) return;
+    //  Resets configuration for the side when its entity type changes.
+    this.configChange.emit({
+      entityType,
+      columns: [],
+      availableFilters: [],
+      prefilter: {},
+    });
   }
 
-  onFiltersChange(newFilters: ColumnConfig[]): void {
+  onColumnsChange(newCols: ColumnConfig[]) {
+    this.configChange.emit({
+      ...this.sideConfig,
+      columns: newCols,
+    });
+  }
+
+  onFiltersChange(newFilters: ColumnConfig[]) {
     const updatedFilters = newFilters.map((f) =>
       typeof f === "string" ? f : f.id,
     );
@@ -122,7 +132,10 @@ export class EditMatchingEntitySideComponent implements OnChanges {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result == null) return;
-      this.configChange.emit({ ...this.sideConfig, prefilter: result });
+      this.configChange.emit({
+        ...this.sideConfig,
+        prefilter: result,
+      });
     });
   }
 }

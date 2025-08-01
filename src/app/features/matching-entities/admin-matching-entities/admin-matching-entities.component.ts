@@ -1,6 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
-
+import { Component, OnInit, inject } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfigService } from "../../../core/config/config.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
@@ -15,6 +13,7 @@ import { EditMatchingEntitySideComponent } from "./edit-matching-entity-side/edi
 import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
 import { ViewActionsComponent } from "#src/app/core/common-components/view-actions/view-actions.component";
 import { ColumnConfig } from "../../../core/common-components/entity-form/FormConfig";
+import { EntityConstructor } from "#src/app/core/entity/model/entity";
 
 /**
  * Configure the details of the MatchingEntitiesComponent.
@@ -22,7 +21,6 @@ import { ColumnConfig } from "../../../core/common-components/entity-form/FormCo
 @Component({
   selector: "app-admin-matching-entities",
   imports: [
-    ReactiveFormsModule,
     MatButtonModule,
     EditMatchingViewComponent,
     EditMatchingEntitySideComponent,
@@ -33,13 +31,11 @@ import { ColumnConfig } from "../../../core/common-components/entity-form/FormCo
   styleUrls: ["./admin-matching-entities.component.scss"],
 })
 export class AdminMatchingEntitiesComponent implements OnInit {
-  readonly fb = inject(FormBuilder);
   readonly configService = inject(ConfigService);
   readonly entityRegistry = inject(EntityRegistry);
   readonly location = inject(Location);
   readonly alertService = inject(AlertService);
 
-  configForm: FormGroup;
   originalConfig: MatchingEntitiesConfig;
 
   /**
@@ -62,15 +58,6 @@ export class AdminMatchingEntitiesComponent implements OnInit {
 
   ngOnInit(): void {
     this.initConfig();
-    this.initForm();
-
-    this.configForm.get("leftType").valueChanges.subscribe((key) => {
-      this.resetSideConfig("left", key);
-    });
-
-    this.configForm.get("rightType").valueChanges.subscribe((key) => {
-      this.resetSideConfig("right", key);
-    });
   }
 
   private initConfig(): void {
@@ -102,28 +89,6 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     };
   }
 
-  private initForm(): void {
-    this.configForm = this.fb.group({
-      leftType: [this.originalConfig.leftSide?.entityType ?? ""],
-      rightType: [this.originalConfig.rightSide?.entityType ?? ""],
-    });
-  }
-
-  /**
-   * Resets configuration for the specified side when its entity type changes.
-   * @param side - Identifier for the side ('left' or 'right').
-   * @param entityKey - The newly selected entity type key.
-   */
-  private resetSideConfig(side: "left" | "right", entityKey: string): void {
-    this.sides[side] = {
-      ...this.sides[side],
-      entityType: entityKey,
-      columns: [],
-      availableFilters: [],
-      prefilter: {},
-    };
-  }
-
   /**
    * Applies updates to the left side configuration from the child component.
    * @param config - Updated MatchingSideConfig for the left side.
@@ -152,15 +117,11 @@ export class AdminMatchingEntitiesComponent implements OnInit {
       columns,
       leftSide: {
         ...this.originalConfig.leftSide,
-        entityType: this.configForm.value.leftType,
-        availableFilters: this.sides.left.availableFilters,
-        prefilter: this.sides.left.prefilter,
+        ...this.sides.left,
       },
       rightSide: {
         ...this.originalConfig.rightSide,
-        entityType: this.configForm.value.rightType,
-        availableFilters: this.sides.right.availableFilters,
-        prefilter: this.sides.right.prefilter,
+        ...this.sides.right,
       },
       matchingViews: this.originalConfig.onMatch,
     };
@@ -185,6 +146,15 @@ export class AdminMatchingEntitiesComponent implements OnInit {
       columns.push([left, right]);
     }
     return columns;
+  }
+
+  getEntityConstructor(
+    entityType: string | EntityConstructor,
+  ): EntityConstructor {
+    if (typeof entityType === "string") {
+      return this.entityRegistry.get(entityType);
+    }
+    return entityType;
   }
 
   cancel(): void {
