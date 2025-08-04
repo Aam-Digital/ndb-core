@@ -25,7 +25,7 @@ export class ImportantNotesDashboardSettingsComponent implements OnInit {
   };
 
   warningLevelsForm = new FormControl([]);
-  private enumService = inject(ConfigurableEnumService);
+  private readonly enumService = inject(ConfigurableEnumService);
 
   ngOnInit() {
     this.localConfig = {
