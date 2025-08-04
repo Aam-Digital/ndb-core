@@ -1,4 +1,4 @@
-import { LOCALE_ID, NgModule, inject } from "@angular/core";
+import { inject, LOCALE_ID, NgModule } from "@angular/core";
 import { LanguageService } from "./language.service";
 import { HTTP_INTERCEPTORS } from "@angular/common/http";
 import { AcceptLanguageInterceptor } from "./accept-language.interceptor";
@@ -6,6 +6,7 @@ import moment from "moment/moment";
 import { getLocaleFirstDayOfWeek } from "@angular/common";
 import { MatPaginatorIntl } from "@angular/material/paginator";
 import { TranslatableMatPaginator } from "./TranslatableMatPaginator";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 /**
  * Module that aids in the management and choice of translations/languages
@@ -33,10 +34,16 @@ export class LanguageModule {
 
     translationService.initDefaultLanguage();
 
-    moment.updateLocale(moment.locale(), {
-      week: {
-        dow: getLocaleFirstDayOfWeek(locale),
-      },
-    });
+    try {
+      moment.updateLocale(moment.locale(), {
+        week: {
+          dow: getLocaleFirstDayOfWeek(locale),
+        },
+      });
+    } catch (e) {
+      Logging.warn(
+        `Could not determine first day of week for locale "${locale}".`,
+      );
+    }
   }
 }
