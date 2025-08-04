@@ -39,11 +39,8 @@ export class EditMatchingEntitySideComponent implements OnInit {
   readonly dialog = inject(MatDialog);
   readonly entityRegistry = inject(EntityRegistry);
 
-  @Input() index: number;
-  @Input() originalSideConfig: MatchingSideConfig;
-  @Input() allColumns: ColumnConfig[][] = [];
-
-  @Output() configChange = new EventEmitter<MatchingSideConfig>();
+  @Input() sideConfig: MatchingSideConfig;
+  @Output() sideConfigChange = new EventEmitter<MatchingSideConfig>();
 
   /**
    * Holds a predefined list of additional column options that can be appended to the entity view.
@@ -57,21 +54,8 @@ export class EditMatchingEntitySideComponent implements OnInit {
   entityConstructor: EntityConstructor | null;
   columns: ColumnConfig[] = [];
   filters: string[] = [];
-  sideConfig: MatchingSideConfig;
 
   ngOnInit(): void {
-    const sideColumns =
-      this.allColumns?.map((col) => col?.[this.index])?.filter(Boolean) ?? [];
-
-    this.sideConfig = {
-      entityType: this.originalSideConfig?.entityType ?? null,
-      columns: sideColumns,
-      availableFilters: this.originalSideConfig?.availableFilters ?? [],
-      prefilter: this.originalSideConfig?.prefilter ?? {},
-    };
-
-    this.configChange.emit(this.sideConfig);
-
     this.availableEntityTypes = this.entityRegistry
       .getEntityTypes()
       .map((ctor) => ctor.value.ENTITY_TYPE);
@@ -99,17 +83,14 @@ export class EditMatchingEntitySideComponent implements OnInit {
    */
   private initFormConfig(): void {
     const sideEntityType = this.sideConfig?.entityType;
-    this.entityConstructor =
-      typeof sideEntityType === "string"
-        ? this.entityRegistry.get(sideEntityType)
-        : sideEntityType;
-
+    this.entityConstructor = this.entityRegistry.get(sideEntityType);
     this.columns = this.sideConfig?.columns ?? [];
     this.filters = this.sideConfig?.availableFilters?.map((f) => f.id) ?? [];
   }
 
   onEntityTypeChange(entityType: string): void {
     if (this.sideConfig.entityType === entityType) return;
+
     const updated: MatchingSideConfig = {
       entityType,
       columns: [],
@@ -117,7 +98,8 @@ export class EditMatchingEntitySideComponent implements OnInit {
       prefilter: {},
     };
     this.sideConfig = updated;
-    this.configChange.emit(updated);
+    this.initFormConfig();
+    this.sideConfigChange.emit(this.sideConfig);
   }
 
   onColumnsChange(newCols: ColumnConfig[]) {
@@ -125,7 +107,7 @@ export class EditMatchingEntitySideComponent implements OnInit {
       ...this.sideConfig,
       columns: newCols,
     };
-    this.configChange.emit(this.sideConfig);
+    this.sideConfigChange.emit(this.sideConfig);
   }
 
   onFiltersChange(newFilters: ColumnConfig[]) {
@@ -136,7 +118,7 @@ export class EditMatchingEntitySideComponent implements OnInit {
       ...this.sideConfig,
       availableFilters: updatedFilters.map((id) => ({ id })),
     };
-    this.configChange.emit(this.sideConfig);
+    this.sideConfigChange.emit(this.sideConfig);
   }
 
   openPrefilterEditor() {
@@ -150,7 +132,7 @@ export class EditMatchingEntitySideComponent implements OnInit {
         ...this.sideConfig,
         prefilter: result,
       };
-      this.configChange.emit(this.sideConfig);
+      this.sideConfigChange.emit(this.sideConfig);
     });
   }
 }

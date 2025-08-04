@@ -178,17 +178,17 @@ export class MatchingEntitiesComponent implements OnInit {
     side: MatchingSideConfig,
     sideIndex: number,
   ): Promise<MatchingSide> {
-    const newSide = Object.assign({}, side) as MatchingSide; // we are transforming it into this type here
+    const newSide = buildMatchingSideConfig(
+      side,
+      this.columns,
+      sideIndex,
+    ) as MatchingSide;
 
     if (!newSide.entityType) {
       newSide.selected = newSide.selected ?? [this.entity];
       newSide.highlightedSelected = newSide.selected[0];
       newSide.entityType = newSide.highlightedSelected?.getType();
     }
-
-    newSide.columns =
-      newSide.columns ??
-      this.columns.map((p) => p[sideIndex]).filter((c) => !!c);
 
     newSide.multiSelect = this.checkIfMultiSelect(
       this.onMatch.newEntityType,
@@ -409,4 +409,22 @@ export class MatchingEntitiesComponent implements OnInit {
       distanceColumn.compareCoordinates.next(coordinates);
     }
   }
+}
+
+/**
+ * Create a MatchingSideConfig object
+ * and fill it with columns from comparison array if necessary
+ * @param side Base side configuration
+ * @param columns columns array from the overall matching configuration
+ * @param sideIndex index (0 or 1) of the side in the columns array
+ */
+export function buildMatchingSideConfig(
+  side: MatchingSideConfig,
+  columns: [ColumnConfig, ColumnConfig][],
+  sideIndex: number,
+): MatchingSideConfig {
+  const newSide = Object.assign({}, side) as MatchingSide; // we are transforming it into this type here
+  newSide.columns =
+    newSide.columns ?? columns.map((p) => p[sideIndex]).filter((c) => !!c);
+  return newSide;
 }

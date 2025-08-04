@@ -13,6 +13,7 @@ import { EditMatchingEntitySideComponent } from "./edit-matching-entity-side/edi
 import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
 import { ViewActionsComponent } from "#src/app/core/common-components/view-actions/view-actions.component";
 import { ColumnConfig } from "../../../core/common-components/entity-form/FormConfig";
+import { buildMatchingSideConfig } from "#src/app/features/matching-entities/matching-entities/matching-entities.component";
 
 /**
  * Configure the details of the MatchingEntitiesComponent.
@@ -41,49 +42,45 @@ export class AdminMatchingEntitiesComponent implements OnInit {
    * Holds matching configuration for both sides of the matching entities.
    */
   sides: Record<"left" | "right", MatchingSideConfig> = {
-    left: {
-      entityType: null,
-      columns: [],
-      availableFilters: [],
-      prefilter: {},
-    },
-    right: {
-      entityType: null,
-      columns: [],
-      availableFilters: [],
-      prefilter: {},
-    },
+    left: {},
+    right: {},
   };
 
   ngOnInit(): void {
     this.originalConfig =
       this.configService.getConfig("appConfig:matching-entities") || {};
+    this.sides.left = buildMatchingSideConfig(
+      this.originalConfig.leftSide,
+      this.originalConfig.columns,
+      0,
+    );
+    this.sides.right = buildMatchingSideConfig(
+      this.originalConfig.leftSide,
+      this.originalConfig.columns,
+      1,
+    );
   }
 
   /**
    * Save the updated matching entities configuration.
    */
-  save(): void {
+  async save() {
     const columns = this.generateColumnsFromSides();
-    const fullConfig = this.configService.exportConfig(true);
 
-    fullConfig["appConfig:matching-entities"] = {
+    const newMatchingConfig: MatchingEntitiesConfig = {
       ...this.originalConfig,
       columns,
-      leftSide: {
-        ...this.originalConfig.leftSide,
-        ...this.sides.left,
-      },
-      rightSide: {
-        ...this.originalConfig.rightSide,
-        ...this.sides.right,
-      },
-      matchingViews: this.originalConfig.onMatch,
+      leftSide: { ...this.sides.left },
+      rightSide: { ...this.sides.right },
+      onMatch: this.originalConfig.onMatch,
     };
+    delete newMatchingConfig.leftSide.columns;
+    delete newMatchingConfig.rightSide.columns;
 
-    this.configService.saveConfig(fullConfig).then(() => {
-      this.alertService.addInfo($localize`Configuration updated successfully.`);
-    });
+    const fullConfig = this.configService.exportConfig(true);
+    fullConfig["appConfig:matching-entities"] = newMatchingConfig;
+    await this.configService.saveConfig(fullConfig);
+    this.alertService.addInfo($localize`Configuration updated successfully.`);
 
     this.location.back();
   }

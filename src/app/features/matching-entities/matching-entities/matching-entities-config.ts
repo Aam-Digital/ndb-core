@@ -12,7 +12,7 @@ export interface MatchingEntitiesConfig {
    *
    * e.g. [["name", "name"], ["motherTongue", "language"]]
    */
-  columns?: [string, string][];
+  columns?: [ColumnConfig, ColumnConfig][];
 
   /**
    * Mapped properties which should be displayed in a map (of left and right entity).

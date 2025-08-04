@@ -16,18 +16,12 @@
   <div class="flex-wrap flex-row gap-small">
     <app-edit-matching-entity-side
       class="entity-side"
-      [index]="0"
-      [originalSideConfig]="originalConfig.leftSide"
-      [allColumns]="originalConfig.columns"
-      (configChange)="sides.left = $event"
+      [(sideConfig)]="sides.left"
     ></app-edit-matching-entity-side>
 
     <app-edit-matching-entity-side
       class="entity-side"
-      [index]="1"
-      [originalSideConfig]="originalConfig.rightSide"
-      [allColumns]="originalConfig.columns"
-      (configChange)="sides.right = $event"
+      [(sideConfig)]="sides.right"
     ></app-edit-matching-entity-side>
   </div>
 
