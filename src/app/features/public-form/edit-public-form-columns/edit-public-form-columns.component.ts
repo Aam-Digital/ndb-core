@@ -37,6 +37,8 @@ export class EditPublicFormColumnsComponent
         fieldGroups: publicFormConfig.columns,
       };
       const originalFormConfig = JSON.parse(JSON.stringify(this.formConfig));
+      // Manually reset the config to reflect the cancelled changes immediately in the UI,
+      // otherwise a full page reload would be needed to see the cancelled changes.
       if (this.entityForm) {
         this.entityForm.onFormStateChange.subscribe((event) => {
           if (event === "cancelled") {
