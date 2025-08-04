@@ -50,7 +50,7 @@ export class LanguageService {
    */
   switchLocale(newLocale: string): void {
     const currentLocale = localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY);
-    if (newLocale === currentLocale) return;
+    if (newLocale === currentLocale || !newLocale) return;
 
     localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, newLocale);
     this.window.location.reload();
@@ -63,11 +63,7 @@ export class LanguageService {
 
     if (!languageSelected) {
       this.siteSettings.defaultLanguage.subscribe(({ id }) => {
-        if (id !== this.baseLocale) {
-          // Reload app with default language from config
-          this.window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, id);
-          this.window.location.reload();
-        }
+        this.switchLocale(id);
       });
     }
   }

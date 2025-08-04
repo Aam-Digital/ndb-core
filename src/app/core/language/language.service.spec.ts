@@ -71,8 +71,8 @@ describe("LanguageService", () => {
   });
 
   it("should not reload, if the current locale is the same as the default", () => {
-    service.initDefaultLanguage();
-    languageSubject.next({ id: "en-US", label: "us" });
+    window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, "de");
+    service.switchLocale("de");
     expect(reloadSpy).not.toHaveBeenCalled();
   });
 
