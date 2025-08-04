@@ -53,7 +53,25 @@ export class WidgetComponentSelectComponent implements OnInit {
         label: $localize`Shortcuts`,
         value: {
           component: "ShortcutDashboard",
-          config: { shortcuts: [] },
+          config: {
+            shortcuts: [
+              {
+                label: "Record Attendance",
+                icon: "calendar-check",
+                link: "/attendance/add-day",
+              },
+              {
+                label: "Add Child",
+                icon: "plus",
+                link: "/child/new",
+              },
+              {
+                label: "Public Registration Form",
+                icon: "file-circle-check",
+                link: "/public-form/form/test",
+              },
+            ],
+          },
         },
       },
       {
