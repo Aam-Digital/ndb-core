@@ -229,7 +229,7 @@ export class MapComponent implements AfterViewInit {
     // If only one entity is highlighted, zoom to its marker
     if (highlightMarkers.length === 1) {
       const marker = highlightMarkers[0];
-      this.markerClusterGroup.addLayer(marker);
+      
       this.map.setView(marker.getLatLng(), Math.max(this.map.getZoom(), 12), {
         animate: true,
       });
