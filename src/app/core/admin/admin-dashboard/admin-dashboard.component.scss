@@ -39,10 +39,14 @@
 .widgets-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 1.5rem;
-  padding: 0.5rem 1rem 1rem 1rem; // Less top padding
   height: auto;
   overflow: visible;
+  grid-auto-rows: unset !important; 
+}
+
+.widget-container {
+  padding: 2px; 
+  box-sizing: border-box;
 }
 
 .widget-preview-card {
@@ -79,7 +83,7 @@
 
 .widget-content-wrapper {
   position: relative;
-  padding: 20px; // Increased padding for more equal spacing
+  padding: 20px;
   height: 100%;
 }
 
@@ -105,7 +109,7 @@
 
 .drag-handle {
   position: absolute;
-  top: 50%; // Center vertically
+  top: 50%;
   left: 1px;
   color: colors.$accent;
   cursor: move;
