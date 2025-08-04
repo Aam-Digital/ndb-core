@@ -11,7 +11,6 @@ import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { availableLocales } from "../language/languages";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
-import { WINDOW_TOKEN } from "#src/app/utils/di-tokens";
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
@@ -23,7 +22,6 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   private title = inject(Title);
   private schemaService = inject(EntitySchemaService);
   private enumService = inject(ConfigurableEnumService);
-  readonly window = inject<Window>(WINDOW_TOKEN);
 
   readonly DEFAULT_FAVICON = "favicon.ico";
   readonly SITE_SETTINGS_LOCAL_STORAGE_KEY = Entity.createPrefixedId(

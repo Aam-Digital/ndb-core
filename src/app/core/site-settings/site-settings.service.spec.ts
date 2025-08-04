@@ -12,28 +12,17 @@ import { availableLocales } from "../language/languages";
 import { ConfigurableEnumModule } from "../basic-datatypes/configurable-enum/configurable-enum.module";
 import { EntityAbility } from "../permissions/ability/entity-ability";
 import { CoreTestingModule } from "../../utils/core-testing.module";
-import { WINDOW_TOKEN } from "#src/app/utils/di-tokens";
 
 describe("SiteSettingsService", () => {
   let service: SiteSettingsService;
   let entityMapper: MockEntityMapperService;
-  let reloadSpy: jasmine.Spy;
 
   beforeEach(waitForAsync(() => {
     localStorage.clear();
-    reloadSpy = jasmine.createSpy();
 
-    const mockWindow: Partial<Window> = {
-      localStorage: window.localStorage,
-      location: { reload: reloadSpy } as any,
-    };
     TestBed.configureTestingModule({
       imports: [CoreTestingModule, ConfigurableEnumModule],
-      providers: [
-        { provide: WINDOW_TOKEN, useValue: mockWindow },
-        ...mockEntityMapperProvider(),
-        EntityAbility,
-      ],
+      providers: [...mockEntityMapperProvider(), EntityAbility],
     });
     service = TestBed.inject(SiteSettingsService);
 

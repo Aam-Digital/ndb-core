@@ -44,10 +44,6 @@ export class LanguageService {
       });
   }
 
-  /**
-   * For the very first load: if user hasn't chosen a language yet,
-   * apply the SiteSettings default and reload.
-   */
   initDefaultLanguage(): void {
     const languageSelected = this.window.localStorage.getItem(
       LANGUAGE_LOCAL_STORAGE_KEY,
