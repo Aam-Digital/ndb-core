@@ -258,7 +258,7 @@ export class MapComponent implements AfterViewInit {
 
     if (targetMarkers.length > 0) {
       const group = L.featureGroup(targetMarkers);
-      this.markerClusterGroup.addLayer(group);
+      this.markerClusterGroup.addLayers(targetMarkers);
       const bounds = group.getBounds();
       if (bounds.isValid()) {
         this.map.fitBounds(bounds, {
