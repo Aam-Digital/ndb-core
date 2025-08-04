@@ -12,7 +12,6 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { availableLocales } from "../language/languages";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import { WINDOW_TOKEN } from "#src/app/utils/di-tokens";
-import { UntilDestroy } from "@ngneat/until-destroy";
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.

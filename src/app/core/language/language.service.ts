@@ -4,7 +4,7 @@ import { LANGUAGE_LOCAL_STORAGE_KEY } from "./language-statics";
 import { WINDOW_TOKEN } from "../../utils/di-tokens";
 import { SiteSettings } from "../site-settings/site-settings";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { SiteSettingsService } from "../site-settings/site-settings.service"; // keep for initDefaultLanguage()
+import { SiteSettingsService } from "../site-settings/site-settings.service";
 import { filter } from "rxjs";
 
 /**
