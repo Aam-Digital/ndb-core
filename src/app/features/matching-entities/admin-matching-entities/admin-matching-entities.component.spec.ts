@@ -44,6 +44,10 @@ describe("AdminMatchingEntitiesComponent", () => {
       "EntityRelationsService",
       ["getEntityTypesReferencingType"],
     );
+    mockEntityRelationsService.getEntityTypesReferencingType.and.returnValue(
+      [],
+    );
+
     mockEntityFormService = jasmine.createSpyObj("EntityFormService", [
       "createEntityForm",
     ]);

@@ -27,9 +27,11 @@
           mat-header-cell
           *matHeaderCellDef
           class="comparison-header"
-          [style.color]="side.entityType?.color ?? 'black'"
+          [style.color]="(side.entityType | entityType)?.color ?? 'black'"
         >
-          <em class="comparison-header-type">{{ side.entityType?.label }}:</em>
+          <em class="comparison-header-type"
+            >{{ (side.entityType | entityType)?.label }}:</em
+          >
           &nbsp;
           @for (s of side.selected; track s; let i = $index) {
             <span
@@ -108,21 +110,21 @@
       @if (side.availableEntities) {
         <div class="flex-grow">
           <h3
-            [style.color]="side.entityType?.color ?? 'black'"
+            [style.color]="(side.entityType | entityType)?.color ?? 'black'"
             class="selection-header"
             i18n="header of section with entities available for selection"
           >
-            Select {{ side.entityType?.label }}
+            Select {{ (side.entityType | entityType)?.label }}
           </h3>
           <app-filter
             class="flex-row gap-regular flex-wrap"
             [filterConfig]="side.availableFilters"
-            [entityType]="side.entityType"
+            [entityType]="side.entityType | entityType"
             [entities]="side.availableEntities"
             (filterObjChange)="applySelectedFilters(side, $event)"
           ></app-filter>
           <app-entities-table
-            [entityType]="side.entityType"
+            [entityType]="side.entityType | entityType"
             [records]="side.availableEntities"
             [customColumns]="side.columns"
             [editable]="false"

@@ -34,8 +34,8 @@
   <div class="padding-top-regular">
     <app-edit-matching-view
       [value]="originalConfig.onMatch"
-      [leftSideEntity]="getEntityConstructor(sides.left.entityType)"
-      [rightSideEntity]="getEntityConstructor(sides.right.entityType)"
+      [leftEntityType]="sides.left.entityType"
+      [rightEntityType]="sides.right.entityType"
       (valueChange)="originalConfig.onMatch = $event"
     ></app-edit-matching-view>
   </div>

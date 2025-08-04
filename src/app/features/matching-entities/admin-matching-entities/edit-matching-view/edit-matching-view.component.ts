@@ -56,8 +56,8 @@ export class EditMatchingViewComponent implements OnInit {
   readonly entityRelationsService = inject(EntityRelationsService);
 
   @Input() value: NewMatchAction;
-  @Input() leftSideEntity: EntityConstructor;
-  @Input() rightSideEntity: EntityConstructor;
+  @Input() leftEntityType: string;
+  @Input() rightEntityType: string;
 
   @Output() valueChange = new EventEmitter<NewMatchAction>();
 
@@ -101,8 +101,8 @@ export class EditMatchingViewComponent implements OnInit {
   ngOnInit() {
     if (this.value) {
       this.availableRelatedEntities = this.buildAvailableRelatedEntities(
-        this.leftSideEntity?.ENTITY_TYPE,
-        this.rightSideEntity?.ENTITY_TYPE,
+        this.leftEntityType,
+        this.rightEntityType,
       );
 
       this.initForm();

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfigService } from "../../../core/config/config.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
@@ -13,7 +13,6 @@ import { EditMatchingEntitySideComponent } from "./edit-matching-entity-side/edi
 import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
 import { ViewActionsComponent } from "#src/app/core/common-components/view-actions/view-actions.component";
 import { ColumnConfig } from "../../../core/common-components/entity-form/FormConfig";
-import { EntityConstructor } from "#src/app/core/entity/model/entity";
 
 /**
  * Configure the details of the MatchingEntitiesComponent.
@@ -118,15 +117,6 @@ export class AdminMatchingEntitiesComponent implements OnInit {
       columns.push([left, right]);
     }
     return columns;
-  }
-
-  getEntityConstructor(
-    entityType: string | EntityConstructor,
-  ): EntityConstructor {
-    if (typeof entityType === "string") {
-      return this.entityRegistry.get(entityType);
-    }
-    return entityType;
   }
 
   cancel(): void {

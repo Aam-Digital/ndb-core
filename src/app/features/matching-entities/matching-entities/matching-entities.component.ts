@@ -2,13 +2,13 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  inject,
   Input,
   OnInit,
   ViewChild,
-  inject,
 } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import {
@@ -48,6 +48,7 @@ import { DataFilter } from "../../../core/filter/filters/filters";
 import { GeoLocation } from "app/features/location/geo-location";
 import { MatMenuModule } from "@angular/material/menu";
 import { AblePurePipe } from "@casl/angular";
+import { EntityTypePipe } from "#src/app/core/common-components/entity-type/entity-type.pipe";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -55,7 +56,7 @@ export interface MatchingSide extends MatchingSideConfig {
 
   availableEntities?: Entity[];
   selectMatch?: (e) => void;
-  entityType: EntityConstructor;
+  entityType: string;
 
   /** whether this allows to select more than one selected match */
   multiSelect: boolean;
@@ -93,6 +94,7 @@ export interface MatchingSide extends MatchingSideConfig {
     RouterLink,
     AblePurePipe,
     AsyncPipe,
+    EntityTypePipe,
   ],
 })
 export class MatchingEntitiesComponent implements OnInit {
@@ -181,15 +183,8 @@ export class MatchingEntitiesComponent implements OnInit {
     if (!newSide.entityType) {
       newSide.selected = newSide.selected ?? [this.entity];
       newSide.highlightedSelected = newSide.selected[0];
-      newSide.entityType = newSide.highlightedSelected?.getConstructor();
+      newSide.entityType = newSide.highlightedSelected?.getType();
     }
-
-    let entityType = newSide.entityType;
-    if (typeof entityType === "string") {
-      entityType = this.entityRegistry.get(entityType);
-    }
-    newSide.entityType =
-      entityType ?? newSide.highlightedSelected?.getConstructor();
 
     newSide.columns =
       newSide.columns ??
@@ -217,7 +212,9 @@ export class MatchingEntitiesComponent implements OnInit {
     }
 
     this.mapVisible =
-      this.mapVisible || getLocationProperties(newSide.entityType).length > 0;
+      this.mapVisible ||
+      getLocationProperties(this.entityRegistry.get(newSide.entityType))
+        .length > 0;
 
     return newSide;
   }
@@ -342,7 +339,7 @@ export class MatchingEntitiesComponent implements OnInit {
 
   entityInMapClicked(entity: Entity) {
     const side = this.sideDetails.find(
-      (s) => s.entityType === entity.getConstructor(),
+      (s) => s.entityType === entity.getType(),
     );
     if (side) {
       side.selectMatch(entity);
@@ -380,7 +377,7 @@ export class MatchingEntitiesComponent implements OnInit {
       viewComponent: "DisplayDistance",
       additional: {
         coordinatesProperties:
-          this.displayedLocationProperties[side.entityType.ENTITY_TYPE],
+          this.displayedLocationProperties[side.entityType],
         compareCoordinates: new BehaviorSubject<Coordinates[]>([]),
       },
     };
@@ -388,8 +385,7 @@ export class MatchingEntitiesComponent implements OnInit {
 
   updateMarkersAndDistances() {
     this.sideDetails.forEach((side) => {
-      const sideProperties =
-        this.displayedLocationProperties[side.entityType.ENTITY_TYPE];
+      const sideProperties = this.displayedLocationProperties[side.entityType];
       if (side.distanceColumn) {
         side.distanceColumn.coordinatesProperties = sideProperties;
         const lastValue = side.distanceColumn.compareCoordinates.value;
