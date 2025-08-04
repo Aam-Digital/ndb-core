@@ -18,16 +18,20 @@ export class LanguageService {
     const languageSelected = this.window.localStorage.getItem(
       LANGUAGE_LOCAL_STORAGE_KEY,
     );
+    console.log(languageSelected, "langageselected");
+    console.log(this.getCurrentLocale(), "getCurrentLocale");
 
-    if (!languageSelected) {
-      this.siteSettings.defaultLanguage.subscribe(({ id }) => {
-        if (id !== this.baseLocale) {
-          // Reload app with default language from config
-          this.window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, id);
-          this.window.location.reload();
-        }
-      });
-    }
+    // if (!languageSelected) {
+    this.siteSettings.defaultLanguage.subscribe(({ id }) => {
+      console.log(this.baseLocale, "this.baseLocale");
+      console.log(id, "id");
+      if (id !== this.baseLocale) {
+        // Reload app with default language from config
+        this.window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, id);
+        this.window.location.reload();
+      }
+    });
+    // }
   }
 
   /**
