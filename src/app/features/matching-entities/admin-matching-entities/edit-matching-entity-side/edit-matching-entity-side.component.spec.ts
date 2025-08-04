@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EditMatchingEntitySideComponent } from "./edit-matching-entity-side.component";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { MatDialog } from "@angular/material/dialog";
 import {
   entityRegistry,
   EntityRegistry,
 } from "#src/app/core/entity/database-entity.decorator";
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
+import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 
 describe("EditMatchingEntitySideComponent", () => {
   let component: EditMatchingEntitySideComponent;
@@ -13,7 +14,7 @@ describe("EditMatchingEntitySideComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EditMatchingEntitySideComponent, FontAwesomeTestingModule],
+      imports: [EditMatchingEntitySideComponent, MockedTestingModule],
       providers: [
         {
           provide: EntityRegistry,
@@ -25,14 +26,12 @@ describe("EditMatchingEntitySideComponent", () => {
         },
       ],
     }).compileComponents();
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(EditMatchingEntitySideComponent);
     component = fixture.componentInstance;
 
     component.sideConfig = {
-      entityType: "TestEntity1",
+      entityType: TestEntity.ENTITY_TYPE,
       columns: [],
       availableFilters: [],
     };

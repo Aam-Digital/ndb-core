@@ -425,6 +425,7 @@ export function buildMatchingSideConfig(
 ): MatchingSideConfig {
   const newSide = Object.assign({}, side) as MatchingSide; // we are transforming it into this type here
   newSide.columns =
-    newSide.columns ?? columns.map((p) => p[sideIndex]).filter((c) => !!c);
+    newSide.columns ??
+    (columns ?? []).map((p) => p[sideIndex]).filter((c) => !!c);
   return newSide;
 }
