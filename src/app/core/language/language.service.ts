@@ -14,24 +14,20 @@ export class LanguageService {
   private window = inject<Window>(WINDOW_TOKEN);
   private siteSettings = inject(SiteSettingsService);
 
-  initDefaultLanguage(): void {
-    const languageSelected = this.window.localStorage.getItem(
-      LANGUAGE_LOCAL_STORAGE_KEY,
-    );
-    console.log(languageSelected, "langageselected");
-    console.log(this.getCurrentLocale(), "getCurrentLocale");
+  /**
+   * Initializes or updates the application's language setting.
+   * Also updates the language in site settings.
+   * If the selected language differs from the current base language, it saves it to localStorage and reloads the page.
+   */
 
-    // if (!languageSelected) {
+  initDefaultLanguage(): void {
     this.siteSettings.defaultLanguage.subscribe(({ id }) => {
-      console.log(this.baseLocale, "this.baseLocale");
-      console.log(id, "id");
       if (id !== this.baseLocale) {
         // Reload app with default language from config
         this.window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, id);
         this.window.location.reload();
       }
     });
-    // }
   }
 
   /**
