@@ -19,7 +19,7 @@ export class LanguageService {
   private baseLocale = inject(LOCALE_ID);
   private window = inject<Window>(WINDOW_TOKEN);
   private siteSettings = inject(SiteSettingsService);
-  readonly entityMapper = inject(EntityMapperService);
+  private readonly entityMapper = inject(EntityMapperService);
 
   constructor() {
     this.switchLocaleOnSiteSettingsUpdate();

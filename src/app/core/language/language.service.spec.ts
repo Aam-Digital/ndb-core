@@ -7,11 +7,15 @@ import { LANGUAGE_LOCAL_STORAGE_KEY } from "./language-statics";
 import { Subject } from "rxjs";
 import { SiteSettingsService } from "../site-settings/site-settings.service";
 import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/configurable-enum.types";
+import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
+import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
+import { SiteSettings } from "#src/app/core/site-settings/site-settings";
 
 describe("LanguageService", () => {
   let service: LanguageService;
   let reloadSpy: jasmine.Spy;
   let languageSubject: Subject<ConfigurableEnumValue>;
+  let mockEntityMapperUpdates: Subject<UpdatedEntity<SiteSettings>>;
 
   beforeEach(() => {
     reloadSpy = jasmine.createSpy();
@@ -20,6 +24,8 @@ describe("LanguageService", () => {
       location: { reload: reloadSpy } as any,
     };
     languageSubject = new Subject();
+    mockEntityMapperUpdates = new Subject();
+
     TestBed.configureTestingModule({
       providers: [
         { provide: LOCALE_ID, useValue: "en-US" },
@@ -27,6 +33,10 @@ describe("LanguageService", () => {
         {
           provide: SiteSettingsService,
           useValue: { defaultLanguage: languageSubject },
+        },
+        {
+          provide: EntityMapperService,
+          useValue: { receiveUpdates: () => mockEntityMapperUpdates },
         },
       ],
     });
@@ -64,5 +74,11 @@ describe("LanguageService", () => {
     service.initDefaultLanguage();
     languageSubject.next({ id: "en-US", label: "us" });
     expect(reloadSpy).not.toHaveBeenCalled();
+  });
+
+  it("should switch locale and reload the page", () => {
+    service.switchLocale("de");
+    expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe("de");
+    expect(reloadSpy).toHaveBeenCalled();
   });
 });
