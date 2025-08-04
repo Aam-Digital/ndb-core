@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { SiteSettings } from "./site-settings";
 import { Observable, skipWhile } from "rxjs";
-import { distinctUntilChanged, map, shareReplay } from "rxjs/operators";
+import { distinctUntilChanged, filter, map, shareReplay } from "rxjs/operators";
 import { Title } from "@angular/platform-browser";
 import materialColours from "@aytek/material-color-picker";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
@@ -65,7 +65,10 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
     //Listen to SiteSettings updates and sync the default language in localStorage
     this.entityMapper
       .receiveUpdates(SiteSettings)
-      .pipe(untilDestroyed(this))
+      .pipe(
+        untilDestroyed(this),
+        filter((update) => update?.entity.getId() === SiteSettings.ENTITY_ID),
+      )
       .subscribe((updatedSiteSettings) => {
         const updatedLanguage =
           updatedSiteSettings?.entity?.defaultLanguage?.id;
