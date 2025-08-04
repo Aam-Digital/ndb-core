@@ -41,11 +41,11 @@
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   height: auto;
   overflow: visible;
-  grid-auto-rows: unset !important; 
+  grid-auto-rows: unset !important;
 }
 
 .widget-container {
-  padding: 2px; 
+  padding: 2px;
   box-sizing: border-box;
 }
 
