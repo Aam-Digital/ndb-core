@@ -4,7 +4,7 @@
 
 .header {
   padding: 20px 24px 12px 24px;
-  background-color: colors.$background-secondary; // Use your themed color
+  background-color: colors.$background-secondary; 
   display: flex;
   align-items: center;
   margin-bottom: 0.5rem;
@@ -106,24 +106,28 @@
 .drag-handle {
   position: absolute;
   top: 50%; // Center vertically
-  left: 8px;
+  left: 1px;
   color: colors.$accent;
   cursor: move;
   z-index: 20;
+  transform: translateY(-50%);
+  padding: 4px;
+  border-radius: 50%;
 }
 
 .widget-remove-icon {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 1px;
+  right: 1px;
   color: black;
   font-size: 20px;
   z-index: 20;
   cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
 
   &:hover {
     color: #ff0000;
-    background-color: rgba(255, 0, 0, 0.1);
   }
 }
 

@@ -126,6 +126,10 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
+  private prettifyWidgetTitle(componentName: string): string {
+    return componentName.replace(/([a-z])([A-Z])/g, "$1 $2");
+  }
+
   private async openWidgetSettingsDialog(
     widgetConfig: DynamicComponentConfig,
     settingsComponent: string,
@@ -133,7 +137,7 @@ export class AdminDashboardComponent implements OnInit {
     const dialogData: AdminWidgetDialogData = {
       widgetConfig: { ...widgetConfig },
       settingsComponent: settingsComponent,
-      title: `${widgetConfig.component} Settings`,
+      title: `${this.prettifyWidgetTitle(widgetConfig.component)} Settings`,
     };
 
     const dialogRef = this.dialog.open(AdminWidgetDialogComponent, {

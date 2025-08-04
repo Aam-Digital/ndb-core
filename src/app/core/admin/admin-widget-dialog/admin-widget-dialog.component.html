@@ -27,5 +27,13 @@
 
 <mat-dialog-actions align="end" class="dialog-actions">
   <button mat-button (click)="onCancel()" i18n>Cancel</button>
-  <button mat-raised-button color="accent" (click)="onSave()" i18n>Save</button>
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="onSave()"
+    cdkFocusInitial
+    i18n
+  >
+    Save
+  </button>
 </mat-dialog-actions>
