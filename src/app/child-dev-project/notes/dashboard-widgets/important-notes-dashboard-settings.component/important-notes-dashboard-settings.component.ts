@@ -1,7 +1,9 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EnumDropdownComponent } from "../../../../core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component";
+import { ConfigurableEnumService } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 export interface ImportantNotesDashboardSettingsConfig {
   warningLevels?: string[];
@@ -23,14 +25,28 @@ export class ImportantNotesDashboardSettingsComponent implements OnInit {
   };
 
   warningLevelsForm = new FormControl([]);
+  private enumService = inject(ConfigurableEnumService);
 
   ngOnInit() {
     this.localConfig = {
       warningLevels: this.formControl.value?.warningLevels ?? [],
     };
-    this.warningLevelsForm.setValue(this.localConfig.warningLevels ?? []);
+
+    // Get all options from the enum service
+    const allOptions: ConfigurableEnumValue[] =
+      this.enumService.getEnum("warning-levels")?.values ?? [];
+
+    // Map stored IDs to option objects for the dropdown
+    const selectedObjects = allOptions.filter((opt) =>
+      (this.localConfig.warningLevels ?? []).includes(opt.id),
+    );
+
+    this.warningLevelsForm.setValue(selectedObjects);
+
     this.warningLevelsForm.valueChanges.subscribe((values) => {
-      this.localConfig.warningLevels = values;
+      // Always store only IDs
+      const ids = (values ?? []).map((v) => (typeof v === "string" ? v : v.id));
+      this.localConfig.warningLevels = ids;
       this.emitConfigChange();
     });
   }
