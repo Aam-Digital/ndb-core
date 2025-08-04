@@ -24,9 +24,9 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 @UntilDestroy()
 export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   private title = inject(Title);
-  private window = inject<Window>(WINDOW_TOKEN);
   private schemaService = inject(EntitySchemaService);
   private enumService = inject(ConfigurableEnumService);
+  readonly window = inject<Window>(WINDOW_TOKEN);
 
   readonly DEFAULT_FAVICON = "favicon.ico";
   readonly SITE_SETTINGS_LOCAL_STORAGE_KEY = Entity.createPrefixedId(
