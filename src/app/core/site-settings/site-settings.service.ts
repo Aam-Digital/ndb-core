@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { SiteSettings } from "./site-settings";
 import { Observable, skipWhile } from "rxjs";
-import { distinctUntilChanged, filter, map, shareReplay } from "rxjs/operators";
+import { distinctUntilChanged, map, shareReplay } from "rxjs/operators";
 import { Title } from "@angular/platform-browser";
 import materialColours from "@aytek/material-color-picker";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
@@ -11,9 +11,8 @@ import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { availableLocales } from "../language/languages";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
-import { LANGUAGE_LOCAL_STORAGE_KEY } from "../language/language-statics";
 import { WINDOW_TOKEN } from "#src/app/utils/di-tokens";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { UntilDestroy } from "@ngneat/until-destroy";
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
@@ -21,7 +20,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 @Injectable({
   providedIn: "root",
 })
-@UntilDestroy()
 export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   private title = inject(Title);
   private schemaService = inject(EntitySchemaService);
@@ -61,28 +59,6 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
     this.initFromLocalStorage();
     this.cacheInLocalStorage();
-
-    //Listen to SiteSettings updates and sync the default language in localStorage
-    this.entityMapper
-      .receiveUpdates(SiteSettings)
-      .pipe(
-        untilDestroyed(this),
-        filter(
-          (update) => update?.entity.getId(true) === SiteSettings.ENTITY_ID,
-        ),
-      )
-      .subscribe((updatedSiteSettings) => {
-        const updatedLanguage =
-          updatedSiteSettings?.entity?.defaultLanguage?.id;
-        const currentLanguage = localStorage.getItem(
-          LANGUAGE_LOCAL_STORAGE_KEY,
-        );
-        if (updatedLanguage !== currentLanguage) {
-          // Override the language in localStorage and reload the app
-          localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, updatedLanguage);
-          this.window.location.reload();
-        }
-      });
   }
 
   /**
