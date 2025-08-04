@@ -46,7 +46,7 @@ describe("LanguageSelectComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should write selected language to local storage and reload page", () => {
+  it("should switch locale", () => {
     component.changeLocale("de");
     expect(mockLanguageService.switchLocale).toHaveBeenCalledWith("de");
   });
