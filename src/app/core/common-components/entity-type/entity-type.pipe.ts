@@ -10,7 +10,7 @@ import { EntityConstructor } from "#src/app/core/entity/model/entity";
   standalone: true,
 })
 export class EntityTypePipe implements PipeTransform {
-  private entityTypes = inject(EntityRegistry);
+  private readonly entityTypes = inject(EntityRegistry);
 
   transform(value: string): EntityConstructor {
     const entity = this.entityTypes.get(value);
