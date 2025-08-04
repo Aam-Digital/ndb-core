@@ -31,6 +31,7 @@ import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entit
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { EntityFieldsMenuComponent } from "#src/app/core/common-components/entity-fields-menu/entity-fields-menu.component";
+import { EntityTypeSelectComponent } from "#src/app/core/entity/entity-type-select/entity-type-select.component";
 
 @Component({
   selector: "app-new-match-action",
@@ -47,6 +48,7 @@ import { EntityFieldsMenuComponent } from "#src/app/core/common-components/entit
     MatOptionModule,
     MatSelectModule,
     EntityFieldsMenuComponent,
+    EntityTypeSelectComponent,
   ],
   templateUrl: "./edit-new-match-action.component.html",
   styleUrl: "./edit-new-match-action.component.scss",

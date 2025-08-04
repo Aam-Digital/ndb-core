@@ -18,19 +18,10 @@
       <div class="flex-row">
         <mat-form-field class="full-width">
           <mat-label i18n>Record created as a match:</mat-label>
-          <mat-select
+          <app-entity-type-select
             formControlName="newEntityType"
-            (selectionChange)="onEntityTypeChange($event.value)"
-          >
-            @for (
-              relatedEntity of availableRelatedEntities;
-              track relatedEntity
-            ) {
-              <mat-option [value]="relatedEntity.entityType">
-                {{ relatedEntity.label }}
-              </mat-option>
-            }
-          </mat-select>
+            (valueChange)="onEntityTypeChange($event)"
+          ></app-entity-type-select>
         </mat-form-field>
       </div>
 
