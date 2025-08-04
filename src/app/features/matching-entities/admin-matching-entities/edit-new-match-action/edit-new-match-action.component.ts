@@ -31,7 +31,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { EntityFieldsMenuComponent } from "#src/app/core/common-components/entity-fields-menu/entity-fields-menu.component";
 
 @Component({
-  selector: "app-edit-matching-view",
+  selector: "app-new-match-action",
   imports: [
     FontAwesomeModule,
     MatFormFieldModule,
@@ -46,22 +46,23 @@ import { EntityFieldsMenuComponent } from "#src/app/core/common-components/entit
     MatSelectModule,
     EntityFieldsMenuComponent,
   ],
-  templateUrl: "./edit-matching-view.component.html",
-  styleUrl: "./edit-matching-view.component.scss",
+  templateUrl: "./edit-new-match-action.component.html",
+  styleUrl: "./edit-new-match-action.component.scss",
 })
-export class EditMatchingViewComponent implements OnInit {
+export class EditNewMatchActionComponent implements OnInit {
   readonly fb = inject(FormBuilder);
   readonly entityRegistry = inject(EntityRegistry);
   readonly dialog = inject(MatDialog);
   readonly entityRelationsService = inject(EntityRelationsService);
 
   @Input() value: NewMatchAction;
+  @Output() valueChange = new EventEmitter<NewMatchAction>();
+
   @Input() leftEntityType: string;
   @Input() rightEntityType: string;
 
-  @Output() valueChange = new EventEmitter<NewMatchAction>();
-
   form: FormGroup;
+
   /**
    * Entities common to both sides, each with its available left/right reference fields.
    */

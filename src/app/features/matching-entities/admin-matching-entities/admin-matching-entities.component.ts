@@ -6,7 +6,7 @@ import {
   MatchingEntitiesConfig,
   MatchingSideConfig,
 } from "#src/app/features/matching-entities/matching-entities/matching-entities-config";
-import { EditMatchingViewComponent } from "./edit-matching-view/edit-matching-view.component";
+import { EditNewMatchActionComponent } from "#src/app/features/matching-entities/admin-matching-entities/edit-new-match-action/edit-new-match-action.component";
 import { Location } from "@angular/common";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { EditMatchingEntitySideComponent } from "./edit-matching-entity-side/edit-matching-entity-side.component";
@@ -21,7 +21,7 @@ import { ColumnConfig } from "../../../core/common-components/entity-form/FormCo
   selector: "app-admin-matching-entities",
   imports: [
     MatButtonModule,
-    EditMatchingViewComponent,
+    EditNewMatchActionComponent,
     EditMatchingEntitySideComponent,
     ViewTitleComponent,
     ViewActionsComponent,
@@ -61,22 +61,6 @@ export class AdminMatchingEntitiesComponent implements OnInit {
   }
 
   /**
-   * Applies updates to the left side configuration from the child component.
-   * @param config - Updated MatchingSideConfig for the left side.
-   */
-  updateLeftSideConfig(config: MatchingSideConfig): void {
-    this.sides.left = config;
-  }
-
-  /**
-   * Applies updates to the right side configuration from the child component.
-   * @param config - Updated MatchingSideConfig for the right side.
-   */
-  updateRightSideConfig(config: MatchingSideConfig): void {
-    this.sides.right = config;
-  }
-
-  /**
    * Save the updated matching entities configuration.
    */
   save(): void {
@@ -100,6 +84,8 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     this.configService.saveConfig(fullConfig).then(() => {
       this.alertService.addInfo($localize`Configuration updated successfully.`);
     });
+
+    this.location.back();
   }
 
   /**

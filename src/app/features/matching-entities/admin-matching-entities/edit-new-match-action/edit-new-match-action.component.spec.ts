@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import {
-  FormGroup,
-  FormControl,
-  ReactiveFormsModule,
   FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
 } from "@angular/forms";
 
-import { EditMatchingViewComponent } from "./edit-matching-view.component";
+import { EditNewMatchActionComponent } from "./edit-new-match-action.component";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EntityFormService } from "#src/app/core/common-components/entity-form/entity-form.service";
 
-describe("EditMatchingViewComponent", () => {
-  let component: EditMatchingViewComponent;
-  let fixture: ComponentFixture<EditMatchingViewComponent>;
+describe("EditNewMatchActionComponent", () => {
+  let component: EditNewMatchActionComponent;
+  let fixture: ComponentFixture<EditNewMatchActionComponent>;
   let mockEntityRelationsService: jasmine.SpyObj<EntityRelationsService>;
   let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
 
@@ -29,7 +29,7 @@ describe("EditMatchingViewComponent", () => {
     ]);
     await TestBed.configureTestingModule({
       imports: [
-        EditMatchingViewComponent,
+        EditNewMatchActionComponent,
         ReactiveFormsModule,
         FontAwesomeTestingModule,
       ],
@@ -44,7 +44,7 @@ describe("EditMatchingViewComponent", () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EditMatchingViewComponent);
+    fixture = TestBed.createComponent(EditNewMatchActionComponent);
     component = fixture.componentInstance;
     component.form = new FormGroup({
       newEntityType: new FormControl(""),

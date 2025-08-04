@@ -19,7 +19,7 @@
       [index]="0"
       [originalSideConfig]="originalConfig.leftSide"
       [allColumns]="originalConfig.columns"
-      (configChange)="updateLeftSideConfig($event)"
+      (configChange)="sides.left = $event"
     ></app-edit-matching-entity-side>
 
     <app-edit-matching-entity-side
@@ -27,16 +27,15 @@
       [index]="1"
       [originalSideConfig]="originalConfig.rightSide"
       [allColumns]="originalConfig.columns"
-      (configChange)="updateRightSideConfig($event)"
+      (configChange)="sides.right = $event"
     ></app-edit-matching-entity-side>
   </div>
 
   <div class="padding-top-regular">
-    <app-edit-matching-view
-      [value]="originalConfig.onMatch"
+    <app-new-match-action
+      [(value)]="originalConfig.onMatch"
       [leftEntityType]="sides.left.entityType"
       [rightEntityType]="sides.right.entityType"
-      (valueChange)="originalConfig.onMatch = $event"
-    ></app-edit-matching-view>
+    ></app-new-match-action>
   </div>
 </div>
