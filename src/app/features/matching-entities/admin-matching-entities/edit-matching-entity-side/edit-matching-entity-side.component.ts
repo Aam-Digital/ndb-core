@@ -62,19 +62,16 @@ export class EditMatchingEntitySideComponent implements OnInit {
       .getEntityTypes()
       .map((ctor) => ctor.value.ENTITY_TYPE);
 
-    // We use setTimeout to add additionalFields only after base fields are loaded
-    setTimeout(() => {
-      this.additionalFields = [
-        { id: "distance", label: "Distance" },
-        {
-          id: "_id",
-          label: $localize`:label for field represented as DisplayEntity block to select in Admin UI:Name (record preview)`,
-          additional: this.sideConfig.entityType,
-          noSorting: true,
-          viewComponent: "DisplayEntity",
-        },
-      ];
-    });
+    this.additionalFields = [
+      { id: "distance", label: "Distance" },
+      {
+        id: "_id",
+        label: $localize`:label for field represented as DisplayEntity block to select in Admin UI:Name (record preview)`,
+        additional: this.sideConfig.entityType,
+        noSorting: true,
+        viewComponent: "DisplayEntity",
+      },
+    ];
 
     this.initFormConfig();
   }
