@@ -12,20 +12,25 @@ import { availableLocales } from "../language/languages";
 import { ConfigurableEnumModule } from "../basic-datatypes/configurable-enum/configurable-enum.module";
 import { EntityAbility } from "../permissions/ability/entity-ability";
 import { CoreTestingModule } from "../../utils/core-testing.module";
-import { FileService } from "#src/app/features/file/file.service";
+import { WINDOW_TOKEN } from "#src/app/utils/di-tokens";
 
 describe("SiteSettingsService", () => {
   let service: SiteSettingsService;
   let entityMapper: MockEntityMapperService;
-  let mockFileService: jasmine.SpyObj<FileService>;
+  let reloadSpy: jasmine.Spy;
 
   beforeEach(waitForAsync(() => {
     localStorage.clear();
-    mockFileService = jasmine.createSpyObj(["loadFile"]);
+    reloadSpy = jasmine.createSpy();
+
+    const mockWindow: Partial<Window> = {
+      localStorage: window.localStorage,
+      location: { reload: reloadSpy } as any,
+    };
     TestBed.configureTestingModule({
       imports: [CoreTestingModule, ConfigurableEnumModule],
       providers: [
-        { provide: FileService, useValue: mockFileService },
+        { provide: WINDOW_TOKEN, useValue: mockWindow },
         ...mockEntityMapperProvider(),
         EntityAbility,
       ],

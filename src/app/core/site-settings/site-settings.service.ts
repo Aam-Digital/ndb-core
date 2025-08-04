@@ -11,7 +11,9 @@ import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { availableLocales } from "../language/languages";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
-import { FileService } from "#src/app/features/file/file.service";
+import { LANGUAGE_LOCAL_STORAGE_KEY } from "../language/language-statics";
+import { WINDOW_TOKEN } from "#src/app/utils/di-tokens";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
@@ -19,9 +21,10 @@ import { FileService } from "#src/app/features/file/file.service";
 @Injectable({
   providedIn: "root",
 })
+@UntilDestroy()
 export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   private title = inject(Title);
-  private fileService = inject(FileService);
+  private window = inject<Window>(WINDOW_TOKEN);
   private schemaService = inject(EntitySchemaService);
   private enumService = inject(ConfigurableEnumService);
 
@@ -39,7 +42,6 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
   constructor() {
     const entityMapper = inject(EntityMapperService);
-
     super(SiteSettings, SiteSettings.ENTITY_ID, entityMapper);
 
     this.init();
@@ -58,6 +60,23 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
     this.initFromLocalStorage();
     this.cacheInLocalStorage();
+
+    //Listen to SiteSettings updates and sync the default language in localStorage
+    this.entityMapper
+      .receiveUpdates(SiteSettings)
+      .pipe(untilDestroyed(this))
+      .subscribe((updatedSiteSettings) => {
+        const updatedLanguage =
+          updatedSiteSettings?.entity?.defaultLanguage?.id;
+        const currentLanguage = localStorage.getItem(
+          LANGUAGE_LOCAL_STORAGE_KEY,
+        );
+        if (updatedLanguage !== currentLanguage) {
+          // Override the language in localStorage and reload the app
+          localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, updatedLanguage);
+          this.window.location.reload();
+        }
+      });
   }
 
   /**
