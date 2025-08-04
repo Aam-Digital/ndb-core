@@ -42,6 +42,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
   constructor() {
     const entityMapper = inject(EntityMapperService);
+
     super(SiteSettings, SiteSettings.ENTITY_ID, entityMapper);
 
     this.init();
