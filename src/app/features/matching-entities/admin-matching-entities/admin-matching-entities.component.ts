@@ -55,7 +55,7 @@ export class AdminMatchingEntitiesComponent implements OnInit {
       0,
     );
     this.sides.right = buildMatchingSideConfig(
-      this.originalConfig.leftSide,
+      this.originalConfig.rightSide,
       this.originalConfig.columns,
       1,
     );

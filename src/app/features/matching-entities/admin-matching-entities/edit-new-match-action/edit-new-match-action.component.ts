@@ -3,8 +3,10 @@ import {
   EventEmitter,
   inject,
   Input,
+  OnChanges,
   OnInit,
   Output,
+  SimpleChanges,
 } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
@@ -49,7 +51,7 @@ import { EntityFieldsMenuComponent } from "#src/app/core/common-components/entit
   templateUrl: "./edit-new-match-action.component.html",
   styleUrl: "./edit-new-match-action.component.scss",
 })
-export class EditNewMatchActionComponent implements OnInit {
+export class EditNewMatchActionComponent implements OnInit, OnChanges {
   readonly fb = inject(FormBuilder);
   readonly entityRegistry = inject(EntityRegistry);
   readonly dialog = inject(MatDialog);
@@ -117,6 +119,15 @@ export class EditNewMatchActionComponent implements OnInit {
           columnsToReview: this.activeFields,
         });
       });
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.leftEntityType || changes.rightEntityType) {
+      this.availableRelatedEntities = this.buildAvailableRelatedEntities(
+        this.leftEntityType,
+        this.rightEntityType,
+      );
     }
   }
 

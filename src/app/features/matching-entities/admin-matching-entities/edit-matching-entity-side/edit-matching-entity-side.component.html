@@ -1,16 +1,11 @@
 <div class="padding-regular">
   <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Select Entity Type</mat-label>
-    <mat-select
+    <app-entity-type-select
       [value]="sideConfig.entityType"
-      (selectionChange)="onEntityTypeChange($event.value)"
+      (valueChange)="onEntityTypeChange($event)"
     >
-      @for (entityType of availableEntityTypes; track entityType) {
-        <mat-option [value]="entityType">
-          {{ entityType }}
-        </mat-option>
-      }
-    </mat-select>
+    </app-entity-type-select>
   </mat-form-field>
 
   <h4 i18n>Available columns</h4>
