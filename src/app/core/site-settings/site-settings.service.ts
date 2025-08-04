@@ -67,7 +67,9 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
       .receiveUpdates(SiteSettings)
       .pipe(
         untilDestroyed(this),
-        filter((update) => update?.entity.getId() === SiteSettings.ENTITY_ID),
+        filter(
+          (update) => update?.entity.getId(true) === SiteSettings.ENTITY_ID,
+        ),
       )
       .subscribe((updatedSiteSettings) => {
         const updatedLanguage =
