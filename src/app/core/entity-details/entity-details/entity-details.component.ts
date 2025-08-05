@@ -26,6 +26,7 @@ import { AbstractEntityDetailsComponent } from "../abstract-entity-details/abstr
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 import { AblePurePipe } from "@casl/angular";
 import { SessionSubject } from "../../session/auth/session-info";
+import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -56,6 +57,7 @@ import { SessionSubject } from "../../session/auth/session-info";
     RouterLink,
     CommonModule,
     ViewActionsComponent,
+    EntityLoadPipe,
   ],
 })
 export class EntityDetailsComponent
