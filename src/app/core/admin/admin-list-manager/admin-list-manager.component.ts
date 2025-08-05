@@ -13,6 +13,7 @@ import { EntityFieldLabelComponent } from "#src/app/core/common-components/entit
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
+
 /**
  * Component for Admin UI to edit table columns or fields in other contexts like filters.
  */

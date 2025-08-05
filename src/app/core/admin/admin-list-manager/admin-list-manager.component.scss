@@ -64,3 +64,12 @@ app-entity-fields-menu {
 .drop-list.cdk-drop-list-dragging .drop-item:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
+
+.full-width-field {
+  width: 100%;
+  display: inline-block;
+
+  ::ng-deep mat-form-field {
+    width: 100% !important;
+  }
+}

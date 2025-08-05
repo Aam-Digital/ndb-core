@@ -1,5 +1,5 @@
 import { FilterConfig } from "../../../core/entity-list/EntityListConfig";
-import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { ColumnConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { DataFilter } from "../../../core/filter/filters/filters";
 
@@ -12,7 +12,7 @@ export interface MatchingEntitiesConfig {
    *
    * e.g. [["name", "name"], ["motherTongue", "language"]]
    */
-  columns?: [string, string][];
+  columns?: [ColumnConfig, ColumnConfig][];
 
   /**
    * Mapped properties which should be displayed in a map (of left and right entity).
@@ -39,7 +39,7 @@ export interface MatchingSideConfig {
   /**
    * entity type of matching, used to load a list of available entities for manual selection
    */
-  entityType?: EntityConstructor | string;
+  entityType?: string;
 
   /** fixed pre-filters applied to remove some entities from the list of available entities */
   prefilter?: DataFilter<Entity>;
