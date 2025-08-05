@@ -24,7 +24,6 @@ export class ImportMetadata extends Entity {
   }
 
   @DatabaseField() config: ImportSettings;
-  @DatabaseField() filename?: string;
 
   /**
    * @deprecated renamed to `createdEntities`
