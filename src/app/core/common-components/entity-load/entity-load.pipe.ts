@@ -10,7 +10,7 @@ import { Entity } from "../../entity/model/entity";
   standalone: true,
 })
 export class EntityLoadPipe implements PipeTransform {
-  private entityMapper = inject(EntityMapperService);
+  private readonly entityMapper = inject(EntityMapperService);
 
   transform(id: string, type: string): Promise<Entity> {
     const entity = this.entityMapper.load(type, id);
