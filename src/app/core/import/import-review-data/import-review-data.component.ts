@@ -64,6 +64,7 @@ export class ImportReviewDataComponent implements OnChanges {
   @Input() columnMapping: ColumnMapping[];
   @Input() additionalActions: AdditionalImportAction[];
   @Input() matchExistingByFields: string[];
+  @Input() filename: string;
 
   entityConstructor: EntityConstructor;
 
@@ -130,6 +131,7 @@ export class ImportReviewDataComponent implements OnChanges {
               columnMapping: this.columnMapping,
               additionalActions: this.additionalActions,
               matchExistingByFields: this.matchExistingByFields,
+              filename: this.filename,
             },
           } as ImportDialogData,
         })
