@@ -2,8 +2,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { LanguageSelectComponent } from "./language-select.component";
 import { RouterTestingModule } from "@angular/router/testing";
-import { LANGUAGE_LOCAL_STORAGE_KEY } from "../language-statics";
-import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { LanguageService } from "../language.service";
 import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { availableLocales } from "../languages";
@@ -20,6 +18,7 @@ describe("LanguageSelectComponent", () => {
     mockLanguageService = jasmine.createSpyObj("LanguageService", [
       "getCurrentLocale",
       "initDefaultLanguage",
+      "switchLocale",
     ]);
     await TestBed.configureTestingModule({
       imports: [
@@ -28,7 +27,6 @@ describe("LanguageSelectComponent", () => {
         FontAwesomeTestingModule,
       ],
       providers: [
-        { provide: LOCATION_TOKEN, useValue: mockLocation },
         { provide: LanguageService, useValue: mockLanguageService },
         {
           provide: ConfigurableEnumService,
@@ -44,17 +42,12 @@ describe("LanguageSelectComponent", () => {
     fixture.detectChanges();
   });
 
-  afterEach(() => {
-    window.localStorage.removeItem(LANGUAGE_LOCAL_STORAGE_KEY);
-  });
-
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should write selected language to local storage and reload page", () => {
+  it("should switch locale", () => {
     component.changeLocale("de");
-    expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe("de");
-    expect(mockLocation.reload).toHaveBeenCalled();
+    expect(mockLanguageService.switchLocale).toHaveBeenCalledWith("de");
   });
 });
