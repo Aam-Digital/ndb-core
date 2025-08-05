@@ -74,6 +74,7 @@
     <app-map
       class="flex-grow"
       [expandable]="true"
+      [showMapOnly]="true"
       [entities]="filteredMapEntities"
       [highlightedEntities]="
         [sideDetails?.[0].selected, sideDetails?.[1].selected] | flattenArray

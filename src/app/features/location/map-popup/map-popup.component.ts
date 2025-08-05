@@ -34,6 +34,12 @@ export interface MapPopupConfig {
    * A single location that is selected and editable.
    */
   selectedLocation?: GeoLocation;
+
+  /**
+   * If true, show a minimal map view with only pins and a close button for selection-only use cases.
+   * Hides the address input, search, and save/cancel buttons.
+   */
+  showMapOnly?: boolean;
 }
 
 /**
@@ -77,12 +83,6 @@ export class MapPopupComponent {
     this.ensureGeoLookupInMarkedLocations();
     this.setDialogCloseBehavior(data);
     this.setHelpText(data);
-  }
-
-  private initMarkedLocations(
-    data: MapPopupConfig,
-  ): BehaviorSubject<GeoResult[]> {
-    return new BehaviorSubject<GeoResult[]>((data.marked as GeoResult[]) ?? []);
   }
 
   private ensureGeoLookupInMarkedLocations() {
