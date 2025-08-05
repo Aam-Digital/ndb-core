@@ -21,6 +21,7 @@ import {
   Injectable,
   Injector,
   ValueProvider,
+  inject,
 } from "@angular/core";
 import { DemoDataGenerator } from "./demo-data-generator";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
@@ -50,14 +51,12 @@ export class DemoDataServiceConfig {
  */
 @Injectable()
 export class DemoDataService {
+  private entityMapper = inject(EntityMapperService);
+  private injector = inject(Injector);
+  private config = inject(DemoDataServiceConfig);
+
   /** All registered demo data generator services */
   readonly dataGenerators: DemoDataGenerator<any>[] = [];
-
-  constructor(
-    private entityMapper: EntityMapperService,
-    private injector: Injector,
-    private config: DemoDataServiceConfig,
-  ) {}
 
   private registerAllProvidedDemoDataGenerators() {
     for (const provider of this.config.dataGeneratorProviders) {

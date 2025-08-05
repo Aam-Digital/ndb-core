@@ -1,60 +1,72 @@
 <h3 i18n>Previous Imports</h3>
 
 <mat-accordion>
-  <mat-expansion-panel
-    *ngFor="let item of previousImports; index as i"
-    [expanded]="i === 0"
-  >
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        {{ item.date | date }}
-      </mat-panel-title>
-
-      <mat-panel-description i18n>
-        {{ item.createdEntities?.length ?? 0 }} new,
-        {{ item.updatedEntities?.length ?? 0 }} updated "{{
-          item.config.entityType | entityTypeLabel
-        }}" records
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-
-    <div i18n>
-      imported by
-      <app-entity-block
-        [entityId]="item.user"
-        [linkDisabled]="true"
-      ></app-entity-block>
-      at {{ item.date | date: "medium" }}
-    </div>
-
-    <div class="flex-row gap-regular margin-top-regular">
-      <div
-        i18n-matTooltip="Tooltip help text for button"
-        matTooltip="Please select a file first"
-        [matTooltipDisabled]="data?.length > 0"
-      >
-        <button
-          [disabled]="!data?.length"
-          (click)="itemSelected.emit(item)"
-          mat-stroked-button
-          color="accent"
-          i18n
-        >
-          Re-use configuration
-        </button>
+  @for (item of previousImports; track item; let i = $index) {
+    <mat-expansion-panel [expanded]="i === 0">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span class="flex-row align-center truncate-text">
+            <fa-icon [icon]="'file-alt'" class="margin-right-small"></fa-icon>
+            {{ item.config?.filename ?? "unknown file name" }}
+          </span>
+        </mat-panel-title>
+        <mat-panel-description i18n>
+          {{ item.createdEntities?.length ?? 0 }} new,
+          {{ item.updatedEntities?.length ?? 0 }} updated "{{
+            item.config.entityType | entityTypeLabel
+          }}" records
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div i18n>
+        imported by
+        <app-entity-block
+          [entityId]="item.user"
+          [linkDisabled]="true"
+        ></app-entity-block>
+        at {{ item.date | date: "medium" }}
       </div>
 
-      <button (click)="undoImport(item)" mat-stroked-button color="warn" i18n>
-        Undo import
-      </button>
-    </div>
-  </mat-expansion-panel>
+      @if (item.config.additionalActions?.length > 0) {
+        <div class="margin-top-regular">
+          <strong i18n>Additional Actions:</strong>
+          <ul>
+            @for (action of item.config.additionalActions; track action) {
+              <li>
+                Link to {{ action.targetType | entityTypeLabel }}:
+                <app-entity-block
+                  [entityId]="action.targetId"
+                  [linkDisabled]="true"
+                ></app-entity-block>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      <div class="flex-row gap-regular margin-top-regular">
+        <div
+          i18n-matTooltip="Tooltip help text for button"
+          matTooltip="Please select a file first"
+          [matTooltipDisabled]="data?.length > 0"
+        >
+          <button
+            [disabled]="!data?.length"
+            (click)="itemSelected.emit(item)"
+            mat-stroked-button
+            color="accent"
+            i18n
+          >
+            Re-use configuration
+          </button>
+        </div>
+        <button (click)="undoImport(item)" mat-stroked-button color="warn" i18n>
+          Undo import
+        </button>
+      </div>
+    </mat-expansion-panel>
+  }
 </mat-accordion>
 
-<div
-  *ngIf="!(previousImports?.length > 0)"
-  class="no-results"
-  i18n="Placeholder text"
->
-  no existing imports
-</div>
+@if (!(previousImports?.length > 0)) {
+  <div class="no-results" i18n="Placeholder text">no existing imports</div>
+}

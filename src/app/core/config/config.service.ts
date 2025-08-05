@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { Config } from "./config";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
@@ -30,7 +30,9 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   configUpdates = this.entityUpdated.pipe(shareReplay(1));
 
-  constructor(entityMapper: EntityMapperService) {
+  constructor() {
+    const entityMapper = inject(EntityMapperService);
+
     super(Config, Config.CONFIG_KEY, entityMapper);
     super.startLoading();
     this.entityUpdated.subscribe(async (config) => {
@@ -456,7 +458,6 @@ const migrateActivitiesOverviewComponent: ConfigMigration = (
           additional: {
             entityType: "RecurringActivity",
             relevantProperty: "linkedGroups",
-            relevantValue: "",
           },
         },
         { id: "assignedTo" },

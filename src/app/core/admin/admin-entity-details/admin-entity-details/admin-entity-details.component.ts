@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, inject } from "@angular/core";
 import {
   EntityDetailsConfig,
   Panel,
@@ -6,7 +6,6 @@ import {
 } from "../../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
-import { NgForOf, NgIf } from "@angular/common";
 import { MatTabsModule } from "@angular/material/tabs";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
@@ -37,17 +36,15 @@ import { WidgetComponentSelectComponent } from "#src/app/core/admin/admin-entity
     AdminEntityFormComponent,
     AdminEntityPanelComponentComponent,
     MatTooltipModule,
-    NgForOf,
-    NgIf,
     AdminTabsComponent,
     AdminTabTemplateDirective,
   ],
 })
 export class AdminEntityDetailsComponent {
+  private dialog = inject(MatDialog);
+
   @Input() entityConstructor: EntityConstructor;
   @Input() config: EntityDetailsConfig;
-
-  constructor(private dialog: MatDialog) {}
 
   newPanelFactory(): Panel {
     return { title: "New Tab", components: [] };

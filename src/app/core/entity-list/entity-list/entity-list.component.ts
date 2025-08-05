@@ -1,12 +1,11 @@
 import {
   Component,
   EventEmitter,
-  inject,
   Input,
   OnChanges,
-  Optional,
   Output,
   SimpleChanges,
+  inject,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
@@ -23,13 +22,7 @@ import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.s
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FilterOverlayComponent } from "../../filter/filter-overlay/filter-overlay.component";
 import { MatDialog } from "@angular/material/dialog";
-import {
-  AsyncPipe,
-  NgForOf,
-  NgIf,
-  NgStyle,
-  NgTemplateOutlet,
-} from "@angular/common";
+import { AsyncPipe, NgStyle, NgTemplateOutlet } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2OnModule } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -67,6 +60,7 @@ import {
 import { AblePurePipe } from "@casl/angular";
 import { BulkMergeService } from "app/features/de-duplication/bulk-merge-service";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
+import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -84,7 +78,6 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
   styleUrls: ["./entity-list.component.scss"],
   providers: [DuplicateRecordService],
   imports: [
-    NgIf,
     NgStyle,
     MatButtonModule,
     Angulartics2OnModule,
@@ -92,7 +85,6 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
     MatMenuModule,
     NgTemplateOutlet,
     MatTabsModule,
-    NgForOf,
     MatFormFieldModule,
     MatInputModule,
     EntitiesTableComponent,
@@ -108,13 +100,26 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
     AsyncPipe,
     AblePurePipe,
     ViewActionsComponent,
-    // WARNING: all imports here also need to be set for components extending EntityList, like ChildrenListComponent
+    EntityLoadPipe,
   ],
 })
 @UntilDestroy()
 export class EntityListComponent<T extends Entity>
   implements EntityListConfig, OnChanges
 {
+  private screenWidthObserver = inject(ScreenWidthObserver);
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+  protected entityMapperService = inject(EntityMapperService);
+  private entities = inject(EntityRegistry);
+  private dialog = inject(MatDialog);
+  private duplicateRecord = inject(DuplicateRecordService);
+  private entityActionsService = inject(EntityActionsService);
+  private entityEditService = inject(EntityEditService);
+  private bulkMergeService = inject(BulkMergeService);
+  private entitySpecialLoader = inject(EntitySpecialLoaderService, {
+    optional: true,
+  });
   private readonly formDialog = inject(FormDialogService);
 
   @Input() allEntities: T[];
@@ -180,19 +185,7 @@ export class EntityListComponent<T extends Entity>
     };
   }
 
-  constructor(
-    private screenWidthObserver: ScreenWidthObserver,
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    protected entityMapperService: EntityMapperService,
-    private entities: EntityRegistry,
-    private dialog: MatDialog,
-    private duplicateRecord: DuplicateRecordService,
-    private entityActionsService: EntityActionsService,
-    private entityEditService: EntityEditService,
-    private bulkMergeService: BulkMergeService,
-    @Optional() private entitySpecialLoader: EntitySpecialLoaderService,
-  ) {
+  constructor() {
     this.screenWidthObserver
       .platform()
       .pipe(untilDestroyed(this))

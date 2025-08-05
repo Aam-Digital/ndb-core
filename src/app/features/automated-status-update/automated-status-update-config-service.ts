@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
@@ -20,6 +20,13 @@ import { DefaultValueConfigUpdatedFromReferencingEntity } from "./default-value-
  */
 @Injectable({ providedIn: "root" })
 export class AutomatedStatusUpdateConfigService {
+  private entityRegistry = inject(EntityRegistry);
+  private entityMapper = inject(EntityMapperService);
+  private dialog = inject(MatDialog);
+  private unsavedChangesService = inject(UnsavedChangesService);
+  private entitySchemaService = inject(EntitySchemaService);
+  private configService = inject(ConfigService);
+
   /**
    * List of entities impacted by automated status updates.
    * For example, if a field in the "Schools" entity is linked to a field in the "Child" entity,
@@ -51,14 +58,7 @@ export class AutomatedStatusUpdateConfigService {
     }[]
   >();
 
-  constructor(
-    private entityRegistry: EntityRegistry,
-    private entityMapper: EntityMapperService,
-    private dialog: MatDialog,
-    private unsavedChangesService: UnsavedChangesService,
-    private entitySchemaService: EntitySchemaService,
-    private configService: ConfigService,
-  ) {
+  constructor() {
     this.configService.configUpdates.subscribe(() =>
       // wait until EntityConfigService has updated the entityRegistry
       setTimeout(() => this.buildDependencyMap()),
@@ -134,18 +134,43 @@ export class AutomatedStatusUpdateConfigService {
    * Applies rules to dependent entities based on changes in the provided entity.
    * Also prompts user confirmation and saves updates if any changes were made.
    * @param entity - The source entity whose changes should trigger updates
+   * @param entityBeforeChanges The state of the entity before changes were applied to identify what has changed
    */
   public async applyRulesToDependentEntities(
     entity: Entity,
-    changedFields: any,
+    entityBeforeChanges: Entity,
   ): Promise<void> {
     const affectedEntities: AffectedEntity[] = [];
-    const changedEntries = Object.entries(changedFields);
-    await this.applyFieldMappings(changedEntries, entity, affectedEntities);
+    const changedFields = this.getChangedFields(entity, entityBeforeChanges);
+    await this.applyFieldMappings(changedFields, entity, affectedEntities);
 
     if (affectedEntities.length > 0) {
       await this.confirmAndSaveAffectedEntities(affectedEntities);
     }
+  }
+
+  /**
+   * Analyze which fields changed during the current editing.
+   * @param newEntity Updated entity after saving
+   * @param originalEntity Entity before changes were applied
+   * @return List of key-value pairs of all changed fields (field ID and new value in that field)
+   * @private
+   */
+  private getChangedFields(
+    newEntity: Entity,
+    originalEntity: Entity,
+  ): [string, any][] {
+    const changedFields: [string, any][] = [];
+
+    for (const [key] of originalEntity.getSchema().entries()) {
+      if (
+        JSON.stringify(originalEntity[key]) !== JSON.stringify(newEntity[key])
+      ) {
+        changedFields.push([key, newEntity[key]]);
+      }
+    }
+
+    return changedFields;
   }
 
   /**

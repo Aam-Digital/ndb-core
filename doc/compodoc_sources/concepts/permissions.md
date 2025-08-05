@@ -1,18 +1,17 @@
 # User Roles and Permissions
 
+User roles and permission rules restrict what components a user can see and what data a user can access and edit.
+These are stored in the backend and are available in the frontend after a successful login.
+
+- Permissions are enforced during database sync by a special backend service, our [replication-backend](https://github.com/Aam-Digital/replication-backend).
+- Permissions (and roles) can also be evaluated in the frontend to disable or hide certain UI elements
+
 ## User Roles
 
-User roles are used to restrict what components a user can see and what data a user can access and edit.
-These roles are stored in the backend and are available in the frontend after a successful login.
-At the moment there are two places, depending on your system setup, where the roles can be defined.
+One or more roles can be assigned to a user account.
+A role is linked to specific permission rules that define access for individual entities (i.e. database documents).
 
-### CouchDB
-
-When using CouchDB as authenticator, then the roles are directly stored on the `org.couchdb.user` document of a user.
-A new role can be added to a user by simply adding the name of the role to the user document.
-After the next login, the role will be available in the frontend.
-
-### Keycloak
+### Roles are assigned in Keycloak
 
 When using Keycloak as an authenticator, the roles are assigned through so called Role-Mappings.
 To assign a new role to a user, this role first has to be created in the realm.
@@ -29,20 +28,16 @@ Users_
 ## Permissions
 
 Aam Digital allows to specify permissions to restrict access of certain user roles to the various entity types.
-Permissions are defined using the [CASL JSON syntax](https://casl.js.org/v5/en/guide/define-rules#the-shape-of-raw-rule)
-.
-The permissions are stored in a [config object](../../classes/Config.html) which is persisted together with other
+Permissions are defined using the [CASL JSON syntax](https://casl.js.org/v5/en/guide/define-rules#the-shape-of-raw-rule).
+The permissions are stored in a [config entity](../../classes/Config.html) `Config:Permissions` which is persisted together with other
 entities in the database.
 
 ### Permission structure
 
-As an example, we will define a permission object which allows users with the role `user_app` _not_ to _create_, _read_
-, _update_ and _delete_ `HealthCheck` entities and _not_ _create_ and _delete_ `School` and `Child` entities.
-Besides that, the role is allowed to do everything.
-A second role `admin_app` is allowed to do everything.
-Additionally, we add a `default` rule which allows each user (independent of role) to read the `Config` entities.
-Default rules are prepended to the rules of any user and allow to configure user-agnostic permissions.
-The default rules can be overwritten in the role-specific rules.
+In the following example, we define roles `user_app` and `admin_app`.
+There are also some permissions for the general `default` role that is automatically applied to all authenticated users.
+
+A user can have multiple roles and the permissions are then combined.
 
 ```JSON
 {
@@ -56,24 +51,27 @@ The default rules can be overwritten in the role-specific rules.
     ],
     "user_app": [
       {
-        "subject": "all",
+        "subject": ["Child", "School"],
         "action": "manage"
       },
       {
-        "subject": "HealthCheck",
+        "subject": "RecurringActivity",
         "action": "manage",
-        "inverted": true
-      },
-      {
-        "subject": [
-          "School",
-          "Child"
-        ],
         "action": [
           "create",
           "delete"
-        ],
-        "inverted": true
+        ]
+      },
+      {
+        "subject": "Note",
+        "action": "manage",
+        "conditions": {
+          "authors": {
+            "$elemMatch": {
+              "$eq": "${user.name}"
+            }
+          }
+        }
       }
     ],
     "admin_app": [
@@ -86,54 +84,68 @@ The default rules can be overwritten in the role-specific rules.
 }
 ```
 
-The `_id` property needs to be exactly as displayed here, as there is only one permission object allowed in a single
-database.
-In `data`, the permissions for each of the user role are defined.
-In this example we have permissions defined for two roles: `user_app` and `admin_app`.
-The permissions for a given role consist of an array of rules.
-
-In case of the `user_app`, we first define that the user is allowed to do everything.
-`subject` refers to the type of entity and `all` is a wildcard, that matches any entity.
-`action` refers to the operation that is allowed or permitted on the given `subject`.
-In this case `manage` is also a wildcard which means _any operation is allowed_.
-So the first rule states _any operation is allowed on any entity_.
-
-The second and third rule for `user_app` restrict this through the `"inverted": true` keyword.
-While the first rule defined what this role is **allowed** to do, when `"inverted": true` is specified, this rule
-defines what the role is **not allowed** to do.
-This allows us to easily take permissions away from a certain role.
-In this case we don't allow users with this role to perform _any_ operation on the `HealhCheck` entity and no _create_
-and _update_ on `Child` and `School` entities.
-Other possible actions are `read` and `update` following the _CRUD_ concept.
-
-The `admin_app` role simpy allows user with this role to do everything, without restrictions.
+- The `_id` property of the doc ("Config:Permissions") needs to be exactly as displayed here, as there is only one permission object allowed in a single database.
+- In `data`, the permissions for each of the user role are defined.
+- The permissions for a given role consist of an array of rules.
+- `subject` refers to the type of entity.
+  - `all` is a wildcard for the subject that matches any entity.
+- `action` refers to the operation that is allowed or permitted on the given subject.
+  - available actions from the CASL library are `create`, `read`, `update`, `delete`
+  - `manage` is also a wildcard for the action which means _any operation is allowed_.
 
 To learn more about how to define rules, have a look at
 the [CASL documentation](https://casl.js.org/v5/en/guide/define-rules#rules).
 
-It is also possible to access information of the user sending the request. E.g.:
+### "Inverted" permission rules (disallowing actions)
+
+It is possible to restrict / remove permissions, instead of adding permissions, through the `"inverted": true` keyword.
+when `"inverted": true` is specified, this rule defines what the role is **not allowed** to do.
+
+Use this with care: When users have multiple roles that overlap, it may not be intuitively clear which permissions apply.
+
+### Conditions in permission rules
+
+Instead of giving permission for all records of a given subject (i.e. entity type)
+you can also apply conditions to narrow this down:
 
 ```json
 {
-  "subject": "org.couchdb.user",
-  "action": "update",
-  "fields": ["password"],
+  "subject": "Note",
+  "action": "manage",
   "conditions": {
-    "name": "${user.name}",
-    "projects": {
-      "$in": "${user.projects}"
-    }
+    "$or": [
+      "authors": {
+        "$elemMatch": {
+          "$eq": "${user.entityId}"
+        }
+      },
+      "assignedProjects": {
+        "$elemMatch": {
+          "$in": "${user.projects}"
+        }
+      },
+      "category": {
+        "$eq": "DISCUSSION"
+      }
+    ]
   }
 }
 ```
 
-This allows users to update the `password` property of their _own_ document in the `_users` database.
-Placeholders can currently access properties that the _replication-backend_ explicitly adds to the auth user object.
-Other available values are `${user.roles}` (array of roles of the user) and `${user.projects}` (the "projects" attribute of the user's entity that is linked to the account through the "exact_username" in Keycloak).
+Conditions follow MongoDB syntax. Refer to [CASL documentation](https://casl.js.org/v6/en/guide/conditions-in-depth) for details.
 
-For more information on how to write rules have a look at the [CASL documentation](https://casl.js.org/v5/en/guide/intro).
+Aam Digital allows you to use certain details of the user entity for such conditions:
 
-### Implementing components with permissions
+- `${user.entityId}` is the entity ID (including prefix) linked to the currently logged in user
+  - this allows to grant access to entities that have explicitly been assigned to a certain user
+- `${user.projects}` is the (array) field with ID `projects` on the entity linked to current user.
+  You can configure this by editing the data structure of the relevant entity type(s).
+  - usually this field is configured as a multi-select entity reference field to allow linking certain "groups" to an individual user.
+    For example: Select schools the user is responsible for and allow the user to see all Note entities that are linked to one of their assigned schools.
+
+---
+
+## Implementing components with permissions
 
 This section is about code using permissions to read and edit **entities**.
 If you want to change the menu items which are shown in the navigation bar have a look at the _views_ section in
@@ -189,28 +201,22 @@ new objects of the `Note` entity.
 In this case a constructor is provided to check for the permissions,
 in other cases it might make more sense to use an instance of an object like `this.ability.can('read', new Note())`.
 
+> WARNING: If you have conditions in your rules, make sure you pass the fully loaded entity and not only the string entity type.
+> Otherwise, conditions for specific properties are ignored.
+
 ### Permissions in production
 
-As permissions cannot directly be created and edited from within the app at the moment, you can use the following steps
-to define permissions for a deployed system:
+Permissions for roles are defined in the CouchDB database in a document `Config:Permissions`.
+Each role must be created in the Keycloak realm also and assigning roles to accounts is managed via Keycloak
+(or in app, which makes API calls to Keycloak for you then).
 
-1. using CouchDB Fauxton GUI to edit database documents directly:
-   Look for or create the document with `"_id": "Config:Permissions"` and define the permissions as described above.
-2. After saving the new permissions document, update the replication backend about the updated permissions:
-   Visit `https://<your-system-domain>/db/api/` to use the OpenAPI interface for this.
-3. There in `Servers` select `/db deployed`.
-4. Click on `Authorize` enter valid user credentials and click `Login`.
-5. Make a request to the `POST /rules/{db}/reload` endpoint, where `{db}` is the active database, e.g. `app`. If
-   successful, the response will show the newly fetched rules.
-6. In case some users might have **gained** access to documents to which they did not have access before,
-   also trigger the `POST /{db}/clear_local` endpoint, where `{db}` again is the active database.
-   The `/{db}/clear_local` endpoint will ensure that each client re-checks whether new objects are available for
-   synchronization.
+1. use CouchDB Fauxton GUI to edit database documents directly or open the JSON in the app: "Admin > Application Configuration: Edit permissions config"
+2. In case some users might have **gained** access to documents to which they did not have access before,
+   the app will automatically make an API call to the replication-backend (`POST /admin/clear_local/{db}`)
+   to ensure that each client re-checks whether new objects are available for synchronization.
    This should also be used in case an existing user has gotten a new, more powerful role.
-   In case a user lost permissions for objects that were already synced, this users local DB will automatically be
+   In case a user lost permissions for objects that were already synced, this user's local DB will automatically be
    destroyed and the user has to synchronize all data again.
-
-The roles assigned to users are specified in the user documents in the `_users` database of CouchDB.
 
 ### Permissions in development
 

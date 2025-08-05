@@ -15,7 +15,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { CommonModule, NgForOf, NgIf } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { EntityActionsMenuComponent } from "../entity-actions-menu/entity-actions-menu.component";
@@ -26,6 +26,7 @@ import { AbstractEntityDetailsComponent } from "../abstract-entity-details/abstr
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 import { AblePurePipe } from "@casl/angular";
 import { SessionSubject } from "../../session/auth/session-info";
+import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -49,8 +50,6 @@ import { SessionSubject } from "../../session/auth/session-info";
     TabStateModule,
     MatTooltipModule,
     MatProgressBarModule,
-    NgIf,
-    NgForOf,
     ViewTitleComponent,
     DynamicComponentDirective,
     EntityActionsMenuComponent,
@@ -58,6 +57,7 @@ import { SessionSubject } from "../../session/auth/session-info";
     RouterLink,
     CommonModule,
     ViewActionsComponent,
+    EntityLoadPipe,
   ],
 })
 export class EntityDetailsComponent

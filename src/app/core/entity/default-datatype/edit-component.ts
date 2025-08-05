@@ -3,7 +3,7 @@ import { FormFieldConfig } from "../../common-components/entity-form/FormConfig"
 import { Entity } from "../model/entity";
 import { Directive, Input, OnChanges, OnInit } from "@angular/core";
 import { DefaultValueConfig } from "../../default-values/default-value-config";
-import { EntityForm } from "app/core/common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 
 /**
  * A simple helper class which sets up all the required information for edit-components.

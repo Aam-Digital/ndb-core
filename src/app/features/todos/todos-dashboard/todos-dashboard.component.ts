@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, inject } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Todo } from "../model/todo";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -24,6 +24,9 @@ import { DashboardWidget } from "../../../core/dashboard/dashboard-widget/dashbo
   ],
 })
 export class TodosDashboardComponent extends DashboardWidget {
+  private formDialog = inject(FormDialogService);
+  private currentUser = inject(CurrentUserSubject);
+
   static override getRequiredEntities() {
     return Todo.ENTITY_TYPE;
   }
@@ -36,13 +39,6 @@ export class TodosDashboardComponent extends DashboardWidget {
   @Input() subtitle: string = $localize`:dashboard widget subtitle:Tasks due`;
   @Input() explanation: string =
     $localize`:dashboard widget explanation:Tasks that are beyond their deadline`;
-
-  constructor(
-    private formDialog: FormDialogService,
-    private currentUser: CurrentUserSubject,
-  ) {
-    super();
-  }
 
   filterEntries = (todo: Todo) => {
     return (

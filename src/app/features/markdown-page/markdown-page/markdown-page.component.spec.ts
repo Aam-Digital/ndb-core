@@ -8,7 +8,6 @@ import { DynamicComponentConfig } from "../../../core/config/dynamic-components/
 import { MarkdownPageModule } from "../markdown-page.module";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 
 describe("MarkdownPageComponent", () => {
   let component: MarkdownPageComponent;
@@ -27,7 +26,10 @@ describe("MarkdownPageComponent", () => {
       imports: [MarkdownPageModule, MarkdownPageComponent],
       providers: [
         { provide: ActivatedRoute, useValue: { data: mockRouteData } },
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        {
+          provide: EntityMapperService,
+          useValue: jasmine.createSpyObj(["load"]),
+        },
         ComponentRegistry,
       ],
     }).compileComponents();

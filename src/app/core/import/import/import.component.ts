@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild } from "@angular/core";
+import { Component, ViewChild, inject } from "@angular/core";
 import { ParsedData } from "../../common-components/input-file/input-file.component";
 import { MatStepper, MatStepperModule } from "@angular/material/stepper";
 import { ColumnMapping } from "../column-mapping";
@@ -8,7 +8,6 @@ import { ImportMetadata, ImportSettings } from "../import-metadata";
 import { AlertService } from "../../alerts/alert.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { NgIf } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
 import { ImportHistoryComponent } from "../import-history/import-history.component";
 import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
@@ -33,7 +32,6 @@ import { ImportMatchExistingComponent } from "../update-existing/import-match-ex
   imports: [
     MatStepperModule,
     FontAwesomeModule,
-    NgIf,
     ImportFileComponent,
     MatCardModule,
     ImportHistoryComponent,
@@ -48,6 +46,12 @@ import { ImportMatchExistingComponent } from "../update-existing/import-match-ex
   ],
 })
 export class ImportComponent {
+  private confirmationDialog = inject(ConfirmationDialogService);
+  private alertService = inject(AlertService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private location = inject<Location>(LOCATION_TOKEN);
+
   rawData: any[];
 
   importSettings: Partial<ImportSettings> = {};
@@ -58,13 +62,7 @@ export class ImportComponent {
   /** calculated for validation on columnMapping changes */
   mappedColumnsCount: number;
 
-  constructor(
-    private confirmationDialog: ConfirmationDialogService,
-    private alertService: AlertService,
-    private route: ActivatedRoute,
-    private router: Router,
-    @Inject(LOCATION_TOKEN) private location: Location,
-  ) {
+  constructor() {
     this.route.queryParamMap.subscribe((params) => {
       if (params.has("entityType")) {
         this.importSettings.entityType = params.get("entityType");
@@ -96,6 +94,7 @@ export class ImportComponent {
 
   onDataLoaded(data: ParsedData) {
     this.rawData = data.data;
+    this.importSettings.filename = data.filename;
 
     if (this.importSettings.columnMapping) {
       this.alertService.addInfo(

@@ -7,6 +7,7 @@ import {
   NgZone,
   Output,
   TemplateRef,
+  inject,
 } from "@angular/core";
 import {
   animate,
@@ -65,7 +66,10 @@ export class TemplateTooltipComponent {
 
   @Output() show = new EventEmitter<void>();
 
-  constructor(zone: NgZone, el: ElementRef<HTMLElement>) {
+  constructor() {
+    const zone = inject(NgZone);
+    const el = inject<ElementRef<HTMLElement>>(ElementRef);
+
     zone.runOutsideAngular(() => {
       el.nativeElement.addEventListener("mouseenter", () => this.show.emit());
       el.nativeElement.addEventListener("mouseleave", (ev) => this.hide.emit());

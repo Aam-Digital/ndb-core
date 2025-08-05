@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -9,7 +9,7 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
-import { KeyValuePipe, NgForOf } from "@angular/common";
+import { KeyValuePipe } from "@angular/common";
 import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
@@ -26,7 +26,6 @@ import { ConfigurableEnumService } from "../../configurable-enum/configurable-en
   styleUrls: ["./discrete-import-config.component.scss"],
   imports: [
     MatDialogModule,
-    NgForOf,
     KeyValuePipe,
     DynamicComponentDirective,
     MatButtonModule,
@@ -34,19 +33,16 @@ import { ConfigurableEnumService } from "../../configurable-enum/configurable-en
   ],
 })
 export class DiscreteImportConfigComponent implements OnInit {
+  data = inject<MappingDialogData>(MAT_DIALOG_DATA);
+  private fb = inject(FormBuilder);
+  private dialog = inject<MatDialogRef<any>>(MatDialogRef);
+  private confirmation = inject(ConfirmationDialogService);
+  private schemaService = inject(EntitySchemaService);
+  private configurableEnumService = inject(ConfigurableEnumService);
+
   form: FormGroup;
   component: string;
   schema: EntitySchemaField;
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA)
-    public data: MappingDialogData,
-    private fb: FormBuilder,
-    private dialog: MatDialogRef<any>,
-    private confirmation: ConfirmationDialogService,
-    private schemaService: EntitySchemaService,
-    private configurableEnumService: ConfigurableEnumService,
-  ) {}
 
   ngOnInit() {
     this.schema = this.data.entityType.schema.get(this.data.col.propertyName);

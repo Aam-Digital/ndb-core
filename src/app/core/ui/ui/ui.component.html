@@ -1,40 +1,43 @@
 <!--
-  ~     This file is part of ndb-core.
-  ~
-  ~     ndb-core is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     (at your option) any later version.
-  ~
-  ~     ndb-core is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
-  -->
+~     This file is part of ndb-core.
+~
+~     ndb-core is free software: you can redistribute it and/or modify
+~     it under the terms of the GNU General Public License as published by
+~     the Free Software Foundation, either version 3 of the License, or
+~     (at your option) any later version.
+~
+~     ndb-core is distributed in the hope that it will be useful,
+~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+~     GNU General Public License for more details.
+~
+~     You should have received a copy of the GNU General Public License
+~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
+-->
 
 <!-- HEADER TOOLBAR -->
 <mat-toolbar color="primary" class="ui-toolbar">
   <!-- Left items -->
   <div class="flex-row align-center">
-    <span *ngIf="(configReady$ | async) && sideNavMode === 'over'">
-      <button mat-icon-button (click)="sideNav.toggle()">
-        <fa-icon class="header-icon" icon="bars"></fa-icon>
-      </button>
-    </span>
+    @if ((configReady$ | async) && sideNavMode === "over") {
+      <span>
+        <button mat-icon-button (click)="sideNav.toggle()">
+          <fa-icon class="header-icon" icon="bars"></fa-icon>
+        </button>
+      </span>
+    }
 
-    <a
-      *ngIf="sideNavMode !== 'over'"
-      [routerLink]="['']"
-      class="header-title"
-      angulartics2On="click"
-      angularticsCategory="Navigation"
-      angularticsAction="navbar_site_title_link"
-    >
-      {{ siteSettings.siteName }}
-    </a>
+    @if (sideNavMode !== "over") {
+      <a
+        [routerLink]="['']"
+        class="header-title"
+        angulartics2On="click"
+        angularticsCategory="Navigation"
+        angularticsAction="navbar_site_title_link"
+      >
+        {{ siteSettings.siteName }}
+      </a>
+    }
   </div>
 
   <!--top right icons and search-->
@@ -58,10 +61,9 @@
 
 <!-- MAIN NAVIGATION + CONTENT -->
 <mat-sidenav-container (backdropClick)="closeSidenavOnMobile()" autosize>
-  @if (isLoggedIn()) {
+  @if ((configReady$ | async) && isLoggedIn()) {
     <mat-sidenav
       #sideNav
-      *ngIf="configReady$ | async"
       [autoFocus]="false"
       [mode]="sideNavMode"
       [fixedInViewport]="true"
@@ -73,26 +75,22 @@
         class="flex-column justify-space-between full-height overflow-y-hidden"
       >
         <div class="toolbar-spacer"></div>
-        <app-display-img
-          *ngIf="siteSettings.logo"
-          [entity]="siteSettings"
-          imgProperty="logo"
-          class="site-logo"
-        ></app-display-img>
+        @if (siteSettings.logo) {
+          <app-display-img
+            [entity]="siteSettings"
+            imgProperty="logo"
+            class="site-logo"
+          ></app-display-img>
+        }
         <app-navigation
           class="overflow-auto-y"
           (click)="closeSidenavOnMobile()"
         ></app-navigation>
-
         <div class="flex-grow"></div>
-
         <div class="flex-column">
           <app-goto-third-party-system></app-goto-third-party-system>
-
           <app-setup-wizard-button></app-setup-wizard-button>
-
           <app-pwa-install></app-pwa-install>
-
           <div class="flex-row">
             <button
               (click)="closeSidenavOnMobile()"
@@ -103,7 +101,6 @@
               <fa-icon icon="user" class="standard-icon-with-text"></fa-icon>
               <span i18n="Navigate to user profile page">Profile</span>
             </button>
-
             <button mat-button (click)="logout()" class="footer-cell width-1-2">
               <fa-icon
                 icon="sign-out-alt"
@@ -112,7 +109,6 @@
               <span i18n="Sign out of the app">Sign out</span>
             </button>
           </div>
-
           <div class="flex-row">
             <button
               mat-icon-button
@@ -141,4 +137,6 @@
   </mat-sidenav-content>
 </mat-sidenav-container>
 
-<app-primary-action *ngIf="showPrimaryAction()"></app-primary-action>
+@if (showPrimaryAction()) {
+  <app-primary-action></app-primary-action>
+}

@@ -18,9 +18,9 @@
 import {
   Component,
   ElementRef,
-  Inject,
   OnInit,
   ViewChild,
+  inject,
 } from "@angular/core";
 import { Changelog } from "../changelog";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
@@ -29,7 +29,7 @@ import { LatestChangesService } from "../latest-changes.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MarkdownModule, MarkdownService } from "ngx-markdown";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DatePipe, NgForOf, NgIf } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MarkedRendererCustom } from "./MarkedRendererCustom";
 
@@ -48,11 +48,13 @@ import { MarkedRendererCustom } from "./MarkedRendererCustom";
     FontAwesomeModule,
     DatePipe,
     MatButtonModule,
-    NgForOf,
-    NgIf,
   ],
 })
 export class ChangelogComponent implements OnInit {
+  data = inject<Observable<Changelog[]>>(MAT_DIALOG_DATA);
+  private latestChangesService = inject(LatestChangesService);
+  private markdownService = inject(MarkdownService);
+
   /** The array of relevant changelog entries to be displayed */
   changelogs: Changelog[];
 
@@ -60,18 +62,6 @@ export class ChangelogComponent implements OnInit {
   showAdvancedDetails = false;
 
   @ViewChild("changelogContainer") contentContainer: ElementRef;
-
-  /**
-   * This component is to be created through a MatDialog that should pass in the relevant data.
-   *
-   * @example
-   * dialog.open(ChangelogComponent, { data: { changelogData: latestChangesService.getChangelogs() } });
-   */
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: Observable<Changelog[]>,
-    private latestChangesService: LatestChangesService,
-    private markdownService: MarkdownService,
-  ) {}
 
   ngOnInit(): void {
     if (isObservable(this.data)) {

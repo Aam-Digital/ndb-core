@@ -1,5 +1,6 @@
 import {
   Component,
+  inject,
   Input,
   OnChanges,
   SimpleChanges,
@@ -15,10 +16,8 @@ import { MatMenuModule } from "@angular/material/menu";
 import { ExportDataDirective } from "../../../core/export/export-data-directive/export-data.directive";
 import { Angulartics2Module } from "angulartics2";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import {
-  EntityForm,
-  EntityFormService,
-} from "../../../core/common-components/entity-form/entity-form.service";
+import { EntityFormService } from "../../../core/common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
 import { MatDialogModule } from "@angular/material/dialog";
 import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
@@ -28,11 +27,6 @@ import { FieldGroup } from "../../../core/entity-details/form/field-group";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 import { AbstractEntityDetailsComponent } from "../../../core/entity-details/abstract-entity-details/abstract-entity-details.component";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
-import { EntityAbility } from "../../../core/permissions/ability/entity-ability";
-import { Router } from "@angular/router";
-import { UnsavedChangesService } from "../../../core/entity-details/form/unsaved-changes.service";
 import { MatProgressBar } from "@angular/material/progress-bar";
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
 
@@ -66,6 +60,9 @@ export class NoteDetailsComponent
   extends AbstractEntityDetailsComponent
   implements OnChanges
 {
+  private configService = inject(ConfigService);
+  private entityFormService = inject(EntityFormService);
+
   @Input() declare entity: Note;
   override entityConstructor = Note;
 
@@ -88,23 +85,11 @@ export class NoteDetailsComponent
   form: EntityForm<Note>;
   tmpEntity: Note;
 
-  constructor(
-    entityMapperService: EntityMapperService,
-    entities: EntityRegistry,
-    ability: EntityAbility,
-    router: Router,
-    unsavedChanges: UnsavedChangesService,
-    private configService: ConfigService,
-    private entityFormService: EntityFormService,
-  ) {
-    super(entityMapperService, entities, ability, router, unsavedChanges);
-
+  override async ngOnChanges(changes: SimpleChanges) {
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note")?.config.exportConfig;
-  }
 
-  override async ngOnChanges(changes: SimpleChanges) {
     await super.ngOnChanges(changes);
 
     await this.initForm();

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { MatButtonModule } from "@angular/material/button";
@@ -25,9 +25,9 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PrimaryActionComponent {
-  noteConstructor = Note;
+  private formDialog = inject(FormDialogService);
 
-  constructor(private formDialog: FormDialogService) {}
+  noteConstructor = Note;
 
   /**
    * The primary action to be triggered when the user clicks the hovering button.

@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { Content, createJSONEditor } from "vanilla-jsoneditor/standalone.js";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
@@ -11,7 +10,7 @@ import { Logging } from "../../logging/logging.service";
 @Component({
   selector: "app-json-editor",
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: "./json-editor.component.html",
   styleUrl: "./json-editor.component.scss",
   providers: [

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import {
   FormBuilder,
@@ -9,7 +9,6 @@ import {
 } from "@angular/forms";
 import { AlertService } from "../../alerts/alert.service";
 import { HttpClient } from "@angular/common/http";
-import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -35,17 +34,20 @@ import { of } from "rxjs";
   templateUrl: "./user-security.component.html",
   styleUrls: ["./user-security.component.scss"],
   imports: [
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    NgForOf,
   ],
 })
 export class UserSecurityComponent implements OnInit {
+  private userAdminService = inject(UserAdminService);
+  private fb = inject(FormBuilder);
+  private alertService = inject(AlertService);
+  private http = inject(HttpClient);
+
   @Input() entity: Entity;
   form: FormGroup;
   availableRoles: Role[] = [];
@@ -53,13 +55,9 @@ export class UserSecurityComponent implements OnInit {
   editing = true;
   userIsPermitted = false;
 
-  constructor(
-    private userAdminService: UserAdminService,
-    sessionInfo: SessionSubject,
-    private fb: FormBuilder,
-    private alertService: AlertService,
-    private http: HttpClient,
-  ) {
+  constructor() {
+    const sessionInfo = inject(SessionSubject);
+
     this.form = this.fb.group({
       userEntityId: [{ value: "", disabled: true }],
       email: ["", [Validators.required, Validators.email]],
@@ -223,12 +221,19 @@ export class UserSecurityComponent implements OnInit {
     return this.form.getRawValue();
   }
 
+  /**
+   * Reset server DB sync state to ensure previously hidden docs are re-synced
+   * after an account has gained more access permissions.
+   *
+   * see https://github.com/Aam-Digital/replication-backend/blob/master/src/admin/admin.controller.ts
+   * @private
+   */
   private triggerSyncReset() {
     // TODO: does this need to be triggered for other CouchDBs as well?
 
     this.http
       .post(
-        `${environment.DB_PROXY_PREFIX}/${Entity.DATABASE}/clear_local`,
+        `${environment.DB_PROXY_PREFIX}/admin/clear_local/${Entity.DATABASE}`,
         undefined,
       )
       .subscribe({

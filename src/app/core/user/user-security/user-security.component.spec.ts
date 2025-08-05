@@ -185,7 +185,8 @@ describe("UserSecurityComponent", () => {
     tick();
 
     expect(mockHttp.post).toHaveBeenCalledWith(
-      `${environment.DB_PROXY_PREFIX}/${Entity.DATABASE}/clear_local`,
+      // see https://github.com/Aam-Digital/replication-backend/blob/master/src/admin/admin.controller.ts
+      `${environment.DB_PROXY_PREFIX}/admin/clear_local/${Entity.DATABASE}`,
       undefined,
     );
     flush();

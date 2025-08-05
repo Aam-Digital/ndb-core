@@ -1,16 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Inject,
+  inject,
   Input,
 } from "@angular/core";
-import { LOCATION_TOKEN } from "../../../utils/di-tokens";
-import {
-  DEFAULT_LANGUAGE,
-  LANGUAGE_LOCAL_STORAGE_KEY,
-} from "../language-statics";
 import { MatSelectModule } from "@angular/material/select";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { LanguageService } from "#src/app/core/language/language.service";
 
 /**
  * Shows a dropdown-menu of available languages
@@ -23,18 +19,17 @@ import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enu
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LanguageSelectComponent {
+  private readonly languageService = inject(LanguageService);
+
   @Input() availableLocales: ConfigurableEnumValue[] = [];
 
   currentLocale: string;
 
-  constructor(@Inject(LOCATION_TOKEN) private location: Location) {
-    this.currentLocale =
-      localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) || DEFAULT_LANGUAGE;
+  constructor() {
+    this.currentLocale = this.languageService.getCurrentLocale();
   }
 
   changeLocale(lang: string) {
-    if (lang === this.currentLocale) return;
-    localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, lang);
-    this.location.reload();
+    this.languageService.switchLocale(lang);
   }
 }

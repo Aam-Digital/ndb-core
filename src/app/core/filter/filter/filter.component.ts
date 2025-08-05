@@ -5,6 +5,7 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  inject,
 } from "@angular/core";
 import { FilterConfig } from "../../entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
@@ -27,6 +28,11 @@ import { MatTooltip } from "@angular/material/tooltip";
   imports: [NgComponentOutlet, FontAwesomeModule, MatButtonModule, MatTooltip],
 })
 export class FilterComponent<T extends Entity = Entity> implements OnChanges {
+  private filterGenerator = inject(FilterGeneratorService);
+  private filterService = inject(FilterService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   /**
    * The filter configuration from the config
    */
@@ -72,12 +78,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   urlPath: string;
   hasActiveFilters: boolean = false;
 
-  constructor(
-    private filterGenerator: FilterGeneratorService,
-    private filterService: FilterService,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {
+  constructor() {
     this.urlPath = getUrlWithoutParams(this.router);
   }
 
@@ -94,6 +95,10 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
           this.filterOptionSelected(filter, event),
         );
       }
+      // Check if there are any active filters which applied by codebase(for example in Todo List)
+      this.hasActiveFilters = this.filterSelections.some(
+        (f) => f.selectedOptionValues?.length > 0,
+      );
 
       this.loadUrlParams();
       this.applyFilterSelections();

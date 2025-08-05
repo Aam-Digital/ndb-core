@@ -80,41 +80,44 @@
   class="view-section"
 ></app-select-report>
 
-<div style="color: gray; padding: 10px" *ngIf="reportCalculation" i18n>
-  This report was calculated at:
-  {{ localTime | date: "dd.MM.yyyy HH:mm" }} <br />
-  Click again on "Calculate" to re-calculate the report including any changes of
-  records since then.
-</div>
-
-<div class="error-message" *ngIf="isError">
-  <h3 class="header" i18n>Something went wrong calculating the report</h3>
-  <div class="content">
-    <p i18n>
-      Please try again. If you continue to see this error, contact the technical
-      support team.
-    </p>
-    <p>Error details:</p>
-    <code>
-      {{ errorDetails | json }}
-    </code>
+@if (reportCalculation) {
+  <div style="color: gray; padding: 10px">
+    <span i18n>This report was calculated at:</span>
+    {{ localTime | date: "dd.MM.yyyy HH:mm" }} <br />
+    <span i18n
+      >Click again on "Calculate" to re-calculate the report including any
+      changes of records since then.</span
+    >
   </div>
-</div>
+}
 
-<app-report-row
-  *ngIf="data?.length > 0 && mode === 'reporting'"
-  [rows]="data"
-></app-report-row>
+@if (isError) {
+  <div class="error-message">
+    <h3 class="header" i18n>Something went wrong calculating the report</h3>
+    <div class="content">
+      <p i18n>
+        Please try again. If you continue to see this error, contact the
+        technical support team.
+      </p>
+      <p>Error details:</p>
+      <code>
+        {{ errorDetails | json }}
+      </code>
+    </div>
+  </div>
+}
 
-<app-object-table
-  *ngIf="
-    data?.length > 0 &&
-    (mode === 'exporting' || (mode === 'sql' && currentReport?.version !== 2))
-  "
-  [objects]="data"
-></app-object-table>
+@if (data?.length > 0 && mode === "reporting") {
+  <app-report-row [rows]="data"></app-report-row>
+}
 
-<app-sql-v2-table
-  *ngIf="data?.length > 0 && mode === 'sql' && currentReport?.version === 2"
-  [reportData]="data"
-></app-sql-v2-table>
+@if (
+  data?.length > 0 &&
+  (mode === "exporting" || (mode === "sql" && currentReport?.version !== 2))
+) {
+  <app-object-table [objects]="data"></app-object-table>
+}
+
+@if (data?.length > 0 && mode === "sql" && currentReport?.version === 2) {
+  <app-sql-v2-table [reportData]="data"></app-sql-v2-table>
+}

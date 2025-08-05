@@ -26,38 +26,45 @@
         }
       </ng-template>
 
-      <ng-container autocompleteFooter *ngIf="currentlyMatchingInactive > 0">
-        <mat-slide-toggle
-          [checked]="includeInactive"
-          (toggleChange)="toggleIncludeInactive()"
-          i18n="Label for checkbox|e.g. include inactive children"
-          >Also show {{ currentlyMatchingInactive }} inactive
-        </mat-slide-toggle>
-      </ng-container>
+      @if (currentlyMatchingInactive > 0) {
+        <ng-container autocompleteFooter>
+          <mat-slide-toggle
+            [checked]="includeInactive"
+            (toggleChange)="toggleIncludeInactive()"
+            i18n="Label for checkbox|e.g. include inactive children"
+            >Also show {{ currentlyMatchingInactive }} inactive
+          </mat-slide-toggle>
+        </ng-container>
+      }
     </app-basic-autocomplete>
     <div class="icon-container">
-      <fa-icon
-        *ngIf="form.enabled"
-        icon="caret-down"
-        class="form-field-icon-suffix"
-        (click)="autocomplete.showAutocomplete()"
-        matIconSuffix
-      ></fa-icon>
+      @if (form.enabled) {
+        <fa-icon
+          icon="caret-down"
+          class="form-field-icon-suffix"
+          (click)="autocomplete.showAutocomplete()"
+          matIconSuffix
+        ></fa-icon>
+      }
     </div>
   </div>
 
-  <mat-hint *ngIf="hasInaccessibleEntities" class="hint">
-    <fa-icon
-      icon="warning"
-      class="standard-icon-with-text warning-icon"
-    ></fa-icon>
-    <span i18n
-      >Some records are hidden because you do not have permission to access them
-      (or they could not be found for other reasons).</span
-    >
-  </mat-hint>
+  @if (hasInaccessibleEntities) {
+    <mat-hint class="hint">
+      <fa-icon
+        icon="warning"
+        class="standard-icon-with-text warning-icon"
+      ></fa-icon>
+      <span i18n
+        >Some records are hidden because you do not have permission to access
+        them (or they could not be found for other reasons).</span
+      >
+    </mat-hint>
+  }
 
-  <mat-error *ngIf="form.errors">
-    <app-error-hint [form]="form"></app-error-hint>
-  </mat-error>
+  @if (form.errors) {
+    <mat-error>
+      <app-error-hint [form]="form"></app-error-hint>
+    </mat-error>
+  }
 </mat-form-field>

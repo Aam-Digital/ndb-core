@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
 import { RouterService } from "../../core/config/dynamic-routing/router.service";
@@ -30,13 +30,13 @@ import { TemplateExportService } from "./template-export-service/template-export
 export class TemplateExportModule {
   static databaseEntities = [TemplateExport];
 
-  constructor(
-    components: ComponentRegistry,
-    routerService: RouterService,
-    adminOverviewService: AdminOverviewService,
-    entityActionsMenuService: EntityActionsMenuService,
-    templateExportService: TemplateExportService,
-  ) {
+  constructor() {
+    const components = inject(ComponentRegistry);
+    const routerService = inject(RouterService);
+    const adminOverviewService = inject(AdminOverviewService);
+    const entityActionsMenuService = inject(EntityActionsMenuService);
+    const templateExportService = inject(TemplateExportService);
+
     components.addAll(dynamicComponents);
     routerService.addRoutes(viewConfigs);
 

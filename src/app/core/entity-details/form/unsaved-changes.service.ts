@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 
 /**
@@ -10,13 +10,15 @@ import { ConfirmationDialogService } from "../../common-components/confirmation-
   providedIn: "root",
 })
 export class UnsavedChangesService {
+  private confirmation = inject(ConfirmationDialogService);
+
   /**
    * Set to true if the user has pending changes that are not yet saved.
    * Set to false once the changes have been saved or discarded.
    */
   pending = false;
 
-  constructor(private confirmation: ConfirmationDialogService) {
+  constructor() {
     // prevent browser navigation if changes are pending
     window.onbeforeunload = (e) => {
       if (this.pending) {

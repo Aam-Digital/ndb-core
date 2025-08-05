@@ -4,7 +4,7 @@ import { EntityCountDashboardComponent } from "./entity-count-dashboard.componen
 
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
@@ -13,7 +13,6 @@ import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { Entity } from "../../../../core/entity/model/entity";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { ConfigurableEnum } from "app/core/basic-datatypes/configurable-enum/configurable-enum";
-import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 
 describe("EntityCountDashboardComponent", () => {
   let component: EntityCountDashboardComponent;
@@ -27,13 +26,9 @@ describe("EntityCountDashboardComponent", () => {
   }
 
   beforeEach(async () => {
-    entityMapper = mockEntityMapper();
     await TestBed.configureTestingModule({
       imports: [EntityCountDashboardComponent, MockedTestingModule.withState()],
-      providers: [
-        { provide: EntityMapperService, useValue: entityMapper },
-        { provide: ConfigurableEnumService, useClass: ConfigurableEnumService },
-      ],
+      providers: [...mockEntityMapperProvider()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EntityCountDashboardComponent);
@@ -43,6 +38,10 @@ describe("EntityCountDashboardComponent", () => {
     component.groupBy = ["category", "other", "ref"];
 
     fixture.detectChanges();
+
+    entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
   });
 
   it("should create", () => {

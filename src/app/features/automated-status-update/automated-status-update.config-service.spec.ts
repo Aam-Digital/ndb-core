@@ -3,7 +3,7 @@ import { AutomatedStatusUpdateConfigService } from "./automated-status-update-co
 import { MatDialog } from "@angular/material/dialog";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
@@ -84,22 +84,10 @@ describe("AutomatedStatusUpdateConfigService", () => {
       "cacheEnum",
     ]);
     enumService.getEnumValues.and.returnValue(TEST_CONFIG);
-    entityMapper = mockEntityMapper();
-
-    mentee = new Mentee();
-    mentee.name = "Mentee A";
-    mentee.status = "open for mentorship";
-    mentee.getSchema();
-
-    mentorship = new Mentorship();
-    mentorship.status = TEST_CONFIG[1];
-    mentorship.mentee = mentee.getId();
-
-    entityMapper.addAll([mentee, mentorship]);
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: EntityMapperService, useValue: entityMapper },
+        ...mockEntityMapperProvider(),
         { provide: MatDialog, useValue: mockDialog },
         {
           provide: EntitySchemaService,
@@ -114,22 +102,41 @@ describe("AutomatedStatusUpdateConfigService", () => {
       ],
     });
     service = TestBed.inject(AutomatedStatusUpdateConfigService);
+
+    entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
+
+    mentee = new Mentee();
+    mentee.name = "Mentee A";
+    mentee.status = "open for mentorship";
+    mentee.getSchema();
+
+    mentorship = new Mentorship();
+    mentorship.status = TEST_CONFIG[1];
+    mentorship.mentee = mentee.getId();
+
+    entityMapper.addAll([mentee, mentorship]);
   });
 
   it("should update mentee status when status of linked mentorship changes", async () => {
+    const originalMentorship = mentorship.copy();
+
     mentorship.status = TEST_CONFIG[1];
     const changedFields = { status: TEST_CONFIG[1] };
-    await service.applyRulesToDependentEntities(mentorship, changedFields);
+    await service.applyRulesToDependentEntities(mentorship, originalMentorship);
 
     const updatedMentee = await entityMapper.load(Mentee, mentee.getId());
     expect(updatedMentee.status).toBe("open for mentorship");
   });
 
   it("should not change mentee status when other field of mentorship changes", async () => {
+    const originalMentorship = mentorship.copy();
+
     mentorship.otherField = "updated value";
     const changedFields = { otherField: "updated value" };
 
-    await service.applyRulesToDependentEntities(mentorship, changedFields);
+    await service.applyRulesToDependentEntities(mentorship, originalMentorship);
 
     const currentMentee = await entityMapper.load(Mentee, mentee.getId());
     expect(currentMentee.status).toBe("open for mentorship");
@@ -146,8 +153,13 @@ describe("AutomatedStatusUpdateConfigService", () => {
     otherMentorship.mentee = otherMentee.getId();
     entityMapper.add(otherMentorship);
 
-    const changedFields = { status: "finished" };
-    await service.applyRulesToDependentEntities(otherMentorship, changedFields);
+    const mentorshipBeforeSave = otherMentorship.copy();
+    mentorshipBeforeSave.status = undefined;
+
+    await service.applyRulesToDependentEntities(
+      otherMentorship,
+      mentorshipBeforeSave,
+    );
 
     const originalMentee = await entityMapper.load(Mentee, mentee.getId());
     expect(originalMentee.status).toBe("open for mentorship");

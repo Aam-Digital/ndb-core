@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
 import { readFile } from "../../../utils/utils";
 import { Papa } from "ngx-papaparse";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -6,7 +6,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { NgIf } from "@angular/common";
 
 /**
  * Form Field to select and parse a file.
@@ -22,10 +21,11 @@ import { NgIf } from "@angular/common";
     ReactiveFormsModule,
     MatButtonModule,
     FontAwesomeModule,
-    NgIf,
   ],
 })
 export class InputFileComponent<T = any> {
+  private papa = inject(Papa);
+
   /** returns parsed data as an object on completing load after user selects a file */
   @Output() fileLoad = new EventEmitter<ParsedData<T>>();
 
@@ -33,8 +33,6 @@ export class InputFileComponent<T = any> {
 
   parsedData: ParsedData<T>;
   formControl = new FormControl();
-
-  constructor(private papa: Papa) {}
 
   async loadFile($event: Event): Promise<void> {
     this.formControl.reset();
@@ -44,7 +42,7 @@ export class InputFileComponent<T = any> {
       this.formControl.setValue(file.name);
 
       const fileContent = await readFile(file);
-      this.parsedData = this.parseContent(fileContent);
+      this.parsedData = this.parseContent(fileContent, file.name);
 
       this.fileLoad.emit(this.parsedData);
     } catch (errors) {
@@ -70,7 +68,7 @@ export class InputFileComponent<T = any> {
     return file;
   }
 
-  private parseContent(fileContent: string) {
+  private parseContent(fileContent: string, filename?: string) {
     let result;
 
     if (this.fileType === "csv") {
@@ -90,7 +88,7 @@ export class InputFileComponent<T = any> {
     if (result.data.length === 0) {
       throw { parsingError: "File has no content" };
     }
-
+    result.filename = filename;
     return result;
   }
 }
@@ -104,4 +102,5 @@ export interface ParsedData<T = any[]> {
 
   /** meta information listing the fields contained in data objects */
   fields?: string[];
+  filename?: string;
 }

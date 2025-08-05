@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit, inject } from "@angular/core";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { Entity } from "../../../core/entity/model/entity";
 import { Coordinates } from "../coordinates";
@@ -43,9 +43,7 @@ export class ViewDistanceComponent
   extends ViewDirective<Geolocation, ViewDistanceConfig>
   implements OnInit
 {
-  constructor(private changeDetector: ChangeDetectorRef) {
-    super();
-  }
+  private changeDetector = inject(ChangeDetectorRef);
 
   distanceFunction = (_entity: Entity) => "-";
 

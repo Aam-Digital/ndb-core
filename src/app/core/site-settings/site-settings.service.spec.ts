@@ -3,7 +3,7 @@ import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 import { SiteSettingsService } from "./site-settings.service";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../entity/entity-mapper/mock-entity-mapper-service";
 import { SiteSettings } from "./site-settings";
@@ -11,8 +11,6 @@ import { Title } from "@angular/platform-browser";
 import { availableLocales } from "../language/languages";
 import { ConfigurableEnumModule } from "../basic-datatypes/configurable-enum/configurable-enum.module";
 import { EntityAbility } from "../permissions/ability/entity-ability";
-import { EntitySchemaService } from "../entity/schema/entity-schema.service";
-import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import { CoreTestingModule } from "../../utils/core-testing.module";
 
 describe("SiteSettingsService", () => {
@@ -21,15 +19,16 @@ describe("SiteSettingsService", () => {
 
   beforeEach(waitForAsync(() => {
     localStorage.clear();
-    entityMapper = mockEntityMapper();
+
     TestBed.configureTestingModule({
       imports: [CoreTestingModule, ConfigurableEnumModule],
-      providers: [
-        { provide: EntityMapperService, useValue: entityMapper },
-        EntityAbility,
-      ],
+      providers: [...mockEntityMapperProvider(), EntityAbility],
     });
     service = TestBed.inject(SiteSettingsService);
+
+    entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
   }));
 
   afterEach(() => {
@@ -120,12 +119,7 @@ describe("SiteSettingsService", () => {
 
     const titleSpy = spyOn(TestBed.inject(Title), "setTitle");
 
-    service = new SiteSettingsService(
-      TestBed.inject(Title),
-      TestBed.inject(EntitySchemaService),
-      TestBed.inject(ConfigurableEnumService),
-      TestBed.inject(EntityMapperService),
-    );
+    service.init();
 
     expect(titleSpy).toHaveBeenCalledWith(settings.siteName);
   }));

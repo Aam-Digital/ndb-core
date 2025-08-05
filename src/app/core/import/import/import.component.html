@@ -8,13 +8,11 @@
     <ng-template matStepLabel>
       <div i18n="Import Step - upload">Select File</div>
 
-      <div
-        *ngIf="step1.completed"
-        class="step-label-extra"
-        i18n="Import Step - upload - sub-label"
-      >
-        {{ rawData?.length }} rows to import
-      </div>
+      @if (step1.completed) {
+        <div class="step-label-extra" i18n="Import Step - upload - sub-label">
+          {{ rawData?.length }} rows to import
+        </div>
+      }
     </ng-template>
 
     <ng-template matStepContent>
@@ -53,13 +51,11 @@
     <ng-template matStepLabel>
       <div i18n="Import Step - import types">Select Import Type(s)</div>
 
-      <div
-        *ngIf="step2.completed"
-        class="step-label-extra"
-        i18n="Import Step - type - sub-label"
-      >
-        as {{ importSettings.entityType | entityTypeLabel }}
-      </div>
+      @if (step2.completed) {
+        <div class="step-label-extra" i18n="Import Step - type - sub-label">
+          as {{ importSettings.entityType | entityTypeLabel }}
+        </div>
+      }
     </ng-template>
 
     <ng-template matStepContent>
@@ -98,13 +94,14 @@
     <ng-template matStepLabel>
       <div i18n="Import Step - map columns">Map Columns</div>
 
-      <div
-        *ngIf="step3.completed"
-        class="step-label-extra"
-        i18n="Import Step - map columns - sub-label"
-      >
-        {{ mappedColumnsCount }} columns selected
-      </div>
+      @if (step3.completed) {
+        <div
+          class="step-label-extra"
+          i18n="Import Step - map columns - sub-label"
+        >
+          {{ mappedColumnsCount }} columns selected
+        </div>
+      }
     </ng-template>
 
     <ng-template matStepContent>
@@ -158,6 +155,7 @@
         [columnMapping]="importSettings.columnMapping"
         [additionalActions]="importSettings.additionalActions"
         [matchExistingByFields]="importSettings.matchExistingByFields"
+        [filename]="importSettings.filename"
         (importComplete)="onImportCompleted()"
       ></app-import-review-data>
     </ng-template>

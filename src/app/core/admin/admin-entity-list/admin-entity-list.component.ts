@@ -1,11 +1,9 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { EntityConstructor } from "../../entity/model/entity";
 import {
   EntityListConfig,
   GroupConfig,
 } from "../../entity-list/EntityListConfig";
-import { ColumnConfig } from "../../common-components/entity-form/FormConfig";
 import { MatTableModule } from "@angular/material/table";
 import { AdminTabsComponent } from "../building-blocks/admin-tabs/admin-tabs.component";
 import { AdminTabTemplateDirective } from "../building-blocks/admin-tabs/admin-tab-template.directive";
@@ -16,7 +14,6 @@ import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manage
 @Component({
   selector: "app-admin-entity-list",
   imports: [
-    CommonModule,
     MatTableModule,
     AdminTabsComponent,
     AdminTabTemplateDirective,
@@ -83,6 +80,16 @@ export class AdminEntityListComponent implements OnChanges {
           (existingFilter) => existingFilter.id === f,
         ) ?? { id: f },
     );
+  }
+
+  updateColumns(columns: string[], group: GroupConfig) {
+    if (!Array.isArray(columns)) {
+      Logging.warn(
+        "AdminEntityListComponent: updateColumns: columns is not an array",
+      );
+      return;
+    }
+    group.columns = columns;
   }
 
   newColumnGroupFactory(): GroupConfig {

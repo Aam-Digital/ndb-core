@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Optional } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
@@ -38,6 +38,14 @@ import { RelatedEntitiesComponentConfig } from "../related-entity-config";
 export class RelatedEntitiesComponent<E extends Entity>
   implements RelatedEntitiesComponentConfig, OnInit
 {
+  protected entityMapper = inject(EntityMapperService);
+  private entityRegistry = inject(EntityRegistry);
+  private screenWidthObserver = inject(ScreenWidthObserver);
+  protected filterService = inject(FilterService);
+  private entitySpecialLoader = inject(EntitySpecialLoaderService, {
+    optional: true,
+  });
+
   /** currently viewed/main entity for which related entities are displayed in this component */
   @Input() entity: Entity;
 
@@ -97,13 +105,7 @@ export class RelatedEntitiesComponent<E extends Entity>
   data: E[];
   protected entityCtr: EntityConstructor<E>;
 
-  constructor(
-    protected entityMapper: EntityMapperService,
-    private entityRegistry: EntityRegistry,
-    private screenWidthObserver: ScreenWidthObserver,
-    protected filterService: FilterService,
-    @Optional() private entitySpecialLoader: EntitySpecialLoaderService,
-  ) {
+  constructor() {
     this.screenWidthObserver
       .shared()
       .pipe(untilDestroyed(this))
@@ -124,8 +126,8 @@ export class RelatedEntitiesComponent<E extends Entity>
 
     // added relatedEntitiesParent (e.g., current RecurringActivity or School) to each column with additional config
     this._columns?.forEach((column) => {
-      if (column.additional) {
-        column.relatedEntitiesParent = this.entity;
+      if (typeof column.additional === "object" && column.additional !== null) {
+        column.additional.relatedEntitiesParent = this.entity;
       }
     });
   }

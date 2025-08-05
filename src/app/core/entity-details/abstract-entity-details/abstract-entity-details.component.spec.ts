@@ -13,7 +13,7 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Component, SimpleChange } from "@angular/core";
-import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 @Component({
@@ -43,7 +43,7 @@ describe("AbstractEntityDetailsComponent", () => {
     TestBed.configureTestingModule({
       imports: [TestEntityDetailsComponent, MockedTestingModule.withState()],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        ...mockEntityMapperProvider(),
         { provide: EntityActionsService, useValue: mockEntityRemoveService },
         { provide: EntityAbility, useValue: mockAbility },
       ],

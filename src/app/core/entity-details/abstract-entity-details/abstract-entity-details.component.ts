@@ -1,4 +1,10 @@
-import { Directive, Input, OnChanges, SimpleChanges } from "@angular/core";
+import {
+  Directive,
+  inject,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from "@angular/core";
 import { Router } from "@angular/router";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -18,6 +24,12 @@ import { Logging } from "../../logging/logging.service";
 @UntilDestroy()
 @Directive()
 export abstract class AbstractEntityDetailsComponent implements OnChanges {
+  protected readonly entityMapperService = inject(EntityMapperService);
+  protected readonly entities = inject(EntityRegistry);
+  protected readonly ability = inject(EntityAbility);
+  protected readonly router = inject(Router);
+  protected readonly unsavedChanges = inject(UnsavedChangesService);
+
   isLoading: boolean;
   private changesSubscription: Subscription;
 
@@ -26,14 +38,6 @@ export abstract class AbstractEntityDetailsComponent implements OnChanges {
 
   @Input() id: string;
   @Input() entity: Entity;
-
-  constructor(
-    private entityMapperService: EntityMapperService,
-    private entities: EntityRegistry,
-    private ability: EntityAbility,
-    private router: Router,
-    protected unsavedChanges: UnsavedChangesService,
-  ) {}
 
   async ngOnChanges(changes: SimpleChanges) {
     if (changes.entityType) {

@@ -7,7 +7,7 @@ import {
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { ConfigService } from "../../../../core/config/config.service";
-import { createTestingConfigService } from "../../../../core/config/testing-config-service";
+import { provideTestingConfigService } from "../../../../core/config/testing-config-service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
@@ -48,7 +48,7 @@ describe("EditProgressDashboardComponent", () => {
           provide: MAT_DIALOG_DATA,
           useValue: mockDialogData,
         },
-        { provide: ConfigService, useValue: createTestingConfigService() },
+        ...provideTestingConfigService(),
         FormBuilder,
       ],
     }).compileComponents();

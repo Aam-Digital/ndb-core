@@ -1,6 +1,6 @@
 import { AbstractControl } from "@angular/forms";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
-import { EntityForm } from "../common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { Entity } from "../entity/model/entity";
 import { Type } from "@angular/core";
 import { DefaultValueHint } from "./default-value-service/default-value.service";

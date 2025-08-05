@@ -1,7 +1,7 @@
 import { DemoChildGenerator } from "./demo-child-generator.service";
 import { DemoSchoolGenerator } from "./demo-school-generator.service";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
 import { faker } from "../../../core/demo-data/faker";
 import { Entity } from "../../../core/entity/model/entity";
@@ -13,6 +13,9 @@ import { Entity } from "../../../core/entity/model/entity";
  */
 @Injectable()
 export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSchoolRelation> {
+  private demoChildren = inject(DemoChildGenerator);
+  private demoSchools = inject(DemoSchoolGenerator);
+
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoChildSchoolRelationGenerator.provider()]`
@@ -24,13 +27,6 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
         useClass: DemoChildSchoolRelationGenerator,
       },
     ];
-  }
-
-  constructor(
-    private demoChildren: DemoChildGenerator,
-    private demoSchools: DemoSchoolGenerator,
-  ) {
-    super();
   }
 
   generateEntities(): ChildSchoolRelation[] {

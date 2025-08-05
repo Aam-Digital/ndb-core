@@ -1,4 +1,4 @@
-import { EntityForm } from "../../common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { Entity } from "../../entity/model/entity";
 import { FormBuilder, FormControl } from "@angular/forms";
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
@@ -9,11 +9,16 @@ import { DynamicPlaceholderValueService } from "../x-dynamic-placeholder/dynamic
 import { InheritedValueService } from "../../../features/default-value-inherited/inherited-value.service";
 import { EventEmitter } from "@angular/core";
 import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
-import { createTestingConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum-testing";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { DefaultValueStrategy } from "../default-value-strategy.interface";
 import { StaticDefaultValueService } from "../x-static/static-default-value.service";
+import { SyncStateSubject } from "app/core/session/session-type";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "app/core/entity/database-entity.decorator";
+import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 
 /**
  * Helper function to add some custom schema fields to Entity for testing.
@@ -118,9 +123,12 @@ describe("DefaultValueService", () => {
           multi: true,
         },
         {
-          provide: ConfigurableEnumService,
-          useValue: createTestingConfigurableEnumService(),
+          provide: EntityRegistry,
+          useValue: entityRegistry,
         },
+        ConfigurableEnumService,
+        SyncStateSubject,
+        EntityAbility,
       ],
     });
     service = TestBed.inject(DefaultValueService);

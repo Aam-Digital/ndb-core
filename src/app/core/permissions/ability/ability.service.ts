@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
@@ -20,15 +20,16 @@ import { map } from "rxjs/operators";
  */
 @Injectable()
 export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
+  private ability = inject(EntityAbility);
+  private sessionInfo = inject(SessionSubject);
+  private currentUser = inject(CurrentUserSubject);
+  private permissionEnforcer = inject(PermissionEnforcerService);
+
   private currentRules: DatabaseRules;
 
-  constructor(
-    private ability: EntityAbility,
-    private sessionInfo: SessionSubject,
-    private currentUser: CurrentUserSubject,
-    private permissionEnforcer: PermissionEnforcerService,
-    entityMapper: EntityMapperService,
-  ) {
+  constructor() {
+    const entityMapper = inject(EntityMapperService);
+
     super(Config, Config.PERMISSION_KEY, entityMapper);
 
     this.entityUpdated.subscribe((config) => (this.currentRules = config.data));

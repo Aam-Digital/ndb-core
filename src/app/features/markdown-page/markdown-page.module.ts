@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { ComponentRegistry } from "../../dynamic-components";
 import { MarkdownModule } from "ngx-markdown";
 import {
@@ -38,9 +38,11 @@ import { MarkdownContent } from "./markdown-content";
   providers: [provideHttpClient(withInterceptorsFromDi())],
 })
 export class MarkdownPageModule {
+  private components = inject(ComponentRegistry);
+
   static databaseEntities = [MarkdownContent];
 
-  constructor(private components: ComponentRegistry) {
+  constructor() {
     this.registerComponents();
   }
 

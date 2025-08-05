@@ -16,7 +16,7 @@
  */
 
 import { Entity } from "../model/entity";
-import { Injectable, Injector } from "@angular/core";
+import { inject, Injectable, Injector } from "@angular/core";
 import { EntitySchema } from "./entity-schema";
 import { EntitySchemaField } from "./entity-schema-field";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
@@ -43,7 +43,7 @@ export class EntitySchemaService {
 
   private defaultDatatype: DefaultDatatype = new DefaultDatatype();
 
-  constructor(private injector: Injector) {}
+  private injector = inject(Injector);
 
   /**
    * Get the datatype for the giving name (or the default datatype if no other registered type fits)

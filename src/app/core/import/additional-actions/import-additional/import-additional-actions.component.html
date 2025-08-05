@@ -21,43 +21,49 @@
   <!-- Existing additional actions -->
   <div>
     <mat-list>
-      <mat-list-item *ngFor="let action of importActions">
-        <fa-icon
-          icon="xmark"
-          matListItemIcon
-          (click)="removeAction(action)"
-          matTooltip="Remove"
-          i18n-matTooltip
-          class="existing-action-remove"
-        ></fa-icon>
-        <div matListItemTitle i18n>
-          Link all imported records to {{ action.targetType | entityTypeLabel }}
-        </div>
-        <div matListItemLine>
-          <app-entity-block
-            [entityId]="action.targetId"
-            [linkDisabled]="true"
-          ></app-entity-block>
-        </div>
-      </mat-list-item>
+      @for (action of importActions; track action) {
+        <mat-list-item>
+          <fa-icon
+            icon="xmark"
+            matListItemIcon
+            (click)="removeAction(action)"
+            matTooltip="Remove"
+            i18n-matTooltip
+            class="existing-action-remove"
+          ></fa-icon>
+          <div matListItemTitle i18n>
+            Link all imported records to
+            {{ action.targetType | entityTypeLabel }}
+          </div>
+          <div matListItemLine>
+            <app-entity-block
+              [entityId]="action.targetId"
+              [linkDisabled]="true"
+            ></app-entity-block>
+          </div>
+        </mat-list-item>
+      }
     </mat-list>
 
-    <div
-      *ngIf="!(importActions?.length > 0)"
-      class="no-actions margin-bottom-large"
-      i18n="import additional actions"
-    >
-      no additional actions selected
-    </div>
+    @if (!(importActions?.length > 0)) {
+      <div
+        class="no-actions margin-bottom-large"
+        i18n="import additional actions"
+      >
+        no additional actions selected
+      </div>
+    }
   </div>
 
   <!-- Create new additional action -->
   @if (availableImportActions?.length > 0) {
     <form [formGroup]="linkEntityForm">
       <div>
-        <mat-error *ngIf="linkEntityForm.disabled" i18n>
-          Select an Import Target Type before defining additional actions.
-        </mat-error>
+        @if (linkEntityForm.disabled) {
+          <mat-error i18n>
+            Select an Import Target Type before defining additional actions.
+          </mat-error>
+        }
       </div>
 
       <div class="flex-row gap-regular">

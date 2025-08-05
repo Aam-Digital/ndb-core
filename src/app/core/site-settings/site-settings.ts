@@ -1,7 +1,7 @@
 import { Entity } from "../entity/model/entity";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
-import { availableLocales, LOCALE_ENUM_ID } from "../language/languages";
+import { LOCALE_ENUM_ID } from "../language/languages";
 import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/configurable-enum.types";
 
 /**
@@ -27,9 +27,7 @@ export class SiteSettings extends Entity {
     dataType: "configurable-enum",
     additional: LOCALE_ENUM_ID,
   })
-  defaultLanguage: ConfigurableEnumValue = availableLocales.values.find(
-    ({ id }) => id === "en-US",
-  );
+  defaultLanguage: ConfigurableEnumValue;
 
   @DatabaseField({
     label: $localize`Display language select`,

@@ -85,7 +85,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
    */
   override init(dbName?: string | null, remoteDbName?: string) {
     if (dbName === null) {
-      this.remoteDatabase.init();
+      this.remoteDatabase.init(null, true);
       // use the remote database as internal database driver
       this.pouchDB = this.remoteDatabase.getPouchDB();
       this.databaseInitialized.complete();

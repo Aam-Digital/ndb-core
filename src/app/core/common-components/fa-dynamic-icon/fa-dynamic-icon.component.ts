@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  inject,
+} from "@angular/core";
 import { IconName, IconPrefix } from "@fortawesome/fontawesome-svg-core";
 import {
   faCalendarAlt,
@@ -14,7 +19,6 @@ import {
   IconDefinition,
 } from "@fortawesome/angular-fontawesome";
 import { Logging } from "../../logging/logging.service";
-import { NgIf } from "@angular/common";
 
 /**
  * A map to prevent old configs to be broken
@@ -35,11 +39,15 @@ const iconAliases = new Map<string, IconDefinition>([
  */
 @Component({
   selector: "app-fa-dynamic-icon",
-  template: ` <fa-icon *ngIf="_icon" [icon]="_icon"></fa-icon>`,
-  imports: [FontAwesomeModule, NgIf],
+  template: ` @if (_icon) {
+    <fa-icon [icon]="_icon"></fa-icon>
+  }`,
+  imports: [FontAwesomeModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FaDynamicIconComponent {
+  private iconLibrary = inject(FaIconLibrary);
+
   /** The fallback icon if the given icon is neither known (inside the internal map)
    * nor registered as a font-awesome icon
    */
@@ -98,6 +106,4 @@ export class FaDynamicIconComponent {
    * The font-awesome internal icon definition
    */
   _icon: IconDefinition;
-
-  constructor(private iconLibrary: FaIconLibrary) {}
 }

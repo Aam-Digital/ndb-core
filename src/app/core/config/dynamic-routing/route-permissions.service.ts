@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { EntityPermissionGuard } from "../../permissions/permission-guard/entity-permission.guard";
 import { MenuItem } from "../../ui/navigation/menu-item";
@@ -10,10 +10,8 @@ import { MenuItem } from "../../ui/navigation/menu-item";
   providedIn: "root",
 })
 export class RoutePermissionsService {
-  constructor(
-    private roleGuard: UserRoleGuard,
-    private permissionGuard: EntityPermissionGuard,
-  ) {}
+  private roleGuard = inject(UserRoleGuard);
+  private permissionGuard = inject(EntityPermissionGuard);
 
   /**
    * Filters menu items based on the route and entity permissions on the link.

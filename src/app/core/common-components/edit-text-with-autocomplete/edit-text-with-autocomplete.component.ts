@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { EditComponent } from "../../entity/default-datatype/edit-component";
 import { Entity } from "../../entity/model/entity";
 import { BehaviorSubject } from "rxjs";
@@ -9,7 +9,7 @@ import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-d
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -48,8 +48,6 @@ import { ErrorHintComponent } from "../error-hint/error-hint.component";
     MatAutocompleteModule,
     AsyncPipe,
     EntityBlockComponent,
-    NgForOf,
-    NgIf,
     FontAwesomeModule,
     MatTooltipModule,
     ErrorHintComponent,
@@ -59,6 +57,9 @@ export class EditTextWithAutocompleteComponent
   extends EditComponent<string>
   implements OnInit
 {
+  private entityMapperService = inject(EntityMapperService);
+  private confirmationDialog = inject(ConfirmationDialogService);
+
   /**
    * Config passed using component
    */
@@ -68,15 +69,25 @@ export class EditTextWithAutocompleteComponent
      * This should be the same type as for which the form was created.
      */
     entityType: string;
+
     /**
      * (optional) a property which should be filled with certain value, if an entity is selected.
      */
     relevantProperty?: string;
+
     /**
+     * @deprecated use `relatedEntitiesParent` instead.
+     *
      * (optional) required if `relevantProperty` is set.
      * The value to be filled in `selectedEntity[relevantProperty]`.
      */
     relevantValue?: string;
+
+    /**
+     * Reference to the "parent" entity within which this is listed as a related entity.
+     * (automatically assigned by RelatedEntitiesComponent)
+     */
+    relatedEntitiesParent?: Entity;
   };
 
   entities: Entity[] = [];
@@ -87,13 +98,6 @@ export class EditTextWithAutocompleteComponent
   autocompleteDisabled = true;
   lastValue = "";
   addedFormControls = [];
-
-  constructor(
-    private entityMapperService: EntityMapperService,
-    private confirmationDialog: ConfirmationDialogService,
-  ) {
-    super();
-  }
 
   keyup() {
     this.lastValue = this.formControl.value;
@@ -166,7 +170,7 @@ export class EditTextWithAutocompleteComponent
   private addRelevantValueToRelevantProperty(selected: Entity) {
     const relevantValue =
       this.additional.relevantValue ??
-      this.formFieldConfig?.relatedEntitiesParent?.getId();
+      this.additional?.relatedEntitiesParent?.getId();
 
     if (
       this.additional.relevantProperty &&

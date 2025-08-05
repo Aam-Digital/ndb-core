@@ -1,88 +1,92 @@
 <!-- Desktop version -->
-<div *ngIf="isDesktop">
-  <!-- Header bar; contains the title on the left and controls on the right -->
-  <app-view-title [ngStyle]="offsetFilterStyle">
-    {{ title }}
-  </app-view-title>
-
-  <app-view-actions>
-    <div class="flex-row gap-regular">
-      <app-entity-create-button
-        [entityType]="entityConstructor"
-        (entityCreate)="addNew($event)"
-      ></app-entity-create-button>
-
-      <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
-        <fa-icon icon="ellipsis-v"></fa-icon>
-      </button>
+@if (isDesktop) {
+  <div>
+    <!-- Header bar; contains the title on the left and controls on the right -->
+    <app-view-title [ngStyle]="offsetFilterStyle">
+      {{ title }}
+    </app-view-title>
+    <app-view-actions>
+      <div class="flex-row gap-regular">
+        <app-entity-create-button
+          [entityType]="entityConstructor"
+          (entityCreate)="addNew()"
+        ></app-entity-create-button>
+        <button
+          mat-icon-button
+          color="primary"
+          [matMenuTriggerFor]="additional"
+        >
+          <fa-icon icon="ellipsis-v"></fa-icon>
+        </button>
+      </div>
+    </app-view-actions>
+    <!-- Filters -->
+    <div class="flex-row gap-regular flex-wrap">
+      <div *ngTemplateOutlet="filterDialog"></div>
+      @if (!!allEntities) {
+        <app-filter
+          class="flex-row gap-regular flex-wrap"
+          [filterConfig]="filters"
+          [entityType]="entityConstructor"
+          [entities]="allEntities"
+          [useUrlQueryParams]="true"
+          [(filterObj)]="filterObj"
+          [filterString]="filterString"
+          (filterStringChange)="filterString = $event; applyFilter($event)"
+        ></app-filter>
+      }
     </div>
-  </app-view-actions>
-
-  <!-- Filters -->
-
-  <div class="flex-row gap-regular flex-wrap">
-    <div *ngTemplateOutlet="filterDialog"></div>
-    <app-filter
-      *ngIf="!!allEntities"
-      class="flex-row gap-regular flex-wrap"
-      [filterConfig]="filters"
-      [entityType]="entityConstructor"
-      [entities]="allEntities"
-      [useUrlQueryParams]="true"
-      [(filterObj)]="filterObj"
-      [filterString]="filterString"
-      (filterStringChange)="filterString = $event; applyFilter($event)"
-    ></app-filter>
+    <!-- Bulk Actions -->
+    <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
+    <!-- Tab Groups-->
+    <div class="mat-elevation-z1">
+      @if (groups.length > 1) {
+        <div>
+          <mat-tab-group
+            [(selectedIndex)]="selectedColumnGroupIndex"
+            appTabStateMemo
+          >
+            @for (item of groups; track item) {
+              <mat-tab
+                [label]="item.name"
+                angulartics2On="click"
+                [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
+                angularticsAction="list_column_view"
+                [angularticsLabel]="item.name"
+              ></mat-tab>
+            }
+          </mat-tab-group>
+        </div>
+      }
+      <ng-container *ngTemplateOutlet="subrecord"></ng-container>
+    </div>
   </div>
-
-  <!-- Bulk Actions -->
-
-  <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
-
-  <!-- Tab Groups-->
-
-  <div class="mat-elevation-z1">
-    <div *ngIf="groups.length > 1">
-      <mat-tab-group
-        [(selectedIndex)]="selectedColumnGroupIndex"
-        appTabStateMemo
-      >
-        <mat-tab
-          *ngFor="let item of groups"
-          [label]="item.name"
-          angulartics2On="click"
-          [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
-          angularticsAction="list_column_view"
-          [angularticsLabel]="item.name"
-        ></mat-tab>
-      </mat-tab-group>
-    </div>
+} @else {
+  <!-- Mobile version -->
+  <div>
+    <app-view-title [disableBackButton]="true">
+      <h2>{{ title }}</h2>
+    </app-view-title>
+    <app-view-actions>
+      <div class="flex-row full-width">
+        <div *ngTemplateOutlet="filterDialog"></div>
+        <button
+          mat-icon-button
+          color="primary"
+          [matMenuTriggerFor]="additional"
+        >
+          <fa-icon icon="ellipsis-v"></fa-icon>
+        </button>
+      </div>
+    </app-view-actions>
+    @if (selectedRows) {
+      <div class="bulk-action-spacing">
+        <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
+      </div>
+    }
     <ng-container *ngTemplateOutlet="subrecord"></ng-container>
   </div>
-</div>
-
-<!-- Mobile Version -->
-<div *ngIf="!isDesktop">
-  <app-view-title [disableBackButton]="true">
-    <h2>{{ title }}</h2>
-  </app-view-title>
-
-  <app-view-actions>
-    <div class="flex-row full-width">
-      <div *ngTemplateOutlet="filterDialog"></div>
-
-      <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
-        <fa-icon icon="ellipsis-v"></fa-icon>
-      </button>
-    </div>
-  </app-view-actions>
-
-  <div *ngIf="selectedRows" class="bulk-action-spacing">
-    <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
-  </div>
-
-  <ng-container *ngTemplateOutlet="subrecord"></ng-container>
-</div>
+}
 
 <!-- Templates and menus for both mobile and desktop -->
 
@@ -100,15 +104,16 @@
       (ngModelChange)="applyFilter($event)"
       [(ngModel)]="filterString"
     />
-    <button
-      mat-icon-button
-      *ngIf="filterString"
-      matIconSuffix
-      aria-label="Clear"
-      (click)="filterString = ''; applyFilter('')"
-    >
-      <fa-icon icon="times"></fa-icon>
-    </button>
+    @if (filterString) {
+      <button
+        mat-icon-button
+        matIconSuffix
+        aria-label="Clear"
+        (click)="filterString = ''; applyFilter('')"
+      >
+        <fa-icon icon="times"></fa-icon>
+      </button>
+    }
   </mat-form-field>
 </ng-template>
 
@@ -232,108 +237,108 @@
     <span i18n> Bulk Actions </span>
   </button>
 
-  <button
-    mat-menu-item
-    [routerLink]="['/admin/entity', entityConstructor.ENTITY_TYPE]"
-    [queryParams]="{ mode: 'list' }"
-    queryParamsHandling="merge"
-    *ngIf="
-      ('update' | ablePure: 'Config' | async) &&
-      !entityConstructor.isInternalEntity
-    "
-  >
-    <fa-icon
-      class="standard-icon-with-text color-accent"
-      icon="tools"
-    ></fa-icon>
-    <span i18n>Edit Data Structure</span>
-  </button>
+  @if (
+    ("update"
+      | ablePure: ("CONFIG_ENTITY" | entityLoad: "Config" | async)
+      | async) && !entityConstructor.isInternalEntity
+  ) {
+    <button
+      mat-menu-item
+      [routerLink]="['/admin/entity', entityConstructor.ENTITY_TYPE]"
+      [queryParams]="{ mode: 'list' }"
+      queryParamsHandling="merge"
+    >
+      <fa-icon
+        class="standard-icon-with-text color-accent"
+        icon="tools"
+      ></fa-icon>
+      <span i18n>Edit Data Structure</span>
+    </button>
+  }
 
   <ng-content select="[mat-menu-item]"></ng-content>
 </mat-menu>
 
 <ng-template #bulkActions>
-  <div *ngIf="!!selectedRows" class="bulk-action-button">
-    <div i18n>
-      Actions on <b>{{ selectedRows.length }}</b> selected records:
-    </div>
-
-    <div
-      class="flex-row gap-small bulk-action-button"
-      matTooltip="Select rows for an action on multiple records"
-      i18n-matTooltip
-    >
-      <button
-        mat-raised-button
-        (click)="editRecords()"
-        [disabled]="selectedRows.length === 0"
-        color="accent"
-        i18n="bulk action button"
+  @if (!!selectedRows) {
+    <div class="bulk-action-button">
+      <div i18n>
+        Actions on <b>{{ selectedRows.length }}</b> selected records:
+      </div>
+      <div
+        class="flex-row gap-small bulk-action-button"
+        matTooltip="Select rows for an action on multiple records"
+        i18n-matTooltip
       >
-        Bulk Edit
-      </button>
-      <button
-        mat-raised-button
-        (click)="archiveRecords()"
-        [disabled]="selectedRows.length === 0"
-        color="accent"
-        i18n="bulk action button"
-      >
-        Archive
-      </button>
-      @if (entityConstructor.hasPII) {
         <button
           mat-raised-button
-          (click)="anonymizeRecords()"
+          (click)="editRecords()"
           [disabled]="selectedRows.length === 0"
           color="accent"
           i18n="bulk action button"
         >
-          Anonymize
+          Bulk Edit
         </button>
-      }
-      <button
-        mat-raised-button
-        (click)="deleteRecords()"
-        [disabled]="selectedRows.length === 0"
-        color="accent"
-        i18n="bulk action button"
-      >
-        Delete
-      </button>
-      <button
-        mat-raised-button
-        (click)="duplicateRecords()"
-        [disabled]="selectedRows.length === 0"
-        color="accent"
-        i18n="bulk action button"
-      >
-        Duplicate
-      </button>
-
-      <button
-        mat-raised-button
-        (click)="linkExternalProfiles()"
-        [disabled]="selectedRows.length === 0"
-        color="accent"
-        i18n="bulk action button"
-      >
-        Link External Profile
-      </button>
-
-      <button
-        mat-raised-button
-        (click)="mergeRecords()"
-        [disabled]="selectedRows.length !== 2"
-        color="accent"
-        i18n="bulk action button"
-      >
-        Merge
-      </button>
-
-      <button mat-raised-button (click)="selectedRows = undefined" i18n>
-        Cancel
-      </button>
+        <button
+          mat-raised-button
+          (click)="archiveRecords()"
+          [disabled]="selectedRows.length === 0"
+          color="accent"
+          i18n="bulk action button"
+        >
+          Archive
+        </button>
+        @if (entityConstructor.hasPII) {
+          <button
+            mat-raised-button
+            (click)="anonymizeRecords()"
+            [disabled]="selectedRows.length === 0"
+            color="accent"
+            i18n="bulk action button"
+          >
+            Anonymize
+          </button>
+        }
+        <button
+          mat-raised-button
+          (click)="deleteRecords()"
+          [disabled]="selectedRows.length === 0"
+          color="accent"
+          i18n="bulk action button"
+        >
+          Delete
+        </button>
+        <button
+          mat-raised-button
+          (click)="duplicateRecords()"
+          [disabled]="selectedRows.length === 0"
+          color="accent"
+          i18n="bulk action button"
+        >
+          Duplicate
+        </button>
+        <button
+          mat-raised-button
+          (click)="linkExternalProfiles()"
+          [disabled]="selectedRows.length === 0"
+          color="accent"
+          i18n="bulk action button"
+        >
+          Link External Profile
+        </button>
+        <button
+          mat-raised-button
+          (click)="mergeRecords()"
+          [disabled]="selectedRows.length !== 2"
+          color="accent"
+          i18n="bulk action button"
+        >
+          Merge
+        </button>
+        <button mat-raised-button (click)="selectedRows = undefined" i18n>
+          Cancel
+        </button>
+      </div>
     </div>
-  </div>
+  }
 </ng-template>

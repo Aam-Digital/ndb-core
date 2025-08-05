@@ -1,7 +1,12 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { MatSelectModule } from "@angular/material/select";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { NgIf } from "@angular/common";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { ConfigurableEnumService } from "../configurable-enum.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
@@ -27,7 +32,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   imports: [
     MatSelectModule,
     ReactiveFormsModule,
-    NgIf,
     BasicAutocompleteComponent,
     FontAwesomeModule,
     ErrorHintComponent,
@@ -36,6 +40,12 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   ],
 })
 export class EnumDropdownComponent implements OnChanges {
+  private enumService = inject(ConfigurableEnumService);
+  private entityMapper = inject(EntityMapperService);
+  private ability = inject(EntityAbility);
+  private dialog = inject(MatDialog);
+  private confirmation = inject(ConfirmationDialogService);
+
   @Input() form: FormControl; // cannot be named "formControl" - otherwise the angular directive grabs this
   @Input() label: string;
   @Input() enumId: string;
@@ -48,14 +58,6 @@ export class EnumDropdownComponent implements OnChanges {
   canEdit = false;
   enumValueToString = (v: ConfigurableEnumValue) => v?.label;
   createNewOption: (input: string) => Promise<ConfigurableEnumValue>;
-
-  constructor(
-    private enumService: ConfigurableEnumService,
-    private entityMapper: EntityMapperService,
-    private ability: EntityAbility,
-    private dialog: MatDialog,
-    private confirmation: ConfirmationDialogService,
-  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("enumId")) {

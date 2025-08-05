@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { PublicFormConfig } from "./public-form-config";
 import { Entity } from "app/core/entity/model/entity";
@@ -9,11 +9,9 @@ import { EntityActionsMenuService } from "app/core/entity-details/entity-actions
   providedIn: "root",
 })
 export class PublicFormsService {
-  constructor(
-    private entityMapper: EntityMapperService,
-    private alertService: AlertService,
-    private entityActionsMenuService: EntityActionsMenuService,
-  ) {}
+  private entityMapper = inject(EntityMapperService);
+  private alertService = inject(AlertService);
+  private entityActionsMenuService = inject(EntityActionsMenuService);
 
   /**
    * Initializes and registers custom form actions for entities.
@@ -39,8 +37,8 @@ export class PublicFormsService {
             this.copyPublicFormLinkFromConfig(entity, config),
           permission: "read",
           icon: "link",
-          label: `Copy Custom Form (${config.title})`,
-          tooltip: `Copy link to public form "${config.title}" that will connect submissions to this individual record.`,
+          label: $localize`Copy Custom Form (${config.title})`,
+          tooltip: $localize`Copy link to public form "${config.title}" that will connect submissions to this individual record.`,
           visible: (entity) =>
             this.getMatchingPublicFormConfigs(config, entity),
         },
