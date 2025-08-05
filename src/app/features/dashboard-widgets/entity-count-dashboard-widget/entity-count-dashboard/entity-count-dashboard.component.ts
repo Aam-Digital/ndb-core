@@ -23,6 +23,7 @@ import { MatIconButton } from "@angular/material/button";
 import { EntityFieldLabelComponent } from "../../../../core/common-components/entity-field-label/entity-field-label.component";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { CommonModule } from "@angular/common";
 
 /**
  * Configuration (stored in Config document in the DB) for the dashboard widget.
@@ -67,6 +68,7 @@ interface GroupCountRow {
     MatTooltipModule,
     MatIconButton,
     EntityFieldLabelComponent,
+    CommonModule,
   ],
 })
 export class EntityCountDashboardComponent
@@ -160,12 +162,15 @@ export class EntityCountDashboardComponent
     const groupedByEntity =
       field.dataType === EntityDatatype.dataType ? field.additional : undefined;
     const groups = groupBy(entities, fieldName as keyof Entity);
+
     const groupCounts = groups.map(([group, entities]) => {
+      const isNotDefined =
+        group === undefined || group === null || group === "";
       const label = extractHumanReadableLabel(group);
       return {
         label: label,
         value: entities.length,
-        id: group?.["id"] || label,
+        id: isNotDefined ? "" : group?.["id"] || group,
         groupedByEntity: groupedByEntity,
       };
     });
@@ -202,8 +207,8 @@ export class EntityCountDashboardComponent
 function extractHumanReadableLabel(
   value: string | ConfigurableEnumValue | any,
 ): string {
-  if (value === undefined) {
-    return "";
+  if (value === undefined || value === null || value === "") {
+    return "not defined";
   }
   if (typeof value === "string") {
     return value;
