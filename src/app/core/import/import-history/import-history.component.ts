@@ -18,6 +18,7 @@ import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/e
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 @UntilDestroy()
 @Component({
@@ -31,6 +32,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     EntityBlockComponent,
     MatButtonModule,
     MatTooltipModule,
+    FaIconComponent,
   ],
 })
 export class ImportHistoryComponent implements OnInit {

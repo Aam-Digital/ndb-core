@@ -21,15 +21,13 @@
       </ng-container>
 
       <ng-container matColumnDef="daysSinceLastNote">
-        <td
-          *matCellDef="let entityNoteInfo"
-          class="text-align-end"
-          i18n="Amount of days back|Format like 'Days passed > 5 days'"
-        >
+        <td *matCellDef="let entityNoteInfo" class="text-align-end">
           @if (entityNoteInfo.moreThanDaysSince) {
             &gt;&nbsp;
           }
-          {{ entityNoteInfo.daysSinceLastNote | number: "1.0-0" }} days
+          <span i18n="Amount of days back"
+            >{{ entityNoteInfo.daysSinceLastNote | number: "1.0-0" }} days</span
+          >
         </td>
       </ng-container>
 

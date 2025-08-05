@@ -11,7 +11,6 @@ import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { availableLocales } from "../language/languages";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
-import { FileService } from "#src/app/features/file/file.service";
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
@@ -21,7 +20,6 @@ import { FileService } from "#src/app/features/file/file.service";
 })
 export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   private title = inject(Title);
-  private fileService = inject(FileService);
   private schemaService = inject(EntitySchemaService);
   private enumService = inject(ConfigurableEnumService);
 

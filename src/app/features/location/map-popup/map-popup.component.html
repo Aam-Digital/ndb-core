@@ -1,9 +1,11 @@
 <mat-dialog-content style="max-height: 90vh">
-  <app-address-edit
-    [disabled]="data.disabled"
-    [selectedLocation]="selectedLocation"
-    (selectedLocationChange)="updateLocation($event)"
-  ></app-address-edit>
+  @if (!data.showMapOnly) {
+    <app-address-edit
+      [disabled]="data.disabled"
+      [selectedLocation]="selectedLocation"
+      (selectedLocationChange)="updateLocation($event)"
+    ></app-address-edit>
+  }
 
   <app-map
     height="65vh"
@@ -17,7 +19,7 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  @if (data.disabled) {
+  @if (data.showMapOnly || data.disabled) {
     <button mat-raised-button mat-dialog-close i18n>Close</button>
   } @else {
     @if (helpText) {

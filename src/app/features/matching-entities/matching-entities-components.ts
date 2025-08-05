@@ -8,4 +8,11 @@ export const matchingEntitiesComponents: ComponentTuple[] = [
         (c) => c.MatchingEntitiesComponent,
       ),
   ],
+  [
+    "AdminMatchingEntities",
+    () =>
+      import(
+        "./admin-matching-entities/admin-matching-entities.component"
+      ).then((c) => c.AdminMatchingEntitiesComponent),
+  ],
 ];

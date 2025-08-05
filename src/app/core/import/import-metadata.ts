@@ -72,4 +72,5 @@ export interface ImportSettings {
 
   /** IDs of fields used to match imported data to an existing record */
   matchExistingByFields?: string[];
+  filename?: string;
 }

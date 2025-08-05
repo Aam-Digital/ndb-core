@@ -2,13 +2,13 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  inject,
   Input,
   OnInit,
   ViewChild,
-  inject,
 } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import {
@@ -17,15 +17,19 @@ import {
   NewMatchAction,
 } from "./matching-entities-config";
 import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { addAlphaToHexColor } from "../../../utils/style-utils";
 import { BehaviorSubject } from "rxjs";
 import { ConfigService } from "../../../core/config/config.service";
 import { MatTableModule } from "@angular/material/table";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import {
+  FaIconComponent,
+  FontAwesomeModule,
+} from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatButtonModule } from "@angular/material/button";
+import { AsyncPipe } from "@angular/common";
+import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { EntityFieldViewComponent } from "../../../core/common-components/entity-field-view/entity-field-view.component";
 import { MapComponent } from "../../location/map/map.component";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
@@ -42,6 +46,9 @@ import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { DataFilter } from "../../../core/filter/filters/filters";
 import { GeoLocation } from "app/features/location/geo-location";
+import { MatMenuModule } from "@angular/material/menu";
+import { AblePurePipe } from "@casl/angular";
+import { EntityTypePipe } from "#src/app/core/common-components/entity-type/entity-type.pipe";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -49,7 +56,7 @@ export interface MatchingSide extends MatchingSideConfig {
 
   availableEntities?: Entity[];
   selectMatch?: (e) => void;
-  entityType: EntityConstructor;
+  entityType: string;
 
   /** whether this allows to select more than one selected match */
   multiSelect: boolean;
@@ -81,6 +88,13 @@ export interface MatchingSide extends MatchingSideConfig {
     MapComponent,
     FilterComponent,
     FlattenArrayPipe,
+    MatMenuModule,
+    MatIconButton,
+    FaIconComponent,
+    RouterLink,
+    AblePurePipe,
+    AsyncPipe,
+    EntityTypePipe,
   ],
 })
 export class MatchingEntitiesComponent implements OnInit {
@@ -164,24 +178,17 @@ export class MatchingEntitiesComponent implements OnInit {
     side: MatchingSideConfig,
     sideIndex: number,
   ): Promise<MatchingSide> {
-    const newSide = Object.assign({}, side) as MatchingSide; // we are transforming it into this type here
+    const newSide = buildMatchingSideConfig(
+      side,
+      this.columns,
+      sideIndex,
+    ) as MatchingSide;
 
     if (!newSide.entityType) {
       newSide.selected = newSide.selected ?? [this.entity];
       newSide.highlightedSelected = newSide.selected[0];
-      newSide.entityType = newSide.highlightedSelected?.getConstructor();
+      newSide.entityType = newSide.highlightedSelected?.getType();
     }
-
-    let entityType = newSide.entityType;
-    if (typeof entityType === "string") {
-      entityType = this.entityRegistry.get(entityType);
-    }
-    newSide.entityType =
-      entityType ?? newSide.highlightedSelected?.getConstructor();
-
-    newSide.columns =
-      newSide.columns ??
-      this.columns.map((p) => p[sideIndex]).filter((c) => !!c);
 
     newSide.multiSelect = this.checkIfMultiSelect(
       this.onMatch.newEntityType,
@@ -205,7 +212,9 @@ export class MatchingEntitiesComponent implements OnInit {
     }
 
     this.mapVisible =
-      this.mapVisible || getLocationProperties(newSide.entityType).length > 0;
+      this.mapVisible ||
+      getLocationProperties(this.entityRegistry.get(newSide.entityType))
+        .length > 0;
 
     return newSide;
   }
@@ -330,7 +339,7 @@ export class MatchingEntitiesComponent implements OnInit {
 
   entityInMapClicked(entity: Entity) {
     const side = this.sideDetails.find(
-      (s) => s.entityType === entity.getConstructor(),
+      (s) => s.entityType === entity.getType(),
     );
     if (side) {
       side.selectMatch(entity);
@@ -344,7 +353,10 @@ export class MatchingEntitiesComponent implements OnInit {
    * @private
    */
   private initDistanceColumn(side: MatchingSide, index: number) {
-    const sideIndex = side.columns.findIndex((col) => col === "distance");
+    const sideIndex = side.columns.findIndex((col) =>
+      typeof col === "string" ? col === "distance" : col.id === "distance",
+    );
+
     if (sideIndex !== -1) {
       const columnConfig = this.getDistanceColumnConfig(side);
       side.columns[sideIndex] = columnConfig;
@@ -365,7 +377,7 @@ export class MatchingEntitiesComponent implements OnInit {
       viewComponent: "DisplayDistance",
       additional: {
         coordinatesProperties:
-          this.displayedLocationProperties[side.entityType.ENTITY_TYPE],
+          this.displayedLocationProperties[side.entityType],
         compareCoordinates: new BehaviorSubject<Coordinates[]>([]),
       },
     };
@@ -373,8 +385,7 @@ export class MatchingEntitiesComponent implements OnInit {
 
   updateMarkersAndDistances() {
     this.sideDetails.forEach((side) => {
-      const sideProperties =
-        this.displayedLocationProperties[side.entityType.ENTITY_TYPE];
+      const sideProperties = this.displayedLocationProperties[side.entityType];
       if (side.distanceColumn) {
         side.distanceColumn.coordinatesProperties = sideProperties;
         const lastValue = side.distanceColumn.compareCoordinates.value;
@@ -398,4 +409,23 @@ export class MatchingEntitiesComponent implements OnInit {
       distanceColumn.compareCoordinates.next(coordinates);
     }
   }
+}
+
+/**
+ * Create a MatchingSideConfig object
+ * and fill it with columns from comparison array if necessary
+ * @param side Base side configuration
+ * @param columns columns array from the overall matching configuration
+ * @param sideIndex index (0 or 1) of the side in the columns array
+ */
+export function buildMatchingSideConfig(
+  side: MatchingSideConfig,
+  columns: [ColumnConfig, ColumnConfig][],
+  sideIndex: number,
+): MatchingSideConfig {
+  const newSide = Object.assign({}, side) as MatchingSide; // we are transforming it into this type here
+  newSide.columns =
+    newSide.columns ??
+    (columns ?? []).map((p) => p[sideIndex]).filter((c) => !!c);
+  return newSide;
 }
