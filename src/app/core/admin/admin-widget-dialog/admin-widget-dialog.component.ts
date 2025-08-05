@@ -22,6 +22,10 @@ export interface AdminWidgetDialogData {
   title: string;
 }
 
+/**
+ * Generic dashboard widget editing dialog
+ * that also displays a custom component for the specific widget type.
+ */
 @Component({
   selector: "app-admin-widget-dialog",
   standalone: true,
