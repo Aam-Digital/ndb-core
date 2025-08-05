@@ -60,6 +60,7 @@ import {
 import { AblePurePipe } from "@casl/angular";
 import { BulkMergeService } from "app/features/de-duplication/bulk-merge-service";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
+import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -99,6 +100,7 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
     AsyncPipe,
     AblePurePipe,
     ViewActionsComponent,
+    EntityLoadPipe,
   ],
 })
 @UntilDestroy()
