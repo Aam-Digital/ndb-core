@@ -6,9 +6,17 @@ import { MatOptionModule } from "@angular/material/core";
 import { FormControl, FormsModule } from "@angular/forms";
 
 export interface BirthdayDashboardSettingsConfig {
+  /**
+   * How many days in advance an upcoming birthday/anniversary should be displayed.
+   */
   threshold?: number;
-  entityType?: string;
-  birthdayProperty?: string;
+  
+  /**
+   * Map of entity type(s) and the "date-with-age" field within the type
+   * that should be scanned for upcoming anniversaries.
+   * e.g. `{ "Child": "dateOfBirth", "School": "foundingDate" }`
+   */
+  entities?: { [entitType: string]: string };
 }
 
 @Component({
