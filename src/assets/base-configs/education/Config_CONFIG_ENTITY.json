@@ -13,11 +13,6 @@
           "link": "/"
         },
         {
-          "label": "Matching",
-          "icon": "",
-          "link": "/matching"
-        },
-        {
           "entityType": "Child"
         },
         {
