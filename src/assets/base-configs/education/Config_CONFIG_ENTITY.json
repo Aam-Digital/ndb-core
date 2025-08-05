@@ -846,14 +846,7 @@
                 "title": "Find a suitable new school",
                 "component": "MatchingEntities",
                 "config": {
-                  "rightSide": {
-                    "entityType": "School",
-                    "availableFilters": [
-                      {
-                        "id": "language"
-                      }
-                    ]
-                  }
+                  "leftSide": {}
                 }
               }
             ]
@@ -1485,30 +1478,25 @@
       }
     },
     "view:matching": {
-      "component": "MatchingEntities",
-      "config": {
-        "rightSide": {
-          "entityType": "School",
-          "prefilter": {
-            "privateSchool": true
-          },
-          "availableFilters": [
-            {
-              "id": "language"
-            }
-          ]
-        },
-        "leftSide": {
-          "entityType": "Child"
-        }
-      },
-      "_id": "view:matching"
+      "component": "MatchingEntities"
     },
     "appConfig:matching-entities": {
       "columns": [
         [
-          "name",
-          "name"
+          {
+            "label": "Name (record preview)",
+            "id": "_id",
+            "additional": "Child",
+            "noSorting": true,
+            "viewComponent": "DisplayEntity"
+          },
+          {
+            "label": "Name (record preview)",
+            "id": "_id",
+            "additional": "School",
+            "noSorting": true,
+            "viewComponent": "DisplayEntity"
+          }
         ],
         [
           "motherTongue",
@@ -1523,6 +1511,35 @@
           "privateSchool"
         ]
       ],
+      "rightSide": {
+        "entityType": "School",
+        "availableFilters": [
+          {
+            "id": "language"
+          }
+        ],
+        "prefilter": {
+          "privateSchool": true
+        }
+      },
+      "leftSide": {
+        "entityType": "Child",
+        "availableFilters": [
+          {
+            "id": "gender"
+          }
+        ],
+        "prefilter": {
+          "$or": [
+            {
+              "center.id": "C1"
+            },
+            {
+              "center.id": "C2"
+            }
+          ]
+        }
+      },
       "onMatch": {
         "newEntityType": "ChildSchoolRelation",
         "newEntityMatchPropertyLeft": "childId",

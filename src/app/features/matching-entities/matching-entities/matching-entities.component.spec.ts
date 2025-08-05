@@ -23,7 +23,10 @@ import { DynamicComponentConfig } from "../../../core/config/dynamic-components/
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { GeoLocation } from "app/features/location/geo-location";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+} from "../../../core/entity/database-entity.decorator";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
@@ -31,6 +34,7 @@ describe("MatchingEntitiesComponent", () => {
 
   let routeData: Subject<DynamicComponentConfig<MatchingEntitiesConfig>>;
   let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let entityRegistry: EntityRegistry;
 
   let testConfig: MatchingEntitiesConfig = {
     columns: [],
@@ -56,6 +60,12 @@ describe("MatchingEntitiesComponent", () => {
     mockConfigService = jasmine.createSpyObj(["getConfig"], {
       configUpdates: NEVER,
     });
+    entityRegistry = new EntityRegistry();
+    entityRegistry.add(TestEntity.ENTITY_TYPE, TestEntity);
+    entityRegistry.add(ChildSchoolRelation.ENTITY_TYPE, ChildSchoolRelation);
+    entityRegistry.add(Entity.ENTITY_TYPE, Entity);
+    entityRegistry.add(Note.ENTITY_TYPE, Note);
+    entityRegistry.add(OtherEntity.ENTITY_TYPE, OtherEntity);
 
     TestBed.configureTestingModule({
       imports: [MatchingEntitiesComponent, MockedTestingModule.withState()],
@@ -63,6 +73,7 @@ describe("MatchingEntitiesComponent", () => {
         { provide: ActivatedRoute, useValue: { data: routeData } },
         { provide: FormDialogService, useValue: null },
         { provide: ConfigService, useValue: mockConfigService },
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();
 
@@ -146,15 +157,13 @@ describe("MatchingEntitiesComponent", () => {
     expect(component.sideDetails.length).toBe(2);
 
     expect(component.sideDetails[0].selected).toEqual([testEntity]);
-    expect(component.sideDetails[0].entityType).toEqual(
-      testEntity.getConstructor(),
-    );
+    expect(component.sideDetails[0].entityType).toEqual(testEntity.getType());
     expect(component.sideDetails[0].availableEntities).toBeUndefined();
     expect(component.sideDetails[0].columns).toEqual(["_id", "_rev"]);
 
     expect(component.sideDetails[1].selected).toBeUndefined();
-    expect(component.sideDetails[1].entityType).toEqual(TestEntity);
-    expect(loadTypeSpy).toHaveBeenCalledWith(TestEntity);
+    expect(component.sideDetails[1].entityType).toEqual(TestEntity.ENTITY_TYPE);
+    expect(loadTypeSpy).toHaveBeenCalledWith(TestEntity.ENTITY_TYPE);
     expect(component.sideDetails[1].availableEntities).toEqual(allChildren);
     expect(component.sideDetails[1].columns).toEqual(["name", "phone"]);
   }));
@@ -277,7 +286,7 @@ describe("MatchingEntitiesComponent", () => {
     TestEntity.schema.set("address", { dataType: "location" });
     component.entity = new TestEntity();
     component.columns = [[undefined, "distance"]];
-    component.leftSide = { entityType: TestEntity };
+    component.leftSide = { entityType: TestEntity.ENTITY_TYPE };
     component.onMatch = testConfig.onMatch;
 
     fixture.detectChanges();
