@@ -22,6 +22,10 @@
             formControlName="newEntityType"
             (valueChange)="onEntityTypeChange($event)"
           ></app-entity-type-select>
+          <mat-hint i18n
+            >Only types that have a reference field to both selected entity
+            types above are available here.</mat-hint
+          >
         </mat-form-field>
       </div>
 
@@ -53,16 +57,25 @@
         ></app-help-button>
       </div>
 
-      <span i18n
-        >Fields shown in dialog for confirmation or editing when creating a
-        match:</span
-      >
-      <app-entity-fields-menu
-        [entityType]="entityConstructor"
-        [availableFields]="availableFields"
-        [activeFields]="fieldsAsStrings"
-        (activeFieldsChange)="activeFields = $event"
-      ></app-entity-fields-menu>
+      <div class="flex-column">
+        <div i18n>
+          Fields shown in dialog for confirmation or editing when creating a
+          match:
+        </div>
+        @if (!(activeFields?.length > 0)) {
+          <div class="warning">
+            You should select at least one field to be shown in the confirmation
+            dialog.
+          </div>
+        }
+        <app-entity-fields-menu
+          [entityType]="entityConstructor"
+          [availableFields]="availableFields"
+          [activeFields]="fieldsAsStrings"
+          (activeFieldsChange)="activeFields = $event"
+          class="full-with-field"
+        ></app-entity-fields-menu>
+      </div>
     </form>
   </div>
 </mat-expansion-panel>
