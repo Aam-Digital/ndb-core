@@ -1,0 +1,45 @@
+<div class="padding-regular">
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label i18n>Select Entity Type</mat-label>
+    <app-entity-type-select
+      [value]="sideConfig.entityType"
+      (valueChange)="onEntityTypeChange($event)"
+    >
+    </app-entity-type-select>
+  </mat-form-field>
+
+  <h4 i18n>Available columns</h4>
+  <app-admin-list-manager
+    [entityType]="entityConstructor"
+    [items]="columns"
+    [activeFields]="columns"
+    [additionalFields]="additionalFields"
+    fieldLabel="These columns will appear in the top summary view and in the table
+      view below when matching; Add columns:"
+    i18n-fieldLabel
+    (itemsChange)="onColumnsChange($event)"
+  ></app-admin-list-manager>
+
+  <h4 i18n>Available Filters</h4>
+  <app-admin-list-manager
+    [entityType]="entityConstructor"
+    [items]="filters"
+    [activeFields]="filters"
+    templateType="filter"
+    fieldLabel="These filters (and any prefilters) are only applied to the table list view during matching; Add filters:"
+    i18n-fieldLabel
+    (itemsChange)="onFiltersChange($event)"
+  ></app-admin-list-manager>
+
+  <div>
+    <h4 i18n>Records available for matching</h4>
+    <p i18n>
+      Configure filters to only show certain records for matching, that fulfill
+      the required criteria (e.g. having a required status).
+    </p>
+    <button mat-stroked-button (click)="openPrefilterEditor()">
+      <fa-icon icon="tools" class="standard-icon-with-text"></fa-icon>
+      <span i18n>Edit Prefilters</span>
+    </button>
+  </div>
+</div>

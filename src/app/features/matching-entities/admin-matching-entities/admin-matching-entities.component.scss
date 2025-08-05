@@ -1,0 +1,22 @@
+@use "@angular/material" as mat;
+@use "variables/sizes";
+
+.entity-config-container {
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.entity-side {
+  flex: 1;
+  margin: 0;
+  background-color: #fff;
+
+  border-radius: 4px;
+  @include mat.elevation(2);
+  padding: sizes.$regular;
+
+  .columns-list {
+    display: flex;
+    flex-direction: column;
+  }
+}

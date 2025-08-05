@@ -1,18 +1,19 @@
 import { inject, Pipe, PipeTransform } from "@angular/core";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { EntityConstructor } from "#src/app/core/entity/model/entity";
 
 /**
- * Transform an entity type key to its human-readable label.
+ * Transform an entity type key to its full constructor.
  */
 @Pipe({
-  name: "entityTypeLabel",
+  name: "entityType",
   standalone: true,
 })
-export class EntityTypeLabelPipe implements PipeTransform {
+export class EntityTypePipe implements PipeTransform {
   private readonly entityTypes = inject(EntityRegistry);
 
-  transform(value: string, plural: boolean = false): string {
+  transform(value: string): EntityConstructor {
     const entity = this.entityTypes.get(value);
-    return plural ? entity?.labelPlural : entity?.label;
+    return entity;
   }
 }

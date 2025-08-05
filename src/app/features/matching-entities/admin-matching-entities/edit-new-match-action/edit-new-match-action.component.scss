@@ -1,0 +1,14 @@
+@use "variables/colors";
+
+.warning {
+  color: colors.$error;
+}
+
+.full-width-field {
+  width: 100%;
+  display: inline-block;
+
+  ::ng-deep mat-form-field {
+    width: 100% !important;
+  }
+}

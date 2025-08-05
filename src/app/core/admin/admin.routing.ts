@@ -45,6 +45,16 @@ export const adminRoutes: Routes = [
     },
     canActivate: [EntityPermissionGuard],
   },
+  {
+    path: "matching",
+    component: RoutedViewComponent,
+    data: {
+      component: "AdminMatchingEntities",
+      entityType: "Config",
+      requiredPermissionOperation: "update",
+    },
+    canActivate: [EntityPermissionGuard],
+  },
 
   {
     path: "site-settings",
