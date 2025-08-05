@@ -1,16 +1,18 @@
 # User Roles and Permissions
+
 User roles and permission rules restrict what components a user can see and what data a user can access and edit.
 These are stored in the backend and are available in the frontend after a successful login.
 
 - Permissions are enforced during database sync by a special backend service, our [replication-backend](https://github.com/Aam-Digital/replication-backend).
 - Permissions (and roles) can also be evaluated in the frontend to disable or hide certain UI elements
 
-
 ## User Roles
+
 One or more roles can be assigned to a user account.
 A role is linked to specific permission rules that define access for individual entities (i.e. database documents).
 
 ### Roles are assigned in Keycloak
+
 When using Keycloak as an authenticator, the roles are assigned through so called Role-Mappings.
 To assign a new role to a user, this role first has to be created in the realm.
 To do this go to the Keycloak admin console, select the realm for which you want to create a role and go to the _Realm
@@ -23,14 +25,15 @@ This can either be done in the frontend using the `UserSecurityComponent` or via
 Users_
 -> _\<select user\>_ -> _Role mapping_ -> _Assign role_.
 
-
 ## Permissions
+
 Aam Digital allows to specify permissions to restrict access of certain user roles to the various entity types.
 Permissions are defined using the [CASL JSON syntax](https://casl.js.org/v5/en/guide/define-rules#the-shape-of-raw-rule).
 The permissions are stored in a [config entity](../../classes/Config.html) `Config:Permissions` which is persisted together with other
 entities in the database.
 
 ### Permission structure
+
 In the following example, we define roles `user_app` and `admin_app`.
 There are also some permissions for the general `default` role that is automatically applied to all authenticated users.
 
@@ -85,21 +88,23 @@ A user can have multiple roles and the permissions are then combined.
 - In `data`, the permissions for each of the user role are defined.
 - The permissions for a given role consist of an array of rules.
 - `subject` refers to the type of entity.
-   - `all` is a wildcard for the subject that matches any entity.
+  - `all` is a wildcard for the subject that matches any entity.
 - `action` refers to the operation that is allowed or permitted on the given subject.
-   - available actions from the CASL library are `create`, `read`, `update`, `delete`
-   - `manage` is also a wildcard for the action which means _any operation is allowed_.
+  - available actions from the CASL library are `create`, `read`, `update`, `delete`
+  - `manage` is also a wildcard for the action which means _any operation is allowed_.
 
 To learn more about how to define rules, have a look at
 the [CASL documentation](https://casl.js.org/v5/en/guide/define-rules#rules).
 
 ### "Inverted" permission rules (disallowing actions)
+
 It is possible to restrict / remove permissions, instead of adding permissions, through the `"inverted": true` keyword.
 when `"inverted": true` is specified, this rule defines what the role is **not allowed** to do.
 
 Use this with care: When users have multiple roles that overlap, it may not be intuitively clear which permissions apply.
 
 ### Conditions in permission rules
+
 Instead of giving permission for all records of a given subject (i.e. entity type)
 you can also apply conditions to narrow this down:
 
@@ -130,15 +135,16 @@ you can also apply conditions to narrow this down:
 Conditions follow MongoDB syntax. Refer to [CASL documentation](https://casl.js.org/v6/en/guide/conditions-in-depth) for details.
 
 Aam Digital allows you to use certain details of the user entity for such conditions:
+
 - `${user.entityId}` is the entity ID (including prefix) linked to the currently logged in user
-   - this allows to grant access to entities that have explicitly been assigned to a certain user
+  - this allows to grant access to entities that have explicitly been assigned to a certain user
 - `${user.projects}` is the (array) field with ID `projects` on the entity linked to current user.
-You can configure this by editing the data structure of the relevant entity type(s).
-   - usually this field is configured as a multi-select entity reference field to allow linking certain "groups" to an individual user.
-   For example: Select schools the user is responsible for and allow the user to see all Note entities that are linked to one of their assigned schools.
+  You can configure this by editing the data structure of the relevant entity type(s).
+  - usually this field is configured as a multi-select entity reference field to allow linking certain "groups" to an individual user.
+    For example: Select schools the user is responsible for and allow the user to see all Note entities that are linked to one of their assigned schools.
 
+---
 
------
 ## Implementing components with permissions
 
 This section is about code using permissions to read and edit **entities**.
@@ -196,8 +202,7 @@ In this case a constructor is provided to check for the permissions,
 in other cases it might make more sense to use an instance of an object like `this.ability.can('read', new Note())`.
 
 > WARNING: If you have conditions in your rules, make sure you pass the fully loaded entity and not only the string entity type.
-Otherwise, conditions for specific properties are ignored.
-
+> Otherwise, conditions for specific properties are ignored.
 
 ### Permissions in production
 
