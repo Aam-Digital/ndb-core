@@ -12,23 +12,17 @@ import { availableLocales } from "../language/languages";
 import { ConfigurableEnumModule } from "../basic-datatypes/configurable-enum/configurable-enum.module";
 import { EntityAbility } from "../permissions/ability/entity-ability";
 import { CoreTestingModule } from "../../utils/core-testing.module";
-import { FileService } from "#src/app/features/file/file.service";
 
 describe("SiteSettingsService", () => {
   let service: SiteSettingsService;
   let entityMapper: MockEntityMapperService;
-  let mockFileService: jasmine.SpyObj<FileService>;
 
   beforeEach(waitForAsync(() => {
     localStorage.clear();
-    mockFileService = jasmine.createSpyObj(["loadFile"]);
+
     TestBed.configureTestingModule({
       imports: [CoreTestingModule, ConfigurableEnumModule],
-      providers: [
-        { provide: FileService, useValue: mockFileService },
-        ...mockEntityMapperProvider(),
-        EntityAbility,
-      ],
+      providers: [...mockEntityMapperProvider(), EntityAbility],
     });
     service = TestBed.inject(SiteSettingsService);
 
