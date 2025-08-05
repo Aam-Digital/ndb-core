@@ -29,30 +29,10 @@
         To manually define a label and link, clear the entity type field above.
       </p>
     } @else {
-      <!-- Label -->
-      <mat-form-field appearance="fill">
-        <mat-label i18n>Label</mat-label>
-        <input
-          matInput
-          [(ngModel)]="item.label"
-          name="label"
-          placeholder="Enter label"
-          i18n-placeholder
-        />
-      </mat-form-field>
-
-      <!-- Icon -->
-      <app-admin-icon-input [(icon)]="item.icon"></app-admin-icon-input>
-
-      <!-- Link Target -->
-      <mat-form-field appearance="fill">
-        <mat-label i18n>Link Target</mat-label>
-        <mat-select [(ngModel)]="item.link" name="link">
-          @for (option of availableRoutes; track option.value) {
-            <mat-option [value]="option.value">{{ option.label }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+      <app-menu-item-form
+        [item]="item"
+        (itemChange)="item = $event"
+      ></app-menu-item-form>
     }
   </form>
 </mat-dialog-content>
