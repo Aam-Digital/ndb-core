@@ -37,8 +37,8 @@ export class PublicFormsService {
             this.copyPublicFormLinkFromConfig(entity, config),
           permission: "read",
           icon: "link",
-          label: `Copy Custom Form (${config.title})`,
-          tooltip: `Copy link to public form "${config.title}" that will connect submissions to this individual record.`,
+          label: $localize`Copy Custom Form (${config.title})`,
+          tooltip: $localize`Copy link to public form "${config.title}" that will connect submissions to this individual record.`,
           visible: (entity) =>
             this.getMatchingPublicFormConfigs(config, entity),
         },
