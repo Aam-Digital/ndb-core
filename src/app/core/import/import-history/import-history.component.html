@@ -5,7 +5,10 @@
     <mat-expansion-panel [expanded]="i === 0">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          {{ item.date | date }}
+          <span class="flex-row align-center truncate-text">
+            <fa-icon [icon]="'file-alt'" class="margin-right-small"></fa-icon>
+            {{ item.config?.filename ?? "unknown file name" }}
+          </span>
         </mat-panel-title>
         <mat-panel-description i18n>
           {{ item.createdEntities?.length ?? 0 }} new,
@@ -22,6 +25,24 @@
         ></app-entity-block>
         at {{ item.date | date: "medium" }}
       </div>
+
+      @if (item.config.additionalActions?.length > 0) {
+        <div class="margin-top-regular">
+          <strong i18n>Additional Actions:</strong>
+          <ul>
+            @for (action of item.config.additionalActions; track action) {
+              <li>
+                Link to {{ action.targetType | entityTypeLabel }}:
+                <app-entity-block
+                  [entityId]="action.targetId"
+                  [linkDisabled]="true"
+                ></app-entity-block>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
       <div class="flex-row gap-regular margin-top-regular">
         <div
           i18n-matTooltip="Tooltip help text for button"
