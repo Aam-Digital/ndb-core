@@ -12,28 +12,28 @@
     </mat-form-field>
   </div>
 
-  <!-- Entity Type and Property -->
   <div>
     <h3 i18n>Entity Type</h3>
     <mat-form-field appearance="fill" class="full-width">
       <mat-label i18n>Entity Type</mat-label>
-      <mat-select
-        [(ngModel)]="localConfig.entityType"
-        (ngModelChange)="emitConfigChange()"
-      >
-        <mat-option value="Child" i18n>Child</mat-option>
-        <mat-option value="School" i18n>School</mat-option>
-      </mat-select>
+      <app-entity-type-select
+        [ngModel]="selectedEntityType"
+        (ngModelChange)="onEntityTypeChange($event)"
+        [options]="availableEntityTypes"
+      ></app-entity-type-select>
     </mat-form-field>
     <mat-form-field appearance="fill" class="full-width">
       <mat-label i18n>Birthday Property</mat-label>
-      <input
-        matInput
-        [(ngModel)]="localConfig.birthdayProperty"
-        (ngModelChange)="emitConfigChange()"
-        placeholder="dateOfBirth"
-        i18n-placeholder
-      />
+      <mat-select
+        [ngModel]="selectedProperty"
+        (ngModelChange)="onPropertyChange($event)"
+      >
+        @for (prop of availableProperties; track $index) {
+          <mat-option [value]="prop">
+            {{ prop }}
+          </mat-option>
+        }
+      </mat-select>
     </mat-form-field>
   </div>
 </div>
