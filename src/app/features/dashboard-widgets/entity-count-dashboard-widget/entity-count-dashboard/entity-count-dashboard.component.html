@@ -67,7 +67,10 @@
       <ng-container matColumnDef="label">
         <td *matCellDef="let group">
           @if (!group.groupedByEntity) {
-            <span>{{ group.label }}</span>
+            <span
+              [ngClass]="{ 'not-defined-label': group.label === 'not defined' }"
+              >{{ group.label }}</span
+            >
           } @else {
             <app-entity-block [entityId]="group.id"></app-entity-block>
           }
