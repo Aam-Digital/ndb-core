@@ -256,12 +256,20 @@ export class MatchingEntitiesComponent implements OnInit {
 
   private getSingleSelectFunction(newSide: MatchingSide) {
     return (e: Entity) => {
-      this.highlightSelectedRow(e);
-      if (newSide.highlightedSelected) {
-        this.highlightSelectedRow(newSide.highlightedSelected, true);
+      if (newSide.selected?.[0] === e) {
+        // Deselect if already selected
+        this.highlightSelectedRow(e, true);
+        newSide.selected = [];
+        newSide.highlightedSelected = null;
+      } else {
+        this.highlightSelectedRow(e);
+        if (newSide.highlightedSelected) {
+          this.highlightSelectedRow(newSide.highlightedSelected, true);
+        }
+        newSide.selected = [e];
+        newSide.highlightedSelected = e;
       }
-      newSide.selected = [e];
-      newSide.highlightedSelected = e;
+
       this.matchComparisonElement.nativeElement.scrollIntoView();
       this.updateDistanceColumn(newSide);
     };
