@@ -102,10 +102,6 @@ export class MapComponent implements AfterViewInit {
 
   @Output() entityClick = new EventEmitter<Entity>();
 
-  // --- Added selection state for spiderfied marker ---
-  private selectedSpiderMarker: L.Marker | null = null;
-  private spiderfiedMarkers: Set<L.Marker> = new Set();
-
   constructor() {
     const configService = inject(ConfigService);
     const config = configService.getConfig<MapConfig>(MAP_CONFIG_KEY);
@@ -160,18 +156,6 @@ export class MapComponent implements AfterViewInit {
           this.addMarkerStyle(marker, entity, highlighted);
         }
       });
-    });
-
-    this.markerClusterGroup.on("spiderfied", (e) => {
-      // e.cluster.getAllChildMarkers() gives an array of markers in this cluster
-      this.spiderfiedMarkers = new Set(e.markers);
-      if (
-        !this.selectedSpiderMarker ||
-        !this.spiderfiedMarkers.has(this.selectedSpiderMarker)
-      ) {
-        this.selectedSpiderMarker = null;
-      }
-      this.setSpiderfiedOpacities();
     });
   }
 
@@ -305,21 +289,7 @@ export class MapComponent implements AfterViewInit {
           .forEach((loc: GeoResult) => {
             const marker = L.marker([loc.lat, loc.lon]);
             marker.bindTooltip(entity.toString());
-            marker.on("click", (e) => {
-              // If this marker is in a spiderfied group, update opacity and stop propagation (prevent zoom-to-point)
-              if (this.spiderfiedMarkers.has(marker)) {
-                // Only update selection, do not zoom
-                this.selectedSpiderMarker = marker;
-                this.setSpiderfiedOpacities();
-                this.entityClick.emit(entity);
-
-                // Prevent default behavior (zoom out to cluster)
-                e.originalEvent.preventDefault();
-                e.originalEvent.stopPropagation();
-              } else {
-                this.entityClick.emit(entity);
-              }
-            });
+            marker.on("click", () => this.entityClick.emit(entity));
             marker["entity"] = entity;
             marker["highlighted"] = highlighted;
 
@@ -328,9 +298,6 @@ export class MapComponent implements AfterViewInit {
               if (highlighted) {
                 marker.openTooltip();
                 marker.bindTooltip(entity.toString(), { permanent: true });
-                const icon = marker["_icon"] as HTMLElement;
-
-                icon.style.opacity = highlighted ? "1" : "0.5";
               }
             });
 
@@ -354,34 +321,8 @@ export class MapComponent implements AfterViewInit {
       icon.style.opacity = "";
       const degree = entity ? getHueForEntity(entity) : "145";
       icon.style.filter = `hue-rotate(${degree}deg)`;
-
-      // if (this.spiderfiedMarkers.has(marker)) {
-      //   if (this.selectedSpiderMarker && marker === this.selectedSpiderMarker) {
-      //     icon.style.opacity = "1";
-      //   } else {
-      //     icon.style.opacity = "0.5";
-      //   }
-      // } else {
       icon.style.opacity = highlighted ? "1" : "0.5";
-      // }
     }
-  }
-
-  /**
-   * Set opacities for all spiderfied markers.
-   * Only selectedSpiderMarker is opaque, others transparent.
-   */
-  private setSpiderfiedOpacities() {
-    this.spiderfiedMarkers.forEach((marker: any) => {
-      const icon = marker["_icon"] as HTMLElement;
-      if (icon) {
-        if (this.selectedSpiderMarker && marker === this.selectedSpiderMarker) {
-          icon.style.opacity = "1";
-        } else {
-          icon.style.opacity = "0.5";
-        }
-      }
-    });
   }
 
   private getMapProperties(entity: Entity) {
