@@ -6,7 +6,6 @@ import { EventAttendance } from "../../model/event-attendance";
 import { ActivityAttendance } from "../../model/activity-attendance";
 import { RecurringActivity } from "../../model/recurring-activity";
 import moment, { Moment } from "moment";
-import { groupBy } from "../../../../utils/utils";
 import { MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
@@ -116,7 +115,7 @@ export class AttendanceWeekDashboardComponent
         .forEach((r) => lowAttendanceCases.add(r.childId));
     }
 
-    const groups = groupBy(records, "childId");
+    const groups = Array.from(Map.groupBy(records, (record) => record.childId));
     this.entries = groups
       .filter(([childId]) => lowAttendanceCases.has(childId))
       .map(([_, attendance]) => attendance);

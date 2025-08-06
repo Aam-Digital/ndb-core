@@ -3,7 +3,6 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import moment from "moment";
 import { RecurringActivity } from "./model/recurring-activity";
 import { ActivityAttendance } from "./model/activity-attendance";
-import { groupBy } from "../../utils/utils";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { EventNote } from "./model/event-note";
 import { ChildrenService } from "../children/children.service";
@@ -49,7 +48,7 @@ export class AttendanceService {
               var dString;
               if (doc.date && doc.date.length === 10) {
                 dString = doc.date;
-              } else {            
+              } else {
                 var d = new Date(doc.date || null);
                 dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
               }
@@ -204,7 +203,10 @@ export class AttendanceService {
     until: Date,
   ): Promise<ActivityAttendance[]> {
     const matchingEvents = await this.getEventsOnDate(from, until);
-    const groupedEvents = groupBy(matchingEvents, "relatesTo");
+    const groupedEvents = Map.groupBy(
+      matchingEvents,
+      (event) => event.relatesTo,
+    );
 
     const records = [];
     for (const [activityId, activityEvents] of groupedEvents) {
