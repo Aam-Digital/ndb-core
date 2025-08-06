@@ -64,6 +64,30 @@ export class MapComponent implements AfterViewInit {
       return;
     }
     this._entities.next(entities);
+    // update overlapping coordinates
+    const adjustedEntities = entities.map((e) => ({
+      entity: e,
+      adjusted: false,
+    }));
+    const coordMap = new Map<string, number>();
+    adjustedEntities.forEach(({ entity }) => {
+      const mapProps = this.getMapProperties(entity);
+      mapProps.forEach((prop) => {
+        const loc = entity[prop]?.geoLookup;
+        if (loc) {
+          const key = `${loc.lat.toFixed(5)}_${loc.lon.toFixed(5)}`;
+          const count = coordMap.get(key) || 0;
+          if (count > 0) {
+            const angle = (count * 45 * Math.PI) / 180;
+            const dx = (10 / 111320) * Math.cos(angle); // approx 10m in degrees
+            const dy = (10 / 111320) * Math.sin(angle);
+            loc.lat += dy;
+            loc.lon += dx;
+          }
+          coordMap.set(key, count + 1);
+        }
+      });
+    });
     this.updateMarkers();
   }
   private _entities = new BehaviorSubject<Entity[]>([]);
@@ -142,6 +166,7 @@ export class MapComponent implements AfterViewInit {
       spiderfyOnMaxZoom: true,
       showCoverageOnHover: false,
       zoomToBoundsOnClick: true,
+      maxClusterRadius: 20, // needed to noy use clustering on overlapping markers
     });
     this.map.addLayer(this.markerClusterGroup);
     this.mapInitialized = true;
