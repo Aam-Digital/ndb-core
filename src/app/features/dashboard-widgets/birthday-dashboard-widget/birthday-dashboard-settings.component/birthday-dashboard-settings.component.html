@@ -28,7 +28,7 @@
         [ngModel]="selectedProperty"
         (ngModelChange)="onPropertyChange($event)"
       >
-        @for (prop of availableProperties; track $prop) {
+        @for (prop of availableProperties; track prop) {
           <mat-option [value]="prop">
             {{ prop }}
           </mat-option>
