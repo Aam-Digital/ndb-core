@@ -1,9 +1,10 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import {
   EditFileComponent,
   EditFileComponent_IMPORTS,
 } from "../../file/edit-file/edit-file.component";
+import { TemplateExportApiService } from "#src/app/features/template-export/template-export-api/template-export-api.service";
 
 /**
  * An edit component that allows to manage template files stored in the PDF Generator API.
@@ -15,4 +16,7 @@ import {
   styleUrls: ["../../file/edit-file/edit-file.component.scss"],
   imports: EditFileComponent_IMPORTS,
 })
-export class EditTemplateExportFileComponent extends EditFileComponent {}
+export class EditTemplateExportFileComponent extends EditFileComponent {
+  // Use the TemplateExportApiService to also upload files to the PDF Generator API
+  override fileService = inject(TemplateExportApiService);
+}
