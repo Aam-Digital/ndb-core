@@ -50,6 +50,11 @@ export class MapComponent implements AfterViewInit {
    */
   @Input() showMapOnly = false;
 
+  /**
+   * Coordinates to show as extra markers on the map, not linked to any entity.
+   * Use this to display locations like search results or temporary pins.
+   * This is different from highlighted entities, which refer to existing entities that should stand out on the map.
+   */
   @Input() set marked(coordinates: Coordinates[]) {
     if (!coordinates) {
       return;
@@ -57,6 +62,9 @@ export class MapComponent implements AfterViewInit {
     this._marked.next(coordinates);
     this.updateMarkers();
   }
+
+  // Stores arbitrary coordinates for markers not linked to entities.
+  // This is separate from _highlightedEntities, which holds entities to highlight.
   private _marked = new BehaviorSubject<Coordinates[]>([]);
 
   @Input() set entities(entities: Entity[]) {
@@ -135,6 +143,8 @@ export class MapComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+    // Previously, the map was centered on the first existing marker if present.
+    // Now, the map always starts at `start_location`, and centering on markers is handled later in `updateMarkers()` or `handleMarkerHighlights()`.
     // init Map
     this.map = L.map(this.mapElement.nativeElement, {
       center: this.start_location,
