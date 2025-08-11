@@ -182,40 +182,5 @@
         "label": "Complété"
       }
     ]
-  },
-  {
-    "_id": "ConfigurableEnum:rating-answer",
-    "values": [
-      {
-        "_ordinal": 0,
-        "id": "notTrueAtAll",
-        "label": "pas du tout",
-        "color": "rgba(253, 114, 114, 0.5)"
-      },
-      {
-        "_ordinal": 1,
-        "id": "rarelyTrue",
-        "label": "rarement",
-        "color": "rgba(255, 165, 0, 0.5)"
-      },
-      {
-        "_ordinal": 2,
-        "id": "usuallyTrue",
-        "label": "généralement",
-        "color": "rgba(255, 242, 0, 0.5)"
-      },
-      {
-        "_ordinal": 3,
-        "id": "absolutelyTrue",
-        "label": "absolument",
-        "color": "rgba(144, 238, 144, 0.5)"
-      },
-      {
-        "_ordinal": 4,
-        "id": "noAnswerPossible",
-        "label": "non applicable",
-        "color": "#b0b0b0"
-      }
-    ]
   }
 ]

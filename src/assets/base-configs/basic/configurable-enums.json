@@ -23,40 +23,5 @@
         "isMeeting": true
       }
     ]
-  },
-    {
-    "_id": "ConfigurableEnum:rating-answer",
-    "values": [
-      {
-        "_ordinal": 0,
-        "id": "notTrueAtAll",
-        "label": "not at all",
-        "color": "rgba(253, 114, 114, 0.5)"
-      },
-      {
-        "_ordinal": 1,
-        "id": "rarelyTrue",
-        "label": "rarely",
-        "color": "rgba(255, 165, 0, 0.5)"
-      },
-      {
-        "_ordinal": 2,
-        "id": "usuallyTrue",
-        "label": "usually",
-        "color": "rgba(255, 242, 0, 0.5)"
-      },
-      {
-        "_ordinal": 3,
-        "id": "absolutelyTrue",
-        "label": "absolutely",
-        "color": "rgba(144, 238, 144, 0.5)"
-      },
-      {
-        "_ordinal": 4,
-        "id": "noAnswerPossible",
-        "label": "N/A",
-        "color": "#b0b0b0"
-      }
-    ]
   }
 ]

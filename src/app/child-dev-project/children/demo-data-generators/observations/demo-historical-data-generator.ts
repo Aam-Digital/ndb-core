@@ -29,31 +29,26 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<Entity> {
   }
 
   protected generateEntities(): Entity[] {
+    const attributes: any[] = Object.keys(
+      this.entityRegistry.get("HistoricalEntityData").schema,
+    );
+
     const entities: Entity[] = [];
     for (const child of this.childrenGenerator.entities) {
       const countOfData =
         faker.number.int(this.config.maxCountAttributes) +
         this.config.minCountAttributes;
-      for (let i = 0; i < countOfData; i++) {
+      const historicalDataOfChild = [...Array(countOfData)].map(() => {
         const historicalData = createEntityOfType("HistoricalEntityData");
+        for (const attribute of attributes) {
+          historicalData[attribute] = faker.helpers.arrayElement(ratingAnswers);
+        }
         historicalData.date = faker.date.past();
         historicalData.relatedEntity = child.getId();
-
-        historicalData.isMotivatedDuringClass =
-          faker.helpers.arrayElement(ratingAnswers).id;
-        historicalData.isParticipatingInClass =
-          faker.helpers.arrayElement(ratingAnswers).id;
-        historicalData.isInteractingWithOthers =
-          faker.helpers.arrayElement(ratingAnswers).id;
-        historicalData.doesHomework =
-          faker.helpers.arrayElement(ratingAnswers).id;
-        historicalData.asksQuestions =
-          faker.helpers.arrayElement(ratingAnswers).id;
-
-        entities.push(historicalData);
-      }
+        return historicalData;
+      });
+      entities.push(...historicalDataOfChild);
     }
-
     return entities;
   }
 }
