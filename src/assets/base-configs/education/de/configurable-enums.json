@@ -182,5 +182,40 @@
         "label": "abgeschlossen"
       }
     ]
+  },
+  {
+    "_id": "ConfigurableEnum:rating-answer",
+    "values": [
+      {
+        "_ordinal": 0,
+        "id": "notTrueAtAll",
+        "label": "überhaupt nicht",
+        "color": "rgba(253, 114, 114, 0.5)"
+      },
+      {
+        "_ordinal": 1,
+        "id": "rarelyTrue",
+        "label": "selten",
+        "color": "rgba(255, 165, 0, 0.5)"
+      },
+      {
+        "_ordinal": 2,
+        "id": "usuallyTrue",
+        "label": "meistens",
+        "color": "rgba(255, 242, 0, 0.5)"
+      },
+      {
+        "_ordinal": 3,
+        "id": "absolutelyTrue",
+        "label": "absolut",
+        "color": "rgba(144, 238, 144, 0.5)"
+      },
+      {
+        "_ordinal": 4,
+        "id": "noAnswerPossible",
+        "label": "nicht anwendbar",
+        "color": "#b0b0b0"
+      }
+    ]
   }
 ]

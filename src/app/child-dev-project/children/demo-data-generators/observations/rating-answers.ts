@@ -1,4 +1,6 @@
-import enumJson from "../../../../../assets/base-configs/basic/ConfigurableEnum_rating-answers.json";
-import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import enums from "../../../../../assets/base-configs/education/configurable-enums.json";
 
-export const ratingAnswers: ConfigurableEnumValue[] = enumJson.values;
+export const ratingAnswers: ConfigurableEnumValue[] = enums.find(
+  (e) => e._id === "ConfigurableEnum:rating-answer",
+).values;
