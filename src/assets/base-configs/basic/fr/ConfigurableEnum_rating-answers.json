@@ -1,5 +1,5 @@
 {
-  "_id": "ConfigurableEnum:rating-answer",
+  "_id": "ConfigurableEnum:rating-answers",
   "values": [
     {
       "id": "notTrueAtAll",
