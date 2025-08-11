@@ -32,7 +32,7 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<Entity> {
     const ratedAttributes: any[] = Array.from(
       this.entityRegistry.get("HistoricalEntityData").schema.entries(),
     )
-      .filter(([id, field]) => field.additional === "rating-answers")
+      .filter(([id, field]) => field.additional === "rating-answer")
       .map(([id, field]) => id);
 
     const entities: Entity[] = [];

@@ -23,7 +23,7 @@ export function getDefaultEnumEntities(): ConfigurableEnum[] {
     "math-levels": mathLevels,
     "reading-levels": readingLevels,
     "warning-levels": warningLevels,
-    "rating-answers": ratingAnswers,
+    "rating-answer": ratingAnswers,
     center: centersUnique,
     "attendance-status": defaultAttendanceStatusTypes,
     [INTERACTION_TYPE_CONFIG_ID]: defaultInteractionTypes,
