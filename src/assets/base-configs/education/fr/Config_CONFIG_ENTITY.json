@@ -1435,31 +1435,31 @@
         },
         "isMotivatedDuringClass": {
           "dataType": "configurable-enum",
-          "additional": "rating-answer",
+          "additional": "rating-answers",
           "label": "Motivé",
           "description": "L'enfant est motivé en classe."
         },
         "isParticipatingInClass": {
           "dataType": "configurable-enum",
-          "additional": "rating-answer",
+          "additional": "rating-answers",
           "label": "Participe",
           "description": "L'enfant participe activement en classe."
         },
         "isInteractingWithOthers": {
           "dataType": "configurable-enum",
-          "additional": "rating-answer",
+          "additional": "rating-answers",
           "label": "Interagit",
           "description": "L'enfant interagit avec les autres enfants en classe."
         },
         "doesHomework": {
           "dataType": "configurable-enum",
-          "additional": "rating-answer",
+          "additional": "rating-answers",
           "label": "Devoirs",
           "description": "L'enfant fait ses devoirs."
         },
         "asksQuestions": {
           "dataType": "configurable-enum",
-          "additional": "rating-answer",
+          "additional": "rating-answers",
           "label": "Pose des questions",
           "description": "L'enfant pose des questions en classe."
         }
