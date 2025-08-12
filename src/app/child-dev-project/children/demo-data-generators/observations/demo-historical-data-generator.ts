@@ -29,9 +29,11 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<Entity> {
   }
 
   protected generateEntities(): Entity[] {
-    const attributes: any[] = Object.keys(
-      this.entityRegistry.get("HistoricalEntityData").schema,
-    );
+    const ratedAttributes: any[] = Array.from(
+      this.entityRegistry.get("HistoricalEntityData").schema.entries(),
+    )
+      .filter(([id, field]) => field.additional === "rating-answer")
+      .map(([id, field]) => id);
 
     const entities: Entity[] = [];
     for (const child of this.childrenGenerator.entities) {
@@ -40,7 +42,7 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<Entity> {
         this.config.minCountAttributes;
       const historicalDataOfChild = [...Array(countOfData)].map(() => {
         const historicalData = createEntityOfType("HistoricalEntityData");
-        for (const attribute of attributes) {
+        for (const attribute of ratedAttributes) {
           historicalData[attribute] = faker.helpers.arrayElement(ratingAnswers);
         }
         historicalData.date = faker.date.past();

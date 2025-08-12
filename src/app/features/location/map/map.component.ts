@@ -42,6 +42,12 @@ export class MapComponent implements AfterViewInit {
   @Input() height = "200px";
   @Input() expandable = false;
 
+  /**
+   * If true, shows only the map with pins and a close button.
+   * Hides address search, selected location, and save/cancel actions.
+   */
+  @Input() showMapOnly = false;
+
   @Input() set marked(coordinates: Coordinates[]) {
     if (!coordinates) {
       return;
@@ -217,6 +223,7 @@ export class MapComponent implements AfterViewInit {
       highlightedEntities: this._highlightedEntities,
       entityClick: this.entityClick,
       displayedProperties: this._displayedProperties,
+      showMapOnly: this.showMapOnly,
     };
     this.dialog
       .open(mapComponent.MapPopupComponent, { width: "90%", data })

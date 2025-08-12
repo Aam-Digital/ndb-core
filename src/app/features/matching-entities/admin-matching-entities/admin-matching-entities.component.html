@@ -1,0 +1,35 @@
+<app-view-title i18n>Edit Matching View</app-view-title>
+
+<app-view-actions>
+  <div class="flex-row gap-small">
+    <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
+    <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+  </div>
+</app-view-actions>
+
+<div class="entity-config-container padding-regular">
+  <p i18n>
+    Configure the details for each "side" of the matching. A side represents one
+    of the two entity types that will be matched.
+  </p>
+
+  <div class="flex-wrap flex-row gap-small">
+    <app-edit-matching-entity-side
+      class="entity-side"
+      [(sideConfig)]="sides.left"
+    ></app-edit-matching-entity-side>
+
+    <app-edit-matching-entity-side
+      class="entity-side"
+      [(sideConfig)]="sides.right"
+    ></app-edit-matching-entity-side>
+  </div>
+
+  <div class="padding-top-regular">
+    <app-new-match-action
+      [(value)]="originalConfig.onMatch"
+      [leftEntityType]="sides.left.entityType"
+      [rightEntityType]="sides.right.entityType"
+    ></app-new-match-action>
+  </div>
+</div>

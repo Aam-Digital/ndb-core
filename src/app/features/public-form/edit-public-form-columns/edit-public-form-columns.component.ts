@@ -36,9 +36,17 @@ export class EditPublicFormColumnsComponent
       this.formConfig = {
         fieldGroups: publicFormConfig.columns,
       };
-      this.formControl.valueChanges.subscribe(
-        (v) => (this.formConfig = { fieldGroups: v }),
-      );
+      const originalFormConfig = JSON.parse(JSON.stringify(this.formConfig));
+      // Manually reset the config to reflect the cancelled changes immediately in the UI,
+      // also resetting the local config object only internal to this component
+      if (this.entityForm) {
+        this.entityForm.onFormStateChange.subscribe((event) => {
+          if (event === "cancelled") {
+            this.formConfig = originalFormConfig;
+            this.formControl.setValue(originalFormConfig.fieldGroups);
+          }
+        });
+      }
     }
   }
 

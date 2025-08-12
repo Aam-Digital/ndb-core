@@ -29,9 +29,14 @@ export async function initLanguage(locale?: string): Promise<void> {
         .then((t) => parseXliffToJson(t))
         .catch((err) => {
           Logging.error(`Error loading translations for locale ${locale}`, err);
-          return {};
+          return undefined;
         }),
     );
+
+  if (json === undefined) {
+    // failed to load translations, so abort here
+    return;
+  }
 
   loadTranslations(json);
   $localize.locale = locale;

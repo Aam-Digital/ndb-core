@@ -46,10 +46,10 @@ export const adminRoutes: Routes = [
     canActivate: [EntityPermissionGuard],
   },
   {
-    path: "dashboard/:dashboardViewId",
+    path: "matching",
     component: RoutedViewComponent,
     data: {
-      component: "AdminDashboard",
+      component: "AdminMatchingEntities",
       entityType: "Config",
       requiredPermissionOperation: "update",
     },
