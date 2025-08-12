@@ -135,10 +135,14 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     }
   }
 
+  /**
+   * - If field already exists in existing column then only set defaultValue.
+   * - If field not found in any existing column then  add to last column hidden by default.
+   */
   private applyPrefill(
     fieldId: string,
     defaultValue: DefaultValueConfig,
-    hideFromForm = true,
+    hideFromForm?: boolean,
   ) {
     if (!fieldId) return;
     const findField = (field) =>
@@ -153,11 +157,14 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
         fieldGroup.fields[fieldIndex],
       );
       existingField.defaultValue = defaultValue;
-      existingField.hideFromForm = hideFromForm;
       fieldGroup.fields[fieldIndex] = existingField;
     } else {
       const lastColumn = this.formConfig.columns.at(-1);
-      lastColumn?.fields.push({ id: fieldId, defaultValue, hideFromForm });
+      lastColumn?.fields.push({
+        id: fieldId,
+        defaultValue,
+        hideFromForm: hideFromForm ?? true,
+      });
     }
   }
 
