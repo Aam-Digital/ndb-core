@@ -7,7 +7,18 @@
   <app-admin-icon-input [(icon)]="item.icon"></app-admin-icon-input>
 
   <mat-form-field appearance="fill" class="full-width">
-    <mat-label i18n>Link</mat-label>
+    <mat-label i18n>
+      Link
+      @if (showLinkTooltip) {
+        &nbsp;
+        <span
+          matTooltip="You can edit the link to create a new quick access shortcut. To create a new shortcut link, open Aam Digital in a new tab, go to the desired entity, copy everything after ‘https://demo.aam-digital.com/’, and paste it here to create your shortcut."
+          i18n-matTooltip
+        >
+          <fa-icon icon="question-circle"></fa-icon>
+        </span>
+      }
+    </mat-label>
     <input matInput [(ngModel)]="item.link" (ngModelChange)="onChange()" />
   </mat-form-field>
 </div>

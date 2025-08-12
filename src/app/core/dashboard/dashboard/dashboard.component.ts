@@ -29,6 +29,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { AblePurePipe } from "@casl/angular";
 import { AsyncPipe } from "@angular/common";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @RouteTarget("Dashboard")
 @Component({
@@ -43,6 +44,7 @@ import { AsyncPipe } from "@angular/common";
     RouterLink,
     AblePurePipe,
     AsyncPipe,
+    MatTooltipModule
   ],
 })
 export class DashboardComponent implements DashboardConfig {

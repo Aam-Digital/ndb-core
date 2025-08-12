@@ -1,5 +1,8 @@
 <div style="padding: 16px">
   <div style="margin-bottom: 32px">
+    <p i18n>
+      You can create some quick access links to your most-used features.
+    </p>
     <h3 i18n>Shortcuts</h3>
     @for (shortcut of localConfig.shortcuts; track $index; let i = $index) {
       <div class="shortcut-item">
@@ -7,6 +10,7 @@
         <app-menu-item-form
           [item]="shortcut"
           (itemChange)="onShortcutItemChange($event, i)"
+          [showLinkTooltip]="true"
         ></app-menu-item-form>
       </div>
     }

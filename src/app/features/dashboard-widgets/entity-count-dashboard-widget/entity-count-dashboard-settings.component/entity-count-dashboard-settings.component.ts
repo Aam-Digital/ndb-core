@@ -9,6 +9,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatSelectModule } from "@angular/material/select";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 export interface EntityCountDashboardConfig {
   entityType?: string;
@@ -29,6 +30,7 @@ export interface EntityCountDashboardConfig {
     FormsModule,
     EntityTypeSelectComponent,
     EntityFieldSelectComponent,
+    FaIconComponent,
   ],
   templateUrl: "./entity-count-dashboard-settings.component.html",
   styleUrls: ["./entity-count-dashboard-settings.component.scss"],

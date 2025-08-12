@@ -44,6 +44,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
   styleUrls: [
     "./admin-dashboard.component.scss",
     "../../dashboard/dashboard/dashboard.component.scss",
+    "../admin-entity/admin-entity-styles.scss",
   ],
 })
 export class AdminDashboardComponent implements OnInit {

@@ -13,6 +13,12 @@
   </div>
 </div>
 
+<div class="hint-banner" i18n>
+  You can customize the widgets on your dashboard to highlight the information
+  that is most useful to you. You can personalize the dashboard to show the key
+  insights you need.
+</div>
+
 <div class="overall-container flex-row" [class.disabled]="isDisabled">
   <!-- WIDGET PREVIEW AREA -->
   <div
@@ -38,6 +44,8 @@
             size="xl"
             class="drag-handle"
             cdkDragHandle
+            matTooltip="You can rearrange the dashboard sections to highlight the most important information first."
+            i18n-matTooltip
           ></fa-icon>
 
           <fa-icon
