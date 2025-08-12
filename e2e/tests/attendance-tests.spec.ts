@@ -186,7 +186,9 @@ test("Edit participants of a recurring activity", async ({ page }) => {
   await page.getByRole("button", { name: "Edit" }).click();
 
   // And I click on the "Participants" field
-  await page.getByLabel("Participants").click();
+  await page
+    .getByRole("combobox", { name: "Participants", exact: true })
+    .click();
 
   // Then I see "Abhisyanta Sharma" selected.
   await expect(
