@@ -226,3 +226,68 @@ test("Edit participants of a recurring activity", async ({ page }) => {
   // Then I can record attendance for "Aasha Gill"
   await expect(page.getByText(childToAdd.name)).toBeVisible();
 });
+
+test("Assign a recurring activity to a user", async ({ page }) => {
+  const users = generateUsers();
+  const [currentUser, otherUser] = users;
+  const children = times(6, () => generateChild());
+
+  const activityToAssign = generateActivity({
+    title: "<COACHING CLASS>",
+    participants: faker.helpers.arrayElements(children, { min: 2, max: 4 }),
+    assignedUser: otherUser, // Initially assigned to other user
+  });
+
+  const userOwnActivity = generateActivity({
+    participants: faker.helpers.arrayElements(children, { min: 2, max: 3 }),
+    assignedUser: currentUser,
+  });
+
+  const otherActivities = times(2, () =>
+    generateActivity({
+      participants: faker.helpers.arrayElements(children, { min: 2, max: 3 }),
+      assignedUser: otherUser,
+    }),
+  );
+
+  await loadApp(page, [
+    ...users,
+    ...children,
+    userOwnActivity,
+    ...otherActivities,
+    activityToAssign,
+  ]);
+
+  // When I click on Attendance from the main menu.
+  await page.getByRole("navigation").getByText("Attendance").click();
+
+  // And I click on "Manage Activities"
+  await page.getByRole("button", { name: "Manage Activities" }).click();
+
+  // And I Click on "Coaching Class"
+  await page.getByRole("cell", { name: "<COACHING CLASS>" }).click();
+
+  // When I assign myself
+  await page.getByRole("button", { name: "Edit" }).click();
+  await page.getByLabel("Assigned user(s)").click();
+  await page
+    .getByRole("option", { name: currentUser.name, exact: true })
+    .click();
+  await page.getByRole("button", { name: "Save" }).click();
+
+  // Then I navigate to Record Attendance
+  await page.getByRole("navigation").getByText("Attendance").click();
+  await page.getByRole("button", { name: "Record" }).click();
+
+  // Then only the Recurring Activity assigned to the user should be listed.
+  await expect(page.getByText("<COACHING CLASS>")).toBeVisible();
+  await expect(page.getByText(userOwnActivity.title)).toBeVisible();
+  await expect(page.getByText(otherActivities[0].title)).not.toBeVisible();
+
+  // When I click on "Show More"
+  await page.getByRole("button", { name: "Show more" }).click();
+
+  // Then the Recurring Activity that are assigned to other users should also be listed.
+  await expect(page.getByText(otherActivities[0].title)).toBeVisible();
+  await expect(page.getByText(otherActivities[1].title)).toBeVisible();
+});
