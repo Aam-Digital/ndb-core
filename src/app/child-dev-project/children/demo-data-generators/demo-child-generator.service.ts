@@ -44,12 +44,16 @@ export class DemoChildGenerator extends DemoDataGenerator<Entity> {
 }
 
 export function generateChild(
-  opts: { id?: string; inactive?: boolean } = {},
-): Entity {
+  opts: { id?: string; inactive?: boolean; name?: string } = {},
+): Entity & { name: string } {
   const id = opts.id ?? faker.string.alphanumeric(20);
 
-  const child = createEntityOfType("Child", id);
-  child.name = faker.person.firstName() + " " + faker.person.lastName();
+  const child = createEntityOfType("Child", id) as Entity & {
+    name: string;
+    [key: string]: any;
+  };
+  child.name =
+    opts.name ?? `${faker.person.firstName()} ${faker.person.lastName()}`;
   child.projectNumber = id;
   child.religion = faker.helpers.arrayElement(religions);
   child.gender = faker.helpers.arrayElement(genders.slice(0, 2));
