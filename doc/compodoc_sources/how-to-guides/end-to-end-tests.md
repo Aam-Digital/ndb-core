@@ -94,6 +94,18 @@ option](https://argos-ci.com/docs/playwright#argosscreenshotpage-name-options)
 in `argosScreenshot()`. Set a default threshold with `argos upload
 --threshold=...`
 
+## AI-Assisted Test Development
+
+You can streamline test development using Claude Code with the custom `/write-e2e-test` command, which provides comprehensive guidelines for writing Playwright tests.
+
+The command includes:
+- Best practices for locators and actions
+- Common patterns for navigation, forms, and verification
+- Test fixture usage patterns
+- Gherkin-to-Playwright translation guides
+
+Simply use the `/write-e2e-test` command when you need to implement or improve e2e tests.
+
 [aria-busy]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-busy
 [Playwright]: https://playwright.dev/
 [Playwright UI]: https://playwright.dev/docs/test-ui-mode
