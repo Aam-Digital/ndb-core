@@ -10,7 +10,7 @@ import { faker } from "#src/app/core/demo-data/faker.js";
 test("Record attendance for one activity", async ({ page }) => {
   const users = generateUsers();
   const demoUser = users[0];
-  const children = times(8, generateChild).filter((child) => child.isActive);
+  const children = times(8, () => generateChild());
   const otherActivities = times(3, () =>
     generateActivity({
       participants: faker.helpers.arrayElements(children, { min: 2, max: 7 }),
@@ -116,7 +116,7 @@ test("Children list displays monthly attendance percentage", async ({
   await loadApp(page);
   await page.getByRole("navigation").getByText("Children").click();
   await page.getByRole("tab", { name: "School Info" }).click();
-  await expect(page.getByRole("cell", { name: /\d+%/ })).toHaveCount(10);
+  await expect(page.getByRole("cell", { name: /\d+%/ })).toHaveCount(8);
   await argosScreenshot(page, "children-school-info");
 });
 
@@ -131,6 +131,6 @@ test("Recurring activities list", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "Recurring Activities" }),
   ).toBeVisible();
-  await expect(page.getByRole("row")).toHaveCount(10);
+  await expect(page.getByRole("row")).toHaveCount(3);
   await argosScreenshot(page, "recurring-activities-list");
 });
