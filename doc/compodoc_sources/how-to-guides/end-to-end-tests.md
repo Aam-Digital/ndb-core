@@ -94,6 +94,28 @@ option](https://argos-ci.com/docs/playwright#argosscreenshotpage-name-options)
 in `argosScreenshot()`. Set a default threshold with `argos upload
 --threshold=...`
 
+## AI-Assisted Test Development
+
+You can use [Claude Code][] to write tests based on Gherkin-style scenario steps.
+
+Start by adding the steps to a test file, e.g. `e2e/tests/attendance-tests.spec.ts`:
+
+```typescript
+/*
+TODO: Add a child
+When I navigate to "Children"
+And I click on "Add New"
+Then the heading "Adding new child" is displayed
+When I fill in "<NAME>" in the field "Name"
+And then I click on "Save".
+Then the heading changes to "<NAME>"
+*/
+```
+
+Then, start `claude` and run the command `/write-e2e-tests
+e2e/tests/attendance-test.spec.ts`. This will create a new test case "Add a
+child". You can then work with the initial draft and fix it until it passes.
+
 [aria-busy]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-busy
 [Playwright]: https://playwright.dev/
 [Playwright UI]: https://playwright.dev/docs/test-ui-mode
