@@ -16,7 +16,6 @@ import { DefaultValueConfig } from "../../../core/default-values/default-value-c
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 
@@ -38,7 +37,7 @@ import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
   styleUrls: ["./edit-prefilled-values.component.scss"],
 })
 export class EditPrefilledValuesComponent
-  extends EditComponent<FormFieldConfig[]>
+  extends EditComponent<{ [key: string]: DefaultValueConfig }>
   implements OnInit
 {
   entityConstructor: EntityConstructor;
@@ -53,7 +52,6 @@ export class EditPrefilledValuesComponent
 
   override ngOnInit(): void {
     if (!this.entity) return;
-
     this.entityConstructor = this.entities.get(this.entity["entity"]);
     this.initializePrefilledValues();
     this.prefilledValueSettings.valueChanges.subscribe((value) =>
@@ -66,28 +64,51 @@ export class EditPrefilledValuesComponent
   }
 
   private initializePrefilledValues(): void {
-    const fields = this.formControl.value as FormFieldConfig[];
-    if (!fields || !Array.isArray(fields)) return;
+    let fields = this.formControl.value;
 
-    fields.forEach((field) => {
-      this.prefilledValues.push(
-        this.fb.group({
-          field: [field.id, Validators.required],
-          defaultValue: [field.defaultValue],
-          hideFromForm: [field.hideFromForm ?? true],
-        }),
-      );
-    });
+    // todo: check/update this with existing prefilled array
+    if (
+      Array.isArray(fields) &&
+      fields.length === 1 &&
+      typeof fields[0] === "object" &&
+      !Array.isArray(fields[0])
+    ) {
+      fields = fields[0];
+    }
+
+    if (fields && typeof fields === "object" && !Array.isArray(fields)) {
+      for (const [fieldId, defVal] of Object.entries(
+        fields as Record<string, DefaultValueConfig>,
+      )) {
+        this.prefilledValues.push(
+          this.fb.group({
+            field: [fieldId, Validators.required],
+            defaultValue: [defVal],
+          }),
+        );
+      }
+      return;
+    }
+
+    // Old format: array of PrefilledValue
+    if (Array.isArray(fields)) {
+      type PossiblePrefilledItem = PrefilledValue & { id?: string };
+      (fields as PossiblePrefilledItem[]).forEach((item) => {
+        this.prefilledValues.push(
+          this.fb.group({
+            field: [item.field ?? item.id, Validators.required],
+            defaultValue: [item.defaultValue],
+          }),
+        );
+      });
+    }
   }
 
   addPrefilledFields(): void {
     this.prefilledValues.push(
       this.fb.group({
         field: ["", Validators.required],
-        defaultValue: {
-          mode: "static",
-        },
-        hideFromForm: true,
+        defaultValue: { mode: "static" },
       }),
     );
   }
@@ -113,17 +134,12 @@ export class EditPrefilledValuesComponent
       return;
     }
 
-    const updatedFields: FormFieldConfig[] = value.prefilledValue.map(
-      ({ field, defaultValue, hideFromForm }) => {
-        return {
-          id: field,
-          defaultValue,
-          hideFromForm: hideFromForm ?? true,
-        };
-      },
-    );
+    const objFormat: { [key: string]: DefaultValueConfig } = {};
+    value.prefilledValue.forEach(({ field, defaultValue }) => {
+      if (field) objFormat[field] = defaultValue;
+    });
 
-    this.formControl.setValue(updatedFields);
+    this.formControl.setValue(objFormat);
     this.formControl.markAsDirty();
   }
 }

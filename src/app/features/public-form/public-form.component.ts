@@ -115,40 +115,50 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   private handlePrefilledFields() {
-    if (!this.formConfig.prefilledFields?.length) {
-      return;
-    }
-
-    this.formConfig.prefilledFields.forEach((item) => {
-      if (!item.id) {
-        return;
+    if (
+      this.formConfig.prefilled &&
+      typeof this.formConfig.prefilled === "object"
+    ) {
+      for (const [fieldId, defaultValue] of Object.entries(
+        this.formConfig.prefilled,
+      )) {
+        this.applyPrefill(fieldId, defaultValue as DefaultValueConfig);
       }
-
-      const newPrefilledField: FormFieldConfig = {
-        id: item.id,
-        defaultValue: item.defaultValue ?? null,
-        hideFromForm: item.hideFromForm ?? true,
-      };
-
-      const findField = (field) =>
-        field === item.id ||
-        (typeof field === "object" && field.id === item.id);
-      const fieldGroup = this.fieldGroups.find((group) =>
-        group.fields.some(findField),
-      );
-
-      if (fieldGroup) {
-        const fieldIndex = fieldGroup.fields.findIndex(findField);
-        const existingField: FormFieldConfig = toFormFieldConfig(
-          fieldGroup.fields[fieldIndex],
+    } else if (Array.isArray(this.formConfig.prefilledFields)) {
+      this.formConfig.prefilledFields.forEach((item) => {
+        this.applyPrefill(
+          item.id,
+          item.defaultValue ?? null,
+          item.hideFromForm ?? true,
         );
-        existingField.defaultValue = item.defaultValue;
-        fieldGroup.fields[fieldIndex] = existingField;
-      } else {
-        const lastColumn = this.formConfig.columns.at(-1);
-        lastColumn?.fields.push(newPrefilledField);
-      }
-    });
+      });
+    }
+  }
+
+  private applyPrefill(
+    fieldId: string,
+    defaultValue: DefaultValueConfig,
+    hideFromForm = true,
+  ) {
+    if (!fieldId) return;
+    const findField = (field) =>
+      field === fieldId || (typeof field === "object" && field.id === fieldId);
+    const fieldGroup = this.fieldGroups.find((group) =>
+      group.fields.some(findField),
+    );
+
+    if (fieldGroup) {
+      const fieldIndex = fieldGroup.fields.findIndex(findField);
+      const existingField: FormFieldConfig = toFormFieldConfig(
+        fieldGroup.fields[fieldIndex],
+      );
+      existingField.defaultValue = defaultValue;
+      existingField.hideFromForm = hideFromForm;
+      fieldGroup.fields[fieldIndex] = existingField;
+    } else {
+      const lastColumn = this.formConfig.columns.at(-1);
+      lastColumn?.fields.push({ id: fieldId, defaultValue, hideFromForm });
+    }
   }
 
   /**
@@ -195,42 +205,19 @@ export function migratePublicFormConfig(
     );
   }
 
-  for (let [id, value] of Object.entries(formConfig["prefilled"] ?? [])) {
-    const defaultValue: DefaultValueConfig = {
-      mode: "static",
-      config: { value },
-    };
-
-    const field: FormFieldConfig = findFieldInFieldGroups(formConfig, id);
-    if (!field) {
-      // add new field to last column
-      const lastColumn: FieldGroup =
-        formConfig.columns[formConfig.columns.length - 1];
-      lastColumn.fields.push({ id, defaultValue, hideFromForm: true });
-    } else {
-      field.defaultValue = defaultValue;
-    }
+  if (!formConfig.prefilled && Array.isArray(formConfig.prefilledFields)) {
+    const newObj: { [key: string]: DefaultValueConfig } = {};
+    formConfig.prefilledFields.forEach((item) => {
+      if (item.id) {
+        newObj[item.id] = item.defaultValue ?? {
+          mode: "static",
+          config: { value: null },
+        };
+      }
+    });
+    formConfig.prefilled = newObj;
+    delete formConfig.prefilledFields;
   }
-  delete formConfig.prefilled;
 
   return formConfig;
-}
-
-function findFieldInFieldGroups(
-  formConfig: PublicFormConfig,
-  id: string,
-): FormFieldConfig {
-  for (const column of formConfig.columns) {
-    for (const field of column.fields) {
-      if (typeof field === "string" && field === id) {
-        // replace the string with a field object, so that we can pass by reference
-        const newField: FormFieldConfig = { id: field };
-        column.fields[column.fields.indexOf(field)] = newField;
-        return newField;
-      } else if (typeof field === "object" && field.id === id) {
-        return field;
-      }
-    }
-  }
-  return undefined;
 }
