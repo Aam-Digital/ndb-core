@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { BirthdayDashboardSettingsComponent } from "./birthday-dashboard-settings.component";
 import { FormControl } from "@angular/forms";
+import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
+import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 
 describe("BirthdayDashboardSettingsComponent", () => {
   let component: BirthdayDashboardSettingsComponent;
@@ -9,7 +11,10 @@ describe("BirthdayDashboardSettingsComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BirthdayDashboardSettingsComponent],
+      imports: [
+        BirthdayDashboardSettingsComponent,
+        MockedTestingModule.withState(),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BirthdayDashboardSettingsComponent);

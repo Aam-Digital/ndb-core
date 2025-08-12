@@ -44,7 +44,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     RouterLink,
     AblePurePipe,
     AsyncPipe,
-    MatTooltipModule
+    MatTooltipModule,
   ],
 })
 export class DashboardComponent implements DashboardConfig {
