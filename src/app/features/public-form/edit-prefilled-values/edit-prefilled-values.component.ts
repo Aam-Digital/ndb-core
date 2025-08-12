@@ -79,19 +79,6 @@ export class EditPrefilledValuesComponent
       }
       return;
     }
-
-    // Old format: array of PrefilledValue
-    if (Array.isArray(fields)) {
-      type PossiblePrefilledItem = PrefilledValue & { id?: string };
-      (fields as PossiblePrefilledItem[]).forEach((item) => {
-        this.prefilledValues.push(
-          this.fb.group({
-            field: [item.field ?? item.id, Validators.required],
-            defaultValue: [item.defaultValue],
-          }),
-        );
-      });
-    }
   }
 
   addPrefilledFields(): void {
