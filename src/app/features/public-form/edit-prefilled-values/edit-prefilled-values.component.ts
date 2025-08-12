@@ -134,12 +134,12 @@ export class EditPrefilledValuesComponent
       return;
     }
 
-    const objFormat: { [key: string]: DefaultValueConfig } = {};
+    const updatedFields: { [key: string]: DefaultValueConfig } = {};
     value.prefilledValue.forEach(({ field, defaultValue }) => {
-      if (field) objFormat[field] = defaultValue;
+      if (field) updatedFields[field] = defaultValue;
     });
 
-    this.formControl.setValue(objFormat);
+    this.formControl.setValue(updatedFields);
     this.formControl.markAsDirty();
   }
 }
