@@ -66,16 +66,6 @@ export class EditPrefilledValuesComponent
   private initializePrefilledValues(): void {
     let fields = this.formControl.value;
 
-    // todo: check/update this with existing prefilled array
-    if (
-      Array.isArray(fields) &&
-      fields.length === 1 &&
-      typeof fields[0] === "object" &&
-      !Array.isArray(fields[0])
-    ) {
-      fields = fields[0];
-    }
-
     if (fields && typeof fields === "object" && !Array.isArray(fields)) {
       for (const [fieldId, defVal] of Object.entries(
         fields as Record<string, DefaultValueConfig>,
