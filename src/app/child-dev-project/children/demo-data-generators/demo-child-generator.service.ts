@@ -1,3 +1,5 @@
+import { times } from "lodash-es";
+
 import { Entity } from "../../../core/entity/model/entity";
 import { religions } from "./fixtures/religions";
 import { languages } from "./fixtures/languages";
@@ -10,7 +12,6 @@ import { genders } from "../model/genders";
 import { calculateAge } from "../../../utils/utils";
 import { DateWithAge } from "../../../core/basic-datatypes/date-with-age/dateWithAge";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
-import { range } from "lodash-es";
 
 export class DemoChildConfig {
   count: number;
@@ -35,22 +36,24 @@ export class DemoChildGenerator extends DemoDataGenerator<Entity> {
   }
 
   generateEntities(): Entity[] {
-    return generateChildren({ count: this.config.count });
+    return times(this.config.count, (i) => {
+      const inactive = faker.number.int(100) <= 90;
+      return generateChild({ id: String(i + 1), inactive });
+    });
   }
 }
 
-export function generateChildren(params: { count: number }): Entity[] {
-  return range(params.count).map((i) => generateChild(String(i + 1)));
-}
+export function generateChild(
+  opts: { id?: string; inactive?: boolean; name?: string } = {},
+): Entity & { name: string } {
+  const id = opts.id ?? faker.string.alphanumeric(20);
 
-/** @deprecated Don’t pass `id` explicitly, use `generateChild()` instead */
-export function generateChild(id: string): Entity;
-export function generateChild(): Entity;
-export function generateChild(id?: string): Entity {
-  id ??= faker.string.alphanumeric(20);
-
-  const child = createEntityOfType("Child", id);
-  child.name = faker.person.firstName() + " " + faker.person.lastName();
+  const child = createEntityOfType("Child", id) as Entity & {
+    name: string;
+    [key: string]: any;
+  };
+  child.name =
+    opts.name ?? `${faker.person.firstName()} ${faker.person.lastName()}`;
   child.projectNumber = id;
   child.religion = faker.helpers.arrayElement(religions);
   child.gender = faker.helpers.arrayElement(genders.slice(0, 2));
@@ -71,7 +74,7 @@ export function generateChild(id?: string): Entity {
 
   child["address"] = faker.geoAddress();
 
-  if (faker.number.int(100) > 90) {
+  if (opts.inactive ?? false) {
     child.dropoutDate = faker.date.between({
       from: child.admissionDate,
       to: faker.defaultRefDate(),

@@ -23,11 +23,7 @@ const Template: StoryFn<ActivityCardComponent> = (
   props: args,
 });
 
-const demoChildren = [
-  generateChild("1"),
-  generateChild("2"),
-  generateChild("3"),
-];
+const demoChildren = [generateChild(), generateChild(), generateChild()];
 
 const simpleEvent = Note.create(new Date(), "some meeting");
 demoChildren.forEach((c) => simpleEvent.addChild(c));
