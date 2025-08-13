@@ -160,7 +160,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.html</context>
-          <context context-type="linenumber">28</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/admin-matching-entities.component.html</context>
+          <context context-type="linenumber">5</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3823219296477075982" datatype="html">
@@ -1306,8 +1310,7 @@
       <trans-unit id="5191402552920528867" datatype="html">
         <source> You can edit how users will see the details of a single record of this type. Drag and drop fields and sections in this preview of a profile view and group them as appropriate. The editor below closely resembles how the form will look for users later. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> We recommend to keep things simple: Only add fields that you really need for your work.
 </source>
-        <target> Sie können anpassen, wie Nutzer:innen die Details eines einzelnen Datensatzes dieses Typs sehen. Verschieben Sie Felder und Bereiche per &quot;drag &amp; drop&quot; in dieser Vorschau und gruppieren Sie Felder. Das Layout im untenstehenden Editor ist sehr ähnlich dem Formular, wie es Nutzer:innen später sehen. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Weniger ist mehr: Aus unserer Erfahrung empfehlen wir, nur Felder die Sie wirklich aktuell benötigen anzulegen.
-</target>
+        <target></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-details/admin-entity-details.component.html</context>
           <context context-type="linenumber">1,9</context>
@@ -1412,7 +1415,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.html</context>
-          <context context-type="linenumber">27</context>
+          <context context-type="linenumber">29</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/admin-matching-entities.component.html</context>
+          <context context-type="linenumber">6</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.html</context>
@@ -2048,7 +2055,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin.routing.ts</context>
-          <context context-type="linenumber">59</context>
+          <context context-type="linenumber">69</context>
         </context-group>
       </trans-unit>
       <trans-unit id="657496228690855434" datatype="html">
@@ -2247,7 +2254,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.html</context>
-          <context context-type="linenumber">21</context>
+          <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5212890716533126981" datatype="html">
@@ -2368,7 +2375,7 @@
       </trans-unit>
       <trans-unit id="1706683980499618052" datatype="html">
         <source> Save &amp; Close </source>
-        <target> Speichern &amp; Schließen </target>
+        <target></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date/date-import-config/date-import-config.component.html</context>
           <context context-type="linenumber">34,36</context>
@@ -4019,7 +4026,7 @@
       </trans-unit>
       <trans-unit id="6822844657665398859" datatype="html">
         <source> Confirm &amp; Run Import </source>
-        <target> Bestätigen &amp; Import ausführen </target>
+        <target></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-confirm-summary/import-confirm-summary.component.html</context>
           <context context-type="linenumber">27,29</context>
@@ -4260,7 +4267,7 @@
       </trans-unit>
       <trans-unit id="5807588556271438398" datatype="html">
         <source> Review &amp; Edit Data </source>
-        <target> Daten Überprüfen &amp; bearbeiten </target>
+        <target></target>
         <note priority="1" from="description">Import Step - review data</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
@@ -5736,7 +5743,7 @@
         <target>Adresse suchen oder auf die Karte klicken, um einen anderen Standort auszuwählen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.ts</context>
-          <context context-type="linenumber">61</context>
+          <context context-type="linenumber">67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5615009935382672786" datatype="html">
@@ -5775,16 +5782,16 @@
         <note priority="1" from="description">tooltip explaining that this entity in matching is locked</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/matching-entities/matching-entities/matching-entities.component.html</context>
-          <context context-type="linenumber">31</context>
+          <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="209260392918751767" datatype="html">
-        <source> Select <x id="INTERPOLATION" equiv-text="{{ side.entityType?.label }}"/> </source>
+        <source> Select <x id="INTERPOLATION" equiv-text="{{ (side.entityType | entityType)?.label }}"/> </source>
         <target><x id="INTERPOLATION" equiv-text="{{ side.entityType.label }}"/> auswählen </target>
         <note priority="1" from="description">header of section with entities available for selection</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/matching-entities/matching-entities/matching-entities.component.html</context>
-          <context context-type="linenumber">97,99</context>
+          <context context-type="linenumber">117,119</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4566094167890982095" datatype="html">
@@ -5793,7 +5800,7 @@
         <note priority="1" from="description">Matching button label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/matching-entities/matching-entities/matching-entities.component.ts</context>
-          <context context-type="linenumber">106</context>
+          <context context-type="linenumber">120</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1779552786277618671" datatype="html">
@@ -5802,7 +5809,7 @@
         <note priority="1" from="description">Matching View column name</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/matching-entities/matching-entities/matching-entities.component.ts</context>
-          <context context-type="linenumber">364</context>
+          <context context-type="linenumber">376</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2468578017924444574" datatype="html">
@@ -7270,6 +7277,10 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
           <context context-type="sourcefile">src/app/core/entity/entity-type-select/entity-type-select.component.ts</context>
           <context context-type="linenumber">25</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-matching-entity-side/edit-matching-entity-side.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="6124157318104158478" datatype="html">
         <source> You can use Markdown syntax to format this text. For more details, check out the <x id="START_LINK" ctype="x-a" equiv-text="&lt;a href=&quot;https://www.markdownguide.org/basic-syntax&quot; target=&quot;_blank&quot;             &gt;"/>Markdown Guide<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a           &gt;"/></source>
@@ -7347,7 +7358,7 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
       </trans-unit>
       <trans-unit id="5801022225533937256" datatype="html">
         <source>Drag &amp; drop table column headers. Add columns:</source>
-        <target>Sortieren Sie die Spaltenüberschriften der Tabelle per Drag &amp; Drop. Spalten hinzufügen:</target>
+        <target></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-list/admin-entity-list.component.html</context>
           <context context-type="linenumber">37</context>
@@ -8904,7 +8915,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
       </trans-unit>
       <trans-unit id="8822881955333053912" datatype="html">
         <source>Open M&amp;E Module</source>
-        <target>M&amp;E Modul öffnen</target>
+        <target></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/third-party-authentication/goto-third-party-system/goto-third-party-system.component.html</context>
           <context context-type="linenumber">15</context>
@@ -9696,6 +9707,176 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-forms.service.ts</context>
           <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8864781719329546897" datatype="html">
+        <source>Edit Matching View</source>
+        <target>Matching-Ansicht bearbeiten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/admin-matching-entities.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3678144055616354042" datatype="html">
+        <source> Configure the details for each &quot;side&quot; of the matching. A side represents one of the two entity types that will be matched. </source>
+        <target> Konfigurieren Sie die Details für jede „Seite“ des Matchings. Eine Seite stellt einen der beiden Datensatz-Typen dar, die abgeglichen werden. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/admin-matching-entities.component.html</context>
+          <context context-type="linenumber">11,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2567583351940009311" datatype="html">
+        <source>Configuration updated successfully.</source>
+        <target>Konfiguration erfolgreich aktualisiert.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/admin-matching-entities.component.ts</context>
+          <context context-type="linenumber">83</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1465722133080575331" datatype="html">
+        <source>Available columns</source>
+        <target>Verfügbare Spalten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-matching-entity-side/edit-matching-entity-side.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2669435945195117510" datatype="html">
+        <source>These columns will appear in the top summary view and in the table
+      view below when matching; Add columns:</source>
+        <target>Diese Spalten werden beim Matching in der oberen Übersichtsansicht und in der Tabellenansicht unten angezeigt. Spalten hinzufügen:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-matching-entity-side/edit-matching-entity-side.component.html</context>
+          <context context-type="linenumber">17,18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5606655842276460327" datatype="html">
+        <source>Available Filters</source>
+        <target>Verfügbare Filter</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-matching-entity-side/edit-matching-entity-side.component.html</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5732173227190842854" datatype="html">
+        <source>These filters (and any prefilters) are only applied to the table list view during matching; Add filters:</source>
+        <target>Diese Filter (und alle Vorfilter) werden nur während des Matchings auf die Tabellenlistenansicht angewendet. Filter hinzufügen:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-matching-entity-side/edit-matching-entity-side.component.html</context>
+          <context context-type="linenumber">29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4075630299256837507" datatype="html">
+        <source>Records available for matching</source>
+        <target>Zum Matching verfügbare Datensätze</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-matching-entity-side/edit-matching-entity-side.component.html</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9189472441523524491" datatype="html">
+        <source> Configure filters to only show certain records for matching, that fulfill the required criteria (e.g. having a required status). </source>
+        <target> Konfigurieren Sie Filter, um nur bestimmte Datensätze zum Matching anzuzeigen, die die erforderlichen Kriterien erfüllen (z. B. einen erforderlichen Status haben). </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-matching-entity-side/edit-matching-entity-side.component.html</context>
+          <context context-type="linenumber">36,39</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3502754134202383537" datatype="html">
+        <source>Edit Prefilters</source>
+        <target>Vorfilter bearbeiten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-matching-entity-side/edit-matching-entity-side.component.html</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7050295264408581820" datatype="html">
+        <source>Name (record preview)</source>
+        <target>Name (Datensatz-Vorschau)</target>
+        <note priority="1" from="description">label for field represented as DisplayEntity block to select in Admin UI</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-matching-entity-side/edit-matching-entity-side.component.ts</context>
+          <context context-type="linenumber">69</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5556518443552910962" datatype="html">
+        <source>Match Settings</source>
+        <target>Matching-Einstellungen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-new-match-action/edit-new-match-action.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="540310691791508338" datatype="html">
+        <source> Configure the details of the record that is created as a match. (e.g. A &quot;school enrollment&quot; record that is created upon matching a student with a school). </source>
+        <target> Konfigurieren Sie die Details des Datensatzes, der als Übereinstimmung erstellt wird. (z. B. ein „Schul-Anmeldung“-Datensatz, der beim Zuordnen einer Schüler:in zu einer Schule erstellt wird.) </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-new-match-action/edit-new-match-action.component.html</context>
+          <context context-type="linenumber">10,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7835219428460620663" datatype="html">
+        <source>Record created as a match:</source>
+        <target>Als Matching erstellter Datensatz:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-new-match-action/edit-new-match-action.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7160805272345692229" datatype="html">
+        <source>Only types that have a reference field to both selected entity types above are available here.</source>
+        <target>Hier stehen nur Typen zur Verfügung, die ein Referenzfeld zu den beiden oben ausgewählten Datensatz-Typen haben.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-new-match-action/edit-new-match-action.component.html</context>
+          <context context-type="linenumber">26,27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6679543595911014937" datatype="html">
+        <source>Left Match Property</source>
+        <target>Feld des linken Matchings</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-new-match-action/edit-new-match-action.component.html</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4577175571322830177" datatype="html">
+        <source>Select the field from the entity that will be used as the left-side key in matching comparison.</source>
+        <target>Wählen Sie das Feld aus dem Datensatz aus, das auf der &quot;linken&quot; Seite des Matchings verknüpft wird.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-new-match-action/edit-new-match-action.component.html</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3248465086410305181" datatype="html">
+        <source>Right Match Property</source>
+        <target>Feld des rechten Matchings</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-new-match-action/edit-new-match-action.component.html</context>
+          <context context-type="linenumber">47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3265170216057184242" datatype="html">
+        <source>Select the field from the entity that will be used as the right-side key in matching comparison.</source>
+        <target>Wählen Sie das Feld aus dem Datensatz aus, das auf der &quot;rechten&quot; Seite des Matchings verknüpft wird.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-new-match-action/edit-new-match-action.component.html</context>
+          <context context-type="linenumber">56</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="818863335056140410" datatype="html">
+        <source> Fields shown in dialog for confirmation or editing when creating a match: </source>
+        <target> Felder, die im Bestätigungsdialog beim Erstellen eines Matchings zur zur Kontrolle oder Bearbeitung angezeigte werden: </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-new-match-action/edit-new-match-action.component.html</context>
+          <context context-type="linenumber">61,64</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6800314329963208068" datatype="html">
+        <source>Edit Matching Entities</source>
+        <target>Matching Datensätze bearbeiten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/matching-entities/matching-entities.component.html</context>
+          <context context-type="linenumber">12</context>
         </context-group>
       </trans-unit>
     </body>
