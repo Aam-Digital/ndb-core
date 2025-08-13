@@ -174,7 +174,7 @@ export class MapComponent implements AfterViewInit {
       spiderfyOnMaxZoom: true,
       showCoverageOnHover: false,
       zoomToBoundsOnClick: true,
-      maxClusterRadius: 20, // needed to noy use clustering on overlapping markers
+      maxClusterRadius: 20, // needed to not use clustering on overlapping markers
     });
     this.map.addLayer(this.markerClusterGroup);
     this.mapInitialized = true;
