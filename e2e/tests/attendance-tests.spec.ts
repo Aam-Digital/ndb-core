@@ -52,6 +52,7 @@ test("Record attendance for one activity", async ({ page }) => {
 
   await expect(page.getByText("2 / 3")).toBeVisible();
   await page.getByRole("button", { name: "Absent" }).click();
+  await argosScreenshot(page, "record-attendance-person");
 
   await expect(page.getByText("3 / 3")).toBeVisible();
   await page.getByRole("button", { name: "Late" }).click();
@@ -199,6 +200,7 @@ test("Edit participants of a recurring activity", async ({ page }) => {
 
   // And I select "Aasha Gill"
   await page.getByRole("option", { name: childToAdd.name }).click();
+  await argosScreenshot(page, "edit-participants");
 
   // And I click "Save."
   await page.getByRole("button", { name: "Save" }).click();
