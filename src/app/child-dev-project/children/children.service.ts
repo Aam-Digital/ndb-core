@@ -5,7 +5,6 @@ import { ChildSchoolRelation } from "./model/childSchoolRelation";
 import moment, { Moment } from "moment";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { Entity } from "../../core/entity/model/entity";
-import { groupBy } from "../../utils/utils";
 
 @Injectable({ providedIn: "root" })
 export class ChildrenService {
@@ -27,12 +26,17 @@ export class ChildrenService {
   async getChildren(): Promise<Entity[]> {
     const children = await this.entityMapper.loadType("Child");
     const relations = await this.entityMapper.loadType(ChildSchoolRelation);
-    groupBy(relations, "childId").forEach(([id, rels]) => {
-      const child = children.find((c) => c.getId() === id);
-      if (child) {
-        this.extendChildWithSchoolInfo(child, rels);
-      }
-    });
+    const relationsByChildId = Map.groupBy(
+      relations,
+      (relation) => relation.childId,
+    );
+
+    for (const child of children) {
+      this.extendChildWithSchoolInfo(
+        child,
+        relationsByChildId.get(child.getId()) ?? [],
+      );
+    }
     return children;
   }
 
