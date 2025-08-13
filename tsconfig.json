@@ -22,12 +22,15 @@
     "importHelpers": true,
     "allowSyntheticDefaultImports": true,
     "useDefineForClassFields": false,
-    // TODO fix decorator issues caused by the changed initialization order
-    "target": "ES2022",
-    "module": "ES2022",
+    // we ensure browser compatibility through babel and .browserslistrc
+    "target": "ESNext",
+    "module": "ESNext",
     "resolveJsonModule": true,
     "lib": [
-      "ES2022",
+      // NOTE: If you change this you must use caniuse.com to ensure that the
+      // targeted browsers (as defined in `.browserlistsrc`) support all
+      // language features. No polyfills are used.
+      "ES2023",
       "dom"
     ],
     "types": [
