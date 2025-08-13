@@ -52,6 +52,7 @@ export class EditPrefilledValuesComponent
 
   override ngOnInit(): void {
     if (!this.entity) return;
+
     this.entityConstructor = this.entities.get(this.entity["entity"]);
     this.initializePrefilledValues();
     this.prefilledValueSettings.valueChanges.subscribe((value) =>
