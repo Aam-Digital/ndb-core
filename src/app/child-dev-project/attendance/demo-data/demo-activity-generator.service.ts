@@ -64,18 +64,21 @@ const ACTIVITY_TYPES = [
 export function generateActivity({
   participants,
   assignedUser,
+  title,
 }: {
   participants: Entity[];
   assignedUser?: Entity;
+  title?: string;
 }): RecurringActivity {
   const activity = new RecurringActivity(faker.string.uuid());
   const type = faker.helpers.arrayElement(ACTIVITY_TYPES);
 
   activity.title =
+    title ??
     type.label +
-    " " +
-    faker.number.int({ min: 1, max: 9 }) +
-    faker.string.alphanumeric(1).toUpperCase();
+      " " +
+      faker.number.int({ min: 1, max: 9 }) +
+      faker.string.alphanumeric(1).toUpperCase();
   activity.type = type;
   activity.participants = participants.map((c) => c.getId());
   activity.assignedTo = [assignedUser?.getId()];
