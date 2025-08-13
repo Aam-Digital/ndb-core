@@ -37,7 +37,7 @@ import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
   styleUrls: ["./edit-prefilled-values.component.scss"],
 })
 export class EditPrefilledValuesComponent
-  extends EditComponent<{ [key: string]: DefaultValueConfig }>
+  extends EditComponent<Record<string, DefaultValueConfig>>
   implements OnInit
 {
   entityConstructor: EntityConstructor;
@@ -112,7 +112,7 @@ export class EditPrefilledValuesComponent
       return;
     }
 
-    const updatedFields: { [key: string]: DefaultValueConfig } = {};
+    const updatedFields: Record<string, DefaultValueConfig> = {};
     value.prefilledValue.forEach(({ field, defaultValue }) => {
       if (field) updatedFields[field] = defaultValue;
     });

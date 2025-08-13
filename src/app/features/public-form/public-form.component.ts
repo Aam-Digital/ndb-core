@@ -211,20 +211,5 @@ export function migratePublicFormConfig(
       },
     );
   }
-
-  if (!formConfig.prefilled && Array.isArray(formConfig.prefilledFields)) {
-    const newObj: { [key: string]: DefaultValueConfig } = {};
-    formConfig.prefilledFields.forEach((item) => {
-      if (item.id) {
-        newObj[item.id] = item.defaultValue ?? {
-          mode: "static",
-          config: { value: null },
-        };
-      }
-    });
-    formConfig.prefilled = newObj;
-    delete formConfig.prefilledFields;
-  }
-
   return formConfig;
 }
