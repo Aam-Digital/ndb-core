@@ -23,11 +23,7 @@ demoEvents[4].category = { id: "OTHER", label: "Other", isMeeting: true };
 const demoEvent = Note.create(new Date(), "coaching");
 demoEvent.category = { id: "COACHING", label: "Coaching", isMeeting: true };
 
-const demoChildren = [
-  generateChild("1"),
-  generateChild("2"),
-  generateChild("3"),
-];
+const demoChildren = [generateChild(), generateChild(), generateChild()];
 demoChildren.forEach((c) => demoEvent.addChild(c));
 
 const demoActivities = [

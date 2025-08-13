@@ -6,11 +6,7 @@ import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 
 const demoEvent = Note.create(new Date(), "coaching");
-const demoChildren = [
-  generateChild("1"),
-  generateChild("2"),
-  generateChild("3"),
-];
+const demoChildren = [generateChild(), generateChild(), generateChild()];
 demoChildren.forEach((c) => demoEvent.addChild(c));
 
 export default {
