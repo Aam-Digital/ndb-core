@@ -70,31 +70,8 @@ export class MapComponent implements AfterViewInit {
     if (!entities) {
       return;
     }
-    this._entities.next(entities);
-    // update overlapping coordinates
-    const adjustedEntities = entities.map((e) => ({
-      entity: e,
-      adjusted: false,
-    }));
-    const coordMap = new Map<string, number>();
-    adjustedEntities.forEach(({ entity }) => {
-      const mapProps = this.getMapProperties(entity);
-      mapProps.forEach((prop) => {
-        const loc = entity[prop]?.geoLookup;
-        if (loc) {
-          const key = `${loc.lat.toFixed(5)}_${loc.lon.toFixed(5)}`;
-          const count = coordMap.get(key) || 0;
-          if (count > 0) {
-            const angle = (count * 45 * Math.PI) / 180;
-            const dx = (10 / 111320) * Math.cos(angle); // approx 10m in degrees
-            const dy = (10 / 111320) * Math.sin(angle);
-            loc.lat += dy;
-            loc.lon += dx;
-          }
-          coordMap.set(key, count + 1);
-        }
-      });
-    });
+    const adjusted = this.adjustOverlappingCoordinates(entities);
+    this._entities.next(adjusted);
     this.updateMarkers();
   }
   private _entities = new BehaviorSubject<Entity[]>([]);
@@ -190,6 +167,40 @@ export class MapComponent implements AfterViewInit {
         }
       });
     });
+  }
+
+  /**
+   * Adjusts overlapping entity coordinates in-place so markers don't overlap
+   */
+  private adjustOverlappingCoordinates(entities: Entity[]): Entity[] {
+    const locationOccurrencesMap = new Map<string, number>();
+
+    const roundTo5Decimals = (n: number) => Number(n.toFixed(5));
+
+    entities.forEach((entity) => {
+      const locationProperties = this.getMapProperties(entity);
+      locationProperties.forEach((prop) => {
+        const location = (entity as any)[prop]?.geoLookup as
+          | { lat: number; lon: number }
+          | undefined;
+        if (!location) return;
+
+        const coordinateKey = `${roundTo5Decimals(location.lat)}_${roundTo5Decimals(location.lon)}`;
+        const occurrenceCount = locationOccurrencesMap.get(coordinateKey) || 0;
+
+        if (occurrenceCount > 0) {
+          const angle = (occurrenceCount * 45 * Math.PI) / 180;
+          const dx = (10 / 111320) * Math.cos(angle); // approx 10m in degrees
+          const dy = (10 / 111320) * Math.sin(angle);
+          location.lat += dy;
+          location.lon += dx;
+        }
+
+        locationOccurrencesMap.set(coordinateKey, occurrenceCount + 1);
+      });
+    });
+
+    return entities;
   }
 
   /**
