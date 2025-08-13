@@ -50,12 +50,11 @@ export function groupBy<T, P extends keyof T, E>(
 ): [T[P] extends Array<infer E> ? E | undefined : T[P], T[]][] {
   return array.reduce((allGroups, currentElement) => {
     let currentValue = currentElement[propertyToGroupBy];
-    // Treat empty array, undefined, null, or empty string as undefined for grouping
+    // Treat empty array, undefined, null string as undefined for grouping
     if (
       (Array.isArray(currentValue) && currentValue.length === 0) ||
       currentValue === undefined ||
-      currentValue === null ||
-      currentValue === ""
+      currentValue === null
     ) {
       currentValue = undefined;
     }

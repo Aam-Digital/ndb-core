@@ -67,7 +67,11 @@
       <ng-container matColumnDef="label">
         <td *matCellDef="let group">
           @if (!group.groupedByEntity) {
-            @if(group.label === undefined) {
+            @if (group.label === undefined && group.isInvalidOption) {
+              <span class="not-defined-label" style="color: #d9534f"
+                >[invalid option]</span
+              >
+            } @else if (group.label === undefined) {
               <span class="not-defined-label" i18n>not defined</span>
             } @else {
               <span>{{ group.label }}</span>

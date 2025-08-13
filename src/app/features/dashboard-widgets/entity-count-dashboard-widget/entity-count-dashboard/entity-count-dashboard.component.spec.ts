@@ -142,7 +142,7 @@ describe("EntityCountDashboardComponent", () => {
 
     expect(groupCounts).toEqual([
       {
-        label: "not defined",
+        label: undefined,
         value: 2,
         id: "",
         groupedByEntity: undefined,
@@ -179,7 +179,7 @@ describe("EntityCountDashboardComponent", () => {
 
     expect(currentlyShownGroupCounts).toHaveSize(2);
     expect(currentlyShownGroupCounts).toContain({
-      label: "not defined",
+      label: undefined,
       value: 1,
       id: "",
       groupedByEntity: TestEntity.ENTITY_TYPE,
@@ -214,7 +214,7 @@ describe("EntityCountDashboardComponent", () => {
 
     expect(currentlyShownGroupCounts).toHaveSize(3);
     expect(currentlyShownGroupCounts).toContain({
-      label: "not defined",
+      label: undefined,
       value: 1,
       id: "",
       groupedByEntity: "Child",

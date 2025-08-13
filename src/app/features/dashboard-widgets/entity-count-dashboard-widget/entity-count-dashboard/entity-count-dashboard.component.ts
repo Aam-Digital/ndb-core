@@ -37,7 +37,7 @@ export interface EntityCountDashboardConfig {
  * Details of one row of disaggregated counts (e.g. for a specific category value) to be displayed.
  */
 interface GroupCountRow {
-  label: string;
+  label: string | undefined;
   id: string;
 
   /**
@@ -51,6 +51,7 @@ interface GroupCountRow {
    * otherwise undefined, to display simply the group label.
    */
   groupedByEntity: string;
+  isInvalidOption?: boolean;
 }
 
 @DynamicComponent("ChildrenCountDashboard")
@@ -163,29 +164,62 @@ export class EntityCountDashboardComponent
       field.dataType === EntityDatatype.dataType ? field.additional : undefined;
     const groups = groupBy(entities, fieldName as keyof Entity);
 
-    const groupCounts = groups.map(([group, entities]) => {
-      const isNotDefined =
-        group === undefined || group === null || group === "";
+    let groupCounts = groups.map(([group, entities]) => {
       const label = extractHumanReadableLabel(group);
       return {
         label: label,
         value: entities.length,
-        id: isNotDefined ? "" : group?.["id"] || group,
+        id: extractGroupId(group),
         groupedByEntity: groupedByEntity,
       };
     });
 
+    // Merge "" and undefined groups into a single group with label: undefined
+    const notDefinedGroups = groupCounts.filter(
+      (g) => g.id === "" || g.id === undefined,
+    );
+    if (notDefinedGroups.length > 1) {
+      const merged = {
+        label: undefined,
+        value: notDefinedGroups.reduce((sum, g) => sum + g.value, 0),
+        id: "",
+        groupedByEntity: notDefinedGroups[0].groupedByEntity,
+      };
+      groupCounts = [
+        merged,
+        ...groupCounts.filter((g) => g.id !== "" && g.id !== undefined),
+      ];
+    }
+
     if (field.dataType === "configurable-enum") {
       const enumValues = this.configurableEnum.getEnumValues(field.additional);
+      const validIds = new Set(enumValues.map((ev) => ev.id));
       const groupCountsMap = new Map(
         groupCounts.map((aggregate) => [aggregate.id, aggregate]),
       );
-      const groupCountSorted = enumValues
+
+      // Mark and collect invalid options
+      const invalidOptions = groupCounts
+        .filter((g) => g.id && !validIds.has(g.id))
+        .map((g) => ({
+          ...g,
+          label: undefined,
+          isInvalidOption: true,
+        }));
+
+      // Only keep valid groups
+      let groupCountSorted = enumValues
         .map((enumValue) => groupCountsMap.get(enumValue.id))
         .filter(Boolean);
+
+      // Add merged undefined group if present
       if (groupCountsMap.has("")) {
         groupCountSorted.unshift(groupCountsMap.get(""));
       }
+
+      // Add invalid options at the end
+      groupCountSorted = [...invalidOptions, ...groupCountSorted];
+
       return groupCountSorted;
     }
 
@@ -206,9 +240,9 @@ export class EntityCountDashboardComponent
  */
 function extractHumanReadableLabel(
   value: string | ConfigurableEnumValue | any,
-): string {
+): string | undefined {
   if (value === undefined || value === null || value === "") {
-    return "not defined";
+    return undefined;
   }
   if (typeof value === "string") {
     return value;
@@ -218,4 +252,17 @@ function extractHumanReadableLabel(
   }
 
   return String(value);
+}
+
+/**
+ * Extract a group ID from a group value (string, object, etc.)
+ */
+function extractGroupId(group: any): string {
+  if (group === undefined || group === null || group === "") {
+    return "";
+  }
+  if (typeof group === "object" && "id" in group) {
+    return group.id;
+  }
+  return group;
 }
