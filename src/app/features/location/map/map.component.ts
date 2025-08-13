@@ -143,8 +143,7 @@ export class MapComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Previously, the map was centered on the first existing marker if present.
-    // Now, the map always starts at `start_location`, and centering on markers is handled later in `updateMarkers()` or `handleMarkerHighlights()`.
+    // the map always starts at `start_location`, and centering on markers is handled later in `updateMarkers()` or `handleMarkerHighlights()`.
     // init Map
     this.map = L.map(this.mapElement.nativeElement, {
       center: this.start_location,
