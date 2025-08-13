@@ -63,8 +63,7 @@ export class MapComponent implements AfterViewInit {
     this.updateMarkers();
   }
 
-  // Stores arbitrary coordinates for markers not linked to entities.
-  // This is separate from _highlightedEntities, which holds entities to highlight.
+  /** observable of updates to `marked`, see the description there */
   private _marked = new BehaviorSubject<Coordinates[]>([]);
 
   @Input() set entities(entities: Entity[]) {
