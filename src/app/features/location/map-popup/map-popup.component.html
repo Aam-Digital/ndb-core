@@ -15,7 +15,7 @@
     [highlightedEntities]="data.highlightedEntities | async"
     (mapClick)="mapClicked($event)"
     (entityClick)="data.entityClick?.next($event)"
-    [enableLocationMarking]="!data.showMapOnly"
+    [showMapOnly]="data.showMapOnly"
   ></app-map>
 </mat-dialog-content>
 

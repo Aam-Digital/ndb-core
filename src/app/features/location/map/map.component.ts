@@ -51,12 +51,6 @@ export class MapComponent implements AfterViewInit {
   @Input() showMapOnly = false;
 
   /**
-   * When true (default), clicking on the map emits a mapClick event which
-   * Set to false to completely ignore map clicks and avoid placing the blue pin for eg. in matching view
-   */
-  @Input() enableLocationMarking = true;
-
-  /**
    * Coordinates to show as extra markers on the map, not linked to any entity.
    * Use this to display locations like search results or temporary pins.
    * This is different from highlighted entities, which refer to existing entities that should stand out on the map.
@@ -132,7 +126,7 @@ export class MapComponent implements AfterViewInit {
       zoom: 14,
     });
     this.map.addEventListener("click", (res) => {
-      if (!this.enableLocationMarking) {
+      if (this.showMapOnly) {
         return; // ignore map clicks when disabled
       }
       this.clickStream.emit({ lat: res.latlng.lat, lon: res.latlng.lng });
