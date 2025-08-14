@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
   MAT_DIALOG_DATA,
@@ -148,28 +148,33 @@ export class AdminEntityFieldComponent implements OnInit {
       this.data.entitySchemaField.additional,
     );
 
-    this.schemaFieldsForm = this.fb.group({
-      id: this.fieldIdForm,
-      label: [this.data.entitySchemaField.label, Validators.required],
-      labelShort: [this.data.entitySchemaField.labelShort],
-      description: [this.data.entitySchemaField.description],
+    this.schemaFieldsForm = this.fb.group(
+      {
+        id: this.fieldIdForm,
+        label: new FormControl(this.data.entitySchemaField.label, {
+          validators: Validators.required,
+          updateOn: "change", // immediately update generated ID when label changes
+        }),
+        labelShort: [this.data.entitySchemaField.labelShort],
+        description: [this.data.entitySchemaField.description],
 
-      dataType: [this.data.entitySchemaField.dataType, Validators.required],
-      isArray: [this.data.entitySchemaField.isArray],
-      additional: this.additionalForm,
+        dataType: [this.data.entitySchemaField.dataType, Validators.required],
+        isArray: [this.data.entitySchemaField.isArray],
+        additional: this.additionalForm,
 
-      // defaultValue will only update after the user leaves the input
-      defaultValue: new FormControl(this.data.entitySchemaField.defaultValue, {
-        updateOn: "blur",
-      }),
-      searchable: [this.data.entitySchemaField.searchable],
-      anonymize: [this.data.entitySchemaField.anonymize],
-      viewComponent: [this.data.entitySchemaField.viewComponent],
-      editComponent: [this.data.entitySchemaField.editComponent],
-      showInDetailsView: [this.data.entitySchemaField.showInDetailsView],
-      generateIndex: [this.data.entitySchemaField.generateIndex],
-      validators: [this.data.entitySchemaField.validators],
-    });
+        defaultValue: new FormControl(this.data.entitySchemaField.defaultValue),
+        searchable: [this.data.entitySchemaField.searchable],
+        anonymize: [this.data.entitySchemaField.anonymize],
+        viewComponent: [this.data.entitySchemaField.viewComponent],
+        editComponent: [this.data.entitySchemaField.editComponent],
+        showInDetailsView: [this.data.entitySchemaField.showInDetailsView],
+        generateIndex: [this.data.entitySchemaField.generateIndex],
+        validators: [this.data.entitySchemaField.validators],
+      },
+      {
+        updateOn: "blur", // avoid losing focus of a field from over-eager updates
+      },
+    );
     this.form = this.fb.group({
       id: this.fieldIdForm,
       schemaFields: this.schemaFieldsForm,
@@ -178,7 +183,7 @@ export class AdminEntityFieldComponent implements OnInit {
     this.schemaFieldsForm.valueChanges.subscribe((v) => {
       if (JSON.stringify(v) === JSON.stringify(this.data.entitySchemaField))
         return;
-      Object.assign(this.data.entitySchemaField, this.getUpdatedSchemaField(v));
+      this.data.entitySchemaField = { ...this.getUpdatedSchemaField(v) };
     });
 
     this.schemaFieldsForm
