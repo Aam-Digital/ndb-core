@@ -202,16 +202,12 @@ describe("PublicFormComponent", () => {
     expect(component.error).toBe("not_found");
   }));
 
-  it("should add a hidden field when a field in prefilledFields is not part of visible fields", fakeAsync(() => {
+  it("should add a hidden field when a field in prefilled is not part of visible fields", fakeAsync(() => {
     const config = new PublicFormConfig();
     config.columns = [{ fields: [] }];
-    config.prefilledFields = [
-      {
-        id: "other",
-        defaultValue: { mode: "static", config: { value: "default value" } },
-        hideFromForm: true,
-      },
-    ];
+    config.prefilled = {
+      other: { mode: "static", config: { value: "default value" } },
+    };
 
     initComponent(config);
     tick();
@@ -243,7 +239,7 @@ describe("PublicFormComponent", () => {
     );
   });
 
-  it("should update defaultValue for a field in prefilledFields that is already visible", fakeAsync(() => {
+  it("should update defaultValue for a field in prefilled that is already visible", fakeAsync(() => {
     const config = new PublicFormConfig();
     config.columns = [
       {
@@ -255,16 +251,9 @@ describe("PublicFormComponent", () => {
         ],
       },
     ];
-    config.prefilledFields = [
-      {
-        id: "other",
-        defaultValue: {
-          mode: "static",
-          config: { value: "prefilled default" },
-        },
-        hideFromForm: true,
-      },
-    ];
+    config.prefilled = {
+      other: { mode: "static", config: { value: "prefilled default" } },
+    };
 
     initComponent(config);
     tick();
