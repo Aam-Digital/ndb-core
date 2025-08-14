@@ -144,6 +144,7 @@ export abstract class CustomFormControlDirective<T>
 
   /** @deprecated the this.value setter seems to already do the same? */
   writeValue(val: T): void {
+    // only update if the value actually changed to prevent loops (we are using this in basicautocomplete component and also in multi select it getting called twice and creating loop)
     this.value = val;
     this.valueChange.emit(val);
   }
