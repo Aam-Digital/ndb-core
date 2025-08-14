@@ -158,7 +158,10 @@ export class AdminEntityFieldComponent implements OnInit {
       isArray: [this.data.entitySchemaField.isArray],
       additional: this.additionalForm,
 
-      defaultValue: [this.data.entitySchemaField.defaultValue],
+      // defaultValue will only update after the user leaves the input
+      defaultValue: new FormControl(this.data.entitySchemaField.defaultValue, {
+        updateOn: "blur",
+      }),
       searchable: [this.data.entitySchemaField.searchable],
       anonymize: [this.data.entitySchemaField.anonymize],
       viewComponent: [this.data.entitySchemaField.viewComponent],
