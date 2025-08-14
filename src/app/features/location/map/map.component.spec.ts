@@ -178,13 +178,40 @@ describe("MapComponent", () => {
     });
   });
 
+  it("should call adjustOverlappingCoordinates when two entity coordinates overlap and produce separated markers", () => {
+    TestEntity.schema.set("address", { dataType: "location" });
+    const School1 = new TestEntity();
+    const School2 = new TestEntity();
+    School1["address"] = {
+      locationString: "Test place 1",
+      geoLookup: { lat: 10, lon: 10, display_name: "Test place 1" },
+    } as GeoLocation;
+    School2["address"] = {
+      locationString: "Test place 2",
+      geoLookup: { lat: 10, lon: 10, display_name: "Test place 2" },
+    } as GeoLocation;
+
+    component.entities = [School1, School2];
+
+    const markers = getEntityMarkers();
+    expect(markers).toHaveSize(2);
+    const marker1 = markers[0].getLatLng();
+    const marker2 = markers[1].getLatLng();
+
+    // both entities should have diff in their markers location
+    expect(
+      marker1.lat === marker2.lat && marker1.lng === marker2.lng,
+    ).toBeFalse();
+
+    TestEntity.schema.delete("address");
+  });
+
   function getEntityMarkers(): L.Marker[] {
-    const markers: L.Marker[] = [];
-    map.eachLayer((layer) => {
-      if (layer["entity"]) {
-        markers.push(layer as L.Marker);
-      }
-    });
-    return markers;
+    const group = component["markerClusterGroup"];
+    return (
+      (group
+        ?.getLayers()
+        .filter((layer: any) => !!layer["entity"]) as L.Marker[]) || []
+    );
   }
 });
