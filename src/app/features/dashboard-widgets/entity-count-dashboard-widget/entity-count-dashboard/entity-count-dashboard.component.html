@@ -74,7 +74,12 @@
             } @else if (group.label === undefined) {
               <span class="not-defined-label" i18n>not defined</span>
             } @else {
-              <span>{{ group.label }}</span>
+              <span
+                class="colored"
+                [style.background-color]="group.color || 'transparent'"
+              >
+                {{ group.label }}
+              </span>
             }
           } @else {
             <app-entity-block [entityId]="group.id"></app-entity-block>

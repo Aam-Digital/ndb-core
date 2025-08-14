@@ -52,6 +52,7 @@ interface GroupCountRow {
    */
   groupedByEntity: string;
   isInvalidOption?: boolean;
+  color?: string;
 }
 
 @DynamicComponent("ChildrenCountDashboard")
@@ -207,17 +208,24 @@ export class EntityCountDashboardComponent
           isInvalidOption: true,
         }));
 
-      // Only keep valid groups
       let groupCountSorted = enumValues
-        .map((enumValue) => groupCountsMap.get(enumValue.id))
+        .map((enumValue) => {
+          const group = groupCountsMap.get(enumValue.id);
+          if (group) {
+            return enumValue.color !== undefined
+              ? { ...group, color: enumValue.color }
+              : { ...group };
+          }
+          return undefined;
+        })
         .filter(Boolean);
 
       // Add merged undefined group if present
       if (groupCountsMap.has("")) {
-        groupCountSorted.unshift(groupCountsMap.get(""));
+        const mergedGroup = groupCountsMap.get("");
+        groupCountSorted.unshift(mergedGroup);
       }
 
-      // Add invalid options at the end
       groupCountSorted = [...invalidOptions, ...groupCountSorted];
 
       return groupCountSorted;

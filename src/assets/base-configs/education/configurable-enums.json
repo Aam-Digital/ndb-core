@@ -4,15 +4,18 @@
     "values": [
       {
         "id": "C1",
-        "label": "Alipore"
+        "label": "Alipore",
+        "color": "#B3E5FC"
       },
       {
         "id": "C2",
-        "label": "Tollygunge"
+        "label": "Tollygunge",
+        "color": "#B3E5FC"
       },
       {
         "id": "C3",
-        "label": "Barabazar"
+        "label": "Barabazar",
+        "color": "#B3E5FC"
       }
     ]
   },

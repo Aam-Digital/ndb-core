@@ -1,0 +1,15 @@
+.colored {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 110px;
+  height: 20px; 
+  padding: 5px;
+  border-radius: 4px;
+  text-align: center;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: inherit;
+  font-family: inherit;
+}
