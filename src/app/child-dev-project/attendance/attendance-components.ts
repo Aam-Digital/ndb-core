@@ -36,4 +36,11 @@ export const attendanceComponents: ComponentTuple[] = [
         (c) => c.EditAttendanceComponent,
       ),
   ],
+  [
+    "AttendanceWeekDashboardSettings",
+    () =>
+      import(
+        "./dashboard-widgets/attendance-week-dashboard-settings.component/attendance-week-dashboard-settings.component"
+      ).then((c) => c.AttendanceWeekDashboardSettingsComponent),
+  ],
 ];
