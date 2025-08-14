@@ -68,7 +68,7 @@
         <td *matCellDef="let group">
           @if (!group.groupedByEntity) {
             @if (group.label === undefined && group.isInvalidOption) {
-              <span class="not-defined-label" style="color: #d9534f"
+              <span class="not-defined-label" style="color: #d9534f" i18n
                 >[invalid option]</span
               >
             } @else if (group.label === undefined) {
