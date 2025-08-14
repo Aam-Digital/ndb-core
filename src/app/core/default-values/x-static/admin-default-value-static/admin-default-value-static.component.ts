@@ -114,7 +114,7 @@ export class AdminDefaultValueStaticComponent
 
     this.value = { value: newValue };
 
-  // update if the value actually changed
+    // update if the value actually changed
     const newConfig = { value: newValue };
     if (JSON.stringify(newConfig) !== JSON.stringify(this.value)) {
       this.value = newConfig;
