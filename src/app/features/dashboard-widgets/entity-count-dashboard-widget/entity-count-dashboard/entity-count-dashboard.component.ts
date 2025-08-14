@@ -24,6 +24,7 @@ import { EntityFieldLabelComponent } from "../../../../core/common-components/en
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { CommonModule } from "@angular/common";
+import { DisplayConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/display-configurable-enum/display-configurable-enum.component";
 
 /**
  * Configuration (stored in Config document in the DB) for the dashboard widget.
@@ -71,6 +72,7 @@ interface GroupCountRow {
     MatIconButton,
     EntityFieldLabelComponent,
     CommonModule,
+    DisplayConfigurableEnumComponent,
   ],
 })
 export class EntityCountDashboardComponent
@@ -163,19 +165,34 @@ export class EntityCountDashboardComponent
     const field = this._entity.schema.get(fieldName);
     const groupedByEntity =
       field.dataType === EntityDatatype.dataType ? field.additional : undefined;
+
+    let groupCounts = this.getGroupCounts(entities, fieldName, groupedByEntity);
+    groupCounts = this.mergeNotDefinedGroups(groupCounts);
+
+    if (field.dataType === "configurable-enum") {
+      return this.getEnumGroupCounts(groupCounts, field);
+    }
+
+    return groupCounts;
+  }
+
+  /** Groups entities by field and returns initial groupCounts array */
+  private getGroupCounts(
+    entities: Entity[],
+    fieldName: string,
+    groupedByEntity: string | undefined,
+  ): GroupCountRow[] {
     const groups = groupBy(entities, fieldName as keyof Entity);
+    return groups.map(([group, entities]) => ({
+      label: extractHumanReadableLabel(group),
+      value: entities.length,
+      id: extractGroupId(group),
+      groupedByEntity,
+    }));
+  }
 
-    let groupCounts = groups.map(([group, entities]) => {
-      const label = extractHumanReadableLabel(group);
-      return {
-        label: label,
-        value: entities.length,
-        id: extractGroupId(group),
-        groupedByEntity: groupedByEntity,
-      };
-    });
-
-    // Merge "" and undefined groups into a single group with label: undefined
+  /** Merges "" and undefined groups into a single group with label: undefined */
+  private mergeNotDefinedGroups(groupCounts: GroupCountRow[]): GroupCountRow[] {
     const notDefinedGroups = groupCounts.filter(
       (g) => g.id === "" || g.id === undefined,
     );
@@ -186,52 +203,64 @@ export class EntityCountDashboardComponent
         id: "",
         groupedByEntity: notDefinedGroups[0].groupedByEntity,
       };
-      groupCounts = [
+      return [
         merged,
         ...groupCounts.filter((g) => g.id !== "" && g.id !== undefined),
       ];
     }
+    return groupCounts;
+  }
 
-    if (field.dataType === "configurable-enum") {
-      const enumValues = this.configurableEnum.getEnumValues(field.additional);
-      const validIds = new Set(enumValues.map((ev) => ev.id));
-      const groupCountsMap = new Map(
-        groupCounts.map((aggregate) => [aggregate.id, aggregate]),
-      );
+  /** Handles groupCounts for configurable-enum fields, including color and invalid option merging */
+  private getEnumGroupCounts(
+    groupCounts: GroupCountRow[],
+    field: any,
+  ): GroupCountRow[] {
+    const enumValues = this.configurableEnum.getEnumValues(field.additional);
+    const validIds = new Set(enumValues.map((ev) => ev.id));
+    const groupCountsMap = new Map(
+      groupCounts.map((aggregate) => [aggregate.id, aggregate]),
+    );
 
-      // Mark and collect invalid options
-      const invalidOptions = groupCounts
-        .filter((g) => g.id && !validIds.has(g.id))
-        .map((g) => ({
-          ...g,
-          label: undefined,
-          isInvalidOption: true,
-        }));
-
-      let groupCountSorted = enumValues
-        .map((enumValue) => {
-          const group = groupCountsMap.get(enumValue.id);
-          if (group) {
-            return enumValue.color !== undefined
-              ? { ...group, color: enumValue.color }
-              : { ...group };
-          }
-          return undefined;
-        })
-        .filter(Boolean);
-
-      // Add merged undefined group if present
-      if (groupCountsMap.has("")) {
-        const mergedGroup = groupCountsMap.get("");
-        groupCountSorted.unshift(mergedGroup);
-      }
-
-      groupCountSorted = [...invalidOptions, ...groupCountSorted];
-
-      return groupCountSorted;
+    // Combine all invalid options into a single row
+    const invalidGroups = groupCounts.filter(
+      (g) => g.id && !validIds.has(g.id),
+    );
+    let invalidOptionRow: GroupCountRow | undefined = undefined;
+    if (invalidGroups.length > 0) {
+      invalidOptionRow = {
+        label: undefined,
+        value: invalidGroups.reduce((sum, g) => sum + g.value, 0),
+        id: "__invalid__",
+        groupedByEntity: undefined,
+        isInvalidOption: true,
+      };
     }
 
-    return groupCounts;
+    let groupCountSorted = enumValues
+      .map((enumValue) => {
+        const group = groupCountsMap.get(enumValue.id);
+        if (group) {
+          return enumValue.color !== undefined
+            ? { ...group, color: enumValue.color }
+            : { ...group };
+        }
+        return undefined;
+      })
+      .filter(Boolean);
+
+    // Add merged undefined group if present
+    if (groupCountsMap.has("")) {
+      const mergedGroup = groupCountsMap.get("");
+      groupCountSorted.unshift(mergedGroup);
+    }
+
+    // Add the single invalid option row at the top if it exists
+    if (invalidOptionRow) {
+      groupCountSorted = [invalidOptionRow, ...groupCountSorted];
+    }
+
+    return groupCountSorted;
   }
 
   goToEntityList(filterId: string) {
