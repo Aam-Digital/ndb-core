@@ -69,6 +69,14 @@ export class ViewDistanceComponent
 
   private getAllDistances(compareCoordinates: Coordinates[], e: Entity) {
     const results: number[] = [];
+    // Defensive check: ensure coordinatesProperties is defined and iterable
+    if (
+      !this.config.coordinatesProperties ||
+      !Array.isArray(this.config.coordinatesProperties)
+    ) {
+      return results;
+    }
+
     for (const prop of this.config.coordinatesProperties) {
       for (const coord of compareCoordinates) {
         if (e[prop]?.geoLookup && coord) {
