@@ -92,7 +92,11 @@ export abstract class CustomFormControlDirective<T>
   }
 
   set value(value: T) {
-    if (value === this._value) return;
+    if (
+      value === this._value ||
+      JSON.stringify(value) === JSON.stringify(this._value)
+    )
+      return;
 
     this._value = value;
     this.onChange(value);

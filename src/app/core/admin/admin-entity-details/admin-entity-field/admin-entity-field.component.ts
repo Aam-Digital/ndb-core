@@ -175,7 +175,7 @@ export class AdminEntityFieldComponent implements OnInit {
     this.schemaFieldsForm.valueChanges.subscribe((v) => {
       if (JSON.stringify(v) === JSON.stringify(this.data.entitySchemaField))
         return;
-      this.data.entitySchemaField = { ...this.getUpdatedSchemaField(v) };
+      Object.assign(this.data.entitySchemaField, this.getUpdatedSchemaField(v));
     });
 
     this.schemaFieldsForm
