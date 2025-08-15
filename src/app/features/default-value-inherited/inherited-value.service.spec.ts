@@ -445,7 +445,8 @@ fdescribe("InheritedValueService", () => {
     );
 
     tick();
-    form.formGroup.get("field2").setValue("Entity:0");
+    form.formGroup.get("field2").setValue("User:Test");
+    tick(); // check why removing this not working test?
 
     expect(targetFormControl.value).toEqual(["ongoing"]);
   }));
