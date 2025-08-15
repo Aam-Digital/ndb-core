@@ -23,6 +23,8 @@ import { MatIconButton } from "@angular/material/button";
 import { EntityFieldLabelComponent } from "../../../../core/common-components/entity-field-label/entity-field-label.component";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { CommonModule } from "@angular/common";
+import { DisplayConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/display-configurable-enum/display-configurable-enum.component";
 
 /**
  * Configuration (stored in Config document in the DB) for the dashboard widget.
@@ -36,7 +38,7 @@ export interface EntityCountDashboardConfig {
  * Details of one row of disaggregated counts (e.g. for a specific category value) to be displayed.
  */
 interface GroupCountRow {
-  label: string;
+  label: string | undefined;
   id: string;
 
   /**
@@ -50,6 +52,8 @@ interface GroupCountRow {
    * otherwise undefined, to display simply the group label.
    */
   groupedByEntity: string;
+  isInvalidOption?: boolean;
+  color?: string;
 }
 
 @DynamicComponent("ChildrenCountDashboard")
@@ -67,6 +71,8 @@ interface GroupCountRow {
     MatTooltipModule,
     MatIconButton,
     EntityFieldLabelComponent,
+    CommonModule,
+    DisplayConfigurableEnumComponent,
   ],
 })
 export class EntityCountDashboardComponent
@@ -159,32 +165,102 @@ export class EntityCountDashboardComponent
     const field = this._entity.schema.get(fieldName);
     const groupedByEntity =
       field.dataType === EntityDatatype.dataType ? field.additional : undefined;
-    const groups = groupBy(entities, fieldName as keyof Entity);
-    const groupCounts = groups.map(([group, entities]) => {
-      const label = extractHumanReadableLabel(group);
-      return {
-        label: label,
-        value: entities.length,
-        id: group?.["id"] || label,
-        groupedByEntity: groupedByEntity,
-      };
-    });
+
+    let groupCounts = this.getGroupCounts(entities, fieldName, groupedByEntity);
+    groupCounts = this.mergeNotDefinedGroups(groupCounts);
 
     if (field.dataType === "configurable-enum") {
-      const enumValues = this.configurableEnum.getEnumValues(field.additional);
-      const groupCountsMap = new Map(
-        groupCounts.map((aggregate) => [aggregate.id, aggregate]),
-      );
-      const groupCountSorted = enumValues
-        .map((enumValue) => groupCountsMap.get(enumValue.id))
-        .filter(Boolean);
-      if (groupCountsMap.has("")) {
-        groupCountSorted.unshift(groupCountsMap.get(""));
-      }
-      return groupCountSorted;
+      return this.getEnumGroupCounts(groupCounts, field);
     }
 
     return groupCounts;
+  }
+
+  /** Groups entities by field and returns initial groupCounts array */
+  private getGroupCounts(
+    entities: Entity[],
+    fieldName: string,
+    groupedByEntity: string | undefined,
+  ): GroupCountRow[] {
+    const groups = groupBy(entities, fieldName as keyof Entity);
+    return groups.map(([group, entities]) => ({
+      label: extractHumanReadableLabel(group),
+      value: entities.length,
+      id: extractGroupId(group),
+      groupedByEntity,
+    }));
+  }
+
+  /** Merges "" and undefined groups into a single group with label: undefined */
+  private mergeNotDefinedGroups(groupCounts: GroupCountRow[]): GroupCountRow[] {
+    const notDefinedGroups = groupCounts.filter(
+      (g) => g.id === "" || g.id === undefined,
+    );
+    if (notDefinedGroups.length > 1) {
+      const merged = {
+        label: undefined,
+        value: notDefinedGroups.reduce((sum, g) => sum + g.value, 0),
+        id: "",
+        groupedByEntity: notDefinedGroups[0].groupedByEntity,
+      };
+      return [
+        merged,
+        ...groupCounts.filter((g) => g.id !== "" && g.id !== undefined),
+      ];
+    }
+    return groupCounts;
+  }
+
+  /** Handles groupCounts for configurable-enum fields, including color and invalid option merging */
+  private getEnumGroupCounts(
+    groupCounts: GroupCountRow[],
+    field: any,
+  ): GroupCountRow[] {
+    const enumValues = this.configurableEnum.getEnumValues(field.additional);
+    const validIds = new Set(enumValues.map((ev) => ev.id));
+    const groupCountsMap = new Map(
+      groupCounts.map((aggregate) => [aggregate.id, aggregate]),
+    );
+
+    // Combine all invalid options into a single row
+    const invalidGroups = groupCounts.filter(
+      (g) => g.id && !validIds.has(g.id),
+    );
+    let invalidOptionRow: GroupCountRow | undefined = undefined;
+    if (invalidGroups.length > 0) {
+      invalidOptionRow = {
+        label: undefined,
+        value: invalidGroups.reduce((sum, g) => sum + g.value, 0),
+        id: "__invalid__",
+        groupedByEntity: undefined,
+        isInvalidOption: true,
+      };
+    }
+
+    let groupCountSorted = enumValues
+      .map((enumValue) => {
+        const group = groupCountsMap.get(enumValue.id);
+        if (group) {
+          return enumValue.color !== undefined
+            ? { ...group, color: enumValue.color }
+            : { ...group };
+        }
+        return undefined;
+      })
+      .filter(Boolean);
+
+    // Add merged undefined group if present
+    if (groupCountsMap.has("")) {
+      const mergedGroup = groupCountsMap.get("");
+      groupCountSorted.unshift(mergedGroup);
+    }
+
+    // Add the single invalid option row at the top if it exists
+    if (invalidOptionRow) {
+      groupCountSorted = [invalidOptionRow, ...groupCountSorted];
+    }
+
+    return groupCountSorted;
   }
 
   goToEntityList(filterId: string) {
@@ -201,9 +277,9 @@ export class EntityCountDashboardComponent
  */
 function extractHumanReadableLabel(
   value: string | ConfigurableEnumValue | any,
-): string {
-  if (value === undefined) {
-    return "";
+): string | undefined {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
   }
   if (typeof value === "string") {
     return value;
@@ -213,4 +289,17 @@ function extractHumanReadableLabel(
   }
 
   return String(value);
+}
+
+/**
+ * Extract a group ID from a group value (string, object, etc.)
+ */
+function extractGroupId(group: any): string {
+  if (group === undefined || group === null || group === "") {
+    return "";
+  }
+  if (typeof group === "object" && "id" in group) {
+    return group.id;
+  }
+  return group;
 }
