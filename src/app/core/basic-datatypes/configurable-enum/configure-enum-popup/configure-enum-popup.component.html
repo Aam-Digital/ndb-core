@@ -17,29 +17,31 @@
       ></fa-icon>
       <input matInput [(ngModel)]="v.label" />
 
-      <!-- Color picker button -->
-      <button
-        mat-icon-button
-        matIconSuffix
-        type="button"
-        [style.color]="v.color || '#888'"
-        style="margin-right: 8px"
-        (click)="colorPicker.click()"
-        [matTooltip]="'Set color'"
-        tabindex="-1"
-      >
-        <fa-icon icon="palette"></fa-icon>
-      </button>
-      <input
-        #colorPicker
-        type="color"
-        style="display: none"
-        [(ngModel)]="v.color"
-      />
-
-      <button mat-icon-button matIconSuffix (click)="delete(v, i)">
-        <fa-icon icon="trash"></fa-icon>
-      </button>
+      <span class="enum-actions">
+        <span class="color-picker-wrapper">
+          <button
+            mat-icon-button
+            matIconSuffix
+            type="button"
+            [style.color]="v.color || '#888'"
+            (click)="colorInput.click()"
+            [matTooltip]="'Set color'"
+            tabindex="-1"
+          >
+            <fa-icon icon="palette"></fa-icon>
+          </button>
+          <input
+            #colorInput
+            type="color"
+            class="color-input-overlay"
+            [(ngModel)]="v.color"
+            (click)="$event.stopPropagation()"
+          />
+        </span>
+        <button mat-icon-button matIconSuffix (click)="delete(v, i)">
+          <fa-icon icon="trash"></fa-icon>
+        </button>
+      </span>
     </mat-form-field>
   }
   <!-- CREATING NEW OPTION -->
