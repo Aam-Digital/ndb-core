@@ -17,7 +17,7 @@ import { Config } from "../../core/config/config";
 import { Subject } from "rxjs";
 import { DefaultValueStrategy } from "../../core/default-values/default-value-strategy.interface";
 
-fdescribe("InheritedValueService", () => {
+describe("InheritedValueService", () => {
   let service: InheritedValueService;
   let defaultValueService: DefaultValueService;
   let mockEntityMapperService: jasmine.SpyObj<EntityMapperService>;
