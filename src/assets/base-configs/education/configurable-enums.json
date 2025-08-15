@@ -4,7 +4,8 @@
     "values": [
       {
         "id": "C1",
-        "label": "Alipore"
+        "label": "Alipore",
+        "color": "#d2c92e"
       },
       {
         "id": "C2",
@@ -12,7 +13,8 @@
       },
       {
         "id": "C3",
-        "label": "Barabazar"
+        "label": "Barabazar",
+        "color": "#B3E5FC"
       }
     ]
   },
