@@ -2,19 +2,28 @@
 
 You are helping write an end-to-end test for the Aam Digital project using Playwright.
 
+## Command Usage
+
+This command accepts an optional filename parameter:
+- `/write-e2e-test` - searches for TODOs in all e2e test files
+- `/write-e2e-test filename.spec.ts` - searches for TODOs only in the specified file
+
 ## TODO Implementation Mode
 
-First, search for TODO comments in e2e test files:
+Search for TODO comments in e2e test files:
 
 ```bash
-# Search for TODO comments in e2e test files
+# If filename parameter provided, search only in that file:
+grep -n "TODO" e2e/tests/[FILENAME] -A 10
+
+# If no filename provided, search all e2e test files:
 grep -r "TODO" e2e/tests/ --include="*.ts" -n -A 10
 ```
 
 If TODOs are found:
 
 1. **Implement One at a Time**: Only implement the FIRST TODO found - do not implement multiple TODOs in one run
-2. **Create Test Case**: Replace the entire TODO comment block with a complete `test()` function
+2. **Create Test Case**: Replace the entire TODO comment block with a complete `test()` function in the specified file (or the file where the TODO was found)
 3. **Expected TODO Format**: 
    ```typescript
    /*
@@ -27,16 +36,14 @@ If TODOs are found:
    */
    ```
 
-If no TODOs are found, explain:
-- How to add TODO comments with scenario steps in Gherkin format (Given/When/Then)  
-- That each TODO block will become a separate test case
-- That the command will implement one TODO at a time when run again
-- The preferred `/* ... */` comment format for multi-line TODOs
-- Example of how to structure a test file with TODOs
+If no TODOs are found, point the user to
+`./doc/compodoc_sources/how-to-guides/end-to-end-tests.md` for instructions on
+how to use the command.
 
 ## Framework & Setup
 - Use Playwright with browser-local database
-- Import from `#e2e/fixtures.ts` instead of `@playwright/test`
+- Import from `#e2e/fixtures.js` instead of `@playwright/test`
+- Available imports: `{ argosScreenshot, expect, loadApp, test }` from `#e2e/fixtures.js`
 - Run tests with `npx playwright test` or `npm run e2e`
 
 ## Test Structure Best Practices
@@ -54,11 +61,16 @@ If no TODOs are found, explain:
 - Navigate via clicks instead of `page.goto()` to avoid reloads
 
 ### Test Fixtures
-- Create explicit fixtures using generator functions (`generateUsers()`, `generateChild()`, `generateActivity()`)
-- Use semantic names: `childToAdd`, `activityToTest`, `userToAssign`
+- Create explicit fixtures using generator functions:
+  - `generateUsers()` from `#src/app/core/user/demo-user-generator.service.js`
+  - `generateChild()` from `#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js`
+  - `generateActivity()` from `#src/app/child-dev-project/attendance/demo-data/demo-activity-generator.service.js`
+- **Note**: Fixture generators are not yet implemented for all entities. If no generator exists, create dummy fixtures manually and inform the user that a generator should be created
+- Use semantic names: `childToAdd`, `childToKeep`, `childToRemove`, `activityToTest`, `userToAssign`
 - Load all data via `loadApp(page, [...users, ...children, ...activities])`
-- Generate additional context entities for realism
+- Generate additional context entities for realism using `times()` from `lodash-es`
 - Use descriptive titles with angle brackets for test activities (e.g., `"<COACHING CLASS>"`, `"<MATH TUTORING>"`) to distinguish them from real data
+- Access faker via `faker` from `#src/app/core/demo-data/faker.js` for random selections
 
 ## Common Patterns
 

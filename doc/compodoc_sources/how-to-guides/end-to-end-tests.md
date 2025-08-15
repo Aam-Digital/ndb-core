@@ -96,17 +96,22 @@ in `argosScreenshot()`. Set a default threshold with `argos upload
 
 ## AI-Assisted Test Development
 
-You can streamline test development using Claude Code with the custom `/write-e2e-test` command, which provides comprehensive guidelines for writing Playwright tests.
+You can use [Claude Code][] to write tests based on Gherkin-style scenario steps.
 
-The command includes:
-- Best practices for locators and actions
-- Common patterns for navigation, forms, and verification
-- Test fixture usage patterns
-- Gherkin-to-Playwright translation guides
+Start by adding the steps to a test file, e.g. `e2e/tests/attendance-tests.spec.ts`:
 
-Simply use the `/write-e2e-test` command when you need to implement or improve e2e tests.
+```typescript
+/*
+TODO: Add a child
+When I navigate to "Children"
+And I click on "Add New"
+Then the heading "Adding new child" is displayed
+When I fill in "<NAME>" in the field "Name"
+And then I click on "Save".
+Then the heading changes to "<NAME>"
+*/
+```
 
-[aria-busy]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-busy
-[Playwright]: https://playwright.dev/
-[Playwright UI]: https://playwright.dev/docs/test-ui-mode
-[Trace Viewer]: https://playwright.dev/docs/trace-viewer
+Then, start `claude` and run the command `/write-e2e-tests
+e2e/tests/attendance-test.spec.ts`. This will create a new test case "Add a
+child". You can then work with the initial draft and fix it until it passes.
