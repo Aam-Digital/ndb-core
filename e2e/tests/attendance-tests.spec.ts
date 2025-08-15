@@ -283,6 +283,7 @@ test("Assign a recurring activity to a user", async ({ page }) => {
   await expect(page.getByText("<COACHING CLASS>")).toBeVisible();
   await expect(page.getByText(userOwnActivity.title)).toBeVisible();
   await expect(page.getByText(otherActivities[0].title)).not.toBeVisible();
+  await argosScreenshot(page, "record-recurring-activity-selection");
 
   // When I click on "Show More"
   await page.getByRole("button", { name: "Show more" }).click();
