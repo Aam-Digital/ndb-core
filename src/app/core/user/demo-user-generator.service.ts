@@ -29,7 +29,7 @@ export class DemoUserGeneratorService extends DemoDataGenerator<Entity> {
   generateEntities = generateUsers;
 }
 
-export function generateUsers(): Entity[] {
+export function generateUsers(): Array<Entity & { name: string }> {
   const users = [];
   const demoUser = createEntityOfType(
     "User",
