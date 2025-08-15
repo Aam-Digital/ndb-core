@@ -17,7 +17,7 @@ import { Config } from "../../core/config/config";
 import { Subject } from "rxjs";
 import { DefaultValueStrategy } from "../../core/default-values/default-value-strategy.interface";
 
-describe("InheritedValueService", () => {
+fdescribe("InheritedValueService", () => {
   let service: InheritedValueService;
   let defaultValueService: DefaultValueService;
   let mockEntityMapperService: jasmine.SpyObj<EntityMapperService>;
@@ -408,4 +408,46 @@ describe("InheritedValueService", () => {
     // then
     expect(form.formGroup.get("field").value).toEqual(["bar"]);
   }));
+
+  it("should handle copying single value to array field", fakeAsync(() => {
+  let entity = new Entity();
+  entity["status"] = "ongoing";
+  mockEntityMapperService.load.and.returnValue(Promise.resolve(entity));
+
+  let form: EntityForm<any> = {
+    formGroup: new FormGroup<any>({
+      field1: new FormControl(),
+      field2: new FormControl(),
+    }),
+    onFormStateChange: new EventEmitter(),
+    entity: new Entity(),
+    fieldConfigs: [],
+    watcher: new Map(),
+    inheritedParentValues: new Map(),
+  };
+
+  let targetFormControl = form.formGroup.get("field1");
+
+  // when
+  service.setDefaultValue(
+    targetFormControl,
+    {
+      isArray: true,
+      defaultValue: {
+        mode: "inherited-from-referenced-entity",
+        config: {
+          field: "status",
+          localAttribute: "field2",
+        },
+      },
+    },
+    form,
+  );
+
+  tick();
+  form.formGroup.get("field2").setValue("Entity:0");
+
+
+  expect(targetFormControl.value).toEqual(["ongoing"]);
+}));
 });
