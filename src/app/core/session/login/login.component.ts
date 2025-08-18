@@ -22,7 +22,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ActivatedRoute, Router } from "@angular/router";
 import { LoginState } from "../session-states/login-state.enum";
 import { LoginStateSubject } from "../session-type";
-import { AsyncPipe } from "@angular/common";
+import { AsyncPipe, Location } from "@angular/common";
 import { SessionManagerService } from "../session-service/session-manager.service";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { SessionInfo } from "../auth/session-info";
@@ -57,6 +57,7 @@ export class LoginComponent implements OnInit {
   sessionManager = inject(SessionManagerService);
   loginState = inject(LoginStateSubject);
   siteSettingsService = inject(SiteSettingsService);
+  location = inject(Location);
 
   offlineUsers: SessionInfo[] = [];
   enableOfflineLogin: boolean;
@@ -91,10 +92,27 @@ export class LoginComponent implements OnInit {
 
   private routeAfterLogin() {
     const redirectUri = this.route.snapshot.queryParams["redirect_uri"] || "";
-    setTimeout(
-      () => this.router.navigateByUrl(decodeURIComponent(redirectUri)),
-      100,
-    );
+    const safeRedirectUri = this.safeRedirectUrl(redirectUri);
+    this.router.navigateByUrl(safeRedirectUri);
+  }
+
+  private safeRedirectUrl(redirectUri: string): string {
+    if (!redirectUri) return "/";
+
+    try {
+      const decodedUri = decodeURIComponent(redirectUri);
+      const base = window.location.origin;
+      const fullUrl = new URL(decodedUri, base);
+
+      // validate same origin and path
+      if (fullUrl.origin !== base || !fullUrl.pathname.startsWith("/")) {
+        return "/";
+      }
+
+      return fullUrl.pathname + fullUrl.search + fullUrl.hash;
+    } catch (e) {
+      return "/"; // fallback for invalid urls
+    }
   }
 
   tryLogin() {
