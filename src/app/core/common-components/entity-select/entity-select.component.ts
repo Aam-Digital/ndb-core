@@ -167,9 +167,7 @@ export class EntitySelectComponent<
     const includeInactive = (entity: E) =>
       this.includeInactive || entity.isActive;
     const includeSelected = (entity: E) =>
-      asArray(this.form.value)
-        .filter((id) => id !== null && id !== undefined && id !== "")
-        .includes(entity.getId());
+      asArray(this.form.value).includes(entity.getId());
 
     const newAvailableEntities = this.allEntities.filter(
       (e) => includeInactive(e) || includeSelected(e),
