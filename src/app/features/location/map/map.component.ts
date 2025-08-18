@@ -178,7 +178,7 @@ export class MapComponent implements AfterViewInit {
   private adjustOverlappingCoordinates(entities: Entity[]): Entity[] {
     const locationOccurrencesMap = new Map<string, number>();
 
-    const roundTo5Decimals = (n: number) => Number(n.toFixed(5));
+    const roundTo5Decimals = (n: any) => Number(Number(n).toFixed(5));
 
     entities.forEach((entity) => {
       const locationProperties = this.getMapProperties(entity);
@@ -186,17 +186,20 @@ export class MapComponent implements AfterViewInit {
         const location = (entity as any)[prop]?.geoLookup as
           | { lat: number; lon: number }
           | undefined;
-        if (!location) return;
 
-        const coordinateKey = `${roundTo5Decimals(location.lat)}_${roundTo5Decimals(location.lon)}`;
+        const lat = Number(location?.lat);
+        const lon = Number(location?.lon);
+        if (isNaN(lat) || isNaN(lon)) return;
+
+        const coordinateKey = `${roundTo5Decimals(lat)}_${roundTo5Decimals(lon)}`;
         const occurrenceCount = locationOccurrencesMap.get(coordinateKey) || 0;
 
         if (occurrenceCount > 0) {
           const angle = (occurrenceCount * 45 * Math.PI) / 180;
           const dx = (10 / 111320) * Math.cos(angle); // approx 10m in degrees
           const dy = (10 / 111320) * Math.sin(angle);
-          location.lat += dy;
-          location.lon += dx;
+          location.lat = lat + dy;
+          location.lon = lon + dx;
         }
 
         locationOccurrencesMap.set(coordinateKey, occurrenceCount + 1);
