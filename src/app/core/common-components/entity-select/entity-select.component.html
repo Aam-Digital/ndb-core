@@ -1,4 +1,4 @@
-<mat-form-field>
+<mat-form-field #formField>
   <mat-label>
     <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
   </mat-label>
@@ -37,7 +37,11 @@
         </ng-container>
       }
     </app-basic-autocomplete>
-    <div class="icon-container">
+    <div
+      class="icon-container"
+      role="combobox"
+      [attr.aria-labelledby]="formField.getLabelId()"
+    >
       @if (form.enabled) {
         <fa-icon
           icon="caret-down"
