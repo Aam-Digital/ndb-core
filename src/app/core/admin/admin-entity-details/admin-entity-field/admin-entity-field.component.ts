@@ -146,6 +146,7 @@ export class AdminEntityFieldComponent implements OnInit {
     });
     this.additionalForm = this.fb.control(
       this.data.entitySchemaField.additional,
+      { updateOn: "change" },
     );
 
     this.schemaFieldsForm = this.fb.group(
@@ -158,7 +159,10 @@ export class AdminEntityFieldComponent implements OnInit {
         labelShort: [this.data.entitySchemaField.labelShort],
         description: [this.data.entitySchemaField.description],
 
-        dataType: [this.data.entitySchemaField.dataType, Validators.required],
+        dataType: new FormControl(this.data.entitySchemaField.dataType, {
+          validators: Validators.required,
+          updateOn: "change",
+        }),
         isArray: [this.data.entitySchemaField.isArray],
         additional: this.additionalForm,
 
