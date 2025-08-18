@@ -146,39 +146,29 @@ export class AdminEntityFieldComponent implements OnInit {
     });
     this.additionalForm = this.fb.control(
       this.data.entitySchemaField.additional,
-      { updateOn: "change" },
     );
 
-    this.schemaFieldsForm = this.fb.group(
-      {
-        id: this.fieldIdForm,
-        label: new FormControl(this.data.entitySchemaField.label, {
-          validators: Validators.required,
-          updateOn: "change", // immediately update generated ID when label changes
-        }),
-        labelShort: [this.data.entitySchemaField.labelShort],
-        description: [this.data.entitySchemaField.description],
+    this.schemaFieldsForm = this.fb.group({
+      id: this.fieldIdForm,
+      label: [this.data.entitySchemaField.label, Validators.required],
+      labelShort: [this.data.entitySchemaField.labelShort],
+      description: [this.data.entitySchemaField.description],
 
-        dataType: new FormControl(this.data.entitySchemaField.dataType, {
-          validators: Validators.required,
-          updateOn: "change",
-        }),
-        isArray: [this.data.entitySchemaField.isArray],
-        additional: this.additionalForm,
+      dataType: [this.data.entitySchemaField.dataType, Validators.required],
+      isArray: [this.data.entitySchemaField.isArray],
+      additional: this.additionalForm,
 
-        defaultValue: new FormControl(this.data.entitySchemaField.defaultValue),
-        searchable: [this.data.entitySchemaField.searchable],
-        anonymize: [this.data.entitySchemaField.anonymize],
-        viewComponent: [this.data.entitySchemaField.viewComponent],
-        editComponent: [this.data.entitySchemaField.editComponent],
-        showInDetailsView: [this.data.entitySchemaField.showInDetailsView],
-        generateIndex: [this.data.entitySchemaField.generateIndex],
-        validators: [this.data.entitySchemaField.validators],
-      },
-      {
+      defaultValue: new FormControl(this.data.entitySchemaField.defaultValue, {
         updateOn: "blur", // avoid losing focus of a field from over-eager updates
-      },
-    );
+      }),
+      searchable: [this.data.entitySchemaField.searchable],
+      anonymize: [this.data.entitySchemaField.anonymize],
+      viewComponent: [this.data.entitySchemaField.viewComponent],
+      editComponent: [this.data.entitySchemaField.editComponent],
+      showInDetailsView: [this.data.entitySchemaField.showInDetailsView],
+      generateIndex: [this.data.entitySchemaField.generateIndex],
+      validators: [this.data.entitySchemaField.validators],
+    });
     this.form = this.fb.group({
       id: this.fieldIdForm,
       schemaFields: this.schemaFieldsForm,
