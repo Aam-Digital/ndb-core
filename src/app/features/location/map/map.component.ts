@@ -186,10 +186,10 @@ export class MapComponent implements AfterViewInit {
         const location = (entity as any)[prop]?.geoLookup as
           | { lat: number; lon: number }
           | undefined;
-        if (!location) return;
 
-        const lat = Number(location.lat);
-        const lon = Number(location.lon);
+        const lat = Number(location?.lat);
+        const lon = Number(location?.lon);
+        if (isNaN(lat) || isNaN(lon)) return;
 
         const coordinateKey = `${roundTo5Decimals(lat)}_${roundTo5Decimals(lon)}`;
         const occurrenceCount = locationOccurrencesMap.get(coordinateKey) || 0;
