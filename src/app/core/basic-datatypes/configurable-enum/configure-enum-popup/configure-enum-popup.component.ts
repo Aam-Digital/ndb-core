@@ -60,15 +60,13 @@ export class ConfigureEnumPopupComponent {
   localEnum: ConfigurableEnum;
 
   constructor() {
-    const enumEntity = this.enumEntity;
-
     // disable closing with backdrop click (so that we can always confirm unsaved changes)
     this.dialog.disableClose = true;
 
     // Deep copy for editing, using ConfigurableEnum logic
     this.localEnum = new ConfigurableEnum(
-      enumEntity.getId(),
-      enumEntity.values.map((v) => ({ ...v })),
+      this.enumEntity.getId(),
+      this.enumEntity.values.map((v) => ({ ...v })),
     );
   }
 
