@@ -1,16 +1,22 @@
-<!--Display-->
 @if (display === "text" || display === "none") {
-  <input
-    [id]="id"
-    [hidden]="isInSearchMode() || display === 'none'"
-    [disabled]="_disabled"
-    matInput
-    style="text-overflow: ellipsis; width: calc(100% - 50px)"
-    (focusin)="showAutocomplete()"
-    (focusout)="showAutocomplete()"
-    [value]="displayText"
-    [placeholder]="placeholder"
-  />
+  @if (!isInSearchMode() && templateRef && display !== "none") {
+    <ng-template
+      [ngTemplateOutlet]="templateRef"
+      [ngTemplateOutletContext]="{ $implicit: _selectedOptions[0]?.initial }"
+    ></ng-template>
+  } @else {
+    <input
+      [id]="id"
+      [hidden]="isInSearchMode() || display === 'none'"
+      [disabled]="_disabled"
+      matInput
+      style="text-overflow: ellipsis; width: calc(100% - 50px)"
+      (focusin)="showAutocomplete()"
+      (focusout)="showAutocomplete()"
+      [value]="displayText"
+      [placeholder]="placeholder"
+    />
+  }
 } @else {
   <input
     [hidden]="true"
