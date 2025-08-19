@@ -23,23 +23,9 @@ export class EditEmailComponent
   extends EditComponent<string>
   implements OnInit
 {
-override ngOnInit() {
-  super.ngOnInit();
+  override ngOnInit() {
+    super.ngOnInit();
 
-  this.formControl.addValidators([
-    Validators.email
-  ]);
-
-  this.formControl.valueChanges.subscribe((value) => {
-    if (value) {
-
-    if (this.formControl.value === value) {
-      // nothing changed, don't update the form control
-      return;
-    }
-        this.formControl.setValue(value, { emitEvent: false });
-    }
-  });
-}
-
+    this.formControl.addValidators([Validators.email]);
+  }
 }
