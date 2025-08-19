@@ -206,6 +206,44 @@ describe("MapComponent", () => {
     TestEntity.schema.delete("address");
   });
 
+  it("should handle string lat/lon coordinates for overlapping entity coordinates and produce markers", () => {
+    TestEntity.schema.set("address", { dataType: "location" });
+    const testEntity1 = new TestEntity();
+    testEntity1["address"] = {
+      locationString: "Test place 1",
+      geoLookup: {
+        lat: "52.4790412",
+        lon: "13.4319106",
+        display_name: "Test place 1",
+      },
+    } as unknown as GeoLocation;
+
+    const testEntity2 = new TestEntity();
+    testEntity2["address"] = {
+      locationString: "Test place 2",
+      geoLookup: {
+        lat: "52.4790412",
+        lon: "13.4319106",
+        display_name: "Test place 2",
+      },
+    } as unknown as GeoLocation;
+
+    component.entities = [testEntity1, testEntity2];
+
+    const markers = getEntityMarkers();
+
+    const marker1LatLng = markers[0].getLatLng();
+    const marker2LatLng = markers[1].getLatLng();
+
+    expect(markers.length).toBe(2);
+    expect(
+      marker1LatLng.lat === marker2LatLng.lat &&
+        marker1LatLng.lng === marker2LatLng.lng,
+    ).toBeFalse();
+
+    TestEntity.schema.delete("address");
+  });
+
   function getEntityMarkers(): L.Marker[] {
     const group = component["markerClusterGroup"];
     return (
