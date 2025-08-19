@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
   MAT_DIALOG_DATA,
@@ -158,7 +158,9 @@ export class AdminEntityFieldComponent implements OnInit {
       isArray: [this.data.entitySchemaField.isArray],
       additional: this.additionalForm,
 
-      defaultValue: [this.data.entitySchemaField.defaultValue],
+      defaultValue: new FormControl(this.data.entitySchemaField.defaultValue, {
+        updateOn: "blur", // avoid losing focus of a field from over-eager updates
+      }),
       searchable: [this.data.entitySchemaField.searchable],
       anonymize: [this.data.entitySchemaField.anonymize],
       viewComponent: [this.data.entitySchemaField.viewComponent],
