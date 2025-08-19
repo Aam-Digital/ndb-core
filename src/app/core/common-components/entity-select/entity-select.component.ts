@@ -193,6 +193,11 @@ export class EntitySelectComponent<
     let updatedValue: T = this.form.value;
 
     for (const id of asArray(this.form.value)) {
+      // Skip null, undefined, or empty string values
+      if (id === null || id === undefined || id === "") {
+        continue;
+      }
+
       if (availableEntities.find((e) => id === e.getId())) {
         // already available, nothing to do
         continue;
