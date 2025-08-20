@@ -31,6 +31,7 @@ import {
   YesNoButtons,
 } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { ColorInputComponent } from "#src/app/color-input/color-input.component";
 
 @Component({
   selector: "app-configure-enum-popup",
@@ -47,6 +48,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     FontAwesomeModule,
     MatButtonModule,
     MatTooltipModule,
+    ColorInputComponent,
   ],
 })
 export class ConfigureEnumPopupComponent {
