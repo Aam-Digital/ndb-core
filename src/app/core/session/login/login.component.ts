@@ -91,10 +91,27 @@ export class LoginComponent implements OnInit {
 
   private routeAfterLogin() {
     const redirectUri = this.route.snapshot.queryParams["redirect_uri"] || "";
-    setTimeout(
-      () => this.router.navigateByUrl(decodeURIComponent(redirectUri)),
-      100,
-    );
+    const safeRedirectUri = this.safeRedirectUrl(redirectUri);
+    setTimeout(() => this.router.navigateByUrl(safeRedirectUri), 0);
+  }
+
+  private safeRedirectUrl(redirectUri: string): string {
+    if (!redirectUri) return "/";
+
+    try {
+      const decodedUri = decodeURIComponent(redirectUri);
+      const base = window.location.origin;
+      const fullUrl = new URL(decodedUri, base);
+
+      // validate same origin and path
+      if (fullUrl.origin !== base || !fullUrl.pathname.startsWith("/")) {
+        return "/";
+      }
+
+      return fullUrl.pathname + fullUrl.search + fullUrl.hash;
+    } catch (e) {
+      return "/"; // fallback for invalid urls
+    }
   }
 
   tryLogin() {
