@@ -294,7 +294,7 @@ function extractHumanReadableLabel(
 /**
  * Extract a group ID from a group value (string, object, etc.)
  */
-function extractGroupId(group: any): string {
+function extractGroupId(group: string | ConfigurableEnumValue | undefined | null): string {
   if (group === undefined || group === null || group === "") {
     return "";
   }
