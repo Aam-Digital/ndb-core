@@ -22,7 +22,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ActivatedRoute, Router } from "@angular/router";
 import { LoginState } from "../session-states/login-state.enum";
 import { LoginStateSubject } from "../session-type";
-import { AsyncPipe, Location } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { SessionManagerService } from "../session-service/session-manager.service";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { SessionInfo } from "../auth/session-info";
@@ -57,7 +57,6 @@ export class LoginComponent implements OnInit {
   sessionManager = inject(SessionManagerService);
   loginState = inject(LoginStateSubject);
   siteSettingsService = inject(SiteSettingsService);
-  location = inject(Location);
 
   offlineUsers: SessionInfo[] = [];
   enableOfflineLogin: boolean;
@@ -93,7 +92,7 @@ export class LoginComponent implements OnInit {
   private routeAfterLogin() {
     const redirectUri = this.route.snapshot.queryParams["redirect_uri"] || "";
     const safeRedirectUri = this.safeRedirectUrl(redirectUri);
-    this.router.navigateByUrl(safeRedirectUri);
+    setTimeout(() => this.router.navigateByUrl(safeRedirectUri), 0);
   }
 
   private safeRedirectUrl(redirectUri: string): string {
