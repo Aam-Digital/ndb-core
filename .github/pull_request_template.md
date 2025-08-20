@@ -1,11 +1,8 @@
-closes: #XX
+- closes #GITHUB_ISSUE_NUMBER
+- closes #ANOTHER_GITHUB_ISSUE_NUMBER
 
-### Visible/Frontend Changes
+### Remaining TODOs:
+_delete things that don't apply; add any open tasks and issues_
 
-- [x]
-- [ ]
-
-### Architectural/Backend Changes
-
-- [x]
-- [ ]
+- [ ] unit tests
+- [ ] e2e test?
