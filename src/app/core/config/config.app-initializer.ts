@@ -18,7 +18,7 @@ export const APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES = provideAppInitializer(
         configService.configUpdates.subscribe(() => {
           routerService.initRouting();
           entityConfigService.setupEntitiesFromConfig();
-          const url = location.href.replace(location.origin, "");
+          const url = router.parseUrl(router.url);
           router.navigateByUrl(url, { skipLocationChange: true });
         });
       }
