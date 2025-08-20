@@ -1,7 +1,7 @@
 import { applicationConfig, Meta } from "@storybook/angular";
 import { DisplayEmailComponent } from "./display-email.component";
 import { importProvidersFrom } from "@angular/core";
-import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
+import { StorybookBaseModule } from "app/utils/storybook-base.module";
 
 export default {
   title: "Core/Entities/Properties/email/DisplayEmail",
