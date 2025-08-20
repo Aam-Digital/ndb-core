@@ -276,7 +276,7 @@ export class EntityCountDashboardComponent
  * @param value
  */
 function extractHumanReadableLabel(
-  value: string | ConfigurableEnumValue | undefined | null,
+  value: string | ConfigurableEnumValue | any,
 ): string | undefined {
   if (value === undefined || value === null || value === "") {
     return undefined;
@@ -294,7 +294,7 @@ function extractHumanReadableLabel(
 /**
  * Extract a group ID from a group value (string, object, etc.)
  */
-function extractGroupId(group: string | ConfigurableEnumValue | undefined | null): string {
+function extractGroupId(group: any): string {
   if (group === undefined || group === null || group === "") {
     return "";
   }
