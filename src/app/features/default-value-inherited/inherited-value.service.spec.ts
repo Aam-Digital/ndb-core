@@ -446,7 +446,8 @@ describe("InheritedValueService", () => {
 
     tick();
     form.formGroup.get("field2").setValue("User:Test");
-    tick(); // check why removing this not working test?
+    // The tick() is required here to allow the asynchronous value change and any dependent logic to complete.
+    tick();
 
     expect(targetFormControl.value).toEqual(["ongoing"]);
   }));
