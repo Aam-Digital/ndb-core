@@ -276,7 +276,7 @@ export class EntityCountDashboardComponent
  * @param value
  */
 function extractHumanReadableLabel(
-  value: string | ConfigurableEnumValue | any,
+  value: string | ConfigurableEnumValue | undefined | null,
 ): string | undefined {
   if (value === undefined || value === null || value === "") {
     return undefined;
