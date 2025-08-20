@@ -72,7 +72,7 @@
                 [invalid option]
               </span>
             } @else if (group.label === undefined) {
-              <span class="not-defined-label" i18n>not defined</span>
+              <span class="not-defined-label" matTooltip="records where this field is empty" i18n-matTooltip i18n>not defined</span>
             } @else {
               <app-display-configurable-enum
                 [value]="{
