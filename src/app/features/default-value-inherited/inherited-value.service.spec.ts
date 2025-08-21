@@ -408,4 +408,74 @@ describe("InheritedValueService", () => {
     // then
     expect(form.formGroup.get("field").value).toEqual(["bar"]);
   }));
+
+  it("should handle copying single value to array field", fakeAsync(() => {
+    let entity = new Entity();
+    entity["status"] = "ongoing";
+    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity));
+
+    let form: EntityForm<any> = {
+      formGroup: new FormGroup<any>({
+        field1: new FormControl(),
+        field2: new FormControl(),
+      }),
+      onFormStateChange: new EventEmitter(),
+      entity: new Entity(),
+      fieldConfigs: [],
+      watcher: new Map(),
+      inheritedParentValues: new Map(),
+    };
+
+    let targetFormControl = form.formGroup.get("field1");
+
+    // when
+    service.setDefaultValue(
+      targetFormControl,
+      {
+        isArray: true,
+        defaultValue: {
+          mode: "inherited-from-referenced-entity",
+          config: {
+            field: "status",
+            localAttribute: "field2",
+          },
+        },
+      },
+      form,
+    );
+
+    tick();
+    form.formGroup.get("field2").setValue("User:Test");
+    // The tick() is required here to allow the asynchronous value change and any dependent logic to complete.
+    tick();
+
+    expect(targetFormControl.value).toEqual(["ongoing"]);
+
+    // PART 2:
+    // check that array to array inheritance keeps the correct form also
+    entity["status"] = ["status_1", "status_2"];
+    form.formGroup.reset();
+
+    service.setDefaultValue(
+      targetFormControl,
+      {
+        isArray: true,
+        defaultValue: {
+          mode: "inherited-from-referenced-entity",
+          config: {
+            field: "status",
+            localAttribute: "field2",
+          },
+        },
+      },
+      form,
+    );
+
+    tick();
+    form.formGroup.get("field2").setValue("User:Test");
+    // The tick() is required here to allow the asynchronous value change and any dependent logic to complete.
+    tick();
+
+    expect(targetFormControl.value).toEqual(["status_1", "status_2"]);
+  }));
 });
