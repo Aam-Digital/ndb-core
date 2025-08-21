@@ -20,6 +20,7 @@ import { CurrentUserSubject } from "./session/current-user-subject";
 import { SessionSubject } from "./session/auth/session-info";
 import { PercentageDatatype } from "./basic-datatypes/number/display-percentage/percentage.datatype";
 import { UrlDatatype } from "./basic-datatypes/string/url.datatype";
+import { EmailDatatype } from "./basic-datatypes/string/email.datatype";
 
 /**
  * Core module registering basic parts like datatypes and components.
@@ -41,6 +42,7 @@ import { UrlDatatype } from "./basic-datatypes/string/url.datatype";
     { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
     { provide: DefaultDatatype, useClass: PercentageDatatype, multi: true },
     { provide: DefaultDatatype, useClass: UrlDatatype, multi: true },
+    { provide: DefaultDatatype, useClass: EmailDatatype, multi: true },
   ],
   imports: [CommonModule],
 })
