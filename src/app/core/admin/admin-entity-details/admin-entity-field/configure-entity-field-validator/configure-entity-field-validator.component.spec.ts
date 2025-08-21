@@ -38,7 +38,6 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
         min: 0,
         max: 10,
         pattern: "^[a-zA-Z0-9]+$",
-        validEmail: true,
         uniqueId: "guid",
       },
     };
@@ -57,7 +56,6 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       min: null,
       max: 100,
       regex: "abc",
-      validEmail: false,
       uniqueId: "",
     };
 
