@@ -238,7 +238,13 @@
   </button>
 
   @for (formConfig of publicFormConfigs; track formConfig.route) {
-    <button mat-menu-item (click)="copyPublicFormLinkForEntityType(formConfig)">
+    <button
+      mat-menu-item
+      (click)="copyPublicFormLinkForEntityType(formConfig)"
+      [matTooltip]="formConfig.title"
+      i18n-matTooltip
+      matTooltipPosition="before"
+    >
       <fa-icon
         class="color-accent standard-icon-with-text"
         icon="link"

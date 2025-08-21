@@ -214,10 +214,7 @@ export class EntityListComponent<T extends Entity>
   }
 
   private async loadPublicFormConfig() {
-    // Load all public form configs
-    const allForms =
-      await this.publicFormsService["entityMapper"].loadType(PublicFormConfig);
-    // Find all configs matching this entity type
+    const allForms = await this.publicFormsService.getAllPublicFormConfigs();
     this.publicFormConfigs = allForms.filter(
       (config) =>
         config.entity &&
