@@ -87,11 +87,7 @@
               >
             } @else {
               <app-display-configurable-enum
-                [value]="{
-                  id: group.id,
-                  label: group.label,
-                  color: group.color,
-                }"
+                [value]="group"
               ></app-display-configurable-enum>
             }
           } @else {
