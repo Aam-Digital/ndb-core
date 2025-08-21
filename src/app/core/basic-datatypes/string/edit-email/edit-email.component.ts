@@ -26,6 +26,6 @@ export class EditEmailComponent
   override ngOnInit() {
     super.ngOnInit();
 
-    this.formControl.addValidators([Validators.email]); // or we can use our custom validator
+    this.formControl.addValidators([Validators.email]);
   }
 }
