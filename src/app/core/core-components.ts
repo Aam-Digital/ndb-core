@@ -269,4 +269,18 @@ export const coreComponents: ComponentTuple[] = [
         (c) => c.DisplayUrlComponent,
       ),
   ],
+  [
+    "EditEmail",
+    () =>
+      import("./basic-datatypes/string/edit-email/edit-email.component").then(
+        (c) => c.EditEmailComponent,
+      ),
+  ],
+  [
+    "DisplayEmail",
+    () =>
+      import(
+        "./basic-datatypes/string/display-email/display-email.component"
+      ).then((c) => c.DisplayEmailComponent),
+  ],
 ];

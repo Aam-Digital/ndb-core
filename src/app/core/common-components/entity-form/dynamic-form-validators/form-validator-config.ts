@@ -9,8 +9,6 @@ export type DynamicValidator =
   | "max"
   /** type: boolean */
   | "required"
-  /** type: boolean */
-  | "validEmail"
   /** type: string = EntityType; check against existing ids of the entity type */
   | "uniqueId"
   /** type: boolean */

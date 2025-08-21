@@ -645,6 +645,7 @@
               "columns": [
                 "projectNumber",
                 "name",
+                "email",
                 "age",
                 "gender",
                 "schoolClass",
@@ -758,7 +759,8 @@
                       "fields": [
                         "name",
                         "projectNumber",
-                        "admissionDate"
+                        "admissionDate",
+                        "email"
                       ],
                       "header": "Personal Information"
                     },
@@ -1355,6 +1357,10 @@
           "additional": {
             "acceptedFileTypes": ".pdf"
           }
+        },
+        "email": {
+          "dataType": "email",
+          "label": "Email"
         }
       }
     },
