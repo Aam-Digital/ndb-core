@@ -125,7 +125,7 @@ export class EntityListComponent<T extends Entity>
   });
   private readonly formDialog = inject(FormDialogService);
 
-  private publicFormsService = inject(PublicFormsService);
+  private readonly publicFormsService = inject(PublicFormsService);
   public publicFormConfigs: PublicFormConfig[] = [];
 
   @Input() allEntities: T[];
