@@ -137,7 +137,7 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: ["prefilledFields", "linkedEntity"],
+                    fields: ["prefilled", "linkedEntity"],
                   },
                 ],
               },
