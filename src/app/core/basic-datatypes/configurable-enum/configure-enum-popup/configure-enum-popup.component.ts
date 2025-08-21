@@ -30,6 +30,8 @@ import {
   CustomYesNoButtons,
   YesNoButtons,
 } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { ColorInputComponent } from "#src/app/color-input/color-input.component";
 
 @Component({
   selector: "app-configure-enum-popup",
@@ -45,6 +47,8 @@ import {
     CdkDrag,
     FontAwesomeModule,
     MatButtonModule,
+    MatTooltipModule,
+    ColorInputComponent,
   ],
 })
 export class ConfigureEnumPopupComponent {
@@ -60,15 +64,13 @@ export class ConfigureEnumPopupComponent {
   localEnum: ConfigurableEnum;
 
   constructor() {
-    const enumEntity = this.enumEntity;
-
     // disable closing with backdrop click (so that we can always confirm unsaved changes)
     this.dialog.disableClose = true;
 
     // Deep copy for editing, using ConfigurableEnum logic
     this.localEnum = new ConfigurableEnum(
-      enumEntity.getId(),
-      enumEntity.values.map((v) => ({ ...v })),
+      this.enumEntity.getId(),
+      this.enumEntity.values.map((v) => ({ ...v })),
     );
   }
 

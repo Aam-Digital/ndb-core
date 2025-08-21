@@ -42,12 +42,12 @@ test("Dashboard widgets and actions", async ({ page }) => {
   ]);
 
   await expect(page.getByText("Quick Actions")).toBeVisible();
-  await expect(page.getByText("6 Children")).toBeVisible();
-  await expect(page.getByText("2 Notes needing follow-up")).toBeVisible();
+  await expect(page.getByText("8 Children")).toBeVisible();
+  await expect(page.getByText("1 Notes needing follow-up")).toBeVisible();
   await expect(page.getByText("5 Tasks due")).toBeVisible();
-  await expect(page.getByText("2 Children with recent report")).toBeVisible();
+  await expect(page.getByText("3 Children with recent report")).toBeVisible();
   await expect(
-    page.getByText("4 Children having no recent reports"),
+    page.getByText("5 Children having no recent reports"),
   ).toBeVisible();
   await argosScreenshot(page, "dashboard");
 

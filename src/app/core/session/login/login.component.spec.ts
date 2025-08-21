@@ -80,7 +80,7 @@ describe("LoginComponent", () => {
     loginState.next(LoginState.LOGGED_IN);
     tick(100);
 
-    expect(navigateSpy).toHaveBeenCalledWith("someUrl");
+    expect(navigateSpy).toHaveBeenCalledWith("/someUrl");
   }));
 
   it("should show offline login if remote login fails", fakeAsync(() => {

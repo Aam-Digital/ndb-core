@@ -150,10 +150,15 @@ export class InheritedValueService extends DefaultValueStrategy {
       return;
     }
 
+    const sourceValue = parentEntity[defaultConfig.field];
     if (fieldConfig.isArray) {
-      targetFormControl.setValue([...parentEntity[defaultConfig.field]]);
+      // always wrap the source value in an array
+      const targetValue = Array.isArray(sourceValue)
+        ? [...sourceValue]
+        : [sourceValue];
+      targetFormControl.setValue(targetValue);
     } else {
-      targetFormControl.setValue(parentEntity[defaultConfig.field]);
+      targetFormControl.setValue(sourceValue);
     }
 
     targetFormControl.markAsUntouched();

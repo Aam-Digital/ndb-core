@@ -161,6 +161,11 @@ export class Entity {
    * @param id An entity's id including prefix.
    */
   static extractTypeFromId(id: string): string {
+    if (!id || typeof id !== "string") {
+      throw new Error(
+        `Invalid entity id provided: ${id}. Expected a non-empty string.`,
+      );
+    }
     const split = id.indexOf(":");
     return id.substring(0, split);
   }
@@ -170,6 +175,11 @@ export class Entity {
    * @param id An entity's id including prefix.
    */
   static extractEntityIdFromId(id: string): string {
+    if (!id || typeof id !== "string") {
+      throw new Error(
+        `Invalid entity id provided: ${id}. Expected a non-empty string.`,
+      );
+    }
     let type: string = undefined;
     try {
       const split = id.indexOf(":");
