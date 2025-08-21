@@ -58,7 +58,6 @@ test("Record attendance for one activity", async ({ page }) => {
   await page.getByRole("button", { name: "Late" }).click();
 
   await page.getByRole("button", { name: "Review Details" }).click();
-  await page.getByLabel("status").fill("Status");
 
   const row = page.getByRole("row").filter({ hasText: childWithRemarkName });
   await row.getByLabel("Present").click();

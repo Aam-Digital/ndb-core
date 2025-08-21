@@ -2,7 +2,6 @@ import { Component, OnInit } from "@angular/core";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 
-import { NgClass } from "@angular/common";
 import { ConfigurableEnumValue } from "../configurable-enum.types";
 
 /**
@@ -14,7 +13,7 @@ import { ConfigurableEnumValue } from "../configurable-enum.types";
   selector: "app-display-configurable-enum",
   templateUrl: "./display-configurable-enum.component.html",
   styleUrls: ["./display-configurable-enum.component.scss"],
-  imports: [NgClass],
+  imports: [],
 })
 export class DisplayConfigurableEnumComponent
   extends ViewDirective<ConfigurableEnumValue | ConfigurableEnumValue[]>
