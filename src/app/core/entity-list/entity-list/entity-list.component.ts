@@ -6,6 +6,7 @@ import {
   Output,
   SimpleChanges,
   inject,
+  OnInit,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
@@ -61,6 +62,8 @@ import { AblePurePipe } from "@casl/angular";
 import { BulkMergeService } from "app/features/de-duplication/bulk-merge-service";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
+import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
+import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -105,7 +108,7 @@ import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.
 })
 @UntilDestroy()
 export class EntityListComponent<T extends Entity>
-  implements EntityListConfig, OnChanges
+  implements EntityListConfig, OnChanges, OnInit
 {
   private screenWidthObserver = inject(ScreenWidthObserver);
   private router = inject(Router);
@@ -121,6 +124,9 @@ export class EntityListComponent<T extends Entity>
     optional: true,
   });
   private readonly formDialog = inject(FormDialogService);
+
+  private publicFormsService = inject(PublicFormsService);
+  public publicFormConfig: PublicFormConfig | null = null;
 
   @Input() allEntities: T[];
 
@@ -201,6 +207,31 @@ export class EntityListComponent<T extends Entity>
 
         this.isDesktop = isDesktop;
       });
+  }
+
+  async ngOnInit() {
+    await this.loadPublicFormConfig();
+  }
+
+  private async loadPublicFormConfig() {
+    // Load all public form configs
+    const allForms =
+      await this.publicFormsService["entityMapper"].loadType(PublicFormConfig);
+    // Find the config matching this entity type
+    this.publicFormConfig =
+      allForms.find(
+        (config) =>
+          config.entity &&
+          config.entity.toLowerCase() ===
+            this.entityConstructor?.ENTITY_TYPE?.toLowerCase(),
+      ) || null;
+  }
+
+  async copyPublicFormLinkForEntityType() {
+    if (!this.publicFormConfig) return;
+    const url = `${window.location.origin}/public-form/form/${this.publicFormConfig.route}`;
+    await navigator.clipboard.writeText(url);
+    this.publicFormsService["alertService"].addInfo("Link copied: " + url);
   }
 
   ngOnChanges(changes: SimpleChanges) {

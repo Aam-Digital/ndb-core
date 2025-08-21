@@ -38,6 +38,29 @@ export class DemoPublicFormGeneratorService extends DemoDataGenerator<PublicForm
         ],
       },
     ];
-    return [form];
+    const schoolForm = new PublicFormConfig();
+    schoolForm.title = $localize`Example School form`;
+    schoolForm.description = $localize`This is a public form for the School entity. It can be shared as a link or embedded in a website.`;
+    schoolForm.entity = "School";
+    schoolForm.route = "school-test";
+    schoolForm.columns = [
+      {
+        fields: [
+          "name",
+          "address",
+          "phone",
+          "language",
+          {
+            id: "establishedDate",
+            defaultValue: {
+              mode: "dynamic",
+              config: { value: PLACEHOLDERS.NOW },
+            },
+          },
+        ],
+      },
+    ];
+
+    return [form, schoolForm];
   }
 }

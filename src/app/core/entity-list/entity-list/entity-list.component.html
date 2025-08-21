@@ -256,6 +256,16 @@
     </button>
   }
 
+  @if (publicFormConfig) {
+    <button mat-menu-item (click)="copyPublicFormLinkForEntityType()">
+      <fa-icon
+        class="color-accent standard-icon-with-text"
+        icon="link"
+      ></fa-icon>
+      <span i18n>Copy Public Form Link</span>
+    </button>
+  }
+
   <ng-content select="[mat-menu-item]"></ng-content>
 </mat-menu>
 
