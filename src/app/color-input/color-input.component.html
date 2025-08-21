@@ -1,4 +1,5 @@
-@if (compact) {
+<!-- Color Picker Button -->
+<ng-template #colorPicker>
   <span class="color-picker-wrapper">
     <button
       mat-icon-button
@@ -19,7 +20,13 @@
       (click)="$event.stopPropagation()"
     />
   </span>
+</ng-template>
+
+@if (compact) {
+  <!-- only color picker button -->
+  <ng-container *ngTemplateOutlet="colorPicker"></ng-container>
 } @else {
+  <!-- full form field with picker -->
   <mat-form-field class="full-width" floatLabel="always">
     <mat-label>
       <span i18n>Color</span>
@@ -31,26 +38,8 @@
       ></fa-icon>
     </mat-label>
     <div class="color-input-row">
-      <span class="color-picker-wrapper">
-        <button
-          mat-icon-button
-          type="button"
-          [style.color]="color"
-          (click)="colorInput2.click()"
-          tabindex="-1"
-          [matTooltip]="'Pick color'"
-        >
-          <fa-icon icon="palette"></fa-icon>
-        </button>
-        <input
-          #colorInput2
-          type="color"
-          class="color-input-overlay"
-          [value]="color"
-          (input)="onColorChange($event.target.value)"
-          (click)="$event.stopPropagation()"
-        />
-      </span>
+      <ng-container *ngTemplateOutlet="colorPicker"></ng-container>
+
       @if (!hideTextField) {
         <input
           matInput

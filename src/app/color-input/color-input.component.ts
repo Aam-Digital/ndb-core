@@ -13,6 +13,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { NgTemplateOutlet } from "@angular/common";
 
 @Component({
   selector: "app-color-input",
@@ -24,6 +25,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     FontAwesomeModule,
     ReactiveFormsModule,
     MatTooltipModule,
+    NgTemplateOutlet,
   ],
   templateUrl: "./color-input.component.html",
   styleUrl: "./color-input.component.scss",
