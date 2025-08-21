@@ -107,17 +107,10 @@ export class WidgetComponentSelectComponent implements OnInit {
         },
       },
       {
-        label: $localize`Attendance (This Week)`,
+        label: $localize`Attendance (recent absences)`,
         value: {
           component: "AttendanceWeekDashboard",
           config: { daysOffset: 7, periodLabel: "this week" },
-        },
-      },
-      {
-        label: $localize`Attendance (Last Week)`,
-        value: {
-          component: "AttendanceWeekDashboard",
-          config: { daysOffset: 0, periodLabel: "last week" },
         },
       },
       {
