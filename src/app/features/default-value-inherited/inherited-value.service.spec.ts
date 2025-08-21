@@ -450,5 +450,32 @@ describe("InheritedValueService", () => {
     tick();
 
     expect(targetFormControl.value).toEqual(["ongoing"]);
+
+    // PART 2:
+    // check that array to array inheritance keeps the correct form also
+    entity["status"] = ["status_1", "status_2"];
+    form.formGroup.reset();
+
+    service.setDefaultValue(
+      targetFormControl,
+      {
+        isArray: true,
+        defaultValue: {
+          mode: "inherited-from-referenced-entity",
+          config: {
+            field: "status",
+            localAttribute: "field2",
+          },
+        },
+      },
+      form,
+    );
+
+    tick();
+    form.formGroup.get("field2").setValue("User:Test");
+    // The tick() is required here to allow the asynchronous value change and any dependent logic to complete.
+    tick();
+
+    expect(targetFormControl.value).toEqual(["status_1", "status_2"]);
   }));
 });
