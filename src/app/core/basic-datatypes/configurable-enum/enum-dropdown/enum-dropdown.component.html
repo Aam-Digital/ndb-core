@@ -13,7 +13,14 @@
       [options]="options"
       [optionToString]="enumValueToString"
       [createOption]="createNewOption"
-    ></app-basic-autocomplete>
+      display="chips"
+    >
+      <ng-template let-option>
+        <app-display-configurable-enum
+          [value]="option"
+        ></app-display-configurable-enum>
+      </ng-template>
+    </app-basic-autocomplete>
 
     <div class="icon-container">
       @if (form.enabled) {
