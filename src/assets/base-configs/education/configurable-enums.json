@@ -5,16 +5,17 @@
       {
         "id": "C1",
         "label": "Alipore",
-        "color": "#d2c92e"
+        "color": "#CCEFFF"
       },
       {
         "id": "C2",
-        "label": "Tollygunge"
+        "label": "Tollygunge",
+        "color": "#B3E5FC"
       },
       {
         "id": "C3",
         "label": "Barabazar",
-        "color": "#B3E5FC"
+        "color": "#94DDFF"
       }
     ]
   },
