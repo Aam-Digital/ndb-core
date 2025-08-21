@@ -16,9 +16,18 @@
         class="grab-icon margin-right-small"
       ></fa-icon>
       <input matInput [(ngModel)]="v.label" />
-      <button mat-icon-button matIconSuffix (click)="delete(v, i)">
-        <fa-icon icon="trash"></fa-icon>
-      </button>
+
+      <div matSuffix class="flex-row gap-small">
+        <app-color-input
+          [color]="v.color"
+          (colorChange)="v.color = $event"
+          [compact]="true"
+        ></app-color-input>
+
+        <button mat-icon-button matIconSuffix (click)="delete(v, i)">
+          <fa-icon icon="trash"></fa-icon>
+        </button>
+      </div>
     </mat-form-field>
   }
 

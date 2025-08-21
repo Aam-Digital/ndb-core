@@ -56,7 +56,6 @@ export class ConfigureEntityFieldValidatorComponent implements OnInit {
         min: [this.entitySchemaField.validators.min],
         max: [this.entitySchemaField.validators.max],
         regex: [this.entitySchemaField.validators.pattern],
-        validEmail: [this.entitySchemaField.validators.validEmail],
         uniqueId: [this.entitySchemaField.validators.uniqueId],
         readonlyAfterSet: [this.entitySchemaField.validators.readonlyAfterSet],
       });
@@ -66,7 +65,6 @@ export class ConfigureEntityFieldValidatorComponent implements OnInit {
         min: [null],
         max: [null],
         regex: [""],
-        validEmail: [false],
         uniqueId: [""],
         readonlyAfterSet: [false],
       });

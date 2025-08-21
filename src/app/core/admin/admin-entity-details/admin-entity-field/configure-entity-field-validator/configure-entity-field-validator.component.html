@@ -41,16 +41,4 @@
       i18n-text
     ></app-help-button>
   </div>
-
-  @if (entitySchemaField.dataType === "string") {
-    <div>
-      <mat-checkbox i18n formControlName="validEmail">
-        Valid Email Format
-      </mat-checkbox>
-      <app-help-button
-        text="Users must enter a text that can be used as an email."
-        i18n-text
-      ></app-help-button>
-    </div>
-  }
 </form>
