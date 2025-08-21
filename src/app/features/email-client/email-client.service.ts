@@ -23,6 +23,7 @@ export class EmailClientService {
       if (field.dataType === EmailDatatype.dataType) {
         const emailValue = entity[field.id];
         recipient = emailValue;
+        break; // Use only the first found email field
       }
     }
 
@@ -32,6 +33,6 @@ export class EmailClientService {
 
     const mailto = "mailto:" + encodeURIComponent(recipient);
     window.location.href = mailto;
-    return true; // Success!
+    return true;
   }
 }
