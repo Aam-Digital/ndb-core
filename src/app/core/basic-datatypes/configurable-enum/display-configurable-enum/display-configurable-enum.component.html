@@ -1,5 +1,5 @@
 @for (val of iterableValue; track val; let i = $index) {
-  <span class="colored" [style.background-color]="val.color || 'transparent'">{{
+  <span class="colored" [style.background-color]="val.color">{{
     val.label
   }}</span>
   @if (i !== iterableValue.length - 1) {
