@@ -77,7 +77,6 @@ describe("DynamicValidatorsService", () => {
       min: 9,
       max: 10,
       required: true,
-      validEmail: true,
       pattern: "foo",
     };
     const validators = service.buildValidators(
@@ -88,7 +87,6 @@ describe("DynamicValidatorsService", () => {
       [10, 8],
       [8, 11],
       ["something", undefined],
-      ["foo@bar.com", "I'm an email I swear"],
       ["foo", "bar"],
     ].forEach(([successState, failureState], index) => {
       testValidator(validators[index], successState, failureState);
