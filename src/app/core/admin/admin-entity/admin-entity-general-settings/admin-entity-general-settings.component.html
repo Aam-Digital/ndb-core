@@ -40,7 +40,6 @@
           <app-color-input
             [color]="basicSettingsForm.get('color').value"
             (colorChange)="basicSettingsForm.get('color').setValue($event)"
-            [hideTextField]="false"
           ></app-color-input>
 
           <mat-checkbox formControlName="enableUserAccounts">
