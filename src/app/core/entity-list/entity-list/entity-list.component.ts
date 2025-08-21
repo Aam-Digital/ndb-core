@@ -126,7 +126,7 @@ export class EntityListComponent<T extends Entity>
   private readonly formDialog = inject(FormDialogService);
 
   private publicFormsService = inject(PublicFormsService);
-  public publicFormConfig: PublicFormConfig | null = null;
+  public publicFormConfigs: PublicFormConfig[] = [];
 
   @Input() allEntities: T[];
 
@@ -217,21 +217,17 @@ export class EntityListComponent<T extends Entity>
     // Load all public form configs
     const allForms =
       await this.publicFormsService["entityMapper"].loadType(PublicFormConfig);
-    // Find the config matching this entity type
-    this.publicFormConfig =
-      allForms.find(
-        (config) =>
-          config.entity &&
-          config.entity.toLowerCase() ===
-            this.entityConstructor?.ENTITY_TYPE?.toLowerCase(),
-      ) || null;
+    // Find all configs matching this entity type
+    this.publicFormConfigs = allForms.filter(
+      (config) =>
+        config.entity &&
+        config.entity.toLowerCase() ===
+          this.entityConstructor?.ENTITY_TYPE?.toLowerCase(),
+    );
   }
 
-  async copyPublicFormLinkForEntityType() {
-    if (!this.publicFormConfig) return;
-    const url = `${window.location.origin}/public-form/form/${this.publicFormConfig.route}`;
-    await navigator.clipboard.writeText(url);
-    this.publicFormsService["alertService"].addInfo("Link copied: " + url);
+  async copyPublicFormLinkForEntityType(config: PublicFormConfig) {
+    await this.publicFormsService.copyPublicFormLinkForEntityType(config);
   }
 
   ngOnChanges(changes: SimpleChanges) {

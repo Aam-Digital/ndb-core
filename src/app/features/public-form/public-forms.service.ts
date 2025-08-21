@@ -64,6 +64,18 @@ export class PublicFormsService {
     return true;
   }
 
+  /**
+   * Copies the public form link for an entity type.
+   */
+  public async copyPublicFormLinkForEntityType(
+    config: PublicFormConfig,
+  ): Promise<boolean> {
+    const url = `${window.location.origin}/public-form/form/${config.route}`;
+    await navigator.clipboard.writeText(url);
+    this.alertService.addInfo("Link copied: " + url);
+    return true;
+  }
+
   public async getMatchingPublicFormConfigs(
     config: PublicFormConfig,
     entity: Entity,

@@ -237,6 +237,16 @@
     <span i18n> Bulk Actions </span>
   </button>
 
+  @for (formConfig of publicFormConfigs; track formConfig.route) {
+    <button mat-menu-item (click)="copyPublicFormLinkForEntityType(formConfig)">
+      <fa-icon
+        class="color-accent standard-icon-with-text"
+        icon="link"
+      ></fa-icon>
+      <span>Copy Public Form Link ({{ formConfig.title }})</span>
+    </button>
+  }
+
   @if (
     ("update"
       | ablePure: ("CONFIG_ENTITY" | entityLoad: "Config" | async)
@@ -253,16 +263,6 @@
         icon="tools"
       ></fa-icon>
       <span i18n>Edit Data Structure</span>
-    </button>
-  }
-
-  @if (publicFormConfig) {
-    <button mat-menu-item (click)="copyPublicFormLinkForEntityType()">
-      <fa-icon
-        class="color-accent standard-icon-with-text"
-        icon="link"
-      ></fa-icon>
-      <span i18n>Copy Public Form Link</span>
     </button>
   }
 
