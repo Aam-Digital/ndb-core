@@ -5,6 +5,6 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
 @DynamicComponent("DisplayEmail")
 @Component({
   selector: "app-display-email",
-  template: `{{ value }}`,
+  template: `<a [href]="'mailto:' + value">{{ value }}</a>`,
 })
 export class DisplayEmailComponent extends ViewDirective<string> {}
