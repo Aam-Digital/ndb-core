@@ -17,19 +17,20 @@
       ></fa-icon>
       <input matInput [(ngModel)]="v.label" />
 
-      <span class="enum-actions">
+      <div matSuffix class="flex-row gap-small">
         <app-color-input
           [color]="v.color"
-          [hideTextField]="true"
-          [compact]="true"
           (colorChange)="v.color = $event"
+          [compact]="true"
         ></app-color-input>
+
         <button mat-icon-button matIconSuffix (click)="delete(v, i)">
           <fa-icon icon="trash"></fa-icon>
         </button>
-      </span>
+      </div>
     </mat-form-field>
   }
+
   <!-- CREATING NEW OPTION -->
   <mat-form-field class="full-width">
     <mat-label i18n>Add new option</mat-label>

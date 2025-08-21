@@ -1,25 +1,23 @@
 <!-- Color Picker Button -->
 <ng-template #colorPicker>
-  <span class="color-picker-wrapper">
-    <button
-      mat-icon-button
-      type="button"
-      [style.color]="color"
-      (click)="colorInput.click()"
-      tabindex="-1"
-      matTooltip="Pick color"
-    >
-      <fa-icon icon="palette"></fa-icon>
-    </button>
-    <input
-      #colorInput
-      type="color"
-      class="color-input-overlay"
-      [value]="color"
-      (input)="onColorChange($event.target.value)"
-      (click)="$event.stopPropagation()"
-    />
-  </span>
+  <button
+    mat-icon-button
+    type="button"
+    [style.color]="color"
+    (click)="colorInput.click()"
+    tabindex="-1"
+    matTooltip="Pick color"
+  >
+    <fa-icon icon="palette"></fa-icon>
+  </button>
+  <input
+    #colorInput
+    type="color"
+    class="color-input-overlay"
+    [value]="color"
+    (input)="onColorChange($event.target.value)"
+    (click)="$event.stopPropagation()"
+  />
 </ng-template>
 
 @if (compact) {
@@ -37,15 +35,13 @@
         i18n-matTooltip
       ></fa-icon>
     </mat-label>
-    @if (!hideTextField) {
-      <input
-        matInput
-        [formControl]="colorControl"
-        (input)="onColorChange(colorControl.value)"
-        style="width: 100px"
-        placeholder="#RRGGBB"
-      />
-    }
+    <input
+      matInput
+      [formControl]="colorControl"
+      (input)="onColorChange(colorControl.value)"
+      style="width: 100px"
+      placeholder="#RRGGBB"
+    />
     <span matSuffix>
       <ng-container *ngTemplateOutlet="colorPicker"></ng-container>
     </span>
