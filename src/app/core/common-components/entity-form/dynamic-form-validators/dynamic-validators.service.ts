@@ -81,8 +81,6 @@ export class DynamicValidatorsService {
         } else {
           return { fn: Validators.pattern(value as string) };
         }
-      case "validEmail":
-        return value ? { fn: Validators.email } : null;
       case "uniqueId":
         return value ? this.buildUniqueIdValidator(value) : null;
       case "required":
@@ -191,8 +189,6 @@ export class DynamicValidatorsService {
         }
       case "required":
         return $localize`This field is required`;
-      case "validEmail":
-        return $localize`Please enter a valid email`;
       case "matDatepickerParse":
         return $localize`Please enter a valid date`;
       case "isNumber":
