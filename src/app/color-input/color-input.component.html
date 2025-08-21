@@ -37,18 +37,17 @@
         i18n-matTooltip
       ></fa-icon>
     </mat-label>
-    <div class="color-input-row">
+    @if (!hideTextField) {
+      <input
+        matInput
+        [formControl]="colorControl"
+        (input)="onColorChange(colorControl.value)"
+        style="width: 100px"
+        placeholder="#RRGGBB"
+      />
+    }
+    <span matSuffix>
       <ng-container *ngTemplateOutlet="colorPicker"></ng-container>
-
-      @if (!hideTextField) {
-        <input
-          matInput
-          [formControl]="colorControl"
-          (input)="onColorChange(colorControl.value)"
-          style="width: 100px; margin-left: 8px"
-          placeholder="#RRGGBB"
-        />
-      }
-    </div>
+    </span>
   </mat-form-field>
 }

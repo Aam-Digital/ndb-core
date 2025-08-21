@@ -32,7 +32,16 @@ import { NgTemplateOutlet } from "@angular/common";
 })
 export class ColorInputComponent implements OnInit, OnChanges {
   @Input() color: string = "";
+  /**
+   * If true, hides the text input field for entering a color code.
+   * Only the color picker button will be shown.
+   */
   @Input() hideTextField = false;
+
+  /**
+   * If true, renders only the compact color picker button (no label, no text field, no form field).
+   * Useful for inline/icon-only usage.
+   */
   @Input() compact = false;
   @Output() colorChange = new EventEmitter<string>();
 
