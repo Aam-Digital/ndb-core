@@ -78,15 +78,6 @@ export class AdminDashboardComponent implements OnInit {
         event.previousIndex,
         event.currentIndex,
       );
-    } else {
-      // Handle drop from available widgets
-      const widgetType = event.previousContainer.data[event.previousIndex];
-      const newWidget: DynamicComponentConfig = {
-        component: widgetType.component,
-        config: { ...widgetType.defaultConfig },
-      };
-
-      this.dashboardConfig.widgets.splice(event.currentIndex, 0, newWidget);
     }
   }
 
