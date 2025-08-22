@@ -62,6 +62,15 @@ export class AdminDashboardComponent implements OnInit {
     this.loadDashboardViewConfig();
   }
 
+  private loadDashboardViewConfig() {
+    const viewConfig: DynamicComponentConfig<DashboardConfig> =
+      this.configService.getConfig(PREFIX_VIEW_CONFIG + this.dashboardViewId);
+
+    this.dashboardConfig = JSON.parse(JSON.stringify(viewConfig?.config)) || {
+      widgets: [],
+    };
+  }
+
   drop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(
@@ -188,12 +197,5 @@ export class AdminDashboardComponent implements OnInit {
     this.location.back();
   }
 
-  private loadDashboardViewConfig() {
-    const viewConfig: DynamicComponentConfig<DashboardConfig> =
-      this.configService.getConfig(PREFIX_VIEW_CONFIG + this.dashboardViewId);
-
-    this.dashboardConfig = JSON.parse(JSON.stringify(viewConfig?.config)) || {
-      widgets: [],
-    };
-  }
+  
 }
