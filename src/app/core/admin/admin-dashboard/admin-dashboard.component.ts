@@ -49,7 +49,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 })
 export class AdminDashboardComponent implements OnInit {
   @Input() dashboardViewId: string;
-  @Input() isDisabled: boolean = false;
 
   dashboardConfig: DashboardConfig;
 
