@@ -37,6 +37,7 @@ import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-
 import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.datatype";
 import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.component";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
+import { ColorInputComponent } from "#src/app/color-input/color-input.component";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -62,6 +63,7 @@ import { SimpleDropdownValue } from "app/core/common-components/basic-autocomple
     AnonymizeOptionsComponent,
     FaIconComponent,
     AdminIconComponent,
+    ColorInputComponent,
   ],
 })
 export class AdminEntityGeneralSettingsComponent implements OnInit {
