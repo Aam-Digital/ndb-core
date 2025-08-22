@@ -1,0 +1,38 @@
+<div style="padding: 16px">
+  <div style="margin-bottom: 32px">
+    <h3 i18n>Entity Type to Count</h3>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label i18n>Select Entity Type</mat-label>
+      <app-entity-type-select
+        [(ngModel)]="localConfig.entityType"
+        (ngModelChange)="onEntityTypeChange()"
+      ></app-entity-type-select>
+    </mat-form-field>
+    <mat-hint i18n
+      >Select which record type to count and display statistics for</mat-hint
+    >
+  </div>
+
+  <div>
+    <h3 i18n>
+      Group By Fields
+      <span
+        matTooltip="You can select one or more filters to segregate the dashboard data further, providing a more detailed analysis."
+        i18n-matTooltip
+      >
+        <fa-icon icon="question-circle"></fa-icon>
+      </span>
+    </h3>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label i18n>Select Group By Fields</mat-label>
+      <app-entity-field-select
+        [entityType]="localConfig.entityType"
+        [(ngModel)]="localConfig.groupBy"
+        (ngModelChange)="onGroupByChange()"
+        [multi]="true"
+        [placeholder]="'Select Group By Fields'"
+        i18n-placeholder
+      ></app-entity-field-select>
+    </mat-form-field>
+  </div>
+</div>

@@ -23,20 +23,35 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { DashboardWidget } from "../dashboard-widget/dashboard-widget";
 import { SessionSubject } from "../../session/auth/session-info";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatIconButton } from "@angular/material/button";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { ActivatedRoute, RouterLink } from "@angular/router";
+import { AblePurePipe } from "@casl/angular";
+import { AsyncPipe } from "@angular/common";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @RouteTarget("Dashboard")
 @Component({
   selector: "app-dashboard",
-  template: ` @for (widgetConfig of _widgets; track widgetConfig) {
-    <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
-  }`,
+  templateUrl: "./dashboard.component.html",
   styleUrls: ["./dashboard.component.scss"],
-  imports: [DynamicComponentDirective],
+  imports: [
+    DynamicComponentDirective,
+    MatMenuModule,
+    MatIconButton,
+    FaIconComponent,
+    RouterLink,
+    AblePurePipe,
+    AsyncPipe,
+    MatTooltipModule,
+  ],
 })
 export class DashboardComponent implements DashboardConfig {
   private ability = inject(EntityAbility);
   private components = inject(ComponentRegistry);
   private session = inject(SessionSubject);
+  private readonly activeRoute = inject(ActivatedRoute);
 
   @Input() set widgets(widgets: DynamicComponentConfig[]) {
     this.filterPermittedWidgets(widgets).then((res) => (this._widgets = res));
@@ -45,6 +60,8 @@ export class DashboardComponent implements DashboardConfig {
     return this._widgets;
   }
   _widgets: DynamicComponentConfig[] = [];
+
+  dashboardViewId: string = this.activeRoute.snapshot.url.join("/");
 
   private async filterPermittedWidgets(
     widgets: DynamicComponentConfig[],
