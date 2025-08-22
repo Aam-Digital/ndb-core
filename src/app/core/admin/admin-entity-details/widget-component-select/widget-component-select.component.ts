@@ -37,7 +37,7 @@ export class WidgetComponentSelectComponent implements OnInit {
     isDashboard?: boolean;
   }>(MAT_DIALOG_DATA);
 
-  options: WidgetOption[] | DashboardWidgetOption[];
+  options: WidgetOption[]
 
   ngOnInit() {
     if (this.data.isDashboard) {
@@ -47,7 +47,7 @@ export class WidgetComponentSelectComponent implements OnInit {
     }
   }
 
-  private loadDashboardWidgets(): DashboardWidgetOption[] {
+  private loadDashboardWidgets(): WidgetOption[] {
     return [
       {
         label: $localize`Shortcuts`,
@@ -162,24 +162,18 @@ export class WidgetComponentSelectComponent implements OnInit {
     ];
   }
 
-  selectSectionType(opt: any) {
+  selectSectionType(opt: PanelComponent | DynamicComponentConfig) {
     this.dialogRef.close(opt);
   }
 }
 
 export interface WidgetOption {
   label: string;
-  value: PanelComponent;
+  value: PanelComponent | DynamicComponentConfig;
 
   /**
    * If the option is not available in the current context, mark it as disabled
    * by providing any string value describing the reason (displayed as tooltip).
    */
-  disabled?: string;
-}
-
-export interface DashboardWidgetOption {
-  label: string;
-  value: DynamicComponentConfig;
   disabled?: string;
 }
