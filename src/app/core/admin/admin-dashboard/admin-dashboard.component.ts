@@ -52,7 +52,6 @@ export class AdminDashboardComponent implements OnInit {
   @Input() isDisabled: boolean = false;
 
   dashboardConfig: DashboardConfig;
-  private originalDashboardConfig: DashboardConfig;
 
   private readonly configService = inject(ConfigService);
   private readonly dialog = inject(MatDialog);
@@ -127,9 +126,6 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
-  private prettifyWidgetTitle(componentName: string): string {
-    return componentName.replace(/([a-z])([A-Z])/g, "$1 $2");
-  }
 
   private async openWidgetSettingsDialog(
     widgetConfig: DynamicComponentConfig,
@@ -138,7 +134,7 @@ export class AdminDashboardComponent implements OnInit {
     const dialogData: AdminWidgetDialogData = {
       widgetConfig: { ...widgetConfig },
       settingsComponent: settingsComponent,
-      title: `${this.prettifyWidgetTitle(widgetConfig.component)} Settings`,
+      title: widgetConfig.component,
     };
 
     const dialogRef = this.dialog.open(AdminWidgetDialogComponent, {
@@ -167,9 +163,6 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   cancel() {
-    this.dashboardConfig = JSON.parse(
-      JSON.stringify(this.originalDashboardConfig),
-    );
     this.location.back();
   }
 
@@ -202,8 +195,5 @@ export class AdminDashboardComponent implements OnInit {
     this.dashboardConfig = JSON.parse(JSON.stringify(viewConfig?.config)) || {
       widgets: [],
     };
-    this.originalDashboardConfig = JSON.parse(
-      JSON.stringify(this.dashboardConfig),
-    );
   }
 }

@@ -69,6 +69,10 @@ export class AdminWidgetDialogComponent {
     };
   }
 
+  prettifyTitle(componentName: string): string {
+    return componentName.replace(/([a-z])([A-Z])/g, "$1 $2");
+  }
+
   onSave() {
     const config: any = {
       ...(this.widgetConfigForm.value ?? {}),
