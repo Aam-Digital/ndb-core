@@ -33,17 +33,15 @@
       track widgetConfig;
       let i = $index
     ) {
-      <div class="widget-container">
         <mat-card
-          cdkDrag
-          cdkDragBoundary=".overall-container"
+          cdkDrag cdkDragBoundary=".overall-container"
+          
           class="widget-preview-card"
         >
           <fa-icon
             icon="grip-vertical"
             size="xl"
             class="drag-handle"
-            cdkDragHandle
             matTooltip="You can rearrange the dashboard sections to highlight the most important information first."
             i18n-matTooltip
           ></fa-icon>
@@ -76,7 +74,6 @@
             </div>
           </mat-card-content>
         </mat-card>
-      </div>
     }
 
     <!-- DROP AREA: ADD NEW WIDGET -->
