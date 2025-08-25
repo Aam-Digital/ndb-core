@@ -98,7 +98,7 @@ import { KeycloakAdminService } from "./core/user/user-admin-service/keycloak-ad
 import { defaultValueStrategyProviders } from "./core/default-values/standard-default-value-strategies";
 import { DemoDataModule } from "./core/demo-data/demo-data.module";
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
-import { EmailClientServicetModule } from "./features/email-client/email-client.module";
+import { EmailClientServiceModule } from "./features/email-client/email-client.module";
 
 /**
  * Main entry point of the application.
