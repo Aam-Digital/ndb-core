@@ -3,6 +3,8 @@ import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { inject, Injectable } from "@angular/core";
 import { AlertService } from "#src/app/core/alerts/alert.service";
+import { MatDialog } from "@angular/material/dialog";
+import { EmailTemplateSelectionDialogComponent } from "../email-template-selection-dialog/email-template-selection-dialog.component";
 
 @Injectable({
   providedIn: "root",
@@ -10,6 +12,7 @@ import { AlertService } from "#src/app/core/alerts/alert.service";
 export class EmailClientService {
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly alertService = inject(AlertService);
+  private readonly dialog = inject(MatDialog);
 
   /**
    * Build a mailto link from an entity's email fields and open the local mail client.
@@ -20,6 +23,8 @@ export class EmailClientService {
     const entityType = this.entityRegistry.get(
       entity.getType(),
     ) as EntityConstructor<Entity>;
+
+    this.dialog.open(EmailTemplateSelectionDialogComponent, { data: entity });
 
     let recipient: string | null = null;
 
