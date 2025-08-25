@@ -34,7 +34,7 @@ export class EmailClientService {
     }
 
     const mailto = "mailto:" + encodeURIComponent(recipient);
-    window.location.href = mailto;
+    this.document.location.href = mailto;
     return true;
   }
 }
