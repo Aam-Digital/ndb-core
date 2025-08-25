@@ -7,7 +7,7 @@ import { EmailClientService } from "./email-client.service";
 @NgModule({
   imports: [CommonModule],
 })
-export class EmailClientServicetModule {
+export class EmailClientServiceModule {
   constructor() {
     const entityActionsMenuService = inject(EntityActionsMenuService);
     const emailClientService = inject(EmailClientService);
