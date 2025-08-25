@@ -6,7 +6,6 @@ import { Component, inject, Input } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import {
-  MAT_DIALOG_DATA,
   MatDialogActions,
   MatDialogClose,
   MatDialogContent,
@@ -14,6 +13,7 @@ import {
 } from "@angular/material/dialog";
 import { RouterLink } from "@angular/router";
 import { EmailTemplate } from "../email-client/email-template.entity";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 
 @Component({
   selector: "app-email-template-selection-dialog",
@@ -30,14 +30,27 @@ import { EmailTemplate } from "../email-client/email-template.entity";
   styleUrl: "./email-template-selection-dialog.component.scss",
 })
 export class EmailTemplateSelectionDialogComponent {
-  @Input() entity: Entity;
-
   emailTemplateSelectionForm: FormControl = new FormControl();
   EmailTemplate = EmailTemplate;
 
-  constructor() {
-    const data = inject<Entity>(MAT_DIALOG_DATA);
+  dialogRef: MatDialogRef<EmailTemplateSelectionDialogComponent>;
 
-    this.entity = data;
+  private readonly entityMapper = inject(EntityMapperService);
+
+  constructor() {
+    this.dialogRef = inject(
+      MatDialogRef<EmailTemplateSelectionDialogComponent>,
+    );
+  }
+
+  selectedTemplate(template: EmailTemplate) {
+    this.emailTemplateSelectionForm.setValue(template);
+
+    const emailTemplate = this.entityMapper.load(
+      EmailTemplate.ENTITY_TYPE,
+      this.emailTemplateSelectionForm.value,
+    );
+
+    this.dialogRef.close(emailTemplate);
   }
 }

@@ -5,6 +5,7 @@ import { inject, Injectable } from "@angular/core";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EmailTemplateSelectionDialogComponent } from "../email-template-selection-dialog/email-template-selection-dialog.component";
+import { lastValueFrom } from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -19,15 +20,12 @@ export class EmailClientService {
    *
    * If no default email client is available on the device / configured in the browser, then nothing will happen here.
    */
-  executeMailtoFromEntity(entity: Entity): boolean {
+  async executeMailtoFromEntity(entity: Entity): Promise<boolean> {
     const entityType = this.entityRegistry.get(
       entity.getType(),
     ) as EntityConstructor<Entity>;
 
-    this.dialog.open(EmailTemplateSelectionDialogComponent, { data: entity });
-
     let recipient: string | null = null;
-
     for (const [, field] of entityType.schema.entries()) {
       if (field.dataType === EmailDatatype.dataType) {
         const emailValue = entity[field.id];
@@ -43,7 +41,21 @@ export class EmailClientService {
       return false;
     }
 
-    const mailto = "mailto:" + encodeURIComponent(recipient);
+    const dialogRef = this.dialog.open(EmailTemplateSelectionDialogComponent);
+    const template = await lastValueFrom(dialogRef.afterClosed());
+
+    if (!template) return false;
+
+    const enc = (v: string) => encodeURIComponent(v);
+    const params: string[] = [];
+    const subject = template.subject?.toString().trim();
+    const body = template.body?.toString();
+
+    if (subject) params.push(`subject=${enc(subject)}`);
+    if (body) params.push(`body=${enc(body)}`);
+
+    const mailto = `mailto:${enc(recipient)}${params.length ? `?${params.join("&")}` : ""}`;
+
     window.location.href = mailto;
     return true;
   }

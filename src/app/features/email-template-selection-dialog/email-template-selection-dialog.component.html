@@ -4,7 +4,8 @@
     <span i18n>
       Select the template to use for sending an email to this record. Nothing
       will happen unless you have a default email client set up. Please
-      configure one to proceed.
+      configure one to proceed. Also if you wanted to create a new template, you
+      can do so from -
     </span>
     <a
       [routerLink]="EmailTemplate.route"
@@ -35,6 +36,7 @@
     mat-raised-button
     color="accent"
     [disabled]="!emailTemplateSelectionForm.value"
+    (click)="selectedTemplate(emailTemplateSelectionForm.value)"
   >
     <span i18n>Send Email</span>
   </button>
