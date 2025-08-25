@@ -26,6 +26,7 @@ export class EmailClientService {
     ) as EntityConstructor<Entity>;
 
     let recipient: string | null = null;
+
     for (const [, field] of entityType.schema.entries()) {
       if (field.dataType === EmailDatatype.dataType) {
         const emailValue = entity[field.id];
