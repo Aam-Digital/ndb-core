@@ -2,6 +2,7 @@ import { Entity } from "../../core/entity/model/entity";
 import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../core/entity/database-field.decorator";
 import { LongTextDatatype } from "../../core/basic-datatypes/string/long-text.datatype";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 /**
  * EmailTemplate represents a reusable template for generating emails.
@@ -15,6 +16,7 @@ export class EmailTemplate extends Entity {
   static override labelPlural = $localize`:EmailTemplate:Email Templates`;
   static override toStringAttributes = ["subject"];
   static override route = "admin/email-template";
+  static override icon: IconName = "envelope";
   static override isInternalEntity = true;
 
   /**
