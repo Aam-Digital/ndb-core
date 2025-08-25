@@ -30,17 +30,18 @@ describe("EmailClientService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should show warning and return false if email field exists but value is missing", () => {
+  it("should show warning and return false if email field exists but value is missing", async () => {
     const fakeEntity = {
       getType: () => "TestEntity",
       email: undefined,
     } as unknown as Entity;
+
     const FakeEntityConstructor: any = {
       schema: [{ id: "email", dataType: EmailDatatype.dataType }],
     };
     mockRegistry.get.and.returnValue(FakeEntityConstructor);
 
-    const result = service.executeMailtoFromEntity(fakeEntity);
+    const result = await service.executeMailtoFromEntity(fakeEntity);
 
     expect(result).toBeFalse();
     expect(mockAlert.addWarning).toHaveBeenCalledWith(
