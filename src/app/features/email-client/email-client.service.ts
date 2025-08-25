@@ -2,12 +2,14 @@ import { EmailDatatype } from "#src/app/core/basic-datatypes/string/email.dataty
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { inject, Injectable } from "@angular/core";
+import { AlertService } from "#src/app/core/alerts/alert.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class EmailClientService {
   private entityRegistry = inject(EntityRegistry);
+  private alertService = inject(AlertService);
 
   /**
    * Build a mailto link from an entity's email fields and open the local mail client.
@@ -30,6 +32,9 @@ export class EmailClientService {
     }
 
     if (!recipient) {
+      this.alertService.addWarning(
+        "Please fill an email address for this record to use this functionality.",
+      );
       return false;
     }
 

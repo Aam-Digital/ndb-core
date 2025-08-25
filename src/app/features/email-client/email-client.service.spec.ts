@@ -1,22 +1,50 @@
 import { TestBed } from "@angular/core/testing";
 
 import { EmailClientService } from "./email-client.service";
-import {
-  entityRegistry,
-  EntityRegistry,
-} from "#src/app/core/entity/database-entity.decorator";
+import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
+import { AlertService } from "#src/app/core/alerts/alert.service";
+import { Entity } from "#src/app/core/entity/model/entity";
+import { EmailDatatype } from "#src/app/core/basic-datatypes/string/email.datatype";
 
-describe("EmailClientService", () => {
+fdescribe("EmailClientService", () => {
   let service: EmailClientService;
+  let mockRegistry: jasmine.SpyObj<EntityRegistry>;
+  let mockAlert: jasmine.SpyObj<AlertService>;
 
   beforeEach(() => {
+    mockRegistry = jasmine.createSpyObj("EntityRegistry", ["get"]);
+    mockAlert = jasmine.createSpyObj("AlertService", ["addWarning"]);
+
     TestBed.configureTestingModule({
-      providers: [{ provide: EntityRegistry, useValue: entityRegistry }],
+      providers: [
+        EmailClientService,
+        { provide: EntityRegistry, useValue: mockRegistry },
+        { provide: AlertService, useValue: mockAlert },
+      ],
     });
+
     service = TestBed.inject(EmailClientService);
   });
 
   it("should be created", () => {
     expect(service).toBeTruthy();
+  });
+
+  it("should show warning and return false if email field exists but value is missing", () => {
+    const fakeEntity = {
+      getType: () => "TestEntity",
+      email: undefined,
+    } as unknown as Entity;
+    const FakeEntityConstructor: any = {
+      schema: [{ id: "email", dataType: EmailDatatype.dataType }],
+    };
+    mockRegistry.get.and.returnValue(FakeEntityConstructor);
+
+    const result = service.executeMailtoFromEntity(fakeEntity);
+
+    expect(result).toBeFalse();
+    expect(mockAlert.addWarning).toHaveBeenCalledWith(
+      "Please fill an email address for this record to use this functionality.",
+    );
   });
 });
