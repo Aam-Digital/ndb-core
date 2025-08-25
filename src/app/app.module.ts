@@ -145,7 +145,7 @@ import { EmailClientServiceModule } from "./features/email-client/email-client.m
     PublicFormModule,
     SkillModule,
     DemoDataModule,
-    EmailClientServicetModule,
+    EmailClientServiceModule,
     // top level component
     UiComponent,
     // Global Angular Material modules
