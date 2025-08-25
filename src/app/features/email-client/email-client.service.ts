@@ -8,8 +8,8 @@ import { AlertService } from "#src/app/core/alerts/alert.service";
   providedIn: "root",
 })
 export class EmailClientService {
-  private entityRegistry = inject(EntityRegistry);
-  private alertService = inject(AlertService);
+  private readonly entityRegistry = inject(EntityRegistry);
+  private readonly alertService = inject(AlertService);
 
   /**
    * Build a mailto link from an entity's email fields and open the local mail client.
@@ -23,7 +23,7 @@ export class EmailClientService {
 
     let recipient: string | null = null;
 
-    for (const [id, field] of entityType.schema.entries()) {
+    for (const [, field] of entityType.schema.entries()) {
       if (field.dataType === EmailDatatype.dataType) {
         const emailValue = entity[field.id];
         recipient = emailValue;
