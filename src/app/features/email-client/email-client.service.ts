@@ -11,7 +11,7 @@ export class EmailClientService {
 
   /**
    * Build a mailto link from an entity's email fields and open the local mail client.
-   * 
+   *
    * If no default email client is available on the device / configured in the browser, then nothing will happen here.
    */
   executeMailtoFromEntity(entity: Entity): boolean {
@@ -34,7 +34,7 @@ export class EmailClientService {
     }
 
     const mailto = "mailto:" + encodeURIComponent(recipient);
-    this.document.location.href = mailto;
+    window.location.href = mailto;
     return true;
   }
 }
