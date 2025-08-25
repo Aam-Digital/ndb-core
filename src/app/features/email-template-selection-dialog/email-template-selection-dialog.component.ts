@@ -1,8 +1,6 @@
-import { AlertService } from "#src/app/core/alerts/alert.service";
 import { EntitySelectComponent } from "#src/app/core/common-components/entity-select/entity-select.component";
-import { Entity } from "#src/app/core/entity/model/entity";
 import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
-import { Component, inject, Input } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import {
@@ -33,15 +31,10 @@ export class EmailTemplateSelectionDialogComponent {
   emailTemplateSelectionForm: FormControl = new FormControl();
   EmailTemplate = EmailTemplate;
 
-  dialogRef: MatDialogRef<EmailTemplateSelectionDialogComponent>;
-
+  private readonly dialogRef = inject(
+    MatDialogRef<EmailTemplateSelectionDialogComponent>,
+  );
   private readonly entityMapper = inject(EntityMapperService);
-
-  constructor() {
-    this.dialogRef = inject(
-      MatDialogRef<EmailTemplateSelectionDialogComponent>,
-    );
-  }
 
   selectedTemplate(template: EmailTemplate) {
     this.emailTemplateSelectionForm.setValue(template);
