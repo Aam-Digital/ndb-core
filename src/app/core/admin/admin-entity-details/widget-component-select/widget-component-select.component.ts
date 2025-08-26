@@ -1,3 +1,4 @@
+import { v4 as uuid } from "uuid";
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
 import { PanelComponent } from "#src/app/core/entity-details/EntityDetailsConfig";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
@@ -117,7 +118,7 @@ export class WidgetComponentSelectComponent implements OnInit {
         label: $localize`Progress`,
         value: {
           component: "ProgressDashboard",
-          config: { dashboardConfigId: "1" },
+          config: { dashboardConfigId: uuid() },
         },
       },
       {
