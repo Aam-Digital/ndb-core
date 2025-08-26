@@ -2,10 +2,8 @@
   <h2 i18n>Select Email Template</h2>
   <p>
     <span i18n>
-      Select the template to use for sending an email to this record. Nothing
-      will happen unless you have a default email client set up. Please
-      configure one to proceed. Also if you wanted to create a new template, you
-      can do so from -
+      Select the template to use for sending an email to this record. If you
+      want to create a new template, you can do so from -
     </span>
     <a
       [routerLink]="EmailTemplate.route"
@@ -17,6 +15,12 @@
       i18n
       >configure available Email templates</a
     >
+  </p>
+  <p>
+    <span i18n>
+      Note: Nothing will happen unless you have a default email client set up.
+      Please configure one to proceed.
+    </span>
   </p>
 
   <app-entity-select
