@@ -25,6 +25,7 @@ import {
   EventAttendanceDatatype,
   EventAttendanceMapDatatype,
 } from "./model/event-attendance.datatype";
+import { DashboardWidgetRegistryService } from "../../core/dashboard/dashboard-widget-registry.service";
 
 @NgModule({
   providers: [
@@ -43,7 +44,11 @@ import {
 export class AttendanceModule {
   static databaseEntities = [RecurringActivity, EventNote];
 
+  private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
+
   constructor() {
+    this.widgetRegistry.register("AttendanceWeekDashboard", "AttendanceWeekDashboardSettings");
+
     const components = inject(ComponentRegistry);
 
     components.addAll(attendanceComponents);

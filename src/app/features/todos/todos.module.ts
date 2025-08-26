@@ -3,6 +3,7 @@ import { Todo } from "./model/todo";
 import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
 import { TimeIntervalDatatype } from "./recurring-interval/time-interval.datatype";
+import { DashboardWidgetRegistryService } from "../../core/dashboard/dashboard-widget-registry.service";
 
 @NgModule({
   providers: [
@@ -12,7 +13,11 @@ import { TimeIntervalDatatype } from "./recurring-interval/time-interval.datatyp
 export class TodosModule {
   static databaseEntities = [Todo];
 
+  private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
+
   constructor() {
+    this.widgetRegistry.register("TodosDashboard", "TodosDashboardSettings");
+
     const components = inject(ComponentRegistry);
 
     components.addAll(dynamicComponents);

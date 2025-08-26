@@ -1,12 +1,17 @@
 import { NgModule, inject } from "@angular/core";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { ProgressDashboardConfig } from "./progress-dashboard/progress-dashboard-config";
+import { DashboardWidgetRegistryService } from "../../../core/dashboard/dashboard-widget-registry.service";
 
 @NgModule({})
 export class ProgressDashboardWidgetModule {
   static databaseEntities = [ProgressDashboardConfig];
 
+  private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
+
   constructor() {
+    this.widgetRegistry.register("ProgressDashboard", "ProgressDashboardSettings");
+
     const components = inject(ComponentRegistry);
 
     components.addAll([

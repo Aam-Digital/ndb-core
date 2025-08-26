@@ -1,11 +1,15 @@
 import { NgModule, inject } from "@angular/core";
 import { ComponentRegistry } from "../../../dynamic-components";
+import { DashboardWidgetRegistryService } from "#src/app/core/dashboard/dashboard-widget-registry.service";
 
 @NgModule({})
 export class EntityCountDashboardWidgetModule {
-  constructor() {
-    const components = inject(ComponentRegistry);
+  private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
 
+  constructor() {
+    this.widgetRegistry.register("EntityCountDashboard", "EntityCountDashboardSettings");
+
+    const components = inject(ComponentRegistry);
     components.addAll([
       [
         "EntityCountDashboard",

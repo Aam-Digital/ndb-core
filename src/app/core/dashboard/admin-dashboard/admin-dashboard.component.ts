@@ -25,6 +25,7 @@ import {
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { WidgetComponentSelectComponent } from "../../admin/admin-entity-details/widget-component-select/widget-component-select.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { DashboardWidgetRegistryService } from "../dashboard-widget-registry.service";
 
 @Component({
   selector: "app-admin-dashboard",
@@ -56,6 +57,7 @@ export class AdminDashboardComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly location = inject(Location);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
 
   ngOnInit() {
     this.loadDashboardViewConfig();
@@ -81,7 +83,9 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   async editWidget(widgetConfig: DynamicComponentConfig, idx: number) {
-    const settingsComponent = this.getSettingsComponentforWidget(widgetConfig);
+    const settingsComponent = this.widgetRegistry.getSettingsComponentForWidget(
+      widgetConfig.component,
+    );
     if (!settingsComponent) return;
 
     const updatedConfig = await this.openWidgetSettingsDialog(
@@ -93,38 +97,6 @@ export class AdminDashboardComponent implements OnInit {
       this.dashboardConfig.widgets = [...this.dashboardConfig.widgets];
     }
   }
-
-  getSettingsComponentforWidget(widgetConfig: DynamicComponentConfig): any {
-    switch (widgetConfig.component) {
-      case "ShortcutDashboard":
-        return "ShortcutDashboardSettings";
-
-      case "EntityCountDashboard":
-        return "EntityCountDashboardSettings";
-
-      case "ImportantNotesDashboard":
-        return "ImportantNotesDashboardSettings";
-
-      case "TodosDashboard":
-        return "TodosDashboardSettings";
-
-      case "NotesDashboard":
-        return "NotesDashboardSettings";
-
-      case "AttendanceWeekDashboard":
-        return "AttendanceWeekDashboardSettings";
-
-      case "ProgressDashboard":
-        return "ProgressDashboardSettings";
-
-      case "BirthdayDashboard":
-        return "BirthdayDashboardSettings";
-
-      default:
-        return null;
-    }
-  }
-
 
   private async openWidgetSettingsDialog(
     widgetConfig: DynamicComponentConfig,
@@ -186,6 +158,4 @@ export class AdminDashboardComponent implements OnInit {
 
     this.location.back();
   }
-
-  
 }
