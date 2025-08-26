@@ -304,27 +304,21 @@ export class ImportAdditionalService {
       const types = Array.isArray(typeOrTypes) ? typeOrTypes : [typeOrTypes];
       return types.map((type) => this.entityRegistry.get(type));
     };
-
-    const sourceTypes = getEntityTypes(importAction.sourceType);
+    const sourceType = this.entityRegistry.get(importAction.sourceType);
     const targetTypes = importAction["targetType"]
       ? getEntityTypes(importAction["targetType"])
       : [];
-    const relationshipTypes = importAction["relationshipEntityType"]
-      ? getEntityTypes(importAction["relationshipEntityType"])
-      : [];
-
+    const relationshipType = importAction["relationshipEntityType"]
+      ? this.entityRegistry.get(importAction["relationshipEntityType"])
+      : null;
     // normally just one type, list with commas if several
-    const sourceTypeLabel = sourceTypes.map((t) => t.toString(true)).join(", ");
     const targetTypeLabel = targetTypes.map((t) => t.toString()).join(", ");
-    const relationshipTypeLabel = relationshipTypes
-      .map((t) => t.toString(true))
-      .join(", ");
 
     let label: string;
     if (!forTargetType) {
-      label = $localize`Link imported ${sourceTypeLabel} to a ${targetTypeLabel}`;
+      label = $localize`Link imported ${sourceType.toString(true)} to a ${targetTypeLabel}`;
     } else {
-      label = $localize`Import related ${sourceTypeLabel} for this ${targetTypeLabel}`;
+      label = $localize`Import related ${sourceType.toString(true)} for this ${targetTypeLabel}`;
     }
 
     // add additional context details
@@ -341,9 +335,9 @@ export class ImportAdditionalService {
       label += ` (as ${targetProps.filter(Boolean).join(", ")})`;
     } else if (
       (importAction as AdditionalIndirectLinkAction).relationshipEntityType &&
-      relationshipTypes?.length
+      relationshipType?.label
     ) {
-      label += ` (through ${relationshipTypeLabel})`;
+      label += ` (through ${relationshipType?.toString(true)})`;
     }
 
     return label;
