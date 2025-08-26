@@ -83,7 +83,6 @@ export class PublicFormsService {
       return false;
     }
 
-
     const entityType = entity.getConstructor().ENTITY_TYPE.toLowerCase();
     const linkedEntity = config.linkedEntity;
 
