@@ -224,7 +224,7 @@ export class EntityListComponent<T extends Entity>
   }
 
   async copyPublicFormLinkForEntityType(config: PublicFormConfig) {
-    await this.publicFormsService.copyPublicFormLinkForEntityType(config);
+    await this.publicFormsService.copyPublicFormLinkFromConfig(config);
   }
 
   ngOnChanges(changes: SimpleChanges) {

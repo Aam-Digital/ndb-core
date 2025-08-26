@@ -58,8 +58,8 @@ export class CustomFormLinkButtonComponent implements OnInit {
   async copyLink(matchingCustomForm: PublicFormConfig) {
     if (!matchingCustomForm) return;
     await this.publicFormsService.copyPublicFormLinkFromConfig(
-      this.linkedEntity,
       matchingCustomForm,
+      this.linkedEntity,
     );
   }
 }
