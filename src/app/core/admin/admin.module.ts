@@ -45,7 +45,7 @@ export class AdminModule {
       [
         "AdminDashboard",
         () =>
-          import("./admin-dashboard/admin-dashboard.component").then(
+          import("../dashboard/admin-dashboard/admin-dashboard.component").then(
             (c) => c.AdminDashboardComponent,
           ),
       ],

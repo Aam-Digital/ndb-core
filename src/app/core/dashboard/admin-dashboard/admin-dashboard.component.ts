@@ -21,9 +21,9 @@ import { firstValueFrom } from "rxjs";
 import {
   AdminWidgetDialogComponent,
   AdminWidgetDialogData,
-} from "../admin-widget-dialog/admin-widget-dialog.component";
+} from "../../admin/admin-widget-dialog/admin-widget-dialog.component";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
-import { WidgetComponentSelectComponent } from "../admin-entity-details/widget-component-select/widget-component-select.component";
+import { WidgetComponentSelectComponent } from "../../admin/admin-entity-details/widget-component-select/widget-component-select.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
@@ -44,7 +44,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
   styleUrls: [
     "./admin-dashboard.component.scss",
     "../../dashboard/dashboard/dashboard.component.scss",
-    "../admin-entity/admin-entity-styles.scss",
+    "../../admin/admin-entity/admin-entity-styles.scss",
   ],
 })
 export class AdminDashboardComponent implements OnInit {
