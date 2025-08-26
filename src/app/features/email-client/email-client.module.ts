@@ -86,3 +86,5 @@ const viewConfigs: ViewConfig[] = [
     } as EntityDetailsConfig,
   },
 ];
+  }
+}

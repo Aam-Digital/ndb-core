@@ -42,6 +42,7 @@ export class EmailClientService {
       return false;
     }
 
+
     const dialogRef = this.dialog.open(EmailTemplateSelectionDialogComponent);
     const template = await lastValueFrom(dialogRef.afterClosed());
 
@@ -56,7 +57,6 @@ export class EmailClientService {
     if (body) params.push(`body=${enc(body)}`);
 
     const mailto = `mailto:${enc(recipient)}${params.length ? `?${params.join("&")}` : ""}`;
-
     window.location.href = mailto;
     return true;
   }

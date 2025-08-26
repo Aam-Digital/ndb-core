@@ -35,7 +35,6 @@ describe("EmailClientService", () => {
       getType: () => "TestEntity",
       email: undefined,
     } as unknown as Entity;
-
     const FakeEntityConstructor: any = {
       schema: [{ id: "email", dataType: EmailDatatype.dataType }],
     };
