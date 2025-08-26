@@ -57,7 +57,7 @@ const viewConfigs: ViewConfig[] = [
     component: "EntityList",
     config: {
       entityType: EmailTemplate.ENTITY_TYPE,
-      columns: ["subject", "body"],
+      columns: ["subject", "body", "availableForEntityTypes"],
     } as EntityListConfig,
   },
 
@@ -75,7 +75,7 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: ["subject", "body"],
+                    fields: ["subject", "body", "availableForEntityTypes"],
                   },
                 ],
               },
@@ -86,5 +86,3 @@ const viewConfigs: ViewConfig[] = [
     } as EntityDetailsConfig,
   },
 ];
-  }
-}

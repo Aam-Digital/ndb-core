@@ -37,4 +37,15 @@ export class EmailTemplate extends Entity {
     validators: { required: true },
   })
   body: string;
+
+  /**
+   * Optional entity types this template is available for.
+   */
+  @DatabaseField({
+    label: $localize`:EmailTemplate:Available for Entity Type(s)`,
+    editComponent: "EditEntityType",
+    viewComponent: "DisplayEntityType",
+    isArray: true,
+  })
+  availableForEntityTypes?: string;
 }

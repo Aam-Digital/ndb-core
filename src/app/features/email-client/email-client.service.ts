@@ -42,8 +42,9 @@ export class EmailClientService {
       return false;
     }
 
-
-    const dialogRef = this.dialog.open(EmailTemplateSelectionDialogComponent);
+    const dialogRef = this.dialog.open(EmailTemplateSelectionDialogComponent, {
+      data: entity,
+    });
     const template = await lastValueFrom(dialogRef.afterClosed());
 
     if (!template) return false;

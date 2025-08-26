@@ -4,6 +4,7 @@ import { Component, inject } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import {
+  MAT_DIALOG_DATA,
   MatDialogActions,
   MatDialogClose,
   MatDialogContent,
@@ -12,6 +13,7 @@ import {
 import { RouterLink } from "@angular/router";
 import { EmailTemplate } from "../email-client/email-template.entity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { Entity } from "#src/app/core/entity/model/entity";
 
 @Component({
   selector: "app-email-template-selection-dialog",
@@ -35,6 +37,30 @@ export class EmailTemplateSelectionDialogComponent {
     MatDialogRef<EmailTemplateSelectionDialogComponent>,
   );
   private readonly entityMapper = inject(EntityMapperService);
+  private readonly entity = inject<Entity>(MAT_DIALOG_DATA);
+
+  /**
+   * Filters email templates based on their availability for the current entity type.
+   * Returns true if the template is available for the entity type or if no restrictions are set.
+   *
+   * @param e The email template to check.
+   * @returns True if the template is available for the current entity type, otherwise false.
+   */
+  filteredTemplate = (e: EmailTemplate): boolean => {
+    const currentType = this.entity.getType();
+    if (
+      e.availableForEntityTypes &&
+      e.availableForEntityTypes.includes(currentType)
+    ) {
+      return true;
+    } else if (
+      !e.availableForEntityTypes ||
+      e.availableForEntityTypes.length === 0
+    ) {
+      return true;
+    }
+    return false;
+  };
 
   selectedTemplate(template: EmailTemplate) {
     this.emailTemplateSelectionForm.setValue(template);
