@@ -88,8 +88,6 @@ export class PublicFormsService {
     const linkedEntity = config.linkedEntity;
 
     if (!linkedEntity) return false;
-    if (linkedEntity.additional) {
-      return linkedEntity.additional.toLowerCase() === entityType;
 
     if (linkedEntity.additional) {
       return linkedEntity.additional.toLowerCase() === entityType;
