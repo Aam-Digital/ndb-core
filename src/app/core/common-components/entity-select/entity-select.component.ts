@@ -1,12 +1,16 @@
+import { Component, Input, Signal, inject, input, signal } from "@angular/core";
+import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  inject,
-} from "@angular/core";
+  BehaviorSubject,
+  lastValueFrom,
+  Observable,
+  switchMap,
+  combineLatest,
+  startWith,
+  map,
+  share,
+} from "rxjs";
 import { Entity } from "../../entity/model/entity";
-import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
@@ -52,18 +56,14 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
   ],
 })
 @UntilDestroy()
-export class EntitySelectComponent<
-  E extends Entity,
-  T extends string[] | string = string[],
-> implements OnChanges
-{
+export class EntitySelectComponent<E extends Entity> {
   private entityMapperService = inject(EntityMapperService);
   private formDialog = inject(FormDialogService);
   private entityRegistry = inject(EntityRegistry);
 
   readonly loadingPlaceholder = $localize`:A placeholder for the input element when select options are not loaded yet:loading...`;
 
-  @Input() form: FormControl<T>;
+  form = input<FormControl<string[] | string>>();
 
   /**
    * The entity-type (e.g. 'Child', 'School', e.t.c.) to set.
@@ -71,16 +71,11 @@ export class EntitySelectComponent<
    *             that displays the entities. Can be an array giving multiple types.
    * @throws Error when `type` is not in the entity-map
    */
-  @Input() set entityType(type: string | string[]) {
-    if (type === undefined || type === null) {
-      type = [];
-    }
-
-    this._entityType = Array.isArray(type) ? type : [type];
-    this.loadAvailableEntities().then((_) => {});
-  }
-
-  private _entityType: string[];
+  entityType: Signal<string[]> = input([], {
+    transform: (type: string | string[] | undefined): string[] => {
+      return asArray(type ?? []);
+    },
+  });
 
   /**
    * Whether users can select multiple entities.
@@ -120,12 +115,10 @@ export class EntitySelectComponent<
    * state of this component. Will trigger once loading is done
    */
   loading = new BehaviorSubject(true);
-  allEntities: E[] = [];
-  availableOptions = new BehaviorSubject<E[]>([]);
 
   hasInaccessibleEntities: Boolean = false;
 
-  @Input() includeInactive: boolean = false;
+  includeInactive = signal<boolean>(false);
   currentlyMatchingInactive: number = 0;
 
   /**
@@ -139,86 +132,73 @@ export class EntitySelectComponent<
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes["form"]) {
-      this.form.valueChanges.subscribe((value) => {
-        this.updateAvailableOptions().then((_) => {});
-      });
-    }
-  }
+  #allEntities: Observable<E[]> = toObservable(this.entityType)
+    .pipe(
+      switchMap(async (types) => {
+        this.loading.next(true);
+        if (types.length === 0) return [];
 
-  private async loadAvailableEntities() {
-    this.loading.next(true);
+        const entities: E[] = [];
+        for (const type of types) {
+          entities.push(...(await this.entityMapperService.loadType<E>(type)));
+        }
 
-    const entities = [];
-    for (const type of this._entityType) {
-      entities.push(...(await this.entityMapperService.loadType<E>(type)));
-    }
-    this.allEntities = entities
-      .filter((e) => this.additionalFilter(e))
-      .sort((a, b) => a.toString().localeCompare(b.toString()));
+        this.loading.next(false);
+        return entities
+          .filter((e) => this.additionalFilter(e))
+          .sort((a, b) => a.toString().localeCompare(b.toString()));
+      }),
+    )
+    .pipe(startWith([]))
+    .pipe(share());
 
-    await this.updateAvailableOptions();
+  #values: Observable<string[]> = toObservable(this.form)
+    .pipe(switchMap((form) => form.valueChanges))
+    .pipe(map(asArray))
+    .pipe(startWith([]));
 
-    this.loading.next(false);
-  }
+  availableOptions: Signal<E[]> = toSignal(
+    combineLatest([
+      this.#allEntities,
+      this.#values,
+      toObservable(this.includeInactive),
+    ]).pipe(
+      switchMap(async ([entities, formValue, includeInactive]) => {
+        const includeSelected = (entity: E) =>
+          asArray(formValue).includes(entity.getId());
 
-  private async updateAvailableOptions() {
-    const includeInactive = (entity: E) =>
-      this.includeInactive || entity.isActive;
-    const includeSelected = (entity: E) =>
-      asArray(this.form.value).includes(entity.getId());
+        const availableEntities = entities.filter(
+          (e) => includeInactive || e.isActive || includeSelected(e),
+        );
 
-    const newAvailableEntities = this.allEntities.filter(
-      (e) => includeInactive(e) || includeSelected(e),
-    );
+        if (formValue !== null && formValue !== undefined) {
+          for (const id of asArray(formValue)) {
+            if (id === null || id === undefined || id === "") {
+              continue;
+            }
 
-    await this.alignAvailableAndSelectedEntities(newAvailableEntities);
+            if (availableEntities.find((e) => id === e.getId())) {
+              continue;
+            }
 
-    this.availableOptions.next(newAvailableEntities);
-    this.recalculateMatchingInactive();
-  }
+            const additionalEntity = await this.getEntity(id);
+            if (additionalEntity) {
+              availableEntities.push(additionalEntity);
+            } else {
+              this.hasInaccessibleEntities = true;
+              availableEntities.push({
+                getId: () => id,
+                isHidden: true,
+              } as unknown as E);
+            }
+          }
+        }
 
-  /**
-   * Edit form value (currently selected) and the given available Entities to be consistent:
-   * Entities that do not exist should be removed from the form value
-   * and availableEntities should contain all selected entities, even from other types.
-   * @private
-   */
-  private async alignAvailableAndSelectedEntities(availableEntities: E[]) {
-    if (this.form?.value === null || this.form?.value === undefined) {
-      return;
-    }
-
-    let updatedValue: T = this.form.value;
-
-    for (const id of asArray(this.form.value)) {
-      // Skip null, undefined, or empty string values
-      if (id === null || id === undefined || id === "") {
-        continue;
-      }
-
-      if (availableEntities.find((e) => id === e.getId())) {
-        // already available, nothing to do
-        continue;
-      }
-
-      const additionalEntity = await this.getEntity(id);
-      if (additionalEntity) {
-        availableEntities.push(additionalEntity);
-      } else {
-        this.hasInaccessibleEntities = true;
-        availableEntities.push({
-          getId: () => id,
-          isHidden: true,
-        } as unknown as E);
-      }
-    }
-
-    if (this.form.value !== updatedValue) {
-      this.form.setValue(updatedValue);
-    }
-  }
+        return availableEntities;
+      }),
+    ),
+    { initialValue: [] },
+  );
 
   private async getEntity(selectedId: string): Promise<E | undefined> {
     const type = Entity.extractTypeFromId(selectedId);
@@ -238,9 +218,9 @@ export class EntitySelectComponent<
     return entity;
   }
 
-  async toggleIncludeInactive() {
-    this.includeInactive = !this.includeInactive;
-    await this.updateAvailableOptions();
+  toggleIncludeInactive() {
+    this.includeInactive.set(!this.includeInactive());
+    this.recalculateMatchingInactive();
   }
 
   private autocompleteFilter: (o: E) => boolean = () => true;
@@ -250,28 +230,32 @@ export class EntitySelectComponent<
    * and optionally updates the current filter function (otherwise reuses the filter previously set)
    * @param newAutocompleteFilter
    */
-  recalculateMatchingInactive(newAutocompleteFilter?: (o: Entity) => boolean) {
+  async recalculateMatchingInactive(
+    newAutocompleteFilter?: (o: Entity) => boolean,
+  ) {
     if (newAutocompleteFilter) {
       this.autocompleteFilter = newAutocompleteFilter;
     }
 
-    this.currentlyMatchingInactive = this.allEntities.filter(
+    const currentEntities = await lastValueFrom(this.#allEntities);
+    this.currentlyMatchingInactive = currentEntities.filter(
       (e) => !e.isActive && this.autocompleteFilter(e),
     ).length;
   }
 
   createNewEntity = async (input: string): Promise<E> => {
-    if (this._entityType?.length < 1) {
+    const entityTypes = this.entityType();
+    if (entityTypes.length < 1) {
       return;
     }
-    if (this._entityType?.length > 1) {
+    if (entityTypes.length > 1) {
       Logging.warn(
         "EntitySelect with multiple types is always creating a new entity of the first listed type only.",
       );
       // TODO: maybe display an additional popup asking the user to select which type should be created?
     }
 
-    const newEntity = new (this.entityRegistry.get(this._entityType[0]))();
+    const newEntity = new (this.entityRegistry.get(entityTypes[0]))();
     applyTextToCreatedEntity(newEntity, input);
 
     const dialogRef = this.formDialog.openFormPopup(newEntity);
