@@ -15,7 +15,7 @@ export class PublicFormsService {
 
   /**
    * Initializes and registers custom form actions for entities.
-   *  - Loads all PublicFormConfig entries from the EntityMapper.
+   * - Loads all PublicFormConfig entries from the EntityMapper.
    * - Filters configs to those with a linkedEntity ID.
    * - For each matching config, registers a "copy-form-<route>" action that:
    *   • Executes copying a prebuilt form URL based on the config.
@@ -82,12 +82,19 @@ export class PublicFormsService {
     if (!entity.getConstructor) {
       return false;
     }
+
+
     const entityType = entity.getConstructor().ENTITY_TYPE.toLowerCase();
     const linkedEntity = config.linkedEntity;
+
     if (!linkedEntity) return false;
     if (linkedEntity.additional) {
       return linkedEntity.additional.toLowerCase() === entityType;
+
+    if (linkedEntity.additional) {
+      return linkedEntity.additional.toLowerCase() === entityType;
     }
+
     return false;
   }
 }
