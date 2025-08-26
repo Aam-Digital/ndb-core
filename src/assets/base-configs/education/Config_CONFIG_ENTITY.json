@@ -226,7 +226,11 @@
           "label": "Related Records",
           "dataType": "entity",
           "isArray": true,
-          "anonymize": "retain"
+          "anonymize": "retain",
+          "additional": [
+            "Child",
+            "School"
+          ]
         },
         "schools": {
           "label": "Groups",
