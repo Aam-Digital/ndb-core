@@ -7,7 +7,30 @@ export class ShortcutDashboardWidgetModule {
   private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
 
   constructor() {
-    this.widgetRegistry.register("ShortcutDashboard", "ShortcutDashboardSettings");
+    this.widgetRegistry.register({
+      component: "ShortcutDashboard",
+      label: $localize`Shortcuts`,
+      settingsComponent: "ShortcutDashboardSettings",
+      defaultConfig: {
+        shortcuts: [
+          {
+            label: $localize`Record Attendance`,
+            icon: "calendar-check",
+            link: "/attendance/add-day",
+          },
+          {
+            label: $localize`Add Child`,
+            icon: "plus",
+            link: "/child/new",
+          },
+          {
+            label: $localize`Public Registration Form`,
+            icon: "file-circle-check",
+            link: "/public-form/form/test",
+          },
+        ],
+      }
+    });
 
     const components = inject(ComponentRegistry);
 

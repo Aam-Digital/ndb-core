@@ -1,30 +1,23 @@
 import { Injectable } from '@angular/core';
+import { WidgetOption } from '../admin/admin-entity-details/widget-component-select/widget-component-select.component';
 
 /**
  * Allows decentralized registration of any available dashboard widget
  * including their details like settings component, etc.
- * 
- * 
- * Implementation steps:
-  - [x] create new service for dashboard-widget-registry
-  - define an interface of widget details
-  - add `register` method to the service
-  - [x] replace the switch statement in admin-dashboard.component with a call to the service
  */
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardWidgetRegistryService {
-  
-  private readonly dashboardWidgets: Record<string, string> = {};
+  private readonly dashboardWidgets: DashboardWidgetDefinition[] = [];
 
   /**
    * Register a new widget and its details
    * @param widgetName The name of the widget
    * @param settingsComponent The settings component associated with the widget
    */
-  register(widgetName: string, settingsComponent: string) {
-    this.dashboardWidgets[widgetName] = settingsComponent;
+  register(widgetDefinition: DashboardWidgetDefinition) {
+    this.dashboardWidgets.push(widgetDefinition);
   }
 
   /**
@@ -33,6 +26,43 @@ export class DashboardWidgetRegistryService {
    * @returns The string component ID of the settings (Admin UI) component of that widget
    */
   getSettingsComponentForWidget(widgetName: string): string {
-    return this.dashboardWidgets[widgetName];
+    const widget = this.dashboardWidgets.find(w => w.component === widgetName);
+    return widget ? widget.settingsComponent : '';
   }
+
+  /**
+   * Return all registered widgets as "widget options" for an admin user to select.
+   */
+  getAvailableWidgets(): WidgetOption[] {
+    return this.dashboardWidgets.map(widget => ({
+      label: widget.label,
+      value: {
+        component: widget.component,
+        config: widget.defaultConfig,
+      }
+    }));
+  }
+}
+
+
+export interface DashboardWidgetDefinition {
+  /**
+   * Component ID for the widget to be displayed.
+   */
+  component: string;
+
+  /**
+   * Human-readable label/name of the widget, e.g. for admin UI.
+   */
+  label: string;
+
+  /**
+   * Component ID for the settings (Admin UI) component of that widget.
+   */
+  settingsComponent: string;
+
+  /**
+   * Some default configuration settings for the widget, when a 
+   */
+  defaultConfig: any;
 }

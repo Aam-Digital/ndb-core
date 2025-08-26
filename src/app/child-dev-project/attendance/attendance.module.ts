@@ -47,7 +47,12 @@ export class AttendanceModule {
   private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
 
   constructor() {
-    this.widgetRegistry.register("AttendanceWeekDashboard", "AttendanceWeekDashboardSettings");
+    this.widgetRegistry.register({
+      component: "AttendanceWeekDashboard",
+      label: $localize`Attendance (recent absences)`,
+      settingsComponent: "AttendanceWeekDashboardSettings",
+      defaultConfig: { daysOffset: 7, periodLabel: $localize`this week` }
+    });
 
     const components = inject(ComponentRegistry);
 

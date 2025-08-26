@@ -7,7 +7,12 @@ export class EntityCountDashboardWidgetModule {
   private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
 
   constructor() {
-    this.widgetRegistry.register("EntityCountDashboard", "EntityCountDashboardSettings");
+    this.widgetRegistry.register({
+      component: "EntityCountDashboard",
+      label: $localize`Entity Count`,
+      settingsComponent: "EntityCountDashboardSettings",
+      defaultConfig: {}
+    });
 
     const components = inject(ComponentRegistry);
     components.addAll([

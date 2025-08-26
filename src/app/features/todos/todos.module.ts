@@ -16,7 +16,12 @@ export class TodosModule {
   private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
 
   constructor() {
-    this.widgetRegistry.register("TodosDashboard", "TodosDashboardSettings");
+    this.widgetRegistry.register({
+      component: "TodosDashboard",
+      label: $localize`Todos`,
+      settingsComponent: "TodosDashboardSettings",
+      defaultConfig: {}
+    });
 
     const components = inject(ComponentRegistry);
 

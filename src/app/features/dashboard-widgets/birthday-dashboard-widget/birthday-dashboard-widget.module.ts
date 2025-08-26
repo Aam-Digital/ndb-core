@@ -7,7 +7,12 @@ export class BirthdayDashboardWidgetModule {
   private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
 
   constructor() {
-    this.widgetRegistry.register("BirthdayDashboard", "BirthdayDashboardSettings");
+    this.widgetRegistry.register({
+      component: "BirthdayDashboard",
+      label: $localize`Birthdays`,
+      settingsComponent: "BirthdayDashboardSettings",
+      defaultConfig: { entities: { Child: "dateOfBirth", School: "dateOfBirth" } }
+    });
 
     const components = inject(ComponentRegistry);
 

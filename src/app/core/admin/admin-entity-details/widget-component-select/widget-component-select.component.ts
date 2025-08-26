@@ -12,6 +12,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { DynamicComponentConfig } from "#src/app/core/config/dynamic-components/dynamic-component-config.interface";
+import { DashboardWidgetRegistryService } from "#src/app/core/dashboard/dashboard-widget-registry.service";
 
 /**
  * Admin component to select components to be added to view configs or dashboard.
@@ -32,6 +33,7 @@ export class WidgetComponentSelectComponent implements OnInit {
   private entityRelationsService = inject(EntityRelationsService);
   private dialogRef =
     inject<MatDialogRef<WidgetComponentSelectComponent, any>>(MatDialogRef);
+  private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
 
   data = inject<{
     entityType?: string;
@@ -42,93 +44,10 @@ export class WidgetComponentSelectComponent implements OnInit {
 
   ngOnInit() {
     if (this.data.isDashboard) {
-      this.options = this.loadDashboardWidgets();
+      this.options = this.widgetRegistry.getAvailableWidgets();
     } else {
       this.options = this.loadAvailableWidgets();
     }
-  }
-
-  private loadDashboardWidgets(): WidgetOption[] {
-    return [
-      {
-        label: $localize`Shortcuts`,
-        value: {
-          component: "ShortcutDashboard",
-          config: {
-            shortcuts: [
-              {
-                label: "Record Attendance",
-                icon: "calendar-check",
-                link: "/attendance/add-day",
-              },
-              {
-                label: "Add Child",
-                icon: "plus",
-                link: "/child/new",
-              },
-              {
-                label: "Public Registration Form",
-                icon: "file-circle-check",
-                link: "/public-form/form/test",
-              },
-            ],
-          },
-        },
-      },
-      {
-        label: $localize`Entity Count`,
-        value: {
-          component: "EntityCountDashboard",
-          config: {},
-        },
-      },
-      {
-        label: $localize`Important Notes`,
-        value: {
-          component: "ImportantNotesDashboard",
-          config: { warningLevels: ["WARNING", "URGENT"] },
-        },
-      },
-      {
-        label: $localize`Todos`,
-        value: {
-          component: "TodosDashboard",
-          config: {},
-        },
-      },
-      {
-        label: $localize`Notes`,
-        value: {
-          component: "NotesDashboard",
-          config: {
-            sinceDays: 28,
-            fromBeginningOfWeek: false,
-            mode: "with-recent-notes",
-          },
-        },
-      },
-      {
-        label: $localize`Attendance (recent absences)`,
-        value: {
-          component: "AttendanceWeekDashboard",
-          config: { daysOffset: 7, periodLabel: "this week" },
-        },
-      },
-      {
-        label: $localize`Progress`,
-        value: {
-          component: "ProgressDashboard",
-          config: { dashboardConfigId: uuid() },
-        },
-      },
-      {
-        label: $localize`Birthdays`,
-        value: {
-          component: "BirthdayDashboard",
-          config: { entities: { Child: "dateOfBirth", School: "dateOfBirth" } },
-        },
-      },
-    ];
   }
 
   private loadAvailableWidgets(): WidgetOption[] {

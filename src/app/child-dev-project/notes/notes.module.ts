@@ -11,8 +11,23 @@ export class NotesModule {
   private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
 
   constructor() {
-    this.widgetRegistry.register("ImportantNotesDashboard", "ImportantNotesDashboardSettings");
-    this.widgetRegistry.register("NotesDashboard", "NotesDashboardSettings");
+    this.widgetRegistry.register({
+      component: "ImportantNotesDashboard",
+      label: $localize`Important Notes`,
+      settingsComponent: "ImportantNotesDashboardSettings",
+      defaultConfig: { warningLevels: ["WARNING", "URGENT"] }
+    });
+    
+    this.widgetRegistry.register({
+      component: "NotesDashboard",
+      label: $localize`Notes`,
+      settingsComponent: "NotesDashboardSettings",
+      defaultConfig: {
+        sinceDays: 28,
+        fromBeginningOfWeek: false,
+        mode: "with-recent-notes"
+      }
+    });
 
     const components = inject(ComponentRegistry);
 
