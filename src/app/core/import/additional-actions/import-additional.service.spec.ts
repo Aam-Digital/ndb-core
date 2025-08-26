@@ -239,4 +239,15 @@ describe("ImportAdditionalService", () => {
 
     await expectEntitiesToBeInDatabase([relations[2]], false, true);
   });
+
+  it("should handle array of target types", () => {
+    const multiTypeAction: any = {
+      sourceType: "Child",
+      mode: "direct",
+      targetType: ["Child", "DirectlyLinkingEntity"],
+      targetProperty: "participant",
+    };
+    const label = service.createActionLabel(multiTypeAction);
+    expect(label).toContain("Child, DirectlyLinkingEntity");
+  });
 });

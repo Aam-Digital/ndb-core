@@ -300,29 +300,50 @@ export class ImportAdditionalService {
     importAction: AdditionalImportAction,
     forTargetType: boolean = false,
   ): string {
-    const sourceType = this.entityRegistry.get(importAction.sourceType);
-    const targetType = importAction["targetType"]
-      ? this.entityRegistry.get(importAction["targetType"])
-      : null;
-    const relationshipType = importAction["relationshipEntityType"]
-      ? this.entityRegistry.get(importAction["relationshipEntityType"])
-      : null;
+    const getEntityTypes = (typeOrTypes: string | string[]) => {
+      const types = Array.isArray(typeOrTypes) ? typeOrTypes : [typeOrTypes];
+      return types.map((type) => this.entityRegistry.get(type));
+    };
+
+    const sourceTypes = getEntityTypes(importAction.sourceType);
+    const targetTypes = importAction["targetType"]
+      ? getEntityTypes(importAction["targetType"])
+      : [];
+    const relationshipTypes = importAction["relationshipEntityType"]
+      ? getEntityTypes(importAction["relationshipEntityType"])
+      : [];
+
+    // normally just one type, list with commas if several
+    const sourceTypeLabel = sourceTypes.map((t) => t.toString(true)).join(", ");
+    const targetTypeLabel = targetTypes.map((t) => t.toString()).join(", ");
+    const relationshipTypeLabel = relationshipTypes
+      .map((t) => t.toString(true))
+      .join(", ");
 
     let label: string;
     if (!forTargetType) {
-      label = $localize`Link imported ${sourceType.toString(true)} to a ${targetType.toString()}`;
+      label = $localize`Link imported ${sourceTypeLabel} to a ${targetTypeLabel}`;
     } else {
-      label = $localize`Import related ${sourceType.toString(true)} for this ${targetType.toString()}`;
+      label = $localize`Import related ${sourceTypeLabel} for this ${targetTypeLabel}`;
     }
 
     // add additional context details
-    if ((importAction as AdditonalDirectLinkAction).targetProperty) {
-      label += ` (as ${targetType.schema.get((importAction as AdditonalDirectLinkAction).targetProperty).label})`;
+    if (
+      (importAction as AdditonalDirectLinkAction).targetProperty &&
+      targetTypes?.length
+    ) {
+      const targetProps = targetTypes.map(
+        (t) =>
+          t.schema.get(
+            (importAction as AdditonalDirectLinkAction).targetProperty,
+          )?.label,
+      );
+      label += ` (as ${targetProps.filter(Boolean).join(", ")})`;
     } else if (
       (importAction as AdditionalIndirectLinkAction).relationshipEntityType &&
-      relationshipType?.label
+      relationshipTypes?.length
     ) {
-      label += ` (through ${relationshipType?.toString(true)})`;
+      label += ` (through ${relationshipTypeLabel})`;
     }
 
     return label;
