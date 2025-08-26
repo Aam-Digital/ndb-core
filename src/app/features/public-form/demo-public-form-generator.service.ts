@@ -38,50 +38,6 @@ export class DemoPublicFormGeneratorService extends DemoDataGenerator<PublicForm
         ],
       },
     ];
-    const form2 = new PublicFormConfig();
-    form2.title = $localize`Another Child Registration`;
-    form2.description = $localize`A second public form for Child entity for testing multiple links.`;
-    form2.entity = "Child";
-    form2.route = "test2";
-    form2.columns = [
-      {
-        fields: [
-          "name",
-          "gender",
-          "dateOfBirth",
-          {
-            id: "admissionDate",
-            defaultValue: {
-              mode: "dynamic",
-              config: { value: PLACEHOLDERS.NOW },
-            },
-          },
-        ],
-      },
-    ];
-    const schoolForm = new PublicFormConfig();
-    schoolForm.title = $localize`Example School form`;
-    schoolForm.description = $localize`This is a public form for the School entity. It can be shared as a link or embedded in a website.`;
-    schoolForm.entity = "School";
-    schoolForm.route = "school-test";
-    schoolForm.columns = [
-      {
-        fields: [
-          "name",
-          "address",
-          "phone",
-          "language",
-          {
-            id: "establishedDate",
-            defaultValue: {
-              mode: "dynamic",
-              config: { value: PLACEHOLDERS.NOW },
-            },
-          },
-        ],
-      },
-    ];
-
-    return [form, form2, schoolForm];
+    return [form];
   }
 }
