@@ -269,6 +269,11 @@ test("Assign a recurring activity to a user", async ({ page }) => {
   // When I assign myself
   await page.getByRole("button", { name: "Edit" }).click();
   await page.getByLabel("Assigned user(s)").click();
+
+  // wait to ensure the dropdown option is rendered and interactable, to avoid playwriting timeout issue
+  await page
+    .getByRole("option", { name: currentUser.name, exact: true })
+    .waitFor();
   await page
     .getByRole("option", { name: currentUser.name, exact: true })
     .click();
