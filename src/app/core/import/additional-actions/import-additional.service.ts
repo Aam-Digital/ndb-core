@@ -15,6 +15,7 @@ import { Note } from "../../../child-dev-project/notes/model/note";
 import { EventNote } from "../../../child-dev-project/attendance/model/event-note";
 import { Todo } from "../../../features/todos/model/todo";
 import { EntityRelationsService } from "../../entity/entity-mapper/entity-relations.service";
+import { asArray } from "../../../utils/asArray";
 
 /**
  * Service to handle additional import actions
@@ -301,7 +302,7 @@ export class ImportAdditionalService {
     forTargetType: boolean = false,
   ): string {
     const getEntityTypes = (typeOrTypes: string | string[]) => {
-      const types = Array.isArray(typeOrTypes) ? typeOrTypes : [typeOrTypes];
+      const types = asArray(typeOrTypes);
       return types.map((type) => this.entityRegistry.get(type));
     };
     const sourceType = this.entityRegistry.get(importAction.sourceType);
@@ -311,7 +312,7 @@ export class ImportAdditionalService {
     const relationshipType = importAction["relationshipEntityType"]
       ? this.entityRegistry.get(importAction["relationshipEntityType"])
       : null;
-    // normally just one type, list with commas if several
+    // normally just one type; join with " / " if several
     const targetTypeLabel = targetTypes.map((t) => t.toString()).join(" / ");
 
     let label: string;
@@ -326,13 +327,17 @@ export class ImportAdditionalService {
       (importAction as AdditonalDirectLinkAction).targetProperty &&
       targetTypes?.length
     ) {
-      const targetProps = targetTypes.map(
-        (t) =>
-          t.schema.get(
-            (importAction as AdditonalDirectLinkAction).targetProperty,
-          )?.label,
-      );
-      label += ` (as ${targetProps.filter(Boolean).join(", ")})`;
+      const targetProps = targetTypes
+        .map(
+          (t) =>
+            t.schema.get(
+              (importAction as AdditonalDirectLinkAction).targetProperty,
+            )?.label,
+        )
+        .filter(Boolean) as string[];
+      if (targetProps?.length) {
+        label += ` (as ${targetProps.join(", ")})`;
+      }
     } else if (
       (importAction as AdditionalIndirectLinkAction).relationshipEntityType &&
       relationshipType?.label
