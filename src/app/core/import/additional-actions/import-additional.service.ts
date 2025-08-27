@@ -312,7 +312,7 @@ export class ImportAdditionalService {
       ? this.entityRegistry.get(importAction["relationshipEntityType"])
       : null;
     // normally just one type, list with commas if several
-    const targetTypeLabel = targetTypes.map((t) => t.toString()).join(", ");
+    const targetTypeLabel = targetTypes.map((t) => t.toString()).join(" / ");
 
     let label: string;
     if (!forTargetType) {
