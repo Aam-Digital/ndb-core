@@ -18,7 +18,7 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 
-fdescribe("EntitySelectComponent", () => {
+describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
   let test1Entities: TestEntity[];
