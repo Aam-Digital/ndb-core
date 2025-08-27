@@ -1,5 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import {
+  DataFilter,
   Filter,
   FilterSelectionOption,
   SelectableFilter,
@@ -56,11 +57,60 @@ export class FilterGeneratorService {
       const label = filterConfig.label ?? schema.labelShort ?? schema.label;
       const type = filterConfig.type ?? schema.dataType;
       if (type == "configurable-enum") {
+        // Add invalid and empty options
+        const enumValues = this.enumService.getEnumValues(schema.additional);
+        const validIds = new Set(enumValues.map((ev) => ev.id));
+        // Get all unique values from data for this field (by id if object, or value)
+        const dataValues = [
+          ...new Set(
+            data.map((e) => {
+              const v = e[filterConfig.id];
+              if (v && typeof v === "object" && "id" in v) return v.id;
+              return v;
+            }),
+          ),
+        ];
+
+        // Find invalid options (not in enum)
+        const invalidOptions = dataValues
+          .filter(
+            (v) =>
+              v !== undefined && v !== null && v !== "" && !validIds.has(v),
+          )
+          .map((invalidId) => ({
+            key: "__invalid__:" + invalidId,
+            label: `<i>[Invalid: ${invalidId}]</i>`,
+            filter: { [filterConfig.id + ".id"]: invalidId } as DataFilter<T>,
+          }));
+
+        // Add "empty" option if there are empty/undefined values
+        const hasEmpty = dataValues.some(
+          (v) => v === undefined || v === null || v === "",
+        );
+        const emptyOption = hasEmpty
+          ? [
+              {
+                key: "__empty__",
+                label: "<i>not defined</i>",
+                filter: {
+                  $or: [
+                    { [filterConfig.id]: undefined },
+                    { [filterConfig.id]: null },
+                    { [filterConfig.id + ".id"]: undefined },
+                    { [filterConfig.id + ".id"]: null },
+                    { [filterConfig.id + ".id"]: "" },
+                  ],
+                } as DataFilter<T>,
+              },
+            ]
+          : [];
+
         filter = new ConfigurableEnumFilter(
           filterConfig.id,
           label,
-          this.enumService.getEnumValues(schema.additional),
+          enumValues,
           filterConfig.singleSelectOnly,
+          [...invalidOptions, ...emptyOption],
         );
       } else if (type == "boolean") {
         filter = new BooleanFilter(

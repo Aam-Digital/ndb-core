@@ -116,11 +116,10 @@ Autocomplete
           @if (!templateRef) {
             <span
               class="text-truncate"
-              matTooltip="{{ item.asString }}"
+              [matTooltip]="getPlainTextTooltip(item.asString)"
               matTooltipPosition="above"
-            >
-              {{ item.asString }}
-            </span>
+              [innerHTML]="item.asString"
+            ></span>
           } @else {
             <ng-template
               class="item-option"
