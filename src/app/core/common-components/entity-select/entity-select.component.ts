@@ -152,6 +152,9 @@ export class EntitySelectComponent<E extends Entity> {
     .pipe(startWith([]))
     .pipe(share());
 
+  /**
+   * The currently selected values (IDs) of the form control.
+   */
   #values: Observable<string[]> = toObservable(this.form)
     .pipe(switchMap((form) => form.valueChanges))
     .pipe(map(asArray))
