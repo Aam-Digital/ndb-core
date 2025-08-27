@@ -47,7 +47,7 @@ export class FilterGeneratorService {
   async generate<T extends Entity>(
     filterConfigs: FilterConfig[],
     entityConstructor: EntityConstructor<T>,
-    data: T[],
+    data: T[] = [],
     onlyShowUsedOptions = false,
   ): Promise<Filter<T>[]> {
     const filters: Filter<T>[] = [];
@@ -58,13 +58,14 @@ export class FilterGeneratorService {
       const type = filterConfig.type ?? schema.dataType;
       if (type == "configurable-enum") {
         // Add invalid and empty options
-        const enumValues = this.enumService.getEnumValues(schema.additional);
+        const enumValues =
+          this.enumService.getEnumValues(schema.additional) || [];
         const validIds = new Set(enumValues.map((ev) => ev.id));
         // Get all unique values from data for this field (by id if object, or value)
         const dataValues = [
           ...new Set(
-            data.map((e) => {
-              const v = e[filterConfig.id];
+            (data ?? []).map((e) => {
+              const v = e?.[filterConfig.id];
               if (v && typeof v === "object" && "id" in v) return v.id;
               return v;
             }),
