@@ -248,6 +248,6 @@ describe("ImportAdditionalService", () => {
       targetProperty: "participant",
     };
     const label = service.createActionLabel(multiTypeAction);
-    expect(label).toContain("Child, DirectlyLinkingEntity");
+    expect(label).toContain("Child / DirectlyLinkingEntity");
   });
 });
