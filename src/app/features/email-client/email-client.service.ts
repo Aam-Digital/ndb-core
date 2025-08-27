@@ -6,6 +6,8 @@ import { AlertService } from "#src/app/core/alerts/alert.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EmailTemplateSelectionDialogComponent } from "../email-template-selection-dialog/email-template-selection-dialog.component";
 import { lastValueFrom } from "rxjs";
+import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
+import { Note } from "#src/app/child-dev-project/notes/model/note";
 
 @Injectable({
   providedIn: "root",
@@ -14,6 +16,7 @@ export class EmailClientService {
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly alertService = inject(AlertService);
   private readonly dialog = inject(MatDialog);
+  private formDialog = inject(FormDialogService);
 
   /**
    * Build a mailto link from an entity's email fields and open the local mail client.
@@ -59,6 +62,25 @@ export class EmailClientService {
 
     const mailto = `mailto:${enc(recipient)}${params.length ? `?${params.join("&")}` : ""}`;
     window.location.href = mailto;
+
+    // todo: need to check if mail client opened or some time delay?
+    this.formDialog.openView(
+      this.prefilledNote(subject, body, entity.getId()),
+      "NoteDetails",
+    );
     return true;
+  }
+
+  private prefilledNote(
+    subject: string,
+    body: string,
+    recipient: string,
+  ): Note {
+    const note = new Note();
+    note.subject = subject;
+    note.text = body;
+    note.children = [recipient]; // todo update this to use entityrelationservice to get the field linked to that record
+    console.log("Created  note", note);
+    return note;
   }
 }
