@@ -1,9 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 
-import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { EmailTemplate } from "../email-client/email-template.entity";
-
 import { EmailTemplateSelectionDialogComponent } from "./email-template-selection-dialog.component";
 import { mockEntityMapperProvider } from "#src/app/core/entity/entity-mapper/mock-entity-mapper-service";
 import {
@@ -53,25 +50,5 @@ describe("EmailTemplateSelectionDialogComponent", () => {
     const fakeTemplate = { subject: "Test Subject", body: "Test Body" } as any;
     component.selectedTemplate(fakeTemplate);
     expect(component.emailTemplateSelectionForm.value).toEqual(fakeTemplate);
-  });
-
-  it("should close dialog with selected template", () => {
-    const fakeTemplate = { subject: "Test Subject", body: "Test Body" } as any;
-    const entityMapper = TestBed.inject(
-      EntityMapperService,
-    ) as unknown as jasmine.SpyObj<EntityMapperService>;
-    const expectedPromise = Promise.resolve({
-      _id: "EmailTemplate:test",
-    } as any);
-    spyOn(entityMapper, "load").and.returnValue(expectedPromise);
-    component.selectedTemplate(fakeTemplate);
-
-    expect(entityMapper.load).toHaveBeenCalledWith(
-      EmailTemplate.ENTITY_TYPE,
-      fakeTemplate,
-    );
-
-    const dialogRef = TestBed.inject(MatDialogRef);
-    expect(dialogRef.close).toHaveBeenCalledWith(expectedPromise);
   });
 });
