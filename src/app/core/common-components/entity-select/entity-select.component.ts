@@ -1,15 +1,16 @@
-import { Component, Input, Signal, inject, input, signal } from "@angular/core";
-import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import {
-  BehaviorSubject,
-  lastValueFrom,
-  Observable,
-  switchMap,
-  combineLatest,
-  startWith,
-  map,
-  share,
-} from "rxjs";
+  Component,
+  Input,
+  Resource,
+  Signal,
+  computed,
+  inject,
+  input,
+  resource,
+  signal,
+} from "@angular/core";
+import { toObservable, toSignal } from "@angular/core/rxjs-interop";
+import { lastValueFrom, switchMap, map } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatChipsModule } from "@angular/material/chips";
@@ -17,7 +18,6 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { AsyncPipe } from "@angular/common";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -48,7 +48,6 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
     MatTooltipModule,
     MatInputModule,
     MatCheckboxModule,
-    AsyncPipe,
     ErrorHintComponent,
     BasicAutocompleteComponent,
     MatSlideToggle,
@@ -109,17 +108,14 @@ export class EntitySelectComponent<E extends Entity> {
    */
   @Input() showEntities: boolean = true;
 
-  /**
-   * true when this is loading and false when it's ready.
-   * This subject's state reflects the actual loading resp. the 'readiness'-
-   * state of this component. Will trigger once loading is done
-   */
-  loading = new BehaviorSubject(true);
-
   hasInaccessibleEntities: Boolean = false;
 
   includeInactive = signal<boolean>(false);
-  currentlyMatchingInactive: number = 0;
+  currentlyMatchingInactive: Signal<number> = computed(() => {
+    return this.entitiesForType
+      .value()
+      .filter((e) => !e.isActive && this.autocompleteFilter()(e)).length;
+  });
 
   /**
    * The accessor used for filtering and when selecting a new
@@ -132,75 +128,90 @@ export class EntitySelectComponent<E extends Entity> {
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
 
-  #allEntities: Observable<E[]> = toObservable(this.entityType)
-    .pipe(
-      switchMap(async (types) => {
-        this.loading.next(true);
-        if (types.length === 0) return [];
+  private entitiesForType: Resource<E[]> = resource({
+    defaultValue: [],
+    params: () => ({
+      entityTypes: this.entityType(),
+    }),
+    loader: async ({ params }) => {
+      console.log("LOAD 1");
+      if (params.entityTypes.length === 0) return [];
 
-        const entities: E[] = [];
-        for (const type of types) {
-          entities.push(...(await this.entityMapperService.loadType<E>(type)));
-        }
+      const entities: E[] = [];
+      for (const type of params.entityTypes) {
+        entities.push(...(await this.entityMapperService.loadType<E>(type)));
+      }
 
-        this.loading.next(false);
-        return entities
-          .filter((e) => this.additionalFilter(e))
-          .sort((a, b) => a.toString().localeCompare(b.toString()));
-      }),
-    )
-    .pipe(startWith([]))
-    .pipe(share());
+      return entities
+        .filter((e) => this.additionalFilter(e))
+        .sort((a, b) => a.toString().localeCompare(b.toString()));
+    },
+  });
+
+  /**
+   * true when this is loading and false when it's ready.
+   * This subject's state reflects the actual loading resp. the 'readiness'-
+   * state of this component. Will trigger once loading is done
+   */
+  loading: Signal<boolean> = computed(() => this.entitiesForType.isLoading());
 
   /**
    * The currently selected values (IDs) of the form control.
    */
-  #values: Observable<string[]> = toObservable(this.form)
-    .pipe(switchMap((form) => form.valueChanges))
-    .pipe(map(asArray))
-    .pipe(startWith([]));
+  values: Signal<string[]> = toSignal(
+    toObservable(this.form)
+      .pipe(switchMap((form) => form.valueChanges))
+      .pipe(map(asArray)),
+    { initialValue: [] },
+  );
 
-  availableOptions: Signal<E[]> = toSignal(
-    combineLatest([
-      this.#allEntities,
-      this.#values,
-      toObservable(this.includeInactive),
-    ]).pipe(
-      switchMap(async ([entities, formValue, includeInactive]) => {
-        const includeSelected = (entity: E) =>
-          asArray(formValue).includes(entity.getId());
+  private availableOptionsResource: Resource<E[]> = resource({
+    defaultValue: [],
+    params: () => ({
+      allEntities: this.entitiesForType.value(),
+      values: this.values(),
+      includeInactive: this.includeInactive(),
+    }),
+    loader: async ({ params }) => {
+      console.log("LOAD 2 START", params.values);
+      const includeSelected = (entity: E) =>
+        asArray(params.values).includes(entity.getId());
 
-        const availableEntities = entities.filter(
-          (e) => includeInactive || e.isActive || includeSelected(e),
-        );
+      const availableEntities = params.allEntities.filter(
+        (e) => params.includeInactive || e.isActive || includeSelected(e),
+      );
 
-        if (formValue !== null && formValue !== undefined) {
-          for (const id of asArray(formValue)) {
-            if (id === null || id === undefined || id === "") {
-              continue;
-            }
+      if (params.values !== null && params.values !== undefined) {
+        for (const id of asArray(params.values)) {
+          if (id === null || id === undefined || id === "") {
+            continue;
+          }
 
-            if (availableEntities.find((e) => id === e.getId())) {
-              continue;
-            }
+          if (availableEntities.find((e) => id === e.getId())) {
+            continue;
+          }
+          console.log("OTHER", id);
 
-            const additionalEntity = await this.getEntity(id);
-            if (additionalEntity) {
-              availableEntities.push(additionalEntity);
-            } else {
-              this.hasInaccessibleEntities = true;
-              availableEntities.push({
-                getId: () => id,
-                isHidden: true,
-              } as unknown as E);
-            }
+          const additionalEntity = await this.getEntity(id);
+          if (additionalEntity) {
+            availableEntities.push(additionalEntity);
+          } else {
+            this.hasInaccessibleEntities = true;
+            availableEntities.push({
+              getId: () => id,
+              isHidden: true,
+            } as unknown as E);
           }
         }
+      }
+      console.log("LOAD 2 END", availableEntities);
 
-        return availableEntities;
-      }),
-    ),
-    { initialValue: [] },
+      return availableEntities;
+    },
+  });
+
+  availableOptions: Signal<E[]> = computed(() =>
+    this.availableOptionsResource.value(),
   );
 
   private async getEntity(selectedId: string): Promise<E | undefined> {
@@ -226,7 +237,7 @@ export class EntitySelectComponent<E extends Entity> {
     this.recalculateMatchingInactive();
   }
 
-  private autocompleteFilter: (o: E) => boolean = () => true;
+  private autocompleteFilter = signal<(o: E) => boolean>(() => true);
 
   /**
    * Recalculates the number of inactive entities that match the current filter,
@@ -237,13 +248,8 @@ export class EntitySelectComponent<E extends Entity> {
     newAutocompleteFilter?: (o: Entity) => boolean,
   ) {
     if (newAutocompleteFilter) {
-      this.autocompleteFilter = newAutocompleteFilter;
+      this.autocompleteFilter.set(newAutocompleteFilter);
     }
-
-    const currentEntities = await lastValueFrom(this.#allEntities);
-    this.currentlyMatchingInactive = currentEntities.filter(
-      (e) => !e.isActive && this.autocompleteFilter(e),
-    ).length;
   }
 
   createNewEntity = async (input: string): Promise<E> => {

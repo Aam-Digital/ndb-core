@@ -13,7 +13,7 @@
       [multi]="multi"
       [display]="showEntities ? 'chips' : 'none'"
       [options]="availableOptions()"
-      [placeholder]="(loading | async) ? loadingPlaceholder : placeholder"
+      [placeholder]="loading() ? loadingPlaceholder : placeholder"
       [createOption]="disableCreateNew ? null : createNewEntity"
     >
       <ng-template let-item>
@@ -26,13 +26,13 @@
         }
       </ng-template>
 
-      @if (currentlyMatchingInactive > 0) {
+      @if (currentlyMatchingInactive() > 0) {
         <ng-container autocompleteFooter>
           <mat-slide-toggle
             [checked]="includeInactive()"
             (toggleChange)="toggleIncludeInactive()"
             i18n="Label for checkbox|e.g. include inactive children"
-            >Also show {{ currentlyMatchingInactive }} inactive
+            >Also show {{ currentlyMatchingInactive() }} inactive
           </mat-slide-toggle>
         </ng-container>
       }
