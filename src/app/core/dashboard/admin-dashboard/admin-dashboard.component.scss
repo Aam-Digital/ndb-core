@@ -1,0 +1,198 @@
+@use "variables/sizes";
+@use "@angular/material/core/style/elevation" as mat-elevation;
+@use "variables/colors";
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.back-button {
+  margin-right: 8px;
+}
+
+::ng-deep app-dashboard-widget {
+  pointer-events: none;
+
+  /* dim preview of actual widgets to highlight admin elements */
+  opacity: 35%;
+}
+
+.widget-interaction-blocker {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+}
+
+.widgets-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  height: auto;
+  overflow: visible;
+  grid-auto-rows: unset !important;
+}
+
+.widget-preview-card {
+  position: relative;
+  border: 2px dotted #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+
+  &:hover {
+    border-color: #999;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:hover .field-hover-buttons {
+    opacity: 1;
+  }
+
+  &.drop-area-hint {
+    border: 2px dashed #ccc;
+    background-color: #f9f9f9;
+    min-height: 250px;
+
+    &:hover {
+      border-color: #999;
+      background-color: #f5f5f5;
+    }
+  }
+}
+
+.widget-action-icon {
+  margin: .5em;
+}
+
+.widget-preview-section {
+  padding: 2.5em;
+}
+
+.add-widget-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #666;
+  padding: 2rem;
+  min-height: 200px;
+
+  span {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+}
+
+.add-widget-button {
+  margin-top: 1rem;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 50%;
+  left: -8px;
+  color: colors.$accent;
+  cursor: move;
+  z-index: 20;
+  transform: translateY(-50%);
+  padding: 10px;
+  border-radius: 50%;
+}
+
+.widget-remove-icon {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  color: black;
+  font-size: 20px;
+  z-index: 20;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 50%;
+
+  &:hover {
+    color: #ff0000;
+  }
+}
+
+// Centered Edit Button
+.field-hover-buttons {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  z-index: 15;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.field-edit-button {
+  /* large button to make edit option obvious */
+  padding: 2.5em;
+
+  background: white !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border: 1px solid #ddd;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.widget-preview-card.widget-remove-hover {
+  border-color: rgb(255, 0, 0);
+  background-color: rgba(255, 0, 0, 0.05);
+}
+
+// Override Material Card styles for consistency
+::ng-deep .widget-preview-card {
+  .mat-card-header {
+    padding: 0;
+    margin: 0;
+  }
+
+  .mat-card-content {
+    margin: 0;
+    padding: 0 !important;
+    height: 100%;
+  }
+}
+
+.widget-container:has(.widget-remove-icon:hover) .widget-preview-card {
+  border-color: rgb(255, 0, 0) !important;
+  background-color: rgba(255, 0, 0, 0.1) !important;
+}
+
+::ng-deep .cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow:
+    0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+::ng-deep .cdk-drag-placeholder {
+  opacity: 0;
+}
+
+::ng-deep .cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+::ng-deep
+  .drop-list.cdk-drop-list-dragging
+  .widget-preview-card:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+::ng-deep .cdk-drop-list-receiving {
+  background-color: rgba(0, 0, 0, 0.03);
+  border: 2px dashed #ccc;
+}
