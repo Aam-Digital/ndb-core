@@ -1,4 +1,5 @@
 import { inject, Injectable } from "@angular/core";
+import { memoize } from "lodash-es";
 import { SessionInfo } from "../session-info";
 import { KeycloakEventTypeLegacy, KeycloakService } from "keycloak-angular";
 import { Logging } from "../../../logging/logging.service";
@@ -15,7 +16,6 @@ import { ThirdPartyAuthenticationService } from "../../../../features/third-part
 @Injectable()
 export class KeycloakAuthService {
   static readonly LAST_AUTH_KEY = "LAST_REMOTE_LOGIN";
-  private keycloakInitialised = false;
   accessToken: string;
 
   private keycloak = inject(KeycloakService);
@@ -25,26 +25,28 @@ export class KeycloakAuthService {
   /**
    * Check for an existing session or forward to the login page.
    */
-  async login(): Promise<SessionInfo> {
-    if (!this.keycloakInitialised) {
+  login = memoize(async (): Promise<SessionInfo> => {
+    try {
       await this.initKeycloak();
+
+      await this.keycloak.updateToken();
+      let token = await this.keycloak.getToken();
+      if (!token) {
+        // Forward to the keycloak login page.
+        await this.keycloak.login({
+          redirectUri: location.href,
+          ...this.thirdPartyAuthService.initSessionParams(this.activatedRoute),
+        });
+        token = await this.keycloak.getToken();
+      }
+
+      return this.processToken(token);
+    } finally {
+      this.login.cache.clear();
     }
+  });
 
-    await this.keycloak.updateToken();
-    let token = await this.keycloak.getToken();
-    if (!token) {
-      // Forward to the keycloak login page.
-      await this.keycloak.login({
-        redirectUri: location.href,
-        ...this.thirdPartyAuthService.initSessionParams(this.activatedRoute),
-      });
-      token = await this.keycloak.getToken();
-    }
-
-    return this.processToken(token);
-  }
-
-  private async initKeycloak() {
+  private initKeycloak = memoize(async () => {
     try {
       await this.keycloak.init({
         config: window.location.origin + "/assets/keycloak.json",
@@ -67,7 +69,7 @@ export class KeycloakAuthService {
         Logging.error("Keycloak init failed", err);
       }
 
-      this.keycloakInitialised = false;
+      this.initKeycloak.cache.clear();
       throw err;
     }
 
@@ -79,9 +81,7 @@ export class KeycloakAuthService {
         );
       }
     });
-
-    this.keycloakInitialised = true;
-  }
+  });
 
   private processToken(token: string): SessionInfo {
     if (!token) {
