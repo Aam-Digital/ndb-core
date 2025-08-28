@@ -66,19 +66,22 @@ export class EmailClientService {
 
     // todo: need to check if mail client opened or some time delay?
     this.formDialog.openView(
-      this.prefilledNote(entity.getId(), template),
+      this.prefilledNote(entity, template),
       "NoteDetails",
     );
     return true;
   }
 
-  private prefilledNote(recipient: string, template: EmailTemplate): Note {
+  private prefilledNote(entity: Entity, template: EmailTemplate): Note {
     const note = new Note();
+
     note.subject = template.subject;
     note.text = template.body;
     note.category = template.category;
-    note.children = [recipient]; // todo update this to use entityrelationservice to get the field linked to that record
-    console.log("Created  note", note);
+    // Note related entities (linked records) - link to the entity we sent the email
+    const relatedProperty = Note.getPropertyFor(entity.getType());
+    note[relatedProperty] = [entity.getId()];
+
     return note;
   }
 }
