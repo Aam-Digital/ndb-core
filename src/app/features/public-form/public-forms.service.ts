@@ -34,7 +34,7 @@ export class PublicFormsService {
         {
           action: `copy-form-${config.getId()}`,
           execute: (entity) =>
-            this.copyPublicFormLinkFromConfig(entity, config),
+            this.copyPublicFormLinkFromConfig(config, entity),
           permission: "read",
           icon: "link",
           label: $localize`Copy Custom Form (${config.title})`,
@@ -48,20 +48,31 @@ export class PublicFormsService {
 
   /**
    * Copies the public form link to clipboard if a matching form exists for the given entity.
-   * It checks all PublicFormConfig entries to find the one linked to the current entity type via `linkedEntity.id`.
-   * If a matching form is found, it generates the link including the entity ID as a query parameter and copies it.
+   * - It checks all PublicFormConfig entries to find the one linked to the current entity type via `linkedEntity.id`.
+   * - If a matching form is found, it generates the link including the entity ID as a query parameter and copies it.
+   *
+   * If no entity is provided, copies the public form link for the entity type (list-level) without any query parameter.
    */
   public async copyPublicFormLinkFromConfig(
-    entity: Entity,
     config: PublicFormConfig,
+    entity?: Entity,
   ): Promise<boolean> {
-    const paramKey = config.linkedEntity.id;
-    const entityId = entity.getId();
-    const fullUrl = `${window.location.origin}/public-form/form/${config.route}?${paramKey}=${encodeURIComponent(entityId)}`;
-
-    await navigator.clipboard.writeText(fullUrl);
-    this.alertService.addInfo("Link copied: " + fullUrl);
+    let url = `${window.location.origin}/public-form/form/${config.route}`;
+    if (entity && config.linkedEntity?.id) {
+      const paramKey = config.linkedEntity.id;
+      const entityId = entity.getId();
+      url += `?${paramKey}=${encodeURIComponent(entityId)}`;
+    }
+    await navigator.clipboard.writeText(url);
+    this.alertService.addInfo("Link copied: " + url);
     return true;
+  }
+
+  /**
+   * Returns all public form configs.
+   */
+  public async getAllPublicFormConfigs(): Promise<PublicFormConfig[]> {
+    return this.entityMapper.loadType(PublicFormConfig);
   }
 
   public async getMatchingPublicFormConfigs(
