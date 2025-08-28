@@ -62,8 +62,9 @@ export interface DashboardWidgetDefinition {
    */
   settingsComponent: string;
 
-  /**
-   * Some default configuration settings for the widget, when a
+   * Some default configuration settings for the widget. This configuration is used
+   * as the initial settings when a widget is first added to a dashboard. Users can
+   * later override these settings with their own preferences.
    */
   defaultConfig: any;
 }
