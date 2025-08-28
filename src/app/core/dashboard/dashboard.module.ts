@@ -6,7 +6,6 @@ import { ComponentRegistry } from "../../dynamic-components";
  */
 @NgModule()
 export class DashboardModule {
-
   constructor() {
     const components = inject(ComponentRegistry);
 

@@ -29,7 +29,7 @@ export class ShortcutDashboardWidgetModule {
             link: "/public-form/form/test",
           },
         ],
-      }
+      },
     });
 
     const components = inject(ComponentRegistry);

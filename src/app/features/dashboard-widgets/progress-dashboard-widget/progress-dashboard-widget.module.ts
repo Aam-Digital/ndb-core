@@ -15,7 +15,7 @@ export class ProgressDashboardWidgetModule {
       component: "ProgressDashboard",
       label: $localize`Progress`,
       settingsComponent: "ProgressDashboardSettings",
-      defaultConfig: { dashboardConfigId: uuid() }
+      defaultConfig: { dashboardConfigId: uuid() },
     });
 
     const components = inject(ComponentRegistry);

@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
-import { WidgetOption } from '../admin/admin-entity-details/widget-component-select/widget-component-select.component';
+import { Injectable } from "@angular/core";
+import { WidgetOption } from "../admin/admin-entity-details/widget-component-select/widget-component-select.component";
 
 /**
  * Allows decentralized registration of any available dashboard widget
  * including their details like settings component, etc.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class DashboardWidgetRegistryService {
   private readonly dashboardWidgets: DashboardWidgetDefinition[] = [];
@@ -26,24 +26,25 @@ export class DashboardWidgetRegistryService {
    * @returns The string component ID of the settings (Admin UI) component of that widget
    */
   getSettingsComponentForWidget(widgetName: string): string {
-    const widget = this.dashboardWidgets.find(w => w.component === widgetName);
-    return widget ? widget.settingsComponent : '';
+    const widget = this.dashboardWidgets.find(
+      (w) => w.component === widgetName,
+    );
+    return widget ? widget.settingsComponent : "";
   }
 
   /**
    * Return all registered widgets as "widget options" for an admin user to select.
    */
   getAvailableWidgets(): WidgetOption[] {
-    return this.dashboardWidgets.map(widget => ({
+    return this.dashboardWidgets.map((widget) => ({
       label: widget.label,
       value: {
         component: widget.component,
         config: widget.defaultConfig,
-      }
+      },
     }));
   }
 }
-
 
 export interface DashboardWidgetDefinition {
   /**
@@ -62,7 +63,7 @@ export interface DashboardWidgetDefinition {
   settingsComponent: string;
 
   /**
-   * Some default configuration settings for the widget, when a 
+   * Some default configuration settings for the widget, when a
    */
   defaultConfig: any;
 }

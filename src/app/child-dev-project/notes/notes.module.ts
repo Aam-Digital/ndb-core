@@ -15,9 +15,9 @@ export class NotesModule {
       component: "ImportantNotesDashboard",
       label: $localize`Important Notes`,
       settingsComponent: "ImportantNotesDashboardSettings",
-      defaultConfig: { warningLevels: ["WARNING", "URGENT"] }
+      defaultConfig: { warningLevels: ["WARNING", "URGENT"] },
     });
-    
+
     this.widgetRegistry.register({
       component: "NotesDashboard",
       label: $localize`Notes`,
@@ -25,8 +25,8 @@ export class NotesModule {
       defaultConfig: {
         sinceDays: 28,
         fromBeginningOfWeek: false,
-        mode: "with-recent-notes"
-      }
+        mode: "with-recent-notes",
+      },
     });
 
     const components = inject(ComponentRegistry);

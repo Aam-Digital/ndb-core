@@ -1,8 +1,8 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 
-import { DashboardWidgetRegistryService } from './dashboard-widget-registry.service';
+import { DashboardWidgetRegistryService } from "./dashboard-widget-registry.service";
 
-describe('DashboardWidgetRegistryService', () => {
+describe("DashboardWidgetRegistryService", () => {
   let service: DashboardWidgetRegistryService;
 
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe('DashboardWidgetRegistryService', () => {
     service = TestBed.inject(DashboardWidgetRegistryService);
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(service).toBeTruthy();
   });
 });

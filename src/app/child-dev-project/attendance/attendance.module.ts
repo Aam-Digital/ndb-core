@@ -51,7 +51,7 @@ export class AttendanceModule {
       component: "AttendanceWeekDashboard",
       label: $localize`Attendance (recent absences)`,
       settingsComponent: "AttendanceWeekDashboardSettings",
-      defaultConfig: { daysOffset: 7, periodLabel: $localize`this week` }
+      defaultConfig: { daysOffset: 7, periodLabel: $localize`this week` },
     });
 
     const components = inject(ComponentRegistry);

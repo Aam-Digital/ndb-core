@@ -11,7 +11,7 @@ export class EntityCountDashboardWidgetModule {
       component: "EntityCountDashboard",
       label: $localize`Entity Count`,
       settingsComponent: "EntityCountDashboardSettings",
-      defaultConfig: {}
+      defaultConfig: {},
     });
 
     const components = inject(ComponentRegistry);

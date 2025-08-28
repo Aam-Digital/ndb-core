@@ -11,7 +11,9 @@ export class BirthdayDashboardWidgetModule {
       component: "BirthdayDashboard",
       label: $localize`Birthdays`,
       settingsComponent: "BirthdayDashboardSettings",
-      defaultConfig: { entities: { Child: "dateOfBirth", School: "dateOfBirth" } }
+      defaultConfig: {
+        entities: { Child: "dateOfBirth", School: "dateOfBirth" },
+      },
     });
 
     const components = inject(ComponentRegistry);

@@ -20,7 +20,7 @@ export class TodosModule {
       component: "TodosDashboard",
       label: $localize`Todos`,
       settingsComponent: "TodosDashboardSettings",
-      defaultConfig: {}
+      defaultConfig: {},
     });
 
     const components = inject(ComponentRegistry);

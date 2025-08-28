@@ -40,7 +40,7 @@ export class WidgetComponentSelectComponent implements OnInit {
     isDashboard?: boolean;
   }>(MAT_DIALOG_DATA);
 
-  options: WidgetOption[]
+  options: WidgetOption[];
 
   ngOnInit() {
     if (this.data.isDashboard) {
