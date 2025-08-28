@@ -134,7 +134,6 @@ export class EntitySelectComponent<E extends Entity> {
       entityTypes: this.entityType(),
     }),
     loader: async ({ params }) => {
-      console.log("LOAD 1");
       if (params.entityTypes.length === 0) return [];
 
       const entities: E[] = [];
@@ -173,7 +172,6 @@ export class EntitySelectComponent<E extends Entity> {
       includeInactive: this.includeInactive(),
     }),
     loader: async ({ params }) => {
-      console.log("LOAD 2 START", params.values);
       const includeSelected = (entity: E) =>
         asArray(params.values).includes(entity.getId());
 
@@ -190,7 +188,6 @@ export class EntitySelectComponent<E extends Entity> {
           if (availableEntities.find((e) => id === e.getId())) {
             continue;
           }
-          console.log("OTHER", id);
 
           const additionalEntity = await this.getEntity(id);
           if (additionalEntity) {
@@ -204,7 +201,6 @@ export class EntitySelectComponent<E extends Entity> {
           }
         }
       }
-      console.log("LOAD 2 END", availableEntities);
 
       return availableEntities;
     },
@@ -234,7 +230,6 @@ export class EntitySelectComponent<E extends Entity> {
 
   toggleIncludeInactive() {
     this.includeInactive.set(!this.includeInactive());
-    this.recalculateMatchingInactive();
   }
 
   private autocompleteFilter = signal<(o: E) => boolean>(() => true);
