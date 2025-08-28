@@ -49,15 +49,14 @@ export class EmailClientService {
 
     if (!template) return false;
 
-    const enc = (v: string) => encodeURIComponent(v);
     const params: string[] = [];
     const subject = template.subject?.toString().trim();
     const body = template.body?.toString();
 
-    if (subject) params.push(`subject=${enc(subject)}`);
-    if (body) params.push(`body=${enc(body)}`);
+    if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
+    if (body) params.push(`body=${encodeURIComponent(body)}`);
 
-    const mailto = `mailto:${enc(recipient)}${params.length ? `?${params.join("&")}` : ""}`;
+    const mailto = `mailto:${encodeURIComponent(recipient)}${params.length ? `?${params.join("&")}` : ""}`;
     window.location.href = mailto;
     return true;
   }
