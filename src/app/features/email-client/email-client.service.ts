@@ -17,7 +17,7 @@ export class EmailClientService {
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly alertService = inject(AlertService);
   private readonly dialog = inject(MatDialog);
-  private formDialog = inject(FormDialogService);
+  private readonly formDialog = inject(FormDialogService);
 
   /**
    * Build a mailto link from an entity's email fields and open the local mail client.
