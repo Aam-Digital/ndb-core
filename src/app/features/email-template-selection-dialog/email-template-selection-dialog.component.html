@@ -18,8 +18,8 @@
   </p>
   <p>
     <span i18n>
-      Note: "Sending" mail will open the email application on your device.
-      If nothing happens you may have to set up a default email client.
+      Note: "Sending" mail will open the email application on your device. If
+      nothing happens you may have to set up a default email client.
     </span>
   </p>
 
@@ -32,7 +32,6 @@
     placeholder="Select an email template"
     i18n-placeholder
     [form]="emailTemplateSelectionForm"
-    [disableCreateNew]="true"
   ></app-entity-select>
 </mat-dialog-content>
 
@@ -41,7 +40,7 @@
     mat-raised-button
     color="accent"
     [disabled]="!emailTemplateSelectionForm.value"
-    (click)="selectedTemplate(emailTemplateSelectionForm.value)"
+    (click)="confirmSelectedTemplate(emailTemplateSelectionForm.value)"
   >
     <span i18n>Send Email</span>
   </button>
