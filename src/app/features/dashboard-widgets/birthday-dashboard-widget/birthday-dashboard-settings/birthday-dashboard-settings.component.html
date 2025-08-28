@@ -1,5 +1,7 @@
 <div mat-dialog-title style="display: flex">
-  <span i18n="Birthday Dashboard Settings Title">Birthday Dashboard Settings</span>
+  <span i18n="Birthday Dashboard Settings Title"
+    >Birthday Dashboard Settings</span
+  >
   <app-dialog-close mat-dialog-close></app-dialog-close>
 </div>
 
@@ -25,13 +27,20 @@
 
   <div class="settings-section">
     <h3 i18n="Entity fields section title">Entity Types and Birthday Fields</h3>
-    
-    @for (control of entityProperties.controls; track control; let index = $index) {
-      <div class="entity-property-wrapper mat-elevation-z1" [formGroup]="$any(control)">
+
+    @for (
+      control of entityProperties.controls;
+      track control;
+      let index = $index
+    ) {
+      <div
+        class="entity-property-wrapper mat-elevation-z1"
+        [formGroup]="$any(control)"
+      >
         <mat-form-field class="entity-type-field">
           <mat-label i18n="Entity type label">Entity Type</mat-label>
-          <mat-select 
-            formControlName="entityType" 
+          <mat-select
+            formControlName="entityType"
             (selectionChange)="onEntityTypeChange(index, $event.value)"
           >
             @for (entityType of availableEntityTypes; track entityType) {
@@ -46,7 +55,12 @@
         <mat-form-field class="property-field">
           <mat-label i18n="Property label">Birthday Field</mat-label>
           <mat-select formControlName="property">
-            @for (property of getPropertiesForEntity(control.get('entityType')?.value); track property) {
+            @for (
+              property of getPropertiesForEntity(
+                control.get("entityType")?.value
+              );
+              track property
+            ) {
               <mat-option [value]="property">{{ property }}</mat-option>
             }
           </mat-select>
@@ -55,9 +69,9 @@
           }
         </mat-form-field>
 
-        <button 
-          mat-icon-button 
-          color="accent" 
+        <button
+          mat-icon-button
+          color="accent"
           (click)="removeEntityProperty(index)"
           [disabled]="entityProperties.length <= 1"
           matTooltip="Remove this entity-field pair"
@@ -97,7 +111,8 @@
       [matTooltipDisabled]="outputData.valid"
       i18n-matTooltip="Shown when there are errors that prevent saving"
       i18n
-    >Save</span>
+      >Save</span
+    >
   </button>
   <button mat-stroked-button mat-dialog-close i18n>Cancel</button>
 </mat-dialog-actions>

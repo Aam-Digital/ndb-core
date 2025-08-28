@@ -74,14 +74,14 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
 
     // Convert entities object to array of entity-property pairs
     const entityPropertyPairs: EntityPropertyPair[] = Object.entries(
-      this.data.entities || { Child: "dateOfBirth" }
+      this.data.entities || { Child: "dateOfBirth" },
     ).map(([entityType, property]) => ({
       entityType,
       property,
     }));
 
     this.entityProperties = this.fb.array(
-      entityPropertyPairs.map((pair) => this.createEntityPropertyForm(pair))
+      entityPropertyPairs.map((pair) => this.createEntityPropertyForm(pair)),
     );
 
     this.outputData = new FormGroup({
@@ -96,7 +96,7 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
         // Filter out internal entities
         const constructor = this.entityRegistry.get(entityType);
         return !constructor.isInternalEntity;
-      }
+      },
     );
   }
 
@@ -104,15 +104,18 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
     this.availableEntityTypes.forEach((entityType) => {
       const constructor = this.entityRegistry.get(entityType);
       const schema = constructor.schema;
-      
+
       // Find properties that have date datatype
       const dateProperties: string[] = [];
       schema.forEach((fieldConfig, fieldName) => {
-        if (fieldConfig.dataType === "date" || fieldConfig.dataType === "date-with-age") {
+        if (
+          fieldConfig.dataType === "date" ||
+          fieldConfig.dataType === "date-with-age"
+        ) {
           dateProperties.push(fieldName);
         }
       });
-      
+
       this.availableProperties[entityType] = dateProperties;
     });
   }
@@ -143,14 +146,14 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
   onEntityTypeChange(index: number, entityType: string): void {
     const control = this.entityProperties.at(index) as FormGroup;
     const propertyControl = control.get("property");
-    
+
     // Reset property selection when entity type changes
     propertyControl?.setValue("");
   }
 
   getOutputData(): BirthdayDashboardSettingsData {
     const formValue = this.outputData.value;
-    
+
     // Convert array back to object format
     const entities: EntityPropertyMap = {};
     formValue.entityProperties.forEach((pair: EntityPropertyPair) => {

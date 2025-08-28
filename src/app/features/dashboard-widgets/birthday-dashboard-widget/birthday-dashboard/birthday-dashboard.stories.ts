@@ -58,3 +58,15 @@ export const Primary = {
   render: Template,
   args: {},
 };
+
+export const WithConfigurationButton = {
+  render: Template,
+  args: {},
+  parameters: {
+    docs: {
+      description: {
+        story: 'This shows the Birthday Dashboard with the configuration button (wrench icon) that allows admin users to configure multiple entity types and their date fields.',
+      },
+    },
+  },
+};

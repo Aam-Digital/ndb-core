@@ -11,7 +11,10 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
-import { BirthdayDashboardSettingsComponent, BirthdayDashboardSettingsData } from "../birthday-dashboard-settings/birthday-dashboard-settings.component";
+import {
+  BirthdayDashboardSettingsComponent,
+  BirthdayDashboardSettingsData,
+} from "../birthday-dashboard-settings/birthday-dashboard-settings.component";
 
 interface BirthdayDashboardConfig {
   entities: EntityPropertyMap;
