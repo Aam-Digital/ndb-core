@@ -8,6 +8,7 @@ import { EmailTemplateSelectionDialogComponent } from "../email-template-selecti
 import { lastValueFrom } from "rxjs";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
+import { EmailTemplate } from "./email-template.entity";
 
 @Injectable({
   providedIn: "root",
@@ -65,20 +66,17 @@ export class EmailClientService {
 
     // todo: need to check if mail client opened or some time delay?
     this.formDialog.openView(
-      this.prefilledNote(subject, body, entity.getId()),
+      this.prefilledNote(entity.getId(), template),
       "NoteDetails",
     );
     return true;
   }
 
-  private prefilledNote(
-    subject: string,
-    body: string,
-    recipient: string,
-  ): Note {
+  private prefilledNote(recipient: string, template: EmailTemplate): Note {
     const note = new Note();
-    note.subject = subject;
-    note.text = body;
+    note.subject = template.subject;
+    note.text = template.body;
+    note.category = template.category;
     note.children = [recipient]; // todo update this to use entityrelationservice to get the field linked to that record
     console.log("Created  note", note);
     return note;
