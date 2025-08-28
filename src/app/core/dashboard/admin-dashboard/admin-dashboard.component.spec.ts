@@ -7,7 +7,7 @@ import { ConfigService } from "../../config/config.service";
 import { MatDialog } from "@angular/material/dialog";
 import { of } from "rxjs";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { WidgetComponentSelectComponent } from "../admin-entity-details/widget-component-select/widget-component-select.component";
+import { WidgetComponentSelectComponent } from "../../admin/admin-entity-details/widget-component-select/widget-component-select.component";
 
 describe("AdminDashboardComponent", () => {
   let component: AdminDashboardComponent;
