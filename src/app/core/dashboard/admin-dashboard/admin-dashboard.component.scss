@@ -2,15 +2,6 @@
 @use "@angular/material/core/style/elevation" as mat-elevation;
 @use "variables/colors";
 
-.header {
-  padding: 20px 24px 12px 24px;
-  background-color: colors.$background-secondary;
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-  border-bottom: 1px solid #eee;
-}
-
 .header-left {
   display: flex;
   align-items: center;
@@ -21,25 +12,11 @@
   margin-right: 8px;
 }
 
-.admin-ui-title {
-  font-style: italic;
-  font-size: 2rem;
-  margin-bottom: 0;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}
-
-.overall-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 0;
-}
-
 ::ng-deep app-dashboard-widget {
-  /* dim preview of actual widgets to highlight admin elements */
-  opacity: 50%;
   pointer-events: none;
+
+  /* dim preview of actual widgets to highlight admin elements */
+  opacity: 35%;
 }
 
 .widget-interaction-blocker {
@@ -83,15 +60,12 @@
   }
 }
 
-.widget-preview-section {
-  padding: 0;
-  position: relative;
+.widget-action-icon {
+  margin: .5em;
 }
 
-.widget-content-wrapper {
-  position: relative;
-  padding: 20px;
-  height: 100%;
+.widget-preview-section {
+  padding: 2.5em;
 }
 
 .add-widget-content {
@@ -159,9 +133,10 @@
 }
 
 .field-edit-button {
+  /* large button to make edit option obvious */
+  padding: 2.5em;
+
   background: white !important;
-  padding: 1rem 1.5rem;
-  font-size: 0.875rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   border: 1px solid #ddd;
 

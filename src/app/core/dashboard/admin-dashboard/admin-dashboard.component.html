@@ -1,14 +1,9 @@
-<div class="header flex-row flex-wrap justify-space-between">
-  <app-view-title
-    class="admin-ui-title"
-    i18n="page title"
-    [displayInPlace]="true"
-    i18n
-  >
+<div class="padding-regular flex-row flex-wrap justify-space-between">
+  <app-view-title [displayInPlace]="true" i18n>
     Edit Dashboard Widgets
   </app-view-title>
 
-  <div class="flex-row gap-small save-buttons">
+  <div class="flex-row gap-small">
     <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
     <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
   </div>
@@ -21,80 +16,79 @@
   users, your changes will be visible to everyone.
 </div>
 
-<div class="overall-container flex-row">
-  <!-- WIDGET PREVIEW AREA -->
-  <div
-    cdkDropList
-    [cdkDropListData]="dashboardConfig.widgets"
-    (cdkDropListDropped)="drop($event)"
-    cdkDropListOrientation="mixed"
-    class="widgets-container drop-list"
-  >
-    @for (
-      widgetConfig of dashboardConfig.widgets;
-      track widgetConfig;
-      let i = $index
-    ) {
-      <mat-card
-        cdkDrag
-        cdkDragBoundary=".overall-container"
-        class="widget-preview-card"
+<!-- WIDGET PREVIEW AREA -->
+<div
+  cdkDropList
+  [cdkDropListData]="dashboardConfig.widgets"
+  (cdkDropListDropped)="drop($event)"
+  cdkDropListOrientation="mixed"
+  class="widgets-container drop-list"
+>
+  @for (
+    widgetConfig of dashboardConfig.widgets;
+    track widgetConfig;
+    let i = $index
+  ) {
+    <mat-card
+      cdkDrag
+      cdkDragBoundary=".overall-container"
+      class="widget-preview-card"
+    >
+      <fa-icon
+        icon="grip-vertical"
+        size="xl"
+        class="widget-action-icon drag-handle"
+        matTooltip="You can rearrange the dashboard sections to highlight the most important information first."
+        i18n-matTooltip
+      ></fa-icon>
+
+      <button
+        mat-icon-button
+        class="widget-action-icon widget-remove-icon"
+        color="black"
+        (click)="removeWidget(i)"
+        matTooltip="Remove this widget"
+        i18n-matTooltip
       >
-        <fa-icon
-          icon="grip-vertical"
-          size="xl"
-          class="drag-handle"
-          matTooltip="You can rearrange the dashboard sections to highlight the most important information first."
-          i18n-matTooltip
-        ></fa-icon>
+        <fa-icon icon="times"></fa-icon>
+      </button>
 
-        <fa-icon
-          icon="times"
-          class="widget-remove-icon"
-          (click)="removeWidget(i)"
-          matTooltip="Remove this widget"
-          i18n-matTooltip
-        ></fa-icon>
+      <mat-card-content class="widget-preview-section">
+        <!-- Widget Content with Overlay Edit Button -->
+        <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
 
-        <mat-card-content class="widget-preview-section">
-          <!-- Widget Content with Overlay Edit Button -->
-          <div class="widget-content-wrapper">
-            <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
-
-            <!-- Centered Edit Button Overlay -->
-            <div class="field-hover-buttons">
-              <button
-                mat-stroked-button
-                color="accent"
-                class="field-edit-button"
-                (click)="editWidget(widgetConfig, i)"
-                i18n
-              >
-                Edit Widget
-              </button>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    }
-
-    <!-- DROP AREA: ADD NEW WIDGET -->
-    <mat-card class="widget-preview-card drop-area-hint">
-      <mat-card-content class="add-widget-content">
-        <button
-          mat-stroked-button
-          color="accent"
-          class="add-widget-button"
-          (click)="addNewWidget()"
-        >
-          <fa-icon
-            aria-label="add widget"
-            icon="plus-circle"
-            class="standard-icon-with-text"
-          ></fa-icon>
-          <span i18n>Add Widget</span>
-        </button>
+        <!-- Centered Edit Button Overlay -->
+        <div class="field-hover-buttons">
+          <button
+            mat-stroked-button
+            color="accent"
+            class="field-edit-button"
+            (click)="editWidget(widgetConfig, i)"
+            i18n
+          >
+            Edit Widget
+          </button>
+        </div>
       </mat-card-content>
     </mat-card>
-  </div>
+  }
+
+  <!-- DROP AREA: ADD NEW WIDGET -->
+  <mat-card class="widget-preview-card drop-area-hint">
+    <mat-card-content class="add-widget-content">
+      <button
+        mat-stroked-button
+        color="accent"
+        class="add-widget-button field-edit-button"
+        (click)="addNewWidget()"
+      >
+        <fa-icon
+          aria-label="add widget"
+          icon="plus-circle"
+          class="standard-icon-with-text"
+        ></fa-icon>
+        <span i18n>Add Widget</span>
+      </button>
+    </mat-card-content>
+  </mat-card>
 </div>
