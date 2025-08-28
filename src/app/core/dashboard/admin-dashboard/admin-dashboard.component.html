@@ -3,6 +3,7 @@
     class="admin-ui-title"
     i18n="page title"
     [displayInPlace]="true"
+    i18n
   >
     Edit Dashboard Widgets
   </app-view-title>
@@ -14,9 +15,10 @@
 </div>
 
 <div class="hint-banner" i18n>
-  Drag and drop the widgets to reorder them. You can configure details of each widget by clicking on them.
-  Add additional widgets or remove widgets to fully customize the dashboard to your needs.
-  The dashboard layout is shared by all users, your changes will be visible to everyone.
+  Drag and drop the widgets to reorder them. You can configure details of each
+  widget by clicking on them. Add additional widgets or remove widgets to fully
+  customize the dashboard to your needs. The dashboard layout is shared by all
+  users, your changes will be visible to everyone.
 </div>
 
 <div class="overall-container flex-row">
@@ -33,48 +35,48 @@
       track widgetConfig;
       let i = $index
     ) {
-        <mat-card
-          cdkDrag cdkDragBoundary=".overall-container"
-          
-          class="widget-preview-card"
-        >
-          <fa-icon
-            icon="grip-vertical"
-            size="xl"
-            class="drag-handle"
-            matTooltip="You can rearrange the dashboard sections to highlight the most important information first."
-            i18n-matTooltip
-          ></fa-icon>
+      <mat-card
+        cdkDrag
+        cdkDragBoundary=".overall-container"
+        class="widget-preview-card"
+      >
+        <fa-icon
+          icon="grip-vertical"
+          size="xl"
+          class="drag-handle"
+          matTooltip="You can rearrange the dashboard sections to highlight the most important information first."
+          i18n-matTooltip
+        ></fa-icon>
 
-          <fa-icon
-            icon="times"
-            class="widget-remove-icon"
-            (click)="removeWidget(i)"
-            matTooltip="Remove this widget"
-            i18n-matTooltip
-          ></fa-icon>
+        <fa-icon
+          icon="times"
+          class="widget-remove-icon"
+          (click)="removeWidget(i)"
+          matTooltip="Remove this widget"
+          i18n-matTooltip
+        ></fa-icon>
 
-          <mat-card-content class="widget-preview-section">
-            <!-- Widget Content with Overlay Edit Button -->
-            <div class="widget-content-wrapper">
-              <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
+        <mat-card-content class="widget-preview-section">
+          <!-- Widget Content with Overlay Edit Button -->
+          <div class="widget-content-wrapper">
+            <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
 
-              <!-- Centered Edit Button Overlay -->
-              <div class="field-hover-buttons">
-                <button
-                  mat-stroked-button
-                  color="accent"
-                  class="field-edit-button"
-                  (click)="editWidget(widgetConfig, i)"
-                  i18n="Button label"
-                >
-                  Edit Widget
-                </button>
-              </div>
+            <!-- Centered Edit Button Overlay -->
+            <div class="field-hover-buttons">
+              <button
+                mat-stroked-button
+                color="accent"
+                class="field-edit-button"
+                (click)="editWidget(widgetConfig, i)"
+                i18n
+              >
+                Edit Widget
+              </button>
             </div>
-          </mat-card-content>
-          <div class="widget-interaction-blocker"></div>
-        </mat-card>
+          </div>
+        </mat-card-content>
+        <div class="widget-interaction-blocker"></div>
+      </mat-card>
     }
 
     <!-- DROP AREA: ADD NEW WIDGET -->
