@@ -48,7 +48,7 @@ describe("EmailTemplateSelectionDialogComponent", () => {
 
   it("should set selected template in form control", () => {
     const fakeTemplate = { subject: "Test Subject", body: "Test Body" } as any;
-    component.selectedTemplate(fakeTemplate);
+    component.confirmSelectedTemplate(fakeTemplate);
     expect(component.emailTemplateSelectionForm.value).toEqual(fakeTemplate);
   });
 });
