@@ -1,34 +1,40 @@
-<app-dashboard-list-widget
-  icon="birthday-cake"
-  theme="child"
-  [subtitle]="subtitle"
-  [explanation]="explanation"
-  [entries]="entries"
->
-  <div class="table-wrapper">
-    <table mat-table>
-      <tr hidden="true">
-        <th scope="col">Name</th>
-        <th scope="col">DateOfBirth</th>
-        <th scope="col">AfterBirthdayAge</th>
-      </tr>
-      <ng-container matColumnDef="entity">
-        <td *matCellDef="let entity">
-          <app-entity-block [entity]="entity.entity"></app-entity-block>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="dateOfBirth">
-        <td *matCellDef="let entity">
-          {{ entity.birthday | date: "E dd.MM" }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="newAge">
-        <td *matCellDef="let entity" i18n>{{ entity.newAge }} yrs</td>
-      </ng-container>
-      <tr
-        mat-row
-        *matRowDef="let row; columns: ['entity', 'dateOfBirth', 'newAge']"
-      ></tr>
-    </table>
-  </div>
-</app-dashboard-list-widget>
+<div class="widget-container">
+  <app-dashboard-list-widget
+    icon="birthday-cake"
+    theme="child"
+    [subtitle]="subtitle"
+    [explanation]="explanation"
+    [entries]="entries"
+  >
+    <div class="table-wrapper">
+      <table mat-table>
+        <tr hidden="true">
+          <th scope="col">Name</th>
+          <th scope="col">DateOfBirth</th>
+          <th scope="col">AfterBirthdayAge</th>
+        </tr>
+        <ng-container matColumnDef="entity">
+          <td *matCellDef="let entity">
+            <app-entity-block [entity]="entity.entity"></app-entity-block>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="dateOfBirth">
+          <td *matCellDef="let entity">
+            {{ entity.birthday | date: "E dd.MM" }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="newAge">
+          <td *matCellDef="let entity" i18n>{{ entity.newAge }} yrs</td>
+        </ng-container>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: ['entity', 'dateOfBirth', 'newAge']"
+        ></tr>
+      </table>
+    </div>
+  </app-dashboard-list-widget>
+
+  <button mat-icon-button (click)="showSettingsDialog()" class="config-panel">
+    <fa-icon aria-label="configure" icon="wrench"></fa-icon>
+  </button>
+</div>

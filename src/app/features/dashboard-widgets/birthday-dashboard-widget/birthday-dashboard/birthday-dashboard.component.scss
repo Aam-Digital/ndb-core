@@ -1,1 +1,12 @@
 @use "../../../../core/dashboard/dashboard-widget-base";
+
+.config-panel {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  margin: 4px;
+}
+
+.widget-container {
+  position: relative;
+}

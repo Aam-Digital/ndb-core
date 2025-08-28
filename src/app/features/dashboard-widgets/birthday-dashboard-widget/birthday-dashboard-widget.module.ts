@@ -14,6 +14,13 @@ export class BirthdayDashboardWidgetModule {
             (c) => c.BirthdayDashboardComponent,
           ),
       ],
+      [
+        "BirthdayDashboardSettings",
+        () =>
+          import("./birthday-dashboard-settings/birthday-dashboard-settings.component").then(
+            (c) => c.BirthdayDashboardSettingsComponent,
+          ),
+      ],
     ]);
   }
 }

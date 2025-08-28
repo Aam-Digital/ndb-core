@@ -1,0 +1,103 @@
+<div mat-dialog-title style="display: flex">
+  <span i18n="Birthday Dashboard Settings Title">Birthday Dashboard Settings</span>
+  <app-dialog-close mat-dialog-close></app-dialog-close>
+</div>
+
+<mat-dialog-content class="dialog-content">
+  <div class="settings-section">
+    <mat-form-field>
+      <mat-label i18n="Days threshold label">Days Ahead Threshold</mat-label>
+      <input
+        [formControl]="threshold"
+        matInput
+        type="number"
+        i18n-placeholder="Threshold placeholder"
+        placeholder="Number of days ahead to show birthdays"
+      />
+      @if (threshold.hasError("required")) {
+        <mat-error i18n>This field is required</mat-error>
+      }
+      @if (threshold.hasError("min")) {
+        <mat-error i18n>Must be greater than 0</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="settings-section">
+    <h3 i18n="Entity fields section title">Entity Types and Birthday Fields</h3>
+    
+    @for (control of entityProperties.controls; track control; let index = $index) {
+      <div class="entity-property-wrapper mat-elevation-z1" [formGroup]="$any(control)">
+        <mat-form-field class="entity-type-field">
+          <mat-label i18n="Entity type label">Entity Type</mat-label>
+          <mat-select 
+            formControlName="entityType" 
+            (selectionChange)="onEntityTypeChange(index, $event.value)"
+          >
+            @for (entityType of availableEntityTypes; track entityType) {
+              <mat-option [value]="entityType">{{ entityType }}</mat-option>
+            }
+          </mat-select>
+          @if (control.hasError("required", "entityType")) {
+            <mat-error i18n>This field is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field class="property-field">
+          <mat-label i18n="Property label">Birthday Field</mat-label>
+          <mat-select formControlName="property">
+            @for (property of getPropertiesForEntity(control.get('entityType')?.value); track property) {
+              <mat-option [value]="property">{{ property }}</mat-option>
+            }
+          </mat-select>
+          @if (control.hasError("required", "property")) {
+            <mat-error i18n>This field is required</mat-error>
+          }
+        </mat-form-field>
+
+        <button 
+          mat-icon-button 
+          color="accent" 
+          (click)="removeEntityProperty(index)"
+          [disabled]="entityProperties.length <= 1"
+          matTooltip="Remove this entity-field pair"
+          i18n-matTooltip
+        >
+          <fa-icon
+            class="button-icon"
+            aria-label="remove element"
+            icon="trash"
+          ></fa-icon>
+        </button>
+      </div>
+    }
+
+    <div class="add-button-wrapper">
+      <button mat-button color="accent" (click)="addEntityProperty()">
+        <fa-icon
+          class="button-icon margin-sides-small"
+          aria-label="add element"
+          icon="plus-circle"
+        ></fa-icon>
+        <span i18n="Add entity field pair button">Add Another Entity Type</span>
+      </button>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button
+    mat-raised-button
+    color="accent"
+    [mat-dialog-close]="getOutputData()"
+    [disabled]="outputData.invalid"
+  >
+    <span
+      matTooltip="Fix the errors to save the form"
+      [matTooltipDisabled]="outputData.valid"
+      i18n-matTooltip="Shown when there are errors that prevent saving"
+      i18n
+    >Save</span>
+  </button>
+  <button mat-stroked-button mat-dialog-close i18n>Cancel</button>
+</mat-dialog-actions>

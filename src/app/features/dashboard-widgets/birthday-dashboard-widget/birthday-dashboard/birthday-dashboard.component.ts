@@ -5,9 +5,13 @@ import { MatTableModule } from "@angular/material/table";
 import { Entity } from "../../../../core/entity/model/entity";
 import { DatePipe } from "@angular/common";
 import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
+import { MatDialog } from "@angular/material/dialog";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
+import { BirthdayDashboardSettingsComponent, BirthdayDashboardSettingsData } from "../birthday-dashboard-settings/birthday-dashboard-settings.component";
 
 interface BirthdayDashboardConfig {
   entities: EntityPropertyMap;
@@ -24,6 +28,8 @@ interface BirthdayDashboardConfig {
     EntityBlockComponent,
     DatePipe,
     DashboardListWidgetComponent,
+    MatButtonModule,
+    FontAwesomeModule,
   ],
 })
 export class BirthdayDashboardComponent
@@ -31,6 +37,7 @@ export class BirthdayDashboardComponent
   implements BirthdayDashboardConfig, OnInit
 {
   private entityMapper = inject(EntityMapperService);
+  private dialog = inject(MatDialog);
 
   static override getRequiredEntities(config: BirthdayDashboardConfig) {
     return config?.entities ? Object.keys(config.entities) : "Child";
@@ -102,6 +109,28 @@ export class BirthdayDashboardComponent
   private daysUntil(date: Date): number {
     const diff = date.getTime() - this.today.getTime();
     return Math.floor(diff / (1000 * 60 * 60 * 24));
+  }
+
+  showSettingsDialog(): void {
+    const dialogData: BirthdayDashboardSettingsData = {
+      entities: this.entities,
+      threshold: this.threshold,
+    };
+
+    this.dialog
+      .open(BirthdayDashboardSettingsComponent, {
+        data: dialogData,
+        width: "600px",
+      })
+      .afterClosed()
+      .subscribe((result: BirthdayDashboardSettingsData) => {
+        if (result) {
+          this.entities = result.entities;
+          this.threshold = result.threshold;
+          // Refresh the data with new configuration
+          this.ngOnInit();
+        }
+      });
   }
 }
 
