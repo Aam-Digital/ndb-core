@@ -13,8 +13,7 @@ export class DashboardWidgetRegistryService {
 
   /**
    * Register a new widget and its details
-   * @param widgetName The name of the widget
-   * @param settingsComponent The settings component associated with the widget
+   * @param widgetDefinition The widget to register
    */
   register(widgetDefinition: DashboardWidgetDefinition) {
     this.dashboardWidgets.push(widgetDefinition);
@@ -62,9 +61,11 @@ export interface DashboardWidgetDefinition {
    */
   settingsComponent: string;
 
-   * Some default configuration settings for the widget. This configuration is used
-   * as the initial settings when a widget is first added to a dashboard. Users can
-   * later override these settings with their own preferences.
+  /**
+   * Default configuration settings for the widget
+   * used as the initial settings when a widget is first added.
+   *
+   * Users can later override these settings with their own preferences.
    */
   defaultConfig: any;
 }
