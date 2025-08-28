@@ -209,6 +209,11 @@ export class BasicAutocompleteComponent<O, V = O>
     });
   }
 
+  getPlainTextTooltip(htmlString: string): string {
+    // Remove HTML tags for tooltip display
+    return htmlString.replace(/<[^>]*>/g, "");
+  }
+
   ngOnChanges(changes: { [key in keyof this]?: any }) {
     if (changes.valueMapper) {
       this._options.forEach(
