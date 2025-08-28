@@ -97,6 +97,7 @@ in `argosScreenshot()`. Set a default threshold with `argos upload
 ## AI-Assisted Test Development
 
 You can use [Claude Code][] to write tests based on Gherkin-style scenario steps.
+This requires a Claude account (the "Free" plan may be sufficient for occasional use).
 
 Start by adding the steps to a test file, e.g. `e2e/tests/attendance-tests.spec.ts`:
 
@@ -120,3 +121,4 @@ child". You can then work with the initial draft and fix it until it passes.
 [Playwright]: https://playwright.dev/
 [Playwright UI]: https://playwright.dev/docs/test-ui-mode
 [Trace Viewer]: https://playwright.dev/docs/trace-viewer
+[Claude Code]: https://docs.anthropic.com/en/docs/claude-code/common-workflows#create-custom-slash-commands
