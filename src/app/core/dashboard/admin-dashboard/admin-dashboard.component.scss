@@ -36,6 +36,12 @@
   padding: 0;
 }
 
+::ng-deep app-dashboard-widget {
+  /* dim preview of actual widgets to highlight admin elements */
+  opacity: 50%;
+  pointer-events: none;
+}
+
 .widget-interaction-blocker {
   position: absolute;
   inset: 0;
