@@ -1,6 +1,6 @@
 {
-  "realm": "dummy-realm",
-  "auth-server-url": "https://keycloak.localhost",
+  "realm": "demo",
+  "auth-server-url": "http://id.aam.localhost",
   "ssl-required": "external",
   "resource": "app",
   "public-client": true,
