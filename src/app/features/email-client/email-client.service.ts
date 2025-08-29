@@ -71,7 +71,7 @@ export class EmailClientService {
       const confirmDialogRef = this.dialog.open(ConfirmationDialogComponent, {
         data: {
           title: $localize`Opening email on your device...`,
-          text: $localize`If nothing is happening, please check your default email client. <a href="https://www.lessannoyingcrm.com/help/setting-your-computers-default-email-program" target="_blank" rel="noopener">User guide</a>`,
+          text: $localize`If nothing is happening, please check your default email client. <a href="https://www.lessannoyingcrm.com/help/setting-your-computers-default-email-program" target="_blank">link to user guide</a>`,
           closeButton: true,
         },
       });
