@@ -36,7 +36,6 @@ import { DemoHistoricalDataGenerator } from "../../child-dev-project/children/de
 import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-generator.service";
 import { DemoPublicFormGeneratorService } from "../../features/public-form/demo-public-form-generator.service";
 import { DemoReportConfigGeneratorService } from "../../features/reporting/demo-report-config-generator.service";
-import { DemoEmailTemplateFormGeneratorService } from "#src/app/features/email-client/demo-email-template-form-generator.service";
 
 const demoDataGeneratorProviders = [
   ...DemoPublicFormGeneratorService.provider(),
@@ -64,7 +63,6 @@ const demoDataGeneratorProviders = [
   }),
   ...DemoTodoGeneratorService.provider(),
   ...DemoReportConfigGeneratorService.provider(),
-  ...DemoEmailTemplateFormGeneratorService.provider(),
 ];
 
 /**
