@@ -42,13 +42,6 @@ export class AdminModule {
             (c) => c.AdminEntityTypesComponent,
           ),
       ],
-      [
-        "AdminDashboard",
-        () =>
-          import("../dashboard/admin-dashboard/admin-dashboard.component").then(
-            (c) => c.AdminDashboardComponent,
-          ),
-      ],
     ]);
   }
 }

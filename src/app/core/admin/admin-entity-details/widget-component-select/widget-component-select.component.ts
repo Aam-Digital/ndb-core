@@ -1,4 +1,3 @@
-import { v4 as uuid } from "uuid";
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
 import { PanelComponent } from "#src/app/core/entity-details/EntityDetailsConfig";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
@@ -11,11 +10,9 @@ import {
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { DynamicComponentConfig } from "#src/app/core/config/dynamic-components/dynamic-component-config.interface";
-import { DashboardWidgetRegistryService } from "#src/app/core/dashboard/dashboard-widget-registry.service";
 
 /**
- * Admin component to select components to be added to view configs or dashboard.
+ * Admin component to select components to be added to view configs.
  */
 @Component({
   selector: "app-widget-component-select",
@@ -32,22 +29,17 @@ import { DashboardWidgetRegistryService } from "#src/app/core/dashboard/dashboar
 export class WidgetComponentSelectComponent implements OnInit {
   private entityRelationsService = inject(EntityRelationsService);
   private dialogRef =
-    inject<MatDialogRef<WidgetComponentSelectComponent, any>>(MatDialogRef);
-  private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
-
+    inject<MatDialogRef<WidgetComponentSelectComponent, PanelComponent>>(
+      MatDialogRef,
+    );
   data = inject<{
-    entityType?: string;
-    isDashboard?: boolean;
+    entityType: string;
   }>(MAT_DIALOG_DATA);
 
   options: WidgetOption[];
 
   ngOnInit() {
-    if (this.data.isDashboard) {
-      this.options = this.widgetRegistry.getAvailableWidgets();
-    } else {
-      this.options = this.loadAvailableWidgets();
-    }
+    this.options = this.loadAvailableWidgets();
   }
 
   private loadAvailableWidgets(): WidgetOption[] {
@@ -82,14 +74,14 @@ export class WidgetComponentSelectComponent implements OnInit {
     ];
   }
 
-  selectSectionType(opt: PanelComponent | DynamicComponentConfig) {
+  selectSectionType(opt: PanelComponent) {
     this.dialogRef.close(opt);
   }
 }
 
 export interface WidgetOption {
   label: string;
-  value: PanelComponent | DynamicComponentConfig;
+  value: PanelComponent;
 
   /**
    * If the option is not available in the current context, mark it as disabled

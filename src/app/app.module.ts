@@ -58,7 +58,6 @@ import { UiComponent } from "./core/ui/ui/ui.component";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatDialogModule } from "@angular/material/dialog";
 import { componentRegistry, ComponentRegistry } from "./dynamic-components";
-import { DashboardModule } from "./core/dashboard/dashboard.module";
 import { CoreModule } from "./core/core.module";
 import {
   entityRegistry,
@@ -125,7 +124,6 @@ import { EmailClientServiceModule } from "./features/email-client/email-client.m
     LatestChangesModule,
     PermissionsModule,
     SessionModule,
-    DashboardModule,
     // child-dev modules
     AttendanceModule,
     ChildrenModule,
