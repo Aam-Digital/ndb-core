@@ -68,14 +68,15 @@ export class EmailClientService {
 
     // Only offer to create/edit a note if the user opted in
     if (createNote) {
-      this.dialog.open(ConfirmationDialogComponent, {
+      const confirmDialogRef = this.dialog.open(ConfirmationDialogComponent, {
         data: {
-          title: $localize`Opening email on your device ...`,
-          text: $localize`If nothing is happening, please check your default email client [link to user guide](https://www.lessannoyingcrm.com/help/setting-your-computers-default-email-program)`,
+          title: $localize`Opening email on your device...`,
+          text: $localize`If nothing is happening, please check your default email client. <a href="https://www.lessannoyingcrm.com/help/setting-your-computers-default-email-program" target="_blank" rel="noopener">User guide</a>`,
           closeButton: true,
         },
       });
       setTimeout(async () => {
+        confirmDialogRef.close();
         this.formDialog.openView(
           this.prefilledNote(entity, template),
           "NoteDetails",
