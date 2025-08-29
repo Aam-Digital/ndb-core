@@ -141,7 +141,6 @@ export class UiComponent {
     const currentUrl = this.router.url;
     const configFullscreen =
       currentUrl.startsWith("/admin/entity/") ||
-      currentUrl.startsWith("/admin/dashboard") ||
       currentUrl.startsWith("/admin/matching");
 
     this.sideNavMode = configFullscreen || !this.isDesktop ? "over" : "side";

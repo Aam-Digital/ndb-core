@@ -3,7 +3,6 @@ import { Todo } from "./model/todo";
 import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
 import { TimeIntervalDatatype } from "./recurring-interval/time-interval.datatype";
-import { DashboardWidgetRegistryService } from "../../core/dashboard/dashboard-widget-registry.service";
 
 @NgModule({
   providers: [
@@ -13,16 +12,7 @@ import { DashboardWidgetRegistryService } from "../../core/dashboard/dashboard-w
 export class TodosModule {
   static databaseEntities = [Todo];
 
-  private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
-
   constructor() {
-    this.widgetRegistry.register({
-      component: "TodosDashboard",
-      label: $localize`Todos`,
-      settingsComponent: "TodosDashboardSettings",
-      defaultConfig: {},
-    });
-
     const components = inject(ComponentRegistry);
 
     components.addAll(dynamicComponents);
@@ -71,12 +61,5 @@ const dynamicComponents: [string, AsyncComponent][] = [
       import(
         "./todo-completion/display-todo-completion/display-todo-completion.component"
       ).then((c) => c.DisplayTodoCompletionComponent),
-  ],
-  [
-    "TodosDashboardSettings",
-    () =>
-      import(
-        "./todos-dashboard-settings.component/todos-dashboard-settings.component"
-      ).then((c) => c.TodosDashboardSettingsComponent),
   ],
 ];
