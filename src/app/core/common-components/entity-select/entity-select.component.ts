@@ -239,7 +239,7 @@ export class EntitySelectComponent<E extends Entity> {
    * and optionally updates the current filter function (otherwise reuses the filter previously set)
    * @param newAutocompleteFilter
    */
-  async recalculateMatchingInactive(
+  recalculateMatchingInactive(
     newAutocompleteFilter?: (o: Entity) => boolean,
   ) {
     if (newAutocompleteFilter) {
