@@ -110,13 +110,6 @@ export class EntitySelectComponent<E extends Entity> {
 
   hasInaccessibleEntities: Boolean = false;
 
-  includeInactive = input<boolean>(false);
-  currentlyMatchingInactive: Signal<number> = computed(() => {
-    return this.entitiesForType
-      .value()
-      .filter((e) => !e.isActive && this.autocompleteFilter()(e)).length;
-  });
-
   /**
    * The accessor used for filtering and when selecting a new
    * entity.
@@ -128,7 +121,7 @@ export class EntitySelectComponent<E extends Entity> {
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
 
-  private entitiesForType: Resource<E[]> = resource({
+  private allEntities: Resource<E[]> = resource({
     defaultValue: [],
     params: () => ({
       entityTypes: this.entityType(),
@@ -147,12 +140,18 @@ export class EntitySelectComponent<E extends Entity> {
     },
   });
 
+  currentlyMatchingInactive: Signal<number> = computed(() => {
+    return this.allEntities
+      .value()
+      .filter((e) => !e.isActive && this.autocompleteFilter()(e)).length;
+  });
+
   /**
    * true when this is loading and false when it's ready.
    * This subject's state reflects the actual loading resp. the 'readiness'-
    * state of this component. Will trigger once loading is done
    */
-  loading: Signal<boolean> = computed(() => this.entitiesForType.isLoading());
+  loading: Signal<boolean> = computed(() => this.allEntities.isLoading());
 
   /**
    * The currently selected values (IDs) of the form control.
@@ -164,41 +163,41 @@ export class EntitySelectComponent<E extends Entity> {
     { initialValue: [] },
   );
 
+  includeInactive = signal<boolean>(false);
+
   private availableOptionsResource: Resource<E[]> = resource({
     defaultValue: [],
     params: () => ({
-      allEntities: this.entitiesForType.value(),
+      allEntities: this.allEntities.value(),
       values: this.values(),
       includeInactive: this.includeInactive(),
     }),
     loader: async ({ params }) => {
-      const includeSelected = (entity: E) =>
-        asArray(params.values).includes(entity.getId());
-
       const availableEntities = params.allEntities.filter(
-        (e) => params.includeInactive || e.isActive || includeSelected(e),
+        (e) =>
+          params.values.includes(e.getId()) ||
+          params.includeInactive ||
+          e.isActive,
       );
 
-      if (params.values !== null && params.values !== undefined) {
-        for (const id of asArray(params.values)) {
-          if (id === null || id === undefined || id === "") {
-            continue;
-          }
+      for (const id of params.values) {
+        if (id === null || id === undefined || id === "") {
+          continue;
+        }
 
-          if (availableEntities.find((e) => id === e.getId())) {
-            continue;
-          }
+        if (availableEntities.find((e) => id === e.getId())) {
+          continue;
+        }
 
-          const additionalEntity = await this.getEntity(id);
-          if (additionalEntity) {
-            availableEntities.push(additionalEntity);
-          } else {
-            this.hasInaccessibleEntities = true;
-            availableEntities.push({
-              getId: () => id,
-              isHidden: true,
-            } as unknown as E);
-          }
+        const additionalEntity = await this.getEntity(id);
+        if (additionalEntity) {
+          availableEntities.push(additionalEntity);
+        } else {
+          this.hasInaccessibleEntities = true;
+          availableEntities.push({
+            getId: () => id,
+            isHidden: true,
+          } as unknown as E);
         }
       }
 
@@ -206,6 +205,9 @@ export class EntitySelectComponent<E extends Entity> {
     },
   });
 
+  /**
+   * Entities visible to the user, considering current values and filters.
+   */
   availableOptions: Signal<E[]> = computed(() =>
     this.availableOptionsResource.value(),
   );
@@ -239,9 +241,7 @@ export class EntitySelectComponent<E extends Entity> {
    * and optionally updates the current filter function (otherwise reuses the filter previously set)
    * @param newAutocompleteFilter
    */
-  recalculateMatchingInactive(
-    newAutocompleteFilter?: (o: Entity) => boolean,
-  ) {
+  recalculateMatchingInactive(newAutocompleteFilter?: (o: Entity) => boolean) {
     if (newAutocompleteFilter) {
       this.autocompleteFilter.set(newAutocompleteFilter);
     }
