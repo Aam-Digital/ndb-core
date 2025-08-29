@@ -110,7 +110,7 @@ export class EntitySelectComponent<E extends Entity> {
 
   hasInaccessibleEntities: Boolean = false;
 
-  includeInactive = signal<boolean>(false);
+  includeInactive = input<boolean>(false);
   currentlyMatchingInactive: Signal<number> = computed(() => {
     return this.entitiesForType
       .value()
