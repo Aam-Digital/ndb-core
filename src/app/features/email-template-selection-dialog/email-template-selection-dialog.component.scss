@@ -1,0 +1,8 @@
+app-entity-select {
+  width: 100%;
+  display: inline-block;
+
+  ::ng-deep mat-form-field {
+    width: 100%;
+  }
+}
