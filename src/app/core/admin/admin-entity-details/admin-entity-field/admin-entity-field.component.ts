@@ -152,6 +152,7 @@ export class AdminEntityFieldComponent implements OnInit {
       id: this.fieldIdForm,
       label: [this.data.entitySchemaField.label, Validators.required],
       labelShort: [this.data.entitySchemaField.labelShort],
+      displayFullLengthLabel: [this.data.entitySchemaField.displayFullLengthLabel ?? false],
       description: [this.data.entitySchemaField.description],
 
       dataType: [this.data.entitySchemaField.dataType, Validators.required],
