@@ -9,6 +9,7 @@ import { lastValueFrom } from "rxjs";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { EmailTemplate } from "./email-template.entity";
+import { ConfirmationDialogComponent } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 @Injectable({
   providedIn: "root",
@@ -49,10 +50,12 @@ export class EmailClientService {
     const dialogRef = this.dialog.open(EmailTemplateSelectionDialogComponent, {
       data: entity,
     });
-    const template = await lastValueFrom(dialogRef.afterClosed());
+    const result: { template: EmailTemplate; createNote: boolean } | undefined =
+      await lastValueFrom(dialogRef.afterClosed());
 
-    if (!template) return false;
+    if (!result) return false;
 
+    const { template, createNote } = result;
     const params: string[] = [];
     const subject = template.subject?.toString().trim();
     const body = template.body?.toString();
@@ -63,11 +66,23 @@ export class EmailClientService {
     const mailto = `mailto:${encodeURIComponent(recipient)}${params.length ? `?${params.join("&")}` : ""}`;
     window.location.href = mailto;
 
-    // todo: need to check if mail client opened or some time delay?
-    this.formDialog.openView(
-      this.prefilledNote(entity, template),
-      "NoteDetails",
-    );
+    // Only offer to create/edit a note if the user opted in
+    if (createNote) {
+      this.dialog.open(ConfirmationDialogComponent, {
+        data: {
+          title: $localize`Opening email on your device ...`,
+          text: $localize`If nothing is happening, please check your default email client [link to user guide](https://www.lessannoyingcrm.com/help/setting-your-computers-default-email-program)`,
+          closeButton: true,
+        },
+      });
+      setTimeout(async () => {
+        this.formDialog.openView(
+          this.prefilledNote(entity, template),
+          "NoteDetails",
+        );
+      }, 5000);
+    }
+
     return true;
   }
 
