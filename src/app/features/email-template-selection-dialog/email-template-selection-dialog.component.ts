@@ -76,12 +76,9 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
     }
   };
 
-  selectedTemplate(template: EmailTemplate) {
-    this.emailTemplateSelectionForm.setValue(template);
-
+  confirmSelectedTemplate(templateId: string) {
     const selectedTemplate = this.availableTemplates.find(
-      (template: EmailTemplate) =>
-        template.getId() === this.emailTemplateSelectionForm.value,
+      (template: EmailTemplate) => template.getId() === templateId,
     );
     this.dialogRef.close(selectedTemplate);
   }
