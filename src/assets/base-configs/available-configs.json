@@ -13,7 +13,8 @@
       "basic/Config_Permissions.json",
       "basic/Config_SetupWizard.json",
       "basic/MarkdownContent_help.json",
-      "basic/SiteSettings_global.json"
+      "basic/SiteSettings_global.json",
+      "basic/EmailTemplate.json"
     ],
     "locale": "en-US"
   },
@@ -31,7 +32,8 @@
       "basic/Config_SetupWizard.json",
       "basic/MarkdownContent_help.json",
       "basic/Config_Permissions.json",
-      "basic/SiteSettings_global.json"
+      "basic/SiteSettings_global.json",
+      "basic/EmailTemplate.json"
     ],
     "locale": "en-US"
   },

@@ -3,6 +3,10 @@ import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../core/entity/database-field.decorator";
 import { LongTextDatatype } from "../../core/basic-datatypes/string/long-text.datatype";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
+import {
+  INTERACTION_TYPE_CONFIG_ID,
+  InteractionType,
+} from "#src/app/child-dev-project/notes/model/interaction-type.interface";
 
 /**
  * EmailTemplate represents a reusable template for generating emails.
@@ -48,4 +52,13 @@ export class EmailTemplate extends Entity {
     isArray: true,
   })
   availableForEntityTypes?: string;
+
+  @DatabaseField({
+    label: $localize`:EmailTemplate:Category`,
+    description: $localize`:EmailTemplate:You can select a Note category here that is used for documenting a sent email in the record's related notes.`,
+    dataType: "configurable-enum",
+    additional: INTERACTION_TYPE_CONFIG_ID,
+    validators: { required: true },
+  })
+  category: InteractionType;
 }

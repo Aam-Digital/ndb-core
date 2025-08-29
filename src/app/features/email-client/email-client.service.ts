@@ -6,6 +6,10 @@ import { AlertService } from "#src/app/core/alerts/alert.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EmailTemplateSelectionDialogComponent } from "../email-template-selection-dialog/email-template-selection-dialog.component";
 import { lastValueFrom } from "rxjs";
+import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
+import { Note } from "#src/app/child-dev-project/notes/model/note";
+import { EmailTemplate } from "./email-template.entity";
+import { ConfirmationDialogComponent } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 @Injectable({
   providedIn: "root",
@@ -14,6 +18,7 @@ export class EmailClientService {
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly alertService = inject(AlertService);
   private readonly dialog = inject(MatDialog);
+  private readonly formDialog = inject(FormDialogService);
 
   /**
    * Build a mailto link from an entity's email fields and open the local mail client.
@@ -45,10 +50,12 @@ export class EmailClientService {
     const dialogRef = this.dialog.open(EmailTemplateSelectionDialogComponent, {
       data: entity,
     });
-    const template = await lastValueFrom(dialogRef.afterClosed());
+    const result: { template: EmailTemplate; createNote: boolean } | undefined =
+      await lastValueFrom(dialogRef.afterClosed());
 
-    if (!template) return false;
+    if (!result) return false;
 
+    const { template, createNote } = result;
     const params: string[] = [];
     const subject = template.subject?.toString().trim();
     const body = template.body?.toString();
@@ -58,6 +65,38 @@ export class EmailClientService {
 
     const mailto = `mailto:${encodeURIComponent(recipient)}${params.length ? `?${params.join("&")}` : ""}`;
     window.location.href = mailto;
+
+    // Only offer to create/edit a note if the user opted in
+    if (createNote) {
+      const confirmDialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        data: {
+          title: $localize`Opening email on your device...`,
+          text: $localize`If nothing is happening, please check your default email client. <a href="https://www.lessannoyingcrm.com/help/setting-your-computers-default-email-program" target="_blank">link to user guide</a>`,
+          closeButton: true,
+        },
+      });
+      setTimeout(async () => {
+        confirmDialogRef.close();
+        this.formDialog.openView(
+          this.prefilledNote(entity, template),
+          "NoteDetails",
+        );
+      }, 5000);
+    }
+
     return true;
+  }
+
+  private prefilledNote(entity: Entity, template: EmailTemplate): Note {
+    const note = new Note();
+
+    note.subject = template.subject;
+    note.text = template.body;
+    note.category = template.category;
+    // Note related entities (linked records) - link to the entity we sent the email
+    const relatedProperty = Note.getPropertyFor(entity.getType());
+    note[relatedProperty] = [entity.getId()];
+
+    return note;
   }
 }

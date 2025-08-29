@@ -33,6 +33,9 @@
     i18n-placeholder
     [form]="emailTemplateSelectionForm"
   ></app-entity-select>
+  <mat-checkbox [formControl]="createNoteControl" i18n>
+    Create a note after sending
+  </mat-checkbox>
 </mat-dialog-content>
 
 <mat-dialog-actions>
