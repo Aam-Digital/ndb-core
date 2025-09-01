@@ -47,4 +47,28 @@ describe("EmailClientService", () => {
       "Please fill an email address for this record to use this functionality.",
     );
   });
+
+  it("should generate mailto link with bcc for multiple emails", () => {
+    const emails = ["test@example.com", "john@example.com"];
+    const subject = "Subject";
+    const body = "Body";
+
+    const mailto = service.buildMailtoLink(emails, subject, body, true);
+    expect(mailto).toContain("bcc=test%40example.com%2Cjohn%40example.com");
+    expect(mailto).toContain("subject=Subject");
+    expect(mailto).toContain("body=Body");
+    expect(mailto.startsWith("mailto:?bcc=")).toBeTrue();
+  });
+
+  it("should generate mailto link with to for single email", () => {
+    const email = "test@example.com";
+    const subject = "Subject";
+    const body = "Body";
+
+    const mailto = service.buildMailtoLink(email, subject, body, false);
+    expect(mailto).toContain("to=test%40example.com");
+    expect(mailto).toContain("subject=Subject");
+    expect(mailto).toContain("body=Body");
+    expect(mailto.startsWith("mailto:test%40example.com?to=")).toBeTrue();
+  });
 });

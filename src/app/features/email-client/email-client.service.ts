@@ -73,7 +73,7 @@ export class EmailClientService {
     return await lastValueFrom(dialogRef.afterClosed());
   }
 
-  private buildMailtoLink(
+  public buildMailtoLink(
     recipientOrBcc: string | string[],
     subject?: string,
     body?: string,
