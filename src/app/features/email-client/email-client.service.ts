@@ -91,7 +91,7 @@ export class EmailClientService {
   }
 
   private async showConfirmationAndOpenNote(
-    entityOrEntities: Entity[],
+    entities: Entity[],
     template: EmailTemplate,
   ) {
     const confirmDialogRef = this.dialog.open(ConfirmationDialogComponent, {
@@ -104,31 +104,28 @@ export class EmailClientService {
 
     setTimeout(() => {
       confirmDialogRef.close();
-      const entityType = (
-        Array.isArray(entityOrEntities) ? entityOrEntities[0] : entityOrEntities
-      ).constructor as EntityConstructor<Entity>;
+      const entityType = (Array.isArray(entities) ? entities[0] : entities)
+        .constructor as EntityConstructor<Entity>;
 
-      const note = this.prefilledNote(entityOrEntities, entityType, template);
+      const note = this.prefilledNote(entities, entityType, template);
       this.formDialog.openView(note, "NoteDetails");
     }, 5000);
   }
 
   private prefilledNote(
-    entityOrEntities: Entity[],
+    entities: Entity[],
     entityType: EntityConstructor<Entity>,
     template: EmailTemplate,
   ): Note {
     const note = new Note();
-    const isBulk = entityOrEntities.length > 1;
+    const isBulk = entities.length > 1;
 
     note.subject = isBulk ? $localize`Mass mail sent.` : template.subject;
     note.text = template.body;
     note.category = template.category;
 
     const relatedProperty = Note.getPropertyFor(entityType.ENTITY_TYPE);
-    note[relatedProperty] = (entityOrEntities as Entity[]).map((e) =>
-      e.getId(),
-    );
+    note[relatedProperty] = entities.map((e) => e.getId());
 
     return note;
   }
