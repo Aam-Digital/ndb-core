@@ -6,6 +6,7 @@ import { FormsModule } from "@angular/forms";
 import { AdminIconComponent } from "../admin-icon-input/admin-icon-input.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatSelectModule } from "@angular/material/select";
 
 @Component({
   selector: "app-menu-item-form",
@@ -17,6 +18,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     AdminIconComponent,
     FaIconComponent,
     MatTooltipModule,
+    MatSelectModule,
   ],
   templateUrl: "./menu-item-form.component.html",
   styleUrls: ["./menu-item-form.component.scss"],
@@ -24,6 +26,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 export class MenuItemFormComponent {
   @Input() item!: MenuItem;
   @Input() showLinkTooltip = false;
+  @Input() showLinkDropdown = false;
+  @Input() linkOptions: { value: string; label: string }[] = []; //used if showLinkDropdown is true
   @Output() itemChange = new EventEmitter<MenuItem>();
 
   onChange() {
