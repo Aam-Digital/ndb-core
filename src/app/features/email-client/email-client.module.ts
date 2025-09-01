@@ -29,8 +29,7 @@ export class EmailClientServiceModule {
         label: $localize`:entity context menu:Send Email`,
         icon: "envelope",
         permission: "read",
-        execute: async (e: Entity) =>
-          emailClientService.executeMailto(e),
+        execute: async (e: Entity) => emailClientService.executeMailto(e),
         visible: async (entity) => {
           // Only show if there is at least one email field in the schema
           const schema = entity.getConstructor().schema;

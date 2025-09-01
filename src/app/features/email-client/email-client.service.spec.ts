@@ -6,7 +6,7 @@ import { AlertService } from "#src/app/core/alerts/alert.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EmailDatatype } from "#src/app/core/basic-datatypes/string/email.datatype";
 
-fdescribe("EmailClientService", () => {
+describe("EmailClientService", () => {
   let service: EmailClientService;
   let mockRegistry: jasmine.SpyObj<EntityRegistry>;
   let mockAlert: jasmine.SpyObj<AlertService>;
