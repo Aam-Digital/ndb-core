@@ -1,5 +1,11 @@
 <mat-dialog-content>
   <h2 i18n>Select Email Template</h2>
+  @if (excludedCount > 0) {
+    <p class="warning-message" i18n>
+      {{ excludedCount }} records were excluded due to missing email address.
+    </p>
+  }
+
   <p>
     <span i18n>
       Select the template to use for sending an email to this record. If you

@@ -35,7 +35,11 @@ export class EmailClientService {
     const entityConstructor =
       entityType ?? this.entityRegistry.get(entityList[0].getType());
 
-    const recipients = this.getEmailsForEntities(entityList, entityConstructor);
+    const { recipients, excludedEntities } = this.getEmailsForEntities(
+      entityList,
+      entityConstructor,
+    );
+
     if (!recipients.length) {
       this.alertService.addWarning(
         $localize`Please fill an email address for this record to use this functionality.`,
@@ -43,7 +47,14 @@ export class EmailClientService {
       return false;
     }
 
-    const result = await this.selectTemplate(entityList[0]);
+    const filteredEntities = entityList.filter(
+      (e) => !excludedEntities.includes(e),
+    );
+
+    const result = await this.selectTemplate(
+      filteredEntities[0],
+      excludedEntities.length,
+    );
     if (!result) return false;
 
     const { template, createNote } = result;
@@ -58,7 +69,7 @@ export class EmailClientService {
 
     // Only offer to create/edit a note if the user opted in
     if (createNote) {
-      await this.showConfirmationAndOpenNote(entityList, template);
+      await this.showConfirmationAndOpenNote(filteredEntities, template);
     }
 
     return true;
@@ -66,9 +77,10 @@ export class EmailClientService {
 
   private async selectTemplate(
     entity: Entity,
+    excludedCount: number,
   ): Promise<{ template: EmailTemplate; createNote: boolean } | undefined> {
     const dialogRef = this.dialog.open(EmailTemplateSelectionDialogComponent, {
-      data: entity,
+      data: { entity, excludedCount },
     });
     return await lastValueFrom(dialogRef.afterClosed());
   }
@@ -120,7 +132,7 @@ export class EmailClientService {
     const note = new Note();
     const isBulk = entities.length > 1;
 
-    note.subject = isBulk ? $localize`Mass mail sent.` : template.subject;
+    note.subject = isBulk ? $localize`Mass mail sent` : template.subject;
     note.text = template.body;
     note.category = template.category;
 
@@ -130,22 +142,26 @@ export class EmailClientService {
     return note;
   }
 
-  /** Extract first EmailDatatype field value*/
   private getEmailsForEntities(
     entities: Entity[],
     entityType: EntityConstructor<Entity>,
-  ): string[] {
+  ): { recipients: string[]; excludedEntities: Entity[] } {
     const emailFieldId = this.findFirstEmailFieldId(entityType);
-    if (!emailFieldId) return [];
+    if (!emailFieldId) return { recipients: [], excludedEntities: entities };
 
-    const set = new Set<string>();
+    const recipients = new Set<string>();
+    const excludedEntities: Entity[] = [];
+
     for (const e of entities) {
       const value = e[emailFieldId];
       if (value) {
-        set.add(value);
+        recipients.add(value);
+      } else {
+        excludedEntities.push(e);
       }
     }
-    return Array.from(set);
+
+    return { recipients: Array.from(recipients), excludedEntities };
   }
 
   /** Find the first field id with EmailDatatype in the schema */

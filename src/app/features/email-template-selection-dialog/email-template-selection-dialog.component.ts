@@ -38,17 +38,27 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
 
   EmailTemplate = EmailTemplate;
   availableTemplates: EmailTemplate[] = [];
+  excludedCount: number = 0;
 
   private readonly dialogRef = inject(
     MatDialogRef<EmailTemplateSelectionDialogComponent>,
   );
   private readonly entityMapper = inject(EntityMapperService);
-  private readonly entity = inject<Entity>(MAT_DIALOG_DATA);
+  private readonly dialogData = inject(MAT_DIALOG_DATA) as {
+    entity: Entity;
+    excludedCount: number;
+  };
+
+  get entity(): Entity {
+    return this.dialogData.entity;
+  }
 
   async ngOnInit() {
     this.availableTemplates = (await this.entityMapper.loadType(
       EmailTemplate.ENTITY_TYPE,
     )) as EmailTemplate[];
+
+    this.excludedCount = this.dialogData.excludedCount ?? 0;
   }
 
   /**
