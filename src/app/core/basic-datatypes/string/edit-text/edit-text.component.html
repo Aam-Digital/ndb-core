@@ -1,5 +1,13 @@
 <mat-form-field>
-  @if (!hideLabel) {
+  @if (displayFullLengthLabel) {
+    <label
+      for="{{ formFieldConfig.id }}"
+      [class.custom-label-dark]="!formControl.disabled"
+      [class.custom-label-light]="formControl.disabled"
+      >{{ label }}</label
+    >
+  }
+  @else if (!hideLabel) {
     <mat-label
       [matTooltip]="!displayFullLengthLabel ? label : null"
       matTooltipPosition="before"
@@ -9,11 +17,14 @@
     </mat-label>
   }
 
-  <input [formControl]="formControl" matInput type="text" />
+  <input
+    [formControl]="formControl"
+    matInput
+    type="text"
+    id="{{ formFieldConfig.id }}"
+  />
 
   <mat-error>
     <app-error-hint [form]="formControl"></app-error-hint>
   </mat-error>
 </mat-form-field>
-
-
