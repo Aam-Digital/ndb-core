@@ -25,78 +25,139 @@ export class EmailClientService {
    *
    * If no default email client is available on the device / configured in the browser, then nothing will happen here.
    */
-  async executeMailtoFromEntity(entity: Entity): Promise<boolean> {
-    const entityType = this.entityRegistry.get(
-      entity.getType(),
-    ) as EntityConstructor<Entity>;
+  async executeMailto(
+    entities: Entity | Entity[],
+    entityType?: EntityConstructor<Entity>,
+  ): Promise<boolean> {
+    const isBulk = Array.isArray(entities);
+    const entityList = isBulk ? entities : [entities];
 
-    let recipient: string | null = null;
+    const entityConstructor =
+      entityType ?? this.entityRegistry.get(entityList[0].getType());
 
-    for (const [, field] of entityType.schema.entries()) {
-      if (field.dataType === EmailDatatype.dataType) {
-        const emailValue = entity[field.id];
-        recipient = emailValue;
-        break; // Use only the first found email field
-      }
-    }
-
-    if (!recipient) {
+    const recipients = this.getEmailsForEntities(entityList, entityConstructor);
+    if (!recipients.length) {
       this.alertService.addWarning(
-        "Please fill an email address for this record to use this functionality.",
+        $localize`Please fill an email address for this record to use this functionality.`,
       );
       return false;
     }
 
-    const dialogRef = this.dialog.open(EmailTemplateSelectionDialogComponent, {
-      data: entity,
-    });
-    const result: { template: EmailTemplate; createNote: boolean } | undefined =
-      await lastValueFrom(dialogRef.afterClosed());
-
+    const result = await this.selectTemplate(entityList[0]);
     if (!result) return false;
 
     const { template, createNote } = result;
-    const params: string[] = [];
-    const subject = template.subject?.toString().trim();
-    const body = template.body?.toString();
+    const mailto = this.buildMailtoLink(
+      isBulk ? recipients : recipients[0],
+      template.subject,
+      template.body,
+      isBulk,
+    );
 
-    if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
-    if (body) params.push(`body=${encodeURIComponent(body)}`);
-
-    const mailto = `mailto:${encodeURIComponent(recipient)}${params.length ? `?${params.join("&")}` : ""}`;
     window.location.href = mailto;
 
     // Only offer to create/edit a note if the user opted in
     if (createNote) {
-      const confirmDialogRef = this.dialog.open(ConfirmationDialogComponent, {
-        data: {
-          title: $localize`Opening email on your device...`,
-          text: $localize`If nothing is happening, please check your default email client. <a href="https://www.lessannoyingcrm.com/help/setting-your-computers-default-email-program" target="_blank">link to user guide</a>`,
-          closeButton: true,
-        },
-      });
-      setTimeout(async () => {
-        confirmDialogRef.close();
-        this.formDialog.openView(
-          this.prefilledNote(entity, template),
-          "NoteDetails",
-        );
-      }, 5000);
+      await this.showConfirmationAndOpenNote(entityList, template);
     }
 
     return true;
   }
 
-  private prefilledNote(entity: Entity, template: EmailTemplate): Note {
-    const note = new Note();
+  private async selectTemplate(
+    entity: Entity,
+  ): Promise<{ template: EmailTemplate; createNote: boolean } | undefined> {
+    const dialogRef = this.dialog.open(EmailTemplateSelectionDialogComponent, {
+      data: entity,
+    });
+    return await lastValueFrom(dialogRef.afterClosed());
+  }
 
-    note.subject = template.subject;
+  private buildMailtoLink(
+    recipientOrBcc: string | string[],
+    subject?: string,
+    body?: string,
+    isBcc = false,
+  ): string {
+    const params: string[] = [];
+    if (isBcc && Array.isArray(recipientOrBcc)) {
+      params.push(`bcc=${encodeURIComponent(recipientOrBcc.join(","))}`);
+    } else {
+      params.push(`to=${encodeURIComponent(recipientOrBcc as string)}`);
+    }
+    if (subject) params.push(`subject=${encodeURIComponent(subject.trim())}`);
+    if (body) params.push(`body=${encodeURIComponent(body)}`);
+    return `mailto:${isBcc ? "" : encodeURIComponent(recipientOrBcc as string)}${params.length ? `?${params.join("&")}` : ""}`;
+  }
+
+  private async showConfirmationAndOpenNote(
+    entityOrEntities: Entity[],
+    template: EmailTemplate,
+  ) {
+    const confirmDialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: $localize`Opening email on your device...`,
+        text: $localize`If nothing is happening, please check your default email client. <a href="https://www.lessannoyingcrm.com/help/setting-your-computers/default-email-program" target="_blank">link to user guide</a>`,
+        closeButton: true,
+      },
+    });
+
+    setTimeout(() => {
+      confirmDialogRef.close();
+      const entityType = (
+        Array.isArray(entityOrEntities) ? entityOrEntities[0] : entityOrEntities
+      ).constructor as EntityConstructor<Entity>;
+
+      const note = this.prefilledNote(entityOrEntities, entityType, template);
+      this.formDialog.openView(note, "NoteDetails");
+    }, 5000);
+  }
+
+  private prefilledNote(
+    entityOrEntities: Entity[],
+    entityType: EntityConstructor<Entity>,
+    template: EmailTemplate,
+  ): Note {
+    const note = new Note();
+    const isBulk = entityOrEntities.length > 1;
+
+    note.subject = isBulk ? $localize`Mass mail sent.` : template.subject;
     note.text = template.body;
     note.category = template.category;
-    // Note related entities (linked records) - link to the entity we sent the email
-    const relatedProperty = Note.getPropertyFor(entity.getType());
-    note[relatedProperty] = [entity.getId()];
+
+    const relatedProperty = Note.getPropertyFor(entityType.ENTITY_TYPE);
+    note[relatedProperty] = (entityOrEntities as Entity[]).map((e) =>
+      e.getId(),
+    );
 
     return note;
+  }
+
+  /** Extract first EmailDatatype field value*/
+  private getEmailsForEntities(
+    entities: Entity[],
+    entityType: EntityConstructor<Entity>,
+  ): string[] {
+    const emailFieldId = this.findFirstEmailFieldId(entityType);
+    if (!emailFieldId) return [];
+
+    const set = new Set<string>();
+    for (const e of entities) {
+      const value = e[emailFieldId];
+      set.add(value);
+    }
+    return Array.from(set);
+  }
+
+  /** Find the first field id with EmailDatatype in the schema */
+  private findFirstEmailFieldId(
+    entityType: EntityConstructor<Entity>,
+  ): string | null {
+    for (const [, field] of entityType.schema.entries()) {
+      if (field.dataType === EmailDatatype.dataType) {
+        return field.id;
+      }
+    }
+    return null;
   }
 }

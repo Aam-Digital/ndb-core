@@ -30,7 +30,7 @@ export class EmailClientServiceModule {
         icon: "envelope",
         permission: "read",
         execute: async (e: Entity) =>
-          emailClientService.executeMailtoFromEntity(e),
+          emailClientService.executeMailto(e),
         visible: async (entity) => {
           // Only show if there is at least one email field in the schema
           const schema = entity.getConstructor().schema;

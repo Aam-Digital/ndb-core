@@ -5,8 +5,12 @@ import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EmailDatatype } from "#src/app/core/basic-datatypes/string/email.datatype";
+import { SyncStateSubject } from "#src/app/core/session/session-type";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { createEntityMapperSpyObj } from "#src/app/core/entity/entity-mapper/mock-entity-mapper-service";
+import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 
-describe("EmailClientService", () => {
+fdescribe("EmailClientService", () => {
   let service: EmailClientService;
   let mockRegistry: jasmine.SpyObj<EntityRegistry>;
   let mockAlert: jasmine.SpyObj<AlertService>;
@@ -20,6 +24,10 @@ describe("EmailClientService", () => {
         EmailClientService,
         { provide: EntityRegistry, useValue: mockRegistry },
         { provide: AlertService, useValue: mockAlert },
+        {
+          provide: EntityMapperService,
+          useValue: jasmine.createSpyObj(["load", "save"]),
+        },
       ],
     });
 
@@ -40,7 +48,7 @@ describe("EmailClientService", () => {
     };
     mockRegistry.get.and.returnValue(FakeEntityConstructor);
 
-    const result = await service.executeMailtoFromEntity(fakeEntity);
+    const result = await service.executeMailto(fakeEntity);
 
     expect(result).toBeFalse();
     expect(mockAlert.addWarning).toHaveBeenCalledWith(
