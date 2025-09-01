@@ -78,6 +78,16 @@ export class AdminMenuItemComponent {
     this.itemChange.emit(this.item);
   }
 
+  onSubItemChange(updatedSubItem: MenuItemForAdminUi) {
+  this.item = {
+    ...this.item,
+    subMenu: this.item.subMenu.map(sub =>
+      sub.uniqueId === updatedSubItem.uniqueId ? updatedSubItem : sub
+    ),
+  };
+  this.itemChange.emit(this.item);
+}
+
   onDelete(item: MenuItemForAdminUi): void {
     this.deleteItem.emit(item);
   }
