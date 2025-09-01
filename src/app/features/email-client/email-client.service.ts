@@ -144,7 +144,9 @@ export class EmailClientService {
     const set = new Set<string>();
     for (const e of entities) {
       const value = e[emailFieldId];
-      set.add(value);
+      if (value) {
+        set.add(value);
+      }
     }
     return Array.from(set);
   }
