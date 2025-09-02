@@ -3,6 +3,9 @@ import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { inject, Injectable } from "@angular/core";
 import { AlertService } from "#src/app/core/alerts/alert.service";
+import { MatDialog } from "@angular/material/dialog";
+import { EmailTemplateSelectionDialogComponent } from "../email-template-selection-dialog/email-template-selection-dialog.component";
+import { lastValueFrom } from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -10,13 +13,14 @@ import { AlertService } from "#src/app/core/alerts/alert.service";
 export class EmailClientService {
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly alertService = inject(AlertService);
+  private readonly dialog = inject(MatDialog);
 
   /**
    * Build a mailto link from an entity's email fields and open the local mail client.
    *
    * If no default email client is available on the device / configured in the browser, then nothing will happen here.
    */
-  executeMailtoFromEntity(entity: Entity): boolean {
+  async executeMailtoFromEntity(entity: Entity): Promise<boolean> {
     const entityType = this.entityRegistry.get(
       entity.getType(),
     ) as EntityConstructor<Entity>;
@@ -38,7 +42,21 @@ export class EmailClientService {
       return false;
     }
 
-    const mailto = "mailto:" + encodeURIComponent(recipient);
+    const dialogRef = this.dialog.open(EmailTemplateSelectionDialogComponent, {
+      data: entity,
+    });
+    const template = await lastValueFrom(dialogRef.afterClosed());
+
+    if (!template) return false;
+
+    const params: string[] = [];
+    const subject = template.subject?.toString().trim();
+    const body = template.body?.toString();
+
+    if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
+    if (body) params.push(`body=${encodeURIComponent(body)}`);
+
+    const mailto = `mailto:${encodeURIComponent(recipient)}${params.length ? `?${params.join("&")}` : ""}`;
     window.location.href = mailto;
     return true;
   }
