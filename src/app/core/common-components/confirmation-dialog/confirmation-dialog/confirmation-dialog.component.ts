@@ -15,7 +15,12 @@ import { MarkdownComponent } from "ngx-markdown";
 @Component({
   selector: "app-confirmation-dialog",
   templateUrl: "./confirmation-dialog.component.html",
-  imports: [DialogCloseComponent, MatDialogModule, MatButtonModule, MarkdownComponent],
+  imports: [
+    DialogCloseComponent,
+    MatDialogModule,
+    MatButtonModule,
+    MarkdownComponent,
+  ],
 })
 export class ConfirmationDialogComponent {
   dialogRef = inject<MatDialogRef<ConfirmationDialogComponent>>(MatDialogRef);
