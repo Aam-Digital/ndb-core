@@ -62,7 +62,7 @@ export class EmailClientService {
     if (!result) return false;
 
     const { template, createNote } = result;
-    
+
     const params: string[] = [];
     const subject = template.subject?.toString().trim();
     const body = template.body?.toString();
