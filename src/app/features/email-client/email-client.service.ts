@@ -9,7 +9,10 @@ import { lastValueFrom } from "rxjs";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { EmailTemplate } from "./email-template.entity";
-import { ConfirmationDialogComponent } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import {
+  ConfirmationDialogComponent,
+  ConfirmationDialogConfig,
+} from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 @Injectable({
   providedIn: "root",
@@ -74,8 +77,10 @@ export class EmailClientService {
         title: $localize`Opening email on your device...`,
         text: $localize`If nothing is happening, please check your default email client. <a href="https://chatwoot.help/hc/aam-digital/articles/1756720692-send-e_mail-and-use-mail-templates" target="_blank">link to user guide</a>`,
         closeButton: true,
-      },
+        buttons: [{ text: $localize`Continue` }],
+      } as ConfirmationDialogConfig,
     });
+
     setTimeout(async () => {
       confirmDialogRef.close();
 
