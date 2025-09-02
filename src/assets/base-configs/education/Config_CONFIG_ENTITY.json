@@ -1284,6 +1284,7 @@
           "dataType": "configurable-enum",
           "additional": "center",
           "label": "Center",
+          "isArray": true,
           "anonymize": "retain"
         },
         "gender": {

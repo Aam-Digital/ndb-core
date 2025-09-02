@@ -1,8 +1,13 @@
-@for (val of iterableValue; track val; let i = $index) {
-  <span class="colored" [style.background-color]="val.color">{{
-    val.label
-  }}</span>
-  @if (i !== iterableValue.length - 1) {
-    ,&nbsp;
-  }
+@if (iterableValue.length === 1) {
+  <span class="colored" [style.background-color]="iterableValue[0].color">
+    {{ iterableValue[0].label }}
+  </span>
+} @else {
+  <span class="bubble-list">
+    @for (val of iterableValue; track val) {
+      <span class="colored-bubble" [style.background-color]="val.color">
+        {{ val.label }}
+      </span>
+    }
+  </span>
 }

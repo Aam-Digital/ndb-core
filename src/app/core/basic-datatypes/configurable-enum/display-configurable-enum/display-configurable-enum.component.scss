@@ -3,7 +3,6 @@
 .colored {
   display: inline-flex;
   width: 100%;
-
   align-items: center;
   justify-content: start;
   min-width: 110px;
@@ -16,7 +15,23 @@
   overflow: hidden;
   font-size: inherit;
   font-family: inherit;
-
-  /* default color, overwritten if option defines a custom color */
   background-color: colors.$grey-transparent;
+}
+
+.colored-bubble {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 6px;
+  margin-right: 6px;
+  margin-bottom: 2px;
+  background: colors.$grey-transparent;
+  white-space: nowrap;
+  vertical-align: middle;
+  font-size: inherit;
+  font-family: inherit;
+}
+
+.bubble-list {
+  display: flex;
+  align-items: center;
 }
