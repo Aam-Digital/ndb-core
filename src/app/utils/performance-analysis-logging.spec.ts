@@ -22,9 +22,8 @@ class TestClass {
 
   @PerformanceAnalysisLogging
   async testFun(max: number, other?: number) {
-    let result = 0;
     for (let x = 0; x < max; x++) {
-      result += Math.sqrt(x);
+      Math.sqrt(x);
     }
     return [this.result, max, other];
   }
