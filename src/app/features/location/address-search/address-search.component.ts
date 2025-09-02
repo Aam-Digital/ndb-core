@@ -92,38 +92,57 @@ export class AddressSearchComponent implements OnInit {
   @ViewChild("inputElement") private inputElem: ElementRef<HTMLInputElement>;
   private inputStream = new Subject<string>();
   private searchClickStream = new Subject<string>();
+  private enterKeyStream = new Subject<string>();
   private lastSearch: string;
 
   /** do not display selected item in the input field because this should be an empty search field */
   displayFn = () => "";
+
+  // Track if a search has completed (for fallback option)
+  searchCompleted = false;
 
   ngOnInit() {
     this.initSearchPipeline();
   }
 
   private initSearchPipeline() {
-    merge(this.inputStream.pipe(debounceTime(2500)), this.searchClickStream)
+    merge(
+      this.inputStream.pipe(debounceTime(2500)),
+      this.searchClickStream,
+      this.enterKeyStream, // immediate search on ENTER
+    )
       .pipe(
         map((input) => input.trim()),
         filter((input) => this.isRelevantInput(input)),
         tap(() => {
           this.nothingFound = false;
           this.loading = true;
+          this.searchCompleted = false; // Reset before search
         }),
         debounceTime(200),
         concatMap((res) => this.getGeoLookupResult(res)),
       )
-      .subscribe((res) => this.filteredOptions.next(res));
+      .subscribe((res) => {
+        this.filteredOptions.next(res);
+        this.searchCompleted = true; // Set after search completes
+      });
   }
 
   private lastUserInput: string = "";
 
-  triggerInputUpdate() {
+  triggerInputUpdate(event?: KeyboardEvent) {
     this.lastUserInput = this.inputElem.nativeElement.value;
-    this.inputStream.next(this.inputElem.nativeElement.value);
+    // If ENTER is pressed, trigger immediate search
+    if (event && event.key === "Enter") {
+      this.enterKeyStream.next(this.inputElem.nativeElement.value);
+    } else {
+      this.searchCompleted = false; // Hide fallback until search completes
+      this.inputStream.next(this.inputElem.nativeElement.value);
+    }
   }
   searchClick() {
     this.lastUserInput = this.inputElem.nativeElement.value;
+    this.searchCompleted = false;
     this.searchClickStream.next(this.inputElem.nativeElement.value);
   }
 

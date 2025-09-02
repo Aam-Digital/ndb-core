@@ -6,7 +6,7 @@
     type="text"
     matInput
     [value]="_searchText"
-    (keyup)="triggerInputUpdate()"
+    (keyup)="triggerInputUpdate($event)"
     [matAutocomplete]="auto"
   />
 
@@ -39,9 +39,11 @@
       <mat-option disabled i18n>Location not found</mat-option>
     }
 
-    <!-- Always show user-typed value if not empty and not in options -->
+    <!-- Show fallback only after search completed -->
     @if (
-      inputElement.value?.length > 2 && !isInputInOptions(inputElement.value)
+      searchCompleted &&
+      inputElement.value?.length > 2 &&
+      !isInputInOptions(inputElement.value)
     ) {
       <mat-option [value]="inputElement.value" i18n>
         <span class="address-warning">
