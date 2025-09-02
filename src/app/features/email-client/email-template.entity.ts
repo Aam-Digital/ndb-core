@@ -47,5 +47,5 @@ export class EmailTemplate extends Entity {
     viewComponent: "DisplayEntityType",
     isArray: true,
   })
-  availableForEntityTypes?: string;
+  availableForEntityTypes?: string[];
 }
