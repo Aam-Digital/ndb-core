@@ -87,8 +87,8 @@ export class EmailClientService {
 
   public buildMailtoLink(
     recipientOrBcc: string | string[],
-    subject?: string,
-    body?: string,
+    subject: string,
+    body: string,
     isBcc = false,
   ): string {
     const params: string[] = [];
@@ -97,9 +97,14 @@ export class EmailClientService {
     } else {
       params.push(`to=${encodeURIComponent(recipientOrBcc as string)}`);
     }
-    if (subject) params.push(`subject=${encodeURIComponent(subject.trim())}`);
-    if (body) params.push(`body=${encodeURIComponent(body)}`);
-    return `mailto:${isBcc ? "" : encodeURIComponent(recipientOrBcc as string)}${params.length ? `?${params.join("&")}` : ""}`;
+    params.push(`subject=${encodeURIComponent(subject.trim())}`);
+    params.push(`body=${encodeURIComponent(body)}`);
+
+    if (isBcc) {
+      return `mailto:?${params.join("&")}`;
+    } else {
+      return `mailto:${encodeURIComponent(recipientOrBcc as string)}${params.length ? `?${params.join("&")}` : ""}`;
+    }
   }
 
   private async showConfirmationAndOpenNote(
