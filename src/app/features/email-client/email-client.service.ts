@@ -15,6 +15,9 @@ import { ConfirmationDialogComponent } from "#src/app/core/common-components/con
   providedIn: "root",
 })
 export class EmailClientService {
+  /** milliseconds to wait for the email client to open before discarding the confirmation dialog */
+  private static readonly EMAIL_CLIENT_WAIT_DURATION = 5000;
+
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly alertService = inject(AlertService);
   private readonly dialog = inject(MatDialog);
@@ -66,23 +69,23 @@ export class EmailClientService {
     const mailto = `mailto:${encodeURIComponent(recipient)}${params.length ? `?${params.join("&")}` : ""}`;
     window.location.href = mailto;
 
-    // Only offer to create/edit a note if the user opted in
-    if (createNote) {
-      const confirmDialogRef = this.dialog.open(ConfirmationDialogComponent, {
-        data: {
-          title: $localize`Opening email on your device...`,
-          text: $localize`If nothing is happening, please check your default email client. <a href="https://chatwoot.help/hc/aam-digital/articles/1756720692-send-e_mail-and-use-mail-templates" target="_blank">link to user guide</a>`,
-          closeButton: true,
-        },
-      });
-      setTimeout(async () => {
-        confirmDialogRef.close();
+    const confirmDialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: $localize`Opening email on your device...`,
+        text: $localize`If nothing is happening, please check your default email client. <a href="https://chatwoot.help/hc/aam-digital/articles/1756720692-send-e_mail-and-use-mail-templates" target="_blank">link to user guide</a>`,
+        closeButton: true,
+      },
+    });
+    setTimeout(async () => {
+      confirmDialogRef.close();
+
+      if (createNote) {
         this.formDialog.openView(
           this.prefilledNote(entity, template),
           "NoteDetails",
         );
-      }, 5000);
-    }
+      }
+    }, EmailClientService.EMAIL_CLIENT_WAIT_DURATION);
 
     return true;
   }
