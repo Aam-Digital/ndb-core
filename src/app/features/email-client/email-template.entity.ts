@@ -47,6 +47,7 @@ export class EmailTemplate extends Entity {
    */
   @DatabaseField({
     label: $localize`:EmailTemplate:Available for Entity Type(s)`,
+    description: $localize`:EmailTemplate:Select for which records this template is offered. If none are selected, the template is available for all record types.`,
     editComponent: "EditEntityType",
     viewComponent: "DisplayEntityType",
     isArray: true,
@@ -58,7 +59,6 @@ export class EmailTemplate extends Entity {
     description: $localize`:EmailTemplate:You can select a Note category here that is used for documenting a sent email in the record's related notes.`,
     dataType: "configurable-enum",
     additional: INTERACTION_TYPE_CONFIG_ID,
-    validators: { required: true },
   })
   category: InteractionType;
 }
