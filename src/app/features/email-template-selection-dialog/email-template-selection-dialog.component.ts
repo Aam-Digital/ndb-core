@@ -1,6 +1,6 @@
 import { EntitySelectComponent } from "#src/app/core/common-components/entity-select/entity-select.component";
 import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import {
@@ -32,12 +32,11 @@ import { MatCheckbox } from "@angular/material/checkbox";
   templateUrl: "./email-template-selection-dialog.component.html",
   styleUrl: "./email-template-selection-dialog.component.scss",
 })
-export class EmailTemplateSelectionDialogComponent implements OnInit {
+export class EmailTemplateSelectionDialogComponent {
   emailTemplateSelectionForm: FormControl = new FormControl();
   createNoteControl = new FormControl<boolean>(true);
 
   EmailTemplate = EmailTemplate;
-  availableTemplates: EmailTemplate[] = [];
 
   private readonly dialogRef = inject(
     MatDialogRef<EmailTemplateSelectionDialogComponent>,
@@ -45,45 +44,20 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly entity = inject<Entity>(MAT_DIALOG_DATA);
 
-  async ngOnInit() {
-    this.availableTemplates = (await this.entityMapper.loadType(
-      EmailTemplate.ENTITY_TYPE,
-    )) as EmailTemplate[];
-  }
-
   /**
    * Filter email templates to show based on current entity type.
    * Shows only templates explicitly matching the entity type if any exist,
    * otherwise shows templates with no restrictions (null or empty availableForEntityTypes).
-   *
-   * @param e - An EmailTemplate instance to test.
-   * @returns true if the template should be shown, false otherwise.
    */
-  filteredTemplate = (e: EmailTemplate): boolean => {
-    const currentType = this.entity.getType();
-    const matchedTemplate = this.availableTemplates.some(
-      (t) =>
-        Array.isArray(t.availableForEntityTypes) &&
-        t.availableForEntityTypes.includes(currentType),
-    );
+  filteredTemplate = (e: EmailTemplate): boolean =>
+    !e.availableForEntityTypes ||
+    e.availableForEntityTypes.length === 0 ||
+    e.availableForEntityTypes.includes(this.entity.getType());
 
-    if (matchedTemplate) {
-      // Show only templates explicitly for current entity type
-      return (
-        Array.isArray(e.availableForEntityTypes) &&
-        e.availableForEntityTypes.includes(currentType)
-      );
-    } else {
-      return (
-        !Array.isArray(e.availableForEntityTypes) ||
-        e.availableForEntityTypes.length === 0
-      );
-    }
-  };
-
-  confirmSelectedTemplate(templateId: string | null) {
-    const selectedTemplate = this.availableTemplates.find(
-      (template: EmailTemplate) => template.getId() === templateId,
+  async confirmSelectedTemplate(templateId: string) {
+    const selectedTemplate = await this.entityMapper.load(
+      EmailTemplate,
+      templateId,
     );
     if (!selectedTemplate) return;
 

@@ -27,11 +27,12 @@
     [entityType]="EmailTemplate.ENTITY_TYPE"
     [multi]="false"
     [additionalFilter]="filteredTemplate"
-    label="Email Template"
+    label="Message Template"
     i18n-label
-    placeholder="Select an email template"
+    placeholder="Select a template to use and adapt"
     i18n-placeholder
     [form]="emailTemplateSelectionForm"
+    [disableCreateNew]="true"
   ></app-entity-select>
   <mat-checkbox [formControl]="createNoteControl" i18n>
     Create a note after sending
