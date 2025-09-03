@@ -41,7 +41,6 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
   createNoteControl = new FormControl<boolean>(true);
   sendAsBCC = new FormControl<boolean>(true);
   EmailTemplate = EmailTemplate;
-  availableTemplates: EmailTemplate[] = [];
   excludedEntityCount: number = 0;
   isBulkEmail: boolean = false;
 
@@ -60,10 +59,6 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.availableTemplates = (await this.entityMapper.loadType(
-      EmailTemplate.ENTITY_TYPE,
-    )) as EmailTemplate[];
-
     this.excludedEntityCount = this.dialogData.excludedEntityCount ?? 0;
     this.isBulkEmail = this.dialogData.isBulk;
   }

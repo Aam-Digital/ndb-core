@@ -59,7 +59,6 @@ export class EmailTemplate extends Entity {
     description: $localize`:EmailTemplate:You can select a Note category here that is used for documenting a sent email in the record's related notes.`,
     dataType: "configurable-enum",
     additional: INTERACTION_TYPE_CONFIG_ID,
-    validators: { required: true },
   })
   category: InteractionType;
 }
