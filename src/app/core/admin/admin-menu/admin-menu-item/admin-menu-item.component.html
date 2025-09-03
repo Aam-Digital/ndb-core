@@ -41,12 +41,13 @@
 
       @if (item.subMenu && item.subMenu.length > 0) {
         <div class="submenu">
-          @for (subItem of item.subMenu; track subItem; let i = $index) {
+          @for (subItem of item.subMenu; track subItem.uniqueId) {
             <app-admin-menu-item
               [item]="subItem"
               [connectedTo]="connectedTo"
               (itemDrop)="onDragDrop($event)"
               (deleteItem)="removeSubItem(subItem)"
+              (itemChange)="onSubItemChange($event)"
               class="submenu-list"
             ></app-admin-menu-item>
           }
