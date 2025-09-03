@@ -119,6 +119,12 @@ Autocomplete
               [matTooltip]="getPlainTextTooltip(item.asString)"
               matTooltipPosition="above"
               [innerHTML]="item.asString"
+              [style.color]="
+                item.asString.includes('[Invalid:') ||
+                item.asString.includes('not defined')
+                  ? item.initial['color']
+                  : null
+              "
             ></span>
           } @else {
             <ng-template
