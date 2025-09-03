@@ -29,8 +29,7 @@ export class EmailClientServiceModule {
         label: $localize`:entity context menu:Send Email`,
         icon: "envelope",
         permission: "read",
-        execute: async (e: Entity) =>
-          emailClientService.executeMailtoFromEntity(e),
+        execute: async (e: Entity) => emailClientService.executeMailto(e),
         visible: async (entity) => {
           // Only show if there is at least one email field in the schema
           const schema = entity.getConstructor().schema;
@@ -57,7 +56,7 @@ const viewConfigs: ViewConfig[] = [
     component: "EntityList",
     config: {
       entityType: EmailTemplate.ENTITY_TYPE,
-      columns: ["subject", "body", "availableForEntityTypes"],
+      columns: ["subject", "body", "availableForEntityTypes", "category"],
     } as EntityListConfig,
   },
 
@@ -75,7 +74,10 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: ["subject", "body", "availableForEntityTypes"],
+                    fields: ["subject", "body"],
+                  },
+                  {
+                    fields: ["availableForEntityTypes", "category"],
                   },
                 ],
               },
