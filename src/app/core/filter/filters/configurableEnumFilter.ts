@@ -1,5 +1,6 @@
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { Entity } from "../../entity/model/entity";
+
 import { DataFilter, FilterSelectionOption, SelectableFilter } from "./filters";
 
 export class ConfigurableEnumFilter<
