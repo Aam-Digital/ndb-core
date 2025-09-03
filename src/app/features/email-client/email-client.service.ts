@@ -140,7 +140,7 @@ export class EmailClientService {
     const note = new Note();
     const isBulk = entities.length > 1;
 
-    note.subject = isBulk ? $localize`Mass mail sent` : template.subject;
+    note.subject = template.subject;
     note.text = template.body;
     note.category = template.category;
 
