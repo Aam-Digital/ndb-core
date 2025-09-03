@@ -26,6 +26,10 @@ import { MatSelectModule } from "@angular/material/select";
 export class MenuItemFormComponent {
   @Input() item!: MenuItem;
   @Input() showLinkTooltip = false;
+
+  /**
+   * Available routes that are offered to the user for selection.
+   */
   @Input() linkOptions: { value: string; label: string }[] = [];
   @Output() itemChange = new EventEmitter<MenuItem>();
 
