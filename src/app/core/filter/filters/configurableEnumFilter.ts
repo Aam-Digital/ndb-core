@@ -20,7 +20,7 @@ export class ConfigurableEnumFilter<
         color: enumValue.color,
         filter: { [name + ".id"]: enumValue.id } as DataFilter<T>,
       })),
-      ...InvalidOptions,
+      ...invalidOptions,
     ];
     super(name, options, label, singleSelectOnly);
   }

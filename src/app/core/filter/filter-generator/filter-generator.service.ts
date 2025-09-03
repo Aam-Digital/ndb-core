@@ -47,7 +47,7 @@ export class FilterGeneratorService {
   async generate<T extends Entity>(
     filterConfigs: FilterConfig[],
     entityConstructor: EntityConstructor<T>,
-    data: T[] = [],
+    data: T[],
     onlyShowUsedOptions = false,
   ): Promise<Filter<T>[]> {
     const filters: Filter<T>[] = [];
@@ -81,6 +81,7 @@ export class FilterGeneratorService {
           .map((invalidId) => ({
             key: "__invalid__:" + invalidId,
             label: `<i>[Invalid: ${invalidId}]</i>`,
+            color: "#d9534f",
             filter: { [filterConfig.id + ".id"]: invalidId } as DataFilter<T>,
           }));
 
