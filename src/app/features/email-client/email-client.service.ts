@@ -138,7 +138,6 @@ export class EmailClientService {
 
   private prefilledNote(entities: Entity[], template: EmailTemplate): Note {
     const note = new Note();
-    const isBulk = entities.length > 1;
 
     note.subject = template.subject;
     note.text = template.body;
