@@ -354,7 +354,7 @@
         <button
           mat-raised-button
           (click)="bulkEmail()"
-          [disabled]="selectedRows.length < 2"
+          [disabled]="selectedRows.length === 0"
           color="accent"
           i18n="bulk action button"
         >
