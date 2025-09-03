@@ -5,9 +5,7 @@
   }
 </h1>
 <div mat-dialog-content>
-  @for (para of data.text?.split("\n"); track para) {
-    <p [innerHTML]="para"></p>
-  }
+  <markdown>{{ data.text }}</markdown>
 </div>
 
 <div mat-dialog-actions>

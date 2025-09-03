@@ -39,7 +39,6 @@ describe("EmailClientService", () => {
       schema: [{ id: "email", dataType: EmailDatatype.dataType }],
     };
     mockRegistry.get.and.returnValue(FakeEntityConstructor);
-
     const result = await service.executeMailto(fakeEntity);
 
     expect(result).toBeFalse();

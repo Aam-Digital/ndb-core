@@ -40,6 +40,7 @@ export class EmailTemplateSelectionDialogComponent {
   availableTemplates: EmailTemplate[] = [];
   excludedCount: number = 0;
 
+
   private readonly dialogRef = inject(
     MatDialogRef<EmailTemplateSelectionDialogComponent>,
   );

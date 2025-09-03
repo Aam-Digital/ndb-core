@@ -5,7 +5,6 @@
       {{ excludedCount }} records were excluded due to missing email address.
     </p>
   }
-
   <p>
     <span i18n>
       Select the template to use for sending an email to this record. If you
@@ -40,8 +39,9 @@
     [form]="emailTemplateSelectionForm"
     [disableCreateNew]="true"
   ></app-entity-select>
+
   <mat-checkbox [formControl]="createNoteControl" i18n>
-    Create a note after sending
+    Create a note to document message
   </mat-checkbox>
 </mat-dialog-content>
 
