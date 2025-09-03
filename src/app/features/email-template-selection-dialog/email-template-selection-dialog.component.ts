@@ -1,6 +1,6 @@
 import { EntitySelectComponent } from "#src/app/core/common-components/entity-select/entity-select.component";
 import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
-import { Component, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import {
@@ -36,13 +36,13 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   templateUrl: "./email-template-selection-dialog.component.html",
   styleUrl: "./email-template-selection-dialog.component.scss",
 })
-export class EmailTemplateSelectionDialogComponent {
+export class EmailTemplateSelectionDialogComponent implements OnInit {
   emailTemplateSelectionForm: FormControl = new FormControl();
   createNoteControl = new FormControl<boolean>(true);
   sendAsBCC = new FormControl<boolean>(true);
   EmailTemplate = EmailTemplate;
   availableTemplates: EmailTemplate[] = [];
-  excludedCount: number = 0;
+  excludedEntityCount: number = 0;
   isBulkEmail: boolean = false;
 
   private readonly dialogRef = inject(
@@ -51,7 +51,7 @@ export class EmailTemplateSelectionDialogComponent {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly dialogData = inject(MAT_DIALOG_DATA) as {
     entity: Entity;
-    excludedCount: number;
+    excludedEntityCount: number;
     isBulk: boolean;
   };
 
@@ -64,7 +64,7 @@ export class EmailTemplateSelectionDialogComponent {
       EmailTemplate.ENTITY_TYPE,
     )) as EmailTemplate[];
 
-    this.excludedCount = this.dialogData.excludedCount ?? 0;
+    this.excludedEntityCount = this.dialogData.excludedEntityCount ?? 0;
     this.isBulkEmail = this.dialogData.isBulk;
   }
 
