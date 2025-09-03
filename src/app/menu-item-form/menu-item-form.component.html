@@ -19,7 +19,7 @@
         </span>
       }
     </mat-label>
-    @if (showLinkDropdown && linkOptions?.length) {
+    @if (linkOptions?.length) {
       <mat-select [(ngModel)]="item.link" (ngModelChange)="onChange()">
         @for (option of linkOptions; track option.value) {
           <mat-option [value]="option.value">
