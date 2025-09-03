@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ConfirmationDialogComponent } from "./confirmation-dialog.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { MarkdownModule } from "ngx-markdown";
 
 describe("ConfirmationDialogComponent", () => {
   let component: ConfirmationDialogComponent;
@@ -9,7 +10,7 @@ describe("ConfirmationDialogComponent", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [ConfirmationDialogComponent],
+      imports: [ConfirmationDialogComponent, MarkdownModule.forRoot()],
       providers: [
         { provide: MatDialogRef, useValue: {} },
         {
