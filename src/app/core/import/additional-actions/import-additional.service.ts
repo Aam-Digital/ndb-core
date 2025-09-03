@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { Entity } from "../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { ImportMetadata, ImportSettings } from "../import-metadata";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
@@ -301,17 +301,16 @@ export class ImportAdditionalService {
     importAction: AdditionalImportAction,
     forTargetType: boolean = false,
   ): string {
-    const getEntityTypes = (typeOrTypes: string | string[]) => {
-      const types = asArray(typeOrTypes);
-      return types.map((type) => this.entityRegistry.get(type));
-    };
     const sourceType = this.entityRegistry.get(importAction.sourceType);
     const targetTypes = importAction["targetType"]
-      ? getEntityTypes(importAction["targetType"])
+      ? asArray(importAction["targetType"]).map((type) =>
+          this.entityRegistry.get(type),
+        )
       : [];
     const relationshipType = importAction["relationshipEntityType"]
       ? this.entityRegistry.get(importAction["relationshipEntityType"])
       : null;
+
     // normally just one type; join with " / " if several
     const targetTypeLabel = targetTypes.map((t) => t.toString()).join(" / ");
 
@@ -322,7 +321,22 @@ export class ImportAdditionalService {
       label = $localize`Import related ${sourceType.toString(true)} for this ${targetTypeLabel}`;
     }
 
-    // add additional context details
+    label += this.getAdditionalContextDetailsForActionLabel(
+      importAction,
+      targetTypes,
+      relationshipType,
+    );
+
+    return label;
+  }
+
+  private getAdditionalContextDetailsForActionLabel(
+    importAction: AdditonalDirectLinkAction | AdditionalIndirectLinkAction,
+    targetTypes: EntityConstructor[],
+    relationshipType: EntityConstructor,
+  ): string {
+    let labelExtension = "";
+
     if (
       (importAction as AdditonalDirectLinkAction).targetProperty &&
       targetTypes?.length
@@ -336,15 +350,15 @@ export class ImportAdditionalService {
         )
         .filter(Boolean) as string[];
       if (targetProps?.length) {
-        label += ` (as ${targetProps.join(", ")})`;
+        labelExtension = ` (as ${targetProps.join(", ")})`;
       }
     } else if (
       (importAction as AdditionalIndirectLinkAction).relationshipEntityType &&
       relationshipType?.label
     ) {
-      label += ` (through ${relationshipType?.toString(true)})`;
+      labelExtension = ` (through ${relationshipType?.toString(true)})`;
     }
 
-    return label;
+    return labelExtension;
   }
 }
