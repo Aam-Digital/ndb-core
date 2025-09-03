@@ -52,7 +52,7 @@ describe("EmailClientService", () => {
     const subject = "Subject";
     const body = "Body";
 
-    const mailto = service.buildMailtoLink(emails, subject, body, true);
+    const mailto = service.buildMailtoLink(emails, subject, body, true, true);
     expect(mailto).toContain("bcc=test%40example.com%2Cjohn%40example.com");
     expect(mailto).toContain("subject=Subject");
     expect(mailto).toContain("body=Body");
@@ -64,7 +64,7 @@ describe("EmailClientService", () => {
     const subject = "Subject";
     const body = "Body";
 
-    const mailto = service.buildMailtoLink(email, subject, body, false);
+    const mailto = service.buildMailtoLink(email, subject, body, false, false);
     expect(mailto).toContain("to=test%40example.com");
     expect(mailto).toContain("subject=Subject");
     expect(mailto).toContain("body=Body");

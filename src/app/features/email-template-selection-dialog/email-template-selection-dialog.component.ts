@@ -15,6 +15,8 @@ import { EmailTemplate } from "../email-client/email-template.entity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { MatCheckbox } from "@angular/material/checkbox";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
   selector: "app-email-template-selection-dialog",
@@ -28,6 +30,8 @@ import { MatCheckbox } from "@angular/material/checkbox";
     DisableEntityOperationDirective,
     MatCheckbox,
     ReactiveFormsModule,
+    FontAwesomeTestingModule,
+    MatTooltipModule,
   ],
   templateUrl: "./email-template-selection-dialog.component.html",
   styleUrl: "./email-template-selection-dialog.component.scss",
@@ -35,10 +39,11 @@ import { MatCheckbox } from "@angular/material/checkbox";
 export class EmailTemplateSelectionDialogComponent {
   emailTemplateSelectionForm: FormControl = new FormControl();
   createNoteControl = new FormControl<boolean>(true);
-
+  sendAsBCC = new FormControl<boolean>(true);
   EmailTemplate = EmailTemplate;
   availableTemplates: EmailTemplate[] = [];
   excludedCount: number = 0;
+  isBulkEmail: boolean = false;
 
   private readonly dialogRef = inject(
     MatDialogRef<EmailTemplateSelectionDialogComponent>,
@@ -47,6 +52,7 @@ export class EmailTemplateSelectionDialogComponent {
   private readonly dialogData = inject(MAT_DIALOG_DATA) as {
     entity: Entity;
     excludedCount: number;
+    isBulk: boolean;
   };
 
   get entity(): Entity {
@@ -59,6 +65,7 @@ export class EmailTemplateSelectionDialogComponent {
     )) as EmailTemplate[];
 
     this.excludedCount = this.dialogData.excludedCount ?? 0;
+    this.isBulkEmail = this.dialogData.isBulk;
   }
 
   /**
@@ -81,9 +88,11 @@ export class EmailTemplateSelectionDialogComponent {
     this.dialogRef.close({
       template: selectedTemplate,
       createNote: !!this.createNoteControl.value,
+      sendAsBCC: this.isBulkEmail ? !!this.sendAsBCC.value : false,
     } as {
       template: EmailTemplate;
       createNote: boolean;
+      sendAsBCC: boolean;
     });
   }
 }

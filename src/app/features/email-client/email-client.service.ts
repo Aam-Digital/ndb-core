@@ -60,15 +60,17 @@ export class EmailClientService {
     const result = await this.selectTemplate(
       filteredEntities[0],
       excludedEntities.length,
+      isBulk,
     );
     if (!result) return false;
 
-    const { template, createNote } = result;
+    const { template, createNote, sendAsBCC } = result;
     const mailto = this.buildMailtoLink(
       isBulk ? recipients : recipients[0],
       template.subject,
       template.body,
       isBulk,
+      sendAsBCC,
     );
 
     window.location.href = mailto;
@@ -80,32 +82,42 @@ export class EmailClientService {
   private async selectTemplate(
     entity: Entity,
     excludedCount: number,
-  ): Promise<{ template: EmailTemplate; createNote: boolean } | undefined> {
+    isBulk: boolean,
+  ): Promise<
+    | { template: EmailTemplate; createNote: boolean; sendAsBCC: boolean }
+    | undefined
+  > {
     const dialogRef = this.dialog.open(EmailTemplateSelectionDialogComponent, {
-      data: { entity, excludedCount },
+      data: { entity, excludedCount, isBulk },
     });
     return await lastValueFrom(dialogRef.afterClosed());
   }
 
   public buildMailtoLink(
-    recipientOrBcc: string | string[],
+    recipients: string | string[],
     subject: string,
     body: string,
-    isBcc = false,
+    isBulk = false,
+    sendAsBCC = false,
   ): string {
     const params: string[] = [];
-    if (isBcc && Array.isArray(recipientOrBcc)) {
-      params.push(`bcc=${encodeURIComponent(recipientOrBcc.join(","))}`);
+
+    if (isBulk && Array.isArray(recipients)) {
+      if (sendAsBCC) {
+        params.push(`bcc=${encodeURIComponent(recipients.join(","))}`);
+      } else {
+        params.push(`to=${encodeURIComponent(recipients.join(","))}`);
+      }
     } else {
-      params.push(`to=${encodeURIComponent(recipientOrBcc as string)}`);
+      params.push(`to=${encodeURIComponent(recipients as string)}`);
     }
     params.push(`subject=${encodeURIComponent(subject.trim())}`);
     params.push(`body=${encodeURIComponent(body)}`);
 
-    if (isBcc) {
+    if (sendAsBCC) {
       return `mailto:?${params.join("&")}`;
     } else {
-      return `mailto:${encodeURIComponent(recipientOrBcc as string)}${params.length ? `?${params.join("&")}` : ""}`;
+      return `mailto:${encodeURIComponent(recipients as string)}${params.length ? `?${params.join("&")}` : ""}`;
     }
   }
 
