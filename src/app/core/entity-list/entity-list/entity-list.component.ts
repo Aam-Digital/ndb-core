@@ -1,12 +1,12 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
+  OnInit,
   Output,
   SimpleChanges,
-  inject,
-  OnInit,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
@@ -64,6 +64,7 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
 import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
+import { EmailClientService } from "#src/app/features/email-client/email-client.service";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -124,6 +125,7 @@ export class EntityListComponent<T extends Entity>
     optional: true,
   });
   private readonly formDialog = inject(FormDialogService);
+  private readonly emailClientService = inject(EmailClientService);
 
   private readonly publicFormsService = inject(PublicFormsService);
   public publicFormConfigs: PublicFormConfig[] = [];
@@ -392,6 +394,11 @@ export class EntityListComponent<T extends Entity>
       this.selectedRows,
       this.entityConstructor,
     );
+    this.selectedRows = undefined;
+  }
+
+  async bulkEmail() {
+    await this.emailClientService.executeMailto(this.selectedRows);
     this.selectedRows = undefined;
   }
 
