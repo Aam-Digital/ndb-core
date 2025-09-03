@@ -18,6 +18,12 @@ import { MatCheckbox } from "@angular/material/checkbox";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
+export interface EmailTemplateSelectionDialogData {
+  entity: Entity;
+  excludedEntitiesCount: number;
+  isBulk: boolean;
+}
+
 @Component({
   selector: "app-email-template-selection-dialog",
   imports: [
@@ -41,25 +47,22 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
   createNoteControl = new FormControl<boolean>(true);
   sendAsBCC = new FormControl<boolean>(true);
   EmailTemplate = EmailTemplate;
-  excludedEntityCount: number = 0;
+  excludedEntitiesCount: number = 0;
   isBulkEmail: boolean = false;
 
   private readonly dialogRef = inject(
     MatDialogRef<EmailTemplateSelectionDialogComponent>,
   );
   private readonly entityMapper = inject(EntityMapperService);
-  private readonly dialogData = inject(MAT_DIALOG_DATA) as {
-    entity: Entity;
-    excludedEntityCount: number;
-    isBulk: boolean;
-  };
+  private readonly dialogData: EmailTemplateSelectionDialogData =
+    inject(MAT_DIALOG_DATA);
 
   get entity(): Entity {
     return this.dialogData.entity;
   }
 
   async ngOnInit() {
-    this.excludedEntityCount = this.dialogData.excludedEntityCount ?? 0;
+    this.excludedEntitiesCount = this.dialogData.excludedEntitiesCount ?? 0;
     this.isBulkEmail = this.dialogData.isBulk;
   }
 

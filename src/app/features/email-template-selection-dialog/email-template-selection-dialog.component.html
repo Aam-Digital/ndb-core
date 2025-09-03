@@ -1,8 +1,8 @@
 <mat-dialog-content>
   <h2 i18n>Select Email Template</h2>
-  @if (excludedEntityCount > 0) {
+  @if (excludedEntitiesCount > 0) {
     <p class="warning-message" i18n>
-      {{ excludedEntityCount }} records were excluded due to missing email
+      {{ excludedEntitiesCount }} records were excluded due to missing email
       address.
     </p>
   }
@@ -41,21 +41,23 @@
     [disableCreateNew]="true"
   ></app-entity-select>
 
-  <mat-checkbox [formControl]="createNoteControl" i18n>
-    Create a note to document message
-  </mat-checkbox>
-
-  @if (isBulkEmail) {
-    <mat-checkbox [formControl]="sendAsBCC">
-      <span i18n>Send as BCC</span>
-      &nbsp;
-      <fa-icon
-        icon="question-circle"
-        matTooltip="If you send an email to multiple people they can see each others email IDs. Unless they know each other you should avoid this. Therefore, you can instead send the email to yourself and add all recipients as 'blind copy' (BCC)."
-        i18n-matTooltip
-      ></fa-icon>
+  <div class="flex-column">
+    <mat-checkbox [formControl]="createNoteControl" i18n>
+      Create a note to document message
     </mat-checkbox>
-  }
+
+    @if (isBulkEmail) {
+      <mat-checkbox [formControl]="sendAsBCC">
+        <span i18n>Send as BCC</span>
+        &nbsp;
+        <fa-icon
+          icon="question-circle"
+          matTooltip="If you send an email to multiple people they can see each others email IDs. Unless they know each other you should avoid this. Therefore, you can instead send the email to yourself and add all recipients as 'blind copy' (BCC)."
+          i18n-matTooltip
+        ></fa-icon>
+      </mat-checkbox>
+    }
+  </div>
 </mat-dialog-content>
 
 <mat-dialog-actions>

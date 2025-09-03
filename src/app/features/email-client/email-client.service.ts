@@ -4,7 +4,10 @@ import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { inject, Injectable } from "@angular/core";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { MatDialog } from "@angular/material/dialog";
-import { EmailTemplateSelectionDialogComponent } from "../email-template-selection-dialog/email-template-selection-dialog.component";
+import {
+  EmailTemplateSelectionDialogComponent,
+  EmailTemplateSelectionDialogData,
+} from "../email-template-selection-dialog/email-template-selection-dialog.component";
 import { lastValueFrom } from "rxjs";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
@@ -13,6 +16,7 @@ import {
   ConfirmationDialogComponent,
   ConfirmationDialogConfig,
 } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { asArray } from "#src/app/utils/asArray";
 
 @Injectable({
   providedIn: "root",
@@ -61,7 +65,6 @@ export class EmailClientService {
       isBulk ? recipients : recipients[0],
       template.subject,
       template.body,
-      isBulk,
       sendAsBCC,
     );
 
@@ -73,14 +76,18 @@ export class EmailClientService {
 
   private async selectTemplate(
     entity: Entity,
-    excludedCount: number,
+    excludedEntitiesCount: number,
     isBulk: boolean,
   ): Promise<
     | { template: EmailTemplate; createNote: boolean; sendAsBCC: boolean }
     | undefined
   > {
     const dialogRef = this.dialog.open(EmailTemplateSelectionDialogComponent, {
-      data: { entity, excludedCount, isBulk },
+      data: {
+        entity,
+        excludedEntitiesCount,
+        isBulk,
+      } as EmailTemplateSelectionDialogData,
     });
     return await lastValueFrom(dialogRef.afterClosed());
   }
@@ -89,27 +96,18 @@ export class EmailClientService {
     recipients: string | string[],
     subject: string,
     body: string,
-    isBulk = false,
     sendAsBCC = false,
   ): string {
-    const params: string[] = [];
+    let recipientsString = encodeURIComponent(asArray(recipients).join(","));
 
-    if (isBulk && Array.isArray(recipients)) {
-      if (sendAsBCC) {
-        params.push(`bcc=${encodeURIComponent(recipients.join(","))}`);
-      } else {
-        params.push(`to=${encodeURIComponent(recipients.join(","))}`);
-      }
-    } else {
-      params.push(`to=${encodeURIComponent(recipients as string)}`);
-    }
+    const params: string[] = [];
     params.push(`subject=${encodeURIComponent(subject.trim())}`);
     params.push(`body=${encodeURIComponent(body)}`);
 
     if (sendAsBCC) {
-      return `mailto:?${params.join("&")}`;
+      return `mailto:?bcc=${recipientsString}&${params.join("&")}`;
     } else {
-      return `mailto:${encodeURIComponent(recipients as string)}${params.length ? `?${params.join("&")}` : ""}`;
+      return `mailto:${recipientsString}${params.length ? "?" : ""}${params.join("&")}`;
     }
   }
 
