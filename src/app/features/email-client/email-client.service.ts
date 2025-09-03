@@ -31,20 +31,12 @@ export class EmailClientService {
    *
    * If no default email client is available on the device / configured in the browser, then nothing will happen here.
    */
-  async executeMailto(
-    entities: Entity | Entity[],
-    entityType?: EntityConstructor<Entity>,
-  ): Promise<boolean> {
+  async executeMailto(entities: Entity | Entity[]): Promise<boolean> {
     const isBulk = Array.isArray(entities);
     const entityList = isBulk ? entities : [entities];
 
-    const entityConstructor =
-      entityType ?? this.entityRegistry.get(entityList[0].getType());
-
-    const { recipients, excludedEntities } = this.getEmailsForEntities(
-      entityList,
-      entityConstructor,
-    );
+    const { recipients, excludedEntities } =
+      this.getEmailsForEntities(entityList);
 
     if (!recipients.length) {
       this.alertService.addWarning(
@@ -137,22 +129,16 @@ export class EmailClientService {
 
     setTimeout(() => {
       confirmDialogRef.close();
-      const entityType = (Array.isArray(entities) ? entities[0] : entities)
-        .constructor as EntityConstructor<Entity>;
 
-      const note = this.prefilledNote(entities, entityType, template);
       // Only offer to create/edit a note if the user opted in
       if (createNote) {
+        const note = this.prefilledNote(entities, template);
         this.formDialog.openView(note, "NoteDetails");
       }
     }, EmailClientService.EMAIL_CLIENT_WAIT_DURATION);
   }
 
-  private prefilledNote(
-    entities: Entity[],
-    entityType: EntityConstructor<Entity>,
-    template: EmailTemplate,
-  ): Note {
+  private prefilledNote(entities: Entity[], template: EmailTemplate): Note {
     const note = new Note();
     const isBulk = entities.length > 1;
 
@@ -160,17 +146,21 @@ export class EmailClientService {
     note.text = template.body;
     note.category = template.category;
 
+    const entityType = (Array.isArray(entities) ? entities[0] : entities)
+      .constructor as EntityConstructor<Entity>;
     const relatedProperty = Note.getPropertyFor(entityType.ENTITY_TYPE);
     note[relatedProperty] = entities.map((e) => e.getId());
 
     return note;
   }
 
-  private getEmailsForEntities(
-    entities: Entity[],
-    entityType: EntityConstructor<Entity>,
-  ): { recipients: string[]; excludedEntities: Entity[] } {
-    const emailFieldId = this.findFirstEmailFieldId(entityType);
+  private getEmailsForEntities(entities: Entity[]): {
+    recipients: string[];
+    excludedEntities: Entity[];
+  } {
+    const emailFieldId = this.findFirstEmailFieldId(
+      entities?.[0].getConstructor(),
+    );
     if (!emailFieldId) return { recipients: [], excludedEntities: entities };
 
     const recipients = new Set<string>();
@@ -192,6 +182,8 @@ export class EmailClientService {
   private findFirstEmailFieldId(
     entityType: EntityConstructor<Entity>,
   ): string | null {
+    if (!entityType) return null;
+
     for (const [, field] of entityType.schema.entries()) {
       if (field.dataType === EmailDatatype.dataType) {
         return field.id;

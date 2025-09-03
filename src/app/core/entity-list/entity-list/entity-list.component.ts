@@ -1,12 +1,12 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
+  OnInit,
   Output,
   SimpleChanges,
-  inject,
-  OnInit,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
@@ -398,10 +398,7 @@ export class EntityListComponent<T extends Entity>
   }
 
   async bulkEmail() {
-    await this.emailClientService.executeMailto(
-      this.selectedRows,
-      this.entityConstructor,
-    );
+    await this.emailClientService.executeMailto(this.selectedRows);
     this.selectedRows = undefined;
   }
 
