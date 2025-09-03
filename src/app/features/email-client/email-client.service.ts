@@ -73,50 +73,7 @@ export class EmailClientService {
 
     window.location.href = mailto;
 
-    // Only offer to create/edit a note if the user opted in
-    if (createNote) {
-      await this.showConfirmationAndOpenNote(filteredEntities, template);
-    }
-    const dialogRef = this.dialog.open(EmailTemplateSelectionDialogComponent, {
-      data: entity,
-    });
-    const result: { template: EmailTemplate; createNote: boolean } | undefined =
-      await lastValueFrom(dialogRef.afterClosed());
-
-    if (!result) return false;
-
-    const { template, createNote } = result;
-
-    const params: string[] = [];
-    const subject = template.subject?.toString().trim();
-    const body = template.body?.toString();
-
-    if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
-    if (body) params.push(`body=${encodeURIComponent(body)}`);
-
-    const mailto = `mailto:${encodeURIComponent(recipient)}${params.length ? `?${params.join("&")}` : ""}`;
-    window.location.href = mailto;
-
-    const confirmDialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: {
-        title: $localize`Opening email on your device...`,
-        text: $localize`If nothing is happening, please check your default email client. <a href="https://chatwoot.help/hc/aam-digital/articles/1756720692-send-e_mail-and-use-mail-templates" target="_blank">link to user guide</a>`,
-        closeButton: true,
-        buttons: [{ text: $localize`Continue` }],
-      } as ConfirmationDialogConfig,
-    });
-
-    setTimeout(async () => {
-      confirmDialogRef.close();
-
-      if (createNote) {
-        this.formDialog.openView(
-          this.prefilledNote(entity, template),
-          "NoteDetails",
-        );
-      }
-    }, EmailClientService.EMAIL_CLIENT_WAIT_DURATION);
-
+    this.showConfirmationAndOpenNote(filteredEntities, template, createNote);
     return true;
   }
 
@@ -155,13 +112,15 @@ export class EmailClientService {
   private async showConfirmationAndOpenNote(
     entities: Entity[],
     template: EmailTemplate,
+    createNote: boolean,
   ) {
     const confirmDialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: {
         title: $localize`Opening email on your device...`,
         text: $localize`If nothing is happening, please check your default email client. <a href="https://chatwoot.help/hc/aam-digital/articles/1756720692-send-e_mail-and-use-mail-templates" target="_blank">link to user guide</a>`,
         closeButton: true,
-      },
+        buttons: [{ text: $localize`Continue` }],
+      } as ConfirmationDialogConfig,
     });
 
     setTimeout(() => {
@@ -170,8 +129,11 @@ export class EmailClientService {
         .constructor as EntityConstructor<Entity>;
 
       const note = this.prefilledNote(entities, entityType, template);
-      this.formDialog.openView(note, "NoteDetails");
-    }, 5000);
+      // Only offer to create/edit a note if the user opted in
+      if (createNote) {
+        this.formDialog.openView(note, "NoteDetails");
+      }
+    }, EmailClientService.EMAIL_CLIENT_WAIT_DURATION);
   }
 
   private prefilledNote(
@@ -224,18 +186,5 @@ export class EmailClientService {
       }
     }
     return null;
-  }
-
-  private prefilledNote(entity: Entity, template: EmailTemplate): Note {
-    const note = new Note();
-
-    note.subject = template.subject;
-    note.text = template.body;
-    note.category = template.category;
-    // Note related entities (linked records) - link to the entity we sent the email
-    const relatedProperty = Note.getPropertyFor(entity.getType());
-    note[relatedProperty] = [entity.getId()];
-
-    return note;
   }
 }
