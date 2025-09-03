@@ -1,0 +1,54 @@
+<mat-dialog-content>
+  <h2 i18n>Select Email Template</h2>
+  <p>
+    <span i18n>
+      Select the template to use for sending an email to this record. If you
+      want to create a new template, you can do so from -
+    </span>
+    <a
+      [routerLink]="EmailTemplate.route"
+      *appDisabledEntityOperation="{
+        entity: EmailTemplate,
+        operation: 'update',
+      }"
+      matDialogClose
+      i18n
+      >configure available Email templates</a
+    >
+  </p>
+  <p>
+    <span i18n>
+      Note: "Sending" mail will open the email application on your device. If
+      nothing happens you may have to set up a default email client.
+    </span>
+  </p>
+
+  <app-entity-select
+    [entityType]="EmailTemplate.ENTITY_TYPE"
+    [multi]="false"
+    [additionalFilter]="filteredTemplate"
+    label="Message Template"
+    i18n-label
+    placeholder="Select a template to use and adapt"
+    i18n-placeholder
+    [form]="emailTemplateSelectionForm"
+    [disableCreateNew]="true"
+  ></app-entity-select>
+
+  <mat-checkbox [formControl]="createNoteControl" i18n>
+    Create a note to document message
+  </mat-checkbox>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button
+    mat-raised-button
+    color="accent"
+    [disabled]="!emailTemplateSelectionForm.value"
+    (click)="confirmSelectedTemplate(emailTemplateSelectionForm.value)"
+  >
+    <span i18n>Send Email</span>
+  </button>
+
+  <button mat-stroked-button i18n [matDialogClose]="false">Cancel</button>
+</mat-dialog-actions>
