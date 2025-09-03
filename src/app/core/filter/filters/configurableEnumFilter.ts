@@ -11,7 +11,7 @@ export class ConfigurableEnumFilter<
     label: string,
     enumValues: ConfigurableEnumValue[],
     singleSelectOnly: boolean = false,
-    InvalidOptions: FilterSelectionOption<T>[] = [],
+    invalidOptions: FilterSelectionOption<T>[] = [],
   ) {
     const options: FilterSelectionOption<T>[] = [
       ...enumValues.map((enumValue: ConfigurableEnumValue) => ({
