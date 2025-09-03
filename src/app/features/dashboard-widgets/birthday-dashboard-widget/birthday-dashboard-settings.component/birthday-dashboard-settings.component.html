@@ -1,0 +1,39 @@
+<div style="padding: 16px">
+  <div style="margin-bottom: 32px">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label i18n>Days ahead to show birthdays</mat-label>
+      <input
+        matInput
+        type="number"
+        min="1"
+        [(ngModel)]="localConfig.threshold"
+        (ngModelChange)="emitConfigChange()"
+      />
+    </mat-form-field>
+  </div>
+
+  <div>
+    <h3 i18n>Entity Type</h3>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label i18n>Entity Type</mat-label>
+      <app-entity-type-select
+        [ngModel]="selectedEntityType"
+        (ngModelChange)="onEntityTypeChange($event)"
+        [options]="availableEntityTypes"
+      ></app-entity-type-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label i18n>Birthday Property</mat-label>
+      <mat-select
+        [ngModel]="selectedProperty"
+        (ngModelChange)="onPropertyChange($event)"
+      >
+        @for (prop of availableProperties; track prop) {
+          <mat-option [value]="prop">
+            {{ prop }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>
