@@ -29,6 +29,10 @@
   vertical-align: middle;
   font-size: inherit;
   font-family: inherit;
+  max-width: 120px; // Cap width
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
 }
 
 .bubble-list {
