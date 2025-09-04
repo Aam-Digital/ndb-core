@@ -30,7 +30,7 @@ export class PublicFormModule {
     components.addAll(dynamicComponents);
     routerService.addRoutes(viewConfigs);
     adminOverviewService.menuItems.push({
-      label: $localize`:admin menu item:Manage Public Forms`,
+      label: $localize`:admin menu item:Configure Public Forms`,
       link: PublicFormConfig.route,
     });
     publicFormsService.initCustomFormActions();
