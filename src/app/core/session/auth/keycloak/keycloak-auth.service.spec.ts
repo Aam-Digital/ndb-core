@@ -113,6 +113,31 @@ describe("KeycloakAuthService", () => {
     expect(mockKeycloak.getToken).toHaveBeenCalled();
   }));
 
+  it("does not call updateToken() and init() twice concurrently", async () => {
+    const sessionPromise1 = service.login();
+    const sessionPromise2 = service.login();
+
+    const [session1, session2] = await Promise.all([
+      sessionPromise1,
+      sessionPromise2,
+    ]);
+    expect(session1).toBe(session2);
+
+    expect(mockKeycloak.updateToken).toHaveBeenCalledTimes(1);
+    expect(mockKeycloak.init).toHaveBeenCalledTimes(1);
+  });
+
+  it("calls keycloak.init() again if it fails", async () => {
+    const initError = new Error("init failed");
+    mockKeycloak.init.and.rejectWith(initError);
+    await expectAsync(service.login()).toBeRejectedWith(initError);
+
+    mockKeycloak.init.and.resolveTo();
+    await service.login();
+
+    expect(mockKeycloak.init).toHaveBeenCalledTimes(2);
+  });
+
   xit("should gracefully handle failed re-authorization", fakeAsync(() => {
     // TODO: investigate different updateToken return values in dev and prod setups, see #2318
     service.login();
