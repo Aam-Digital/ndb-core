@@ -36,4 +36,11 @@ export class DisplayConfigurableEnumComponent
       this.iterableValue = [this.value];
     }
   }
+
+  get extraLabels(): string {
+    return this.iterableValue
+      .slice(3)
+      .map((v) => v.label)
+      .join(", ");
+  }
 }
