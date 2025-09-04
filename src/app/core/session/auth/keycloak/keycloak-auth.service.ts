@@ -9,6 +9,7 @@ import { RemoteLoginNotAvailableError } from "./remote-login-not-available.error
 import { KeycloakUserDto } from "../../../user/user-admin-service/keycloak-user-dto";
 import { ActivatedRoute } from "@angular/router";
 import { ThirdPartyAuthenticationService } from "../../../../features/third-party-authentication/third-party-authentication.service";
+import { reuseFirstAsync } from "#src/app/utils/reuse-first-async";
 
 /**
  * Handles the remote session with keycloak
@@ -25,25 +26,21 @@ export class KeycloakAuthService {
   /**
    * Check for an existing session or forward to the login page.
    */
-  login = memoize(async (): Promise<SessionInfo> => {
-    try {
-      await this.initKeycloak();
+  login = reuseFirstAsync(async (): Promise<SessionInfo> => {
+    await this.initKeycloak();
 
-      await this.keycloak.updateToken();
-      let token = await this.keycloak.getToken();
-      if (!token) {
-        // Forward to the keycloak login page.
-        await this.keycloak.login({
-          redirectUri: location.href,
-          ...this.thirdPartyAuthService.initSessionParams(this.activatedRoute),
-        });
-        token = await this.keycloak.getToken();
-      }
-
-      return this.processToken(token);
-    } finally {
-      this.login.cache.clear();
+    await this.keycloak.updateToken();
+    let token = await this.keycloak.getToken();
+    if (!token) {
+      // Forward to the keycloak login page.
+      await this.keycloak.login({
+        redirectUri: location.href,
+        ...this.thirdPartyAuthService.initSessionParams(this.activatedRoute),
+      });
+      token = await this.keycloak.getToken();
     }
+
+    return this.processToken(token);
   });
 
   private initKeycloak = memoize(async () => {
