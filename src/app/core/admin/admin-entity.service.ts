@@ -96,13 +96,4 @@ export class AdminEntityService {
 
     return config.data[entityConfigKey];
   }
-
-  private getDefaultEntityConfig(
-    entityTypeId: string,
-    name: string,
-  ): EntityConfig {
-    return {
-      label: name,
-    };
-  }
 }
