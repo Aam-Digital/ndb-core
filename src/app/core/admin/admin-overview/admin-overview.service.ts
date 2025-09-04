@@ -20,7 +20,7 @@ export class AdminOverviewService {
       link: "/admin/conflicts",
     },
     {
-      label: $localize`:admin menu item:Administer Entity Types`,
+      label: $localize`:admin menu item:Configure Entity Types`,
       link: "/admin/entity",
     },
     {
@@ -28,7 +28,7 @@ export class AdminOverviewService {
       link: "/admin/setup-wizard",
     },
     {
-      label: $localize`:admin menu item:Administer Main Menu`,
+      label: $localize`:admin menu item:Configure Main Menu`,
       link: "/admin/menu",
     },
   ];
