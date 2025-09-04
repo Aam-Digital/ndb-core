@@ -1,0 +1,251 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../../../images/favicon.ico">
+	   <link rel="stylesheet" href="../../../styles/style.css">
+        <link rel="stylesheet" href="../../../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../../../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content additional-page">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>How to add another language to the project</h1>
+<h2>Abstract</h2>
+<p>This guide depicts the workflow one needs to go through to add another language
+(such as <em>hindi</em>, <em>bengali</em>, <em>french</em> e.t.c.) to the project</p>
+<h3>1) Find the correct language code</h3>
+<p>You first need the correct ISO-639-2 Language-Code. To find this code for a given
+language, go to their <a href="https://www.loc.gov/standards/iso639-2/php/code_list.php">website</a>
+and find the code that corresponds to your language (look in the <code>ISO 639-1 Code</code> column).
+For example, for <em>french</em>, this would be <code>fr</code>, for <em>hindi</em>, this would be <code>hi</code></p>
+<p>In addition to a language code, you might consider specifying a country if the spoken language can
+differ based on where the app should be shipped to. For example, English is spoken differently
+in the US (<code>en-US</code>), Great-Britain (<code>en-GB</code>) or Australia (<code>en-AU</code>).
+A list of available country codes can be found <a href="https://www.iso.org/obp/ui/#search/code/">here</a>.
+Once you have the language and country code, the resulting code is <em>language code</em>-<em>country code</em>.</p>
+<h3>2) Let xliffmerge know about the new language</h3>
+<p><code>xliffmerge</code> is a tool that helps in the translation process. Especially, it is needed to
+update the language files while retaining old translations.</p>
+<p>Go to <a href="xliffmerge.json">xliffmerge.json</a> and add your language code to the <code>languages</code> section.
+Again, for french, this could look like this:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">{
+  ...
+  &quot;languages&quot;: [
+    // other languages
+    &quot;fr&quot;
+  ]
+}</code></pre></div><h3>3) Create a localization-file</h3>
+<p>In order to allow the actual translation process to take place, you need to create a
+standardized file that translators can work with. The standard that we use is <code>xlf</code>.</p>
+<p>To generate a file, simply use the script <code>extract-i18n</code> located inside the <a href="package.json">package.json</a>
+file. This will automatically generate the needed file if none exists</p>
+<h3>4) Add language icon</h3>
+<p>Go to the <code>LanguageService</code> and add the language to the list of <code>availableLocales</code>.
+This allows the app to show the langauge icon in the language select component.</p>
+<h3>5) Include language in bundle</h3>
+<p>To reduce the bundle size, only supported languages are shipped with the production build.
+To support a language by Angular (dates, units etc.) add the language to the <em>webpack include</em> in the <code>main.ts</code>
+file:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-javascript">const localeModule = await import(
+  /* webpackInclude: /(fr|de)\.mjs/ &lt;-- add language between the brackets sepreated by a pipe symbol */
+  `../node_modules/&#64;angular/common/locales/${locale}`
+);</code></pre></div><h3>6) Test your build</h3>
+<p>Run the app.
+You can change the language in the top right corner.
+If you have not added translations, the app will be in english.
+Try to translate some units.</p>
+<p>In order to do this, go to the newly created <code>src/locale/messages.&lt;locale&gt;.xlf</code> file.
+Inside this file, you will find a lot of&quot;trans-units&quot;. These mark single texts that
+you can translate. Translate one or more of these units by replacing the content of
+the <code>target</code>. For example:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-xml">
+&lt;trans-unit id=&quot;08c74dc9762957593b91f6eb5d65efdfc975bf48&quot; datatype=&quot;html&quot;&gt;
+  &lt;source&gt;Username&lt;/source&gt;
+  &lt;target state=&quot;translated&quot;&gt;Nom d&#39;utilisateur&lt;/target&gt;
+  &lt;context-group purpose=&quot;location&quot;&gt;
+    &lt;context context-type=&quot;sourcefile&quot;&gt;src/app/core/admin/user-list/user-list.component.html&lt;/context&gt;
+    &lt;context context-type=&quot;linenumber&quot;&gt;7,8&lt;/context&gt;
+  &lt;/context-group&gt;
+  &lt;context-group purpose=&quot;location&quot;&gt;
+    &lt;context context-type=&quot;sourcefile&quot;&gt;src/app/core/session/login/login.component.html&lt;/context&gt;
+    &lt;context context-type=&quot;linenumber&quot;&gt;32&lt;/context&gt;
+  &lt;/context-group&gt;
+  &lt;context-group purpose=&quot;location&quot;&gt;
+    &lt;context context-type=&quot;sourcefile&quot;&gt;src/app/core/user/user-account/user-account.component.html&lt;/context&gt;
+    &lt;context context-type=&quot;linenumber&quot;&gt;26&lt;/context&gt;
+  &lt;/context-group&gt;
+&lt;/trans-unit&gt;</code></pre></div><p>You can change the state to &quot;translated&quot; as shown in the picture (but this is not required).
+Leave everything else as it is and test the app again. Translations should appear for each
+trans-unit that you have translated.</p>
+<p>A more detailed overview can be found in Guide
+<a href="work-with-xlf.md">How to edit, update and work with XLF files</a>.</p>
+<h3>Conclusion</h3>
+<p>You have now successfully added the capability to translate the app into the target
+language. You can now take the translation file (<code>&quot;src/locale/messages.&lt;your locale&gt;.xlf&quot;</code>) and
+send it to a translator to have it translated. Once this process is done, replace the
+preliminary translation file with the one that comes back from a translator.</p>
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 3;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
+            var COMPODOC_CURRENT_PAGE_URL = 'add-another-language.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../../../js/libs/custom-elements.min.js"></script>
+       <script src="../../../js/libs/lit-html.js"></script>
+
+       <script src="../../../js/menu-wc.js" defer></script>
+       <script nomodule src="../../../js/menu-wc_es5.js" defer></script>
+
+       <script src="../../../js/libs/bootstrap-native.js"></script>
+
+       <script src="../../../js/libs/es6-shim.min.js"></script>
+       <script src="../../../js/libs/EventDispatcher.js"></script>
+       <script src="../../../js/libs/promise.min.js"></script>
+
+       <script src="../../../js/compodoc.js"></script>
+
+       <script src="../../../js/tabs.js"></script>
+       <script src="../../../js/menu.js"></script>
+       <script src="../../../js/libs/clipboard.min.js"></script>
+       <script src="../../../js/libs/prism.js"></script>
+       <script src="../../../js/sourceCode.js"></script>
+          <script src="../../../js/search/search.js"></script>
+          <script src="../../../js/search/lunr.min.js"></script>
+          <script src="../../../js/search/search-lunr.js"></script>
+          <script src="../../../js/search/search_index.js"></script>
+       <script src="../../../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

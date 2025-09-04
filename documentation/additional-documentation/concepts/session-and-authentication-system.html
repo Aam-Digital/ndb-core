@@ -1,0 +1,318 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	   <link rel="stylesheet" href="../../styles/style.css">
+        <link rel="stylesheet" href="../../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content additional-page">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>Session Handling, Authentication &amp; Synchronisation</h1>
+<p>This document aims at describing the architecture of the offline-first session handling, focussing on the <code>(Synced)SessionService</code>.</p>
+<!-- TOC -->
+
+<ul>
+<li><a href="#components">Components</a></li>
+<li><a href="#state">State</a></li>
+<li><a href="#database-user">Database User</a><ul>
+<li><a href="#local-user">Local User</a></li>
+</ul>
+</li>
+<li><a href="#session-services">Session Services</a><ul>
+<li><a href="#local-session">Local Session</a></li>
+<li><a href="#remote-session">Remote Session</a></li>
+<li><a href="#synced-session">Synced Session</a></li>
+</ul>
+</li>
+</ul>
+<!-- /TOC -->
+
+<h2>Components</h2>
+<p>The following diagram show which components are involved in managing the session.</p>
+<p><img src="../../images/session-uml.svg" alt="class diagram" class="img-responsive">.</p>
+<p>There are three implementations of the <code>SessionService</code> interface: <a href="#local-session">LocalSession</a>, <a href="#remote-session">RemoteSession</a> and the <a href="#synced-session">SyncedSession</a>.
+They are described in more detail in the <a href="#session-services">SessionServices</a> section.</p>
+<h2>State</h2>
+<p>Lets talk about state for a second. With an offline-first synced session, there is lots of state involved needing to be synced. The following enums are used to define the possible states.</p>
+<ul>
+<li><strong>LoginState</strong> At the beginning or after logout the state is <code>LOGGED_OUT</code>. After successful login, the state changes to <code>LOGGED_IN</code>. Entering wrong credentials will result in <code>LOGIN_FAILED</code>. If login is not possible at the moment (due to bad or no internet) the state is <code>UNAVAILABLE</code>.</li>
+<li><strong>SyncState</strong> At the beginning or without internet the state is <code>UNSYNCED</code>. Once the user logs in the state changes to <code>STARTED</code>. If no problems occur, the state will change to <code>COMPLETED</code>, once all data is synced. If an error occurs the state changes to <code>FAILED</code>.</li>
+</ul>
+<h2>Database User</h2>
+<p>The <code>DatabaseUser</code> interface mirrors parts of the user documents as it is used by CouchDB (see <a href="https://docs.couchdb.org/en/stable/intro/security.html?highlight=_users#users-documents">here</a>).
+The most important properties are the <code>name</code> which is equivalent to the username and the <code>roles</code> which is an array of roles the user has.
+The <code>name</code> can be used to assign e.g. notes to a user or find the <code>User</code> entity in the database.
+The roles are used to check whether the user has permissions to visit certain pages or edit certain entities.</p>
+<h3>Local User</h3>
+<p>The <code>LocalUser</code> interface is used by the <a href="#local-session">LocalSession</a> to store user information in the local storage.
+Additionally to the fields of the <code>DatabaseUser</code> interface it holds the encrypted password together with information how the password is encrypted.
+This can be used to verify the password later on.</p>
+<h2>Session Services</h2>
+<p>The <code>SessionService</code> interface provides methods for <code>login</code>, <code>logout</code> and user access.
+These methods need to be implemented to create a working session.</p>
+<h3>Local Session</h3>
+<p>The <code>LocalSession</code> manages a session without internet. It can be used for demo purposes or when no network connection is available.
+The session loads <code>LocalUser</code> objects from the local storage and uses the encrypted password to validate login credentials.
+It provides an additional method to save <code>DatabaseUser</code> objects together with the password to the local storage.
+If the password matches, it returns <code>LoginState.LOGGED_IN</code>.
+If the username matches an existing username but the password is wrong, it returns <code>LoginState.LOGIN_FAILED</code>.
+If the username does not match any saved users, it returns <code>LoginState.UNAVAILABLE</code>.</p>
+<h3>Remote Session</h3>
+<p>The <code>RemoteSession</code> directly authenticates against a CouchDB instance.
+It uses the <a href="https://docs.couchdb.org/en/stable/api/server/authn.html?highlight=session#cookie-authentication">_session</a> endpoint of the CouchDB API for cookie-authentication.
+Once successfully logged in, a cookie is stored and sent with any further request to CouchDB.
+This cookie is valid for 10 minutes and renewed by CouchDB if regular requests occur.
+If the password matches, it returns <code>LoginState.LOGGED_IN</code>.
+If CouchDB returns are <code>401</code> error (unauthorized), it returns <code>LoginState.LOGIN_FAILED</code>.
+If the requests fails with an error message other thatn <code>401</code>, it returns <code>LoginState.UNAVAILABLE</code>.</p>
+<h3>Synced Session</h3>
+<p>The <code>SyncedSession</code> combines the <code>LocalSession</code> and the <code>RemoteSession</code>.
+It starts the login workflow of both the <code>RemoteSession</code> and the <code>LocalSession</code> at the same time.
+It first only waits for the <code>LocalSession</code> because this is faster and also works without internet.
+Only if the local login fails the <code>SyncedSession</code> waits for the remote login.
+If the remote login succeeds, the returned user object is saved through the <code>LocalSession</code> to allow a local login next time.</p>
+<p>The following table shows all possible return values of the local and the remote session and the handling of the synced session.
+The error message is shown in the <code>LoginComponent</code></p>
+<table class="table table-bordered compodoc-table">
+<thead>
+<tr>
+<th>Remote Login</th>
+<th>Local Login</th>
+<th>Synced Login</th>
+<th>Error Message</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LOGGED_IN</td>
+<td>LOGGED_IN</td>
+<td>login + sync</td>
+<td>-</td>
+</tr>
+<tr>
+<td>LOGGED_IN</td>
+<td>LOGIN_FAILED</td>
+<td>sync + login</td>
+<td>-</td>
+</tr>
+<tr>
+<td>LOGGED_IN</td>
+<td>UNAVAILABLE</td>
+<td>sync + login</td>
+<td>-</td>
+</tr>
+<tr>
+<td>LOGIN_FAILED</td>
+<td>LOGGED_IN</td>
+<td>login -&gt; logout</td>
+<td>-</td>
+</tr>
+<tr>
+<td>LOGIN_FAILED</td>
+<td>LOGIN_FAILED</td>
+<td>LOGIN_FAILED</td>
+<td>Username and/or password incorrect</td>
+</tr>
+<tr>
+<td>LOGIN_FAILED</td>
+<td>UNAVAILABLE</td>
+<td>LOGIN_FAILED</td>
+<td>Username and/or password incorrect</td>
+</tr>
+<tr>
+<td>UNAVAILABLE</td>
+<td>LOGGED_IN</td>
+<td>login + retry</td>
+<td>-</td>
+</tr>
+<tr>
+<td>UNAVAILABLE</td>
+<td>LOGIN_FAILED</td>
+<td>LOGIN_FAILED</td>
+<td>Username and/or password incorrect</td>
+</tr>
+<tr>
+<td>UNAVAILABLE</td>
+<td>UNAVAILABLE</td>
+<td>UNAVAILABLE</td>
+<td>Please connect to the internet and try again</td>
+</tr>
+</tbody>
+</table>
+<p>To illustrate this table, the following flow-diagram shows what happens in the case <code>RemoteLogin: LOGGED_IN</code> and <code>LocalLogin: LoginFailed</code>.
+This case happens when the password of a user has been changed on the server, but not locally and the users logs in with the new password.</p>
+<p><img src="../../images/login-flow-new-user.svg" alt="class diagram" class="img-responsive">.</p>
+<p>The flow starts by the user entering a username and a password in the <code>LoginComponent</code>.
+First the user credentials are validated against the local session.
+This fails possible because the saved password does not match the user-entered one.
+Then the synced session waits for the remote login to finish.
+In this case the remote login succeeds and the <code>DatabaseUser</code> object can be retrieved from the remote session.
+The synced session then stores the <code>DatabaseUser</code> in the local session and after that tries to log in against the local session.
+Now that the <code>DatabaseUser</code> has been saved with the new password the local log in succeeds and returns <code>LoginState.LOGGED_IN</code>.</p>
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 2;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
+            var COMPODOC_CURRENT_PAGE_URL = 'session-and-authentication-system.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../../js/libs/custom-elements.min.js"></script>
+       <script src="../../js/libs/lit-html.js"></script>
+
+       <script src="../../js/menu-wc.js" defer></script>
+       <script nomodule src="../../js/menu-wc_es5.js" defer></script>
+
+       <script src="../../js/libs/bootstrap-native.js"></script>
+
+       <script src="../../js/libs/es6-shim.min.js"></script>
+       <script src="../../js/libs/EventDispatcher.js"></script>
+       <script src="../../js/libs/promise.min.js"></script>
+
+       <script src="../../js/compodoc.js"></script>
+
+       <script src="../../js/tabs.js"></script>
+       <script src="../../js/menu.js"></script>
+       <script src="../../js/libs/clipboard.min.js"></script>
+       <script src="../../js/libs/prism.js"></script>
+       <script src="../../js/sourceCode.js"></script>
+          <script src="../../js/search/search.js"></script>
+          <script src="../../js/search/lunr.min.js"></script>
+          <script src="../../js/search/search-lunr.js"></script>
+          <script src="../../js/search/search_index.js"></script>
+       <script src="../../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
