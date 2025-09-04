@@ -91,12 +91,7 @@ export class AdminEntityService {
       EntityConfigService.PREFIX_ENTITY_CONFIG + entityConstructor.ENTITY_TYPE;
 
     if (!config.data[entityConfigKey]) {
-      config.data[entityConfigKey] = this.getDefaultEntityConfig(
-        entityConstructor.ENTITY_TYPE,
-        entityConstructor.label,
-      ) as EntityConfig;
-
-      return config.data[entityConfigKey];
+      return (config.data[entityConfigKey] = {});
     }
 
     return config.data[entityConfigKey];
@@ -108,7 +103,6 @@ export class AdminEntityService {
   ): EntityConfig {
     return {
       label: name,
-      route: entityTypeId,
     };
   }
 }
