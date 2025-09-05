@@ -121,6 +121,7 @@ export class EntitySelectComponent<E extends Entity> {
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
 
+  @Input() entityName: string;
   private allEntities: Resource<E[]> = resourceWithRetention({
     defaultValue: [],
     params: () => ({
