@@ -116,11 +116,16 @@ Autocomplete
           @if (!templateRef) {
             <span
               class="text-truncate"
-              matTooltip="{{ item.asString }}"
+              [matTooltip]="getPlainTextTooltip(item.asString)"
               matTooltipPosition="above"
-            >
-              {{ item.asString }}
-            </span>
+              [innerHTML]="item.asString"
+              [style.color]="
+                item.asString.includes('[Invalid:') ||
+                item.asString.includes('not defined')
+                  ? item.initial['color']
+                  : null
+              "
+            ></span>
           } @else {
             <ng-template
               class="item-option"
