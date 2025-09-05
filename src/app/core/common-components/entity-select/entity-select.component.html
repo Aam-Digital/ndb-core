@@ -15,6 +15,7 @@
       [options]="availableOptions()"
       [placeholder]="loading() ? loadingPlaceholder : placeholder"
       [createOption]="disableCreateNew ? null : createNewEntity"
+      [entityName]="entityName"
     >
       <ng-template let-item>
         @if (!item.isHidden) {
