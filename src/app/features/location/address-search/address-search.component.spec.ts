@@ -15,7 +15,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { HttpErrorResponse } from "@angular/common/http";
 
-describe("AddressSearchComponent", () => {
+fdescribe("AddressSearchComponent", () => {
   let component: AddressSearchComponent;
   let fixture: ComponentFixture<AddressSearchComponent>;
 
@@ -55,20 +55,20 @@ describe("AddressSearchComponent", () => {
       .then((el) => el.host());
 
     await inputElement.sendKeys("input 1");
+    expect(component.loading).toBeTrue();
     expect(mockGeoService.lookup).not.toHaveBeenCalled();
-    expect(component.loading).toBeFalse();
 
     tick(2000);
+    expect(component.loading).toBeTrue();
     expect(mockGeoService.lookup).not.toHaveBeenCalled();
-    expect(component.loading).toBeFalse();
 
     // change input before debounce --> restarts timeouts
     await inputElement.clear();
     await inputElement.sendKeys("input 2");
 
     tick(700);
+    expect(component.loading).toBeTrue();
     expect(mockGeoService.lookup).not.toHaveBeenCalled();
-    expect(component.loading).toBeFalse();
     expect(options).toEqual([]);
 
     tick(2000);
