@@ -16,7 +16,7 @@ import { ConfigMigration } from "./config-migration";
 import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
 import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
 import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
-import { addDefaultRecurringActivityDetailsConfig } from "#src/app/child-dev-project/attendance/add-default-recurring-activity-views";
+import { addDefaultRecurringActivityDetailsConfig } from "../../child-dev-project/attendance/add-default-recurring-activity-views";
 
 /**
  * Access dynamic app configuration retrieved from the database
