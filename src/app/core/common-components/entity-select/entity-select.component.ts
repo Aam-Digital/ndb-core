@@ -119,16 +119,7 @@ export class EntitySelectComponent<E extends Entity> {
    * has no name, this filters for the entity's id.
    */
   @Input() accessor: (e: Entity) => string = (e) => e.toString();
-  entityToId = (option: E) => {
-    console.log("entityToId called with:", option.getType());
-    const entityType = option.getType();
-    this.disableCreateNew = !this.ability.can(
-      "create",
-      new (this.entityRegistry.get(entityType))(),
-    );
-    console.log("disableCreateNew", this.disableCreateNew);
-    return option.getId();
-  };
+  entityToId = (option: E) => option.getId();
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
 
@@ -155,6 +146,21 @@ export class EntitySelectComponent<E extends Entity> {
     return this.allEntities
       .value()
       .filter((e) => !e.isActive && this.autocompleteFilter()(e)).length;
+  });
+
+  readonly isCreateDisabled = computed(() => {
+    if (this.disableCreateNew === true) {
+      return true;
+    }
+    //calculate based on permissions and entity type
+    const entityTypes = this.entityType();
+    if (entityTypes.length === 0) {
+      return true;
+    }
+
+    const entityType = entityTypes[0];
+    const entity = this.entityRegistry.get(entityType);
+    return !this.ability.can("create", new entity());
   });
 
   /**
