@@ -39,7 +39,7 @@
       <mat-option disabled i18n>Location not found</mat-option>
     }
 
-    <!-- Show fallback only after search completed -->
+    <!-- show user-typed value if not empty and not in options (after search completed) -->
     @if (
       searchCompleted &&
       inputElement.value?.length > 2 &&
