@@ -91,7 +91,6 @@ export class AdminEntityService {
 
     if (!config.data[entityConfigKey]) {
       config.data[entityConfigKey] = {};
-      return config.data[entityConfigKey];
     }
 
     return config.data[entityConfigKey];
