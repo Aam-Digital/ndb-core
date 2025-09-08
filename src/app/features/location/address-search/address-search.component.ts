@@ -117,14 +117,14 @@ export class AddressSearchComponent implements OnInit {
         tap(() => {
           this.nothingFound = false;
           this.loading = true;
-          this.searchCompleted = false; // Reset before search
+          this.searchCompleted = false; 
         }),
         debounceTime(200),
         concatMap((res) => this.getGeoLookupResult(res)),
       )
       .subscribe((res) => {
         this.filteredOptions.next(res);
-        this.searchCompleted = true; // Set after search completes
+        this.searchCompleted = true; 
       });
   }
 
