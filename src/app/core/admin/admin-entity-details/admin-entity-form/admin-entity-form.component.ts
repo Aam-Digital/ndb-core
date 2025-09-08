@@ -424,7 +424,7 @@ export class AdminEntityFormComponent implements OnChanges {
   }
 
   removeGroup(i: number) {
-    const [removedFieldGroup] = this.config.fieldGroups.splice(i, 1);
+    this.config.fieldGroups.splice(i, 1);
     this.initAvailableFields();
 
     this.emitUpdatedConfig();
