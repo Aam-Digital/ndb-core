@@ -98,9 +98,6 @@ export class AddressSearchComponent implements OnInit {
   /** do not display selected item in the input field because this should be an empty search field */
   displayFn = () => "";
 
-  // Track if a search has completed (for fallback option)
-  searchCompleted = false;
-
   ngOnInit() {
     this.initSearchPipeline();
   }
@@ -117,14 +114,13 @@ export class AddressSearchComponent implements OnInit {
         tap(() => {
           this.nothingFound = false;
           this.loading = true;
-          this.searchCompleted = false; 
         }),
         debounceTime(200),
         concatMap((res) => this.getGeoLookupResult(res)),
       )
       .subscribe((res) => {
         this.filteredOptions.next(res);
-        this.searchCompleted = true; 
+        this.loading = false;
       });
   }
 
@@ -132,18 +128,17 @@ export class AddressSearchComponent implements OnInit {
 
   triggerInputUpdate(event?: KeyboardEvent) {
     this.lastUserInput = this.inputElem.nativeElement.value;
-    // If ENTER is pressed, trigger immediate search
+    this.loading = true;
     if (event && event.key === "Enter") {
       this.enterKeyStream.next(this.inputElem.nativeElement.value);
     } else {
-      this.searchCompleted = false; // Hide fallback until search completes
       this.inputStream.next(this.inputElem.nativeElement.value);
     }
   }
   searchClick() {
     this.lastUserInput = this.inputElem.nativeElement.value;
-    this.searchCompleted = false;
-    this.searchClickStream.next(this.inputElem.nativeElement.value);
+    this.loading = true;
+    this.inputStream.next(this.inputElem.nativeElement.value);
   }
 
   private isRelevantInput(input: string): boolean {
@@ -182,8 +177,6 @@ export class AddressSearchComponent implements OnInit {
         this.networkError = false;
         this.otherTypeError = false;
         this.lastSearch = searchTerm;
-        this.loading = false;
-        this.nothingFound = res.length === 0;
       }),
       catchError((error: HttpErrorResponse) => {
         this.loading = false;

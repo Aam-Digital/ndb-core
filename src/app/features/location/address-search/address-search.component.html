@@ -41,7 +41,7 @@
 
     <!-- show user-typed value if not empty and not in options (after search completed) -->
     @if (
-      searchCompleted &&
+      !loading &&
       inputElement.value?.length > 2 &&
       !isInputInOptions(inputElement.value)
     ) {
