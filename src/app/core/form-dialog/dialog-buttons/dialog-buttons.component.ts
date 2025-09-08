@@ -48,6 +48,7 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
   @Input() entity: E;
   @Input() form: EntityForm<E>;
   detailsRoute: string;
+  canSave: boolean = false;
 
   @Output() closeView = new EventEmitter<any>();
 
@@ -79,6 +80,20 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
       }
       this.initializeDetailsRouteIfAvailable();
     }
+    console.log("initDialogSettings", this.form);
+    this.form.formGroup.valueChanges.subscribe(() => {
+      this.canSave = Object.values(this.form.formGroup.controls).some(
+        (ctrl) => {
+          const val = ctrl.value;
+          if (val === null || val === undefined) return false;
+          if (Array.isArray(val)) return val.length > 0;
+          if (typeof val === "object" && val !== null && !(val instanceof Date))
+            return Object.keys(val).length > 0;
+          if (typeof val === "string") return val.trim().length > 0;
+          return true;
+        },
+      );
+    });
   }
 
   private initializeDetailsRouteIfAvailable() {
