@@ -88,6 +88,11 @@ export class AdminEntityService {
   ): EntityConfig {
     const entityConfigKey =
       EntityConfigService.PREFIX_ENTITY_CONFIG + entityConstructor.ENTITY_TYPE;
+
+    if (!config.data[entityConfigKey]) {
+      config.data[entityConfigKey] = {};
+    }
+
     return config.data[entityConfigKey];
   }
 }
