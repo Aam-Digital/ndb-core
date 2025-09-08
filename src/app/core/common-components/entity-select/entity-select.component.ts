@@ -30,6 +30,7 @@ import { Logging } from "../../logging/logging.service";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { resourceWithRetention } from "#src/app/utils/resourceWithRetention";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 @Component({
   selector: "app-entity-select",
@@ -59,6 +60,7 @@ export class EntitySelectComponent<E extends Entity> {
   private entityMapperService = inject(EntityMapperService);
   private formDialog = inject(FormDialogService);
   private entityRegistry = inject(EntityRegistry);
+  private ability = inject(EntityAbility);
 
   readonly loadingPlaceholder = $localize`:A placeholder for the input element when select options are not loaded yet:loading...`;
 
@@ -144,6 +146,20 @@ export class EntitySelectComponent<E extends Entity> {
     return this.allEntities
       .value()
       .filter((e) => !e.isActive && this.autocompleteFilter()(e)).length;
+  });
+
+  readonly isCreateDisabled = computed(() => {
+    if (this.disableCreateNew === true) {
+      return true;
+    }
+    //calculate based on permissions and entity type
+    const entityTypes = this.entityType();
+    if (entityTypes.length === 0) {
+      return true;
+    }
+
+    const entityType = entityTypes[0];
+    return !this.ability.can("create", entityType);
   });
 
   /**
