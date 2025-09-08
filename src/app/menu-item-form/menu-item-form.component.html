@@ -19,6 +19,16 @@
         </span>
       }
     </mat-label>
-    <input matInput [(ngModel)]="item.link" (ngModelChange)="onChange()" />
+    @if (linkOptions?.length) {
+      <mat-select [(ngModel)]="item.link" (ngModelChange)="onChange()">
+        @for (option of linkOptions; track option.value) {
+          <mat-option [value]="option.value">
+            {{ option.label }}
+          </mat-option>
+        }
+      </mat-select>
+    } @else {
+      <input matInput [(ngModel)]="item.link" (ngModelChange)="onChange()" />
+    }
   </mat-form-field>
 </div>
