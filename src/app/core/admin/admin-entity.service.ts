@@ -91,7 +91,8 @@ export class AdminEntityService {
       EntityConfigService.PREFIX_ENTITY_CONFIG + entityConstructor.ENTITY_TYPE;
 
     if (!config.data[entityConfigKey]) {
-      return (config.data[entityConfigKey] = {});
+      config.data[entityConfigKey] = {};
+      return config.data[entityConfigKey];
     }
 
     return config.data[entityConfigKey];
