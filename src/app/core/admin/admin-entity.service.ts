@@ -55,8 +55,7 @@ export class AdminEntityService {
     const newConfig = originalConfig.copy();
 
     let entitySchemaConfig: EntityConfig =
-      (await this.getEntitySchemaFromConfig(newConfig, entityConstructor)) ??
-      {};
+      this.getEntitySchemaFromConfig(newConfig, entityConstructor) ?? {};
     // Initialize config if not present
     entitySchemaConfig.attributes = entitySchemaConfig.attributes ?? {};
 
@@ -83,10 +82,10 @@ export class AdminEntityService {
     return { previous: originalConfig, current: updatedConfig };
   }
 
-  private async getEntitySchemaFromConfig(
+  private getEntitySchemaFromConfig(
     config: Config<unknown>,
     entityConstructor: EntityConstructor,
-  ): Promise<EntityConfig> {
+  ): EntityConfig {
     const entityConfigKey =
       EntityConfigService.PREFIX_ENTITY_CONFIG + entityConstructor.ENTITY_TYPE;
 
