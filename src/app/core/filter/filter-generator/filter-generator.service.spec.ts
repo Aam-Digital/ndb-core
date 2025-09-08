@@ -271,6 +271,51 @@ describe("FilterGeneratorService", () => {
     expect(filterData.selectedOptionValues).toEqual([user.getId()]);
   });
 
+  it("should filter entities with empty values using configurable enum filter", async () => {
+    const schema = {
+      id: "enumField",
+      dataType: "configurable-enum",
+      additional: "TestEnum",
+      label: "Enum Field",
+    };
+    TestEntity.schema.set("enumField", schema);
+
+    spyOn(
+      TestBed.inject(FilterGeneratorService)["enumService"],
+      "getEnumValues",
+    ).and.returnValue([
+      { id: "A", label: "A" },
+      { id: "B", label: "B" },
+    ]);
+
+    // Create entities with various "empty" values
+    const e1 = new TestEntity(); // undefined
+    const e2 = new TestEntity();
+    e2["enumField"] = null;
+    const e3 = new TestEntity();
+    e3["enumField"] = "";
+    const e4 = new TestEntity();
+    e4["enumField"] = { id: undefined };
+    const e5 = new TestEntity();
+    e5["enumField"] = { id: null };
+    const e6 = new TestEntity();
+    e6["enumField"] = { id: "" };
+    const e7 = new TestEntity();
+    e7["enumField"] = { id: "A" }; // valid
+
+    const data = [e1, e2, e3, e4, e5, e6, e7];
+
+    const filter = (
+      await service.generate([{ id: "enumField" }], TestEntity, data)
+    )[0] as ConfigurableEnumFilter<TestEntity>;
+
+    const emptyOption = filter.options.find((opt) => opt.key === "__empty__");
+    expect(emptyOption).toBeTruthy();
+
+    const filtered = filterService.getFilterPredicate(emptyOption.filter);
+    expect(data.filter(filtered)).toEqual([e1, e2, e3, e4, e5, e6]);
+  });
+
   function filter<T extends Entity>(
     data: T[],
     option: FilterSelectionOption<T>,
