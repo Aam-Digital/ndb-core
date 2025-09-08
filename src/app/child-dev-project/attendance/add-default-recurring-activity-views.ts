@@ -18,7 +18,7 @@ export const addDefaultRecurringActivityDetailsConfig: ConfigMigration = (
       component: "EntityList",
       config: {
         entityType: "RecurringActivity",
-        columns: ["title", "type", "status", "assignedTo"],
+        columns: ["title", "type", "assignedTo"],
         exportConfig: [
           {
             label: "Title",
@@ -53,7 +53,7 @@ export const addDefaultRecurringActivityDetailsConfig: ConfigMigration = (
                       fields: ["title"],
                     },
                     {
-                      fields: ["type", "status"],
+                      fields: ["type"],
                     },
                     {
                       fields: ["assignedTo"],
