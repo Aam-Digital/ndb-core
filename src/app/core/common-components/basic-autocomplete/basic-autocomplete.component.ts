@@ -44,7 +44,6 @@ import {
   CdkVirtualForOf,
   CdkVirtualScrollViewport,
 } from "@angular/cdk/scrolling";
-import {DisableEntityOperationDirective} from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive"
 interface SelectableOption<O, V> {
   initial: O;
   asString: string;
@@ -71,7 +70,6 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
   CdkVirtualScrollViewport,
   CdkVirtualForOf,
   CdkFixedSizeVirtualScroll,
-  DisableEntityOperationDirective
 ];
 
 /**
@@ -106,7 +104,6 @@ export class BasicAutocompleteComponent<O, V = O>
   @Input() createOption: (input: string) => Promise<O>;
   @Input() hideOption: (option: O) => boolean = () => false;
 
-  @Input() entityName?: string;
   /**
    * Whether the user should be able to select multiple values.
    */
@@ -203,8 +200,6 @@ export class BasicAutocompleteComponent<O, V = O>
         this.virtualScrollViewport.checkViewportSize();
       });
     });
-      console.log("updating valueMapper",this.valueMapper);
-
     // Subscribe to the valueChanges observable to print the input value
     this.autocompleteForm.valueChanges.subscribe((value) => {
       if (typeof value === "string") {

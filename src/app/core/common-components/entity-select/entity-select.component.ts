@@ -30,6 +30,7 @@ import { Logging } from "../../logging/logging.service";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { resourceWithRetention } from "#src/app/utils/resourceWithRetention";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 @Component({
   selector: "app-entity-select",
@@ -59,6 +60,7 @@ export class EntitySelectComponent<E extends Entity> {
   private entityMapperService = inject(EntityMapperService);
   private formDialog = inject(FormDialogService);
   private entityRegistry = inject(EntityRegistry);
+  private ability = inject(EntityAbility);
 
   readonly loadingPlaceholder = $localize`:A placeholder for the input element when select options are not loaded yet:loading...`;
 
@@ -117,11 +119,19 @@ export class EntitySelectComponent<E extends Entity> {
    * has no name, this filters for the entity's id.
    */
   @Input() accessor: (e: Entity) => string = (e) => e.toString();
-  entityToId = (option: E) => option.getId();
+  entityToId = (option: E) => {
+    console.log("entityToId called with:", option.getType());
+    const entityType = option.getType();
+    this.disableCreateNew = !this.ability.can(
+      "create",
+      new (this.entityRegistry.get(entityType))(),
+    );
+    console.log("disableCreateNew", this.disableCreateNew);
+    return option.getId();
+  };
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
 
-  @Input() entityName: string;
   private allEntities: Resource<E[]> = resourceWithRetention({
     defaultValue: [],
     params: () => ({

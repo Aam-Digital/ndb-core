@@ -135,13 +135,7 @@ Autocomplete
 
   <!-- Create new option -->
   @if (createOption && showAddOption && inputElement.value) {
-    <mat-option
-      [value]="inputElement.value"
-      *appDisabledEntityOperation="{
-        entity: entityName,
-        operation: 'create',
-      }"
-    >
+    <mat-option [value]="inputElement.value">
       <em
         i18n="
           Label for adding an option in a dropdown|e.g. Add new My new Option
