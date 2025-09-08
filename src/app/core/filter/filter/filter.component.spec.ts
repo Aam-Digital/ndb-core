@@ -40,7 +40,6 @@ describe("FilterComponent", () => {
     }).compileComponents();
     router = TestBed.inject(Router);
     fixture = TestBed.createComponent(FilterComponent);
-    loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
