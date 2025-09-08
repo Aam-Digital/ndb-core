@@ -14,7 +14,7 @@
       [display]="showEntities ? 'chips' : 'none'"
       [options]="availableOptions()"
       [placeholder]="loading() ? loadingPlaceholder : placeholder"
-      [createOption]="disableCreateNew ? null : createNewEntity"
+      [createOption]="isCreateDisabled() ? null : createNewEntity"
     >
       <ng-template let-item>
         @if (!item.isHidden) {
