@@ -15,7 +15,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { HttpErrorResponse } from "@angular/common/http";
 
-fdescribe("AddressSearchComponent", () => {
+describe("AddressSearchComponent", () => {
   let component: AddressSearchComponent;
   let fixture: ComponentFixture<AddressSearchComponent>;
 
