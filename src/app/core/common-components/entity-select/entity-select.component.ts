@@ -159,8 +159,7 @@ export class EntitySelectComponent<E extends Entity> {
     }
 
     const entityType = entityTypes[0];
-    const entity = this.entityRegistry.get(entityType);
-    return !this.ability.can("create", new entity());
+    return !this.ability.can("create", entityType);
   });
 
   /**
