@@ -21,6 +21,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
+import { untilDestroyed } from "@ngneat/until-destroy";
 
 @Component({
   selector: "app-dialog-buttons",
@@ -80,19 +81,25 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
       }
       this.initializeDetailsRouteIfAvailable();
     }
-    this.form.formGroup.valueChanges.subscribe(() => {
-      this.canSave = Object.values(this.form.formGroup.controls).some(
-        (ctrl) => {
-          const val = ctrl.value;
-          if (val === null || val === undefined) return false;
-          if (Array.isArray(val)) return val.length > 0;
-          if (typeof val === "object" && val !== null && !(val instanceof Date))
-            return Object.keys(val).length > 0;
-          if (typeof val === "string") return val.trim().length > 0;
-          return true;
-        },
-      );
-    });
+    this.form.formGroup.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.canSave = Object.values(this.form.formGroup.controls).some(
+          (ctrl) => {
+            const val = ctrl.value;
+            if (val === null || val === undefined) return false;
+            if (Array.isArray(val)) return val.length > 0;
+            if (
+              typeof val === "object" &&
+              val !== null &&
+              !(val instanceof Date)
+            )
+              return Object.keys(val).length > 0;
+            if (typeof val === "string") return val.trim().length > 0;
+            return true;
+          },
+        );
+      });
   }
 
   private initializeDetailsRouteIfAvailable() {
