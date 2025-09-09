@@ -96,6 +96,7 @@ export class AddressSearchComponent implements OnInit {
   private readonly enterKeyStream = new Subject<string>();
   private lastSearch: string;
 
+  /** do not display selected item in the input field because this should be an empty search field */
   displayFn = () => "";
 
   ngOnInit() {
