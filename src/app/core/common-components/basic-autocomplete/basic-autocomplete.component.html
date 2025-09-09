@@ -122,8 +122,7 @@ Autocomplete
                 'special-option': item.isInvalid || item.isEmpty,
               }"
               [style.color]="
-                item.asString.includes('[Invalid:') ||
-                item.asString.includes('not defined')
+                item.isInvalid || item.isEmpty
                   ? item.initial['color']
                   : null
               "
