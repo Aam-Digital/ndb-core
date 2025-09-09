@@ -4,11 +4,12 @@ import { AdminMenuItemDetailsComponent } from "./admin-menu-item-details.compone
 import { ConfigService } from "app/core/config/config.service";
 import { ViewConfig } from "app/core/config/dynamic-routing/view-config.interface";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { NEVER } from "rxjs";
+import { NEVER, Subject } from "rxjs";
 import { MenuItem } from "app/core/ui/navigation/menu-item";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { MenuService } from "app/core/ui/navigation/menu.service";
 
 describe("AdminMenuItemDetailsComponent", () => {
   let component: AdminMenuItemDetailsComponent;
@@ -16,6 +17,7 @@ describe("AdminMenuItemDetailsComponent", () => {
 
   let menuItem: MenuItem;
   let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let configUpdates$: Subject<void>;
 
   beforeEach(async () => {
     menuItem = {
@@ -24,7 +26,10 @@ describe("AdminMenuItemDetailsComponent", () => {
       link: "",
     };
 
-    mockConfigService = jasmine.createSpyObj(["getAllConfigs"]);
+    configUpdates$ = new Subject<void>();
+    mockConfigService = jasmine.createSpyObj(["getAllConfigs", "getConfig"], {
+      configUpdates: configUpdates$.asObservable(),
+    });
     mockConfigService.getAllConfigs.and.returnValue([]);
 
     await TestBed.configureTestingModule({
@@ -38,6 +43,7 @@ describe("AdminMenuItemDetailsComponent", () => {
         { provide: MatDialogRef, useValue: { afterClosed: () => NEVER } },
         { provide: ConfigService, useValue: mockConfigService },
         EntityRegistry,
+        MenuService,
       ],
     }).compileComponents();
 
