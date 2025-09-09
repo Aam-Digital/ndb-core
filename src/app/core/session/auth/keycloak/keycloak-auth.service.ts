@@ -1,4 +1,5 @@
 import { inject, Injectable } from "@angular/core";
+import { memoize } from "lodash-es";
 import { SessionInfo } from "../session-info";
 import { KeycloakEventTypeLegacy, KeycloakService } from "keycloak-angular";
 import { Logging } from "../../../logging/logging.service";
@@ -8,6 +9,7 @@ import { RemoteLoginNotAvailableError } from "./remote-login-not-available.error
 import { KeycloakUserDto } from "../../../user/user-admin-service/keycloak-user-dto";
 import { ActivatedRoute } from "@angular/router";
 import { ThirdPartyAuthenticationService } from "../../../../features/third-party-authentication/third-party-authentication.service";
+import { reuseFirstAsync } from "#src/app/utils/reuse-first-async";
 
 /**
  * Handles the remote session with keycloak
@@ -15,7 +17,6 @@ import { ThirdPartyAuthenticationService } from "../../../../features/third-part
 @Injectable()
 export class KeycloakAuthService {
   static readonly LAST_AUTH_KEY = "LAST_REMOTE_LOGIN";
-  private keycloakInitialised = false;
   accessToken: string;
 
   private keycloak = inject(KeycloakService);
@@ -25,10 +26,8 @@ export class KeycloakAuthService {
   /**
    * Check for an existing session or forward to the login page.
    */
-  async login(): Promise<SessionInfo> {
-    if (!this.keycloakInitialised) {
-      await this.initKeycloak();
-    }
+  login = reuseFirstAsync(async (): Promise<SessionInfo> => {
+    await this.initKeycloak();
 
     await this.keycloak.updateToken();
     let token = await this.keycloak.getToken();
@@ -42,9 +41,9 @@ export class KeycloakAuthService {
     }
 
     return this.processToken(token);
-  }
+  });
 
-  private async initKeycloak() {
+  private initKeycloak = memoize(async () => {
     try {
       await this.keycloak.init({
         config: window.location.origin + "/assets/keycloak.json",
@@ -67,7 +66,7 @@ export class KeycloakAuthService {
         Logging.error("Keycloak init failed", err);
       }
 
-      this.keycloakInitialised = false;
+      this.initKeycloak.cache.clear();
       throw err;
     }
 
@@ -79,9 +78,7 @@ export class KeycloakAuthService {
         );
       }
     });
-
-    this.keycloakInitialised = true;
-  }
+  });
 
   private processToken(token: string): SessionInfo {
     if (!token) {
