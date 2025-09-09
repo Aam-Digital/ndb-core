@@ -20,12 +20,6 @@ describe("AddressEditComponent", () => {
   let mockGeoService: jasmine.SpyObj<GeoService>;
   let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
 
-  const SAMPLE_GEO_RESULT: GeoResult = {
-    lat: 1,
-    lon: 1,
-    display_name: "lookup address",
-  };
-
   beforeEach(async () => {
     mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
 

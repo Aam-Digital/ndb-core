@@ -123,7 +123,6 @@ describe("AutomatedStatusUpdateConfigService", () => {
     const originalMentorship = mentorship.copy();
 
     mentorship.status = TEST_CONFIG[1];
-    const changedFields = { status: TEST_CONFIG[1] };
     await service.applyRulesToDependentEntities(mentorship, originalMentorship);
 
     const updatedMentee = await entityMapper.load(Mentee, mentee.getId());
@@ -134,7 +133,6 @@ describe("AutomatedStatusUpdateConfigService", () => {
     const originalMentorship = mentorship.copy();
 
     mentorship.otherField = "updated value";
-    const changedFields = { otherField: "updated value" };
 
     await service.applyRulesToDependentEntities(mentorship, originalMentorship);
 

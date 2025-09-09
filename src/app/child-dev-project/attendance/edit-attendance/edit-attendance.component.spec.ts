@@ -101,9 +101,6 @@ describe("EditAttendanceComponent", () => {
     const firstRemarkInput = inputElements[2];
     await firstRemarkInput.setValue("new remarks");
 
-    const placeholder = await firstRemarkInput.getPlaceholder();
-    const name = await firstRemarkInput.getName();
-
     expect(
       component.getAttendance(childrenEntities[0].getId()).remarks,
     ).toEqual("new remarks");

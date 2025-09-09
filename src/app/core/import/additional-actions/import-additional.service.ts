@@ -44,7 +44,7 @@ export class ImportAdditionalService {
 
   private updateLinkableEntities() {
     this.linkableEntities.clear();
-    for (const [entityTypeId, entityType] of this.entityRegistry.entries()) {
+    for (const [entityTypeId] of this.entityRegistry.entries()) {
       const actions = this.generateLinkActionsFor(entityTypeId);
       if (actions.length > 0) {
         this.linkableEntities.set(entityTypeId, actions);
