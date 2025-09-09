@@ -1,6 +1,7 @@
 @use "variables/colors";
 @use "variables/sizes";
 
+@use "../special-option-labels.scss";
 em {
   color: colors.$primary;
 }
