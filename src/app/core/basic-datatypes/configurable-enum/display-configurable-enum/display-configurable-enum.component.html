@@ -1,30 +1,20 @@
-@if (iterableValue.length === 1) {
-  <span
-    class="colored-bubble"
-    [style.background-color]="iterableValue[0].color"
-    [title]="iterableValue[0].label"
-  >
-    {{ iterableValue[0].label }}
-  </span>
-} @else {
-  <span class="bubble-list">
-    @for (val of iterableValue.slice(0, 3); track val) {
-      <span
-        class="colored-bubble"
-        [style.background-color]="val.color"
-        [title]="val.label"
-      >
-        {{ val.label }}
-      </span>
-    }
-    @if (iterableValue.length > 3) {
-      <span
-        class="colored-bubble"
-        style="background: #eee; color: #333"
-        [title]="extraLabels"
-      >
-        +{{ iterableValue.length - 3 }} more
-      </span>
-    }
-  </span>
-}
+<span class="bubble-list">
+  @for (val of iterableValue.slice(0, 3); track val) {
+    <span
+      class="colored-bubble"
+      [style.background-color]="val.color"
+      [title]="val.label"
+    >
+      {{ val.label }}
+    </span>
+  }
+  @if (iterableValue.length > 3) {
+    <span
+      class="colored-bubble"
+      style="background: #eee; color: #333"
+      [title]="extraLabels"
+    >
+      +{{ iterableValue.length - 3 }} more
+    </span>
+  }
+</span>
