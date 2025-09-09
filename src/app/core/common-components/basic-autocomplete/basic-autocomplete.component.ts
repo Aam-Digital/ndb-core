@@ -14,7 +14,7 @@ import {
   ViewChild,
   WritableSignal,
 } from "@angular/core";
-import { NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
+import { NgClass, NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatInput, MatInputModule } from "@angular/material/input";
@@ -51,6 +51,8 @@ interface SelectableOption<O, V> {
   asValue: V;
   selected: boolean;
   isHidden: boolean;
+  isInvalid?: boolean;
+  isEmpty?: boolean;
 }
 
 export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
@@ -71,6 +73,7 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
   CdkVirtualScrollViewport,
   CdkVirtualForOf,
   CdkFixedSizeVirtualScroll,
+  NgClass,
 ];
 
 /**
@@ -207,11 +210,6 @@ export class BasicAutocompleteComponent<O, V = O>
         this.retainSearchValue = value;
       }
     });
-  }
-
-  getPlainTextTooltip(htmlString: string): string {
-    // Remove HTML tags for tooltip display
-    return htmlString.replace(/<[^>]*>/g, "");
   }
 
   ngOnChanges(changes: { [key in keyof this]?: any }) {
@@ -424,6 +422,8 @@ export class BasicAutocompleteComponent<O, V = O>
       asString: this.optionToString(opt),
       selected: false,
       isHidden: (opt as SelectableOption<O, V>)?.isHidden ?? false,
+      isInvalid: (opt as SelectableOption<O, V>)?.isInvalid ?? false,
+      isEmpty: (opt as SelectableOption<O, V>)?.isEmpty ?? false,
     };
   }
 
