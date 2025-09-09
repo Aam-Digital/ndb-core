@@ -10,13 +10,9 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { ConfigService } from "app/core/config/config.service";
-import {
-  PREFIX_VIEW_CONFIG,
-  ViewConfig,
-} from "app/core/config/dynamic-routing/view-config.interface";
 import { EntityTypeSelectComponent } from "../../../entity/entity-type-select/entity-type-select.component";
 import { MenuItemFormComponent } from "#src/app/menu-item-form/menu-item-form.component";
+import { MenuService } from "#src/app/core/ui/navigation/menu.service";
 
 /**
  * Dialog component to edit a single menu item's details.
@@ -39,7 +35,7 @@ import { MenuItemFormComponent } from "#src/app/menu-item-form/menu-item-form.co
   styleUrls: ["./admin-menu-item-details.component.scss"],
 })
 export class AdminMenuItemDetailsComponent implements OnInit {
-  private configService = inject(ConfigService);
+  private menuService = inject(MenuService);
   dialogRef = inject<MatDialogRef<AdminMenuItemDetailsComponent>>(MatDialogRef);
   data = inject<{
     item: MenuItem;
@@ -58,19 +54,7 @@ export class AdminMenuItemDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.availableRoutes = this.loadAvailableRoutes();
-  }
-
-  private loadAvailableRoutes(): { value: string; label: string }[] {
-    const allConfigs: ViewConfig[] =
-      this.configService.getAllConfigs<ViewConfig>(PREFIX_VIEW_CONFIG);
-    return allConfigs
-      .filter((view) => !view._id.includes("/:id")) // skip details views (with "/:id" placeholder)
-      .map((view) => {
-        const id = view._id.replace(PREFIX_VIEW_CONFIG, "/");
-        const label = view.config?.entityType?.trim() || view.component || id;
-        return { value: id, label };
-      });
+    this.availableRoutes = this.menuService.loadAvailableRoutes();
   }
 
   onEntityTypeSelected(entityType: string | string[]) {

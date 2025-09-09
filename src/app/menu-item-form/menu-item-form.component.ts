@@ -7,6 +7,7 @@ import { AdminIconComponent } from "../admin-icon-input/admin-icon-input.compone
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatSelectModule } from "@angular/material/select";
+import { MatIconButton } from "@angular/material/button";
 
 @Component({
   selector: "app-menu-item-form",
@@ -19,6 +20,7 @@ import { MatSelectModule } from "@angular/material/select";
     FaIconComponent,
     MatTooltipModule,
     MatSelectModule,
+    MatIconButton,
   ],
   templateUrl: "./menu-item-form.component.html",
   styleUrls: ["./menu-item-form.component.scss"],
@@ -33,7 +35,12 @@ export class MenuItemFormComponent {
   @Input() linkOptions: { value: string; label: string }[] = [];
   @Output() itemChange = new EventEmitter<MenuItem>();
 
+  customLinkMode = false;
+
   onChange() {
     this.itemChange.emit({ ...this.item });
+  }
+  toggleCustomLinkMode() {
+    this.customLinkMode = !this.customLinkMode;
   }
 }

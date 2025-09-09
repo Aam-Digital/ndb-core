@@ -6,29 +6,43 @@
 
   <app-admin-icon-input [(icon)]="item.icon"></app-admin-icon-input>
 
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label i18n>
-      Link
-      @if (showLinkTooltip) {
-        &nbsp;
-        <span
-          matTooltip="You can edit the link to create a new quick access shortcut. To create a new shortcut link, open Aam Digital in a new tab, go to the desired entity, copy everything after ‘https://demo.aam-digital.com/’, and paste it here to create your shortcut."
-          i18n-matTooltip
-        >
-          <fa-icon icon="question-circle"></fa-icon>
-        </span>
-      }
-    </mat-label>
-    @if (linkOptions?.length) {
-      <mat-select [(ngModel)]="item.link" (ngModelChange)="onChange()">
-        @for (option of linkOptions; track option.value) {
-          <mat-option [value]="option.value">
-            {{ option.label }}
-          </mat-option>
+  <div class="flex-row align-center gap-small">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label i18n>
+        Link
+        @if (showLinkTooltip) {
+          &nbsp;
+          <span
+            matTooltip="You can edit the link to create a new quick access shortcut. To create a new shortcut link, open Aam Digital in a new tab, go to the desired entity, copy everything after ‘https://demo.aam-digital.com/’, and paste it here to create your shortcut."
+            i18n-matTooltip
+          >
+            <fa-icon icon="question-circle"></fa-icon>
+          </span>
         }
-      </mat-select>
-    } @else {
-      <input matInput [(ngModel)]="item.link" (ngModelChange)="onChange()" />
-    }
-  </mat-form-field>
+      </mat-label>
+      @if (linkOptions?.length && !customLinkMode) {
+        <mat-select [(ngModel)]="item.link" (ngModelChange)="onChange()">
+          @for (option of linkOptions; track option.value) {
+            <mat-option [value]="option.value">
+              {{ option.label }}
+            </mat-option>
+          }
+        </mat-select>
+      } @else {
+        <input matInput [(ngModel)]="item.link" (ngModelChange)="onChange()" />
+      }
+    </mat-form-field>
+    <button
+      mat-icon-button
+      matTooltip="Switch to {{
+        customLinkMode ? 'select' : 'custom link'
+      }} mode"
+      i18n-matTooltip
+      matIconSuffix
+      (click)="toggleCustomLinkMode()"
+      class="margin-left-small"
+    >
+      <fa-icon [icon]="customLinkMode ? 'edit' : 'list'"></fa-icon>
+    </button>
+  </div>
 </div>

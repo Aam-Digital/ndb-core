@@ -11,6 +11,7 @@
           [item]="shortcut"
           (itemChange)="onShortcutItemChange($event, i)"
           [showLinkTooltip]="true"
+          [linkOptions]="availableRoutes"
         ></app-menu-item-form>
       </div>
     }
