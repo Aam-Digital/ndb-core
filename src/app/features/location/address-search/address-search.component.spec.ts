@@ -55,20 +55,20 @@ describe("AddressSearchComponent", () => {
       .then((el) => el.host());
 
     await inputElement.sendKeys("input 1");
-    expect(component.loading).toBeTrue();
     expect(mockGeoService.lookup).not.toHaveBeenCalled();
+    expect(component.loading).toBeFalse();
 
     tick(2000);
-    expect(component.loading).toBeTrue();
     expect(mockGeoService.lookup).not.toHaveBeenCalled();
+    expect(component.loading).toBeFalse();
 
     // change input before debounce --> restarts timeouts
     await inputElement.clear();
     await inputElement.sendKeys("input 2");
 
     tick(700);
-    expect(component.loading).toBeTrue();
     expect(mockGeoService.lookup).not.toHaveBeenCalled();
+    expect(component.loading).toBeFalse();
     expect(options).toEqual([]);
 
     tick(2000);
@@ -110,6 +110,7 @@ describe("AddressSearchComponent", () => {
     });
     await expectAsync(input.getValue()).toBeResolvedTo("");
   });
+
   it("should handle network errors", fakeAsync(async () => {
     const error = new HttpErrorResponse({ status: 0 });
     mockGeoService.lookup.and.returnValue(throwError(() => error));

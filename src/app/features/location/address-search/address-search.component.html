@@ -39,8 +39,9 @@
       <mat-option disabled i18n>Location not found</mat-option>
     }
 
-    <!-- show user-typed value if not empty and not in options (after search completed) -->
+    <!-- Only show fallback after waiting and loading are both false -->
     @if (
+      !waiting &&
       !loading &&
       inputElement.value?.length > 2 &&
       !isInputInOptions(inputElement.value)

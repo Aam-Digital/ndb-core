@@ -85,7 +85,8 @@ export class AddressSearchComponent implements OnInit {
   }>();
 
   filteredOptions = new BehaviorSubject<GeoResult[]>([]);
-  loading = false;
+  waiting = false; // <-- new flag for debounce period
+  loading = false; // <-- true only during actual HTTP request
   nothingFound = false;
   networkError = false;
   otherTypeError = false;
@@ -95,7 +96,6 @@ export class AddressSearchComponent implements OnInit {
   private enterKeyStream = new Subject<string>();
   private lastSearch: string;
 
-  /** do not display selected item in the input field because this should be an empty search field */
   displayFn = () => "";
 
   ngOnInit() {
@@ -113,9 +113,9 @@ export class AddressSearchComponent implements OnInit {
         filter((input) => this.isRelevantInput(input)),
         tap(() => {
           this.nothingFound = false;
-          this.loading = true;
+          this.waiting = false; // debounce is done, not waiting anymore
+          this.loading = true; // now actually loading
         }),
-        debounceTime(200),
         concatMap((res) => this.getGeoLookupResult(res)),
       )
       .subscribe((res) => {
@@ -128,8 +128,11 @@ export class AddressSearchComponent implements OnInit {
 
   triggerInputUpdate(event?: KeyboardEvent) {
     this.lastUserInput = this.inputElem.nativeElement.value;
-    this.loading = true;
+    this.waiting = true; // start waiting for debounce
+    this.loading = false; // not loading yet
     if (event && event.key === "Enter") {
+      this.waiting = false; // skip waiting if ENTER
+      this.loading = true;
       this.enterKeyStream.next(this.inputElem.nativeElement.value);
     } else {
       this.inputStream.next(this.inputElem.nativeElement.value);
@@ -137,8 +140,9 @@ export class AddressSearchComponent implements OnInit {
   }
   searchClick() {
     this.lastUserInput = this.inputElem.nativeElement.value;
+    this.waiting = false;
     this.loading = true;
-    this.inputStream.next(this.inputElem.nativeElement.value);
+    this.searchClickStream.next(this.inputElem.nativeElement.value);
   }
 
   private isRelevantInput(input: string): boolean {
