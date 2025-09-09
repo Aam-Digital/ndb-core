@@ -35,7 +35,7 @@ import { MenuService } from "#src/app/core/ui/navigation/menu.service";
   styleUrls: ["./admin-menu-item-details.component.scss"],
 })
 export class AdminMenuItemDetailsComponent implements OnInit {
-  private menuService = inject(MenuService);
+  private readonly menuService = inject(MenuService);
   dialogRef = inject<MatDialogRef<AdminMenuItemDetailsComponent>>(MatDialogRef);
   data = inject<{
     item: MenuItem;
