@@ -96,7 +96,7 @@ export class FilterGeneratorService {
                 key: "__empty__",
                 label: "not defined",
                 color: "#888",
-                isEmpty: true, //
+                isEmpty: true,
                 filter: {
                   $or: [
                     { [filterConfig.id]: undefined },
