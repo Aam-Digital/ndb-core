@@ -3,8 +3,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FilterComponent } from "./filter.component";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
-import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
-import { HarnessLoader } from "@angular/cdk/testing";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BasicFilterConfig } from "../../entity-list/EntityListConfig";
@@ -19,7 +17,6 @@ class ActivatedRouteMock {
 describe("FilterComponent", () => {
   let component: FilterComponent;
   let fixture: ComponentFixture<FilterComponent>;
-  let loader: HarnessLoader;
 
   let activatedRouteMock = new ActivatedRouteMock();
   let router: Router;
@@ -40,7 +37,6 @@ describe("FilterComponent", () => {
     }).compileComponents();
     router = TestBed.inject(Router);
     fixture = TestBed.createComponent(FilterComponent);
-    loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
