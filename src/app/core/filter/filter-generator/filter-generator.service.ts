@@ -79,7 +79,7 @@ export class FilterGeneratorService {
               v !== undefined && v !== null && v !== "" && !validIds.has(v),
           )
           .map((invalidId) => ({
-            key: "__invalid__:" + invalidId,
+            key: `invalid:${invalidId}`,
             label: `[Invalid: ${invalidId}]`,
             color: "#d9534f",
             isInvalid: true,
@@ -93,7 +93,7 @@ export class FilterGeneratorService {
         const emptyOption = hasEmpty
           ? [
               {
-                key: "__empty__",
+                key: null,
                 label: "not defined",
                 color: "#888",
                 isEmpty: true,
