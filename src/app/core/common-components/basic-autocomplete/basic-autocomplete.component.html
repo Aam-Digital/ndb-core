@@ -95,6 +95,7 @@ Autocomplete
       <mat-option
         [value]="item"
         cdkDrag
+        [ngClass]="getCssClass(item)"
         *cdkVirtualFor="
           let item of autocompleteOptions;
           trackBy: trackByOptionValueFn

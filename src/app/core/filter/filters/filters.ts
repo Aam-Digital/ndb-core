@@ -154,6 +154,9 @@ export interface FilterSelectionOption<T> {
   /** Optional color */
   color?: string;
 
+  /** Optional CSS class for styling the option */
+  cssClass?: string;
+
   /**
    * The filter query which should be used if this filter is selected
    */

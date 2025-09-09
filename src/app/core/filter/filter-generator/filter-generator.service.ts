@@ -61,6 +61,7 @@ export class FilterGeneratorService {
           label,
           this.enumService.getEnumValues(schema.additional),
           filterConfig.singleSelectOnly,
+          data,
         );
       } else if (type == "boolean") {
         filter = new BooleanFilter(

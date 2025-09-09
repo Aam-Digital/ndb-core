@@ -8,3 +8,16 @@
 .hidden {
   display: none;
 }
+
+// Styling for special filter options
+::ng-deep .mat-option {
+  &.invalid-option .mat-option-text {
+    font-style: italic;
+    color: #d9534f; /* red color for invalid options */
+  }
+
+  &.empty-option .mat-option-text {
+    font-style: italic;
+    color: #6c757d; /* grey color for empty values */
+  }
+}

@@ -265,7 +265,20 @@ export class EntityCountDashboardComponent
 
   goToEntityList(filterId: string) {
     const params = {};
-    params[this.groupBy[this.currentGroupIndex]] = filterId;
+    const fieldName = this.groupBy[this.currentGroupIndex];
+    
+    // Handle special filter values for invalid options and empty values
+    if (filterId === "__invalid__") {
+      // For invalid options, we need to construct a special query parameter
+      // that will be interpreted by the filter system
+      params[fieldName] = "__invalid__";
+    } else if (filterId === "") {
+      // For empty/not defined values
+      params[fieldName] = "__empty__";
+    } else {
+      // Regular filter values
+      params[fieldName] = filterId;
+    }
 
     this.router.navigate([this._entity.route], { queryParams: params });
   }

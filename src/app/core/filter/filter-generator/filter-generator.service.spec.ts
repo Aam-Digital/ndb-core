@@ -140,6 +140,59 @@ describe("FilterGeneratorService", () => {
     Note.schema.delete("otherEnum");
   });
 
+  it("should include invalid options and empty values in configurable enum filter", async () => {
+    const schema = Note.schema.get("category");
+    
+    // Create test notes with invalid and empty values
+    const noteWithValidEnum = new Note();
+    noteWithValidEnum.category = defaultInteractionTypes[0];
+    
+    const noteWithInvalidEnum = new Note();
+    noteWithInvalidEnum.category = { id: "INVALID_OPTION", label: "Invalid Option", isInvalidOption: true };
+    
+    const noteWithEmptyEnum = new Note();
+    noteWithEmptyEnum.category = undefined;
+    
+    const noteWithEmptyStringEnum = new Note();
+    noteWithEmptyStringEnum.category = { id: "", label: "" };
+
+    const testNotes = [noteWithValidEnum, noteWithInvalidEnum, noteWithEmptyEnum, noteWithEmptyStringEnum];
+
+    const filterOptions = (
+      await service.generate([{ id: "category" }], Note, testNotes)
+    )[0] as ConfigurableEnumFilter<Note>;
+
+    expect(filterOptions.label).toEqual(schema.label);
+    expect(filterOptions.name).toEqual("category");
+    
+    // Check that valid options are included
+    const validOptionKeys = defaultInteractionTypes.map(it => it.id);
+    const filterOptionKeys = filterOptions.options.map(option => option.key);
+    validOptionKeys.forEach(key => {
+      expect(filterOptionKeys).toContain(key);
+    });
+    
+    // Check that invalid option is included
+    expect(filterOptionKeys).toContain("INVALID_OPTION");
+    const invalidOption = filterOptions.options.find(opt => opt.key === "INVALID_OPTION");
+    expect(invalidOption.label).toContain("[invalid option]");
+    expect(invalidOption.cssClass).toBe("invalid-option");
+    
+    // Check that empty option is included
+    expect(filterOptionKeys).toContain("__empty__");
+    const emptyOption = filterOptions.options.find(opt => opt.key === "__empty__");
+    expect(emptyOption.label).toContain("not defined");
+    expect(emptyOption.cssClass).toBe("empty-option");
+    
+    // Test filtering with invalid option
+    expect(filter([noteWithInvalidEnum], invalidOption)).toEqual([noteWithInvalidEnum]);
+    expect(filter([noteWithValidEnum], invalidOption)).toEqual([]);
+    
+    // Test filtering with empty option
+    expect(filter([noteWithEmptyEnum, noteWithEmptyStringEnum], emptyOption)).toEqual([noteWithEmptyEnum, noteWithEmptyStringEnum]);
+    expect(filter([noteWithValidEnum], emptyOption)).toEqual([]);
+  });
+
   it("should create an entity filter", async () => {
     const school1 = new TestEntity();
     school1.name = "First School";

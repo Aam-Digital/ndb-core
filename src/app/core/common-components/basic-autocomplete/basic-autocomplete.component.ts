@@ -14,7 +14,7 @@ import {
   ViewChild,
   WritableSignal,
 } from "@angular/core";
-import { NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
+import { NgForOf, NgIf, NgTemplateOutlet, NgClass } from "@angular/common";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatInput, MatInputModule } from "@angular/material/input";
@@ -60,6 +60,7 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
   NgForOf,
   MatCheckboxModule,
   NgIf,
+  NgClass,
   NgTemplateOutlet,
   MatChipInput,
   MatChipGrid,
@@ -432,6 +433,10 @@ export class BasicAutocompleteComponent<O, V = O>
       this.isInSearchMode.set(false);
       this.retainSearchValue = "";
     }
+  }
+
+  getCssClass(item: SelectableOption<O, V>): string {
+    return (item.initial as any)?.cssClass || "";
   }
 
   override onContainerClick(event: MouseEvent) {
