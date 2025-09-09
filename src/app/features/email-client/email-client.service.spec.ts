@@ -5,11 +5,17 @@ import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EmailDatatype } from "#src/app/core/basic-datatypes/string/email.datatype";
+import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 
 describe("EmailClientService", () => {
   let service: EmailClientService;
   let mockRegistry: jasmine.SpyObj<EntityRegistry>;
   let mockAlert: jasmine.SpyObj<AlertService>;
+
+  class EntityWithEmail extends Entity {
+    @DatabaseField({ dataType: EmailDatatype.dataType })
+    email?: string;
+  }
 
   beforeEach(() => {
     mockRegistry = jasmine.createSpyObj("EntityRegistry", ["get"]);
@@ -30,21 +36,50 @@ describe("EmailClientService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should show warning and return false if email field exists but value is missing", () => {
-    const fakeEntity = {
-      getType: () => "TestEntity",
-      email: undefined,
-    } as unknown as Entity;
-    const FakeEntityConstructor: any = {
-      schema: [{ id: "email", dataType: EmailDatatype.dataType }],
-    };
-    mockRegistry.get.and.returnValue(FakeEntityConstructor);
+  it("should show warning and return false if email field exists but value is missing", async () => {
+    const fakeEntity = new EntityWithEmail();
+    fakeEntity.email = undefined;
+    mockRegistry.get.and.returnValue(EntityWithEmail);
 
-    const result = service.executeMailtoFromEntity(fakeEntity);
+    const result = await service.executeMailto(fakeEntity);
 
     expect(result).toBeFalse();
     expect(mockAlert.addWarning).toHaveBeenCalledWith(
       "Please fill an email address for this record to use this functionality.",
     );
+  });
+
+  it("should generate mailto link with bcc for multiple emails", () => {
+    const emails = ["test@example.com", "john@example.com"];
+    const subject = "Subject";
+    const body = "Body";
+
+    const mailto = service.buildMailtoLink(emails, subject, body, true);
+
+    expect(mailto).toBe(
+      "mailto:?bcc=test%40example.com%2Cjohn%40example.com&subject=Subject&body=Body",
+    );
+  });
+
+  it("should generate mailto link with to for group email", () => {
+    const emails = ["test@example.com", "john@example.com"];
+    const subject = "Subject";
+    const body = "Body";
+
+    const mailto = service.buildMailtoLink(emails, subject, body, false);
+
+    expect(mailto).toBe(
+      "mailto:test%40example.com%2Cjohn%40example.com?subject=Subject&body=Body",
+    );
+  });
+
+  it("should generate mailto link with to for single email", () => {
+    const email = "test@example.com";
+    const subject = "Subject";
+    const body = "Body";
+
+    const mailto = service.buildMailtoLink(email, subject, body, false);
+
+    expect(mailto).toBe("mailto:test%40example.com?subject=Subject&body=Body");
   });
 });

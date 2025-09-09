@@ -90,7 +90,6 @@ describe("PublicFormComponent", () => {
   it("should navigate to the success page after form submission and show a link to submit another form", fakeAsync(() => {
     initComponent();
     tick();
-    const openSnackbarSpy = spyOn(TestBed.inject(MatSnackBar), "open");
     const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
     const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
     saveSpy.and.resolveTo();

@@ -268,7 +268,7 @@
         class="standard-icon-with-text color-accent"
         icon="tools"
       ></fa-icon>
-      <span i18n>Edit Data Structure</span>
+      <span i18n>Configure Data Structure</span>
     </button>
   }
 
@@ -350,6 +350,15 @@
           i18n="bulk action button"
         >
           Merge
+        </button>
+        <button
+          mat-raised-button
+          (click)="bulkEmail()"
+          [disabled]="selectedRows.length === 0"
+          color="accent"
+          i18n="bulk action button"
+        >
+          Send email to group
         </button>
         <button mat-raised-button (click)="selectedRows = undefined" i18n>
           Cancel

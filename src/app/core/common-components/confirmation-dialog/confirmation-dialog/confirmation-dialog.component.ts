@@ -6,6 +6,7 @@ import {
 } from "@angular/material/dialog";
 import { DialogCloseComponent } from "../../dialog-close/dialog-close.component";
 import { MatButtonModule } from "@angular/material/button";
+import { MarkdownComponent } from "ngx-markdown";
 
 /**
  * A configurable confirmation dialog box
@@ -14,7 +15,12 @@ import { MatButtonModule } from "@angular/material/button";
 @Component({
   selector: "app-confirmation-dialog",
   templateUrl: "./confirmation-dialog.component.html",
-  imports: [DialogCloseComponent, MatDialogModule, MatButtonModule],
+  imports: [
+    DialogCloseComponent,
+    MatDialogModule,
+    MatButtonModule,
+    MarkdownComponent,
+  ],
 })
 export class ConfirmationDialogComponent {
   dialogRef = inject<MatDialogRef<ConfirmationDialogComponent>>(MatDialogRef);
