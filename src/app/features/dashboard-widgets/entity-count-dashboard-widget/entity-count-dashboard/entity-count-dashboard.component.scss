@@ -1,4 +1,5 @@
 @use "../../../../core/dashboard/dashboard-widget-base";
+@use "../../../../core/common-components/special-option-labels.scss";
 
 .groupby-label {
   margin: auto;
@@ -10,10 +11,4 @@
 .label-separator {
   border-top: 1px solid #ccc;
   margin: 8px 0 0 0;
-}
-
-.not-defined-label {
-  font-style: italic;
-  color: #888;
-  opacity: 0.85;
 }
