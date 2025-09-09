@@ -85,8 +85,8 @@ export class AddressSearchComponent implements OnInit {
   }>();
 
   filteredOptions = new BehaviorSubject<GeoResult[]>([]);
-  waiting = false; // <-- new flag for debounce period
-  loading = false; // <-- true only during actual HTTP request
+  waiting = false;
+  loading = false;
   nothingFound = false;
   networkError = false;
   otherTypeError = false;
@@ -113,8 +113,8 @@ export class AddressSearchComponent implements OnInit {
         filter((input) => this.isRelevantInput(input)),
         tap(() => {
           this.nothingFound = false;
-          this.waiting = false; // debounce is done, not waiting anymore
-          this.loading = true; // now actually loading
+          this.waiting = false;
+          this.loading = true;
         }),
         concatMap((res) => this.getGeoLookupResult(res)),
       )
@@ -128,8 +128,8 @@ export class AddressSearchComponent implements OnInit {
 
   triggerInputUpdate(event?: KeyboardEvent) {
     this.lastUserInput = this.inputElem.nativeElement.value;
-    this.waiting = true; // start waiting for debounce
-    this.loading = false; // not loading yet
+    this.waiting = true;
+    this.loading = false;
     if (event && event.key === "Enter") {
       this.waiting = false; // skip waiting if ENTER
       this.loading = true;
