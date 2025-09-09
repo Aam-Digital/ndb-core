@@ -181,6 +181,8 @@ export class AddressSearchComponent implements OnInit {
         this.networkError = false;
         this.otherTypeError = false;
         this.lastSearch = searchTerm;
+        this.loading = false;
+        this.nothingFound = res.length === 0;
       }),
       catchError((error: HttpErrorResponse) => {
         this.loading = false;
