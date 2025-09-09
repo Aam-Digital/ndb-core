@@ -93,7 +93,7 @@ export class AddressSearchComponent implements OnInit {
   @ViewChild("inputElement") private inputElem: ElementRef<HTMLInputElement>;
   private inputStream = new Subject<string>();
   private searchClickStream = new Subject<string>();
-  private enterKeyStream = new Subject<string>();
+  private readonly enterKeyStream = new Subject<string>();
   private lastSearch: string;
 
   displayFn = () => "";
