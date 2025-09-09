@@ -119,13 +119,9 @@ Autocomplete
               [matTooltip]="item.asString"
               matTooltipPosition="above"
               [ngClass]="{
-                'special-option': item.isInvalid || item.isEmpty,
+                'not-defined-label': item.isEmpty,
+                'invalid-label': item.isInvalid,
               }"
-              [style.color]="
-                item.isInvalid || item.isEmpty
-                  ? item.initial['color']
-                  : null
-              "
             >
               {{ item.asString }}
             </span>

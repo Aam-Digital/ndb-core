@@ -309,7 +309,7 @@ describe("FilterGeneratorService", () => {
       await service.generate([{ id: "enumField" }], TestEntity, data)
     )[0] as ConfigurableEnumFilter<TestEntity>;
 
-    const emptyOption = filter.options.find((opt) => opt.key === "__empty__");
+    const emptyOption = filter.options.find((opt) => opt.key === null);
     expect(emptyOption).toBeTruthy();
 
     const filtered = filterService.getFilterPredicate(emptyOption.filter);

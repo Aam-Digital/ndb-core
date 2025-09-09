@@ -81,7 +81,6 @@ export class FilterGeneratorService {
           .map((invalidId) => ({
             key: `invalid:${invalidId}`,
             label: `[Invalid: ${invalidId}]`,
-            color: "#d9534f",
             isInvalid: true,
             filter: { [filterConfig.id + ".id"]: invalidId } as DataFilter<T>,
           }));
@@ -95,7 +94,6 @@ export class FilterGeneratorService {
               {
                 key: null,
                 label: "not defined",
-                color: "#888",
                 isEmpty: true,
                 filter: {
                   $or: [
