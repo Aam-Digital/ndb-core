@@ -21,8 +21,9 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
-import { untilDestroyed } from "@ngneat/until-destroy";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-dialog-buttons",
   imports: [
@@ -84,21 +85,7 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
     this.form.formGroup.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.canSave = Object.values(this.form.formGroup.controls).some(
-          (ctrl) => {
-            const val = ctrl.value;
-            if (val === null || val === undefined) return false;
-            if (Array.isArray(val)) return val.length > 0;
-            if (
-              typeof val === "object" &&
-              val !== null &&
-              !(val instanceof Date)
-            )
-              return Object.keys(val).length > 0;
-            if (typeof val === "string") return val.trim().length > 0;
-            return true;
-          },
-        );
+        this.canSave = this.hasFormValue();
       });
   }
 
@@ -144,5 +131,21 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
     if (action === "delete") {
       this.close();
     }
+  }
+
+  /**
+   * Checks if any control in the form has a non-empty value.
+   * Returns true if at least one form control contains a value
+   */
+  private hasFormValue(): boolean {
+    return Object.values(this.form.formGroup.controls).some((ctrl) => {
+      const val = ctrl.value;
+      if (val === null || val === undefined) return false;
+      if (Array.isArray(val)) return val.length > 0;
+      if (typeof val === "object" && val !== null && !(val instanceof Date))
+        return Object.keys(val).length > 0;
+      if (typeof val === "string") return val.trim().length > 0;
+      return true;
+    });
   }
 }
