@@ -80,7 +80,6 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
       }
       this.initializeDetailsRouteIfAvailable();
     }
-    console.log("initDialogSettings", this.form);
     this.form.formGroup.valueChanges.subscribe(() => {
       this.canSave = Object.values(this.form.formGroup.controls).some(
         (ctrl) => {
