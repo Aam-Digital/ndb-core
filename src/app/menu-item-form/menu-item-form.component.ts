@@ -40,6 +40,7 @@ export class MenuItemFormComponent {
   onChange() {
     this.itemChange.emit({ ...this.item });
   }
+
   toggleCustomLinkMode() {
     this.customLinkMode = !this.customLinkMode;
   }
