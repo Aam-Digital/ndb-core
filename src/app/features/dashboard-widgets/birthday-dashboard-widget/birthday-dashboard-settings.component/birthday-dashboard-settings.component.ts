@@ -9,6 +9,10 @@ import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { getEntitySchema } from "#src/app/core/entity/database-field.decorator";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import { CommonModule } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
+import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 
 export interface BirthdayDashboardSettingsConfig {
   /**
@@ -24,6 +28,11 @@ export interface BirthdayDashboardSettingsConfig {
   entities?: { [entityType: string]: string };
 }
 
+interface EntityPropertyPair {
+  entityType: string;
+  property: string;
+}
+
 @Component({
   selector: "app-birthday-dashboard-settings",
   standalone: true,
@@ -35,6 +44,9 @@ export interface BirthdayDashboardSettingsConfig {
     MatOptionModule,
     FormsModule,
     EntityTypeSelectComponent,
+    EntityFieldSelectComponent,
+    MatButtonModule,
+    FontAwesomeModule,
   ],
   templateUrl: "./birthday-dashboard-settings.component.html",
   styleUrls: ["./birthday-dashboard-settings.component.scss"],
@@ -43,10 +55,9 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
   @Input() formControl: FormControl<BirthdayDashboardSettingsConfig>;
 
   availableEntityTypes: EntityConstructor[] = [];
-  availableProperties: string[] = [];
+  availablePropertiesMap: { [entityType: string]: string[] } = {};
 
-  selectedEntityType: string;
-  selectedProperty: string;
+  entityPropertyPairs: EntityPropertyPair[] = [];
 
   localConfig: BirthdayDashboardSettingsConfig = {
     threshold: 32,
@@ -70,41 +81,55 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
       },
     );
 
+    // Build availablePropertiesMap for each entity type
+    for (const ctor of this.availableEntityTypes) {
+      const schema = getEntitySchema(ctor);
+      this.availablePropertiesMap[ctor.ENTITY_TYPE] = Array.from(
+        schema.entries(),
+      )
+        .filter(([_, field]: any) => field.dataType === "date-with-age")
+        .map(([key]) => key);
+    }
+
+    // Initialize pairs from config or default
     const entities = this.formControl.value?.entities ?? {
       Child: "dateOfBirth",
     };
-    this.selectedEntityType = Object.keys(entities)[0];
-    this.selectedProperty = entities[this.selectedEntityType];
+    this.entityPropertyPairs = Object.entries(entities).map(
+      ([entityType, property]) => ({
+        entityType,
+        property,
+      }),
+    );
+    if (this.entityPropertyPairs.length === 0) {
+      // Always show at least one pair
+      this.entityPropertyPairs.push({
+        entityType: this.availableEntityTypes[0]?.ENTITY_TYPE ?? "",
+        property:
+          this.availablePropertiesMap[
+            this.availableEntityTypes[0]?.ENTITY_TYPE
+          ]?.[0] ?? "",
+      });
+    }
 
-    this.updateAvailableProperties();
+    this.localConfig.threshold = this.formControl.value?.threshold ?? 32;
     this.updateLocalConfig();
   }
 
-  updateAvailableProperties() {
-    const ctor = this.availableEntityTypes.find(
-      (c) => c.ENTITY_TYPE === this.selectedEntityType,
-    );
-    if (!ctor) {
-      this.availableProperties = [];
-      return;
-    }
-    const schema = getEntitySchema(ctor);
-
-    this.availableProperties = Array.from(schema.entries())
-      .filter(([_, field]: any) => field.dataType === "date-with-age")
-      .map(([key]) => key);
+  availablePropertiesFor(entityType: string): string[] {
+    return this.availablePropertiesMap[entityType] ?? [];
   }
 
-  onEntityTypeChange(entityType: string) {
-    this.selectedEntityType = entityType;
-    this.updateAvailableProperties();
-    this.selectedProperty = this.availableProperties[0];
+  onEntityTypeChange(entityType: string, index: number) {
+    this.entityPropertyPairs[index].entityType = entityType;
+    const props = this.availablePropertiesFor(entityType);
+    this.entityPropertyPairs[index].property = props[0] ?? "";
     this.updateLocalConfig();
     this.emitConfigChange();
   }
 
-  onPropertyChange(property: string) {
-    this.selectedProperty = property;
+  onPropertyChange(property: string, index: number) {
+    this.entityPropertyPairs[index].property = property;
     this.updateLocalConfig();
     this.emitConfigChange();
   }
@@ -114,13 +139,36 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
     this.emitConfigChange();
   }
 
+  addPair() {
+    // Add new pair with first available entity type and property
+    const entityType = this.availableEntityTypes[0]?.ENTITY_TYPE ?? "";
+    const property = this.availablePropertiesFor(entityType)[0] ?? "";
+    this.entityPropertyPairs.push({ entityType, property });
+    this.updateLocalConfig();
+    this.emitConfigChange();
+  }
+
+  removePair(index: number) {
+    this.entityPropertyPairs.splice(index, 1);
+    this.updateLocalConfig();
+    this.emitConfigChange();
+  }
+
   updateLocalConfig() {
+    const entities: { [entityType: string]: string } = {};
+    for (const pair of this.entityPropertyPairs) {
+      if (pair.entityType && pair.property) {
+        entities[pair.entityType] = pair.property;
+      }
+    }
     this.localConfig = {
-      threshold: this.formControl.value?.threshold ?? 32,
-      entities: {
-        [this.selectedEntityType]: this.selectedProperty,
-      },
+      threshold: this.localConfig.threshold,
+      entities,
     };
+  }
+
+  hideNonBirthdayFields(option: FormFieldConfig): boolean {
+    return option.dataType !== "date-with-age";
   }
 
   emitConfigChange() {
