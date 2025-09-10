@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
 import { MenuItem } from "../core/ui/navigation/menu-item";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -25,9 +25,8 @@ import { MatIconButton } from "@angular/material/button";
   templateUrl: "./menu-item-form.component.html",
   styleUrls: ["./menu-item-form.component.scss"],
 })
-export class MenuItemFormComponent {
+export class MenuItemFormComponent implements OnInit {
   @Input() item!: MenuItem;
-  @Input() showLinkTooltip = false;
 
   /**
    * Available routes that are offered to the user for selection.
@@ -36,6 +35,13 @@ export class MenuItemFormComponent {
   @Output() itemChange = new EventEmitter<MenuItem>();
 
   customLinkMode = false;
+
+  ngOnInit() {
+    // If no options are available, always start in custom link mode
+    if (!this.linkOptions || this.linkOptions.length === 0) {
+      this.customLinkMode = true;
+    }
+  }
 
   onChange() {
     this.itemChange.emit({ ...this.item });

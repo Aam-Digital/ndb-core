@@ -8,18 +8,7 @@
 
   <div class="flex-row align-center gap-small">
     <mat-form-field appearance="fill" class="full-width">
-      <mat-label i18n>
-        Link
-        @if (showLinkTooltip) {
-          &nbsp;
-          <span
-            matTooltip="You can edit the link to create a new quick access shortcut. To create a new shortcut link, open Aam Digital in a new tab, go to the desired entity, copy everything after ‘https://demo.aam-digital.com/’, and paste it here to create your shortcut."
-            i18n-matTooltip
-          >
-            <fa-icon icon="question-circle"></fa-icon>
-          </span>
-        }
-      </mat-label>
+      <mat-label i18n>Link</mat-label>
       @if (linkOptions?.length && !customLinkMode) {
         <mat-select [(ngModel)]="item.link" (ngModelChange)="onChange()">
           @for (option of linkOptions; track option.value) {
@@ -31,6 +20,14 @@
       } @else {
         <input matInput [(ngModel)]="item.link" (ngModelChange)="onChange()" />
       }
+      @if (customLinkMode) {
+        <mat-hint align="start" i18n>
+          You can edit the link to create a new quick access shortcut. To create
+          a new shortcut link, open Aam Digital in a new tab, go to the desired
+          entity, copy everything after ‘https://demo.aam-digital.com/’, and
+          paste it here to create your shortcut.
+        </mat-hint>
+      }
     </mat-form-field>
     <button
       mat-icon-button
@@ -38,11 +35,10 @@
         customLinkMode ? 'select' : 'custom link'
       }} mode"
       i18n-matTooltip
-      matIconSuffix
       (click)="toggleCustomLinkMode()"
       class="margin-left-small"
     >
-      <fa-icon [icon]="customLinkMode ? 'edit' : 'list'"></fa-icon>
+      <fa-icon [icon]="customLinkMode ? 'list' : 'edit'"></fa-icon>
     </button>
   </div>
 </div>
