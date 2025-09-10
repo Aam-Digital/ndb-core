@@ -7,33 +7,59 @@
         type="number"
         min="1"
         [(ngModel)]="localConfig.threshold"
-        (ngModelChange)="emitConfigChange()"
+        (ngModelChange)="onThresholdChange()"
       />
     </mat-form-field>
   </div>
 
   <div>
-    <h3 i18n>Entity Type</h3>
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label i18n>Entity Type</mat-label>
-      <app-entity-type-select
-        [ngModel]="selectedEntityType"
-        (ngModelChange)="onEntityTypeChange($event)"
-        [options]="availableEntityTypes"
-      ></app-entity-type-select>
-    </mat-form-field>
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label i18n>Birthday Property</mat-label>
-      <mat-select
-        [ngModel]="selectedProperty"
-        (ngModelChange)="onPropertyChange($event)"
-      >
-        @for (prop of availableProperties; track prop) {
-          <mat-option [value]="prop">
-            {{ prop }}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+    <h3 i18n>Entity Types & Birthday Properties</h3>
+    @for (pair of entityPropertyPairs; track pair; let i = $index) {
+      <div style="margin-bottom: 24px; position: relative">
+        <div style="display: flex; align-items: center">
+          <mat-form-field
+            appearance="fill"
+            class="full-width"
+            style="margin-bottom: 0"
+          >
+            <mat-label i18n>Entity Type</mat-label>
+            <app-entity-type-select
+              [ngModel]="pair.entityType"
+              (ngModelChange)="onEntityTypeChange($event, i)"
+              [options]="availableEntityTypes"
+            ></app-entity-type-select>
+          </mat-form-field>
+          <button
+            mat-icon-button
+            color="accent"
+            aria-label="Remove"
+            (click)="removePair(i)"
+            style="margin-left: 8px; margin-top: 8px"
+          >
+            <fa-icon icon="trash"></fa-icon>
+          </button>
+        </div>
+        <mat-form-field
+          appearance="fill"
+          class="full-width"
+          style="margin-top: 8px"
+        >
+          <mat-label i18n>Birthday Property</mat-label>
+          <app-entity-field-select
+            [entityType]="pair.entityType"
+            [ngModel]="pair.property"
+            (ngModelChange)="onPropertyChange($event, i)"
+            [hideOption]="hideNonBirthdayFields"
+          ></app-entity-field-select>
+        </mat-form-field>
+      </div>
+    }
+    <button mat-button color="accent" (click)="addPair()">
+      <fa-icon
+        class="button-icon margin-sides-small"
+        icon="plus-circle"
+      ></fa-icon>
+      <span i18n>Add another</span>
+    </button>
   </div>
 </div>
