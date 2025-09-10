@@ -1,4 +1,4 @@
-import { Component, Input, inject } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -20,6 +20,7 @@ import { RouterLink } from "@angular/router";
 import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
 import { MatProgressBar } from "@angular/material/progress-bar";
 import { AlertService } from "../../../core/alerts/alert.service";
+import { TemplateExportService } from "../template-export-service/template-export.service";
 
 /**
  * Popup for user to select one of the available templates
@@ -40,17 +41,18 @@ import { AlertService } from "../../../core/alerts/alert.service";
   templateUrl: "./template-export-selection-dialog.component.html",
   styleUrl: "./template-export-selection-dialog.component.scss",
 })
-export class TemplateExportSelectionDialogComponent {
+export class TemplateExportSelectionDialogComponent implements OnInit {
   private dialogRef =
     inject<MatDialogRef<TemplateExportSelectionDialogComponent>>(MatDialogRef);
   private templateExportApi = inject(TemplateExportApiService);
   private downloadService = inject(DownloadService);
   private alertService = inject(AlertService);
+  private templateExportService = inject(TemplateExportService);
 
   @Input() entity: Entity;
 
   templateSelectionForm: FormControl = new FormControl();
-
+  isFeatureEnabled: boolean;
   TemplateExport = TemplateExport;
   templateEntityFilter: (e: TemplateExport) => boolean = (e) =>
     e.applicableForEntityTypes.includes(this.entity.getType());
@@ -61,6 +63,11 @@ export class TemplateExportSelectionDialogComponent {
     const data = inject<Entity>(MAT_DIALOG_DATA);
 
     this.entity = data;
+  }
+
+  async ngOnInit() {
+    this.isFeatureEnabled =
+      await this.templateExportService.isExportServerEnabled();
   }
 
   requestFile() {

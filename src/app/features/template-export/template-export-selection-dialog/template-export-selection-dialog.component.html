@@ -1,33 +1,47 @@
 <mat-dialog-content>
   <h2 i18n>Generate File from Template</h2>
-  <p>
-    <span i18n>
-      Select the template based on which to generate a file for the current
-      record or
-    </span>
-    <a
-      [routerLink]="TemplateExport.route"
-      *appDisabledEntityOperation="{
-        entity: TemplateExport,
-        operation: 'update',
-      }"
-      matDialogClose
-      i18n
-      >configure available templates</a
-    >
-  </p>
 
-  <app-entity-select
-    [entityType]="TemplateExport.ENTITY_TYPE"
-    [additionalFilter]="templateEntityFilter"
-    [multi]="false"
-    label="Template"
-    i18n-label
-    placeholder="Select a file template"
-    i18n-placeholder
-    [form]="templateSelectionForm"
-    [disableCreateNew]="true"
-  ></app-entity-select>
+  @if (isFeatureEnabled === false) {
+    <div class="margin-top-large feature-disabled-box">
+      <h2 i18n>This feature is currently not enabled for your system.</h2>
+      <p i18n>Please contact your system administrator to enable it.</p>
+      <p i18n>
+        If Export API has been enabled and you are still seeing this message,
+        there may be an issue with your internet connection or a temporary
+        technical issue on the server. If this persists, please also contact
+        your administrator.
+      </p>
+    </div>
+  } @else if (!isFeatureEnabled) {
+    <p>
+      <span i18n>
+        Select the template based on which to generate a file for the current
+        record or
+      </span>
+      <a
+        [routerLink]="TemplateExport.route"
+        *appDisabledEntityOperation="{
+          entity: TemplateExport,
+          operation: 'update',
+        }"
+        matDialogClose
+        i18n
+        >configure available templates</a
+      >
+    </p>
+
+    <app-entity-select
+      [entityType]="TemplateExport.ENTITY_TYPE"
+      [additionalFilter]="templateEntityFilter"
+      [multi]="false"
+      label="Template"
+      i18n-label
+      placeholder="Select a file template"
+      i18n-placeholder
+      [form]="templateSelectionForm"
+      [disableCreateNew]="true"
+    ></app-entity-select>
+  }
 </mat-dialog-content>
 
 <mat-dialog-actions>
