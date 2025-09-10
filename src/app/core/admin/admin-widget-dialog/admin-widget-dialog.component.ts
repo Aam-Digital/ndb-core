@@ -89,8 +89,6 @@ export class AdminWidgetDialogComponent {
       ...this.data.widgetConfig,
       config,
     };
-
-    console.log("AdminWidgetDialogComponent saves config:", updatedConfig);
     this.dialogRef.close(updatedConfig);
   }
 
