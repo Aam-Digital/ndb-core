@@ -25,7 +25,7 @@ Angular — Deliver web apps with confidence 🚀
 - [Binding text, properties and attributes](https://angular.dev/guide/templates/binding)
 - [Control Flow](https://angular.dev/guide/templates/control-flow)
 - [Template variable declaration](https://angular.dev/guide/templates/variables)
-- [Deferred loading of components](https://angular.dev/guide/templates/defer) 
+- [Deferred loading of components](https://angular.dev/guide/templates/defer)
 - [Expression syntax](https://angular.dev/guide/templates/expression-syntax)
 
 ## Directives
@@ -68,7 +68,7 @@ Angular — Deliver web apps with confidence 🚀
 ## Forms
 - [Forms overview](https://angular.dev/guide/forms)
 - [Reactive Forms](https://angular.dev/guide/forms/reactive-forms)
-- [Strictly types forms](https://angular.dev/guide/forms/typed-forms)
+- [Strictly typed forms](https://angular.dev/guide/forms/typed-forms)
 - [Template driven forms](https://angular.dev/guide/forms/template-driven-forms)
 - [Validate forms input](https://angular.dev/guide/forms/form-validation)
 - [Building dynamic forms](https://angular.dev/guide/forms/dynamic-forms)
@@ -110,7 +110,7 @@ Angular — Deliver web apps with confidence 🚀
 - [Creating a component harness for your components](https://angular.dev/guide/testing/creating-component-harnesses)
 
 ## Animations
-- [Animations your content](https://angular.dev/guide/animations/css)
+- [Animating your content](https://angular.dev/guide/animations/css)
 - [Route transition animation](https://angular.dev/guide/routing/route-transition-animations)
 - [Migrating to native CSS animations](https://next.angular.dev/guide/animations/migration)
 
