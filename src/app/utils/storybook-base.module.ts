@@ -10,7 +10,6 @@ import { EntityAbility } from "../core/permissions/ability/entity-ability";
 import { defineAbility } from "@casl/ability";
 import { provideTestingConfigService } from "../core/config/testing-config-service";
 import { componentRegistry } from "../dynamic-components";
-import { AppModule } from "../app.module";
 import { Entity } from "../core/entity/model/entity";
 import {
   mockEntityMapperProvider,
@@ -36,7 +35,7 @@ export const entityFormStorybookDefaultParameters = {
  */
 @NgModule({
   declarations: [],
-  imports: [AppModule, RouterTestingModule],
+  imports: [RouterTestingModule],
   providers: [
     { provide: ConfigService, useValue: provideTestingConfigService() },
     {
