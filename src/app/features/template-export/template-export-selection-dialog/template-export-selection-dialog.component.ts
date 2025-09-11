@@ -47,7 +47,7 @@ export class TemplateExportSelectionDialogComponent implements OnInit {
   private templateExportApi = inject(TemplateExportApiService);
   private downloadService = inject(DownloadService);
   private alertService = inject(AlertService);
-  private templateExportService = inject(TemplateExportService);
+  private readonly templateExportService = inject(TemplateExportService);
 
   @Input() entity: Entity;
 

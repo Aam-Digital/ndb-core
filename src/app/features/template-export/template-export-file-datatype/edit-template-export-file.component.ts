@@ -27,7 +27,7 @@ export class EditTemplateExportFileComponent
 {
   // Use the TemplateExportApiService to also upload files to the PDF Generator API
   override fileService = inject(TemplateExportApiService);
-  private templateExportService = inject(TemplateExportService);
+  private readonly templateExportService = inject(TemplateExportService);
 
   exportServerEnabled = false;
 
