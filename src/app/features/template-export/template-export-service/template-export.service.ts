@@ -34,8 +34,6 @@ export class TemplateExportService {
         .get(environment.API_PROXY_PREFIX + "/actuator/features")
         .pipe(
           map((res) => {
-            console.log(res, "res");
-
             return res?.["export"]?.enabled ?? false;
           }),
           catchError((err) => {

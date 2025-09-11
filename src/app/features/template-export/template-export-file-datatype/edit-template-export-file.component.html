@@ -13,7 +13,9 @@
   >
     @if (!hideLabel) {
       <mat-label>
-        <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
+        <span [matTooltip]="label" matTooltipPosition="before">{{
+          label
+        }}</span>
       </mat-label>
     }
     <input
@@ -25,7 +27,9 @@
       placeholder="No template file selected"
       i18n-matTooltip="Tooltip show template file"
       matTooltip="Show template file"
-      [matTooltipDisabled]="!(initialValue && formControl.value === initialValue)"
+      [matTooltipDisabled]="
+        !(initialValue && formControl.value === initialValue)
+      "
     />
 
     @if (formControl.value && formControl.enabled) {
@@ -56,7 +60,9 @@
     }
 
     @if (!navigator.onLine && formControl.enabled) {
-      <mat-hint i18n>Changes to template files are not possible offline.</mat-hint>
+      <mat-hint i18n
+        >Changes to template files are not possible offline.</mat-hint
+      >
     }
 
     <mat-error>
@@ -67,7 +73,9 @@
   <mat-form-field>
     @if (!hideLabel) {
       <mat-label>
-        <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
+        <span [matTooltip]="label" matTooltipPosition="before">{{
+          label
+        }}</span>
       </mat-label>
     }
     <input
@@ -78,6 +86,9 @@
       i18n-placeholder="placeholder when export server disabled"
       placeholder="Export server not available"
     />
-    <mat-hint style="color: red;" i18n>Template export functionality is not available. Please check if the export server is running and properly configured.</mat-hint>
+    <mat-hint class="warning" i18n>
+      This feature is currently not enabled for your system. Please contact your
+      system administrator to enable it.
+    </mat-hint>
   </mat-form-field>
 }

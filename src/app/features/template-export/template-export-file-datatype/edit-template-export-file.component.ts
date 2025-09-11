@@ -15,19 +15,26 @@ import { TemplateExportService } from "../template-export-service/template-expor
 @Component({
   selector: "app-template-export-file",
   templateUrl: "./edit-template-export-file.component.html",
-  styleUrls: ["../../file/edit-file/edit-file.component.scss"],
+  styleUrls: [
+    "../../file/edit-file/edit-file.component.scss",
+    "./edit-template-export-file.component.scss",
+  ],
   imports: EditFileComponent_IMPORTS,
 })
-export class EditTemplateExportFileComponent extends EditFileComponent implements OnInit {
+export class EditTemplateExportFileComponent
+  extends EditFileComponent
+  implements OnInit
+{
   // Use the TemplateExportApiService to also upload files to the PDF Generator API
   override fileService = inject(TemplateExportApiService);
   private templateExportService = inject(TemplateExportService);
-  
+
   exportServerEnabled = false;
 
   override async ngOnInit() {
     super.ngOnInit();
     // Check if export server is enabled
-    this.exportServerEnabled = await this.templateExportService.isExportServerEnabled();
+    this.exportServerEnabled =
+      await this.templateExportService.isExportServerEnabled();
   }
 }
