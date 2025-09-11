@@ -10,7 +10,16 @@
     }"
   >
     <div class="flex-grow">
-      <ng-container
+      <mat-form-field>
+        <mat-label>{{ _field.label }}</mat-label>
+        
+        <app-dynamic-edit [formControl]="testFormControl"></app-dynamic-edit>
+
+        <mat-error>
+          <app-error-hint [form]="testFormControl"></app-error-hint>
+        </mat-error>
+      </mat-form-field>
+      <!-- <ng-container
         [appDynamicComponent]="{
           component: _field.editComponent,
           config: {
@@ -22,7 +31,7 @@
           },
         }"
       >
-      </ng-container>
+      </ng-container>-->
     </div>
     @if (_field?.validators?.readonlyAfterSet && form?.formGroup?.enabled) {
       <button

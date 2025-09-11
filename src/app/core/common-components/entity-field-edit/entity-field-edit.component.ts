@@ -5,7 +5,6 @@ import {
   OnChanges,
   SimpleChanges,
 } from "@angular/core";
-import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { HelpButtonComponent } from "../help-button/help-button.component";
 import { Entity } from "../../entity/model/entity";
 import { EntityFormService } from "../entity-form/entity-form.service";
@@ -22,6 +21,10 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ErrorHintComponent } from "../error-hint/error-hint.component";
+import { DynamicEditComponent } from "./dynamic-edit/dynamic-edit.component";
 
 /**
  * Generic component to display one entity property field's editComponent.
@@ -36,7 +39,6 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
   templateUrl: "./entity-field-edit.component.html",
   styleUrls: ["./entity-field-edit.component.scss"],
   imports: [
-    DynamicComponentDirective,
     HelpButtonComponent,
     EntityFieldViewComponent,
     InheritedValueButtonComponent,
@@ -44,7 +46,11 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
     FontAwesomeModule,
     MatButtonModule,
     MatTooltipModule,
-  ],
+    DynamicEditComponent,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    ErrorHintComponent
+],
 })
 export class EntityFieldEditComponent<T extends Entity = Entity>
   implements OnChanges
@@ -69,10 +75,12 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
    * Whether to display the field label or not.
    */
   @Input() hideLabel: boolean;
+  testFormControl: FormControl<any>;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.field || changes.entity) {
       this.updateField();
+      this.testFormControl = this.form.formGroup.get(this._field.id) as FormControl;
     }
   }
 

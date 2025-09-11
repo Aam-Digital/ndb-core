@@ -37,7 +37,7 @@ export abstract class CustomFormControlDirective<T>
 {
   elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   errorStateMatcher = inject(ErrorStateMatcher);
-  ngControl = inject(NgControl, { optional: true, self: true });
+  @Input() ngControl = inject(NgControl, { optional: true, self: true });
   parentForm = inject(NgForm, { optional: true });
   parentFormGroup = inject(FormGroupDirective, { optional: true });
 
