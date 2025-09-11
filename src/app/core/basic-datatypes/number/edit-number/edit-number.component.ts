@@ -1,31 +1,31 @@
-import { Component, OnInit } from "@angular/core";
-import { EditComponent } from "../../../entity/default-datatype/edit-component";
+import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
 import { CustomNumberValidators } from "../../../../utils/custom-number-validators";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
-import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
+import { MatFormFieldControl } from "@angular/material/form-field";
 
 @DynamicComponent("EditNumber")
 @Component({
   selector: "app-edit-number",
   templateUrl: "./edit-number.component.html",
-  imports: [
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    ErrorHintComponent,
-    MatTooltipModule,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ReactiveFormsModule, MatInputModule, MatTooltipModule],
+  providers: [
+    { provide: MatFormFieldControl, useExisting: EditNumberComponent },
   ],
 })
 export class EditNumberComponent
-  extends EditComponent<number>
+  extends CustomFormControlDirective<number>
   implements OnInit
 {
-  override ngOnInit() {
-    super.ngOnInit();
+  get formControl(): FormControl<number> {
+    return this.ngControl.control as FormControl<number>;
+  }
+
+  ngOnInit() {
     const newValidators = [CustomNumberValidators.isNumber];
     if (this.formControl.validator) {
       newValidators.push(this.formControl.validator);

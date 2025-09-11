@@ -1,26 +1,29 @@
 import { Component } from "@angular/core";
-import { EditComponent } from "../../../entity/default-datatype/edit-component";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
-import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatDatepickerModule } from "@angular/material/datepicker";
-import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatTooltipModule } from "@angular/material/tooltip";
+import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
 
 @DynamicComponent("EditDate")
 @Component({
   selector: "app-edit-date",
   templateUrl: "./edit-date.component.html",
+  styleUrls: [
+    "../../../common-components/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
+  ],
   imports: [
-    MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
     MatDatepickerModule,
-    ErrorHintComponent,
     FontAwesomeModule,
-    MatTooltipModule,
   ],
+  providers: [{ provide: MatFormFieldControl, useExisting: EditDateComponent }],
 })
-export class EditDateComponent extends EditComponent<Date> {}
+export class EditDateComponent extends CustomFormControlDirective<Date> {
+  get formControl(): FormControl<Date> {
+    return this.ngControl.control as FormControl<Date>;
+  }
+}

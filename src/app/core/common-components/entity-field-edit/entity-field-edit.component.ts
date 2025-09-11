@@ -81,12 +81,19 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
    */
   @Input() hideLabel: boolean;
 
+  isPartiallyAnonymized: boolean;
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.field || changes.entity) {
       this.updateField();
     }
 
     this.formControl = this.form.formGroup.get(this._field.id) as FormControl;
+
+    this.isPartiallyAnonymized =
+      this.entity?.anonymized &&
+      this.entity?.getSchema()?.get(this._field?.id)?.anonymize ===
+        "retain-anonymized";
   }
 
   private updateField() {

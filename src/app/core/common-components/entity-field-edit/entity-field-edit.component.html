@@ -10,9 +10,23 @@
     }"
   >
     <div class="flex-grow">
-      <mat-form-field>
+      <mat-form-field floatLabel="always">
         @if (!hideLabel) {
-          <mat-label>{{ _field.label }}</mat-label>
+          <mat-label>
+            <span [matTooltip]="_field.label" matTooltipPosition="before">
+              {{ _field.label }}</span
+            >
+          </mat-label>
+        }
+
+        @if (isPartiallyAnonymized) {
+          <fa-icon
+            matIconPrefix
+            class="input-prefix-icon"
+            icon="warning"
+            matTooltip="This data has been partially anonymized."
+            i18n-matTooltip
+          ></fa-icon>
         }
 
         <app-dynamic-edit

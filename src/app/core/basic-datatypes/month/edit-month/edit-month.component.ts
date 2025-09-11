@@ -1,13 +1,14 @@
-import { Component, ViewEncapsulation } from "@angular/core";
-import { EditComponent } from "../../../entity/default-datatype/edit-component";
-import { MatFormFieldModule } from "@angular/material/form-field";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ViewEncapsulation,
+} from "@angular/core";
 import { MatInputModule } from "@angular/material/input";
 import {
   MatDatepicker,
   MatDatepickerModule,
 } from "@angular/material/datepicker";
-import { ReactiveFormsModule } from "@angular/forms";
-import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import {
   DateAdapter,
   MAT_DATE_FORMATS,
@@ -19,7 +20,8 @@ import {
   MomentDateAdapter,
 } from "@angular/material-moment-adapter";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatTooltipModule } from "@angular/material/tooltip";
+import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
+import { MatFormFieldControl } from "@angular/material/form-field";
 
 export const MY_FORMATS = {
   parse: {
@@ -36,16 +38,17 @@ export const MY_FORMATS = {
 @Component({
   selector: "app-edit-month",
   imports: [
-    MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
     ReactiveFormsModule,
-    ErrorHintComponent,
     FontAwesomeModule,
-    MatTooltipModule,
   ],
   templateUrl: "./edit-month.component.html",
-  styleUrls: ["./edit-month.component.scss"],
+  styleUrls: [
+    "./edit-month.component.scss",
+    "../../../common-components/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
     {
@@ -53,10 +56,15 @@ export const MY_FORMATS = {
       useClass: MomentDateAdapter,
       deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
     },
+    { provide: MatFormFieldControl, useExisting: EditMonthComponent },
   ],
   encapsulation: ViewEncapsulation.None,
 })
-export class EditMonthComponent extends EditComponent<Date> {
+export class EditMonthComponent extends CustomFormControlDirective<Date> {
+  get formControl(): FormControl<Date> {
+    return this.ngControl.control as FormControl<Date>;
+  }
+
   setMonthAndYear(date: Moment, datepicker: MatDatepicker<Moment>) {
     this.formControl.markAsDirty();
     this.formControl.setValue(date.toDate());
