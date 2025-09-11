@@ -34,6 +34,9 @@ export class MenuItemFormComponent implements OnInit {
   @Input() linkOptions: { value: string; label: string }[] = [];
   @Output() itemChange = new EventEmitter<MenuItem>();
 
+  /**
+  * If true: show free-text input. If false: show dropdown with linkOptions.
+  */
   customLinkMode = false;
 
   ngOnInit() {
