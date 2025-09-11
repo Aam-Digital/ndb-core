@@ -29,7 +29,7 @@ export class EditTemplateExportFileComponent
   override fileService = inject(TemplateExportApiService);
   private readonly templateExportService = inject(TemplateExportService);
 
-  exportServerEnabled = false;
+  exportServerEnabled: boolean;
 
   override async ngOnInit() {
     super.ngOnInit();
