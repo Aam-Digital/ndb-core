@@ -8,6 +8,8 @@ import { EntityForm } from "#src/app/core/common-components/entity-form/entity-f
 /**
  * A simple helper class which sets up all the required information for edit-components.
  * <T> refers to the type of the value which is processed in the component.
+ *
+ * @deprecated
  */
 @Directive()
 export abstract class EditComponent<T, E extends Entity = Entity>

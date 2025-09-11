@@ -49,8 +49,8 @@ import { DynamicEditComponent } from "./dynamic-edit/dynamic-edit.component";
     DynamicEditComponent,
     ReactiveFormsModule,
     MatFormFieldModule,
-    ErrorHintComponent
-],
+    ErrorHintComponent,
+  ],
 })
 export class EntityFieldEditComponent<T extends Entity = Entity>
   implements OnChanges
@@ -62,6 +62,11 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
   @Input() field: ColumnConfig;
   /** full field config extended from schema (used internally and for template) */
   _field: FormFieldConfig;
+
+  /**
+   * The FormControl of this field
+   */
+  formControl: FormControl;
 
   @Input() entity: T;
   @Input() form: EntityForm<T>;
@@ -75,13 +80,13 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
    * Whether to display the field label or not.
    */
   @Input() hideLabel: boolean;
-  testFormControl: FormControl<any>;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.field || changes.entity) {
       this.updateField();
-      this.testFormControl = this.form.formGroup.get(this._field.id) as FormControl;
     }
+
+    this.formControl = this.form.formGroup.get(this._field.id) as FormControl;
   }
 
   private updateField() {

@@ -6,33 +6,26 @@
       readonlyAfterSet:
         _field?.validators?.readonlyAfterSet &&
         form?.formGroup?.enabled &&
-        form?.formGroup?.get(_field.id)?.disabled,
+        formControl?.disabled,
     }"
   >
     <div class="flex-grow">
       <mat-form-field>
-        <mat-label>{{ _field.label }}</mat-label>
-        
-        <app-dynamic-edit [formControl]="testFormControl"></app-dynamic-edit>
+        @if (!hideLabel) {
+          <mat-label>{{ _field.label }}</mat-label>
+        }
+
+        <app-dynamic-edit
+          [formControl]="formControl"
+          [formFieldConfig]="_field"
+        ></app-dynamic-edit>
 
         <mat-error>
-          <app-error-hint [form]="testFormControl"></app-error-hint>
+          <app-error-hint [form]="formControl"></app-error-hint>
         </mat-error>
       </mat-form-field>
-      <!-- <ng-container
-        [appDynamicComponent]="{
-          component: _field.editComponent,
-          config: {
-            formFieldConfig: _field,
-            formControl: form?.formGroup.get(_field.id),
-            entity: entity,
-            entityForm: form,
-            hideLabel: hideLabel,
-          },
-        }"
-      >
-      </ng-container>-->
     </div>
+
     @if (_field?.validators?.readonlyAfterSet && form?.formGroup?.enabled) {
       <button
         mat-icon-button
@@ -43,9 +36,11 @@
         <fa-icon icon="warning"></fa-icon>
       </button>
     }
+
     @if (!compactMode) {
       <app-help-button [text]="_field.description"></app-help-button>
     }
+
     <app-inherited-value-button
       [form]="form"
       [field]="_field"
