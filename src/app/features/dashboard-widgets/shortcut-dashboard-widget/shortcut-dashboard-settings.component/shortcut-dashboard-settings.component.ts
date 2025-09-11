@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import { MenuItem } from "../../../../core/ui/navigation/menu-item";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -10,6 +10,7 @@ import { FormControl, FormsModule } from "@angular/forms";
 import { MenuItemFormComponent } from "#src/app/menu-item-form/menu-item-form.component";
 import { ShortcutDashboardConfig } from "../shortcut-dashboard-config";
 import { DynamicFormControlComponent } from "#src/app/core/admin/admin-widget-dialog/dynamic-form-control.interface";
+import { MenuService } from "#src/app/core/ui/navigation/menu.service";
 
 @DynamicComponent("ShortcutDashboardSettings")
 @Component({
@@ -30,6 +31,9 @@ import { DynamicFormControlComponent } from "#src/app/core/admin/admin-widget-di
 export class ShortcutDashboardSettingsComponent
   implements OnInit, DynamicFormControlComponent<ShortcutDashboardConfig>
 {
+  private readonly menuService = inject(MenuService);
+  availableRoutes: { value: string; label: string }[] = [];
+
   @Input() formControl: FormControl<ShortcutDashboardConfig>;
 
   localConfig: ShortcutDashboardConfig;
@@ -40,6 +44,7 @@ export class ShortcutDashboardSettingsComponent
         ? [...this.formControl.value.shortcuts.map((s) => ({ ...s }))]
         : [],
     };
+    this.availableRoutes = this.menuService.loadAvailableRoutes();
   }
 
   addShortcut() {

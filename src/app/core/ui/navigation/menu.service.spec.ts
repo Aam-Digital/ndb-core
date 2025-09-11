@@ -1,5 +1,4 @@
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
-
 import { MenuService } from "./menu.service";
 import { ConfigService } from "app/core/config/config.service";
 import { Config } from "@playwright/test";
@@ -9,6 +8,7 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
+import { ViewConfig } from "app/core/config/dynamic-routing/view-config.interface";
 
 describe("MenuService", () => {
   let service: MenuService;
@@ -62,4 +62,42 @@ describe("MenuService", () => {
       },
     ]);
   }));
+
+  it("should load availableRoutes from config service and skip routes with /:id", () => {
+    const testView1: ViewConfig = {
+      _id: "view:child",
+      component: "ChildrenList",
+      config: { entityType: "Child" },
+    };
+    const testView2: ViewConfig = {
+      _id: "view:school",
+      component: "EntityList",
+      config: { entityType: "School" },
+    };
+    const testView3: ViewConfig = {
+      _id: "view:note/:id",
+      component: "NoteDetails",
+      config: { entityType: "Note" },
+    };
+    const testView4: ViewConfig = {
+      _id: "view:",
+      component: "Dashboard",
+      config: { widgets: [] },
+    };
+
+    mockConfigService.getAllConfigs.and.returnValue([
+      testView1,
+      testView2,
+      testView3,
+      testView4,
+    ]);
+
+    const routes = service.loadAvailableRoutes();
+
+    expect(routes).toEqual([
+      { value: "/child", label: "Child" },
+      { value: "/school", label: "School" },
+      { value: "/", label: "Dashboard" },
+    ]);
+  });
 });
