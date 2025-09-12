@@ -44,17 +44,20 @@ export class AdminMenuItemDetailsComponent implements OnInit {
   data = inject<{
     item: MenuItem;
     isNew?: boolean;
+    itemType?: string;
   }>(MAT_DIALOG_DATA);
 
   item: MenuItem | EntityMenuItem;
   availableRoutes: { value: string; label: string }[];
   isNew: boolean;
+  itemType: string;
 
   constructor() {
     const data = this.data;
 
     this.item = data.item;
     this.isNew = data.isNew;
+    this.itemType = data.itemType || "Menu Item";
   }
 
   ngOnInit(): void {
