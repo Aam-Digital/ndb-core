@@ -3,16 +3,22 @@ import { TestBed } from "@angular/core/testing";
 import { TemplateExportService } from "./template-export.service";
 import { MatDialog } from "@angular/material/dialog";
 import { TemplateExportSelectionDialogComponent } from "../template-export-selection-dialog/template-export-selection-dialog.component";
+import { HttpClient } from "@angular/common/http";
 
 describe("TemplateExportService", () => {
   let service: TemplateExportService;
   let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockHttpClient: jasmine.SpyObj<HttpClient>;
 
   beforeEach(() => {
     mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
+    mockHttpClient = jasmine.createSpyObj(["get", "post", "delete"]);
 
     TestBed.configureTestingModule({
-      providers: [{ provide: MatDialog, useValue: mockDialog }],
+      providers: [
+        { provide: MatDialog, useValue: mockDialog },
+        { provide: HttpClient, useValue: mockHttpClient },
+      ],
     });
     service = TestBed.inject(TemplateExportService);
   });
