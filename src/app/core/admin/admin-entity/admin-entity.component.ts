@@ -28,6 +28,8 @@ import { BetaFeatureComponent } from "../../../features/coming-soon/beta-feature
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { AdminEntityService } from "../admin-entity.service";
 import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/admin-entity-public-forms-component";
+import { AdminNoteDetailsComponent } from "../../../child-dev-project/notes/admin-note-details/admin-note-details.component";
+import { NoteDetailsConfig } from "../../../child-dev-project/notes/note-details/note-details-config.interface";
 
 @Component({
   selector: "app-admin-entity",
@@ -42,6 +44,7 @@ import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/ad
     AdminEntityGeneralSettingsComponent,
     BetaFeatureComponent,
     AdminEntityPublicFormsComponent,
+    AdminNoteDetailsComponent,
   ],
   templateUrl: "./admin-entity.component.html",
   styleUrl: "./admin-entity.component.scss",
@@ -58,9 +61,22 @@ export class AdminEntityComponent implements OnInit {
   entityConstructor: EntityConstructor;
   private originalEntitySchemaFields: [string, EntitySchemaField][];
 
-  configDetailsView: DynamicComponentConfig<EntityDetailsConfig>;
+  configDetailsView: DynamicComponentConfig<any>;
   configListView: DynamicComponentConfig<EntityListConfig>;
   configEntitySettings: EntityConfig;
+
+  get noteDetailsConfig(): NoteDetailsConfig {
+    if (this.configDetailsView?.component === "NoteDetails") {
+      return (this.configDetailsView.config as NoteDetailsConfig) || {};
+    }
+    return {};
+  }
+
+  set noteDetailsConfig(value: NoteDetailsConfig) {
+    if (this.configDetailsView?.component === "NoteDetails") {
+      this.configDetailsView.config = value;
+    }
+  }
   protected mode: "details" | "list" | "general" | "publicForm" = "details";
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
@@ -140,11 +156,31 @@ export class AdminEntityComponent implements OnInit {
   }
 
   async save() {
+    let detailsViewConfig = this.configDetailsView;
+
+    if (this.configDetailsView?.component === "NoteDetails") {
+      // For NoteDetails, ensure the config only contains topForm, middleForm, bottomForm
+      const noteConfig = this.configDetailsView
+        .config as unknown as NoteDetailsConfig;
+      const cleanNoteConfig: NoteDetailsConfig = {};
+
+      if (noteConfig?.topForm) cleanNoteConfig.topForm = noteConfig.topForm;
+      if (noteConfig?.middleForm)
+        cleanNoteConfig.middleForm = noteConfig.middleForm;
+      if (noteConfig?.bottomForm)
+        cleanNoteConfig.bottomForm = noteConfig.bottomForm;
+
+      detailsViewConfig = {
+        ...this.configDetailsView,
+        config: cleanNoteConfig,
+      };
+    }
+
     const result = await this.adminEntityService.setAndSaveEntityConfig(
       this.entityConstructor,
       this.configEntitySettings,
       this.configListView,
-      this.configDetailsView,
+      detailsViewConfig,
     );
 
     this.entityActionsService.showSnackbarConfirmationWithUndo(

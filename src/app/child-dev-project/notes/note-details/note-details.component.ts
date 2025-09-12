@@ -29,6 +29,7 @@ import { ViewTitleComponent } from "../../../core/common-components/view-title/v
 import { AbstractEntityDetailsComponent } from "../../../core/entity-details/abstract-entity-details/abstract-entity-details.component";
 import { MatProgressBar } from "@angular/material/progress-bar";
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
+import { NoteDetailsConfig } from "./note-details-config.interface";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -58,7 +59,7 @@ import { ViewActionsComponent } from "../../../core/common-components/view-actio
 })
 export class NoteDetailsComponent
   extends AbstractEntityDetailsComponent
-  implements OnChanges
+  implements OnChanges, NoteDetailsConfig
 {
   private configService = inject(ConfigService);
   private entityFormService = inject(EntityFormService);
