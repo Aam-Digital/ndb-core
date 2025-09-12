@@ -1,0 +1,40 @@
+<div class="hint-banner" i18n>
+  Configure the fields that should be displayed in each section of the Note
+  details form. You can drag and drop to reorder fields within each section.
+</div>
+
+<div>
+  <h3 i18n>Top Form Section</h3>
+  <p i18n>Fields displayed at the top of the note form</p>
+  <app-admin-list-manager
+    [items]="topFormFields"
+    [entityType]="entityConstructor"
+    fieldLabel="Add top form fields:"
+    i18n-fieldLabel
+    (itemsChange)="onTopFormChange($event)"
+  ></app-admin-list-manager>
+</div>
+
+<div>
+  <h3 i18n>Middle Form Section</h3>
+  <p i18n>Fields displayed in the main content area</p>
+  <app-admin-list-manager
+    [items]="middleFormFields"
+    [entityType]="entityConstructor"
+    fieldLabel="Add middle form fields:"
+    i18n-fieldLabel
+    (itemsChange)="onMiddleFormChange($event)"
+  ></app-admin-list-manager>
+</div>
+
+<div>
+  <h3 i18n>Bottom Form Section</h3>
+  <p i18n>Fields displayed at the bottom</p>
+  <app-admin-list-manager
+    [items]="bottomFormFields"
+    [entityType]="entityConstructor"
+    fieldLabel="Add bottom form fields:"
+    i18n-fieldLabel
+    (itemsChange)="onBottomFormChange($event)"
+  ></app-admin-list-manager>
+</div>
