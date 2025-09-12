@@ -165,8 +165,19 @@ export abstract class CustomFormControlDirective<T>
       ? (this.ngControl.control as AbstractControl)
       : null;
 
+    this.checkUpdateDisabled(control);
     this.checkUpdateErrorState(control);
     this.checkUpdateRequired(control);
+  }
+
+  private checkUpdateDisabled(control: AbstractControl | null) {
+    if (!control) {
+      return;
+    }
+
+    if (this.disabled !== coerceBooleanProperty(control.disabled)) {
+      this.disabled = coerceBooleanProperty(control.disabled);
+    }
   }
 
   /**
