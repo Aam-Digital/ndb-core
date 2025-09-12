@@ -31,7 +31,7 @@ import { AdminMenuItemDetailsComponent } from "../../admin/admin-menu/admin-menu
   styleUrl: "./menu-item-list-editor.component.scss",
 })
 export class MenuItemListEditorComponent {
-  private dialog = inject(MatDialog);
+  private readonly dialog = inject(MatDialog);
 
   @Input() items: MenuItemForAdminUi[] = [];
   @Input() showAddButton: boolean = true;
