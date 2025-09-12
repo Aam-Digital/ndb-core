@@ -16,11 +16,6 @@ environment.session_type = SessionType.mock;
 environment.demo_mode = false;
 
 const preview: Preview = {
-  decorators: [
-    applicationConfig({
-      providers: [importProvidersFrom(StorybookMinimalModule)],
-    }),
-  ],
   parameters: {
     actions: { argTypesRegex: "^on[A-Z].*" },
     options: {
