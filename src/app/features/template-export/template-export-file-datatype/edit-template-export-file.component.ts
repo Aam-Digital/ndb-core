@@ -36,5 +36,6 @@ export class EditTemplateExportFileComponent
     // Check if export server is enabled
     this.exportServerEnabled =
       await this.templateExportService.isExportServerEnabled();
+    console.log(this.exportServerEnabled, "enabled");
   }
 }
