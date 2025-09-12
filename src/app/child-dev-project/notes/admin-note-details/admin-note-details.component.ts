@@ -1,4 +1,11 @@
-import { Component, Input, OnInit, inject, Output, EventEmitter } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  inject,
+  Output,
+  EventEmitter,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
@@ -51,8 +58,12 @@ export class AdminNoteDetailsComponent implements OnInit {
     };
 
     this.topFormFields = this.convertToColumnConfigs(currentConfig.topForm);
-    this.middleFormFields = this.convertToColumnConfigs(currentConfig.middleForm);
-    this.bottomFormFields = this.convertToColumnConfigs(currentConfig.bottomForm);
+    this.middleFormFields = this.convertToColumnConfigs(
+      currentConfig.middleForm,
+    );
+    this.bottomFormFields = this.convertToColumnConfigs(
+      currentConfig.bottomForm,
+    );
   }
 
   private convertToColumnConfigs(fieldIds: string[]): ColumnConfig[] {
