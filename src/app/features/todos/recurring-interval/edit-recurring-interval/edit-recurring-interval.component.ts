@@ -1,15 +1,17 @@
-import { Component, OnInit, inject } from "@angular/core";
-import { EditComponent } from "../../../../core/entity/default-datatype/edit-component";
+import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { generateLabelFromInterval, TimeInterval } from "../time-interval";
 import { MatDialog } from "@angular/material/dialog";
 import { CustomIntervalComponent } from "../custom-interval/custom-interval.component";
 import { MatOptionSelectionChange } from "@angular/material/core";
 import { MatInputModule } from "@angular/material/input";
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatSelectModule } from "@angular/material/select";
-import { ErrorHintComponent } from "../../../../core/common-components/error-hint/error-hint.component";
+import { CustomFormControlDirective } from "../../../../core/common-components/basic-autocomplete/custom-form-control.directive";
+import { MatFormFieldControl } from "@angular/material/form-field";
+import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { EditComponent } from "../../../../core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
 
 /**
  * Form field to edit a time interval for repetitions.
@@ -21,19 +23,27 @@ import { ErrorHintComponent } from "../../../../core/common-components/error-hin
   selector: "app-edit-recurring-interval",
   templateUrl: "./edit-recurring-interval.component.html",
   styleUrls: ["./edit-recurring-interval.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatInputModule,
     ReactiveFormsModule,
     FontAwesomeModule,
     MatSelectModule,
-    ErrorHintComponent,
+  ],
+  providers: [
+    {
+      provide: MatFormFieldControl,
+      useExisting: EditRecurringIntervalComponent,
+    },
   ],
 })
 export class EditRecurringIntervalComponent
-  extends EditComponent<any>
-  implements OnInit
+  extends CustomFormControlDirective<any>
+  implements OnInit, EditComponent
 {
   private matDialog = inject(MatDialog);
+
+  @Input() formFieldConfig?: FormFieldConfig;
 
   predefinedIntervals: { label: string; interval: TimeInterval }[] = [
     {
@@ -49,9 +59,13 @@ export class EditRecurringIntervalComponent
   compareOptionFun = (a: TimeInterval, b: TimeInterval) =>
     JSON.stringify(a) === JSON.stringify(b);
 
-  override ngOnInit(): void {
-    super.ngOnInit();
-    this.predefinedIntervals = this.additional ?? this.predefinedIntervals;
+  get formControl(): FormControl<any> {
+    return this.ngControl.control as FormControl<any>;
+  }
+
+  ngOnInit(): void {
+    this.predefinedIntervals =
+      this.formFieldConfig.additional ?? this.predefinedIntervals;
 
     // re-create active custom interval if necessary
     this.addCustomInterval(this.formControl.value);

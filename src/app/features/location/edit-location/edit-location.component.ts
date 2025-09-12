@@ -1,12 +1,13 @@
-import { Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
 import { GeoLocation } from "../geo-location";
 import { LocationInputComponent } from "../location-input/location-input.component";
-import { MatError, MatFormField, MatLabel } from "@angular/material/form-field";
-import { ReactiveFormsModule } from "@angular/forms";
-import { ErrorHintComponent } from "../../../core/common-components/error-hint/error-hint.component";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
+import { MatFormFieldControl } from "@angular/material/form-field";
+import { EditComponent } from "../../../core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 
 /**
  * Wrapper of LocationInput for use as an EditComponent.
@@ -16,15 +17,17 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 @Component({
   selector: "app-edit-location",
   templateUrl: "./edit-location.component.html",
-  imports: [
-    LocationInputComponent,
-    MatFormField,
-    MatLabel,
-    MatError,
-    ReactiveFormsModule,
-    ErrorHintComponent,
-    MatTooltipModule,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [LocationInputComponent, ReactiveFormsModule, MatTooltipModule],
+  providers: [
+    { provide: MatFormFieldControl, useExisting: EditLocationComponent },
   ],
   styleUrls: ["./edit-location.component.scss"],
 })
-export class EditLocationComponent extends EditComponent<GeoLocation> {}
+export class EditLocationComponent extends CustomFormControlDirective<GeoLocation> implements EditComponent {
+  @Input() formFieldConfig?: FormFieldConfig;
+
+  get formControl(): FormControl<GeoLocation> {
+    return this.ngControl.control as FormControl<GeoLocation>;
+  }
+}

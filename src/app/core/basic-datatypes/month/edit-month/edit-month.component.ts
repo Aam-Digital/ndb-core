@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  Input,
   ViewEncapsulation,
 } from "@angular/core";
 import { MatInputModule } from "@angular/material/input";
@@ -22,6 +23,8 @@ import {
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
 import { MatFormFieldControl } from "@angular/material/form-field";
+import { EditComponent } from "../../../common-components/entity-field-edit/dynamic-edit/edit-component.interface";
+import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 
 export const MY_FORMATS = {
   parse: {
@@ -60,7 +63,9 @@ export const MY_FORMATS = {
   ],
   encapsulation: ViewEncapsulation.None,
 })
-export class EditMonthComponent extends CustomFormControlDirective<Date> {
+export class EditMonthComponent extends CustomFormControlDirective<Date> implements EditComponent {
+  @Input() formFieldConfig?: FormFieldConfig;
+
   get formControl(): FormControl<Date> {
     return this.ngControl.control as FormControl<Date>;
   }
