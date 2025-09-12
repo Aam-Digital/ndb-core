@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormControl } from "@angular/forms";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ShortcutDashboardSettingsComponent } from "./shortcut-dashboard-settings.component";
 
 describe("ShortcutDashboardSettingsComponent", () => {
@@ -8,7 +9,7 @@ describe("ShortcutDashboardSettingsComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ShortcutDashboardSettingsComponent],
+      imports: [ShortcutDashboardSettingsComponent, FontAwesomeTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ShortcutDashboardSettingsComponent);

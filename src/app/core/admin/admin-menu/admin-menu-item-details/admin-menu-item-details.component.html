@@ -1,8 +1,8 @@
 <h2 mat-dialog-title>
   @if (isNew) {
-    <ng-container i18n>Add New Menu Item</ng-container>
+    <ng-container i18n>Add New {{ itemType }}</ng-container>
   } @else {
-    <ng-container i18n>Edit Menu Item</ng-container>
+    <ng-container i18n>Edit {{ itemType }}</ng-container>
   }
 </h2>
 

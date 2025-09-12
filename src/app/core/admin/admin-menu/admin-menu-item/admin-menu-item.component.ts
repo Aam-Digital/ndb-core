@@ -67,6 +67,8 @@ export class AdminMenuItemComponent {
   @Output() itemChange = new EventEmitter<MenuItemForAdminUi>();
 
   @Input() connectedTo: string[];
+  @Input() itemType: string = "Menu Item";
+  @Input() allowSubMenu: boolean = true; // Disable for shortcuts
   @Output() itemDrop = new EventEmitter<CdkDragDrop<MenuItemForAdminUi[]>>();
   @Output() deleteItem = new EventEmitter<MenuItemForAdminUi>();
 
@@ -112,6 +114,7 @@ export class AdminMenuItemComponent {
       data: {
         item: item ? { ...item } : {},
         isNew: (item as MenuItemForAdminUiNew).isNew,
+        itemType: this.itemType,
       },
     });
     return firstValueFrom(dialogRef.afterClosed());

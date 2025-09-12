@@ -4,15 +4,14 @@
       You can create some quick access links to your most-used features.
     </p>
     <h3 i18n>Shortcuts</h3>
-    @for (shortcut of localConfig.shortcuts; track $index; let i = $index) {
-      <div class="shortcut-item">
-        <h4 i18n>Shortcut {{ i + 1 }}</h4>
-        <app-menu-item-form
-          [item]="shortcut"
-          (itemChange)="onShortcutItemChange($event, i)"
-          [showLinkTooltip]="true"
-        ></app-menu-item-form>
-      </div>
-    }
+
+    <app-menu-item-list-editor
+      [items]="menuItems"
+      [addButtonLabel]="'Add Shortcut'"
+      [itemType]="'Shortcut'"
+      [allowSubMenu]="false"
+      containerId="shortcuts-container"
+      (itemsChange)="onMenuItemsChange($event)"
+    ></app-menu-item-list-editor>
   </div>
 </div>
