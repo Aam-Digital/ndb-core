@@ -21,9 +21,6 @@ import { ErrorHintComponent } from "app/core/common-components/error-hint/error-
     MatButtonModule,
     MatTooltipModule,
     FontAwesomeModule,
-    ErrorHintComponent,
-    MatError,
-    NgClass,
   ],
 })
 export class EditPhotoComponent extends EditFileComponent implements OnInit {
@@ -51,7 +48,7 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
     this.acceptedFileTypes = this.additional?.acceptedFileTypes ?? "image/*";
     if (this.formControl.value) {
       this.fileService
-        .loadFile(this.entity, this.formControlName)
+        .loadFile(this.entity, this.formFieldConfig.id)
         .subscribe((res) => {
           this.imgPath = res;
           this.initialImg = res;

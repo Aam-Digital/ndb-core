@@ -1,39 +1,39 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
+  inject,
+  Input,
   OnInit,
   ViewChild,
-  inject,
 } from "@angular/core";
-import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { Logging } from "../../../core/logging/logging.service";
 import { FileService } from "../file.service";
 import { distinctUntilChanged, filter } from "rxjs/operators";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { NgClass, NgIf } from "@angular/common";
+import { MatFormFieldControl } from "@angular/material/form-field";
+import { NgClass } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { ErrorHintComponent } from "../../../core/common-components/error-hint/error-hint.component";
 import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { FileFieldConfig } from "../file.datatype";
+import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
+import { Entity } from "../../../core/entity/model/entity";
+import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { EditComponent } from "../../../core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
 
 export const EditFileComponent_IMPORTS = [
-  MatFormFieldModule,
-  NgClass,
   MatInputModule,
   ReactiveFormsModule,
   MatTooltipModule,
-  NgIf,
   MatButtonModule,
   FontAwesomeModule,
-  ErrorHintComponent,
 ];
 
 /**
@@ -44,14 +44,25 @@ export const EditFileComponent_IMPORTS = [
 @Component({
   selector: "app-edit-file",
   templateUrl: "./edit-file.component.html",
-  styleUrls: ["./edit-file.component.scss"],
+  styleUrls: [
+    "./edit-file.component.scss",
+    "../../../core/common-components/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: EditFileComponent_IMPORTS,
+  providers: [{ provide: MatFormFieldControl, useExisting: EditFileComponent }],
 })
-export class EditFileComponent extends EditComponent<string> implements OnInit {
+export class EditFileComponent
+  extends CustomFormControlDirective<string>
+  implements OnInit, EditComponent
+{
   protected fileService = inject(FileService);
   private alertService = inject(AlertService);
   private entityMapper = inject(EntityMapperService);
   protected navigator = inject<Navigator>(NAVIGATOR_TOKEN);
+
+  @Input() entity: Entity;
+  @Input() formFieldConfig: FormFieldConfig;
 
   @ViewChild("fileUpload") fileUploadInput: ElementRef<HTMLInputElement>;
   private selectedFile: File;
@@ -70,8 +81,11 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
    */
   acceptedFileTypes: string = "*";
 
-  override ngOnInit() {
-    super.ngOnInit();
+  get formControl(): FormControl<string> {
+    return this.ngControl.control as FormControl<string>;
+  }
+
+  ngOnInit() {
     this.initialValue = this.formControl.value;
 
     this.acceptedFileTypes =
@@ -117,7 +131,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   protected saveNewFile(file: File) {
     // The maximum file size is set to 5 MB
     this.fileService
-      .uploadFile(file, this.entity, this.formControlName)
+      .uploadFile(file, this.entity, this.formFieldConfig.id)
       .subscribe({
         error: (err) => this.handleError(err),
         complete: () => {
@@ -150,7 +164,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
     );
 
     // Reset entity to how it was before
-    this.entity[this.formControlName] = this.initialValue;
+    this.entity[this.formFieldConfig.id] = this.initialValue;
     this.formControl.setValue(this.initialValue);
 
     await this.entityMapper.save(this.entity);
@@ -170,7 +184,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
 
   showFile() {
     if (this.initialValue && this.formControl.value === this.initialValue) {
-      this.fileService.showFile(this.entity, this.formControlName);
+      this.fileService.showFile(this.entity, this.formFieldConfig.id);
     }
   }
 
@@ -183,16 +197,18 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   }
 
   protected deleteExistingFile() {
-    this.fileService.removeFile(this.entity, this.formControlName).subscribe({
-      error: (err) => this.handleError(err),
-      complete: () => {
-        this.alertService.addInfo(
-          $localize`:Message for user:File "${this.initialValue}" deleted`,
-        );
-        this.initialValue = undefined;
-        this.removeClicked = false;
-      },
-    });
+    this.fileService
+      .removeFile(this.entity, this.formFieldConfig.id)
+      .subscribe({
+        error: (err) => this.handleError(err),
+        complete: () => {
+          this.alertService.addInfo(
+            $localize`:Message for user:File "${this.initialValue}" deleted`,
+          );
+          this.initialValue = undefined;
+          this.removeClicked = false;
+        },
+      });
   }
 
   protected resetFile() {
