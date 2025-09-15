@@ -7,13 +7,14 @@ import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { TemplateExportApiService } from "../template-export-api/template-export-api.service";
 import { of } from "rxjs";
 import { FileService } from "app/features/file/file.service";
-import { HttpClient } from "@angular/common/http";
+import { TemplateExportService } from "../template-export-service/template-export.service";
 
 describe("EditTemplateExportFileComponent", () => {
   let component: EditTemplateExportFileComponent;
   let fixture: ComponentFixture<EditTemplateExportFileComponent>;
   let mockFileService: jasmine.SpyObj<FileService>;
-  let mockHttpClient: jasmine.SpyObj<HttpClient>;
+  let mockTemplateExportService: jasmine.SpyObj<TemplateExportService>;
+
   beforeEach(async () => {
     mockFileService = jasmine.createSpyObj([
       "uploadFile",
@@ -21,7 +22,12 @@ describe("EditTemplateExportFileComponent", () => {
       "removeFile",
     ]);
     mockFileService.loadFile.and.returnValue(of("success"));
-    mockHttpClient = jasmine.createSpyObj(["get", "post", "delete"]);
+
+    mockTemplateExportService = jasmine.createSpyObj(["isExportServerEnabled"]);
+    mockTemplateExportService.isExportServerEnabled.and.returnValue(
+      Promise.resolve(true),
+    );
+
     await TestBed.configureTestingModule({
       imports: [EditTemplateExportFileComponent],
       providers: [
@@ -30,12 +36,13 @@ describe("EditTemplateExportFileComponent", () => {
         { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
         { provide: TemplateExportApiService, useValue: null },
         { provide: FileService, useValue: mockFileService },
-        { provide: HttpClient, useValue: mockHttpClient },
+        { provide: TemplateExportService, useValue: mockTemplateExportService },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditTemplateExportFileComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it("should create", () => {
