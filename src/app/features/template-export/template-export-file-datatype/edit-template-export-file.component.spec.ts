@@ -8,6 +8,7 @@ import { TemplateExportApiService } from "../template-export-api/template-export
 import { of } from "rxjs";
 import { FileService } from "app/features/file/file.service";
 import { TemplateExportService } from "../template-export-service/template-export.service";
+import { FormControl } from "@angular/forms";
 
 describe("EditTemplateExportFileComponent", () => {
   let component: EditTemplateExportFileComponent;
@@ -42,6 +43,7 @@ describe("EditTemplateExportFileComponent", () => {
 
     fixture = TestBed.createComponent(EditTemplateExportFileComponent);
     component = fixture.componentInstance;
+    component.formControl = new FormControl();
     fixture.detectChanges();
   });
 

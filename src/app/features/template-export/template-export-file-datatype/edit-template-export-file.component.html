@@ -1,74 +1,11 @@
 @if (exportServerEnabled) {
-  <input
-    type="file"
-    [accept]="acceptedFileTypes"
-    style="display: none"
-    (change)="onFileSelected($event.target['files'][0])"
-    #fileUpload
-  />
-
-  <mat-form-field
-    [ngClass]="{ clickable: formControl.value }"
-    (click)="navigator.onLine ? formClicked() : null"
-  >
-    @if (!hideLabel) {
-      <mat-label>
-        <span [matTooltip]="label" matTooltipPosition="before">{{
-          label
-        }}</span>
-      </mat-label>
-    }
-    <input
-      matInput
-      readonly
-      class="filename"
-      [formControl]="formControl"
-      i18n-placeholder="placeholder for template file input"
-      placeholder="No template file selected"
-      i18n-matTooltip="Tooltip show template file"
-      matTooltip="Show template file"
-      [matTooltipDisabled]="
-        !(initialValue && formControl.value === initialValue)
-      "
-    />
-
-    @if (formControl.value && formControl.enabled) {
-      <button
-        type="button"
-        mat-icon-button
-        matIconSuffix
-        (click)="delete(); $event.stopPropagation()"
-        i18n-matTooltip="Tooltip remove template file"
-        matTooltip="Remove template file"
-        [disabled]="!navigator.onLine"
-      >
-        <fa-icon icon="xmark"></fa-icon>
-      </button>
-    }
-    @if (formControl.enabled) {
-      <button
-        type="button"
-        mat-icon-button
-        matIconSuffix
-        (click)="fileUpload.click(); $event.stopPropagation()"
-        i18n-matTooltip="Tooltip upload template file button"
-        matTooltip="Upload template file"
-        [disabled]="!navigator.onLine"
-      >
-        <fa-icon icon="upload"></fa-icon>
-      </button>
-    }
-
-    @if (!navigator.onLine && formControl.enabled) {
-      <mat-hint i18n
-        >Changes to template files are not possible offline.</mat-hint
-      >
-    }
-
-    <mat-error>
-      <app-error-hint [form]="formControl"></app-error-hint>
-    </mat-error>
-  </mat-form-field>
+  <app-edit-file
+    [formControl]="formControl"
+    [entity]="entity"
+    [entityForm]="entityForm"
+    [formFieldConfig]="formFieldConfig"
+    [hideLabel]="hideLabel"
+  ></app-edit-file>
 } @else {
   <mat-form-field>
     @if (!hideLabel) {
