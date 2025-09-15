@@ -1,0 +1,23 @@
+<div class="margin-top-large feature-disabled-box">
+  @if (!navigator.onLine) {
+    <h2 i18n>You are currently offline.</h2>
+    <p i18n>
+      Please reconnect to the internet to activate. We could not check if this
+      feature is enabled for your system.
+    </p>
+  } @else {
+    <h2 i18n>This feature is currently not enabled for your system.</h2>
+    <p i18n>Please contact your system administrator to enable it.</p>
+    <p i18n>
+      @if (featureName) {
+        If {{ featureName }} has been enabled and you are still seeing this
+        message,
+      } @else {
+        If this feature has been enabled and you are still seeing this message,
+      }
+      there may be an issue with your internet connection or a temporary
+      technical issue on the server. If this persists, please also contact your
+      administrator.
+    </p>
+  }
+</div>

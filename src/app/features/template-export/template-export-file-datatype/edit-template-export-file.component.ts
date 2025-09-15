@@ -8,6 +8,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FileService } from "../../file/file.service";
+import { FeatureLoadingComponent } from "#src/app/core/common-components/feature-disabled-info/feature-loading.component";
 
 /**
  * An edit component that allows to manage template files stored in the PDF Generator API.
@@ -26,6 +27,7 @@ import { FileService } from "../../file/file.service";
     MatFormFieldModule,
     MatInputModule,
     MatTooltipModule,
+    FeatureLoadingComponent,
   ],
   providers: [{ provide: FileService, useClass: TemplateExportApiService }],
 })
@@ -35,7 +37,7 @@ export class EditTemplateExportFileComponent
 {
   private readonly templateExportService = inject(TemplateExportService);
 
-  exportServerEnabled: boolean = false;
+  exportServerEnabled: boolean;
 
   override ngOnInit(): void {
     super.ngOnInit();

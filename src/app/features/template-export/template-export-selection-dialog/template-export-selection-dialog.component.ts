@@ -21,6 +21,8 @@ import { DisableEntityOperationDirective } from "../../../core/permissions/permi
 import { MatProgressBar } from "@angular/material/progress-bar";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { TemplateExportService } from "../template-export-service/template-export.service";
+import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
+import { FeatureLoadingComponent } from "#src/app/core/common-components/feature-disabled-info/feature-loading.component";
 
 /**
  * Popup for user to select one of the available templates
@@ -37,6 +39,8 @@ import { TemplateExportService } from "../template-export-service/template-expor
     RouterLink,
     DisableEntityOperationDirective,
     MatProgressBar,
+    FeatureDisabledInfoComponent,
+    FeatureLoadingComponent,
   ],
   templateUrl: "./template-export-selection-dialog.component.html",
   styleUrl: "./template-export-selection-dialog.component.scss",

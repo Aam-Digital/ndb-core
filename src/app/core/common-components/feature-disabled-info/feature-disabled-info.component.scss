@@ -1,0 +1,8 @@
+@use "variables/colors";
+@use "variables/sizes";
+
+.feature-disabled-box {
+  background-color: colors.$disabled-transparent;
+  padding: sizes.$regular;
+  border-radius: sizes.$small;
+}

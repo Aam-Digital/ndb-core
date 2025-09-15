@@ -1,12 +1,4 @@
-@if (exportServerEnabled) {
-  <app-edit-file
-    [formControl]="formControl"
-    [entity]="entity"
-    [entityForm]="entityForm"
-    [formFieldConfig]="formFieldConfig"
-    [hideLabel]="hideLabel"
-  ></app-edit-file>
-} @else {
+@if (exportServerEnabled === false) {
   <mat-form-field>
     @if (!hideLabel) {
       <mat-label>
@@ -28,4 +20,14 @@
       system administrator to enable it.
     </mat-hint>
   </mat-form-field>
+} @else if (!exportServerEnabled) {
+  <app-feature-loading></app-feature-loading>
+} @else {
+  <app-edit-file
+    [formControl]="formControl"
+    [entity]="entity"
+    [entityForm]="entityForm"
+    [formFieldConfig]="formFieldConfig"
+    [hideLabel]="hideLabel"
+  ></app-edit-file>
 }

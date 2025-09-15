@@ -1,7 +1,13 @@
 <mat-dialog-content>
   <h2 i18n>Generate File from Template</h2>
 
-  @if (isFeatureEnabled) {
+  @if (isFeatureEnabled === false) {
+    <app-feature-disabled-info
+      featureName="Export API"
+    ></app-feature-disabled-info>
+  } @else if (!isFeatureEnabled) {
+    <app-feature-loading></app-feature-loading>
+  } @else {
     <p>
       <span i18n>
         Select the template based on which to generate a file for the current
@@ -30,17 +36,6 @@
       [form]="templateSelectionForm"
       [disableCreateNew]="true"
     ></app-entity-select>
-  } @else {
-    <div class="margin-top-large feature-disabled-box">
-      <h2 i18n>This feature is currently not enabled for your system.</h2>
-      <p i18n>Please contact your system administrator to enable it.</p>
-      <p i18n>
-        If Export API has been enabled and you are still seeing this message,
-        there may be an issue with your internet connection or a temporary
-        technical issue on the server. If this persists, please also contact
-        your administrator.
-      </p>
-    </div>
   }
 </mat-dialog-content>
 
