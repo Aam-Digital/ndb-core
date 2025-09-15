@@ -1,40 +1,56 @@
-<div class="hint-banner" i18n>
-  Configure the fields that should be displayed in each section of the Note
-  details form. You can drag and drop to reorder fields within each section.
-</div>
+<div class="note-admin-container">
+  <div class="intro-section">
+    <h2 i18n>Configure Note Details Form</h2>
+    <p class="hint-text" i18n>
+      Configure the fields for each section of the Note details form. You can
+      edit field properties, add new fields, and drag & drop to reorder. Each
+      section represents a different area of the form.
+    </p>
+  </div>
 
-<div>
-  <h3 i18n>Top Form Section</h3>
-  <p i18n>Fields displayed at the top of the note form</p>
-  <app-admin-list-manager
-    [items]="topFormFields"
-    [entityType]="entityConstructor"
-    fieldLabel="Add top form fields:"
-    i18n-fieldLabel
-    (itemsChange)="onTopFormChange($event)"
-  ></app-admin-list-manager>
-</div>
+  <div class="form-sections">
+    <div class="form-section">
+      <h3 i18n>Top Form Section</h3>
+      <p class="section-description" i18n>
+        Fields displayed at the top of the note form (typically metadata like
+        date, category, etc.)
+      </p>
+      <app-admin-entity-form
+        [entityType]="entityConstructor"
+        [config]="topFormConfig"
+        (configChange)="onTopFormConfigChange($event)"
+        uniqueAreaId="top-form"
+        [updateEntitySchema]="true"
+      ></app-admin-entity-form>
+    </div>
 
-<div>
-  <h3 i18n>Middle Form Section</h3>
-  <p i18n>Fields displayed in the main content area</p>
-  <app-admin-list-manager
-    [items]="middleFormFields"
-    [entityType]="entityConstructor"
-    fieldLabel="Add middle form fields:"
-    i18n-fieldLabel
-    (itemsChange)="onMiddleFormChange($event)"
-  ></app-admin-list-manager>
-</div>
+    <div class="form-section">
+      <h3 i18n>Middle Form Section</h3>
+      <p class="section-description" i18n>
+        Fields displayed in the main content area (typically subject and text)
+      </p>
+      <app-admin-entity-form
+        [entityType]="entityConstructor"
+        [config]="middleFormConfig"
+        (configChange)="onMiddleFormConfigChange($event)"
+        uniqueAreaId="middle-form"
+        [updateEntitySchema]="true"
+      ></app-admin-entity-form>
+    </div>
 
-<div>
-  <h3 i18n>Bottom Form Section</h3>
-  <p i18n>Fields displayed at the bottom</p>
-  <app-admin-list-manager
-    [items]="bottomFormFields"
-    [entityType]="entityConstructor"
-    fieldLabel="Add bottom form fields:"
-    i18n-fieldLabel
-    (itemsChange)="onBottomFormChange($event)"
-  ></app-admin-list-manager>
+    <div class="form-section">
+      <h3 i18n>Bottom Form Section</h3>
+      <p class="section-description" i18n>
+        Fields displayed at the bottom (typically related entities like children
+        and schools)
+      </p>
+      <app-admin-entity-form
+        [entityType]="entityConstructor"
+        [config]="bottomFormConfig"
+        (configChange)="onBottomFormConfigChange($event)"
+        uniqueAreaId="bottom-form"
+        [updateEntitySchema]="true"
+      ></app-admin-entity-form>
+    </div>
+  </div>
 </div>

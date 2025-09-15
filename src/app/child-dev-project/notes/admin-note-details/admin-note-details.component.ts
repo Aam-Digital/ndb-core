@@ -1,26 +1,24 @@
-import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  inject,
+  Output,
+  EventEmitter,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatSelectModule } from "@angular/material/select";
-import { FormsModule } from "@angular/forms";
 import { EntityConstructor } from "../../../core/entity/model/entity";
-import { AdminListManagerComponent } from "../../../core/admin/admin-list-manager/admin-list-manager.component";
-import { ColumnConfig } from "../../../core/common-components/entity-form/FormConfig";
+import { AdminEntityFormComponent } from "../../../core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component";
 import { NoteDetailsConfig } from "../note-details/note-details-config.interface";
+import { FormConfig } from "../../../core/entity-details/form/form.component";
 
 /**
  * Admin component for configuring NoteDetails view.
- * Allows users to select and reorder fields for the topForm, middleForm, and bottomForm sections.
+ * Allows users to configure the three form sections with full field editing capabilities.
  */
 @Component({
   selector: "app-admin-note-details",
-  imports: [
-    CommonModule,
-    AdminListManagerComponent,
-    MatFormFieldModule,
-    MatSelectModule,
-    FormsModule,
-  ],
+  imports: [CommonModule, AdminEntityFormComponent],
   templateUrl: "./admin-note-details.component.html",
   styleUrl: "./admin-note-details.component.scss",
 })
@@ -29,65 +27,55 @@ export class AdminNoteDetailsComponent implements OnInit {
   @Input() entityConstructor: EntityConstructor;
   @Output() configChange = new EventEmitter<NoteDetailsConfig>();
 
-  topFormFields: ColumnConfig[] = [];
-  middleFormFields: ColumnConfig[] = [];
-  bottomFormFields: ColumnConfig[] = [];
+  topFormConfig: FormConfig = { fieldGroups: [] };
+  middleFormConfig: FormConfig = { fieldGroups: [] };
+  bottomFormConfig: FormConfig = { fieldGroups: [] };
 
   private readonly defaultConfig: Required<NoteDetailsConfig> = {
-    topForm: ["date", "warningLevel", "category", "authors", "attachment"],
-    middleForm: ["subject", "text"],
-    bottomForm: ["children", "schools"],
+    topForm: [
+      { fields: ["date", "warningLevel", "category", "authors", "attachment"] },
+    ],
+    middleForm: [{ fields: ["subject", "text"] }],
+    bottomForm: [{ fields: ["children", "schools"] }],
   };
 
   ngOnInit(): void {
-    this.initializeFields();
+    this.initializeFormConfigs();
+    console.log(
+      this.topFormConfig,
+      this.middleFormConfig,
+      this.bottomFormConfig,
+    );
+    console.log(this.entityConstructor.schema.entries());
+    console.log(this.config);
   }
 
-  private initializeFields(): void {
-    // Initialize with current config or default values
+  private initializeFormConfigs(): void {
     const currentConfig = {
       ...this.defaultConfig,
       ...this.config,
     };
 
-    this.topFormFields = this.convertToColumnConfigs(currentConfig.topForm);
-    this.middleFormFields = this.convertToColumnConfigs(
-      currentConfig.middleForm,
-    );
-    this.bottomFormFields = this.convertToColumnConfigs(
-      currentConfig.bottomForm,
-    );
+    this.topFormConfig = { fieldGroups: [...currentConfig.topForm] };
+    this.middleFormConfig = { fieldGroups: [...currentConfig.middleForm] };
+    this.bottomFormConfig = { fieldGroups: [...currentConfig.bottomForm] };
   }
 
-  private convertToColumnConfigs(fieldIds: string[]): ColumnConfig[] {
-    return fieldIds.map((fieldId) => ({ id: fieldId }));
-  }
-
-  private convertToFieldIds(columnConfigs: ColumnConfig[]): string[] {
-    return columnConfigs.map((config) => {
-      if (typeof config === "string") {
-        return config;
-      } else {
-        return config.id;
-      }
-    });
-  }
-
-  onTopFormChange(fields: ColumnConfig[]): void {
-    this.topFormFields = fields;
-    this.config.topForm = this.convertToFieldIds(fields);
+  onTopFormConfigChange(formConfig: FormConfig): void {
+    this.topFormConfig = formConfig;
+    this.config.topForm = formConfig.fieldGroups;
     this.configChange.emit(this.config);
   }
 
-  onMiddleFormChange(fields: ColumnConfig[]): void {
-    this.middleFormFields = fields;
-    this.config.middleForm = this.convertToFieldIds(fields);
+  onMiddleFormConfigChange(formConfig: FormConfig): void {
+    this.middleFormConfig = formConfig;
+    this.config.middleForm = formConfig.fieldGroups;
     this.configChange.emit(this.config);
   }
 
-  onBottomFormChange(fields: ColumnConfig[]): void {
-    this.bottomFormFields = fields;
-    this.config.bottomForm = this.convertToFieldIds(fields);
+  onBottomFormConfigChange(formConfig: FormConfig): void {
+    this.bottomFormConfig = formConfig;
+    this.config.bottomForm = formConfig.fieldGroups;
     this.configChange.emit(this.config);
   }
 }

@@ -1,20 +1,22 @@
+import { FieldGroup } from "../../../core/entity-details/form/field-group";
+
 /**
  * Configuration interface for the NoteDetailsComponent.
  * Defines the three configurable form sections that can be edited in the Admin UI.
  */
 export interface NoteDetailsConfig {
   /**
-   * Fields to be displayed in the top form section.
+   * Field groups to be displayed in the top form section.
    */
-  topForm?: string[];
+  topForm?: FieldGroup[];
 
   /**
-   * Fields to be displayed in the middle form section.
+   * Field groups to be displayed in the middle form section.
    */
-  middleForm?: string[];
+  middleForm?: FieldGroup[];
 
   /**
-   * Fields to be displayed in the bottom form section.
+   * Field groups to be displayed in the bottom form section.
    */
-  bottomForm?: string[];
+  bottomForm?: FieldGroup[];
 }

@@ -65,18 +65,6 @@ export class AdminEntityComponent implements OnInit {
   configListView: DynamicComponentConfig<EntityListConfig>;
   configEntitySettings: EntityConfig;
 
-  get noteDetailsConfig(): NoteDetailsConfig {
-    if (this.configDetailsView?.component === "NoteDetails") {
-      return (this.configDetailsView.config as NoteDetailsConfig) || {};
-    }
-    return {};
-  }
-
-  set noteDetailsConfig(value: NoteDetailsConfig) {
-    if (this.configDetailsView?.component === "NoteDetails") {
-      this.configDetailsView.config = value;
-    }
-  }
   protected mode: "details" | "list" | "general" | "publicForm" = "details";
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
