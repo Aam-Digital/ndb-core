@@ -15,12 +15,11 @@
   <div>
     <h3 i18n>Birthdays / Anniversaries to show</h3>
     @for (pair of entityPropertyPairs; track pair; let i = $index) {
-      <div style="margin-bottom: 24px; position: relative">
-        <div style="display: flex; align-items: center">
+      <div class="margin-bottom-regular position-relative">
+        <div class="flex-row align-center gap-regular">
           <mat-form-field
             appearance="fill"
-            class="full-width"
-            style="margin-bottom: 0"
+            class="full-width remove-margin-bottom"
           >
             <mat-label i18n>Entity Type</mat-label>
             <app-entity-type-select
@@ -34,16 +33,11 @@
             color="accent"
             aria-label="Remove"
             (click)="removePair(i)"
-            style="margin-left: 8px; margin-top: 8px"
           >
             <fa-icon icon="trash"></fa-icon>
           </button>
         </div>
-        <mat-form-field
-          appearance="fill"
-          class="full-width"
-          style="margin-top: 8px"
-        >
+        <mat-form-field appearance="fill" class="full-width margin-top-small">
           <mat-label i18n>Birthday Property</mat-label>
           <app-entity-field-select
             [entityType]="pair.entityType"
