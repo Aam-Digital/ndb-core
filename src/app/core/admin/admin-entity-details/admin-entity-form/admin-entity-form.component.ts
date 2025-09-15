@@ -112,6 +112,9 @@ export class AdminEntityFormComponent implements OnChanges {
    */
   @Input() updateEntitySchema?: boolean = true;
 
+  /** Whether to allow creating new field groups by dragging the "create new field" item into the form. Default: true */
+  @Input() createNewFieldGroup?: boolean = true;
+
   dummyEntity: Entity;
   dummyForm: EntityForm<any>;
 

@@ -1,11 +1,4 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  inject,
-  Output,
-  EventEmitter,
-} from "@angular/core";
+import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { AdminEntityFormComponent } from "../../../core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component";
@@ -41,24 +34,42 @@ export class AdminNoteDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeFormConfigs();
-    console.log(
-      this.topFormConfig,
-      this.middleFormConfig,
-      this.bottomFormConfig,
-    );
-    console.log(this.entityConstructor.schema.entries());
-    console.log(this.config);
   }
 
   private initializeFormConfigs(): void {
     const currentConfig = {
       ...this.defaultConfig,
       ...this.config,
-    };
+    } as Required<NoteDetailsConfig>;
 
-    this.topFormConfig = { fieldGroups: [...currentConfig.topForm] };
-    this.middleFormConfig = { fieldGroups: [...currentConfig.middleForm] };
-    this.bottomFormConfig = { fieldGroups: [...currentConfig.bottomForm] };
+    // Normalize to guard against legacy configs where top/middle/bottom may be string[]
+    const normalizedTop = this.normalizeToFieldGroups(currentConfig.topForm);
+    const normalizedMiddle = this.normalizeToFieldGroups(
+      currentConfig.middleForm,
+    );
+    const normalizedBottom = this.normalizeToFieldGroups(
+      currentConfig.bottomForm,
+    );
+
+    this.topFormConfig = { fieldGroups: [...normalizedTop] };
+    this.middleFormConfig = { fieldGroups: [...normalizedMiddle] };
+    this.bottomFormConfig = { fieldGroups: [...normalizedBottom] };
+  }
+
+  /**
+   * Normalize legacy configs where a form is provided as string[] instead of
+   * [{ fields: string[] }]. Ensures we always return an array of field-group objects.
+   */
+  private normalizeToFieldGroups(input: any): { fields: string[] }[] {
+    if (!Array.isArray(input)) {
+      return [];
+    }
+    // If first element is a string, treat the whole array as fields of a single group
+    if (input.length > 0 && typeof input[0] === "string") {
+      return [{ fields: input as string[] }];
+    }
+    // Otherwise assume it's already in the correct shape
+    return input as { fields: string[] }[];
   }
 
   onTopFormConfigChange(formConfig: FormConfig): void {
