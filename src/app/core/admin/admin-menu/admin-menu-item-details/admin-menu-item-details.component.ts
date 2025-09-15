@@ -75,8 +75,8 @@ export class AdminMenuItemDetailsComponent implements OnInit {
       (view) => !view._id.includes("/:id"),
     ); // skip details views (with "/:id" placeholder)
 
-    // For shortcuts, exclude routes that are already in the navigation menu
-    if (this.excludeNavigationItems) {
+    // Only exclude routes when creating shortcuts (not main navigation menu)
+    if (this.excludeNavigationItems && this.itemType === "Shortcut") {
       const navigationRoutes = this.getNavigationMenuRoutes();
       availableViews = availableViews.filter((view) => {
         const route = view._id.replace(PREFIX_VIEW_CONFIG, "/");
@@ -98,16 +98,17 @@ export class AdminMenuItemDetailsComponent implements OnInit {
       }>("navigationMenu");
       const routes: string[] = [];
 
-      const extractRoutes = (items: MenuItem[]) => {
+      const isEntityMenuItem = (
+        item: MenuItem | EntityMenuItem,
+      ): item is EntityMenuItem => "entityType" in item;
+
+      const extractRoutes = (items: (MenuItem | EntityMenuItem)[]) => {
         items?.forEach((item) => {
           if (item.link) {
             routes.push(item.link);
           }
-          if ("entityType" in item && item.entityType) {
-            // For entity menu items, we need to generate the route
-            const entityType = item.entityType as string;
-            const entityRoute = `/${entityType.toLowerCase()}`;
-            routes.push(entityRoute);
+          if (isEntityMenuItem(item) && item.entityType) {
+            routes.push(`/${item.entityType.toLowerCase()}`);
           }
           if (item.subMenu) {
             extractRoutes(item.subMenu);
@@ -133,6 +134,11 @@ export class AdminMenuItemDetailsComponent implements OnInit {
       delete this.item.label;
       delete this.item.icon;
       delete this.item.link;
+    } else {
+      if (!this.item.link) {
+        // optionally surface validation in UI; minimally, do not close
+        return;
+      }
     }
 
     this.dialogRef.close(this.item);
