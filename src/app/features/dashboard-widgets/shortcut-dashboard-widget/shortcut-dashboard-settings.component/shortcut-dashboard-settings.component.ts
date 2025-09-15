@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { MenuItem } from "../../../../core/ui/navigation/menu-item";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { FormControl } from "@angular/forms";
 import { ShortcutDashboardConfig } from "../shortcut-dashboard-config";
@@ -34,6 +33,10 @@ export class ShortcutDashboardSettingsComponent
     this.menuItems = updatedItems;
     const plainMenuItems =
       MenuItemListEditorComponent.toPlainMenuItems(updatedItems);
-    this.formControl.setValue({ shortcuts: plainMenuItems });
+    this.formControl.setValue({
+      ...(this.formControl.value ?? ({} as ShortcutDashboardConfig)),
+      shortcuts: plainMenuItems,
+    });
+    this.formControl.markAsDirty();
   }
 }

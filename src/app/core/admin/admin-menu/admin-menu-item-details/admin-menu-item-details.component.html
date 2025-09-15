@@ -8,27 +8,37 @@
 
 <mat-dialog-content>
   <form class="flex-column gap-regular">
-    <p i18n>
-      Optionally select a record type to automatically use its name, icon and
-      list view (as link) for this menu item. Otherwise, you can select a custom
-      name and icon below.
-    </p>
-
-    <!-- EntityType -->
-    <mat-form-field appearance="fill" class="margin-bottom-large">
-      <mat-label i18n>Entity Type</mat-label>
-      <app-entity-type-select
-        [value]="item?.['entityType']"
-        (valueChange)="onEntityTypeSelected($event)"
-        [multi]="false"
-      ></app-entity-type-select>
-    </mat-form-field>
-
-    @if (item?.["entityType"]) {
+    @if (itemType === "Menu Item") {
       <p i18n>
-        To manually define a label and link, clear the entity type field above.
+        Optionally select a record type to automatically use its name, icon and
+        list view (as link) for this menu item. Otherwise, you can select a
+        custom name and icon below.
       </p>
+
+      <!-- EntityType -->
+      <mat-form-field appearance="fill" class="margin-bottom-large">
+        <mat-label i18n>Entity Type</mat-label>
+        <app-entity-type-select
+          [value]="item?.['entityType']"
+          (valueChange)="onEntityTypeSelected($event)"
+          [multi]="false"
+        ></app-entity-type-select>
+      </mat-form-field>
+
+      @if (item?.["entityType"]) {
+        <p i18n>
+          To manually define a label and link, clear the entity type field
+          above.
+        </p>
+      } @else {
+        <app-menu-item-form
+          [item]="item"
+          (itemChange)="item = $event"
+          [linkOptions]="availableRoutes"
+        ></app-menu-item-form>
+      }
     } @else {
+      <!-- For shortcuts, only show the manual form -->
       <app-menu-item-form
         [item]="item"
         (itemChange)="item = $event"

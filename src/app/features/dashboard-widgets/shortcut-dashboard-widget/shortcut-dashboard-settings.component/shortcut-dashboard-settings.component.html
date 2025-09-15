@@ -10,6 +10,7 @@
       [addButtonLabel]="'Add Shortcut'"
       [itemType]="'Shortcut'"
       [allowSubMenu]="false"
+      [excludeNavigationItems]="true"
       containerId="shortcuts-container"
       (itemsChange)="onMenuItemsChange($event)"
     ></app-menu-item-list-editor>

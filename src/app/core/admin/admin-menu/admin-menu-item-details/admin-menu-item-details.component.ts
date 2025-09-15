@@ -45,12 +45,14 @@ export class AdminMenuItemDetailsComponent implements OnInit {
     item: MenuItem;
     isNew?: boolean;
     itemType?: string;
+    excludeNavigationItems?: boolean;
   }>(MAT_DIALOG_DATA);
 
   item: MenuItem | EntityMenuItem;
   availableRoutes: { value: string; label: string }[];
   isNew: boolean;
   itemType: string;
+  excludeNavigationItems: boolean;
 
   constructor() {
     const data = this.data;
@@ -58,6 +60,7 @@ export class AdminMenuItemDetailsComponent implements OnInit {
     this.item = data.item;
     this.isNew = data.isNew;
     this.itemType = data.itemType || "Menu Item";
+    this.excludeNavigationItems = data.excludeNavigationItems || false;
   }
 
   ngOnInit(): void {
@@ -67,13 +70,57 @@ export class AdminMenuItemDetailsComponent implements OnInit {
   private loadAvailableRoutes(): { value: string; label: string }[] {
     const allConfigs: ViewConfig[] =
       this.configService.getAllConfigs<ViewConfig>(PREFIX_VIEW_CONFIG);
-    return allConfigs
-      .filter((view) => !view._id.includes("/:id")) // skip details views (with "/:id" placeholder)
-      .map((view) => {
-        const id = view._id.replace(PREFIX_VIEW_CONFIG, "/");
-        const label = view.config?.entityType?.trim() || view.component || id;
-        return { value: id, label };
+
+    let availableViews = allConfigs.filter(
+      (view) => !view._id.includes("/:id"),
+    ); // skip details views (with "/:id" placeholder)
+
+    // For shortcuts, exclude routes that are already in the navigation menu
+    if (this.excludeNavigationItems) {
+      const navigationRoutes = this.getNavigationMenuRoutes();
+      availableViews = availableViews.filter((view) => {
+        const route = view._id.replace(PREFIX_VIEW_CONFIG, "/");
+        return !navigationRoutes.includes(route);
       });
+    }
+
+    return availableViews.map((view) => {
+      const id = view._id.replace(PREFIX_VIEW_CONFIG, "/");
+      const label = view.config?.entityType?.trim() || view.component || id;
+      return { value: id, label };
+    });
+  }
+
+  private getNavigationMenuRoutes(): string[] {
+    try {
+      const navigationConfig = this.configService.getConfig<{
+        items: MenuItem[];
+      }>("navigationMenu");
+      const routes: string[] = [];
+
+      const extractRoutes = (items: MenuItem[]) => {
+        items?.forEach((item) => {
+          if (item.link) {
+            routes.push(item.link);
+          }
+          if ("entityType" in item && item.entityType) {
+            // For entity menu items, we need to generate the route
+            const entityType = item.entityType as string;
+            const entityRoute = `/${entityType.toLowerCase()}`;
+            routes.push(entityRoute);
+          }
+          if (item.subMenu) {
+            extractRoutes(item.subMenu);
+          }
+        });
+      };
+
+      extractRoutes(navigationConfig?.items || []);
+      return routes;
+    } catch (error) {
+      console.warn("Could not load navigation menu config:", error);
+      return [];
+    }
   }
 
   onEntityTypeSelected(entityType: string | string[]) {

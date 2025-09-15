@@ -37,8 +37,9 @@ export class MenuItemListEditorComponent {
   @Input() showAddButton: boolean = true;
   @Input() addButtonLabel: string = "Add New";
   @Input() containerId: string = "menu-item-list-container";
-  @Input() itemType: string = "Menu Item"; // "Menu Item" or "Shortcut"
-  @Input() allowSubMenu: boolean = true; // Disable for shortcuts
+  @Input() itemType: string = "Menu Item";
+  @Input() allowSubMenu: boolean = true;
+  @Input() excludeNavigationItems: boolean = false;
 
   @Output() itemsChange = new EventEmitter<MenuItemForAdminUi[]>();
 
@@ -106,7 +107,12 @@ export class MenuItemListEditorComponent {
     const newItem = new MenuItemForAdminUiNew(uuid());
     const dialogRef = this.dialog.open(AdminMenuItemDetailsComponent, {
       width: "600px",
-      data: { item: { ...newItem }, isNew: true, itemType: this.itemType },
+      data: {
+        item: { ...newItem },
+        isNew: true,
+        itemType: this.itemType,
+        excludeNavigationItems: this.excludeNavigationItems,
+      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
