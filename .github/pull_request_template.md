@@ -13,7 +13,7 @@ This helps us reduce the number of review cycles and use the time of our core re
 - [ ] reviewed the "Files changed" section of the PR briefly yourself to check for any unwanted changes
    - e.g. clean up debugging console.log statements, disabled tests, ...
    - please also avoid changes that are not directly related to the issue of the PR, even small code reformatings make the review process much more complex
-- [ ] PR status is changed to "Ready for Review"
+- [ ] 🚦 PR status is changed to "Ready for Review"
   - while you are still working on initial implementation, keep the PR in "Draft" status
   - once you are done with your initial work, change to "Ready for Review". This will trigger some additional automated checks and reviews.
   - (PR = "Ready for Review" does not immediately request a manual review yet, first complete the further checks below)
