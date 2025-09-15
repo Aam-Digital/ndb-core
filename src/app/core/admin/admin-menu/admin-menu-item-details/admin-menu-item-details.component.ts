@@ -134,11 +134,9 @@ export class AdminMenuItemDetailsComponent implements OnInit {
       delete this.item.label;
       delete this.item.icon;
       delete this.item.link;
-    } else {
-      if (!this.item.link) {
-        // optionally surface validation in UI; minimally, do not close
-        return;
-      }
+    } else if (!this.item.link) {
+      // optionally surface validation in UI; minimally, do not close
+      return;
     }
 
     this.dialogRef.close(this.item);
