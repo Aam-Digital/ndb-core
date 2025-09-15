@@ -12,7 +12,6 @@ import { FeatureLoadingComponent } from "#src/app/core/common-components/feature
 
 /**
  * An edit component that allows to manage template files stored in the PDF Generator API.
- * Shows conditional UI based on whether the export server is enabled.
  */
 @DynamicComponent("EditTemplateExportFile")
 @Component({
