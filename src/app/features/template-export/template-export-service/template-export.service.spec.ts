@@ -1,11 +1,10 @@
 import { TestBed } from "@angular/core/testing";
-import { HttpErrorResponse } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { of, throwError } from "rxjs";
 
 import { TemplateExportService } from "./template-export.service";
 import { MatDialog } from "@angular/material/dialog";
 import { TemplateExportSelectionDialogComponent } from "../template-export-selection-dialog/template-export-selection-dialog.component";
-import { HttpClient } from "@angular/common/http";
 import { environment } from "#src/environments/environment";
 
 describe("TemplateExportService", () => {
