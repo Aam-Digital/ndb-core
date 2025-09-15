@@ -29,13 +29,14 @@ export class EditTemplateExportFileComponent
   override fileService = inject(TemplateExportApiService);
   private readonly templateExportService = inject(TemplateExportService);
 
-  exportServerEnabled: boolean;
+  exportServerEnabled: boolean = false;
 
-  override async ngOnInit() {
+  override ngOnInit(): void {
     super.ngOnInit();
     // Check if export server is enabled
-    this.exportServerEnabled =
-      await this.templateExportService.isExportServerEnabled();
-    console.log(this.exportServerEnabled, "enabled");
+    this.templateExportService
+      .isExportServerEnabled()
+      .then((enabled) => (this.exportServerEnabled = enabled))
+      .catch(() => (this.exportServerEnabled = false));
   }
 }
