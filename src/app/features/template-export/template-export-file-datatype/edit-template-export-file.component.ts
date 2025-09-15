@@ -8,7 +8,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FileService } from "../../file/file.service";
-import { FeatureLoadingComponent } from "#src/app/core/common-components/feature-disabled-info/feature-loading.component";
+import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
 
 /**
  * An edit component that allows to manage template files stored in the PDF Generator API.
@@ -26,7 +26,7 @@ import { FeatureLoadingComponent } from "#src/app/core/common-components/feature
     MatFormFieldModule,
     MatInputModule,
     MatTooltipModule,
-    FeatureLoadingComponent,
+    FeatureDisabledInfoComponent,
   ],
   providers: [{ provide: FileService, useClass: TemplateExportApiService }],
 })

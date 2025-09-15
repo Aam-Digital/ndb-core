@@ -6,13 +6,11 @@
     toolbar and can be sent via email or push notifications.
   </div>
 
-  @if (isFeatureEnabled === false) {
+  @if (isFeatureEnabled !== true) {
     <app-feature-disabled-info
       featureName="Notification API"
+      [showLoader]="isFeatureEnabled"
     ></app-feature-disabled-info>
-  } @else if (!isFeatureEnabled) {
-    <!-- feature check not completed yet -->
-    <app-feature-loading></app-feature-loading>
   }
 
   @if (notificationConfig) {

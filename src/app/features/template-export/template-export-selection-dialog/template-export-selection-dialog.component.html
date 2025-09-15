@@ -1,12 +1,11 @@
 <mat-dialog-content>
   <h2 i18n>Generate File from Template</h2>
 
-  @if (isFeatureEnabled === false) {
+  @if (isFeatureEnabled !== true) {
     <app-feature-disabled-info
       featureName="Export API"
+      [showLoader]="isFeatureEnabled"
     ></app-feature-disabled-info>
-  } @else if (!isFeatureEnabled) {
-    <app-feature-loading></app-feature-loading>
   } @else {
     <p>
       <span i18n>

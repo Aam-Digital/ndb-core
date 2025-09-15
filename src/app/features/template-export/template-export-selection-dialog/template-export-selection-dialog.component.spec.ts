@@ -28,6 +28,7 @@ import { map } from "rxjs/operators";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { TemplateExport } from "../template-export.entity";
 import { TemplateExportService } from "../template-export-service/template-export.service";
+import { NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
 
 describe("TemplateExportSelectionDialogComponent", () => {
   let component: TemplateExportSelectionDialogComponent;
@@ -89,6 +90,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
           provide: TemplateExportService,
           useValue: mockTemplateExportService,
         },
+        { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
       ],
     }).compileComponents();
 

@@ -1,27 +1,8 @@
-@if (exportServerEnabled === false) {
-  <mat-form-field>
-    @if (!hideLabel) {
-      <mat-label>
-        <span [matTooltip]="label" matTooltipPosition="before">{{
-          label
-        }}</span>
-      </mat-label>
-    }
-    <input
-      matInput
-      readonly
-      disabled
-      value=""
-      i18n-placeholder="placeholder when export server disabled"
-      placeholder="Export server not available"
-    />
-    <mat-hint class="warning" i18n>
-      This feature is currently not enabled for your system. Please contact your
-      system administrator to enable it.
-    </mat-hint>
-  </mat-form-field>
-} @else if (!exportServerEnabled) {
-  <app-feature-loading></app-feature-loading>
+@if (!exportServerEnabled === true) {
+  <app-feature-disabled-info
+    [showLoader]="exportServerEnabled"
+    [compactView]="true"
+  ></app-feature-disabled-info>
 } @else {
   <app-edit-file
     [formControl]="formControl"

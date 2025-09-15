@@ -25,7 +25,6 @@ import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 import { Config } from "../../../core/config/config";
 import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
-import { FeatureLoadingComponent } from "#src/app/core/common-components/feature-disabled-info/feature-loading.component";
 
 /**
  * UI for current user to configure individual notification settings.
@@ -44,7 +43,6 @@ import { FeatureLoadingComponent } from "#src/app/core/common-components/feature
     CdkAccordionModule,
     MatAccordion,
     FeatureDisabledInfoComponent,
-    FeatureLoadingComponent,
   ],
   templateUrl: "./notification-settings.component.html",
   styleUrl: "./notification-settings.component.scss",
