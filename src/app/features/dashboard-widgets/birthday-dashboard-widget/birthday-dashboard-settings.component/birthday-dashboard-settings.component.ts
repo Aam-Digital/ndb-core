@@ -56,6 +56,7 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
 
   availableEntityTypes: EntityConstructor[] = [];
   availablePropertiesMap: { [entityType: string]: string[] } = {};
+  availableEntityTypesPerRow: EntityConstructor[][] = [];
 
   entityPropertyPairs: EntityPropertyPair[] = [];
 
@@ -114,16 +115,54 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
 
     this.localConfig.threshold = this.formControl.value?.threshold ?? 32;
     this.updateLocalConfig();
+    this.updateAvailableEntityTypesPerRow();
   }
 
   availablePropertiesFor(entityType: string): string[] {
     return this.availablePropertiesMap[entityType] ?? [];
   }
 
+  updateAvailableEntityTypesPerRow() {
+    this.availableEntityTypesPerRow = this.entityPropertyPairs.map(
+      (_, index) => {
+        const usedEntityTypes = new Set(
+          this.entityPropertyPairs
+            .map((p, i) => (i === index ? null : p.entityType))
+            .filter(Boolean),
+        );
+        return this.availableEntityTypes.filter(
+          (ctor) => !usedEntityTypes.has(ctor.ENTITY_TYPE),
+        );
+      },
+    );
+  }
+
+  get canAddMorePairs(): boolean {
+    const usedEntityTypes = new Set(
+      this.entityPropertyPairs.map((p) => p.entityType),
+    );
+    return this.availableEntityTypes.some(
+      (ctor) => !usedEntityTypes.has(ctor.ENTITY_TYPE),
+    );
+  }
+
+  get isFormValid(): boolean {
+    return this.entityPropertyPairs.every(
+      (pair) => pair.entityType && pair.property,
+    );
+  }
+
+  get hasInvalidPairs(): boolean {
+    return this.entityPropertyPairs.some(
+      (pair) => !pair.entityType || !pair.property,
+    );
+  }
+
   onEntityTypeChange(entityType: string, index: number) {
     this.entityPropertyPairs[index].entityType = entityType;
     const props = this.availablePropertiesFor(entityType);
     this.entityPropertyPairs[index].property = props[0] ?? "";
+    this.updateAvailableEntityTypesPerRow();
     this.updateLocalConfig();
     this.emitConfigChange();
   }
@@ -140,16 +179,29 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
   }
 
   addPair() {
-    // Add new pair with first available entity type and property
-    const entityType = this.availableEntityTypes[0]?.ENTITY_TYPE ?? "";
+    // Find first unused entity type
+    const usedEntityTypes = new Set(
+      this.entityPropertyPairs.map((p) => p.entityType),
+    );
+    const availableEntityType = this.availableEntityTypes.find(
+      (ctor) => !usedEntityTypes.has(ctor.ENTITY_TYPE),
+    );
+
+    if (!availableEntityType) {
+      return; // No more entity types available
+    }
+
+    const entityType = availableEntityType.ENTITY_TYPE;
     const property = this.availablePropertiesFor(entityType)[0] ?? "";
     this.entityPropertyPairs.push({ entityType, property });
+    this.updateAvailableEntityTypesPerRow();
     this.updateLocalConfig();
     this.emitConfigChange();
   }
 
   removePair(index: number) {
     this.entityPropertyPairs.splice(index, 1);
+    this.updateAvailableEntityTypesPerRow();
     this.updateLocalConfig();
     this.emitConfigChange();
   }
@@ -172,6 +224,12 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
   }
 
   emitConfigChange() {
-    this.formControl.setValue({ ...this.localConfig });
+    // Set form control validity based on whether all pairs are complete
+    if (this.isFormValid) {
+      this.formControl.setValue({ ...this.localConfig });
+      this.formControl.setErrors(null);
+    } else {
+      this.formControl.setErrors({ invalidPairs: true });
+    }
   }
 }

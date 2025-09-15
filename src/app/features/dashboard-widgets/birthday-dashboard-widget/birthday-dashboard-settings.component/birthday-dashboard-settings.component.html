@@ -25,7 +25,7 @@
             <app-entity-type-select
               [ngModel]="pair.entityType"
               (ngModelChange)="onEntityTypeChange($event, i)"
-              [options]="availableEntityTypes"
+              [options]="availableEntityTypesPerRow[i]"
             ></app-entity-type-select>
           </mat-form-field>
           <button
@@ -48,12 +48,27 @@
         </mat-form-field>
       </div>
     }
-    <button mat-button color="accent" (click)="addPair()">
+    <button
+      mat-button
+      color="accent"
+      (click)="addPair()"
+      [disabled]="!canAddMorePairs"
+    >
       <fa-icon
         class="button-icon margin-sides-small"
         icon="plus-circle"
       ></fa-icon>
       <span i18n>Add another</span>
     </button>
+
+    @if (hasInvalidPairs) {
+      <div class="margin-top-regular validation-error">
+        <fa-icon icon="exclamation-triangle"></fa-icon>
+        <span i18n
+          >Please select both entity type and property for all entries before
+          saving.</span
+        >
+      </div>
+    }
   </div>
 </div>
