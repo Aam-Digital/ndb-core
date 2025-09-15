@@ -17,6 +17,7 @@ import { Logging } from "#src/app/core/logging/logging.service";
 export class TemplateExportService {
   private dialog = inject(MatDialog);
   private readonly httpClient = inject(HttpClient);
+
   /**
    * Open a dialog for the user to select a template and generate a file from it for the given entity.
    * @param entity The entity or other data object to provide placeholder values for the template
