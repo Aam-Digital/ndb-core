@@ -118,6 +118,9 @@ export class ExampleComponent {
 - Prefer inline templates for small components
 - Write maintainable, performant, and accessible code
 
+### Additional Resources
+- **Angular Framework Reference**: For comprehensive Angular guidance and best practices, see the official Angular llms.txt file: https://angular.dev/context/llm-files/llms-full.txt
+
 -----
 
 ## Aam Digital specific patterns
