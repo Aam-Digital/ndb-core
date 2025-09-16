@@ -1,59 +1,20 @@
-<div class="note-admin-container">
-  <div class="intro-section">
-    <h2 i18n>Configure Note Details Form</h2>
-    <p class="hint-text" i18n>
-      Configure the fields for each section of the Note details form. You can
-      edit field properties, add new fields, and drag & drop to reorder. Each
-      section represents a different area of the form.
-    </p>
-  </div>
+<div class="hint-banner" i18n>
+  You can edit how users will see the Note details of a single record. Drag and
+  drop fields and sections in this preview of a profile view and group them as
+  appropriate. The editor below closely resembles how the form will look for
+  users later.
+  <br />
+  We recommend to keep things simple: Only add fields that you really need for
+  your work.
+</div>
 
-  <div class="form-sections">
-    <div class="form-section">
-      <h3 i18n>Top Form Section</h3>
-      <p class="section-description" i18n>
-        Fields displayed at the top of the note form (typically metadata like
-        date, category, etc.)
-      </p>
-      <app-admin-entity-form
-        [entityType]="entityConstructor"
-        [config]="topFormConfig"
-        (configChange)="onTopFormConfigChange($event)"
-        uniqueAreaId="top-form"
-        [updateEntitySchema]="true"
-        [createNewFieldGroup]="false"
-      ></app-admin-entity-form>
-    </div>
-
-    <div class="form-section">
-      <h3 i18n>Middle Form Section</h3>
-      <p class="section-description" i18n>
-        Fields displayed in the main content area (typically subject and text)
-      </p>
-      <app-admin-entity-form
-        [entityType]="entityConstructor"
-        [config]="middleFormConfig"
-        (configChange)="onMiddleFormConfigChange($event)"
-        uniqueAreaId="middle-form"
-        [updateEntitySchema]="true"
-        [createNewFieldGroup]="false"
-      ></app-admin-entity-form>
-    </div>
-
-    <div class="form-section">
-      <h3 i18n>Bottom Form Section</h3>
-      <p class="section-description" i18n>
-        Fields displayed at the bottom (typically related entities like children
-        and schools)
-      </p>
-      <app-admin-entity-form
-        [entityType]="entityConstructor"
-        [config]="bottomFormConfig"
-        (configChange)="onBottomFormConfigChange($event)"
-        uniqueAreaId="bottom-form"
-        [updateEntitySchema]="true"
-        [createNewFieldGroup]="false"
-      ></app-admin-entity-form>
-    </div>
-  </div>
+<div class="form-sections">
+  <app-admin-entity-form
+    [entityType]="entityConstructor"
+    [config]="combinedFormConfig"
+    (configChange)="onCombinedFormConfigChange($event)"
+    uniqueAreaId="combined-note-form"
+    [updateEntitySchema]="true"
+    [createNewFieldGroup]="false"
+  ></app-admin-entity-form>
 </div>

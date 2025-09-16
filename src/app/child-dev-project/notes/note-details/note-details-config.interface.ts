@@ -8,15 +8,15 @@ export interface NoteDetailsConfig {
   /**
    * Field groups to be displayed in the top form section.
    */
-  topForm?: FieldGroup[];
+  topForm?: FieldGroup[] | string[];
 
   /**
    * Field groups to be displayed in the middle form section.
    */
-  middleForm?: FieldGroup[];
+  middleForm?: FieldGroup[] | string[];
 
   /**
    * Field groups to be displayed in the bottom form section.
    */
-  bottomForm?: FieldGroup[];
+  bottomForm?: FieldGroup[] | string[];
 }

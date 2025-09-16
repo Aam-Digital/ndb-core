@@ -4,7 +4,9 @@
     cdkDropList
     (cdkDropListDropped)="dropfieldGroups($event, config.fieldGroups)"
     cdkDropListOrientation="mixed"
-    class="flex-grow admin-grid-layout padding-right-regular drop-list"
+    class="flex-grow padding-right-regular drop-list"
+    [class.admin-grid-layout]="createNewFieldGroup"
+    [class.compactFieldMode]="!createNewFieldGroup"
   >
     <!-- FIELD GROUPS -->
     @for (group of config.fieldGroups; track group; let i = $index) {

@@ -4,6 +4,7 @@ import { EntityConstructor } from "../../../core/entity/model/entity";
 import { AdminEntityFormComponent } from "../../../core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component";
 import { NoteDetailsConfig } from "../note-details/note-details-config.interface";
 import { FormConfig } from "../../../core/entity-details/form/form.component";
+import { FieldGroup } from "../../../core/entity-details/form/field-group";
 
 /**
  * Admin component for configuring NoteDetails view.
@@ -13,16 +14,14 @@ import { FormConfig } from "../../../core/entity-details/form/form.component";
   selector: "app-admin-note-details",
   imports: [CommonModule, AdminEntityFormComponent],
   templateUrl: "./admin-note-details.component.html",
-  styleUrl: "./admin-note-details.component.scss",
+  styleUrls: ["../../../core/admin/admin-entity/admin-entity-styles.scss"],
 })
 export class AdminNoteDetailsComponent implements OnInit {
   @Input() config: NoteDetailsConfig = {};
   @Input() entityConstructor: EntityConstructor;
   @Output() configChange = new EventEmitter<NoteDetailsConfig>();
 
-  topFormConfig: FormConfig = { fieldGroups: [] };
-  middleFormConfig: FormConfig = { fieldGroups: [] };
-  bottomFormConfig: FormConfig = { fieldGroups: [] };
+  combinedFormConfig: FormConfig = { fieldGroups: [] };
 
   private readonly defaultConfig: Required<NoteDetailsConfig> = {
     topForm: [
@@ -51,16 +50,36 @@ export class AdminNoteDetailsComponent implements OnInit {
       currentConfig.bottomForm,
     );
 
-    this.topFormConfig = { fieldGroups: [...normalizedTop] };
-    this.middleFormConfig = { fieldGroups: [...normalizedMiddle] };
-    this.bottomFormConfig = { fieldGroups: [...normalizedBottom] };
+    // Add headers to distinguish sections and combine all field groups
+    const topWithHeaders = normalizedTop.map((group: FieldGroup) => ({
+      ...group,
+      header: "Top Form Section",
+    }));
+
+    const middleWithHeaders = normalizedMiddle.map((group: FieldGroup) => ({
+      ...group,
+      header: "Middle Form Section",
+    }));
+
+    const bottomWithHeaders = normalizedBottom.map((group: FieldGroup) => ({
+      ...group,
+      header: "Bottom Form Section",
+    }));
+
+    this.combinedFormConfig = {
+      fieldGroups: [
+        ...topWithHeaders,
+        ...middleWithHeaders,
+        ...bottomWithHeaders,
+      ],
+    };
   }
 
   /**
    * Normalize legacy configs where a form is provided as string[] instead of
    * [{ fields: string[] }]. Ensures we always return an array of field-group objects.
    */
-  private normalizeToFieldGroups(input: any): { fields: string[] }[] {
+  private normalizeToFieldGroups(input: any): FieldGroup[] {
     if (!Array.isArray(input)) {
       return [];
     }
@@ -69,24 +88,33 @@ export class AdminNoteDetailsComponent implements OnInit {
       return [{ fields: input as string[] }];
     }
     // Otherwise assume it's already in the correct shape
-    return input as { fields: string[] }[];
+    return input as FieldGroup[];
   }
 
-  onTopFormConfigChange(formConfig: FormConfig): void {
-    this.topFormConfig = formConfig;
-    this.config.topForm = formConfig.fieldGroups;
-    this.configChange.emit(this.config);
-  }
+  onCombinedFormConfigChange(formConfig: FormConfig): void {
+    this.combinedFormConfig = formConfig;
 
-  onMiddleFormConfigChange(formConfig: FormConfig): void {
-    this.middleFormConfig = formConfig;
-    this.config.middleForm = formConfig.fieldGroups;
-    this.configChange.emit(this.config);
-  }
+    // Separate the combined field groups back into their respective sections
+    const topGroups: FieldGroup[] = [];
+    const middleGroups: FieldGroup[] = [];
+    const bottomGroups: FieldGroup[] = [];
 
-  onBottomFormConfigChange(formConfig: FormConfig): void {
-    this.bottomFormConfig = formConfig;
-    this.config.bottomForm = formConfig.fieldGroups;
+    formConfig.fieldGroups.forEach((group) => {
+      if (group.header === "Top Form Section") {
+        topGroups.push(group);
+      } else if (group.header === "Middle Form Section") {
+        middleGroups.push(group);
+      } else if (group.header === "Bottom Form Section") {
+        bottomGroups.push(group);
+      }
+    });
+
+    // Update the config - remove headers to match the original format
+    this.config.topForm = topGroups;
+    this.config.middleForm = middleGroups;
+    this.config.bottomForm = bottomGroups;
+
+    console.log(this.config, "this.config");
     this.configChange.emit(this.config);
   }
 }
