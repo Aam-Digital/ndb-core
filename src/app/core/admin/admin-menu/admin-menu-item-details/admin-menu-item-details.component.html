@@ -1,14 +1,22 @@
 <h2 mat-dialog-title>
   @if (isNew) {
-    <ng-container i18n>Add New {{ itemType }}</ng-container>
+    @if (isShortcut) {
+      <ng-container i18n>Add New Shortcut</ng-container>
+    } @else {
+      <ng-container i18n>Add New Menu Item</ng-container>
+    }
   } @else {
-    <ng-container i18n>Edit {{ itemType }}</ng-container>
+    @if (isShortcut) {
+      <ng-container i18n>Edit Shortcut</ng-container>
+    } @else {
+      <ng-container i18n>Edit Menu Item</ng-container>
+    }
   }
 </h2>
 
 <mat-dialog-content>
   <form class="flex-column gap-regular">
-    @if (itemType === "Menu Item") {
+    @if (!isShortcut) {
       <p i18n>
         Optionally select a record type to automatically use its name, icon and
         list view (as link) for this menu item. Otherwise, you can select a

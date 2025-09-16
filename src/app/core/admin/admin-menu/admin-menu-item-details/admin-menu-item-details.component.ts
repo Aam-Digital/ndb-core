@@ -53,6 +53,7 @@ export class AdminMenuItemDetailsComponent implements OnInit {
   isNew: boolean;
   itemType: string;
   excludeNavigationItems: boolean;
+  isShortcut: boolean;
 
   constructor() {
     const data = this.data;
@@ -61,6 +62,7 @@ export class AdminMenuItemDetailsComponent implements OnInit {
     this.isNew = data.isNew;
     this.itemType = data.itemType || "Menu Item";
     this.excludeNavigationItems = data.excludeNavigationItems || false;
+    this.isShortcut = this.itemType === "Shortcut";
   }
 
   ngOnInit(): void {
@@ -76,7 +78,7 @@ export class AdminMenuItemDetailsComponent implements OnInit {
     ); // skip details views (with "/:id" placeholder)
 
     // Only exclude routes when creating shortcuts (not main navigation menu)
-    if (this.excludeNavigationItems && this.itemType === "Shortcut") {
+    if (this.excludeNavigationItems && this.isShortcut) {
       const navigationRoutes = this.getNavigationMenuRoutes();
       availableViews = availableViews.filter((view) => {
         const route = view._id.replace(PREFIX_VIEW_CONFIG, "/");
