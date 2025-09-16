@@ -148,21 +148,20 @@ export class AdminEntityComponent implements OnInit {
 
     if (this.configDetailsView?.component === "NoteDetails") {
       // For NoteDetails, ensure the config only contains topForm, middleForm, bottomForm
-      const noteConfig = this.configDetailsView
-        .config as unknown as NoteDetailsConfig;
+      const noteConfig = this.configDetailsView.config as NoteDetailsConfig;
       const cleanNoteConfig: NoteDetailsConfig = {};
-      ["topForm", "middleForm", "bottomForm"].forEach((key) => {
-        if (noteConfig?.[key]) {
-          cleanNoteConfig[key] = this.flattenFormConfig(noteConfig[key]);
-        }
-      });
+
+      if (noteConfig?.topForm) cleanNoteConfig.topForm = noteConfig.topForm;
+      if (noteConfig?.middleForm)
+        cleanNoteConfig.middleForm = noteConfig.middleForm;
+      if (noteConfig?.bottomForm)
+        cleanNoteConfig.bottomForm = noteConfig.bottomForm;
 
       detailsViewConfig = {
         ...this.configDetailsView,
         config: cleanNoteConfig,
       };
     }
-    console.log(detailsViewConfig, "detailsViewConfig");
 
     const result = await this.adminEntityService.setAndSaveEntityConfig(
       this.entityConstructor,
@@ -178,16 +177,4 @@ export class AdminEntityComponent implements OnInit {
 
     this.location.back();
   }
-
-  // Helper function to flatten FieldGroup[] to string[]
-  private flattenFormConfig = (formConfig: any): string[] => {
-    if (!Array.isArray(formConfig)) return [];
-    if (formConfig.length === 0) return [];
-
-    // If it's a FieldGroup with fields property, extract the fields
-    if (typeof formConfig[0] === "object" && "fields" in formConfig[0]) {
-      return formConfig[0].fields;
-    }
-    return formConfig;
-  };
 }

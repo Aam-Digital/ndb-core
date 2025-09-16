@@ -21,15 +21,13 @@ export class AdminNoteDetailsComponent implements OnInit {
   @Input() entityConstructor: EntityConstructor;
   @Output() configChange = new EventEmitter<NoteDetailsConfig>();
 
-  combinedFormConfig: FormConfig = { fieldGroups: [] };
+  noteDetailsConfig: FormConfig = { fieldGroups: [] };
 
   // todo: somehow we are not getting these 3 sections from admin-entity component for note entity, we are only gettting topForm
   private readonly defaultConfig: NoteDetailsConfig = {
-    topForm: [
-      { fields: ["date", "warningLevel", "category", "authors", "attachment"] },
-    ],
-    middleForm: [{ fields: ["subject", "text"] }],
-    bottomForm: [{ fields: ["children", "schools"] }],
+    topForm: ["date", "warningLevel", "category", "authors", "attachment"],
+    middleForm: ["subject", "text"],
+    bottomForm: ["children", "schools"],
   };
 
   ngOnInit(): void {
@@ -42,71 +40,48 @@ export class AdminNoteDetailsComponent implements OnInit {
       ...this.config,
     } as NoteDetailsConfig;
 
-    // Normalize to guard against legacy configs where top/middle/bottom may be string[]
-    const normalizedTop = this.updatedFieldGroups(currentConfig.topForm);
-    const normalizedMiddle = this.updatedFieldGroups(currentConfig.middleForm);
-    const normalizedBottom = this.updatedFieldGroups(currentConfig.bottomForm);
-
-    // Add headers to distinguish sections and combine all field groups
-    const topWithHeaders = normalizedTop.map((group: FieldGroup) => ({
-      ...group,
+    // Convert string to FieldGroup for the admin form and add header for distinguishing sections
+    const topFieldGroup: FieldGroup = {
+      fields: currentConfig.topForm,
       header: "Top Form",
-    }));
+    };
 
-    const middleWithHeaders = normalizedMiddle.map((group: FieldGroup) => ({
-      ...group,
+    const middleFieldGroup: FieldGroup = {
+      fields: currentConfig.middleForm,
       header: "Middle Form",
-    }));
+    };
 
-    const bottomWithHeaders = normalizedBottom.map((group: FieldGroup) => ({
-      ...group,
+    const bottomFieldGroup: FieldGroup = {
+      fields: currentConfig.bottomForm,
       header: "Bottom Form",
-    }));
+    };
 
-    this.combinedFormConfig = {
-      fieldGroups: [
-        ...topWithHeaders,
-        ...middleWithHeaders,
-        ...bottomWithHeaders,
-      ],
+    this.noteDetailsConfig = {
+      fieldGroups: [topFieldGroup, middleFieldGroup, bottomFieldGroup],
     };
   }
 
-  /**
-   * Normalize topForm configs where a form is provided as string[] instead of
-   * [{ fields: string[] }]. Ensures we always return an array of field-group objects.
-   */
-  private updatedFieldGroups(input: any): FieldGroup[] {
-    if (!Array.isArray(input)) {
-      return [];
-    }
-    // If first element is a string, treat the whole array as fields of a single group
-    if (input.length > 0 && typeof input[0] === "string") {
-      return [{ fields: input as string[] }];
-    }
-    return input as FieldGroup[];
-  }
+  onNoteDetailsConfigChange(formConfig: FormConfig): void {
+    this.noteDetailsConfig = formConfig;
+    // Extract fields from each section based on headers and convert back to string arrays
+    const topGroup = formConfig.fieldGroups.find(
+      (group) => group.header === "Top Form",
+    );
+    const middleGroup = formConfig.fieldGroups.find(
+      (group) => group.header === "Middle Form",
+    );
+    const bottomGroup = formConfig.fieldGroups.find(
+      (group) => group.header === "Bottom Form",
+    );
 
-  onCombinedFormConfigChange(formConfig: FormConfig): void {
-    this.combinedFormConfig = formConfig;
-    const topGroups: FieldGroup[] = [];
-    const middleGroups: FieldGroup[] = [];
-    const bottomGroups: FieldGroup[] = [];
-
-    formConfig.fieldGroups.forEach((group) => {
-      if (group.header === "Top Form Section") {
-        topGroups.push(group);
-      } else if (group.header === "Middle Form Section") {
-        middleGroups.push(group);
-      } else if (group.header === "Bottom Form Section") {
-        bottomGroups.push(group);
-      }
-    });
-
-    // Update the config - remove headers to match the original format
-    this.config.topForm = topGroups;
-    this.config.middleForm = middleGroups;
-    this.config.bottomForm = bottomGroups;
+    // Update the config as simple string arrays
+    this.config.topForm = topGroup ? (topGroup.fields as string[]) : [];
+    this.config.middleForm = middleGroup
+      ? (middleGroup.fields as string[])
+      : [];
+    this.config.bottomForm = bottomGroup
+      ? (bottomGroup.fields as string[])
+      : [];
 
     this.configChange.emit(this.config);
   }
