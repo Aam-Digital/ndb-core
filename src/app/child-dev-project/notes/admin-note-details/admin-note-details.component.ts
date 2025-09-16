@@ -23,7 +23,8 @@ export class AdminNoteDetailsComponent implements OnInit {
 
   combinedFormConfig: FormConfig = { fieldGroups: [] };
 
-  private readonly defaultConfig: Required<NoteDetailsConfig> = {
+  // todo: somehow we are not getting these 3 sections from admin-entity component for note entity, we are only gettting topForm
+  private readonly defaultConfig: NoteDetailsConfig = {
     topForm: [
       { fields: ["date", "warningLevel", "category", "authors", "attachment"] },
     ],
@@ -39,31 +40,27 @@ export class AdminNoteDetailsComponent implements OnInit {
     const currentConfig = {
       ...this.defaultConfig,
       ...this.config,
-    } as Required<NoteDetailsConfig>;
+    } as NoteDetailsConfig;
 
     // Normalize to guard against legacy configs where top/middle/bottom may be string[]
-    const normalizedTop = this.normalizeToFieldGroups(currentConfig.topForm);
-    const normalizedMiddle = this.normalizeToFieldGroups(
-      currentConfig.middleForm,
-    );
-    const normalizedBottom = this.normalizeToFieldGroups(
-      currentConfig.bottomForm,
-    );
+    const normalizedTop = this.updatedFieldGroups(currentConfig.topForm);
+    const normalizedMiddle = this.updatedFieldGroups(currentConfig.middleForm);
+    const normalizedBottom = this.updatedFieldGroups(currentConfig.bottomForm);
 
     // Add headers to distinguish sections and combine all field groups
     const topWithHeaders = normalizedTop.map((group: FieldGroup) => ({
       ...group,
-      header: "Top Form Section",
+      header: "Top Form",
     }));
 
     const middleWithHeaders = normalizedMiddle.map((group: FieldGroup) => ({
       ...group,
-      header: "Middle Form Section",
+      header: "Middle Form",
     }));
 
     const bottomWithHeaders = normalizedBottom.map((group: FieldGroup) => ({
       ...group,
-      header: "Bottom Form Section",
+      header: "Bottom Form",
     }));
 
     this.combinedFormConfig = {
@@ -76,10 +73,10 @@ export class AdminNoteDetailsComponent implements OnInit {
   }
 
   /**
-   * Normalize legacy configs where a form is provided as string[] instead of
+   * Normalize topForm configs where a form is provided as string[] instead of
    * [{ fields: string[] }]. Ensures we always return an array of field-group objects.
    */
-  private normalizeToFieldGroups(input: any): FieldGroup[] {
+  private updatedFieldGroups(input: any): FieldGroup[] {
     if (!Array.isArray(input)) {
       return [];
     }
@@ -87,14 +84,11 @@ export class AdminNoteDetailsComponent implements OnInit {
     if (input.length > 0 && typeof input[0] === "string") {
       return [{ fields: input as string[] }];
     }
-    // Otherwise assume it's already in the correct shape
     return input as FieldGroup[];
   }
 
   onCombinedFormConfigChange(formConfig: FormConfig): void {
     this.combinedFormConfig = formConfig;
-
-    // Separate the combined field groups back into their respective sections
     const topGroups: FieldGroup[] = [];
     const middleGroups: FieldGroup[] = [];
     const bottomGroups: FieldGroup[] = [];
@@ -114,7 +108,6 @@ export class AdminNoteDetailsComponent implements OnInit {
     this.config.middleForm = middleGroups;
     this.config.bottomForm = bottomGroups;
 
-    console.log(this.config, "this.config");
     this.configChange.emit(this.config);
   }
 }
