@@ -27,6 +27,8 @@ import { delay, of } from "rxjs";
 import { map } from "rxjs/operators";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { TemplateExport } from "../template-export.entity";
+import { TemplateExportService } from "../template-export-service/template-export.service";
+import { NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
 
 describe("TemplateExportSelectionDialogComponent", () => {
   let component: TemplateExportSelectionDialogComponent;
@@ -37,7 +39,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
   >;
   let mockPdfGeneratorApiService: jasmine.SpyObj<TemplateExportApiService>;
   let mockDownloadService: jasmine.SpyObj<DownloadService>;
-
+  let mockTemplateExportService: jasmine.SpyObj<TemplateExportService>;
   let testEntity: Entity;
 
   beforeEach(async () => {
@@ -48,6 +50,10 @@ describe("TemplateExportSelectionDialogComponent", () => {
     ]);
     mockDownloadService = jasmine.createSpyObj(["triggerDownload"]);
     mockDialogRef = jasmine.createSpyObj(["close"]);
+    mockTemplateExportService = jasmine.createSpyObj(["isExportServerEnabled"]);
+    mockTemplateExportService.isExportServerEnabled.and.returnValue(
+      Promise.resolve(true),
+    );
     const mockAbility = jasmine.createSpyObj(["cannot", "on"]);
     mockAbility.on.and.returnValue(() => null);
 
@@ -80,6 +86,11 @@ describe("TemplateExportSelectionDialogComponent", () => {
           provide: EntityRegistry,
           useValue: entityRegistry,
         },
+        {
+          provide: TemplateExportService,
+          useValue: mockTemplateExportService,
+        },
+        { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
       ],
     }).compileComponents();
 
