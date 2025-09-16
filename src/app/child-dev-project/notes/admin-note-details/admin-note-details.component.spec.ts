@@ -8,7 +8,6 @@ import { Entity } from "../../../core/entity/model/entity";
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFormService } from "#src/app/core/common-components/entity-form/entity-form.service";
 import { FormGroup } from "@angular/forms";
-import { AdminEntityService } from "#src/app/core/admin/admin-entity.service";
 import { SyncStateSubject } from "#src/app/core/session/session-type";
 import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 
