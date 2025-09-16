@@ -78,20 +78,19 @@ export class MenuItemListEditorComponent {
           return;
         }
 
-        const itemToTransfer = {
-          ...event.previousContainer.data[event.previousIndex],
-        };
-
-        if (!itemToTransfer.subMenu) {
-          itemToTransfer.subMenu = [];
-        }
-
         transferArrayItem(
           event.previousContainer.data,
           event.container.data,
           event.previousIndex,
           event.currentIndex,
         );
+
+        // Ensure the moved item has a subMenu array to allow nesting
+        const targetData = event.container.data as MenuItemForAdminUi[];
+        const movedItem = targetData[event.currentIndex];
+        if (movedItem && !movedItem.subMenu) {
+          movedItem.subMenu = [];
+        }
 
         if (event.container.id === this.containerId) {
           this.items = [...this.items];
