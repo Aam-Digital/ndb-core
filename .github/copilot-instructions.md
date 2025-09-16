@@ -117,6 +117,9 @@ export class ExampleComponent {
 - Keep components small and focused on a single responsibility
 - Prefer inline templates for small components
 - Write maintainable, performant, and accessible code
+- Use _ESLint_ for linting (`npm run lint`)
+- Use _prettier_ for code formatting
+- Maintain a comprehensive test suite with Karma and Playwright
 
 ### Additional Resources
 - **Angular Framework Reference**: For comprehensive Angular guidance and best practices, see the official Angular llms.txt file: https://angular.dev/context/llm-files/llms-full.txt
@@ -134,19 +137,29 @@ export class ExampleComponent {
   Components and buttons can use `EntityAbility` and `DisableEntityOperationDirective` to check and enforce permissions.
 - Follow entity lifecycle patterns for CRUD operations
 - Use entity services for data access and caching
+- Implement specific datatypes (Date, ConfigurableEnum, etc.) extending the `DefaultDatatype` class. Implement "edit" and "display" components for a datatype's customized UI.
 
 ### Configuration System
 
+The platform is highly configurable through JSON configuration files, allowing customization without code changes. This includes:
+- Entity definitions and field configurations
+- Dashboard layouts and widgets
+- Navigation menus and views
+- Reports and data exports
+
+When developing new functionality:
 - Leverage the existing config-driven architecture
 - Use the established configuration patterns for new features
 - Create interfaces for configuration objects and let component classes implement them
 - Validate configurations properly
 
-### File Organization
-
-- Place components in feature-specific folders under `src/app/features/`
-- Core functionality belongs in `src/app/core/`
-- Shared components go in `src/app/core/common-components/`
+### Project & File Structure
+- `src/app/core/` - Core system modules and services
+  - Shared components go in `src/app/core/common-components/`
+- `src/app/features/` - Feature-specific modules
+- `e2e/` - End-to-end tests with Playwright
+- `doc/` - Documentation and API reference
+- `build/` - Build configuration and scripts
 - Follow the existing module structure with entity-based organization
 
 ## Internationalization (i18n)
