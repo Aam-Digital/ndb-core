@@ -221,7 +221,7 @@ export class MenuItemListEditorComponent {
   ): MenuItem[] {
     return items
       .map((item) => MenuItemListEditorComponent.toPlainMenuItem(item, opts))
-      .filter((item) => item !== null) as MenuItem[];
+      .filter((item): item is MenuItem => item !== null);
   }
 
   private emitItemsChange() {
