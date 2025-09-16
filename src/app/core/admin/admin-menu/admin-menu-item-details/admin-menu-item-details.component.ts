@@ -51,8 +51,11 @@ export class AdminMenuItemDetailsComponent implements OnInit {
   item: MenuItem | EntityMenuItem;
   availableRoutes: { value: string; label: string }[];
   isNew: boolean;
+  /** The type of item being edited (e.g., "Menu Item", "Shortcut") */
   itemType: string;
+  /** Whether to exclude navigation menu items from available route options */
   excludeNavigationItems: boolean;
+  /** Computed boolean flag indicating if the current item is a shortcut */
   isShortcut: boolean;
 
   constructor() {

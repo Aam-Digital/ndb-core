@@ -67,8 +67,10 @@ export class AdminMenuItemComponent {
   @Output() itemChange = new EventEmitter<MenuItemForAdminUi>();
 
   @Input() connectedTo: string[];
+  /** The type of item being managed (e.g., "Menu Item", "Shortcut") */
   @Input() itemType: string = "Menu Item";
   @Input() allowSubMenu: boolean = true;
+  /** Whether to exclude navigation menu items from route options */
   @Input() excludeNavigationItems: boolean = false;
   @Output() itemDrop = new EventEmitter<CdkDragDrop<MenuItemForAdminUi[]>>();
   @Output() deleteItem = new EventEmitter<MenuItemForAdminUi>();
