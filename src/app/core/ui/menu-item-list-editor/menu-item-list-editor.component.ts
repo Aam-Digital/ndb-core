@@ -35,8 +35,6 @@ export class MenuItemListEditorComponent {
 
   @Input() items: MenuItemForAdminUi[] = [];
   @Input() showAddButton: boolean = true;
-  /** Label text for the add button (e.g., "Add New", "Add Shortcut") */
-  @Input() addButtonLabel: string = "Add New";
   /** Unique identifier for the drag-drop container */
   @Input() containerId: string = "menu-item-list-container";
   /** The type of items being managed (e.g., "Menu Item", "Shortcut") */
