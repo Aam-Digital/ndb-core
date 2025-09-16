@@ -70,12 +70,6 @@ export class EditFileComponent
   initialValue: string;
 
   /**
-   * config for the given form field / entity attribute, containing special settings for this component.
-   * (re-declared here for better typing)
-   */
-  declare additional: FileFieldConfig;
-
-  /**
    * The accepted file types for file selection dialog.
    * If not defined, allows any file.
    */
@@ -89,7 +83,7 @@ export class EditFileComponent
     this.initialValue = this.formControl.value;
 
     this.acceptedFileTypes =
-      this.additional?.acceptedFileTypes ?? this.acceptedFileTypes;
+      this.formFieldConfig.additional?.acceptedFileTypes ?? this.acceptedFileTypes;
 
     this.formControl.statusChanges
       .pipe(

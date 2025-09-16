@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { ComponentRegistry } from '#src/app/dynamic-components';
 import { DynamicEditComponent } from './dynamic-edit.component';
 
 describe('DynamicEditComponent', () => {
@@ -8,12 +9,18 @@ describe('DynamicEditComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DynamicEditComponent]
+      imports: [DynamicEditComponent],
+      providers: [ComponentRegistry],
     })
     .compileComponents();
 
     fixture = TestBed.createComponent(DynamicEditComponent);
     component = fixture.componentInstance;
+
+    component.formFieldConfig = {
+      id: 'testField',
+    }
+
     fixture.detectChanges();
   });
 

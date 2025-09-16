@@ -5,18 +5,18 @@ import {
   tick,
 } from "@angular/core/testing";
 
-import { EditFileComponent } from "./edit-file.component";
-import { AlertService } from "../../../core/alerts/alert.service";
 import { FormControl } from "@angular/forms";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { of, Subject } from "rxjs";
-import { Entity } from "app/core/entity/model/entity";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { FileService } from "../file.service";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { Entity } from "app/core/entity/model/entity";
+import { of, Subject } from "rxjs";
+import { AlertService } from "../../../core/alerts/alert.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { FileFieldConfig } from "../file.datatype";
+import { FileService } from "../file.service";
+import { EditFileComponent } from "./edit-file.component";
 
 describe("EditFileComponent", () => {
   let component: EditFileComponent;

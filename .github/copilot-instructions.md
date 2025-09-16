@@ -228,6 +228,12 @@ When developing new functionality:
 - Include proper error handling and logging
 - Generate demo data when creating new entities
 - Follow the established file organization
+- Generate or adapt unit tests
+- Run tests (`npm run test`) and linting (`npm run lint`) before finalizing and fix any issues
+- If similar changes are required in multiple places, only implement in one place and ask for review before implementing elsewhere
+- If a change is complex or large, first suggest and approach broken into smaller parts and ask for review after each part
+- If unsure about a specific implementation detail, ask for clarification before proceeding
+- Do not change any code or tests that are unrelated to the direct task
 
 ## Common Commands
 
