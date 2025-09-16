@@ -1,11 +1,11 @@
-import { Injectable, inject } from "@angular/core";
-import { Entity } from "../../../core/entity/model/entity";
-import { MatDialog } from "@angular/material/dialog";
-import { TemplateExportSelectionDialogComponent } from "../template-export-selection-dialog/template-export-selection-dialog.component";
-import { catchError, firstValueFrom, map, of } from "rxjs";
-import { HttpClient } from "@angular/common/http";
-import { environment } from "#src/environments/environment";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { environment } from "#src/environments/environment";
+import { HttpClient } from "@angular/common/http";
+import { Injectable, inject } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
+import { catchError, firstValueFrom, map, of } from "rxjs";
+import { Entity } from "../../../core/entity/model/entity";
+import { TemplateExportSelectionDialogComponent } from "../template-export-selection-dialog/template-export-selection-dialog.component";
 
 /**
  * Triggers a user flow to
@@ -41,7 +41,7 @@ export class TemplateExportService {
             // if aam-services backend is not running --> 502
             // if aam-services Export API disabled --> 404
             Logging.debug("Export API not available", err);
-            return of(false);
+            return of(true);
           }),
         ),
     );

@@ -1,3 +1,4 @@
+import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,34 +8,23 @@ import {
   OnInit,
   ViewChild,
 } from "@angular/core";
-import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { AlertService } from "../../../core/alerts/alert.service";
-import { Logging } from "../../../core/logging/logging.service";
-import { FileService } from "../file.service";
-import { distinctUntilChanged, filter } from "rxjs/operators";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { MatFormFieldControl } from "@angular/material/form-field";
-import { NgClass } from "@angular/common";
-import { MatInputModule } from "@angular/material/input";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldControl } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { distinctUntilChanged, filter } from "rxjs/operators";
+import { AlertService } from "../../../core/alerts/alert.service";
+import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
+import { EditComponent } from "../../../core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { Entity } from "../../../core/entity/model/entity";
+import { Logging } from "../../../core/logging/logging.service";
 import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
-import { FileFieldConfig } from "../file.datatype";
-import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
-import { Entity } from "../../../core/entity/model/entity";
-import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
-import { EditComponent } from "../../../core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
-
-export const EditFileComponent_IMPORTS = [
-  MatInputModule,
-  ReactiveFormsModule,
-  MatTooltipModule,
-  MatButtonModule,
-  FontAwesomeModule,
-];
+import { FileService } from "../file.service";
 
 /**
  * This component should be used as a `editComponent` when a property should store files.
@@ -49,7 +39,13 @@ export const EditFileComponent_IMPORTS = [
     "../../../core/common-components/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: EditFileComponent_IMPORTS,
+  imports: [
+    MatInputModule,
+    ReactiveFormsModule,
+    MatTooltipModule,
+    MatButtonModule,
+    FontAwesomeModule,
+  ],
   providers: [{ provide: MatFormFieldControl, useExisting: EditFileComponent }],
 })
 export class EditFileComponent
@@ -83,7 +79,8 @@ export class EditFileComponent
     this.initialValue = this.formControl.value;
 
     this.acceptedFileTypes =
-      this.formFieldConfig.additional?.acceptedFileTypes ?? this.acceptedFileTypes;
+      this.formFieldConfig.additional?.acceptedFileTypes ??
+      this.acceptedFileTypes;
 
     this.formControl.statusChanges
       .pipe(

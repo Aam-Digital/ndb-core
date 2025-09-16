@@ -1,14 +1,14 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditTemplateExportFileComponent } from "./edit-template-export-file.component";
+import { setupCustomFormControlEditComponent } from "#src/app/core/entity/default-datatype/edit-component.spec";
+import { FileService } from "app/features/file/file.service";
+import { of } from "rxjs";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { TemplateExportApiService } from "../template-export-api/template-export-api.service";
-import { of } from "rxjs";
-import { FileService } from "app/features/file/file.service";
 import { TemplateExportService } from "../template-export-service/template-export.service";
-import { FormControl } from "@angular/forms";
+import { EditTemplateExportFileComponent } from "./edit-template-export-file.component";
 
 describe("EditTemplateExportFileComponent", () => {
   let component: EditTemplateExportFileComponent;
@@ -43,7 +43,9 @@ describe("EditTemplateExportFileComponent", () => {
 
     fixture = TestBed.createComponent(EditTemplateExportFileComponent);
     component = fixture.componentInstance;
-    component.formControl = new FormControl();
+    
+    setupCustomFormControlEditComponent(component);
+
     fixture.detectChanges();
   });
 
