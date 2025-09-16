@@ -1,0 +1,5 @@
+@use "variables/colors";
+
+.warning {
+  color: colors.$error;
+}
