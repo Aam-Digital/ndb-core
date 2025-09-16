@@ -53,7 +53,11 @@ export class TemplateExportModule {
         visible: async () => {
           const session = sessionSubject.value;
           if (!session) return false;
-          return session.roles.includes("admin_app");
+          // Show for admin users OR when export feature is enabled
+          const isAdmin = session.roles.includes("admin_app");
+          const isExportEnabled =
+            await templateExportService.isExportServerEnabled();
+          return isAdmin || isExportEnabled;
         },
       },
     ]);

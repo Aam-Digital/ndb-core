@@ -6,12 +6,10 @@
     toolbar and can be sent via email or push notifications.
   </div>
 
-  @if (isFeatureEnabled !== true) {
-    <app-feature-disabled-info
-      featureName="Notification API"
-      [featureEnabled]="isFeatureEnabled"
-    ></app-feature-disabled-info>
-  }
+  <app-feature-disabled-info
+    featureName="Notification API"
+    [featureEnabled]="isFeatureEnabled"
+  ></app-feature-disabled-info>
 
   @if (notificationConfig) {
     <!--
