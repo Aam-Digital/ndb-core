@@ -163,22 +163,19 @@ export class MenuItemListEditorComponent {
   static toPlainMenuItem(
     item: MenuItemForAdminUi,
     opts?: { forceLinkOnly?: boolean },
-  ): MenuItem {
+  ): MenuItem | null {
     if ("entityType" in item && item.entityType) {
       if (opts?.forceLinkOnly) {
-        // For shortcuts, convert entity items to their actual link format
-        return {
-          label: item.label,
-          icon: item.icon,
-          link: item.link,
-        };
+        // For shortcuts, entity items should not be included
+        // They are filtered out in the UI, but this handles edge cases
+        return null;
       }
 
       const entityMenuItem: any = { entityType: item.entityType };
       if (item.subMenu?.length) {
-        entityMenuItem.subMenu = item.subMenu.map((sub) =>
-          MenuItemListEditorComponent.toPlainMenuItem(sub, opts),
-        );
+        entityMenuItem.subMenu = item.subMenu
+          .map((sub) => MenuItemListEditorComponent.toPlainMenuItem(sub, opts))
+          .filter((sub) => sub !== null);
       }
       return entityMenuItem;
     }
@@ -222,9 +219,9 @@ export class MenuItemListEditorComponent {
     items: MenuItemForAdminUi[],
     opts?: { forceLinkOnly?: boolean },
   ): MenuItem[] {
-    return items.map((item) =>
-      MenuItemListEditorComponent.toPlainMenuItem(item, opts),
-    );
+    return items
+      .map((item) => MenuItemListEditorComponent.toPlainMenuItem(item, opts))
+      .filter((item) => item !== null) as MenuItem[];
   }
 
   private emitItemsChange() {
