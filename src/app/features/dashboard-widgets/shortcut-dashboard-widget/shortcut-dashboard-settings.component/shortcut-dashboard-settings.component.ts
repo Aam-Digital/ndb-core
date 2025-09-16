@@ -31,8 +31,10 @@ export class ShortcutDashboardSettingsComponent
 
   onMenuItemsChange(updatedItems: MenuItemForAdminUi[]) {
     this.menuItems = updatedItems;
-    const plainMenuItems =
-      MenuItemListEditorComponent.toPlainMenuItems(updatedItems);
+    const plainMenuItems = MenuItemListEditorComponent.toPlainMenuItems(
+      updatedItems,
+      { forceLinkOnly: true },
+    );
     this.formControl.setValue({
       ...(this.formControl.value ?? ({} as ShortcutDashboardConfig)),
       shortcuts: plainMenuItems,

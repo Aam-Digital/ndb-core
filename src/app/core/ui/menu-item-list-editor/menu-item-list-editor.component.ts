@@ -160,13 +160,21 @@ export class MenuItemListEditorComponent {
   /**
    * Convert MenuItemForAdminUi back to plain MenuItem by removing UI-specific properties
    */
-  static toPlainMenuItem(item: MenuItemForAdminUi): MenuItem {
+  static toPlainMenuItem(
+    item: MenuItemForAdminUi,
+    opts?: { forceLinkOnly?: boolean },
+  ): MenuItem {
     // If it's an EntityMenuItem (has entityType), only keep entityType and subMenu
     if ("entityType" in item && item.entityType) {
+      if (opts?.forceLinkOnly && "entityType" in item && item.entityType) {
+        const entityMenuItem: any = { entityType: item.entityType };
+        return entityMenuItem;
+      }
+
       const entityMenuItem: any = { entityType: item.entityType };
       if (item.subMenu?.length) {
         entityMenuItem.subMenu = item.subMenu.map((sub) =>
-          MenuItemListEditorComponent.toPlainMenuItem(sub),
+          MenuItemListEditorComponent.toPlainMenuItem(sub, opts),
         );
       }
       return entityMenuItem;
@@ -177,11 +185,12 @@ export class MenuItemListEditorComponent {
       label: item.label,
       icon: item.icon,
       link: item.link,
-      subMenu: item.subMenu?.length
-        ? item.subMenu.map((sub) =>
-            MenuItemListEditorComponent.toPlainMenuItem(sub),
-          )
-        : undefined,
+      subMenu:
+        opts?.forceLinkOnly || !item.subMenu?.length
+          ? undefined
+          : item.subMenu.map((sub) =>
+              MenuItemListEditorComponent.toPlainMenuItem(sub, opts),
+            ),
     };
   }
 
@@ -206,9 +215,12 @@ export class MenuItemListEditorComponent {
   /**
    * Convert MenuItemForAdminUi array back to plain MenuItem array
    */
-  static toPlainMenuItems(items: MenuItemForAdminUi[]): MenuItem[] {
+  static toPlainMenuItems(
+    items: MenuItemForAdminUi[],
+    opts?: { forceLinkOnly?: boolean },
+  ): MenuItem[] {
     return items.map((item) =>
-      MenuItemListEditorComponent.toPlainMenuItem(item),
+      MenuItemListEditorComponent.toPlainMenuItem(item, opts),
     );
   }
 
