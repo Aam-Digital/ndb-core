@@ -1,5 +1,5 @@
 <div class="margin-top-large feature-disabled-box">
-  @if (!showLoader) {
+  @if (featureEnabled === undefined) {
     <mat-progress-bar
       mode="indeterminate"
       style="margin-bottom: 1rem"
@@ -8,7 +8,7 @@
       Checking if this feature is enabled for your system. This may take a few
       seconds...
     </p>
-  } @else {
+  } @else if (featureEnabled === false) {
     @if (!navigator.onLine) {
       <h2 i18n>You are currently offline.</h2>
       <p i18n>

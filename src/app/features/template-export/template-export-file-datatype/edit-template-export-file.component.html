@@ -1,6 +1,6 @@
 @if (!exportServerEnabled === true) {
   <app-feature-disabled-info
-    [showLoader]="exportServerEnabled"
+    [featureEnabled]="exportServerEnabled"
     [compactView]="true"
   ></app-feature-disabled-info>
 } @else {

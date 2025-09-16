@@ -15,23 +15,15 @@ import { MatProgressBar } from "@angular/material/progress-bar";
 export class FeatureDisabledInfoComponent {
   protected readonly navigator: Navigator = inject(NAVIGATOR_TOKEN);
 
-  private _featureName?: string;
-
   /**
    * The name of the feature that is disabled (e.g., "Export API", "Notifications")
    */
-  @Input()
-  set featureName(value: string) {
-    this._featureName = value;
-  }
-  get featureName(): string {
-    return this._featureName || "this feature";
-  }
+  @Input() featureName: string = $localize`this feature`;
 
   /**
-   * Whether to show the loading indicator
+   * Whether the feature is enabled (true), disabled (false), or loading (undefined)
    */
-  @Input() showLoader: boolean;
+  @Input() featureEnabled: boolean | undefined;
 
   /**
    * Whether to use a compact view (less text)

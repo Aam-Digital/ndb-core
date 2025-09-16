@@ -4,7 +4,7 @@
   @if (isFeatureEnabled !== true) {
     <app-feature-disabled-info
       featureName="Export API"
-      [showLoader]="isFeatureEnabled"
+      [featureEnabled]="isFeatureEnabled"
     ></app-feature-disabled-info>
   } @else {
     <p>

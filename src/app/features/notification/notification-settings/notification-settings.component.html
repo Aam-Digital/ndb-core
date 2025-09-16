@@ -9,7 +9,7 @@
   @if (isFeatureEnabled !== true) {
     <app-feature-disabled-info
       featureName="Notification API"
-      [showLoader]="isFeatureEnabled"
+      [featureEnabled]="isFeatureEnabled"
     ></app-feature-disabled-info>
   }
 
