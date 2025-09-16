@@ -1,3 +1,5 @@
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import { NgClass } from "@angular/common";
 import {
   Component,
   inject,
@@ -5,25 +7,23 @@ import {
   OnChanges,
   SimpleChanges,
 } from "@angular/core";
-import { HelpButtonComponent } from "../help-button/help-button.component";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { InheritedValueButtonComponent } from "../../../features/default-value-inherited/inherited-value-button/inherited-value-button.component";
 import { Entity } from "../../entity/model/entity";
+import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 import { EntityFormService } from "../entity-form/entity-form.service";
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import {
   ColumnConfig,
   FormFieldConfig,
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
-import { NgClass } from "@angular/common";
-import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
-import { InheritedValueButtonComponent } from "../../../features/default-value-inherited/inherited-value-button/inherited-value-button.component";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatButtonModule } from "@angular/material/button";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { ErrorHintComponent } from "../error-hint/error-hint.component";
+import { HelpButtonComponent } from "../help-button/help-button.component";
 import { DynamicEditComponent } from "./dynamic-edit/dynamic-edit.component";
 
 /**
@@ -88,7 +88,9 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
       this.updateField();
     }
 
-    this.formControl = this.form.formGroup.get(this._field.id) as FormControl;
+    if (this.form && this._field) {
+      this.formControl = this.form.formGroup.get(this._field.id) as FormControl;
+    }
 
     this.isPartiallyAnonymized =
       this.entity?.anonymized &&

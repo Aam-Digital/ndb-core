@@ -1,14 +1,14 @@
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { FormControl } from "@angular/forms";
+import { By } from "@angular/platform-browser";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { EntityFormService } from "../entity-form/entity-form.service";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EditTextWithAutocompleteComponent } from "./edit-text-with-autocomplete.component";
-import { By } from "@angular/platform-browser";
-import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 
 describe("EditTextWithAutocompleteComponent", () => {
   let component: EditTextWithAutocompleteComponent;
@@ -16,7 +16,7 @@ describe("EditTextWithAutocompleteComponent", () => {
   let loadTypeSpy: jasmine.Spy;
   let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(waitForAsync(async () => {
     mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
     TestBed.configureTestingModule({
       imports: [
@@ -30,9 +30,7 @@ describe("EditTextWithAutocompleteComponent", () => {
         },
       ],
     }).compileComponents();
-  }));
 
-  beforeEach(waitForAsync(async () => {
     fixture = TestBed.createComponent(EditTextWithAutocompleteComponent);
     component = fixture.componentInstance;
     loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");

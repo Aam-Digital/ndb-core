@@ -243,6 +243,8 @@ When developing new functionality:
 - `npm run lint` - Linting
 - `npm run build` - Production build
 
+to run tests in Agent Mode, use the `#runTests` tool/context instead of a terminal command
+
 ## Key Dependencies to Leverage
 
 - Angular Material for UI components

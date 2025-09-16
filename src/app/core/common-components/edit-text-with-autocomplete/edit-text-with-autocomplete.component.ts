@@ -1,3 +1,5 @@
+import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { AsyncPipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,21 +7,19 @@ import {
   Input,
   OnInit,
 } from "@angular/core";
-import { Entity } from "../../entity/model/entity";
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatFormFieldControl } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { BehaviorSubject } from "rxjs";
+import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { FormControl, FormGroup, NgForm, ReactiveFormsModule } from "@angular/forms";
-import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
-import { MatInputModule } from "@angular/material/input";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { AsyncPipe } from "@angular/common";
-import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatTooltipModule } from "@angular/material/tooltip";
+import { Entity } from "../../entity/model/entity";
 import { CustomFormControlDirective } from "../basic-autocomplete/custom-form-control.directive";
-import { MatFormFieldControl } from "@angular/material/form-field";
-import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { EditComponent } from "../entity-field-edit/dynamic-edit/edit-component.interface";
 
 /**
@@ -144,6 +144,9 @@ export class EditTextWithAutocompleteComponent
   }
 
   async ngOnInit() {
+    // Initialize additional configuration from formFieldConfig
+    this.additional = this.formFieldConfig?.additional;
+    
     if (!this.formControl.value) {
       // adding new entry - enable autocomplete
       const entityType = this.additional.entityType;
