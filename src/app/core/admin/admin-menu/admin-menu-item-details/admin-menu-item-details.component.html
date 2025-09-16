@@ -38,15 +38,11 @@
           To manually define a label and link, clear the entity type field
           above.
         </p>
-      } @else {
-        <app-menu-item-form
-          [item]="item"
-          (itemChange)="item = $event"
-          [linkOptions]="availableRoutes"
-        ></app-menu-item-form>
       }
-    } @else {
-      <!-- For shortcuts, only show the manual form -->
+    }
+    
+    <!-- Show manual form for shortcuts OR when no entity type is selected -->
+    @if (isShortcut || !item?.["entityType"]) {
       <app-menu-item-form
         [item]="item"
         (itemChange)="item = $event"
