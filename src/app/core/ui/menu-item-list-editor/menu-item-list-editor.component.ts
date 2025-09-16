@@ -115,7 +115,15 @@ export class MenuItemListEditorComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.items = [result, ...this.items];
+        const normalizedItem: MenuItemForAdminUi = {
+          ...result,
+          uniqueId: uuid(),
+          subMenu:
+            this.allowSubMenu && result.subMenu
+              ? MenuItemListEditorComponent.addUniqueIds(result.subMenu)
+              : [],
+        };
+        this.items = [normalizedItem, ...this.items];
         this.emitItemsChange();
       }
     });
