@@ -1,5 +1,5 @@
-<div class="margin-top-large feature-disabled-box">
-  @if (featureEnabled === undefined) {
+@if (featureEnabled === undefined) {
+  <div class="feature-disabled-box">
     <mat-progress-bar
       mode="indeterminate"
       style="margin-bottom: 1rem"
@@ -8,7 +8,9 @@
       Checking if this feature is enabled for your system. This may take a few
       seconds...
     </p>
-  } @else if (featureEnabled === false) {
+  </div>
+} @else if (featureEnabled === false) {
+  <div class="feature-disabled-box">
     @if (!navigator.onLine) {
       <h2 i18n>You are currently offline.</h2>
       <p i18n>
@@ -16,7 +18,7 @@
         feature is enabled for your system.
       </p>
     } @else if (compactView) {
-      <p i18n>
+      <p i18n class="compact-message">
         This feature is currently not enabled for your system. Please contact
         your system administrator to enable it.
       </p>
@@ -30,5 +32,5 @@
         contact your administrator.
       </p>
     }
-  }
-</div>
+  </div>
+}
