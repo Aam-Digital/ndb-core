@@ -1,12 +1,4 @@
-import {
-  AbstractControl,
-  ControlValueAccessor,
-  FormGroupDirective,
-  NgControl,
-  NgForm,
-  Validators,
-} from "@angular/forms";
-import { MatFormFieldControl } from "@angular/material/form-field";
+import { coerceBooleanProperty } from "@angular/cdk/coercion";
 import {
   Directive,
   DoCheck,
@@ -17,9 +9,17 @@ import {
   Output,
   inject,
 } from "@angular/core";
-import { Subject } from "rxjs";
-import { coerceBooleanProperty } from "@angular/cdk/coercion";
+import {
+  AbstractControl,
+  ControlValueAccessor,
+  FormGroupDirective,
+  NgControl,
+  NgForm,
+  Validators,
+} from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
+import { MatFormFieldControl } from "@angular/material/form-field";
+import { Subject } from "rxjs";
 
 /**
  * Extend this base class to implement custom input controls to be used as form fields.
@@ -92,12 +92,7 @@ export abstract class CustomFormControlDirective<T>
   }
 
   set value(value: T) {
-    if (JSON.stringify(value) === JSON.stringify(this._value)) return;
-
-    this._value = value;
-    this.onChange(value);
-    this.valueChange.emit(value);
-    this.stateChanges.next();
+    this.writeValue(value, true);
   }
 
   _value: T;
@@ -106,6 +101,7 @@ export abstract class CustomFormControlDirective<T>
 
   constructor() {
     if (this.ngControl != null) {
+      // register the `writeValue` method with the Angular FormControl
       this.ngControl.valueAccessor = this;
     }
 
@@ -142,10 +138,21 @@ export abstract class CustomFormControlDirective<T>
 
   onContainerClick(event: MouseEvent) {}
 
-  /** @deprecated the this.value setter seems to already do the same? */
-  writeValue(val: T): void {
-    this.value = val;
-    this.valueChange.emit(val);
+  /**
+   * Implementation for Angular ControlValueAccessor interface
+   * that links the form control value to the component value
+   * @param value The new value to set
+   * @param notifyFormControl Whether to notify the FormControl of this change (for internal updates)
+   */
+  writeValue(value: T, notifyFormControl = false): void {
+    if (JSON.stringify(value) === JSON.stringify(this._value)) return;
+
+    this._value = value;
+    if (notifyFormControl) {
+      this.onChange(value);
+    }
+    this.valueChange.emit(value);
+    this.stateChanges.next();
   }
 
   registerOnChange(fn: any): void {
@@ -165,9 +172,23 @@ export abstract class CustomFormControlDirective<T>
       ? (this.ngControl.control as AbstractControl)
       : null;
 
+    this.checkUpdateValue(control);
     this.checkUpdateDisabled(control);
     this.checkUpdateErrorState(control);
     this.checkUpdateRequired(control);
+  }
+
+  /**
+   * Sync back changes from formControl to this component's value
+   */
+  private checkUpdateValue(control: AbstractControl | null) {
+    if (!control) {
+      return;
+    }
+
+    // sync the FormControl value to handle cases where Angular doesn't automatically call writeValue()
+    // Use writeValue without notifying FormControl to avoid loops
+    this.writeValue(control.value, false);
   }
 
   private checkUpdateDisabled(control: AbstractControl | null) {
