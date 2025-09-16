@@ -13,8 +13,7 @@
     [entityType]="entityConstructor"
     [config]="noteDetailsConfig"
     (configChange)="onNoteDetailsConfigChange($event)"
-    uniqueAreaId="combined-note-form"
-    [updateEntitySchema]="true"
-    [createNewFieldGroup]="false"
+    uniqueAreaId="note-details-form"
+    [fieldsOnlyMode]="true"
   ></app-admin-entity-form>
 </div>

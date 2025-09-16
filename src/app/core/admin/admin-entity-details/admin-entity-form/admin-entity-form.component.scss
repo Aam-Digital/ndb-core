@@ -146,8 +146,8 @@ $toolbar-width: 300px;
   opacity: 0.5;
 }
 
-// Horizontal layout only when compactFieldMode is true
-.compactFieldMode {
+// Horizontal layout only when fieldsOnlyMode is true
+.fieldsOnlyMode {
   .fields-group-list {
     display: flex;
     flex-wrap: wrap;
