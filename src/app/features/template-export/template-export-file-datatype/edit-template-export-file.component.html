@@ -1,0 +1,14 @@
+@if (!exportServerEnabled === true) {
+  <app-feature-disabled-info
+    [featureEnabled]="exportServerEnabled"
+    [compactView]="true"
+  ></app-feature-disabled-info>
+} @else {
+  <app-edit-file
+    [formControl]="formControl"
+    [entity]="entity"
+    [entityForm]="entityForm"
+    [formFieldConfig]="formFieldConfig"
+    [hideLabel]="hideLabel"
+  ></app-edit-file>
+}
