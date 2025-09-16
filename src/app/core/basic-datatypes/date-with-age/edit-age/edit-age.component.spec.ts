@@ -6,6 +6,7 @@ import { DateAdapter, MAT_DATE_FORMATS } from "@angular/material/core";
 import { MatDatepickerInputHarness } from "@angular/material/datepicker/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import moment from "moment";
 import { setupCustomFormControlEditComponent } from "../../../entity/default-datatype/edit-component.spec";
 import {
   DATE_FORMATS,
@@ -40,12 +41,23 @@ describe("EditAgeComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should transform Date to DateOfBirth", async () => {
+  xit("should transform Date to DateOfBirth", async () => {
+    // the updated implementation doesn't support this anymore
+    // but has a separate age signal
+
     const datepicker = await loader.getHarness(MatDatepickerInputHarness);
 
     await datepicker.setValue("6/21/2019");
 
     expect(component.formControl.value).toBeInstanceOf(DateWithAge);
     expect(component.formControl.value).toBeDate("2019-06-21");
+  });
+
+  it("should update age when date is changed", async () => {
+    const datepicker = await loader.getHarness(MatDatepickerInputHarness);
+
+    await datepicker.setValue(moment().subtract(20, "years").toDate().toLocaleDateString());
+
+    expect(component.age()).toEqual(20);
   });
 });

@@ -1,5 +1,5 @@
 import { Entity } from "#src/app/core/entity/model/entity";
-import { Component, Input, signal } from "@angular/core";
+import { Component, Input, OnInit, signal } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -30,7 +30,7 @@ import { DateWithAge } from "../dateWithAge";
 })
 export class EditAgeComponent
   extends CustomFormControlDirective<DateWithAge>
-  implements EditComponent
+  implements EditComponent, OnInit
 {
   @Input() formFieldConfig?: FormFieldConfig;
   @Input() entity?: Entity;
@@ -38,13 +38,25 @@ export class EditAgeComponent
   age = signal<number | null>(null);
 
   override writeValue(newValue: DateWithAge | Date) {
-    if (newValue instanceof Date) {
+    if (newValue instanceof Date && !(newValue instanceof DateWithAge)) {
       super.writeValue(new DateWithAge(newValue));
     } else {
       super.writeValue(newValue);
     }
 
     this.age.set(this.value?.age ?? null);
+  }
+
+  ngOnInit() {
+    this.age.set(this.value?.age ?? this.formControl.value?.age ?? null);
+
+    this.formControl.valueChanges.subscribe((newValue) => {
+      if (newValue instanceof Date && !(newValue instanceof DateWithAge)) {
+        this.formControl.setValue(new DateWithAge(newValue));
+      }
+
+      this.age.set(this.formControl.value?.age ?? null);
+    });
   }
 
   get formControl(): FormControl<DateWithAge> {

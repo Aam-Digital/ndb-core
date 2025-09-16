@@ -172,23 +172,9 @@ export abstract class CustomFormControlDirective<T>
       ? (this.ngControl.control as AbstractControl)
       : null;
 
-    this.checkUpdateValue(control);
     this.checkUpdateDisabled(control);
     this.checkUpdateErrorState(control);
     this.checkUpdateRequired(control);
-  }
-
-  /**
-   * Sync back changes from formControl to this component's value
-   */
-  private checkUpdateValue(control: AbstractControl | null) {
-    if (!control) {
-      return;
-    }
-
-    // sync the FormControl value to handle cases where Angular doesn't automatically call writeValue()
-    // Use writeValue without notifying FormControl to avoid loops
-    this.writeValue(control.value, false);
   }
 
   private checkUpdateDisabled(control: AbstractControl | null) {
