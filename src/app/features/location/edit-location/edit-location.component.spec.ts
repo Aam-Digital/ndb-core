@@ -4,18 +4,17 @@ import {
   TestBed,
   tick,
 } from "@angular/core/testing";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { GeoResult } from "../geo.service";
-import { Subject } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
-import { EditLocationComponent } from "./edit-location.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { Subject } from "rxjs";
+import { GeoLocation } from "../geo-location";
+import { GeoResult } from "../geo.service";
 import {
   MapPopupComponent,
   MapPopupConfig,
 } from "../map-popup/map-popup.component";
-import { GeoLocation } from "../geo-location";
+import { EditLocationComponent } from "./edit-location.component";
 
 describe("EditLocationComponent", () => {
   let component: EditLocationComponent;
@@ -40,15 +39,12 @@ describe("EditLocationComponent", () => {
     await TestBed.configureTestingModule({
       imports: [
         EditLocationComponent,
-        MockedTestingModule.withState(),
         NoopAnimationsModule,
         FontAwesomeTestingModule,
       ],
       providers: [{ provide: MatDialog, useValue: mockDialog }],
     }).compileComponents();
-  });
-
-  beforeEach(() => {
+    
     fixture = TestBed.createComponent(EditLocationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

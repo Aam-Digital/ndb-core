@@ -6,10 +6,10 @@ import {
 } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { GeoLocation } from "../geo-location";
-import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
-import { MatFormFieldControl, MatSuffix } from "@angular/material/form-field";
+import { MatFormFieldControl } from "@angular/material/form-field";
 import { EditComponent } from "../../../core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { MatInput } from "@angular/material/input";

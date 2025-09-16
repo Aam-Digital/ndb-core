@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditTextComponent } from "./edit-text.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { setupEditComponent } from "../../../entity/default-datatype/edit-component.spec";
+import { setupCustomFormControlEditComponent } from "../../../entity/default-datatype/edit-component.spec";
 
 describe("EditTextComponent", () => {
   let component: EditTextComponent;
@@ -12,12 +12,10 @@ describe("EditTextComponent", () => {
     await TestBed.configureTestingModule({
       imports: [EditTextComponent, NoopAnimationsModule],
     }).compileComponents();
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(EditTextComponent);
     component = fixture.componentInstance;
-    setupEditComponent(component);
+    setupCustomFormControlEditComponent(component);
     fixture.detectChanges();
   });
 
