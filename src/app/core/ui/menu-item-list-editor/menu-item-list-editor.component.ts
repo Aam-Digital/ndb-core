@@ -164,11 +164,14 @@ export class MenuItemListEditorComponent {
     item: MenuItemForAdminUi,
     opts?: { forceLinkOnly?: boolean },
   ): MenuItem {
-    // If it's an EntityMenuItem (has entityType), only keep entityType and subMenu
     if ("entityType" in item && item.entityType) {
-      if (opts?.forceLinkOnly && "entityType" in item && item.entityType) {
-        const entityMenuItem: any = { entityType: item.entityType };
-        return entityMenuItem;
+      if (opts?.forceLinkOnly) {
+        // For shortcuts, convert entity items to their actual link format
+        return {
+          label: item.label,
+          icon: item.icon,
+          link: item.link,
+        };
       }
 
       const entityMenuItem: any = { entityType: item.entityType };
