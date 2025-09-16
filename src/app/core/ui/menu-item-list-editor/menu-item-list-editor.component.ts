@@ -42,8 +42,6 @@ export class MenuItemListEditorComponent {
   /** The type of items being managed (e.g., "Menu Item", "Shortcut") */
   @Input() itemType: string = "Menu Item";
   @Input() allowSubMenu: boolean = true;
-  /** Whether to exclude navigation menu items from available route options */
-  @Input() excludeNavigationItems: boolean = false;
 
   @Output() itemsChange = new EventEmitter<MenuItemForAdminUi[]>();
 
@@ -115,7 +113,6 @@ export class MenuItemListEditorComponent {
         item: { ...newItem },
         isNew: true,
         itemType: this.itemType,
-        excludeNavigationItems: this.excludeNavigationItems,
       },
     });
 

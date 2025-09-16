@@ -45,7 +45,6 @@ export class AdminMenuItemDetailsComponent implements OnInit {
     item: MenuItem;
     isNew?: boolean;
     itemType?: string;
-    excludeNavigationItems?: boolean;
   }>(MAT_DIALOG_DATA);
 
   item: MenuItem | EntityMenuItem;
@@ -53,8 +52,6 @@ export class AdminMenuItemDetailsComponent implements OnInit {
   isNew: boolean;
   /** The type of item being edited (e.g., "Menu Item", "Shortcut") */
   itemType: string;
-  /** Whether to exclude navigation menu items from available route options */
-  excludeNavigationItems: boolean;
   /** Computed boolean flag indicating if the current item is a shortcut */
   isShortcut: boolean;
 
@@ -64,7 +61,6 @@ export class AdminMenuItemDetailsComponent implements OnInit {
     this.item = data.item;
     this.isNew = data.isNew;
     this.itemType = data.itemType || "Menu Item";
-    this.excludeNavigationItems = data.excludeNavigationItems || false;
     this.isShortcut = this.itemType === "Shortcut";
   }
 
@@ -80,12 +76,11 @@ export class AdminMenuItemDetailsComponent implements OnInit {
       (view) => !view._id.includes("/:id"),
     ); // skip details views (with "/:id" placeholder)
 
-    // Only exclude routes when creating shortcuts (not main navigation menu)
-    if (this.excludeNavigationItems && this.isShortcut) {
-      const navigationRoutes = this.getNavigationMenuRoutes();
+    // For shortcuts, exclude entityType routes
+    // For admin menu items, show all routes (no filtering)
+    if (this.isShortcut) {
       availableViews = availableViews.filter((view) => {
-        const route = view._id.replace(PREFIX_VIEW_CONFIG, "/");
-        return !navigationRoutes.includes(route);
+        return !view.config?.entityType;
       });
     }
 
@@ -94,39 +89,6 @@ export class AdminMenuItemDetailsComponent implements OnInit {
       const label = view.config?.entityType?.trim() || view.component || id;
       return { value: id, label };
     });
-  }
-
-  private getNavigationMenuRoutes(): string[] {
-    try {
-      const navigationConfig = this.configService.getConfig<{
-        items: MenuItem[];
-      }>("navigationMenu");
-      const routes: string[] = [];
-
-      const isEntityMenuItem = (
-        item: MenuItem | EntityMenuItem,
-      ): item is EntityMenuItem => "entityType" in item;
-
-      const extractRoutes = (items: (MenuItem | EntityMenuItem)[]) => {
-        items?.forEach((item) => {
-          if (item.link) {
-            routes.push(item.link);
-          }
-          if (isEntityMenuItem(item) && item.entityType) {
-            routes.push(`/${item.entityType.toLowerCase()}`);
-          }
-          if (item.subMenu) {
-            extractRoutes(item.subMenu);
-          }
-        });
-      };
-
-      extractRoutes(navigationConfig?.items || []);
-      return routes;
-    } catch (error) {
-      console.warn("Could not load navigation menu config:", error);
-      return [];
-    }
   }
 
   onEntityTypeSelected(entityType: string | string[]) {
