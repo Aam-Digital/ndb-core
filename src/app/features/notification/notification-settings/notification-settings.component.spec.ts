@@ -18,7 +18,7 @@ import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
 import { NotificationService } from "../notification.service";
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
-import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
+import { NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
 
 describe("NotificationSettingComponent", () => {
   let component: NotificationSettingsComponent;
