@@ -1,51 +1,44 @@
-<div [formGroup]="parent">
+<div class="flex-row align-center gap-small">
   @if (
-    !(entity?.anonymized && formFieldConfig.anonymize === "retain-anonymized")
+    !(entity?.anonymized && formFieldConfig?.anonymize === "retain-anonymized")
   ) {
-    <mat-form-field style="width: 70%">
-      @if (!hideLabel) {
-        <mat-label>
-          <span [matTooltip]="label" matTooltipPosition="before">{{
-            label
-          }}</span></mat-label
-        >
-      }
-      <input
-        matInput
-        [formControlName]="formControlName"
-        [matDatepicker]="dateOfBirthDatepicker"
-        (dateChange)="dateChanged($event)"
-      />
-      <mat-datepicker-toggle
-        matIconSuffix
-        [for]="dateOfBirthDatepicker"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
-      <mat-error>
-        <app-error-hint [form]="formControl"></app-error-hint>
-      </mat-error>
-    </mat-form-field>
-  }
-
-  <mat-form-field style="width: 30%">
-    <mat-label i18n="Placeholder for the input that displays the age"
-      >Age
-    </mat-label>
-    @if (formControl.enabled) {
-      <fa-icon
-        matIconSuffix
-        icon="question-circle"
-        i18n-matTooltip="Tooltip for the disabled age field"
-        matTooltip="This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth."
-      ></fa-icon>
-    }
     <input
       matInput
-      [value]="formControl.value?.age?.toString()"
-      [disabled]="true"
+      [formControl]="formControl"
+      [matDatepicker]="dateOfBirthDatepicker"
+      class="flex-grow"
     />
-    <mat-error>
-      <app-error-hint [form]="formControl"></app-error-hint>
-    </mat-error>
-  </mat-form-field>
+
+    <mat-datepicker-toggle
+      [for]="dateOfBirthDatepicker"
+      class="input-action-button"
+    ></mat-datepicker-toggle>
+    <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
+  }
+
+  <div
+    class="flex-row align-center gap-small padding-regular"
+    style="
+      margin-left: 8px;
+      margin-top: -8px;
+      background-color: rgba(0, 0, 0, 0.04);
+      border-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+    "
+  >
+    <span
+      style="font-size: 12px; color: rgba(0, 0, 0, 0.6); font-weight: 500"
+      i18n="Label for the age display"
+      >Age:</span
+    >
+    <span>{{ age() || "-" }}</span>
+
+    <fa-icon
+      icon="question-circle"
+      i18n-matTooltip="Tooltip for the disabled age field"
+      matTooltip="This field is read-only. Edit the date field to update the age. You can select Jan 1st if you don't know the exact date."
+      style="color: rgba(0, 0, 0, 0.6); cursor: help"
+      [style.visibility]="formControl.enabled ? 'visible' : 'hidden'"
+    ></fa-icon>
+  </div>
 </div>

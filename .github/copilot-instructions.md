@@ -162,6 +162,16 @@ When developing new functionality:
 - `build/` - Build configuration and scripts
 - Follow the existing module structure with entity-based organization
 
+## UX and Styling
+- Use Angular Material components for UI consistency
+- Follow Material Design guidelines
+- Use SCSS for styling
+  - Use global variables and mixins from `src/styles/` for colors (e.g. `@use "variables/colors";` and `colors.$primary`)
+- Use global style classes from the files in the `src/styles/globals/` folder (e.g. `flex-row` and `margin-regular`) where possible,
+  instead of creating new custom styles
+- If custom styles are necessary, create a class with a meaningful name in the component-specific scss file and avoid inline styles
+
+
 ## Internationalization (i18n)
 
 - All user-facing strings must be translatable
@@ -229,13 +239,14 @@ When developing new functionality:
 - Generate demo data when creating new entities
 - Follow the established file organization
 - Generate or adapt unit tests
-- Run tests (`npm run test`) and linting (`npm run lint`) before finalizing and fix any issues
 - If similar changes are required in multiple places, only implement in one place and ask for review before implementing elsewhere
 - If a change is complex or large, first suggest and approach broken into smaller parts and ask for review after each part
 - If unsure about a specific implementation detail, ask for clarification before proceeding
 - Do not change any code or tests that are unrelated to the direct task
 - Remove unused typescript imports
 - Check terminal output and fix unused Angular component imports or other warnings
+- When all changes are done, ask the user if the task should be finalized.
+  After confirmation, run tests (`npm run test`) and linting (`npm run lint`) and fix any issues.
 
 ## Common Commands
 
