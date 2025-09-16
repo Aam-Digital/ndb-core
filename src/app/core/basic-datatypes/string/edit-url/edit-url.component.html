@@ -1,27 +1,6 @@
-<mat-form-field
+<div
   (click)="openLinkIfDisabled()"
   [class.clickable]="formControl.disabled && formControl.value"
 >
-  @if (!hideLabel) {
-    <mat-label>
-      <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
-    </mat-label>
-  }
-
-  <input
-    [formControl]="formControl"
-    matInput
-    [title]="label"
-    type="url"
-    [readonly]="formControl.disabled"
-    placeholder="Enter URL"
-    i18n-placeholder
-  />
-
-  @if (formControl.invalid && formControl.touched) {
-    <mat-error>
-      <span i18n>Invalid URL format</span>
-      <app-error-hint [form]="formControl"></app-error-hint>
-    </mat-error>
-  }
-</mat-form-field>
+  <input [formControl]="formControl" matInput type="url" />
+</div>

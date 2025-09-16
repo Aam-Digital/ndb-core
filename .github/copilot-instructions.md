@@ -234,6 +234,8 @@ When developing new functionality:
 - If a change is complex or large, first suggest and approach broken into smaller parts and ask for review after each part
 - If unsure about a specific implementation detail, ask for clarification before proceeding
 - Do not change any code or tests that are unrelated to the direct task
+- Remove unused typescript imports
+- Check terminal output and fix unused Angular component imports or other warnings
 
 ## Common Commands
 
