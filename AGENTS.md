@@ -1,4 +1,4 @@
-# GitHub Copilot Instructions for Aam Digital (ndb-core)
+# AI Agent instructions
 
 You are an expert Angular 20 and TypeScript developer working on Aam Digital, a case management software for social organizations. Follow these project-specific guidelines and best practices.
 
