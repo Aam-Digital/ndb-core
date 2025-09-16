@@ -2,6 +2,10 @@ import { Injectable, inject } from "@angular/core";
 import { Entity } from "../../../core/entity/model/entity";
 import { MatDialog } from "@angular/material/dialog";
 import { TemplateExportSelectionDialogComponent } from "../template-export-selection-dialog/template-export-selection-dialog.component";
+import { catchError, firstValueFrom, map, of } from "rxjs";
+import { HttpClient } from "@angular/common/http";
+import { environment } from "#src/environments/environment";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 /**
  * Triggers a user flow to
@@ -12,6 +16,7 @@ import { TemplateExportSelectionDialogComponent } from "../template-export-selec
 })
 export class TemplateExportService {
   private dialog = inject(MatDialog);
+  private readonly httpClient = inject(HttpClient);
 
   /**
    * Open a dialog for the user to select a template and generate a file from it for the given entity.
@@ -22,5 +27,23 @@ export class TemplateExportService {
     this.dialog.open(TemplateExportSelectionDialogComponent, { data: entity });
 
     return true;
+  }
+
+  async isExportServerEnabled(): Promise<boolean> {
+    return firstValueFrom(
+      this.httpClient
+        .get(environment.API_PROXY_PREFIX + "/actuator/features")
+        .pipe(
+          map((res) => {
+            return res?.["export"]?.enabled ?? false;
+          }),
+          catchError((err) => {
+            // if aam-services backend is not running --> 502
+            // if aam-services Export API disabled --> 404
+            Logging.debug("Export API not available", err);
+            return of(false);
+          }),
+        ),
+    );
   }
 }
