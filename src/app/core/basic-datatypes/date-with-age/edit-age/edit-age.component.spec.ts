@@ -1,10 +1,11 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { DateAdapter, MAT_DATE_FORMATS } from "@angular/material/core";
 import { MatDatepickerInputHarness } from "@angular/material/datepicker/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { setupCustomFormControlEditComponent } from "../../../entity/default-datatype/edit-component.spec";
 import {
   DATE_FORMATS,
@@ -18,20 +19,19 @@ describe("EditAgeComponent", () => {
   let fixture: ComponentFixture<EditAgeComponent>;
   let loader: HarnessLoader;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [EditAgeComponent, NoopAnimationsModule],
+      imports: [EditAgeComponent, NoopAnimationsModule, FontAwesomeTestingModule],
       providers: [
         { provide: DateAdapter, useClass: DateAdapterWithFormatting },
         { provide: MAT_DATE_FORMATS, useValue: DATE_FORMATS },
       ],
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
+    
     fixture = TestBed.createComponent(EditAgeComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
+
     setupCustomFormControlEditComponent(component);
     fixture.detectChanges();
   });

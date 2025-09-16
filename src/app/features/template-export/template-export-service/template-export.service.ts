@@ -41,7 +41,7 @@ export class TemplateExportService {
             // if aam-services backend is not running --> 502
             // if aam-services Export API disabled --> 404
             Logging.debug("Export API not available", err);
-            return of(true);
+            return of(false);
           }),
         ),
     );

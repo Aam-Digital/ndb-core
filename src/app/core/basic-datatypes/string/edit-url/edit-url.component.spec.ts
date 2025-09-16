@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EditUrlComponent } from "./edit-url.component";
-import { setupEditComponent } from "app/core/entity/default-datatype/edit-component.spec";
+import { setupCustomFormControlEditComponent, setupEditComponent } from "app/core/entity/default-datatype/edit-component.spec";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { By } from "@angular/platform-browser";
 
@@ -17,7 +17,8 @@ describe("EditUrlComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditUrlComponent);
     component = fixture.componentInstance;
-    setupEditComponent(component);
+
+    setupCustomFormControlEditComponent(component);
     fixture.detectChanges();
   });
 
