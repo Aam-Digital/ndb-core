@@ -76,13 +76,6 @@ export class AdminMenuItemDetailsComponent implements OnInit {
       (view) => !view._id.includes("/:id"),
     ); // skip details views (with "/:id" placeholder)
 
-    // For shortcuts, exclude entityType routes
-    // For admin menu items, show all routes (no filtering)
-    if (this.isShortcut) {
-      availableViews = availableViews.filter((view) => {
-        return !view.config?.entityType;
-      });
-    }
 
     return availableViews.map((view) => {
       const id = view._id.replace(PREFIX_VIEW_CONFIG, "/");
