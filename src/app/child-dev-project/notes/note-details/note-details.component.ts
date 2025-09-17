@@ -22,7 +22,6 @@ import { EntityFormComponent } from "../../../core/common-components/entity-form
 import { MatDialogModule } from "@angular/material/dialog";
 import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
 import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
-import { EntityFieldEditComponent } from "../../../core/common-components/entity-field-edit/entity-field-edit.component";
 import { FieldGroup } from "../../../core/entity-details/form/field-group";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
@@ -51,7 +50,6 @@ import { getDefaultNoteDetailsConfig } from "../add-default-note-views";
     DialogButtonsComponent,
     MatMenuModule,
     EntityArchivedInfoComponent,
-    EntityFieldEditComponent,
     ViewTitleComponent,
     MatProgressBar,
     ViewActionsComponent,
