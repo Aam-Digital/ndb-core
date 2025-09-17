@@ -26,6 +26,7 @@
               [ngModel]="pair.entityType"
               (ngModelChange)="onEntityTypeChange($event, i)"
               [options]="entityTypeOptionsPerRow[i]"
+              [required]="true"
             ></app-entity-type-select>
           </mat-form-field>
           <button
@@ -44,12 +45,13 @@
             [ngModel]="pair.property"
             (ngModelChange)="onPropertyChange($event, i)"
             [hideOption]="hideNonBirthdayFieldsForRow(i)"
+            [required]="true"
           ></app-entity-field-select>
         </mat-form-field>
       </div>
     }
     <div
-      matTooltip="There are no additional fields with datatype date-with-age."
+      matTooltip="There are no additional fields with datatype 'date of birth (date + age)'."
       i18n-matTooltip
       [matTooltipDisabled]="canAddMorePairs"
       matTooltipPosition="before"
