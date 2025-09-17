@@ -77,6 +77,7 @@ export class NoteDetailsComponent
   @Input() bottomForm = this.defaultFormConfig.bottomForm;
 
   topFieldGroups: FieldGroup[];
+  middleFieldGroups: FieldGroup[];
   bottomFieldGroups: FieldGroup[];
 
   form: EntityForm<Note>;
@@ -96,6 +97,7 @@ export class NoteDetailsComponent
     if (!this.entity) return;
 
     this.topFieldGroups = this.topForm.map((f) => ({ fields: [f] }));
+    this.middleFieldGroups = [{ fields: this.middleForm }];
     this.bottomFieldGroups = [{ fields: this.bottomForm }];
 
     this.form = await this.entityFormService.createEntityForm(

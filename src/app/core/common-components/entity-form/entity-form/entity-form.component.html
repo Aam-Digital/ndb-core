@@ -5,7 +5,7 @@
         <h2>{{ group.header }}</h2>
       }
       @for (field of group.fields; track field) {
-        <div>
+        <div [class.full-width]="fullWidth">
           <app-entity-field-edit
             [field]="field"
             [entity]="entity"
