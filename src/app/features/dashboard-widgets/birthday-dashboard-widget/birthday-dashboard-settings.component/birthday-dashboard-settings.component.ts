@@ -13,6 +13,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 export interface BirthdayDashboardSettingsConfig {
   /**
@@ -47,6 +48,7 @@ interface EntityPropertyPair {
     EntityFieldSelectComponent,
     MatButtonModule,
     FontAwesomeModule,
+    MatTooltipModule,
   ],
   templateUrl: "./birthday-dashboard-settings.component.html",
   styleUrls: ["./birthday-dashboard-settings.component.scss"],
@@ -124,26 +126,44 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
 
   updateAvailableEntityTypesPerRow() {
     this.availableEntityTypesPerRow = this.entityPropertyPairs.map(
-      (_, index) => {
-        const usedEntityTypes = new Set(
+      (pair, index) => {
+        const usedFields = new Set(
           this.entityPropertyPairs
-            .map((p, i) => (i === index ? null : p.entityType))
-            .filter(Boolean),
+            .filter(
+              (_, i) =>
+                i !== index &&
+                pair.entityType === this.entityPropertyPairs[i].entityType,
+            )
+            .map((p) => p.property),
         );
-        return this.availableEntityTypes.filter(
-          (ctor) => !usedEntityTypes.has(ctor.ENTITY_TYPE),
-        );
+
+        return this.availableEntityTypes.filter((ctor) => {
+          if (ctor.ENTITY_TYPE !== pair.entityType) {
+            return true; // Allow other entity types
+          }
+
+          const availableFields = this.availablePropertiesFor(ctor.ENTITY_TYPE);
+          return availableFields.some(
+            (field) => !usedFields.has(field) || field === pair.property,
+          );
+        });
       },
     );
   }
 
   get canAddMorePairs(): boolean {
-    const usedEntityTypes = new Set(
-      this.entityPropertyPairs.map((p) => p.entityType),
-    );
-    return this.availableEntityTypes.some(
-      (ctor) => !usedEntityTypes.has(ctor.ENTITY_TYPE),
-    );
+    return this.availableEntityTypes.some((ctor) => {
+      const entityType = ctor.ENTITY_TYPE;
+      const usedFields = new Set(
+        this.entityPropertyPairs
+          .filter((p) => p.entityType === entityType)
+          .map((p) => p.property),
+      );
+      const availableFields = this.availablePropertiesFor(entityType).filter(
+        (field) => !usedFields.has(field),
+      );
+      return availableFields.length > 0;
+    });
   }
 
   get isFormValid(): boolean {
@@ -179,24 +199,29 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
   }
 
   addPair() {
-    // Find first unused entity type
-    const usedEntityTypes = new Set(
-      this.entityPropertyPairs.map((p) => p.entityType),
-    );
-    const availableEntityType = this.availableEntityTypes.find(
-      (ctor) => !usedEntityTypes.has(ctor.ENTITY_TYPE),
-    );
+    // Find the first entity type with unused fields
+    for (const ctor of this.availableEntityTypes) {
+      const entityType = ctor.ENTITY_TYPE;
+      const usedFields = new Set(
+        this.entityPropertyPairs
+          .filter((p) => p.entityType === entityType)
+          .map((p) => p.property),
+      );
+      const availableFields = this.availablePropertiesFor(entityType).filter(
+        (field) => !usedFields.has(field),
+      );
 
-    if (!availableEntityType) {
-      return; // No more entity types available
+      if (availableFields.length > 0) {
+        this.entityPropertyPairs.push({
+          entityType,
+          property: availableFields[0],
+        });
+        this.updateAvailableEntityTypesPerRow();
+        this.updateLocalConfig();
+        this.emitConfigChange();
+        return;
+      }
     }
-
-    const entityType = availableEntityType.ENTITY_TYPE;
-    const property = this.availablePropertiesFor(entityType)[0] ?? "";
-    this.entityPropertyPairs.push({ entityType, property });
-    this.updateAvailableEntityTypesPerRow();
-    this.updateLocalConfig();
-    this.emitConfigChange();
   }
 
   removePair(index: number) {
