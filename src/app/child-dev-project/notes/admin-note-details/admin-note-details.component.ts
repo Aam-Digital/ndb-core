@@ -5,6 +5,7 @@ import { AdminEntityFormComponent } from "../../../core/admin/admin-entity-detai
 import { NoteDetailsConfig } from "../note-details/note-details-config.interface";
 import { FormConfig } from "../../../core/entity-details/form/form.component";
 import { FieldGroup } from "../../../core/entity-details/form/field-group";
+import { getDefaultNoteDetailsConfig } from "../add-default-note-views";
 
 /**
  * Admin component for configuring NoteDetails view.
@@ -23,20 +24,13 @@ export class AdminNoteDetailsComponent implements OnInit {
 
   noteDetailsConfig: FormConfig = { fieldGroups: [] };
 
-  // todo: somehow we are not getting these 3 sections from admin-entity component for note entity, we are only gettting topForm
-  private readonly defaultConfig: NoteDetailsConfig = {
-    topForm: ["date", "warningLevel", "category", "authors", "attachment"],
-    middleForm: ["subject", "text"],
-    bottomForm: ["children", "schools"],
-  };
-
   ngOnInit(): void {
     this.initializeFormConfigs();
   }
 
   private initializeFormConfigs(): void {
     const currentConfig = {
-      ...this.defaultConfig,
+      ...getDefaultNoteDetailsConfig(),
       ...this.config,
     } as NoteDetailsConfig;
 

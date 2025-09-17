@@ -30,6 +30,7 @@ import { AbstractEntityDetailsComponent } from "../../../core/entity-details/abs
 import { MatProgressBar } from "@angular/material/progress-bar";
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
 import { NoteDetailsConfig } from "./note-details-config.interface";
+import { getDefaultNoteDetailsConfig } from "../add-default-note-views";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -70,15 +71,10 @@ export class NoteDetailsComponent
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
 
-  @Input() topForm = [
-    "date",
-    "warningLevel",
-    "category",
-    "authors",
-    "attachment",
-  ];
-  @Input() middleForm = ["subject", "text"];
-  @Input() bottomForm = ["children", "schools"];
+  private readonly defaultFormConfig = getDefaultNoteDetailsConfig();
+  @Input() topForm = this.defaultFormConfig.topForm;
+  @Input() middleForm = this.defaultFormConfig.middleForm;
+  @Input() bottomForm = this.defaultFormConfig.bottomForm;
 
   topFieldGroups: FieldGroup[];
   bottomFieldGroups: FieldGroup[];
