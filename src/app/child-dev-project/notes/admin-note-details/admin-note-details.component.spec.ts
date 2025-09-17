@@ -14,7 +14,7 @@ import { FormConfig } from "../../../core/entity-details/form/form.component";
 import { FieldGroup } from "../../../core/entity-details/form/field-group";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
-fdescribe("AdminNoteDetailsComponent", () => {
+describe("AdminNoteDetailsComponent", () => {
   let component: AdminNoteDetailsComponent;
   let fixture: ComponentFixture<AdminNoteDetailsComponent>;
   let mockFormService: jasmine.SpyObj<EntityFormService>;
