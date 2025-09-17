@@ -2,11 +2,7 @@
   @if (isNew) {
     <ng-container i18n="menu item edit title">Add New Item</ng-container>
   } @else {
-    @if (isShortcut) {
-      <ng-container i18n>Edit Shortcut</ng-container>
-    } @else {
-      <ng-container i18n>Edit Menu Item</ng-container>
-    }
+    <ng-container i18n="menu item edit title">Edit Item</ng-container>
   }
 </h2>
 
