@@ -35,10 +35,13 @@ export class MenuItemListEditorComponent {
 
   @Input() items: MenuItemForAdminUi[] = [];
   @Input() showAddButton: boolean = true;
+
   /** Unique identifier for the drag-drop container */
   @Input() containerId: string = "menu-item-list-container";
+
   /** Whether entity type links are allowed (false for shortcuts, true for admin menu) */
   @Input() allowEntityLinks: boolean = true;
+  
   @Input() allowSubMenu: boolean = true;
 
   @Output() itemsChange = new EventEmitter<MenuItemForAdminUi[]>();
