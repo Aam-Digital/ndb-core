@@ -17,7 +17,6 @@ import { MenuItemForAdminUi } from "../../../../core/admin/admin-menu/menu-item-
 export class ShortcutDashboardSettingsComponent
   implements OnInit, DynamicFormControlComponent<ShortcutDashboardConfig>
 {
-  private readonly menuService = inject(MenuService);
   availableRoutes: { value: string; label: string }[] = [];
 
   @Input() formControl: FormControl<ShortcutDashboardConfig>;

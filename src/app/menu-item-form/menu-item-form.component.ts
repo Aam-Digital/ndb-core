@@ -35,15 +35,25 @@ export class MenuItemFormComponent implements OnInit {
   @Output() itemChange = new EventEmitter<MenuItem>();
 
   /**
-  * If true: show free-text input. If false: show dropdown with linkOptions.
-  */
+   * If true: show free-text input. If false: show dropdown with linkOptions.
+   */
   customLinkMode = false;
 
   ngOnInit() {
     // If no options are available, always start in custom link mode
     if (!this.linkOptions || this.linkOptions.length === 0) {
       this.customLinkMode = true;
+      return;
     }
+
+    // If there's a link value but it's not in the available options, switch to custom mode
+    if (this.item?.link && !this.isLinkInOptions(this.item.link)) {
+      this.customLinkMode = true;
+    }
+  }
+
+  private isLinkInOptions(link: string): boolean {
+    return this.linkOptions?.some((option) => option.value === link) ?? false;
   }
 
   onChange() {

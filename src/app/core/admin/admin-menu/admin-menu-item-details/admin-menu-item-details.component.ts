@@ -12,7 +12,11 @@ import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { EntityTypeSelectComponent } from "../../../entity/entity-type-select/entity-type-select.component";
 import { MenuItemFormComponent } from "#src/app/menu-item-form/menu-item-form.component";
-import { MenuService } from "#src/app/core/ui/navigation/menu.service";
+import {
+  PREFIX_VIEW_CONFIG,
+  ViewConfig,
+} from "#src/app/core/config/dynamic-routing/view-config.interface";
+import { ConfigService } from "#src/app/core/config/config.service";
 
 /**
  * Dialog component to edit a single menu item's details.
@@ -35,7 +39,7 @@ import { MenuService } from "#src/app/core/ui/navigation/menu.service";
   styleUrls: ["./admin-menu-item-details.component.scss"],
 })
 export class AdminMenuItemDetailsComponent implements OnInit {
-  private readonly menuService = inject(MenuService);
+  private readonly configService = inject(ConfigService);
   dialogRef = inject<MatDialogRef<AdminMenuItemDetailsComponent>>(MatDialogRef);
   data = inject<{
     item: MenuItem;
