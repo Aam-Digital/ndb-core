@@ -67,18 +67,26 @@ export class BirthdayDashboardComponent
 
   async ngOnInit() {
     const data: EntityWithBirthday[] = [];
-    for (const [entityType, property] of Object.entries(this.entities)) {
+    for (const [entityType, properties] of Object.entries(this.entities)) {
       const entities = await this.entityMapper.loadType(entityType);
-      data.push(
-        ...entities
-          .filter((entity) => entity.isActive && entity[property])
-          .map((entity) => ({
-            entity: entity,
-            birthday: this.getNextBirthday(entity[property]),
-            newAge: entity[property]?.age + 1,
-          }))
-          .filter((a) => this.daysUntil(a.birthday) < this.threshold),
-      );
+
+      // Handle both single property string and array of properties
+      const propertyList = Array.isArray(properties)
+        ? properties
+        : [properties];
+
+      for (const property of propertyList) {
+        data.push(
+          ...entities
+            .filter((entity) => entity.isActive && entity[property])
+            .map((entity) => ({
+              entity: entity,
+              birthday: this.getNextBirthday(entity[property]),
+              newAge: entity[property]?.age + 1,
+            }))
+            .filter((a) => this.daysUntil(a.birthday) < this.threshold),
+        );
+      }
     }
     data.sort(
       (a, b) => this.daysUntil(a.birthday) - this.daysUntil(b.birthday),
@@ -106,7 +114,7 @@ export class BirthdayDashboardComponent
 }
 
 interface EntityPropertyMap {
-  [key: string]: string;
+  [key: string]: string | string[];
 }
 
 interface EntityWithBirthday {
