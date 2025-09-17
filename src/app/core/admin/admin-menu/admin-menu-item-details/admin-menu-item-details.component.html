@@ -1,10 +1,6 @@
 <h2 mat-dialog-title>
   @if (isNew) {
-    @if (isShortcut) {
-      <ng-container i18n>Add New Shortcut</ng-container>
-    } @else {
-      <ng-container i18n>Add New Menu Item</ng-container>
-    }
+    <ng-container i18n="menu item edit title">Add New Item</ng-container>
   } @else {
     @if (isShortcut) {
       <ng-container i18n>Edit Shortcut</ng-container>
