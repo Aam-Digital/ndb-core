@@ -8,7 +8,7 @@ import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { ConfigService } from "app/core/config/config.service";
 
-fdescribe("AdminMenuItemDetailsComponent", () => {
+describe("AdminMenuItemDetailsComponent", () => {
   let component: AdminMenuItemDetailsComponent;
   let fixture: ComponentFixture<AdminMenuItemDetailsComponent>;
 
