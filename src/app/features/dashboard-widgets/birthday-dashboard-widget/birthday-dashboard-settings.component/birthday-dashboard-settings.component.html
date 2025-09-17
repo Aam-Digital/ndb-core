@@ -49,11 +49,8 @@
       </div>
     }
     <div
-      matTooltip="{{
-        !canAddMorePairs
-          ? 'There are no additional fields with datatype date-with-age.'
-          : ''
-      }}"
+      matTooltip="There are no additional fields with datatype date-with-age."
+      i18n-matTooltip
       [matTooltipDisabled]="canAddMorePairs"
       matTooltipPosition="before"
     >
