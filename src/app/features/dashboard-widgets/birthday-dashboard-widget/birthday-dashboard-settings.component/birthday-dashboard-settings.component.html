@@ -25,7 +25,7 @@
             <app-entity-type-select
               [ngModel]="pair.entityType"
               (ngModelChange)="onEntityTypeChange($event, i)"
-              [options]="availableEntityTypesPerRow[i]"
+              [options]="entityTypeOptionsPerRow[i]"
             ></app-entity-type-select>
           </mat-form-field>
           <button
@@ -43,7 +43,7 @@
             [entityType]="pair.entityType"
             [ngModel]="pair.property"
             (ngModelChange)="onPropertyChange($event, i)"
-            [hideOption]="hideNonBirthdayFields"
+            [hideOption]="hideNonBirthdayFieldsForRow(i)"
           ></app-entity-field-select>
         </mat-form-field>
       </div>
@@ -71,7 +71,7 @@
       </button>
     </div>
 
-    @if (hasInvalidPairs) {
+    @if (!isFormValid) {
       <div class="margin-top-regular validation-error">
         <fa-icon icon="exclamation-triangle"></fa-icon>
         <span i18n
