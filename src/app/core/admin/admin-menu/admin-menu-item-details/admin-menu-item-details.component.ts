@@ -44,24 +44,21 @@ export class AdminMenuItemDetailsComponent implements OnInit {
   data = inject<{
     item: MenuItem;
     isNew?: boolean;
-    itemType?: string;
+    allowEntityLinks?: boolean;
   }>(MAT_DIALOG_DATA);
 
   item: MenuItem | EntityMenuItem;
   availableRoutes: { value: string; label: string }[];
   isNew: boolean;
-  /** The type of item being edited (e.g., "Menu Item", "Shortcut") */
-  itemType: string;
-  /** Computed boolean flag indicating if the current item is a shortcut */
-  isShortcut: boolean;
+  /** Whether entity type links are allowed (false for shortcuts, true for admin menu) */
+  allowEntityLinks: boolean;
 
   constructor() {
     const data = this.data;
 
     this.item = data.item;
     this.isNew = data.isNew;
-    this.itemType = data.itemType || "Menu Item";
-    this.isShortcut = this.itemType === "Shortcut";
+    this.allowEntityLinks = data.allowEntityLinks ?? true;
   }
 
   ngOnInit(): void {
@@ -72,10 +69,9 @@ export class AdminMenuItemDetailsComponent implements OnInit {
     const allConfigs: ViewConfig[] =
       this.configService.getAllConfigs<ViewConfig>(PREFIX_VIEW_CONFIG);
 
-    let availableViews = allConfigs.filter(
+    const availableViews = allConfigs.filter(
       (view) => !view._id.includes("/:id"),
     ); // skip details views (with "/:id" placeholder)
-
 
     return availableViews.map((view) => {
       const id = view._id.replace(PREFIX_VIEW_CONFIG, "/");

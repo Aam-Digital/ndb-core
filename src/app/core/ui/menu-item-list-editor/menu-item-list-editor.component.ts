@@ -37,8 +37,8 @@ export class MenuItemListEditorComponent {
   @Input() showAddButton: boolean = true;
   /** Unique identifier for the drag-drop container */
   @Input() containerId: string = "menu-item-list-container";
-  /** The type of items being managed (e.g., "Menu Item", "Shortcut") */
-  @Input() itemType: string = "Menu Item";
+  /** Whether entity type links are allowed (false for shortcuts, true for admin menu) */
+  @Input() allowEntityLinks: boolean = true;
   @Input() allowSubMenu: boolean = true;
 
   @Output() itemsChange = new EventEmitter<MenuItemForAdminUi[]>();
@@ -109,7 +109,7 @@ export class MenuItemListEditorComponent {
       data: {
         item: { ...newItem },
         isNew: true,
-        itemType: this.itemType,
+        allowEntityLinks: this.allowEntityLinks,
       },
     });
 

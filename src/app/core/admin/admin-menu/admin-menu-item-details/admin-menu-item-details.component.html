@@ -8,7 +8,7 @@
 
 <mat-dialog-content>
   <form class="flex-column gap-regular">
-    @if (!isShortcut) {
+    @if (allowEntityLinks) {
       <p i18n>
         Optionally select a record type to automatically use its name, icon and
         list view (as link) for this menu item. Otherwise, you can select a
@@ -34,7 +34,7 @@
     }
 
     <!-- Show manual form for shortcuts OR when no entity type is selected -->
-    @if (isShortcut || !item?.["entityType"]) {
+    @if (!allowEntityLinks || !item?.["entityType"]) {
       <app-menu-item-form
         [item]="item"
         (itemChange)="item = $event"

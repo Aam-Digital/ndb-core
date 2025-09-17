@@ -6,7 +6,7 @@
 
     <app-menu-item-list-editor
       [items]="menuItems"
-      itemType="Shortcut"
+      [allowEntityLinks]="false"
       [allowSubMenu]="false"
       containerId="shortcuts-container"
       (itemsChange)="onMenuItemsChange($event)"

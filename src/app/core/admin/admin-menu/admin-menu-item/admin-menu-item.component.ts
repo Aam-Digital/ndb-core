@@ -67,8 +67,8 @@ export class AdminMenuItemComponent {
   @Output() itemChange = new EventEmitter<MenuItemForAdminUi>();
 
   @Input() connectedTo: string[];
-  /** The type of item being managed (e.g., "Menu Item", "Shortcut") */
-  @Input() itemType: string = "Menu Item";
+  /** Whether entity type links are allowed (false for shortcuts, true for admin menu) */
+  @Input() allowEntityLinks: boolean = true;
   /** Whether sub-menus are allowed for this item type */
   @Input() allowSubMenu: boolean = true;
   @Output() itemDrop = new EventEmitter<CdkDragDrop<MenuItemForAdminUi[]>>();
@@ -116,7 +116,7 @@ export class AdminMenuItemComponent {
       data: {
         item: item ? { ...item } : {},
         isNew: (item as MenuItemForAdminUiNew).isNew,
-        itemType: this.itemType,
+        allowEntityLinks: this.allowEntityLinks,
       },
     });
     return firstValueFrom(dialogRef.afterClosed());
