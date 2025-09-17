@@ -1,34 +1,40 @@
 <h2 mat-dialog-title>
   @if (isNew) {
-    <ng-container i18n>Add New Menu Item</ng-container>
+    <ng-container i18n="menu item edit title">Add New Item</ng-container>
   } @else {
-    <ng-container i18n>Edit Menu Item</ng-container>
+    <ng-container i18n="menu item edit title">Edit Item</ng-container>
   }
 </h2>
 
 <mat-dialog-content>
   <form class="flex-column gap-regular">
-    <p i18n>
-      Optionally select a record type to automatically use its name, icon and
-      list view (as link) for this menu item. Otherwise, you can select a custom
-      name and icon below.
-    </p>
-
-    <!-- EntityType -->
-    <mat-form-field appearance="fill" class="margin-bottom-large">
-      <mat-label i18n>Entity Type</mat-label>
-      <app-entity-type-select
-        [value]="item?.['entityType']"
-        (valueChange)="onEntityTypeSelected($event)"
-        [multi]="false"
-      ></app-entity-type-select>
-    </mat-form-field>
-
-    @if (item?.["entityType"]) {
+    @if (allowEntityLinks) {
       <p i18n>
-        To manually define a label and link, clear the entity type field above.
+        Optionally select a record type to automatically use its name, icon and
+        list view (as link) for this menu item. Otherwise, you can select a
+        custom name and icon below.
       </p>
-    } @else {
+
+      <!-- EntityType -->
+      <mat-form-field appearance="fill" class="margin-bottom-large">
+        <mat-label i18n>Entity Type</mat-label>
+        <app-entity-type-select
+          [value]="item?.['entityType']"
+          (valueChange)="onEntityTypeSelected($event)"
+          [multi]="false"
+        ></app-entity-type-select>
+      </mat-form-field>
+
+      @if (item?.["entityType"]) {
+        <p i18n>
+          To manually define a label and link, clear the entity type field
+          above.
+        </p>
+      }
+    }
+
+    <!-- Show manual form for shortcuts OR when no entity type is selected -->
+    @if (!allowEntityLinks || !item?.["entityType"]) {
       <app-menu-item-form
         [item]="item"
         (itemChange)="item = $event"
