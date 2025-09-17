@@ -73,7 +73,7 @@ export class AdminMenuItemComponent {
 
   /** Whether sub-menus are allowed for this item type */
   @Input() allowSubMenu: boolean = true;
-  
+
   @Output() itemDrop = new EventEmitter<CdkDragDrop<MenuItemForAdminUi[]>>();
   @Output() deleteItem = new EventEmitter<MenuItemForAdminUi>();
 
