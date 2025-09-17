@@ -100,4 +100,236 @@ describe("MenuItemListEditorComponent", () => {
     expect(component.items[0]).toBe(secondItem);
     expect(component.itemsChange.emit).toHaveBeenCalledWith([secondItem]);
   });
+
+  it("should convert entity menu item to plain format with toPlainMenuItem", () => {
+    // Arrange
+    const entityItem: MenuItemForAdminUi & { entityType: string } = {
+      entityType: "Child",
+      label: "Child",
+      uniqueId: "test-id",
+      subMenu: [],
+    };
+
+    // Act
+    const result = MenuItemListEditorComponent.toPlainMenuItem(entityItem);
+
+    // Assert
+    expect(result).toEqual(
+      jasmine.objectContaining({
+        entityType: "Child",
+      }),
+    );
+  });
+
+  it("should convert regular menu item to plain format with toPlainMenuItem", () => {
+    // Arrange
+    const regularItem: MenuItemForAdminUi = {
+      label: "Test Item",
+      icon: "user",
+      link: "/test",
+      uniqueId: "test-id",
+      subMenu: [],
+    };
+
+    // Act
+    const result = MenuItemListEditorComponent.toPlainMenuItem(regularItem);
+
+    // Assert
+    expect(result).toEqual({
+      label: "Test Item",
+      icon: "user",
+      link: "/test",
+      subMenu: undefined,
+    });
+  });
+
+  it("should convert menu item with subMenu to plain format with toPlainMenuItem", () => {
+    // Arrange
+    const itemWithSubMenu: MenuItemForAdminUi = {
+      label: "Parent Item",
+      icon: "folder",
+      link: "/parent",
+      uniqueId: "parent-id",
+      subMenu: [
+        {
+          label: "Child Item",
+          icon: "file",
+          link: "/child",
+          uniqueId: "child-id",
+          subMenu: [],
+        },
+      ],
+    };
+
+    // Act
+    const result = MenuItemListEditorComponent.toPlainMenuItem(itemWithSubMenu);
+
+    // Assert
+    expect(result).toEqual({
+      label: "Parent Item",
+      icon: "folder",
+      link: "/parent",
+      subMenu: [
+        {
+          label: "Child Item",
+          icon: "file",
+          link: "/child",
+          subMenu: undefined,
+        },
+      ],
+    });
+  });
+
+  it("should return null for entity item when forceLinkOnly is true in toPlainMenuItem", () => {
+    // Arrange
+    const entityItem: MenuItemForAdminUi & { entityType: string } = {
+      entityType: "Child",
+      label: "Child",
+      uniqueId: "test-id",
+      subMenu: [],
+    };
+
+    // Act
+    const result = MenuItemListEditorComponent.toPlainMenuItem(entityItem, {
+      forceLinkOnly: true,
+    });
+
+    // Assert
+    expect(result).toBeNull();
+  });
+
+  it("should remove subMenu when forceLinkOnly is true in toPlainMenuItem", () => {
+    // Arrange
+    const itemWithSubMenu: MenuItemForAdminUi = {
+      label: "Parent Item",
+      icon: "folder",
+      link: "/parent",
+      uniqueId: "parent-id",
+      subMenu: [
+        {
+          label: "Child Item",
+          icon: "file",
+          link: "/child",
+          uniqueId: "child-id",
+          subMenu: [],
+        },
+      ],
+    };
+
+    // Act
+    const result = MenuItemListEditorComponent.toPlainMenuItem(
+      itemWithSubMenu,
+      {
+        forceLinkOnly: true,
+      },
+    );
+
+    // Assert
+    expect(result).toEqual({
+      label: "Parent Item",
+      icon: "folder",
+      link: "/parent",
+      subMenu: undefined,
+    });
+  });
+
+  it("should convert plain menu items to admin UI format with fromPlainMenuItems", () => {
+    // Arrange
+    const plainItems = [
+      {
+        label: "Test Item",
+        icon: "user",
+        link: "/test",
+      },
+      {
+        label: "Entity Item",
+        entityType: "Child",
+      } as any, // Cast to handle EntityMenuItem type
+    ];
+
+    // Act
+    const result = MenuItemListEditorComponent.fromPlainMenuItems(plainItems);
+
+    // Assert
+    expect(result.length).toBe(2);
+    expect(result[0]).toEqual(
+      jasmine.objectContaining({
+        label: "Test Item",
+        icon: "user",
+        link: "/test",
+        uniqueId: jasmine.any(String),
+        subMenu: [],
+      }),
+    );
+    expect(result[1]).toEqual(
+      jasmine.objectContaining({
+        label: "Entity Item",
+        entityType: "Child",
+        uniqueId: jasmine.any(String),
+        subMenu: [],
+      }),
+    );
+  });
+
+  it("should preserve subMenu structure when allowSubMenu is true in fromPlainMenuItems", () => {
+    // Arrange
+    const plainItems = [
+      {
+        label: "Parent Item",
+        icon: "folder",
+        link: "/parent",
+        subMenu: [
+          {
+            label: "Child Item",
+            icon: "file",
+            link: "/child",
+          },
+        ],
+      },
+    ];
+
+    // Act
+    const result = MenuItemListEditorComponent.fromPlainMenuItems(
+      plainItems,
+      true,
+    );
+
+    // Assert
+    expect(result[0].subMenu?.length).toBe(1);
+    expect(result[0].subMenu?.[0]).toEqual(
+      jasmine.objectContaining({
+        label: "Child Item",
+        icon: "file",
+        link: "/child",
+        uniqueId: jasmine.any(String),
+      }),
+    );
+  });
+
+  it("should clear subMenu when allowSubMenu is false in fromPlainMenuItems", () => {
+    // Arrange
+    const plainItems = [
+      {
+        label: "Parent Item",
+        icon: "folder",
+        link: "/parent",
+        subMenu: [
+          {
+            label: "Child Item",
+            icon: "file",
+            link: "/child",
+          },
+        ],
+      },
+    ];
+
+    // Act
+    const result = MenuItemListEditorComponent.fromPlainMenuItems(
+      plainItems,
+      false,
+    );
+
+    // Assert
+    expect(result[0].subMenu).toEqual([]);
+  });
 });
