@@ -40,21 +40,40 @@ export class AdminMenuItemDetailsComponent implements OnInit {
   data = inject<{
     item: MenuItem;
     isNew?: boolean;
+    allowEntityLinks?: boolean;
   }>(MAT_DIALOG_DATA);
 
   item: MenuItem | EntityMenuItem;
   availableRoutes: { value: string; label: string }[];
   isNew: boolean;
+  /** Whether entity type links are allowed (false for shortcuts, true for admin menu) */
+  allowEntityLinks: boolean;
 
   constructor() {
     const data = this.data;
 
     this.item = data.item;
     this.isNew = data.isNew;
+    this.allowEntityLinks = data.allowEntityLinks ?? true;
   }
 
   ngOnInit(): void {
-    this.availableRoutes = this.menuService.loadAvailableRoutes();
+    this.availableRoutes = this.loadAvailableRoutes();
+  }
+
+  private loadAvailableRoutes(): { value: string; label: string }[] {
+    const allConfigs: ViewConfig[] =
+      this.configService.getAllConfigs<ViewConfig>(PREFIX_VIEW_CONFIG);
+
+    const availableViews = allConfigs.filter(
+      (view) => !view._id.includes("/:id"),
+    ); // skip details views (with "/:id" placeholder)
+
+    return availableViews.map((view) => {
+      const id = view._id.replace(PREFIX_VIEW_CONFIG, "/");
+      const label = view.config?.entityType?.trim() || view.component || id;
+      return { value: id, label };
+    });
   }
 
   onEntityTypeSelected(entityType: string | string[]) {
@@ -67,6 +86,9 @@ export class AdminMenuItemDetailsComponent implements OnInit {
       delete this.item.label;
       delete this.item.icon;
       delete this.item.link;
+    } else if (!this.item.link) {
+      // optionally surface validation in UI; minimally, do not close
+      return;
     }
 
     this.dialogRef.close(this.item);

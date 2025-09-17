@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormControl } from "@angular/forms";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ShortcutDashboardSettingsComponent } from "./shortcut-dashboard-settings.component";
 import { MenuService } from "#src/app/core/ui/navigation/menu.service";
 
@@ -18,8 +19,7 @@ describe("ShortcutDashboardSettingsComponent", () => {
       { value: "/", label: "Dashboard" },
     ]);
     await TestBed.configureTestingModule({
-      imports: [ShortcutDashboardSettingsComponent],
-      providers: [{ provide: MenuService, useValue: mockMenuService }],
+      imports: [ShortcutDashboardSettingsComponent, FontAwesomeTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ShortcutDashboardSettingsComponent);

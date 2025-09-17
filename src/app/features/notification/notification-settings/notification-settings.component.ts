@@ -23,9 +23,8 @@ import { MatAccordion } from "@angular/material/expansion";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
-import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
-import { MatProgressBar } from "@angular/material/progress-bar";
 import { Config } from "../../../core/config/config";
+import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
 
 /**
  * UI for current user to configure individual notification settings.
@@ -43,7 +42,7 @@ import { Config } from "../../../core/config/config";
     MatTooltip,
     CdkAccordionModule,
     MatAccordion,
-    MatProgressBar,
+    FeatureDisabledInfoComponent,
   ],
   templateUrl: "./notification-settings.component.html",
   styleUrl: "./notification-settings.component.scss",
@@ -60,7 +59,6 @@ export class NotificationSettingsComponent implements OnInit {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly notificationService = inject(NotificationService);
   private readonly alertService = inject(AlertService);
-  protected readonly navigator: Navigator = inject(NAVIGATOR_TOKEN);
 
   /**
    * Get the logged-in user id
