@@ -24,36 +24,34 @@
 
       @if (customLinkMode) {
         <mat-hint align="start" i18n>
-          You can define a link manually. To create
-          a new link, open Aam Digital in a new tab, go to the desired
-          entity, copy everything after
-          ‘https://<your-system>.aam-digital.app/’, and
-          paste it here as the link target.
+          You can define a link manually. To create a new link, open Aam Digital
+          in a new tab, go to the desired entity, copy everything after
+          ‘https://&lt;your-system&gt;.aam-digital.app/’, and paste it here as
+          the link target.
         </mat-hint>
       }
     </mat-form-field>
 
-    <button
-      mat-icon-button
-      (click)="toggleCustomLinkMode()"
-      class="margin-left-small"
-    >
-      @if (customLinkMode) {
-        <fa-icon 
-          icon="list"
-          matTooltip="Switch to select mode"
-          i18n-matTooltip
-        ></fa-icon>
-      } @else {
-        <fa-icon 
-          icon="edit"
-          matTooltip="Switch to custom link mode"
-          i18n-matTooltip
-        ></fa-icon>
-      }
-    </button>
+    @if (customLinkMode) {
+      <button
+        mat-icon-button
+        (click)="toggleCustomLinkMode()"
+        class="margin-left-small"
+        matTooltip="Switch to select mode"
+        i18n-matTooltip
+      >
+        <fa-icon icon="list"></fa-icon>
+      </button>
+    } @else {
+      <button
+        mat-icon-button
+        (click)="toggleCustomLinkMode()"
+        class="margin-left-small"
+        matTooltip="Switch to custom link mode"
+        i18n-matTooltip
+      >
+        <fa-icon icon="edit"></fa-icon>
+      </button>
+    }
   </div>
 </div>
-
-
-
