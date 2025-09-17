@@ -9,6 +9,7 @@
   <div class="flex-row align-center gap-small">
     <mat-form-field appearance="fill" class="full-width">
       <mat-label i18n>Link</mat-label>
+
       @if (linkOptions?.length && !customLinkMode) {
         <mat-select [(ngModel)]="item.link" (ngModelChange)="onChange()">
           @for (option of linkOptions; track option.value) {
@@ -20,25 +21,39 @@
       } @else {
         <input matInput [(ngModel)]="item.link" (ngModelChange)="onChange()" />
       }
+
       @if (customLinkMode) {
         <mat-hint align="start" i18n>
           You can define a link manually. To create
           a new link, open Aam Digital in a new tab, go to the desired
-          entity, copy everything after ‘https://<your-system>.aam-digital.app/’, and
+          entity, copy everything after
+          ‘https://<your-system>.aam-digital.app/’, and
           paste it here as the link target.
         </mat-hint>
       }
     </mat-form-field>
+
     <button
       mat-icon-button
-      matTooltip="Switch to {{
-        customLinkMode ? 'select' : 'custom link'
-      }} mode"
-      i18n-matTooltip
       (click)="toggleCustomLinkMode()"
       class="margin-left-small"
     >
-      <fa-icon [icon]="customLinkMode ? 'list' : 'edit'"></fa-icon>
+      @if (customLinkMode) {
+        <fa-icon 
+          icon="list"
+          matTooltip="Switch to select mode"
+          i18n-matTooltip
+        ></fa-icon>
+      } @else {
+        <fa-icon 
+          icon="edit"
+          matTooltip="Switch to custom link mode"
+          i18n-matTooltip
+        ></fa-icon>
+      }
     </button>
   </div>
 </div>
+
+
+
