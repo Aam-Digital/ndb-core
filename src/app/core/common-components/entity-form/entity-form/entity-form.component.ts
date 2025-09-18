@@ -71,6 +71,11 @@ export class EntityFormComponent<T extends Entity = Entity>
    */
   @Input() gridLayout = true;
 
+  /**
+   * Whether the fields should use the max width of the container
+   */
+  @Input() fullWidth = false;
+
   private initialFormValues: any;
   private changesSubscription: Subscription;
 
