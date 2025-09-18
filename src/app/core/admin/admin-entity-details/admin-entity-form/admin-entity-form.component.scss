@@ -145,3 +145,18 @@ $toolbar-width: 300px;
   pointer-events: none;
   opacity: 0.5;
 }
+
+// Horizontal layout only when fieldsOnlyMode is true
+.fieldsOnlyMode {
+  .fields-group-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: sizes.$small;
+    padding: sizes.$small;
+  }
+
+  .fields-group-list .admin-form-field {
+    margin: 0;
+    flex: 0 1 auto;
+  }
+}

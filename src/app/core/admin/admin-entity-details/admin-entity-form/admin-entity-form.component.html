@@ -4,20 +4,28 @@
     cdkDropList
     (cdkDropListDropped)="dropfieldGroups($event, config.fieldGroups)"
     cdkDropListOrientation="mixed"
-    class="flex-grow admin-grid-layout padding-right-regular drop-list"
+    class="flex-grow padding-right-regular drop-list"
+    [class.admin-grid-layout]="!fieldsOnlyMode"
+    [class.fieldsOnlyMode]="fieldsOnlyMode"
   >
     <!-- FIELD GROUPS -->
     @for (group of config.fieldGroups; track group; let i = $index) {
       <div class="entity-form-cell admin-form-column section-container" cdkDrag>
-        <div class="flex-row align-center">
-          <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
-          <!-- GROUP HEADER -->
-          <app-admin-section-header
-            [title]="group.header"
-            (titleChange)="group.header = $event; emitUpdatedConfig()"
-            (remove)="removeGroup(i)"
-          ></app-admin-section-header>
-        </div>
+        @if (!fieldsOnlyMode) {
+          <div class="flex-row align-center">
+            <fa-icon
+              icon="grip-vertical"
+              size="xl"
+              class="drag-handle"
+            ></fa-icon>
+            <!-- GROUP HEADER -->
+            <app-admin-section-header
+              [title]="group.header"
+              (titleChange)="group.header = $event; emitUpdatedConfig()"
+              (remove)="removeGroup(i)"
+            ></app-admin-section-header>
+          </div>
+        }
         <div
           cdkDropList
           [id]="uniqueAreaId + '-group' + i"
@@ -25,6 +33,7 @@
           (cdkDropListDropped)="drop($event)"
           [cdkDropListConnectedTo]="getConnectedGroups()"
           [cdkDropListDisabled]="isDisabled"
+          cdkDropListOrientation="mixed"
           class="fields-group-list drop-list"
         >
           <!-- FIELD [start] -->
@@ -75,24 +84,26 @@
     }
 
     <!-- DROP AREA: NEW FIELD GROUP -->
-    <div class="entity-form-cell admin-form-column">
-      <div
-        [id]="'newGroupDropArea-' + uniqueAreaId"
-        cdkDropList
-        [cdkDropListConnectedTo]="getConnectedGroups()"
-        (cdkDropListDropped)="dropNewGroup($event)"
-        class="fields-group-list drop-list drop-area-hint"
-      >
-        <span i18n="Header of drag and drop box"
-          >drop here to create new field group</span
+    @if (!fieldsOnlyMode) {
+      <div class="entity-form-cell admin-form-column">
+        <div
+          [id]="'newGroupDropArea-' + uniqueAreaId"
+          cdkDropList
+          [cdkDropListConnectedTo]="getConnectedGroups()"
+          (cdkDropListDropped)="dropNewGroup($event)"
+          class="fields-group-list drop-list drop-area-hint"
         >
-        <fa-icon
-          icon="question-circle"
-          matTooltip="You can group fields so that they will always appear next to each other while the layout is automatically adjusted to different screen sizes. Such field groups can also have a title displayed to users."
-          i18n-matTooltip
-        ></fa-icon>
+          <span i18n="Header of drag and drop box"
+            >drop here to create new field group</span
+          >
+          <fa-icon
+            icon="question-circle"
+            matTooltip="You can group fields so that they will always appear next to each other while the layout is automatically adjusted to different screen sizes. Such field groups can also have a title displayed to users."
+            i18n-matTooltip
+          ></fa-icon>
+        </div>
       </div>
-    </div>
+    }
   </div>
 
   <!-- TOOLBAR -->

@@ -22,13 +22,14 @@ import { EntityFormComponent } from "../../../core/common-components/entity-form
 import { MatDialogModule } from "@angular/material/dialog";
 import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
 import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
-import { EntityFieldEditComponent } from "../../../core/common-components/entity-field-edit/entity-field-edit.component";
 import { FieldGroup } from "../../../core/entity-details/form/field-group";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 import { AbstractEntityDetailsComponent } from "../../../core/entity-details/abstract-entity-details/abstract-entity-details.component";
 import { MatProgressBar } from "@angular/material/progress-bar";
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
+import { NoteDetailsConfig } from "./note-details-config.interface";
+import { getDefaultNoteDetailsConfig } from "../add-default-note-views";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -49,7 +50,6 @@ import { ViewActionsComponent } from "../../../core/common-components/view-actio
     DialogButtonsComponent,
     MatMenuModule,
     EntityArchivedInfoComponent,
-    EntityFieldEditComponent,
     ViewTitleComponent,
     MatProgressBar,
     ViewActionsComponent,
@@ -58,7 +58,7 @@ import { ViewActionsComponent } from "../../../core/common-components/view-actio
 })
 export class NoteDetailsComponent
   extends AbstractEntityDetailsComponent
-  implements OnChanges
+  implements OnChanges, NoteDetailsConfig
 {
   private configService = inject(ConfigService);
   private entityFormService = inject(EntityFormService);
@@ -69,17 +69,13 @@ export class NoteDetailsComponent
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
 
-  @Input() topForm = [
-    "date",
-    "warningLevel",
-    "category",
-    "authors",
-    "attachment",
-  ];
-  @Input() middleForm = ["subject", "text"];
-  @Input() bottomForm = ["children", "schools"];
+  private readonly defaultFormConfig = getDefaultNoteDetailsConfig();
+  @Input() topForm = this.defaultFormConfig.topForm;
+  @Input() middleForm = this.defaultFormConfig.middleForm;
+  @Input() bottomForm = this.defaultFormConfig.bottomForm;
 
   topFieldGroups: FieldGroup[];
+  middleFieldGroups: FieldGroup[];
   bottomFieldGroups: FieldGroup[];
 
   form: EntityForm<Note>;
@@ -99,6 +95,7 @@ export class NoteDetailsComponent
     if (!this.entity) return;
 
     this.topFieldGroups = this.topForm.map((f) => ({ fields: [f] }));
+    this.middleFieldGroups = [{ fields: this.middleForm }];
     this.bottomFieldGroups = [{ fields: this.bottomForm }];
 
     this.form = await this.entityFormService.createEntityForm(
