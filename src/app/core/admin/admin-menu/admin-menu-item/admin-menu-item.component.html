@@ -39,12 +39,14 @@
         </div>
       </div>
 
-      @if (item.subMenu && item.subMenu.length > 0) {
+      @if (allowSubMenu && item.subMenu && item.subMenu.length > 0) {
         <div class="submenu">
           @for (subItem of item.subMenu; track subItem.uniqueId) {
             <app-admin-menu-item
               [item]="subItem"
               [connectedTo]="connectedTo"
+              [allowEntityLinks]="allowEntityLinks"
+              [allowSubMenu]="allowSubMenu"
               (itemDrop)="onDragDrop($event)"
               (deleteItem)="removeSubItem(subItem)"
               (itemChange)="onSubItemChange($event)"

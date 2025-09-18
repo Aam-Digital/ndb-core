@@ -1,0 +1,28 @@
+@if (showAddButton) {
+  <div class="margin-bottom-regular">
+    <button mat-stroked-button color="accent" (click)="addNewMenuItem()">
+      <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
+      <span i18n>Add New</span>
+    </button>
+  </div>
+}
+
+<div
+  cdkDropList
+  [id]="containerId"
+  [cdkDropListData]="items"
+  [cdkDropListConnectedTo]="connectedDropLists"
+  (cdkDropListDropped)="onDragDrop($event)"
+>
+  @for (item of items; track item; let i = $index) {
+    <app-admin-menu-item
+      [item]="item"
+      [connectedTo]="connectedDropLists"
+      [allowEntityLinks]="allowEntityLinks"
+      [allowSubMenu]="allowSubMenu"
+      (itemDrop)="onDragDrop($event)"
+      (deleteItem)="removeItem(item)"
+      (itemChange)="onItemChange($event, i)"
+    ></app-admin-menu-item>
+  }
+</div>
