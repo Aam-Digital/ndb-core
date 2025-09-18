@@ -61,13 +61,27 @@ export class AdminEntityComponent implements OnInit {
   entityConstructor: EntityConstructor;
   private originalEntitySchemaFields: [string, EntitySchemaField][];
 
-  configDetailsView: DynamicComponentConfig<any>;
+  configDetailsView: DynamicComponentConfig<
+    EntityDetailsConfig | NoteDetailsConfig
+  >;
   configListView: DynamicComponentConfig<EntityListConfig>;
   configEntitySettings: EntityConfig;
 
   protected mode: "details" | "list" | "general" | "publicForm" = "details";
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
+
+  get entityDetailsConfig(): EntityDetailsConfig {
+    return this.configDetailsView.config as EntityDetailsConfig;
+  }
+
+  get noteDetailsConfig(): NoteDetailsConfig {
+    return this.configDetailsView.config as NoteDetailsConfig;
+  }
+
+  set noteDetailsConfig(config: NoteDetailsConfig) {
+    this.configDetailsView.config = config;
+  }
 
   ngOnInit(): void {
     this.init();
