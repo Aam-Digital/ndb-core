@@ -1,11 +1,9 @@
 import "@angular/localize/init";
 import * as buffer from "buffer";
 import * as MockDate from "mockdate";
-import { Preview, applicationConfig } from "@storybook/angular";
+import { Preview } from "@storybook/angular";
 import { environment } from "../src/environments/environment";
 import { SessionType } from "../src/app/core/session/session-type";
-import { importProvidersFrom } from "@angular/core";
-import { StorybookMinimalModule } from "../src/app/utils/storybook-minimal-fixed.module";
 
 // fixing a mocked "TODAY" to have persistent stories for visual regression testing
 MockDate.set(new Date("2023-06-09"));

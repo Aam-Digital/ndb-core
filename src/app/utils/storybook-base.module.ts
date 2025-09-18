@@ -17,6 +17,7 @@ import {
   mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../core/entity/entity-mapper/mock-entity-mapper-service";
+import { TestEntity } from "./test-utils/TestEntity";
 import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
 import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
 import { EntityConfigService } from "../core/entity/entity-config.service";
@@ -49,6 +50,9 @@ import { DefaultDatatype } from "../core/entity/default-datatype/default.datatyp
 import { DefaultValueStrategy } from "../core/default-values/default-value-strategy.interface";
 import { StaticDefaultValueService } from "../core/default-values/x-static/static-default-value.service";
 import { SwUpdate } from "@angular/service-worker";
+import { AppModule } from "../app.module";
+import { CoreModule } from "../core/core.module";
+import { MarkdownModule } from "ngx-markdown";
 
 componentRegistry.allowDuplicates();
 entityRegistry.allowDuplicates();
@@ -64,9 +68,8 @@ export const entityFormStorybookDefaultParameters = {
  */
 @NgModule({
   declarations: [],
-  imports: [RouterTestingModule],
+  imports: [RouterTestingModule, CoreModule, MarkdownModule.forRoot()],
   providers: [
-    // { provide: ConfigService, useValue: provideTestingConfigService() },
     {
       provide: AbilityService,
       useValue: {
@@ -89,9 +92,7 @@ export const entityFormStorybookDefaultParameters = {
     },
     {
       provide: EntityRegistry,
-      useValue: {
-        ...entityRegistry,
-      },
+      useValue: entityRegistry,
     },
     {
       provide: EntityConfigService,
@@ -219,10 +220,21 @@ export const entityFormStorybookDefaultParameters = {
       useClass: StaticDefaultValueService,
       multi: true,
     },
-    { provide: SwUpdate, useValue: { isEnabled: true } },
+    {
+      provide: SwUpdate,
+      useValue: {
+        isEnabled: true,
+        unrecoverable: EMPTY,
+        versionUpdates: EMPTY,
+        available: EMPTY,
+        activated: EMPTY,
+        checkForUpdate: () => Promise.resolve(false),
+        activateUpdate: () => Promise.resolve(false),
+      },
+    },
     { provide: DefaultDatatype, useClass: DefaultDatatype, multi: true },
     { provide: HttpClient, useValue: {} as HttpClient },
-    { provide: ComponentRegistry, useValue: { componentRegistry } },
+    { provide: ComponentRegistry, useValue: componentRegistry },
     AnalyticsService,
     EntityActionsService,
     SessionSubject,
@@ -245,6 +257,9 @@ export class StorybookBaseModule {
     const icons = inject(FaIconLibrary);
     const entityMapper = inject(EntityMapperService);
     const entityConfigService = inject(EntityConfigService);
+
+    // Ensure TestEntity is registered by referencing it
+    TestEntity.ENTITY_TYPE;
 
     (entityMapper as MockEntityMapperService).addAll(
       StorybookBaseModule.initData,
