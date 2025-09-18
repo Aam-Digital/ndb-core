@@ -80,4 +80,11 @@ export class PublicFormConfig extends Entity {
     editComponent: "EditPublicFormRelatedEntitiesComponent",
   })
   linkedEntity: FormFieldConfig;
+
+  @DatabaseField({
+    label: $localize`:PublicFormConfig:Linked Entities`,
+    editComponent: "EditPublicFormRelatedEntitiesComponent",
+    isArray: true,
+  })
+  linkedEntities: FormFieldConfig[];
 }

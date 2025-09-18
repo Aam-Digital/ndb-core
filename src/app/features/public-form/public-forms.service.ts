@@ -4,6 +4,7 @@ import { PublicFormConfig } from "./public-form-config";
 import { Entity } from "app/core/entity/model/entity";
 import { AlertService } from "app/core/alerts/alert.service";
 import { EntityActionsMenuService } from "app/core/entity-details/entity-actions-menu/entity-actions-menu.service";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 
 @Injectable({
   providedIn: "root",
@@ -23,7 +24,9 @@ export class PublicFormsService {
    */
   public async initCustomFormActions() {
     const allForms = await this.entityMapper.loadType(PublicFormConfig);
-    const matchingForms = allForms.filter((config) => config.linkedEntity?.id);
+    const matchingForms = allForms.filter(
+      (config) => this.getLinkedEntitiesFromConfig(config).length > 0,
+    );
     // Unregister any previously registered actions for these form configs
     const actionKeys = matchingForms.map(
       (config) => `copy-form-${config.getId()}`,
@@ -58,14 +61,58 @@ export class PublicFormsService {
     entity?: Entity,
   ): Promise<boolean> {
     let url = `${window.location.origin}/public-form/form/${config.route}`;
-    if (entity && config.linkedEntity?.id) {
-      const paramKey = config.linkedEntity.id;
-      const entityId = entity.getId();
-      url += `?${paramKey}=${encodeURIComponent(entityId)}`;
+
+    if (entity) {
+      const queryParams = this.buildQueryParametersForEntity(config, entity);
+      if (queryParams) {
+        url += `?${queryParams}`;
+      }
     }
+
     await navigator.clipboard.writeText(url);
     this.alertService.addInfo("Link copied: " + url);
     return true;
+  }
+
+  /**
+   * Builds query parameters for a given entity based on the form's linked entities configuration.
+   * Supports both single linkedEntity and multiple linkedEntities configurations.
+   */
+  private buildQueryParametersForEntity(
+    config: PublicFormConfig,
+    entity: Entity,
+  ): string {
+    const linkedEntities = this.getLinkedEntitiesFromConfig(config);
+    const params: string[] = [];
+
+    linkedEntities.forEach((linkedEntity) => {
+      if (linkedEntity.id) {
+        const paramKey = linkedEntity.id;
+        const entityId = entity.getId();
+        params.push(`${paramKey}=${encodeURIComponent(entityId)}`);
+      }
+    });
+
+    return params.join("&");
+  }
+
+  /**
+   * Gets all linked entities from config, supporting both legacy single linkedEntity
+   * and new multiple linkedEntities configurations.
+   */
+  private getLinkedEntitiesFromConfig(
+    config: PublicFormConfig,
+  ): FormFieldConfig[] {
+    // Priority: use linkedEntities if available, otherwise fall back to single linkedEntity
+    if (config.linkedEntities?.length) {
+      return config.linkedEntities.filter((entity) => entity?.id);
+    }
+
+    if (config.linkedEntity?.id) {
+      return [config.linkedEntity];
+    }
+
+    return [];
   }
 
   /**
@@ -84,14 +131,16 @@ export class PublicFormsService {
     }
 
     const entityType = entity.getConstructor().ENTITY_TYPE.toLowerCase();
-    const linkedEntity = config.linkedEntity;
+    const linkedEntities = this.getLinkedEntitiesFromConfig(config);
 
-    if (!linkedEntity) return false;
+    if (!linkedEntities.length) return false;
 
-    if (linkedEntity.additional) {
-      return linkedEntity.additional.toLowerCase() === entityType;
-    }
-
-    return false;
+    // Check if any linked entity matches the provided entity type
+    return linkedEntities.some((linkedEntity) => {
+      if (linkedEntity.additional) {
+        return linkedEntity.additional.toLowerCase() === entityType;
+      }
+      return false;
+    });
   }
 }
