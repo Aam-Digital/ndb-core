@@ -1,3 +1,4 @@
+import { Location } from "@angular/common";
 import {
   Component,
   ContentChild,
@@ -6,30 +7,27 @@ import {
   TemplateRef,
   inject,
 } from "@angular/core";
-import { Location } from "@angular/common";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { MatButton } from "@angular/material/button";
+import { MatListItem, MatNavList } from "@angular/material/list";
+import { ActivatedRoute } from "@angular/router";
+import { AdminNoteDetailsComponent } from "../../../child-dev-project/notes/admin-note-details/admin-note-details.component";
+import { BetaFeatureComponent } from "../../../features/coming-soon/beta-feature/beta-feature.component";
+import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
+import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ConfigService } from "../../config/config.service";
+import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
+import { EntityListConfig } from "../../entity-list/EntityListConfig";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
-import { EntityDetailsConfig } from "../../entity-details/EntityDetailsConfig";
-import { EntityConfigService } from "../../entity/entity-config.service";
 import { EntityConfig } from "../../entity/entity-config";
+import { EntityConfigService } from "../../entity/entity-config.service";
 import { EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
-import { EntityListConfig } from "../../entity-list/EntityListConfig";
-import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
-import { MatButton } from "@angular/material/button";
-import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
-import { AdminEntityListComponent } from "../admin-entity-list/admin-entity-list.component";
-import { ActivatedRoute } from "@angular/router";
-import { MatListItem, MatNavList } from "@angular/material/list";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
-import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
-import { BetaFeatureComponent } from "../../../features/coming-soon/beta-feature/beta-feature.component";
-import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
-import { AdminEntityService } from "../admin-entity.service";
+import { AdminEntityListComponent } from "../admin-entity-list/admin-entity-list.component";
 import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/admin-entity-public-forms-component";
-import { AdminNoteDetailsComponent } from "../../../child-dev-project/notes/admin-note-details/admin-note-details.component";
-import { NoteDetailsConfig } from "../../../child-dev-project/notes/note-details/note-details-config.interface";
+import { AdminEntityService } from "../admin-entity.service";
+import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
 
 @Component({
   selector: "app-admin-entity",
@@ -61,27 +59,13 @@ export class AdminEntityComponent implements OnInit {
   entityConstructor: EntityConstructor;
   private originalEntitySchemaFields: [string, EntitySchemaField][];
 
-  configDetailsView: DynamicComponentConfig<
-    EntityDetailsConfig | NoteDetailsConfig
-  >;
+  configDetailsView: DynamicComponentConfig<any>; // typed any to avoid type issues with different detail components
   configListView: DynamicComponentConfig<EntityListConfig>;
   configEntitySettings: EntityConfig;
 
   protected mode: "details" | "list" | "general" | "publicForm" = "details";
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
-
-  get entityDetailsConfig(): EntityDetailsConfig {
-    return this.configDetailsView.config as EntityDetailsConfig;
-  }
-
-  get noteDetailsConfig(): NoteDetailsConfig {
-    return this.configDetailsView.config as NoteDetailsConfig;
-  }
-
-  set noteDetailsConfig(config: NoteDetailsConfig) {
-    this.configDetailsView.config = config;
-  }
 
   ngOnInit(): void {
     this.init();

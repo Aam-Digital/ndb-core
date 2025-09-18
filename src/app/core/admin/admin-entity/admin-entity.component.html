@@ -58,13 +58,13 @@
             @case ("EntityDetails") {
               <app-admin-entity-details
                 [entityConstructor]="entityConstructor"
-                [config]="entityDetailsConfig"
+                [config]="configDetailsView.config"
               ></app-admin-entity-details>
             }
             @case ("NoteDetails") {
               <app-admin-note-details
                 [entityConstructor]="entityConstructor"
-                [(config)]="noteDetailsConfig"
+                [(config)]="configDetailsView.config"
               ></app-admin-note-details>
             }
             @default {
