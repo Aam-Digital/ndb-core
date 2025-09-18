@@ -5,7 +5,7 @@ import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper
 import { PublicFormConfig } from "./public-form-config";
 import { Entity } from "app/core/entity/model/entity";
 
-fdescribe("PublicFormsService", () => {
+describe("PublicFormsService", () => {
   let service: PublicFormsService;
 
   beforeEach(() => {

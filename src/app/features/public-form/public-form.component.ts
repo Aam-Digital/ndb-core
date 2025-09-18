@@ -169,39 +169,33 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   /**
-   * Checks if the public form has linkedEntity or linkedEntities configuration.
-   * If matching query parameters are found in the URL, it adds hidden prefilled fields
-   * to the form so that the submission can be linked to the correct entities (e.g., child, school, event).
-   * Supports multiple entity linking through multiple URL parameters.
+   * Process ALL URL parameters to create prefilled fields, not just configured linked entities.
+   * This allows any URL parameter to be used for entity linking without prior configuration.
+   * Sebastian's feedback: "all url params are used to prefill"
    */
   private handleRelatedEntityFields() {
-    // Get all linked entities (supporting both single and multiple entity linking)
-    const linkedEntities = this.getLinkedEntities();
+    const urlParams = this.route.snapshot.queryParams;
 
-    console.log("🔗 URL Params:", this.route.snapshot.queryParams);
-    console.log("🎯 Processing entities:", linkedEntities);
-
-    if (!linkedEntities.length) {
-      return;
-    }
+    console.log("🔗 URL Params:", urlParams);
+    console.log("🎯 Processing ALL parameters for prefilling");
 
     const lastColumn = this.formConfig.columns?.at(-1);
     if (!lastColumn) {
       return;
     }
 
-    // Process each linked entity and check for corresponding URL parameter
-    linkedEntities.forEach((linkedEntity) => {
-      const linkedFieldId = linkedEntity.id;
-      const hideFromForm = linkedEntity.hideFromForm;
-      const paramValue = this.route.snapshot.queryParamMap.get(linkedFieldId);
+    // Process ALL URL parameters, not just configured ones
+    Object.keys(urlParams).forEach((paramKey) => {
+      const paramValue = urlParams[paramKey];
 
-      if (linkedFieldId && paramValue) {
+      if (paramKey && paramValue) {
         const prefillField: FormFieldConfig = {
-          id: linkedFieldId,
+          id: paramKey,
           defaultValue: { mode: "static", config: { value: paramValue } },
-          hideFromForm,
+          hideFromForm: true, // Hide all URL parameter fields by default
         };
+
+        console.log(`✅ Adding prefill field for ${paramKey}:`, paramValue);
         lastColumn.fields.push(prefillField);
       }
     });
