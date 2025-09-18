@@ -175,7 +175,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
    */
   private handleRelatedEntityFields() {
     const urlParams = this.route.snapshot?.queryParams || {};
-    
+
     console.log("🔗 URL Params:", urlParams);
     console.log("🎯 Processing ALL parameters for prefilling");
 
