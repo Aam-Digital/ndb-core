@@ -201,23 +201,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     });
   }
 
-  /**
-   * Gets all linked entities, supporting both legacy single linkedEntity
-   * and new multiple linkedEntities configurations.
-   */
-  private getLinkedEntities(): FormFieldConfig[] {
-    // Priority: use linkedEntities if available, otherwise fall back to single linkedEntity
-    if (this.formConfig.linkedEntities?.length) {
-      return this.formConfig.linkedEntities.filter((entity) => entity?.id);
-    }
-
-    if (this.formConfig.linkedEntity?.id) {
-      return [this.formConfig.linkedEntity];
-    }
-
-    return [];
-  }
-
   private async initForm() {
     this.entity = new this.entityType();
     this.form = await this.entityFormService.createEntityForm(
