@@ -174,8 +174,8 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
    * Sebastian's feedback: "all url params are used to prefill"
    */
   private handleRelatedEntityFields() {
-    const urlParams = this.route.snapshot.queryParams;
-
+    const urlParams = this.route.snapshot?.queryParams || {};
+    
     console.log("🔗 URL Params:", urlParams);
     console.log("🎯 Processing ALL parameters for prefilling");
 
