@@ -3,6 +3,10 @@ import { ConfigService } from "app/core/config/config.service";
 import { EntityMenuItem, MenuItem, NavigationMenuConfig } from "./menu-item";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { BehaviorSubject } from "rxjs";
+import {
+  PREFIX_VIEW_CONFIG,
+  ViewConfig,
+} from "../../config/dynamic-routing/view-config.interface";
 
 @Injectable({
   providedIn: "root",
@@ -40,6 +44,21 @@ export class MenuService {
     );
 
     this.menuItems.next(menuItems);
+  }
+
+  /**
+   * Load all available routes from ViewConfigs for use in dropdowns
+   */
+  loadAvailableRoutes(): { value: string; label: string }[] {
+    const allConfigs: ViewConfig[] =
+      this.configService.getAllConfigs<ViewConfig>(PREFIX_VIEW_CONFIG);
+    return allConfigs
+      .filter((view) => !view._id.includes("/:id")) // skip details views (with "/:id" placeholder)
+      .map((view) => {
+        const id = view._id.replace(PREFIX_VIEW_CONFIG, "/");
+        const label = view.config?.entityType?.trim() || view.component || id;
+        return { value: id, label };
+      });
   }
 
   /**
