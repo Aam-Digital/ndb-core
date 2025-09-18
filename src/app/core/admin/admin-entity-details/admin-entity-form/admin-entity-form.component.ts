@@ -112,6 +112,11 @@ export class AdminEntityFormComponent implements OnChanges {
    */
   @Input() updateEntitySchema?: boolean = true;
 
+  /** Whether to only show fields in a compact layout.
+   * If false, the full admin layout with section headers and drag&drop areas is shown.
+   */
+  @Input() fieldsOnlyMode?: boolean = false;
+
   dummyEntity: Entity;
   dummyForm: EntityForm<any>;
 
