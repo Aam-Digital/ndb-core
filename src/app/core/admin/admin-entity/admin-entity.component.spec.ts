@@ -139,7 +139,9 @@ describe("AdminEntityComponent", () => {
       title: "New Panel",
       components: [],
     };
-    component.configDetailsView.config.panels.push(newPanel);
+    (component.configDetailsView.config as EntityDetailsConfig).panels.push(
+      newPanel,
+    );
 
     await component.save();
 
