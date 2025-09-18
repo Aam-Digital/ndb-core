@@ -169,25 +169,59 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   /**
-   * Checks if the public form has a linkedEntity configuration.
-   * If a matching query parameter is found in the URL, it adds a hidden prefilled field
-   * to the form so that the submission can be linked to the correct entity (e.g., child, school).
+   * Checks if the public form has linkedEntity or linkedEntities configuration.
+   * If matching query parameters are found in the URL, it adds hidden prefilled fields
+   * to the form so that the submission can be linked to the correct entities (e.g., child, school, event).
+   * Supports multiple entity linking through multiple URL parameters.
    */
   private handleRelatedEntityFields() {
-    const linkedFieldId = this.formConfig.linkedEntity?.id;
-    const hideFromForm = this.formConfig.linkedEntity?.hideFromForm;
-    const paramValue = this.route.snapshot.queryParamMap.get(linkedFieldId);
+    // Get all linked entities (supporting both single and multiple entity linking)
+    const linkedEntities = this.getLinkedEntities();
 
-    if (linkedFieldId && paramValue) {
-      const prefillField: FormFieldConfig = {
-        id: linkedFieldId,
-        defaultValue: { mode: "static", config: { value: paramValue } },
-        hideFromForm,
-      };
+    console.log("🔗 URL Params:", this.route.snapshot.queryParams);
+    console.log("🎯 Processing entities:", linkedEntities);
 
-      const lastColumn = this.formConfig.columns?.at(-1);
-      lastColumn?.fields.push(prefillField);
+    if (!linkedEntities.length) {
+      return;
     }
+
+    const lastColumn = this.formConfig.columns?.at(-1);
+    if (!lastColumn) {
+      return;
+    }
+
+    // Process each linked entity and check for corresponding URL parameter
+    linkedEntities.forEach((linkedEntity) => {
+      const linkedFieldId = linkedEntity.id;
+      const hideFromForm = linkedEntity.hideFromForm;
+      const paramValue = this.route.snapshot.queryParamMap.get(linkedFieldId);
+
+      if (linkedFieldId && paramValue) {
+        const prefillField: FormFieldConfig = {
+          id: linkedFieldId,
+          defaultValue: { mode: "static", config: { value: paramValue } },
+          hideFromForm,
+        };
+        lastColumn.fields.push(prefillField);
+      }
+    });
+  }
+
+  /**
+   * Gets all linked entities, supporting both legacy single linkedEntity
+   * and new multiple linkedEntities configurations.
+   */
+  private getLinkedEntities(): FormFieldConfig[] {
+    // Priority: use linkedEntities if available, otherwise fall back to single linkedEntity
+    if (this.formConfig.linkedEntities?.length) {
+      return this.formConfig.linkedEntities.filter((entity) => entity?.id);
+    }
+
+    if (this.formConfig.linkedEntity?.id) {
+      return [this.formConfig.linkedEntity];
+    }
+
+    return [];
   }
 
   private async initForm() {

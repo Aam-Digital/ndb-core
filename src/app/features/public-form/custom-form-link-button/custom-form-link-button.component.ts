@@ -36,7 +36,9 @@ export class CustomFormLinkButtonComponent implements OnInit {
     if (!this.linkedEntity || !this.formEntityType) return;
 
     const allForms = await this.entityMapper.loadType(PublicFormConfig);
-    const matchingForms = allForms.filter((config) => config.linkedEntity?.id);
+    const matchingForms = allForms.filter((config) =>
+      this.hasLinkedEntities(config),
+    );
 
     this.matchingCustomForms = [];
 
@@ -61,5 +63,18 @@ export class CustomFormLinkButtonComponent implements OnInit {
       matchingCustomForm,
       this.linkedEntity,
     );
+  }
+
+  /**
+   * Checks if a config has any linked entities (supporting both single and multiple configurations)
+   */
+  private hasLinkedEntities(config: PublicFormConfig): boolean {
+    // Check new multiple linkedEntities array
+    if (config.linkedEntities?.length) {
+      return config.linkedEntities.some((entity) => entity?.id);
+    }
+
+    // Fall back to legacy single linkedEntity
+    return !!config.linkedEntity?.id;
   }
 }
