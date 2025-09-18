@@ -176,8 +176,8 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   private handleRelatedEntityFields() {
     const urlParams = this.route.snapshot?.queryParams || {};
 
-    console.log("🔗 URL Params:", urlParams);
-    console.log("🎯 Processing ALL parameters for prefilling");
+    console.log(" URL Params:", urlParams);
+    console.log(" Processing ALL parameters for prefilling");
 
     const lastColumn = this.formConfig.columns?.at(-1);
     if (!lastColumn) {
@@ -195,7 +195,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
           hideFromForm: true, // Hide all URL parameter fields by default
         };
 
-        console.log(`✅ Adding prefill field for ${paramKey}:`, paramValue);
+        console.log(` Adding prefill field for ${paramKey}:`, paramValue);
         lastColumn.fields.push(prefillField);
       }
     });
