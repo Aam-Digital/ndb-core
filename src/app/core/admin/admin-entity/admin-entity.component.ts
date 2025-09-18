@@ -148,6 +148,11 @@ export class AdminEntityComponent implements OnInit {
     }
 
     viewConfig.config = viewConfig.config ?? { entityType: this.entityType };
+
+    // cleanup note details config, which should not have an entity instance assigned
+    if (viewConfig.config.entity && viewConfig.component === "NoteDetails") {
+      delete viewConfig.config.entity;
+    }
     // work on a deep copy as we are editing in place (for titles, sections, etc.)
     return JSON.parse(JSON.stringify(viewConfig));
   }
@@ -158,30 +163,11 @@ export class AdminEntityComponent implements OnInit {
   }
 
   async save() {
-    let detailsViewConfig = this.configDetailsView;
-
-    if (this.configDetailsView?.component === "NoteDetails") {
-      // For NoteDetails, ensure the config only contains topForm, middleForm, bottomForm
-      const noteConfig = this.configDetailsView.config as NoteDetailsConfig;
-      const cleanNoteConfig: NoteDetailsConfig = {};
-
-      if (noteConfig?.topForm) cleanNoteConfig.topForm = noteConfig.topForm;
-      if (noteConfig?.middleForm)
-        cleanNoteConfig.middleForm = noteConfig.middleForm;
-      if (noteConfig?.bottomForm)
-        cleanNoteConfig.bottomForm = noteConfig.bottomForm;
-
-      detailsViewConfig = {
-        ...this.configDetailsView,
-        config: cleanNoteConfig,
-      };
-    }
-
     const result = await this.adminEntityService.setAndSaveEntityConfig(
       this.entityConstructor,
       this.configEntitySettings,
       this.configListView,
-      detailsViewConfig,
+      this.configDetailsView,
     );
 
     this.entityActionsService.showSnackbarConfirmationWithUndo(
