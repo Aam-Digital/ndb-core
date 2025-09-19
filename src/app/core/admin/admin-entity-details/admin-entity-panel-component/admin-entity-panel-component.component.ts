@@ -77,6 +77,10 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     if (!Array.isArray(activeFields)) {
       activeFields = [];
     }
+    // Ensure config.config.columns is initialized for new related entity sections
+    if (!this.config.config.columns) {
+      this.config.config.columns = [];
+    }
 
     this.activeFields = [...activeFields];
     this.config.config.columns = this.activeFields.map(

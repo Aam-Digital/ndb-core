@@ -38,4 +38,22 @@ describe("AdminEntityPanelComponentComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("should handle undefined columns when creating new related entity section", () => {
+    component.config = {
+      component: "RelatedEntities",
+      config: {
+        entityType: "Note",
+      },
+    };
+
+    const activeFields = ["subject", "note"];
+
+    expect(() => component.updateFields(activeFields)).not.toThrow();
+
+    expect(component.config.config.columns).toEqual([
+      { id: "subject" },
+      { id: "note" },
+    ]);
+  });
 });
