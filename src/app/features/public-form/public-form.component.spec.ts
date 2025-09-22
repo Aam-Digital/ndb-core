@@ -52,6 +52,7 @@ describe("PublicFormComponent", () => {
             snapshot: {
               paramMap: new Map([["id", FORM_ID]]),
               queryParamMap: new Map([["childId", "Child:3"]]),
+              queryParams: { childId: "Child:3" },
             },
           },
         },
@@ -236,6 +237,48 @@ describe("PublicFormComponent", () => {
         hideFromForm: true,
       }),
     );
+  });
+
+  it("should process ALL URL parameters and create prefilled fields for multi-entity magic links", () => {
+    // Create a mock ActivatedRoute with multiple URL parameters
+    const multiParamRoute = {
+      snapshot: {
+        queryParams: {
+          childId: "Child:123",
+          schoolId: "School:456",
+          eventId: "Event:789",
+          teacherId: "Teacher:101",
+        },
+      },
+    };
+
+    // Replace the route in the component
+    component["route"] = multiParamRoute as any;
+    component.formConfig = testFormConfig;
+    component.fieldGroups = testFormConfig.columns;
+
+    component["handleRelatedEntityFields"]();
+
+    const lastColumn = component.formConfig.columns.at(-1);
+
+    // Expected URL parameters and their values
+    const expectedParams = {
+      childId: "Child:123",
+      schoolId: "School:456",
+      eventId: "Event:789",
+      teacherId: "Teacher:101",
+    };
+
+    // Verify ALL URL parameters were processed and added as hidden fields
+    Object.entries(expectedParams).forEach(([paramId, paramValue]) => {
+      expect(lastColumn?.fields).toContain(
+        jasmine.objectContaining({
+          id: paramId,
+          defaultValue: { mode: "static", config: { value: paramValue } },
+          hideFromForm: true,
+        }),
+      );
+    });
   });
 
   it("should update defaultValue for a field in prefilled that is already visible", fakeAsync(() => {
