@@ -182,71 +182,39 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
     const linkedEntities = this.getLinkedEntities();
 
+    // If no linkedEntities configured, process ALL URL parameters for backward compatibility
     if (linkedEntities.length === 0) {
-      this.processAllUrlParameters(urlParams, lastColumn);
-    } else {
-      this.processConfiguredParameters(urlParams, linkedEntities, lastColumn);
+      Object.keys(urlParams).forEach((paramKey) => {
+        const paramValue = urlParams[paramKey];
+
+        if (paramKey && paramValue) {
+          const prefillField: FormFieldConfig = {
+            id: paramKey,
+            defaultValue: { mode: "static", config: { value: paramValue } },
+            hideFromForm: true,
+          };
+
+          lastColumn.fields.push(prefillField);
+        }
+      });
+      return;
     }
-  }
 
-  /**
-   * Processes all URL parameters without filtering (fallback mode for backward compatibility).
-   */
-  private processAllUrlParameters(
-    urlParams: Record<string, string>,
-    lastColumn: FieldGroup,
-  ) {
-    Object.keys(urlParams).forEach((paramKey) => {
-      const paramValue = urlParams[paramKey];
-
-      if (paramKey && paramValue) {
-        const prefillField = this.createPrefillField(
-          paramKey,
-          paramValue,
-          true,
-        );
-        lastColumn.fields.push(prefillField);
-      }
-    });
-  }
-
-  /**
-   * Processes only configured linkedEntities for security.
-   */
-  private processConfiguredParameters(
-    urlParams: Record<string, string>,
-    linkedEntities: FormFieldConfig[],
-    lastColumn: FieldGroup,
-  ) {
+    // Only process configured linked entities for security
     linkedEntities.forEach((linkedEntity) => {
       const paramId = linkedEntity.id;
       const paramValue = urlParams[paramId];
 
       if (paramId && paramValue) {
-        const hideFromForm = linkedEntity.hideFromForm ?? true;
-        const prefillField = this.createPrefillField(
-          paramId,
-          paramValue,
-          hideFromForm,
-        );
+        const prefillField: FormFieldConfig = {
+          id: paramId,
+          defaultValue: { mode: "static", config: { value: paramValue } },
+          hideFromForm: linkedEntity.hideFromForm ?? true, // Use configured value or default to true
+        };
+
         lastColumn.fields.push(prefillField);
       }
     });
-  }
-
-  /**
-   * Creates a prefilled form field configuration.
-   */
-  private createPrefillField(
-    id: string,
-    value: string,
-    hideFromForm: boolean,
-  ): FormFieldConfig {
-    return {
-      id,
-      defaultValue: { mode: "static", config: { value } },
-      hideFromForm,
-    };
   }
 
   /**

@@ -18,6 +18,7 @@ import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { getDefaultConfigEntity } from "../../core/config/testing-config-service";
+import { AlertService } from "../../core/alerts/alert.service";
 
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
@@ -256,7 +257,6 @@ describe("PublicFormComponent", () => {
           schoolId: "School:456",
           eventId: "Event:789",
           teacherId: "Teacher:101",
-          hackerId: "Hacker:malicious", // This should be ignored (not configured)
         },
       },
     };
@@ -278,7 +278,7 @@ describe("PublicFormComponent", () => {
       teacherId: "Teacher:101",
     };
 
-    // Verify only configured URL parameters were processed and added as hidden fields
+    // Verify all configured URL parameters were processed and added as hidden fields
     Object.entries(expectedParams).forEach(([paramId, paramValue]) => {
       expect(lastColumn?.fields).toContain(
         jasmine.objectContaining({
@@ -288,13 +288,45 @@ describe("PublicFormComponent", () => {
         }),
       );
     });
+  });
 
-    // Verify unauthorized parameter was ignored (security check)
-    const unauthorizedFields = lastColumn?.fields.filter((field) =>
-      typeof field === "string"
-        ? field === "hackerId"
-        : field.id === "hackerId",
+  it("should ignore unconfigured URL parameters for security", () => {
+    // Configure only specific entities
+    testFormConfig.linkedEntities = [{ id: "childId" }, { id: "schoolId" }];
+
+    const securityTestRoute = {
+      snapshot: {
+        queryParams: {
+          childId: "Child:123", // Allowed
+          schoolId: "School:456", // Allowed
+          hackerId: "Hacker:malicious", //should be ignored
+          adminId: "Admin:dangerous", //should be ignored
+        },
+      },
+    };
+
+    component["route"] = securityTestRoute as any;
+    component.formConfig = testFormConfig;
+    component.fieldGroups = testFormConfig.columns;
+
+    component["handleRelatedEntityFields"]();
+
+    const lastColumn = component.formConfig.columns.at(-1);
+
+    // Should process allowed parameters
+    expect(lastColumn?.fields).toContain(
+      jasmine.objectContaining({
+        id: "childId",
+        defaultValue: { mode: "static", config: { value: "Child:123" } },
+        hideFromForm: true,
+      }),
     );
+
+    // Should ignore unauthorized parameters
+    const unauthorizedFields = lastColumn?.fields.filter((field) => {
+      const fieldId = typeof field === "string" ? field : field.id;
+      return fieldId === "hackerId" || fieldId === "adminId";
+    });
     expect(unauthorizedFields.length).toBe(0);
   });
 
