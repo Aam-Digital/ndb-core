@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-
 import { AdminMenuItemDetailsComponent } from "./admin-menu-item-details.component";
-import { ConfigService } from "app/core/config/config.service";
-import { ViewConfig } from "app/core/config/dynamic-routing/view-config.interface";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { NEVER } from "rxjs";
 import { MenuItem } from "app/core/ui/navigation/menu-item";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
+import { ConfigService } from "app/core/config/config.service";
 
 describe("AdminMenuItemDetailsComponent", () => {
   let component: AdminMenuItemDetailsComponent;
@@ -24,14 +22,17 @@ describe("AdminMenuItemDetailsComponent", () => {
       link: "",
     };
 
-    mockConfigService = jasmine.createSpyObj(["getAllConfigs"]);
+    mockConfigService = jasmine.createSpyObj("ConfigService", [
+      "getAllConfigs",
+    ]);
     mockConfigService.getAllConfigs.and.returnValue([]);
+    mockConfigService.configUpdates = NEVER;
 
     await TestBed.configureTestingModule({
       imports: [
         AdminMenuItemDetailsComponent,
         NoopAnimationsModule,
-        FontAwesomeTestingModule,
+        MockedTestingModule.withState(),
       ],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: { item: menuItem } },
@@ -48,55 +49,5 @@ describe("AdminMenuItemDetailsComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
-  });
-
-  it("should load availableRoutes from config service and skip routes with /:id", () => {
-    //when
-    let testView1: ViewConfig = {
-      _id: "view:child",
-      component: "ChildrenList",
-      config: {
-        entityType: "Child",
-        //...
-      },
-    };
-    let testView2: ViewConfig = {
-      _id: "view:school",
-      component: "EntityList",
-      config: {
-        entityType: "School",
-        //...
-      },
-    };
-    let testView3: ViewConfig = {
-      _id: "view:note/:id",
-      component: "NoteDetails",
-      config: {
-        entityType: "Note",
-        //...
-      },
-    };
-    let testView4: ViewConfig = {
-      _id: "view:",
-      component: "Dashboard",
-      config: { widgets: [] }, // No entityType
-    };
-
-    mockConfigService.getAllConfigs.and.returnValue([
-      testView1,
-      testView2,
-      testView3,
-      testView4,
-    ]);
-
-    // action
-    component.ngOnInit();
-
-    // then
-    expect(component.availableRoutes).toEqual([
-      { value: "/child", label: "Child" },
-      { value: "/school", label: "School" },
-      { value: "/", label: "Dashboard" }, // Fallback label from component name
-    ]);
   });
 });

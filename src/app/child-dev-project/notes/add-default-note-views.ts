@@ -1,4 +1,5 @@
 import { ConfigMigration } from "../../core/config/config-migration";
+import { NoteDetailsConfig } from "./note-details/note-details-config.interface";
 
 /**
  * Add default view:note/:id NoteDetails config
@@ -16,7 +17,7 @@ export const addDefaultNoteDetailsConfig: ConfigMigration = (
   if (!configPart?.["data"]["view:note/:id"]) {
     configPart["data"]["view:note/:id"] = {
       component: "NoteDetails",
-      config: {},
+      config: getDefaultNoteDetailsConfig(),
     };
   }
   if (!configPart?.["data"]["view:eventnote/:id"]) {
@@ -30,3 +31,14 @@ export const addDefaultNoteDetailsConfig: ConfigMigration = (
 
   return configPart;
 };
+
+/**
+ * Default configuration for Note Details.
+ */
+export function getDefaultNoteDetailsConfig(): NoteDetailsConfig {
+  return {
+    topForm: ["date", "warningLevel", "category", "authors", "attachment"],
+    middleForm: ["subject", "text"],
+    bottomForm: ["children", "schools"],
+  };
+}

@@ -117,6 +117,13 @@
           >
             Select {{ (side.entityType | entityType)?.label }}
           </h3>
+
+          @if (side.multiSelect) {
+            <div class="selection-table-hint margin-bottom-regular" i18n>
+              Click on multiple rows below to match a group.
+            </div>
+          }
+
           <app-filter
             class="flex-row gap-regular flex-wrap"
             [filterConfig]="side.availableFilters"
@@ -124,6 +131,7 @@
             [entities]="side.availableEntities"
             (filterObjChange)="applySelectedFilters(side, $event)"
           ></app-filter>
+
           <app-entities-table
             [entityType]="side.entityType | entityType"
             [records]="side.availableEntities"
