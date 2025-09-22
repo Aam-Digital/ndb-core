@@ -324,11 +324,13 @@ export class EntitiesTableComponent<T extends Entity>
       return;
     }
 
-    // Find the index of the row in the sorted and filtered data
-    const sortedData = this.recordsDataSource.sortData(
-      this.recordsDataSource.data,
-      this.recordsDataSource.sort,
-    );
+    // Find the index of the row in the currently displayed (sorted and filtered) data
+    const sortedData = this.recordsDataSource.sortData
+      ? this.recordsDataSource.sortData(
+          this.recordsDataSource.data,
+          this.recordsDataSource.sort,
+        )
+      : this.recordsDataSource.data;
     const currentIndex = sortedData.indexOf(row);
 
     const isCheckboxClick =
