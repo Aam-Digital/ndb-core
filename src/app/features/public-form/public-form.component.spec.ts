@@ -239,7 +239,15 @@ describe("PublicFormComponent", () => {
     );
   });
 
-  it("should process ALL URL parameters and create prefilled fields for multi-entity magic links", () => {
+  it("should process configured URL parameters and create prefilled fields for multi-entity magic links", () => {
+    // Configure which entities are allowed to be linked (security feature)
+    testFormConfig.linkedEntities = [
+      { id: "childId" },
+      { id: "schoolId" },
+      { id: "eventId" },
+      { id: "teacherId" },
+    ];
+
     // Create a mock ActivatedRoute with multiple URL parameters
     const multiParamRoute = {
       snapshot: {
@@ -248,6 +256,7 @@ describe("PublicFormComponent", () => {
           schoolId: "School:456",
           eventId: "Event:789",
           teacherId: "Teacher:101",
+          hackerId: "Hacker:malicious", // This should be ignored (not configured)
         },
       },
     };
@@ -269,7 +278,7 @@ describe("PublicFormComponent", () => {
       teacherId: "Teacher:101",
     };
 
-    // Verify ALL URL parameters were processed and added as hidden fields
+    // Verify only configured URL parameters were processed and added as hidden fields
     Object.entries(expectedParams).forEach(([paramId, paramValue]) => {
       expect(lastColumn?.fields).toContain(
         jasmine.objectContaining({
@@ -279,6 +288,14 @@ describe("PublicFormComponent", () => {
         }),
       );
     });
+
+    // Verify unauthorized parameter was ignored (security check)
+    const unauthorizedFields = lastColumn?.fields.filter((field) =>
+      typeof field === "string"
+        ? field === "hackerId"
+        : field.id === "hackerId",
+    );
+    expect(unauthorizedFields.length).toBe(0);
   });
 
   it("should update defaultValue for a field in prefilled that is already visible", fakeAsync(() => {

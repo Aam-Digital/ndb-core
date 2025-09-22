@@ -169,8 +169,8 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   /**
-   * Process ALL URL parameters to create prefilled fields automatically.
-   * This allows any URL parameter to be used for entity linking without prior configuration.
+   * Processes URL parameters to create prefilled fields for entity linking.
+   * Supports both configured security mode and automatic fallback mode.
    */
   private handleRelatedEntityFields() {
     const urlParams = this.route.snapshot?.queryParams || {};
@@ -180,20 +180,89 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       return;
     }
 
-    // Process ALL URL parameters automatically
+    const linkedEntities = this.getLinkedEntities();
+
+    if (linkedEntities.length === 0) {
+      this.processAllUrlParameters(urlParams, lastColumn);
+    } else {
+      this.processConfiguredParameters(urlParams, linkedEntities, lastColumn);
+    }
+  }
+
+  /**
+   * Processes all URL parameters without filtering (fallback mode for backward compatibility).
+   */
+  private processAllUrlParameters(
+    urlParams: Record<string, string>,
+    lastColumn: FieldGroup,
+  ) {
     Object.keys(urlParams).forEach((paramKey) => {
       const paramValue = urlParams[paramKey];
 
       if (paramKey && paramValue) {
-        const prefillField: FormFieldConfig = {
-          id: paramKey,
-          defaultValue: { mode: "static", config: { value: paramValue } },
-          hideFromForm: true, // Hide all URL parameter fields by default
-        };
-
+        const prefillField = this.createPrefillField(
+          paramKey,
+          paramValue,
+          true,
+        );
         lastColumn.fields.push(prefillField);
       }
     });
+  }
+
+  /**
+   * Processes only configured linkedEntities for security.
+   */
+  private processConfiguredParameters(
+    urlParams: Record<string, string>,
+    linkedEntities: FormFieldConfig[],
+    lastColumn: FieldGroup,
+  ) {
+    linkedEntities.forEach((linkedEntity) => {
+      const paramId = linkedEntity.id;
+      const paramValue = urlParams[paramId];
+
+      if (paramId && paramValue) {
+        const hideFromForm = linkedEntity.hideFromForm ?? true;
+        const prefillField = this.createPrefillField(
+          paramId,
+          paramValue,
+          hideFromForm,
+        );
+        lastColumn.fields.push(prefillField);
+      }
+    });
+  }
+
+  /**
+   * Creates a prefilled form field configuration.
+   */
+  private createPrefillField(
+    id: string,
+    value: string,
+    hideFromForm: boolean,
+  ): FormFieldConfig {
+    return {
+      id,
+      defaultValue: { mode: "static", config: { value } },
+      hideFromForm,
+    };
+  }
+
+  /**
+   * Gets all linked entities, supporting both legacy single linkedEntity
+   * and new multiple linkedEntities configurations.
+   */
+  private getLinkedEntities(): FormFieldConfig[] {
+    if (this.formConfig.linkedEntities?.length) {
+      return this.formConfig.linkedEntities.filter((entity) => entity?.id);
+    }
+
+    if (this.formConfig.linkedEntity?.id) {
+      return [this.formConfig.linkedEntity];
+    }
+
+    return [];
   }
 
   private async initForm() {
