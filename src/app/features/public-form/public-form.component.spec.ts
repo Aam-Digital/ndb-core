@@ -52,6 +52,7 @@ describe("PublicFormComponent", () => {
             snapshot: {
               paramMap: new Map([["id", FORM_ID]]),
               queryParamMap: new Map([["childId", "Child:3"]]),
+              queryParams: { childId: "Child:3" },
             },
           },
         },
