@@ -62,7 +62,7 @@ export class EntityFieldLabelComponent implements OnChanges {
   );
 
   constructor() {
-    // Use effect to react to schema updates
+    // Use effect to react to schema updates and automatically runs code whenever any signals it depends on change.
     effect(() => {
       this.schemaUpdateSignal();
       if (this._entityType) {
