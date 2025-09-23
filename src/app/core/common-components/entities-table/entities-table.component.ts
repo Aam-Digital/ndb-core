@@ -93,7 +93,7 @@ export class EntitiesTableComponent<T extends Entity>
     this.isLoading = false;
   }
 
-  private lastSelectedIndex: number = null;
+  private lastSelectedRow: TableRow<T> | null = null;
   private lastSelection: boolean = null;
   _records: T[] = [];
   /** data displayed in the template's table */
@@ -269,7 +269,9 @@ export class EntitiesTableComponent<T extends Entity>
 
   selectRow(row: TableRow<T>, checked: boolean) {
     if (checked) {
-      this.selectedRecords.push(row.record);
+      if (!this.selectedRecords.includes(row.record)) {
+        this.selectedRecords.push(row.record);
+      }
     } else {
       const index = this.selectedRecords.indexOf(row.record);
       if (index > -1) {
@@ -324,27 +326,32 @@ export class EntitiesTableComponent<T extends Entity>
       return;
     }
 
-    // Find the index of the row in the sorted and filtered data
-    const sortedData = this.recordsDataSource.sortData(
-      this.recordsDataSource.data,
-      this.recordsDataSource.sort,
-    );
-    const currentIndex = sortedData.indexOf(row);
+    const selectedRows = this.getSelectedRows();
+    const currentIndex = selectedRows.indexOf(row);
+    const anchorIndex = this.lastSelectedRow
+      ? selectedRows.indexOf(this.lastSelectedRow)
+      : -1;
 
     const isCheckboxClick =
       event.target instanceof HTMLInputElement &&
       event.target.type === "checkbox";
 
-    if (event.shiftKey && this.lastSelectedIndex !== null) {
-      const start = Math.min(this.lastSelectedIndex, currentIndex);
-      const end = Math.max(this.lastSelectedIndex, currentIndex);
+    const canRangeSelect =
+      event.shiftKey &&
+      this.lastSelectedRow &&
+      anchorIndex !== -1 &&
+      currentIndex !== -1;
+
+    if (canRangeSelect) {
+      const start = Math.min(anchorIndex, currentIndex);
+      const end = Math.max(anchorIndex, currentIndex);
       const shouldCheck =
         this.lastSelection !== null
           ? !this.lastSelection
           : !this.selectedRecords.includes(row.record);
 
       for (let i = start; i <= end; i++) {
-        const rowToSelect = sortedData[i];
+        const rowToSelect = selectedRows[i];
         const isSelected = this.selectedRecords.includes(rowToSelect.record);
 
         if (shouldCheck && !isSelected) {
@@ -359,9 +366,9 @@ export class EntitiesTableComponent<T extends Entity>
     } else {
       const isSelected = this.selectedRecords.includes(row.record);
       this.selectRow(row, !isSelected);
-      this.lastSelectedIndex = currentIndex;
       this.lastSelection = isSelected;
     }
+    this.lastSelectedRow = currentIndex !== -1 ? row : null;
 
     if (isCheckboxClick) {
       this.onRowClick(row, event);
@@ -422,6 +429,26 @@ export class EntitiesTableComponent<T extends Entity>
     dataSource.filterPredicate = (data, filter) =>
       entityFilterPredicate(data.record, filter);
     return dataSource;
+  }
+
+  private getSelectedRows(): TableRow<T>[] {
+    const dataSource = this.recordsDataSource;
+    const filteredRows = dataSource.filteredData ?? dataSource.data ?? [];
+    const workingRows = [...filteredRows];
+
+    const sorter = dataSource.sort;
+    const sortedRows =
+      sorter && sorter.active
+        ? dataSource.sortData(workingRows, sorter)
+        : workingRows;
+
+    const paginator = dataSource.paginator;
+    if (!paginator) {
+      return sortedRows;
+    }
+
+    const startIndex = paginator.pageIndex * paginator.pageSize;
+    return sortedRows.slice(startIndex, startIndex + paginator.pageSize);
   }
 
   private inferDefaultSort(): Sort {
