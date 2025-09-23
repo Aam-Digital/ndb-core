@@ -1,12 +1,8 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  inject,
-  effect,
-} from "@angular/core";
+import { Component, Signal, computed, inject, input } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { AdminEntityService } from "../../admin/admin-entity.service";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityConstructor } from "../../entity/model/entity";
 import {
   ColumnConfig,
@@ -14,9 +10,6 @@ import {
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { AdminEntityService } from "../../admin/admin-entity.service";
-import { toSignal } from "@angular/core/rxjs-interop";
 
 /**
  * Generic component to display the label of one form field of an entity
@@ -27,74 +20,62 @@ import { toSignal } from "@angular/core/rxjs-interop";
   templateUrl: "./entity-field-label.component.html",
   imports: [MatTooltipModule],
 })
-export class EntityFieldLabelComponent implements OnChanges {
+export class EntityFieldLabelComponent {
   private readonly entityFormService = inject(EntityFormService);
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly adminEntityService = inject(AdminEntityService);
 
-  /** field id or full config */
-  @Input() field: ColumnConfig;
-  /** full field config extended from schema (used internally and for template) */
-  _field: FormFieldConfig;
+  private schemaUpdateSignal: Signal<void> = toSignal(
+    this.adminEntityService.entitySchemaUpdated,
+    {
+      initialValue: null,
+    },
+  );
 
-  /** entity type to look up the schema details for the given field */
-  @Input() entityType: EntityConstructor | string;
+  /**
+   * field id or full config
+   */
+  field: Signal<ColumnConfig> = input.required();
+
+  /**
+   * entity type to look up the schema details for the given field
+   */
+  entityType: Signal<EntityConstructor | undefined> = input(undefined, {
+    transform: (value: EntityConstructor | string | undefined) => {
+      if (!value) {
+        return undefined;
+      }
+      if (typeof value === "string") {
+        return this.entityRegistry.get(value);
+      }
+      return value;
+    }
+  });
 
   /**
    * Custom columns in addition to the entity type's schema
    */
-  @Input() set additionalFields(value: ColumnConfig[]) {
-    this._additionalFields = (value ?? []).map((c) =>
-      this._entityType
-        ? this.entityFormService.extendFormFieldConfig(c, this._entityType)
-        : toFormFieldConfig(c),
-    );
-  }
-  /** Custom overwrites or additional fields to be displayed for example "Age", "School (Attendance)" */
-  _additionalFields: FormFieldConfig[] = [];
+  additionalFields: Signal<ColumnConfig[]> = input([], {
+    transform: (value: ColumnConfig[] | undefined) => value ?? [],
+  });
 
-  _entityType: EntityConstructor;
+  /**
+   * full field config extended from schema (used internally and for template)
+   */
+  _field: Signal<FormFieldConfig> = computed(() => {
+    this.schemaUpdateSignal(); // re-evaluate when schema updates
 
-  // Convert the schema update observable to a signal
-  private readonly schemaUpdateSignal = toSignal(
-    this.adminEntityService.entitySchemaUpdated,
-    { initialValue: null },
-  );
-
-  constructor() {
-    // Use effect to react to schema updates and automatically runs code whenever any signals it depends on change.
-    effect(() => {
-      this.schemaUpdateSignal();
-      if (this._entityType) {
-        this.updateField();
-      }
-    });
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.entityType) {
-      this._entityType =
-        typeof this.entityType === "string"
-          ? this.entityRegistry.get(this.entityType)
-          : this.entityType;
+    if (!this.entityType()) {
+      return undefined;
     }
-    if (changes.field || changes.entityType) {
-      this.updateField();
-    }
-  }
 
-  private updateField() {
-    if (!this.entityType) {
-      this._field = undefined;
-      return;
-    }
-    const customFieldConfig = this._additionalFields?.find(
-      (col) => col.id === this.field,
+    const customFieldConfig: ColumnConfig = this.additionalFields().find(
+      (col) => toFormFieldConfig(col).id === this.field(),
     );
 
-    this._field = this.entityFormService.extendFormFieldConfig(
-      customFieldConfig ?? this.field,
-      this._entityType,
+    return this.entityFormService.extendFormFieldConfig(
+      customFieldConfig ?? this.field(),
+      this.entityType(),
     );
-  }
+  });
 }
