@@ -49,7 +49,7 @@ export class EntityFieldLabelComponent {
         return this.entityRegistry.get(value);
       }
       return value;
-    }
+    },
   });
 
   /**

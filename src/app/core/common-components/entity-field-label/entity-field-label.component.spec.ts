@@ -5,7 +5,10 @@ import { Subject } from "rxjs";
 
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { AdminEntityService } from "../../admin/admin-entity.service";
-import { DatabaseEntity, EntityRegistry } from "../../entity/database-entity.decorator";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+} from "../../entity/database-entity.decorator";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { Entity } from "../../entity/model/entity";
 import { FormFieldConfig } from "../entity-form/FormConfig";
@@ -42,7 +45,11 @@ describe("EntityFieldLabelComponent", () => {
     schemaUpdateSubject = new Subject<void>();
 
     await TestBed.configureTestingModule({
-      imports: [EntityFieldLabelComponent, MatTooltipModule, MockedTestingModule.withState()],
+      imports: [
+        EntityFieldLabelComponent,
+        MatTooltipModule,
+        MockedTestingModule.withState(),
+      ],
       providers: [
         {
           provide: AdminEntityService,
@@ -56,8 +63,8 @@ describe("EntityFieldLabelComponent", () => {
     fixture = TestBed.createComponent(EntityFieldLabelComponent);
     component = fixture.componentInstance;
     entityRegistry = TestBed.inject(EntityRegistry);
-    
-    spyOn(entityRegistry, 'get').and.returnValue(TestLabelEntity);
+
+    spyOn(entityRegistry, "get").and.returnValue(TestLabelEntity);
   });
 
   afterEach(() => {
@@ -72,36 +79,38 @@ describe("EntityFieldLabelComponent", () => {
     const fieldConfig: FormFieldConfig = {
       id: "testField",
       label: "Custom Field Label",
-      description: "Custom field description"
+      description: "Custom field description",
     };
-    
-    fixture.componentRef.setInput('field', fieldConfig);
-    fixture.componentRef.setInput('entityType', TestLabelEntity);
+
+    fixture.componentRef.setInput("field", fieldConfig);
+    fixture.componentRef.setInput("entityType", TestLabelEntity);
     fixture.detectChanges();
 
-    const spanElement = fixture.debugElement.query(By.css('span'));
+    const spanElement = fixture.debugElement.query(By.css("span"));
     expect(spanElement).toBeTruthy();
-    expect(spanElement.nativeElement.textContent.trim()).toBe("Custom Field Label");
+    expect(spanElement.nativeElement.textContent.trim()).toBe(
+      "Custom Field Label",
+    );
     expect(component._field().description).toBe("Custom field description");
   });
 
   it("should display the correct label for a given field string id and entityType", () => {
-    fixture.componentRef.setInput('field', "name");
-    fixture.componentRef.setInput('entityType', TestLabelEntity);
+    fixture.componentRef.setInput("field", "name");
+    fixture.componentRef.setInput("entityType", TestLabelEntity);
     fixture.detectChanges();
 
-    const spanElement = fixture.debugElement.query(By.css('span'));
+    const spanElement = fixture.debugElement.query(By.css("span"));
     expect(spanElement).toBeTruthy();
     expect(spanElement.nativeElement.textContent.trim()).toBe("Test Name");
     expect(component._field().description).toBe("A test name field");
   });
 
   it("should display the correct label for the given field id and entityType string id", () => {
-    fixture.componentRef.setInput('field', "testNumber");
-    fixture.componentRef.setInput('entityType', "TestEntity");
+    fixture.componentRef.setInput("field", "testNumber");
+    fixture.componentRef.setInput("entityType", "TestEntity");
     fixture.detectChanges();
 
-    const spanElement = fixture.debugElement.query(By.css('span'));
+    const spanElement = fixture.debugElement.query(By.css("span"));
     expect(spanElement).toBeTruthy();
     expect(spanElement.nativeElement.textContent.trim()).toBe("Test Number");
     expect(component._field().description).toBe("A test number field");
@@ -111,57 +120,60 @@ describe("EntityFieldLabelComponent", () => {
     const additionalFieldConfig: FormFieldConfig = {
       id: "customField",
       label: "Custom Additional Field",
-      description: "This is a custom additional field"
+      description: "This is a custom additional field",
     };
-    
-    fixture.componentRef.setInput('field', "customField");
-    fixture.componentRef.setInput('entityType', TestLabelEntity);
-    fixture.componentRef.setInput('additionalFields', [additionalFieldConfig]);
+
+    fixture.componentRef.setInput("field", "customField");
+    fixture.componentRef.setInput("entityType", TestLabelEntity);
+    fixture.componentRef.setInput("additionalFields", [additionalFieldConfig]);
     fixture.detectChanges();
 
-    const spanElement = fixture.debugElement.query(By.css('span'));
+    const spanElement = fixture.debugElement.query(By.css("span"));
     expect(spanElement).toBeTruthy();
-    expect(spanElement.nativeElement.textContent.trim()).toBe("Custom Additional Field");
+    expect(spanElement.nativeElement.textContent.trim()).toBe(
+      "Custom Additional Field",
+    );
   });
 
   it("should fallback to field id when no label is available", () => {
     const fieldConfigWithoutLabel: FormFieldConfig = {
-      id: "fieldWithoutLabel"
+      id: "fieldWithoutLabel",
     };
-    
-    fixture.componentRef.setInput('field', fieldConfigWithoutLabel);
-    fixture.componentRef.setInput('entityType', TestLabelEntity);
+
+    fixture.componentRef.setInput("field", fieldConfigWithoutLabel);
+    fixture.componentRef.setInput("entityType", TestLabelEntity);
     fixture.detectChanges();
 
-    const spanElement = fixture.debugElement.query(By.css('span'));
+    const spanElement = fixture.debugElement.query(By.css("span"));
     expect(spanElement).toBeTruthy();
-    expect(spanElement.nativeElement.textContent.trim()).toBe("fieldWithoutLabel");
+    expect(spanElement.nativeElement.textContent.trim()).toBe(
+      "fieldWithoutLabel",
+    );
   });
 
   it("should not display anything when no entityType is provided", () => {
-    fixture.componentRef.setInput('field', "name");
-    fixture.componentRef.setInput('entityType', undefined);
+    fixture.componentRef.setInput("field", "name");
+    fixture.componentRef.setInput("entityType", undefined);
     fixture.detectChanges();
 
-    const spanElement = fixture.debugElement.query(By.css('span'));
+    const spanElement = fixture.debugElement.query(By.css("span"));
     expect(spanElement).toBeFalsy();
   });
 
   it("should update when field changes", () => {
     // Set initial field
-    fixture.componentRef.setInput('field', "name");
-    fixture.componentRef.setInput('entityType', TestLabelEntity);
+    fixture.componentRef.setInput("field", "name");
+    fixture.componentRef.setInput("entityType", TestLabelEntity);
     fixture.detectChanges();
 
-    let spanElement = fixture.debugElement.query(By.css('span'));
+    let spanElement = fixture.debugElement.query(By.css("span"));
     expect(spanElement.nativeElement.textContent.trim()).toBe("Test Name");
 
     // Change to different field
-    fixture.componentRef.setInput('field', "testNumber");
+    fixture.componentRef.setInput("field", "testNumber");
     fixture.detectChanges();
 
-    spanElement = fixture.debugElement.query(By.css('span'));
+    spanElement = fixture.debugElement.query(By.css("span"));
     expect(spanElement.nativeElement.textContent.trim()).toBe("Test Number");
   });
-
 });
