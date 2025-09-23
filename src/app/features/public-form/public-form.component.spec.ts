@@ -223,7 +223,7 @@ describe("PublicFormComponent", () => {
   }));
 
   it("should add hidden prefilled field for related entity when query param exists", () => {
-    testFormConfig.linkedEntity = { id: "childId", hideFromForm: true };
+    testFormConfig.linkedEntities = [{ id: "childId", hideFromForm: true }];
     component.formConfig = testFormConfig;
     component.fieldGroups = testFormConfig.columns;
 

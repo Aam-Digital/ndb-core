@@ -170,10 +170,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
   /**
    * Processes URL parameters to create prefilled fields for entity linking.
-   *
-   * Security modes:
-   * - If linkedEntities configured: Only process configured parameters (security filtering)
-   * - If no linkedEntities configured: Process ALL URL parameters (backward compatibility)
+   * Only processes URL parameters that match configured linkedEntities
    */
   private handleRelatedEntityFields() {
     const urlParams = this.route.snapshot?.queryParams || {};
@@ -182,22 +179,11 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       return;
     }
 
-    const hasLinkedEntityConfig = this.hasLinkedEntityConfiguration();
+    const linkedEntities = this.getLinkedEntities();
 
-    if (!hasLinkedEntityConfig) {
-      Object.entries(urlParams).forEach(([paramKey, paramValue]) => {
-        if (paramKey && paramValue) {
-          this.applyPrefill(
-            paramKey,
-            { mode: "static", config: { value: paramValue } },
-            true,
-          );
-        }
-      });
+    if (linkedEntities.length === 0) {
       return;
     }
-
-    const linkedEntities = this.getLinkedEntities();
 
     // Only process configured linked entities for security
     const configuredParams = new Set(linkedEntities.map((entity) => entity.id));
@@ -231,30 +217,8 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     }
   }
 
-  private hasLinkedEntityConfiguration(): boolean {
-    return !!(this.formConfig.linkedEntities || this.formConfig.linkedEntity);
-  }
-
-  /**
-   * Gets all linked entities, supporting both legacy single linkedEntity
-   * and new multiple linkedEntities configurations.
-   */
   private getLinkedEntities(): FormFieldConfig[] {
-    // Prioritize new linkedEntities array over legacy linkedEntity
-    if (this.formConfig.linkedEntities?.length) {
-      return this.formConfig.linkedEntities.filter((entity) => entity?.id);
-    }
-
-    // Handle legacy linkedEntity (can be single object or array due to migration)
-    if (this.formConfig.linkedEntity) {
-      if (Array.isArray(this.formConfig.linkedEntity)) {
-        return this.formConfig.linkedEntity.filter((entity) => entity?.id);
-      } else if (this.formConfig.linkedEntity.id) {
-        return [this.formConfig.linkedEntity];
-      }
-    }
-
-    return [];
+    return this.formConfig.linkedEntities?.filter((entity) => entity?.id) || [];
   }
 
   private async initForm() {

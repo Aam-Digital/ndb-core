@@ -28,7 +28,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   styleUrls: ["./edit-public-form-related-entities.component.scss"],
 })
 export class EditPublicFormRelatedEntitiesComponent
-  extends EditComponent<FormFieldConfig | FormFieldConfig[]>
+  extends EditComponent<FormFieldConfig[]>
   implements OnInit
 {
   entityConstructor: EntityConstructor;

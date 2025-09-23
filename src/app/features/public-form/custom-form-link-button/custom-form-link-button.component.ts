@@ -36,7 +36,9 @@ export class CustomFormLinkButtonComponent implements OnInit {
     if (!this.linkedEntity || !this.formEntityType) return;
 
     const allForms = await this.entityMapper.loadType(PublicFormConfig);
-    const matchingForms = allForms.filter((config) => config.linkedEntity?.id);
+    const matchingForms = allForms.filter(
+      (config) => config.linkedEntities?.length > 0,
+    );
 
     this.matchingCustomForms = [];
 
