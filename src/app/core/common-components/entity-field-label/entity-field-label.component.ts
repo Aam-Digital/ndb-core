@@ -28,9 +28,9 @@ import { toSignal } from "@angular/core/rxjs-interop";
   imports: [MatTooltipModule],
 })
 export class EntityFieldLabelComponent implements OnChanges {
-  private entityFormService = inject(EntityFormService);
-  private entityRegistry = inject(EntityRegistry);
-  private adminEntityService = inject(AdminEntityService);
+  private readonly entityFormService = inject(EntityFormService);
+  private readonly entityRegistry = inject(EntityRegistry);
+  private readonly adminEntityService = inject(AdminEntityService);
 
   /** field id or full config */
   @Input() field: ColumnConfig;
@@ -56,7 +56,7 @@ export class EntityFieldLabelComponent implements OnChanges {
   _entityType: EntityConstructor;
 
   // Convert the schema update observable to a signal
-  private schemaUpdateSignal = toSignal(
+  private readonly schemaUpdateSignal = toSignal(
     this.adminEntityService.entitySchemaUpdated,
     { initialValue: null },
   );
