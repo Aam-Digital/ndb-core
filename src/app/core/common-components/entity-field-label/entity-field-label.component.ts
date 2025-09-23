@@ -4,6 +4,7 @@ import {
   OnChanges,
   SimpleChanges,
   inject,
+  effect,
 } from "@angular/core";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityConstructor } from "../../entity/model/entity";
@@ -14,6 +15,8 @@ import {
 } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { AdminEntityService } from "../../admin/admin-entity.service";
+import { toSignal } from "@angular/core/rxjs-interop";
 
 /**
  * Generic component to display the label of one form field of an entity
@@ -27,6 +30,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 export class EntityFieldLabelComponent implements OnChanges {
   private entityFormService = inject(EntityFormService);
   private entityRegistry = inject(EntityRegistry);
+  private adminEntityService = inject(AdminEntityService);
 
   /** field id or full config */
   @Input() field: ColumnConfig;
@@ -50,6 +54,22 @@ export class EntityFieldLabelComponent implements OnChanges {
   _additionalFields: FormFieldConfig[] = [];
 
   _entityType: EntityConstructor;
+
+  // Convert the schema update observable to a signal
+  private schemaUpdateSignal = toSignal(
+    this.adminEntityService.entitySchemaUpdated,
+    { initialValue: null },
+  );
+
+  constructor() {
+    // Use effect to react to schema updates
+    effect(() => {
+      this.schemaUpdateSignal();
+      if (this._entityType) {
+        this.updateField();
+      }
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.entityType) {
