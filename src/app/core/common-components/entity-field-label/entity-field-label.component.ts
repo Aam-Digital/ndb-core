@@ -25,7 +25,7 @@ export class EntityFieldLabelComponent {
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly adminEntityService = inject(AdminEntityService);
 
-  private schemaUpdateSignal: Signal<void> = toSignal(
+  private readonly schemaUpdateSignal: Signal<void> = toSignal(
     this.adminEntityService.entitySchemaUpdated,
     {
       initialValue: null,
