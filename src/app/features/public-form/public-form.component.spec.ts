@@ -18,7 +18,6 @@ import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { getDefaultConfigEntity } from "../../core/config/testing-config-service";
-import { AlertService } from "../../core/alerts/alert.service";
 
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;

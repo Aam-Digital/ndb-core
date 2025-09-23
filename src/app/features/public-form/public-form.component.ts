@@ -170,51 +170,64 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
   /**
    * Processes URL parameters to create prefilled fields for entity linking.
-   * Supports both configured security mode and automatic fallback mode.
+   *
+   * Security modes:
+   * - If linkedEntities configured: Only process configured parameters (security filtering)
+   * - If no linkedEntities configured: Process ALL URL parameters (backward compatibility)
    */
   private handleRelatedEntityFields() {
     const urlParams = this.route.snapshot?.queryParams || {};
     const lastColumn = this.formConfig.columns?.at(-1);
 
-    if (!lastColumn) {
+    if (!lastColumn || Object.keys(urlParams).length === 0) {
       return;
     }
 
     const linkedEntities = this.getLinkedEntities();
 
-    // If no linkedEntities configured, process ALL URL parameters for backward compatibility
     if (linkedEntities.length === 0) {
-      Object.keys(urlParams).forEach((paramKey) => {
-        const paramValue = urlParams[paramKey];
-
+      Object.entries(urlParams).forEach(([paramKey, paramValue]) => {
         if (paramKey && paramValue) {
-          const prefillField: FormFieldConfig = {
+          lastColumn.fields.push({
             id: paramKey,
             defaultValue: { mode: "static", config: { value: paramValue } },
             hideFromForm: true,
-          };
-
-          lastColumn.fields.push(prefillField);
+          });
         }
       });
       return;
     }
 
     // Only process configured linked entities for security
+    const configuredParams = new Set(linkedEntities.map((entity) => entity.id));
+    const ignoredParams: string[] = [];
+
+    // Process configured parameters
     linkedEntities.forEach((linkedEntity) => {
-      const paramId = linkedEntity.id;
-      const paramValue = urlParams[paramId];
-
-      if (paramId && paramValue) {
-        const prefillField: FormFieldConfig = {
-          id: paramId,
+      const paramValue = urlParams[linkedEntity.id];
+      if (linkedEntity.id && paramValue) {
+        lastColumn.fields.push({
+          id: linkedEntity.id,
           defaultValue: { mode: "static", config: { value: paramValue } },
-          hideFromForm: linkedEntity.hideFromForm ?? true, // Use configured value or default to true
-        };
-
-        lastColumn.fields.push(prefillField);
+          hideFromForm: linkedEntity.hideFromForm ?? true,
+        });
       }
     });
+
+    // Track ignored parameters for security warning
+    Object.keys(urlParams).forEach((paramKey) => {
+      if (!configuredParams.has(paramKey)) {
+        ignoredParams.push(paramKey);
+      }
+    });
+
+    if (ignoredParams.length > 0) {
+      this.snackbar.open(
+        $localize`Some URL parameters were ignored for security: ${ignoredParams.join(", ")}`,
+        undefined,
+        { duration: 5000 },
+      );
+    }
   }
 
   /**
@@ -222,12 +235,18 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
    * and new multiple linkedEntities configurations.
    */
   private getLinkedEntities(): FormFieldConfig[] {
+    // Prioritize new linkedEntities array over legacy linkedEntity
     if (this.formConfig.linkedEntities?.length) {
       return this.formConfig.linkedEntities.filter((entity) => entity?.id);
     }
 
-    if (this.formConfig.linkedEntity?.id) {
-      return [this.formConfig.linkedEntity];
+    // Handle legacy linkedEntity (can be single object or array due to migration)
+    if (this.formConfig.linkedEntity) {
+      if (Array.isArray(this.formConfig.linkedEntity)) {
+        return this.formConfig.linkedEntity.filter((entity) => entity?.id);
+      } else if (this.formConfig.linkedEntity.id) {
+        return [this.formConfig.linkedEntity];
+      }
     }
 
     return [];
