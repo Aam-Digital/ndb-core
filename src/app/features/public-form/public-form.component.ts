@@ -177,26 +177,27 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
    */
   private handleRelatedEntityFields() {
     const urlParams = this.route.snapshot?.queryParams || {};
-    const lastColumn = this.formConfig.columns?.at(-1);
 
-    if (!lastColumn || Object.keys(urlParams).length === 0) {
+    if (Object.keys(urlParams).length === 0) {
       return;
     }
 
-    const linkedEntities = this.getLinkedEntities();
+    const hasLinkedEntityConfig = this.hasLinkedEntityConfiguration();
 
-    if (linkedEntities.length === 0) {
+    if (!hasLinkedEntityConfig) {
       Object.entries(urlParams).forEach(([paramKey, paramValue]) => {
         if (paramKey && paramValue) {
-          lastColumn.fields.push({
-            id: paramKey,
-            defaultValue: { mode: "static", config: { value: paramValue } },
-            hideFromForm: true,
-          });
+          this.applyPrefill(
+            paramKey,
+            { mode: "static", config: { value: paramValue } },
+            true,
+          );
         }
       });
       return;
     }
+
+    const linkedEntities = this.getLinkedEntities();
 
     // Only process configured linked entities for security
     const configuredParams = new Set(linkedEntities.map((entity) => entity.id));
@@ -206,11 +207,11 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     linkedEntities.forEach((linkedEntity) => {
       const paramValue = urlParams[linkedEntity.id];
       if (linkedEntity.id && paramValue) {
-        lastColumn.fields.push({
-          id: linkedEntity.id,
-          defaultValue: { mode: "static", config: { value: paramValue } },
-          hideFromForm: linkedEntity.hideFromForm ?? true,
-        });
+        this.applyPrefill(
+          linkedEntity.id,
+          { mode: "static", config: { value: paramValue } },
+          linkedEntity.hideFromForm ?? true,
+        );
       }
     });
 
@@ -228,6 +229,10 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
         { duration: 5000 },
       );
     }
+  }
+
+  private hasLinkedEntityConfiguration(): boolean {
+    return !!(this.formConfig.linkedEntities || this.formConfig.linkedEntity);
   }
 
   /**
