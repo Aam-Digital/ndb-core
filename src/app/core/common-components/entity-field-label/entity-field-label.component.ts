@@ -62,20 +62,17 @@ export class EntityFieldLabelComponent {
   /**
    * full field config extended from schema (used internally and for template)
    */
-  _field: Signal<FormFieldConfig> = computed(() => {
+  _field: Signal<FormFieldConfig | undefined> = computed(() => {
     this.schemaUpdateSignal(); // re-evaluate when schema updates
 
-    if (!this.entityType()) {
-      return undefined;
-    }
-
-    const customFieldConfig: ColumnConfig = this.additionalFields().find(
-      (col) => toFormFieldConfig(col).id === this.field(),
+    const entityType = this.entityType();
+    if (!entityType) return undefined;
+    const customFieldConfig = this.additionalFields().find(
+      (col) => toFormFieldConfig(col).id === toFormFieldConfig(this.field()).id,
     );
-
     return this.entityFormService.extendFormFieldConfig(
       customFieldConfig ?? this.field(),
-      this.entityType(),
+      entityType,
     );
   });
 }
