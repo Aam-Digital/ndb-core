@@ -6,6 +6,8 @@ import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { SyncStateSubject } from "#src/app/core/session/session-type";
+import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 
 describe("AutomatedFieldMappingComponent", () => {
   let component: AutomatedFieldMappingComponent;
@@ -46,6 +48,8 @@ describe("AutomatedFieldMappingComponent", () => {
             valueToDatabaseFormat: (v) => v,
           },
         },
+        SyncStateSubject,
+        CurrentUserSubject,
       ],
     }).compileComponents();
 
