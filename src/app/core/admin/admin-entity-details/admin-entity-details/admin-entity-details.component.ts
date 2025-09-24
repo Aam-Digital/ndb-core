@@ -88,18 +88,18 @@ export class AdminEntityDetailsComponent {
   }
 
   /**
-   * Generate a unique identifier for a panel component
+   * Generate a unique identifier for a panel component/sections
    */
-  private getComponentId(panel: Panel, component: PanelComponent): string {
+  private getSectionId(panel: Panel, component: PanelComponent): string {
     const panelIndex = this.config.panels.indexOf(panel);
     const componentIndex = panel.components.indexOf(component);
     return `${panelIndex}-${componentIndex}-${component.component || "unknown"}`;
   }
 
   isSectionExpanded(panel: Panel, component: PanelComponent): boolean {
-    const componentId = this.getComponentId(panel, component);
+    const componentId = this.getSectionId(panel, component);
 
-    // Auto-expand if it's the only component in the panel
+    // Auto-expand if it's the only component/sections in the panel
     if (
       panel.components.length <= 1 &&
       !this.expandedSections().has(componentId)
@@ -111,7 +111,7 @@ export class AdminEntityDetailsComponent {
   }
 
   onSectionOpened(panel: Panel, component: PanelComponent) {
-    const componentId = this.getComponentId(panel, component);
+    const componentId = this.getSectionId(panel, component);
     this.expandedSections.update((sections) => {
       const newSections = new Set(sections);
       newSections.add(componentId);
@@ -120,7 +120,7 @@ export class AdminEntityDetailsComponent {
   }
 
   onSectionClosed(panel: Panel, component: PanelComponent) {
-    const componentId = this.getComponentId(panel, component);
+    const componentId = this.getSectionId(panel, component);
     this.expandedSections.update((sections) => {
       const newSections = new Set(sections);
       newSections.delete(componentId);
