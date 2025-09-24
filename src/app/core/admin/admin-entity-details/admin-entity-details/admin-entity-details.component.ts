@@ -17,6 +17,13 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { AdminTabsComponent } from "../../building-blocks/admin-tabs/admin-tabs.component";
 import { AdminTabTemplateDirective } from "../../building-blocks/admin-tabs/admin-tab-template.directive";
 import { MatDialog } from "@angular/material/dialog";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatIconModule } from "@angular/material/icon";
+import {
+  CdkDragDrop,
+  DragDropModule,
+  moveItemInArray,
+} from "@angular/cdk/drag-drop";
 import { WidgetComponentSelectComponent } from "#src/app/core/admin/admin-entity-details/widget-component-select/widget-component-select.component";
 
 @DynamicComponent("AdminEntityDetails")
@@ -38,6 +45,9 @@ import { WidgetComponentSelectComponent } from "#src/app/core/admin/admin-entity
     MatTooltipModule,
     AdminTabsComponent,
     AdminTabTemplateDirective,
+    MatExpansionModule,
+    MatIconModule,
+    DragDropModule,
   ],
 })
 export class AdminEntityDetailsComponent {
@@ -61,5 +71,17 @@ export class AdminEntityDetailsComponent {
           panel.components.push(sectionConfig);
         }
       });
+  }
+
+  onSectionDrop(panel: Panel, event: CdkDragDrop<PanelComponent[]>) {
+    if (
+      event.previousIndex === event.currentIndex ||
+      event.currentIndex < 0 ||
+      event.currentIndex >= panel.components.length
+    ) {
+      return;
+    }
+
+    moveItemInArray(panel.components, event.previousIndex, event.currentIndex);
   }
 }
