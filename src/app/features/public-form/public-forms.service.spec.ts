@@ -38,10 +38,7 @@ describe("PublicFormsService", () => {
     const config = new PublicFormConfig();
     config.linkedEntities = [{ id: "children", additional: "Child" }];
 
-    const result = await service.copyPublicFormLinkFromConfig(
-      config,
-      undefined,
-    );
+    const result = await service.copyPublicFormLinkFromConfig(config);
     expect(result).toBe(false); // No entity, no parameters
   });
 

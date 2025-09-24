@@ -49,53 +49,40 @@ export class PublicFormsService {
   }
 
   /**
-   * Copies the public form link to clipboard for the given entity.
-   * Only generates parameters for linkedEntities that match the entity's type.
+   * Copies the public form link to clipboard if a matching form exists for the given entity.
    */
   public async copyPublicFormLinkFromConfig(
     config: PublicFormConfig,
     entity?: Entity,
   ): Promise<boolean> {
-    // Early returns for invalid cases
-    if (!entity) {
-      return false; // No entity provided
-    }
+    let hasMatchingParameters = false;
 
-    if (!config.linkedEntities?.length) {
-      return false;
-    }
+    if (entity && config.linkedEntities?.length) {
+      const params = new URLSearchParams();
 
-    const entityType = entity.getConstructor?.()?.ENTITY_TYPE;
-    if (!entityType) {
-      return false; // Entity has no constructor/type
-    }
+      config.linkedEntities.forEach((entityConfig) => {
+        if (
+          entityConfig.id &&
+          entityConfig.additional?.toLowerCase() ===
+            entity.getConstructor?.()?.ENTITY_TYPE?.toLowerCase()
+        ) {
+          params.set(entityConfig.id, entity.getId());
+          hasMatchingParameters = true;
+        }
+      });
 
-    // Only add parameters for linkedEntities that match the entity's type
-    const params = new URLSearchParams();
-    config.linkedEntities.forEach((entityConfig) => {
-      if (
-        entityConfig.id &&
-        entityConfig.additional?.toLowerCase() === entityType.toLowerCase()
-      ) {
-        params.set(entityConfig.id, entity.getId());
+      if (hasMatchingParameters) {
+        const url = `${window.location.origin}/public-form/form/${config.route}?${params.toString()}`;
+        try {
+          await navigator.clipboard.writeText(url);
+        } catch {
+          // Clipboard access might fail in tests or unsupported browsers
+        }
+        this.alertService.addInfo("Link copied: " + url);
       }
-    });
-
-    if (!params.toString()) {
-      return false;
     }
 
-    // Generate and copy URL with parameters
-    const url = `${window.location.origin}/public-form/form/${config.route}?${params.toString()}`;
-
-    try {
-      await navigator.clipboard.writeText(url);
-      this.alertService.addInfo("Link copied: " + url);
-      return true;
-    } catch (error) {
-      // Clipboard API might not be available (e.g., in tests)
-      return false;
-    }
+    return hasMatchingParameters;
   }
 
   /**
