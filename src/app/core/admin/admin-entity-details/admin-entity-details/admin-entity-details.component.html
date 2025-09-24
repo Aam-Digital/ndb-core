@@ -32,7 +32,9 @@
         ) {
           <mat-expansion-panel
             class="section-wrapper"
-            [expanded]="false"
+            [expanded]="isSectionExpanded(item, componentConfig)"
+            (opened)="onSectionOpened(item, componentConfig)"
+            (closed)="onSectionClosed(item, componentConfig)"
             cdkDrag
             cdkDragLockAxis="y"
           >

@@ -1,4 +1,4 @@
-import { Component, Input, inject } from "@angular/core";
+import { Component, Input, inject, signal } from "@angular/core";
 import {
   EntityDetailsConfig,
   Panel,
@@ -52,6 +52,8 @@ import { WidgetComponentSelectComponent } from "#src/app/core/admin/admin-entity
 })
 export class AdminEntityDetailsComponent {
   private dialog = inject(MatDialog);
+  /** Track expanded sections */
+  private expandedSections = signal<Set<string>>(new Set());
 
   @Input() entityConstructor: EntityConstructor;
   @Input() config: EntityDetailsConfig;
@@ -83,5 +85,46 @@ export class AdminEntityDetailsComponent {
     }
 
     moveItemInArray(panel.components, event.previousIndex, event.currentIndex);
+  }
+
+  /**
+   * Generate a unique identifier for a panel component
+   */
+  private getComponentId(panel: Panel, component: PanelComponent): string {
+    const panelIndex = this.config.panels.indexOf(panel);
+    const componentIndex = panel.components.indexOf(component);
+    return `${panelIndex}-${componentIndex}-${component.component || "unknown"}`;
+  }
+
+  isSectionExpanded(panel: Panel, component: PanelComponent): boolean {
+    const componentId = this.getComponentId(panel, component);
+
+    // Auto-expand if it's the only component in the panel
+    if (
+      panel.components.length <= 1 &&
+      !this.expandedSections().has(componentId)
+    ) {
+      return true;
+    }
+
+    return this.expandedSections().has(componentId);
+  }
+
+  onSectionOpened(panel: Panel, component: PanelComponent) {
+    const componentId = this.getComponentId(panel, component);
+    this.expandedSections.update((sections) => {
+      const newSections = new Set(sections);
+      newSections.add(componentId);
+      return newSections;
+    });
+  }
+
+  onSectionClosed(panel: Panel, component: PanelComponent) {
+    const componentId = this.getComponentId(panel, component);
+    this.expandedSections.update((sections) => {
+      const newSections = new Set(sections);
+      newSections.delete(componentId);
+      return newSections;
+    });
   }
 }
