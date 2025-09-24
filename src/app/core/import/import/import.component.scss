@@ -24,6 +24,7 @@ mat-stepper {
 }
 :host ::ng-deep .mat-horizontal-content-container {
   overflow-y: auto;
+  overflow-x: auto;
 }
 
 .stepper-navigation {
