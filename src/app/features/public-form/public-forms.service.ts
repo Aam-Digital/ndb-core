@@ -49,31 +49,53 @@ export class PublicFormsService {
   }
 
   /**
-   * Copies the public form link to clipboard if a matching form exists for the given entity.
-   * - It checks PublicFormConfig entries to find those linked to the current entity type via linkedEntities.
-   * - If matching forms are found, it generates the link including the entity ID as query parameters and copies it.
-   *
-   * If no entity is provided, copies the public form link for the entity type (list-level) without any query parameter.
+   * Copies the public form link to clipboard for the given entity.
+   * Only generates parameters for linkedEntities that match the entity's type.
    */
   public async copyPublicFormLinkFromConfig(
     config: PublicFormConfig,
     entity?: Entity,
   ): Promise<boolean> {
-    let url = `${window.location.origin}/public-form/form/${config.route}`;
-    if (entity && config.linkedEntities?.length) {
-      const params = new URLSearchParams();
-      config.linkedEntities.forEach((entityConfig) => {
-        if (entityConfig.id) {
-          params.set(entityConfig.id, entity.getId());
-        }
-      });
-      if (params.toString()) {
-        url += `?${params.toString()}`;
-      }
+    // Early returns for invalid cases
+    if (!entity) {
+      return false; // No entity provided
     }
-    await navigator.clipboard.writeText(url);
-    this.alertService.addInfo("Link copied: " + url);
-    return true;
+
+    if (!config.linkedEntities?.length) {
+      return false;
+    }
+
+    const entityType = entity.getConstructor?.()?.ENTITY_TYPE;
+    if (!entityType) {
+      return false; // Entity has no constructor/type
+    }
+
+    // Only add parameters for linkedEntities that match the entity's type
+    const params = new URLSearchParams();
+    config.linkedEntities.forEach((entityConfig) => {
+      if (
+        entityConfig.id &&
+        entityConfig.additional?.toLowerCase() === entityType.toLowerCase()
+      ) {
+        params.set(entityConfig.id, entity.getId());
+      }
+    });
+
+    if (!params.toString()) {
+      return false;
+    }
+
+    // Generate and copy URL with parameters
+    const url = `${window.location.origin}/public-form/form/${config.route}?${params.toString()}`;
+
+    try {
+      await navigator.clipboard.writeText(url);
+      this.alertService.addInfo("Link copied: " + url);
+      return true;
+    } catch (error) {
+      // Clipboard API might not be available (e.g., in tests)
+      return false;
+    }
   }
 
   /**
