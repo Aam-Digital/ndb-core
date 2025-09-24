@@ -51,20 +51,22 @@
                 </div>
               </div>
             </mat-expansion-panel-header>
-            @if (componentConfig.component === "Form") {
-              <app-admin-entity-form
-                [config]="componentConfig.config"
-                (configChange)="componentConfig.config = $event"
-                [entityType]="entityConstructor"
-                uniqueAreaId="{{ tabIndex }}-{{ i }}"
-              >
-              </app-admin-entity-form>
-            } @else {
-              <app-admin-entity-panel-component
-                [config]="componentConfig"
-                [entityType]="entityConstructor"
-              ></app-admin-entity-panel-component>
-            }
+            <div class="section-content">
+              @if (componentConfig.component === "Form") {
+                <app-admin-entity-form
+                  [config]="componentConfig.config"
+                  (configChange)="componentConfig.config = $event"
+                  [entityType]="entityConstructor"
+                  uniqueAreaId="{{ tabIndex }}-{{ i }}"
+                >
+                </app-admin-entity-form>
+              } @else {
+                <app-admin-entity-panel-component
+                  [config]="componentConfig"
+                  [entityType]="entityConstructor"
+                ></app-admin-entity-panel-component>
+              }
+            </div>
           </mat-expansion-panel>
         }
       </mat-accordion>

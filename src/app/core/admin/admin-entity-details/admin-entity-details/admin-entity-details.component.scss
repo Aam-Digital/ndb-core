@@ -15,7 +15,7 @@
   padding: sizes.$small;
 
   .mat-expansion-panel-header {
-    min-height: auto;
+    min-height: 70px;
     align-items: center;
   }
 }
@@ -43,4 +43,9 @@
 .section-add-button {
   padding: sizes.$large;
   margin: sizes.$small;
+}
+
+.section-content {
+  overflow-x: auto;
+  overflow-y: hidden;
 }
