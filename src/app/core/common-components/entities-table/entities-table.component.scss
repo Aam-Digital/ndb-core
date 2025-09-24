@@ -4,7 +4,6 @@
 
 .table-container {
   position: relative; /* anchor for further absolute positioning of child elements */
-  overflow-x: auto; /* enable horizontal scrolling when table content is wider than container */
 }
 
 .column-menu {
@@ -24,7 +23,6 @@
 
 .table {
   @include mat-elevation.elevation(2);
-  min-width: max-content;
 }
 
 .table-footer {
