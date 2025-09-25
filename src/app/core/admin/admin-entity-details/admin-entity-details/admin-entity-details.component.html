@@ -32,9 +32,12 @@
         ) {
           <mat-expansion-panel
             class="section-wrapper"
-            [expanded]="isSectionExpanded(item, componentConfig)"
-            (opened)="onSectionOpened(item, componentConfig)"
-            (closed)="onSectionClosed(item, componentConfig)"
+            [expanded]="
+              item.components.length <= 1 ||
+              expandedSections().has(componentConfig)
+            "
+            (opened)="onSectionOpened(componentConfig)"
+            (closed)="onSectionClosed(componentConfig)"
             cdkDrag
             cdkDragLockAxis="y"
           >
@@ -49,7 +52,7 @@
                   <app-admin-section-header
                     [(title)]="componentConfig.title"
                     (remove)="item.components.splice(i, 1)"
-                    (click)="$event.stopPropagation()"
+                    (keydown)="$event.stopPropagation()"
                   ></app-admin-section-header>
                 </div>
               </div>
