@@ -52,8 +52,6 @@ import { WidgetComponentSelectComponent } from "#src/app/core/admin/admin-entity
 })
 export class AdminEntityDetailsComponent {
   private dialog = inject(MatDialog);
-  /** Track expanded sections */
-  protected readonly expandedSections = signal<Set<PanelComponent>>(new Set());
 
   @Input() entityConstructor: EntityConstructor;
   @Input() config: EntityDetailsConfig;
@@ -85,21 +83,5 @@ export class AdminEntityDetailsComponent {
     }
 
     moveItemInArray(panel.components, event.previousIndex, event.currentIndex);
-  }
-
-  onSectionOpened(component: PanelComponent) {
-    this.expandedSections.update((sections) => {
-      const newSections = new Set(sections);
-      newSections.add(component);
-      return newSections;
-    });
-  }
-
-  onSectionClosed(component: PanelComponent) {
-    this.expandedSections.update((sections) => {
-      const newSections = new Set(sections);
-      newSections.delete(component);
-      return newSections;
-    });
   }
 }
