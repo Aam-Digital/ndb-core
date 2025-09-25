@@ -41,20 +41,26 @@ export class PublicFormsService {
           icon: "link",
           label: $localize`Copy Custom Form (${config.title})`,
           tooltip: $localize`Copy link to public form "${config.title}" that will connect submissions to this individual record.`,
-          visible: (entity) =>
-            this.getMatchingPublicFormConfigs(config, entity),
+          visible: (entity) => this.isEntityTypeLinkedToConfig(config, entity),
         },
       ]);
     }
   }
 
   /**
-   * Copies the public form link to clipboard if a matching form exists for the given entity.
+   * Copies a public form link to the clipboard for a given config and (optionally) an entity.
+   *
+   * Supported cases:
+   * - If an entity is provided and its type matches any linkedEntities in the config,
+   *   generates a URL with the entity ID as a query parameter (e.g. ?children=Child:123).
+   * - If no entity is provided, or if the entity type does not match any linkedEntities,
+   *   generates the base public form URL (list-level) without any query parameters.
    */
   public async copyPublicFormLinkFromConfig(
     config: PublicFormConfig,
     entity?: Entity,
   ): Promise<boolean> {
+    let url = `${window.location.origin}/public-form/form/${config.route}`;
     let hasMatchingParameters = false;
 
     if (entity && config.linkedEntities?.length) {
@@ -72,16 +78,16 @@ export class PublicFormsService {
       });
 
       if (hasMatchingParameters) {
-        const url = `${window.location.origin}/public-form/form/${config.route}?${params.toString()}`;
-        try {
-          await navigator.clipboard.writeText(url);
-        } catch {
-          // Clipboard access might fail in tests or unsupported browsers
-        }
-        this.alertService.addInfo("Link copied: " + url);
+        url += `?${params.toString()}`;
       }
     }
 
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // Clipboard access might fail in tests or unsupported browsers
+    }
+    this.alertService.addInfo("Link copied: " + url);
     return hasMatchingParameters;
   }
 
@@ -92,7 +98,7 @@ export class PublicFormsService {
     return this.entityMapper.loadType(PublicFormConfig);
   }
 
-  public async getMatchingPublicFormConfigs(
+  public async isEntityTypeLinkedToConfig(
     config: PublicFormConfig,
     entity: Entity,
   ): Promise<boolean> {

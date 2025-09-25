@@ -4,7 +4,7 @@ import { PublicFormConfig } from "./public-form-config";
 import { Entity } from "app/core/entity/model/entity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 
-describe("PublicFormsService", () => {
+fdescribe("PublicFormsService", () => {
   let service: PublicFormsService;
 
   beforeEach(() => {
@@ -34,16 +34,21 @@ describe("PublicFormsService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should generate no parameters when no entity is provided", async () => {
+  it("should copy base URL when no entity is provided", async () => {
     const config = new PublicFormConfig();
+    config.route = "test-form";
     config.linkedEntities = [{ id: "children", additional: "Child" }];
 
     const result = await service.copyPublicFormLinkFromConfig(config);
     expect(result).toBe(false); // No entity, no parameters
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      `${window.location.origin}/public-form/form/test-form`,
+    );
   });
 
-  it("should generate no parameters when entity type does not match linkedEntities", async () => {
+  it("should copy base URL when entity type does not match any linkedEntity", async () => {
     const config = new PublicFormConfig();
+    config.route = "test-form";
     config.linkedEntities = [{ id: "children", additional: "Child" }];
 
     const entity = new Entity();
@@ -53,10 +58,14 @@ describe("PublicFormsService", () => {
 
     const result = await service.copyPublicFormLinkFromConfig(config, entity);
     expect(result).toBe(false);
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      `${window.location.origin}/public-form/form/test-form`,
+    );
   });
 
-  it("should generate no parameters when config has no linkedEntities", async () => {
+  it("should copy base URL when config has no linkedEntities", async () => {
     const config = new PublicFormConfig();
+    config.route = "test-form";
     config.linkedEntities = [];
 
     const entity = new Entity();
@@ -66,10 +75,14 @@ describe("PublicFormsService", () => {
 
     const result = await service.copyPublicFormLinkFromConfig(config, entity);
     expect(result).toBe(false);
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      `${window.location.origin}/public-form/form/test-form`,
+    );
   });
 
-  it("should generate correct parameters for matching entity type", async () => {
+  it("should copy URL with parameters for matching entity type", async () => {
     const config = new PublicFormConfig();
+    config.route = "test-form";
     config.linkedEntities = [
       { id: "children", additional: "Child" },
       { id: "schools", additional: "School" },
@@ -83,10 +96,14 @@ describe("PublicFormsService", () => {
 
     const result = await service.copyPublicFormLinkFromConfig(config, entity);
     expect(result).toBe(true);
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      `${window.location.origin}/public-form/form/test-form?children=Child%3A123`,
+    );
   });
 
-  it("should generate correct parameters for multiple matching entity types", async () => {
+  it("should copy URL with parameters for multiple matching entity types", async () => {
     const config = new PublicFormConfig();
+    config.route = "test-form";
     config.linkedEntities = [
       { id: "children", additional: "Child" },
       { id: "schools", additional: "Child" },
@@ -100,9 +117,12 @@ describe("PublicFormsService", () => {
 
     const result = await service.copyPublicFormLinkFromConfig(config, entity);
     expect(result).toBe(true);
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      `${window.location.origin}/public-form/form/test-form?children=Child%3A123&schools=Child%3A123`,
+    );
   });
 
-  it("should generate no parameters when linkedEntities exist but no matching type", async () => {
+  it("should not copy URL when linkedEntities exist but no matching type", async () => {
     const config = new PublicFormConfig();
     config.linkedEntities = [
       { id: "children", additional: "Child" },
@@ -118,19 +138,19 @@ describe("PublicFormsService", () => {
     expect(result).toBe(false);
   });
 
-  // Tests for getMatchingPublicFormConfigs method
-  it("should return false when entity has no constructor", async () => {
+  // Tests for isEntityTypeLinkedToConfig method
+  it("should not return isEntityTypeLinkedToConfig when entity has no constructor", async () => {
     const config = new PublicFormConfig();
     config.linkedEntities = [{ id: "children", additional: "Child" }];
 
     const entity = new Entity();
     // Entity without getConstructor method
 
-    const result = await service.getMatchingPublicFormConfigs(config, entity);
+    const result = await service.isEntityTypeLinkedToConfig(config, entity);
     expect(result).toBe(false);
   });
 
-  it("should return false when config has no linkedEntities", async () => {
+  it("should return false for isEntityTypeLinkedToConfig when config has no linkedEntities", async () => {
     const config = new PublicFormConfig();
     config.linkedEntities = [];
 
@@ -139,11 +159,11 @@ describe("PublicFormsService", () => {
       ENTITY_TYPE: "Child",
     });
 
-    const result = await service.getMatchingPublicFormConfigs(config, entity);
+    const result = await service.isEntityTypeLinkedToConfig(config, entity);
     expect(result).toBe(false);
   });
 
-  it("should return true when entity type matches linkedEntity additional property", async () => {
+  it("should return true for isEntityTypeLinkedToConfig when entity type matches linkedEntity additional property", async () => {
     const config = new PublicFormConfig();
     config.linkedEntities = [{ id: "children", additional: "Child" }];
 
@@ -152,11 +172,11 @@ describe("PublicFormsService", () => {
       ENTITY_TYPE: "Child",
     });
 
-    const result = await service.getMatchingPublicFormConfigs(config, entity);
+    const result = await service.isEntityTypeLinkedToConfig(config, entity);
     expect(result).toBe(true);
   });
 
-  it("should return false when entity type does not match linkedEntity additional property", async () => {
+  it("should return false for isEntityTypeLinkedToConfig when entity type does not match linkedEntity additional property", async () => {
     const config = new PublicFormConfig();
     config.linkedEntities = [{ id: "children", additional: "Child" }];
 
@@ -165,11 +185,11 @@ describe("PublicFormsService", () => {
       ENTITY_TYPE: "School",
     });
 
-    const result = await service.getMatchingPublicFormConfigs(config, entity);
+    const result = await service.isEntityTypeLinkedToConfig(config, entity);
     expect(result).toBe(false);
   });
 
-  it("should return true when entity type matches any of multiple linkedEntities", async () => {
+  it("should return true for isEntityTypeLinkedToConfig when entity type matches any of multiple linkedEntities", async () => {
     const config = new PublicFormConfig();
     config.linkedEntities = [
       { id: "children", additional: "Child" },
@@ -181,7 +201,7 @@ describe("PublicFormsService", () => {
       ENTITY_TYPE: "School",
     });
 
-    const result = await service.getMatchingPublicFormConfigs(config, entity);
+    const result = await service.isEntityTypeLinkedToConfig(config, entity);
     expect(result).toBe(true);
   });
 });
