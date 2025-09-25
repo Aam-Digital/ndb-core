@@ -1,5 +1,6 @@
 @use "@angular/material/core/style/elevation" as mat-elevation;
 @use "variables/sizes";
+@use "variables/colors";
 
 .admin-ui-title {
   font-style: italic;
@@ -48,4 +49,11 @@
 .section-content {
   overflow-x: auto;
   overflow-y: hidden;
+}
+
+.drag-handle {
+  color: colors.$accent;
+  cursor: move;
+  min-width: 2em;
+  text-align: center;
 }

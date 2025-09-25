@@ -49,6 +49,7 @@
                   <app-admin-section-header
                     [(title)]="componentConfig.title"
                     (remove)="item.components.splice(i, 1)"
+                    (click)="$event.stopPropagation()"
                   ></app-admin-section-header>
                 </div>
               </div>
