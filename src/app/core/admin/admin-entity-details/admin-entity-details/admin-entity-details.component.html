@@ -32,10 +32,7 @@
         ) {
           <mat-expansion-panel
             class="section-wrapper"
-            [expanded]="
-              item.components.length <= 1 ||
-              expandedSections().has(componentConfig)
-            "
+            [expanded]="item.components.length <= 1"
             (opened)="onSectionOpened(componentConfig)"
             (closed)="onSectionClosed(componentConfig)"
             cdkDrag
