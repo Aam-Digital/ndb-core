@@ -20,6 +20,7 @@
             ></fa-icon>
             <!-- GROUP HEADER -->
             <app-admin-section-header
+              class="flex-grow"
               [title]="group.header"
               (titleChange)="group.header = $event; emitUpdatedConfig()"
               (remove)="removeGroup(i)"
