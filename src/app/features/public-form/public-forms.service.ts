@@ -49,8 +49,6 @@ export class PublicFormsService {
 
   /**
    * Copies a public form link to the clipboard for a given config and (optionally) an entity.
-   *
-   * Supported cases:
    * - If an entity is provided and its type matches any linkedEntities in the config,
    *   generates a URL with the entity ID as a query parameter (e.g. ?children=Child:123).
    * - If no entity is provided, or if the entity type does not match any linkedEntities,

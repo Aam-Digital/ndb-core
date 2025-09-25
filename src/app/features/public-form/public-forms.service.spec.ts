@@ -124,6 +124,7 @@ describe("PublicFormsService", () => {
 
   it("should not copy URL when linkedEntities exist but no matching type", async () => {
     const config = new PublicFormConfig();
+    config.route = "test-form";
     config.linkedEntities = [
       { id: "children", additional: "Child" },
       { id: "schools", additional: "School" },
@@ -136,6 +137,9 @@ describe("PublicFormsService", () => {
 
     const result = await service.copyPublicFormLinkFromConfig(config, entity);
     expect(result).toBe(false);
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      `${window.location.origin}/public-form/form/test-form`,
+    );
   });
 
   // Tests for isEntityTypeLinkedToConfig method
