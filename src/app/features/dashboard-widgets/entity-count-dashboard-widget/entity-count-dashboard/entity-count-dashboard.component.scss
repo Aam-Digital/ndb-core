@@ -13,21 +13,6 @@
   margin: 8px 0 0 0;
 }
 
-.table-wrapper {
-  overflow: hidden;
-}
-
 .mat-mdc-table {
   table-layout: fixed;
-}
-
-.mat-column-label {
-  width: auto;
-  min-width: 0;
-}
-
-.mat-column-value,
-.mat-column-link {
-  width: 0;
-  white-space: nowrap;
 }
