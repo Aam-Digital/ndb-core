@@ -19,32 +19,58 @@
     let-tabIndex="index"
   >
     <div class="flex-column gap-large padding-top-large">
-      @for (
-        componentConfig of item.components;
-        track componentConfig;
-        let i = $index
-      ) {
-        <div class="section-wrapper">
-          <app-admin-section-header
-            [(title)]="componentConfig.title"
-            (remove)="item.components.splice(i, 1)"
-          ></app-admin-section-header>
-          @if (componentConfig.component === "Form") {
-            <app-admin-entity-form
-              [config]="componentConfig.config"
-              (configChange)="componentConfig.config = $event"
-              [entityType]="entityConstructor"
-              uniqueAreaId="{{ tabIndex }}-{{ i }}"
-            >
-            </app-admin-entity-form>
-          } @else {
-            <app-admin-entity-panel-component
-              [config]="componentConfig"
-              [entityType]="entityConstructor"
-            ></app-admin-entity-panel-component>
-          }
-        </div>
-      }
+      <mat-accordion
+        cdkDropList
+        [cdkDropListData]="item.components"
+        cdkDropListOrientation="vertical"
+        (cdkDropListDropped)="onSectionDrop(item, $event)"
+      >
+        @for (
+          componentConfig of item.components;
+          track componentConfig;
+          let i = $index
+        ) {
+          <mat-expansion-panel
+            class="section-wrapper"
+            [expanded]="item.components.length <= 1"
+            cdkDrag
+            cdkDragLockAxis="y"
+          >
+            <mat-expansion-panel-header>
+              <div class="section-header-row">
+                <fa-icon
+                  icon="grip-vertical"
+                  size="xl"
+                  class="drag-handle"
+                ></fa-icon>
+                <div class="section-header-content">
+                  <app-admin-section-header
+                    [(title)]="componentConfig.title"
+                    (remove)="item.components.splice(i, 1)"
+                    (keydown)="$event.stopPropagation()"
+                  ></app-admin-section-header>
+                </div>
+              </div>
+            </mat-expansion-panel-header>
+            <div class="section-content">
+              @if (componentConfig.component === "Form") {
+                <app-admin-entity-form
+                  [config]="componentConfig.config"
+                  (configChange)="componentConfig.config = $event"
+                  [entityType]="entityConstructor"
+                  uniqueAreaId="{{ tabIndex }}-{{ i }}"
+                >
+                </app-admin-entity-form>
+              } @else {
+                <app-admin-entity-panel-component
+                  [config]="componentConfig"
+                  [entityType]="entityConstructor"
+                ></app-admin-entity-panel-component>
+              }
+            </div>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
 
       <button
         mat-stroked-button

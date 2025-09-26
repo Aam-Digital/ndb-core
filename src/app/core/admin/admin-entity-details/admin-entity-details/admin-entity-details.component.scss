@@ -1,5 +1,6 @@
 @use "@angular/material/core/style/elevation" as mat-elevation;
 @use "variables/sizes";
+@use "variables/colors";
 
 .admin-ui-title {
   font-style: italic;
@@ -13,15 +14,46 @@
   @include mat-elevation.elevation(1);
   margin: sizes.$small;
   padding: sizes.$small;
+
+  .mat-expansion-panel-header {
+    min-height: 70px;
+    align-items: center;
+  }
 }
 /* TODO: making direct child of app-admin-section-header somehow breaks this
    although `:has(> app-admin-section-header .group-remove-button` (without :hover) does work ... */
-.section-wrapper:has(> app-admin-section-header .group-remove-button:hover) {
+.section-wrapper:has(
+  .section-header-content app-admin-section-header .group-remove-button:hover
+) {
   border-color: rgb(255, 0, 0);
   background-color: rgba(255, 0, 0, 0.1);
+}
+
+.section-header-row {
+  display: flex;
+  align-items: center;
+  gap: sizes.$small;
+  width: 100%;
+}
+
+.section-header-content {
+  flex: 1;
+  padding-right: sizes.$large;
 }
 
 .section-add-button {
   padding: sizes.$large;
   margin: sizes.$small;
+}
+
+.section-content {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.drag-handle {
+  color: colors.$accent;
+  cursor: move;
+  min-width: 2em;
+  text-align: center;
 }
