@@ -52,6 +52,7 @@ describe("PublicFormComponent", () => {
             snapshot: {
               paramMap: new Map([["id", FORM_ID]]),
               queryParamMap: new Map([["childId", "Child:3"]]),
+              queryParams: { childId: "Child:3" },
             },
           },
         },
@@ -222,7 +223,7 @@ describe("PublicFormComponent", () => {
   }));
 
   it("should add hidden prefilled field for related entity when query param exists", () => {
-    testFormConfig.linkedEntity = { id: "childId", hideFromForm: true };
+    testFormConfig.linkedEntities = [{ id: "childId", hideFromForm: true }];
     component.formConfig = testFormConfig;
     component.fieldGroups = testFormConfig.columns;
 
@@ -236,6 +237,96 @@ describe("PublicFormComponent", () => {
         hideFromForm: true,
       }),
     );
+  });
+
+  it("should process configured URL parameters and create prefilled fields for multi-entity magic links", () => {
+    // Configure which entities are allowed to be linked (security feature)
+    testFormConfig.linkedEntities = [
+      { id: "childId" },
+      { id: "schoolId" },
+      { id: "eventId" },
+      { id: "teacherId" },
+    ];
+
+    // Create a mock ActivatedRoute with multiple URL parameters
+    const multiParamRoute = {
+      snapshot: {
+        queryParams: {
+          childId: "Child:123",
+          schoolId: "School:456",
+          eventId: "Event:789",
+          teacherId: "Teacher:101",
+        },
+      },
+    };
+
+    // Replace the route in the component
+    component["route"] = multiParamRoute as any;
+    component.formConfig = testFormConfig;
+    component.fieldGroups = testFormConfig.columns;
+
+    component["handleRelatedEntityFields"]();
+
+    const lastColumn = component.formConfig.columns.at(-1);
+
+    // Expected URL parameters and their values
+    const expectedParams = {
+      childId: "Child:123",
+      schoolId: "School:456",
+      eventId: "Event:789",
+      teacherId: "Teacher:101",
+    };
+
+    // Verify all configured URL parameters were processed and added as hidden fields
+    Object.entries(expectedParams).forEach(([paramId, paramValue]) => {
+      expect(lastColumn?.fields).toContain(
+        jasmine.objectContaining({
+          id: paramId,
+          defaultValue: { mode: "static", config: { value: paramValue } },
+          hideFromForm: true,
+        }),
+      );
+    });
+  });
+
+  it("should ignore unconfigured URL parameters for security", () => {
+    // Configure only specific entities
+    testFormConfig.linkedEntities = [{ id: "childId" }, { id: "schoolId" }];
+
+    const securityTestRoute = {
+      snapshot: {
+        queryParams: {
+          childId: "Child:123", // Allowed
+          schoolId: "School:456", // Allowed
+          hackerId: "Hacker:malicious", //should be ignored
+          adminId: "Admin:dangerous", //should be ignored
+        },
+      },
+    };
+
+    component["route"] = securityTestRoute as any;
+    component.formConfig = testFormConfig;
+    component.fieldGroups = testFormConfig.columns;
+
+    component["handleRelatedEntityFields"]();
+
+    const lastColumn = component.formConfig.columns.at(-1);
+
+    // Should process allowed parameters
+    expect(lastColumn?.fields).toContain(
+      jasmine.objectContaining({
+        id: "childId",
+        defaultValue: { mode: "static", config: { value: "Child:123" } },
+        hideFromForm: true,
+      }),
+    );
+
+    // Should ignore unauthorized parameters
+    const unauthorizedFields = lastColumn?.fields.filter((field) => {
+      const fieldId = typeof field === "string" ? field : field.id;
+      return fieldId === "hackerId" || fieldId === "adminId";
+    });
+    expect(unauthorizedFields.length).toBe(0);
   });
 
   it("should update defaultValue for a field in prefilled that is already visible", fakeAsync(() => {
