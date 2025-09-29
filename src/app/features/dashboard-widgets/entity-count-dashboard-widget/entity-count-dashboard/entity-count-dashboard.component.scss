@@ -14,8 +14,7 @@
 }
 
 .mat-mdc-table {
-  .mat-mdc-row,
-  .mat-mdc-footer-row {
+  .mat-mdc-row {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto auto;
     column-gap: 8px;
