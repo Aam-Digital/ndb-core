@@ -17,6 +17,7 @@
   .mat-mdc-row {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
     column-gap: 8px;
   }
 }
