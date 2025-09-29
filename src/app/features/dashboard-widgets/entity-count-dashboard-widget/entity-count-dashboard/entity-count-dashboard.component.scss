@@ -16,11 +16,9 @@
 .mat-mdc-table {
   table-layout: fixed;
 
-  .mat-column-value {
-    width: 80px;
-  }
-
+  .mat-column-value,
   .mat-column-link {
-    width: 40px;
+    width: 0;
+    white-space: nowrap;
   }
 }
