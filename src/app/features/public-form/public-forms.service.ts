@@ -1,9 +1,10 @@
+import { Logging } from "#src/app/core/logging/logging.service";
 import { Injectable, inject } from "@angular/core";
-import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
-import { PublicFormConfig } from "./public-form-config";
-import { Entity } from "app/core/entity/model/entity";
 import { AlertService } from "app/core/alerts/alert.service";
 import { EntityActionsMenuService } from "app/core/entity-details/entity-actions-menu/entity-actions-menu.service";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { Entity } from "app/core/entity/model/entity";
+import { PublicFormConfig } from "./public-form-config";
 
 @Injectable({
   providedIn: "root",
@@ -84,6 +85,9 @@ export class PublicFormsService {
       await navigator.clipboard.writeText(url);
     } catch {
       // Clipboard access might fail in tests or unsupported browsers
+      Logging.warn(
+        "PublicFormsService.copyPublicFormLinkFromConfig write to clipboard failed.",
+      );
     }
     this.alertService.addInfo("Link copied: " + url);
     return hasMatchingParameters;
