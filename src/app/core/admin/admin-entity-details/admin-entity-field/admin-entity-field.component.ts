@@ -303,7 +303,6 @@ export class AdminEntityFieldComponent implements OnInit {
     this.schemaFieldsForm.updateValueAndValidity();
     if (this.form.invalid) return;
     this.data.entitySchemaField.id = this.fieldIdForm.getRawValue();
-    console.log(this.data.entitySchemaField, "data");
     this.dialogRef.close(this.data.entitySchemaField);
   }
 
