@@ -1,6 +1,32 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:base",
+    "group:allNonMajor"
+  ],
+  "enabledManagers": ["npm"],
+  "timezone": "Etc/UTC",
+  "schedule": ["after 00:00 and before 04:00 on Wednesday"],
+  "dependencyDashboard": true,
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "labels": ["dependencies"],
+  "reviewers": ["sleidig", "Abhinegi2"],
+  "rangeStrategy": "replace",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["after 00:00 and before 04:00 on Wednesday"]
+  },
+  "packageRules": [
+    {
+      "matchManagers": ["npm"],
+      "rangeStrategy": "replace"
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "draftPR": true,
+      "dependencyDashboardApproval": true,
+      "labels": ["dependencies", "major-update"]
+    }
   ]
 }
