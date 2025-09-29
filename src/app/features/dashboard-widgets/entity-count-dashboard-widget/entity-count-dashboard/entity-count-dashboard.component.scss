@@ -14,11 +14,9 @@
 }
 
 .mat-mdc-table {
-  table-layout: fixed;
-
-  .mat-column-value,
-  .mat-column-link {
-    width: 0;
-    white-space: nowrap;
+  .mat-mdc-row,
+  .mat-mdc-footer-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
   }
 }
