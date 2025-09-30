@@ -40,7 +40,7 @@ describe("EditConfigurableEnumComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  fit("should extract the enum ID", () => {
+  it("should extract the enum ID", () => {
     setupCustomFormControlEditComponent(component, "test", { additional: "some-id" });
     console.log('After setup, formFieldConfig:', component.formFieldConfig);
     component.ngOnInit();

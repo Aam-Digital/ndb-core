@@ -6,10 +6,6 @@ import { MatDialog } from "@angular/material/dialog";
 import { catchError, firstValueFrom, map, of } from "rxjs";
 import { Entity } from "../../../core/entity/model/entity";
 import { TemplateExportSelectionDialogComponent } from "../template-export-selection-dialog/template-export-selection-dialog.component";
-import { catchError, firstValueFrom, map, of } from "rxjs";
-import { HttpClient } from "@angular/common/http";
-import { environment } from "#src/environments/environment";
-import { Logging } from "#src/app/core/logging/logging.service";
 
 /**
  * Triggers a user flow to
