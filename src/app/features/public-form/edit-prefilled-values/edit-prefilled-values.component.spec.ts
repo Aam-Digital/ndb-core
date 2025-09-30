@@ -10,7 +10,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { Entity } from "app/core/entity/model/entity";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
-import { DefaultValueConfig } from "#src/app/core/default-values/default-value-config";
+import { setupCustomFormControlEditComponent } from "app/core/entity/default-datatype/edit-component.spec";
 
 describe("EditPrefilledValuesComponent", () => {
   let component: EditPrefilledValuesComponent;
@@ -38,10 +38,9 @@ describe("EditPrefilledValuesComponent", () => {
 
     fixture = TestBed.createComponent(EditPrefilledValuesComponent);
     component = fixture.componentInstance;
+
+    setupCustomFormControlEditComponent(component);
     component.entity = new TestEntity();
-    component.formControl = new FormBuilder().control(
-      {} as { [key: string]: DefaultValueConfig },
-    );
 
     fixture.detectChanges();
   });

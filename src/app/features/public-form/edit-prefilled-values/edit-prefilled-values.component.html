@@ -41,6 +41,7 @@
           }
           <button
             mat-icon-button
+            [disabled]="formControl.disabled"
             (click)="removePrefilledFields(i)"
             matTooltip="Remove default value"
             i18n-matTooltip
@@ -58,7 +59,7 @@
       class="add-new-defaultvalue-button"
       color="accent"
       (click)="addPrefilledFields()"
-      [disabled]="prefilledValues.invalid"
+      [disabled]="formControl.disabled || prefilledValues.invalid"
       matTooltip="Add a fixed value for another field"
       i18n-matTooltip
     >
