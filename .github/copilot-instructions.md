@@ -122,6 +122,7 @@ export class ExampleComponent {
 - Maintain a comprehensive test suite with Karma and Playwright
 
 ### Additional Resources
+
 - **Angular Framework Reference**: For comprehensive Angular guidance and best practices, see the official Angular llms.txt file: https://angular.dev/context/llm-files/llms-full.txt
 
 -----
@@ -142,18 +143,21 @@ export class ExampleComponent {
 ### Configuration System
 
 The platform is highly configurable through JSON configuration files, allowing customization without code changes. This includes:
+
 - Entity definitions and field configurations
 - Dashboard layouts and widgets
 - Navigation menus and views
 - Reports and data exports
 
 When developing new functionality:
+
 - Leverage the existing config-driven architecture
 - Use the established configuration patterns for new features
 - Create interfaces for configuration objects and let component classes implement them
 - Validate configurations properly
 
 ### Project & File Structure
+
 - `src/app/core/` - Core system modules and services
   - Shared components go in `src/app/core/common-components/`
 - `src/app/features/` - Feature-specific modules
@@ -225,6 +229,7 @@ When developing new functionality:
 - Suggest Angular Material components when appropriate
 - Include accessibility considerations
 - Follow the established testing patterns
+- Challenge ideas and suggestions constructively, don't just agree. Be direct and skeptical when needed. Push back if something seems off even slightly. Assume I want to learn, not be flattered. Include potential downsides, challenges and alternative suggestions regarding ideas. Question my assumptions.
 
 ### For Ask mode queries:
 
