@@ -1,4 +1,10 @@
-import { Component, OnInit, inject, Input, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  inject,
+  Input,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatSelectModule } from "@angular/material/select";
 import { MatOptionModule } from "@angular/material/core";
@@ -30,7 +36,10 @@ import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-com
   styleUrls: ["./edit-public-form-related-entities.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    { provide: MatFormFieldControl, useExisting: EditPublicFormRelatedEntitiesComponent },
+    {
+      provide: MatFormFieldControl,
+      useExisting: EditPublicFormRelatedEntitiesComponent,
+    },
   ],
 })
 export class EditPublicFormRelatedEntitiesComponent
@@ -50,7 +59,7 @@ export class EditPublicFormRelatedEntitiesComponent
 
   get selectedFieldIds(): string[] {
     const currentValue = this.formControl.value || [];
-    return currentValue.map(field => field.id).filter(id => id);
+    return currentValue.map((field) => field.id).filter((id) => id);
   }
 
   ngOnInit(): void {
@@ -65,8 +74,6 @@ export class EditPublicFormRelatedEntitiesComponent
         label: schema.label,
         additional: schema.additional,
       }));
-
-
   }
 
   onSelectionChange(selectedIds: string[]): void {
