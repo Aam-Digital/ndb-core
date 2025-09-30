@@ -137,7 +137,20 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: ["prefilled", "linkedEntities"],
+                    fields: [
+                      {
+                        id: "prefilled_description",
+                        editComponent: "EditDescriptionOnly",
+                        label: $localize`:PublicFormConfig admin form:You can configure some fields to be always be set to a certain value when this form is submitted. For example, make a "status" field always be set to "new" so that you can easily filter the new records submitted by external users; or make a "signed up on" date field to always show the current date. If you add the same field(s) in the "Configure Fields" section to show to the user, this pre-filled value can be changed by the person filling the form.`,
+                      },
+                      "prefilled",
+                      {
+                        id: "linked_entities_description",
+                        editComponent: "EditDescriptionOnly",
+                        label: $localize`:PublicFormConfig admin form:**Collect replies of this form linked to individual records**<br> <br>You can use forms with a special "magic link" to collect responses from participants that are already registered in your system. By sending out an individual link to each person, the form response(s) from that person can be linked into their profile. For example, you can collect feedback or an evaluation survey and relate each submission to the specific participant or organisation that gave it.<br>The system supports linking to multiple entity types. For example, you can encode IDs of a person and activity in the magic link to collect feedback for that specific context. To set this up, select multiple fields below. Currently, such multi-ID URLs need to be generated outside of this system, however.`,
+                      },
+                      "linkedEntities",
+                    ],
                   },
                 ],
               },
