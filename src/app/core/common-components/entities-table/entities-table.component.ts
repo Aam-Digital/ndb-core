@@ -172,8 +172,13 @@ export class EntitiesTableComponent<T extends Entity>
     this._columnsToDisplay = cols;
 
     if (this.sortIsInferred) {
-      this.sortBy = this.inferDefaultSort();
-      this.sortIsInferred = true;
+      // Only set default sort if not present in URL
+      const urlSortBy = this.tableStateUrl.getUrlParam("sortBy");
+      const urlSortOrder = this.tableStateUrl.getUrlParam("sortOrder");
+      if (!urlSortBy && !urlSortOrder) {
+        this.sortBy = this.inferDefaultSort();
+        this.sortIsInferred = true;
+      }
     }
   }
 
@@ -196,8 +201,10 @@ export class EntitiesTableComponent<T extends Entity>
     this.sortIsInferred = false;
     // Persist sort state to URL
     if (value.active) {
-      this.tableStateUrl.updateUrlParam("sortBy", value.active);
-      this.tableStateUrl.updateUrlParam("sortOrder", value.direction ?? "asc");
+      this.tableStateUrl.updateUrlParams({
+        sortBy: value.active,
+        sortOrder: value.direction ?? "asc",
+      });
     }
   }
 
@@ -219,8 +226,10 @@ export class EntitiesTableComponent<T extends Entity>
       }
       // Listen for sort changes to persist to URL
       sort.sortChange.subscribe(({ active, direction }) => {
-        this.tableStateUrl.updateUrlParam("sortBy", active);
-        this.tableStateUrl.updateUrlParam("sortOrder", direction ?? "asc");
+        this.tableStateUrl.updateUrlParams({
+          sortBy: active,
+          sortOrder: direction ?? "asc",
+        });
       });
     }
   }

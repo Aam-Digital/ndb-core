@@ -12,12 +12,18 @@ export class TableStateUrlService {
   /**
    * Update a query param in the URL (without reloading the page).
    */
-  updateUrlParam(key: string, value: string, replaceUrl = true) {
+  updateUrlParams(
+    params: Record<string, string | null | undefined>,
+    replaceUrl = true,
+  ) {
     const queryParams = { ...this.route.snapshot.queryParams };
-    if (value == null || value === "") {
-      delete queryParams[key];
-    } else {
-      queryParams[key] = value;
+    for (const key of Object.keys(params)) {
+      const value = params[key];
+      if (value == null || value === "") {
+        delete queryParams[key];
+      } else {
+        queryParams[key] = value;
+      }
     }
     this.router.navigate([], {
       relativeTo: this.route,
@@ -25,6 +31,13 @@ export class TableStateUrlService {
       queryParamsHandling: "merge",
       ...(replaceUrl ? { replaceUrl: true } : {}),
     });
+  }
+
+  /**
+   * Deprecated: single key-value param update. Use updateUrlParams instead.
+   */
+  updateUrlParam(key: string, value: string, replaceUrl = true) {
+    this.updateUrlParams({ [key]: value }, replaceUrl);
   }
 
   /**
@@ -45,7 +58,7 @@ export class TableStateUrlService {
    * If value is empty or null, removes the param.
    */
   updateFilterParam(key: string, value: string, replaceUrl = false) {
-    this.updateUrlParam(key, value, replaceUrl);
+    this.updateUrlParams({ [key]: value }, replaceUrl);
   }
 
   /**
@@ -54,8 +67,8 @@ export class TableStateUrlService {
   getFilterParams(): Record<string, string> {
     const params = this.getAllUrlParams();
     // Remove sortBy and sortOrder, keep only filter params
-  delete params["sortBy"];
-  delete params["sortOrder"];
+    delete params["sortBy"];
+    delete params["sortOrder"];
     return params;
   }
 
