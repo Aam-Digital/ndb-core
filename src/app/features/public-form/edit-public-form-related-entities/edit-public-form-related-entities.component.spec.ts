@@ -5,8 +5,10 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
-import { FormControl, ReactiveFormsModule, FormGroup } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { setupCustomFormControlEditComponent } from "app/core/entity/default-datatype/edit-component.spec";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("EditPublicFormRelatedEntitiesComponent", () => {
   let component: EditPublicFormRelatedEntitiesComponent;
@@ -18,14 +20,14 @@ describe("EditPublicFormRelatedEntitiesComponent", () => {
         ReactiveFormsModule,
         EditPublicFormRelatedEntitiesComponent,
         FontAwesomeTestingModule,
+        NoopAnimationsModule,
       ],
       providers: [{ provide: EntityRegistry, useValue: entityRegistry }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditPublicFormRelatedEntitiesComponent);
     component = fixture.componentInstance;
-    component.formControl = new FormControl();
-    component.fieldIdsControl = new FormControl();
+    setupCustomFormControlEditComponent(component);
     fixture.detectChanges();
   });
 
