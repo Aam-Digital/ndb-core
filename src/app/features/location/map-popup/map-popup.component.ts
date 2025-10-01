@@ -211,15 +211,35 @@ export class MapPopupComponent {
     this.dialogRef.close([this.selectedLocation]);
   }
 
-  updateLocation(event: GeoLocation) {
+  updateLocation(event: GeoLocation | undefined) {
+    let updatedLocation = event;
+
+    const displayName = event?.geoLookup?.display_name;
+    const hasManualAddress =
+      event?.locationString !== undefined &&
+      event?.locationString !== null &&
+      event?.locationString !== "";
+
+    if (displayName && !hasManualAddress) {
+      updatedLocation = {
+        ...(event ?? {}),
+        locationString: displayName,
+      };
+    }
+
     // Detect if manual address was just edited
     if (
-      this.selectedLocation?.locationString !== event?.locationString &&
-      event?.locationString !== event?.geoLookup?.display_name
+      this.selectedLocation?.locationString !==
+        updatedLocation?.locationString &&
+      updatedLocation?.locationString !==
+        updatedLocation?.geoLookup?.display_name
     ) {
       this.manualAddressJustEdited = true;
     }
-    this.selectedLocation = event;
-    this.markedLocations.next(event?.geoLookup ? [event.geoLookup] : []);
+
+    this.selectedLocation = updatedLocation;
+    this.markedLocations.next(
+      updatedLocation?.geoLookup ? [updatedLocation.geoLookup] : [],
+    );
   }
 }

@@ -79,6 +79,10 @@ describe("MapPopupComponent", () => {
       display_name: "[selected on map: 1 - 2]",
     };
     expect(updatedLocations).toEqual([expectedAfterFirstClick]);
+    expect(component.selectedLocation).toEqual({
+      geoLookup: expectedAfterFirstClick,
+      locationString: expectedAfterFirstClick.display_name,
+    });
 
     // expect this to be prevented when disabled
     component.data.disabled = true;
@@ -102,6 +106,10 @@ describe("MapPopupComponent", () => {
 
     expect(mockGeoService.reverseLookup).toHaveBeenCalledWith(mockedClick);
     expect(updatedLocations).toEqual([fullLocation]);
+    expect(component.selectedLocation).toEqual({
+      geoLookup: fullLocation,
+      locationString: fullLocation.display_name,
+    });
   }));
 
   it("should update location if received from address search", fakeAsync(() => {

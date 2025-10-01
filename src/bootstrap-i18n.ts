@@ -47,8 +47,6 @@ export async function initLanguage(locale?: string): Promise<void> {
     localeModule = await import("@angular/common/locales/de");
   } else if (locale == "fr") {
     localeModule = await import("@angular/common/locales/fr");
-  } else if (locale == "it") {
-    localeModule = await import("@angular/common/locales/it");
   }
 
   if (localeModule) {
