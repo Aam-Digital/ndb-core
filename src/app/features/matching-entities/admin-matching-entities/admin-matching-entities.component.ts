@@ -65,6 +65,18 @@ export class AdminMatchingEntitiesComponent implements OnInit {
    * Save the updated matching entities configuration.
    */
   async save() {
+    // Validate that columnsToReview has at least one field if onMatch is configured
+    if (
+      this.originalConfig.onMatch &&
+      (!this.originalConfig.onMatch.columnsToReview ||
+        this.originalConfig.onMatch.columnsToReview.length === 0)
+    ) {
+      this.alertService.addWarning(
+        $localize`Please select at least one field to be shown in the confirmation dialog.`,
+      );
+      return;
+    }
+
     const columns = this.generateColumnsFromSides();
 
     const newMatchingConfig: MatchingEntitiesConfig = {
