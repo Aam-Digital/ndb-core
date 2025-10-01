@@ -2,7 +2,6 @@ import { Component, OnInit, inject } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatOptionModule } from "@angular/material/core";
 import { EntityConstructor } from "app/core/entity/model/entity";
 import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype";
@@ -20,7 +19,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatCheckboxModule,
     MatOptionModule,
     MatButtonModule,
     FontAwesomeModule,
@@ -30,12 +28,12 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   styleUrls: ["./edit-public-form-related-entities.component.scss"],
 })
 export class EditPublicFormRelatedEntitiesComponent
-  extends EditComponent<FormFieldConfig>
+  extends EditComponent<FormFieldConfig[]>
   implements OnInit
 {
   entityConstructor: EntityConstructor;
   relatedRefFields: FormFieldConfig[] = [];
-  fieldIdControl: FormControl;
+  fieldIdsControl: FormControl;
 
   private entities = inject(EntityRegistry);
 
@@ -52,35 +50,40 @@ export class EditPublicFormRelatedEntitiesComponent
         additional: schema.additional,
       }));
 
-    this.initializeLinkedEntity();
+    this.initializeLinkedEntities();
   }
 
-  private initializeLinkedEntity(): void {
-    const raw = this.formControl.value as FormFieldConfig;
+  private initializeLinkedEntities(): void {
+    const rawArray = (this.formControl.value as FormFieldConfig[]) || [];
+    const selectedIds = rawArray.map((field) => field.id).filter((id) => id);
 
-    this.fieldIdControl = new FormControl({
-      value: raw?.id ?? null,
+    this.fieldIdsControl = new FormControl({
+      value: selectedIds,
       disabled: this.formControl.disabled,
     });
 
-    this.fieldIdControl.valueChanges.subscribe((newId: string) => {
-      const match = this.relatedRefFields.find((f) => f.id === newId);
-      this.formControl.patchValue({
-        id: newId,
-        hideFromForm: true,
-        additional: match?.additional,
+    this.fieldIdsControl.valueChanges.subscribe((newIds: string[]) => {
+      const newLinkedEntities: FormFieldConfig[] = newIds.map((id) => {
+        const match = this.relatedRefFields.find((f) => f.id === id);
+        return {
+          id,
+          hideFromForm: true,
+          additional: match?.additional,
+        };
       });
+      this.formControl.patchValue(newLinkedEntities);
       this.formControl.markAsDirty();
     });
+
     this.formControl.statusChanges.subscribe(() => {
       this.formControl.disabled
-        ? this.fieldIdControl.disable({ emitEvent: false })
-        : this.fieldIdControl.enable({ emitEvent: false });
+        ? this.fieldIdsControl.disable({ emitEvent: false })
+        : this.fieldIdsControl.enable({ emitEvent: false });
     });
   }
 
-  clearSelectedEntity() {
-    this.fieldIdControl.setValue(null);
-    this.formControl.setValue(null);
+  clearSelectedEntities() {
+    this.fieldIdsControl.setValue([]);
+    this.formControl.setValue([]);
   }
 }

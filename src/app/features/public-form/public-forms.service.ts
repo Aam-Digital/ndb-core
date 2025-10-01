@@ -1,9 +1,10 @@
+import { Logging } from "#src/app/core/logging/logging.service";
 import { Injectable, inject } from "@angular/core";
-import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
-import { PublicFormConfig } from "./public-form-config";
-import { Entity } from "app/core/entity/model/entity";
 import { AlertService } from "app/core/alerts/alert.service";
 import { EntityActionsMenuService } from "app/core/entity-details/entity-actions-menu/entity-actions-menu.service";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { Entity } from "app/core/entity/model/entity";
+import { PublicFormConfig } from "./public-form-config";
 
 @Injectable({
   providedIn: "root",
@@ -16,14 +17,16 @@ export class PublicFormsService {
   /**
    * Initializes and registers custom form actions for entities.
    * - Loads all PublicFormConfig entries from the EntityMapper.
-   * - Filters configs to those with a linkedEntity ID.
+   * - Filters configs to those with linkedEntities configured.
    * - For each matching config, registers a "copy-form-<route>" action that:
    *   • Executes copying a prebuilt form URL based on the config.
    *   • Is only visible when matching configs exist for the given entity.
    */
   public async initCustomFormActions() {
     const allForms = await this.entityMapper.loadType(PublicFormConfig);
-    const matchingForms = allForms.filter((config) => config.linkedEntity?.id);
+    const matchingForms = allForms.filter((config) =>
+      this.hasLinkedEntities(config),
+    );
     // Unregister any previously registered actions for these form configs
     const actionKeys = matchingForms.map(
       (config) => `copy-form-${config.getId()}`,
@@ -39,33 +42,55 @@ export class PublicFormsService {
           icon: "link",
           label: $localize`Copy Custom Form (${config.title})`,
           tooltip: $localize`Copy link to public form "${config.title}" that will connect submissions to this individual record.`,
-          visible: (entity) =>
-            this.getMatchingPublicFormConfigs(config, entity),
+          visible: (entity) => this.isEntityTypeLinkedToConfig(config, entity),
         },
       ]);
     }
   }
 
   /**
-   * Copies the public form link to clipboard if a matching form exists for the given entity.
-   * - It checks all PublicFormConfig entries to find the one linked to the current entity type via `linkedEntity.id`.
-   * - If a matching form is found, it generates the link including the entity ID as a query parameter and copies it.
-   *
-   * If no entity is provided, copies the public form link for the entity type (list-level) without any query parameter.
+   * Copies a public form link to the clipboard for a given config and (optionally) an entity.
+   * - If an entity is provided and its type matches any linkedEntities in the config,
+   *   generates a URL with the entity ID as a query parameter (e.g. ?children=Child:123).
+   * - If no entity is provided, or if the entity type does not match any linkedEntities,
+   *   generates the base public form URL (list-level) without any query parameters.
    */
   public async copyPublicFormLinkFromConfig(
     config: PublicFormConfig,
     entity?: Entity,
   ): Promise<boolean> {
     let url = `${window.location.origin}/public-form/form/${config.route}`;
-    if (entity && config.linkedEntity?.id) {
-      const paramKey = config.linkedEntity.id;
-      const entityId = entity.getId();
-      url += `?${paramKey}=${encodeURIComponent(entityId)}`;
+    let hasMatchingParameters = false;
+
+    if (entity && config.linkedEntities?.length) {
+      const params = new URLSearchParams();
+
+      config.linkedEntities.forEach((entityConfig) => {
+        if (
+          entityConfig.id &&
+          entityConfig.additional?.toLowerCase() ===
+            entity.getConstructor?.()?.ENTITY_TYPE?.toLowerCase()
+        ) {
+          params.set(entityConfig.id, entity.getId());
+          hasMatchingParameters = true;
+        }
+      });
+
+      if (hasMatchingParameters) {
+        url += `?${params.toString()}`;
+      }
     }
-    await navigator.clipboard.writeText(url);
+
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // Clipboard access might fail in tests or unsupported browsers
+      Logging.warn(
+        "PublicFormsService.copyPublicFormLinkFromConfig write to clipboard failed.",
+      );
+    }
     this.alertService.addInfo("Link copied: " + url);
-    return true;
+    return hasMatchingParameters;
   }
 
   /**
@@ -75,7 +100,7 @@ export class PublicFormsService {
     return this.entityMapper.loadType(PublicFormConfig);
   }
 
-  public async getMatchingPublicFormConfigs(
+  public async isEntityTypeLinkedToConfig(
     config: PublicFormConfig,
     entity: Entity,
   ): Promise<boolean> {
@@ -84,14 +109,17 @@ export class PublicFormsService {
     }
 
     const entityType = entity.getConstructor().ENTITY_TYPE.toLowerCase();
-    const linkedEntity = config.linkedEntity;
+    const linkedEntities = config.linkedEntities || [];
 
-    if (!linkedEntity) return false;
+    return linkedEntities.some(
+      (entityConfig) => entityConfig.additional?.toLowerCase() === entityType,
+    );
+  }
 
-    if (linkedEntity.additional) {
-      return linkedEntity.additional.toLowerCase() === entityType;
-    }
-
-    return false;
+  /**
+   * Checks if a PublicFormConfig has any linked entities configured.
+   */
+  private hasLinkedEntities(config: PublicFormConfig): boolean {
+    return !!config.linkedEntities?.length;
   }
 }

@@ -369,9 +369,12 @@ export class MatchingEntitiesComponent implements OnInit {
       const columnConfig = this.getDistanceColumnConfig(side);
       side.columns[sideIndex] = columnConfig;
       side.distanceColumn = columnConfig.additional;
-      const colIndex = this.columns.findIndex(
-        (row) => row[index] === "distance",
-      );
+      const colIndex = this.columns.findIndex((row) => {
+        const col = row[index];
+        return typeof col === "string"
+          ? col === "distance"
+          : col?.id === "distance";
+      });
       if (colIndex !== -1) {
         this.columns[colIndex][index] = columnConfig;
       }

@@ -140,7 +140,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu-item-details/admin-menu-item-details.component.html</context>
-          <context context-type="linenumber">42</context>
+          <context context-type="linenumber">48</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu.component.html</context>
@@ -1376,7 +1376,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu-item-details/admin-menu-item-details.component.html</context>
-          <context context-type="linenumber">43</context>
+          <context context-type="linenumber">49</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu.component.html</context>
@@ -1452,7 +1452,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export-selection-dialog/template-export-selection-dialog.component.html</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5542400467544837445" datatype="html">
@@ -1782,7 +1782,7 @@
         <note priority="1" from="description">Button label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">49,51</context>
+          <context context-type="linenumber">58,60</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8884892459004408018" datatype="html">
@@ -1790,7 +1790,7 @@
         <target>Feld aus dem Formular entfernen (ausblenden)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">57</context>
+          <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8476842395095367834" datatype="html">
@@ -1798,7 +1798,7 @@
         <target>Felder können gruppiert werden, sodass sie auch auf unterschiedlichen Bildschirmgrößen zusammen erscheinen. Ein zusätzlicher Titel kann für eine solche Gruppe an Feldern auch angezeigt werden.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">91</context>
+          <context context-type="linenumber">101</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1500859009281693254" datatype="html">
@@ -1807,7 +1807,7 @@
         <note priority="1" from="description">title for drag and drop section</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">108</context>
+          <context context-type="linenumber">119</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6586271653607682602" datatype="html">
@@ -1816,7 +1816,7 @@
         <note priority="1" from="description">subtitle for drag and drop section</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">109,111</context>
+          <context context-type="linenumber">120,122</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5001163309666256786" datatype="html">
@@ -1824,7 +1824,7 @@
         <target>Felder können entfernt werden ohne diese komplett zu löschen. Die Felder hier werden nicht angezeigt aber sie können in anderen Ansichten sichtbar sein oder als archivierte Felder behalten werden um die darin gespeicherten Daten nicht zu verlieren. Um ein Feld anzuzeigen, ziehe es in die Formular-Vorschau.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">114</context>
+          <context context-type="linenumber">125</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3972154626835212608" datatype="html">
@@ -1833,7 +1833,7 @@
         <note priority="1" from="description">Label drag and drop item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts</context>
-          <context context-type="linenumber">121</context>
+          <context context-type="linenumber">126</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4704280698666275116" datatype="html">
@@ -1842,7 +1842,7 @@
         <note priority="1" from="description">Label drag and drop item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts</context>
-          <context context-type="linenumber">126</context>
+          <context context-type="linenumber">131</context>
         </context-group>
       </trans-unit>
       <trans-unit id="594027083086692935" datatype="html">
@@ -1970,7 +1970,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-widget-dialog/admin-widget-dialog.component.html</context>
-          <context context-type="linenumber">36,38</context>
+          <context context-type="linenumber">37,39</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component.html</context>
@@ -2021,7 +2021,7 @@
         <target> Diese Komponente (<x id="INTERPOLATION" equiv-text="{{ configDetailsView.component }}"/>) kann aktuell noch nicht von Nutzer:innen in der Admin-Oberfläche bearbeitet werden. Bitte kontaktieren Sie Ihr technisches Support-Team, um hier Änderungen vorzunehmen. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
-          <context context-type="linenumber">65,69</context>
+          <context context-type="linenumber">71,75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5103146006962696736" datatype="html">
@@ -2030,7 +2030,7 @@
         <note priority="1" from="description">Save config confirmation message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.ts</context>
-          <context context-type="linenumber">151</context>
+          <context context-type="linenumber">158</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
@@ -2770,12 +2770,12 @@
         <source>Add New</source>
         <target> Neu </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu.component.html</context>
-          <context context-type="linenumber">9</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-create-button/entity-create-button.component.html</context>
           <context context-type="linenumber">25</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/ui/menu-item-list-editor/menu-item-list-editor.component.html</context>
+          <context context-type="linenumber">5</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3813876381901859208" datatype="html">
@@ -2855,7 +2855,7 @@
         <target>Änderungen laden?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts</context>
-          <context context-type="linenumber">142</context>
+          <context context-type="linenumber">147</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8180161184938665842" datatype="html">
@@ -2863,7 +2863,7 @@
         <target>Lokale Änderungen überlappen mit aktualisierten Daten, die vom Server synchronisiert wurden. Wollen Sie die lokalen Änderungen mit den aktuellsten Daten überschreiben?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/entity-form/entity-form.component.ts</context>
-          <context context-type="linenumber">143</context>
+          <context context-type="linenumber">148</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3982571199769260291" datatype="html">
@@ -2910,10 +2910,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/input-file/input-file.component.html</context>
           <context context-type="linenumber">14</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">24</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
@@ -4919,11 +4915,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">194</context>
+          <context context-type="linenumber">166</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">203</context>
+          <context context-type="linenumber">175</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/skill/link-external-profile/link-external-profile-dialog/link-external-profile-dialog.component.html</context>
@@ -5046,7 +5042,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">204</context>
+          <context context-type="linenumber">176</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2666994589784458982" datatype="html">
@@ -5266,6 +5262,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
           <context context-type="linenumber">118</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="linenumber">11</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6680431077518392028" datatype="html">
@@ -5501,19 +5501,11 @@
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">26</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="8605421971099461066" datatype="html">
         <source>Upload file</source>
         <target>Datei hochladen</target>
         <note priority="1" from="description">Tooltip upload file button</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">50</context>
-        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
           <context context-type="linenumber">50</context>
@@ -5526,10 +5518,6 @@
       <trans-unit id="878939938766774780" datatype="html">
         <source>Changes to files are not possible offline.</source>
         <target>Änderungen an Datei-Anhängen sind offline nicht mögich.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">58</context>
-        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
           <context context-type="linenumber">58</context>
@@ -5788,7 +5776,7 @@
         <note priority="1" from="description">Matching View column name</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/matching-entities/matching-entities/matching-entities.component.ts</context>
-          <context context-type="linenumber">384</context>
+          <context context-type="linenumber">387</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2468578017924444574" datatype="html">
@@ -6122,7 +6110,7 @@
         <target>Template</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export-selection-dialog/template-export-selection-dialog.component.html</context>
-          <context context-type="linenumber">24</context>
+          <context context-type="linenumber">31</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3740165325390560180" datatype="html">
@@ -6130,7 +6118,7 @@
         <target>Wählen Sie ein Template</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export-selection-dialog/template-export-selection-dialog.component.html</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">33</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4072910007862654890" datatype="html">
@@ -6138,11 +6126,11 @@
         <target>Datei generieren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export-selection-dialog/template-export-selection-dialog.component.html</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">48</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export.module.ts</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">48</context>
         </context-group>
       </trans-unit>
       <trans-unit id="789688904588709799" datatype="html">
@@ -6150,7 +6138,7 @@
         <target>Dokument konnte nicht erstellt werden [<x id="PH" equiv-text="error"/>]</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export-selection-dialog/template-export-selection-dialog.component.ts</context>
-          <context context-type="linenumber">75</context>
+          <context context-type="linenumber">84</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4115277409045448265" datatype="html">
@@ -6240,7 +6228,7 @@
         <note priority="1" from="description">entity context menu tooltip</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export.module.ts</context>
-          <context context-type="linenumber">48</context>
+          <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7825436843695902859" datatype="html">
@@ -6265,7 +6253,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
         <note priority="1" from="description">TemplateExport</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export.module.ts</context>
-          <context context-type="linenumber">108,116</context>
+          <context context-type="linenumber">119,127</context>
         </context-group>
       </trans-unit>
       <trans-unit id="545544867626738363" datatype="html">
@@ -7310,7 +7298,7 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
         <note priority="1" from="description">Header of drag and drop box</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">97</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9144258997640819235" datatype="html">
@@ -7379,7 +7367,7 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
         <target> Wählen Sie die Vorlage aus, auf deren Grundlage eine Datei für den aktuellen Datensatz erstellt werden soll, oder </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export-selection-dialog/template-export-selection-dialog.component.html</context>
-          <context context-type="linenumber">4,7</context>
+          <context context-type="linenumber">11,14</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3202893386008118482" datatype="html">
@@ -7387,7 +7375,7 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
         <target>Verfügbare Vorlagen konfigurieren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export-selection-dialog/template-export-selection-dialog.component.html</context>
-          <context context-type="linenumber">16</context>
+          <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
       <trans-unit id="327256119203254598" datatype="html">
@@ -7414,7 +7402,7 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
         <note priority="1" from="description">Download note details as CSV</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">71</context>
+          <context context-type="linenumber">58</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5965753758570204253" datatype="html">
@@ -8078,48 +8066,32 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source>You are currently offline.</source>
         <target>Sie sind derzeit offline.</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">12</context>
+          <context context-type="sourcefile">src/app/core/common-components/feature-disabled-info/feature-disabled-info.component.html</context>
+          <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
       <trans-unit id="839454416155110142" datatype="html">
         <source> Please reconnect to the internet to activate. We could not check if this feature is enabled for your system. </source>
         <target> Bitte stellen Sie eine Internetverbindung her. Wir konnten nicht überprüfen, ob diese Funktion für Ihr System aktiviert ist. </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">13,16</context>
+          <context context-type="sourcefile">src/app/core/common-components/feature-disabled-info/feature-disabled-info.component.html</context>
+          <context context-type="linenumber">16,19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5657007278337384532" datatype="html">
         <source>This feature is currently not enabled for your system.</source>
         <target>Diese Funktion ist derzeit für Ihr System nicht aktiviert.</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="sourcefile">src/app/core/common-components/feature-disabled-info/feature-disabled-info.component.html</context>
+          <context context-type="linenumber">26</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7484952008819482551" datatype="html">
         <source>Please contact your system administrator to enable it.</source>
         <target>Bitte wenden Sie sich zur Aktivierung an Ihren Systemadministrator.</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">19</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4952995794247665884" datatype="html">
-        <source> If Notification API has been enabled and you are still seeing this message, there may be an issue with your internet connection or a temporary technical issue on the server. If this persists, please also contact your administrator. </source>
-        <target>Wenn die Benachrichtigungs-API aktiviert ist und diese Meldung weiterhin angezeigt wird, liegt möglicherweise ein Problem mit Ihrer Internetverbindung oder ein vorübergehendes technisches Problem auf dem Server vor. Sollte dies weiterhin bestehen, wenden Sie sich bitte an Ihren Administrator. </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">20,25</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5413618350676964903" datatype="html">
-        <source> Checking if this feature is enabled for your system. This may take a few seconds. </source>
-        <target>Es wird überprüft, ob diese Funktion für Ihr System aktiviert ist. Dies kann einige Sekunden dauern. </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">35,38</context>
+          <context context-type="sourcefile">src/app/core/common-components/feature-disabled-info/feature-disabled-info.component.html</context>
+          <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3192389074334932058" datatype="html">
@@ -8127,7 +8099,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="rong&gt;"/>Welche Benachrichtigungen Sie erhalten<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">48,50</context>
+          <context context-type="linenumber">20,22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4143359484380110691" datatype="html">
@@ -8135,7 +8107,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Definieren Sie Regeln für Ereignisse, für die Sie Benachrichtigungen erhalten möchten. Sie können beliebig viele Regeln hinzufügen und einige vorübergehend deaktivieren, um diese Benachrichtigungen zu pausieren. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">50,54</context>
+          <context context-type="linenumber">22,26</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4518659109156428915" datatype="html">
@@ -8143,7 +8115,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Definieren Sie einen anderen Benachrichtigungstyp für Ihr Benutzerkonto</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">76</context>
+          <context context-type="linenumber">48</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7779859057193480599" datatype="html">
@@ -8151,7 +8123,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Neue Benachrichtigungsregel hinzufügen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">84</context>
+          <context context-type="linenumber">56</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1400147328363601102" datatype="html">
@@ -8159,7 +8131,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Push-Benachrichtigungen sind aktiviert. Sie erhalten Echtzeit-Updates zu wichtigen Aktivitäten.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">99</context>
+          <context context-type="linenumber">71</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2455631196031742891" datatype="html">
@@ -8167,7 +8139,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Push-Benachrichtigungen sind deaktiviert. Aktivieren Sie sie in den Einstellungen, um auch außerhalb der App Benachrichtigungen zu erhalten.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">108</context>
+          <context context-type="linenumber">80</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7193930492633515632" datatype="html">
@@ -8175,7 +8147,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Benachrichtigungen sind immer über das Glockensymbol in der Symbolleiste oben in der Anwendung sichtbar. Sie können unten weitere Möglichkeiten zum Erhalt von Benachrichtigungen aktivieren. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">116,120</context>
+          <context context-type="linenumber">88,92</context>
         </context-group>
       </trans-unit>
       <trans-unit id="200424054360142817" datatype="html">
@@ -8183,7 +8155,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Push-Benachrichtigungen werden derzeit von Ihrem Browser nicht unterstützt. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">125,127</context>
+          <context context-type="linenumber">97,99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="188782366693384177" datatype="html">
@@ -8191,7 +8163,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Für weitere Informationen wenden Sie sich bitte an Ihren Systemadministrator. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">128,130</context>
+          <context context-type="linenumber">100,102</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6243335407677922860" datatype="html">
@@ -8199,7 +8171,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Wenn Sie iOS verwenden, müssen Sie die App zu Ihrem Homescreen hinzufügen. Nutzen Sie dazu den Button &quot;App installieren&quot; im Menü. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">131,134</context>
+          <context context-type="linenumber">103,106</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5855712980171403039" datatype="html">
@@ -8207,7 +8179,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Browser</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">142</context>
+          <context context-type="linenumber">114</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8170386907280460572" datatype="html">
@@ -8215,7 +8187,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Benachrichtigungscenter (in der App)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">153</context>
+          <context context-type="linenumber">125</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3117110618567022749" datatype="html">
@@ -8223,7 +8195,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Klicken Sie auf das Glockensymbol in der oberen Symbolleiste, um jederzeit auf Benachrichtigungen zuzugreifen. Dort finden Sie alle Nachrichten, auch bereits gelesene.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">155</context>
+          <context context-type="linenumber">127</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8152207330358684262" datatype="html">
@@ -8231,7 +8203,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Push-Benachrichtigungen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">168</context>
+          <context context-type="linenumber">140</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5254839394853572699" datatype="html">
@@ -8239,7 +8211,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Eine Benachrichtigung auf Ihrem System (z. B. eine normale Android-Smartphone-Benachrichtigung). Sie sehen diese Benachrichtigungen auch, wenn Ihre App gerade nicht geöffnet ist.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">170</context>
+          <context context-type="linenumber">142</context>
         </context-group>
       </trans-unit>
       <trans-unit id="220423849517898736" datatype="html">
@@ -8247,7 +8219,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Beispielbenachrichtigung anzeigen (nur verfügbar, wenn Push-Benachrichtigungen aktiviert sind)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">179</context>
+          <context context-type="linenumber">151</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6923125800271447938" datatype="html">
@@ -8255,7 +8227,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Testbenachrichtigung</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">186</context>
+          <context context-type="linenumber">158</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6999023508738940307" datatype="html">
@@ -8263,7 +8235,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Erste Benachrichtigungseinstellungen erstellt und gespeichert.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
-          <context context-type="linenumber">140</context>
+          <context context-type="linenumber">138</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2697874063201718403" datatype="html">
@@ -8271,7 +8243,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Benachrichtigungsregel löschen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
-          <context context-type="linenumber">193</context>
+          <context context-type="linenumber">191</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3173500569851728935" datatype="html">
@@ -8279,7 +8251,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Möchten Sie diese Benachrichtigungsregel wirklich entfernen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
-          <context context-type="linenumber">194</context>
+          <context context-type="linenumber">192</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9181790066849638690" datatype="html">
@@ -8288,7 +8260,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <note priority="1" from="description">Default notification rule label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
-          <context context-type="linenumber">220</context>
+          <context context-type="linenumber">218</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2949628569044050352" datatype="html">
@@ -8297,7 +8269,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <note priority="1" from="description">Default notification rule label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
-          <context context-type="linenumber">228</context>
+          <context context-type="linenumber">226</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5449135813027171237" datatype="html">
@@ -8306,7 +8278,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <note priority="1" from="description">Default notification rule label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
-          <context context-type="linenumber">236</context>
+          <context context-type="linenumber">234</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3768499663881435063" datatype="html">
@@ -8485,7 +8457,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Wo Benachrichtigungen empfangen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">95</context>
+          <context context-type="linenumber">67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6151416851572883297" datatype="html">
@@ -8493,7 +8465,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target> Aktiviert </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">102,104</context>
+          <context context-type="linenumber">74,76</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6197665339164385071" datatype="html">
@@ -8501,7 +8473,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target> Deaktiviert </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
-          <context context-type="linenumber">111,113</context>
+          <context context-type="linenumber">83,85</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2613908026572744573" datatype="html">
@@ -8966,28 +8938,12 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
           <context context-type="linenumber">12,20</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1712225779594774251" datatype="html">
-        <source>Add New Menu Item</source>
-        <target>Neuen Menüpunkt hinzufügen</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu-item-details/admin-menu-item-details.component.html</context>
-          <context context-type="linenumber">3</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2734334000358852553" datatype="html">
-        <source>Edit Menu Item</source>
-        <target>Menüpunkt „Bearbeiten“</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu-item-details/admin-menu-item-details.component.html</context>
-          <context context-type="linenumber">5</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="4522221863763285377" datatype="html">
         <source> Optionally select a record type to automatically use its name, icon and list view (as link) for this menu item. Otherwise, you can select a custom name and icon below. </source>
         <target>Wählen Sie optional einen Datensatztyp aus, dessen Name, Symbol und Listenansicht (als Link) automatisch für diesen Menüpunkt verwendet werden sollen. Andernfalls können Sie unten einen benutzerdefinierten Namen und ein benutzerdefiniertes Symbol auswählen. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu-item-details/admin-menu-item-details.component.html</context>
-          <context context-type="linenumber">11,15</context>
+          <context context-type="linenumber">12,16</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6638390680817376590" datatype="html">
@@ -8999,15 +8955,11 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu-item-details/admin-menu-item-details.component.html</context>
-          <context context-type="linenumber">19</context>
+          <context context-type="linenumber">20</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.html</context>
-          <context context-type="linenumber">16</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.html</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2954289314689748382" datatype="html">
@@ -9015,7 +8967,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Um eine Bezeichnung und einen Link manuell zu definieren, löschen Sie das Feld „Entitätstyp“ oben. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu-item-details/admin-menu-item-details.component.html</context>
-          <context context-type="linenumber">28,30</context>
+          <context context-type="linenumber">29,32</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4276502865577075277" datatype="html">
@@ -9477,7 +9429,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Entitätstyp ändern</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.ts</context>
-          <context context-type="linenumber">100</context>
+          <context context-type="linenumber">104</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6472567986999223209" datatype="html">
@@ -9485,7 +9437,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Durch das Ändern des Typs werden alle ausgewählten Felder verworfen. Fortfahren?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.ts</context>
-          <context context-type="linenumber">101</context>
+          <context context-type="linenumber">105</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4815129362025568896" datatype="html">
@@ -10116,7 +10068,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Geburtsdatum-Feld</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.html</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">42</context>
         </context-group>
       </trans-unit>
       <trans-unit id="772865261820430643" datatype="html">
@@ -10203,20 +10155,8 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source>Shortcuts</source>
         <target>Verknüpfungen</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard-settings.component/shortcut-dashboard-settings.component.html</context>
-          <context context-type="linenumber">6</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard-widget.module.ts</context>
           <context context-type="linenumber">12</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5200227476976723766" datatype="html">
-        <source>Shortcut <x id="INTERPOLATION" equiv-text="{{ i + 1 }}"/></source>
-        <target>Verknüpfung <x id="INTERPOLATION" equiv-text="{{ i + 1 }}"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard-settings.component/shortcut-dashboard-settings.component.html</context>
-          <context context-type="linenumber">9</context>
         </context-group>
       </trans-unit>
       <trans-unit id="192340254091027151" datatype="html">
@@ -10249,22 +10189,6 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todos.module.ts</context>
           <context context-type="linenumber">21</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4579616810494189556" datatype="html">
-        <source> Link <x id="START_BLOCK_IF" equiv-text="@if (showLinkTooltip) {"/>   <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span           matTooltip=&quot;You can edit the link to create a new quick access shortcut. To create a new shortcut link, open Aam Digital in a new tab, go to the desired entity, copy everything after ‘https://demo.aam-digital.com/’, and paste it here to create your shortcut.&quot;           i18n-matTooltip         &gt;"/><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;question-circle&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/></source>
-        <target>Link <x id="START_BLOCK_IF" equiv-text="@if (showLinkTooltip) {"/>   <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span matTooltip=&quot;Sie können den Link bearbeiten, um eine neue Verknüpfung für den Schnellzugriff zu erstellen. Um einen neuen Verknüpfungslink zu erstellen, öffnen Sie Aam Digital in einem neuen Tab, gehen Sie zur gewünschten Entität, kopieren Sie alles nach „https://demo.aam-digital.com/“ und fügen Sie es hier ein, um Ihre Verknüpfung zu erstellen.&quot; i18n-matTooltip &gt;"/><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;question-circle&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
-          <context context-type="linenumber">10,20</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4972527003527000997" datatype="html">
-        <source>You can edit the link to create a new quick access shortcut. To create a new shortcut link, open Aam Digital in a new tab, go to the desired entity, copy everything after ‘https://demo.aam-digital.com/’, and paste it here to create your shortcut.</source>
-        <target>Sie können den Link bearbeiten, um eine neue Verknüpfung für den Schnellzugriff zu erstellen. Geben Sie dazu den relativen Link an (Öffnen Sie Aam Digital in einem neuen Tab, gehen Sie zur gewünschten Seite, kopieren Sie alles nach der Basis der URL „https://mein-system.aam-digital.app/“ und fügen Sie es hier ein, um Ihre Verknüpfung zu erstellen.)</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
-          <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
       <trans-unit id="732955514089887947" datatype="html">
@@ -10505,7 +10429,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <note priority="1" from="description">admin menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export.module.ts</context>
-          <context context-type="linenumber">55</context>
+          <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8112028716281298918" datatype="html">
@@ -10515,6 +10439,130 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/filter/filter-generator/filter-generator.service.ts</context>
           <context context-type="linenumber">83</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2074381744111873107" datatype="html">
+        <source> Checking if this feature is enabled for your system. This may take a few seconds... </source>
+        <target> Es wird überprüft, ob diese Funktion für Ihr System aktiviert ist. Dies kann einige Sekunden dauern ... </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/feature-disabled-info/feature-disabled-info.component.html</context>
+          <context context-type="linenumber">7,10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1453115761842949013" datatype="html">
+        <source> This feature is currently not enabled for your system. Please contact your system administrator to enable it. </source>
+        <target>Diese Funktion ist derzeit für Ihr System nicht aktiviert. Wenden Sie sich zur Aktivierung an Ihren Systemadministrator. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/feature-disabled-info/feature-disabled-info.component.html</context>
+          <context context-type="linenumber">21,24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7075609553416215839" datatype="html">
+        <source> If <x id="INTERPOLATION" equiv-text="{{ featureName }}"/> has been enabled and you are still seeing this message, there may be an issue with your internet connection or a temporary technical issue on the server. If this persists, please also contact your administrator. </source>
+        <target>Wenn <x id="INTERPOLATION" equiv-text="{{ featureName }}"/> aktiviert ist und diese Meldung weiterhin angezeigt wird, liegt möglicherweise ein Problem mit Ihrer Internetverbindung oder ein vorübergehendes technisches Problem auf dem Server vor. Sollte das Problem weiterhin bestehen, wenden Sie sich bitte ebenfalls an Ihren Administrator. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/feature-disabled-info/feature-disabled-info.component.html</context>
+          <context context-type="linenumber">28,33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2454892044880818283" datatype="html">
+        <source>this feature</source>
+        <target>diese Funktion</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/feature-disabled-info/feature-disabled-info.component.ts</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3112165833797777047" datatype="html">
+        <source>Add New Item</source>
+        <target>Neues Element hinzufügen</target>
+        <note priority="1" from="description">menu item edit title</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu-item-details/admin-menu-item-details.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7805237500063100423" datatype="html">
+        <source>Edit Item</source>
+        <target>Element bearbeiten</target>
+        <note priority="1" from="description">menu item edit title</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu-item-details/admin-menu-item-details.component.html</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6918670220461715209" datatype="html">
+        <source>Birthdays / Anniversaries to show</source>
+        <target>angezeigte Geburtstage / Jahrestage</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3133347151411553014" datatype="html">
+        <source>There are no additional fields with datatype &apos;date of birth (date + age)&apos;.</source>
+        <target>Es gibt keine zusätzlichen Felder mit dem Datentyp „Geburtsdatum (Datum + Alter)“.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.html</context>
+          <context context-type="linenumber">54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6476657073855749920" datatype="html">
+        <source>Add another</source>
+        <target>Weitere hinzufügen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.html</context>
+          <context context-type="linenumber">69</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1465748633383959054" datatype="html">
+        <source>Please select both entity type and property for all entries before saving.</source>
+        <target>Bitte wählen Sie vor dem Speichern für alle Einträge den Datensatz-Typ und das Feld aus.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.html</context>
+          <context context-type="linenumber">77,78</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="212828338610327706" datatype="html">
+        <source> You can edit how users will see the Note details of a single record. Drag and drop fields and sections in this preview of a profile view and group them as appropriate. The editor below closely resembles how the form will look for users later. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> We recommend to keep things simple: Only add fields that you really need for your work.
+</source>
+        <target>Sie können festlegen, wie Benutzern die Notizdetails eines einzelnen Datensatzes angezeigt werden. Ziehen Sie Felder und Abschnitte in dieser Profilansicht per Drag &amp; Drop und gruppieren Sie sie nach Bedarf. Der folgende Editor ähnelt stark dem späteren Aussehen des Formulars für Benutzer. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Wir empfehlen, es einfach zu halten: Fügen Sie nur Felder hinzu, die Sie für Ihre Arbeit wirklich benötigen.
+</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/admin-note-details/admin-note-details.component.html</context>
+          <context context-type="linenumber">1,9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4395458180329513485" datatype="html">
+        <source> You can define a link manually. To create a new link, open Aam Digital in a new tab, go to the desired entity, copy everything after ‘https://&lt;your-system&gt;.aam-digital.app/’, and paste it here as the link target. </source>
+        <target>Sie können einen Link manuell definieren. Um einen neuen Link zu erstellen, öffnen Sie Aam Digital in einem neuen Tab, gehen Sie zur gewünschten Entität, kopieren Sie alles nach „https://&lt;Ihr-System&gt;.aam-digital.app/“ und fügen Sie es hier als Linkziel ein. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="linenumber">26,31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6273099248629806285" datatype="html">
+        <source>Switch to select mode</source>
+        <target>In den Auswahlmodus wechseln</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8718527404606333767" datatype="html">
+        <source>Switch to custom link mode</source>
+        <target>Wechseln Sie in den benutzerdefinierten Linkmodus</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4639606720451442052" datatype="html">
+        <source> Click on multiple rows below to match a group. </source>
+        <target>Klicken Sie unten auf mehrere Zeilen, um eine Gruppe zuzuordnen. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/matching-entities/matching-entities.component.html</context>
+          <context context-type="linenumber">122,124</context>
         </context-group>
       </trans-unit>
     </body>
