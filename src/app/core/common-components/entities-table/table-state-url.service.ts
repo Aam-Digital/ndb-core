@@ -16,7 +16,8 @@ export class TableStateUrlService {
     params: Record<string, string | null | undefined>,
     replaceUrl = true,
   ) {
-    const queryParams = { ...this.route.snapshot.queryParams };
+    const MAX_URL_LENGTH = 2000;
+    let queryParams = { ...this.route.snapshot.queryParams };
     for (const key of Object.keys(params)) {
       const value = params[key];
       if (value == null || value === "") {
@@ -25,19 +26,36 @@ export class TableStateUrlService {
         queryParams[key] = value;
       }
     }
+    let potentialUrl = this.router
+      .createUrlTree([], {
+        relativeTo: this.route,
+        queryParams,
+        queryParamsHandling: "merge",
+      })
+      .toString();
+    if (potentialUrl.length > MAX_URL_LENGTH) {
+      let longestKey: string | null = null;
+      let maxLength = 0;
+      Object.keys(queryParams).forEach((key) => {
+        if (queryParams[key] && queryParams[key].length > maxLength) {
+          longestKey = key;
+          maxLength = queryParams[key].length;
+        }
+      });
+      if (longestKey) {
+        delete queryParams[longestKey];
+      } else {
+        // fallback: remove the last added param
+        const lastKey = Object.keys(params)[Object.keys(params).length - 1];
+        delete queryParams[lastKey];
+      }
+    }
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams,
       queryParamsHandling: "merge",
       ...(replaceUrl ? { replaceUrl: true } : {}),
     });
-  }
-
-  /**
-   * Deprecated: single key-value param update. Use updateUrlParams instead.
-   */
-  updateUrlParam(key: string, value: string, replaceUrl = true) {
-    this.updateUrlParams({ [key]: value }, replaceUrl);
   }
 
   /**
