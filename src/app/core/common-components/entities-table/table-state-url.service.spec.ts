@@ -2,7 +2,7 @@ import { TestBed } from "@angular/core/testing";
 import { Router, ActivatedRoute } from "@angular/router";
 import { TableStateUrlService } from "./table-state-url.service";
 
-fdescribe("TableStateUrlService", () => {
+describe("TableStateUrlService", () => {
   let service: TableStateUrlService;
   let routerSpy: jasmine.SpyObj<Router>;
   let activatedRouteStub: Partial<ActivatedRoute>;

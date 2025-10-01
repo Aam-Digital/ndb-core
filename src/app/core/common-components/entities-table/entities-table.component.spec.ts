@@ -46,7 +46,14 @@ describe("EntitiesTableComponent", () => {
           useValue: jasmine.createSpyObj(["openFormPopup"]),
         },
         { provide: CurrentUserSubject, useValue: of(null) },
-        { provide: Router, useValue: jasmine.createSpyObj(["navigate"]) },
+        {
+          provide: Router,
+          useValue: (() => {
+            const spy = jasmine.createSpyObj(["navigate", "createUrlTree"]);
+            spy.createUrlTree.and.returnValue({ toString: () => "/?foo=bar" });
+            return spy;
+          })(),
+        },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -287,7 +294,7 @@ describe("EntitiesTableComponent", () => {
   });
 
   it("should navigate to '/new' route on newly created entities", () => {
-    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
+    const navigateSpy = TestBed.inject(Router).navigate;
     component.clickMode = "navigate";
 
     const child = new TestEntity();
