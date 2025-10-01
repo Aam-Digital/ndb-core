@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
-import { MenuItem } from "app/core/ui/navigation/menu-item";
+import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
 import { MenuItemComponent } from "app/core/ui/navigation/menu-item/menu-item.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { CdkDragDrop, DragDropModule } from "@angular/cdk/drag-drop";
@@ -106,7 +106,12 @@ export class AdminMenuItemComponent {
   async editMenuItem(item: MenuItemForAdminUi | MenuItemForAdminUiNew) {
     const updatedItem = await this.openEditDialog(item);
     if (updatedItem) {
-      this.item = { ...item, ...updatedItem };
+      const mergedItem = { ...item, ...updatedItem };
+      if ("entityType" in item && !("entityType" in updatedItem)) {
+        delete (mergedItem as unknown as EntityMenuItem).entityType;
+      }
+
+      this.item = mergedItem;
       this.itemChange.emit(this.item);
     }
   }
