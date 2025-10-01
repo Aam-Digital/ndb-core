@@ -82,7 +82,7 @@ export class EntitiesTableComponent<T extends Entity>
   private router = inject(Router);
   private filterService = inject(FilterService);
   private schemaService = inject(EntitySchemaService);
-  private tableStateUrl = inject(TableStateUrlService);
+  private readonly tableStateUrl = inject(TableStateUrlService);
 
   @Input() set records(value: T[]) {
     if (!value) {

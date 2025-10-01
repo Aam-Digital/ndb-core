@@ -32,8 +32,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   private filterGenerator = inject(FilterGeneratorService);
   private filterService = inject(FilterService);
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private tableStateUrl = inject(TableStateUrlService);
+  private readonly tableStateUrl = inject(TableStateUrlService);
 
   /**
    * The filter configuration from the config

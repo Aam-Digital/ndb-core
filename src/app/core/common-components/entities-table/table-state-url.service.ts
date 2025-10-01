@@ -6,8 +6,8 @@ import { ActivatedRoute, Router } from "@angular/router";
  */
 @Injectable({ providedIn: "root" })
 export class TableStateUrlService {
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   /**
    * Update a query param in the URL (without reloading the page).
