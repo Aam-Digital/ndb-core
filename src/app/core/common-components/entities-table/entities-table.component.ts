@@ -44,6 +44,7 @@ import { entityFilterPredicate } from "../../filter/filter-generator/filter-pred
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { Router } from "@angular/router";
 import { FilterService } from "../../filter/filter.service";
+import { TableStateUrlService } from "./table-state-url.service";
 import { DataFilter } from "../../filter/filters/filters";
 import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
 import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
@@ -51,7 +52,6 @@ import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TableRow } from "./table-row";
-
 /**
  * A simple display component (no logic and transformations) to display a table of entities.
  */
@@ -82,6 +82,7 @@ export class EntitiesTableComponent<T extends Entity>
   private router = inject(Router);
   private filterService = inject(FilterService);
   private schemaService = inject(EntitySchemaService);
+  private readonly tableStateUrl = inject(TableStateUrlService);
 
   @Input() set records(value: T[]) {
     if (!value) {
@@ -171,8 +172,13 @@ export class EntitiesTableComponent<T extends Entity>
     this._columnsToDisplay = cols;
 
     if (this.sortIsInferred) {
-      this.sortBy = this.inferDefaultSort();
-      this.sortIsInferred = true;
+      // Only set default sort if not present in URL
+      const urlSortBy = this.tableStateUrl.getUrlParam("sortBy");
+      const urlSortOrder = this.tableStateUrl.getUrlParam("sortOrder");
+      if (!urlSortBy && !urlSortOrder) {
+        this.sortBy = this.inferDefaultSort();
+        this.sortIsInferred = true;
+      }
     }
   }
 
@@ -190,15 +196,48 @@ export class EntitiesTableComponent<T extends Entity>
     if (!value) {
       return;
     }
-
     this._sortBy = value;
     this.sortIsInferred = false;
+    // Persist sort state to URL
+    if (value.active) {
+      this.tableStateUrl.updateUrlParams({
+        sortBy: value.active,
+        sortOrder: value.direction ?? "asc",
+      });
+    }
   }
 
   _sortBy: Sort;
 
   @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
     this.recordsDataSource.sort = sort;
+    if (sort) {
+      // Restore sort state from URL on init
+      const sortBy = this.tableStateUrl.getUrlParam("sortBy");
+      const sortOrder = this.tableStateUrl.getUrlParam(
+        "sortOrder",
+      ) as SortDirection;
+      if (sortBy) {
+        sort.active = sortBy;
+        sort.direction = sortOrder || "asc";
+      }
+      // Listen for sort changes to persist to URL
+      sort.sortChange.subscribe(({ active, direction }) => {
+        if (!direction) {
+          this.tableStateUrl.updateUrlParams({ sortBy: null, sortOrder: null });
+        } else if (direction === "desc") {
+          this.tableStateUrl.updateUrlParams({
+            sortBy: active,
+            sortOrder: "desc",
+          });
+        } else {
+          this.tableStateUrl.updateUrlParams({
+            sortBy: active,
+            sortOrder: null,
+          });
+        }
+      });
+    }
   }
 
   private sortIsInferred: boolean = true;

@@ -70,7 +70,16 @@ describe("MatchingEntitiesComponent", () => {
     TestBed.configureTestingModule({
       imports: [MatchingEntitiesComponent, MockedTestingModule.withState()],
       providers: [
-        { provide: ActivatedRoute, useValue: { data: routeData } },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            data: routeData,
+            snapshot: {
+              queryParams: {},
+              queryParamMap: { get: () => null },
+            },
+          },
+        },
         { provide: FormDialogService, useValue: null },
         { provide: ConfigService, useValue: mockConfigService },
         { provide: EntityRegistry, useValue: entityRegistry },
