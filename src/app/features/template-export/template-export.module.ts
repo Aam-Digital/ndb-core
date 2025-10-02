@@ -1,18 +1,18 @@
-import { NgModule, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
+import { NgModule, inject } from "@angular/core";
+import { AdminOverviewService } from "../../core/admin/admin-overview/admin-overview.service";
 import { RouterService } from "../../core/config/dynamic-routing/router.service";
 import { ViewConfig } from "../../core/config/dynamic-routing/view-config.interface";
+import { EntityActionsMenuService } from "../../core/entity-details/entity-actions-menu/entity-actions-menu.service";
 import { EntityDetailsConfig } from "../../core/entity-details/EntityDetailsConfig";
 import { EntityListConfig } from "../../core/entity-list/EntityListConfig";
-import { AdminOverviewService } from "../../core/admin/admin-overview/admin-overview.service";
-import { EntityActionsMenuService } from "../../core/entity-details/entity-actions-menu/entity-actions-menu.service";
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
 import { Entity } from "../../core/entity/model/entity";
-import { TemplateExportFileDatatype } from "./template-export-file-datatype/template-export-file.datatype";
-import { TemplateExport } from "./template-export.entity";
-import { TemplateExportService } from "./template-export-service/template-export.service";
 import { SessionSubject } from "../../core/session/auth/session-info";
+import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
+import { TemplateExportFileDatatype } from "./template-export-file-datatype/template-export-file.datatype";
+import { TemplateExportService } from "./template-export-service/template-export.service";
+import { TemplateExport } from "./template-export.entity";
 
 /**
  * Manage template files with placeholders that can be used to render files for export of entities.

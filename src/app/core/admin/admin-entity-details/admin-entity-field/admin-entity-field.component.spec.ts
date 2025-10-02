@@ -50,7 +50,7 @@ describe("AdminEntityFieldComponent", () => {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            entitySchemaField: {},
+            entitySchemaField: { datatype: "" },
             entityType: Entity,
           },
         },
@@ -93,7 +93,10 @@ describe("AdminEntityFieldComponent", () => {
         )
         .then((field) => field.getControl(MatInputHarness))
         .then((input) => (additionalInput = input))
-        .catch(() => (additionalInput = undefined));
+        .catch((err) => {
+          console.error(err);
+          additionalInput = undefined;
+        });
       tick();
     }
 

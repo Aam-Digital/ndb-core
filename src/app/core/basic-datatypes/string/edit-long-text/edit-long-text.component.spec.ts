@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditLongTextComponent } from "./edit-long-text.component";
-import { setupEditComponent } from "../../../entity/default-datatype/edit-component.spec";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { setupCustomFormControlEditComponent } from "../../../entity/default-datatype/edit-component.spec";
 
 describe("EditLongTextComponent", () => {
   let component: EditLongTextComponent;
@@ -12,12 +12,10 @@ describe("EditLongTextComponent", () => {
     await TestBed.configureTestingModule({
       imports: [EditLongTextComponent, NoopAnimationsModule],
     }).compileComponents();
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(EditLongTextComponent);
     component = fixture.componentInstance;
-    setupEditComponent(component);
+    setupCustomFormControlEditComponent(component);
     fixture.detectChanges();
   });
 

@@ -6,15 +6,11 @@
   #fileUpload
 />
 
-<mat-form-field
-  [ngClass]="{ clickable: formControl.value }"
+<div
+  class="flex-row gap-regular"
+  [class.clickable]="formControl.value"
   (click)="navigator.onLine ? formClicked() : null"
 >
-  @if (!hideLabel) {
-    <mat-label>
-      <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
-    </mat-label>
-  }
   <input
     matInput
     readonly
@@ -31,11 +27,11 @@
     <button
       type="button"
       mat-icon-button
-      matIconSuffix
       (click)="delete(); $event.stopPropagation()"
       i18n-mattooltip="Tooltip remove file"
       matTooltip="Remove file"
       [disabled]="!navigator.onLine"
+      class="input-action-button"
     >
       <fa-icon icon="xmark"></fa-icon>
     </button>
@@ -44,21 +40,22 @@
     <button
       type="button"
       mat-icon-button
-      matIconSuffix
       (click)="fileUpload.click(); $event.stopPropagation()"
       i18n-matTooltip="Tooltip upload file button"
       matTooltip="Upload file"
       [disabled]="!navigator.onLine"
+      class="input-action-button"
     >
       <fa-icon icon="upload"></fa-icon>
     </button>
   }
+</div>
 
-  @if (!navigator.onLine && formControl.enabled) {
-    <mat-hint i18n>Changes to files are not possible offline.</mat-hint>
-  }
-
-  <mat-error>
-    <app-error-hint [form]="formControl"></app-error-hint>
-  </mat-error>
-</mat-form-field>
+@if (!navigator.onLine && formControl.enabled) {
+  <div
+    style="font-size: 0.75em; color: rgba(0, 0, 0, 0.6); margin-top: 4px"
+    i18n
+  >
+    Changes to files are not possible offline.
+  </div>
+}

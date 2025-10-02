@@ -448,8 +448,8 @@ export class BasicAutocompleteComponent<O, V = O>
     }
   }
 
-  override writeValue(val: V[] | V) {
-    super.writeValue(val);
+  override writeValue(val: V[] | V, notifyFormControl = false): void {
+    super.writeValue(val, notifyFormControl);
     this.setInitialInputValue();
   }
 }

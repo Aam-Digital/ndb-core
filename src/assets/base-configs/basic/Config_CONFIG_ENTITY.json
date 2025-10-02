@@ -248,21 +248,103 @@
       "component": "AddDayAttendance"
     },
     "entity:School": {
-      "label": "Group",
-      "labelPlural": "Groups",
-      "icon": "university",
       "toStringAttributes": [
         "name"
       ],
+      "icon": "university",
+      "label": "School",
+      "labelPlural": "Schools",
+      "color": "#9E9D24",
       "attributes": {
         "name": {
           "dataType": "string",
           "label": "Name",
           "validators": {
             "required": true
-          }
+          },
+          "id": "name"
+        },
+        "privateSchool": {
+          "dataType": "boolean",
+          "label": "Private School",
+          "id": "privateSchool"
+        },
+        "language": {
+          "dataType": "string",
+          "label": "Language",
+          "id": "language"
+        },
+        "address": {
+          "dataType": "location",
+          "label": "Address",
+          "id": "address"
+        },
+        "phone": {
+          "dataType": "string",
+          "label": "Phone Number",
+          "id": "phone"
+        },
+        "timing": {
+          "dataType": "string",
+          "label": "School Timing",
+          "id": "timing"
+        },
+        "remarks": {
+          "dataType": "string",
+          "label": "Remarks",
+          "id": "remarks"
+        },
+        "website": {
+          "dataType": "url",
+          "label": "Website",
+          "id": "website"
+        },
+        "_id": {
+          "anonymize": "retain",
+          "dataType": "string",
+          "id": "_id"
+        },
+        "_rev": {
+          "anonymize": "retain",
+          "dataType": "string",
+          "id": "_rev"
+        },
+        "created": {
+          "anonymize": "retain",
+          "dataType": "update-metadata",
+          "id": "created"
+        },
+        "updated": {
+          "anonymize": "retain",
+          "dataType": "update-metadata",
+          "id": "updated"
+        },
+        "inactive": {
+          "anonymize": "retain",
+          "dataType": "boolean",
+          "id": "inactive"
+        },
+        "anonymized": {
+          "anonymize": "retain",
+          "dataType": "boolean",
+          "id": "anonymized"
+        },
+        "enumDropdown": {
+          "id": "enumDropdown",
+          "label": "enum dropdown",
+          "dataType": "configurable-enum",
+          "additional": "center"
+        },
+        "enumMulti": {
+          "id": "enumMulti",
+          "label": "enum multi",
+          "dataType": "configurable-enum",
+          "isArray": true,
+          "additional": "center"
         }
-      }
+      },
+      "hasPII": false,
+      "_id": "entity:School"
     },
     "view:school": {
       "component": "EntityList",
@@ -299,7 +381,28 @@
                   "fieldGroups": [
                     {
                       "fields": [
-                        "name"
+                        "name",
+                        "privateSchool"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "address",
+                        "phone",
+                        "website"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "language",
+                        "timing"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "remarks",
+                        "enumDropdown",
+                        "enumMulti"
                       ]
                     }
                   ]
@@ -308,11 +411,33 @@
             ]
           },
           {
-            "title": "Participants",
+            "title": "Students",
             "components": [
               {
-                "title": "",
-                "component": "ChildSchoolOverview"
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "ChildSchoolRelation",
+                  "columns": [
+                    {
+                      "id": "childId"
+                    },
+                    {
+                      "id": "start",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "end",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "schoolClass"
+                    },
+                    {
+                      "id": "result"
+                    }
+                  ],
+                  "loaderMethod": "ChildrenServiceQueryRelations"
+                }
               }
             ]
           },
@@ -320,13 +445,35 @@
             "title": "Activities",
             "components": [
               {
-                "title": "",
-                "component": "ActivitiesOverview"
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "RecurringActivity",
+                  "columns": [
+                    {
+                      "id": "title",
+                      "editComponent": "EditTextWithAutocomplete",
+                      "additional": {
+                        "entityType": "RecurringActivity",
+                        "relevantProperty": "linkedGroups"
+                      }
+                    },
+                    {
+                      "id": "assignedTo"
+                    },
+                    {
+                      "id": "linkedGroups"
+                    },
+                    {
+                      "id": "excludedParticipants"
+                    }
+                  ]
+                }
               }
             ]
           }
         ]
-      }
+      },
+      "_id": "view:school/:id"
     },
     "entity:Child": {
       "label": "Participant",

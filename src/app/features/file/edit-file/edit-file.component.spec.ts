@@ -5,18 +5,18 @@ import {
   tick,
 } from "@angular/core/testing";
 
-import { EditFileComponent } from "./edit-file.component";
-import { AlertService } from "../../../core/alerts/alert.service";
 import { FormControl } from "@angular/forms";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { of, Subject } from "rxjs";
-import { Entity } from "app/core/entity/model/entity";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { FileService } from "../file.service";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { Entity } from "app/core/entity/model/entity";
+import { of, Subject } from "rxjs";
+import { AlertService } from "../../../core/alerts/alert.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { FileFieldConfig } from "../file.datatype";
+import { FileService } from "../file.service";
+import { EditFileComponent } from "./edit-file.component";
 
 describe("EditFileComponent", () => {
   let component: EditFileComponent;
@@ -131,7 +131,7 @@ describe("EditFileComponent", () => {
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       file,
       component.entity,
-      component.formControlName,
+      component.formFieldConfig.id,
     );
   });
 
@@ -170,7 +170,7 @@ describe("EditFileComponent", () => {
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       otherFile,
       component.entity,
-      component.formControlName,
+      component.formFieldConfig.id,
     );
   });
 
@@ -215,7 +215,7 @@ describe("EditFileComponent", () => {
     expect(component.formControl).toHaveValue(undefined);
     expect(mockFileService.removeFile).toHaveBeenCalledWith(
       component.entity,
-      component.formControlName,
+      component.formFieldConfig.id,
     );
     expect(mockAlertService.addInfo).toHaveBeenCalled();
   });
@@ -235,7 +235,7 @@ describe("EditFileComponent", () => {
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       otherFile,
       component.entity,
-      component.formControlName,
+      component.formFieldConfig.id,
     );
   });
 
@@ -253,18 +253,18 @@ describe("EditFileComponent", () => {
 
     component.onFileSelected(file);
 
-    component.entity[component.formControlName] = file.name;
+    component.entity[component.formFieldConfig.id] = file.name;
     component.formControl.disable();
 
     expect(component.formControl).toHaveValue(file.name);
-    expect(component.entity[component.formControlName]).toBe(file.name);
+    expect(component.entity[component.formFieldConfig.id]).toBe(file.name);
 
     subject.error(new Error());
     tick();
 
     expect(mockAlertService.addDanger).toHaveBeenCalled();
     expect(component.formControl).toHaveValue("old.file");
-    expect(component.entity[component.formControlName]).toBe("old.file");
+    expect(component.entity[component.formFieldConfig.id]).toBe("old.file");
     expect(mockEntityMapper.save).toHaveBeenCalledWith(
       jasmine.objectContaining({
         _id: component.entity["_id"],
@@ -281,7 +281,7 @@ describe("EditFileComponent", () => {
 
     expect(mockFileService.showFile).toHaveBeenCalledWith(
       component.entity,
-      component.formControlName,
+      component.formFieldConfig.id,
     );
   });
 
@@ -296,7 +296,10 @@ describe("EditFileComponent", () => {
 
   function setupComponent(value = null) {
     initialValue = value;
-    component.formControl = new FormControl(initialValue);
+    component.ngControl = {
+      control: new FormControl(initialValue),
+    } as any;
+
     component.entity = Object.assign(new Entity(), { testProp: initialValue });
     component.formFieldConfig = { id: "testProp" };
     component.formControl.disable();

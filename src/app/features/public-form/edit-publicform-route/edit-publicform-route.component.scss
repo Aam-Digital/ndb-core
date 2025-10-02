@@ -1,16 +1,9 @@
 @use "variables/breakpoints";
-
-.router-container {
-  display: flex;
-  flex-direction: row;
-}
-
-.disabled {
-  pointer-events: none;
-}
+@use "variables/colors";
 
 .readonly-prefix {
   word-break: break-word;
+  align-self: center;
 }
 
 .prefix-text-disabled {

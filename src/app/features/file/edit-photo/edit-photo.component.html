@@ -7,12 +7,6 @@
     matTooltip="Changes to files are not possible offline."
     i18n-matTooltip
   >
-    <label
-      class="img-label"
-      [ngClass]="{ invalid: formControl.invalid && formControl.touched }"
-      >{{ label }}</label
-    >
-
     @if (formControl.value && formControl.enabled) {
       <button
         type="button"
@@ -37,18 +31,13 @@
         <fa-icon icon="upload"></fa-icon>
       </button>
     }
-
-    <input
-      type="file"
-      style="display: none"
-      (change)="onFileSelected($event.target['files'][0])"
-      [accept]="acceptedFileTypes"
-      #fileUpload
-    />
   </div>
-  @if (formControl.invalid && formControl.touched) {
-    <mat-error>
-      <app-error-hint [form]="formControl"></app-error-hint>
-    </mat-error>
-  }
+
+  <input
+    type="file"
+    style="display: none"
+    (change)="onFileSelected($event.target['files'][0])"
+    [accept]="acceptedFileTypes"
+    #fileUpload
+  />
 </div>

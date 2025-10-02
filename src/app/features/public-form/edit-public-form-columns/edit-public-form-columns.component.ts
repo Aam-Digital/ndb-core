@@ -1,6 +1,19 @@
-import { Component, inject, OnInit } from "@angular/core";
-import { EditComponent } from "app/core/entity/default-datatype/edit-component";
+import {
+  Component,
+  inject,
+  OnInit,
+  Input,
+  ChangeDetectionStrategy,
+  ViewChild,
+  signal,
+} from "@angular/core";
+import { FormControl } from "@angular/forms";
+import { MatFormFieldControl } from "@angular/material/form-field";
+import { EditComponent } from "app/core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
+import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
+import { Entity } from "app/core/entity/model/entity";
 
 import { EntityConstructor } from "app/core/entity/model/entity";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
@@ -10,23 +23,43 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
 import { PublicFormConfig } from "../public-form-config";
 import { migratePublicFormConfig } from "../public-form.component";
 
+@DynamicComponent("EditPublicFormColumns")
 @Component({
   selector: "app-edit-public-form-columns",
   imports: [AdminEntityFormComponent],
   templateUrl: "./edit-public-form-columns.component.html",
   styleUrl: "./edit-public-form-columns.component.scss",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: MatFormFieldControl,
+      useExisting: EditPublicFormColumnsComponent,
+    },
+  ],
 })
-@DynamicComponent("EditPublicFormColumns")
 export class EditPublicFormColumnsComponent
-  extends EditComponent<FieldGroup[]>
-  implements OnInit
+  extends CustomFormControlDirective<FieldGroup[]>
+  implements OnInit, EditComponent
 {
+  @Input() formFieldConfig?: FormFieldConfig;
+  @Input() entity?: Entity;
+
+  @ViewChild(AdminEntityFormComponent) entityForm?: AdminEntityFormComponent;
+
   entityConstructor: EntityConstructor;
   formConfig: FormConfig;
+  private originalFormConfig: FormConfig;
+
+  // Signal to track disabled state for immediate UI updates
+  isDisabled = signal(false);
 
   private entities = inject(EntityRegistry);
 
-  override ngOnInit() {
+  get formControl(): FormControl<FieldGroup[]> {
+    return this.ngControl.control as FormControl<FieldGroup[]>;
+  }
+
+  ngOnInit() {
     if (this.entity) {
       this.entityConstructor = this.entities.get(this.entity["entity"]);
 
@@ -36,17 +69,10 @@ export class EditPublicFormColumnsComponent
       this.formConfig = {
         fieldGroups: publicFormConfig.columns,
       };
-      const originalFormConfig = JSON.parse(JSON.stringify(this.formConfig));
-      // Manually reset the config to reflect the cancelled changes immediately in the UI,
-      // also resetting the local config object only internal to this component
-      if (this.entityForm) {
-        this.entityForm.onFormStateChange.subscribe((event) => {
-          if (event === "cancelled") {
-            this.formConfig = originalFormConfig;
-            this.formControl.setValue(originalFormConfig.fieldGroups);
-          }
-        });
-      }
+      this.originalFormConfig = JSON.parse(JSON.stringify(this.formConfig));
+      this.setupFormStateDetection();
+      // Set initial disabled state
+      this.isDisabled.set(this.formControl.disabled);
     }
   }
 
@@ -55,4 +81,50 @@ export class EditPublicFormColumnsComponent
     setTimeout(() => this.formControl.setValue(newConfig.fieldGroups));
     this.formControl.markAsDirty();
   }
+
+  /**
+   * Setup form state detection for cancel vs save operations
+   */
+  private setupFormStateDetection(): void {
+    let wasDirty = false;
+    let lastValue: FieldGroup[] | null = null;
+
+    // Listen to form control status and value changes to detect cancel operations
+    this.formControl.statusChanges.subscribe(() => {
+      const isDirty = this.formControl.dirty;
+      const isPristine = this.formControl.pristine;
+      const currentValue = this.formControl.value;
+
+      // If form was dirty and now becomes pristine
+      if (wasDirty && isPristine) {
+        const normalizedCurrentValue = this.normalizeFieldGroups(
+          currentValue || [],
+        );
+        const normalizedOriginalValue = this.normalizeFieldGroups(
+          this.originalFormConfig.fieldGroups || [],
+        );
+
+        // Check if the value was reverted to original (cancel)
+        const isValueRevertedToOriginal =
+          JSON.stringify(normalizedCurrentValue) ===
+          JSON.stringify(normalizedOriginalValue);
+
+        if (isValueRevertedToOriginal) {
+          // Reset UI to original configuration immediately
+          this.formConfig = JSON.parse(JSON.stringify(this.originalFormConfig));
+        }
+      }
+      wasDirty = isDirty;
+      lastValue = currentValue;
+      this.isDisabled.set(this.formControl.disabled);
+    });
+  }
+
+  // Normalize both values for comparison (handle missing header property)
+  private normalizeFieldGroups = (fieldGroups: FieldGroup[]) => {
+    return fieldGroups.map((group) => ({
+      ...group,
+      header: group.header || null,
+    }));
+  };
 }

@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditEmailComponent } from "./edit-email.component";
-import { setupEditComponent } from "app/core/entity/default-datatype/edit-component.spec";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { setupCustomFormControlEditComponent } from "app/core/entity/default-datatype/edit-component.spec";
+import { EditEmailComponent } from "./edit-email.component";
 
 describe("EditEmailComponent", () => {
   let component: EditEmailComponent;
@@ -12,12 +12,12 @@ describe("EditEmailComponent", () => {
     await TestBed.configureTestingModule({
       imports: [EditEmailComponent, NoopAnimationsModule],
     }).compileComponents();
-  });
-
-  beforeEach(() => {
+    
     fixture = TestBed.createComponent(EditEmailComponent);
     component = fixture.componentInstance;
-    setupEditComponent(component);
+    
+    setupCustomFormControlEditComponent(component);
+
     fixture.detectChanges();
   });
 

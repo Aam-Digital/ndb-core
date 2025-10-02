@@ -13,7 +13,7 @@
     [config]="formConfig"
     (configChange)="updateValue($event)"
     [entityType]="entityConstructor"
-    [isDisabled]="formControl.disabled"
+    [isDisabled]="isDisabled()"
     [updateEntitySchema]="false"
   >
   </app-admin-entity-form>

@@ -1,11 +1,10 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-
-import { EditTodoCompletionComponent } from "./edit-todo-completion.component";
-import { Todo } from "../../model/todo";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { setupCustomFormControlEditComponent } from "../../../../core/entity/default-datatype/edit-component.spec";
 import { EntityFormService } from "../../../../core/common-components/entity-form/entity-form.service";
+import { Todo } from "../../model/todo";
 import { TodoService } from "../../todo.service";
-import { FormControl } from "@angular/forms";
+import { EditTodoCompletionComponent } from "./edit-todo-completion.component";
 
 describe("EditTodoCompletionComponent", () => {
   let component: EditTodoCompletionComponent;
@@ -24,7 +23,7 @@ describe("EditTodoCompletionComponent", () => {
     component = fixture.componentInstance;
 
     component.entity = new Todo();
-    component.formControl = new FormControl();
+    setupCustomFormControlEditComponent(component);
 
     fixture.detectChanges();
   });

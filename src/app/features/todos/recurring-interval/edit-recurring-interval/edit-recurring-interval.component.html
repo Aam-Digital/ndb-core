@@ -1,38 +1,24 @@
-<mat-form-field [formGroup]="parent">
-  <mat-label>
-    <fa-icon icon="repeat"></fa-icon>
-    {{ label }}
-  </mat-label>
+<mat-select [formControl]="formControl" [compareWith]="compareOptionFun">
+  @for (o of predefinedIntervals; track o) {
+    <mat-option [value]="o.interval">
+      {{ o.label }}
+    </mat-option>
+  }
 
-  <mat-select
-    [formControlName]="formControlName"
-    [compareWith]="compareOptionFun"
+  <mat-option
+    (onSelectionChange)="openCustomIntervalSelection($event)"
+    class="special-option"
   >
-    @for (o of predefinedIntervals; track o) {
-      <mat-option [value]="o.interval">
-        {{ o.label }}
-      </mat-option>
-    }
+    <fa-icon icon="tools" [fixedWidth]="true"></fa-icon>
+    <span i18n="recurring interval option">define other interval</span>
+  </mat-option>
 
-    <mat-option
-      (onSelectionChange)="openCustomIntervalSelection($event)"
-      class="special-option"
-    >
-      <fa-icon icon="tools" [fixedWidth]="true"></fa-icon>
-      <span i18n="recurring interval option">define other interval</span>
-    </mat-option>
-
-    <mat-option
-      [value]="undefined"
-      (onSelectionChange)="resetSelection()"
-      class="special-option"
-    >
-      <fa-icon icon="xmark" [fixedWidth]="true"></fa-icon>
-      <span i18n="recurring interval option">does not repeat</span>
-    </mat-option>
-  </mat-select>
-
-  <mat-error>
-    <app-error-hint [form]="formControl"></app-error-hint>
-  </mat-error>
-</mat-form-field>
+  <mat-option
+    [value]="undefined"
+    (onSelectionChange)="resetSelection()"
+    class="special-option"
+  >
+    <fa-icon icon="xmark" [fixedWidth]="true"></fa-icon>
+    <span i18n="recurring interval option">does not repeat</span>
+  </mat-option>
+</mat-select>

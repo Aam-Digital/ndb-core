@@ -1,3 +1,5 @@
+import { ColumnConfig } from "../common-components/entity-form/FormConfig";
+
 /**
  * Configuration for related entity components like RelatedEntitiesComponent or RelatedEntitiesWithSummaryComponent.
  * This interface allows dynamic assignment of component behavior based on the entity type, including which
@@ -34,4 +36,9 @@ export interface RelatedEntitiesComponentConfig {
    * Whether inactive/archived records should be shown.
    */
   showInactive?: boolean;
+
+  /**
+   * Columns to be displayed in the table and popup form.
+   */
+  columns: ColumnConfig[];
 }

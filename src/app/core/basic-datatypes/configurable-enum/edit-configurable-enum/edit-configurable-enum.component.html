@@ -1,8 +1,35 @@
-<app-enum-dropdown
-  [form]="formControl"
-  [label]="label"
-  [enumId]="enumId"
-  [multi]="multi"
-  [hideLabel]="hideLabel"
->
-</app-enum-dropdown>
+<div class="flex-row gap-small">
+  <app-basic-autocomplete
+    (click)="onContainerClick($event)"
+    class="flex-grow"
+    #autocomplete
+    [formControl]="formControl"
+    [multi]="multi"
+    [options]="options"
+    [optionToString]="enumValueToString"
+    [createOption]="createNewOption"
+    display="chips"
+  >
+    <ng-template let-option>
+      <app-display-configurable-enum
+        [value]="option"
+      ></app-display-configurable-enum>
+    </ng-template>
+  </app-basic-autocomplete>
+
+  @if (formControl.enabled) {
+    <fa-icon
+      icon="caret-down"
+      class="form-field-icon-suffix"
+      (click)="autocomplete.showAutocomplete()"
+    ></fa-icon>
+  }
+
+  @if (formControl.enabled && !!createNewOption && canEdit) {
+    <fa-icon
+      class="form-field-icon-suffix"
+      (click)="openSettings($event)"
+      icon="wrench"
+    ></fa-icon>
+  }
+</div>
