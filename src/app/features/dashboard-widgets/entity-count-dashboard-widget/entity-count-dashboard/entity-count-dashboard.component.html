@@ -84,6 +84,11 @@
                 i18n
                 >not defined</span
               >
+            } @else if (group.displayEntity && group.fieldName) {
+              <app-entity-field-view
+                [entity]="group.entity"
+                [field]="group.fieldName"
+              ></app-entity-field-view>
             } @else {
               <app-display-configurable-enum
                 [value]="group"
