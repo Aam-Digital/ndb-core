@@ -212,8 +212,12 @@ export class EditNewMatchActionComponent implements OnInit, OnChanges {
    * @param newType The newly selected entity type identifier.
    */
   onEntityTypeChange(newType: string | string[]) {
-    this.updateMatchOptions(newType as string, true);
-    this.value.newEntityType = newType as string;
+    const selectedEntityType = newType as string;
+    if (selectedEntityType === this.value?.newEntityType) {
+      return;
+    }
+    this.updateMatchOptions(selectedEntityType, true);
+    this.value.newEntityType = selectedEntityType;
   }
 
   /**
