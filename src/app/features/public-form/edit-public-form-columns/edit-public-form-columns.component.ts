@@ -48,6 +48,7 @@ export class EditPublicFormColumnsComponent
 
   entityConstructor: EntityConstructor;
   formConfig: FormConfig;
+  private originalFormConfig: FormConfig;
 
   // Signal to track disabled state for immediate UI updates
   isDisabled = signal(false);
@@ -68,24 +69,8 @@ export class EditPublicFormColumnsComponent
       this.formConfig = {
         fieldGroups: publicFormConfig.columns,
       };
-      const originalFormConfig = JSON.parse(JSON.stringify(this.formConfig));
-      // TODO: Handle form reset/cancel events if needed
-      // The original functionality to reset config on cancel may need to be reimplemented
-      // when the AdminEntityFormComponent supports such events
-      // if (this.entityForm) {
-      //   this.entityForm.onFormStateChange.subscribe((event) => {
-      //     if (event === "cancelled") {
-      //       this.formConfig = originalFormConfig;
-      //       this.formControl.setValue(originalFormConfig.fieldGroups);
-      //     }
-      //   });
-      // }
-
-      // Sync disabled state changes with signals for immediate UI updates
-      this.formControl.statusChanges.subscribe(() => {
-        this.isDisabled.set(this.formControl.disabled);
-      });
-
+      this.originalFormConfig = JSON.parse(JSON.stringify(this.formConfig));
+      this.setupFormStateDetection();
       // Set initial disabled state
       this.isDisabled.set(this.formControl.disabled);
     }
@@ -96,4 +81,50 @@ export class EditPublicFormColumnsComponent
     setTimeout(() => this.formControl.setValue(newConfig.fieldGroups));
     this.formControl.markAsDirty();
   }
+
+  /**
+   * Setup form state detection for cancel vs save operations
+   */
+  private setupFormStateDetection(): void {
+    let wasDirty = false;
+    let lastValue: FieldGroup[] | null = null;
+
+    // Listen to form control status and value changes to detect cancel operations
+    this.formControl.statusChanges.subscribe(() => {
+      const isDirty = this.formControl.dirty;
+      const isPristine = this.formControl.pristine;
+      const currentValue = this.formControl.value;
+
+      // If form was dirty and now becomes pristine
+      if (wasDirty && isPristine) {
+        const normalizedCurrentValue = this.normalizeFieldGroups(
+          currentValue || [],
+        );
+        const normalizedOriginalValue = this.normalizeFieldGroups(
+          this.originalFormConfig.fieldGroups || [],
+        );
+
+        // Check if the value was reverted to original (cancel)
+        const isValueRevertedToOriginal =
+          JSON.stringify(normalizedCurrentValue) ===
+          JSON.stringify(normalizedOriginalValue);
+
+        if (isValueRevertedToOriginal) {
+          // Reset UI to original configuration immediately
+          this.formConfig = JSON.parse(JSON.stringify(this.originalFormConfig));
+        }
+      }
+      wasDirty = isDirty;
+      lastValue = currentValue;
+      this.isDisabled.set(this.formControl.disabled);
+    });
+  }
+
+  // Normalize both values for comparison (handle missing header property)
+  private normalizeFieldGroups = (fieldGroups: FieldGroup[]) => {
+    return fieldGroups.map((group) => ({
+      ...group,
+      header: group.header || null,
+    }));
+  };
 }
