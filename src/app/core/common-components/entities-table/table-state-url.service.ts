@@ -17,6 +17,12 @@ export class TableStateUrlService {
     replaceUrl = true,
   ) {
     const MAX_URL_LENGTH = 2000;
+    if (
+      "sortOrder" in params &&
+      (!params.sortOrder || params.sortOrder === "asc")
+    ) {
+      params.sortOrder = null;
+    }
     let queryParams = { ...this.route.snapshot.queryParams };
     for (const key of Object.keys(params)) {
       const value = params[key];
@@ -50,10 +56,19 @@ export class TableStateUrlService {
         delete queryParams[lastKey];
       }
     }
+    this.navigateWithParams(queryParams, replaceUrl);
+  }
+
+  /**
+   * Helper to navigate with given query params and replaceUrl option.
+   */
+  private navigateWithParams(
+    queryParams: Record<string, any>,
+    replaceUrl: boolean,
+  ) {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams,
-      queryParamsHandling: "merge",
       ...(replaceUrl ? { replaceUrl: true } : {}),
     });
   }
@@ -99,11 +114,6 @@ export class TableStateUrlService {
     for (const key of filterKeys) {
       delete queryParams[key];
     }
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams,
-      queryParamsHandling: "merge",
-      ...(replaceUrl ? { replaceUrl: true } : {}),
-    });
+    this.navigateWithParams(queryParams, replaceUrl);
   }
 }

@@ -221,15 +221,22 @@ export class EntitiesTableComponent<T extends Entity>
       if (sortBy) {
         sort.active = sortBy;
         sort.direction = sortOrder || "asc";
-        this._sortBy = { active: sortBy, direction: sortOrder || "asc" };
-        this.sortIsInferred = false;
       }
       // Listen for sort changes to persist to URL
       sort.sortChange.subscribe(({ active, direction }) => {
-        this.tableStateUrl.updateUrlParams({
-          sortBy: active,
-          sortOrder: direction ?? "asc",
-        });
+        if (!direction) {
+          this.tableStateUrl.updateUrlParams({ sortBy: null, sortOrder: null });
+        } else if (direction === "desc") {
+          this.tableStateUrl.updateUrlParams({
+            sortBy: active,
+            sortOrder: "desc",
+          });
+        } else {
+          this.tableStateUrl.updateUrlParams({
+            sortBy: active,
+            sortOrder: null,
+          });
+        }
       });
     }
   }

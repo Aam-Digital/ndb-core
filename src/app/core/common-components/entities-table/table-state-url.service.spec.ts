@@ -45,7 +45,6 @@ describe("TableStateUrlService", () => {
       [],
       jasmine.objectContaining({
         queryParams: { foo: "baz", newParam: "val" },
-        queryParamsHandling: "merge",
         replaceUrl: true,
       }),
     );
@@ -103,7 +102,6 @@ describe("TableStateUrlService", () => {
       [],
       jasmine.objectContaining({
         queryParams: { foo: "bar" },
-        queryParamsHandling: "merge",
       }),
     );
   });
@@ -144,7 +142,6 @@ describe("TableStateUrlService", () => {
       [],
       jasmine.objectContaining({
         queryParams: { filter2: shortValue },
-        queryParamsHandling: "merge",
         replaceUrl: true,
       }),
     );
