@@ -25,6 +25,7 @@ import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enu
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { CommonModule } from "@angular/common";
 import { DisplayConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/display-configurable-enum/display-configurable-enum.component";
+import { EntityFieldViewComponent } from "../../../../core/common-components/entity-field-view/entity-field-view.component";
 
 /**
  * Configuration (stored in Config document in the DB) for the dashboard widget.
@@ -54,6 +55,16 @@ interface GroupCountRow {
   groupedByEntity: string;
   isInvalidOption?: boolean;
   color?: string;
+
+  /**
+   * entity with the field value set for display component rendering
+   */
+  entity?: Entity;
+
+  /**
+   * Field name for the display component
+   */
+  fieldName?: string;
 }
 
 @DynamicComponent("ChildrenCountDashboard")
@@ -73,6 +84,7 @@ interface GroupCountRow {
     EntityFieldLabelComponent,
     CommonModule,
     DisplayConfigurableEnumComponent,
+    EntityFieldViewComponent,
   ],
 })
 export class EntityCountDashboardComponent
@@ -183,12 +195,23 @@ export class EntityCountDashboardComponent
     groupedByEntity: string | undefined,
   ): GroupCountRow[] {
     const groups = groupBy(entities, fieldName as keyof Entity);
-    return groups.map(([group, entities]) => ({
-      label: extractHumanReadableLabel(group),
-      value: entities.length,
-      id: extractGroupId(group),
-      groupedByEntity,
-    }));
+    return groups.map(([group, entities]) => {
+      const row: GroupCountRow = {
+        label: extractHumanReadableLabel(group),
+        value: entities.length,
+        id: extractGroupId(group),
+        groupedByEntity,
+        fieldName,
+      };
+
+      // Create a dummy entity with the field value set for display component rendering
+      if (group !== undefined && group !== null && group !== "") {
+        const entity = new this._entity();
+        entity[fieldName] = group;
+        row.entity = entity;
+      }
+      return row;
+    });
   }
 
   /** Merges "" and undefined groups into a single group with label: undefined */

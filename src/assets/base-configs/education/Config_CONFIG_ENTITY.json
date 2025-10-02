@@ -92,6 +92,13 @@
             "component": "EntityCountDashboard"
           },
           {
+            "component": "EntityCountDashboard",
+            "config": {
+              "entityType": "Note",
+              "groupBy": ["date", "category"]
+            }
+          },
+          {
             "component": "ImportantNotesDashboard",
             "config": {
               "warningLevels": [

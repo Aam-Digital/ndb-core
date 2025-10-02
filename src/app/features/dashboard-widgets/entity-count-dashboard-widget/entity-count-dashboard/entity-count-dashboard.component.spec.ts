@@ -91,12 +91,16 @@ describe("EntityCountDashboardComponent", () => {
         value: 2,
         id: c1.id,
         groupedByEntity: undefined,
+        fieldName: "test",
+        entity: jasmine.any(TestEntity),
       },
       {
         label: c2.label,
         value: 1,
         id: c2.id,
         groupedByEntity: undefined,
+        fieldName: "test",
+        entity: jasmine.any(TestEntity),
       },
     ]);
 
@@ -146,12 +150,15 @@ describe("EntityCountDashboardComponent", () => {
         value: 2,
         id: "",
         groupedByEntity: undefined,
+        fieldName: "test",
       },
       {
         label: "foo",
         value: 1,
         id: "01",
         groupedByEntity: undefined,
+        fieldName: "test",
+        entity: jasmine.any(TestEntity),
       },
     ]);
 
@@ -183,12 +190,15 @@ describe("EntityCountDashboardComponent", () => {
       value: 1,
       id: "",
       groupedByEntity: TestEntity.ENTITY_TYPE,
+      fieldName: "ref",
     });
     expect(currentlyShownGroupCounts).toContain({
       label: c1.getId(),
       value: 1,
       id: c1.getId(),
       groupedByEntity: TestEntity.ENTITY_TYPE,
+      fieldName: "ref",
+      entity: jasmine.any(TestEntity),
     });
   });
 
@@ -218,18 +228,23 @@ describe("EntityCountDashboardComponent", () => {
       value: 1,
       id: "",
       groupedByEntity: "Child",
+      fieldName: "children",
     });
     expect(currentlyShownGroupCounts).toContain({
       label: "link-1",
       value: 2,
       id: "link-1",
       groupedByEntity: "Child",
+      fieldName: "children",
+      entity: jasmine.any(Note),
     });
     expect(currentlyShownGroupCounts).toContain({
       label: "link-2",
       value: 1,
       id: "link-2",
       groupedByEntity: "Child",
+      fieldName: "children",
+      entity: jasmine.any(Note),
     });
   });
 });
