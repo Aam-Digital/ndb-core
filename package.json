@@ -44,7 +44,7 @@
     "@aytek/material-color-picker": "^1.0.4",
     "@casl/ability": "^6.7.3",
     "@casl/angular": "^9.0.3",
-    "@faker-js/faker": "^9.9.0",
+    "@faker-js/faker": "^10.0.0",
     "@fortawesome/angular-fontawesome": "^2.0.1",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-regular-svg-icons": "^6.7.2",
