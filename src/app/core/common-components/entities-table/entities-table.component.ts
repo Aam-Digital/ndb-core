@@ -192,7 +192,6 @@ export class EntitiesTableComponent<T extends Entity>
   _entityType: EntityConstructor<T>;
 
   /** how to sort data by default during initialization */
-
   @Input() set sortBy(value: Sort) {
     if (!value) {
       return;
