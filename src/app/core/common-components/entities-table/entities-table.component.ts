@@ -197,6 +197,7 @@ export class EntitiesTableComponent<T extends Entity>
     if (!value) {
       return;
     }
+  
     this._sortBy = value;
     this.sortIsInferred = false;
     // Persist sort state to URL
