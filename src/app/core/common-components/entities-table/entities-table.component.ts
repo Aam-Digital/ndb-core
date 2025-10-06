@@ -197,7 +197,7 @@ export class EntitiesTableComponent<T extends Entity>
     if (!value) {
       return;
     }
-  
+
     this._sortBy = value;
     this.sortIsInferred = false;
     // Persist sort state to URL
@@ -211,17 +211,20 @@ export class EntitiesTableComponent<T extends Entity>
 
   _sortBy: Sort;
 
+  private urlSortBy: string | null = null;
+  private urlSortOrder: SortDirection | null = null;
+
   @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
     this.recordsDataSource.sort = sort;
     if (sort) {
       // Restore sort state from URL on init
-      const sortBy = this.tableStateUrl.getUrlParam("sortBy");
-      const sortOrder = this.tableStateUrl.getUrlParam(
+      this.urlSortBy = this.tableStateUrl.getUrlParam("sortBy");
+      this.urlSortOrder = this.tableStateUrl.getUrlParam(
         "sortOrder",
       ) as SortDirection;
-      if (sortBy) {
-        sort.active = sortBy;
-        sort.direction = sortOrder || "asc";
+      if (this.urlSortBy) {
+        sort.active = this.urlSortBy;
+        sort.direction = this.urlSortOrder || "asc";
       }
       // Listen for sort changes to persist to URL
       sort.sortChange.subscribe(({ active, direction }) => {
