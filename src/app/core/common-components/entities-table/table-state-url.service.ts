@@ -110,7 +110,7 @@ export class TableStateUrlService {
    * Accepts a list of filter keys to remove.
    */
   clearFilterParams(filterKeys: string[], replaceUrl = false) {
-    const queryParams = { ...this.route.snapshot.queryParams };
+    const queryParams = this.getAllUrlParams();
     for (const key of filterKeys) {
       delete queryParams[key];
     }
