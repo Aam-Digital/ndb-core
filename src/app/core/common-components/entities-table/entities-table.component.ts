@@ -172,11 +172,14 @@ export class EntitiesTableComponent<T extends Entity>
     cols.push(...value);
     this._columnsToDisplay = cols;
 
+    this.urlSortBy = this.tableStateUrl.getUrlParam("sortBy");
+    this.urlSortOrder = this.tableStateUrl.getUrlParam(
+      "sortOrder",
+    ) as SortDirection;
+
     if (this.sortIsInferred) {
       // Only set default sort if not present in URL
-      const urlSortBy = this.tableStateUrl.getUrlParam("sortBy");
-      const urlSortOrder = this.tableStateUrl.getUrlParam("sortOrder");
-      if (!urlSortBy && !urlSortOrder) {
+      if (!this.urlSortBy && !this.urlSortOrder) {
         this.sortBy = this.inferDefaultSort();
         this.sortIsInferred = true;
       }
@@ -218,10 +221,6 @@ export class EntitiesTableComponent<T extends Entity>
     this.recordsDataSource.sort = sort;
     if (sort) {
       // Restore sort state from URL on init
-      this.urlSortBy = this.tableStateUrl.getUrlParam("sortBy");
-      this.urlSortOrder = this.tableStateUrl.getUrlParam(
-        "sortOrder",
-      ) as SortDirection;
       if (this.urlSortBy) {
         sort.active = this.urlSortBy;
         sort.direction = this.urlSortOrder || "asc";
