@@ -44,6 +44,7 @@ export class EntityActionsService {
         tooltip: $localize`:entity context menu tooltip:Mark the record as inactive, hiding it from lists by default while keeping the data.`,
         primaryAction: true,
         visible: async (entity) => entity.isActive && !entity.anonymized,
+        availableFor: "all",
       },
       {
         action: "anonymize",
@@ -54,6 +55,7 @@ export class EntityActionsService {
         tooltip: $localize`:entity context menu tooltip:Remove all personal data and keep an archived basic record for statistical reporting.`,
         visible: async (entity) =>
           !entity.anonymized && entity.getConstructor().hasPII === true,
+        availableFor: "all",
       },
       {
         action: "delete",
@@ -62,6 +64,7 @@ export class EntityActionsService {
         icon: "trash",
         label: $localize`:entity context menu:Delete`,
         tooltip: $localize`:entity context menu tooltip:Remove the record completely from the database.`,
+        availableFor: "all",
       },
       {
         action: "duplicate",
@@ -71,6 +74,7 @@ export class EntityActionsService {
         icon: "copy",
         label: $localize`:entity context menu:Duplicate`,
         tooltip: $localize`:entity context menu tooltip:Create a copy of this record.`,
+        availableFor: "all",
       },
     ]);
     this.entityMapper.receiveUpdates(PublicFormConfig).subscribe(() => {
