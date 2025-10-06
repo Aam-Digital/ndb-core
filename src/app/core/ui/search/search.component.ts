@@ -7,8 +7,8 @@ import {
   inject,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { Observable } from "rxjs";
-import { concatMap, debounceTime, tap } from "rxjs/operators";
+import { Observable, from, of } from "rxjs";
+import { switchMap, debounceTime, tap, map } from "rxjs/operators";
 import { Router } from "@angular/router";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
@@ -76,6 +76,8 @@ export class SearchComponent {
   @ViewChild("searchInput") searchInput: ElementRef<HTMLInputElement>;
   @ViewChild("autoResults") autocomplete: MatAutocomplete;
 
+  private currentSearchString = "";
+
   constructor() {
     const screenWithObserver = inject(ScreenWidthObserver);
 
@@ -86,8 +88,11 @@ export class SearchComponent {
 
     this.results = this.formControl.valueChanges.pipe(
       debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
-      tap((next) => (this.state = this.updateState(next))),
-      concatMap((next: string) => this.searchResults(next)),
+      tap((next) => {
+        this.currentSearchString = next || "";
+        this.state = this.updateState(next);
+      }),
+      switchMap((next: string) => this.searchResults(next)),
       untilDestroyed(this),
     );
   }
@@ -106,14 +111,33 @@ export class SearchComponent {
       : this.SEARCH_IN_PROGRESS;
   }
 
-  async searchResults(next: string): Promise<Entity[]> {
+  searchResults(searchTerm: string): Observable<Entity[]> {
+    // Return empty results for invalid states or empty input
     if (this.state !== this.SEARCH_IN_PROGRESS) {
-      return [];
+      return of([]);
     }
-    const entities = await this.searchService.getSearchResults(next);
-    const filtered = this.prepareResults(entities);
-    this.state = filtered.length === 0 ? this.NO_RESULTS : this.SHOW_RESULTS;
-    return filtered;
+
+    const originalSearchString = searchTerm;
+
+    return from(this.searchService.getSearchResults(searchTerm)).pipe(
+      map((entities) => {
+        const filtered = this.prepareResults(entities);
+
+        // Only update state if this search result is for the current search string
+        if (
+          this.currentSearchString === originalSearchString &&
+          this.state === this.SEARCH_IN_PROGRESS
+        ) {
+          this.state =
+            filtered.length === 0 ? this.NO_RESULTS : this.SHOW_RESULTS;
+        }
+
+        // Only return results if this search is still relevant
+        return this.currentSearchString === originalSearchString
+          ? filtered
+          : [];
+      }),
+    );
   }
 
   async clickOption(optionElement) {
@@ -122,6 +146,7 @@ export class SearchComponent {
       optionElement.value.getId(true),
     ]);
     this.formControl.setValue("");
+    this.state = this.NOTHING_ENTERED;
     if (this.mobile) {
       this.searchActive = false;
     }
@@ -146,6 +171,8 @@ export class SearchComponent {
     this.searchActive = !this.searchActive;
     if (!this.searchActive) {
       this.formControl.setValue("");
+      this.currentSearchString = "";
+      this.state = this.NOTHING_ENTERED;
     } else {
       setTimeout(() => this.searchInput?.nativeElement.focus());
     }
@@ -154,6 +181,12 @@ export class SearchComponent {
   onFocusOut() {
     if (this.mobile && !this.autocomplete.isOpen) {
       this.searchActive = false;
+    }
+    // Reset state if field is empty when losing focus
+    const currentValue = this.formControl.value || "";
+    if (currentValue.length === 0) {
+      this.currentSearchString = "";
+      this.state = this.NOTHING_ENTERED;
     }
   }
 }
