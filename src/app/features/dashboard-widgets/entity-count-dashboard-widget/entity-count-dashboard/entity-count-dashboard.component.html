@@ -7,15 +7,7 @@
   [entries]="entityGroupCounts[groupBy[currentGroupIndex]]"
   [paginationPageSize]="4"
 >
-  <div
-    class="flex-row"
-    style="
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 10px;
-    "
-  >
+  <div class="flex-row navigation-controls">
     <button
       mat-icon-button
       matTooltip="Previous Grouping"
@@ -66,36 +58,30 @@
     >
       <ng-container matColumnDef="label">
         <td *matCellDef="let group">
-          @if (!group.groupedByEntity) {
-            @if (group.isInvalidOption) {
-              <span
-                class="invalid-label"
-                matTooltip="records with a value that is not matching any available dropdown option"
-                i18n-matTooltip
-                i18n
-              >
-                [invalid option]
-              </span>
-            } @else if (group.label === undefined) {
-              <span
-                class="not-defined-label"
-                matTooltip="records where this field is empty"
-                i18n-matTooltip
-                i18n
-                >not defined</span
-              >
-            } @else if (group.displayEntity && group.fieldName) {
-              <app-entity-field-view
-                [entity]="group.entity"
-                [field]="group.fieldName"
-              ></app-entity-field-view>
-            } @else {
-              <app-display-configurable-enum
-                [value]="group"
-              ></app-display-configurable-enum>
-            }
-          } @else {
+          @if (group.isInvalidOption) {
+            <span
+              class="invalid-label"
+              matTooltip="records with a value that is not matching any available dropdown option"
+              i18n-matTooltip
+              i18n
+            >
+              [invalid option]
+            </span>
+          } @else if (group.label === undefined) {
+            <span
+              class="not-defined-label"
+              matTooltip="records where this field is empty"
+              i18n-matTooltip
+              i18n
+              >not defined</span
+            >
+          } @else if (group.groupedByEntity) {
             <app-entity-block [entityId]="group.id"></app-entity-block>
+          } @else if (group.entity && group.fieldName) {
+            <app-entity-field-view
+              [entity]="group.entity"
+              [field]="group.fieldName"
+            ></app-entity-field-view>
           }
         </td>
       </ng-container>

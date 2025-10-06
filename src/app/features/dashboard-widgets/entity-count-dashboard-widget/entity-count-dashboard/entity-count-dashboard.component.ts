@@ -24,7 +24,6 @@ import { EntityFieldLabelComponent } from "../../../../core/common-components/en
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { CommonModule } from "@angular/common";
-import { DisplayConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/display-configurable-enum/display-configurable-enum.component";
 import { EntityFieldViewComponent } from "../../../../core/common-components/entity-field-view/entity-field-view.component";
 
 /**
@@ -83,7 +82,6 @@ interface GroupCountRow {
     MatIconButton,
     EntityFieldLabelComponent,
     CommonModule,
-    DisplayConfigurableEnumComponent,
     EntityFieldViewComponent,
   ],
 })
