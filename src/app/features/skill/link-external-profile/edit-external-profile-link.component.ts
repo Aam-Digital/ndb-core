@@ -22,7 +22,7 @@ import { Entity } from "../../../core/entity/model/entity";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltip } from "@angular/material/tooltip";
 import { SkillApiService } from "../skill-api/skill-api.service";
-import { FormsModule, ReactiveFormsModule, FormControl } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule, FormControl, FormGroup } from "@angular/forms";
 import { ExternalProfileLinkConfig } from "../external-profile-link-config";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { catchError } from "rxjs/operators";
@@ -106,9 +106,7 @@ export class EditExternalProfileLinkComponent
     const currentEntity = Object.assign(
       {},
       this.entity,
-      // Todo: In the new architecture, we don't have direct access to parent form
-      // This might need to be passed as an input or accessed differently
-      // For now, using just the entity
+      this.formControl.parent?.getRawValue(),
     );
 
     this.dialog
@@ -139,13 +137,11 @@ export class EditExternalProfileLinkComponent
       return;
     }
 
-    // Todo: In the new architecture, parent form access needs to be handled differently
-    // This functionality may need to be refactored or the parent form passed as input
-    // await this.skillApi.applyDataFromExternalProfile(
-    //   this.formControl.value,
-    //   this.additional,
-    //   this.parent,
-    // );
+    await this.skillApi.applyDataFromExternalProfile(
+      this.formControl.value,
+      this.additional,
+      this.formControl.parent as FormGroup,
+    );
 
     this.isLoading.set(false);
     // TODO: run import / update automatically?

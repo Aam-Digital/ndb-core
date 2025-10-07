@@ -5,19 +5,19 @@ import {
   tick,
 } from "@angular/core/testing";
 
-import { EditExternalProfileLinkComponent } from "./edit-external-profile-link.component";
-import { SkillApiService } from "../skill-api/skill-api.service";
-import { FormGroup } from "@angular/forms";
+import { HttpErrorResponse } from "@angular/common/http";
+import { FormControl, FormGroup } from "@angular/forms";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { of, Subject, throwError } from "rxjs";
+import { AlertService } from "../../../core/alerts/alert.service";
+import { setupCustomFormControlEditComponent } from "../../../core/entity/default-datatype/edit-component.spec";
 import { Entity } from "../../../core/entity/model/entity";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { setupCustomFormControlEditComponent } from "../../../core/entity/default-datatype/edit-component.spec";
-import { of, Subject, throwError } from "rxjs";
 import { ExternalProfile } from "../skill-api/external-profile";
+import { SkillApiService } from "../skill-api/skill-api.service";
+import { EditExternalProfileLinkComponent } from "./edit-external-profile-link.component";
 import { LinkExternalProfileDialogData } from "./link-external-profile-dialog/link-external-profile-dialog.component";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { HttpErrorResponse } from "@angular/common/http";
-import { AlertService } from "../../../core/alerts/alert.service";
 
 describe("EditExternalProfileLinkComponent", () => {
   let component: EditExternalProfileLinkComponent;
@@ -100,8 +100,10 @@ describe("EditExternalProfileLinkComponent", () => {
       name: "original name",
       other: "foo",
     });
-    // Todo: Parent form access not available in new architecture
-    // component.parent.get("name").setValue("new name");
+    (component.formControl.parent as FormGroup).addControl("name", new FormControl("name"));
+    (component.formControl.parent as FormGroup).addControl("other", new FormControl("foo"));
+    
+    component.formControl.parent.get("name").setValue("new name");
 
     component.searchMatchingProfiles();
     tick();
@@ -109,9 +111,8 @@ describe("EditExternalProfileLinkComponent", () => {
     const actualDialogData = mockDialog.open.calls.mostRecent().args[1]
       .data as LinkExternalProfileDialogData;
     expect(actualDialogData.config).toEqual(component.additional);
-    // Todo: Since parent form access is not available in new architecture,
-    // the entity will only have the original values, not form updates
-    expect(actualDialogData.entity["name"]).toBe("original name");
+    
+    expect(actualDialogData.entity["name"]).toBe("new name");
     expect(actualDialogData.entity["other"]).toBe("foo");
   }));
 
@@ -155,25 +156,20 @@ describe("EditExternalProfileLinkComponent", () => {
     expect(component.externalProfileError).toBeTrue();
   }));
 
-  xit("should update external data", fakeAsync(() => {
-    // This test is temporarily disabled because parent form access
-    // is not available in the new CustomFormControlDirective architecture
-    // TODO: Refactor this functionality or test differently
+  it("should update external data", fakeAsync(() => {
+    mockSkillApi.applyDataFromExternalProfile.and.resolveTo();
     component.formControl.setValue("external-id");
-    mockSkillApi.applyDataFromExternalProfile.and.returnValue(
-      Promise.resolve(),
-    );
 
     component.updateExternalData();
 
     expect(component.isLoading()).toBeTrue();
     tick();
 
-    // expect(mockSkillApi.applyDataFromExternalProfile).toHaveBeenCalledWith(
-    //   "external-id",
-    //   component.additional,
-    //   component.parent,
-    // );
+    expect(mockSkillApi.applyDataFromExternalProfile).toHaveBeenCalledWith(
+      "external-id",
+      component.additional,
+      component.formControl.parent as FormGroup,
+    );
     expect(component.isLoading()).toBeFalse();
   }));
 });

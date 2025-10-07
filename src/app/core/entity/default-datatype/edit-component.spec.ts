@@ -1,5 +1,5 @@
 import { EditComponent } from "./edit-component";
-import { UntypedFormControl, UntypedFormGroup } from "@angular/forms";
+import { FormGroup, UntypedFormControl, UntypedFormGroup } from "@angular/forms";
 import { Entity } from "../model/entity";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
@@ -37,9 +37,9 @@ export function setupCustomFormControlEditComponent<T>(
   schema: any = {},
 ): UntypedFormGroup {
   const formControl = new UntypedFormControl();
-  const fromGroupConfig = {};
-  fromGroupConfig[propertyName] = formControl;
-  const formGroup = new UntypedFormGroup(fromGroupConfig);
+  const formGroup = new UntypedFormGroup({
+    [propertyName]: formControl,
+  });
 
   // Set up the component's ngControl to point to our form control
   component.ngControl = {
