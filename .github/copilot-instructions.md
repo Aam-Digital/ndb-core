@@ -27,7 +27,7 @@ Aam Digital is a comprehensive case management software for social organizations
 - Permission-based access control
 - Demo data generation for testing
 
------
+---
 
 ## Angular Development Patterns
 
@@ -44,13 +44,12 @@ Aam Digital is a comprehensive case management software for social organizations
 ### Component Structure Example
 
 ```typescript
-
 @Component({
-  selector: 'app-example',
+  selector: "app-example",
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     // Use host object instead of @HostBinding/@HostListener
-  }
+  },
 })
 export class ExampleComponent {
   // Use input() and output() functions
@@ -61,9 +60,7 @@ export class ExampleComponent {
   private entityService = inject(EntityService);
 
   // Use signals for reactive state
-  filteredData = computed(() =>
-    this.data().filter(item => item.isActive)
-  );
+  filteredData = computed(() => this.data().filter((item) => item.isActive));
 }
 ```
 
@@ -125,7 +122,7 @@ export class ExampleComponent {
 
 - **Angular Framework Reference**: For comprehensive Angular guidance and best practices, see the official Angular llms.txt file: https://angular.dev/context/llm-files/llms-full.txt
 
------
+---
 
 ## Aam Digital specific patterns
 
@@ -211,7 +208,7 @@ When developing new functionality:
 - Use `@faker-js/faker` for realistic test data
 - Follow existing demo data patterns in `core/demo-data/`
 
------
+---
 
 ## GitHub Copilot-Specific Guidelines
 

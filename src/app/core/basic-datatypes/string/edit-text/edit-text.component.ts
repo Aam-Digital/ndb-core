@@ -6,7 +6,6 @@ import { CustomFormControlDirective } from "#src/app/core/common-components/basi
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { EditComponent } from "../../../common-components/entity-field-edit/dynamic-edit/edit-component.interface";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
-import { Entity } from "../../../entity/model/entity";
 
 @DynamicComponent("EditText")
 @Component({

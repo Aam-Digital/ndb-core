@@ -1,27 +1,25 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   inject,
   Input,
 } from "@angular/core";
-import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { GeoLocation } from "../geo-location";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
+import { MatIconButton } from "@angular/material/button";
+import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
+import { MatInput } from "@angular/material/input";
+import { MatTooltip, MatTooltipModule } from "@angular/material/tooltip";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { filter, map } from "rxjs/operators";
+import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
 import { EditComponent } from "../../../core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
-import { MatInput } from "@angular/material/input";
-import { MatIconButton } from "@angular/material/button";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { GeoLocation } from "../geo-location";
 import {
   MapPopupComponent,
   MapPopupConfig,
 } from "../map-popup/map-popup.component";
-import { MatDialog } from "@angular/material/dialog";
-import { MatTooltip } from "@angular/material/tooltip";
-import { filter, map } from "rxjs/operators";
 
 /**
  * Input to select and view an address on a map.
@@ -52,7 +50,7 @@ export class EditLocationComponent
   extends CustomFormControlDirective<GeoLocation>
   implements EditComponent
 {
-  private dialog = inject(MatDialog);
+  private readonly dialog = inject(MatDialog);
 
   @Input() formFieldConfig?: FormFieldConfig;
 

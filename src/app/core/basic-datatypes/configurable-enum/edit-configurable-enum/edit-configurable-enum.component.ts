@@ -65,11 +65,11 @@ export class EditConfigurableEnumComponent
     ConfigurableEnumValue
   >;
 
-  private enumService = inject(ConfigurableEnumService);
-  private entityMapper = inject(EntityMapperService);
-  private ability = inject(EntityAbility);
-  private dialog = inject(MatDialog);
-  private confirmation = inject(ConfirmationDialogService);
+  private readonly enumService = inject(ConfigurableEnumService);
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly ability = inject(EntityAbility);
+  private readonly dialog = inject(MatDialog);
+  private readonly confirmation = inject(ConfirmationDialogService);
 
   enumId: string;
   multi = false;

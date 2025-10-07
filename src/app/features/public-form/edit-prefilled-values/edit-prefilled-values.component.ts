@@ -1,9 +1,9 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   inject,
-  OnInit,
   Input,
-  ChangeDetectionStrategy,
+  OnInit,
 } from "@angular/core";
 import {
   FormArray,
@@ -12,23 +12,22 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { AdminDefaultValueComponent } from "../../../core/default-values/admin-default-value/admin-default-value.component";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
-import { EditComponent } from "app/core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
-import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
-import { Entity, EntityConstructor } from "app/core/entity/model/entity";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatSelectModule } from "@angular/material/select";
-import { MatFormFieldControl } from "@angular/material/form-field";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DefaultValueConfig } from "../../../core/default-values/default-value-config";
-import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldControl, MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
-import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
+import { EditComponent } from "app/core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
+import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { AdminDefaultValueComponent } from "../../../core/default-values/admin-default-value/admin-default-value.component";
+import { DefaultValueConfig } from "../../../core/default-values/default-value-config";
 
 @DynamicComponent("EditPrefilledValuesComponent")
 @Component({
@@ -62,8 +61,8 @@ export class EditPrefilledValuesComponent
   entityConstructor: EntityConstructor;
   entitySchemaField: EntitySchemaField;
 
-  private entities = inject(EntityRegistry);
-  private fb = inject(FormBuilder);
+  private readonly entities = inject(EntityRegistry);
+  private readonly fb = inject(FormBuilder);
 
   get formControl(): FormControl<Record<string, DefaultValueConfig>> {
     return this.ngControl.control as FormControl<

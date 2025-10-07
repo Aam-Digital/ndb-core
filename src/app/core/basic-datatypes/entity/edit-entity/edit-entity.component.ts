@@ -81,10 +81,10 @@ export class EditEntityComponent<
   @ViewChild(BasicAutocompleteComponent)
   autocompleteComponent: BasicAutocompleteComponent<E, T>;
 
-  private entityMapperService = inject(EntityMapperService);
-  private formDialog = inject(FormDialogService);
-  private entityRegistry = inject(EntityRegistry);
-  private ability = inject(EntityAbility);
+  private readonly entityMapperService = inject(EntityMapperService);
+  private readonly formDialog = inject(FormDialogService);
+  private readonly entityRegistry = inject(EntityRegistry);
+  private readonly ability = inject(EntityAbility);
 
   readonly loadingPlaceholder = $localize`:A placeholder for the input element when select options are not loaded yet:loading...`;
 
