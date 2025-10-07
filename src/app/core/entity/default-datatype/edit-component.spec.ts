@@ -30,7 +30,10 @@ export function setupEditComponent<T>(
 }
 
 /**
- * Helper function for modern Angular components that extend CustomFormControlDirective
+ * Helper function for modern Angular components that extend CustomFormControlDirective.
+ *
+ * WARNING: This doesn't seem to always assign and trigger change detection for properties like `formFieldConfig` correctly.
+ *
  * @param component that extends CustomFormControlDirective
  * @param propertyName (optional) the name of the property for which the edit component is created
  * @param schema (optional) additional schema information for the entity field

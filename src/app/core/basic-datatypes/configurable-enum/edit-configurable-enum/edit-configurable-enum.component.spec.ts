@@ -47,26 +47,21 @@ describe("EditConfigurableEnumComponent", () => {
   });
 
   it("should extract the enum ID", () => {
-    setupCustomFormControlEditComponent(component, "test", {
-      additional: "some-id",
-    });
-    console.log("After setup, formFieldConfig:", component.formFieldConfig);
+    component.formFieldConfig = { id: "test", additional: "some-id" };
     component.ngOnInit();
-    console.log("After ngOnInit, enumId:", component.enumId);
     expect(component.enumId).toBe("some-id");
   });
 
   it("should detect multi selection mode", () => {
-    setupCustomFormControlEditComponent(component, "test", {
-      additional: "some-id",
-    });
+    component.formFieldConfig = { id: "test", additional: "some-id" };
     component.ngOnInit();
     expect(component.multi).toBeFalsy();
 
-    setupCustomFormControlEditComponent(component, "test", {
-      isArray: true,
+    component.formFieldConfig = {
+      id: "test",
       additional: "some-id",
-    });
+      isArray: true,
+    };
     component.ngOnInit();
     expect(component.multi).toBeTrue();
   });
