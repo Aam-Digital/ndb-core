@@ -3,7 +3,7 @@ import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-m
 import { Entity } from "#src/app/core/entity/model/entity";
 import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
 import { Component, inject, OnInit } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatCheckbox } from "@angular/material/checkbox";
 import {

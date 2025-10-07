@@ -13,9 +13,7 @@ import { EditComponent } from "app/core/common-components/entity-field-edit/dyna
 import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
-import { Entity } from "app/core/entity/model/entity";
-
-import { EntityConstructor } from "app/core/entity/model/entity";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { AdminEntityFormComponent } from "app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component";
 import { FormConfig } from "app/core/entity-details/form/form.component";

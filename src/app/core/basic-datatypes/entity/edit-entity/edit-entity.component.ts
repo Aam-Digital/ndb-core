@@ -109,7 +109,7 @@ export class EditEntityComponent<
    */
   @Input() showEntities = true;
 
-  hasInaccessibleEntities: Boolean = false;
+  hasInaccessibleEntities: boolean = false;
 
   /**
    * The accessor used for filtering and when selecting a new entity.
@@ -152,7 +152,7 @@ export class EditEntityComponent<
     return asArray(value ?? []);
   });
 
-  private allEntities: Resource<E[]> = resourceWithRetention({
+  private readonly allEntities: Resource<E[]> = resourceWithRetention({
     defaultValue: [],
     params: () => ({
       entityTypes: this.entityType(),
@@ -203,45 +203,46 @@ export class EditEntityComponent<
 
   includeInactive = signal<boolean>(false);
 
-  private availableOptionsResource: Resource<E[]> = resourceWithRetention({
-    defaultValue: [],
-    params: () => ({
-      allEntities: this.allEntities.value(),
-      values: this.values(),
-      includeInactive: this.includeInactive(),
-    }),
-    loader: async ({ params }) => {
-      const availableEntities = params.allEntities.filter(
-        (e) =>
-          params.values.includes(e.getId()) ||
-          params.includeInactive ||
-          e.isActive,
-      );
+  private readonly availableOptionsResource: Resource<E[]> =
+    resourceWithRetention({
+      defaultValue: [],
+      params: () => ({
+        allEntities: this.allEntities.value(),
+        values: this.values(),
+        includeInactive: this.includeInactive(),
+      }),
+      loader: async ({ params }) => {
+        const availableEntities = params.allEntities.filter(
+          (e) =>
+            params.values.includes(e.getId()) ||
+            params.includeInactive ||
+            e.isActive,
+        );
 
-      for (const id of params.values) {
-        if (id === null || id === undefined || id === "") {
-          continue;
+        for (const id of params.values) {
+          if (id === null || id === undefined || id === "") {
+            continue;
+          }
+
+          if (availableEntities.find((e) => id === e.getId())) {
+            continue;
+          }
+
+          const additionalEntity = await this.getEntity(id);
+          if (additionalEntity) {
+            availableEntities.push(additionalEntity);
+          } else {
+            this.hasInaccessibleEntities = true;
+            availableEntities.push({
+              getId: () => id,
+              isHidden: true,
+            } as unknown as E);
+          }
         }
 
-        if (availableEntities.find((e) => id === e.getId())) {
-          continue;
-        }
-
-        const additionalEntity = await this.getEntity(id);
-        if (additionalEntity) {
-          availableEntities.push(additionalEntity);
-        } else {
-          this.hasInaccessibleEntities = true;
-          availableEntities.push({
-            getId: () => id,
-            isHidden: true,
-          } as unknown as E);
-        }
-      }
-
-      return availableEntities;
-    },
-  });
+        return availableEntities;
+      },
+    });
 
   availableOptions: Signal<E[]> = computed(() =>
     this.availableOptionsResource.value(),
