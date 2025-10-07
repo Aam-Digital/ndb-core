@@ -1,16 +1,24 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+  inject,
+} from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
-import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { startWith } from "rxjs/operators";
 import { EditEntityComponent } from "../../../core/basic-datatypes/entity/edit-entity/edit-entity.component";
 import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entity-block/entity-block.component";
+import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
+import { EditComponent } from "../../../core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { InteractionType } from "../../notes/model/interaction-type.interface";
 import { Note } from "../../notes/model/note";
@@ -28,33 +36,38 @@ import { EventAttendance } from "../model/event-attendance";
     EntityBlockComponent,
     MatButtonModule,
     AttendanceStatusSelectComponent,
-    MatFormFieldModule,
     MatInputModule,
     MatCardModule,
   ],
   templateUrl: "./edit-attendance.component.html",
   styleUrls: ["./edit-attendance.component.scss"],
+  // TODO: refactor this to use signals and be ready for OnPush change detection
+  //changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    { provide: MatFormFieldControl, useExisting: EditAttendanceComponent },
+  ],
 })
 export class EditAttendanceComponent
-  extends EditComponent<string[]>
-  implements OnInit
+  extends CustomFormControlDirective<string[]>
+  implements OnInit, EditComponent
 {
+  @Input() formFieldConfig?: FormFieldConfig;
+  @Input() entity?: Note;
+
   showAttendance = false;
   mobile = false;
-  entityFormGroup: FormGroup;
 
-  @Input() declare entity: Note;
+  get formControl(): FormControl<string[]> {
+    return this.ngControl.control as FormControl<string[]>;
+  }
+
+  get parent() {
+    return this.formControl.parent as FormGroup;
+  }
 
   constructor() {
-    const screenWithObserver = inject(ScreenWidthObserver);
-
     super();
-
-    // Create a FormGroup with the participants control that syncs with this component's formControl
-    // TODO: NOW WORKING YET
-    this.entityFormGroup = new FormGroup({
-      participants: this.formControl,
-    });
+    const screenWithObserver = inject(ScreenWidthObserver);
 
     screenWithObserver
       .platform()
@@ -62,8 +75,7 @@ export class EditAttendanceComponent
       .subscribe((isDesktop) => (this.mobile = !isDesktop));
   }
 
-  override ngOnInit() {
-    super.ngOnInit();
+  ngOnInit() {
     const category = this.parent.get(
       "category",
     ) as FormControl<InteractionType>;
