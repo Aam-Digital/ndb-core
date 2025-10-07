@@ -75,8 +75,6 @@
               i18n
               >not defined</span
             >
-          } @else if (group.groupedByEntity) {
-            <app-entity-block [entityId]="group.id"></app-entity-block>
           } @else if (group.entity && group.fieldName) {
             <app-entity-field-view
               [entity]="group.entity"

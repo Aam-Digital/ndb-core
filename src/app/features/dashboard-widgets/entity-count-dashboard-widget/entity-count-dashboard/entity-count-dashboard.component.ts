@@ -17,7 +17,6 @@ import { groupBy } from "../../../../utils/utils";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { EntityDatatype } from "../../../../core/basic-datatypes/entity/entity.datatype";
-import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatIconButton } from "@angular/material/button";
 import { EntityFieldLabelComponent } from "../../../../core/common-components/entity-field-label/entity-field-label.component";
@@ -77,7 +76,6 @@ interface GroupCountRow {
     FontAwesomeModule,
     Angulartics2Module,
     DashboardListWidgetComponent,
-    EntityBlockComponent,
     MatTooltipModule,
     MatIconButton,
     EntityFieldLabelComponent,
