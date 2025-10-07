@@ -1,3 +1,4 @@
+import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,19 +6,18 @@ import {
   Input,
   OnInit,
 } from "@angular/core";
-import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
-import { generateLabelFromInterval, TimeInterval } from "../time-interval";
-import { MatDialog } from "@angular/material/dialog";
-import { CustomIntervalComponent } from "../custom-interval/custom-interval.component";
-import { MatOptionSelectionChange } from "@angular/material/core";
-import { MatInputModule } from "@angular/material/input";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatSelectModule } from "@angular/material/select";
-import { CustomFormControlDirective } from "../../../../core/common-components/basic-autocomplete/custom-form-control.directive";
+import { MatOptionSelectionChange } from "@angular/material/core";
+import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
-import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
-import { EditComponent } from "../../../../core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { CustomFormControlDirective } from "../../../../core/common-components/basic-autocomplete/custom-form-control.directive";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
+import { EditComponent } from "../../../../core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import { CustomIntervalComponent } from "../custom-interval/custom-interval.component";
+import { generateLabelFromInterval, TimeInterval } from "../time-interval";
 
 /**
  * Form field to edit a time interval for repetitions.

@@ -1,30 +1,29 @@
 import { Component, Input, OnInit, inject } from "@angular/core";
 import { Router } from "@angular/router";
-import { sortBy } from "lodash-es";
 
+import { DisplayConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/display-configurable-enum/display-configurable-enum.component";
+import { CommonModule } from "@angular/common";
+import { MatIconButton } from "@angular/material/button";
+import { MatTableModule } from "@angular/material/table";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
+import { Angulartics2Module } from "angulartics2";
+import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
+import { EntityDatatype } from "../../../../core/basic-datatypes/entity/entity.datatype";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
+import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
+import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
+import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
+import { EntityFieldLabelComponent } from "../../../../core/entity/entity-field-label/entity-field-label.component";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import {
   Entity,
   EntityConstructor,
 } from "../../../../core/entity/model/entity";
-import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
-import { IconName } from "@fortawesome/fontawesome-svg-core";
-import { MatTableModule } from "@angular/material/table";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { Angulartics2Module } from "angulartics2";
 import { groupBy } from "../../../../utils/utils";
-import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
-import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
-import { EntityDatatype } from "../../../../core/basic-datatypes/entity/entity.datatype";
-import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatIconButton } from "@angular/material/button";
-import { EntityFieldLabelComponent } from "../../../../core/common-components/entity-field-label/entity-field-label.component";
-import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
-import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
-import { CommonModule } from "@angular/common";
-import { DisplayConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/display-configurable-enum/display-configurable-enum.component";
 
 /**
  * Configuration (stored in Config document in the DB) for the dashboard widget.

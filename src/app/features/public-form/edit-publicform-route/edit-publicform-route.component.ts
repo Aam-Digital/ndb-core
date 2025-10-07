@@ -1,23 +1,23 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnInit,
   inject,
   Input,
+  OnInit,
 } from "@angular/core";
-import { ReactiveFormsModule, Validators, FormControl } from "@angular/forms";
-import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
-import { EditComponent } from "../../../core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
-import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
-import { Entity } from "../../../core/entity/model/entity";
-import { PublicFormConfig } from "../public-form-config";
+import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
+import { MatIconButton } from "@angular/material/button";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatIconButton } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { AlertService } from "../../../core/alerts/alert.service";
+import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { EditComponent } from "../../../core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import { Entity } from "../../../core/entity/model/entity";
+import { PublicFormConfig } from "../public-form-config";
 
 /**
  * Special Form Field to edit an ID and copy the full public-form URL generated based on this.

@@ -1,24 +1,24 @@
+import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import {
+  ChangeDetectionStrategy,
   Component,
-  OnInit,
   inject,
   Input,
-  ChangeDetectionStrategy,
+  OnInit,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { MatSelectModule } from "@angular/material/select";
+import { MatButtonModule } from "@angular/material/button";
 import { MatOptionModule } from "@angular/material/core";
 import { MatFormFieldControl } from "@angular/material/form-field";
-import { Entity, EntityConstructor } from "app/core/entity/model/entity";
+import { MatSelectModule } from "@angular/material/select";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype";
-import { EditComponent } from "app/core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
 import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
-import { MatButtonModule } from "@angular/material/button";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatTooltipModule } from "@angular/material/tooltip";
 import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 
 @DynamicComponent("EditPublicFormRelatedEntitiesComponent")
 @Component({

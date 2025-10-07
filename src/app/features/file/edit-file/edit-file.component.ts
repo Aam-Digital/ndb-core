@@ -17,8 +17,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { distinctUntilChanged, filter } from "rxjs/operators";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
-import { EditComponent } from "../../../core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { EditComponent } from "../../../core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../core/entity/model/entity";
 import { Logging } from "../../../core/logging/logging.service";
@@ -36,7 +36,7 @@ import { FileService } from "../file.service";
   templateUrl: "./edit-file.component.html",
   styleUrls: [
     "./edit-file.component.scss",
-    "../../../core/common-components/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
+    "../../../core/entity/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

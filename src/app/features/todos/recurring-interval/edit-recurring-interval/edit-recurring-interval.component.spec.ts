@@ -1,14 +1,14 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditRecurringIntervalComponent } from "./edit-recurring-interval.component";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { ConfigService } from "../../../../core/config/config.service";
-import { setupCustomFormControlEditComponent } from "../../../../core/entity/default-datatype/edit-component.spec";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { TimeInterval } from "../time-interval";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { of } from "rxjs";
+import { ConfigService } from "../../../../core/config/config.service";
+import { setupCustomFormControlEditComponent } from "../../../../core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { CustomIntervalComponent } from "../custom-interval/custom-interval.component";
+import { TimeInterval } from "../time-interval";
+import { EditRecurringIntervalComponent } from "./edit-recurring-interval.component";
 
 xdescribe("EditRecurringIntervalComponent", () => {
   let component: EditRecurringIntervalComponent;

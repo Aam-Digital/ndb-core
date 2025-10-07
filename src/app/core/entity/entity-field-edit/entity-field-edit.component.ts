@@ -14,16 +14,16 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { InheritedValueButtonComponent } from "../../../features/default-value-inherited/inherited-value-button/inherited-value-button.component";
-import { Entity } from "../../entity/model/entity";
-import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
-import { EntityFormService } from "../entity-form/entity-form.service";
+import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import {
   ColumnConfig,
   FormFieldConfig,
   toFormFieldConfig,
-} from "../entity-form/FormConfig";
-import { ErrorHintComponent } from "../error-hint/error-hint.component";
-import { HelpButtonComponent } from "../help-button/help-button.component";
+} from "../../common-components/entity-form/FormConfig";
+import { ErrorHintComponent } from "../../common-components/error-hint/error-hint.component";
+import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
+import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
+import { Entity } from "../model/entity";
 import { DynamicEditComponent } from "./dynamic-edit/dynamic-edit.component";
 
 /**

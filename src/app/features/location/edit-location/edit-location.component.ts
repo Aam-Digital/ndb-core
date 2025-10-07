@@ -8,9 +8,9 @@ import { MatTooltip, MatTooltipModule } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { filter, map } from "rxjs/operators";
 import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
-import { EditComponent } from "../../../core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { EditComponent } from "../../../core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { GeoLocation } from "../geo-location";
 import {
   MapPopupComponent,
@@ -26,7 +26,7 @@ import {
   templateUrl: "./edit-location.component.html",
   styleUrls: [
     "./edit-location.component.scss",
-    "../../../core/common-components/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
+    "../../../core/entity/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
   ],
   //changeDetection: ChangeDetectionStrategy.OnPush, // disabled to update results from dialog
   imports: [

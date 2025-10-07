@@ -7,9 +7,9 @@ import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
-import { EditComponent } from "../../../common-components/entity-field-edit/dynamic-edit/edit-component.interface";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
+import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { DateWithAge } from "../dateWithAge";
 
 @DynamicComponent("EditAge")
@@ -17,7 +17,7 @@ import { DateWithAge } from "../dateWithAge";
   selector: "app-edit-age",
   templateUrl: "./edit-age.component.html",
   styleUrls: [
-    "../../../common-components/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
+    "../../../entity/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
   ],
   imports: [
     ReactiveFormsModule,

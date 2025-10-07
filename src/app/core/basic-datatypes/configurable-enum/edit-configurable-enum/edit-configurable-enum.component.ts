@@ -18,9 +18,9 @@ import { BasicAutocompleteComponent } from "../../../common-components/basic-aut
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { OkButton } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
-import { EditComponent } from "../../../common-components/entity-field-edit/dynamic-edit/edit-component.interface";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
+import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { ConfigurableEnum } from "../configurable-enum";

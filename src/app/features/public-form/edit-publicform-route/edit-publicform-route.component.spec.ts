@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { EditPublicformRouteComponent } from "./edit-publicform-route.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { setupCustomFormControlEditComponent } from "../../../core/entity/default-datatype/edit-component.spec";
+import { setupCustomFormControlEditComponent } from "../../../core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
+import { EditPublicformRouteComponent } from "./edit-publicform-route.component";
 
 describe("EditPublicformRouteComponent", () => {
   let component: EditPublicformRouteComponent;

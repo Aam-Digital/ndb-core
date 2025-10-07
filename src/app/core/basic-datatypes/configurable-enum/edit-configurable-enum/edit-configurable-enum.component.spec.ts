@@ -5,7 +5,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { of } from "rxjs";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { setupCustomFormControlEditComponent } from "../../../entity/default-datatype/edit-component.spec";
+import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { ConfigurableEnum } from "../configurable-enum";

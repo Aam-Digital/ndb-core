@@ -1,5 +1,5 @@
 import { StoryFn } from "@storybook/angular";
-import { generateFormFieldStory } from "../../../core/entity/default-datatype/edit-component-story-utils";
+import { generateFormFieldStory } from "../../../core/entity/entity-field-edit/dynamic-edit/edit-component-story-utils";
 
 const formFieldStory = generateFormFieldStory("EditPhoto", undefined);
 

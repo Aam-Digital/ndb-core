@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
+import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { setupCustomFormControlEditComponent } from "app/core/entity/default-datatype/edit-component.spec";
 import { EditEmailComponent } from "./edit-email.component";
 
 describe("EditEmailComponent", () => {

@@ -7,7 +7,7 @@ import { MatDatepickerInputHarness } from "@angular/material/datepicker/testing"
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import moment from "moment";
-import { setupCustomFormControlEditComponent } from "../../../entity/default-datatype/edit-component.spec";
+import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import {
   DATE_FORMATS,
   DateAdapterWithFormatting,

@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EntityFieldEditComponent } from "./entity-field-edit.component";
-import { EntityFormService } from "../entity-form/entity-form.service";
-import { Entity } from "../../entity/model/entity";
 import { ComponentRegistry } from "../../../dynamic-components";
+import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import { Entity } from "../model/entity";
+import { EntityFieldEditComponent } from "./entity-field-edit.component";
 
 describe("EntityFieldEditComponent", () => {
   let component: EntityFieldEditComponent;

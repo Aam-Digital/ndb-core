@@ -1,11 +1,11 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { BulkMergeRecordsComponent } from "./bulk-merge-records.component";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { FormBuilder } from "@angular/forms";
+import { EntityFieldViewComponent } from "#src/app/core/entity/entity-field-view/entity-field-view.component";
 import { CommonModule } from "@angular/common";
-import { EntityFieldViewComponent } from "app/core/common-components/entity-field-view/entity-field-view.component";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { FormBuilder } from "@angular/forms";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
+import { BulkMergeRecordsComponent } from "./bulk-merge-records.component";
 
 describe("BulkMergeRecordsComponent", () => {
   let component: BulkMergeRecordsComponent<TestEntity>;

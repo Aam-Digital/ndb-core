@@ -1,16 +1,16 @@
+import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { EditPrefilledValuesComponent } from "./edit-prefilled-values.component";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { Entity } from "app/core/entity/model/entity";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
-import { setupCustomFormControlEditComponent } from "app/core/entity/default-datatype/edit-component.spec";
+import { EditPrefilledValuesComponent } from "./edit-prefilled-values.component";
 
 describe("EditPrefilledValuesComponent", () => {
   let component: EditPrefilledValuesComponent;

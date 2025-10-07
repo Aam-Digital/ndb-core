@@ -5,24 +5,24 @@ import {
   tick,
 } from "@angular/core/testing";
 
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
+import { Logging } from "#src/app/core/logging/logging.service";
 import { FormControl, NgControl } from "@angular/forms";
+import { of } from "rxjs";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { createEntityOfType } from "../../../demo-data/create-entity-of-type";
 import { DatabaseEntity } from "../../../entity/database-entity.decorator";
-import { setupCustomFormControlEditComponent } from "../../../entity/default-datatype/edit-component.spec";
+import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { Entity } from "../../../entity/model/entity";
 import { LoginState } from "../../../session/session-states/login-state.enum";
 import { EntityDatatype } from "../entity.datatype";
 import {
-  EditEntityComponent,
   applyTextToCreatedEntity,
+  EditEntityComponent,
 } from "./edit-entity.component";
-import { Logging } from "#src/app/core/logging/logging.service";
-import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
-import { of } from "rxjs";
 
 describe("EditEntityComponent", () => {
   let component: EditEntityComponent;

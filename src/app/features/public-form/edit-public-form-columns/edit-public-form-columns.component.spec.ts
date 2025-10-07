@@ -1,16 +1,16 @@
+import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { EditPublicFormColumnsComponent } from "./edit-public-form-columns.component";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
-import { Entity } from "app/core/entity/model/entity";
 import { FormControl, FormGroup } from "@angular/forms";
-import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
-import { setupCustomFormControlEditComponent } from "app/core/entity/default-datatype/edit-component.spec";
-import { TestEntity } from "app/utils/test-utils/TestEntity";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { MockEntityMapperService } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
+import { Entity } from "app/core/entity/model/entity";
+import { TestEntity } from "app/utils/test-utils/TestEntity";
 import { FieldGroup } from "../../../core/entity-details/form/field-group";
+import { EditPublicFormColumnsComponent } from "./edit-public-form-columns.component";
 
 describe("EditPublicFormColumnsComponent", () => {
   let component: EditPublicFormColumnsComponent;

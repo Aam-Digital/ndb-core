@@ -1,11 +1,11 @@
-import { Component, ChangeDetectionStrategy, Input } from "@angular/core";
-import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
-import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { MatInputModule } from "@angular/material/input";
 import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
-import { EditComponent } from "../../../common-components/entity-field-edit/dynamic-edit/edit-component.interface";
+import { MatInputModule } from "@angular/material/input";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
+import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
+import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
 
 @DynamicComponent("EditText")
 @Component({

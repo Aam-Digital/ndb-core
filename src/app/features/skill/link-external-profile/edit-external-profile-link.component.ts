@@ -1,39 +1,39 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   inject,
+  Input,
   OnInit,
   signal,
   WritableSignal,
-  Input,
-  ChangeDetectionStrategy,
 } from "@angular/core";
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
+import { MatFormFieldControl } from "@angular/material/form-field";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatTooltip } from "@angular/material/tooltip";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { of } from "rxjs";
+import { catchError } from "rxjs/operators";
+import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { EditComponent } from "../../../core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import { Entity } from "../../../core/entity/model/entity";
+import { retryOnServerError } from "../../../utils/retry-on-server-error.rxjs-pipe";
+import { ExternalProfileLinkConfig } from "../external-profile-link-config";
+import { ExternalProfile } from "../skill-api/external-profile";
+import { SkillApiService } from "../skill-api/skill-api.service";
 import {
   LinkExternalProfileDialogComponent,
   LinkExternalProfileDialogData,
 } from "./link-external-profile-dialog/link-external-profile-dialog.component";
-import { ExternalProfile } from "../skill-api/external-profile";
-import { EditComponent } from "../../../core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
-import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
-import { MatFormFieldControl } from "@angular/material/form-field";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
-import { Entity } from "../../../core/entity/model/entity";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { MatTooltip } from "@angular/material/tooltip";
-import { SkillApiService } from "../skill-api/skill-api.service";
-import {
-  FormsModule,
-  ReactiveFormsModule,
-  FormControl,
-  FormGroup,
-} from "@angular/forms";
-import { ExternalProfileLinkConfig } from "../external-profile-link-config";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { catchError } from "rxjs/operators";
-import { retryOnServerError } from "../../../utils/retry-on-server-error.rxjs-pipe";
-import { of } from "rxjs";
-import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 
 @DynamicComponent("EditExternalProfileLink")
 @Component({

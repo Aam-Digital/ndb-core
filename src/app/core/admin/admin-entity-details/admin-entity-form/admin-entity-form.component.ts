@@ -24,8 +24,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { lastValueFrom } from "rxjs";
-import { EntityFieldEditComponent } from "../../../common-components/entity-field-edit/entity-field-edit.component";
-import { EntityFieldLabelComponent } from "../../../common-components/entity-field-label/entity-field-label.component";
 import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
 import {
   ColumnConfig,
@@ -33,6 +31,8 @@ import {
   toFormFieldConfig,
 } from "../../../common-components/entity-form/FormConfig";
 import { FormConfig } from "../../../entity-details/form/form.component";
+import { EntityFieldEditComponent } from "../../../entity/entity-field-edit/entity-field-edit.component";
+import { EntityFieldLabelComponent } from "../../../entity/entity-field-label/entity-field-label.component";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AdminEntityService } from "../../admin-entity.service";
 import { AdminSectionHeaderComponent } from "../../building-blocks/admin-section-header/admin-section-header.component";

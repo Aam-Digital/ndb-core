@@ -1,23 +1,23 @@
+import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import {
+  ChangeDetectionStrategy,
   Component,
   inject,
-  OnInit,
   Input,
-  ChangeDetectionStrategy,
-  ViewChild,
+  OnInit,
   signal,
+  ViewChild,
 } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
-import { EditComponent } from "app/core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
+import { AdminEntityFormComponent } from "app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component";
 import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
-import { Entity, EntityConstructor } from "app/core/entity/model/entity";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
-import { AdminEntityFormComponent } from "app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component";
-import { FormConfig } from "app/core/entity-details/form/form.component";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
+import { FormConfig } from "app/core/entity-details/form/form.component";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { PublicFormConfig } from "../public-form-config";
 import { migratePublicFormConfig } from "../public-form.component";
 

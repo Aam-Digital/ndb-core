@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditMonthComponent } from "./edit-month.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { setupCustomFormControlEditComponent } from "../../../entity/default-datatype/edit-component.spec";
 import moment from "moment";
+import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
+import { EditMonthComponent } from "./edit-month.component";
 
 describe("EditMonthComponent", () => {
   let component: EditMonthComponent;

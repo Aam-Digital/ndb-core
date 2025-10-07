@@ -1,14 +1,14 @@
-import { FormComponent } from "../../entity-details/form/form.component";
-import { Entity, EntityConstructor } from "../model/entity";
-import { DatabaseEntity } from "../database-entity.decorator";
-import { DatabaseField } from "../database-field.decorator";
-import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import { importProvidersFrom } from "@angular/core";
 import { applicationConfig, Meta } from "@storybook/angular";
 import {
   entityFormStorybookDefaultParameters,
   StorybookBaseModule,
-} from "../../../utils/storybook-base.module";
-import { importProvidersFrom } from "@angular/core";
+} from "../../../../utils/storybook-base.module";
+import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
+import { FormComponent } from "../../../entity-details/form/form.component";
+import { DatabaseEntity } from "../../database-entity.decorator";
+import { DatabaseField } from "../../database-field.decorator";
+import { Entity, EntityConstructor } from "../../model/entity";
 
 /**
  *

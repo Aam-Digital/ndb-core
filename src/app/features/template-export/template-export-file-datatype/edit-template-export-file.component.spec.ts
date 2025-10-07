@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
-import { setupCustomFormControlEditComponent } from "#src/app/core/entity/default-datatype/edit-component.spec";
+import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { SyncStateSubject } from "#src/app/core/session/session-type";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { FileService } from "app/features/file/file.service";
@@ -13,7 +13,6 @@ import { Entity } from "../../../core/entity/model/entity";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { TemplateExportApiService } from "../template-export-api/template-export-api.service";
 import { TemplateExportService } from "../template-export-service/template-export.service";
-import { FormControl } from "@angular/forms";
 import { EditTemplateExportFileComponent } from "./edit-template-export-file.component";
 
 describe("EditTemplateExportFileComponent", () => {

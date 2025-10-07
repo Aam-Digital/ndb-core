@@ -13,15 +13,15 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
+import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatOption, MatSelect } from "@angular/material/select";
 import { MatTooltip } from "@angular/material/tooltip";
-import { EntityFieldLabelComponent } from "../../../core/common-components/entity-field-label/entity-field-label.component";
-import { EntityConstructor } from "../../../core/entity/model/entity";
-import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
-import { DefaultValueConfigInherited } from "../default-value-config-inherited";
-import { MatFormFieldControl } from "@angular/material/form-field";
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
+import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { EntityFieldLabelComponent } from "../../../core/entity/entity-field-label/entity-field-label.component";
+import { EntityConstructor } from "../../../core/entity/model/entity";
+import { DefaultValueConfigInherited } from "../default-value-config-inherited";
 
 @Component({
   selector: "app-admin-default-value-inherited",

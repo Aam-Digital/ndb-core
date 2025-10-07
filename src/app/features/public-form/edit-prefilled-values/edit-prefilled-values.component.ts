@@ -1,3 +1,4 @@
+import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -21,7 +22,6 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
-import { EditComponent } from "app/core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";

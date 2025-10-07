@@ -1,10 +1,10 @@
+import { EntityFieldViewComponent } from "#src/app/core/entity/entity-field-view/entity-field-view.component";
 import { Component, Input, OnInit } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
-import { Entity } from "app/core/entity/model/entity";
-import { EntityFieldViewComponent } from "app/core/common-components/entity-field-view/entity-field-view.component";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatRadioModule } from "@angular/material/radio";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { Entity } from "app/core/entity/model/entity";
 
 @Component({
   selector: "app-merge-fields",

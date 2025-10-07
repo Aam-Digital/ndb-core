@@ -16,11 +16,11 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { BehaviorSubject } from "rxjs";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
+import { EditComponent } from "../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../entity/model/entity";
 import { CustomFormControlDirective } from "../basic-autocomplete/custom-form-control.directive";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
-import { EditComponent } from "../entity-field-edit/dynamic-edit/edit-component.interface";
 
 /**
  * This component creates a normal text input with autocomplete.

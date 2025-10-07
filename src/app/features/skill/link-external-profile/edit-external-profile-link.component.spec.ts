@@ -11,7 +11,7 @@ import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { of, Subject, throwError } from "rxjs";
 import { AlertService } from "../../../core/alerts/alert.service";
-import { setupCustomFormControlEditComponent } from "../../../core/entity/default-datatype/edit-component.spec";
+import { setupCustomFormControlEditComponent } from "../../../core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { Entity } from "../../../core/entity/model/entity";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { ExternalProfile } from "../skill-api/external-profile";

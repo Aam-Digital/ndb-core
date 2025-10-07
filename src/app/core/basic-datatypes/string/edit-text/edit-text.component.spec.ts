@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditTextComponent } from "./edit-text.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { setupCustomFormControlEditComponent } from "../../../entity/default-datatype/edit-component.spec";
+import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
+import { EditTextComponent } from "./edit-text.component";
 
 describe("EditTextComponent", () => {
   let component: EditTextComponent;

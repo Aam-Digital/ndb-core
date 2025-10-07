@@ -4,27 +4,27 @@ import {
   Input,
   ViewEncapsulation,
 } from "@angular/core";
-import { MatInputModule } from "@angular/material/input";
-import {
-  MatDatepicker,
-  MatDatepickerModule,
-} from "@angular/material/datepicker";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import {
+  MAT_MOMENT_DATE_ADAPTER_OPTIONS,
+  MomentDateAdapter,
+} from "@angular/material-moment-adapter";
 import {
   DateAdapter,
   MAT_DATE_FORMATS,
   MAT_DATE_LOCALE,
 } from "@angular/material/core";
-import { Moment } from "moment";
 import {
-  MAT_MOMENT_DATE_ADAPTER_OPTIONS,
-  MomentDateAdapter,
-} from "@angular/material-moment-adapter";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
+  MatDatepicker,
+  MatDatepickerModule,
+} from "@angular/material/datepicker";
 import { MatFormFieldControl } from "@angular/material/form-field";
-import { EditComponent } from "../../../common-components/entity-field-edit/dynamic-edit/edit-component.interface";
+import { MatInputModule } from "@angular/material/input";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { Moment } from "moment";
+import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
+import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
 
 export const MY_FORMATS = {
   parse: {
@@ -49,7 +49,7 @@ export const MY_FORMATS = {
   templateUrl: "./edit-month.component.html",
   styleUrls: [
     "./edit-month.component.scss",
-    "../../../common-components/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
+    "../../../entity/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
