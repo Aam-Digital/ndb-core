@@ -2,13 +2,13 @@ import { StoryFn } from "@storybook/angular";
 import { generateFormFieldStory } from "../../../entity/default-datatype/edit-component-story-utils";
 
 const formFieldStory = generateFormFieldStory(
-  "EditDescriptionOnly",
+  "DisplayDescriptionOnly",
   "-",
   false,
 );
 
 export default {
-  title: "Core/Entities/Properties/EditDescriptionOnly",
+  title: "Core/Entities/Properties/DisplayDescriptionOnly",
   ...formFieldStory.meta,
 };
 
@@ -24,7 +24,7 @@ export const Primary = {
         fields: [
           {
             id: "description_only_text",
-            editComponent: "EditDescriptionOnly",
+            viewComponent: "DisplayDescriptionOnly",
             label: $localize`"Example Markdown Text\n[Click here](https://example.com) to visit."`,
           },
         ],

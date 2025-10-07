@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { EditDescriptionOnlyComponent } from "./edit-description-only.component";
 import { ComponentRegistry } from "app/dynamic-components";
+import { DisplayDescriptionOnlyComponent } from "./display-description-only.component";
 
-describe("EditDescriptionOnlyComponent", () => {
-  let component: EditDescriptionOnlyComponent;
-  let fixture: ComponentFixture<EditDescriptionOnlyComponent>;
+describe("DisplayDescriptionOnlyComponent", () => {
+  let component: DisplayDescriptionOnlyComponent;
+  let fixture: ComponentFixture<DisplayDescriptionOnlyComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EditDescriptionOnlyComponent],
+      imports: [DisplayDescriptionOnlyComponent],
       providers: [ComponentRegistry],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EditDescriptionOnlyComponent);
+    fixture = TestBed.createComponent(DisplayDescriptionOnlyComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

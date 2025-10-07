@@ -115,7 +115,7 @@ const viewConfigs: ViewConfig[] = [
                     fields: [
                       {
                         id: "template_explanation",
-                        editComponent: "EditDescriptionOnly",
+                        viewComponent: "DisplayDescriptionOnly",
                         label: $localize`:TemplateExport:Upload a specially prepared template file here.
 The file can contain placeholders that will be replaced with actual data when a file is generated for a selected record.
 For example {d.name} will be replaced with the value in the "name" field of the given entity.

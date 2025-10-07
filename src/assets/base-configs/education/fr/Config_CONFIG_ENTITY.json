@@ -897,7 +897,7 @@
                       "fields": [
                         {
                           "id": "_description_health",
-                          "editComponent": "EditDescriptionOnly",
+                          "viewComponent": "DisplayDescriptionOnly",
                           "label": "Les bilans de santé doivent être effectués régulièrement, au moins tous les six mois, conformément aux lignes directrices du programme.\n                        Veillez à consulter les [Lignes directrices en matière de santé] (https://example.com/guidelines) pour obtenir des recommandations et des procédures détaillées."
                         },
                         "health_lastDentalCheckup"
