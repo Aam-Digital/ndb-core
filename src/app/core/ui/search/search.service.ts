@@ -20,7 +20,7 @@ export class SearchService {
   private searchableEntities: [string, string[]][];
 
   constructor() {
-    this.configService?.configUpdates.subscribe(() => this.createSearchIndex());
+    this.configService.configUpdates.subscribe(() => this.createSearchIndex());
     this.createSearchIndex();
   }
 
