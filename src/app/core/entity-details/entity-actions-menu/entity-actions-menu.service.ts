@@ -14,6 +14,16 @@ import { Entity } from "../../entity/model/entity";
   providedIn: "root",
 })
 export class EntityActionsMenuService {
+  /**
+   * Get only actions available for bulk operations.
+   */
+  getBulkActions(entity?: Entity): EntityAction[] {
+    return this.getActions(entity).filter(
+      (action) =>
+        (action.availableFor ?? "all") === "bulk-only" ||
+        (action.availableFor ?? "all") === "all",
+    );
+  }
   private actions: EntityAction[] = [];
   private actionsFactories: EntityActionsFactory[] = [];
 
