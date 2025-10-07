@@ -1,27 +1,28 @@
 import { Component, Input, OnInit, inject } from "@angular/core";
-import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
-import { EditEntityComponent } from "../../../core/basic-datatypes/entity/edit-entity/edit-entity.component";
-import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { startWith } from "rxjs/operators";
-import { FormControl } from "@angular/forms";
-import { InteractionType } from "../../notes/model/interaction-type.interface";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entity-block/entity-block.component";
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
-import { AttendanceStatusSelectComponent } from "../attendance-status-select/attendance-status-select.component";
+import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { startWith } from "rxjs/operators";
+import { EditEntityComponent } from "../../../core/basic-datatypes/entity/edit-entity/edit-entity.component";
+import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entity-block/entity-block.component";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { InteractionType } from "../../notes/model/interaction-type.interface";
 import { Note } from "../../notes/model/note";
+import { AttendanceStatusSelectComponent } from "../attendance-status-select/attendance-status-select.component";
 import { EventAttendance } from "../model/event-attendance";
-import { MatCardModule } from "@angular/material/card";
 
 @UntilDestroy()
 @DynamicComponent("EditAttendance")
 @Component({
   selector: "app-edit-attendance",
   imports: [
+    ReactiveFormsModule,
     EditEntityComponent,
     FontAwesomeModule,
     EntityBlockComponent,
@@ -40,6 +41,7 @@ export class EditAttendanceComponent
 {
   showAttendance = false;
   mobile = false;
+  entityFormGroup: FormGroup;
 
   @Input() declare entity: Note;
 
@@ -47,6 +49,13 @@ export class EditAttendanceComponent
     const screenWithObserver = inject(ScreenWidthObserver);
 
     super();
+
+    // Create a FormGroup with the participants control that syncs with this component's formControl
+    // TODO: NOW WORKING YET
+    this.entityFormGroup = new FormGroup({
+      participants: this.formControl,
+    });
+
     screenWithObserver
       .platform()
       .pipe(untilDestroyed(this))

@@ -1,4 +1,6 @@
 import { Component, Input, OnInit, inject } from "@angular/core";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { MatButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -6,22 +8,21 @@ import {
   MatDialogContent,
   MatDialogRef,
 } from "@angular/material/dialog";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatProgressBar } from "@angular/material/progress-bar";
+import { RouterLink } from "@angular/router";
+import { AlertService } from "../../../core/alerts/alert.service";
+import { EditEntityComponent } from "../../../core/basic-datatypes/entity/edit-entity/edit-entity.component";
+import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
 import { Entity } from "../../../core/entity/model/entity";
+import { DownloadService } from "../../../core/export/download-service/download.service";
+import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
 import {
   TemplateExportApiService,
   TemplateExportResult,
 } from "../template-export-api/template-export-api.service";
-import { MatButton } from "@angular/material/button";
-import { DownloadService } from "../../../core/export/download-service/download.service";
-import { TemplateExport } from "../template-export.entity";
-import { EntitySelectComponent } from "../../../core/common-components/entity-select/entity-select.component";
-import { FormControl } from "@angular/forms";
-import { RouterLink } from "@angular/router";
-import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
-import { MatProgressBar } from "@angular/material/progress-bar";
-import { AlertService } from "../../../core/alerts/alert.service";
 import { TemplateExportService } from "../template-export-service/template-export.service";
-import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
+import { TemplateExport } from "../template-export.entity";
 
 /**
  * Popup for user to select one of the available templates
@@ -33,12 +34,14 @@ import { FeatureDisabledInfoComponent } from "../../../core/common-components/fe
     MatDialogContent,
     MatDialogActions,
     MatButton,
-    EntitySelectComponent,
+    EditEntityComponent,
     MatDialogClose,
     RouterLink,
     DisableEntityOperationDirective,
     MatProgressBar,
     FeatureDisabledInfoComponent,
+    ReactiveFormsModule,
+    MatFormFieldModule,
   ],
   templateUrl: "./template-export-selection-dialog.component.html",
   styleUrl: "./template-export-selection-dialog.component.scss",

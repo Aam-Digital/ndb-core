@@ -710,6 +710,10 @@
       "label": "Task",
       "labelPlural": "Tasks",
       "attributes": {}
+    },
+    "view:import": {
+      "component": "Import",
+      "_id": "view:import"
     }
   }
 }

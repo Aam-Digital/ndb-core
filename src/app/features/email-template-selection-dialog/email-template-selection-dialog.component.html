@@ -29,17 +29,17 @@
     </span>
   </p>
 
-  <app-entity-select
-    [entityType]="EmailTemplate.ENTITY_TYPE"
-    [multi]="false"
-    [additionalFilter]="filteredTemplate"
-    label="Message Template"
-    i18n-label
-    placeholder="Select a template to use and adapt"
-    i18n-placeholder
-    [form]="emailTemplateSelectionForm"
-    [disableCreateNew]="true"
-  ></app-entity-select>
+  <mat-form-field>
+    <mat-label i18n>Message Template</mat-label>
+    <app-edit-entity
+      [formControl]="emailTemplateSelectionForm"
+      [entityType]="EmailTemplate.ENTITY_TYPE"
+      [additionalFilter]="filteredTemplate"
+      [disableCreateNew]="true"
+      placeholder="Select a template to use and adapt"
+      i18n-placeholder
+    ></app-edit-entity>
+  </mat-form-field>
 
   <div class="flex-column">
     <mat-checkbox [formControl]="createNoteControl" i18n>

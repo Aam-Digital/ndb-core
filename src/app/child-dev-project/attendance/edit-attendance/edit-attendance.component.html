@@ -1,9 +1,12 @@
-<app-edit-entity
-  [formControl]="formControl"
-  [formFieldConfig]="formFieldConfig"
-  [entity]="entity"
-  [showEntities]="!showAttendance"
-/>
+<div [formGroup]="entityFormGroup">
+  <mat-form-field>
+    <app-edit-entity
+      formControlName="participants"
+      [formFieldConfig]="formFieldConfig"
+      [showEntities]="!showAttendance"
+    ></app-edit-entity>
+  </mat-form-field>
+</div>
 
 @if (showAttendance) {
   <!-- If feasible, this whole setup should be replaced with a more simple setup that
