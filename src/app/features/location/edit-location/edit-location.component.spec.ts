@@ -44,7 +44,7 @@ describe("EditLocationComponent", () => {
       ],
       providers: [{ provide: MatDialog, useValue: mockDialog }],
     }).compileComponents();
-    
+
     fixture = TestBed.createComponent(EditLocationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

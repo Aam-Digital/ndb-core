@@ -63,7 +63,10 @@ export const MY_FORMATS = {
   ],
   encapsulation: ViewEncapsulation.None,
 })
-export class EditMonthComponent extends CustomFormControlDirective<Date> implements EditComponent {
+export class EditMonthComponent
+  extends CustomFormControlDirective<Date>
+  implements EditComponent
+{
   @Input() formFieldConfig?: FormFieldConfig;
 
   get formControl(): FormControl<Date> {

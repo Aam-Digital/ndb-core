@@ -23,7 +23,11 @@ describe("EditConfigurableEnumComponent", () => {
     mockAbility.can.and.returnValue(true);
 
     await TestBed.configureTestingModule({
-      imports: [EditConfigurableEnumComponent, MockedTestingModule.withState(), NoopAnimationsModule],
+      imports: [
+        EditConfigurableEnumComponent,
+        MockedTestingModule.withState(),
+        NoopAnimationsModule,
+      ],
       providers: [
         { provide: MatDialog, useValue: mockDialog },
         { provide: EntityAbility, useValue: mockAbility },
@@ -32,7 +36,9 @@ describe("EditConfigurableEnumComponent", () => {
 
     fixture = TestBed.createComponent(EditConfigurableEnumComponent);
     component = fixture.componentInstance;
-    setupCustomFormControlEditComponent(component, "test", { additional: "some-id" });
+    setupCustomFormControlEditComponent(component, "test", {
+      additional: "some-id",
+    });
     fixture.detectChanges();
   });
 
@@ -41,15 +47,19 @@ describe("EditConfigurableEnumComponent", () => {
   });
 
   it("should extract the enum ID", () => {
-    setupCustomFormControlEditComponent(component, "test", { additional: "some-id" });
-    console.log('After setup, formFieldConfig:', component.formFieldConfig);
+    setupCustomFormControlEditComponent(component, "test", {
+      additional: "some-id",
+    });
+    console.log("After setup, formFieldConfig:", component.formFieldConfig);
     component.ngOnInit();
-    console.log('After ngOnInit, enumId:', component.enumId);
+    console.log("After ngOnInit, enumId:", component.enumId);
     expect(component.enumId).toBe("some-id");
   });
 
   it("should detect multi selection mode", () => {
-    setupCustomFormControlEditComponent(component, "test", { additional: "some-id" });
+    setupCustomFormControlEditComponent(component, "test", {
+      additional: "some-id",
+    });
     component.ngOnInit();
     expect(component.multi).toBeFalsy();
 

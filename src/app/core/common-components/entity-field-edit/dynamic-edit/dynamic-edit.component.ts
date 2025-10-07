@@ -16,7 +16,10 @@ import { EditComponent } from "./edit-component.interface";
     { provide: MatFormFieldControl, useExisting: DynamicEditComponent },
   ],
 })
-export class DynamicEditComponent extends CustomFormControlDirective<any> implements EditComponent {
+export class DynamicEditComponent
+  extends CustomFormControlDirective<any>
+  implements EditComponent
+{
   @Input() formFieldConfig: FormFieldConfig;
   @Input() entity: Entity;
 }

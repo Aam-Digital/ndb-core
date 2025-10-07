@@ -53,9 +53,9 @@ describe("EditTemplateExportFileComponent", () => {
     component = fixture.componentInstance;
 
     // Set up the form field config properly
-    const formFieldConfig: FormFieldConfig = { 
+    const formFieldConfig: FormFieldConfig = {
       id: "test",
-      additional: {} 
+      additional: {},
     };
     component.entity = new Entity();
     component.formFieldConfig = formFieldConfig; // Set directly first, somehow setup function is not getting things there in time for the child component ...

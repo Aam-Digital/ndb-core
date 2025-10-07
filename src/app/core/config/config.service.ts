@@ -564,14 +564,10 @@ const relatedEntitiesForChild = {
   showInactive: true,
 };
 
-
 /**
  * Change editComponent "EditDescriptionOnly" to viewComponent "DisplayDescriptionOnly"
  */
-const migrateEditDescriptionOnly: ConfigMigration = (
-  key,
-  configPart,
-) => {
+const migrateEditDescriptionOnly: ConfigMigration = (key, configPart) => {
   if (configPart?.editComponent !== "EditDescriptionOnly") {
     return configPart;
   }

@@ -1,4 +1,9 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import { FormControl, NgControl } from "@angular/forms";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
@@ -47,11 +52,9 @@ describe("EditEntityComponent", () => {
           ...otherEntities,
         ]),
       ],
-      providers: [
-        { provide: NgControl, useValue: { control: formControl } },
-      ]
+      providers: [{ provide: NgControl, useValue: { control: formControl } }],
     }).compileComponents();
-    
+
     fixture = TestBed.createComponent(EditEntityComponent);
     component = fixture.componentInstance;
 
@@ -132,7 +135,10 @@ describe("EditEntityComponent", () => {
   }));
 
   it("suggests all entities of multiple different types if configured", fakeAsync(() => {
-    fixture.componentRef.setInput("entityType", [TestEntity.ENTITY_TYPE, Test2Entity.ENTITY_TYPE]);
+    fixture.componentRef.setInput("entityType", [
+      TestEntity.ENTITY_TYPE,
+      Test2Entity.ENTITY_TYPE,
+    ]);
     fixture.autoDetectChanges();
     tick();
 
@@ -147,7 +153,9 @@ describe("EditEntityComponent", () => {
     const warnSpy = spyOn(Logging, "warn");
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
     component.formFieldConfig = { id: "test", label: "test label" };
-    component.formControl().setValue([test1Entities[0].getId(), "missing_user"]);
+    component
+      .formControl()
+      .setValue([test1Entities[0].getId(), "missing_user"]);
     fixture.autoDetectChanges();
     tick();
 
@@ -207,7 +215,9 @@ describe("EditEntityComponent", () => {
 
   it("should show selected entities of type that is not configured", fakeAsync(() => {
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
-    component.formControl().setValue([test1Entities[0].getId(), test2Entities[0].getId()]);
+    component
+      .formControl()
+      .setValue([test1Entities[0].getId(), test2Entities[0].getId()]);
     fixture.autoDetectChanges();
     tick();
 

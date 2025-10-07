@@ -5,11 +5,7 @@ import {
   Input,
   OnInit,
 } from "@angular/core";
-import {
-  FormControl,
-  ReactiveFormsModule,
-  Validators
-} from "@angular/forms";
+import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { EditComponent } from "../../../common-components/entity-field-edit/dynamic-edit/edit-component.interface";

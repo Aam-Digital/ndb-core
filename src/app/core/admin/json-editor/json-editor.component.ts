@@ -73,7 +73,7 @@ export class JsonEditorComponent
    */
   handleTextChange(updatedText: string): void {
     try {
-      this.value =  updatedText ? JSON.parse(updatedText) : {};
+      this.value = updatedText ? JSON.parse(updatedText) : {};
     } catch (e) {
       const control = this.ngControl?.control;
       if (!control) {

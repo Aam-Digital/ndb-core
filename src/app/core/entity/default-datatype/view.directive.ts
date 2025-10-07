@@ -17,7 +17,7 @@ export abstract class ViewDirective<T, C = any> implements OnChanges {
     return this._formFieldConfig;
   }
   private _formFieldConfig: FormFieldConfig;
-  
+
   /**
    * The "additional" context config of the field.
    */

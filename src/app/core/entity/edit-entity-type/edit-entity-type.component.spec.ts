@@ -19,7 +19,7 @@ describe("EditEntityTypeComponent", () => {
     component = fixture.componentInstance;
 
     setupCustomFormControlEditComponent(component);
-    
+
     fixture.detectChanges();
   });
 

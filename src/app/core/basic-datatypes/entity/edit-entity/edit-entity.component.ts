@@ -114,19 +114,20 @@ export class EditEntityComponent<
   /**
    * The accessor used for filtering and when selecting a new entity.
    */
-  @Input() accessor: (e: Entity) => string = (e) => (e instanceof Entity) ? e.toString() : "?";
+  @Input() accessor: (e: Entity) => string = (e) =>
+    e instanceof Entity ? e.toString() : "?";
   entityToId = (option: E) => option.getId();
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
 
   formControl: Signal<FormControl<T>> = computed(() => {
     let control = this.ngControl?.control as FormControl<T>;
-    if(!control) {
+    if (!control) {
       control = this._formControl ?? new FormControl();
     }
 
     this._formControl = control;
-    return this._formControl
+    return this._formControl;
   });
   private _formControl: FormControl<T>;
 
@@ -139,6 +140,7 @@ export class EditEntityComponent<
    * Overrides the `additional` configuration of the FormFieldConfig if given.
    */
   entityTypeInput: Signal<string | string[]> = input(undefined, {
+    // eslint-disable-next-line @angular-eslint/no-input-rename
     alias: "entityType",
   });
   entityType: Signal<string[]> = computed(() => {
@@ -195,7 +197,7 @@ export class EditEntityComponent<
   values: Signal<string[]> = toSignal(
     toObservable(this.formControl)
       .pipe(switchMap((form) => form.valueChanges))
-      .pipe(map((value) => value === undefined ? [] : asArray(value))),
+      .pipe(map((value) => (value === undefined ? [] : asArray(value)))),
     { initialValue: [] },
   );
 

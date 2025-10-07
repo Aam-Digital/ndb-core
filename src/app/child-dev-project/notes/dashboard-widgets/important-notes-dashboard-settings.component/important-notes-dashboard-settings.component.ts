@@ -36,9 +36,9 @@ export class ImportantNotesDashboardSettingsComponent implements OnInit {
 
   warningLevelsForm = new FormControl<ConfigurableEnumValue[]>([]);
   warningLevelsFieldConfig: FormFieldConfig = {
-    id: 'warningLevels',
-    label: 'Warning Levels',
-    additional: 'warning-levels',
+    id: "warningLevels",
+    label: "Warning Levels",
+    additional: "warning-levels",
     isArray: true,
   };
   private readonly enumService = inject(ConfigurableEnumService);

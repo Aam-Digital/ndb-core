@@ -18,7 +18,10 @@ import { FormFieldConfig } from "../../../common-components/entity-form/FormConf
     { provide: MatFormFieldControl, useExisting: EditLongTextComponent },
   ],
 })
-export class EditLongTextComponent extends CustomFormControlDirective<string> implements EditComponent {
+export class EditLongTextComponent
+  extends CustomFormControlDirective<string>
+  implements EditComponent
+{
   @Input() formFieldConfig?: FormFieldConfig;
 
   get formControl(): FormControl<string> {

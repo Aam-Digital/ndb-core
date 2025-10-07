@@ -46,15 +46,24 @@ import { DisplayConfigurableEnumComponent } from "../display-configurable-enum/d
     DisplayConfigurableEnumComponent,
   ],
   providers: [
-    { provide: MatFormFieldControl, useExisting: EditConfigurableEnumComponent },
+    {
+      provide: MatFormFieldControl,
+      useExisting: EditConfigurableEnumComponent,
+    },
   ],
 })
 export class EditConfigurableEnumComponent
-  extends CustomFormControlDirective<ConfigurableEnumValue | ConfigurableEnumValue[]>
+  extends CustomFormControlDirective<
+    ConfigurableEnumValue | ConfigurableEnumValue[]
+  >
   implements OnInit, OnChanges, EditComponent
 {
   @Input() formFieldConfig?: FormFieldConfig;
-  @ViewChild(BasicAutocompleteComponent) autocompleteComponent: BasicAutocompleteComponent<ConfigurableEnumValue, ConfigurableEnumValue>;
+  @ViewChild(BasicAutocompleteComponent)
+  autocompleteComponent: BasicAutocompleteComponent<
+    ConfigurableEnumValue,
+    ConfigurableEnumValue
+  >;
 
   private enumService = inject(ConfigurableEnumService);
   private entityMapper = inject(EntityMapperService);
@@ -72,8 +81,12 @@ export class EditConfigurableEnumComponent
   enumValueToString = (v: ConfigurableEnumValue) => v?.label;
   createNewOption: (input: string) => Promise<ConfigurableEnumValue>;
 
-  get formControl(): FormControl<ConfigurableEnumValue | ConfigurableEnumValue[]> {
-    return this.ngControl?.control as FormControl<ConfigurableEnumValue | ConfigurableEnumValue[]>;
+  get formControl(): FormControl<
+    ConfigurableEnumValue | ConfigurableEnumValue[]
+  > {
+    return this.ngControl?.control as FormControl<
+      ConfigurableEnumValue | ConfigurableEnumValue[]
+    >;
   }
 
   ngOnInit() {
@@ -104,11 +117,16 @@ export class EditConfigurableEnumComponent
     if (!this.formControl) {
       return [];
     }
-    
+
     let additionalOptions;
     const value = this.formControl.value;
-    
-    if (!this.multi && value && !Array.isArray(value) && (value as any).isInvalidOption) {
+
+    if (
+      !this.multi &&
+      value &&
+      !Array.isArray(value) &&
+      (value as any).isInvalidOption
+    ) {
       additionalOptions = [value];
     }
     if (this.multi && Array.isArray(value)) {
@@ -160,7 +178,7 @@ export class EditConfigurableEnumComponent
 
   private updateOptions() {
     const value = this.formControl.value;
-    
+
     if (
       value &&
       !Array.isArray(value) &&

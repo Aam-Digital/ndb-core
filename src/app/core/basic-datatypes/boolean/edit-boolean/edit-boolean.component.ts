@@ -24,7 +24,10 @@ import { FormFieldConfig } from "../../../common-components/entity-form/FormConf
   ],
   encapsulation: ViewEncapsulation.None,
 })
-export class EditBooleanComponent extends CustomFormControlDirective<boolean> implements EditComponent {
+export class EditBooleanComponent
+  extends CustomFormControlDirective<boolean>
+  implements EditComponent
+{
   @Input() formFieldConfig?: FormFieldConfig;
 
   get formControl(): FormControl<boolean> {

@@ -22,13 +22,17 @@ describe("EditAgeComponent", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [EditAgeComponent, NoopAnimationsModule, FontAwesomeTestingModule],
+      imports: [
+        EditAgeComponent,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
       providers: [
         { provide: DateAdapter, useClass: DateAdapterWithFormatting },
         { provide: MAT_DATE_FORMATS, useValue: DATE_FORMATS },
       ],
     }).compileComponents();
-    
+
     fixture = TestBed.createComponent(EditAgeComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
@@ -56,7 +60,9 @@ describe("EditAgeComponent", () => {
   it("should update age when date is changed", async () => {
     const datepicker = await loader.getHarness(MatDatepickerInputHarness);
 
-    await datepicker.setValue(moment().subtract(20, "years").toDate().toLocaleDateString());
+    await datepicker.setValue(
+      moment().subtract(20, "years").toDate().toLocaleDateString(),
+    );
 
     expect(component.age()).toEqual(20);
   });

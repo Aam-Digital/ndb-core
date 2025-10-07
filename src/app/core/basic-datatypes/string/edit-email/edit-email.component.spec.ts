@@ -12,10 +12,10 @@ describe("EditEmailComponent", () => {
     await TestBed.configureTestingModule({
       imports: [EditEmailComponent, NoopAnimationsModule],
     }).compileComponents();
-    
+
     fixture = TestBed.createComponent(EditEmailComponent);
     component = fixture.componentInstance;
-    
+
     setupCustomFormControlEditComponent(component);
 
     fixture.detectChanges();

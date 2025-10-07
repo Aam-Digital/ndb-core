@@ -14,11 +14,7 @@ import { ImagePopupComponent } from "./image-popup/image-popup.component";
   selector: "app-edit-photo",
   templateUrl: "./edit-photo.component.html",
   styleUrls: ["./edit-photo.component.scss"],
-  imports: [
-    MatButtonModule,
-    MatTooltipModule,
-    FontAwesomeModule,
-  ],
+  imports: [MatButtonModule, MatTooltipModule, FontAwesomeModule],
 })
 export class EditPhotoComponent extends EditFileComponent implements OnInit {
   private dialog = inject(MatDialog);
@@ -41,8 +37,10 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
 
   override ngOnInit() {
     super.ngOnInit();
-    this.compression = this.formFieldConfig.additional?.imageCompression ?? this.compression;
-    this.acceptedFileTypes = this.formFieldConfig.additional?.acceptedFileTypes ?? "image/*";
+    this.compression =
+      this.formFieldConfig.additional?.imageCompression ?? this.compression;
+    this.acceptedFileTypes =
+      this.formFieldConfig.additional?.acceptedFileTypes ?? "image/*";
     if (this.formControl.value) {
       this.fileService
         .loadFile(this.entity, this.formFieldConfig.id)

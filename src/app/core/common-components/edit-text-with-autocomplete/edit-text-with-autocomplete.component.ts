@@ -146,7 +146,7 @@ export class EditTextWithAutocompleteComponent
   async ngOnInit() {
     // Initialize additional configuration from formFieldConfig
     this.additional = this.formFieldConfig?.additional;
-    
+
     if (!this.formControl.value) {
       // adding new entry - enable autocomplete
       const entityType = this.additional.entityType;

@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from "@angular/core";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { generateLabelFromInterval, TimeInterval } from "../time-interval";
 import { MatDialog } from "@angular/material/dialog";

@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, Input } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  Input,
+} from "@angular/core";
 import { ReactiveFormsModule, Validators, FormControl } from "@angular/forms";
 import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
 import { EditComponent } from "../../../core/common-components/entity-field-edit/dynamic-edit/edit-component.interface";

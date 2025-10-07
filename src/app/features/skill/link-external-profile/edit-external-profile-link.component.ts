@@ -22,7 +22,12 @@ import { Entity } from "../../../core/entity/model/entity";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltip } from "@angular/material/tooltip";
 import { SkillApiService } from "../skill-api/skill-api.service";
-import { FormsModule, ReactiveFormsModule, FormControl, FormGroup } from "@angular/forms";
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormControl,
+  FormGroup,
+} from "@angular/forms";
 import { ExternalProfileLinkConfig } from "../external-profile-link-config";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { catchError } from "rxjs/operators";

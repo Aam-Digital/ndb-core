@@ -14,16 +14,13 @@ import { Entity } from "../../../entity/model/entity";
   templateUrl: "./edit-text.component.html",
   styleUrls: ["./edit-text.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatInputModule,
-    FormsModule,
-    ReactiveFormsModule,
-  ],
-  providers: [
-    { provide: MatFormFieldControl, useExisting: EditTextComponent },
-  ],
+  imports: [MatInputModule, FormsModule, ReactiveFormsModule],
+  providers: [{ provide: MatFormFieldControl, useExisting: EditTextComponent }],
 })
-export class EditTextComponent extends CustomFormControlDirective<string> implements EditComponent {
+export class EditTextComponent
+  extends CustomFormControlDirective<string>
+  implements EditComponent
+{
   @Input() formFieldConfig?: FormFieldConfig;
 
   get formControl(): FormControl<string> {

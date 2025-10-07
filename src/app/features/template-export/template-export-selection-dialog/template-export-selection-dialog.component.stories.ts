@@ -1,10 +1,10 @@
 import { importProvidersFrom } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import {
-    applicationConfig,
-    Meta,
-    moduleMetadata,
-    StoryFn,
+  applicationConfig,
+  Meta,
+  moduleMetadata,
+  StoryFn,
 } from "@storybook/angular";
 import { of, throwError } from "rxjs";
 import { AlertService } from "../../../core/alerts/alert.service";
@@ -21,7 +21,12 @@ const mockEntity = new TestEntity("test-entity-1");
 mockEntity.name = "John Doe";
 
 // Create mock template export entities
-const createMockTemplateExport = (id: string, title: string, description: string, entityTypes: string[]) => {
+const createMockTemplateExport = (
+  id: string,
+  title: string,
+  description: string,
+  entityTypes: string[],
+) => {
   const template = new TemplateExport(id);
   template.title = title;
   template.description = description;
@@ -30,9 +35,22 @@ const createMockTemplateExport = (id: string, title: string, description: string
 };
 
 const mockTemplateExports = [
-  createMockTemplateExport("template-1", "Basic Report", "A basic report template", ["TestEntity", "Child"]),
-  createMockTemplateExport("template-2", "Detailed Assessment", "Comprehensive assessment template", ["TestEntity"]),
-  createMockTemplateExport("template-3", "Summary Card", "Quick summary card", ["Child", "School"]),
+  createMockTemplateExport(
+    "template-1",
+    "Basic Report",
+    "A basic report template",
+    ["TestEntity", "Child"],
+  ),
+  createMockTemplateExport(
+    "template-2",
+    "Detailed Assessment",
+    "Comprehensive assessment template",
+    ["TestEntity"],
+  ),
+  createMockTemplateExport("template-3", "Summary Card", "Quick summary card", [
+    "Child",
+    "School",
+  ]),
 ];
 
 // Mock services
@@ -80,7 +98,9 @@ export default {
   component: TemplateExportSelectionDialogComponent,
   decorators: [
     applicationConfig({
-      providers: [importProvidersFrom(StorybookBaseModule.withData(mockTemplateExports))],
+      providers: [
+        importProvidersFrom(StorybookBaseModule.withData(mockTemplateExports)),
+      ],
     }),
     moduleMetadata({
       imports: [TemplateExportSelectionDialogComponent],
@@ -127,7 +147,8 @@ export const FeatureEnabled = {
   parameters: {
     docs: {
       description: {
-        story: 'Shows the dialog when the template export feature is enabled. Users can select from available templates and generate files.',
+        story:
+          "Shows the dialog when the template export feature is enabled. Users can select from available templates and generate files.",
       },
     },
   },
@@ -153,7 +174,8 @@ export const FeatureDisabled = {
   parameters: {
     docs: {
       description: {
-        story: 'Shows the dialog when the template export feature is disabled. Displays a feature disabled message.',
+        story:
+          "Shows the dialog when the template export feature is disabled. Displays a feature disabled message.",
       },
     },
   },
@@ -166,7 +188,9 @@ export const LoadingState = {
   },
   play: async ({ canvasElement }) => {
     // Simulate the loading state by programmatically setting it
-    const component = canvasElement.querySelector('app-file-template-selection-dialog-component');
+    const component = canvasElement.querySelector(
+      "app-file-template-selection-dialog-component",
+    );
     if (component) {
       // This would need to be accessed through the Angular component instance
       // For demo purposes, we show how this state would appear
@@ -175,7 +199,8 @@ export const LoadingState = {
   parameters: {
     docs: {
       description: {
-        story: 'Shows the dialog in a loading state while a file is being generated.',
+        story:
+          "Shows the dialog in a loading state while a file is being generated.",
       },
     },
   },
@@ -199,7 +224,8 @@ export const ErrorHandling = {
   parameters: {
     docs: {
       description: {
-        story: 'Shows how the dialog handles errors during file generation. Check the console for error messages.',
+        story:
+          "Shows how the dialog handles errors during file generation. Check the console for error messages.",
       },
     },
   },
@@ -217,7 +243,8 @@ export const DifferentEntityType = {
   parameters: {
     docs: {
       description: {
-        story: 'Shows the dialog with a different entity type. Template filtering would apply based on the entity type.',
+        story:
+          "Shows the dialog with a different entity type. Template filtering would apply based on the entity type.",
       },
     },
   },
@@ -243,7 +270,8 @@ export const FeatureServerUnavailable = {
   parameters: {
     docs: {
       description: {
-        story: 'Shows the dialog when the export server availability is unknown or undefined.',
+        story:
+          "Shows the dialog when the export server availability is unknown or undefined.",
       },
     },
   },

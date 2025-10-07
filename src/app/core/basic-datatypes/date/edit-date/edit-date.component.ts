@@ -24,7 +24,10 @@ import { FormFieldConfig } from "../../../common-components/entity-form/FormConf
   ],
   providers: [{ provide: MatFormFieldControl, useExisting: EditDateComponent }],
 })
-export class EditDateComponent extends CustomFormControlDirective<Date> implements EditComponent {
+export class EditDateComponent
+  extends CustomFormControlDirective<Date>
+  implements EditComponent
+{
   @Input() formFieldConfig?: FormFieldConfig;
 
   get formControl(): FormControl<Date> {

@@ -15,5 +15,7 @@ import { MarkdownPageModule } from "app/features/markdown-page/markdown-page.mod
   styleUrls: ["./display-description-only.component.scss"],
   imports: [MarkdownPageModule],
 })
-export class DisplayDescriptionOnlyComponent extends ViewDirective<undefined, undefined> {
-}
+export class DisplayDescriptionOnlyComponent extends ViewDirective<
+  undefined,
+  undefined
+> {}

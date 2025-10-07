@@ -37,17 +37,17 @@ describe("EditAttendanceComponent", () => {
     component = fixture.componentInstance;
     categoryForm = new FormControl<InteractionType>(defaultInteractionTypes[0]);
     childrenForm = new FormControl(childrenEntities.map((c) => c.getId()));
-    
+
     // Create parent form group that contains both category and children controls
     parentFormGroup = new FormGroup({
       category: categoryForm,
       children: childrenForm,
     });
-    
+
     component.ngControl = {
       control: childrenForm,
     } as any;
-    
+
     component.formFieldConfig = { id: "children" };
     component.entity = new Note();
     fixture.detectChanges();

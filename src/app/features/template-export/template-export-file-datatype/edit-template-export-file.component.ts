@@ -30,7 +30,10 @@ import { TemplateExportService } from "../template-export-service/template-expor
   ],
   providers: [
     { provide: FileService, useClass: TemplateExportApiService },
-    { provide: MatFormFieldControl, useExisting: EditTemplateExportFileComponent },
+    {
+      provide: MatFormFieldControl,
+      useExisting: EditTemplateExportFileComponent,
+    },
   ],
 })
 export class EditTemplateExportFileComponent

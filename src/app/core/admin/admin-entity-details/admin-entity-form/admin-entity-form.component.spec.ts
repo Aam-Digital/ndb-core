@@ -15,7 +15,10 @@ import { of } from "rxjs";
 import { CoreTestingModule } from "../../../../utils/core-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
-import { ColumnConfig, toFormFieldConfig } from "../../../common-components/entity-form/FormConfig";
+import {
+  ColumnConfig,
+  toFormFieldConfig,
+} from "../../../common-components/entity-form/FormConfig";
 import { DefaultValueService } from "../../../default-values/default-value-service/default-value.service";
 import { FormConfig } from "../../../entity-details/form/form.component";
 import { AdminEntityService } from "../../admin-entity.service";
@@ -48,7 +51,9 @@ describe("AdminEntityFormComponent", () => {
         formGroup: new FormGroup({}),
       } as EntityForm<any>),
     );
-    mockFormService.extendFormFieldConfig.and.callFake((field) => toFormFieldConfig(field));
+    mockFormService.extendFormFieldConfig.and.callFake((field) =>
+      toFormFieldConfig(field),
+    );
     mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
 
     TestBed.configureTestingModule({

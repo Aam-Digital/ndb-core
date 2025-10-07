@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { ComponentRegistry } from '#src/app/dynamic-components';
-import { DynamicEditComponent } from './dynamic-edit.component';
+import { ComponentRegistry } from "#src/app/dynamic-components";
+import { DynamicEditComponent } from "./dynamic-edit.component";
 
-describe('DynamicEditComponent', () => {
+describe("DynamicEditComponent", () => {
   let component: DynamicEditComponent;
   let fixture: ComponentFixture<DynamicEditComponent>;
 
@@ -11,20 +11,19 @@ describe('DynamicEditComponent', () => {
     await TestBed.configureTestingModule({
       imports: [DynamicEditComponent],
       providers: [ComponentRegistry],
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(DynamicEditComponent);
     component = fixture.componentInstance;
 
     component.formFieldConfig = {
-      id: 'testField',
-    }
+      id: "testField",
+    };
 
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

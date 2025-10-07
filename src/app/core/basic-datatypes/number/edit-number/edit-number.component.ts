@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+} from "@angular/core";
 import { CustomNumberValidators } from "../../../../utils/custom-number-validators";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";

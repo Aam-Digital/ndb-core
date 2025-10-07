@@ -19,12 +19,7 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   templateUrl: "./edit-url.component.html",
   styleUrls: ["./edit-url.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatInputModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatTooltipModule,
-  ],
+  imports: [MatInputModule, FormsModule, ReactiveFormsModule, MatTooltipModule],
   providers: [{ provide: MatFormFieldControl, useExisting: EditUrlComponent }],
 })
 export class EditUrlComponent

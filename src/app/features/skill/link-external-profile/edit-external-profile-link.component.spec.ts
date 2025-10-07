@@ -100,9 +100,15 @@ describe("EditExternalProfileLinkComponent", () => {
       name: "original name",
       other: "foo",
     });
-    (component.formControl.parent as FormGroup).addControl("name", new FormControl("name"));
-    (component.formControl.parent as FormGroup).addControl("other", new FormControl("foo"));
-    
+    (component.formControl.parent as FormGroup).addControl(
+      "name",
+      new FormControl("name"),
+    );
+    (component.formControl.parent as FormGroup).addControl(
+      "other",
+      new FormControl("foo"),
+    );
+
     component.formControl.parent.get("name").setValue("new name");
 
     component.searchMatchingProfiles();
@@ -111,7 +117,7 @@ describe("EditExternalProfileLinkComponent", () => {
     const actualDialogData = mockDialog.open.calls.mostRecent().args[1]
       .data as LinkExternalProfileDialogData;
     expect(actualDialogData.config).toEqual(component.additional);
-    
+
     expect(actualDialogData.entity["name"]).toBe("new name");
     expect(actualDialogData.entity["other"]).toBe("foo");
   }));
