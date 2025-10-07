@@ -1,8 +1,4 @@
-import {
-  Component,
-  inject,
-  Input,
-} from "@angular/core";
+import { Component, inject, Input } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatIconButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";

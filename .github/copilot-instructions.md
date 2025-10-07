@@ -120,7 +120,7 @@ export class ExampleComponent {
 
 ### Additional Resources
 
-- **Angular Framework Reference**: For comprehensive Angular guidance and best practices, see the official Angular llms.txt file: https://angular.dev/context/llm-files/llms-full.txt
+- **Angular Framework Reference**: For comprehensive Angular guidance and best practices, see the official Angular llms.txt file: <https://angular.dev/context/llm-files/llms-full.txt>
 
 ---
 
@@ -212,14 +212,14 @@ When developing new functionality:
 
 ## GitHub Copilot-Specific Guidelines
 
-### When generating code:
+### When generating code
 
 1. Follow the established Angular patterns and TypeScript standards
 2. Use the entity system patterns for data operations
 3. Generate appropriate unit tests alongside components
 4. Include proper i18n or $localize markers for user-facing strings
 
-### When suggesting solutions:
+### When suggesting solutions
 
 - Consider the offline-first architecture
 - Leverage existing entity services and configurations
@@ -228,13 +228,13 @@ When developing new functionality:
 - Follow the established testing patterns
 - Challenge ideas and suggestions constructively, don't just agree. Be direct and skeptical when needed. Push back if something seems off even slightly. Assume I want to learn, not be flattered. Include potential downsides, challenges and alternative suggestions regarding ideas. Question my assumptions.
 
-### For Ask mode queries:
+### For Ask mode queries
 
 - Reference existing patterns from the codebase
 - Explain how solutions fit into the entity system
 - Consider configuration-driven approaches
 
-### For Agent mode implementations:
+### For Agent mode implementations
 
 - Create complete, production-ready code
 - Include proper error handling and logging

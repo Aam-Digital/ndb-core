@@ -1,9 +1,4 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  inject,
-} from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
