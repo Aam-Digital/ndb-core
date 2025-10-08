@@ -173,7 +173,9 @@ export class EntitiesTableComponent<T extends Entity>
     this._columnsToDisplay = cols;
 
     const urlSortBy = this.tableStateUrl.getUrlParam("sortBy");
-    const urlSortOrder = this.tableStateUrl.getUrlParam("sortOrder") as SortDirection;
+    const urlSortOrder = this.tableStateUrl.getUrlParam(
+      "sortOrder",
+    ) as SortDirection;
 
     if (!this.sortManuallySet && !urlSortBy) {
       // Only set default sort if not manually set and/or present in URL
@@ -211,13 +213,14 @@ export class EntitiesTableComponent<T extends Entity>
 
   _sortBy: Sort;
 
-
   @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
     this.recordsDataSource.sort = sort;
     if (sort) {
       // Restore sort state from URL on init
       const urlSortBy = this.tableStateUrl.getUrlParam("sortBy");
-      const urlSortOrder = this.tableStateUrl.getUrlParam("sortOrder") as SortDirection;
+      const urlSortOrder = this.tableStateUrl.getUrlParam(
+        "sortOrder",
+      ) as SortDirection;
       if (urlSortBy) {
         sort.active = urlSortBy;
         sort.direction = urlSortOrder || "asc";
