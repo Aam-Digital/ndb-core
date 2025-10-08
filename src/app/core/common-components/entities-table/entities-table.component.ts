@@ -172,12 +172,7 @@ export class EntitiesTableComponent<T extends Entity>
     cols.push(...value);
     this._columnsToDisplay = cols;
 
-    const urlSortBy = this.tableStateUrl.getUrlParam("sortBy");
-    const urlSortOrder = this.tableStateUrl.getUrlParam(
-      "sortOrder",
-    ) as SortDirection;
-
-    if (!this.sortManuallySet && !urlSortBy) {
+    if (!this.sortManuallySet && !this.tableStateUrl.getUrlParam("sortBy")) {
       // Only set default sort if not manually set and/or present in URL
       this._sortBy = this.inferDefaultSort(); // do not use sortBy setter to avoid persisting to URL
     }
