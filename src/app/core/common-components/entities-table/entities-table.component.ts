@@ -172,12 +172,10 @@ export class EntitiesTableComponent<T extends Entity>
     cols.push(...value);
     this._columnsToDisplay = cols;
 
-    this.urlSortBy = this.tableStateUrl.getUrlParam("sortBy");
-    this.urlSortOrder = this.tableStateUrl.getUrlParam(
-      "sortOrder",
-    ) as SortDirection;
+    const urlSortBy = this.tableStateUrl.getUrlParam("sortBy");
+    const urlSortOrder = this.tableStateUrl.getUrlParam("sortOrder") as SortDirection;
 
-    if (!this.sortManuallySet && !this.urlSortBy) {
+    if (!this.sortManuallySet && !urlSortBy) {
       // Only set default sort if not manually set and/or present in URL
       this._sortBy = this.inferDefaultSort(); // do not use sortBy setter to avoid persisting to URL
     }
@@ -213,16 +211,16 @@ export class EntitiesTableComponent<T extends Entity>
 
   _sortBy: Sort;
 
-  private urlSortBy: string | null = null;
-  private urlSortOrder: SortDirection | null = null;
 
   @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
     this.recordsDataSource.sort = sort;
     if (sort) {
       // Restore sort state from URL on init
-      if (this.urlSortBy) {
-        sort.active = this.urlSortBy;
-        sort.direction = this.urlSortOrder || "asc";
+      const urlSortBy = this.tableStateUrl.getUrlParam("sortBy");
+      const urlSortOrder = this.tableStateUrl.getUrlParam("sortOrder") as SortDirection;
+      if (urlSortBy) {
+        sort.active = urlSortBy;
+        sort.direction = urlSortOrder || "asc";
       }
       // Listen for sort changes to persist to URL
       sort.sortChange.subscribe(({ active, direction }) => {
