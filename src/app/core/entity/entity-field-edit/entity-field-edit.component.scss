@@ -1,3 +1,15 @@
+.full-label {
+  font-family: var(--mat-form-field-label-text-font, Roboto, Arial, sans-serif);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--mat-form-field-label-text-color, rgba(0,0,0,0.6));
+  line-height: 1.25rem;
+  display: block;
+  white-space: pre-line;
+}
+.full-label-disabled {
+  color: var(--mat-form-field-disabled-text-color, rgba(0,0,0,0.38));
+}
 .hidden {
   display: none;
 }
