@@ -9,10 +9,6 @@ import {
   ViewChild,
   inject,
 } from "@angular/core";
-import { EntityFieldEditComponent } from "../entity-field-edit/entity-field-edit.component";
-import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
-import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
-import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import {
   MatCheckboxChange,
   MatCheckboxModule,
@@ -31,27 +27,31 @@ import {
   MatTableDataSource,
   MatTableModule,
 } from "@angular/material/table";
+import { Router } from "@angular/router";
+import { UntilDestroy } from "@ngneat/until-destroy";
+import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
+import { FilterService } from "../../filter/filter.service";
+import { DataFilter } from "../../filter/filters/filters";
+import { FormDialogService } from "../../form-dialog/form-dialog.service";
+import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
+import { EntityFieldEditComponent } from "../entity-field-edit/entity-field-edit.component";
+import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
+import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 import {
   ColumnConfig,
   FormFieldConfig,
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
-import { tableSort } from "./table-sort/table-sort";
-import { UntilDestroy } from "@ngneat/until-destroy";
-import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
-import { FormDialogService } from "../../form-dialog/form-dialog.service";
-import { Router } from "@angular/router";
-import { FilterService } from "../../filter/filter.service";
-import { TableStateUrlService } from "./table-state-url.service";
-import { DataFilter } from "../../filter/filters/filters";
 import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
-import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
-import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { TableRow } from "./table-row";
+import { tableSort } from "./table-sort/table-sort";
+import { TableStateUrlService } from "./table-state-url.service";
 
 /**
  * A simple display component (no logic and transformations) to display a table of entities.
@@ -177,12 +177,9 @@ export class EntitiesTableComponent<T extends Entity>
       "sortOrder",
     ) as SortDirection;
 
-    if (this.sortIsInferred) {
-      // Only set default sort if not present in URL
-      if (!this.urlSortBy && !this.urlSortOrder) {
-        this.sortBy = this.inferDefaultSort();
-        this.sortIsInferred = true;
-      }
+    if (!this.sortManuallySet && !this.urlSortBy) {
+      // Only set default sort if not manually set and/or present in URL
+      this._sortBy = this.inferDefaultSort(); // do not use sortBy setter to avoid persisting to URL
     }
   }
 
@@ -202,7 +199,7 @@ export class EntitiesTableComponent<T extends Entity>
     }
 
     this._sortBy = value;
-    this.sortIsInferred = false;
+
     // Persist sort state to URL
     if (value.active) {
       this.tableStateUrl.updateUrlParams({
@@ -210,6 +207,8 @@ export class EntitiesTableComponent<T extends Entity>
         sortOrder: value.direction ?? "asc",
       });
     }
+
+    this.sortManuallySet = true;
   }
 
   _sortBy: Sort;
@@ -244,7 +243,11 @@ export class EntitiesTableComponent<T extends Entity>
     }
   }
 
-  private sortIsInferred: boolean = true;
+  /**
+   * Indicates whether the current sort order was manually set by the user
+   * to avoid overwriting it with the default sort
+   */
+  private sortManuallySet: boolean;
 
   /**
    * Adds a filter for the displayed data.
