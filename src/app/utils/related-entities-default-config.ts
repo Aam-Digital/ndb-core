@@ -37,7 +37,7 @@ export const RELATED_ENTITIES_DEFAULT_CONFIGS: Record<
 
 export const RELATED_ENTITY_OVERRIDES: Record<
   string,
-  RelatedEntitiesComponentConfig
+  Partial<RelatedEntitiesComponentConfig>
 > = {
   EducationalMaterial: {
     component: "RelatedEntitiesWithSummary",

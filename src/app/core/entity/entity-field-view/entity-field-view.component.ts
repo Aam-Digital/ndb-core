@@ -5,10 +5,13 @@ import {
   SimpleChanges,
   inject,
 } from "@angular/core";
-import { Entity } from "../../entity/model/entity";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+} from "../../common-components/entity-form/FormConfig";
+import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
-import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
-import { EntityFormService } from "../entity-form/entity-form.service";
+import { Entity } from "../model/entity";
 
 /**
  * Generic component to display one entity property field's viewComponent.

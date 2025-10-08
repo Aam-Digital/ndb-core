@@ -1,19 +1,21 @@
+import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { EditPublicFormColumnsComponent } from "./edit-public-form-columns.component";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
-import { Entity } from "app/core/entity/model/entity";
-import { FormControl } from "@angular/forms";
-import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
-import { TestEntity } from "app/utils/test-utils/TestEntity";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { FormControl, FormGroup } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { MockEntityMapperService } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
+import { Entity } from "app/core/entity/model/entity";
+import { TestEntity } from "app/utils/test-utils/TestEntity";
 import { FieldGroup } from "../../../core/entity-details/form/field-group";
+import { EditPublicFormColumnsComponent } from "./edit-public-form-columns.component";
 
 describe("EditPublicFormColumnsComponent", () => {
   let component: EditPublicFormColumnsComponent;
   let fixture: ComponentFixture<EditPublicFormColumnsComponent>;
+  let formGroup: FormGroup;
   let mockEntityRegistry: Partial<EntityRegistry>;
   let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
   let entityMapper: MockEntityMapperService;
@@ -59,7 +61,7 @@ describe("EditPublicFormColumnsComponent", () => {
     component = fixture.componentInstance;
     component.entity = new TestEntity();
     component.entity["columns"] = testColumns;
-    component.formControl = new FormControl();
+    formGroup = setupCustomFormControlEditComponent(component);
     fixture.detectChanges();
   });
 
@@ -68,7 +70,8 @@ describe("EditPublicFormColumnsComponent", () => {
   });
 
   it("should migrate old columns config to new columns config", () => {
-    component.formControl.setValue(oldColumnConfig as any);
+    const control = formGroup.get("testProperty") as FormControl;
+    control.setValue(oldColumnConfig as any);
 
     component.ngOnInit();
 

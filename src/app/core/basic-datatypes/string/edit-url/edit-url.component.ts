@@ -1,30 +1,38 @@
-import { Component, OnInit } from "@angular/core";
-import { EditComponent } from "../../../entity/default-datatype/edit-component";
-import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { ReactiveFormsModule } from "@angular/forms";
+import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+} from "@angular/core";
+import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
+import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
+import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
 
 @DynamicComponent("EditUrl")
 @Component({
   selector: "app-edit-url",
   templateUrl: "./edit-url.component.html",
   styleUrls: ["./edit-url.component.scss"],
-  imports: [
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    ErrorHintComponent,
-    MatTooltipModule,
-  ],
-  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatInputModule, FormsModule, ReactiveFormsModule, MatTooltipModule],
+  providers: [{ provide: MatFormFieldControl, useExisting: EditUrlComponent }],
 })
-export class EditUrlComponent extends EditComponent<string> implements OnInit {
-  override ngOnInit() {
-    super.ngOnInit();
+export class EditUrlComponent
+  extends CustomFormControlDirective<string>
+  implements EditComponent, OnInit
+{
+  @Input() formFieldConfig?: FormFieldConfig;
 
+  get formControl(): FormControl<string> {
+    return this.ngControl.control as FormControl<string>;
+  }
+
+  ngOnInit() {
     this.formControl.valueChanges.subscribe((value) =>
       this.processUrlInput(value),
     );
@@ -67,8 +75,11 @@ export class EditUrlComponent extends EditComponent<string> implements OnInit {
   /**
    * Opens the URL in a new tab if the input field is disabled.
    */
-  openLinkIfDisabled() {
+  openLinkIfDisabled(event?: Event) {
     if (this.formControl.disabled && this.formControl.value) {
+      // Prevent any default behavior and stop propagation
+      event?.preventDefault();
+      event?.stopPropagation();
       window.open(this.formControl.value, "_blank");
     }
   }

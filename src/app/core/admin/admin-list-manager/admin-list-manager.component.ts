@@ -1,18 +1,18 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { EntityFieldsMenuComponent } from "#src/app/core/common-components/entity-fields-menu/entity-fields-menu.component";
+import { EntityFieldLabelComponent } from "#src/app/core/entity/entity-field-label/entity-field-label.component";
+import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import {
-  CdkDropList,
   CdkDrag,
   CdkDragDrop,
+  CdkDropList,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
-import { ColumnConfig } from "app/core/common-components/entity-form/FormConfig";
-import { EntityConstructor } from "#src/app/core/entity/model/entity";
-import { EntityFieldsMenuComponent } from "#src/app/core/common-components/entity-fields-menu/entity-fields-menu.component";
-import { EntityFieldLabelComponent } from "#src/app/core/common-components/entity-field-label/entity-field-label.component";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { ColumnConfig } from "app/core/common-components/entity-form/FormConfig";
 
 /**
  * Component for Admin UI to edit table columns or fields in other contexts like filters.

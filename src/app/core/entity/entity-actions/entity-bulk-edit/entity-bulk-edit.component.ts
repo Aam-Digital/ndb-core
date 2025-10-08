@@ -1,28 +1,28 @@
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
 import { Component, inject, OnInit } from "@angular/core";
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from "@angular/material/dialog";
-import { MatButtonModule } from "@angular/material/button";
-import { DialogCloseComponent } from "app/core/common-components/dialog-close/dialog-close.component";
-import { MatInputModule } from "@angular/material/input";
-import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
 import {
   FormControl,
   FormsModule,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatButtonModule } from "@angular/material/button";
+import { MatOption } from "@angular/material/core";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { DialogCloseComponent } from "app/core/common-components/dialog-close/dialog-close.component";
+import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { Entity, EntityConstructor } from "../../model/entity";
-import { MatOption } from "@angular/material/core";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatSelectModule } from "@angular/material/select";
-import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 
 @Component({
   selector: "app-entity-bulk-edit",

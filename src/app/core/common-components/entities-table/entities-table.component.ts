@@ -9,10 +9,6 @@ import {
   ViewChild,
   inject,
 } from "@angular/core";
-import { EntityFieldEditComponent } from "../entity-field-edit/entity-field-edit.component";
-import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
-import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
-import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import {
   MatCheckboxChange,
   MatCheckboxModule,
@@ -31,26 +27,30 @@ import {
   MatTableDataSource,
   MatTableModule,
 } from "@angular/material/table";
+import { Router } from "@angular/router";
+import { UntilDestroy } from "@ngneat/until-destroy";
+import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { EntityFieldEditComponent } from "../../entity/entity-field-edit/entity-field-edit.component";
+import { EntityFieldLabelComponent } from "../../entity/entity-field-label/entity-field-label.component";
+import { EntityFieldViewComponent } from "../../entity/entity-field-view/entity-field-view.component";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
+import { FilterService } from "../../filter/filter.service";
+import { DataFilter } from "../../filter/filters/filters";
+import { FormDialogService } from "../../form-dialog/form-dialog.service";
+import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
 import {
   ColumnConfig,
   FormFieldConfig,
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
-import { tableSort } from "./table-sort/table-sort";
-import { UntilDestroy } from "@ngneat/until-destroy";
-import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
-import { FormDialogService } from "../../form-dialog/form-dialog.service";
-import { Router } from "@angular/router";
-import { FilterService } from "../../filter/filter.service";
-import { DataFilter } from "../../filter/filters/filters";
 import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
-import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
-import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { TableRow } from "./table-row";
+import { tableSort } from "./table-sort/table-sort";
 
 /**
  * A simple display component (no logic and transformations) to display a table of entities.

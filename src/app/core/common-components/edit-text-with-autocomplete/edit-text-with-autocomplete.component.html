@@ -1,42 +1,36 @@
-<mat-form-field [formGroup]="parent" class="form-field-with-tooltip-suffix">
-  <mat-label>{{ label }}</mat-label>
-  <input
-    matInput
-    [readonly]="!!selectedEntity"
-    [formControl]="formControl"
-    [matAutocomplete]="autoSuggestions"
-    [matAutocompleteDisabled]="autocompleteDisabled"
-    (keyup)="keyup()"
-    (focusin)="updateAutocomplete()"
-  />
-  <mat-autocomplete #autoSuggestions="matAutocomplete">
-    @for (entity of autocompleteEntities | async; track entity) {
-      <mat-option
-        [value]="entity[formControlName]"
-        (onSelectionChange)="
-          $event.source.selected ? selectEntity(entity) : null
-        "
-      >
-        <app-entity-block
-          [entity]="entity"
-          [linkDisabled]="true"
-        ></app-entity-block>
-      </mat-option>
-    }
-  </mat-autocomplete>
-  @if (!autocompleteDisabled) {
-    <mat-hint>
-      @if (!selectedEntity) {
-        <span i18n>Creating new record.</span>
-      } @else {
-        <span i18n>Editing existing record.</span>
-      }
-    </mat-hint>
+<input
+  matInput
+  [readonly]="!!selectedEntity"
+  [formControl]="formControl"
+  [matAutocomplete]="autoSuggestions"
+  [matAutocompleteDisabled]="autocompleteDisabled"
+  (keyup)="keyup()"
+  (focusin)="updateAutocomplete()"
+/>
+
+<mat-autocomplete #autoSuggestions="matAutocomplete">
+  @for (entity of autocompleteEntities | async; track entity) {
+    <mat-option
+      [value]="entity[formFieldConfig.id]"
+      (onSelectionChange)="$event.source.selected ? selectEntity(entity) : null"
+    >
+      <app-entity-block
+        [entity]="entity"
+        [linkDisabled]="true"
+      ></app-entity-block>
+    </mat-option>
   }
-  <mat-error>
-    <app-error-hint [form]="formControl"></app-error-hint>
-  </mat-error>
-</mat-form-field>
+</mat-autocomplete>
+
+@if (!autocompleteDisabled) {
+  <div style="font-size: 0.75em; color: rgba(0, 0, 0, 0.6); margin-top: 4px">
+    @if (!selectedEntity) {
+      <span i18n>Creating new record.</span>
+    } @else {
+      <span i18n>Editing existing record.</span>
+    }
+  </div>
+}
 
 @if (!autocompleteDisabled && !selectedEntity) {
   <fa-icon
@@ -45,6 +39,13 @@
     icon="cogs"
     i18n-matTooltip="Tooltip help text"
     matTooltip="You can create a new or load an existing record. Start to type an existing name and then select it from the dropdown to edit the existing record. Type any new text to create a new record."
+    style="
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+    "
     class="tooltip-suffix"
   ></fa-icon>
 } @else if (!autocompleteDisabled && !!selectedEntity) {
@@ -54,6 +55,12 @@
     i18n-matTooltip="Tooltip for button to reset form"
     matTooltip="Unload existing record and reset form."
     class="tooltip-suffix"
-    style="cursor: pointer"
+    style="
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+    "
   ></fa-icon>
 }

@@ -1,3 +1,4 @@
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { Entity } from "../model/entity";
 import { Directive, Input, OnChanges, SimpleChanges } from "@angular/core";
 
@@ -7,6 +8,19 @@ export abstract class ViewDirective<T, C = any> implements OnChanges {
   @Input() id: string;
   @Input() tooltip: string;
   @Input() value: T;
+
+  @Input() set formFieldConfig(value: FormFieldConfig) {
+    this._formFieldConfig = value;
+    this.config = value?.additional as C;
+  }
+  get formFieldConfig(): FormFieldConfig {
+    return this._formFieldConfig;
+  }
+  private _formFieldConfig: FormFieldConfig;
+
+  /**
+   * The "additional" context config of the field.
+   */
   @Input() config: C;
 
   /** indicating that the value is not in its original state, so that components can explain this to the user */

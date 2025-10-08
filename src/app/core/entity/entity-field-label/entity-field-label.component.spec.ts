@@ -5,13 +5,10 @@ import { Subject } from "rxjs";
 
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { AdminEntityService } from "../../admin/admin-entity.service";
-import {
-  DatabaseEntity,
-  EntityRegistry,
-} from "../../entity/database-entity.decorator";
-import { DatabaseField } from "../../entity/database-field.decorator";
-import { Entity } from "../../entity/model/entity";
-import { FormFieldConfig } from "../entity-form/FormConfig";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import { DatabaseEntity, EntityRegistry } from "../database-entity.decorator";
+import { DatabaseField } from "../database-field.decorator";
+import { Entity } from "../model/entity";
 import { EntityFieldLabelComponent } from "./entity-field-label.component";
 
 // Test Entity for testing purposes

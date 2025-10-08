@@ -107,6 +107,13 @@
   align-items: baseline;
 }
 
+/**
+ * aligns the items (i.e. places the items on the non main axis)
+ */
+.align-end {
+  align-items: end;
+}
+
 .align-self-end {
   align-self: end;
 }
