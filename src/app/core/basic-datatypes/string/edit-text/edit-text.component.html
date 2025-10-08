@@ -6,8 +6,7 @@
       [class.custom-label-light]="formControl.disabled"
       >{{ label }}</label
     >
-  }
-  @else if (!hideLabel) {
+  } @else if (!hideLabel) {
     <mat-label
       [matTooltip]="!displayFullLengthLabel ? label : null"
       matTooltipPosition="before"
