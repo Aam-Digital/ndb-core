@@ -37,3 +37,11 @@
   position: absolute;
   right: 0;
 }
+
+.selection-table-hint {
+  font-size: 0.9em;
+  font-style: italic;
+
+  // replace the margin of the heading above
+  margin-top: -16px;
+}

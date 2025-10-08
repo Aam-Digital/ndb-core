@@ -5,7 +5,7 @@
       i18n="page title"
       [displayInPlace]="true"
     >
-      Editing data structure for "{{
+      Configuring data structure for "{{
         (entityType | entityTypeLabel) ?? entityType
       }}" records
     </app-view-title>
@@ -60,6 +60,12 @@
                 [entityConstructor]="entityConstructor"
                 [config]="configDetailsView.config"
               ></app-admin-entity-details>
+            }
+            @case ("NoteDetails") {
+              <app-admin-note-details
+                [entityConstructor]="entityConstructor"
+                [(config)]="configDetailsView.config"
+              ></app-admin-note-details>
             }
             @default {
               <p class="admin-ui-not-supported-info" i18n>

@@ -110,6 +110,7 @@ describe("AddressSearchComponent", () => {
     });
     await expectAsync(input.getValue()).toBeResolvedTo("");
   });
+
   it("should handle network errors", fakeAsync(async () => {
     const error = new HttpErrorResponse({ status: 0 });
     mockGeoService.lookup.and.returnValue(throwError(() => error));

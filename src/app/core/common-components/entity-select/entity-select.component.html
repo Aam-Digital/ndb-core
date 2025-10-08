@@ -6,33 +6,33 @@
   <div class="autocomplete-container">
     <app-basic-autocomplete
       #autocomplete
-      [formControl]="form"
+      [formControl]="form()"
       [valueMapper]="entityToId"
       [optionToString]="accessor"
       (autocompleteFilterChange)="recalculateMatchingInactive($event)"
       [multi]="multi"
       [display]="showEntities ? 'chips' : 'none'"
-      [options]="availableOptions | async"
-      [placeholder]="(loading | async) ? loadingPlaceholder : placeholder"
-      [createOption]="disableCreateNew ? null : createNewEntity"
+      [options]="availableOptions()"
+      [placeholder]="loading() ? loadingPlaceholder : placeholder"
+      [createOption]="isCreateDisabled() ? null : createNewEntity"
     >
       <ng-template let-item>
         @if (!item.isHidden) {
           <app-entity-block
             style="margin: auto"
             [entity]="item"
-            [linkDisabled]="form.enabled"
+            [linkDisabled]="form().enabled"
           ></app-entity-block>
         }
       </ng-template>
 
-      @if (currentlyMatchingInactive > 0) {
+      @if (currentlyMatchingInactive() > 0) {
         <ng-container autocompleteFooter>
           <mat-slide-toggle
-            [checked]="includeInactive"
+            [checked]="includeInactive()"
             (toggleChange)="toggleIncludeInactive()"
             i18n="Label for checkbox|e.g. include inactive children"
-            >Also show {{ currentlyMatchingInactive }} inactive
+            >Also show {{ currentlyMatchingInactive() }} inactive
           </mat-slide-toggle>
         </ng-container>
       }
@@ -42,7 +42,7 @@
       role="combobox"
       [attr.aria-labelledby]="formField.getLabelId()"
     >
-      @if (form.enabled) {
+      @if (form().enabled) {
         <fa-icon
           icon="caret-down"
           class="form-field-icon-suffix"
@@ -66,9 +66,9 @@
     </mat-hint>
   }
 
-  @if (form.errors) {
+  @if (form().errors) {
     <mat-error>
-      <app-error-hint [form]="form"></app-error-hint>
+      <app-error-hint [form]="form()"></app-error-hint>
     </mat-error>
   }
 </mat-form-field>

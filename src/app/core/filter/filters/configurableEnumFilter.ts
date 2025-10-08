@@ -11,15 +11,17 @@ export class ConfigurableEnumFilter<
     label: string,
     enumValues: ConfigurableEnumValue[],
     singleSelectOnly: boolean = false,
+    invalidOptions: FilterSelectionOption<T>[] = [],
   ) {
-    const options: FilterSelectionOption<T>[] = enumValues.map(
-      (enumValue: ConfigurableEnumValue) => ({
+    const options: FilterSelectionOption<T>[] = [
+      ...enumValues.map((enumValue: ConfigurableEnumValue) => ({
         key: enumValue.id,
         label: enumValue.label,
         color: enumValue.color,
         filter: { [name + ".id"]: enumValue.id } as DataFilter<T>,
-      }),
-    );
+      })),
+      ...invalidOptions,
+    ];
     super(name, options, label, singleSelectOnly);
   }
 }

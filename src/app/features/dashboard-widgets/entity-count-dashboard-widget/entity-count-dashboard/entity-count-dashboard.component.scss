@@ -1,4 +1,5 @@
 @use "../../../../core/dashboard/dashboard-widget-base";
+@use "../../../../core/common-components/special-option-labels.scss";
 
 .groupby-label {
   margin: auto;
@@ -12,8 +13,11 @@
   margin: 8px 0 0 0;
 }
 
-.not-defined-label {
-  font-style: italic;
-  color: #888;
-  opacity: 0.85;
+.mat-mdc-table {
+  .mat-mdc-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    column-gap: 8px;
+  }
 }

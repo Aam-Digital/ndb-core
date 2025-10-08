@@ -7,6 +7,7 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { EntityListConfig } from "../entity-list/EntityListConfig";
 import { EntityDetailsConfig } from "../entity-details/EntityDetailsConfig";
 import { DynamicComponentConfig } from "../config/dynamic-components/dynamic-component-config.interface";
+import { NoteDetailsConfig } from "#src/app/child-dev-project/notes/note-details/note-details-config.interface";
 
 /**
  * Simply service to centralize updates between various admin components in the form builder.
@@ -46,7 +47,9 @@ export class AdminEntityService {
     entityConstructor: EntityConstructor,
     configEntitySettings?: EntityConfig,
     configListView?: DynamicComponentConfig<EntityListConfig>,
-    configDetailsView?: DynamicComponentConfig<EntityDetailsConfig>,
+    configDetailsView?: DynamicComponentConfig<
+      EntityDetailsConfig | NoteDetailsConfig
+    >,
   ): Promise<{ previous: Config; current: Config }> {
     const originalConfig = await this.entityMapper.load(
       Config,
@@ -88,6 +91,11 @@ export class AdminEntityService {
   ): EntityConfig {
     const entityConfigKey =
       EntityConfigService.PREFIX_ENTITY_CONFIG + entityConstructor.ENTITY_TYPE;
+
+    if (!config.data[entityConfigKey]) {
+      config.data[entityConfigKey] = {};
+    }
+
     return config.data[entityConfigKey];
   }
 }

@@ -112,6 +112,11 @@ export class AdminEntityFormComponent implements OnChanges {
    */
   @Input() updateEntitySchema?: boolean = true;
 
+  /** Whether to only show fields in a compact layout.
+   * If false, the full admin layout with section headers and drag&drop areas is shown.
+   */
+  @Input() fieldsOnlyMode?: boolean = false;
+
   dummyEntity: Entity;
   dummyForm: EntityForm<any>;
 
@@ -424,7 +429,7 @@ export class AdminEntityFormComponent implements OnChanges {
   }
 
   removeGroup(i: number) {
-    const [removedFieldGroup] = this.config.fieldGroups.splice(i, 1);
+    this.config.fieldGroups.splice(i, 1);
     this.initAvailableFields();
 
     this.emitUpdatedConfig();

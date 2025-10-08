@@ -12,6 +12,7 @@ import { Entity } from "../../core/entity/model/entity";
 import { TemplateExportFileDatatype } from "./template-export-file-datatype/template-export-file.datatype";
 import { TemplateExport } from "./template-export.entity";
 import { TemplateExportService } from "./template-export-service/template-export.service";
+import { SessionSubject } from "../../core/session/auth/session-info";
 
 /**
  * Manage template files with placeholders that can be used to render files for export of entities.
@@ -36,6 +37,7 @@ export class TemplateExportModule {
     const adminOverviewService = inject(AdminOverviewService);
     const entityActionsMenuService = inject(EntityActionsMenuService);
     const templateExportService = inject(TemplateExportService);
+    const sessionSubject = inject(SessionSubject);
 
     components.addAll(dynamicComponents);
     routerService.addRoutes(viewConfigs);
@@ -48,11 +50,20 @@ export class TemplateExportModule {
         tooltip: $localize`:entity context menu tooltip:Create a file based on a selected template.`,
         permission: "read",
         execute: async (e: Entity) => templateExportService.generateFile(e),
+        visible: async () => {
+          const session = sessionSubject.value;
+          if (!session) return false;
+          // Show for admin users OR when export feature is enabled
+          const isAdmin = session.roles.includes("admin_app");
+          const isExportEnabled =
+            await templateExportService.isExportServerEnabled();
+          return isAdmin || isExportEnabled;
+        },
       },
     ]);
 
     adminOverviewService.menuItems.push({
-      label: $localize`:admin menu item:Manage Export Templates`,
+      label: $localize`:admin menu item:Configure Export Templates`,
       link: TemplateExport.route,
     });
   }

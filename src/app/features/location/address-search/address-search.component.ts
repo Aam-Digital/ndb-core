@@ -85,6 +85,7 @@ export class AddressSearchComponent implements OnInit {
   }>();
 
   filteredOptions = new BehaviorSubject<GeoResult[]>([]);
+  waiting = false;
   loading = false;
   nothingFound = false;
   networkError = false;
@@ -92,6 +93,7 @@ export class AddressSearchComponent implements OnInit {
   @ViewChild("inputElement") private inputElem: ElementRef<HTMLInputElement>;
   private inputStream = new Subject<string>();
   private searchClickStream = new Subject<string>();
+  private readonly enterKeyStream = new Subject<string>();
   private lastSearch: string;
 
   /** do not display selected item in the input field because this should be an empty search field */
@@ -102,28 +104,45 @@ export class AddressSearchComponent implements OnInit {
   }
 
   private initSearchPipeline() {
-    merge(this.inputStream.pipe(debounceTime(2500)), this.searchClickStream)
+    merge(
+      this.inputStream.pipe(debounceTime(2500)),
+      this.searchClickStream,
+      this.enterKeyStream, // immediate search on ENTER
+    )
       .pipe(
         map((input) => input.trim()),
         filter((input) => this.isRelevantInput(input)),
         tap(() => {
           this.nothingFound = false;
+          this.waiting = false;
           this.loading = true;
         }),
-        debounceTime(200),
         concatMap((res) => this.getGeoLookupResult(res)),
       )
-      .subscribe((res) => this.filteredOptions.next(res));
+      .subscribe((res) => {
+        this.filteredOptions.next(res);
+        this.loading = false;
+      });
   }
 
   private lastUserInput: string = "";
 
-  triggerInputUpdate() {
+  triggerInputUpdate(event?: KeyboardEvent) {
     this.lastUserInput = this.inputElem.nativeElement.value;
-    this.inputStream.next(this.inputElem.nativeElement.value);
+    this.waiting = true;
+    this.loading = false;
+    if (event && event.key === "Enter") {
+      this.waiting = false; // skip waiting if ENTER
+      this.loading = true;
+      this.enterKeyStream.next(this.inputElem.nativeElement.value);
+    } else {
+      this.inputStream.next(this.inputElem.nativeElement.value);
+    }
   }
   searchClick() {
     this.lastUserInput = this.inputElem.nativeElement.value;
+    this.waiting = false;
+    this.loading = true;
     this.searchClickStream.next(this.inputElem.nativeElement.value);
   }
 

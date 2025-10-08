@@ -1,8 +1,20 @@
-@for (val of iterableValue; track val; let i = $index) {
-  <span class="colored" [style.background-color]="val.color">{{
-    val.label
-  }}</span>
-  @if (i !== iterableValue.length - 1) {
-    ,&nbsp;
+<span class="bubble-list">
+  @for (val of iterableValue.slice(0, 3); track val) {
+    <span
+      class="colored-bubble"
+      [style.background-color]="val.color"
+      [title]="val.label"
+    >
+      {{ val.label }}
+    </span>
   }
-}
+  @if (iterableValue.length > 3) {
+    <span
+      class="colored-bubble"
+      style="background: #eee; color: #333"
+      [title]="extraLabels"
+    >
+      +{{ iterableValue.length - 3 }} more
+    </span>
+  }
+</span>

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
-import { MenuItem } from "app/core/ui/navigation/menu-item";
+import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
 import { MenuItemComponent } from "app/core/ui/navigation/menu-item/menu-item.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { CdkDragDrop, DragDropModule } from "@angular/cdk/drag-drop";
@@ -67,6 +67,13 @@ export class AdminMenuItemComponent {
   @Output() itemChange = new EventEmitter<MenuItemForAdminUi>();
 
   @Input() connectedTo: string[];
+
+  /** Whether entity type links are allowed (false for shortcuts, true for admin menu) */
+  @Input() allowEntityLinks: boolean = true;
+
+  /** Whether sub-menus are allowed for this item type */
+  @Input() allowSubMenu: boolean = true;
+
   @Output() itemDrop = new EventEmitter<CdkDragDrop<MenuItemForAdminUi[]>>();
   @Output() deleteItem = new EventEmitter<MenuItemForAdminUi>();
 
@@ -74,6 +81,16 @@ export class AdminMenuItemComponent {
     this.item = {
       ...this.item,
       subMenu: [...this.item.subMenu.filter((i) => i !== item)],
+    };
+    this.itemChange.emit(this.item);
+  }
+
+  onSubItemChange(updatedSubItem: MenuItemForAdminUi) {
+    this.item = {
+      ...this.item,
+      subMenu: this.item.subMenu.map((sub) =>
+        sub.uniqueId === updatedSubItem.uniqueId ? updatedSubItem : sub,
+      ),
     };
     this.itemChange.emit(this.item);
   }
@@ -89,7 +106,12 @@ export class AdminMenuItemComponent {
   async editMenuItem(item: MenuItemForAdminUi | MenuItemForAdminUiNew) {
     const updatedItem = await this.openEditDialog(item);
     if (updatedItem) {
-      this.item = { ...item, ...updatedItem };
+      const mergedItem = { ...item, ...updatedItem };
+      if ("entityType" in item && !("entityType" in updatedItem)) {
+        delete (mergedItem as unknown as EntityMenuItem).entityType;
+      }
+
+      this.item = mergedItem;
       this.itemChange.emit(this.item);
     }
   }
@@ -102,6 +124,7 @@ export class AdminMenuItemComponent {
       data: {
         item: item ? { ...item } : {},
         isNew: (item as MenuItemForAdminUiNew).isNew,
+        allowEntityLinks: this.allowEntityLinks,
       },
     });
     return firstValueFrom(dialogRef.afterClosed());

@@ -159,9 +159,7 @@ export class AdminEntityFieldComponent implements OnInit {
       isArray: [this.data.entitySchemaField.isArray],
       additional: this.additionalForm,
 
-      defaultValue: new FormControl(this.data.entitySchemaField.defaultValue, {
-        updateOn: "blur", // avoid losing focus of a field from over-eager updates
-      }),
+      defaultValue: new FormControl(this.data.entitySchemaField.defaultValue),
       searchable: [this.data.entitySchemaField.searchable],
       anonymize: [this.data.entitySchemaField.anonymize],
       viewComponent: [this.data.entitySchemaField.viewComponent],
@@ -178,7 +176,7 @@ export class AdminEntityFieldComponent implements OnInit {
     this.schemaFieldsForm.valueChanges.subscribe((v) => {
       if (JSON.stringify(v) === JSON.stringify(this.data.entitySchemaField))
         return;
-      this.data.entitySchemaField = { ...this.getUpdatedSchemaField(v) };
+      Object.assign(this.data.entitySchemaField, this.getUpdatedSchemaField(v));
     });
 
     this.schemaFieldsForm

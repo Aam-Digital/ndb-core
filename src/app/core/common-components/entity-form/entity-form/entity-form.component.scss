@@ -26,3 +26,7 @@
     align-self: center;
   }
 }
+
+.full-width mat-form-field {
+  max-width: none;
+}
