@@ -79,14 +79,19 @@
           ></app-basic-autocomplete>
         </mat-form-field>
 
-        <app-entity-select
-          [form]="linkEntityForm.controls['targetId']"
-          [entityType]="linkEntityForm.controls['action'].value?.['targetType']"
-          [multi]="false"
-          label="for record"
-          i18n-label
-        >
-        </app-entity-select>
+        <mat-form-field>
+          <mat-label i18n>for record</mat-label>
+          <app-edit-entity
+            formControlName="targetId"
+            [entityType]="
+              linkEntityForm.controls['action'].value?.['targetType']
+            "
+            [multi]="false"
+            label="for record"
+            i18n-label
+          >
+          </app-edit-entity>
+        </mat-form-field>
 
         <button
           (click)="addAction()"

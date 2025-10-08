@@ -27,7 +27,7 @@ Aam Digital is a comprehensive case management software for social organizations
 - Permission-based access control
 - Demo data generation for testing
 
------
+---
 
 ## Angular Development Patterns
 
@@ -44,13 +44,12 @@ Aam Digital is a comprehensive case management software for social organizations
 ### Component Structure Example
 
 ```typescript
-
 @Component({
-  selector: 'app-example',
+  selector: "app-example",
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     // Use host object instead of @HostBinding/@HostListener
-  }
+  },
 })
 export class ExampleComponent {
   // Use input() and output() functions
@@ -61,9 +60,7 @@ export class ExampleComponent {
   private entityService = inject(EntityService);
 
   // Use signals for reactive state
-  filteredData = computed(() =>
-    this.data().filter(item => item.isActive)
-  );
+  filteredData = computed(() => this.data().filter((item) => item.isActive));
 }
 ```
 
@@ -123,9 +120,9 @@ export class ExampleComponent {
 
 ### Additional Resources
 
-- **Angular Framework Reference**: For comprehensive Angular guidance and best practices, see the official Angular llms.txt file: https://angular.dev/context/llm-files/llms-full.txt
+- **Angular Framework Reference**: For comprehensive Angular guidance and best practices, see the official Angular llms.txt file: <https://angular.dev/context/llm-files/llms-full.txt>
 
------
+---
 
 ## Aam Digital specific patterns
 
@@ -211,18 +208,18 @@ When developing new functionality:
 - Use `@faker-js/faker` for realistic test data
 - Follow existing demo data patterns in `core/demo-data/`
 
------
+---
 
 ## GitHub Copilot-Specific Guidelines
 
-### When generating code:
+### When generating code
 
 1. Follow the established Angular patterns and TypeScript standards
 2. Use the entity system patterns for data operations
 3. Generate appropriate unit tests alongside components
 4. Include proper i18n or $localize markers for user-facing strings
 
-### When suggesting solutions:
+### When suggesting solutions
 
 - Consider the offline-first architecture
 - Leverage existing entity services and configurations
@@ -231,13 +228,13 @@ When developing new functionality:
 - Follow the established testing patterns
 - Challenge ideas and suggestions constructively, don't just agree. Be direct and skeptical when needed. Push back if something seems off even slightly. Assume I want to learn, not be flattered. Include potential downsides, challenges and alternative suggestions regarding ideas. Question my assumptions.
 
-### For Ask mode queries:
+### For Ask mode queries
 
 - Reference existing patterns from the codebase
 - Explain how solutions fit into the entity system
 - Consider configuration-driven approaches
 
-### For Agent mode implementations:
+### For Agent mode implementations
 
 - Create complete, production-ready code
 - Include proper error handling and logging
@@ -259,8 +256,8 @@ When developing new functionality:
 - `npm run start` - Development server
 - `npm run test` - Unit tests
 - `npm run e2e` - End-to-end tests
-- `npm run lint` - Linting
 - `npm run build` - Production build
+- `npx eslint` - Linting
 
 to run tests in Agent Mode, use the `#runTests` tool/context instead of a terminal command
 

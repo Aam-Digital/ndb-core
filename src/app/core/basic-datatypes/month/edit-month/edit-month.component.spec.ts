@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditMonthComponent } from "./edit-month.component";
-import { FormControl } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import moment from "moment";
+import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
+import { EditMonthComponent } from "./edit-month.component";
 
 describe("EditMonthComponent", () => {
   let component: EditMonthComponent;
@@ -16,7 +16,7 @@ describe("EditMonthComponent", () => {
 
     fixture = TestBed.createComponent(EditMonthComponent);
     component = fixture.componentInstance;
-    component.formControl = new FormControl();
+    setupCustomFormControlEditComponent(component);
     fixture.detectChanges();
   });
 

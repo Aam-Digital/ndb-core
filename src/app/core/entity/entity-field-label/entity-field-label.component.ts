@@ -2,14 +2,14 @@ import { Component, Signal, computed, inject, input } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { AdminEntityService } from "../../admin/admin-entity.service";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { EntityConstructor } from "../../entity/model/entity";
 import {
   ColumnConfig,
   FormFieldConfig,
   toFormFieldConfig,
-} from "../entity-form/FormConfig";
-import { EntityFormService } from "../entity-form/entity-form.service";
+} from "../../common-components/entity-form/FormConfig";
+import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import { EntityRegistry } from "../database-entity.decorator";
+import { EntityConstructor } from "../model/entity";
 
 /**
  * Generic component to display the label of one form field of an entity

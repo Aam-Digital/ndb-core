@@ -3,12 +3,11 @@
     [featureEnabled]="exportServerEnabled"
     [compactView]="true"
   ></app-feature-disabled-info>
-} @else {
-  <app-edit-file
-    [formControl]="formControl"
-    [entity]="entity"
-    [entityForm]="entityForm"
-    [formFieldConfig]="formFieldConfig"
-    [hideLabel]="hideLabel"
-  ></app-edit-file>
 }
+
+<app-edit-file
+  [formControl]="formControl"
+  [entity]="entity"
+  [formFieldConfig]="formFieldConfig"
+  [style.display]="exportServerEnabled ? 'initial' : 'none'"
+></app-edit-file>

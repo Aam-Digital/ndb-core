@@ -49,7 +49,13 @@ describe("EditPhotoComponent", () => {
 
     fixture = TestBed.createComponent(EditPhotoComponent);
     component = fixture.componentInstance;
-    component.formControl = new FormControl();
+
+    // Set up the component's ngControl to point to our form control
+    const formControl = new FormControl();
+    component.ngControl = {
+      control: formControl,
+    } as any;
+
     component.entity = new Entity();
     component.formFieldConfig = { id: "testProp" };
     component.ngOnInit();

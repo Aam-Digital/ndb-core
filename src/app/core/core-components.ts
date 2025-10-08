@@ -107,11 +107,11 @@ export const coreComponents: ComponentTuple[] = [
       ),
   ],
   [
-    "EditDescriptionOnly",
+    "DisplayDescriptionOnly",
     () =>
       import(
-        "./common-components/description-only/edit-description-only/edit-description-only.component"
-      ).then((c) => c.EditDescriptionOnlyComponent),
+        "./common-components/description-only/display-description-only/display-description-only.component"
+      ).then((c) => c.DisplayDescriptionOnlyComponent),
   ],
   [
     "DisplayCheckmark",

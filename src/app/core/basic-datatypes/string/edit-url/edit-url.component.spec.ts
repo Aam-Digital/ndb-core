@@ -1,8 +1,8 @@
+import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { EditUrlComponent } from "./edit-url.component";
-import { setupEditComponent } from "app/core/entity/default-datatype/edit-component.spec";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { By } from "@angular/platform-browser";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { EditUrlComponent } from "./edit-url.component";
 
 describe("EditUrlComponent", () => {
   let component: EditUrlComponent;
@@ -17,7 +17,8 @@ describe("EditUrlComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditUrlComponent);
     component = fixture.componentInstance;
-    setupEditComponent(component);
+
+    setupCustomFormControlEditComponent(component);
     fixture.detectChanges();
   });
 
@@ -55,7 +56,7 @@ describe("EditUrlComponent", () => {
 
     spyOn(window, "open");
 
-    fixture.debugElement.query(By.css("mat-form-field")).nativeElement.click();
+    fixture.debugElement.query(By.css(".clickable")).nativeElement.click();
 
     expect(window.open).toHaveBeenCalledWith(testUrl, "_blank");
   });

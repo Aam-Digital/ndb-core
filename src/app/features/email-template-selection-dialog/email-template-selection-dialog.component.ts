@@ -1,8 +1,11 @@
-import { EntitySelectComponent } from "#src/app/core/common-components/entity-select/entity-select.component";
+import { EditEntityComponent } from "#src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { Entity } from "#src/app/core/entity/model/entity";
 import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
 import { Component, inject, OnInit } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
+import { MatCheckbox } from "@angular/material/checkbox";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -10,13 +13,11 @@ import {
   MatDialogContent,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { RouterLink } from "@angular/router";
-import { EmailTemplate } from "../email-client/email-template.entity";
-import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { Entity } from "#src/app/core/entity/model/entity";
-import { MatCheckbox } from "@angular/material/checkbox";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { RouterLink } from "@angular/router";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { EmailTemplate } from "../email-client/email-template.entity";
 
 export interface EmailTemplateSelectionDialogData {
   entity: Entity;
@@ -30,7 +31,7 @@ export interface EmailTemplateSelectionDialogData {
     MatDialogContent,
     MatDialogActions,
     MatButton,
-    EntitySelectComponent,
+    EditEntityComponent,
     MatDialogClose,
     RouterLink,
     DisableEntityOperationDirective,
@@ -38,6 +39,7 @@ export interface EmailTemplateSelectionDialogData {
     ReactiveFormsModule,
     FontAwesomeTestingModule,
     MatTooltipModule,
+    MatFormFieldModule,
   ],
   templateUrl: "./email-template-selection-dialog.component.html",
   styleUrl: "./email-template-selection-dialog.component.scss",

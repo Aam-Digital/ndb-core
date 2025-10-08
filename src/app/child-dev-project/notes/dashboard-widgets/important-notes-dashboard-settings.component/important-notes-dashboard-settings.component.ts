@@ -1,9 +1,13 @@
+import { CommonModule } from "@angular/common";
 import { Component, Input, OnInit, inject } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
-import { EnumDropdownComponent } from "../../../../core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component";
+import { MatFormFieldModule } from "@angular/material/form-field";
 import { ConfigurableEnumService } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { EditConfigurableEnumComponent } from "../../../../core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
+import { FormFieldConfig } from "../../../../core/common-components/entity-form/FormConfig";
+import { ErrorHintComponent } from "../../../../core/common-components/error-hint/error-hint.component";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 
 export interface ImportantNotesDashboardSettingsConfig {
   warningLevels?: string[];
@@ -13,7 +17,13 @@ export interface ImportantNotesDashboardSettingsConfig {
 @Component({
   selector: "app-important-notes-dashboard-settings",
   standalone: true,
-  imports: [ReactiveFormsModule, EnumDropdownComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    EditConfigurableEnumComponent,
+    ErrorHintComponent,
+  ],
   templateUrl: "./important-notes-dashboard-settings.component.html",
   styleUrls: ["./important-notes-dashboard-settings.component.scss"],
 })
@@ -24,7 +34,13 @@ export class ImportantNotesDashboardSettingsComponent implements OnInit {
     warningLevels: [],
   };
 
-  warningLevelsForm = new FormControl([]);
+  warningLevelsForm = new FormControl<ConfigurableEnumValue[]>([]);
+  warningLevelsFieldConfig: FormFieldConfig = {
+    id: "warningLevels",
+    label: "Warning Levels",
+    additional: "warning-levels",
+    isArray: true,
+  };
   private readonly enumService = inject(ConfigurableEnumService);
 
   ngOnInit() {

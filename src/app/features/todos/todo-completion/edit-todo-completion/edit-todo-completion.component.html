@@ -1,4 +1,4 @@
-@if (entity.isNew) {
+@if (todo?.isNew) {
   <!-- hide while creating new task -->
 } @else if (!formControl.value) {
   <button mat-raised-button color="accent" (click)="completeTodo()">
