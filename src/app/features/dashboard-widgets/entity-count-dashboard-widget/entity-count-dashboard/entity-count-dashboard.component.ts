@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, inject } from "@angular/core";
 import { Router } from "@angular/router";
-import { sortBy } from "lodash-es";
 
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
@@ -16,15 +15,13 @@ import { Angulartics2Module } from "angulartics2";
 import { groupBy } from "../../../../utils/utils";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
-import { EntityDatatype } from "../../../../core/basic-datatypes/entity/entity.datatype";
-import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatIconButton } from "@angular/material/button";
 import { EntityFieldLabelComponent } from "../../../../core/common-components/entity-field-label/entity-field-label.component";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { CommonModule } from "@angular/common";
-import { DisplayConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/display-configurable-enum/display-configurable-enum.component";
+import { EntityFieldViewComponent } from "../../../../core/common-components/entity-field-view/entity-field-view.component";
 
 /**
  * Configuration (stored in Config document in the DB) for the dashboard widget.
@@ -46,14 +43,18 @@ interface GroupCountRow {
    */
   value: number;
 
-  /**
-   * if the groupBy field is an entity reference this holds the related entity type,
-   * so that the entity block will be displayed instead of an id string,
-   * otherwise undefined, to display simply the group label.
-   */
-  groupedByEntity: string;
   isInvalidOption?: boolean;
   color?: string;
+
+  /**
+   * entity with the field value set for display component rendering
+   */
+  entity?: Entity;
+
+  /**
+   * Field name for the display component
+   */
+  fieldName?: string;
 }
 
 @DynamicComponent("ChildrenCountDashboard")
@@ -67,12 +68,11 @@ interface GroupCountRow {
     FontAwesomeModule,
     Angulartics2Module,
     DashboardListWidgetComponent,
-    EntityBlockComponent,
     MatTooltipModule,
     MatIconButton,
     EntityFieldLabelComponent,
     CommonModule,
-    DisplayConfigurableEnumComponent,
+    EntityFieldViewComponent,
   ],
 })
 export class EntityCountDashboardComponent
@@ -163,10 +163,8 @@ export class EntityCountDashboardComponent
     fieldName: string,
   ): GroupCountRow[] {
     const field = this._entity.schema.get(fieldName);
-    const groupedByEntity =
-      field.dataType === EntityDatatype.dataType ? field.additional : undefined;
 
-    let groupCounts = this.getGroupCounts(entities, fieldName, groupedByEntity);
+    let groupCounts = this.getGroupCounts(entities, fieldName);
     groupCounts = this.mergeNotDefinedGroups(groupCounts);
 
     if (field.dataType === "configurable-enum") {
@@ -180,15 +178,24 @@ export class EntityCountDashboardComponent
   private getGroupCounts(
     entities: Entity[],
     fieldName: string,
-    groupedByEntity: string | undefined,
   ): GroupCountRow[] {
     const groups = groupBy(entities, fieldName as keyof Entity);
-    return groups.map(([group, entities]) => ({
-      label: extractHumanReadableLabel(group),
-      value: entities.length,
-      id: extractGroupId(group),
-      groupedByEntity,
-    }));
+    return groups.map(([group, entities]) => {
+      const row: GroupCountRow = {
+        label: extractHumanReadableLabel(group),
+        value: entities.length,
+        id: extractGroupId(group),
+        fieldName,
+      };
+
+      // Create a dummy entity with the field value set for display component rendering
+      if (group !== undefined && group !== null && group !== "") {
+        const entity = new this._entity();
+        entity[fieldName] = group;
+        row.entity = entity;
+      }
+      return row;
+    });
   }
 
   /** Merges "" and undefined groups into a single group with label: undefined */
@@ -201,7 +208,6 @@ export class EntityCountDashboardComponent
         label: undefined,
         value: notDefinedGroups.reduce((sum, g) => sum + g.value, 0),
         id: "",
-        groupedByEntity: notDefinedGroups[0].groupedByEntity,
       };
       return [
         merged,
@@ -232,7 +238,6 @@ export class EntityCountDashboardComponent
         label: undefined,
         value: invalidGroups.reduce((sum, g) => sum + g.value, 0),
         id: "__invalid__",
-        groupedByEntity: undefined,
         isInvalidOption: true,
       };
     }
