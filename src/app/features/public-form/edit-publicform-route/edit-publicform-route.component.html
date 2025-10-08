@@ -1,4 +1,4 @@
-<div class="flex-row">
+<div class="flex-row align-center">
   <div
     class="readonly-prefix"
     [class.prefix-text-disabled]="!formControl.disabled"
@@ -16,10 +16,10 @@
   />
   <button
     mat-icon-button
-    matTextSuffix
     matTooltip="Copy the link to share or paste it somewhere else"
     i18n-matTooltip
     (click)="copyToClipboard()"
+    class="copy-button"
   >
     <fa-icon [icon]="['far', 'copy']"></fa-icon>
   </button>
