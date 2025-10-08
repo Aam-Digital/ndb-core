@@ -1330,7 +1330,7 @@
         <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="us-circle&quot;             class=&quot;standard-icon-with-text&quot;           &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="A"/> Sektion hinzufügen </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-details/admin-entity-details.component.html</context>
-          <context context-type="linenumber">56,62</context>
+          <context context-type="linenumber">82,88</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6614677774493793726" datatype="html">
@@ -1782,7 +1782,7 @@
         <note priority="1" from="description">Button label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">58,60</context>
+          <context context-type="linenumber">59,61</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8884892459004408018" datatype="html">
@@ -1790,7 +1790,7 @@
         <target>Feld aus dem Formular entfernen (ausblenden)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">66</context>
+          <context context-type="linenumber">67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8476842395095367834" datatype="html">
@@ -1798,7 +1798,7 @@
         <target>Felder können gruppiert werden, sodass sie auch auf unterschiedlichen Bildschirmgrößen zusammen erscheinen. Ein zusätzlicher Titel kann für eine solche Gruppe an Feldern auch angezeigt werden.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">101</context>
+          <context context-type="linenumber">102</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1500859009281693254" datatype="html">
@@ -1807,7 +1807,7 @@
         <note priority="1" from="description">title for drag and drop section</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">119</context>
+          <context context-type="linenumber">120</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6586271653607682602" datatype="html">
@@ -1816,7 +1816,7 @@
         <note priority="1" from="description">subtitle for drag and drop section</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">120,122</context>
+          <context context-type="linenumber">121,123</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5001163309666256786" datatype="html">
@@ -1824,7 +1824,7 @@
         <target>Felder können entfernt werden ohne diese komplett zu löschen. Die Felder hier werden nicht angezeigt aber sie können in anderen Ansichten sichtbar sein oder als archivierte Felder behalten werden um die darin gespeicherten Daten nicht zu verlieren. Um ein Feld anzuzeigen, ziehe es in die Formular-Vorschau.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">125</context>
+          <context context-type="linenumber">126</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3972154626835212608" datatype="html">
@@ -7298,7 +7298,7 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
         <note priority="1" from="description">Header of drag and drop box</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">97</context>
+          <context context-type="linenumber">98</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9144258997640819235" datatype="html">
@@ -9174,31 +9174,6 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
           <context context-type="linenumber">3,10</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="4964955154630817299" datatype="html">
-        <source>Linked to</source>
-        <target>Verbunden mit</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/public-form/edit-public-form-related-entities/edit-public-form-related-entities.component.html</context>
-          <context context-type="linenumber">14</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6961658907165057710" datatype="html">
-        <source>Clear selected entity</source>
-        <target>Ausgewählte Entität löschen</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/public-form/edit-public-form-related-entities/edit-public-form-related-entities.component.html</context>
-          <context context-type="linenumber">33</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7266350393038227948" datatype="html">
-        <source>Linked Entity</source>
-        <target>Verknüpfte Entität</target>
-        <note priority="1" from="description">PublicFormConfig</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
-          <context context-type="linenumber">79</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="7092754629378381247" datatype="html">
         <source> Configure Field &quot;<x id="INTERPOLATION" equiv-text="{{ data.entitySchemaField.label }}"/>&quot;
 </source>
@@ -9586,7 +9561,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Individuelles Formular kopieren (<x id="PH" equiv-text="config.title"/>)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-forms.service.ts</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">43</context>
         </context-group>
       </trans-unit>
       <trans-unit id="395226812887354667" datatype="html">
@@ -9594,7 +9569,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Link zum Öffentlichen Formular &quot;<x id="PH" equiv-text="config.title"/>&quot; kopieren, das Antworten mit diesem individuellen Datensatz verknüpft.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-forms.service.ts</context>
-          <context context-type="linenumber">41</context>
+          <context context-type="linenumber">44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8864781719329546897" datatype="html">
@@ -9618,7 +9593,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Konfiguration erfolgreich aktualisiert.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/admin-matching-entities.component.ts</context>
-          <context context-type="linenumber">83</context>
+          <context context-type="linenumber">95</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1465722133080575331" datatype="html">
@@ -10563,6 +10538,55 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/matching-entities/matching-entities/matching-entities.component.html</context>
           <context context-type="linenumber">122,124</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6241580370555489404" datatype="html">
+        <source> The system supports linking to multiple entity types. For example, you can encode IDs of a person and activity in the magic link to collect feedback for that specific context. To set this up, select multiple fields below. Currently, such multi-ID URLs need to be generated outside of this system, however. </source>
+        <target>Das System unterstützt die Verknüpfung mit mehreren Entitätstypen. Beispielsweise können Sie IDs einer Person und Aktivität im Magic Link kodieren, um Feedback für den jeweiligen Kontext zu sammeln. Wählen Sie dazu unten mehrere Felder aus. Derzeit müssen solche Multi-ID-URLs jedoch außerhalb des Systems generiert werden. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/edit-public-form-related-entities/edit-public-form-related-entities.component.html</context>
+          <context context-type="linenumber">11,17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2920263116334941964" datatype="html">
+        <source>Linked to Entity Types</source>
+        <target>Mit Entitätstypen verknüpft</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/edit-public-form-related-entities/edit-public-form-related-entities.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4243356003902795299" datatype="html">
+        <source>Clear selected entities</source>
+        <target>Ausgewählte Entitäten löschen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/edit-public-form-related-entities/edit-public-form-related-entities.component.html</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6386479047031564765" datatype="html">
+        <source>Linked Entities</source>
+        <target>Verknüpfte Entitäten</target>
+        <note priority="1" from="description">PublicFormConfig</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
+          <context context-type="linenumber">79</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9166349536644112331" datatype="html">
+        <source>Some URL parameters were ignored for security: <x id="PH" equiv-text="ignoredParams.join(&quot;, &quot;)"/></source>
+        <target>Einige URL-Parameter wurden aus Sicherheitsgründen ignoriert: <x id="PH" equiv-text="ignoredParams.join(&quot;, &quot;)"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form.component.ts</context>
+          <context context-type="linenumber">213</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8342057234569368276" datatype="html">
+        <source>Please select at least one field to be shown in the confirmation dialog.</source>
+        <target>Bitte wählen Sie mindestens ein Feld aus, das im Bestätigungsdialog angezeigt werden soll.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/admin-matching-entities.component.ts</context>
+          <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
     </body>
