@@ -7,7 +7,7 @@ import {
   inject,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { Observable, from, of } from "rxjs";
+import { BehaviorSubject, Observable, from, of } from "rxjs";
 import { switchMap, debounceTime, tap, map } from "rxjs/operators";
 import { Router } from "@angular/router";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -72,7 +72,8 @@ export class SearchComponent {
 
   formControl = new FormControl("");
 
-  results: Observable<Entity[]>;
+  private resultsSubject = new BehaviorSubject<Entity[]>([]);
+  results: Observable<Entity[]> = this.resultsSubject.asObservable();
   @ViewChild("searchInput") searchInput: ElementRef<HTMLInputElement>;
   @ViewChild("autoResults") autocomplete: MatAutocomplete;
 
@@ -86,15 +87,19 @@ export class SearchComponent {
       .pipe(untilDestroyed(this))
       .subscribe((isDesktop) => (this.mobile = !isDesktop));
 
-    this.results = this.formControl.valueChanges.pipe(
-      debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
-      tap((next) => {
-        this.currentSearchString = next || "";
-        this.state = this.updateState(next);
-      }),
-      switchMap((next: string) => this.searchResults(next)),
-      untilDestroyed(this),
-    );
+    this.formControl.valueChanges
+      .pipe(
+        debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
+        tap((next) => {
+          this.currentSearchString = next || "";
+          this.state = this.updateState(next);
+        }),
+        switchMap((next: string) => this.searchResults(next)),
+        untilDestroyed(this),
+      )
+      .subscribe((entities) => {
+        this.resultsSubject.next(entities);
+      });
   }
   private updateState(next: any): number {
     if (typeof next !== "string") {
