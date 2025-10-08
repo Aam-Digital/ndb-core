@@ -1269,7 +1269,7 @@
         },
         "projectNumber": {
           "dataType": "string",
-          "label": "Implement a flag in the EntitySchemaField and admin dialog to configure fields to display full length label (even if it spans multiple lines)",
+          "label": "Project Number",
           "labelShort": "PN",
           "searchable": true,
           "anonymize": "retain"
