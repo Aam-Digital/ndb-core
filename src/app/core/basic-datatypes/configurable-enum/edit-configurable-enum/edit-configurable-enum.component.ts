@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   inject,
   Input,
@@ -70,6 +71,7 @@ export class EditConfigurableEnumComponent
   private readonly ability = inject(EntityAbility);
   private readonly dialog = inject(MatDialog);
   private readonly confirmation = inject(ConfirmationDialogService);
+  private readonly changeDetector = inject(ChangeDetectorRef);
 
   enumId: string;
   multi = false;
@@ -103,6 +105,7 @@ export class EditConfigurableEnumComponent
   private updateInvalidOptions(): void {
     this.invalidOptions = this.prepareInvalidOptions();
     this.options = [...(this.enumEntity?.values ?? []), ...this.invalidOptions];
+    this.changeDetector.markForCheck();
   }
 
   private updateEnumData(): void {
@@ -191,6 +194,7 @@ export class EditConfigurableEnumComponent
     }
 
     this.options = [...(this.enumEntity?.values ?? []), ...this.invalidOptions];
+    this.changeDetector.markForCheck();
   }
 
   override onContainerClick(event: MouseEvent) {
