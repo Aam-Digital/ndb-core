@@ -24,7 +24,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { asArray } from "app/utils/asArray";
-import { lastValueFrom, map, switchMap } from "rxjs";
+import { lastValueFrom, map, startWith, switchMap } from "rxjs";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
@@ -196,7 +196,12 @@ export class EditEntityComponent<
    */
   values: Signal<string[]> = toSignal(
     toObservable(this.formControl)
-      .pipe(switchMap((form) => form.valueChanges))
+      .pipe(
+        switchMap((form) => {
+          // Emit both the initial value and subsequent value changes
+          return form.valueChanges.pipe(startWith(form.value));
+        }),
+      )
       .pipe(map((value) => (value === undefined ? [] : asArray(value)))),
     { initialValue: [] },
   );
