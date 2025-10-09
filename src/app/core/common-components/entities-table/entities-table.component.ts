@@ -51,6 +51,7 @@ import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/e
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { TableRow } from "./table-row";
 import { tableSort } from "./table-sort/table-sort";
+import { TableStateUrlService } from "./table-state-url.service";
 
 /**
  * A simple display component (no logic and transformations) to display a table of entities.
@@ -82,6 +83,7 @@ export class EntitiesTableComponent<T extends Entity>
   private router = inject(Router);
   private filterService = inject(FilterService);
   private schemaService = inject(EntitySchemaService);
+  private readonly tableStateUrl = inject(TableStateUrlService);
 
   @Input() set records(value: T[]) {
     if (!value) {
@@ -170,9 +172,9 @@ export class EntitiesTableComponent<T extends Entity>
     cols.push(...value);
     this._columnsToDisplay = cols;
 
-    if (this.sortIsInferred) {
-      this.sortBy = this.inferDefaultSort();
-      this.sortIsInferred = true;
+    if (!this.sortManuallySet && !this.tableStateUrl.getUrlParam("sortBy")) {
+      // Only set default sort if not manually set and/or present in URL
+      this._sortBy = this.inferDefaultSort(); // do not use sortBy setter to avoid persisting to URL
     }
   }
 
@@ -192,16 +194,56 @@ export class EntitiesTableComponent<T extends Entity>
     }
 
     this._sortBy = value;
-    this.sortIsInferred = false;
+
+    // Persist sort state to URL
+    if (value.active) {
+      this.tableStateUrl.updateUrlParams({
+        sortBy: value.active,
+        sortOrder: value.direction ?? "asc",
+      });
+    }
+
+    this.sortManuallySet = true;
   }
 
   _sortBy: Sort;
 
   @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
     this.recordsDataSource.sort = sort;
+    if (sort) {
+      // Restore sort state from URL on init
+      const urlSortBy = this.tableStateUrl.getUrlParam("sortBy");
+      const urlSortOrder = this.tableStateUrl.getUrlParam(
+        "sortOrder",
+      ) as SortDirection;
+      if (urlSortBy) {
+        sort.active = urlSortBy;
+        sort.direction = urlSortOrder || "asc";
+      }
+      // Listen for sort changes to persist to URL
+      sort.sortChange.subscribe(({ active, direction }) => {
+        if (!direction) {
+          this.tableStateUrl.updateUrlParams({ sortBy: null, sortOrder: null });
+        } else if (direction === "desc") {
+          this.tableStateUrl.updateUrlParams({
+            sortBy: active,
+            sortOrder: "desc",
+          });
+        } else {
+          this.tableStateUrl.updateUrlParams({
+            sortBy: active,
+            sortOrder: null,
+          });
+        }
+      });
+    }
   }
 
-  private sortIsInferred: boolean = true;
+  /**
+   * Indicates whether the current sort order was manually set by the user
+   * to avoid overwriting it with the default sort
+   */
+  private sortManuallySet: boolean;
 
   /**
    * Adds a filter for the displayed data.
