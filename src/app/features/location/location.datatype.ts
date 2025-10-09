@@ -35,7 +35,7 @@ export class LocationDatatype extends DefaultDatatype<
 
     // fix errors from broken migrations
     while (value?.geoLookup && "geoLookup" in value.geoLookup) {
-      value.geoLookup = value.geoLookup["geoLookup"];
+      value.geoLookup = (value.geoLookup as { geoLookup: GeoResult }).geoLookup;
     }
 
     if (!value.locationString) {
