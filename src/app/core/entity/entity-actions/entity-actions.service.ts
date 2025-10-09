@@ -25,7 +25,7 @@ import { BulkLinkExternalProfilesComponent } from "#src/app/features/skill/bulk-
   providedIn: "root",
 })
 export class EntityActionsService {
-  private injector = inject(Injector);
+  private readonly injector = inject(Injector);
   private confirmationDialog = inject(ConfirmationDialogService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
@@ -34,7 +34,7 @@ export class EntityActionsService {
   private entityAnonymize = inject(EntityAnonymizeService);
   private duplicateRecordService = inject(DuplicateRecordService);
   private publicFormsService = inject(PublicFormsService);
-  private dialog = inject(MatDialog);
+  private readonly dialog = inject(MatDialog);
 
   constructor() {
     const entityActionsMenuService = inject(EntityActionsMenuService);

@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-  output,
-  signal,
-} from "@angular/core";
+import { Component, computed, inject, input, output } from "@angular/core";
 import {
   FaIconComponent,
   FontAwesomeModule,
@@ -15,7 +7,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatIconModule } from "@angular/material/icon";
-import { NgIf, NgFor } from "@angular/common";
 import { Entity } from "../../entity/model/entity";
 import { EntityActionsMenuService } from "../entity-actions-menu/entity-actions-menu.service";
 import { EntityAction } from "../entity-actions-menu/entity-action.interface";
@@ -38,7 +29,7 @@ export class EntityBulkActionsComponent {
   entities = input.required<Entity[]>();
   actionTriggered = output<EntityAction>();
 
-  private actionsService = inject(EntityActionsMenuService);
+  private readonly actionsService = inject(EntityActionsMenuService);
 
   // Compute available bulk actions for the current selection
   bulkActions = computed(() =>
