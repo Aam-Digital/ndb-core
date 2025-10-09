@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, inject } from "@angular/core";
 import { Router } from "@angular/router";
 
-import { DisplayConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/display-configurable-enum/display-configurable-enum.component";
 import { CommonModule } from "@angular/common";
 import { MatIconButton } from "@angular/material/button";
 import { MatTableModule } from "@angular/material/table";
@@ -11,8 +10,6 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { Angulartics2Module } from "angulartics2";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
-import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
-import { EntityDatatype } from "../../../../core/basic-datatypes/entity/entity.datatype";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
@@ -24,7 +21,7 @@ import {
   EntityConstructor,
 } from "../../../../core/entity/model/entity";
 import { groupBy } from "../../../../utils/utils";
-import { EntityFieldViewComponent } from "../../../../core/common-components/entity-field-view/entity-field-view.component";
+import { EntityFieldViewComponent } from "#src/app/core/entity/entity-field-view/entity-field-view.component";
 
 /**
  * Configuration (stored in Config document in the DB) for the dashboard widget.
