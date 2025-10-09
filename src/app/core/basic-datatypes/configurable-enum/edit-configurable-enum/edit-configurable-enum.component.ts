@@ -36,6 +36,7 @@ import { DisplayConfigurableEnumComponent } from "../display-configurable-enum/d
   templateUrl: "./edit-configurable-enum.component.html",
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: [
+    "./edit-configurable-enum.component.scss",
     "../../../common-components/basic-autocomplete/basic-autocomplete-dropdown.component.scss",
   ],
   imports: [
