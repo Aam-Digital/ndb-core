@@ -34,7 +34,7 @@ export class LocationDatatype extends DefaultDatatype<
     }
 
     // fix errors from broken migrations
-    while (value?.geoLookup?.hasOwnProperty("geoLookup")) {
+    while (value?.geoLookup && "geoLookup" in value.geoLookup) {
       value.geoLookup = value.geoLookup["geoLookup"];
     }
 
