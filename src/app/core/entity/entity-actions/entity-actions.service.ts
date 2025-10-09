@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable, Injector, inject } from "@angular/core";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { Entity } from "../model/entity";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -13,6 +13,9 @@ import { EntityActionsMenuService } from "../../entity-details/entity-actions-me
 import { DuplicateRecordService } from "app/core/entity-list/duplicate-records/duplicate-records.service";
 import { PublicFormsService } from "app/features/public-form/public-forms.service";
 import { PublicFormConfig } from "app/features/public-form/public-form-config";
+import { EntityEditService } from "./entity-edit.service";
+import { MatDialog } from "@angular/material/dialog";
+import { BulkLinkExternalProfilesComponent } from "#src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -22,6 +25,7 @@ import { PublicFormConfig } from "app/features/public-form/public-form-config";
   providedIn: "root",
 })
 export class EntityActionsService {
+  private injector = inject(Injector);
   private confirmationDialog = inject(ConfirmationDialogService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
@@ -30,11 +34,29 @@ export class EntityActionsService {
   private entityAnonymize = inject(EntityAnonymizeService);
   private duplicateRecordService = inject(DuplicateRecordService);
   private publicFormsService = inject(PublicFormsService);
+  private dialog = inject(MatDialog);
 
   constructor() {
     const entityActionsMenuService = inject(EntityActionsMenuService);
 
     entityActionsMenuService.registerActions([
+      {
+        action: "bulk-link-external-profile",
+        label: $localize`:entity context menu:Link External Profile`,
+        icon: "link",
+        tooltip: $localize`:entity context menu tooltip:Link multiple records to external profiles in bulk.`,
+        availableFor: "bulk-only",
+        permission: "update",
+        execute: async (entity: Entity) => {
+          const entities = Array.isArray(entity) ? entity : [entity];
+          if (!entities.length) return false;
+          this.dialog.open(BulkLinkExternalProfilesComponent, {
+            maxHeight: "90vh",
+            data: { entities },
+          });
+          return true;
+        },
+      },
       {
         action: "archive",
         execute: (e) => this.archive(e),
@@ -75,6 +97,22 @@ export class EntityActionsService {
         label: $localize`:entity context menu:Duplicate`,
         tooltip: $localize`:entity context menu tooltip:Create a copy of this record.`,
         availableFor: "all",
+      },
+      {
+        action: "bulk-edit",
+        label: $localize`:entity context menu:Bulk Edit`,
+        icon: "edit",
+        tooltip: $localize`:entity context menu tooltip:Edit multiple records at once.`,
+        availableFor: "bulk-only",
+        permission: "update",
+        execute: async (entity: Entity) => {
+          const entities = Array.isArray(entity) ? entity : [entity];
+          if (!entities.length) return false;
+          const entityType = entities[0].getConstructor();
+          if (!entityType) return false;
+          const entityEditService = this.injector.get(EntityEditService);
+          return entityEditService.edit(entities, entityType);
+        },
       },
     ]);
     this.entityMapper.receiveUpdates(PublicFormConfig).subscribe(() => {
