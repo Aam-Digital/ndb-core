@@ -6,6 +6,13 @@ import { EntityActionPermission } from "../../permissions/permission-types";
  */
 export interface EntityAction {
   /**
+   * Determines where this action is available:
+   * - 'all': available for both individual and bulk actions (default)
+   * - 'bulk-only': only available as a bulk action
+   * - 'individual-only': only available for single entity actions
+   */
+  availableFor?: "all" | "bulk-only" | "individual-only";
+  /**
    * ID for identifying this action in analytics, etc.
    */
   action: string;

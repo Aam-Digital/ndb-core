@@ -40,6 +40,7 @@ export class EmailClientServiceModule {
           }
           return false;
         },
+        availableFor: "all",
       },
     ]);
 

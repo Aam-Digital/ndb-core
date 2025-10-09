@@ -277,93 +277,10 @@
 
 <ng-template #bulkActions>
   @if (!!selectedRows) {
-    <div class="bulk-action-button">
-      <div i18n>
-        Actions on <b>{{ selectedRows.length }}</b> selected records:
-      </div>
-      <div
-        class="flex-row gap-small bulk-action-button"
-        matTooltip="Select rows for an action on multiple records"
-        i18n-matTooltip
-      >
-        <button
-          mat-raised-button
-          (click)="editRecords()"
-          [disabled]="selectedRows.length === 0"
-          color="accent"
-          i18n="bulk action button"
-        >
-          Bulk Edit
-        </button>
-        <button
-          mat-raised-button
-          (click)="archiveRecords()"
-          [disabled]="selectedRows.length === 0"
-          color="accent"
-          i18n="bulk action button"
-        >
-          Archive
-        </button>
-        @if (entityConstructor.hasPII) {
-          <button
-            mat-raised-button
-            (click)="anonymizeRecords()"
-            [disabled]="selectedRows.length === 0"
-            color="accent"
-            i18n="bulk action button"
-          >
-            Anonymize
-          </button>
-        }
-        <button
-          mat-raised-button
-          (click)="deleteRecords()"
-          [disabled]="selectedRows.length === 0"
-          color="accent"
-          i18n="bulk action button"
-        >
-          Delete
-        </button>
-        <button
-          mat-raised-button
-          (click)="duplicateRecords()"
-          [disabled]="selectedRows.length === 0"
-          color="accent"
-          i18n="bulk action button"
-        >
-          Duplicate
-        </button>
-        <button
-          mat-raised-button
-          (click)="linkExternalProfiles()"
-          [disabled]="selectedRows.length === 0"
-          color="accent"
-          i18n="bulk action button"
-        >
-          Link External Profile
-        </button>
-        <button
-          mat-raised-button
-          (click)="mergeRecords()"
-          [disabled]="selectedRows.length !== 2"
-          color="accent"
-          i18n="bulk action button"
-        >
-          Merge
-        </button>
-        <button
-          mat-raised-button
-          (click)="bulkEmail()"
-          [disabled]="selectedRows.length === 0"
-          color="accent"
-          i18n="bulk action button"
-        >
-          Send email to group
-        </button>
-        <button mat-raised-button (click)="selectedRows = undefined" i18n>
-          Cancel
-        </button>
-      </div>
-    </div>
+    <app-entity-bulk-actions
+      [entities]="selectedRows"
+      (actionTriggered)="onBulkAction($event)"
+    >
+    </app-entity-bulk-actions>
   }
 </ng-template>

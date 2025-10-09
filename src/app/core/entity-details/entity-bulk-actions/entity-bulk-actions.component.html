@@ -1,0 +1,34 @@
+<div class="flex-row gap-regular">
+  <span
+    [matTooltip]="
+      !entities() || entities().length === 0
+        ? 'Select at least one record to enable bulk actions'
+        : ''
+    "
+    [matTooltipDisabled]="entities() && entities().length > 0"
+  >
+    <button
+      mat-raised-button
+      color="accent"
+      [matMenuTriggerFor]="bulkMenu"
+      [disabled]="!entities() || entities().length === 0"
+    >
+      <span i18n>Action</span>
+    </button>
+  </span>
+  <mat-menu #bulkMenu="matMenu">
+    @for (action of bulkActions(); track action.action) {
+      <button
+        mat-menu-item
+        (click)="onActionClick(action)"
+        [matTooltip]="action.tooltip || action.label"
+      >
+        <fa-icon [icon]="action.icon"></fa-icon>
+        {{ action.label }}
+      </button>
+    }
+  </mat-menu>
+  <button mat-raised-button (click)="actionTriggered.emit(undefined)" i18n>
+    Cancel
+  </button>
+</div>

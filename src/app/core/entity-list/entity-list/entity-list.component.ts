@@ -65,6 +65,7 @@ import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.
 import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EmailClientService } from "#src/app/features/email-client/email-client.service";
+import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -105,6 +106,7 @@ import { EmailClientService } from "#src/app/features/email-client/email-client.
     AblePurePipe,
     ViewActionsComponent,
     EntityLoadPipe,
+    EntityBulkActionsComponent,
   ],
 })
 @UntilDestroy()
@@ -376,62 +378,12 @@ export class EntityListComponent<T extends Entity>
     this.addNewClick.emit();
   }
 
-  duplicateRecords() {
-    this.duplicateRecord.duplicateRecord(this.selectedRows);
-    this.selectedRows = undefined;
-  }
-
-  async editRecords() {
-    await this.entityEditService.edit(
-      this.selectedRows,
-      this.entityConstructor,
-    );
-    this.selectedRows = undefined;
-  }
-
-  async mergeRecords() {
-    await this.bulkMergeService.showMergeDialog(
-      this.selectedRows,
-      this.entityConstructor,
-    );
-    this.selectedRows = undefined;
-  }
-
-  async bulkEmail() {
-    await this.emailClientService.executeMailto(this.selectedRows);
-    this.selectedRows = undefined;
-  }
-
-  async deleteRecords() {
-    await this.entityActionsService.delete(this.selectedRows);
-    this.selectedRows = undefined;
-  }
-
-  async archiveRecords() {
-    await this.entityActionsService.archive(this.selectedRows);
-    this.selectedRows = undefined;
-  }
-
-  async anonymizeRecords() {
-    await this.entityActionsService.anonymize(this.selectedRows);
-    this.selectedRows = undefined;
-  }
-
-  linkExternalProfiles() {
-    this.dialog.open(DialogViewComponent, {
-      width: "98vw",
-      maxWidth: "100vw",
-      height: "98vh",
-      maxHeight: "100vh",
-
-      data: {
-        component: "BulkLinkExternalProfiles",
-        config: {
-          entities: this.selectedRows,
-        },
-      } as DialogViewData,
-    });
-
+  onBulkAction(action: any) {
+    // If the action has an execute method, call it with selectedRows
+    if (action && typeof action.execute === "function") {
+      action.execute(this.selectedRows);
+    }
+    // Optionally, reset selection after action
     this.selectedRows = undefined;
   }
 
