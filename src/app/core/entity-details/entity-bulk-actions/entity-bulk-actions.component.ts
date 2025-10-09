@@ -38,7 +38,5 @@ export class EntityBulkActionsComponent {
 
   onActionClick(action: EntityAction) {
     this.actionTriggered.emit(action);
-    // Optionally, execute the action here for immediate effect:
-    // action.execute(this.entities());
   }
 }
