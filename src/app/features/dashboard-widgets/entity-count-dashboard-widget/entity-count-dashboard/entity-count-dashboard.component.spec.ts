@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EntityCountDashboardComponent } from "./entity-count-dashboard.component";
-
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import {
   mockEntityMapperProvider,
@@ -90,13 +89,15 @@ describe("EntityCountDashboardComponent", () => {
         label: c1.label,
         value: 2,
         id: c1.id,
-        groupedByEntity: undefined,
+        fieldName: "test",
+        entity: jasmine.any(TestEntity),
       },
       {
         label: c2.label,
         value: 1,
         id: c2.id,
-        groupedByEntity: undefined,
+        fieldName: "test",
+        entity: jasmine.any(TestEntity),
       },
     ]);
 
@@ -145,13 +146,14 @@ describe("EntityCountDashboardComponent", () => {
         label: undefined,
         value: 2,
         id: "",
-        groupedByEntity: undefined,
+        fieldName: "test",
       },
       {
         label: "foo",
         value: 1,
         id: "01",
-        groupedByEntity: undefined,
+        fieldName: "test",
+        entity: jasmine.any(TestEntity),
       },
     ]);
 
@@ -182,13 +184,14 @@ describe("EntityCountDashboardComponent", () => {
       label: undefined,
       value: 1,
       id: "",
-      groupedByEntity: TestEntity.ENTITY_TYPE,
+      fieldName: "ref",
     });
     expect(currentlyShownGroupCounts).toContain({
       label: c1.getId(),
       value: 1,
       id: c1.getId(),
-      groupedByEntity: TestEntity.ENTITY_TYPE,
+      fieldName: "ref",
+      entity: jasmine.any(TestEntity),
     });
   });
 
@@ -217,19 +220,21 @@ describe("EntityCountDashboardComponent", () => {
       label: undefined,
       value: 1,
       id: "",
-      groupedByEntity: "Child",
+      fieldName: "children",
     });
     expect(currentlyShownGroupCounts).toContain({
       label: "link-1",
       value: 2,
       id: "link-1",
-      groupedByEntity: "Child",
+      fieldName: "children",
+      entity: jasmine.any(Note),
     });
     expect(currentlyShownGroupCounts).toContain({
       label: "link-2",
       value: 1,
       id: "link-2",
-      groupedByEntity: "Child",
+      fieldName: "children",
+      entity: jasmine.any(Note),
     });
   });
 });
