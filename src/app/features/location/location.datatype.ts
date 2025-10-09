@@ -1,8 +1,8 @@
-import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
 import { Injectable, inject } from "@angular/core";
-import { GeoResult, GeoService } from "./geo.service";
 import { lastValueFrom } from "rxjs";
+import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
 import { GeoLocation } from "./geo-location";
+import { GeoResult, GeoService } from "./geo.service";
 
 @Injectable()
 export class LocationDatatype extends DefaultDatatype<
@@ -23,12 +23,23 @@ export class LocationDatatype extends DefaultDatatype<
       return undefined;
     }
 
-    if (!value.hasOwnProperty("locationString")) {
-      // migrate from legacy format
-      return {
-        locationString: value["display_name"],
+    // migrate from legacy format
+    if (
+      !value.hasOwnProperty("locationString") &&
+      !value.hasOwnProperty("geoLookup")
+    ) {
+      value = {
         geoLookup: value as unknown as GeoResult,
       };
+    }
+
+    // fix errors from broken migrations
+    while (value?.geoLookup?.hasOwnProperty("geoLookup")) {
+      value.geoLookup = value.geoLookup["geoLookup"];
+    }
+
+    if (!value.locationString) {
+      value.locationString = value.geoLookup?.display_name ?? "";
     }
 
     return value;
