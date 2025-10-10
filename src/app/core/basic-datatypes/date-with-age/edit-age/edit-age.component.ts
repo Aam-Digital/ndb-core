@@ -18,6 +18,7 @@ import { DateWithAge } from "../dateWithAge";
   templateUrl: "./edit-age.component.html",
   styleUrls: [
     "../../../entity/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
+    "./edit-age.component.scss",
   ],
   imports: [
     ReactiveFormsModule,

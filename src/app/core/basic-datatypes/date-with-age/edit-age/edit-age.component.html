@@ -17,28 +17,18 @@
   }
 
   <div
-    class="flex-row align-center gap-small padding-regular"
-    style="
-      margin-left: 8px;
-      margin-top: -8px;
-      background-color: rgba(0, 0, 0, 0.04);
-      border-radius: 4px;
-      border: 1px solid rgba(0, 0, 0, 0.12);
-    "
+    class="flex-row align-center gap-small padding-regular age-display-container"
   >
-    <span
-      style="font-size: 12px; color: rgba(0, 0, 0, 0.6); font-weight: 500"
-      i18n="Label for the age display"
-      >Age:</span
-    >
+    <span class="age-label" i18n="Label for the age display">Age:</span>
     <span>{{ age() || "-" }}</span>
 
     <fa-icon
       icon="question-circle"
       i18n-matTooltip="Tooltip for the disabled age field"
       matTooltip="This field is read-only. Edit the date field to update the age. You can select Jan 1st if you don't know the exact date."
-      style="color: rgba(0, 0, 0, 0.6); cursor: help"
-      [style.visibility]="formControl.enabled ? 'visible' : 'hidden'"
+      class="age-help-icon"
+      [class.visible]="formControl.enabled"
+      [class.hidden]="!formControl.enabled"
     ></fa-icon>
   </div>
 </div>
