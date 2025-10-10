@@ -91,5 +91,6 @@ export class EditPublicFormRelatedEntitiesComponent
 
   clearSelectedEntities() {
     this.formControl.setValue([]);
+    this.formControl.markAsDirty();
   }
 }
