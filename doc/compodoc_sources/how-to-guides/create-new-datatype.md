@@ -84,15 +84,22 @@ and use it for any entity properties that use the `dataType` identifier of your 
 
 ## Implementing a custom EditComponent
 
-To provide a custom UI, you can implement an Angular component that extends the `EditComponent` and configure it to be used for the datatype as shown above.
+To provide a custom UI, you can implement an Angular component that extends the `CustomFormControlDirective` and implements `EditComponent` interface.
+Then configure this to be used for the datatype as shown above.
 
 Such a component is a standard Angular component.
-It has to extend the abstract "EditComponent" base class however
-and needs to ensure changes are set into the `formControl` input property that the base class defines. This is the channel for editing to be picked up by the overall form, which takes care of saving changes also.
+It has to extend the `CustomFormControlDirective` base class however
+to function as an Angular FormControl within mat-form-field.
+You can then design a custom UX and logic for the value
+while parent components use this like a simple `matInput` field.
 
-The `EditComponent` base class also provides access to a number of other `@Input` properties from the current context (i.e. the entity and field configuration).
+You custom EditComponent should _not_ include a form field label.
+This and other mat-form-field details are automatically added by the parent component.
+
+The `EditComponent` interface shows the properties you can access from the current context
+(i.e. the entity and field configuration).
+These are automaticallly assigned to the component through the parent components and structure.
 You can use these to provide a custom UI and functionality, possibly even accessing other form fields or properties of the current entity.
-Please refer to the code and comments in `EditComponent`.
 
 ### Registering the new Component
 
