@@ -93,12 +93,12 @@ to function as an Angular FormControl within mat-form-field.
 You can then design a custom UX and logic for the value
 while parent components use this like a simple `matInput` field.
 
-You custom EditComponent should _not_ include a form field label.
+Your custom EditComponent should _not_ include a form field label.
 This and other mat-form-field details are automatically added by the parent component.
 
 The `EditComponent` interface shows the properties you can access from the current context
 (i.e. the entity and field configuration).
-These are automaticallly assigned to the component through the parent components and structure.
+These are automatically assigned to the component through the parent components and structure.
 You can use these to provide a custom UI and functionality, possibly even accessing other form fields or properties of the current entity.
 
 ### Registering the new Component
