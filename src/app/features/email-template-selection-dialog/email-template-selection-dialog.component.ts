@@ -37,7 +37,6 @@ export interface EmailTemplateSelectionDialogData {
     DisableEntityOperationDirective,
     MatCheckbox,
     ReactiveFormsModule,
-    FontAwesomeTestingModule,
     MatTooltipModule,
     MatFormFieldModule,
   ],

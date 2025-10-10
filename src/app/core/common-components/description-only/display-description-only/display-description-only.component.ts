@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 
 import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
@@ -14,6 +14,7 @@ import { MarkdownPageModule } from "app/features/markdown-page/markdown-page.mod
   template: ` <markdown>{{ formFieldConfig?.label }}</markdown> `,
   styleUrls: ["./display-description-only.component.scss"],
   imports: [MarkdownPageModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DisplayDescriptionOnlyComponent extends ViewDirective<
   undefined,
