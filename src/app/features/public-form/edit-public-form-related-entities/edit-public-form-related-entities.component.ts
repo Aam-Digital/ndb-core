@@ -23,7 +23,6 @@ import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 @DynamicComponent("EditPublicFormRelatedEntitiesComponent")
 @Component({
   selector: "app-edit-public-form-related-entities",
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatSelectModule,
