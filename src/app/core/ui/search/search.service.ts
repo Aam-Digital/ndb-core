@@ -15,7 +15,7 @@ export class SearchService {
   private indexingService = inject(DatabaseIndexingService);
   private schemaService = inject(EntitySchemaService);
   private entities = inject(EntityRegistry);
-  private configService = inject(ConfigService, { optional: true });
+  private configService = inject(ConfigService);
 
   private searchableEntities: [string, string[]][];
 
