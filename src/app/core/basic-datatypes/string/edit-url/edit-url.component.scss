@@ -1,5 +1,9 @@
 /* Keep the input disabled but visible */
 input[disabled] {
   pointer-events: none;
+}
+
+.clickable {
+  cursor: pointer;
   text-decoration: underline;
 }

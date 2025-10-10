@@ -1,11 +1,5 @@
 @use "variables/colors";
 
-:host {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .image {
   width: 150px;
   height: 150px;
@@ -27,4 +21,10 @@
 }
 .img-label.invalid {
   color: colors.$error;
+}
+
+.photo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

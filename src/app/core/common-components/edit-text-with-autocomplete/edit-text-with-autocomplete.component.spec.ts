@@ -1,14 +1,14 @@
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { FormControl } from "@angular/forms";
+import { By } from "@angular/platform-browser";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { EntityFormService } from "../entity-form/entity-form.service";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EditTextWithAutocompleteComponent } from "./edit-text-with-autocomplete.component";
-import { By } from "@angular/platform-browser";
-import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 
 describe("EditTextWithAutocompleteComponent", () => {
   let component: EditTextWithAutocompleteComponent;
@@ -16,7 +16,7 @@ describe("EditTextWithAutocompleteComponent", () => {
   let loadTypeSpy: jasmine.Spy;
   let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(waitForAsync(async () => {
     mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
     TestBed.configureTestingModule({
       imports: [
@@ -30,36 +30,37 @@ describe("EditTextWithAutocompleteComponent", () => {
         },
       ],
     }).compileComponents();
-  }));
 
-  beforeEach(waitForAsync(async () => {
     fixture = TestBed.createComponent(EditTextWithAutocompleteComponent);
     component = fixture.componentInstance;
     loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
     loadTypeSpy.and.resolveTo([]);
     const entityFormService = TestBed.inject(EntityFormService);
-    component.parent = (
-      await entityFormService.createEntityForm(
-        [
-          { id: "title" },
-          { id: "type" },
-          { id: "assignedTo" },
-          { id: "linkedGroups" },
-        ],
-        new RecurringActivity(),
-      )
-    ).formGroup;
-    component.formControl = component.parent.get(
+    const entityForm = await entityFormService.createEntityForm(
+      [
+        { id: "title" },
+        { id: "type" },
+        { id: "assignedTo" },
+        { id: "linkedGroups" },
+      ],
+      new RecurringActivity(),
+    );
+
+    // Set up the component's ngControl to point to the form control
+    const titleControl = entityForm.formGroup.get(
       "title",
     ) as FormControl<string>;
-    component.formControlName = "title";
+    component.ngControl = {
+      control: titleControl,
+    } as any;
+
     component.formFieldConfig = {
       id: "title",
       additional: {
         entityType: "RecurringActivity",
       },
     };
-    component.entity = new RecurringActivity();
+
     fixture.detectChanges();
   }));
 
@@ -70,15 +71,25 @@ describe("EditTextWithAutocompleteComponent", () => {
   it("should show all entities of the given type", async () => {
     const rA1 = RecurringActivity.create("First Recurring Activity");
     const rA2 = RecurringActivity.create("Second Recurring Activity");
-    loadTypeSpy.and.resolveTo([rA1, rA2]);
+    const rA3 = RecurringActivity.create("Third Recurring Activity");
+    loadTypeSpy.and.resolveTo([rA1, rA2, rA3]);
 
     await component.ngOnInit();
 
-    expect(loadTypeSpy).toHaveBeenCalled();
-    expect(component.entities).toEqual([rA1, rA2]);
-    component.formControl.setValue("Activity");
+    expect(component.entities).toEqual([rA1, rA2, rA3]);
+  });
+
+  it("should filter entities when searching", async () => {
+    const rA1 = RecurringActivity.create("First Recurring Activity");
+    const rA2 = RecurringActivity.create("Second Recurring Activity");
+    const rA3 = RecurringActivity.create("Third Recurring Activity");
+    loadTypeSpy.and.resolveTo([rA1, rA2, rA3]);
+
+    await component.ngOnInit();
+    component.formControl.setValue("Second");
     component.updateAutocomplete();
-    expect(component.autocompleteEntities.value).toEqual([rA1, rA2]);
+
+    expect(component.autocompleteEntities.value).toEqual([rA2]);
   });
 
   it("should correctly set the form controls to the selected entity's values", async () => {

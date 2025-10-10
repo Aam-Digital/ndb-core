@@ -1,3 +1,4 @@
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import {
   Component,
   inject,
@@ -5,17 +6,16 @@ import {
   OnChanges,
   SimpleChanges,
 } from "@angular/core";
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
-import { EntityFieldLabelComponent } from "../../../core/common-components/entity-field-label/entity-field-label.component";
+import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { TemplateTooltipDirective } from "../../../core/common-components/template-tooltip/template-tooltip.directive";
-import { Entity } from "../../../core/entity/model/entity";
 import {
   DefaultValueHint,
   DefaultValueService,
 } from "../../../core/default-values/default-value-service/default-value.service";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
-import { MatIconButton } from "@angular/material/button";
+import { EntityFieldLabelComponent } from "../../../core/entity/entity-field-label/entity-field-label.component";
+import { Entity } from "../../../core/entity/model/entity";
 
 /**
  * Display an indicator for form fields explaining the status of the inherited-value config of that field
