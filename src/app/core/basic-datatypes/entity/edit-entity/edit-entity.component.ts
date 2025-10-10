@@ -48,7 +48,6 @@ import { EntityBlockComponent } from "../entity-block/entity-block.component";
   templateUrl: "./edit-entity.component.html",
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: [
-    "./edit-entity.component.scss",
     "../../../common-components/basic-autocomplete/basic-autocomplete-dropdown.component.scss",
   ],
   imports: [
