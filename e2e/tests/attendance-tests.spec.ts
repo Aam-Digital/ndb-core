@@ -116,10 +116,7 @@ test("Children list displays monthly attendance percentage", async ({
   await loadApp(page);
   await page.getByRole("navigation").getByText("Children").click();
   await page.getByRole("tab", { name: "School Info" }).click();
-  // todo: after refactoring the editcomponent somehow this test is flaky
-  // we need to investigate and fix it
-  // for now commenting out the flaky check
-  // await expect(page.getByRole("cell", { name: /\d+%/ })).toHaveCount(8);
+  await expect(page.getByRole("cell", { name: /\d+%/ })).toHaveCount(8);
   await argosScreenshot(page, "children-school-info");
 });
 
