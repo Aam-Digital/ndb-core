@@ -70,7 +70,7 @@ describe("SearchComponent", () => {
 
   function expectResultToBeEmpty(done: DoneFn) {
     subscription = component.results.subscribe((next) => {
-      expect(next).toBeEmpty();
+      expect(next).toEqual([]);
       expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
       done();
     });
