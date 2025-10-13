@@ -176,10 +176,12 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   }
 
   /**
-   * Opens a dialog to configure the data structure and popup form fields
-   * for the related entity type.
+   * Opens a dialog showing the entity's form configuration.
+   * This allows editing the entity's fields structure independently.
+   * Changes made in the dialog update the entity schema and will be
+   * available in the "Available Fields" dropdown for selection.
    */
-  async openRelatedEntityDetailsConfig() {
+  openRelatedEntityDetailsConfig(): void {
     if (!this.entityConstructor) {
       return;
     }
@@ -188,27 +190,8 @@ export class AdminEntityPanelComponentComponent implements OnInit {
       width: "90%",
       maxWidth: "1200px",
       height: "90vh",
-      data: {
-        entityConstructor: this.entityConstructor,
-        columns: this.config.config.columns || [],
-      },
     });
 
-    // Pass the entity constructor and columns directly as component inputs
     dialogRef.componentInstance.entityConstructor = this.entityConstructor;
-    dialogRef.componentInstance.columns = [...(this.config.config.columns || [])];
-
-    // Subscribe to column changes
-    const subscription = dialogRef.componentInstance.columnsChange.subscribe(
-      (updatedColumns: ColumnConfig[]) => {
-        this.config.config.columns = updatedColumns;
-        this.activeFields = updatedColumns.map((col) =>
-          typeof col === "string" ? col : col.id,
-        );
-      },
-    );
-
-    await lastValueFrom(dialogRef.afterClosed());
-    subscription.unsubscribe();
   }
 }

@@ -1,18 +1,20 @@
-import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { AdminEntityFormComponent } from "../admin-entity-form/admin-entity-form.component";
 import { FormConfig } from "../../../entity-details/form/form.component";
-import { FieldGroup } from "../../../entity-details/form/field-group";
-import { ColumnConfig } from "../../../common-components/entity-form/FormConfig";
 import { MatDialogModule } from "@angular/material/dialog";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
 import { MatButtonModule } from "@angular/material/button";
+import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import { Config } from "../../../config/config";
+import { EntityConfigService } from "../../../entity/entity-config.service";
 
 /**
- * Admin component for configuring related entity details popup forms.
- * Allows users to configure which fields are displayed in the popup details view
- * when clicking on a related entity from a related-entities table.
+ * Dialog component for editing the entity's field configuration.
+ * Loads fields from the entity's attributes in the Config database.
+ * Shows configured attributes as "active fields" in the drag-and-drop area,
+ * and all other schema fields as "available fields" in the sidebar.
  */
 @Component({
   selector: "app-admin-related-entity-details",
@@ -30,56 +32,46 @@ import { MatButtonModule } from "@angular/material/button";
   ],
 })
 export class AdminRelatedEntityDetailsComponent implements OnInit {
-  @Input() columns: ColumnConfig[] = [];
+  private entityMapper = inject(EntityMapperService);
+  private entityConfigService = inject(EntityConfigService);
+
   @Input() entityConstructor: EntityConstructor;
-  @Output() columnsChange = new EventEmitter<ColumnConfig[]>();
 
   formConfig: FormConfig = { fieldGroups: [] };
 
-  ngOnInit(): void {
-    this.initializeFormConfig();
+  async ngOnInit(): Promise<void> {
+    await this.loadEntityAttributesConfig();
   }
 
-  private initializeFormConfig(): void {
-    // Convert columns array to FormConfig with a single field group
-    const fieldGroup: FieldGroup = {
-      fields: this.columns.map((col) =>
-        typeof col === "string" ? col : col.id,
-      ),
-      header: $localize`Fields for popup form`,
-    };
-
-    this.formConfig = {
-      fieldGroups: [fieldGroup],
-    };
-  }
-
-  onFormConfigChange(formConfig: FormConfig): void {
-    this.formConfig = formConfig;
+  /**
+   * Load the entity's field configuration from EntityConfig.attributes in the database.
+   * This shows which fields are configured for the entity.
+   * AdminEntityFormComponent will automatically:
+   * - Show configured attributes as "active fields" in the drag-and-drop area
+   * - Show other schema fields as "available fields" in the sidebar
+   */
+  private async loadEntityAttributesConfig(): Promise<void> {
+    const config = await this.entityMapper.load(Config, Config.CONFIG_KEY);
     
-    // Extract fields from the form config and convert back to columns
-    const updatedColumns: ColumnConfig[] = [];
+    const entityConfigKey =
+      EntityConfigService.PREFIX_ENTITY_CONFIG + this.entityConstructor.ENTITY_TYPE;
     
-    formConfig.fieldGroups.forEach((group) => {
-      if (Array.isArray(group.fields)) {
-        group.fields.forEach((field) => {
-          const fieldId = typeof field === "string" ? field : field.id;
-          
-          // Try to preserve existing column config if it exists
-          const existingColumn = this.columns.find(
-            (col) => (typeof col === "string" ? col : col.id) === fieldId,
-          );
-          
-          if (existingColumn && typeof existingColumn !== "string") {
-            updatedColumns.push(existingColumn);
-          } else {
-            updatedColumns.push({ id: fieldId });
-          }
-        });
-      }
-    });
-
-    this.columns = updatedColumns;
-    this.columnsChange.emit(this.columns);
+    const entityConfig = config.data[entityConfigKey];
+    
+    // Get the configured attributes (fields) for this entity
+    const attributes = entityConfig?.attributes || {};
+    
+    // Extract field IDs from attributes
+    const fieldIds = Object.keys(attributes);
+    
+    if (fieldIds.length > 0) {
+      // Show these fields as active fields in the form
+      this.formConfig = {
+        fieldGroups: [{ fields: fieldIds }],
+      };
+    } else {
+      // If no attributes configured, start with empty (all fields will be "available")
+      this.formConfig = { fieldGroups: [] };
+    }
   }
 }

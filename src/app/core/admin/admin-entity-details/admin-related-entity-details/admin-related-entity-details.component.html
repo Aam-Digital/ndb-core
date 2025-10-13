@@ -17,7 +17,6 @@
     <app-admin-entity-form
       [entityType]="entityConstructor"
       [config]="formConfig"
-      (configChange)="onFormConfigChange($event)"
       [uniqueAreaId]="
         'related-entity-details-' + entityConstructor?.ENTITY_TYPE
       "
