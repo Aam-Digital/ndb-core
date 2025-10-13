@@ -2,6 +2,7 @@ import { EntityForm } from "#src/app/core/common-components/entity-form/entity-f
 import { NgClass } from "@angular/common";
 import {
   Component,
+  computed,
   inject,
   Input,
   OnChanges,
@@ -84,14 +85,19 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
   isPartiallyAnonymized: boolean;
 
   /**
-   * Check if the field should show the required indicator
+   * Signal to check if the field is required based on validators config
    */
-  get isRequired(): boolean {
-    return (
+  isRequired = computed(() => this._field?.validators?.required === true);
+
+  /**
+   * Signal to check if the required field should show error styling (red asterisk)
+   */
+  showRequiredError = computed(
+    () =>
+      this.isRequired() &&
       this.formControl?.hasError("required") &&
-      (this.formControl?.touched || this.formControl?.dirty)
-    );
-  }
+      (this.formControl?.touched || this.formControl?.dirty),
+  );
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.field || changes.entity) {
