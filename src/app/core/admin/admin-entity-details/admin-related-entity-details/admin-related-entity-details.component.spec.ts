@@ -30,7 +30,6 @@ describe("AdminRelatedEntityDetailsComponent", () => {
     mockFormService = jasmine.createSpyObj("EntityFormService", [
       "createEntityForm",
     ]);
-
     mockFormService.createEntityForm.and.returnValue(
       Promise.resolve({
         formGroup: new FormGroup({}),
