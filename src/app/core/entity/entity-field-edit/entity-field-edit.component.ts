@@ -85,17 +85,11 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
   isPartiallyAnonymized: boolean;
 
   /**
-   * Signal to check if the field is required based on validators config
-   */
-  isRequired = computed(() => this._field?.validators?.required === true);
-
-  /**
    * Signal to check if the required field should show error styling (red asterisk)
    */
   showRequiredError = computed(
     () =>
-      this.isRequired() &&
-      this.formControl?.hasError("required") &&
+      this._field?.validators?.required === true &&
       (this.formControl?.touched || this.formControl?.dirty),
   );
 
