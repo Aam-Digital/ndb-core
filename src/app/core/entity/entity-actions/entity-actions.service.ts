@@ -16,6 +16,7 @@ import { PublicFormConfig } from "app/features/public-form/public-form-config";
 import { EntityEditService } from "./entity-edit.service";
 import { MatDialog } from "@angular/material/dialog";
 import { BulkLinkExternalProfilesComponent } from "#src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component";
+import { BulkMergeService } from "#src/app/features/de-duplication/bulk-merge-service";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -35,6 +36,7 @@ export class EntityActionsService {
   private duplicateRecordService = inject(DuplicateRecordService);
   private publicFormsService = inject(PublicFormsService);
   private readonly dialog = inject(MatDialog);
+  private readonly bulkMergeService = inject(BulkMergeService);
 
   constructor() {
     const entityActionsMenuService = inject(EntityActionsMenuService);
@@ -112,6 +114,22 @@ export class EntityActionsService {
           if (!entityType) return false;
           const entityEditService = this.injector.get(EntityEditService);
           return entityEditService.edit(entities, entityType);
+        },
+      },
+      {
+        action: "merge",
+        label: $localize`:entity context menu:Merge`,
+        icon: "object-group",
+        tooltip: $localize`:entity context menu tooltip:Merge two records into one, combining their data and deleting duplicates.`,
+        availableFor: "bulk-only",
+        permission: "update",
+        execute: async (entity: Entity) => {
+          const entities = Array.isArray(entity) ? entity : [entity];
+          if (entities.length !== 2) return false;
+          const entityType = entities[0].getConstructor();
+          if (!entityType) return false;
+          await this.bulkMergeService.showMergeDialog(entities, entityType);
+          return true;
         },
       },
     ]);
