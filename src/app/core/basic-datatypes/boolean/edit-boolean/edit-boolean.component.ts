@@ -5,12 +5,12 @@ import {
   ViewEncapsulation,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
-import { BooleanInputComponent } from "./boolean-input/boolean-input.component";
 
 @DynamicComponent("EditBoolean")
 @Component({
@@ -18,7 +18,7 @@ import { BooleanInputComponent } from "./boolean-input/boolean-input.component";
   templateUrl: "./edit-boolean.component.html",
   styleUrls: ["./edit-boolean.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, BooleanInputComponent],
+  imports: [ReactiveFormsModule, MatCheckboxModule],
   providers: [
     { provide: MatFormFieldControl, useExisting: EditBooleanComponent },
   ],

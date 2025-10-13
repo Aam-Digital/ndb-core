@@ -2,6 +2,7 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   inject,
   Input,
@@ -25,6 +26,7 @@ import { Logging } from "../../../core/logging/logging.service";
 import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { FileService } from "../file.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 /**
  * This component should be used as a `editComponent` when a property should store files.
@@ -56,6 +58,7 @@ export class EditFileComponent
   private alertService = inject(AlertService);
   private entityMapper = inject(EntityMapperService);
   protected navigator = inject<Navigator>(NAVIGATOR_TOKEN);
+  private destroyRef = inject(DestroyRef);
 
   @Input() entity: Entity;
   @Input() formFieldConfig: FormFieldConfig;
@@ -86,6 +89,7 @@ export class EditFileComponent
       .pipe(
         distinctUntilChanged(),
         filter((change) => change === "DISABLED"),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         if (

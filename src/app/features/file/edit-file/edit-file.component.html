@@ -52,10 +52,5 @@
 </div>
 
 @if (!navigator.onLine && formControl.enabled) {
-  <div
-    style="font-size: 0.75em; color: rgba(0, 0, 0, 0.6); margin-top: 4px"
-    i18n
-  >
-    Changes to files are not possible offline.
-  </div>
+  <div class="hint-text" i18n>Changes to files are not possible offline.</div>
 }

@@ -308,7 +308,7 @@ export class AdminEntityFormComponent implements OnChanges {
     ) as FormFieldConfig;
 
     const updatedField =
-      configDetails.viewComponent == "DisplayDescriptionOnly"
+      configDetails.viewComponent === "DisplayDescriptionOnly"
         ? await this.openTextConfig(configDetails)
         : await this.openFieldConfig(field);
 

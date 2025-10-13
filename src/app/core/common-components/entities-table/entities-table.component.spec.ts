@@ -16,7 +16,7 @@ import { of } from "rxjs";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
@@ -46,6 +46,23 @@ describe("EntitiesTableComponent", () => {
           useValue: jasmine.createSpyObj(["openFormPopup"]),
         },
         { provide: CurrentUserSubject, useValue: of(null) },
+        {
+          provide: Router,
+          useValue: (() => {
+            const spy = jasmine.createSpyObj(["navigate", "createUrlTree"]);
+            spy.createUrlTree.and.returnValue({ toString: () => "/?foo=bar" });
+            return spy;
+          })(),
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              queryParams: {},
+              queryParamMap: { get: () => null },
+            },
+          },
+        },
       ],
     }).compileComponents();
 
@@ -277,7 +294,7 @@ describe("EntitiesTableComponent", () => {
   });
 
   it("should navigate to '/new' route on newly created entities", () => {
-    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
+    const navigateSpy = TestBed.inject(Router).navigate;
     component.clickMode = "navigate";
 
     const child = new TestEntity();
