@@ -17,6 +17,12 @@ import {
 } from "app/utils/related-entities-default-config";
 import { PanelComponent } from "../../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../../entity/model/entity";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { AdminRelatedEntityDetailsComponent } from "../admin-related-entity-details/admin-related-entity-details.component";
+import { lastValueFrom } from "rxjs";
+import { MatButtonModule } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: "app-admin-entity-panel-component",
@@ -27,6 +33,10 @@ import { EntityConstructor } from "../../../entity/model/entity";
     FormsModule,
     MatOptionModule,
     MatSelectModule,
+    MatButtonModule,
+    MatTooltipModule,
+    FaIconComponent,
+    MatDialogModule,
   ],
   templateUrl: "./admin-entity-panel-component.component.html",
   styleUrl: "./admin-entity-panel-component.component.scss",
@@ -35,6 +45,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   private entities = inject(EntityRegistry);
   private confirmation = inject(ConfirmationDialogService);
   private entityRelationsService = inject(EntityRelationsService);
+  private dialog = inject(MatDialog);
 
   @Input() config: PanelComponent;
   @Input() entityType: EntityConstructor;
@@ -162,5 +173,42 @@ export class AdminEntityPanelComponentComponent implements OnInit {
         ...overrideRelatedConfig,
       };
     }
+  }
+
+  /**
+   * Opens a dialog to configure the data structure and popup form fields
+   * for the related entity type.
+   */
+  async openRelatedEntityDetailsConfig() {
+    if (!this.entityConstructor) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(AdminRelatedEntityDetailsComponent, {
+      width: "90%",
+      maxWidth: "1200px",
+      height: "90vh",
+      data: {
+        entityConstructor: this.entityConstructor,
+        columns: this.config.config.columns || [],
+      },
+    });
+
+    // Pass the entity constructor and columns directly as component inputs
+    dialogRef.componentInstance.entityConstructor = this.entityConstructor;
+    dialogRef.componentInstance.columns = [...(this.config.config.columns || [])];
+
+    // Subscribe to column changes
+    const subscription = dialogRef.componentInstance.columnsChange.subscribe(
+      (updatedColumns: ColumnConfig[]) => {
+        this.config.config.columns = updatedColumns;
+        this.activeFields = updatedColumns.map((col) =>
+          typeof col === "string" ? col : col.id,
+        );
+      },
+    );
+
+    await lastValueFrom(dialogRef.afterClosed());
+    subscription.unsubscribe();
   }
 }

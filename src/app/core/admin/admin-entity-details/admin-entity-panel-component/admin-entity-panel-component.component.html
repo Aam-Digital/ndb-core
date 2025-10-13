@@ -1,6 +1,6 @@
 <div class="padding-regular">
   @if (entityConstructor?.ENTITY_TYPE) {
-    <div class="flex-row">
+    <div class="flex-row gap-regular">
       <mat-form-field appearance="fill" class="margin-bottom-regular flex-grow">
         <mat-label i18n>Entity Type</mat-label>
         <mat-select
@@ -18,7 +18,17 @@
         </mat-select>
       </mat-form-field>
 
-      <div class="flex-grow"></div>
+      <button
+        mat-raised-button
+        color="accent"
+        class="margin-bottom-regular"
+        (click)="openRelatedEntityDetailsConfig()"
+        i18n
+      >
+        <fa-icon icon="edit"></fa-icon>
+        Edit data structure of
+        {{ entityConstructor.label || entityConstructor.ENTITY_TYPE }}
+      </button>
     </div>
 
     <div class="margin-top-regular hint-text">
