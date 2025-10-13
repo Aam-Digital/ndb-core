@@ -11,7 +11,15 @@
   >
     <div class="flex-grow">
       <mat-form-field floatLabel="always" class="allow-full-width">
-        @if (!hideLabel) {
+        @if (!hideLabel && _field.displayFullLengthLabel) {
+          <div
+            class="full-label"
+            [ngClass]="{ 'full-label-disabled': formControl?.disabled }"
+          >
+            {{ _field.label }}
+          </div>
+        }
+        @if (!hideLabel && !_field.displayFullLengthLabel) {
           <mat-label>
             <span [matTooltip]="_field.label" matTooltipPosition="before">
               {{ _field.label }}
