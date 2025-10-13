@@ -897,7 +897,7 @@
                       "fields": [
                         {
                           "id": "_description_health",
-                          "editComponent": "EditDescriptionOnly",
+                          "viewComponent": "DisplayDescriptionOnly",
                           "label": "Gesundheitschecks müssen gemäß den Programmrichtlinien regelmäßig, mindestens alle 6 Monate, durchgeführt werden.\n\nLesen Sie die [Gesundheitsrichtlinien](https://example.com/guidelines), um detaillierte Empfehlungen zu erhalten."
                         },
                         "health_lastDentalCheckup"

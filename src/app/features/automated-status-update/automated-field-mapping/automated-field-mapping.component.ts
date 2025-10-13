@@ -1,3 +1,6 @@
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
+import { EntityFieldLabelComponent } from "#src/app/core/entity/entity-field-label/entity-field-label.component";
 import { Component, inject, OnInit } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -13,9 +16,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
-import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
-import { EntityFieldLabelComponent } from "app/core/common-components/entity-field-label/entity-field-label.component";
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";

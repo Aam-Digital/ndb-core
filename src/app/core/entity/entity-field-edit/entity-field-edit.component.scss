@@ -1,0 +1,31 @@
+.full-label {
+  font-family: var(--mat-form-field-label-text-font, Roboto, Arial, sans-serif);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--mat-form-field-label-text-color, rgba(0, 0, 0, 0.6));
+  line-height: 1.25rem;
+  display: block;
+  white-space: pre-line;
+}
+
+.full-label-disabled {
+  color: var(--mat-form-field-disabled-text-color, rgba(0, 0, 0, 0.38));
+}
+
+.hidden {
+  display: none;
+}
+
+.readonlyAfterSet {
+  opacity: 0.5;
+}
+
+.input-prefix-icon {
+  margin-top: 12px;
+  padding-right: 0.5em;
+}
+
+.allow-full-width {
+  /* allow full-width mat-form-fields if that is needed in child fields like edit-public-form-columns */
+  max-width: unset;
+}

@@ -39,7 +39,7 @@
   </div>
 
   <!-- Action Buttons -->
-  @if (formControl.enabled) {
+  @if (!isDisabled()) {
     <div class="flex-row gap-small">
       @if (!formControl?.value) {
         <button

@@ -19,7 +19,7 @@ test("Edit existing Name field to set and reset default value", async ({
 
   await argosScreenshot(page, "admin-details");
 
-  const nameTextbox = page.getByRole("textbox", { name: "Name" }).first();
+  const nameTextbox = page.locator("mat-form-field").getByText("Name");
   await expect(nameTextbox).toBeVisible();
 
   const nameField = nameTextbox.locator(

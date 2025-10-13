@@ -1,9 +1,8 @@
 <app-edit-entity
   [formControl]="formControl"
   [formFieldConfig]="formFieldConfig"
-  [entity]="entity"
   [showEntities]="!showAttendance"
-/>
+></app-edit-entity>
 
 @if (showAttendance) {
   <!-- If feasible, this whole setup should be replaced with a more simple setup that
@@ -35,7 +34,7 @@
               </app-attendance-status-select>
             </td>
             <td class="full-width">
-              <mat-form-field class="adjust-top">
+              <mat-form-field class="adjust-top margin-small">
                 <input
                   #inputElement
                   matInput

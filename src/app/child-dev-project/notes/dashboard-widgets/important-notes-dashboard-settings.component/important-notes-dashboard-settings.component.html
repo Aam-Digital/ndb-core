@@ -1,11 +1,16 @@
 <div style="padding: 16px">
   <h3 i18n>Warning Levels</h3>
-  <app-enum-dropdown
-    [form]="warningLevelsForm"
-    label="Warning Levels"
-    i18n-label
-    enumId="warning-levels"
-    [multi]="true"
-  >
-  </app-enum-dropdown>
+  <mat-form-field>
+    <mat-label>{{ warningLevelsFieldConfig?.label }}</mat-label>
+    <app-edit-configurable-enum
+      [formControl]="warningLevelsForm"
+      [formFieldConfig]="warningLevelsFieldConfig"
+    >
+    </app-edit-configurable-enum>
+    @if (warningLevelsForm.errors) {
+      <mat-error>
+        <app-error-hint [form]="warningLevelsForm"></app-error-hint>
+      </mat-error>
+    }
+  </mat-form-field>
 </div>

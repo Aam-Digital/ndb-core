@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { EntityRegistry } from "../database-entity.decorator";
+import { setupCustomFormControlEditComponent } from "../entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { EditEntityTypeComponent } from "./edit-entity-type.component";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { setupEditComponent } from "../default-datatype/edit-component.spec";
 
 describe("EditEntityTypeComponent", () => {
   let component: EditEntityTypeComponent;
@@ -10,12 +11,15 @@ describe("EditEntityTypeComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EditEntityTypeComponent, MockedTestingModule.withState()],
+      imports: [EditEntityTypeComponent, NoopAnimationsModule],
+      providers: [EntityRegistry],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditEntityTypeComponent);
     component = fixture.componentInstance;
-    setupEditComponent(component);
+
+    setupCustomFormControlEditComponent(component);
+
     fixture.detectChanges();
   });
 

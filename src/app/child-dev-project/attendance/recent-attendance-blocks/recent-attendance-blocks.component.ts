@@ -11,6 +11,7 @@ import {
 } from "../../../utils/media/screen-size-observer.service";
 import { SlicePipe } from "@angular/common";
 import { AttendanceBlockComponent } from "../attendance-block/attendance-block.component";
+import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 
 /**
  * This component lists attendance blocks for a child for recent months filtered by institutions.
@@ -31,17 +32,22 @@ import { AttendanceBlockComponent } from "../attendance-block/attendance-block.c
   `,
   imports: [SlicePipe, AttendanceBlockComponent],
 })
-export class RecentAttendanceBlocksComponent implements OnInit {
+export class RecentAttendanceBlocksComponent
+  extends ViewDirective<any>
+  implements OnInit
+{
   private attendanceService = inject(AttendanceService);
   private screenWidthObserver = inject(ScreenWidthObserver);
 
   attendanceList: ActivityAttendance[] = [];
   maxAttendanceBlocks: number = 3;
 
-  @Input() entity: Entity;
-  @Input() config: { filterByActivityType: string };
+  @Input() override entity: Entity;
+  @Input() override config: { filterByActivityType: string };
 
   constructor() {
+    super();
+
     this.screenWidthObserver
       .shared()
       .pipe(untilDestroyed(this))

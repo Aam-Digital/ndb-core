@@ -1,24 +1,38 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from "@angular/core";
 import {
   FormArray,
   FormBuilder,
+  FormControl,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { AdminDefaultValueComponent } from "../../../core/default-values/admin-default-value/admin-default-value.component";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
-import { EditComponent } from "app/core/entity/default-datatype/edit-component";
-import { EntityConstructor } from "app/core/entity/model/entity";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatSelectModule } from "@angular/material/select";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DefaultValueConfig } from "../../../core/default-values/default-value-config";
-import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 import { MatButtonModule } from "@angular/material/button";
+import {
+  MatFormFieldControl,
+  MatFormFieldModule,
+} from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
+import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { AdminDefaultValueComponent } from "../../../core/default-values/admin-default-value/admin-default-value.component";
+import { DefaultValueConfig } from "../../../core/default-values/default-value-config";
 
+@DynamicComponent("EditPrefilledValuesComponent")
 @Component({
   selector: "app-edit-prefilled-values",
   standalone: true,
@@ -35,22 +49,35 @@ import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
   ],
   templateUrl: "./edit-prefilled-values.component.html",
   styleUrls: ["./edit-prefilled-values.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    { provide: MatFormFieldControl, useExisting: EditPrefilledValuesComponent },
+  ],
 })
 export class EditPrefilledValuesComponent
-  extends EditComponent<Record<string, DefaultValueConfig>>
-  implements OnInit
+  extends CustomFormControlDirective<Record<string, DefaultValueConfig>>
+  implements OnInit, EditComponent
 {
+  @Input() formFieldConfig?: FormFieldConfig;
+  @Input() entity?: Entity;
+
   entityConstructor: EntityConstructor;
   entitySchemaField: EntitySchemaField;
 
-  private entities = inject(EntityRegistry);
-  private fb = inject(FormBuilder);
+  private readonly entities = inject(EntityRegistry);
+  private readonly fb = inject(FormBuilder);
+
+  get formControl(): FormControl<Record<string, DefaultValueConfig>> {
+    return this.ngControl.control as FormControl<
+      Record<string, DefaultValueConfig>
+    >;
+  }
 
   prefilledValueSettings = this.fb.group({
     prefilledValue: this.fb.array([]),
   });
 
-  override ngOnInit(): void {
+  ngOnInit(): void {
     if (!this.entity) return;
 
     this.entityConstructor = this.entities.get(this.entity["entity"]);
@@ -58,6 +85,20 @@ export class EditPrefilledValuesComponent
     this.prefilledValueSettings.valueChanges.subscribe((value) =>
       this.updateFieldGroups(value as { prefilledValue: PrefilledValue[] }),
     );
+
+    // Sync disabled state between main form control and internal form
+    this.formControl.statusChanges.subscribe(() => {
+      if (this.formControl.disabled) {
+        this.prefilledValueSettings.disable({ emitEvent: false });
+      } else {
+        this.prefilledValueSettings.enable({ emitEvent: false });
+      }
+    });
+
+    // Set initial disabled state
+    if (this.formControl.disabled) {
+      this.prefilledValueSettings.disable({ emitEvent: false });
+    }
   }
 
   get prefilledValues(): FormArray {
