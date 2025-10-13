@@ -83,6 +83,16 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
 
   isPartiallyAnonymized: boolean;
 
+  /**
+   * Check if the field should show the required indicator
+   */
+  get isRequired(): boolean {
+    return (
+      this.formControl?.hasError("required") &&
+      (this.formControl?.touched || this.formControl?.dirty)
+    );
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.field || changes.entity) {
       this.updateField();

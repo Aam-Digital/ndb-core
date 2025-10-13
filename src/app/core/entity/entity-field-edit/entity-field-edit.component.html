@@ -14,8 +14,11 @@
         @if (!hideLabel) {
           <mat-label>
             <span [matTooltip]="_field.label" matTooltipPosition="before">
-              {{ _field.label }}</span
-            >
+              {{ _field.label }}
+              @if (isRequired) {
+                <span>*</span>
+              }
+            </span>
           </mat-label>
         }
 
