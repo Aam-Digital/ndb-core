@@ -31,6 +31,9 @@ import { Router } from "@angular/router";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { EntityFieldEditComponent } from "../../entity/entity-field-edit/entity-field-edit.component";
+import { EntityFieldLabelComponent } from "../../entity/entity-field-label/entity-field-label.component";
+import { EntityFieldViewComponent } from "../../entity/entity-field-view/entity-field-view.component";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
@@ -38,9 +41,6 @@ import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
-import { EntityFieldEditComponent } from "../entity-field-edit/entity-field-edit.component";
-import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
-import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 import {
   ColumnConfig,
   FormFieldConfig,

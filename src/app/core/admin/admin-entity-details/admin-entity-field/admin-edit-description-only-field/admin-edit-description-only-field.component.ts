@@ -1,22 +1,22 @@
 import { Component, OnChanges, SimpleChanges, inject } from "@angular/core";
 import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from "@angular/material/dialog";
-import { MatButtonModule } from "@angular/material/button";
-import { DialogCloseComponent } from "../../../../common-components/dialog-close/dialog-close.component";
-import { MatInputModule } from "@angular/material/input";
-import {
   FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatButtonModule } from "@angular/material/button";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
+import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { v4 as uuid } from "uuid";
+import { DialogCloseComponent } from "../../../../common-components/dialog-close/dialog-close.component";
 import { FormFieldConfig } from "../../../../common-components/entity-form/FormConfig";
 
 @Component({
@@ -72,7 +72,7 @@ export class AdminEditDescriptionOnlyFieldComponent implements OnChanges {
 
     const newSchemaField = {
       id: this.formField.id,
-      editComponent: "EditDescriptionOnly",
+      viewComponent: "DisplayDescriptionOnly",
       label: this.schemaFieldsForm.get("label").value,
     };
 

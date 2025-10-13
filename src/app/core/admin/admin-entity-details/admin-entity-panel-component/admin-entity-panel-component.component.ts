@@ -1,22 +1,22 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
+import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { RelatedEntitiesComponentConfig } from "#src/app/core/entity-details/related-entity-config";
+import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
 import { CommonModule } from "@angular/common";
-import { PanelComponent } from "../../../entity-details/EntityDetailsConfig";
-import { EntityConstructor } from "../../../entity/model/entity";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { Component, Input, OnInit, inject } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { MatOptionModule } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
+import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import {
   RELATED_ENTITIES_DEFAULT_CONFIGS,
   RELATED_ENTITY_OVERRIDES,
 } from "app/utils/related-entities-default-config";
-import { FormsModule } from "@angular/forms";
-import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
-import { RelatedEntitiesComponentConfig } from "#src/app/core/entity-details/related-entity-config";
-import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
-import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
-import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
-import { MatOptionModule } from "@angular/material/core";
-import { MatSelectModule } from "@angular/material/select";
-import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { PanelComponent } from "../../../entity-details/EntityDetailsConfig";
+import { EntityConstructor } from "../../../entity/model/entity";
 
 @Component({
   selector: "app-admin-entity-panel-component",
@@ -152,7 +152,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   private applyCustomOverrides(newType: string) {
     delete this.config.config.loaderMethod;
     delete this.config.config.property;
-    const overrideRelatedConfig: RelatedEntitiesComponentConfig =
+    const overrideRelatedConfig: Partial<RelatedEntitiesComponentConfig> =
       RELATED_ENTITY_OVERRIDES[newType];
 
     if (overrideRelatedConfig) {

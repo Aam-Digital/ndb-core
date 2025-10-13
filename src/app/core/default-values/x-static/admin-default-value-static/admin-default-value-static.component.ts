@@ -1,3 +1,5 @@
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
 import {
   Component,
   inject,
@@ -7,15 +9,13 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { MatFormFieldControl } from "@angular/material/form-field";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { Entity } from "app/core/entity/model/entity";
+import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
 import { DefaultValueConfigStatic } from "../default-value-config-static";
-import { MatFormFieldControl } from "@angular/material/form-field";
-import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
-import { Entity } from "app/core/entity/model/entity";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
-import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
-import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 
 /**
  * UI to edit a static default value in the Admin UI.

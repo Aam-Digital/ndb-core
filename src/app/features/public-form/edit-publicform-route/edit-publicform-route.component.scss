@@ -1,16 +1,9 @@
 @use "variables/breakpoints";
-
-.router-container {
-  display: flex;
-  flex-direction: row;
-}
-
-.disabled {
-  pointer-events: none;
-}
+@use "variables/colors";
 
 .readonly-prefix {
   word-break: break-word;
+  align-self: center;
 }
 
 .prefix-text-disabled {
@@ -26,6 +19,10 @@
   flex-direction: row;
   align-items: center;
   flex-wrap: wrap;
+}
+
+.copy-button {
+  pointer-events: auto !important;
 }
 
 @media screen and (max-width: breakpoints.$md) {
