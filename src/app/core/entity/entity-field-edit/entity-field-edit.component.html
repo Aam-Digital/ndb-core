@@ -17,6 +17,9 @@
             [ngClass]="{ 'full-label-disabled': formControl?.disabled }"
           >
             {{ _field.label }}
+            @if (_field?.validators?.required) {
+              <span class="required-error">*</span>
+            }
           </div>
         }
         @if (!hideLabel && !_field.displayFullLengthLabel) {
