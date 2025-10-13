@@ -31,8 +31,13 @@
               <input formControlName="label" matInput #formLabel />
             </mat-form-field>
 
-            <mat-checkbox formControlName="displayFullLengthLabel" i18n>
-              Display full label (multi-line, no ellipsis)
+            <mat-checkbox
+              formControlName="displayFullLengthLabel"
+              matTooltip="Normally, long labels are shortened with an ellipsis (...) to keep simple views with only single-line labels. If you enable this option, the full label will be displayed on multiple lines instead of being shortened."
+              i18n-matTooltip
+              i18n
+            >
+              Display full label (multi-line)
             </mat-checkbox>
 
             <mat-form-field floatLabel="always">
