@@ -54,6 +54,7 @@ export class SearchComponent {
   private router = inject(Router);
   private userRoleGuard = inject(UserRoleGuard);
   private searchService = inject(SearchService);
+  private readonly resultsSubject = new BehaviorSubject<Entity[]>([]);
 
   static INPUT_DEBOUNCE_TIME_MS = 400;
   MIN_CHARACTERS_FOR_SEARCH = 2;
@@ -72,7 +73,6 @@ export class SearchComponent {
 
   formControl = new FormControl("");
 
-  private resultsSubject = new BehaviorSubject<Entity[]>([]);
   results: Observable<Entity[]> = this.resultsSubject.asObservable();
   @ViewChild("searchInput") searchInput: ElementRef<HTMLInputElement>;
   @ViewChild("autoResults") autocomplete: MatAutocomplete;
