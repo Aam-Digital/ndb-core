@@ -6,20 +6,30 @@
       {{ title }}
     </app-view-title>
     <app-view-actions>
-      <div class="flex-row gap-regular">
-        <app-entity-create-button
-          [entityType]="entityConstructor"
-          (entityCreate)="addNew()"
-        ></app-entity-create-button>
-        <button
-          mat-icon-button
-          color="primary"
-          [matMenuTriggerFor]="additional"
-        >
-          <fa-icon icon="ellipsis-v"></fa-icon>
-        </button>
-      </div>
+      @if (!selectedRows) {
+        <div class="flex-row gap-regular">
+          <app-entity-create-button
+            [entityType]="entityConstructor"
+            (entityCreate)="addNew()"
+          ></app-entity-create-button>
+          <button
+            mat-icon-button
+            color="primary"
+            [matMenuTriggerFor]="additional"
+          >
+            <fa-icon icon="ellipsis-v"></fa-icon>
+          </button>
+        </div>
+      }
     </app-view-actions>
+    <!-- Bulk actions -->
+    @if (!!selectedRows) {
+        <app-entity-bulk-actions
+          [entities]="selectedRows"
+          (actionTriggered)="onBulkAction($event)"
+        >
+        </app-entity-bulk-actions>
+    }
     <!-- Filters -->
     <div class="flex-row gap-regular flex-wrap">
       <div *ngTemplateOutlet="filterDialog"></div>
@@ -36,8 +46,6 @@
         ></app-filter>
       }
     </div>
-    <!-- Bulk Actions -->
-    <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
     <!-- Tab Groups-->
     <div class="mat-elevation-z1">
       @if (groups.length > 1) {

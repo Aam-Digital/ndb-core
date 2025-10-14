@@ -8,12 +8,14 @@ import {
   BasicAutocompleteComponent,
   BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
 } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
   selector: "app-entity-bulk-actions",
   templateUrl: "./entity-bulk-actions.component.html",
   standalone: true,
   imports: [
+    MatButtonModule,
     ReactiveFormsModule,
     BasicAutocompleteComponent,
     ...BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
