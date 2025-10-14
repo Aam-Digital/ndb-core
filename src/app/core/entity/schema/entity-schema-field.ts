@@ -116,6 +116,11 @@ export interface EntitySchemaField {
   labelShort?: string;
 
   /**
+   * If set to `true`, the full length label should be displayed (even if it spans multiple lines).
+   */
+  displayFullLengthLabel?: boolean;
+
+  /**
    * A further description of the property which can be displayed in tooltips.
    */
   description?: string;
