@@ -1,4 +1,5 @@
 import { Component, computed, inject, input, output } from "@angular/core";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { Entity } from "../../entity/model/entity";
 import { EntityActionsMenuService } from "../entity-actions-menu/entity-actions-menu.service";
@@ -27,9 +28,21 @@ export class EntityBulkActionsComponent {
   actionTriggered = output<EntityAction>();
 
   private readonly actionsService = inject(EntityActionsMenuService);
+  private readonly snackBar = inject(MatSnackBar);
   // Compute available bulk actions for the current selection
   bulkActions = computed(() =>
-    this.actionsService.getBulkActions().filter((action) => !!action),
+    this.actionsService
+      .getBulkActions()
+      .map((action) => {
+        if (action.action === "merge") {
+          return {
+            ...action,
+            disabled: !this.entities() || this.entities().length !== 2,
+          };
+        }
+        return action;
+      })
+      .filter((action) => !!action),
   );
   actionControl = new FormControl();
   actionToString = (action: EntityAction) => action?.label || "";
@@ -41,6 +54,18 @@ export class EntityBulkActionsComponent {
   }
 
   onActionSelected(action: EntityAction) {
+    if (
+      action.action === "merge" &&
+      (!this.entities() || this.entities().length !== 2)
+    ) {
+      this.snackBar.open(
+        $localize`:bulk merge error:Please select exactly two records to perform merge.`,
+        undefined,
+        { duration: 4000 },
+      );
+      this.actionControl.setValue(null, { emitEvent: false });
+      return;
+    }
     this.actionTriggered.emit(action);
     this.actionControl.setValue(null, { emitEvent: false });
   }

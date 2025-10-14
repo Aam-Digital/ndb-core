@@ -36,8 +36,10 @@ export class PublicFormsService {
       this.entityActionsMenuService.registerActions([
         {
           action: `copy-form-${config.getId()}`,
-          execute: (entity) =>
-            this.copyPublicFormLinkFromConfig(config, entity),
+          execute: (entity) => {
+            const singleEntity = Array.isArray(entity) ? entity[0] : entity;
+            return this.copyPublicFormLinkFromConfig(config, singleEntity);
+          },
           permission: "read",
           icon: "link",
           label: $localize`Copy Custom Form (${config.title})`,

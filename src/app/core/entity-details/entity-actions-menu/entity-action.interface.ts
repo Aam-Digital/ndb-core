@@ -38,7 +38,10 @@ export interface EntityAction {
    * The method being executed when the action is triggered.
    * @param e The entity on which the action is executed
    */
-  execute: (entity: Entity, navigateOnDelete?: boolean) => Promise<boolean>;
+  execute: (
+    entity: Entity | Entity[],
+    navigateOnDelete?: boolean,
+  ) => Promise<boolean>;
 
   /**
    * Controls visibility of the action based on the given entity.
