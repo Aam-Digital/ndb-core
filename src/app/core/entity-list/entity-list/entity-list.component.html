@@ -24,11 +24,11 @@
     </app-view-actions>
     <!-- Bulk actions -->
     @if (!!selectedRows) {
-        <app-entity-bulk-actions
-          [entities]="selectedRows"
-          (actionTriggered)="onBulkAction($event)"
-        >
-        </app-entity-bulk-actions>
+      <app-entity-bulk-actions
+        [entities]="selectedRows"
+        (actionTriggered)="onBulkAction($event)"
+      >
+      </app-entity-bulk-actions>
     }
     <!-- Filters -->
     <div class="flex-row gap-regular flex-wrap">

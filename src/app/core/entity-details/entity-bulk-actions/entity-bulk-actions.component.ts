@@ -1,7 +1,6 @@
 import { Component, computed, inject, input, output } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { Entity } from "../../entity/model/entity";
-import { AlertService } from "../../alerts/alert.service";
 import { EntityActionsMenuService } from "../entity-actions-menu/entity-actions-menu.service";
 import { EntityAction } from "../entity-actions-menu/entity-action.interface";
 import {
@@ -13,6 +12,7 @@ import { MatButtonModule } from "@angular/material/button";
 @Component({
   selector: "app-entity-bulk-actions",
   templateUrl: "./entity-bulk-actions.component.html",
+  styleUrls: ["./entity-bulk-actions.component.scss"],
   standalone: true,
   imports: [
     MatButtonModule,
@@ -27,8 +27,6 @@ export class EntityBulkActionsComponent {
   actionTriggered = output<EntityAction>();
 
   private readonly actionsService = inject(EntityActionsMenuService);
-  private readonly alertService = inject(AlertService);
-
   // Compute available bulk actions for the current selection
   bulkActions = computed(() =>
     this.actionsService.getBulkActions().filter((action) => !!action),
@@ -43,13 +41,6 @@ export class EntityBulkActionsComponent {
   }
 
   onActionSelected(action: EntityAction) {
-    if (!this.entities() || this.entities().length === 0) {
-      this.alertService.addInfo(
-        $localize`Please select at least one record before performing a bulk action.`,
-      );
-      this.actionControl.setValue(null, { emitEvent: false });
-      return;
-    }
     this.actionTriggered.emit(action);
     this.actionControl.setValue(null, { emitEvent: false });
   }
