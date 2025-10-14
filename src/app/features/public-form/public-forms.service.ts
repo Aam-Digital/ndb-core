@@ -45,7 +45,7 @@ export class PublicFormsService {
           label: $localize`Copy Custom Form (${config.title})`,
           tooltip: $localize`Copy link to public form "${config.title}" that will connect submissions to this individual record.`,
           visible: (entity) => this.isEntityTypeLinkedToConfig(config, entity),
-          availableFor: "all",
+          availableFor: "individual-only",
         },
       ]);
     }
