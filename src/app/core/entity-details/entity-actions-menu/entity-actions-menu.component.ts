@@ -66,9 +66,10 @@ export class EntityActionsMenuComponent implements OnChanges {
       this.actions = [];
       return;
     }
-    const allActions: EntityAction[] = this.entityActionsMenuService.getActions(
-      this.entity,
-    );
+    // Pre-filter out bulk-only actions for single-entity context
+    const allActions: EntityAction[] = this.entityActionsMenuService
+      .getActions(this.entity)
+      .filter((action) => (action.availableFor ?? "all") !== "bulk-only");
 
     // check each action’s `visible` property to hide actions not applicable to the current entity
     const visibleActions = (

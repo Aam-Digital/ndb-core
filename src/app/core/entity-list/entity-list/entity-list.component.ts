@@ -66,6 +66,7 @@ import { PublicFormConfig } from "#src/app/features/public-form/public-form-conf
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EmailClientService } from "#src/app/features/email-client/email-client.service";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
+import { EntityAction } from "../../entity-details/entity-actions-menu/entity-action.interface";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -378,13 +379,23 @@ export class EntityListComponent<T extends Entity>
     this.addNewClick.emit();
   }
 
-  onBulkAction(action: any) {
-    // If the action has an execute method, call it with selectedRows
-    if (action && typeof action.execute === "function") {
-      action.execute(this.selectedRows);
+  async onBulkAction(action: EntityAction | undefined) {
+    if (!action) {
+      this.selectedRows = [];
+      return;
     }
-    // Optionally, reset selection after action
-    this.selectedRows = undefined;
+    if (!action.execute || !this.selectedRows?.length) {
+      return;
+    }
+    try {
+      for (const entity of this.selectedRows) {
+        await action.execute(entity);
+      }
+      // Reset selection after successful action
+      this.selectedRows = [];
+    } catch (error) {
+      console.error("Bulk action failed:", error);
+    }
   }
 
   onRowClick(row: T) {
