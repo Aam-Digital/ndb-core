@@ -23,13 +23,7 @@
       }
     </app-view-actions>
     <!-- Bulk actions -->
-    @if (!!selectedRows) {
-      <app-entity-bulk-actions
-        [entities]="selectedRows"
-        (actionTriggered)="onBulkAction($event)"
-      >
-      </app-entity-bulk-actions>
-    }
+    <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
     <!-- Filters -->
     <div class="flex-row gap-regular flex-wrap">
       <div *ngTemplateOutlet="filterDialog"></div>
