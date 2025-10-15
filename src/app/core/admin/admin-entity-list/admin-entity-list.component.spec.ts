@@ -13,6 +13,7 @@ import {
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
 import { toFormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import { SyncStateSubject } from "../../session/session-type";
 
 describe("AdminEntityListComponent", () => {
   let component: AdminEntityListComponent;
@@ -36,6 +37,7 @@ describe("AdminEntityListComponent", () => {
         { provide: ActivatedRoute, useValue: {} },
         { provide: EntityFormService, useValue: mockFormService },
         { provide: EntityRegistry, useValue: entityRegistry },
+        SyncStateSubject,
       ],
     }).compileComponents();
 

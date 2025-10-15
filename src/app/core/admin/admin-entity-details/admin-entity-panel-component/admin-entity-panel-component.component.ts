@@ -19,7 +19,6 @@ import { PanelComponent } from "../../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { AdminRelatedEntityDetailsComponent } from "../admin-related-entity-details/admin-related-entity-details.component";
-import { lastValueFrom } from "rxjs";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -178,20 +177,22 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   /**
    * Opens a dialog showing the entity's form configuration.
    * This allows editing the entity's fields structure independently.
-   * Changes made in the dialog update the entity schema and will be
-   * available in the "Available Fields" dropdown for selection.
+   * When "Apply" is clicked, newly added fields are added to the dropdown options
+   * (not automatically selected).
    */
   openRelatedEntityDetailsConfig(): void {
     if (!this.entityConstructor) {
       return;
     }
 
-    const dialogRef = this.dialog.open(AdminRelatedEntityDetailsComponent, {
-      width: "90%",
-      maxWidth: "1200px",
-      height: "90vh",
-    });
+    const dialogRef = this.dialog.open(AdminRelatedEntityDetailsComponent);
 
     dialogRef.componentInstance.entityConstructor = this.entityConstructor;
+    dialogRef.afterClosed().subscribe((newFieldIds: string[]) => {
+      if (newFieldIds && newFieldIds.length > 0) {
+        const updatedActiveFields = [...this.activeFields, ...newFieldIds];
+        this.updateFields(updatedActiveFields);
+      }
+    });
   }
 }

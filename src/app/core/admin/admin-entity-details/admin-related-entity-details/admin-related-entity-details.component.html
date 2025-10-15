@@ -26,5 +26,6 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-button mat-dialog-close i18n>Close</button>
+  <button mat-raised-button (click)="applyChanges()" i18n>Apply</button>
+  <button mat-button (click)="cancelChanges()" i18n>Cancel</button>
 </mat-dialog-actions>
