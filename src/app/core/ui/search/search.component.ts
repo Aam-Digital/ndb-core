@@ -126,21 +126,14 @@ export class SearchComponent {
 
     return from(this.searchService.getSearchResults(searchTerm)).pipe(
       map((entities) => {
-        const filtered = this.prepareResults(entities);
-
-        // Only update state if this search result is for the current search string
-        if (
-          this.currentSearchString === originalSearchString &&
-          this.state === this.SEARCH_IN_PROGRESS
-        ) {
-          this.state =
-            filtered.length === 0 ? this.NO_RESULTS : this.SHOW_RESULTS;
+        if (this.currentSearchString !== originalSearchString) {
+          // Abort because the results are not relevant anymore
+          return [];
         }
-
-        // Only return results if this search is still relevant
-        return this.currentSearchString === originalSearchString
-          ? filtered
-          : [];
+        const filtered = this.prepareResults(entities);
+        this.state =
+          filtered.length === 0 ? this.NO_RESULTS : this.SHOW_RESULTS;
+        return filtered;
       }),
     );
   }
