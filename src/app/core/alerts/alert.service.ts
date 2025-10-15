@@ -72,11 +72,7 @@ export class AlertService {
       AlertService.ALERT_BASE_CLASS + "--" + alert.type,
     ];
 
-    this.snackBar.open(
-      alert.message,
-      "×",
-      snackConfig,
-    );
+    this.snackBar.open(alert.message, "×", snackConfig);
   }
 
   /**
