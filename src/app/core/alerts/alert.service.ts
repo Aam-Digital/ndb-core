@@ -74,7 +74,7 @@ export class AlertService {
 
     this.snackBar.open(
       alert.message,
-      $localize`:alert dismiss action:dismiss`,
+      $localize`:alert close action as x:×`,
       snackConfig,
     );
   }
