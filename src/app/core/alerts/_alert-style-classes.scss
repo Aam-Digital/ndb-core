@@ -5,6 +5,13 @@
 
   /* There is no `ndb-alert--info` class since `info` has the default styling. */
 
+  // Increase the size of the close (×) icon in the snack bar action
+  .mat-mdc-snack-bar-action {
+    font-size: 1.5rem;
+    line-height: 1;
+    min-width: 2.5rem;
+  }
+
   &--warning {
     background-color: colors.$warn !important;
     color: rgba(0, 0, 0, 0.87) !important;
