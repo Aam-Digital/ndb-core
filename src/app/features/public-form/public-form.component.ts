@@ -21,10 +21,7 @@ import {
 import { DefaultValueConfig } from "../../core/default-values/default-value-config";
 import { DisplayImgComponent } from "../file/display-img/display-img.component";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
-import {
-  FaIconComponent,
-  FontAwesomeModule,
-} from "@fortawesome/angular-fontawesome";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MarkdownPageModule } from "../markdown-page/markdown-page.module";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 
@@ -40,7 +37,6 @@ import { DatabaseResolverService } from "../../core/database/database-resolver.s
     DisplayImgComponent,
     FontAwesomeModule,
     MarkdownPageModule,
-    FaIconComponent,
   ],
 })
 export class PublicFormComponent<E extends Entity> implements OnInit {
