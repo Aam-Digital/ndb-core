@@ -8,7 +8,7 @@ import {
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { BehaviorSubject, Observable, from, of } from "rxjs";
-import { switchMap, debounceTime, tap, map } from "rxjs/operators";
+import { switchMap, debounceTime, tap, map, catchError } from "rxjs/operators";
 import { Router } from "@angular/router";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
@@ -134,6 +134,10 @@ export class SearchComponent {
         this.state =
           filtered.length === 0 ? this.NO_RESULTS : this.SHOW_RESULTS;
         return filtered;
+      }),
+      catchError((_err) => {
+        this.state = this.NO_RESULTS;
+        return of([]);
       }),
     );
   }
