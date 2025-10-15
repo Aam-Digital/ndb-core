@@ -31,7 +31,3 @@
   /* allow full-width mat-form-fields if that is needed in child fields like edit-public-form-columns */
   max-width: unset;
 }
-
-.required-error {
-  color: colors.$error;
-}

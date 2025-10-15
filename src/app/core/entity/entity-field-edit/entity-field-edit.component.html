@@ -18,7 +18,7 @@
           >
             {{ _field.label }}
             @if (_field?.validators?.required) {
-              <span class="required-error">*</span>
+              <span class="color-error">*</span>
             }
           </div>
         }
@@ -27,7 +27,7 @@
             <span [matTooltip]="_field.label" matTooltipPosition="before">
               {{ _field.label }}
               @if (_field?.validators?.required) {
-                <span class="required-error">*</span>
+                <span class="color-error">*</span>
               }
             </span>
           </mat-label>
