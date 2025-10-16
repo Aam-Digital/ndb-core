@@ -3,6 +3,7 @@ import { DatabaseIndexingService } from "../../entity/database-indexing/database
 import { Entity } from "../../entity/model/entity";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { ConfigService } from "../../config/config.service";
 
 /**
  * This service handles to logic for global searches across all entities
@@ -14,10 +15,12 @@ export class SearchService {
   private indexingService = inject(DatabaseIndexingService);
   private schemaService = inject(EntitySchemaService);
   private entities = inject(EntityRegistry);
+  private readonly configService = inject(ConfigService);
 
   private searchableEntities: [string, string[]][];
 
   constructor() {
+    this.configService.configUpdates.subscribe(() => this.createSearchIndex());
     this.createSearchIndex();
   }
 
