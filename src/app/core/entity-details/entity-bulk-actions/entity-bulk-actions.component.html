@@ -1,11 +1,11 @@
-<div class="flex-row gap-regular">
+<div class="flex-row gap-regular mat-elevation-z6">
   <div class="bulk-action-select-wrapper">
     <mat-form-field class="bulk-action-autocomplete full-width">
       <mat-label i18n>Select Bulk Action</mat-label>
 
       <app-basic-autocomplete
         [formControl]="actionControl"
-        [options]="bulkActions()"
+        [options]="bulkActions.value()"
         [optionToString]="actionToString"
         display="text"
       ></app-basic-autocomplete>

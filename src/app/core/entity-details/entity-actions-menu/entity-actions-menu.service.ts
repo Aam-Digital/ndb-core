@@ -27,12 +27,30 @@ export class EntityActionsMenuService {
   /**
    * Get only actions available for bulk operations.
    */
-  getActionsForBulk(entity?: Entity): EntityAction[] {
-    return this.getActions(entity).filter(
+  async getActionsForBulk(entities?: Entity[]): Promise<EntityAction[]> {
+    const entity = !entities || entities.length === 0 ? undefined : entities[0];
+
+    const bulkActions = this.getActions(entity).filter(
       (action) =>
         (action.availableFor ?? "all") === "bulk-only" ||
         (action.availableFor ?? "all") === "all",
     );
+
+    const visibleActions = [];
+    for (const action of bulkActions) {
+      let isVisible: boolean;
+      if (action.visible && entities) {
+        isVisible = await action.visible(entities);
+      } else {
+        isVisible = true;
+      }
+
+      if (isVisible) {
+        visibleActions.push(action);
+      }
+    }
+
+    return visibleActions;
   }
 
   /**

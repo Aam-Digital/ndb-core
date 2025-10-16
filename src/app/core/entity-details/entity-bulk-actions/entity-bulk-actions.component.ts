@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output } from "@angular/core";
+import { Component, inject, input, output, resource } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { Entity } from "../../entity/model/entity";
@@ -40,20 +40,26 @@ export class EntityBulkActionsComponent {
   /**
    * Available bulk actions for the current selection
    */
-  bulkActions = computed(() =>
-    this.actionsService
-      .getActionsForBulk()
-      .map((action) => {
-        if (action.action === "merge") {
-          return {
-            ...action,
-            disabled: !this.entities() || this.entities().length !== 2,
-          };
-        }
-        return action;
-      })
-      .filter((action) => !!action),
-  );
+  bulkActions = resource({
+    params: () => ({ entities: this.entities() }),
+    loader: async ({ params }) => {
+      const bulkActions = await this.actionsService.getActionsForBulk(
+        params.entities,
+      );
+      return bulkActions
+        .map((action) => {
+          if (action.action === "merge") {
+            return {
+              ...action,
+              disabled: !this.entities() || this.entities().length !== 2,
+            };
+          }
+          return action;
+        })
+        .filter((action) => !!action);
+    },
+    defaultValue: [],
+  });
 
   actionControl = new FormControl();
   actionToString = (action: EntityAction) => action?.label || "";

@@ -1,4 +1,4 @@
-import { Injectable, Injector, inject } from "@angular/core";
+import { inject, Injectable, Injector } from "@angular/core";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { Entity } from "../model/entity";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -15,8 +15,8 @@ import { PublicFormsService } from "app/features/public-form/public-forms.servic
 import { PublicFormConfig } from "app/features/public-form/public-form-config";
 import { EntityEditService } from "./entity-edit.service";
 import { MatDialog } from "@angular/material/dialog";
-import { BulkLinkExternalProfilesComponent } from "#src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component";
 import { BulkMergeService } from "#src/app/features/de-duplication/bulk-merge-service";
+import { asArray } from "#src/app/utils/asArray";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -43,23 +43,6 @@ export class EntityActionsService {
 
     entityActionsMenuService.registerActions([
       {
-        action: "bulk-link-external-profile",
-        label: $localize`:entity context menu:Link External Profile`,
-        icon: "link",
-        tooltip: $localize`:entity context menu tooltip:Link multiple records to external profiles in bulk.`,
-        availableFor: "bulk-only",
-        permission: "update",
-        execute: async (entity: Entity) => {
-          const entities = Array.isArray(entity) ? entity : [entity];
-          if (!entities.length) return false;
-          this.dialog.open(BulkLinkExternalProfilesComponent, {
-            maxHeight: "90vh",
-            data: { entities },
-          });
-          return true;
-        },
-      },
-      {
         action: "archive",
         execute: (e) => this.archive(e),
         permission: "update",
@@ -67,7 +50,10 @@ export class EntityActionsService {
         label: $localize`:entity context menu:Archive`,
         tooltip: $localize`:entity context menu tooltip:Mark the record as inactive, hiding it from lists by default while keeping the data.`,
         primaryAction: true,
-        visible: async (entity) => entity.isActive && !entity.anonymized,
+        visible: async (entity) => {
+          const entities = asArray(entity);
+          return entities.some((e) => e.isActive && !e.anonymized);
+        },
         availableFor: "all",
       },
       {
@@ -77,8 +63,12 @@ export class EntityActionsService {
         icon: "user-secret",
         label: $localize`:entity context menu:Anonymize`,
         tooltip: $localize`:entity context menu tooltip:Remove all personal data and keep an archived basic record for statistical reporting.`,
-        visible: async (entity) =>
-          !entity.anonymized && entity.getConstructor().hasPII === true,
+        visible: async (entity) => {
+          const entities = asArray(entity);
+          return entities.some(
+            (e) => !e?.anonymized && e?.getConstructor().hasPII === true,
+          );
+        },
         availableFor: "all",
       },
       {
