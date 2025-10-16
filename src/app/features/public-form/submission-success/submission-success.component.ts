@@ -13,7 +13,7 @@ import { ActivatedRoute } from "@angular/router";
 })
 export class SubmissionSuccessComponent {
   private location = inject(Location);
-  private route = inject(ActivatedRoute);
+  private readonly route = inject(ActivatedRoute);
 
   showSubmitAnotherButton = true;
 
