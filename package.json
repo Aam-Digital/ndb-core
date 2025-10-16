@@ -86,7 +86,7 @@
     "@angular-eslint/schematics": "^20.1.1",
     "@angular/cli": "^20.1.1",
     "@angular/compiler-cli": "^20.1.2",
-    "@argos-ci/cli": "^2.5.8",
+    "@argos-ci/cli": "^3.0.0",
     "@argos-ci/playwright": "^5.0.6",
     "@babel/core": "^7.28.0",
     "@compodoc/compodoc": "^1.1.26",
