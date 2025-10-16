@@ -58,7 +58,6 @@ import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.
 import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
-import { EntityAction } from "../../entity-details/entity-actions-menu/entity-action.interface";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -366,14 +365,6 @@ export class EntityListComponent<T extends Entity>
     this.addNewClick.emit();
   }
 
-  onBulkAction(action: EntityAction | undefined) {
-    // If the action has an execute method, call it with selectedRows
-    if (action && typeof action.execute === "function") {
-      action.execute(this.selectedRows);
-    }
-    // Optionally, reset selection after action
-    this.selectedRows = undefined;
-  }
   onRowClick(row: T) {
     this.elementClick.emit(row);
   }

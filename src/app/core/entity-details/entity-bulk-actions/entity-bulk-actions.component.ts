@@ -27,7 +27,12 @@ export class EntityBulkActionsComponent {
    * List of selected entities for bulk actions
    */
   entities = input.required<Entity[]>();
-  actionTriggered = output<EntityAction>();
+
+  /**
+   * Event emitted when the bulk action mode should be exited
+   * after an action was executed or the user cancelled the bulk actions.
+   */
+  resetBulkActionMode = output();
 
   private readonly actionsService = inject(EntityActionsMenuService);
   private readonly snackBar = inject(MatSnackBar);
@@ -59,7 +64,7 @@ export class EntityBulkActionsComponent {
     });
   }
 
-  onActionSelected(action: EntityAction) {
+  async onActionSelected(action: EntityAction) {
     if (
       action.action === "merge" &&
       (!this.entities() || this.entities().length !== 2)
@@ -72,7 +77,17 @@ export class EntityBulkActionsComponent {
       this.actionControl.setValue(null, { emitEvent: false });
       return;
     }
-    this.actionTriggered.emit(action);
+
+    // If the action has an execute method, call it with selectedRows
+    if (action && typeof action.execute === "function") {
+      await action.execute(this.entities());
+    }
+
+    this.resetBulkActionMode.emit();
     this.actionControl.setValue(null, { emitEvent: false });
+  }
+
+  cancel() {
+    this.resetBulkActionMode.emit();
   }
 }

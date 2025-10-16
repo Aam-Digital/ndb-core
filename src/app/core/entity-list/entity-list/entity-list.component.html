@@ -286,7 +286,7 @@
   @if (!!selectedRows) {
     <app-entity-bulk-actions
       [entities]="selectedRows"
-      (actionTriggered)="onBulkAction($event)"
+      (resetBulkActionMode)="selectedRows = undefined"
     >
     </app-entity-bulk-actions>
   }
