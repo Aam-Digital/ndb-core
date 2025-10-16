@@ -84,7 +84,7 @@ export class PublicFormConfig extends Entity {
 
   @DatabaseField({
     label: $localize`:PublicFormConfig:Show "Submit Another Form" Button`,
-    description: $localize`:PublicFormConfig:If enabled, users will see a "Submit Another Form" button after a successful submission. If disabled, the button will be hidden and users will not be prompted to submit another form.`,
+    description: $localize`:PublicFormConfig:If enabled, users will see a "Submit Another Form" button after a successful submission. This helps when you want multiple submissions from the same user.`,
     dataType: "boolean",
   })
   showSubmitAnotherButton: boolean = false;
