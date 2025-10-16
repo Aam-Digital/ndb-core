@@ -1,23 +1,22 @@
 import { Component, inject, Input, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { AdminEntityFormComponent } from "../admin-entity-form/admin-entity-form.component";
 import { FormConfig } from "../../../entity-details/form/form.component";
 import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
 import { MatButtonModule } from "@angular/material/button";
-import { AdminEntityService } from "../../admin-entity.service";
 
 /**
- * Dialog component for editing the entity's field configuration.
- * Loads fields from the entity's attributes in the Config database.
- * Shows configured attributes as "active fields" in the drag-and-drop area,
- * and all other schema fields as "available fields" in the sidebar.
+ * Dialog component for editing the related entity's column selection and order.
+ * Shows currently selected columns as "active fields" in the drag-and-drop area,
+ * and all available schema fields as "available fields" in the sidebar.
+ *
+ * When Apply is clicked, returns the updated list of column IDs to the parent.
+ * The parent updates its config.columns, which gets saved when the main form saves.
  */
 @Component({
   selector: "app-admin-related-entity-details",
   imports: [
-    CommonModule,
     AdminEntityFormComponent,
     MatDialogModule,
     DialogCloseComponent,
@@ -30,86 +29,52 @@ import { AdminEntityService } from "../../admin-entity.service";
   ],
 })
 export class AdminRelatedEntityDetailsComponent implements OnInit {
-  private adminEntityService = inject(AdminEntityService);
   private dialogRef = inject(MatDialogRef<AdminRelatedEntityDetailsComponent>);
 
   @Input() entityConstructor: EntityConstructor;
 
-  formConfig: FormConfig = { fieldGroups: [] };
-  private originalFieldIds: string[] = [];
-  private originalSchema: Map<string, any>;
-
-  async ngOnInit(): Promise<void> {
-    // Create a deep copy of the schema to restore if user cancels
-    this.originalSchema = new Map(
-      Array.from(this.entityConstructor.schema.entries()).map(
-        ([key, value]) => [key, { ...value }],
-      ),
-    );
-
-    await this.loadEntityAttributesConfig();
-  }
-
   /**
-   * Load the entity's field configuration from the entity's schema.
-   * This shows all fields currently in the entity's schema (including recently added ones).
-   * Only shows fields that have a label (user-facing fields, not technical/internal fields).
-   * AdminEntityFormComponent will show these as "active fields" in the drag-and-drop area,
-   * and any other potential fields as "available fields" in the sidebar.
+   * Currently selected columns from the panel component.
+   * These are shown as "active fields" in the dialog.
    */
-  private async loadEntityAttributesConfig(): Promise<void> {
-    const fieldIds = Array.from(this.entityConstructor.schema.entries())
-      .filter(([key, field]) => field.label) // Only include fields with labels
-      .map(([key]) => key);
+  @Input() currentColumns: string[] = [];
 
-    // Store original field IDs to detect new fields later
-    this.originalFieldIds = [...fieldIds];
+  formConfig: FormConfig = { fieldGroups: [] };
 
-    if (fieldIds.length > 0) {
+  ngOnInit(): void {
+    // Use the current columns from the panel component as active fields
+    // Available fields will be shown from entityConstructor.schema automatically
+    if (this.currentColumns && this.currentColumns.length > 0) {
       this.formConfig = {
-        fieldGroups: [{ fields: fieldIds }],
+        fieldGroups: [{ fields: this.currentColumns }],
       };
     } else {
       this.formConfig = { fieldGroups: [] };
     }
   }
 
-  /**
-   * Called when "Cancel" button is clicked.
-   * Restores the original schema state before any changes were made.
-   */
-  cancelChanges(): void {
-    // Restore the original schema
-    this.entityConstructor.schema.clear();
-    this.originalSchema.forEach((value, key) => {
-      this.entityConstructor.schema.set(key, value);
-    });
+  onConfigChange(config: FormConfig): void {
+    this.formConfig = config;
+  }
 
+  cancelChanges(): void {
     this.dialogRef.close();
   }
 
-  /**
-   * Called when "Apply" button is clicked.
-   * Detects newly added fields (with labels) and returns them to the parent component.
-   * New fields will be added to dropdown options (not automatically selected).
-   */
-  async applyChanges(): Promise<void> {
-    // Get current field IDs from entity's schema that have labels (filter out technical fields)
-    const currentFieldIds = Array.from(this.entityConstructor.schema.entries())
-      .filter(([key, field]) => field.label)
-      .map(([key]) => key);
-
-    // Find new fields that weren't in the original list
-    const newFieldIds = currentFieldIds.filter(
-      (fieldId) => !this.originalFieldIds.includes(fieldId),
-    );
-
-    // Trigger schema update event to refresh all components that listen to it
-    // This ensures AdminListManagerComponent refreshes its available fields dropdown
-    if (newFieldIds.length > 0) {
-      this.adminEntityService.entitySchemaUpdated.next();
+  applyChanges(): void {
+    // Get the current field order from the form config
+    const updatedFieldIds: string[] = [];
+    if (this.formConfig.fieldGroups) {
+      for (const group of this.formConfig.fieldGroups) {
+        if (group.fields) {
+          for (const field of group.fields) {
+            const fieldId = typeof field === "string" ? field : field.id;
+            updatedFieldIds.push(fieldId);
+          }
+        }
+      }
     }
 
-    this.dialogRef.close(newFieldIds);
+    this.dialogRef.close(updatedFieldIds);
   }
 }

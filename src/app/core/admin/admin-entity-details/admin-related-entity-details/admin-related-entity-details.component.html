@@ -21,6 +21,7 @@
         'related-entity-details-' + entityConstructor?.ENTITY_TYPE
       "
       [fieldsOnlyMode]="true"
+      (configChange)="onConfigChange($event)"
     ></app-admin-entity-form>
   </div>
 </mat-dialog-content>

@@ -175,10 +175,9 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   }
 
   /**
-   * Opens a dialog showing the entity's form configuration.
-   * This allows editing the entity's fields structure independently.
-   * When "Apply" is clicked, newly added fields are added to the dropdown options
-   * (not automatically selected).
+   * Opens a dialog showing the related entity's column selection and ordering.
+   * When "Apply" is clicked, updates the columns in the config.
+   * Changes are saved when the main form's Save button is clicked (config is part of the form).
    */
   openRelatedEntityDetailsConfig(): void {
     if (!this.entityConstructor) {
@@ -188,10 +187,24 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     const dialogRef = this.dialog.open(AdminRelatedEntityDetailsComponent);
 
     dialogRef.componentInstance.entityConstructor = this.entityConstructor;
-    dialogRef.afterClosed().subscribe((newFieldIds: string[]) => {
-      if (newFieldIds && newFieldIds.length > 0) {
-        const updatedActiveFields = [...this.activeFields, ...newFieldIds];
-        this.updateFields(updatedActiveFields);
+
+    // Pass the current columns to show as active fields in the dialog
+    dialogRef.componentInstance.currentColumns = this.activeFields.map((col) =>
+      typeof col === "string" ? col : col.id,
+    );
+
+    dialogRef.afterClosed().subscribe((updatedFieldIds: string[]) => {
+      // Only update if user clicked Apply (updatedFieldIds is defined)
+      // undefined means Cancel was clicked
+      if (updatedFieldIds !== undefined) {
+        // Update the columns configuration with the new field order
+        // This will be saved when the main form's Save button is clicked
+        this.config.config = {
+          ...this.config.config,
+          columns: updatedFieldIds,
+        };
+
+        this.activeFields = updatedFieldIds;
       }
     });
   }
