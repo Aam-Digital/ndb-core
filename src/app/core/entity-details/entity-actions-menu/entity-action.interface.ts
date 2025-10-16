@@ -12,6 +12,7 @@ export interface EntityAction {
    * - 'individual-only': only available for single entity actions
    */
   availableFor?: "all" | "bulk-only" | "individual-only";
+
   /**
    * ID for identifying this action in analytics, etc.
    */

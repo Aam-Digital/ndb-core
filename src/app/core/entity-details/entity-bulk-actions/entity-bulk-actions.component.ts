@@ -5,8 +5,8 @@ import { Entity } from "../../entity/model/entity";
 import { EntityActionsMenuService } from "../entity-actions-menu/entity-actions-menu.service";
 import { EntityAction } from "../entity-actions-menu/entity-action.interface";
 import {
-  BasicAutocompleteComponent,
   BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
+  BasicAutocompleteComponent,
 } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { MatButtonModule } from "@angular/material/button";
 
@@ -23,16 +23,21 @@ import { MatButtonModule } from "@angular/material/button";
   ],
 })
 export class EntityBulkActionsComponent {
-  // List of selected entities for bulk actions
+  /**
+   * List of selected entities for bulk actions
+   */
   entities = input.required<Entity[]>();
   actionTriggered = output<EntityAction>();
 
   private readonly actionsService = inject(EntityActionsMenuService);
   private readonly snackBar = inject(MatSnackBar);
-  // Compute available bulk actions for the current selection
+
+  /**
+   * Available bulk actions for the current selection
+   */
   bulkActions = computed(() =>
     this.actionsService
-      .getBulkActions()
+      .getActionsForBulk()
       .map((action) => {
         if (action.action === "merge") {
           return {
@@ -44,6 +49,7 @@ export class EntityBulkActionsComponent {
       })
       .filter((action) => !!action),
   );
+
   actionControl = new FormControl();
   actionToString = (action: EntityAction) => action?.label || "";
 

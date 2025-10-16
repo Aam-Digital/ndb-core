@@ -1,23 +1,27 @@
 <div class="flex-row gap-regular">
   <div class="bulk-action-select-wrapper">
     <mat-form-field class="bulk-action-autocomplete full-width">
-      <mat-label i18n="@@bulkActionLabel">Select Bulk Action</mat-label>
+      <mat-label i18n>Select Bulk Action</mat-label>
+
       <app-basic-autocomplete
         [formControl]="actionControl"
         [options]="bulkActions()"
         [optionToString]="actionToString"
         display="text"
       ></app-basic-autocomplete>
+
       @if (!entities() || entities().length === 0) {
-        <mat-hint i18n="@@bulkActionHint">
+        <mat-hint i18n>
           Please select one or more rows to enable bulk actions.
         </mat-hint>
       }
     </mat-form-field>
+
     @if (!entities() || entities().length === 0) {
       <div class="bulk-action-field-overlay"></div>
     }
   </div>
+
   <button mat-raised-button (click)="actionTriggered.emit(undefined)" i18n>
     Cancel
   </button>

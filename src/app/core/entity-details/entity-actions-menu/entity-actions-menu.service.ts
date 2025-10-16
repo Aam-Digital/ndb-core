@@ -14,16 +14,6 @@ import { Entity } from "../../entity/model/entity";
   providedIn: "root",
 })
 export class EntityActionsMenuService {
-  /**
-   * Get only actions available for bulk operations.
-   */
-  getBulkActions(entity?: Entity): EntityAction[] {
-    return this.getActions(entity).filter(
-      (action) =>
-        (action.availableFor ?? "all") === "bulk-only" ||
-        (action.availableFor ?? "all") === "all",
-    );
-  }
   private actions: EntityAction[] = [];
   private actionsFactories: EntityActionsFactory[] = [];
 
@@ -32,6 +22,29 @@ export class EntityActionsMenuService {
       ...this.actions,
       ...this.actionsFactories.flatMap((factory) => factory(entity)),
     ];
+  }
+
+  /**
+   * Get only actions available for bulk operations.
+   */
+  getActionsForBulk(entity?: Entity): EntityAction[] {
+    return this.getActions(entity).filter(
+      (action) =>
+        (action.availableFor ?? "all") === "bulk-only" ||
+        (action.availableFor ?? "all") === "all",
+    );
+  }
+
+  /**
+   * Get only actions available for single entity operations.
+   * @param entity
+   */
+  getActionsForSingle(entity?: Entity): EntityAction[] {
+    return this.getActions(entity).filter(
+      (action) =>
+        (action.availableFor ?? "all") === "individual-only" ||
+        (action.availableFor ?? "all") === "all",
+    );
   }
 
   /**

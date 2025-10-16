@@ -22,8 +22,10 @@
         </div>
       }
     </app-view-actions>
+
     <!-- Bulk actions -->
     <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
+
     <!-- Filters -->
     <div class="flex-row gap-regular flex-wrap">
       <div *ngTemplateOutlet="filterDialog"></div>
@@ -40,6 +42,7 @@
         ></app-filter>
       }
     </div>
+
     <!-- Tab Groups-->
     <div class="mat-elevation-z1">
       @if (groups.length > 1) {
@@ -81,11 +84,13 @@
         </button>
       </div>
     </app-view-actions>
+
     @if (selectedRows) {
       <div class="bulk-action-spacing">
         <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
       </div>
     }
+
     <ng-container *ngTemplateOutlet="subrecord"></ng-container>
   </div>
 }
