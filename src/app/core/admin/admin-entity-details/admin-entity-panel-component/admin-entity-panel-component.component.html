@@ -18,17 +18,19 @@
         </mat-select>
       </mat-form-field>
 
-      <button
-        mat-raised-button
-        color="accent"
-        class="margin-bottom-regular"
-        (click)="openRelatedEntityDetailsConfig()"
-        i18n
-      >
-        <fa-icon icon="edit"></fa-icon>
-        Edit data structure of
-        {{ entityConstructor.label || entityConstructor.ENTITY_TYPE }}
-      </button>
+      @if (showEditStructureButton()) {
+        <button
+          mat-raised-button
+          color="accent"
+          class="margin-bottom-regular"
+          (click)="openRelatedEntityDetailsConfig()"
+          i18n
+        >
+          <fa-icon icon="edit"></fa-icon>
+          Edit data structure of
+          {{ entityConstructor.label || entityConstructor.ENTITY_TYPE }}
+        </button>
+      }
     </div>
 
     <div class="margin-top-regular hint-text">

@@ -4,7 +4,14 @@ import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormCo
 import { RelatedEntitiesComponentConfig } from "#src/app/core/entity-details/related-entity-config";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
 import { CommonModule } from "@angular/common";
-import { Component, Input, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  inject,
+  computed,
+  signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatOptionModule } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -64,6 +71,20 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     entityType: string;
   }[];
 
+  /**
+   * Signal to track the current entity type for reactive updates
+   */
+  private currentEntityType = signal<string>("");
+
+  /**
+   * Computed signal to determine if the "Edit data structure" button should be shown.
+   * Hidden for Note and Todo entities as they have custom detail views.
+   */
+  showEditStructureButton = computed(() => {
+    const entityType = this.currentEntityType();
+    return entityType !== "Note" && entityType !== "Todo";
+  });
+
   ngOnInit(): void {
     if (!this.config.config?.entityType) return;
     this.availableRelatedEntities = this.entityRelationsService
@@ -77,6 +98,9 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     this.activeFields = (this.config.config.columns ?? []).map((col) =>
       typeof col === "string" ? col : col.id,
     );
+
+    // Update signal to trigger computed property
+    this.currentEntityType.set(this.selectedEntityType);
   }
 
   /**
@@ -126,6 +150,9 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     this.applyCustomOverrides(newType);
 
     this.activeFields = [];
+
+    // Update signal to trigger computed property for button visibility
+    this.currentEntityType.set(newType);
   }
 
   /**
