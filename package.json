@@ -76,7 +76,7 @@
     "stream-browserify": "^3.0.0",
     "tslib": "^2.8.1",
     "util": "^0.12.5",
-    "uuid": "^11.1.0",
+    "uuid": "^13.0.0",
     "vanilla-jsoneditor": "^3.7.0",
     "webpack": "^5.100.2",
     "zone.js": "^0.15.1"
