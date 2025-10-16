@@ -2,10 +2,10 @@ import { times } from "lodash-es";
 
 import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
 
-import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 import { generateActivity } from "#src/app/child-dev-project/attendance/demo-data/demo-activity-generator.service.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
 import { faker } from "#src/app/core/demo-data/faker.js";
+import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 
 test("Record attendance for one activity", async ({ page }) => {
   const users = generateUsers();
@@ -185,9 +185,8 @@ test("Edit participants of a recurring activity", async ({ page }) => {
   await page.getByRole("button", { name: "Edit" }).click();
 
   // And I click on the "Participants" field
-  await page
-    .getByRole("combobox", { name: "Participants", exact: true })
-    .click();
+  //TODO: fix the locator to something more reliable
+  await page.getByText("Guru Kocchar Ujjwal Achari").click();
 
   // Then I see "Abhisyanta Sharma" selected.
   await expect(
@@ -268,7 +267,10 @@ test("Assign a recurring activity to a user", async ({ page }) => {
 
   // When I assign myself
   await page.getByRole("button", { name: "Edit" }).click();
-  await page.getByLabel("Assigned user(s)").click();
+
+  //TODO: fix the locator to something more reliable
+  await page.getByText("demo-admin").click();
+
   await page
     .getByRole("option", { name: currentUser.name, exact: true })
     .click();

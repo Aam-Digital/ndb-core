@@ -64,7 +64,7 @@ export class JsonEditorComponent
    * @param updatedJSON The updated JSON data.
    */
   handleJSONChange(updatedJSON: object): void {
-    this.writeValue(updatedJSON);
+    this.value = updatedJSON;
   }
 
   /**
@@ -73,7 +73,7 @@ export class JsonEditorComponent
    */
   handleTextChange(updatedText: string): void {
     try {
-      this.writeValue(updatedText ? JSON.parse(updatedText) : {});
+      this.value = updatedText ? JSON.parse(updatedText) : {};
     } catch (e) {
       const control = this.ngControl?.control;
       if (!control) {

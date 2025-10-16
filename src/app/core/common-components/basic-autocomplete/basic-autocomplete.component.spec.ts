@@ -6,14 +6,8 @@ import {
   tick,
 } from "@angular/core/testing";
 
-import { BasicAutocompleteComponent } from "./basic-autocomplete.component";
-import { Entity } from "../../entity/model/entity";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { MatDialogModule } from "@angular/material/dialog";
-import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
-import { MatAutocompleteHarness } from "@angular/material/autocomplete/testing";
+import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import {
   FormControl,
   FormGroup,
@@ -21,8 +15,14 @@ import {
   NgForm,
   Validators,
 } from "@angular/forms";
+import { MatAutocompleteHarness } from "@angular/material/autocomplete/testing";
+import { MatDialogModule } from "@angular/material/dialog";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { Entity } from "../../entity/model/entity";
+import { BasicAutocompleteComponent } from "./basic-autocomplete.component";
 
 describe("BasicAutocompleteComponent", () => {
   let component: BasicAutocompleteComponent<any, any>;
@@ -84,10 +84,10 @@ describe("BasicAutocompleteComponent", () => {
   it("should show name of the selected entity", async () => {
     const child1 = TestEntity.create("First Child");
     const child2 = TestEntity.create("Second Child");
-    component.value = child1.getId();
     component.options = [child1, child2];
     component.valueMapper = entityToId;
 
+    component.value = child1.getId();
     component.ngOnChanges({ value: true, options: true, valueMapper: true });
     fixture.detectChanges();
 

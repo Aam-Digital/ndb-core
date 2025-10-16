@@ -1,11 +1,11 @@
 import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
-import { ConfigService } from "./config.service";
-import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { Config } from "./config";
 import { firstValueFrom, Subject } from "rxjs";
-import { UpdatedEntity } from "../entity/model/entity-update";
-import { EntityConfig } from "../entity/entity-config";
 import { DefaultValueConfig } from "../default-values/default-value-config";
+import { EntityConfig } from "../entity/entity-config";
+import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
+import { UpdatedEntity } from "../entity/model/entity-update";
+import { Config } from "./config";
+import { ConfigService } from "./config.service";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -540,6 +540,30 @@ describe("ConfigService", () => {
           },
         ],
       },
+    };
+
+    testConfigMigration(oldConfig, expectedConfig);
+  }));
+
+  it("should migrate EditDescriptionOnly fields", fakeAsync(() => {
+    const oldConfig = {
+      fields: [
+        {
+          id: "_description1",
+          editComponent: "EditDescriptionOnly",
+          label: "foo bar",
+        },
+      ],
+    };
+
+    const expectedConfig = {
+      fields: [
+        {
+          id: "_description1",
+          viewComponent: "DisplayDescriptionOnly",
+          label: "foo bar",
+        },
+      ],
     };
 
     testConfigMigration(oldConfig, expectedConfig);

@@ -1,8 +1,8 @@
 import { centersUnique } from "../../../../child-dev-project/children/demo-data-generators/fixtures/centers";
-import { ConfigurableEnum } from "../configurable-enum";
-import { generateFormFieldStory } from "../../../entity/default-datatype/edit-component-story-utils";
-import { ConfigurableEnumService } from "../configurable-enum.service";
+import { generateFormFieldStory } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-story-utils";
 import { mockEntityMapperProvider } from "../../../entity/entity-mapper/mock-entity-mapper-service";
+import { ConfigurableEnum } from "../configurable-enum";
+import { ConfigurableEnumService } from "../configurable-enum.service";
 
 const centerEnum = Object.assign(new ConfigurableEnum("center"), {
   values: centersUnique,

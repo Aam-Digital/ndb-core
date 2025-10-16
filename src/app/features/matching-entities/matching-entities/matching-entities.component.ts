@@ -1,3 +1,5 @@
+import { EntityTypePipe } from "#src/app/core/common-components/entity-type/entity-type.pipe";
+import { AsyncPipe } from "@angular/common";
 import {
   ChangeDetectorRef,
   Component,
@@ -7,48 +9,46 @@ import {
   OnInit,
   ViewChild,
 } from "@angular/core";
+import { MatButtonModule, MatIconButton } from "@angular/material/button";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatTableModule } from "@angular/material/table";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { ActivatedRoute, RouterLink } from "@angular/router";
+import { AblePurePipe } from "@casl/angular";
+import {
+  FaIconComponent,
+  FontAwesomeModule,
+} from "@fortawesome/angular-fontawesome";
+import { GeoLocation } from "app/features/location/geo-location";
+import { BehaviorSubject } from "rxjs";
+import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+} from "../../../core/common-components/entity-form/FormConfig";
+import { ConfigService } from "../../../core/config/config.service";
+import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { Entity } from "../../../core/entity/model/entity";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { EntityFieldViewComponent } from "../../../core/entity/entity-field-view/entity-field-view.component";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { Entity } from "../../../core/entity/model/entity";
+import { FilterService } from "../../../core/filter/filter.service";
+import { FilterComponent } from "../../../core/filter/filter/filter.component";
+import { DataFilter } from "../../../core/filter/filters/filters";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { RouteTarget } from "../../../route-target";
+import { FlattenArrayPipe } from "../../../utils/flatten-array/flatten-array.pipe";
+import { addAlphaToHexColor } from "../../../utils/style-utils";
+import { Coordinates } from "../../location/coordinates";
+import { getLocationProperties } from "../../location/map-utils";
+import { LocationProperties } from "../../location/map/map-properties-popup/map-properties-popup.component";
+import { MapComponent } from "../../location/map/map.component";
 import {
   MatchingEntitiesConfig,
   MatchingSideConfig,
   NewMatchAction,
 } from "./matching-entities-config";
-import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
-import { ActivatedRoute, RouterLink } from "@angular/router";
-import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { addAlphaToHexColor } from "../../../utils/style-utils";
-import { BehaviorSubject } from "rxjs";
-import { ConfigService } from "../../../core/config/config.service";
-import { MatTableModule } from "@angular/material/table";
-import {
-  FaIconComponent,
-  FontAwesomeModule,
-} from "@fortawesome/angular-fontawesome";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { AsyncPipe } from "@angular/common";
-import { MatButtonModule, MatIconButton } from "@angular/material/button";
-import { EntityFieldViewComponent } from "../../../core/common-components/entity-field-view/entity-field-view.component";
-import { MapComponent } from "../../location/map/map.component";
-import { FilterComponent } from "../../../core/filter/filter/filter.component";
-import { Coordinates } from "../../location/coordinates";
-import { FilterService } from "../../../core/filter/filter.service";
-import { LocationProperties } from "../../location/map/map-properties-popup/map-properties-popup.component";
-import { getLocationProperties } from "../../location/map-utils";
-import { FlattenArrayPipe } from "../../../utils/flatten-array/flatten-array.pipe";
-import {
-  ColumnConfig,
-  FormFieldConfig,
-} from "../../../core/common-components/entity-form/FormConfig";
-import { RouteTarget } from "../../../route-target";
-import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
-import { DataFilter } from "../../../core/filter/filters/filters";
-import { GeoLocation } from "app/features/location/geo-location";
-import { MatMenuModule } from "@angular/material/menu";
-import { AblePurePipe } from "@casl/angular";
-import { EntityTypePipe } from "#src/app/core/common-components/entity-type/entity-type.pipe";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */

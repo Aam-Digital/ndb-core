@@ -5,22 +5,25 @@ import {
   tick,
 } from "@angular/core/testing";
 
-import { AdminEntityFormComponent } from "./admin-entity-form.component";
-import { CoreTestingModule } from "../../../../utils/core-testing.module";
-import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
-import { MatDialog } from "@angular/material/dialog";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { FormGroup } from "@angular/forms";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
+import { FormGroup } from "@angular/forms";
+import { MatDialog } from "@angular/material/dialog";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { of } from "rxjs";
-import { AdminModule } from "../../admin.module";
-import { FormConfig } from "../../../entity-details/form/form.component";
-import { ColumnConfig } from "../../../common-components/entity-form/FormConfig";
+import { CoreTestingModule } from "../../../../utils/core-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
+import {
+  ColumnConfig,
+  toFormFieldConfig,
+} from "../../../common-components/entity-form/FormConfig";
 import { DefaultValueService } from "../../../default-values/default-value-service/default-value.service";
+import { FormConfig } from "../../../entity-details/form/form.component";
 import { AdminEntityService } from "../../admin-entity.service";
+import { AdminModule } from "../../admin.module";
+import { AdminEntityFormComponent } from "./admin-entity-form.component";
 
 describe("AdminEntityFormComponent", () => {
   let component: AdminEntityFormComponent;
@@ -41,11 +44,15 @@ describe("AdminEntityFormComponent", () => {
 
     mockFormService = jasmine.createSpyObj("EntityFormService", [
       "createEntityForm",
+      "extendFormFieldConfig",
     ]);
     mockFormService.createEntityForm.and.returnValue(
       Promise.resolve({
         formGroup: new FormGroup({}),
       } as EntityForm<any>),
+    );
+    mockFormService.extendFormFieldConfig.and.callFake((field) =>
+      toFormFieldConfig(field),
     );
     mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
 
@@ -77,9 +84,8 @@ describe("AdminEntityFormComponent", () => {
     component.config = testConfig;
     component.entityType = TestEntity;
 
-    fixture.detectChanges();
-
     await component.ngOnChanges({ config: true as any });
+    fixture.detectChanges();
   });
 
   it("should create and init a form", () => {

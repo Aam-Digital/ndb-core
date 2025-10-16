@@ -1,23 +1,28 @@
-import { Component } from "@angular/core";
-import { EditComponent } from "../../../entity/default-datatype/edit-component";
-import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { ReactiveFormsModule } from "@angular/forms";
+import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
-import { MatTooltipModule } from "@angular/material/tooltip";
+import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
+import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
+import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
 
 @DynamicComponent("EditText")
 @Component({
   selector: "app-edit-text",
   templateUrl: "./edit-text.component.html",
   styleUrls: ["./edit-text.component.scss"],
-  imports: [
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    ErrorHintComponent,
-    MatTooltipModule,
-  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatInputModule, FormsModule, ReactiveFormsModule],
+  providers: [{ provide: MatFormFieldControl, useExisting: EditTextComponent }],
 })
-export class EditTextComponent extends EditComponent<string> {}
+export class EditTextComponent
+  extends CustomFormControlDirective<string>
+  implements EditComponent
+{
+  @Input() formFieldConfig?: FormFieldConfig;
+
+  get formControl(): FormControl<string> {
+    return this.ngControl.control as FormControl<string>;
+  }
+}

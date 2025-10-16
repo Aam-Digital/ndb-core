@@ -1,16 +1,16 @@
+import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { EditPrefilledValuesComponent } from "./edit-prefilled-values.component";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { Entity } from "app/core/entity/model/entity";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
-import { DefaultValueConfig } from "#src/app/core/default-values/default-value-config";
+import { EditPrefilledValuesComponent } from "./edit-prefilled-values.component";
 
 describe("EditPrefilledValuesComponent", () => {
   let component: EditPrefilledValuesComponent;
@@ -38,10 +38,9 @@ describe("EditPrefilledValuesComponent", () => {
 
     fixture = TestBed.createComponent(EditPrefilledValuesComponent);
     component = fixture.componentInstance;
+
+    setupCustomFormControlEditComponent(component);
     component.entity = new TestEntity();
-    component.formControl = new FormBuilder().control(
-      {} as { [key: string]: DefaultValueConfig },
-    );
 
     fixture.detectChanges();
   });

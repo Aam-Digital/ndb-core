@@ -7,8 +7,8 @@ import {
   inject,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { Observable } from "rxjs";
-import { concatMap, debounceTime, tap } from "rxjs/operators";
+import { BehaviorSubject, Observable, from, of } from "rxjs";
+import { switchMap, debounceTime, tap, map, catchError } from "rxjs/operators";
 import { Router } from "@angular/router";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
@@ -54,6 +54,7 @@ export class SearchComponent {
   private router = inject(Router);
   private userRoleGuard = inject(UserRoleGuard);
   private searchService = inject(SearchService);
+  private readonly resultsSubject = new BehaviorSubject<Entity[]>([]);
 
   static INPUT_DEBOUNCE_TIME_MS = 400;
   MIN_CHARACTERS_FOR_SEARCH = 2;
@@ -72,9 +73,11 @@ export class SearchComponent {
 
   formControl = new FormControl("");
 
-  results: Observable<Entity[]>;
+  results: Observable<Entity[]> = this.resultsSubject.asObservable();
   @ViewChild("searchInput") searchInput: ElementRef<HTMLInputElement>;
   @ViewChild("autoResults") autocomplete: MatAutocomplete;
+
+  private currentSearchString = "";
 
   constructor() {
     const screenWithObserver = inject(ScreenWidthObserver);
@@ -84,12 +87,19 @@ export class SearchComponent {
       .pipe(untilDestroyed(this))
       .subscribe((isDesktop) => (this.mobile = !isDesktop));
 
-    this.results = this.formControl.valueChanges.pipe(
-      debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
-      tap((next) => (this.state = this.updateState(next))),
-      concatMap((next: string) => this.searchResults(next)),
-      untilDestroyed(this),
-    );
+    this.formControl.valueChanges
+      .pipe(
+        debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
+        tap((next) => {
+          this.currentSearchString = next || "";
+          this.state = this.updateState(next);
+        }),
+        switchMap((next: string) => this.searchResults(next)),
+        untilDestroyed(this),
+      )
+      .subscribe((entities) => {
+        this.resultsSubject.next(entities);
+      });
   }
   private updateState(next: any): number {
     if (typeof next !== "string") {
@@ -106,14 +116,30 @@ export class SearchComponent {
       : this.SEARCH_IN_PROGRESS;
   }
 
-  async searchResults(next: string): Promise<Entity[]> {
+  searchResults(searchTerm: string): Observable<Entity[]> {
+    // Return empty results for invalid states or empty input
     if (this.state !== this.SEARCH_IN_PROGRESS) {
-      return [];
+      return of([]);
     }
-    const entities = await this.searchService.getSearchResults(next);
-    const filtered = this.prepareResults(entities);
-    this.state = filtered.length === 0 ? this.NO_RESULTS : this.SHOW_RESULTS;
-    return filtered;
+
+    const originalSearchString = searchTerm;
+
+    return from(this.searchService.getSearchResults(searchTerm)).pipe(
+      map((entities) => {
+        if (this.currentSearchString !== originalSearchString) {
+          // Abort because the results are not relevant anymore
+          return [];
+        }
+        const filtered = this.prepareResults(entities);
+        this.state =
+          filtered.length === 0 ? this.NO_RESULTS : this.SHOW_RESULTS;
+        return filtered;
+      }),
+      catchError((_err) => {
+        this.state = this.NO_RESULTS;
+        return of([]);
+      }),
+    );
   }
 
   async clickOption(optionElement) {
@@ -122,6 +148,7 @@ export class SearchComponent {
       optionElement.value.getId(true),
     ]);
     this.formControl.setValue("");
+    this.state = this.NOTHING_ENTERED;
     if (this.mobile) {
       this.searchActive = false;
     }
@@ -146,6 +173,8 @@ export class SearchComponent {
     this.searchActive = !this.searchActive;
     if (!this.searchActive) {
       this.formControl.setValue("");
+      this.currentSearchString = "";
+      this.state = this.NOTHING_ENTERED;
     } else {
       setTimeout(() => this.searchInput?.nativeElement.focus());
     }
@@ -154,6 +183,12 @@ export class SearchComponent {
   onFocusOut() {
     if (this.mobile && !this.autocomplete.isOpen) {
       this.searchActive = false;
+    }
+    // Reset state if field is empty when losing focus
+    const currentValue = this.formControl.value || "";
+    if (currentValue.length === 0) {
+      this.currentSearchString = "";
+      this.state = this.NOTHING_ENTERED;
     }
   }
 }

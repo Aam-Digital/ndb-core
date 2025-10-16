@@ -1,19 +1,19 @@
-import { Component, inject, OnInit } from "@angular/core";
-import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
-import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
-import { Entity } from "../../entity/model/entity";
-import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
-import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
-import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
-import { PillComponent } from "../../common-components/pill/pill.component";
+import { Component, inject, OnInit } from "@angular/core";
+import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { DialogButtonsComponent } from "../dialog-buttons/dialog-buttons.component";
+import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
+import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import { PillComponent } from "../../common-components/pill/pill.component";
 import { EntityArchivedInfoComponent } from "../../entity-details/entity-archived-info/entity-archived-info.component";
 import { FieldGroup } from "../../entity-details/form/field-group";
-import { EntityFieldViewComponent } from "../../common-components/entity-field-view/entity-field-view.component";
+import { EntityFieldViewComponent } from "../../entity/entity-field-view/entity-field-view.component";
+import { Entity } from "../../entity/model/entity";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
+import { DialogButtonsComponent } from "../dialog-buttons/dialog-buttons.component";
 
 /**
  * Data interface that must be given when opening the dialog

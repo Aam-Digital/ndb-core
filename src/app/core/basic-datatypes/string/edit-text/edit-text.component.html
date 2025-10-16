@@ -1,11 +1,1 @@
-<mat-form-field>
-  @if (!hideLabel) {
-    <mat-label>
-      <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
-    </mat-label>
-  }
-  <input [formControl]="formControl" matInput type="text" />
-  <mat-error>
-    <app-error-hint [form]="formControl"></app-error-hint>
-  </mat-error>
-</mat-form-field>
+<input [formControl]="formControl" matInput type="text" />

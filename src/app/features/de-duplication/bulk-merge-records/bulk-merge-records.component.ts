@@ -1,4 +1,8 @@
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
 import { Component, inject, OnInit } from "@angular/core";
+import { ReactiveFormsModule } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -6,15 +10,11 @@ import {
   MatDialogContent,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { Entity, EntityConstructor } from "app/core/entity/model/entity";
-import { MatButtonModule } from "@angular/material/button";
+import { MatError } from "@angular/material/form-field";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
-import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
-import { ReactiveFormsModule } from "@angular/forms";
-import { MatError } from "@angular/material/form-field";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { MergeFieldsComponent } from "./merge-fields/merge-fields.component";
 
 @Component({

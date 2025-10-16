@@ -7,24 +7,24 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { MatOption, MatSelect } from "@angular/material/select";
 import { MatButton } from "@angular/material/button";
+import { MatDialog } from "@angular/material/dialog";
+import { MatFormFieldControl } from "@angular/material/form-field";
+import { MatOption, MatSelect } from "@angular/material/select";
 import { MatTooltip } from "@angular/material/tooltip";
-import { EntityFieldLabelComponent } from "../../../core/common-components/entity-field-label/entity-field-label.component";
+import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
+import { lastValueFrom } from "rxjs";
 import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
-import { DefaultValueConfigUpdatedFromReferencingEntity } from "../default-value-config-updated-from-referencing-entity";
+import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { EntityFieldLabelComponent } from "../../../core/entity/entity-field-label/entity-field-label.component";
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
-import { MatDialog } from "@angular/material/dialog";
 import {
   AutomatedFieldMappingComponent,
   AutomatedFieldMappingDialogData,
 } from "../automated-field-mapping/automated-field-mapping.component";
-import { lastValueFrom } from "rxjs";
-import { MatFormFieldControl } from "@angular/material/form-field";
-import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
+import { DefaultValueConfigUpdatedFromReferencingEntity } from "../default-value-config-updated-from-referencing-entity";
 
 @Component({
   selector: "app-admin-default-value-updated",

@@ -1,30 +1,20 @@
 import { Component, inject, OnInit } from "@angular/core";
-import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { NgClass } from "@angular/common";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { EditFileComponent } from "../edit-file/edit-file.component";
-import { SafeUrl } from "@angular/platform-browser";
 import { MatButtonModule } from "@angular/material/button";
-import { resizeImage } from "../file-utils";
 import { MatDialog } from "@angular/material/dialog";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { SafeUrl } from "@angular/platform-browser";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { EditFileComponent } from "../edit-file/edit-file.component";
+import { resizeImage } from "../file-utils";
 import { ImagePopupComponent } from "./image-popup/image-popup.component";
-import { MatError } from "@angular/material/form-field";
-import { ErrorHintComponent } from "app/core/common-components/error-hint/error-hint.component";
 
 @DynamicComponent("EditPhoto")
 @Component({
   selector: "app-edit-photo",
   templateUrl: "./edit-photo.component.html",
   styleUrls: ["./edit-photo.component.scss"],
-  imports: [
-    MatButtonModule,
-    MatTooltipModule,
-    FontAwesomeModule,
-    ErrorHintComponent,
-    MatError,
-    NgClass,
-  ],
+  imports: [MatButtonModule, MatTooltipModule, FontAwesomeModule],
 })
 export class EditPhotoComponent extends EditFileComponent implements OnInit {
   private dialog = inject(MatDialog);
@@ -47,11 +37,13 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
 
   override ngOnInit() {
     super.ngOnInit();
-    this.compression = this.additional?.imageCompression ?? this.compression;
-    this.acceptedFileTypes = this.additional?.acceptedFileTypes ?? "image/*";
+    this.compression =
+      this.formFieldConfig.additional?.imageCompression ?? this.compression;
+    this.acceptedFileTypes =
+      this.formFieldConfig.additional?.acceptedFileTypes ?? "image/*";
     if (this.formControl.value) {
       this.fileService
-        .loadFile(this.entity, this.formControlName)
+        .loadFile(this.entity, this.formFieldConfig.id)
         .subscribe((res) => {
           this.imgPath = res;
           this.initialImg = res;
