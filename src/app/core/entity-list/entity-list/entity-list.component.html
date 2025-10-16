@@ -5,8 +5,12 @@
     <app-view-title [ngStyle]="offsetFilterStyle">
       {{ title }}
     </app-view-title>
+
     <app-view-actions>
-      @if (!selectedRows) {
+      @if (selectedRows) {
+        <!-- Bulk actions -->
+        <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
+      } @else {
         <div class="flex-row gap-regular">
           <app-entity-create-button
             [entityType]="entityConstructor"
@@ -22,9 +26,6 @@
         </div>
       }
     </app-view-actions>
-
-    <!-- Bulk actions -->
-    <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
 
     <!-- Filters -->
     <div class="flex-row gap-regular flex-wrap">

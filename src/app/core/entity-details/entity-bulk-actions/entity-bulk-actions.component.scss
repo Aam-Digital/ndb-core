@@ -1,8 +1,21 @@
+@use "@angular/material/core/style/elevation" as mat-elevation;
+
+.overall-box {
+  @include mat-elevation.elevation(3);
+  padding: 1em;
+  margin: 1em;
+}
+
 .bulk-action-select-wrapper {
   position: relative;
   flex: 1 1 0%;
   min-width: 220px;
   max-width: 700px;
+}
+
+.bulk-action-autocomplete {
+  /* remove form-field bottom spacing */
+  margin-bottom: 0;
 }
 .bulk-action-autocomplete.full-width {
   width: 100%;
