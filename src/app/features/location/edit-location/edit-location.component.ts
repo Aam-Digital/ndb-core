@@ -16,10 +16,12 @@ import {
   MapPopupComponent,
   MapPopupConfig,
 } from "../map-popup/map-popup.component";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Input to select and view an address on a map.
  */
+@UntilDestroy()
 @DynamicComponent("EditLocation")
 @Component({
   selector: "app-edit-location",
@@ -61,11 +63,22 @@ export class EditLocationComponent
    */
   locationValue: GeoLocation;
 
+  override set value(v: GeoLocation) {
+    super.value = v;
+    this.locationValue = v;
+  }
+
+  override get value() {
+    return super.value;
+  }
+
   ngOnInit(): void {
-    this.locationValue = this.ngControl?.control.value;
-    this.ngControl?.control.valueChanges.subscribe(
-      (value) => (this.locationValue = value),
-    );
+    if (this.ngControl?.control) {
+      this.locationValue = this.ngControl.control.value;
+      this.ngControl.control.valueChanges
+        .pipe(untilDestroyed(this))
+        .subscribe((value) => (this.locationValue = value));
+    }
   }
 
   override onContainerClick() {
@@ -101,9 +114,13 @@ export class EditLocationComponent
               JSON.stringify(result) !== JSON.stringify(this.locationValue),
           ), // nothing changed, skip
         )
-        .subscribe((result: GeoLocation) =>
-          this.ngControl.control.setValue(result),
-        );
+        .subscribe((result: GeoLocation) => {
+          if (this.ngControl?.control) {
+            this.ngControl.control.setValue(result);
+          } else {
+            this.value = result;
+          }
+        });
     }
   }
 }
