@@ -81,4 +81,10 @@ export class PublicFormConfig extends Entity {
     isArray: true,
   })
   linkedEntities: FormFieldConfig[];
+  @DatabaseField({
+    label: $localize`:PublicFormConfig:Show "Submit Another Form" Button`,
+    description: $localize`:PublicFormConfig:If enabled, users will see a "Submit Another Form" button after a successful submission. If disabled, the button will be hidden and users will not be prompted to submit another form.`,
+    dataType: "boolean",
+  })
+  showSubmitAnotherButton: boolean = false;
 }
