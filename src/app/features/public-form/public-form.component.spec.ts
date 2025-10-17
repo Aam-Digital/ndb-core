@@ -9,7 +9,6 @@ import { PublicFormComponent } from "./public-form.component";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
 import { PublicFormConfig } from "./public-form-config";
 import { ActivatedRoute, Router } from "@angular/router";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { EntityFormService } from "../../core/common-components/entity-form/entity-form.service";
 import { ConfigService } from "../../core/config/config.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
@@ -126,10 +125,9 @@ describe("PublicFormComponent", () => {
     );
   }));
 
-  it("should show a snackbar error and not reset when trying to submit invalid form", fakeAsync(() => {
+  it("should show an inline error and not reset when trying to submit invalid form", fakeAsync(() => {
     initComponent();
     tick();
-    const openSnackbarSpy = spyOn(TestBed.inject(MatSnackBar), "open");
     const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
     saveSpy.and.throwError(new InvalidFormFieldError());
     component.form.formGroup.get("name").setValue("some name");
@@ -138,9 +136,7 @@ describe("PublicFormComponent", () => {
 
     expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
     tick();
-    expect(openSnackbarSpy).toHaveBeenCalledWith(
-      jasmine.stringContaining("invalid"),
-    );
+    expect(component.validationError).toBeTrue();
     expect(component.form.formGroup.get("name")).toHaveValue("some name");
   }));
 
