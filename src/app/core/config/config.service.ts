@@ -4,6 +4,7 @@ import { shareReplay } from "rxjs/operators";
 import { addDefaultRecurringActivityDetailsConfig } from "../../child-dev-project/attendance/add-default-recurring-activity-views";
 import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
 import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
+import { addDefaultImportViewConfig } from "../import/add-default-import-view";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { DefaultValueConfig } from "../default-values/default-value-config";
 import { PanelComponent } from "../entity-details/EntityDetailsConfig";
@@ -113,6 +114,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       addDefaultNoteDetailsConfig,
       addDefaultTodoViews,
       addDefaultRecurringActivityDetailsConfig,
+      addDefaultImportViewConfig,
     ];
 
     const newDoc = JSON.parse(JSON.stringify(doc), (_that, rawValue) => {
