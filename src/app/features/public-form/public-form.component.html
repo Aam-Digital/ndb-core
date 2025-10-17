@@ -58,6 +58,15 @@
       </mat-card-content>
 
       <mat-card-footer>
+        @if (validationError) {
+          <div
+            class="flex-row align-center justify-content-center margin-regular color-error"
+            role="alert"
+            i18n
+          >
+            Some fields are invalid, please check the form and submit again.
+          </div>
+        }
         <button
           mat-raised-button
           (click)="submit()"
