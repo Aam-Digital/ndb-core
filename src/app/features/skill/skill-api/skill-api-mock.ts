@@ -26,6 +26,10 @@ export const mockSkillApi = {
     of(createSkillApiDummyData(id)).pipe(
       delay(faker.number.int({ min: 500, max: 1500 })),
     ),
+
+  async isSkillApiEnabled() {
+    return false;
+  },
 };
 
 export function createSkillApiDummyData(externalId: string): ExternalProfile {

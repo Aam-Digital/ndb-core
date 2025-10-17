@@ -6,6 +6,14 @@ import { EntityActionPermission } from "../../permissions/permission-types";
  */
 export interface EntityAction {
   /**
+   * Determines where this action is available:
+   * - 'all': available for both individual and bulk actions (default)
+   * - 'bulk-only': only available as a bulk action
+   * - 'individual-only': only available for single entity actions
+   */
+  availableFor?: "all" | "bulk-only" | "individual-only";
+
+  /**
    * ID for identifying this action in analytics, etc.
    */
   action: string;
@@ -31,11 +39,14 @@ export interface EntityAction {
    * The method being executed when the action is triggered.
    * @param e The entity on which the action is executed
    */
-  execute: (entity: Entity, navigateOnDelete?: boolean) => Promise<boolean>;
+  execute: (
+    entity: Entity | Entity[],
+    navigateOnDelete?: boolean,
+  ) => Promise<boolean>;
 
   /**
    * Controls visibility of the action based on the given entity.
    * Should return a Promise resolving to true if visible.
    */
-  visible?: (entity: Entity) => Promise<boolean>;
+  visible?: (entity: Entity | Entity[]) => Promise<boolean>;
 }

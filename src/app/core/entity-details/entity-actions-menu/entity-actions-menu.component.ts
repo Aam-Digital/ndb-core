@@ -1,11 +1,11 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   Output,
   SimpleChanges,
-  inject,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
@@ -66,9 +66,9 @@ export class EntityActionsMenuComponent implements OnChanges {
       this.actions = [];
       return;
     }
-    const allActions: EntityAction[] = this.entityActionsMenuService.getActions(
-      this.entity,
-    );
+
+    const allActions: EntityAction[] =
+      this.entityActionsMenuService.getActionsForSingle(this.entity);
 
     // check each action’s `visible` property to hide actions not applicable to the current entity
     const visibleActions = (

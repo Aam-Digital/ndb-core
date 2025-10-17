@@ -5,21 +5,28 @@
     <app-view-title [ngStyle]="offsetFilterStyle">
       {{ title }}
     </app-view-title>
+
     <app-view-actions>
-      <div class="flex-row gap-regular">
-        <app-entity-create-button
-          [entityType]="entityConstructor"
-          (entityCreate)="addNew()"
-        ></app-entity-create-button>
-        <button
-          mat-icon-button
-          color="primary"
-          [matMenuTriggerFor]="additional"
-        >
-          <fa-icon icon="ellipsis-v"></fa-icon>
-        </button>
-      </div>
+      @if (selectedRows) {
+        <!-- Bulk actions -->
+        <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
+      } @else {
+        <div class="flex-row gap-regular">
+          <app-entity-create-button
+            [entityType]="entityConstructor"
+            (entityCreate)="addNew()"
+          ></app-entity-create-button>
+          <button
+            mat-icon-button
+            color="primary"
+            [matMenuTriggerFor]="additional"
+          >
+            <fa-icon icon="ellipsis-v"></fa-icon>
+          </button>
+        </div>
+      }
     </app-view-actions>
+
     <!-- Filters -->
     <div class="flex-row gap-regular flex-wrap">
       <div *ngTemplateOutlet="filterDialog"></div>
@@ -36,8 +43,7 @@
         ></app-filter>
       }
     </div>
-    <!-- Bulk Actions -->
-    <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
+
     <!-- Tab Groups-->
     <div class="mat-elevation-z1">
       @if (groups.length > 1) {
@@ -79,11 +85,13 @@
         </button>
       </div>
     </app-view-actions>
+
     @if (selectedRows) {
       <div class="bulk-action-spacing">
         <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
       </div>
     }
+
     <ng-container *ngTemplateOutlet="subrecord"></ng-container>
   </div>
 }
@@ -277,93 +285,10 @@
 
 <ng-template #bulkActions>
   @if (!!selectedRows) {
-    <div class="bulk-action-button">
-      <div i18n>
-        Actions on <b>{{ selectedRows.length }}</b> selected records:
-      </div>
-      <div
-        class="flex-row gap-small bulk-action-button"
-        matTooltip="Select rows for an action on multiple records"
-        i18n-matTooltip
-      >
-        <button
-          mat-raised-button
-          (click)="editRecords()"
-          [disabled]="selectedRows.length === 0"
-          color="accent"
-          i18n="bulk action button"
-        >
-          Bulk Edit
-        </button>
-        <button
-          mat-raised-button
-          (click)="archiveRecords()"
-          [disabled]="selectedRows.length === 0"
-          color="accent"
-          i18n="bulk action button"
-        >
-          Archive
-        </button>
-        @if (entityConstructor.hasPII) {
-          <button
-            mat-raised-button
-            (click)="anonymizeRecords()"
-            [disabled]="selectedRows.length === 0"
-            color="accent"
-            i18n="bulk action button"
-          >
-            Anonymize
-          </button>
-        }
-        <button
-          mat-raised-button
-          (click)="deleteRecords()"
-          [disabled]="selectedRows.length === 0"
-          color="accent"
-          i18n="bulk action button"
-        >
-          Delete
-        </button>
-        <button
-          mat-raised-button
-          (click)="duplicateRecords()"
-          [disabled]="selectedRows.length === 0"
-          color="accent"
-          i18n="bulk action button"
-        >
-          Duplicate
-        </button>
-        <button
-          mat-raised-button
-          (click)="linkExternalProfiles()"
-          [disabled]="selectedRows.length === 0"
-          color="accent"
-          i18n="bulk action button"
-        >
-          Link External Profile
-        </button>
-        <button
-          mat-raised-button
-          (click)="mergeRecords()"
-          [disabled]="selectedRows.length !== 2"
-          color="accent"
-          i18n="bulk action button"
-        >
-          Merge
-        </button>
-        <button
-          mat-raised-button
-          (click)="bulkEmail()"
-          [disabled]="selectedRows.length === 0"
-          color="accent"
-          i18n="bulk action button"
-        >
-          Send email to group
-        </button>
-        <button mat-raised-button (click)="selectedRows = undefined" i18n>
-          Cancel
-        </button>
-      </div>
-    </div>
+    <app-entity-bulk-actions
+      [entities]="selectedRows"
+      (resetBulkActionMode)="selectedRows = undefined"
+    >
+    </app-entity-bulk-actions>
   }
 </ng-template>

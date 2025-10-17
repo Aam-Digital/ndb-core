@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { firstValueFrom, Observable } from "rxjs";
+import { firstValueFrom, Observable, of } from "rxjs";
 import { ExternalProfile, ExternalSkill } from "./external-profile";
 import { Entity } from "../../../core/entity/model/entity";
 import { HttpClient } from "@angular/common/http";
@@ -11,6 +11,7 @@ import { FormGroup } from "@angular/forms";
 import { Logging } from "../../../core/logging/logging.service";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { Skill } from "../skill";
+import { environment } from "#src/environments/environment";
 
 /**
  * Interaction with Aam Digital backend providing access to external profiles
@@ -23,6 +24,22 @@ export class SkillApiService {
   private readonly alertService = inject(AlertService);
 
   private readonly BASE_URL = "/api/v1/skill/";
+
+  async isSkillApiEnabled(): Promise<boolean> {
+    return firstValueFrom(
+      this.http.get(environment.API_PROXY_PREFIX + "/actuator/features").pipe(
+        map((res) => {
+          return res?.["skill"]?.enabled ?? false;
+        }),
+        catchError((err) => {
+          // if aam-services backend is not running --> 502
+          // if aam-services module API disabled --> 404
+          Logging.debug("Skill API not available", err);
+          return of(false);
+        }),
+      ),
+    );
+  }
 
   /**
    * Fetch possibly matching external profiles

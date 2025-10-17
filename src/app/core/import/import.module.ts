@@ -54,6 +54,7 @@ export class ImportModule {
               additionalAction: JSON.stringify(importAction),
             },
           }),
+        availableFor: "all",
       });
     }
 

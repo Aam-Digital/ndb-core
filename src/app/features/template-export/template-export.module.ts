@@ -59,6 +59,7 @@ export class TemplateExportModule {
             await templateExportService.isExportServerEnabled();
           return isAdmin || isExportEnabled;
         },
+        availableFor: "all",
       },
     ]);
 
