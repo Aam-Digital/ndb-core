@@ -58,6 +58,17 @@
       </mat-card-content>
 
       <mat-card-footer>
+        @if (validationError) {
+          <div
+            class="flex-row align-center justify-content-center margin-regular color-error"
+            role="alert"
+          >
+            <fa-icon icon="triangle-exclamation" class="color-error"></fa-icon>
+            <span i18n>
+              Some fields are invalid, please check the form and submit again.
+            </span>
+          </div>
+        }
         <button
           mat-raised-button
           (click)="submit()"
@@ -69,14 +80,6 @@
         <button mat-stroked-button (click)="reset()" i18n="Reset form button">
           Reset
         </button>
-        @if (validationError) {
-          <div class="form-validation-error color-error" role="alert">
-            <fa-icon icon="triangle-exclamation" class="color-error"></fa-icon>
-            <span i18n>
-              Some fields are invalid, please check the form and submit again.
-            </span>
-          </div>
-        }
       </mat-card-footer>
     } @else {
       <mat-card-content>
