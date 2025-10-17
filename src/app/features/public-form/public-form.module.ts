@@ -107,6 +107,7 @@ const viewConfigs: ViewConfig[] = [
                       },
                       "entity",
                       "logo",
+                      "showSubmitAnotherButton",
                     ],
                   },
                 ],

@@ -8,6 +8,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { Subject } from "rxjs";
+import { FormControl, NgControl } from "@angular/forms";
 import { GeoLocation } from "../geo-location";
 import { GeoResult } from "../geo.service";
 import {
@@ -28,6 +29,8 @@ describe("EditLocationComponent", () => {
 
   let mockDialog: jasmine.SpyObj<MatDialog>;
   let mockDialogAfterClosedSubject: Subject<GeoLocation[] | undefined>;
+  let mockNgControl: jasmine.SpyObj<NgControl>;
+  let mockFormControl: FormControl<GeoLocation>;
 
   beforeEach(async () => {
     mockDialog = jasmine.createSpyObj(["open"]);
@@ -36,13 +39,23 @@ describe("EditLocationComponent", () => {
       afterClosed: () => mockDialogAfterClosedSubject,
     } as any);
 
+    mockFormControl = new FormControl<GeoLocation>(null);
+    mockNgControl = jasmine.createSpyObj("NgControl", [], {
+      control: mockFormControl,
+    });
+
     await TestBed.configureTestingModule({
       imports: [
         EditLocationComponent,
         NoopAnimationsModule,
         FontAwesomeTestingModule,
       ],
-      providers: [{ provide: MatDialog, useValue: mockDialog }],
+      providers: [
+        { provide: MatDialog, useValue: mockDialog },
+
+        // component works either with this.value or this.ngControl but not with both in combination
+        //{ provide: NgControl, useValue: mockNgControl },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditLocationComponent);
