@@ -47,6 +47,9 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   private entityFormService = inject(EntityFormService);
   private configService = inject(ConfigService);
   private snackbar = inject(MatSnackBar);
+
+  // Track if the last submit attempt failed due to validation
+  validationError = false;
   private ability = inject(EntityAbility);
   private router = inject(Router);
 
@@ -67,14 +70,18 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   async submit() {
+    this.validationError = false;
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
-      this.router.navigate(["/public-form/submission-success"]);
+      this.router.navigate(["/public-form/submission-success"], {
+        queryParams: {
+          showSubmitAnotherButton:
+            this.formConfig?.showSubmitAnotherButton !== false,
+        },
+      });
     } catch (e) {
       if (e instanceof InvalidFormFieldError) {
-        this.snackbar.open(
-          $localize`Some fields are invalid, please check the form and submit again.`,
-        );
+        this.validationError = true;
         return;
       }
       throw e;
@@ -82,6 +89,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   async reset() {
+    this.validationError = false;
     await this.initForm();
   }
 
@@ -227,6 +235,14 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       [].concat(...this.fieldGroups.map((group) => group.fields)),
       this.entity,
     );
+    // Subscribe to form changes and clear validation error when form is valid
+    this.form.formGroup.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        if (this.validationError && this.form.formGroup.valid) {
+          this.validationError = false;
+        }
+      });
   }
 }
 
