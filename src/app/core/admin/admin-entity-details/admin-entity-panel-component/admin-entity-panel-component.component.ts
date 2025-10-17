@@ -4,7 +4,14 @@ import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormCo
 import { RelatedEntitiesComponentConfig } from "#src/app/core/entity-details/related-entity-config";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
 import { CommonModule } from "@angular/common";
-import { Component, Input, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  inject,
+  computed,
+  signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatOptionModule } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -17,6 +24,11 @@ import {
 } from "app/utils/related-entities-default-config";
 import { PanelComponent } from "../../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../../entity/model/entity";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { AdminRelatedEntityDetailsComponent } from "../admin-related-entity-details/admin-related-entity-details.component";
+import { MatButtonModule } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: "app-admin-entity-panel-component",
@@ -27,6 +39,10 @@ import { EntityConstructor } from "../../../entity/model/entity";
     FormsModule,
     MatOptionModule,
     MatSelectModule,
+    MatButtonModule,
+    MatTooltipModule,
+    FaIconComponent,
+    MatDialogModule,
   ],
   templateUrl: "./admin-entity-panel-component.component.html",
   styleUrl: "./admin-entity-panel-component.component.scss",
@@ -35,6 +51,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   private entities = inject(EntityRegistry);
   private confirmation = inject(ConfirmationDialogService);
   private entityRelationsService = inject(EntityRelationsService);
+  private dialog = inject(MatDialog);
 
   @Input() config: PanelComponent;
   @Input() entityType: EntityConstructor;
@@ -54,6 +71,20 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     entityType: string;
   }[];
 
+  /**
+   * Signal to track the current entity type for reactive updates
+   */
+  private currentEntityType = signal<string>("");
+
+  /**
+   * Computed signal to determine if the "Edit data structure" button should be shown.
+   * Hidden for Note and Todo entities as they have custom detail views.
+   */
+  showEditStructureButton = computed(() => {
+    const entityType = this.currentEntityType();
+    return entityType !== "Note" && entityType !== "Todo";
+  });
+
   ngOnInit(): void {
     if (!this.config.config?.entityType) return;
     this.availableRelatedEntities = this.entityRelationsService
@@ -67,6 +98,9 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     this.activeFields = (this.config.config.columns ?? []).map((col) =>
       typeof col === "string" ? col : col.id,
     );
+
+    // Update signal to trigger computed property
+    this.currentEntityType.set(this.selectedEntityType);
   }
 
   /**
@@ -116,6 +150,9 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     this.applyCustomOverrides(newType);
 
     this.activeFields = [];
+
+    // Update signal to trigger computed property for button visibility
+    this.currentEntityType.set(newType);
   }
 
   /**
@@ -162,5 +199,40 @@ export class AdminEntityPanelComponentComponent implements OnInit {
         ...overrideRelatedConfig,
       };
     }
+  }
+
+  /**
+   * Opens a dialog showing the related entity's column selection and ordering.
+   * When "Apply" is clicked, updates the columns in the config.
+   * Changes are saved when the main form's Save button is clicked (config is part of the form).
+   */
+  openRelatedEntityDetailsConfig(): void {
+    if (!this.entityConstructor) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(AdminRelatedEntityDetailsComponent);
+
+    dialogRef.componentInstance.entityConstructor = this.entityConstructor;
+
+    // Pass the current columns to show as active fields in the dialog
+    dialogRef.componentInstance.currentColumns = this.activeFields.map((col) =>
+      typeof col === "string" ? col : col.id,
+    );
+
+    dialogRef.afterClosed().subscribe((updatedFieldIds: string[]) => {
+      // Only update if user clicked Apply (updatedFieldIds is defined)
+      // undefined means Cancel was clicked
+      if (updatedFieldIds !== undefined) {
+        // Update the columns configuration with the new field order
+        // This will be saved when the main form's Save button is clicked
+        this.config.config = {
+          ...this.config.config,
+          columns: updatedFieldIds,
+        };
+
+        this.activeFields = updatedFieldIds;
+      }
+    });
   }
 }
