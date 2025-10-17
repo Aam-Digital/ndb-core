@@ -14,7 +14,6 @@ import { DuplicateRecordService } from "app/core/entity-list/duplicate-records/d
 import { PublicFormsService } from "app/features/public-form/public-forms.service";
 import { PublicFormConfig } from "app/features/public-form/public-form-config";
 import { EntityEditService } from "./entity-edit.service";
-import { MatDialog } from "@angular/material/dialog";
 import { BulkMergeService } from "#src/app/features/de-duplication/bulk-merge-service";
 import { asArray } from "#src/app/utils/asArray";
 
@@ -35,7 +34,6 @@ export class EntityActionsService {
   private entityAnonymize = inject(EntityAnonymizeService);
   private duplicateRecordService = inject(DuplicateRecordService);
   private publicFormsService = inject(PublicFormsService);
-  private readonly dialog = inject(MatDialog);
   private readonly bulkMergeService = inject(BulkMergeService);
 
   constructor() {
@@ -119,7 +117,7 @@ export class EntityActionsService {
             this.snackBar.open(
               $localize`:bulk merge error:Please select exactly two records to perform merge.`,
               undefined,
-              { duration: 4000 }
+              { duration: 4000 },
             );
             return false;
           }

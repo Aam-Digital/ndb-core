@@ -1,5 +1,4 @@
 import { Component, inject, input, output, resource } from "@angular/core";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { Entity } from "../../entity/model/entity";
 import { EntityActionsMenuService } from "../entity-actions-menu/entity-actions-menu.service";
@@ -35,7 +34,6 @@ export class EntityBulkActionsComponent {
   resetBulkActionMode = output();
 
   private readonly actionsService = inject(EntityActionsMenuService);
-  private readonly snackBar = inject(MatSnackBar);
 
   /**
    * Available bulk actions for the current selection

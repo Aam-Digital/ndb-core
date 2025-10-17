@@ -6,11 +6,13 @@
   margin: 1em;
 }
 
+
 .bulk-action-select-wrapper {
   position: relative;
   flex: 1 1 0%;
-  min-width: 220px;
+  min-width: 320px;
   max-width: 700px;
+  width: 400px; /* Fixed width for stability */
 }
 
 .bulk-action-autocomplete {
@@ -19,8 +21,9 @@
 }
 .bulk-action-autocomplete.full-width {
   width: 100%;
-  min-width: 220px;
+  min-width: 0;
   max-width: 100%;
+  box-sizing: border-box;
 }
 
 .bulk-action-field-overlay {
@@ -32,4 +35,13 @@
   background: rgba(255, 255, 255, 0.5);
   z-index: 10;
   cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.1s;
+  box-sizing: border-box;
+}
+
+.bulk-action-select-wrapper.no-entities .bulk-action-field-overlay {
+  pointer-events: all;
+  opacity: 1;
 }
