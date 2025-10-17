@@ -5,11 +5,13 @@
     [title]="placeholder"
     [disabled]="_disabled"
     readonly
-    [value]="_value?.locationString ?? _value?.geoLookup?.display_name"
+    [value]="
+      locationValue?.locationString ?? locationValue?.geoLookup?.display_name
+    "
     rows="3"
   ></textarea>
 
-  @if (_value?.geoLookup) {
+  @if (locationValue?.geoLookup) {
     <button
       (click)="openMap(); $event.stopPropagation()"
       mat-icon-button

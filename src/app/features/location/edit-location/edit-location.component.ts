@@ -1,4 +1,4 @@
-import { Component, inject, Input } from "@angular/core";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatIconButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
@@ -16,10 +16,12 @@ import {
   MapPopupComponent,
   MapPopupConfig,
 } from "../map-popup/map-popup.component";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Input to select and view an address on a map.
  */
+@UntilDestroy()
 @DynamicComponent("EditLocation")
 @Component({
   selector: "app-edit-location",
@@ -44,7 +46,7 @@ import {
 })
 export class EditLocationComponent
   extends CustomFormControlDirective<GeoLocation>
-  implements EditComponent
+  implements EditComponent, OnInit
 {
   private readonly dialog = inject(MatDialog);
 
@@ -55,6 +57,30 @@ export class EditLocationComponent
    */
   @Input() autoLookup = true;
 
+  /**
+   * The location value
+   * (because this.value doesn't always reflect the correct field value, probably because of the DynamicEditComponent wrapper).
+   */
+  locationValue: GeoLocation;
+
+  override set value(v: GeoLocation) {
+    super.value = v;
+    this.locationValue = v;
+  }
+
+  override get value() {
+    return super.value;
+  }
+
+  ngOnInit(): void {
+    if (this.ngControl?.control) {
+      this.locationValue = this.ngControl.control.value;
+      this.ngControl.control.valueChanges
+        .pipe(untilDestroyed(this))
+        .subscribe((value) => (this.locationValue = value));
+    }
+  }
+
   override onContainerClick() {
     if (!this._disabled) {
       this.openMap();
@@ -63,7 +89,7 @@ export class EditLocationComponent
 
   openMap() {
     const config: MapPopupConfig = {
-      selectedLocation: this.value,
+      selectedLocation: this.locationValue,
       disabled: this._disabled,
     };
 
@@ -85,10 +111,16 @@ export class EditLocationComponent
           map((result: GeoLocation[]) => result[0]),
           filter(
             (result: GeoLocation | undefined) =>
-              JSON.stringify(result) !== JSON.stringify(this.value),
+              JSON.stringify(result) !== JSON.stringify(this.locationValue),
           ), // nothing changed, skip
         )
-        .subscribe((result: GeoLocation) => (this.value = result));
+        .subscribe((result: GeoLocation) => {
+          if (this.ngControl?.control) {
+            this.ngControl.control.setValue(result);
+          } else {
+            this.value = result;
+          }
+        });
     }
   }
 }
