@@ -21,7 +21,7 @@
     "sleidig",
     "Abhinegi2"
   ],
-  "rangeStrategy": "replace",
+  "rangeStrategy": "bump",
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": false,
@@ -29,12 +29,17 @@
       "after 00:00 and before 04:00 on Wednesday"
     ]
   },
+  "npm": {
+    "postUpdateOptions": [
+      "npmInstallTwice"
+    ]
+  },
   "packageRules": [
     {
       "matchManagers": [
         "npm"
       ],
-      "rangeStrategy": "replace"
+      "rangeStrategy": "bump"
     },
     {
       "matchUpdateTypes": [
@@ -46,6 +51,18 @@
         "dependencies",
         "major-update"
       ]
+    },
+    {
+      "matchDepTypes": [
+        "dependencies",
+        "devDependencies"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "groupName": "weekly-non-major-updates",
+      "automerge": false
     }
   ]
 }
