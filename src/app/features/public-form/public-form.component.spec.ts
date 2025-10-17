@@ -88,7 +88,8 @@ describe("PublicFormComponent", () => {
     expect(component.formConfig.title).toBe("Some test title");
   }));
 
-  it("should navigate to the success page after form submission and show a link to submit another form", fakeAsync(() => {
+  it("should navigate to the success page and show the button if enabled", fakeAsync(() => {
+    testFormConfig.showSubmitAnotherButton = true;
     initComponent();
     tick();
     const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
@@ -100,9 +101,29 @@ describe("PublicFormComponent", () => {
 
     expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
     tick();
-    expect(navigateSpy).toHaveBeenCalledWith([
-      "/public-form/submission-success",
-    ]);
+    expect(navigateSpy).toHaveBeenCalledWith(
+      ["/public-form/submission-success"],
+      { queryParams: { showSubmitAnotherButton: true } },
+    );
+  }));
+
+  it("should navigate to the success page and hide the button if disabled", fakeAsync(() => {
+    testFormConfig.showSubmitAnotherButton = false;
+    initComponent();
+    tick();
+    const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
+    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
+    saveSpy.and.resolveTo();
+    component.form.formGroup.get("name").setValue("some name");
+
+    component.submit();
+
+    expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
+    tick();
+    expect(navigateSpy).toHaveBeenCalledWith(
+      ["/public-form/submission-success"],
+      { queryParams: { showSubmitAnotherButton: false } },
+    );
   }));
 
   it("should show a snackbar error and not reset when trying to submit invalid form", fakeAsync(() => {
