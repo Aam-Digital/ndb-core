@@ -115,7 +115,14 @@ export class EntityActionsService {
         permission: "update",
         execute: async (entity: Entity) => {
           const entities = Array.isArray(entity) ? entity : [entity];
-          if (entities.length !== 2) return false;
+          if (entities.length !== 2) {
+            this.snackBar.open(
+              $localize`:bulk merge error:Please select exactly two records to perform merge.`,
+              undefined,
+              { duration: 4000 }
+            );
+            return false;
+          }
           const entityType = entities[0].getConstructor();
           if (!entityType) return false;
           await this.bulkMergeService.showMergeDialog(entities, entityType);

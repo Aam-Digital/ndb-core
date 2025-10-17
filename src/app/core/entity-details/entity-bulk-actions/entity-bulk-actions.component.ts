@@ -71,19 +71,6 @@ export class EntityBulkActionsComponent {
   }
 
   async onActionSelected(action: EntityAction) {
-    if (
-      action.action === "merge" &&
-      (!this.entities() || this.entities().length !== 2)
-    ) {
-      this.snackBar.open(
-        $localize`:bulk merge error:Please select exactly two records to perform merge.`,
-        undefined,
-        { duration: 4000 },
-      );
-      this.actionControl.setValue(null, { emitEvent: false });
-      return;
-    }
-
     // If the action has an execute method, call it with selectedRows
     if (action && typeof action.execute === "function") {
       await action.execute(this.entities());
