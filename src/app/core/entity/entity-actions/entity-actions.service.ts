@@ -119,7 +119,7 @@ export class EntityActionsService {
             this.snackBar.open(
               $localize`:bulk merge error:Please select exactly two records to perform merge.`,
               undefined,
-              { duration: 4000 }
+              { duration: 4000 },
             );
             return false;
           }
