@@ -55,7 +55,7 @@
     "assert": "^2.1.0",
     "crypto-es": "^2.1.0",
     "deep-object-diff": "^1.1.9",
-    "firebase": "^11.10.0",
+    "firebase": "^12.0.0",
     "hammerjs": "^2.0.8",
     "json-query": "^2.2.2",
     "keycloak-angular": "^20.0.0",
