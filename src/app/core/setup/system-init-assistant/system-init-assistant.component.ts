@@ -41,7 +41,7 @@ export class SystemInitAssistantComponent implements OnInit {
 
   availableUseCases: BaseConfig[] = [];
   selectedUseCase: BaseConfig | null = null;
-  generateDemoData: boolean = true;
+  generateDemoData: boolean;
 
   demoInitialized: boolean = false;
   generatingData: boolean = false;
