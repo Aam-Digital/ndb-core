@@ -55,9 +55,9 @@ export class EntityActionsMenuComponent implements OnChanges {
    */
   @Input() showExpanded?: boolean;
 
-  ngOnChanges(changes: SimpleChanges): void {
+  async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes.entity) {
-      this.filterAvailableActions();
+      await this.filterAvailableActions();
     }
   }
 
@@ -67,22 +67,10 @@ export class EntityActionsMenuComponent implements OnChanges {
       return;
     }
 
-    const allActions: EntityAction[] =
-      this.entityActionsMenuService.getActionsForSingle(this.entity);
-
-    // check each action’s `visible` property to hide actions not applicable to the current entity
-    const visibleActions = (
-      await Promise.all(
-        allActions.map(async (action) => {
-          const isVisible = action.visible
-            ? await action.visible(this.entity)
-            : true;
-          return isVisible ? action : null;
-        }),
-      )
-    ).filter(Boolean) as EntityAction[];
-
-    this.actions = visibleActions;
+    const allActions = await this.entityActionsMenuService.getActionsForSingle(
+      this.entity,
+    );
+    this.actions = allActions;
   }
 
   async executeAction(action: EntityAction) {

@@ -27,42 +27,40 @@ export class EntityActionsMenuService {
   /**
    * Get only actions available for bulk operations.
    */
-  async getActionsForBulk(entities?: Entity[]): Promise<EntityAction[]> {
-    const entity = !entities || entities.length === 0 ? undefined : entities[0];
-
-    const bulkActions = this.getActions(entity).filter(
-      (action) =>
-        (action.availableFor ?? "all") === "bulk-only" ||
-        (action.availableFor ?? "all") === "all",
-    );
-
-    const visibleActions = [];
-    for (const action of bulkActions) {
+  async getVisibleActions(
+    entities: Entity | Entity[],
+    availableFor: "bulk-only" | "individual-only" | "all",
+  ): Promise<EntityAction[]> {
+    const entity = Array.isArray(entities) ? entities[0] : entities;
+    const actions = this.getActions(entity).filter((action) => {
+      const avail = action.availableFor ?? "all";
+      return avail === availableFor || avail === "all";
+    });
+    const visibleActions: EntityAction[] = [];
+    for (const action of actions) {
       let isVisible: boolean;
-      if (action.visible && entities) {
+      if (action.visible) {
         isVisible = await action.visible(entities);
       } else {
         isVisible = true;
       }
-
       if (isVisible) {
         visibleActions.push(action);
       }
     }
-
     return visibleActions;
+  }
+
+  async getActionsForBulk(entities?: Entity[]): Promise<EntityAction[]> {
+    return this.getVisibleActions(entities ?? [], "bulk-only");
   }
 
   /**
    * Get only actions available for single entity operations.
    * @param entity
    */
-  getActionsForSingle(entity?: Entity): EntityAction[] {
-    return this.getActions(entity).filter(
-      (action) =>
-        (action.availableFor ?? "all") === "individual-only" ||
-        (action.availableFor ?? "all") === "all",
-    );
+  async getActionsForSingle(entity?: Entity): Promise<EntityAction[]> {
+    return this.getVisibleActions(entity, "individual-only");
   }
 
   /**
