@@ -73,5 +73,24 @@
       "education/fr/EmailTemplate_birthday.json"
     ],
     "locale": "fr"
+  },
+  {
+    "id": "all-features",
+    "name": "[All Features]",
+    "description": "A setup with all available features enabled to preview any advanced functionality or special testing.",
+    "entitiesToImport": [
+      "all-features/Config_CONFIG_ENTITY.json",
+      "education/configurable-enums.json",
+      "basic/ConfigurableEnum_attendance-status.json",
+      "basic/ConfigurableEnum_warning-levels.json",
+      "basic/ConfigurableEnum_genders.json",
+      "basic/ConfigurableEnum_rating-answer.json",
+      "basic/Config_SetupWizard.json",
+      "basic/MarkdownContent_help.json",
+      "basic/Config_Permissions.json",
+      "basic/SiteSettings_global.json",
+      "education/EmailTemplate_birthday.json"
+    ],
+    "locale": "en-US"
   }
 ]
