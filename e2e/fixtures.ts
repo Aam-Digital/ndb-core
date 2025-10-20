@@ -64,7 +64,7 @@ export async function argosScreenshot(
   options?: ArgosScreenshotOptions,
 ): Promise<void> {
   if (process.env.CI || process.env.SCREENSHOT) {
-    return argosScreenshotBase(page, name, {
+    await argosScreenshotBase(page, name, {
       fullPage: true,
       ...(options || {}),
     });
