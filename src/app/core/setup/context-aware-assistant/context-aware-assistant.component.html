@@ -6,12 +6,14 @@
     >
   </div>
 
-  @if (isDemoMode) {
+  @if (isMockMode) {
     <div class="margin-top-large" i18n>
-      You are currently using the "Demo Mode". All changes will be reset after
-      closing or reloading the page.
+      You are currently using the temporary "Demo Mode". All changes will be
+      reset after closing or reloading the page.
     </div>
+  }
 
+  @if (isDemoMode) {
     <div class="action-button flex-row">
       <button mat-stroked-button class="flex-grow" (click)="restartDemo()" i18n>
         Restart demo with different use case

@@ -11,6 +11,9 @@ import { availableLocales } from "app/core/language/languages";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { MatDialogRef } from "@angular/material/dialog";
 import { AssistantButtonComponent } from "../assistant-button/assistant-button.component";
+import { MatCheckbox } from "@angular/material/checkbox";
+import { FormsModule } from "@angular/forms";
+import { environment } from "#src/environments/environment";
 
 /**
  * UI for initial system setup and use case selection,
@@ -18,7 +21,13 @@ import { AssistantButtonComponent } from "../assistant-button/assistant-button.c
  */
 @Component({
   selector: "app-system-init-assistant",
-  imports: [MatButtonModule, ChooseUseCaseComponent, LanguageSelectComponent],
+  imports: [
+    MatButtonModule,
+    ChooseUseCaseComponent,
+    LanguageSelectComponent,
+    MatCheckbox,
+    FormsModule,
+  ],
   templateUrl: "./system-init-assistant.component.html",
   styleUrl: "./system-init-assistant.component.scss",
 })
@@ -30,8 +39,10 @@ export class SystemInitAssistantComponent implements OnInit {
   private readonly demoDataInitializer = inject(DemoDataInitializerService);
   private readonly setupService = inject(SetupService);
 
-  demoUseCases: BaseConfig[] = [];
+  availableUseCases: BaseConfig[] = [];
   selectedUseCase: BaseConfig | null = null;
+  generateDemoData: boolean = true;
+
   demoInitialized: boolean = false;
   generatingData: boolean = false;
   availableLocales: ConfigurableEnumValue[];
@@ -39,8 +50,9 @@ export class SystemInitAssistantComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.adjustAssistantDialogPanel();
 
-    this.demoUseCases = await this.setupService.getAvailableBaseConfig();
+    this.availableUseCases = await this.setupService.getAvailableBaseConfig();
     this.availableLocales = this.getAvailableLocalesForUseCases();
+    this.generateDemoData = environment.demo_mode;
 
     await this.initFromQueryParamAutomatically();
   }
@@ -55,7 +67,7 @@ export class SystemInitAssistantComponent implements OnInit {
 
   private getAvailableLocalesForUseCases() {
     const availableDemoLocale = new Set(
-      this.demoUseCases.map((useCase) => useCase.locale).filter(Boolean),
+      this.availableUseCases.map((useCase) => useCase.locale).filter(Boolean),
     );
 
     return availableLocales.values.filter((locale) =>
@@ -74,7 +86,7 @@ export class SystemInitAssistantComponent implements OnInit {
     }
 
     this.selectedUseCase =
-      this.demoUseCases.find(
+      this.availableUseCases.find(
         (config) =>
           // Using lowercase comparison to avoid mismatches due to URL parameter casing or caching issues
           config.id.toLowerCase() === preSelectedUseCase.toLowerCase(),
@@ -93,7 +105,9 @@ export class SystemInitAssistantComponent implements OnInit {
     try {
       await this.setupService.initSystemWithBaseConfig(this.selectedUseCase);
 
-      await this.demoDataInitializer.generateDemoData();
+      if (this.generateDemoData) {
+        await this.demoDataInitializer.generateDemoData();
+      }
 
       this.demoInitialized = true;
     } catch (error) {

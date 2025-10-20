@@ -23,6 +23,10 @@
   position: absolute;
   right: 0;
   top: var(--dialog-header-border);
+
+  ::ng-deep {
+    --mat-icon-button-container-shape: 0;
+  }
 }
 
 

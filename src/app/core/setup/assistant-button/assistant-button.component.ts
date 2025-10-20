@@ -1,6 +1,5 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
-import { environment } from "../../../../environments/environment";
 import { ConfigService } from "app/core/config/config.service";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { lastValueFrom } from "rxjs";
@@ -26,11 +25,9 @@ export class AssistantButtonComponent implements OnInit {
 
   protected isDialogOpen: boolean = false;
 
-  assistantEnabled: boolean;
+  assistantEnabled: boolean = true;
 
   async ngOnInit() {
-    this.assistantEnabled = environment.demo_mode;
-
     await this.setupService.waitForConfigReady();
     if (!this.configService.hasConfig()) {
       // If we do not have a config yet, we open the setup dialog immediately
