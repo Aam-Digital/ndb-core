@@ -1,8 +1,5 @@
 <div class="flex-row gap-regular overall-box">
-  <div
-    class="bulk-action-select-wrapper"
-    [class.no-entities]="!entities() || entities().length === 0"
-  >
+  <div class="bulk-action-select-wrapper">
     <mat-form-field class="bulk-action-autocomplete full-width">
       <mat-label i18n>Select Bulk Action</mat-label>
 
@@ -19,9 +16,6 @@
         </mat-hint>
       }
     </mat-form-field>
-
-    <div class="bulk-action-field-overlay"></div>
   </div>
-
   <button mat-raised-button (click)="cancel()" i18n>Cancel</button>
 </div>

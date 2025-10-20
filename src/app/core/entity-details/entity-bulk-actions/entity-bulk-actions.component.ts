@@ -1,4 +1,11 @@
-import { Component, inject, input, output, resource } from "@angular/core";
+import {
+  Component,
+  inject,
+  input,
+  output,
+  resource,
+  effect,
+} from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { Entity } from "../../entity/model/entity";
 import { EntityActionsMenuService } from "../entity-actions-menu/entity-actions-menu.service";
@@ -65,6 +72,15 @@ export class EntityBulkActionsComponent {
   constructor() {
     this.actionControl.valueChanges.subscribe((action) => {
       if (action) this.onActionSelected(action);
+    });
+    // Enable/disable actionControl based on entities selection
+    effect(() => {
+      const entities = this.entities();
+      if (!entities || entities.length === 0) {
+        this.actionControl.disable({ emitEvent: false });
+      } else {
+        this.actionControl.enable({ emitEvent: false });
+      }
     });
   }
 

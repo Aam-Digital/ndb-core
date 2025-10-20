@@ -25,22 +25,3 @@
   box-sizing: border-box;
 }
 
-.bulk-action-field-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.5);
-  z-index: 10;
-  cursor: not-allowed;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.1s;
-  box-sizing: border-box;
-}
-
-.bulk-action-select-wrapper.no-entities .bulk-action-field-overlay {
-  pointer-events: all;
-  opacity: 1;
-}
