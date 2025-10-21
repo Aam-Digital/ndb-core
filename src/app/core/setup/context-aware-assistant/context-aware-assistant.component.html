@@ -2,8 +2,8 @@
   <div i18n>Hi there! Need help setting up or using the application?</div>
 
   <div i18n>
-    I am here to assist you. We are working on making this assistant more and more
-    interactive and aware of your system.
+    I am here to assist you. We are working on making this assistant more and
+    more interactive and aware of your system.
   </div>
 
   <div class="important-message" i18n>
@@ -13,16 +13,17 @@
   <div class="user-guides-block important-message" i18n>
     Find help and user guides in our
     <a href="https://chatwoot.help/hc/aam-digital/en" target="_blank"
-    >Support Center</a
+      >Support Center</a
     >.
   </div>
 
   @if (isSaaS) {
     @if (isUserSupportEnabled) {
       <div i18n>
-        If you have any technical questions or problems, don't hesitate to contact us at
-        <a href="mailto:support@aam-digital.app">support@aam-digital.app</a>.
-        Our support team is happy to help!
+        If you have any technical questions or problems, don't hesitate to
+        contact us at
+        <a href="mailto:support@aam-digital.app">support&#64;aam-digital.app</a
+        >. Our support team is happy to help!
       </div>
     } @else {
       <div i18n>
@@ -33,23 +34,29 @@
 
   <div i18n>
     You can also discuss your questions and ideas with Aam Digital's
-    <a href="https://github.com/Aam-Digital/ndb-core/discussions" target="_blank">open source Community</a>.
+    <a
+      href="https://github.com/Aam-Digital/ndb-core/discussions"
+      target="_blank"
+      >open source Community</a
+    >.
   </div>
 
   <div class="align-end">
-    @if (isMockMode) {
-      <div class="margin-top-large" i18n>
-        You are currently using the temporary "Demo Mode". All changes will be
-        reset after closing or reloading the page.
-      </div>
-    }
-
-    @if (isDemoMode) {
-      <div class="action-button flex-row">
-        <button mat-stroked-button class="flex-grow" (click)="restartDemo()" i18n>
-          Restart demo with different use case
-        </button>
-      </div>
-    }
+    <!-- Spacer to move remaining content to bottom -->
   </div>
+
+  @if (isMockMode) {
+    <div class="margin-top-large" i18n>
+      You are currently using the temporary "Demo Mode". All changes will be
+      reset after closing or reloading the page.
+    </div>
+  }
+
+  @if (isDemoMode) {
+    <div class="action-button flex-row">
+      <button mat-stroked-button class="flex-grow" (click)="restartDemo()" i18n>
+        Restart demo with different use case
+      </button>
+    </div>
+  }
 </div>
