@@ -16,6 +16,11 @@ import {
 } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { MatButtonModule } from "@angular/material/button";
 
+/**
+ * Allow users to select among the registered bulk actions
+ * that are available in the current context.
+ * Also executes the action.
+ */
 @Component({
   selector: "app-entity-bulk-actions",
   templateUrl: "./entity-bulk-actions.component.html",
