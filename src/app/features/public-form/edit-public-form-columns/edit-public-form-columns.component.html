@@ -1,4 +1,4 @@
-<div class="public-form-detail-hint-banner" i18n>
+<app-hint-box i18n>
   You can edit how users will see the details of this public form. To edit
   fields, click on the Edit button, make your changes, and then save. These
   changes will reflect on the public form.
@@ -7,8 +7,9 @@
   editor below closely resembles how the form will look for users later. Forms
   show all fields below each other not in multiple columns, however.
   <br />
-</div>
-<div class="coloumn-container">
+</app-hint-box>
+
+<div class="column-container">
   <app-admin-entity-form
     [config]="formConfig"
     (configChange)="updateValue($event)"
