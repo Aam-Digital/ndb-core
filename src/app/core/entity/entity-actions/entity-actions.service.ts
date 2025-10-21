@@ -114,10 +114,10 @@ export class EntityActionsService {
         execute: async (entity: Entity) => {
           const entities = Array.isArray(entity) ? entity : [entity];
           if (entities.length !== 2) {
-            this.snackBar.open(
-              $localize`:bulk merge error:Please select exactly two records to perform merge.`,
-              undefined,
-              { duration: 4000 },
+            await this.confirmationDialog.getConfirmation(
+              $localize`:bulk merge error:Invalid selection`,
+              $localize`:bulk merge error:You need to select exactly two records for merge.`,
+              OkButton,
             );
             return false;
           }
