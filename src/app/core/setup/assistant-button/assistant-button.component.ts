@@ -5,6 +5,7 @@ import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { lastValueFrom } from "rxjs";
 import { SetupService } from "../setup.service";
 import { AssistantDialogComponent } from "../assistant-dialog/assistant-dialog.component";
+import { MatTooltip } from "@angular/material/tooltip";
 
 /**
  * Button for the toolbar to access a context-aware assistant dialog
@@ -12,7 +13,7 @@ import { AssistantDialogComponent } from "../assistant-dialog/assistant-dialog.c
  */
 @Component({
   selector: "app-assistant-button",
-  imports: [MatButtonModule],
+  imports: [MatButtonModule, MatTooltip],
   templateUrl: "./assistant-button.component.html",
   styleUrl: "./assistant-button.component.scss",
 })
