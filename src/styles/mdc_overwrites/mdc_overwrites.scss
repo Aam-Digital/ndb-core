@@ -6,12 +6,10 @@
  * more background: https://github.com/angular/components/issues/25981#issuecomment-1515332869
  */
 
-
 /* Progress bar background color should have opacity to indicate progress */
 .mat-mdc-progress-bar .mdc-linear-progress__buffer-bar {
   opacity: 25%;
 }
-
 
 /* Color for selected date range in date picker defaults to white */
 .mat-calendar-body-in-range::before {
