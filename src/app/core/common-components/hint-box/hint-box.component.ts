@@ -1,11 +1,9 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 
 @Component({
-  selector: 'app-hint-box',
+  selector: "app-hint-box",
   imports: [],
-  templateUrl: './hint-box.component.html',
-  styleUrl: './hint-box.component.scss'
+  templateUrl: "./hint-box.component.html",
+  styleUrl: "./hint-box.component.scss",
 })
-export class HintBoxComponent {
-
-}
+export class HintBoxComponent {}

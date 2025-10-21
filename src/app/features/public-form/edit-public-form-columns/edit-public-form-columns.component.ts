@@ -20,11 +20,12 @@ import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { PublicFormConfig } from "../public-form-config";
 import { migratePublicFormConfig } from "../public-form.component";
+import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 
 @DynamicComponent("EditPublicFormColumns")
 @Component({
   selector: "app-edit-public-form-columns",
-  imports: [AdminEntityFormComponent],
+  imports: [AdminEntityFormComponent, HintBoxComponent],
   templateUrl: "./edit-public-form-columns.component.html",
   styleUrl: "./edit-public-form-columns.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
