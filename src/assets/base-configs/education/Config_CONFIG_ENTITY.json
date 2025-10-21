@@ -440,13 +440,6 @@
       },
       "_id": "view:user/:id"
     },
-    "view:help": {
-      "component": "MarkdownPage",
-      "config": {
-        "markdownEntityId": "help"
-      },
-      "_id": "view:help"
-    },
     "view:attendance": {
       "component": "AttendanceManager",
       "_id": "view:attendance"

@@ -10,10 +10,10 @@ import { LanguageSelectComponent } from "app/core/language/language-select/langu
 import { availableLocales } from "app/core/language/languages";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { MatDialogRef } from "@angular/material/dialog";
-import { AssistantButtonComponent } from "../assistant-button/assistant-button.component";
 import { MatCheckbox } from "@angular/material/checkbox";
 import { FormsModule } from "@angular/forms";
 import { environment } from "#src/environments/environment";
+import { AssistantService } from "#src/app/core/setup/assistant.service";
 
 /**
  * UI for initial system setup and use case selection,
@@ -60,7 +60,7 @@ export class SystemInitAssistantComponent implements OnInit {
   private adjustAssistantDialogPanel() {
     this.dialogRef.updateSize(
       "calc(100% - 100px)",
-      AssistantButtonComponent.ASSISTANT_DIALOG_HEIGHT,
+      AssistantService.ASSISTANT_DIALOG_HEIGHT,
     );
     this.dialogRef.disableClose = true;
   }

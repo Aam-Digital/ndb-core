@@ -5,7 +5,6 @@ import {
   SyncStateSubject,
 } from "app/core/session/session-type";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
-import { MatDialogRef } from "@angular/material/dialog";
 import { NAVIGATOR_TOKEN } from "app/utils/di-tokens";
 import { CurrentUserSubject } from "app/core/session/current-user-subject";
 import {
@@ -13,12 +12,18 @@ import {
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
 import { SetupService } from "../setup.service";
+import { AssistantService } from "../assistant.service";
 
 describe("AssistantButtonComponent", () => {
   let component: AssistantButtonComponent;
   let fixture: ComponentFixture<AssistantButtonComponent>;
+  let mockAssistantService: jasmine.SpyObj<AssistantService>;
 
   beforeEach(async () => {
+    mockAssistantService = jasmine.createSpyObj("AssistantService", [
+      "openAssistant",
+    ]);
+
     await TestBed.configureTestingModule({
       imports: [AssistantButtonComponent],
       providers: [
@@ -26,12 +31,12 @@ describe("AssistantButtonComponent", () => {
         LoginStateSubject,
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: KeycloakAuthService, useValue: {} },
-        { provide: MatDialogRef, useValue: {} },
         { provide: NAVIGATOR_TOKEN, useValue: {} },
         {
           provide: SetupService,
-          useValue: { detectConfigReadyState: Promise.resolve(true) },
+          useValue: { waitForConfigReady: () => Promise.resolve(true) },
         },
+        { provide: AssistantService, useValue: mockAssistantService },
         SyncStateSubject,
       ],
     }).compileComponents();
@@ -43,5 +48,13 @@ describe("AssistantButtonComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should call AssistantService.openAssistant when openAssistant is called", async () => {
+    mockAssistantService.openAssistant.and.returnValue(Promise.resolve());
+
+    await component.openAssistant();
+
+    expect(mockAssistantService.openAssistant).toHaveBeenCalled();
   });
 });

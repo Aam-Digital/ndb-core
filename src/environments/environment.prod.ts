@@ -19,4 +19,6 @@ export const environment = {
   DB_PROXY_PREFIX: "/db",
   API_PROXY_PREFIX: "/api",
   notificationsConfig: undefined,
+  SaaS: false,
+  userSupportEnabled: false,
 };

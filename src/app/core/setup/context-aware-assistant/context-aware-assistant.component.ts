@@ -22,6 +22,8 @@ import { BackupService } from "../../admin/backup/backup.service";
 export class ContextAwareAssistantComponent {
   isMockMode: boolean = environment.session_type === SessionType.mock;
   isDemoMode: boolean = environment.demo_mode;
+  isUserSupportEnabled: boolean = environment.userSupportEnabled;
+  isSaaS: boolean = environment.SaaS;
 
   private readonly backupService = inject(BackupService);
 

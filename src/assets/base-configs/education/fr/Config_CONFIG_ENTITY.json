@@ -40,11 +40,6 @@
           "link": "/report"
         },
         {
-          "label": "Aide",
-          "icon": "question",
-          "link": "/help"
-        },
-        {
           "label": "Administrateur",
           "icon": "wrench",
           "subMenu": [
@@ -486,13 +481,6 @@
         ]
       },
       "_id": "view:user/:id"
-    },
-    "view:help": {
-      "component": "MarkdownPage",
-      "config": {
-        "markdownEntityId": "help"
-      },
-      "_id": "view:help"
     },
     "view:attendance": {
       "component": "AttendanceManager",

@@ -1,3 +1,25 @@
+<app-hint-box>
+  <h2 i18n>User Guides & Support</h2>
+  <p i18n>
+    You can use our context-aware "Virtual Assistant" to get support and access
+    our help articles and other resources. Click on the button in the top
+    toolbar to open it. This page here is providing technical details for
+    advanced troubleshooting.
+  </p>
+  <div>
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="assistantService.openAssistant()"
+      i18n
+    >
+      Open Virtual Assistant
+    </button>
+  </div>
+</app-hint-box>
+
+<div class="margin-top-large"></div>
+
 <h1 i18n>Technical User Support Details</h1>
 
 <p id="table-description" class="text-secondary" i18n>
