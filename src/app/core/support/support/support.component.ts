@@ -20,6 +20,7 @@ import { SyncedPouchDatabase } from "../../database/pouchdb/synced-pouch-databas
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { PouchDatabase } from "../../database/pouchdb/pouch-database";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { AssistantService } from "#src/app/core/setup/assistant.service";
 
 @Component({
   selector: "app-support",
@@ -42,6 +43,7 @@ export class SupportComponent implements OnInit {
   private backupService = inject(BackupService);
   private downloadService = inject(DownloadService);
   private window = inject<Window>(WINDOW_TOKEN);
+  protected readonly assistantService = inject(AssistantService);
 
   sessionInfo: SessionInfo;
   currentUser: Entity;
