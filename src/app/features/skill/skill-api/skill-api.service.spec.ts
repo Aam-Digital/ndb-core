@@ -303,9 +303,11 @@ describe("SkillApiService", () => {
       "https://Angular",
     );
 
-    expect(targetEntity.other).toEqual([
-      "Skill:https://Java",
-      "Skill:https://Angular",
-    ]);
+    expect(targetEntity.other).toEqual(
+      jasmine.arrayWithExactContents([
+        "Skill:https://Java",
+        "Skill:https://Angular",
+      ]),
+    );
   }));
 });
