@@ -11,7 +11,7 @@
     [multi]="multi"
     [options]="availableOptionsResource.value()"
     [placeholder]="loading() ? loadingPlaceholder : placeholder"
-    [createOption]="isCreateDisabled() ? null : createNewEntity"
+    [createOption]="createNewEntityOption()"
   >
     <ng-template let-item>
       @if (!item.isHidden) {

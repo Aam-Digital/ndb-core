@@ -22,7 +22,6 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { UntilDestroy } from "@ngneat/until-destroy";
 import { asArray } from "app/utils/asArray";
 import { lastValueFrom, map, startWith, switchMap } from "rxjs";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
@@ -67,7 +66,6 @@ import { EntityBlockComponent } from "../entity-block/entity-block.component";
     { provide: MatFormFieldControl, useExisting: EditEntityComponent },
   ],
 })
-@UntilDestroy()
 export class EditEntityComponent<
     T extends string[] | string = string[],
     E extends Entity = Entity,
@@ -157,11 +155,11 @@ export class EditEntityComponent<
 
       const entities: E[] = [];
       for (const type of params.entityTypes) {
-        entities.push(...(await this.entityMapperService.loadType<E>(type)));
+        entities.push(...[]); //(await this.entityMapperService.loadType<E>(type)));
       }
 
       return entities
-        .filter((e) => this.additionalFilter(e))
+        .filter((e) => true) //this.additionalFilter(e))
         .sort((a, b) => a.toString().localeCompare(b.toString()));
     },
   });
@@ -183,6 +181,16 @@ export class EditEntityComponent<
     const entityType = entityTypes[0];
     return !this.ability.can("create", entityType);
   });
+
+  createNewEntityOption: Signal<(input: string) => Promise<E>> = computed(
+    () => {
+      if (this.isCreateDisabled()) {
+        return null;
+      }
+
+      return (input) => this.createNewEntity(input);
+    },
+  );
 
   loading: Signal<boolean> = computed(() => this.allEntities.isLoading());
 
@@ -227,11 +235,11 @@ export class EditEntityComponent<
           continue;
         }
 
-        const additionalEntity = await this.getEntity(id);
+        const additionalEntity = undefined; //await this.getEntity(id);
         if (additionalEntity) {
           availableEntities.push(additionalEntity);
         } else {
-          this.hasInaccessibleEntities = true;
+          //this.hasInaccessibleEntities = true;
           availableEntities.push({
             getId: () => id,
             isHidden: true,
@@ -273,7 +281,7 @@ export class EditEntityComponent<
     }
   }
 
-  createNewEntity = async (input: string): Promise<E> => {
+  private async createNewEntity(input: string): Promise<E> {
     const entityTypes = this.entityType();
     if (entityTypes.length < 1) {
       return;
@@ -289,7 +297,7 @@ export class EditEntityComponent<
 
     const dialogRef = this.formDialog.openFormPopup(newEntity);
     return lastValueFrom<E | undefined>(dialogRef.afterClosed());
-  };
+  }
 
   ngOnInit() {
     this.multi = this.formFieldConfig?.isArray ?? false;
