@@ -37,7 +37,6 @@ export class ConfigService extends LatestEntityLoader<Config> {
     entityMapper: EntityMapperService, // Prefer using the inject() function not possible here because base class requires the dependency to be passed to super()
   ) {
     super(Config, Config.CONFIG_KEY, entityMapper);
-    super.startLoading();
   }
 
   override onInit() {
@@ -45,6 +44,8 @@ export class ConfigService extends LatestEntityLoader<Config> {
       this.currentConfig = this.applyMigrations(config);
       this.logConfigRev();
     });
+
+    this.startLoading();
   }
 
   private logConfigRev() {
