@@ -129,7 +129,7 @@ describe("EditEntityComponent", () => {
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
     fixture.autoDetectChanges();
     tick();
-    expect(component.availableOptions()).toEqual(
+    expect(component.availableOptionsResource.value()).toEqual(
       jasmine.arrayWithExactContents(test1Entities),
     );
   }));
@@ -142,7 +142,7 @@ describe("EditEntityComponent", () => {
     fixture.autoDetectChanges();
     tick();
 
-    expect(component.availableOptions()).toEqual(
+    expect(component.availableOptionsResource.value()).toEqual(
       [...test1Entities, ...test2Entities].sort((a, b) =>
         a.toString().localeCompare(b.toString()),
       ),
@@ -179,17 +179,19 @@ describe("EditEntityComponent", () => {
     fixture.autoDetectChanges();
     tick();
 
-    expect(component.availableOptions().length).toEqual(
+    expect(component.availableOptionsResource.value().length).toEqual(
       test1Entities.length - 2,
     );
     component.toggleIncludeInactive();
     tick();
-    expect(component.availableOptions().length).toEqual(test1Entities.length);
+    expect(component.availableOptionsResource.value().length).toEqual(
+      test1Entities.length,
+    );
 
     test1Entities[2].isActive = true;
     component.toggleIncludeInactive();
     tick();
-    expect(component.availableOptions().length).toEqual(3);
+    expect(component.availableOptionsResource.value().length).toEqual(3);
   }));
 
   it("should update matchingInactive count when autocomplete filter changes", fakeAsync(() => {
@@ -227,7 +229,7 @@ describe("EditEntityComponent", () => {
         test2Entities[0].getId(),
       ]),
     );
-    expect(component.availableOptions()).toEqual(
+    expect(component.availableOptionsResource.value()).toEqual(
       jasmine.arrayWithExactContents([...test1Entities, test2Entities[0]]),
     );
   }));

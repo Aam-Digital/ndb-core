@@ -2,15 +2,15 @@ import { resourceWithRetention } from "#src/app/utils/resourceWithRetention";
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
+  inject,
   Input,
+  input,
   OnInit,
   Resource,
   Signal,
-  ViewChild,
-  computed,
-  inject,
-  input,
   signal,
+  ViewChild,
 } from "@angular/core";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -130,10 +130,6 @@ export class EditEntityComponent<
   });
   private _formControl: FormControl<T>;
 
-  get label(): string {
-    return this.formFieldConfig?.label || "";
-  }
-
   /**
    * Explicitly define the entity type(s) to select among.
    * Overrides the `additional` configuration of the FormFieldConfig if given.
@@ -207,50 +203,45 @@ export class EditEntityComponent<
 
   includeInactive = signal<boolean>(false);
 
-  private readonly availableOptionsResource: Resource<E[]> =
-    resourceWithRetention({
-      defaultValue: [],
-      params: () => ({
-        allEntities: this.allEntities.value(),
-        values: this.values(),
-        includeInactive: this.includeInactive(),
-      }),
-      loader: async ({ params }) => {
-        const availableEntities = params.allEntities.filter(
-          (e) =>
-            params.values.includes(e.getId()) ||
-            params.includeInactive ||
-            e.isActive,
-        );
+  readonly availableOptionsResource: Resource<E[]> = resourceWithRetention({
+    defaultValue: [],
+    params: () => ({
+      allEntities: this.allEntities.value(),
+      values: this.values(),
+      includeInactive: this.includeInactive(),
+    }),
+    loader: async ({ params }) => {
+      const availableEntities = params.allEntities.filter(
+        (e) =>
+          params.values.includes(e.getId()) ||
+          params.includeInactive ||
+          e.isActive,
+      );
 
-        for (const id of params.values) {
-          if (id === null || id === undefined || id === "") {
-            continue;
-          }
-
-          if (availableEntities.find((e) => id === e.getId())) {
-            continue;
-          }
-
-          const additionalEntity = await this.getEntity(id);
-          if (additionalEntity) {
-            availableEntities.push(additionalEntity);
-          } else {
-            this.hasInaccessibleEntities = true;
-            availableEntities.push({
-              getId: () => id,
-              isHidden: true,
-            } as unknown as E);
-          }
+      for (const id of params.values) {
+        if (id === null || id === undefined || id === "") {
+          continue;
         }
 
-        return availableEntities;
-      },
-    });
+        if (availableEntities.find((e) => id === e.getId())) {
+          continue;
+        }
 
-  availableOptions: Signal<E[]> = computed(() =>
-    this.availableOptionsResource.value(),
-  );
+        const additionalEntity = await this.getEntity(id);
+        if (additionalEntity) {
+          availableEntities.push(additionalEntity);
+        } else {
+          this.hasInaccessibleEntities = true;
+          availableEntities.push({
+            getId: () => id,
+            isHidden: true,
+          } as unknown as E);
+        }
+      }
+
+      return availableEntities;
+    },
+  });
 
   private async getEntity(selectedId: string): Promise<E | undefined> {
     const type = Entity.extractTypeFromId(selectedId);
@@ -260,7 +251,7 @@ export class EditEntityComponent<
       .catch((err: Error) => {
         Logging.warn(
           "[ENTITY_SELECT] Error loading selected entity.",
-          this.label,
+          this.formFieldConfig?.label,
           selectedId,
           err.message,
         );
