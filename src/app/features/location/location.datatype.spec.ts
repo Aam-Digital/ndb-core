@@ -1,8 +1,8 @@
 import { TestBed } from "@angular/core/testing";
 import { of } from "rxjs";
-import { LocationDatatype } from "./location.datatype";
 import { GeoLocation } from "./geo-location";
 import { GeoResult, GeoService } from "./geo.service";
+import { LocationDatatype } from "./location.datatype";
 
 describe("Schema data type: location", () => {
   let service: LocationDatatype;
@@ -121,5 +121,47 @@ describe("Schema data type: location", () => {
     const res2 = await service.importMapFunction("");
     expect(res2).toBeUndefined();
     expect(mockGeoService.lookup).not.toHaveBeenCalled();
+  });
+
+  it("should handle special migration cases when transforming from database to object format", async () => {
+    // catch special migrations:
+    // WHEN value is `{ geoLookup: {  } }` (without locationString) then do not migrate value but do set locationString = value.geoLookup.display_name
+    // WHEN value is `{ geoLookup { geoLookup: { ... } } }` (double geoLookup) then flatten to single geoLookup and set locationString = value.geoLookup.display_name
+
+    const location1: GeoLocation = {
+      geoLookup: {
+        lat: 1,
+        lon: 2,
+        display_name: "1, test address",
+      },
+    };
+    const expected1: GeoLocation = {
+      locationString: "1, test address",
+      geoLookup: {
+        lat: 1,
+        lon: 2,
+        display_name: "1, test address",
+      },
+    };
+    expect(service.transformToObjectFormat(location1)).toEqual(expected1);
+
+    const location2: any = {
+      geoLookup: {
+        geoLookup: {
+          lat: 1,
+          lon: 2,
+          display_name: "2, test address",
+        },
+      },
+    };
+    const expected2: GeoLocation = {
+      locationString: "2, test address",
+      geoLookup: {
+        lat: 1,
+        lon: 2,
+        display_name: "2, test address",
+      },
+    };
+    expect(service.transformToObjectFormat(location2)).toEqual(expected2);
   });
 });

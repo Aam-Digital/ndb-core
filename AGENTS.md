@@ -27,7 +27,7 @@ Aam Digital is a comprehensive case management software for social organizations
 - Permission-based access control
 - Demo data generation for testing
 
------
+---
 
 ## Angular Development Patterns
 
@@ -44,13 +44,12 @@ Aam Digital is a comprehensive case management software for social organizations
 ### Component Structure Example
 
 ```typescript
-
 @Component({
-  selector: 'app-example',
+  selector: "app-example",
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     // Use host object instead of @HostBinding/@HostListener
-  }
+  },
 })
 export class ExampleComponent {
   // Use input() and output() functions
@@ -61,9 +60,7 @@ export class ExampleComponent {
   private entityService = inject(EntityService);
 
   // Use signals for reactive state
-  filteredData = computed(() =>
-    this.data().filter(item => item.isActive)
-  );
+  filteredData = computed(() => this.data().filter((item) => item.isActive));
 }
 ```
 
@@ -122,9 +119,10 @@ export class ExampleComponent {
 - Maintain a comprehensive test suite with Karma and Playwright
 
 ### Additional Resources
-- **Angular Framework Reference**: For comprehensive Angular guidance and best practices, see the official Angular llms.txt file: https://angular.dev/context/llm-files/llms-full.txt
 
------
+- **Angular Framework Reference**: For comprehensive Angular guidance and best practices, see the official Angular llms.txt file: <https://angular.dev/context/llm-files/llms-full.txt>
+
+---
 
 ## Aam Digital specific patterns
 
@@ -142,18 +140,21 @@ export class ExampleComponent {
 ### Configuration System
 
 The platform is highly configurable through JSON configuration files, allowing customization without code changes. This includes:
+
 - Entity definitions and field configurations
 - Dashboard layouts and widgets
 - Navigation menus and views
 - Reports and data exports
 
 When developing new functionality:
+
 - Leverage the existing config-driven architecture
 - Use the established configuration patterns for new features
 - Create interfaces for configuration objects and let component classes implement them
 - Validate configurations properly
 
 ### Project & File Structure
+
 - `src/app/core/` - Core system modules and services
   - Shared components go in `src/app/core/common-components/`
 - `src/app/features/` - Feature-specific modules
@@ -161,6 +162,16 @@ When developing new functionality:
 - `doc/` - Documentation and API reference
 - `build/` - Build configuration and scripts
 - Follow the existing module structure with entity-based organization
+
+## UX and Styling
+
+- Use Angular Material components for UI consistency
+- Follow Material Design guidelines
+- Use SCSS for styling
+  - Use global variables and mixins from `src/styles/` for colors (e.g. `@use "variables/colors";` and `colors.$primary`)
+- Use global style classes from the files in the `src/styles/globals/` folder (e.g. `flex-row` and `margin-regular`) where possible,
+  instead of creating new custom styles
+- If custom styles are necessary, create a class with a meaningful name in the component-specific scss file and avoid inline styles
 
 ## Internationalization (i18n)
 
@@ -197,45 +208,58 @@ When developing new functionality:
 - Use `@faker-js/faker` for realistic test data
 - Follow existing demo data patterns in `core/demo-data/`
 
------
+---
 
 ## GitHub Copilot-Specific Guidelines
 
-### When generating code:
+### When generating code
 
 1. Follow the established Angular patterns and TypeScript standards
 2. Use the entity system patterns for data operations
 3. Generate appropriate unit tests alongside components
 4. Include proper i18n or $localize markers for user-facing strings
 
-### When suggesting solutions:
+### When suggesting solutions
 
 - Consider the offline-first architecture
 - Leverage existing entity services and configurations
 - Suggest Angular Material components when appropriate
 - Include accessibility considerations
 - Follow the established testing patterns
+- Challenge ideas and suggestions constructively, don't just agree. Be direct and skeptical when needed. Push back if something seems off even slightly. Assume I want to learn, not be flattered. Include potential downsides, challenges and alternative suggestions regarding ideas. Question my assumptions.
 
-### For Ask mode queries:
+### For Ask mode queries
 
 - Reference existing patterns from the codebase
 - Explain how solutions fit into the entity system
 - Consider configuration-driven approaches
 
-### For Agent mode implementations:
+### For Agent mode implementations
 
 - Create complete, production-ready code
 - Include proper error handling and logging
 - Generate demo data when creating new entities
 - Follow the established file organization
+- Generate or adapt unit tests
+- If similar changes are required in multiple places, only implement in one place and ask for review before implementing elsewhere
+- If a change is complex or large, first suggest and approach broken into smaller parts and ask for review after each part
+- If unsure about a specific implementation detail, ask for clarification before proceeding
+- Do not change any code or tests that are unrelated to the direct task
+- Check the "Problems" tab in VSCode for TypeScript errors and any other issues after making changes before running tests
+- Remove unused typescript imports
+- Check terminal output and fix unused Angular component imports or other warnings
+- When all changes are done, ask the user if the task should be finalized.
+  After confirmation, run tests (`npm run test`) and linting (`npm run lint`) and fix any issues.
 
 ## Common Commands
 
 - `npm run start` - Development server
 - `npm run test` - Unit tests
 - `npm run e2e` - End-to-end tests
-- `npm run lint` - Linting
 - `npm run build` - Production build
+- `npx eslint` - Linting
+
+to run tests in Agent Mode, use the `#runTests` tool/context instead of a terminal command
 
 ## Key Dependencies to Leverage
 

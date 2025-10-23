@@ -74,6 +74,9 @@ export class AdminWidgetDialogComponent {
   }
 
   onSave() {
+    if (this.widgetConfigForm.invalid) {
+      return;
+    }
     const config: Record<string, unknown> = {
       ...(this.widgetConfigForm.value ?? {}),
     };

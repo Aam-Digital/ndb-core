@@ -1,39 +1,29 @@
-<div class="margin-top-large padding-regular">
-  <h2 i18n>Collect replies of this form linked to individual records</h2>
-  <p i18n>
-    You can use forms with a special “magic link” to collect responses from
-    participants that are already registered in your system. By sending out an
-    individual link to each person, the form response(s) from that person can be
-    linked into their profile. For example, you can collect feedback or an
-    evaluation survey and relate each submission to the specific participant or
-    organisation that gave it.
-  </p>
+<div class="flex-row align-center gap-small">
+  <mat-select
+    [value]="selectedFieldIds"
+    (selectionChange)="onSelectionChange($event.value)"
+    [disabled]="formControl.disabled"
+    multiple
+    class="flex-grow"
+  >
+    @for (field of relatedRefFields; track field.id) {
+      <mat-option [value]="field.id">
+        {{ field.label || field.additional }}
+      </mat-option>
+    } @empty {
+      <mat-option disabled>
+        This record type does not have any fields that link to another record.
+      </mat-option>
+    }
+  </mat-select>
 
-  <div class="flex-row align-center gap-small">
-    <mat-form-field>
-      <mat-label i18n>Linked to</mat-label>
-      <mat-select [formControl]="fieldIdControl">
-        @for (field of relatedRefFields; track field.id) {
-          <mat-option [value]="field.id">
-            {{ field.label || field.additional }}
-          </mat-option>
-        } @empty {
-          <mat-option disabled>
-            This record type does not have any fields that link to another
-            record.
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-
-    <button
-      mat-icon-button
-      [disabled]="formControl.disabled"
-      (click)="clearSelectedEntity()"
-      matTooltip="Clear selected entity"
-      i18n-matTooltip
-    >
-      <fa-icon icon="times"></fa-icon>
-    </button>
-  </div>
+  <button
+    mat-icon-button
+    [disabled]="formControl.disabled"
+    (click)="clearSelectedEntities()"
+    matTooltip="Clear selected entities"
+    i18n-matTooltip
+  >
+    <fa-icon icon="times"></fa-icon>
+  </button>
 </div>

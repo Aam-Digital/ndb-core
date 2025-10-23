@@ -1,19 +1,26 @@
-import { Component, OnInit, inject } from "@angular/core";
-import { EditComponent } from "../../entity/default-datatype/edit-component";
-import { Entity } from "../../entity/model/entity";
-import { BehaviorSubject } from "rxjs";
-import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { AsyncPipe } from "@angular/common";
-import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from "@angular/core";
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatFormFieldControl } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { ErrorHintComponent } from "../error-hint/error-hint.component";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { BehaviorSubject } from "rxjs";
+import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
+import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
+import { EditComponent } from "../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { Entity } from "../../entity/model/entity";
+import { CustomFormControlDirective } from "../basic-autocomplete/custom-form-control.directive";
+import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 
 /**
  * This component creates a normal text input with autocomplete.
@@ -40,9 +47,8 @@ import { ErrorHintComponent } from "../error-hint/error-hint.component";
 @Component({
   selector: "app-edit-text-with-autocomplete",
   templateUrl: "./edit-text-with-autocomplete.component.html",
-  styleUrls: ["./edit-text-with-autocomplete.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatFormFieldModule,
     ReactiveFormsModule,
     MatInputModule,
     MatAutocompleteModule,
@@ -50,15 +56,26 @@ import { ErrorHintComponent } from "../error-hint/error-hint.component";
     EntityBlockComponent,
     FontAwesomeModule,
     MatTooltipModule,
-    ErrorHintComponent,
+  ],
+  providers: [
+    {
+      provide: MatFormFieldControl,
+      useExisting: EditTextWithAutocompleteComponent,
+    },
   ],
 })
 export class EditTextWithAutocompleteComponent
-  extends EditComponent<string>
-  implements OnInit
+  extends CustomFormControlDirective<string>
+  implements OnInit, EditComponent
 {
   private entityMapperService = inject(EntityMapperService);
   private confirmationDialog = inject(ConfirmationDialogService);
+
+  @Input() formFieldConfig?: FormFieldConfig;
+
+  get parent(): FormGroup {
+    return this.formControl.parent as FormGroup;
+  }
 
   /**
    * Config passed using component
@@ -99,6 +116,10 @@ export class EditTextWithAutocompleteComponent
   lastValue = "";
   addedFormControls = [];
 
+  get formControl(): FormControl<string> {
+    return this.ngControl.control as FormControl<string>;
+  }
+
   keyup() {
     this.lastValue = this.formControl.value;
     this.updateAutocomplete();
@@ -108,7 +129,7 @@ export class EditTextWithAutocompleteComponent
     let val = this.formControl.value;
     if (
       !this.autocompleteDisabled &&
-      val !== this.currentValues[this.formControlName]
+      val !== this.currentValues[this.formFieldConfig.id]
     ) {
       let filteredEntities = this.entities;
       if (val) {
@@ -122,8 +143,10 @@ export class EditTextWithAutocompleteComponent
     }
   }
 
-  override async ngOnInit() {
-    super.ngOnInit();
+  async ngOnInit() {
+    // Initialize additional configuration from formFieldConfig
+    this.additional = this.formFieldConfig?.additional;
+
     if (!this.formControl.value) {
       // adding new entry - enable autocomplete
       const entityType = this.additional.entityType;
@@ -162,7 +185,7 @@ export class EditTextWithAutocompleteComponent
   private valuesChanged() {
     return Object.entries(this.currentValues).some(
       ([prop, value]) =>
-        prop !== this.formControlName &&
+        prop !== this.formFieldConfig.id &&
         value !== this.parent.controls[prop].value,
     );
   }

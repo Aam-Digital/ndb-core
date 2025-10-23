@@ -1,26 +1,31 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatSelectModule } from "@angular/material/select";
-import { MatCheckboxModule } from "@angular/material/checkbox";
-import { MatOptionModule } from "@angular/material/core";
-import { EntityConstructor } from "app/core/entity/model/entity";
-import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype";
-import { EditComponent } from "app/core/entity/default-datatype/edit-component";
-import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { MatButtonModule } from "@angular/material/button";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatOptionModule } from "@angular/material/core";
+import { MatFormFieldControl } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype";
+import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 
+@DynamicComponent("EditPublicFormRelatedEntitiesComponent")
 @Component({
   selector: "app-edit-public-form-related-entities",
-  standalone: true,
   imports: [
     ReactiveFormsModule,
-    MatFormFieldModule,
     MatSelectModule,
-    MatCheckboxModule,
     MatOptionModule,
     MatButtonModule,
     FontAwesomeModule,
@@ -28,18 +33,35 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   ],
   templateUrl: "./edit-public-form-related-entities.component.html",
   styleUrls: ["./edit-public-form-related-entities.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: MatFormFieldControl,
+      useExisting: EditPublicFormRelatedEntitiesComponent,
+    },
+  ],
 })
 export class EditPublicFormRelatedEntitiesComponent
-  extends EditComponent<FormFieldConfig>
-  implements OnInit
+  extends CustomFormControlDirective<FormFieldConfig[]>
+  implements OnInit, EditComponent
 {
+  @Input() formFieldConfig?: FormFieldConfig;
+  @Input() entity?: Entity;
   entityConstructor: EntityConstructor;
   relatedRefFields: FormFieldConfig[] = [];
-  fieldIdControl: FormControl;
 
   private entities = inject(EntityRegistry);
 
-  override ngOnInit(): void {
+  get formControl(): FormControl<FormFieldConfig[]> {
+    return this.ngControl.control as FormControl<FormFieldConfig[]>;
+  }
+
+  get selectedFieldIds(): string[] {
+    const currentValue = this.formControl.value || [];
+    return currentValue.map((field) => field.id).filter((id) => id);
+  }
+
+  ngOnInit(): void {
     if (!this.entity) return;
 
     this.entityConstructor = this.entities.get(this.entity["entity"]);
@@ -51,36 +73,23 @@ export class EditPublicFormRelatedEntitiesComponent
         label: schema.label,
         additional: schema.additional,
       }));
-
-    this.initializeLinkedEntity();
   }
 
-  private initializeLinkedEntity(): void {
-    const raw = this.formControl.value as FormFieldConfig;
-
-    this.fieldIdControl = new FormControl({
-      value: raw?.id ?? null,
-      disabled: this.formControl.disabled,
-    });
-
-    this.fieldIdControl.valueChanges.subscribe((newId: string) => {
-      const match = this.relatedRefFields.find((f) => f.id === newId);
-      this.formControl.patchValue({
-        id: newId,
+  onSelectionChange(selectedIds: string[]): void {
+    const newLinkedEntities: FormFieldConfig[] = selectedIds.map((id) => {
+      const match = this.relatedRefFields.find((f) => f.id === id);
+      return {
+        id,
         hideFromForm: true,
         additional: match?.additional,
-      });
-      this.formControl.markAsDirty();
+      };
     });
-    this.formControl.statusChanges.subscribe(() => {
-      this.formControl.disabled
-        ? this.fieldIdControl.disable({ emitEvent: false })
-        : this.fieldIdControl.enable({ emitEvent: false });
-    });
+    this.formControl.patchValue(newLinkedEntities);
+    this.formControl.markAsDirty();
   }
 
-  clearSelectedEntity() {
-    this.fieldIdControl.setValue(null);
-    this.formControl.setValue(null);
+  clearSelectedEntities() {
+    this.formControl.setValue([]);
+    this.formControl.markAsDirty();
   }
 }

@@ -1,0 +1,84 @@
+@if (_field && form && _field.editComponent) {
+  <div
+    class="flex-row"
+    [ngClass]="{
+      hidden: _field?.hideFromForm,
+      readonlyAfterSet:
+        _field?.validators?.readonlyAfterSet &&
+        form?.formGroup?.enabled &&
+        formControl?.disabled,
+    }"
+  >
+    <div class="flex-grow">
+      <mat-form-field floatLabel="always" class="allow-full-width">
+        @if (!hideLabel && _field.displayFullLengthLabel) {
+          <div
+            class="full-label"
+            [ngClass]="{ 'full-label-disabled': formControl?.disabled }"
+          >
+            {{ _field.label }}
+            @if (_field?.validators?.required) {
+              <span [class.color-error]="formControl?.enabled">*</span>
+            }
+          </div>
+        }
+        @if (!hideLabel && !_field.displayFullLengthLabel) {
+          <mat-label>
+            <span [matTooltip]="_field.label" matTooltipPosition="before">
+              {{ _field.label }}
+              @if (_field?.validators?.required) {
+                <span [class.color-error]="formControl?.enabled">*</span>
+              }
+            </span>
+          </mat-label>
+        }
+
+        @if (isPartiallyAnonymized) {
+          <fa-icon
+            matIconPrefix
+            class="input-prefix-icon"
+            icon="warning"
+            matTooltip="This data has been partially anonymized."
+            i18n-matTooltip
+          ></fa-icon>
+        }
+
+        <app-dynamic-edit
+          [formControl]="formControl"
+          [formFieldConfig]="_field"
+          [entity]="entity"
+        ></app-dynamic-edit>
+
+        <mat-error>
+          <app-error-hint [form]="formControl"></app-error-hint>
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    @if (_field?.validators?.readonlyAfterSet && form?.formGroup?.enabled) {
+      <button
+        mat-icon-button
+        i18n-matTooltip
+        matTooltip="This field value can only be set when creating a record and cannot be changed afterwards"
+        type="button"
+      >
+        <fa-icon icon="warning"></fa-icon>
+      </button>
+    }
+
+    @if (!compactMode) {
+      <app-help-button [text]="_field.description"></app-help-button>
+    }
+
+    <app-inherited-value-button
+      [form]="form"
+      [field]="_field"
+      [entity]="entity"
+    ></app-inherited-value-button>
+  </div>
+} @else {
+  <app-entity-field-view
+    [field]="_field"
+    [entity]="entity"
+  ></app-entity-field-view>
+}

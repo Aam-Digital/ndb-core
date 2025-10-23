@@ -61,6 +61,12 @@
                 [config]="configDetailsView.config"
               ></app-admin-entity-details>
             }
+            @case ("NoteDetails") {
+              <app-admin-note-details
+                [entityConstructor]="entityConstructor"
+                [(config)]="configDetailsView.config"
+              ></app-admin-note-details>
+            }
             @default {
               <p class="admin-ui-not-supported-info" i18n>
                 This component ({{ configDetailsView.component }}) cannot be

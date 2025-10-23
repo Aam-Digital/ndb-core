@@ -47,6 +47,8 @@ $toolbar-width: 300px;
 
   /* draggable item must not be wider than toolbar, otherwise it cannot be dropped there due to cdkDragBoundary */
   max-width: $toolbar-width;
+  min-height: 3.5em;
+  min-width: 250px;
 }
 .admin-form-field:hover {
   background-color: colors.$grey-transparent;
@@ -85,10 +87,6 @@ $toolbar-width: 300px;
 .admin-form-field:hover .field-hover-buttons {
   visibility: visible;
 }
-.field-edit-button-small {
-  left: unset;
-}
-
 .field-edit-button {
   background: white !important;
   padding: 1.5em;
@@ -144,4 +142,19 @@ $toolbar-width: 300px;
 .disabled {
   pointer-events: none;
   opacity: 0.5;
+}
+
+// Horizontal layout only when fieldsOnlyMode is true
+.fieldsOnlyMode {
+  .fields-group-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: sizes.$small;
+    padding: sizes.$small;
+  }
+
+  .fields-group-list .admin-form-field {
+    margin: 0;
+    flex: 0 1 auto;
+  }
 }

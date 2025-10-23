@@ -1,4 +1,10 @@
 import {
+  EntityForm,
+  EntityFormSavedEvent,
+} from "#src/app/core/common-components/entity-form/entity-form";
+import { AutomatedStatusUpdateConfigService } from "#src/app/features/automated-status-update/automated-status-update-config-service";
+import { NgClass } from "@angular/common";
+import {
   Component,
   inject,
   Input,
@@ -6,23 +12,17 @@ import {
   SimpleChanges,
   ViewEncapsulation,
 } from "@angular/core";
-import { Entity } from "../../../entity/model/entity";
-import {
-  EntityForm,
-  EntityFormSavedEvent,
-} from "#src/app/core/common-components/entity-form/entity-form";
-import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
-import { filter } from "rxjs/operators";
-import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { NgClass } from "@angular/common";
-import { Subscription } from "rxjs";
-import moment from "moment";
-import { EntityFieldEditComponent } from "../../entity-field-edit/entity-field-edit.component";
-import { FieldGroup } from "../../../entity-details/form/field-group";
-import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { FormsModule } from "@angular/forms";
-import { AutomatedStatusUpdateConfigService } from "#src/app/features/automated-status-update/automated-status-update-config-service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import moment from "moment";
+import { Subscription } from "rxjs";
+import { filter } from "rxjs/operators";
+import { FieldGroup } from "../../../entity-details/form/field-group";
+import { EntityFieldEditComponent } from "../../../entity/entity-field-edit/entity-field-edit.component";
+import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import { Entity } from "../../../entity/model/entity";
+import { EntityAbility } from "../../../permissions/ability/entity-ability";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -70,6 +70,11 @@ export class EntityFormComponent<T extends Entity = Entity>
    * Whether the component should use a grid layout or just rows
    */
   @Input() gridLayout = true;
+
+  /**
+   * Whether the fields should use the max width of the container
+   */
+  @Input() fullWidth = false;
 
   private initialFormValues: any;
   private changesSubscription: Subscription;

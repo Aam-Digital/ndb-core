@@ -1,30 +1,30 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
-import { Location } from "@angular/common";
-import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
-import { DashboardConfig } from "../../dashboard/dashboard/dashboard.component";
-import { ConfigService } from "../../config/config.service";
-import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
-import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import {
   CdkDragDrop,
   DragDropModule,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { Location } from "@angular/common";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatIconModule } from "@angular/material/icon";
 import { MatDialog } from "@angular/material/dialog";
+import { MatIconModule } from "@angular/material/icon";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { firstValueFrom } from "rxjs";
+import { WidgetComponentSelectComponent } from "../../admin/admin-entity-details/widget-component-select/widget-component-select.component";
 import {
   AdminWidgetDialogComponent,
   AdminWidgetDialogData,
 } from "../../admin/admin-widget-dialog/admin-widget-dialog.component";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
-import { WidgetComponentSelectComponent } from "../../admin/admin-entity-details/widget-component-select/widget-component-select.component";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { ConfigService } from "../../config/config.service";
+import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
+import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
+import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
+import { DashboardConfig } from "../../dashboard/dashboard/dashboard.component";
 import { DashboardWidgetRegistryService } from "../dashboard-widget-registry.service";
 
 @Component({
@@ -109,7 +109,7 @@ export class AdminDashboardComponent implements OnInit {
     };
 
     const dialogRef = this.dialog.open(AdminWidgetDialogComponent, {
-      width: "600px",
+      width: "80vw",
       data: dialogData,
     });
 

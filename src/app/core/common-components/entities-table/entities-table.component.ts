@@ -9,10 +9,6 @@ import {
   ViewChild,
   inject,
 } from "@angular/core";
-import { EntityFieldEditComponent } from "../entity-field-edit/entity-field-edit.component";
-import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
-import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
-import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import {
   MatCheckboxChange,
   MatCheckboxModule,
@@ -31,26 +27,31 @@ import {
   MatTableDataSource,
   MatTableModule,
 } from "@angular/material/table";
+import { Router } from "@angular/router";
+import { UntilDestroy } from "@ngneat/until-destroy";
+import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { EntityFieldEditComponent } from "../../entity/entity-field-edit/entity-field-edit.component";
+import { EntityFieldLabelComponent } from "../../entity/entity-field-label/entity-field-label.component";
+import { EntityFieldViewComponent } from "../../entity/entity-field-view/entity-field-view.component";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
+import { FilterService } from "../../filter/filter.service";
+import { DataFilter } from "../../filter/filters/filters";
+import { FormDialogService } from "../../form-dialog/form-dialog.service";
+import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
 import {
   ColumnConfig,
   FormFieldConfig,
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
-import { tableSort } from "./table-sort/table-sort";
-import { UntilDestroy } from "@ngneat/until-destroy";
-import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
-import { FormDialogService } from "../../form-dialog/form-dialog.service";
-import { Router } from "@angular/router";
-import { FilterService } from "../../filter/filter.service";
-import { DataFilter } from "../../filter/filters/filters";
 import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
-import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
-import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { TableRow } from "./table-row";
+import { tableSort } from "./table-sort/table-sort";
+import { TableStateUrlService } from "./table-state-url.service";
 
 /**
  * A simple display component (no logic and transformations) to display a table of entities.
@@ -82,6 +83,7 @@ export class EntitiesTableComponent<T extends Entity>
   private router = inject(Router);
   private filterService = inject(FilterService);
   private schemaService = inject(EntitySchemaService);
+  private readonly tableStateUrl = inject(TableStateUrlService);
 
   @Input() set records(value: T[]) {
     if (!value) {
@@ -93,7 +95,7 @@ export class EntitiesTableComponent<T extends Entity>
     this.isLoading = false;
   }
 
-  private lastSelectedIndex: number = null;
+  private lastSelectedRow: TableRow<T> | null = null;
   private lastSelection: boolean = null;
   _records: T[] = [];
   /** data displayed in the template's table */
@@ -170,9 +172,9 @@ export class EntitiesTableComponent<T extends Entity>
     cols.push(...value);
     this._columnsToDisplay = cols;
 
-    if (this.sortIsInferred) {
-      this.sortBy = this.inferDefaultSort();
-      this.sortIsInferred = true;
+    if (!this.sortManuallySet && !this.tableStateUrl.getUrlParam("sortBy")) {
+      // Only set default sort if not manually set and/or present in URL
+      this._sortBy = this.inferDefaultSort(); // do not use sortBy setter to avoid persisting to URL
     }
   }
 
@@ -192,16 +194,56 @@ export class EntitiesTableComponent<T extends Entity>
     }
 
     this._sortBy = value;
-    this.sortIsInferred = false;
+
+    // Persist sort state to URL
+    if (value.active) {
+      this.tableStateUrl.updateUrlParams({
+        sortBy: value.active,
+        sortOrder: value.direction ?? "asc",
+      });
+    }
+
+    this.sortManuallySet = true;
   }
 
   _sortBy: Sort;
 
   @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
     this.recordsDataSource.sort = sort;
+    if (sort) {
+      // Restore sort state from URL on init
+      const urlSortBy = this.tableStateUrl.getUrlParam("sortBy");
+      const urlSortOrder = this.tableStateUrl.getUrlParam(
+        "sortOrder",
+      ) as SortDirection;
+      if (urlSortBy) {
+        sort.active = urlSortBy;
+        sort.direction = urlSortOrder || "asc";
+      }
+      // Listen for sort changes to persist to URL
+      sort.sortChange.subscribe(({ active, direction }) => {
+        if (!direction) {
+          this.tableStateUrl.updateUrlParams({ sortBy: null, sortOrder: null });
+        } else if (direction === "desc") {
+          this.tableStateUrl.updateUrlParams({
+            sortBy: active,
+            sortOrder: "desc",
+          });
+        } else {
+          this.tableStateUrl.updateUrlParams({
+            sortBy: active,
+            sortOrder: null,
+          });
+        }
+      });
+    }
   }
 
-  private sortIsInferred: boolean = true;
+  /**
+   * Indicates whether the current sort order was manually set by the user
+   * to avoid overwriting it with the default sort
+   */
+  private sortManuallySet: boolean;
 
   /**
    * Adds a filter for the displayed data.
@@ -269,7 +311,9 @@ export class EntitiesTableComponent<T extends Entity>
 
   selectRow(row: TableRow<T>, checked: boolean) {
     if (checked) {
-      this.selectedRecords.push(row.record);
+      if (!this.selectedRecords.includes(row.record)) {
+        this.selectedRecords.push(row.record);
+      }
     } else {
       const index = this.selectedRecords.indexOf(row.record);
       if (index > -1) {
@@ -324,27 +368,32 @@ export class EntitiesTableComponent<T extends Entity>
       return;
     }
 
-    // Find the index of the row in the sorted and filtered data
-    const sortedData = this.recordsDataSource.sortData(
-      this.recordsDataSource.data,
-      this.recordsDataSource.sort,
-    );
-    const currentIndex = sortedData.indexOf(row);
+    const selectedRows = this.getSelectedRows();
+    const currentIndex = selectedRows.indexOf(row);
+    const anchorIndex = this.lastSelectedRow
+      ? selectedRows.indexOf(this.lastSelectedRow)
+      : -1;
 
     const isCheckboxClick =
       event.target instanceof HTMLInputElement &&
       event.target.type === "checkbox";
 
-    if (event.shiftKey && this.lastSelectedIndex !== null) {
-      const start = Math.min(this.lastSelectedIndex, currentIndex);
-      const end = Math.max(this.lastSelectedIndex, currentIndex);
+    const canRangeSelect =
+      event.shiftKey &&
+      this.lastSelectedRow &&
+      anchorIndex !== -1 &&
+      currentIndex !== -1;
+
+    if (canRangeSelect) {
+      const start = Math.min(anchorIndex, currentIndex);
+      const end = Math.max(anchorIndex, currentIndex);
       const shouldCheck =
         this.lastSelection !== null
           ? !this.lastSelection
           : !this.selectedRecords.includes(row.record);
 
       for (let i = start; i <= end; i++) {
-        const rowToSelect = sortedData[i];
+        const rowToSelect = selectedRows[i];
         const isSelected = this.selectedRecords.includes(rowToSelect.record);
 
         if (shouldCheck && !isSelected) {
@@ -359,9 +408,9 @@ export class EntitiesTableComponent<T extends Entity>
     } else {
       const isSelected = this.selectedRecords.includes(row.record);
       this.selectRow(row, !isSelected);
-      this.lastSelectedIndex = currentIndex;
       this.lastSelection = isSelected;
     }
+    this.lastSelectedRow = currentIndex !== -1 ? row : null;
 
     if (isCheckboxClick) {
       this.onRowClick(row, event);
@@ -422,6 +471,26 @@ export class EntitiesTableComponent<T extends Entity>
     dataSource.filterPredicate = (data, filter) =>
       entityFilterPredicate(data.record, filter);
     return dataSource;
+  }
+
+  private getSelectedRows(): TableRow<T>[] {
+    const dataSource = this.recordsDataSource;
+    const filteredRows = dataSource.filteredData ?? dataSource.data ?? [];
+    const workingRows = [...filteredRows];
+
+    const sorter = dataSource.sort;
+    const sortedRows =
+      sorter && sorter.active
+        ? dataSource.sortData(workingRows, sorter)
+        : workingRows;
+
+    const paginator = dataSource.paginator;
+    if (!paginator) {
+      return sortedRows;
+    }
+
+    const startIndex = paginator.pageIndex * paginator.pageSize;
+    return sortedRows.slice(startIndex, startIndex + paginator.pageSize);
   }
 
   private inferDefaultSort(): Sort {

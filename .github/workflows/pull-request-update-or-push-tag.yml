@@ -69,25 +69,12 @@ jobs:
 
 
   build-image:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - platform: linux/amd64
-            os: ubuntu-latest
-          - platform: linux/arm64
-            os: ubuntu-24.04-arm
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     needs:
       - build-webapp
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
-
-      - name: Prepare Platform
-        run: |
-          platform=${{ matrix.platform }}
-          echo "PLATFORM_PAIR=${platform//\//-}" >> "$GITHUB_ENV"
 
       - name: Download webapp files
         uses: actions/download-artifact@v4
@@ -100,6 +87,15 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY_IMAGE }}
+          # - tag with git tag name on tag builds
+          # - tag with `:pr-XXX` on PR builds
+          # - tag with `:stable` on tag pushes that are not pre-releases
+          #   (i.e. don't contain "-")
+          tags: |
+            type=ref,event=tag
+            type=ref,event=pr
+            type=raw,value=stable,enabled=${{ github.event_name == 'push' && !contains(github.ref_name, '-') }}
+
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -113,33 +109,19 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Image and push by digest
-        id: build-image
+      - name: Build and push multi-platform image
         uses: docker/build-push-action@v6
         with:
-          platforms: ${{ matrix.platform }}
+          platforms: linux/amd64,linux/arm64
           context: ./
           file: ./build/Dockerfile
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
+          push: true
           cache-from: type=gha
           cache-to: type=gha,mode=min
         env:
           SOURCE_DATE_EPOCH: 0
-
-      - name: Export digest
-        run: |
-          mkdir -p "./tmp/digests"
-          digest="${{ steps.build-image.outputs.digest }}"
-          touch "./tmp/digests/${digest#sha256:}"
-
-      - name: Upload digest
-        uses: actions/upload-artifact@v4
-        with:
-          name: digests-${{ env.PLATFORM_PAIR }}
-          path: ./tmp/digests/*
-          if-no-files-found: error
-          retention-days: 1
 
   sentry-upload-sourcemaps:
     runs-on: ubuntu-latest
@@ -163,48 +145,10 @@ jobs:
           npm install -g @sentry/cli
           sentry-cli sourcemaps upload --release="ndb-core@${{ env.BUILD_NAME }}" ./dist
 
-  docker-merge:
-    runs-on: ubuntu-latest
-    needs:
-      - build-image
-    steps:
-      - name: Download digests
-        uses: actions/download-artifact@v4
-        with:
-          path: ./tmp/digests
-          pattern: digests-*
-          merge-multiple: true
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY_IMAGE }}
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Create manifest list and push
-        working-directory: ./tmp/digests
-        run: |
-          # shellcheck disable=SC2046
-          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
-
-      - name: Inspect image
-        run: |
-          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
-
   sentry-release:
     runs-on: ubuntu-latest
     needs:
-      - docker-merge
+      - build-image
       - build-webapp
       - sentry-upload-sourcemaps
       - qa
@@ -227,7 +171,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs:
-      - docker-merge
+      - build-image
     steps:
       - name: Deploy updated image
         if: ${{ github.event.ref == '' }}

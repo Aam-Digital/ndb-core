@@ -11,10 +11,13 @@
   vertical-align: middle;
   font-size: inherit;
   font-family: inherit;
-  max-width: 120px; // Cap width
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
+
+  // max width to get more consistent, clean look
+  // disable for now as it cuts too many important details
+  //max-width: 120px;
 }
 
 .bubble-list {

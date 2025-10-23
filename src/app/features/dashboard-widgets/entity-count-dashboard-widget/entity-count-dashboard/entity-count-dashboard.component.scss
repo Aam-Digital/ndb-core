@@ -12,3 +12,19 @@
   border-top: 1px solid #ccc;
   margin: 8px 0 0 0;
 }
+
+.mat-mdc-table {
+  .mat-mdc-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    column-gap: 8px;
+  }
+}
+
+.navigation-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+}

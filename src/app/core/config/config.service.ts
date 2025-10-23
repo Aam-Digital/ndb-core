@@ -1,22 +1,23 @@
 import { Injectable, inject } from "@angular/core";
-import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { Config } from "./config";
-import { LatestEntityLoader } from "../entity/latest-entity-loader";
+import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
 import { shareReplay } from "rxjs/operators";
+import { addDefaultRecurringActivityDetailsConfig } from "../../child-dev-project/attendance/add-default-recurring-activity-views";
+import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
+import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
+import { addDefaultImportViewConfig } from "../import/add-default-import-view";
+import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
+import { DefaultValueConfig } from "../default-values/default-value-config";
+import { PanelComponent } from "../entity-details/EntityDetailsConfig";
+import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
+import { LoaderMethod } from "../entity/entity-special-loader/entity-special-loader.service";
+import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import {
   EntitySchemaField,
   PLACEHOLDERS,
 } from "../entity/schema/entity-schema-field";
-import { DefaultValueConfig } from "../default-values/default-value-config";
-import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
-import { LoaderMethod } from "../entity/entity-special-loader/entity-special-loader.service";
 import { Logging } from "../logging/logging.service";
-import { PanelComponent } from "../entity-details/EntityDetailsConfig";
+import { Config } from "./config";
 import { ConfigMigration } from "./config-migration";
-import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
-import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
-import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
-import { addDefaultRecurringActivityDetailsConfig } from "../../child-dev-project/attendance/add-default-recurring-activity-views";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -105,6 +106,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateActivitiesOverviewComponent,
       removeOutdatedTodoViews,
       migrateChildSchoolOverviewComponent,
+      migrateEditDescriptionOnly,
     ];
 
     // default migrations that are not only temporary but will remain in the codebase
@@ -112,6 +114,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       addDefaultNoteDetailsConfig,
       addDefaultTodoViews,
       addDefaultRecurringActivityDetailsConfig,
+      addDefaultImportViewConfig,
     ];
 
     const newDoc = JSON.parse(JSON.stringify(doc), (_that, rawValue) => {
@@ -561,4 +564,18 @@ const relatedEntitiesForChild = {
   ],
   loaderMethod: "ChildrenServiceQueryRelations",
   showInactive: true,
+};
+
+/**
+ * Change editComponent "EditDescriptionOnly" to viewComponent "DisplayDescriptionOnly"
+ */
+const migrateEditDescriptionOnly: ConfigMigration = (key, configPart) => {
+  if (configPart?.editComponent !== "EditDescriptionOnly") {
+    return configPart;
+  }
+
+  configPart.viewComponent = "DisplayDescriptionOnly";
+  delete configPart.editComponent;
+
+  return configPart;
 };

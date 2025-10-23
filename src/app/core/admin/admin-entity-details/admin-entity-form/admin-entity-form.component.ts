@@ -1,3 +1,10 @@
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import {
+  CdkDragDrop,
+  DragDropModule,
+  moveItemInArray,
+  transferArrayItem,
+} from "@angular/cdk/drag-drop";
 import {
   Component,
   EventEmitter,
@@ -7,40 +14,33 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
-import { Entity, EntityConstructor } from "../../../entity/model/entity";
-import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { FormControl } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from "@angular/material/card";
 import { MatDialog } from "@angular/material/dialog";
-import {
-  AdminEntityFieldComponent,
-  AdminEntityFieldData,
-} from "../admin-entity-field/admin-entity-field.component";
-import {
-  CdkDragDrop,
-  DragDropModule,
-  moveItemInArray,
-  transferArrayItem,
-} from "@angular/cdk/drag-drop";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { FieldGroup } from "app/core/entity-details/form/field-group";
+import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { lastValueFrom } from "rxjs";
+import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
 import {
   ColumnConfig,
   FormFieldConfig,
   toFormFieldConfig,
 } from "../../../common-components/entity-form/FormConfig";
-import { AdminEntityService } from "../../admin-entity.service";
-import { lastValueFrom } from "rxjs";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { MatButtonModule } from "@angular/material/button";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatCardModule } from "@angular/material/card";
-import { EntityFieldLabelComponent } from "../../../common-components/entity-field-label/entity-field-label.component";
-import { EntityFieldEditComponent } from "../../../common-components/entity-field-edit/entity-field-edit.component";
-import { AdminSectionHeaderComponent } from "../../building-blocks/admin-section-header/admin-section-header.component";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FormConfig } from "../../../entity-details/form/form.component";
+import { EntityFieldEditComponent } from "../../../entity/entity-field-edit/entity-field-edit.component";
+import { EntityFieldLabelComponent } from "../../../entity/entity-field-label/entity-field-label.component";
+import { Entity, EntityConstructor } from "../../../entity/model/entity";
+import { AdminEntityService } from "../../admin-entity.service";
+import { AdminSectionHeaderComponent } from "../../building-blocks/admin-section-header/admin-section-header.component";
 import { AdminEditDescriptionOnlyFieldComponent } from "../admin-entity-field/admin-edit-description-only-field/admin-edit-description-only-field.component";
-import { FieldGroup } from "app/core/entity-details/form/field-group";
-import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import {
+  AdminEntityFieldComponent,
+  AdminEntityFieldData,
+} from "../admin-entity-field/admin-entity-field.component";
 
 @UntilDestroy()
 @Component({
@@ -111,6 +111,11 @@ export class AdminEntityFormComponent implements OnChanges {
    * Also update any changes to fields to the global entity type schema.
    */
   @Input() updateEntitySchema?: boolean = true;
+
+  /** Whether to only show fields in a compact layout.
+   * If false, the full admin layout with section headers and drag&drop areas is shown.
+   */
+  @Input() fieldsOnlyMode?: boolean = false;
 
   dummyEntity: Entity;
   dummyForm: EntityForm<any>;
@@ -303,7 +308,7 @@ export class AdminEntityFormComponent implements OnChanges {
     ) as FormFieldConfig;
 
     const updatedField =
-      configDetails.editComponent == "EditDescriptionOnly"
+      configDetails.viewComponent === "DisplayDescriptionOnly"
         ? await this.openTextConfig(configDetails)
         : await this.openFieldConfig(field);
 
@@ -318,7 +323,7 @@ export class AdminEntityFormComponent implements OnChanges {
 
     if (
       !this.updateEntitySchema ||
-      configDetails.editComponent === "EditDescriptionOnly"
+      configDetails.viewComponent === "DisplayDescriptionOnly"
     ) {
       this.applySchemaOverride(
         updatedField.id,

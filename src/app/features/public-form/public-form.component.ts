@@ -47,6 +47,9 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   private entityFormService = inject(EntityFormService);
   private configService = inject(ConfigService);
   private snackbar = inject(MatSnackBar);
+
+  // Track if the last submit attempt failed due to validation
+  validationError = false;
   private ability = inject(EntityAbility);
   private router = inject(Router);
 
@@ -67,14 +70,18 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   async submit() {
+    this.validationError = false;
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
-      this.router.navigate(["/public-form/submission-success"]);
+      this.router.navigate(["/public-form/submission-success"], {
+        queryParams: {
+          showSubmitAnotherButton:
+            this.formConfig?.showSubmitAnotherButton !== false,
+        },
+      });
     } catch (e) {
       if (e instanceof InvalidFormFieldError) {
-        this.snackbar.open(
-          $localize`Some fields are invalid, please check the form and submit again.`,
-        );
+        this.validationError = true;
         return;
       }
       throw e;
@@ -82,6 +89,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   async reset() {
+    this.validationError = false;
     await this.initForm();
   }
 
@@ -169,25 +177,56 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   /**
-   * Checks if the public form has a linkedEntity configuration.
-   * If a matching query parameter is found in the URL, it adds a hidden prefilled field
-   * to the form so that the submission can be linked to the correct entity (e.g., child, school).
+   * Processes URL parameters to create prefilled fields for entity linking.
+   * Only processes URL parameters that match configured linkedEntities
    */
   private handleRelatedEntityFields() {
-    const linkedFieldId = this.formConfig.linkedEntity?.id;
-    const hideFromForm = this.formConfig.linkedEntity?.hideFromForm;
-    const paramValue = this.route.snapshot.queryParamMap.get(linkedFieldId);
+    const urlParams = this.route.snapshot?.queryParams || {};
 
-    if (linkedFieldId && paramValue) {
-      const prefillField: FormFieldConfig = {
-        id: linkedFieldId,
-        defaultValue: { mode: "static", config: { value: paramValue } },
-        hideFromForm,
-      };
-
-      const lastColumn = this.formConfig.columns?.at(-1);
-      lastColumn?.fields.push(prefillField);
+    if (Object.keys(urlParams).length === 0) {
+      return;
     }
+
+    const linkedEntities = this.getLinkedEntities();
+
+    if (linkedEntities.length === 0) {
+      return;
+    }
+
+    // Only process configured linked entities for security
+    const configuredParams = new Set(linkedEntities.map((entity) => entity.id));
+    const ignoredParams: string[] = [];
+
+    // Process configured parameters
+    linkedEntities.forEach((linkedEntity) => {
+      const paramValue = urlParams[linkedEntity.id];
+      if (linkedEntity.id && paramValue) {
+        this.applyPrefill(
+          linkedEntity.id,
+          { mode: "static", config: { value: paramValue } },
+          linkedEntity.hideFromForm ?? true,
+        );
+      }
+    });
+
+    // Track ignored parameters for security warning
+    Object.keys(urlParams).forEach((paramKey) => {
+      if (!configuredParams.has(paramKey)) {
+        ignoredParams.push(paramKey);
+      }
+    });
+
+    if (ignoredParams.length > 0) {
+      this.snackbar.open(
+        $localize`Some URL parameters were ignored for security: ${ignoredParams.join(", ")}`,
+        undefined,
+        { duration: 5000 },
+      );
+    }
+  }
+
+  private getLinkedEntities(): FormFieldConfig[] {
+    return this.formConfig.linkedEntities?.filter((entity) => entity?.id) || [];
   }
 
   private async initForm() {
@@ -196,6 +235,14 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       [].concat(...this.fieldGroups.map((group) => group.fields)),
       this.entity,
     );
+    // Subscribe to form changes and clear validation error when form is valid
+    this.form.formGroup.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        if (this.validationError && this.form.formGroup.valid) {
+          this.validationError = false;
+        }
+      });
   }
 }
 

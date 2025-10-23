@@ -1,15 +1,41 @@
-<mat-form-field [formGroup]="parent">
-  @if (!hideLabel) {
-    <mat-label>
-      <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
-    </mat-label>
-  }
-  <app-location-input
-    [formControl]="formControl"
-    [placeholder]="label"
-  ></app-location-input>
+<div class="flex-row gap-regular align-end">
+  <textarea
+    #inputElement
+    matInput
+    [title]="placeholder"
+    [disabled]="_disabled"
+    readonly
+    [value]="
+      locationValue?.locationString ?? locationValue?.geoLookup?.display_name
+    "
+    rows="3"
+  ></textarea>
 
-  <mat-error>
-    <app-error-hint [form]="formControl"></app-error-hint>
-  </mat-error>
-</mat-form-field>
+  @if (locationValue?.geoLookup) {
+    <button
+      (click)="openMap(); $event.stopPropagation()"
+      mat-icon-button
+      type="button"
+      class="input-action-button"
+      matTooltip="Show the location marked on the map."
+      i18n-matTooltip
+    >
+      <fa-icon icon="map-location-dot"></fa-icon>
+    </button>
+  } @else {
+    <div
+      matTooltip="No location marked yet. Edit and search a location on the map here."
+      i18n-matTooltip
+    >
+      <button
+        (click)="openMap(); $event.stopPropagation()"
+        mat-icon-button
+        type="button"
+        class="input-action-button"
+        [disabled]="_disabled"
+      >
+        <fa-icon icon="magnifying-glass-location"></fa-icon>
+      </button>
+    </div>
+  }
+</div>

@@ -1,25 +1,22 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditNumberComponent } from "./edit-number.component";
-import { UntypedFormGroup } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { setupEditComponent } from "../../../entity/default-datatype/edit-component.spec";
+import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
+import { EditNumberComponent } from "./edit-number.component";
 
 describe("EditNumberComponent", () => {
   let component: EditNumberComponent;
   let fixture: ComponentFixture<EditNumberComponent>;
-  let formGroup: UntypedFormGroup;
+  let formGroup;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [EditNumberComponent, NoopAnimationsModule],
     }).compileComponents();
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(EditNumberComponent);
     component = fixture.componentInstance;
-    formGroup = setupEditComponent(component);
+    formGroup = setupCustomFormControlEditComponent(component);
     fixture.detectChanges();
   });
 

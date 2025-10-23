@@ -41,7 +41,7 @@ jobs:
       - name: Export translations from POEditor
         # see POEditor Export API: https://poeditor.com/docs/api#projects_export
         run: |
-          languages=("fr" "it" "de")
+          languages=("fr" "de")
           for lang in "${languages[@]}"; do
           echo "Exporting translations for language $lang"
           response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \

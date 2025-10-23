@@ -1,15 +1,15 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
-import { Entity } from "../../../entity/model/entity";
-import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
-import { Router } from "@angular/router";
 import { NgClass } from "@angular/common";
-import { Logging } from "../../../logging/logging.service";
+import { Component, Input, OnInit, inject } from "@angular/core";
+import { Router } from "@angular/router";
+import { DisplayImgComponent } from "../../../../features/file/display-img/display-img.component";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { TemplateTooltipDirective } from "../../../common-components/template-tooltip/template-tooltip.directive";
-import { DisplayImgComponent } from "../../../../features/file/display-img/display-img.component";
-import { EntityBlockConfig } from "./entity-block-config";
-import { EntityFieldViewComponent } from "../../../common-components/entity-field-view/entity-field-view.component";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
+import { EntityFieldViewComponent } from "../../../entity/entity-field-view/entity-field-view.component";
+import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import { Entity } from "../../../entity/model/entity";
+import { Logging } from "../../../logging/logging.service";
+import { EntityBlockConfig } from "./entity-block-config";
 
 /**
  * Display an inline block representing an entity.

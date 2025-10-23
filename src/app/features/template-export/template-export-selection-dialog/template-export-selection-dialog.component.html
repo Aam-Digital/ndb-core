@@ -24,17 +24,17 @@
       >
     </p>
 
-    <app-entity-select
-      [entityType]="TemplateExport.ENTITY_TYPE"
-      [additionalFilter]="templateEntityFilter"
-      [multi]="false"
-      label="Template"
-      i18n-label
-      placeholder="Select a file template"
-      i18n-placeholder
-      [form]="templateSelectionForm"
-      [disableCreateNew]="true"
-    ></app-entity-select>
+    <mat-form-field class="full-width">
+      <mat-label i18n>Template</mat-label>
+      <app-edit-entity
+        [formControl]="templateSelectionForm"
+        [entityType]="TemplateExport.ENTITY_TYPE"
+        [additionalFilter]="templateEntityFilter"
+        [disableCreateNew]="true"
+        placeholder="Select a file template"
+        i18n-placeholder
+      ></app-edit-entity>
+    </mat-form-field>
   }
 </mat-dialog-content>
 

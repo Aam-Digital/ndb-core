@@ -1,27 +1,13 @@
-<mat-form-field>
-  @if (!hideLabel) {
-    <mat-label>
-      <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
-    </mat-label>
-  }
+<div class="flex-row">
   <input
     matInput
     [formControl]="formControl"
     [matDatepicker]="datepickerComp"
   />
 
-  @if (isPartiallyAnonymized) {
-    <fa-icon
-      matIconSuffix
-      icon="warning"
-      matTooltip="This data has been partially anonymized."
-      i18n-matTooltip
-    ></fa-icon>
-  }
-
   <mat-datepicker-toggle
-    matIconSuffix
     [for]="datepickerComp"
+    class="input-action-button"
   ></mat-datepicker-toggle>
   <mat-datepicker
     #datepickerComp
@@ -29,7 +15,4 @@
     (monthSelected)="setMonthAndYear($event, datepickerComp)"
     panelClass="month-picker"
   ></mat-datepicker>
-  <mat-error>
-    <app-error-hint [form]="formControl"></app-error-hint>
-  </mat-error>
-</mat-form-field>
+</div>

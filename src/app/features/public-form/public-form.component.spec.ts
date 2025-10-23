@@ -9,7 +9,6 @@ import { PublicFormComponent } from "./public-form.component";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
 import { PublicFormConfig } from "./public-form-config";
 import { ActivatedRoute, Router } from "@angular/router";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { EntityFormService } from "../../core/common-components/entity-form/entity-form.service";
 import { ConfigService } from "../../core/config/config.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
@@ -52,6 +51,7 @@ describe("PublicFormComponent", () => {
             snapshot: {
               paramMap: new Map([["id", FORM_ID]]),
               queryParamMap: new Map([["childId", "Child:3"]]),
+              queryParams: { childId: "Child:3" },
             },
           },
         },
@@ -87,7 +87,8 @@ describe("PublicFormComponent", () => {
     expect(component.formConfig.title).toBe("Some test title");
   }));
 
-  it("should navigate to the success page after form submission and show a link to submit another form", fakeAsync(() => {
+  it("should navigate to the success page and show the button if enabled", fakeAsync(() => {
+    testFormConfig.showSubmitAnotherButton = true;
     initComponent();
     tick();
     const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
@@ -99,15 +100,34 @@ describe("PublicFormComponent", () => {
 
     expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
     tick();
-    expect(navigateSpy).toHaveBeenCalledWith([
-      "/public-form/submission-success",
-    ]);
+    expect(navigateSpy).toHaveBeenCalledWith(
+      ["/public-form/submission-success"],
+      { queryParams: { showSubmitAnotherButton: true } },
+    );
   }));
 
-  it("should show a snackbar error and not reset when trying to submit invalid form", fakeAsync(() => {
+  it("should navigate to the success page and hide the button if disabled", fakeAsync(() => {
+    testFormConfig.showSubmitAnotherButton = false;
     initComponent();
     tick();
-    const openSnackbarSpy = spyOn(TestBed.inject(MatSnackBar), "open");
+    const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
+    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
+    saveSpy.and.resolveTo();
+    component.form.formGroup.get("name").setValue("some name");
+
+    component.submit();
+
+    expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
+    tick();
+    expect(navigateSpy).toHaveBeenCalledWith(
+      ["/public-form/submission-success"],
+      { queryParams: { showSubmitAnotherButton: false } },
+    );
+  }));
+
+  it("should show an inline error and not reset when trying to submit invalid form", fakeAsync(() => {
+    initComponent();
+    tick();
     const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
     saveSpy.and.throwError(new InvalidFormFieldError());
     component.form.formGroup.get("name").setValue("some name");
@@ -116,9 +136,7 @@ describe("PublicFormComponent", () => {
 
     expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
     tick();
-    expect(openSnackbarSpy).toHaveBeenCalledWith(
-      jasmine.stringContaining("invalid"),
-    );
+    expect(component.validationError).toBeTrue();
     expect(component.form.formGroup.get("name")).toHaveValue("some name");
   }));
 
@@ -222,7 +240,7 @@ describe("PublicFormComponent", () => {
   }));
 
   it("should add hidden prefilled field for related entity when query param exists", () => {
-    testFormConfig.linkedEntity = { id: "childId", hideFromForm: true };
+    testFormConfig.linkedEntities = [{ id: "childId", hideFromForm: true }];
     component.formConfig = testFormConfig;
     component.fieldGroups = testFormConfig.columns;
 
@@ -236,6 +254,96 @@ describe("PublicFormComponent", () => {
         hideFromForm: true,
       }),
     );
+  });
+
+  it("should process configured URL parameters and create prefilled fields for multi-entity magic links", () => {
+    // Configure which entities are allowed to be linked (security feature)
+    testFormConfig.linkedEntities = [
+      { id: "childId" },
+      { id: "schoolId" },
+      { id: "eventId" },
+      { id: "teacherId" },
+    ];
+
+    // Create a mock ActivatedRoute with multiple URL parameters
+    const multiParamRoute = {
+      snapshot: {
+        queryParams: {
+          childId: "Child:123",
+          schoolId: "School:456",
+          eventId: "Event:789",
+          teacherId: "Teacher:101",
+        },
+      },
+    };
+
+    // Replace the route in the component
+    component["route"] = multiParamRoute as any;
+    component.formConfig = testFormConfig;
+    component.fieldGroups = testFormConfig.columns;
+
+    component["handleRelatedEntityFields"]();
+
+    const lastColumn = component.formConfig.columns.at(-1);
+
+    // Expected URL parameters and their values
+    const expectedParams = {
+      childId: "Child:123",
+      schoolId: "School:456",
+      eventId: "Event:789",
+      teacherId: "Teacher:101",
+    };
+
+    // Verify all configured URL parameters were processed and added as hidden fields
+    Object.entries(expectedParams).forEach(([paramId, paramValue]) => {
+      expect(lastColumn?.fields).toContain(
+        jasmine.objectContaining({
+          id: paramId,
+          defaultValue: { mode: "static", config: { value: paramValue } },
+          hideFromForm: true,
+        }),
+      );
+    });
+  });
+
+  it("should ignore unconfigured URL parameters for security", () => {
+    // Configure only specific entities
+    testFormConfig.linkedEntities = [{ id: "childId" }, { id: "schoolId" }];
+
+    const securityTestRoute = {
+      snapshot: {
+        queryParams: {
+          childId: "Child:123", // Allowed
+          schoolId: "School:456", // Allowed
+          hackerId: "Hacker:malicious", //should be ignored
+          adminId: "Admin:dangerous", //should be ignored
+        },
+      },
+    };
+
+    component["route"] = securityTestRoute as any;
+    component.formConfig = testFormConfig;
+    component.fieldGroups = testFormConfig.columns;
+
+    component["handleRelatedEntityFields"]();
+
+    const lastColumn = component.formConfig.columns.at(-1);
+
+    // Should process allowed parameters
+    expect(lastColumn?.fields).toContain(
+      jasmine.objectContaining({
+        id: "childId",
+        defaultValue: { mode: "static", config: { value: "Child:123" } },
+        hideFromForm: true,
+      }),
+    );
+
+    // Should ignore unauthorized parameters
+    const unauthorizedFields = lastColumn?.fields.filter((field) => {
+      const fieldId = typeof field === "string" ? field : field.id;
+      return fieldId === "hackerId" || fieldId === "adminId";
+    });
+    expect(unauthorizedFields.length).toBe(0);
   });
 
   it("should update defaultValue for a field in prefilled that is already visible", fakeAsync(() => {

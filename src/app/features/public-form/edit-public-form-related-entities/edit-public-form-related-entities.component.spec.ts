@@ -1,12 +1,14 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditPublicFormRelatedEntitiesComponent } from "./edit-public-form-related-entities.component";
+import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
+import { ReactiveFormsModule } from "@angular/forms";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import {
   entityRegistry,
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
-import { FormControl, ReactiveFormsModule, FormGroup } from "@angular/forms";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { EditPublicFormRelatedEntitiesComponent } from "./edit-public-form-related-entities.component";
 
 describe("EditPublicFormRelatedEntitiesComponent", () => {
   let component: EditPublicFormRelatedEntitiesComponent;
@@ -18,14 +20,14 @@ describe("EditPublicFormRelatedEntitiesComponent", () => {
         ReactiveFormsModule,
         EditPublicFormRelatedEntitiesComponent,
         FontAwesomeTestingModule,
+        NoopAnimationsModule,
       ],
       providers: [{ provide: EntityRegistry, useValue: entityRegistry }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditPublicFormRelatedEntitiesComponent);
     component = fixture.componentInstance;
-    component.formControl = new FormControl();
-    component.fieldIdControl = new FormControl();
+    setupCustomFormControlEditComponent(component);
     fixture.detectChanges();
   });
 

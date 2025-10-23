@@ -11,6 +11,7 @@ import { FilterConfig } from "../../entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FilterGeneratorService } from "../filter-generator/filter-generator.service";
 import { ActivatedRoute, Router } from "@angular/router";
+import { TableStateUrlService } from "../../common-components/entities-table/table-state-url.service";
 import { NgComponentOutlet } from "@angular/common";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { FilterService } from "../filter.service";
@@ -31,7 +32,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   private filterGenerator = inject(FilterGeneratorService);
   private filterService = inject(FilterService);
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
+  private readonly tableStateUrl = inject(TableStateUrlService);
 
   /**
    * The filter configuration from the config
@@ -108,7 +109,6 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   filterOptionSelected(filter: Filter<T>, selectedOptions: string[]) {
     filter.selectedOptionValues = selectedOptions;
     // It is only safe to update `hasActiveFilters` after the view is rendered.
-    // Using setTimeout ensures the change happens after Angular’s check cycle.
     setTimeout(() => {
       this.hasActiveFilters = this.filterSelections.some(
         (f) => f.selectedOptionValues?.length > 0,
@@ -117,7 +117,11 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
 
     this.applyFilterSelections();
     if (this.useUrlQueryParams) {
-      this.updateUrl(filter.name, selectedOptions.toString());
+      this.tableStateUrl.updateFilterParam(
+        filter.name,
+        selectedOptions.toString(),
+        false,
+      );
     }
   }
 
@@ -136,46 +140,11 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     this.filterObjChange.emit(this.filterObj);
   }
 
-  private updateUrl(key: string, value: string) {
-    const MAX_URL_LENGTH = 2000;
-    let queryParams = { ...this.route.snapshot.queryParams, [key]: value };
-
-    let potentialUrl = this.router
-      .createUrlTree([], {
-        relativeTo: this.route,
-        queryParams,
-        queryParamsHandling: "merge",
-      })
-      .toString();
-    if (potentialUrl.length > MAX_URL_LENGTH) {
-      let longestKey: string | null = null;
-      let maxLength = 0;
-      Object.keys(queryParams).forEach((key) => {
-        if (queryParams[key].length > maxLength) {
-          longestKey = key;
-          maxLength = queryParams[key].length;
-        }
-      });
-
-      if (longestKey) {
-        queryParams[longestKey] = undefined;
-      } else {
-        queryParams[key] = undefined;
-      }
-    }
-
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: queryParams,
-      queryParamsHandling: "merge",
-    });
-  }
-
   private loadUrlParams() {
     if (!this.useUrlQueryParams) {
       return;
     }
-    const params = this.route.snapshot.queryParams;
+    const params = this.tableStateUrl.getFilterParams();
     this.filterSelections.forEach((f) => {
       if (params.hasOwnProperty(f.name)) {
         this.hasActiveFilters = true;
@@ -197,14 +166,9 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     this.filterObjChange.emit({});
     this.filterStringChange.emit("");
 
-    let newParams = { ...this.route.snapshot.queryParams };
-    this.filterSelections.forEach((filter) => {
-      newParams[filter.name] = undefined;
-    });
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: newParams,
-      queryParamsHandling: "merge",
-    });
+    if (this.useUrlQueryParams) {
+      const filterKeys = this.filterSelections.map((f) => f.name);
+      this.tableStateUrl.clearFilterParams(filterKeys, false);
+    }
   }
 }

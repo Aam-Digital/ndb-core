@@ -1,22 +1,23 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditAttendanceComponent } from "./edit-attendance.component";
-import { FormControl, FormGroup } from "@angular/forms";
-import { Note } from "../../notes/model/note";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { By } from "@angular/platform-browser";
-import { AttendanceStatusSelectComponent } from "../attendance-status-select/attendance-status-select.component";
-import { InteractionType } from "../../notes/model/interaction-type.interface";
-import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
-import { MatInputHarness } from "@angular/material/input/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
-import { LoginState } from "../../../core/session/session-states/login-state.enum";
+import { FormControl, FormGroup } from "@angular/forms";
+import { MatInputHarness } from "@angular/material/input/testing";
+import { By } from "@angular/platform-browser";
+import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { Entity } from "../../../core/entity/model/entity";
+import { LoginState } from "../../../core/session/session-states/login-state.enum";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { InteractionType } from "../../notes/model/interaction-type.interface";
+import { Note } from "../../notes/model/note";
+import { AttendanceStatusSelectComponent } from "../attendance-status-select/attendance-status-select.component";
+import { EditAttendanceComponent } from "./edit-attendance.component";
 
 describe("EditAttendanceComponent", () => {
   let component: EditAttendanceComponent;
   let fixture: ComponentFixture<EditAttendanceComponent>;
+  let parentFormGroup: FormGroup;
   let categoryForm: FormControl<InteractionType>;
   let childrenForm: FormControl<string[]>;
 
@@ -36,11 +37,17 @@ describe("EditAttendanceComponent", () => {
     component = fixture.componentInstance;
     categoryForm = new FormControl<InteractionType>(defaultInteractionTypes[0]);
     childrenForm = new FormControl(childrenEntities.map((c) => c.getId()));
-    component.parent = new FormGroup({
-      children: childrenForm,
+
+    // Create parent form group that contains both category and children controls
+    parentFormGroup = new FormGroup({
       category: categoryForm,
+      children: childrenForm,
     });
-    component.formControl = childrenForm;
+
+    component.ngControl = {
+      control: childrenForm,
+    } as any;
+
     component.formFieldConfig = { id: "children" };
     component.entity = new Note();
     fixture.detectChanges();
@@ -75,7 +82,7 @@ describe("EditAttendanceComponent", () => {
   it("should remove a child from the children array if the attendance is removed", () => {
     categoryForm.setValue(defaultInteractionTypes.find((c) => c.isMeeting));
     fixture.detectChanges();
-    const attendanceForm = component.parent.get("childrenAttendance");
+    const attendanceForm = parentFormGroup.get("childrenAttendance");
     const a1 = component.getAttendance(childrenEntities[0].getId());
     const a2 = component.getAttendance(childrenEntities[1].getId());
     a1.remarks = "absent";

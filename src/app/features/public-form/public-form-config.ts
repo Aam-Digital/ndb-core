@@ -76,8 +76,16 @@ export class PublicFormConfig extends Entity {
   prefilledFields: FormFieldConfig[];
 
   @DatabaseField({
-    label: $localize`:PublicFormConfig:Linked Entity`,
+    label: $localize`:PublicFormConfig:Linked Entities`,
     editComponent: "EditPublicFormRelatedEntitiesComponent",
+    isArray: true,
   })
-  linkedEntity: FormFieldConfig;
+  linkedEntities: FormFieldConfig[];
+
+  @DatabaseField({
+    label: $localize`:PublicFormConfig:Show "Submit Another Form" Button`,
+    description: $localize`:PublicFormConfig:If enabled, users will see a "Submit Another Form" button after a successful submission. This helps when you want multiple submissions from the same user.`,
+    dataType: "boolean",
+  })
+  showSubmitAnotherButton: boolean = false;
 }
