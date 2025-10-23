@@ -30,9 +30,10 @@ export class ChooseUseCaseComponent {
     return this.useCases().filter((uc) => (uc.locale ?? current) === current);
   });
 
-  private readonly switchLanguageIfNoUseCaseInCurrentLocale = effect(() => {
+  private switchLanguageIfNoUseCaseInCurrentLocale = effect(() => {
     if (this.availableUseCases().length === 0 && this.useCases().length > 0) {
-      this.languageService.switchLocale(this.useCases()[0].locale);
+      const nextLanguage = this.useCases().find((uc) => !!uc.locale)?.locale;
+      if (nextLanguage) this.languageService.switchLocale(nextLanguage);
     }
   });
 
