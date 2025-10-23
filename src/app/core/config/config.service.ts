@@ -32,11 +32,12 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   configUpdates = this.entityUpdated.pipe(shareReplay(1));
 
-  constructor() {
-    const entityMapper = inject(EntityMapperService);
-
+  constructor(entityMapper: EntityMapperService) {
     super(Config, Config.CONFIG_KEY, entityMapper);
     super.startLoading();
+  }
+
+  override onInit() {
     this.entityUpdated.subscribe(async (config) => {
       this.currentConfig = this.applyMigrations(config);
       this.logConfigRev();
