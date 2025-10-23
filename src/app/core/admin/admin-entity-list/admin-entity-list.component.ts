@@ -10,6 +10,7 @@ import { AdminTabTemplateDirective } from "../building-blocks/admin-tabs/admin-t
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { Logging } from "../../logging/logging.service";
 import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
+import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 
 @Component({
   selector: "app-admin-entity-list",
@@ -19,12 +20,10 @@ import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manage
     AdminTabTemplateDirective,
     ViewTitleComponent,
     AdminListManagerComponent,
+    HintBoxComponent,
   ],
   templateUrl: "./admin-entity-list.component.html",
-  styleUrls: [
-    "./admin-entity-list.component.scss",
-    "../admin-entity/admin-entity-styles.scss",
-  ],
+  styleUrls: ["./admin-entity-list.component.scss"],
 })
 export class AdminEntityListComponent implements OnChanges {
   @Input() entityConstructor: EntityConstructor;

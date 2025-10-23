@@ -17,11 +17,15 @@
     </p>
 
     <app-choose-use-case
-      [demoUseCases]="demoUseCases"
+      [useCases]="availableUseCases"
       (selectionChanged)="onUseCaseSelected($event)"
       class="margin-top-large margin-bottom-large"
     >
     </app-choose-use-case>
+
+    <mat-checkbox [(ngModel)]="generateDemoData" i18n
+      >Generate demo data</mat-checkbox
+    >
 
     <p class="footer-note" i18n>
       Aam Digital is very flexible and can be quickly adapted to your needs and
