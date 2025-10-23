@@ -21,7 +21,7 @@ import { LanguageService } from "app/core/language/language.service";
   styleUrls: ["./choose-use-case.component.scss"],
 })
 export class ChooseUseCaseComponent {
-  private languageService = inject(LanguageService);
+  private readonly languageService = inject(LanguageService);
 
   useCases: InputSignal<BaseConfig[]> = input([]);
 
@@ -31,7 +31,7 @@ export class ChooseUseCaseComponent {
     ),
   );
 
-  private switchLanguageIfNoUseCaseInCurrentLocale = effect(() => {
+  private readonly switchLanguageIfNoUseCaseInCurrentLocale = effect(() => {
     if (this.availableUseCases().length === 0 && this.useCases().length > 0) {
       this.languageService.switchLocale(this.useCases()[0].locale);
     }
