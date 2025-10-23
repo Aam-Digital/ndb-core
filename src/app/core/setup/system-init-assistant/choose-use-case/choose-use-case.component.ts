@@ -1,4 +1,13 @@
-import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  InputSignal,
+  output,
+  Signal,
+} from "@angular/core";
 import { BaseConfig } from "../../base-config";
 import { MatSelectModule } from "@angular/material/select";
 import { MarkdownComponent } from "ngx-markdown";
@@ -14,27 +23,23 @@ import { LanguageService } from "app/core/language/language.service";
 export class ChooseUseCaseComponent {
   private languageService = inject(LanguageService);
 
-  private _demoUseCases: BaseConfig[] = [];
+  useCases: InputSignal<BaseConfig[]> = input([]);
 
-  @Input()
-  set demoUseCases(useCases: BaseConfig[]) {
-    this._demoUseCases = useCases?.filter(
-      (useCase) => useCase.locale === this.locale,
-    );
-  }
+  availableUseCases: Signal<BaseConfig[]> = computed(() =>
+    this.useCases()?.filter(
+      (useCase) => useCase.locale === this.languageService.getCurrentLocale(),
+    ),
+  );
 
-  get demoUseCases(): BaseConfig[] {
-    return this._demoUseCases;
-  }
+  private switchLanguageIfNoUseCaseInCurrentLocale = effect(() => {
+    if (this.availableUseCases().length === 0 && this.useCases().length > 0) {
+      this.languageService.switchLocale(this.useCases()[0].locale);
+    }
+  });
 
-  @Output() selectionChanged = new EventEmitter<BaseConfig>();
+  selectionChanged = output<BaseConfig>();
 
   selectedUseCase: BaseConfig;
-  locale: string;
-
-  constructor() {
-    this.locale = this.languageService.getCurrentLocale();
-  }
 
   onSelectionChange() {
     this.selectionChanged.emit(this.selectedUseCase);
