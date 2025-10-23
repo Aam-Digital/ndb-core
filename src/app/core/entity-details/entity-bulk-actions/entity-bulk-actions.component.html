@@ -14,6 +14,10 @@
         <mat-hint i18n>
           Please select one or more rows to enable bulk actions.
         </mat-hint>
+      } @else {
+        <mat-hint i18n>
+          Actions on {{ entities().length }} selected records:
+        </mat-hint>
       }
     </mat-form-field>
   </div>
