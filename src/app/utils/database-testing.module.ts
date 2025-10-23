@@ -41,6 +41,8 @@ import { getDefaultEnumEntities } from "app/core/basic-datatypes/configurable-en
       await entityMapper.save(getDefaultConfigEntity());
       entityMapper.saveAll(getDefaultEnumEntities());
 
+      // WARNING: unit tests don't await this AppInitializer (https://github.com/angular/angular/issues/32441)
+      // so the expected EntityTypes may not be available yet in the beforeEach of tests
       entityConfigService.setupEntitiesFromConfig();
     }),
   ],
