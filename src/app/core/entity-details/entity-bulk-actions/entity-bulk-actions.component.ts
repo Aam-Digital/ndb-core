@@ -38,6 +38,7 @@ export class EntityBulkActionsComponent {
    * List of selected entities for bulk actions
    */
   entities = input.required<Entity[]>();
+  private isExecutingAction = false;
 
   /**
    * Event emitted when the bulk action mode should be exited
@@ -90,13 +91,18 @@ export class EntityBulkActionsComponent {
   }
 
   async onActionSelected(action: EntityAction) {
-    // If the action has an execute method, call it with selectedRows
+    if (this.isExecutingAction) {
+      return;
+    }
+
+    this.isExecutingAction = true;
     if (action && typeof action.execute === "function") {
       await action.execute(this.entities());
     }
 
     this.resetBulkActionMode.emit();
     this.actionControl.setValue(null, { emitEvent: false });
+    this.isExecutingAction = false;
   }
 
   cancel() {
