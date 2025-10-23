@@ -6,6 +6,7 @@ import {
   inject,
   Input,
   input,
+  InputSignal,
   OnInit,
   Resource,
   Signal,
@@ -106,8 +107,6 @@ export class EditEntityComponent<
    */
   @Input() showEntities = true;
 
-  hasInaccessibleEntities: boolean = false;
-
   /**
    * The accessor used for filtering and when selecting a new entity.
    */
@@ -115,7 +114,7 @@ export class EditEntityComponent<
     e instanceof Entity ? e.toString() : "?";
   entityToId = (option: E) => option.getId();
 
-  @Input() additionalFilter: (e: E) => boolean = (_) => true;
+  additionalFilter: InputSignal<(e: E) => boolean> = input((_) => true);
 
   formControl: Signal<FormControl<T>> = computed(() => {
     let control = this.ngControl?.control as FormControl<T>;
@@ -149,17 +148,19 @@ export class EditEntityComponent<
     defaultValue: [],
     params: () => ({
       entityTypes: this.entityType(),
+      additionalFilter: this.additionalFilter(),
+      loadType: (type: string) => this.entityMapperService.loadType<E>(type), // we cannot directly access `this.` within the loader (see https://github.com/Aam-Digital/ndb-core/pull/3410#issuecomment-3438380605)
     }),
     loader: async ({ params }) => {
       if (params.entityTypes.length === 0) return [];
 
       const entities: E[] = [];
       for (const type of params.entityTypes) {
-        entities.push(...[]); //(await this.entityMapperService.loadType<E>(type)));
+        entities.push(...(await params.loadType(type)));
       }
 
       return entities
-        .filter((e) => true) //this.additionalFilter(e))
+        .filter((e) => params.additionalFilter(e))
         .sort((a, b) => a.toString().localeCompare(b.toString()));
     },
   });
@@ -211,12 +212,16 @@ export class EditEntityComponent<
 
   includeInactive = signal<boolean>(false);
 
-  readonly availableOptionsResource: Resource<E[]> = resourceWithRetention({
-    defaultValue: [],
+  readonly availableOptionsResource: Resource<{
+    entities: E[];
+    hasInaccessible?: boolean;
+  }> = resourceWithRetention({
+    defaultValue: { entities: [], hasInaccessible: false },
     params: () => ({
       allEntities: this.allEntities.value(),
       values: this.values(),
       includeInactive: this.includeInactive(),
+      getEntity: (id: string) => this.getEntity(id), // we cannot directly access `this.` within the loader (see https://github.com/Aam-Digital/ndb-core/pull/3410#issuecomment-3438380605)
     }),
     loader: async ({ params }) => {
       const availableEntities = params.allEntities.filter(
@@ -225,6 +230,7 @@ export class EditEntityComponent<
           params.includeInactive ||
           e.isActive,
       );
+      let hasInaccessibleEntities = false;
 
       for (const id of params.values) {
         if (id === null || id === undefined || id === "") {
@@ -235,11 +241,11 @@ export class EditEntityComponent<
           continue;
         }
 
-        const additionalEntity = undefined; //await this.getEntity(id);
+        const additionalEntity = await params.getEntity(id);
         if (additionalEntity) {
           availableEntities.push(additionalEntity);
         } else {
-          //this.hasInaccessibleEntities = true;
+          hasInaccessibleEntities = true;
           availableEntities.push({
             getId: () => id,
             isHidden: true,
@@ -247,7 +253,10 @@ export class EditEntityComponent<
         }
       }
 
-      return availableEntities;
+      return {
+        entities: availableEntities,
+        hasInaccessible: hasInaccessibleEntities,
+      };
     },
   });
 
@@ -281,7 +290,7 @@ export class EditEntityComponent<
     }
   }
 
-  private async createNewEntity(input: string): Promise<E> {
+  async createNewEntity(input: string): Promise<E> {
     const entityTypes = this.entityType();
     if (entityTypes.length < 1) {
       return;
