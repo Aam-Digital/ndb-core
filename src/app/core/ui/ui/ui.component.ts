@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Signal, signal, ViewChild, inject } from "@angular/core";
+import { Component, inject, signal, Signal, ViewChild } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
@@ -51,6 +51,7 @@ import { LoginStateSubject } from "../../session/session-type";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { ConfigService } from "../../config/config.service";
+import { MatTooltip } from "@angular/material/tooltip";
 
 /**
  * The main user interface component as root element for the app structure
@@ -81,6 +82,7 @@ import { ConfigService } from "../../config/config.service";
     GotoThirdPartySystemComponent,
     AssistantButtonComponent,
     AsyncPipe,
+    MatTooltip,
   ],
 })
 export class UiComponent {

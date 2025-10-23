@@ -49,4 +49,10 @@ export const environment = {
 
   /** see FirebaseConfiguration and assets/firebase-config.json */
   notificationsConfig: undefined,
+
+  /** Whether the system is hosted Software-as-a-Service, therefore enabling subscription-related UI */
+  SaaS: true,
+
+  /** Has the system a subscription with access to personal user support? */
+  userSupportEnabled: false,
 };

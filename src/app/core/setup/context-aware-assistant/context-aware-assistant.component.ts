@@ -20,7 +20,10 @@ import { BackupService } from "../../admin/backup/backup.service";
  * It can be used to guide users through the setup process or provide help based on the current context.
  */
 export class ContextAwareAssistantComponent {
+  isMockMode: boolean = environment.session_type === SessionType.mock;
   isDemoMode: boolean = environment.demo_mode;
+  isUserSupportEnabled: boolean = environment.userSupportEnabled;
+  isSaaS: boolean = environment.SaaS;
 
   private readonly backupService = inject(BackupService);
 

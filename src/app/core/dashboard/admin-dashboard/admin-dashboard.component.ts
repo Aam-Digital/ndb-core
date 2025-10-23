@@ -26,6 +26,7 @@ import { DynamicComponentDirective } from "../../config/dynamic-components/dynam
 import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
 import { DashboardConfig } from "../../dashboard/dashboard/dashboard.component";
 import { DashboardWidgetRegistryService } from "../dashboard-widget-registry.service";
+import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 
 @Component({
   selector: "app-admin-dashboard",
@@ -40,12 +41,12 @@ import { DashboardWidgetRegistryService } from "../dashboard-widget-registry.ser
     MatTooltipModule,
     MatIconModule,
     ViewTitleComponent,
+    HintBoxComponent,
   ],
   templateUrl: "./admin-dashboard.component.html",
   styleUrls: [
     "./admin-dashboard.component.scss",
     "../../dashboard/dashboard/dashboard.component.scss",
-    "../../admin/admin-entity/admin-entity-styles.scss",
   ],
 })
 export class AdminDashboardComponent implements OnInit {

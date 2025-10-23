@@ -13,12 +13,12 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { filter } from "rxjs/operators";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { SetupWizardComponent } from "../../admin/setup-wizard/setup-wizard.component";
-import { AssistantButtonComponent } from "../assistant-button/assistant-button.component";
 import { MatDialogRef } from "@angular/material/dialog";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatIconButton } from "@angular/material/button";
 import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { Angulartics2OnModule } from "angulartics2";
+import { AssistantService } from "#src/app/core/setup/assistant.service";
 
 /**
  * The Assistant Panel shown by the AssistantButton,
@@ -104,7 +104,7 @@ export class AssistantDialogComponent implements OnInit {
   private setDialogFullscreen() {
     this.dialogRef.updateSize(
       "calc(100% - 100px)",
-      AssistantButtonComponent.ASSISTANT_DIALOG_HEIGHT,
+      AssistantService.ASSISTANT_DIALOG_HEIGHT,
     );
   }
 
