@@ -25,11 +25,10 @@ export class ChooseUseCaseComponent {
 
   useCases: InputSignal<BaseConfig[]> = input([]);
 
-  availableUseCases: Signal<BaseConfig[]> = computed(() =>
-    this.useCases()?.filter(
-      (useCase) => useCase.locale === this.languageService.getCurrentLocale(),
-    ),
-  );
+  availableUseCases: Signal<BaseConfig[]> = computed(() => {
+    const current = this.languageService.getCurrentLocale();
+    return this.useCases().filter((uc) => (uc.locale ?? current) === current);
+  });
 
   private readonly switchLanguageIfNoUseCaseInCurrentLocale = effect(() => {
     if (this.availableUseCases().length === 0 && this.useCases().length > 0) {
