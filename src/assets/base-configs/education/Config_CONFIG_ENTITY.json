@@ -1681,7 +1681,8 @@
           "additional": "center",
           "label": "Result",
           "validators": {
-            "required": true
+            "min": 0,
+            "max": 100
           }
         }
       }
