@@ -1,7 +1,7 @@
 <button
   mat-raised-button
   color="accent"
-  [disabled]="!canSave"
+  [disabled]="!form.formGroup.valid"
   (click)="save()"
   angulartics2On="click"
   [angularticsCategory]="entity?.getType()"
