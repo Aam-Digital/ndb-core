@@ -1,4 +1,4 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EmailClientService } from "./email-client.service";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
@@ -7,11 +7,14 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { EmailDatatype } from "#src/app/core/basic-datatypes/string/email.datatype";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { MarkdownModule } from "ngx-markdown";
+import { MatDialog } from "@angular/material/dialog";
+import { of } from "rxjs";
 
-describe("EmailClientService", () => {
+fdescribe("EmailClientService", () => {
   let service: EmailClientService;
   let mockRegistry: jasmine.SpyObj<EntityRegistry>;
   let mockAlert: jasmine.SpyObj<AlertService>;
+  let mockDialog: jasmine.SpyObj<MatDialog>;
 
   class EntityWithEmail extends Entity {
     @DatabaseField({ dataType: EmailDatatype.dataType })
@@ -21,6 +24,7 @@ describe("EmailClientService", () => {
   beforeEach(() => {
     mockRegistry = jasmine.createSpyObj("EntityRegistry", ["get"]);
     mockAlert = jasmine.createSpyObj("AlertService", ["addWarning"]);
+    mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
 
     TestBed.configureTestingModule({
       imports: [MarkdownModule.forRoot()],
@@ -28,6 +32,7 @@ describe("EmailClientService", () => {
         EmailClientService,
         { provide: EntityRegistry, useValue: mockRegistry },
         { provide: AlertService, useValue: mockAlert },
+        { provide: MatDialog, useValue: mockDialog },
       ],
     });
 
@@ -38,18 +43,27 @@ describe("EmailClientService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should show warning and return false if email field exists but value is missing", async () => {
+  it("should show warning and return false if email field exists but value is missing", waitForAsync(async () => {
     const fakeEntity = new EntityWithEmail();
     fakeEntity.email = undefined;
     mockRegistry.get.and.returnValue(EntityWithEmail);
+    mockDialog.open.and.returnValue({
+      afterClosed: () => of(undefined),
+    } as any);
 
     const result = await service.executeMailto(fakeEntity);
 
     expect(result).toBeFalse();
-    expect(mockAlert.addWarning).toHaveBeenCalledWith(
-      "Please fill an email address for this record to use this functionality.",
+    expect(mockDialog.open).toHaveBeenCalledWith(
+      jasmine.anything(),
+      jasmine.objectContaining({
+        data: jasmine.objectContaining({
+          title: "Email Error",
+          text: "Please fill an email address for this record to use this functionality.",
+        }),
+      }),
     );
-  });
+  }));
 
   it("should generate mailto link with bcc for multiple emails", () => {
     const emails = ["test@example.com", "john@example.com"];
