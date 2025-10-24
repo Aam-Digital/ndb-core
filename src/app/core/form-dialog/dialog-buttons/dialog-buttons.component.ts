@@ -21,9 +21,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
-import { UntilDestroy } from "@ngneat/until-destroy";
 
-@UntilDestroy()
 @Component({
   selector: "app-dialog-buttons",
   imports: [
