@@ -3,11 +3,11 @@ import {
   Component,
   ContentChildren,
   EventEmitter,
+  inject,
   Input,
   Output,
   QueryList,
   ViewChild,
-  inject,
 } from "@angular/core";
 import {
   MatCheckboxChange,
@@ -314,12 +314,10 @@ export class EntitiesTableComponent<T extends Entity>
       if (!this.selectedRecords.includes(row.record)) {
         this.selectedRecords = [...this.selectedRecords, row.record];
       }
-    } else {
-      if (this.selectedRecords.includes(row.record)) {
-        this.selectedRecords = this.selectedRecords.filter(
-          (r) => r !== row.record,
-        );
-      }
+    } else if (this.selectedRecords.includes(row.record)) {
+      this.selectedRecords = this.selectedRecords.filter(
+        (r) => r !== row.record,
+      );
     }
     this.selectedRecordsChange.emit(this.selectedRecords);
   }
