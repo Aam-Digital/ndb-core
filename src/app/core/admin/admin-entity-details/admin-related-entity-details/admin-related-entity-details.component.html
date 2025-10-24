@@ -1,0 +1,32 @@
+<h2 mat-dialog-title i18n>
+  Edit data structure:
+  {{ entityConstructor?.label || entityConstructor?.ENTITY_TYPE }}
+</h2>
+<app-dialog-close mat-dialog-close></app-dialog-close>
+
+<mat-dialog-content>
+  <div class="hint-banner" i18n>
+    You can edit how users will see the details of a single record of this type.
+    Drag and drop fields and sections in this preview of a profile view and
+    group them as appropriate. The editor below closely resembles how the form
+    will look for users later. We recommend to keep things simple: Only add
+    fields that you really need for your work.
+  </div>
+
+  <div class="form-sections">
+    <app-admin-entity-form
+      [entityType]="entityConstructor"
+      [config]="formConfig"
+      [uniqueAreaId]="
+        'related-entity-details-' + entityConstructor?.ENTITY_TYPE
+      "
+      [fieldsOnlyMode]="true"
+      (configChange)="onConfigChange($event)"
+    ></app-admin-entity-form>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-raised-button (click)="applyChanges()" i18n>Apply</button>
+  <button mat-button (click)="cancelChanges()" i18n>Cancel</button>
+</mat-dialog-actions>
