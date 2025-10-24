@@ -6,6 +6,7 @@ import { AlertService } from "#src/app/core/alerts/alert.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EmailDatatype } from "#src/app/core/basic-datatypes/string/email.datatype";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
+import { MarkdownModule } from "ngx-markdown";
 
 describe("EmailClientService", () => {
   let service: EmailClientService;
@@ -22,6 +23,7 @@ describe("EmailClientService", () => {
     mockAlert = jasmine.createSpyObj("AlertService", ["addWarning"]);
 
     TestBed.configureTestingModule({
+      imports: [MarkdownModule.forRoot()],
       providers: [
         EmailClientService,
         { provide: EntityRegistry, useValue: mockRegistry },
