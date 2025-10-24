@@ -10,7 +10,7 @@ import { MarkdownModule } from "ngx-markdown";
 import { MatDialog } from "@angular/material/dialog";
 import { of } from "rxjs";
 
-fdescribe("EmailClientService", () => {
+describe("EmailClientService", () => {
   let service: EmailClientService;
   let mockRegistry: jasmine.SpyObj<EntityRegistry>;
   let mockAlert: jasmine.SpyObj<AlertService>;
