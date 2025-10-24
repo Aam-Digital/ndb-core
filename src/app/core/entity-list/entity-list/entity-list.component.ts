@@ -42,7 +42,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { Sort } from "@angular/material/sort";
 import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
 import { RouteTarget } from "../../../route-target";
-import { EntityActionsService } from "app/core/entity/entity-actions/entity-actions.service";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { applyUpdate } from "../../entity/model/entity-update";
 import { Subscription } from "rxjs";
@@ -53,18 +52,12 @@ import {
   EntitySpecialLoaderService,
   LoaderMethod,
 } from "../../entity/entity-special-loader/entity-special-loader.service";
-import { EntityEditService } from "app/core/entity/entity-actions/entity-edit.service";
-import {
-  DialogViewComponent,
-  DialogViewData,
-} from "../../ui/dialog-view/dialog-view.component";
 import { AblePurePipe } from "@casl/angular";
-import { BulkMergeService } from "app/features/de-duplication/bulk-merge-service";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
 import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
-import { EmailClientService } from "#src/app/features/email-client/email-client.service";
+import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -105,6 +98,7 @@ import { EmailClientService } from "#src/app/features/email-client/email-client.
     AblePurePipe,
     ViewActionsComponent,
     EntityLoadPipe,
+    EntityBulkActionsComponent,
   ],
 })
 @UntilDestroy()
@@ -117,15 +111,10 @@ export class EntityListComponent<T extends Entity>
   protected entityMapperService = inject(EntityMapperService);
   private entities = inject(EntityRegistry);
   private dialog = inject(MatDialog);
-  private duplicateRecord = inject(DuplicateRecordService);
-  private entityActionsService = inject(EntityActionsService);
-  private entityEditService = inject(EntityEditService);
-  private bulkMergeService = inject(BulkMergeService);
   private entitySpecialLoader = inject(EntitySpecialLoaderService, {
     optional: true,
   });
   private readonly formDialog = inject(FormDialogService);
-  private readonly emailClientService = inject(EmailClientService);
 
   private readonly publicFormsService = inject(PublicFormsService);
   public publicFormConfigs: PublicFormConfig[] = [];
@@ -374,65 +363,6 @@ export class EntityListComponent<T extends Entity>
     }
 
     this.addNewClick.emit();
-  }
-
-  duplicateRecords() {
-    this.duplicateRecord.duplicateRecord(this.selectedRows);
-    this.selectedRows = undefined;
-  }
-
-  async editRecords() {
-    await this.entityEditService.edit(
-      this.selectedRows,
-      this.entityConstructor,
-    );
-    this.selectedRows = undefined;
-  }
-
-  async mergeRecords() {
-    await this.bulkMergeService.showMergeDialog(
-      this.selectedRows,
-      this.entityConstructor,
-    );
-    this.selectedRows = undefined;
-  }
-
-  async bulkEmail() {
-    await this.emailClientService.executeMailto(this.selectedRows);
-    this.selectedRows = undefined;
-  }
-
-  async deleteRecords() {
-    await this.entityActionsService.delete(this.selectedRows);
-    this.selectedRows = undefined;
-  }
-
-  async archiveRecords() {
-    await this.entityActionsService.archive(this.selectedRows);
-    this.selectedRows = undefined;
-  }
-
-  async anonymizeRecords() {
-    await this.entityActionsService.anonymize(this.selectedRows);
-    this.selectedRows = undefined;
-  }
-
-  linkExternalProfiles() {
-    this.dialog.open(DialogViewComponent, {
-      width: "98vw",
-      maxWidth: "100vw",
-      height: "98vh",
-      maxHeight: "100vh",
-
-      data: {
-        component: "BulkLinkExternalProfiles",
-        config: {
-          entities: this.selectedRows,
-        },
-      } as DialogViewData,
-    });
-
-    this.selectedRows = undefined;
   }
 
   onRowClick(row: T) {
