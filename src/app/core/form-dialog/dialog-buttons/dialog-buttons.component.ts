@@ -21,7 +21,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { UntilDestroy } from "@ngneat/until-destroy";
 
 @UntilDestroy()
 @Component({
@@ -50,7 +50,6 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
   @Input() entity: E;
   @Input() form: EntityForm<E>;
   detailsRoute: string;
-  canSave: boolean = false;
 
   @Output() closeView = new EventEmitter<any>();
 
@@ -82,11 +81,6 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
       }
       this.initializeDetailsRouteIfAvailable();
     }
-    this.form.formGroup.valueChanges
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.canSave = this.hasFormValue();
-      });
   }
 
   private initializeDetailsRouteIfAvailable() {
@@ -131,24 +125,5 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
     if (action === "delete") {
       this.close();
     }
-  }
-
-  /**
-   * Checks if any control in the form has a non-empty value.
-   * Returns true if at least one form control contains a value
-   */
-  private hasFormValue(): boolean {
-    return Object.values(this.form.formGroup.controls).some((ctrl) => {
-      const val = ctrl.value;
-      if (
-        val === null ||
-        val === undefined ||
-        (Array.isArray(val) && val.length === 0) ||
-        JSON.stringify(val) === "{}" ||
-        (typeof val === "string" && val.trim().length === 0)
-      )
-        return false;
-      else return true;
-    });
   }
 }
