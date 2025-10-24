@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
 import { shareReplay } from "rxjs/operators";
 import { addDefaultRecurringActivityDetailsConfig } from "../../child-dev-project/attendance/add-default-recurring-activity-views";
@@ -32,15 +32,20 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   configUpdates = this.entityUpdated.pipe(shareReplay(1));
 
-  constructor() {
-    const entityMapper = inject(EntityMapperService);
-
+  constructor(
+    // eslint-disable-next-line
+    entityMapper: EntityMapperService, // Prefer using the inject() function not possible here because base class requires the dependency to be passed to super()
+  ) {
     super(Config, Config.CONFIG_KEY, entityMapper);
-    super.startLoading();
+  }
+
+  override onInit() {
     this.entityUpdated.subscribe(async (config) => {
       this.currentConfig = this.applyMigrations(config);
       this.logConfigRev();
     });
+
+    this.startLoading();
   }
 
   private logConfigRev() {
