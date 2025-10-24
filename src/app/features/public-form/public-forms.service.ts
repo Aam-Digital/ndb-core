@@ -1,10 +1,11 @@
 import { Logging } from "#src/app/core/logging/logging.service";
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { AlertService } from "app/core/alerts/alert.service";
 import { EntityActionsMenuService } from "app/core/entity-details/entity-actions-menu/entity-actions-menu.service";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "app/core/entity/model/entity";
 import { PublicFormConfig } from "./public-form-config";
+import { asArray } from "#src/app/utils/asArray";
 
 @Injectable({
   providedIn: "root",
@@ -36,13 +37,17 @@ export class PublicFormsService {
       this.entityActionsMenuService.registerActions([
         {
           action: `copy-form-${config.getId()}`,
-          execute: (entity) =>
-            this.copyPublicFormLinkFromConfig(config, entity),
+          execute: (entity) => {
+            const singleEntity = Array.isArray(entity) ? entity[0] : entity;
+            return this.copyPublicFormLinkFromConfig(config, singleEntity);
+          },
           permission: "read",
           icon: "link",
           label: $localize`Copy Custom Form (${config.title})`,
           tooltip: $localize`Copy link to public form "${config.title}" that will connect submissions to this individual record.`,
-          visible: (entity) => this.isEntityTypeLinkedToConfig(config, entity),
+          visible: (entity) =>
+            this.isEntityTypeLinkedToConfig(config, asArray(entity)[0]),
+          availableFor: "individual-only",
         },
       ]);
     }
