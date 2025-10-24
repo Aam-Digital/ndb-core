@@ -6,7 +6,6 @@ import { AlertService } from "#src/app/core/alerts/alert.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EmailDatatype } from "#src/app/core/basic-datatypes/string/email.datatype";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
-import { MarkdownModule } from "ngx-markdown";
 import { MatDialog } from "@angular/material/dialog";
 import { of } from "rxjs";
 
@@ -27,7 +26,6 @@ describe("EmailClientService", () => {
     mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
 
     TestBed.configureTestingModule({
-      imports: [MarkdownModule.forRoot()],
       providers: [
         EmailClientService,
         { provide: EntityRegistry, useValue: mockRegistry },
