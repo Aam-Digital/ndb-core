@@ -1677,11 +1677,11 @@
           "anonymize": "retain"
         },
         "result": {
-          "dataType": "percentage",
+          "dataType": "configurable-enum",
+          "additional": "center",
           "label": "Result",
           "validators": {
-            "min": 0,
-            "max": 100
+            "required": true
           }
         }
       }
