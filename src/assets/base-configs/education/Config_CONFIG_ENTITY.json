@@ -1677,8 +1677,7 @@
           "anonymize": "retain"
         },
         "result": {
-          "dataType": "configurable-enum",
-          "additional": "center",
+          "dataType": "percentage",
           "label": "Result",
           "validators": {
             "min": 0,
