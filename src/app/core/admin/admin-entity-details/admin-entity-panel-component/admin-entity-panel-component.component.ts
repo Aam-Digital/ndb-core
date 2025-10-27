@@ -231,19 +231,20 @@ export class AdminEntityPanelComponentComponent implements OnInit {
       ),
     );
 
-    const dialogRef = this.dialog.open(AdminRelatedEntityDetailsComponent);
-
-    dialogRef.componentInstance.entityConstructor = this.entityConstructor;
-
-    // Pass the current columns to show as active fields in the dialog
-    dialogRef.componentInstance.currentColumns = this.activeFields.map((col) =>
-      typeof col === "string" ? col : col.id,
-    );
+    const dialogRef = this.dialog.open(AdminRelatedEntityDetailsComponent, {
+      data: {
+        entityConstructor: this.entityConstructor,
+        currentColumns: this.activeFields.map((col) =>
+          typeof col === "string" ? col : col.id,
+        ),
+      },
+    });
 
     dialogRef.afterClosed().subscribe((updatedFieldIds: string[]) => {
       // Only update if user clicked Apply (updatedFieldIds is defined)
       // undefined means Cancel was clicked
       if (updatedFieldIds !== undefined) {
+        this.config.config.columns = updatedFieldIds;
         this.activeFields = updatedFieldIds;
         // Check if the related entity's schema was modified
         if (this.hasSchemaChanged()) {

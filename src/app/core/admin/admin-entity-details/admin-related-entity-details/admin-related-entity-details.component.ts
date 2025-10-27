@@ -1,10 +1,22 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { AdminEntityFormComponent } from "../admin-entity-form/admin-entity-form.component";
 import { FormConfig } from "../../../entity-details/form/form.component";
-import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
 import { MatButtonModule } from "@angular/material/button";
+
+/**
+ * Data interface for AdminRelatedEntityDetailsComponent dialog
+ */
+export interface AdminRelatedEntityDetailsData {
+  entityConstructor: EntityConstructor;
+  currentColumns: string[];
+}
 
 /**
  * Dialog component for editing the related entity's column selection and order.
@@ -30,18 +42,17 @@ import { MatButtonModule } from "@angular/material/button";
 })
 export class AdminRelatedEntityDetailsComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<AdminRelatedEntityDetailsComponent>);
+  private data = inject<AdminRelatedEntityDetailsData>(MAT_DIALOG_DATA);
 
-  @Input() entityConstructor: EntityConstructor;
-
-  /**
-   * Currently selected columns from the panel component.
-   * These are shown as "active fields" in the dialog.
-   */
-  @Input() currentColumns: string[] = [];
+  entityConstructor: EntityConstructor;
+  currentColumns: string[] = [];
 
   formConfig: FormConfig = { fieldGroups: [] };
 
   ngOnInit(): void {
+    this.entityConstructor = this.data.entityConstructor;
+    this.currentColumns = this.data.currentColumns;
+
     // Use the current columns from the panel component as active fields
     // Available fields will be shown from entityConstructor.schema automatically
     if (this.currentColumns && this.currentColumns.length > 0) {
