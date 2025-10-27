@@ -25,7 +25,7 @@ import { MatButtonModule } from "@angular/material/button";
   templateUrl: "./admin-related-entity-details.component.html",
   styleUrls: [
     "./admin-related-entity-details.component.scss",
-    "../../admin-entity/admin-entity-styles.scss",
+    "../../../common-components/hint-box/hint-box.component.scss",
   ],
 })
 export class AdminRelatedEntityDetailsComponent implements OnInit {
