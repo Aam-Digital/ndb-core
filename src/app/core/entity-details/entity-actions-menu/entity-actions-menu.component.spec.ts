@@ -35,6 +35,7 @@ describe("EntityActionsMenuComponent", () => {
       label: "Test Action",
       icon: "test_icon",
       execute: () => null,
+      availableFor: "all",
     };
     spyOn(testAction, "execute").and.resolveTo(true);
 

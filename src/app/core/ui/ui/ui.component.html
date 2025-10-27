@@ -82,11 +82,14 @@
             class="site-logo"
           ></app-display-img>
         }
+
         <app-navigation
           class="overflow-auto-y"
           (click)="closeSidenavOnMobile()"
         ></app-navigation>
+
         <div class="flex-grow"></div>
+
         <div class="flex-column">
           <app-goto-third-party-system></app-goto-third-party-system>
           <app-setup-wizard-button></app-setup-wizard-button>
@@ -109,15 +112,19 @@
               <span i18n="Sign out of the app">Sign out</span>
             </button>
           </div>
+
           <div class="flex-row">
             <button
               mat-icon-button
               class="footer-cell"
               routerLink="/support"
               (click)="closeSidenavOnMobile()"
+              matTooltip="show technical support details"
+              i18n-matTooltip
             >
               <fa-icon icon="info-circle" class="info-icon"></fa-icon>
             </button>
+
             <button
               mat-button
               class="footer-cell full-width"

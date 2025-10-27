@@ -1,0 +1,26 @@
+@use "@angular/material/core/style/elevation" as mat-elevation;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.full-height-container {
+  height: calc(100% - 16px);
+}
+
+.important-message {
+  font-weight: bold;
+}
+
+.user-guides-block {
+  padding: 1em;
+  margin: 1em;
+  border-radius: 4px;
+  @include mat-elevation.elevation(1);
+}
+
+.align-end {
+  flex-grow: 1;
+  align-content: flex-end;
+}

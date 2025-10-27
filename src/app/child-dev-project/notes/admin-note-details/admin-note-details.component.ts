@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { AdminEntityFormComponent } from "../../../core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component";
@@ -6,6 +6,7 @@ import { NoteDetailsConfig } from "../note-details/note-details-config.interface
 import { FormConfig } from "../../../core/entity-details/form/form.component";
 import { FieldGroup } from "../../../core/entity-details/form/field-group";
 import { getDefaultNoteDetailsConfig } from "../add-default-note-views";
+import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 
 /**
  * Admin component for configuring NoteDetails view.
@@ -13,9 +14,8 @@ import { getDefaultNoteDetailsConfig } from "../add-default-note-views";
  */
 @Component({
   selector: "app-admin-note-details",
-  imports: [CommonModule, AdminEntityFormComponent],
+  imports: [CommonModule, AdminEntityFormComponent, HintBoxComponent],
   templateUrl: "./admin-note-details.component.html",
-  styleUrls: ["../../../core/admin/admin-entity/admin-entity-styles.scss"],
 })
 export class AdminNoteDetailsComponent implements OnInit {
   @Input() config: NoteDetailsConfig = {};

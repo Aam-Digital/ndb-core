@@ -2,15 +2,16 @@ import { resourceWithRetention } from "#src/app/utils/resourceWithRetention";
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
+  inject,
   Input,
+  input,
+  InputSignal,
   OnInit,
   Resource,
   Signal,
-  ViewChild,
-  computed,
-  inject,
-  input,
   signal,
+  ViewChild,
 } from "@angular/core";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -22,7 +23,6 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { UntilDestroy } from "@ngneat/until-destroy";
 import { asArray } from "app/utils/asArray";
 import { lastValueFrom, map, startWith, switchMap } from "rxjs";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
@@ -67,7 +67,6 @@ import { EntityBlockComponent } from "../entity-block/entity-block.component";
     { provide: MatFormFieldControl, useExisting: EditEntityComponent },
   ],
 })
-@UntilDestroy()
 export class EditEntityComponent<
     T extends string[] | string = string[],
     E extends Entity = Entity,
@@ -108,8 +107,6 @@ export class EditEntityComponent<
    */
   @Input() showEntities = true;
 
-  hasInaccessibleEntities: boolean = false;
-
   /**
    * The accessor used for filtering and when selecting a new entity.
    */
@@ -117,7 +114,7 @@ export class EditEntityComponent<
     e instanceof Entity ? e.toString() : "?";
   entityToId = (option: E) => option.getId();
 
-  @Input() additionalFilter: (e: E) => boolean = (_) => true;
+  additionalFilter: InputSignal<(e: E) => boolean> = input((_) => true);
 
   formControl: Signal<FormControl<T>> = computed(() => {
     let control = this.ngControl?.control as FormControl<T>;
@@ -129,10 +126,6 @@ export class EditEntityComponent<
     return this._formControl;
   });
   private _formControl: FormControl<T>;
-
-  get label(): string {
-    return this.formFieldConfig?.label || "";
-  }
 
   /**
    * Explicitly define the entity type(s) to select among.
@@ -155,17 +148,19 @@ export class EditEntityComponent<
     defaultValue: [],
     params: () => ({
       entityTypes: this.entityType(),
+      additionalFilter: this.additionalFilter(),
+      loadType: (type: string) => this.entityMapperService.loadType<E>(type), // we cannot directly access `this.` within the loader (see https://github.com/Aam-Digital/ndb-core/pull/3410#issuecomment-3438380605)
     }),
     loader: async ({ params }) => {
       if (params.entityTypes.length === 0) return [];
 
       const entities: E[] = [];
       for (const type of params.entityTypes) {
-        entities.push(...(await this.entityMapperService.loadType<E>(type)));
+        entities.push(...(await params.loadType(type)));
       }
 
       return entities
-        .filter((e) => this.additionalFilter(e))
+        .filter((e) => params.additionalFilter(e))
         .sort((a, b) => a.toString().localeCompare(b.toString()));
     },
   });
@@ -188,6 +183,16 @@ export class EditEntityComponent<
     return !this.ability.can("create", entityType);
   });
 
+  createNewEntityOption: Signal<(input: string) => Promise<E>> = computed(
+    () => {
+      if (this.isCreateDisabled()) {
+        return null;
+      }
+
+      return (input) => this.createNewEntity(input);
+    },
+  );
+
   loading: Signal<boolean> = computed(() => this.allEntities.isLoading());
 
   /**
@@ -207,50 +212,53 @@ export class EditEntityComponent<
 
   includeInactive = signal<boolean>(false);
 
-  private readonly availableOptionsResource: Resource<E[]> =
-    resourceWithRetention({
-      defaultValue: [],
-      params: () => ({
-        allEntities: this.allEntities.value(),
-        values: this.values(),
-        includeInactive: this.includeInactive(),
-      }),
-      loader: async ({ params }) => {
-        const availableEntities = params.allEntities.filter(
-          (e) =>
-            params.values.includes(e.getId()) ||
-            params.includeInactive ||
-            e.isActive,
-        );
+  readonly availableOptionsResource: Resource<{
+    entities: E[];
+    hasInaccessible?: boolean;
+  }> = resourceWithRetention({
+    defaultValue: { entities: [], hasInaccessible: false },
+    params: () => ({
+      allEntities: this.allEntities.value(),
+      values: this.values(),
+      includeInactive: this.includeInactive(),
+      getEntity: (id: string) => this.getEntity(id), // we cannot directly access `this.` within the loader (see https://github.com/Aam-Digital/ndb-core/pull/3410#issuecomment-3438380605)
+    }),
+    loader: async ({ params }) => {
+      const availableEntities = params.allEntities.filter(
+        (e) =>
+          params.values.includes(e.getId()) ||
+          params.includeInactive ||
+          e.isActive,
+      );
+      let hasInaccessibleEntities = false;
 
-        for (const id of params.values) {
-          if (id === null || id === undefined || id === "") {
-            continue;
-          }
-
-          if (availableEntities.find((e) => id === e.getId())) {
-            continue;
-          }
-
-          const additionalEntity = await this.getEntity(id);
-          if (additionalEntity) {
-            availableEntities.push(additionalEntity);
-          } else {
-            this.hasInaccessibleEntities = true;
-            availableEntities.push({
-              getId: () => id,
-              isHidden: true,
-            } as unknown as E);
-          }
+      for (const id of params.values) {
+        if (id === null || id === undefined || id === "") {
+          continue;
         }
 
-        return availableEntities;
-      },
-    });
+        if (availableEntities.find((e) => id === e.getId())) {
+          continue;
+        }
 
-  availableOptions: Signal<E[]> = computed(() =>
-    this.availableOptionsResource.value(),
-  );
+        const additionalEntity = await params.getEntity(id);
+        if (additionalEntity) {
+          availableEntities.push(additionalEntity);
+        } else {
+          hasInaccessibleEntities = true;
+          availableEntities.push({
+            getId: () => id,
+            isHidden: true,
+          } as unknown as E);
+        }
+      }
+
+      return {
+        entities: availableEntities,
+        hasInaccessible: hasInaccessibleEntities,
+      };
+    },
+  });
 
   private async getEntity(selectedId: string): Promise<E | undefined> {
     const type = Entity.extractTypeFromId(selectedId);
@@ -260,7 +268,7 @@ export class EditEntityComponent<
       .catch((err: Error) => {
         Logging.warn(
           "[ENTITY_SELECT] Error loading selected entity.",
-          this.label,
+          this.formFieldConfig?.label,
           selectedId,
           err.message,
         );
@@ -282,7 +290,7 @@ export class EditEntityComponent<
     }
   }
 
-  createNewEntity = async (input: string): Promise<E> => {
+  async createNewEntity(input: string): Promise<E> {
     const entityTypes = this.entityType();
     if (entityTypes.length < 1) {
       return;
@@ -298,7 +306,7 @@ export class EditEntityComponent<
 
     const dialogRef = this.formDialog.openFormPopup(newEntity);
     return lastValueFrom<E | undefined>(dialogRef.afterClosed());
-  };
+  }
 
   ngOnInit() {
     this.multi = this.formFieldConfig?.isArray ?? false;
