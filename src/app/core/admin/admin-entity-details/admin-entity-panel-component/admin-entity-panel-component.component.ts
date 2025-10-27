@@ -11,6 +11,8 @@ import {
   inject,
   computed,
   signal,
+  Output,
+  EventEmitter,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatOptionModule } from "@angular/material/core";
@@ -56,12 +58,23 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   @Input() config: PanelComponent;
   @Input() entityType: EntityConstructor;
 
+  /**
+   * Event emitted when a related entity's schema has been modified.
+   * The parent component should register this entity to be saved.
+   */
+  @Output() relatedEntityModified = new EventEmitter<EntityConstructor>();
+
   entityConstructor: EntityConstructor;
   selectedEntityType: string;
   isDialogOpen = false;
 
   /** Stores the currently active/selected field IDs to be shown in the panel */
   activeFields: ColumnConfig[];
+
+  /**
+   * Store the original schema state of the related entity to detect changes
+   */
+  private originalRelatedEntitySchema: Map<string, any>;
 
   /**
    * List of entity types that reference the current entity type.
@@ -204,12 +217,19 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   /**
    * Opens a dialog showing the related entity's column selection and ordering.
    * When "Apply" is clicked, updates the columns in the config.
-   * Changes are saved when the main form's Save button is clicked (config is part of the form).
+   * If the related entity's schema was modified, emits an event so the parent can save it.
    */
   openRelatedEntityDetailsConfig(): void {
     if (!this.entityConstructor) {
       return;
     }
+
+    // Store the original schema state to detect changes after dialog closes
+    this.originalRelatedEntitySchema = new Map(
+      JSON.parse(
+        JSON.stringify(Array.from(this.entityConstructor.schema.entries())),
+      ),
+    );
 
     const dialogRef = this.dialog.open(AdminRelatedEntityDetailsComponent);
 
@@ -224,15 +244,38 @@ export class AdminEntityPanelComponentComponent implements OnInit {
       // Only update if user clicked Apply (updatedFieldIds is defined)
       // undefined means Cancel was clicked
       if (updatedFieldIds !== undefined) {
-        // Update the columns configuration with the new field order
-        // This will be saved when the main form's Save button is clicked
-        this.config.config = {
-          ...this.config.config,
-          columns: updatedFieldIds,
-        };
-
         this.activeFields = updatedFieldIds;
+        // Check if the related entity's schema was modified
+        if (this.hasSchemaChanged()) {
+          // Emit event so parent component can register this entity to be saved
+          this.relatedEntityModified.emit(this.entityConstructor);
+        }
       }
     });
+  }
+
+  /**
+   * Check if the related entity's schema has been modified compared to the original state.
+   */
+  private hasSchemaChanged(): boolean {
+    const currentSchema = this.entityConstructor.schema;
+
+    // Check if size changed
+    if (currentSchema.size !== this.originalRelatedEntitySchema.size) {
+      return true;
+    }
+
+    // Check if any field was modified
+    for (const [fieldId, fieldSchema] of currentSchema.entries()) {
+      const originalFieldSchema = this.originalRelatedEntitySchema.get(fieldId);
+      if (
+        !originalFieldSchema ||
+        JSON.stringify(fieldSchema) !== JSON.stringify(originalFieldSchema)
+      ) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

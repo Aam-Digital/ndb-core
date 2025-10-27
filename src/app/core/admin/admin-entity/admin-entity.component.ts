@@ -59,6 +59,12 @@ export class AdminEntityComponent implements OnInit {
   entityConstructor: EntityConstructor;
   private originalEntitySchemaFields: [string, EntitySchemaField][];
 
+  /**
+   * Track related entity types that have been modified through the panel config dialog.
+   * These will need to be saved when the main Save button is clicked.
+   */
+  private modifiedRelatedEntities = new Set<EntityConstructor>();
+
   configDetailsView: DynamicComponentConfig<any>; // typed any to avoid type issues with different detail components
   configListView: DynamicComponentConfig<EntityListConfig>;
   configEntitySettings: EntityConfig;
@@ -147,11 +153,13 @@ export class AdminEntityComponent implements OnInit {
   }
 
   async save() {
+    // Save the main entity configuration along with all related entities in a single transaction
     const result = await this.adminEntityService.setAndSaveEntityConfig(
       this.entityConstructor,
       this.configEntitySettings,
       this.configListView,
       this.configDetailsView,
+      Array.from(this.modifiedRelatedEntities),
     );
 
     this.entityActionsService.showSnackbarConfirmationWithUndo(
@@ -160,5 +168,13 @@ export class AdminEntityComponent implements OnInit {
     );
 
     this.location.back();
+  }
+
+  /**
+   * Register a related entity as modified, so its schema will be saved when the main Save button is clicked.
+   * This is called from child components (e.g., panel components) when they modify related entity schemas.
+   */
+  emmitUpdatedRelatedEntity(entityConstructor: EntityConstructor): void {
+    this.modifiedRelatedEntities.add(entityConstructor);
   }
 }
