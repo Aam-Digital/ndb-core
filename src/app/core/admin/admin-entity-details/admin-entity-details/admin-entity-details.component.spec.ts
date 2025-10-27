@@ -46,12 +46,16 @@ describe("AdminEntityDetailsComponent", () => {
         FontAwesomeTestingModule,
       ],
       providers: [
-        { provide: MatDialog, useValue: mockDialog },
         { provide: EntityRegistry, useValue: entityRegistry },
         SyncStateSubject,
         CurrentUserSubject,
       ],
+    }).overrideComponent(AdminEntityDetailsComponent, {
+      set: {
+        providers: [{ provide: MatDialog, useValue: mockDialog }],
+      },
     });
+
     fixture = TestBed.createComponent(AdminEntityDetailsComponent);
     component = fixture.componentInstance;
 
@@ -76,8 +80,8 @@ describe("AdminEntityDetailsComponent", () => {
     } as any);
 
     component.addComponent(component.config.panels[0]);
-    expect(component.config.panels[0].components.length).toBe(1);
 
+    expect(component.config.panels[0].components.length).toBe(1);
     expect(component.config.panels[0].components[0]).toEqual(defaultConfig);
   });
 });
