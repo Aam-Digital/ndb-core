@@ -18,7 +18,14 @@ export abstract class LatestEntityLoader<T extends Entity> {
     private entityCtor: EntityConstructor<T>,
     private entityID: string,
     protected entityMapper: EntityMapperService,
-  ) {}
+  ) {
+    this.onInit();
+  }
+
+  /**
+   * Override this to trigger actions upon initialization of the service
+   */
+  protected onInit() {}
 
   /**
    * Initialize the loader to make the entity available and emit continuous updates

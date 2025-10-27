@@ -1,4 +1,4 @@
-import { Component, Input, inject, signal } from "@angular/core";
+import { Component, inject, Input } from "@angular/core";
 import {
   EntityDetailsConfig,
   Panel,
@@ -25,15 +25,13 @@ import {
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { WidgetComponentSelectComponent } from "#src/app/core/admin/admin-entity-details/widget-component-select/widget-component-select.component";
+import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 
 @DynamicComponent("AdminEntityDetails")
 @Component({
   selector: "app-admin-entity-details",
   templateUrl: "./admin-entity-details.component.html",
-  styleUrls: [
-    "./admin-entity-details.component.scss",
-    "../../admin-entity/admin-entity-styles.scss",
-  ],
+  styleUrls: ["./admin-entity-details.component.scss"],
   imports: [
     MatTabsModule,
     FaIconComponent,
@@ -48,6 +46,7 @@ import { WidgetComponentSelectComponent } from "#src/app/core/admin/admin-entity
     MatExpansionModule,
     MatIconModule,
     DragDropModule,
+    HintBoxComponent,
   ],
 })
 export class AdminEntityDetailsComponent {

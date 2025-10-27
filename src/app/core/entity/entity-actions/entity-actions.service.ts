@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable, Injector } from "@angular/core";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { Entity } from "../model/entity";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -13,6 +13,9 @@ import { EntityActionsMenuService } from "../../entity-details/entity-actions-me
 import { DuplicateRecordService } from "app/core/entity-list/duplicate-records/duplicate-records.service";
 import { PublicFormsService } from "app/features/public-form/public-forms.service";
 import { PublicFormConfig } from "app/features/public-form/public-form-config";
+import { EntityEditService } from "./entity-edit.service";
+import { BulkMergeService } from "#src/app/features/de-duplication/bulk-merge-service";
+import { asArray } from "#src/app/utils/asArray";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -22,6 +25,7 @@ import { PublicFormConfig } from "app/features/public-form/public-form-config";
   providedIn: "root",
 })
 export class EntityActionsService {
+  private readonly injector = inject(Injector);
   private confirmationDialog = inject(ConfirmationDialogService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
@@ -30,6 +34,7 @@ export class EntityActionsService {
   private entityAnonymize = inject(EntityAnonymizeService);
   private duplicateRecordService = inject(DuplicateRecordService);
   private publicFormsService = inject(PublicFormsService);
+  private readonly bulkMergeService = inject(BulkMergeService);
 
   constructor() {
     const entityActionsMenuService = inject(EntityActionsMenuService);
@@ -43,7 +48,11 @@ export class EntityActionsService {
         label: $localize`:entity context menu:Archive`,
         tooltip: $localize`:entity context menu tooltip:Mark the record as inactive, hiding it from lists by default while keeping the data.`,
         primaryAction: true,
-        visible: async (entity) => entity.isActive && !entity.anonymized,
+        visible: async (entity) => {
+          const entities = asArray(entity);
+          return entities.some((e) => e.isActive && !e.anonymized);
+        },
+        availableFor: "all",
       },
       {
         action: "anonymize",
@@ -52,8 +61,13 @@ export class EntityActionsService {
         icon: "user-secret",
         label: $localize`:entity context menu:Anonymize`,
         tooltip: $localize`:entity context menu tooltip:Remove all personal data and keep an archived basic record for statistical reporting.`,
-        visible: async (entity) =>
-          !entity.anonymized && entity.getConstructor().hasPII === true,
+        visible: async (entity) => {
+          const entities = asArray(entity);
+          return entities.some(
+            (e) => !e?.anonymized && e?.getConstructor().hasPII === true,
+          );
+        },
+        availableFor: "all",
       },
       {
         action: "delete",
@@ -62,6 +76,7 @@ export class EntityActionsService {
         icon: "trash",
         label: $localize`:entity context menu:Delete`,
         tooltip: $localize`:entity context menu tooltip:Remove the record completely from the database.`,
+        availableFor: "all",
       },
       {
         action: "duplicate",
@@ -71,6 +86,46 @@ export class EntityActionsService {
         icon: "copy",
         label: $localize`:entity context menu:Duplicate`,
         tooltip: $localize`:entity context menu tooltip:Create a copy of this record.`,
+        availableFor: "all",
+      },
+      {
+        action: "bulk-edit",
+        label: $localize`:entity context menu:Bulk Edit`,
+        icon: "edit",
+        tooltip: $localize`:entity context menu tooltip:Edit multiple records at once.`,
+        availableFor: "bulk-only",
+        permission: "update",
+        execute: async (entity: Entity) => {
+          const entities = Array.isArray(entity) ? entity : [entity];
+          if (!entities.length) return false;
+          const entityType = entities[0].getConstructor();
+          if (!entityType) return false;
+          const entityEditService = this.injector.get(EntityEditService);
+          return entityEditService.edit(entities, entityType);
+        },
+      },
+      {
+        action: "merge",
+        label: $localize`:entity context menu:Merge`,
+        icon: "object-group",
+        tooltip: $localize`:entity context menu tooltip:Merge two records into one, combining their data and deleting duplicates.`,
+        availableFor: "bulk-only",
+        permission: "update",
+        execute: async (entity: Entity) => {
+          const entities = Array.isArray(entity) ? entity : [entity];
+          if (entities.length !== 2) {
+            await this.confirmationDialog.getConfirmation(
+              $localize`:bulk merge error:Invalid selection`,
+              $localize`:bulk merge error:You need to select exactly two records for merge.`,
+              OkButton,
+            );
+            return false;
+          }
+          const entityType = entities[0].getConstructor();
+          if (!entityType) return false;
+          await this.bulkMergeService.showMergeDialog(entities, entityType);
+          return true;
+        },
       },
     ]);
     this.entityMapper.receiveUpdates(PublicFormConfig).subscribe(() => {

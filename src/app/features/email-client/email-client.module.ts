@@ -1,4 +1,4 @@
-import { NgModule, inject } from "@angular/core";
+import { inject, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntityActionsMenuService } from "../../core/entity-details/entity-actions-menu/entity-actions-menu.service";
 import { Entity } from "../../core/entity/model/entity";
@@ -10,6 +10,7 @@ import { RouterService } from "#src/app/core/config/dynamic-routing/router.servi
 import { EntityDetailsConfig } from "#src/app/core/entity-details/EntityDetailsConfig";
 import { ViewConfig } from "#src/app/core/config/dynamic-routing/view-config.interface";
 import { EntityListConfig } from "#src/app/core/entity-list/EntityListConfig";
+import { asArray } from "#src/app/utils/asArray";
 
 @NgModule({
   imports: [CommonModule],
@@ -31,6 +32,11 @@ export class EmailClientServiceModule {
         permission: "read",
         execute: async (e: Entity) => emailClientService.executeMailto(e),
         visible: async (entity) => {
+          entity = asArray(entity)[0]; // assuming all entities have same type
+          if (!entity) {
+            return false;
+          }
+
           // Only show if there is at least one email field in the schema
           const schema = entity.getConstructor().schema;
           for (const [, field] of schema.entries()) {
@@ -40,6 +46,7 @@ export class EmailClientServiceModule {
           }
           return false;
         },
+        availableFor: "all",
       },
     ]);
 

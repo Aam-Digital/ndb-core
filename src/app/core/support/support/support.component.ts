@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
@@ -19,12 +19,19 @@ import { Entity } from "../../entity/model/entity";
 import { SyncedPouchDatabase } from "../../database/pouchdb/synced-pouch-database";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { PouchDatabase } from "../../database/pouchdb/pouch-database";
+import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { AssistantService } from "#src/app/core/setup/assistant.service";
 
 @Component({
   selector: "app-support",
   templateUrl: "./support.component.html",
   styleUrls: ["./support.component.scss"],
-  imports: [MatExpansionModule, MatButtonModule, MatTooltipModule],
+  imports: [
+    MatExpansionModule,
+    MatButtonModule,
+    MatTooltipModule,
+    HintBoxComponent,
+  ],
 })
 export class SupportComponent implements OnInit {
   private syncState = inject(SyncStateSubject);
@@ -36,6 +43,7 @@ export class SupportComponent implements OnInit {
   private backupService = inject(BackupService);
   private downloadService = inject(DownloadService);
   private window = inject<Window>(WINDOW_TOKEN);
+  protected readonly assistantService = inject(AssistantService);
 
   sessionInfo: SessionInfo;
   currentUser: Entity;
