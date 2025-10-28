@@ -232,6 +232,8 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     );
 
     const dialogRef = this.dialog.open(AdminRelatedEntityDetailsComponent, {
+      width: "99.8%",
+      height: "80vh",
       data: {
         entityConstructor: this.entityConstructor,
         currentColumns: this.activeFields.map((col) =>

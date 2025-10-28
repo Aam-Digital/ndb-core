@@ -9,6 +9,7 @@ import {
 } from "@angular/material/dialog";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
 import { MatButtonModule } from "@angular/material/button";
+import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 
 /**
  * Data interface for AdminRelatedEntityDetailsComponent dialog
@@ -33,6 +34,7 @@ export interface AdminRelatedEntityDetailsData {
     MatDialogModule,
     DialogCloseComponent,
     MatButtonModule,
+    HintBoxComponent,
   ],
   templateUrl: "./admin-related-entity-details.component.html",
   styleUrls: [

@@ -5,13 +5,13 @@
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
 <mat-dialog-content>
-  <div class="hint-banner" i18n>
-    You can edit how users will see the details of a single record of this type.
-    Drag and drop fields and sections in this preview of a profile view and
-    group them as appropriate. The editor below closely resembles how the form
-    will look for users later. We recommend to keep things simple: Only add
-    fields that you really need for your work.
-  </div>
+  <app-hint-box i18n>
+    Configure which fields are displayed when editing records of this type
+    through a related entity form. You can select from existing fields or add
+    new fields directly from here! Drag and drop fields to reorder and group
+    them as needed. We recommend to keep things simple: Only add fields that you
+    really need for your work.
+  </app-hint-box>
 
   <div class="form-sections">
     <app-admin-entity-form
