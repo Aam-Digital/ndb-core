@@ -27,7 +27,10 @@ import {
 import { PanelComponent } from "../../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
-import { AdminRelatedEntityDetailsComponent } from "../admin-related-entity-details/admin-related-entity-details.component";
+import {
+  AdminRelatedEntityDetailsComponent,
+  AdminRelatedEntityDetailsResult,
+} from "../admin-related-entity-details/admin-related-entity-details.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -70,11 +73,6 @@ export class AdminEntityPanelComponentComponent implements OnInit {
 
   /** Stores the currently active/selected field IDs to be shown in the panel */
   activeFields: ColumnConfig[];
-
-  /**
-   * Store the original schema state of the related entity to detect changes
-   */
-  private originalRelatedEntitySchema: Map<string, any>;
 
   /**
    * List of entity types that reference the current entity type.
@@ -224,13 +222,6 @@ export class AdminEntityPanelComponentComponent implements OnInit {
       return;
     }
 
-    // Store the original schema state to detect changes after dialog closes
-    this.originalRelatedEntitySchema = new Map(
-      JSON.parse(
-        JSON.stringify(Array.from(this.entityConstructor.schema.entries())),
-      ),
-    );
-
     const dialogRef = this.dialog.open(AdminRelatedEntityDetailsComponent, {
       width: "99.8%",
       height: "80vh",
@@ -242,43 +233,20 @@ export class AdminEntityPanelComponentComponent implements OnInit {
       },
     });
 
-    dialogRef.afterClosed().subscribe((updatedFieldIds: string[]) => {
-      // Only update if user clicked Apply (updatedFieldIds is defined)
-      // undefined means Cancel was clicked
-      if (updatedFieldIds !== undefined) {
-        this.config.config.columns = updatedFieldIds;
-        this.activeFields = updatedFieldIds;
-        // Check if the related entity's schema was modified
-        if (this.hasSchemaChanged()) {
-          // Emit event so parent component can register this entity to be saved
-          this.relatedEntityModified.emit(this.entityConstructor);
+    dialogRef
+      .afterClosed()
+      .subscribe((result: AdminRelatedEntityDetailsResult) => {
+        // Only update if user clicked Apply (result is defined)
+        // undefined means Cancel was clicked
+        if (result) {
+          this.config.config.columns = result.fieldIds;
+          this.activeFields = result.fieldIds;
+
+          // If schema changed, emit event so parent component can register this entity to be saved
+          if (result.schemaChanged) {
+            this.relatedEntityModified.emit(this.entityConstructor);
+          }
         }
-      }
-    });
-  }
-
-  /**
-   * Check if the related entity's schema has been modified compared to the original state.
-   */
-  private hasSchemaChanged(): boolean {
-    const currentSchema = this.entityConstructor.schema;
-
-    // Check if size changed
-    if (currentSchema.size !== this.originalRelatedEntitySchema.size) {
-      return true;
-    }
-
-    // Check if any field was modified
-    for (const [fieldId, fieldSchema] of currentSchema.entries()) {
-      const originalFieldSchema = this.originalRelatedEntitySchema.get(fieldId);
-      if (
-        !originalFieldSchema ||
-        JSON.stringify(fieldSchema) !== JSON.stringify(originalFieldSchema)
-      ) {
-        return true;
-      }
-    }
-
-    return false;
+      });
   }
 }

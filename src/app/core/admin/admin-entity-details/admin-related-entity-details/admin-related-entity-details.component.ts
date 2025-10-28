@@ -19,6 +19,11 @@ export interface AdminRelatedEntityDetailsData {
   currentColumns: string[];
 }
 
+export interface AdminRelatedEntityDetailsResult {
+  fieldIds: string[];
+  schemaChanged: boolean;
+}
+
 /**
  * Dialog component for editing the related entity's column selection and order.
  * Shows currently selected columns as "active fields" in the drag-and-drop area,
@@ -48,12 +53,20 @@ export class AdminRelatedEntityDetailsComponent implements OnInit {
 
   entityConstructor: EntityConstructor;
   currentColumns: string[] = [];
+  private originalSchema: Map<string, any>;
 
   formConfig: FormConfig = { fieldGroups: [] };
 
   ngOnInit(): void {
     this.entityConstructor = this.data.entityConstructor;
     this.currentColumns = this.data.currentColumns;
+
+    // Create a deep copy of the original schema to restore on cancel
+    this.originalSchema = new Map(
+      JSON.parse(
+        JSON.stringify(Array.from(this.entityConstructor.schema.entries())),
+      ),
+    );
 
     // Use the current columns from the panel component as active fields
     // Available fields will be shown from entityConstructor.schema automatically
@@ -71,6 +84,11 @@ export class AdminRelatedEntityDetailsComponent implements OnInit {
   }
 
   cancelChanges(): void {
+    // Restore the original schema when canceling
+    this.entityConstructor.schema.clear();
+    for (const [key, value] of this.originalSchema.entries()) {
+      this.entityConstructor.schema.set(key, value);
+    }
     this.dialogRef.close();
   }
 
@@ -88,6 +106,29 @@ export class AdminRelatedEntityDetailsComponent implements OnInit {
       }
     }
 
-    this.dialogRef.close(updatedFieldIds);
+    const schemaChanged = this.hasSchemaChanged();
+
+    this.dialogRef.close({
+      fieldIds: updatedFieldIds,
+      schemaChanged: schemaChanged,
+    } as AdminRelatedEntityDetailsResult);
+  }
+
+  /**
+   * Check if the entity's schema has been modified compared to the original state.
+   */
+  private hasSchemaChanged(): boolean {
+    const currentSchema = this.entityConstructor.schema;
+    // Check if any field was modified
+    for (const [fieldId, fieldSchema] of currentSchema.entries()) {
+      const originalFieldSchema = this.originalSchema.get(fieldId);
+      if (
+        !originalFieldSchema ||
+        JSON.stringify(fieldSchema) !== JSON.stringify(originalFieldSchema)
+      ) {
+        return true;
+      }
+    }
+    return false;
   }
 }
