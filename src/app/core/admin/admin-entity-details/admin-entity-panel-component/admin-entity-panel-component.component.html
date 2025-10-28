@@ -1,6 +1,6 @@
 <div class="padding-regular">
   @if (entityConstructor?.ENTITY_TYPE) {
-    <div class="flex-row gap-regular">
+    <div class="flex-row gap-regular align-center">
       <mat-form-field appearance="fill" class="margin-bottom-regular flex-grow">
         <mat-label i18n>Entity Type</mat-label>
         <mat-select
@@ -20,9 +20,7 @@
 
       @if (showEditStructureButton()) {
         <button
-          mat-raised-button
-          color="accent"
-          class="margin-bottom-regular"
+          mat-stroked-button
           (click)="openRelatedEntityDetailsConfig()"
           i18n
         >
