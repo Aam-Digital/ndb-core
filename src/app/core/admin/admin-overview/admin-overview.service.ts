@@ -44,7 +44,7 @@ export class AdminOverviewService {
     },
   ];
 
-  private _sections: AdminSection[] = [
+  private readonly _sections: AdminSection[] = [
     {
       id: "subscription",
       title: $localize`:admin section:Subscription (SaaS only)`,
