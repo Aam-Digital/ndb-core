@@ -8,7 +8,6 @@ import { readFile } from "../../../utils/utils";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { MatButtonModule } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
-import { DatePipe } from "@angular/common";
 import { DownloadService } from "../../export/download-service/download.service";
 import { MatListModule } from "@angular/material/list";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -33,7 +32,6 @@ import moment from "moment";
   imports: [
     MatButtonModule,
     RouterLink,
-    DatePipe,
     MatListModule,
     MatExpansionModule,
     MatIconModule,
