@@ -5,89 +5,96 @@
   you know what you are doing.
 </p>
 
-<hr />
+<mat-accordion class="admin-sections" multi>
+  @for (section of adminOverviewService.sections; track section.id) {
+    <!-- Hide subscription section if not in SaaS environment -->
+    @if (section.id !== "subscription" || isSaasEnvironment()) {
+      <mat-expansion-panel [expanded]="section.expanded">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ section.title }}</mat-panel-title>
+          <mat-panel-description>
+            {{ section.description }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
 
-<h2>Shortcuts</h2>
-<mat-nav-list>
-  @for (item of adminOverviewService.menuItems; track item) {
-    <mat-list-item [routerLink]="[item.link]">{{ item.label }}</mat-list-item>
-  }
-</mat-nav-list>
+        <!-- Dynamic section items -->
+        @if (section.items.length > 0) {
+          <mat-nav-list class="section-nav-list">
+            @for (item of section.items; track item.link) {
+              <mat-list-item [routerLink]="[item.link]">
+                <span matListItemTitle>{{ item.label }}</span>
+              </mat-list-item>
+            }
+          </mat-nav-list>
+        }
 
-<hr />
+        <!-- Special content for Export and Backups section -->
+        @if (section.id === "export-backups") {
+          <mat-nav-list class="section-nav-list">
+            <mat-list-item (click)="saveBackup()" button>
+              <span matListItemTitle>Download Backup (.json)</span>
+            </mat-list-item>
+            <mat-list-item (click)="backupImport.click()" button>
+              <span matListItemTitle>Restore Backup (.json)</span>
+            </mat-list-item>
+            <mat-list-item (click)="saveCsvExport()" button>
+              <span matListItemTitle>Full Database Export (.csv)</span>
+            </mat-list-item>
+          </mat-nav-list>
+          <input
+            #backupImport
+            type="file"
+            hidden
+            (change)="loadBackup($event)"
+          />
+        }
 
-<h2>Backup</h2>
-<p>
-  <button (click)="saveBackup()" mat-stroked-button>
-    Download Backup (.json)
-  </button>
-  &nbsp;
-  <button (click)="backupImport.click()" mat-stroked-button>
-    Restore Backup (.json)
-  </button>
-  <input #backupImport type="file" hidden (change)="loadBackup($event)" />
-</p>
+        <!-- Special content for Technical Administration section -->
+        @if (section.id === "technical") {
+          <mat-nav-list class="section-nav-list">
+            <mat-list-item (click)="editConfig()" button>
+              <span matListItemTitle
+                >Edit Application Configuration (JSON)</span
+              >
+            </mat-list-item>
+            <mat-list-item (click)="downloadConfigClick()" button>
+              <span matListItemTitle
+                >Download Application Configuration (JSON)</span
+              >
+            </mat-list-item>
+            <mat-list-item (click)="configImport.click()" button>
+              <span matListItemTitle
+                >Upload Application Configuration (JSON)</span
+              >
+            </mat-list-item>
+            <mat-list-item (click)="editPermissions()" button>
+              <span matListItemTitle
+                >Edit Permissions Configuration (JSON)</span
+              >
+            </mat-list-item>
+            <mat-list-item (click)="debugDatabase()" button>
+              <span matListItemTitle
+                >PouchDB Debug: Send to console.log ()</span
+              >
+            </mat-list-item>
+            <mat-list-item (click)="clearDatabase()" button>
+              <span matListItemTitle>Empty Database</span>
+            </mat-list-item>
+            <mat-list-item routerLink="config-import">
+              <span matListItemTitle
+                >Generate Configuration from Spreadsheet</span
+              >
+            </mat-list-item>
+          </mat-nav-list>
 
-<br />
-<hr />
-<h2>Export</h2>
-<p>
-  <button (click)="saveCsvExport()" mat-stroked-button>
-    Download whole database (.csv)
-  </button>
-</p>
-<br />
-<hr />
-<h2>Application Configuration</h2>
-<p class="flex-row flex-wrap gap-regular">
-  <button (click)="editConfig()" mat-stroked-button>Edit configuration</button>
-
-  <button (click)="editPermissions()" mat-stroked-button>
-    Edit permissions config
-  </button>
-
-  <button (click)="downloadConfigClick()" mat-stroked-button>
-    Download configuration
-  </button>
-
-  <button (click)="configImport.click()" mat-stroked-button>
-    Upload new configuration
-  </button>
-  <input #configImport type="file" hidden (change)="uploadConfigFile($event)" />
-
-  <button routerLink="config-import" mat-stroked-button>
-    Generate configuration from spreadsheet
-  </button>
-</p>
-
-<br />
-<hr />
-<h2>Debug the PouchDB</h2>
-<p>
-  <button (click)="debugDatabase()" mat-stroked-button>
-    Send to console.log()
-  </button>
-</p>
-<p>
-  <button (click)="clearDatabase()" mat-stroked-button>Empty Database</button>
-</p>
-
-<br />
-<hr />
-<h2 id="alert-log-heading">Alert Log</h2>
-<table aria-describedby="alert-log-heading" class="admin-table">
-  <thead>
-    <th class="shrink-width">Timestamp</th>
-    <th class="shrink-width">Type</th>
-    <th>Message</th>
-  </thead>
-  <tbody>
-    @for (alert of alerts.reverse(); track alert) {
-      <tr>
-        <td>{{ alert.timestamp | date: "medium" }}</td>
-        <td>{{ alert.type }}</td>
-        <td>{{ alert.message }}</td>
-      </tr>
+          <input
+            #configImport
+            type="file"
+            hidden
+            (change)="uploadConfigFile($event)"
+          />
+        }
+      </mat-expansion-panel>
     }
-  </tbody>
-</table>
+  }
+</mat-accordion>

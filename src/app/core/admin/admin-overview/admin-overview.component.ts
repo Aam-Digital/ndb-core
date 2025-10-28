@@ -1,5 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
-import { AlertService } from "../../alerts/alert.service";
+import { Component, inject } from "@angular/core";
 import { BackupService } from "../backup/backup.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -7,17 +6,19 @@ import { ConfigService } from "../../config/config.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { readFile } from "../../../utils/utils";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
-import { ExtendedAlertConfig } from "../../alerts/alert-config";
 import { MatButtonModule } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
 import { DatePipe } from "@angular/common";
 import { DownloadService } from "../../export/download-service/download.service";
 import { MatListModule } from "@angular/material/list";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatIconModule } from "@angular/material/icon";
 import { RouteTarget } from "../../../route-target";
 import { AdminOverviewService } from "./admin-overview.service";
 import { JsonEditorService } from "#src/app/core/admin/json-editor/json-editor.service";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { Config } from "#src/app/core/config/config";
+import { environment } from "#src/environments/environment";
 import moment from "moment";
 
 /**
@@ -29,10 +30,16 @@ import moment from "moment";
   selector: "app-admin-overview",
   templateUrl: "./admin-overview.component.html",
   styleUrls: ["./admin-overview.component.scss"],
-  imports: [MatButtonModule, RouterLink, DatePipe, MatListModule],
+  imports: [
+    MatButtonModule,
+    RouterLink,
+    DatePipe,
+    MatListModule,
+    MatExpansionModule,
+    MatIconModule,
+  ],
 })
-export class AdminOverviewComponent implements OnInit {
-  private alertService = inject(AlertService);
+export class AdminOverviewComponent {
   private backupService = inject(BackupService);
   private downloadService = inject(DownloadService);
   private dbResolver = inject(DatabaseResolverService);
@@ -43,11 +50,12 @@ export class AdminOverviewComponent implements OnInit {
   private jsonEditorService = inject(JsonEditorService);
   private entityMapper = inject(EntityMapperService);
 
-  /** all alerts */
-  alerts: ExtendedAlertConfig[] = [];
-
-  ngOnInit() {
-    this.alerts = this.alertService.alerts;
+  /**
+   * Check if the application is running in a SaaS environment.
+   * This determines whether to show subscription-related admin options.
+   */
+  isSaasEnvironment(): boolean {
+    return environment.SaaS === true;
   }
 
   /**
