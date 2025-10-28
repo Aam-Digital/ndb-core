@@ -43,8 +43,8 @@ import { Subscription } from "rxjs";
   styleUrl: "./admin-list-manager.component.scss",
 })
 export class AdminListManagerComponent implements OnInit, OnDestroy {
-  private adminEntityService = inject(AdminEntityService);
-  private schemaUpdateSubscription?: Subscription;
+  private readonly adminEntityService = inject(AdminEntityService);
+  private schemaUpdateSubscription: Subscription;
   @Input() items: ColumnConfig[] = [];
   @Input() entityType: EntityConstructor;
   @Input() fieldLabel: string;

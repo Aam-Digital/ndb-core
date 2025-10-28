@@ -48,8 +48,11 @@ export interface AdminRelatedEntityDetailsResult {
   ],
 })
 export class AdminRelatedEntityDetailsComponent implements OnInit {
-  private dialogRef = inject(MatDialogRef<AdminRelatedEntityDetailsComponent>);
-  private data = inject<AdminRelatedEntityDetailsData>(MAT_DIALOG_DATA);
+  private readonly dialogRef = inject(
+    MatDialogRef<AdminRelatedEntityDetailsComponent>,
+  );
+  private readonly data =
+    inject<AdminRelatedEntityDetailsData>(MAT_DIALOG_DATA);
 
   entityConstructor: EntityConstructor;
   currentColumns: string[] = [];

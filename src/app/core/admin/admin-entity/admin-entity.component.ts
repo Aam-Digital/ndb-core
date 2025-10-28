@@ -63,7 +63,7 @@ export class AdminEntityComponent implements OnInit {
    * Track related entity types that have been modified through the panel config dialog.
    * These will need to be saved when the main Save button is clicked.
    */
-  private modifiedRelatedEntities = new Set<EntityConstructor>();
+  private readonly modifiedRelatedEntities = new Set<EntityConstructor>();
 
   configDetailsView: DynamicComponentConfig<any>; // typed any to avoid type issues with different detail components
   configListView: DynamicComponentConfig<EntityListConfig>;

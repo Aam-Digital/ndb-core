@@ -56,7 +56,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   private entities = inject(EntityRegistry);
   private confirmation = inject(ConfirmationDialogService);
   private entityRelationsService = inject(EntityRelationsService);
-  private dialog = inject(MatDialog);
+  private readonly dialog = inject(MatDialog);
 
   @Input() config: PanelComponent;
   @Input() entityType: EntityConstructor;
@@ -85,7 +85,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   /**
    * Signal to track the current entity type for reactive updates
    */
-  private currentEntityType = signal<string>("");
+  private readonly currentEntityType = signal<string>("");
 
   /**
    * Computed signal to determine if the "Edit data structure" button should be shown.
