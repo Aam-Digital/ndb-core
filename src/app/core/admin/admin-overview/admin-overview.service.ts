@@ -107,10 +107,9 @@ export class AdminOverviewService {
       description: $localize`:admin section description:Setup integrations, application data, and system diagnostics.`,
       expanded: false,
       items: [
-        // Note: This section could be expanded with user management functionality
         {
           label: $localize`:admin menu item:User Roles`,
-          link: "/admin/user-roles", // TODO: For now, it is placeholder link that would need to be implemented
+          link: "/admin/user-roles",
         },
         {
           label: $localize`:admin menu item:Manage User Accounts`, 
