@@ -1,5 +1,6 @@
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { EntityBlockConfig } from "../basic-datatypes/entity/entity-block/entity-block-config";
+import { ColorMapping } from "./model/entity";
 
 /**
  * Dynamic configuration for a entity.
@@ -40,9 +41,21 @@ export interface EntityConfig {
   icon?: string;
 
   /**
-   * color used for to highlight this entity type across the app
+   * color used for to highlight this entity type across the app.
+   * 
+   * Can be either:
+   * - A simple string (hex color code) for a single color
+   * - An array of ColorMapping objects for conditional colors based on entity properties
+   * 
+   * Example of conditional colors:
+   * ```json
+   * "color": [
+   *   { "condition": { "status": "active" }, "color": "#00FF00" },
+   *   { "condition": { "status": "inactive" }, "color": "#FF0000" }
+   * ]
+   * ```
    */
-  color?: string;
+  color?: string | ColorMapping[];
 
   /**
    * base route of views for this entity type

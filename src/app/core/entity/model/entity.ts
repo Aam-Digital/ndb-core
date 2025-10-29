@@ -26,6 +26,7 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { UpdateMetadata } from "./update-metadata";
 import { EntityBlockConfig } from "../../basic-datatypes/entity/entity-block/entity-block-config";
 import { Logging } from "../../logging/logging.service";
+import { DataFilter } from "../../filter/filters/filters";
 
 /**
  * This represents a static class of type <T>.
@@ -37,6 +38,20 @@ export type EntityConstructor<T extends Entity = Entity> = (new (
   id?: string,
 ) => T) &
   typeof Entity;
+
+/**
+ * Definition of conditions and the respective color for the entities under that condition.
+ *
+ * This allows defining different colors for entities based on their properties.
+ * For example, children assigned to "Program A" could be yellow, while children in "Program B" could be orange.
+ */
+export interface ColorMapping {
+  /** DataFilter condition that must match for this color to apply */
+  condition: DataFilter<any>;
+
+  /** The color (hex code) to use when the condition matches */
+  color: string;
+}
 
 /**
  * "Entity" is a base class for all domain model classes.
@@ -135,9 +150,13 @@ export class Entity {
   static icon: IconName;
 
   /**
-   * color used for to highlight this entity type across the app
+   * color used for to highlight this entity type across the app.
+   *
+   * Can be either:
+   * - A simple string (hex color code) for a single color
+   * - An array of ColorMapping objects for conditional colors based on entity properties
    */
-  static color: string;
+  static color: string | ColorMapping[];
 
   /**
    * Base route of the entity (list/details) view for this entity type.
