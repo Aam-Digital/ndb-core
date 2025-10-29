@@ -176,7 +176,7 @@ export const WithExtendedSections = {
                   { label: "User Roles", link: "/admin/user-roles" },
                   {
                     label: "Manage User Accounts",
-                    link: "/admin/user-accounts",
+                    link: "/user",
                   },
                 ],
               },

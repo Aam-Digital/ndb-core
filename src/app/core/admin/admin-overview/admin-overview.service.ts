@@ -108,14 +108,13 @@ export class AdminOverviewService {
       expanded: false,
       items: [
         // Note: This section could be expanded with user management functionality
-        // For now, these are placeholder links that would need to be implemented
         {
           label: $localize`:admin menu item:User Roles`,
-          link: "/admin/user-roles",
+          link: "/admin/user-roles", // TODO: For now, it is placeholder link that would need to be implemented
         },
         {
-          label: $localize`:admin menu item:Manage User Accounts`,
-          link: "/admin/user-accounts",
+          label: $localize`:admin menu item:Manage User Accounts`, 
+          link: "/user",
         },
       ],
     },
