@@ -1,7 +1,6 @@
 @use "../../../../styles/variables/colors";
 @use "../../../../styles/variables/sizes";
 
-
 .admin-sections {
   margin-top: sizes.$large;
 
@@ -16,7 +15,7 @@
     border: none;
     border-radius: 0;
     margin-bottom: 0;
-    
+
     &:not(:last-child) {
       border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     }
@@ -25,13 +24,13 @@
   // Stack title and description vertically in expansion panel headers
   ::ng-deep .mat-expansion-panel-header {
     padding: sizes.$regular sizes.$large;
-    
+
     .mat-content {
       flex-direction: column;
       align-items: flex-start;
       gap: sizes.$x-small;
     }
-    
+
     &:hover {
       background: rgba(0, 0, 0, 0.04);
     }
