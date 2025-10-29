@@ -94,7 +94,7 @@ export class UiComponent {
   private router = inject(Router);
   private loginState = inject(LoginStateSubject);
   private configService = inject(ConfigService);
-  private sessionSubject = inject(SessionSubject);
+  private readonly sessionSubject = inject(SessionSubject);
 
   /** display mode for the menu to make it responsive and usable on smaller screens */
   sideNavMode: MatDrawerMode;
