@@ -96,15 +96,17 @@
           <app-pwa-install></app-pwa-install>
 
           <!-- Admin Overview Button -->
-          <button
-            (click)="closeSidenavOnMobile()"
-            mat-button
-            routerLink="/admin"
-            class="footer-cell admin-overview-button"
-          >
-            <fa-icon icon="wrench" class="standard-icon-with-text"></fa-icon>
-            <span i18n="Navigate to admin overview page">Admin Overview</span>
-          </button>
+          @if (isAdminUser()) {
+            <button
+              (click)="closeSidenavOnMobile()"
+              mat-button
+              routerLink="/admin"
+              class="footer-cell admin-overview-button"
+            >
+              <fa-icon icon="wrench" class="standard-icon-with-text"></fa-icon>
+              <span i18n="Navigate to admin overview page">Admin Overview</span>
+            </button>
+          }
 
           <div class="flex-row">
             <button
