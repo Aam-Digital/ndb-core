@@ -57,6 +57,14 @@ export class AdminOverviewComponent {
   }
 
   /**
+   * Handle expansion state change for accordion panels.
+   * This ensures the expanded state is persisted when navigating away and back.
+   */
+  onSectionExpandedChange(sectionId: string, expanded: boolean): void {
+    this.adminOverviewService.setSectionExpanded(sectionId, expanded);
+  }
+
+  /**
    * Send a reference of the PouchDB to the browser's developer console for real-time debugging.
    */
   debugDatabase() {

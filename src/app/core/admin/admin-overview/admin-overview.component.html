@@ -9,7 +9,10 @@
   @for (section of adminOverviewService.sections; track section.id) {
     <!-- Hide subscription section if not in SaaS environment -->
     @if (section.id !== "subscription" || isSaasEnvironment()) {
-      <mat-expansion-panel [expanded]="section.expanded">
+      <mat-expansion-panel
+        [expanded]="section.expanded"
+        (expandedChange)="onSectionExpandedChange(section.id, $event)"
+      >
         <mat-expansion-panel-header>
           <mat-panel-title>{{ section.title }}</mat-panel-title>
           <mat-panel-description>

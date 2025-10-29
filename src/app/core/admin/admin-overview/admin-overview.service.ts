@@ -168,4 +168,16 @@ export class AdminOverviewService {
   addMenuItem(sectionId: string, item: MenuItem): void {
     this.addMenuItems(sectionId, item);
   }
+
+  /**
+   * Set expansion state for a section
+   * @param sectionId The ID of the section
+   * @param expanded Whether the section should be expanded
+   */
+  setSectionExpanded(sectionId: string, expanded: boolean): void {
+    const section = this._sections.find((s) => s.id === sectionId);
+    if (section) {
+      section.expanded = expanded;
+    }
+  }
 }
