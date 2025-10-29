@@ -1,11 +1,9 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 
 @Component({
-  selector: 'app-admin-user-roles',
+  selector: "app-admin-user-roles",
   imports: [],
-  templateUrl: './admin-user-roles.component.html',
-  styleUrl: './admin-user-roles.component.scss',
+  templateUrl: "./admin-user-roles.component.html",
+  styleUrl: "./admin-user-roles.component.scss",
 })
-export class AdminUserRolesComponent {
-
-}
+export class AdminUserRolesComponent {}

@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { AdminUserRolesComponent } from "./admin-user-roles.component";
+import { DataPrivacyComponent } from "./data-privacy.component";
 
-describe("AdminUserRolesComponent", () => {
-  let component: AdminUserRolesComponent;
-  let fixture: ComponentFixture<AdminUserRolesComponent>;
+describe("DataPrivacyComponent", () => {
+  let component: DataPrivacyComponent;
+  let fixture: ComponentFixture<DataPrivacyComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminUserRolesComponent],
+      imports: [DataPrivacyComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AdminUserRolesComponent);
+    fixture = TestBed.createComponent(DataPrivacyComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -112,7 +112,7 @@ export class AdminOverviewService {
           link: "/admin/user-roles",
         },
         {
-          label: $localize`:admin menu item:Manage User Accounts`, 
+          label: $localize`:admin menu item:Manage User Accounts`,
           link: "/user",
         },
       ],
