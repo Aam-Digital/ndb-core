@@ -201,6 +201,7 @@ export const WithExtendedSections = {
             ],
             addMenuItems: () => {},
             addMenuItem: () => {},
+            setSectionExpanded: () => {},
           },
         },
       ],
