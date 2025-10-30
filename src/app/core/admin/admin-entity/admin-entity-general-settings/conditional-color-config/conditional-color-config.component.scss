@@ -1,0 +1,20 @@
+.conditional-color-config {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.conditional-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.config-summary {
+  color: rgba(0, 0, 0, 0.6);
+  font-style: italic;
+  padding-left: 0.5rem;
+}

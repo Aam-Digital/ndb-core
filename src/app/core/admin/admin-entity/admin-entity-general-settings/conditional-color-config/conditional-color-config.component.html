@@ -1,0 +1,39 @@
+<div class="conditional-color-config">
+  <app-color-input
+    [color]="getStaticColor()"
+    (colorChange)="onStaticColorChange($event)"
+  ></app-color-input>
+
+  @if (isConditionalMode()) {
+    <div class="conditional-section">
+      <div class="flex-row gap-regular align-center">
+        <mat-form-field class="flex-grow">
+          <mat-label i18n>Conditional Color Field</mat-label>
+          <mat-select
+            [value]="selectedColorField"
+            (valueChange)="onColorFieldSelected($event)"
+            placeholder="Select field"
+            i18n-placeholder
+          >
+            @for (option of colorFieldOptions; track option.value) {
+              <mat-option [value]="option.value">{{ option.label }}</mat-option>
+            }
+          </mat-select>
+          <mat-hint i18n
+            >Select the field to base conditional colors on</mat-hint
+          >
+        </mat-form-field>
+
+        <button
+          mat-icon-button
+          type="button"
+          (click)="openColorJsonEditor()"
+          matTooltip="Edit conditional colors in JSON editor"
+          i18n-matTooltip
+        >
+          <fa-icon icon="code"></fa-icon>
+        </button>
+      </div>
+    </div>
+  }
+</div>
