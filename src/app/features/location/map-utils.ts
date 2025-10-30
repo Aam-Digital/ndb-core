@@ -28,7 +28,19 @@ L.Marker.prototype.options.icon = iconDefault;
  */
 export function getHueForEntity(entity: Entity, offset = 145): string {
   // Grab the hex representation and convert to decimal (base 10).
-  const color = entity.getConstructor().color;
+  const colorConfig = entity.getConstructor().color;
+  
+  // If color is an array of mappings, use the first one's color as fallback
+  // (The actual color will be determined by getColor() method based on entity properties)
+  let color: string;
+  if (Array.isArray(colorConfig)) {
+    // For map markers, we can't evaluate conditions here, so we use a default
+    // The proper color will be applied through the getColor() method
+    color = colorConfig.length > 0 ? colorConfig[0].color : undefined;
+  } else {
+    color = colorConfig;
+  }
+  
   if (!color) {
     return "0";
   }
