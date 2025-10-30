@@ -87,14 +87,14 @@ export class NotesDashboardComponent
           (stat) => stat[1] <= dayRangeBoundary,
           dayRangeBoundary,
         );
-        this.subtitle = $localize`:Subtitle|Subtitle informing the user that these are the entities with recent reports:${this._entity.labelPlural} with recent report`;
+        this.subtitle = $localize`:Subtitle|Subtitle informing the user that these are the records with recent reports:${this._entity.labelPlural} with recent report`;
         break;
       case "without-recent-notes":
         this.loadConcernedEntities(
           (stat) => stat[1] >= dayRangeBoundary,
           dayRangeBoundary,
         );
-        this.subtitle = $localize`:Subtitle|Subtitle informing the user that these are the entities without recent reports:${this._entity.labelPlural} having no recent reports`;
+        this.subtitle = $localize`:Subtitle|Subtitle informing the user that these are the records without recent reports:${this._entity.labelPlural} having no recent reports`;
         break;
     }
   }

@@ -25,7 +25,7 @@ export class EventAttendanceMapDatatype extends DefaultDatatype<
   override transformToDatabaseFormat(value: Map<string, any>) {
     if (!(value instanceof Map)) {
       console.warn(
-        'property to be saved with "map" EntitySchema is not of expected type',
+        'property to be saved with "map" RecordSchema is not of expected type',
         value,
       );
       return value as any;
@@ -45,7 +45,7 @@ export class EventAttendanceMapDatatype extends DefaultDatatype<
     }
     if (!Array.isArray(value) || value === null) {
       console.warn(
-        'property to be loaded with "map" EntitySchema is not valid',
+        'property to be loaded with "map" RecordSchema is not valid',
         value,
       );
       return value as any;
