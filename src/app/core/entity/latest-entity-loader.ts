@@ -55,7 +55,7 @@ export abstract class LatestEntityLoader<T extends Entity> {
     } catch (err) {
       if (err?.status !== HttpStatusCode.NotFound) {
         Logging.error(
-          `Initial loading of record "${this.entityCtor.ENTITY_TYPE}:${this.entityID}" failed [Service based on LatestRecordLoader]`,
+          `Initial loading of record "${this.entityCtor.ENTITY_TYPE}:${this.entityID}" failed [Service based on LatestEntityLoader]`,
           err,
         );
       }
