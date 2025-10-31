@@ -236,7 +236,7 @@ export class EntityActionsService {
         entities.length > 0
           ? entities
           : [result.originalEntitiesBeforeChange[0]],
-        $localize`:Recordaction confirmation message verb:deleted`,
+        $localize`:Record action confirmation message verb:deleted`,
       ),
       result.originalEntitiesBeforeChange,
       currentUrl,
