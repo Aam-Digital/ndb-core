@@ -99,7 +99,7 @@ export class SetupService {
     }
 
     const entity = this.schemaService.loadDataIntoEntity(new entityType(), doc);
-    Logging.debug("Importing baseConfig record", entity);
+    Logging.debug("Importing baseConfig entity", entity);
 
     return entity;
   }
