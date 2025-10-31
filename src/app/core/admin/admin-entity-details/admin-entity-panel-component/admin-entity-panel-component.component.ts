@@ -109,8 +109,6 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     this.activeFields = (this.config.config.columns ?? []).map((col) =>
       typeof col === "string" ? col : col.id,
     );
-
-    // Update signal to trigger computed property
     this.currentEntityType.set(this.selectedEntityType);
   }
 
@@ -161,8 +159,6 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     this.applyCustomOverrides(newType);
 
     this.activeFields = [];
-
-    // Update signal to trigger computed property for button visibility
     this.currentEntityType.set(newType);
   }
 
@@ -236,13 +232,10 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     dialogRef
       .afterClosed()
       .subscribe((result: AdminRelatedEntityDetailsResult) => {
-        // Only update if user clicked Apply (result is defined)
-        // undefined means Cancel was clicked
         if (result) {
           this.config.config.columns = result.fieldIds;
           this.activeFields = result.fieldIds;
 
-          // If schema changed, emit event so parent component can register this entity to be saved
           if (result.schemaChanged) {
             this.relatedEntityModified.emit(this.entityConstructor);
           }
