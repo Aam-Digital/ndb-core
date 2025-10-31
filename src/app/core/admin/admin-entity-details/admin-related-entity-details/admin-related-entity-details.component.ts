@@ -72,13 +72,23 @@ export class AdminRelatedEntityDetailsComponent implements OnInit {
     );
 
     // Use the current columns from the panel component as active fields
-    // Available fields will be shown from entityConstructor.schema automatically
+    // If no columns are configured yet, show all available schema fields by default
     if (this.currentColumns && this.currentColumns.length > 0) {
       this.formConfig = {
         fieldGroups: [{ fields: this.currentColumns }],
       };
     } else {
-      this.formConfig = { fieldGroups: [] };
+      const allSchemaFields = Array.from(
+        this.entityConstructor.schema.keys(),
+      ).filter((fieldId) => {
+        const field = this.entityConstructor.schema.get(fieldId);
+        return field?.label;
+      });
+
+      this.formConfig = {
+        fieldGroups:
+          allSchemaFields.length > 0 ? [{ fields: allSchemaFields }] : [],
+      };
     }
   }
 
