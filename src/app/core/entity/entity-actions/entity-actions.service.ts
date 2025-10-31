@@ -140,7 +140,7 @@ export class EntityActionsService {
   ) {
     const snackBarRef = this.snackBar.open(
       message,
-      $localize`:Undo an record action:Undo`,
+      $localize`:Undo a record action:Undo`,
       {
         duration: 8000,
       },
