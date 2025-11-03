@@ -57,7 +57,6 @@ export class AdminEntityDetailsComponent {
 
   /**
    * Event emitted when a related entity's schema has been modified.
-   * Bubbles up to the parent AdminEntityComponent.
    */
   @Output() relatedEntityModified = new EventEmitter<EntityConstructor>();
 
@@ -91,8 +90,7 @@ export class AdminEntityDetailsComponent {
   }
 
   /**
-   * Handle related entity modification event from panel component.
-   * Bubble it up to the parent AdminEntityComponent.
+   * Handle related entity modification event from panel component
    */
   onRelatedEntityModified(entityConstructor: EntityConstructor): void {
     this.relatedEntityModified.emit(entityConstructor);

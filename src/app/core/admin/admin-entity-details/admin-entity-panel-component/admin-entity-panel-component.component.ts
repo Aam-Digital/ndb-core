@@ -62,8 +62,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   @Input() entityType: EntityConstructor;
 
   /**
-   * Event emitted when a related entity's schema has been modified.
-   * The parent component should register this entity to be saved.
+   * emitted when a related entity's schema has been modified.
    */
   @Output() relatedEntityModified = new EventEmitter<EntityConstructor>();
 

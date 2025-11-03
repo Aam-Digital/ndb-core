@@ -26,11 +26,6 @@ export interface AdminRelatedEntityDetailsResult {
 
 /**
  * Dialog component for editing the related entity's column selection and order.
- * Shows currently selected columns as "active fields" in the drag-and-drop area,
- * and all available schema fields as "available fields" in the sidebar.
- *
- * When Apply is clicked, returns the updated list of column IDs to the parent.
- * The parent updates its config.columns, which gets saved when the main form saves.
  */
 @Component({
   selector: "app-admin-related-entity-details",
@@ -97,7 +92,6 @@ export class AdminRelatedEntityDetailsComponent implements OnInit {
   }
 
   cancelChanges(): void {
-    // Restore the original schema when canceling
     this.entityConstructor.schema.clear();
     for (const [key, value] of this.originalSchema.entries()) {
       this.entityConstructor.schema.set(key, value);
@@ -106,7 +100,6 @@ export class AdminRelatedEntityDetailsComponent implements OnInit {
   }
 
   applyChanges(): void {
-    // Get the current field order from the form config
     const updatedFieldIds: string[] = [];
     if (this.formConfig.fieldGroups) {
       for (const group of this.formConfig.fieldGroups) {
