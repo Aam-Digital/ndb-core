@@ -48,6 +48,7 @@ export class ConditionalColorConfigComponent
   private readonly enumService = inject(ConfigurableEnumService);
 
   @Input() entityConstructor: EntityConstructor;
+  @Input() isConditionalMode: boolean = false;
 
   colorFieldOptions: SimpleDropdownValue[] = [];
   selectedColorField: string = null;
@@ -68,13 +69,6 @@ export class ConditionalColorConfigComponent
     this.colorFieldOptions = Array.from(this.entityConstructor.schema.entries())
       .filter(([_, field]) => field.label)
       .map(([key, field]) => ({ value: key, label: field.label }));
-  }
-
-  /**
-   * Check if the component is in conditional mode
-   */
-  isConditionalMode(): boolean {
-    return Array.isArray(this.value);
   }
 
   /**

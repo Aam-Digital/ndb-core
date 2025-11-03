@@ -1,12 +1,12 @@
 <div class="conditional-color-config">
-  @if (!isConditionalMode()) {
+  @if (!isConditionalMode) {
     <app-color-input
       [color]="getStaticColor()"
       (colorChange)="onStaticColorChange($event)"
     ></app-color-input>
   }
 
-  @if (isConditionalMode()) {
+  @if (isConditionalMode) {
     <div class="conditional-section">
       <div class="flex-row gap-regular align-center">
         <mat-form-field class="flex-grow">
