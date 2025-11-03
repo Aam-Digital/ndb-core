@@ -27,6 +27,11 @@ import { UpdateMetadata } from "./update-metadata";
 import { EntityBlockConfig } from "../../basic-datatypes/entity/entity-block/entity-block-config";
 import { Logging } from "../../logging/logging.service";
 import { DataFilter } from "../../filter/filters/filters";
+import {
+  allInterpreters,
+  allParsingInstructions,
+  createFactory,
+} from "@ucast/mongo2js";
 
 /**
  * This represents a static class of type <T>.
@@ -399,6 +404,85 @@ export class Entity {
    */
   public getWarningLevel(): WarningLevel {
     return WarningLevel.NONE;
+  }
+
+  /**
+   * Static method to evaluate conditional colors for an entity based on ColorMapping configuration.
+   * This method can be used in contexts where you need conditional color evaluation
+   */
+  static getColorWithConditions(entity: Entity): string {
+    const colorConfig = entity.getConstructor().color;
+
+    if (Array.isArray(colorConfig) && colorConfig.length > 0) {
+      try {
+        // Custom compare function to handle ConfigurableEnum values
+        const customCompare = <T>(a: T, b: T): 1 | -1 | 0 => {
+          // Handle ConfigurableEnum objects: compare by id property
+          if (
+            a &&
+            typeof a === "object" &&
+            "id" in a &&
+            typeof b === "string"
+          ) {
+            return (a as any).id === b ? 0 : (a as any).id < b ? -1 : 1;
+          }
+          if (
+            b &&
+            typeof b === "object" &&
+            "id" in b &&
+            typeof a === "string"
+          ) {
+            return (b as any).id === a ? 0 : a < (b as any).id ? -1 : 1;
+          }
+          // Default comparison
+          return a === b ? 0 : a < b ? -1 : 1;
+        };
+
+        const interpret = createFactory(
+          allParsingInstructions,
+          allInterpreters,
+          { compare: customCompare },
+        );
+
+        // Evaluate each condition in order
+        for (const mapping of colorConfig) {
+          if (!mapping.condition || !mapping.color) {
+            continue;
+          }
+
+          // Empty condition {} serves as fallback
+          if (Object.keys(mapping.condition).length === 0) {
+            return mapping.color;
+          }
+
+          // Evaluate the condition against this entity
+          try {
+            const test = interpret(mapping.condition as any);
+            if (test(entity)) {
+              return mapping.color;
+            }
+          } catch (e) {
+            Logging.debug(
+              "Error evaluating color condition",
+              mapping.condition,
+              e,
+            );
+          }
+        }
+      } catch (e) {
+        Logging.warn("Error processing conditional colors", e);
+      }
+
+      return getWarningLevelColor(entity.getWarningLevel());
+    }
+
+    // Handle simple string color
+    if (typeof colorConfig === "string" && colorConfig) {
+      return colorConfig;
+    }
+
+    // Default to entity's getColor method (warning level)
+    return entity.getColor();
   }
 
   /**

@@ -1,8 +1,10 @@
 <div class="conditional-color-config">
-  <app-color-input
-    [color]="getStaticColor()"
-    (colorChange)="onStaticColorChange($event)"
-  ></app-color-input>
+  @if (!isConditionalMode()) {
+    <app-color-input
+      [color]="getStaticColor()"
+      (colorChange)="onStaticColorChange($event)"
+    ></app-color-input>
+  }
 
   @if (isConditionalMode()) {
     <div class="conditional-section">
@@ -19,16 +21,13 @@
               <mat-option [value]="option.value">{{ option.label }}</mat-option>
             }
           </mat-select>
-          <mat-hint i18n
-            >Select a field to help generate example conditions
-            (optional)</mat-hint
-          >
         </mat-form-field>
 
         <button
           mat-icon-button
           type="button"
           (click)="openColorJsonEditor()"
+          [disabled]="!selectedColorField"
           matTooltip="Edit conditional colors in JSON editor"
           i18n-matTooltip
         >

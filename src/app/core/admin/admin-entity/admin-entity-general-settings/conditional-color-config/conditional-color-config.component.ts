@@ -18,16 +18,6 @@ import { ColorInputComponent } from "app/color-input/color-input.component";
 
 /**
  * A form control for configuring conditional colors based on entity fields.
- * Manages the full color value (string | ColorMapping[]) and handles conversion
- * between static and conditional modes.
- *
- * Supports conditional colors based on any field type:
- * - For ConfigurableEnum fields: Auto-generates template with all enum values
- * - For other field types: Provides basic example template that users customize
- * - Users can define complex MongoDB-style queries in the JSON editor
- *
- * In conditional mode, the static/default color is stored as a mapping with
- * an empty condition {} at the end of the array.
  */
 @Component({
   selector: "app-conditional-color-config",
@@ -68,7 +58,6 @@ export class ConditionalColorConfigComponent
 
   /**
    * Initialize dropdown options for fields that can be used for conditional colors.
-   * Now supports any field type - users define conditions manually in the JSON editor.
    */
   private initColorFieldOptions() {
     if (!this.entityConstructor?.schema) {
@@ -100,7 +89,7 @@ export class ConditionalColorConfigComponent
         (mapping) =>
           mapping.condition && Object.keys(mapping.condition).length === 0,
       );
-      return fallback?.color || "";
+      return fallback.color || "";
     }
 
     return "";
@@ -135,7 +124,7 @@ export class ConditionalColorConfigComponent
   }
 
   /**
-   * Get conditional mappings (without fallback)
+   * Get conditional mappings
    */
   getConditionalMappings(): ColorMapping[] {
     if (!Array.isArray(this.value)) {
@@ -149,7 +138,7 @@ export class ConditionalColorConfigComponent
   }
 
   /**
-   * Update conditional mappings (preserving fallback)
+   * Update conditional mappings
    */
   onConditionalMappingsChange(newMappings: ColorMapping[]) {
     const staticColor = this.getStaticColor();
@@ -181,10 +170,16 @@ export class ConditionalColorConfigComponent
   }
 
   /**
-   * Called when user selects a field for conditional colors
+   * Called when user selects a field for conditional colors.
    */
   onColorFieldSelected(fieldKey: string | string[]) {
     const selectedField = Array.isArray(fieldKey) ? fieldKey[0] : fieldKey;
+
+    if (this.selectedColorField && this.selectedColorField !== selectedField) {
+      const staticColor = this.getStaticColor();
+      this.onConditionalMappingsChange([]);
+    }
+
     this.selectedColorField = selectedField;
   }
 
@@ -209,7 +204,7 @@ export class ConditionalColorConfigComponent
     dialogRef.afterClosed().subscribe((result) => {
       if (result !== undefined) {
         this.onConditionalMappingsChange(result);
-        this.detectSelectedField(); // Update selected field from new value
+        this.detectSelectedField();
       }
     });
   }
@@ -234,7 +229,6 @@ export class ConditionalColorConfigComponent
       const enumEntity = this.enumService.getEnum(enumId);
 
       if (enumEntity && Array.isArray(enumEntity.values)) {
-        // Generate template with all enum options and empty colors
         return enumEntity.values.map((enumValue) => ({
           condition: { [fieldKey]: enumValue.id },
           color: "",
