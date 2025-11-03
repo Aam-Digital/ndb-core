@@ -38,7 +38,6 @@ import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.d
 import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.component";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
-import { ColorInputComponent } from "#src/app/color-input/color-input.component";
 import { ConditionalColorConfigComponent } from "./conditional-color-config/conditional-color-config.component";
 
 @Component({

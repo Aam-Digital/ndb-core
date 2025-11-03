@@ -1,5 +1,8 @@
 import { Component, inject, Input, OnInit } from "@angular/core";
-import { MatFormFieldModule } from "@angular/material/form-field";
+import {
+  MatFormFieldModule,
+  MatFormFieldControl,
+} from "@angular/material/form-field";
 import { MatButtonModule } from "@angular/material/button";
 import { MatSelectModule } from "@angular/material/select";
 import { ReactiveFormsModule } from "@angular/forms";
@@ -7,11 +10,9 @@ import { MatDialog } from "@angular/material/dialog";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
-import { MatFormFieldControl } from "@angular/material/form-field";
-import { ColorMapping } from "app/core/entity/model/entity";
+import { ColorMapping, EntityConstructor } from "app/core/entity/model/entity";
 import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
-import { EntityConstructor } from "app/core/entity/model/entity";
 import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { ColorInputComponent } from "app/color-input/color-input.component";
@@ -43,8 +44,8 @@ export class ConditionalColorConfigComponent
   extends CustomFormControlDirective<string | ColorMapping[]>
   implements OnInit
 {
-  private dialog = inject(MatDialog);
-  private enumService = inject(ConfigurableEnumService);
+  private readonly dialog = inject(MatDialog);
+  private readonly enumService = inject(ConfigurableEnumService);
 
   @Input() entityConstructor: EntityConstructor;
 

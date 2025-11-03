@@ -74,5 +74,4 @@ describe("ConditionsEditorComponent", () => {
       done();
     }, 100);
   });
-
 });

@@ -35,7 +35,7 @@ import { DataFilter } from "../../filter/filters/filters";
 export class ConditionsEditorComponent extends CustomFormControlDirective<
   DataFilter<any>
 > {
-  private dialog = inject(MatDialog);
+  private readonly dialog = inject(MatDialog);
 
   /**
    * Open the JSON editor dialog to edit the conditions.
@@ -54,5 +54,4 @@ export class ConditionsEditorComponent extends CustomFormControlDirective<
       }
     });
   }
-
 }
