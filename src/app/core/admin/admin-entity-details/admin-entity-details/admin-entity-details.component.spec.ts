@@ -55,7 +55,6 @@ describe("AdminEntityDetailsComponent", () => {
         providers: [{ provide: MatDialog, useValue: mockDialog }],
       },
     });
-
     fixture = TestBed.createComponent(AdminEntityDetailsComponent);
     component = fixture.componentInstance;
 
