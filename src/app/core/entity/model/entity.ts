@@ -468,6 +468,7 @@ export class Entity {
         Logging.warn("Error processing conditional colors", e);
       }
 
+      // If no conditions matched, fall back to warning level color
       return getWarningLevelColor(entity.getWarningLevel());
     }
 
@@ -476,8 +477,8 @@ export class Entity {
       return colorConfig;
     }
 
-    // Default to entity's getColor method (warning level)
-    return entity.getColor();
+    // No color configured - return warning level color directly to avoid infinite recursion
+    return getWarningLevelColor(entity.getWarningLevel());
   }
 
   /**
