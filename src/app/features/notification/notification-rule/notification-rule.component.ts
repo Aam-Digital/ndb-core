@@ -23,14 +23,13 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NotificationRule } from "../model/notification-config";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { MatDialog } from "@angular/material/dialog";
 import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
-import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
 } from "@angular/material/expansion";
+import { JsonEditorComponent } from "app/core/common-components/json-editor/json-editor.component";
 
 /**
  * Configure a single notification rule.
@@ -53,6 +52,7 @@ import {
     MatSelect,
     MatExpansionPanel,
     MatExpansionPanelHeader,
+    JsonEditorComponent,
   ],
   templateUrl: "./notification-rule.component.html",
   styleUrl: "./notification-rule.component.scss",
@@ -65,8 +65,6 @@ export class NotificationRuleComponent implements OnChanges {
 
   form: FormGroup;
   entityTypeControl: AbstractControl;
-
-  readonly dialog = inject(MatDialog);
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
@@ -127,25 +125,5 @@ export class NotificationRuleComponent implements OnChanges {
 
     this.value = value;
     this.valueChange.emit(value);
-  }
-
-  /**
-   * Open the conditions JSON editor popup.
-   */
-  openConditionsInJsonEditorPopup() {
-    const conditionsForm = this.form.get("conditions");
-
-    const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
-      data: {
-        value: conditionsForm.value ?? {},
-        closeButton: true,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (!result) return;
-
-      conditionsForm.setValue(result);
-    });
   }
 }

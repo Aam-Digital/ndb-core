@@ -1,0 +1,26 @@
+<div class="flex-row gap-small align-center">
+  @if (iconButton) {
+    <button
+      mat-icon-button
+      type="button"
+      (click)="openJsonEditor()"
+      [disabled]="disabled"
+      [matTooltip]="buttonTooltip"
+    >
+      <fa-icon [icon]="buttonIcon"></fa-icon>
+    </button>
+  } @else {
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="openJsonEditor()"
+      [disabled]="disabled"
+      [matTooltip]="buttonTooltip"
+    >
+      @if (buttonIcon) {
+        <fa-icon [icon]="buttonIcon" class="standard-icon-with-text"></fa-icon>
+      }
+      <span>{{ buttonLabel }}</span>
+    </button>
+  }
+</div>
