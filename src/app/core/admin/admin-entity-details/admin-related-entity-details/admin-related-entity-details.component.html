@@ -13,17 +13,13 @@
     really need for your work.
   </app-hint-box>
 
-  <div class="form-sections">
-    <app-admin-entity-form
-      [entityType]="entityConstructor"
-      [config]="formConfig"
-      [uniqueAreaId]="
-        'related-entity-details-' + entityConstructor?.ENTITY_TYPE
-      "
-      [fieldsOnlyMode]="true"
-      (configChange)="onConfigChange($event)"
-    ></app-admin-entity-form>
-  </div>
+  <app-admin-entity-form
+    [entityType]="entityConstructor"
+    [config]="formConfig"
+    [uniqueAreaId]="'related-entity-details-' + entityConstructor?.ENTITY_TYPE"
+    [fieldsOnlyMode]="true"
+    (configChange)="onConfigChange($event)"
+  ></app-admin-entity-form>
 </mat-dialog-content>
 
 <mat-dialog-actions>
