@@ -94,6 +94,9 @@ export class EditImportColumnMappingComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.updateHasMultiMapping();
+    if (changes["columnMapping"]) {
+      this.updateDatatypeAndWarning();
+    }
   }
 
   private updateHasMultiMapping() {
