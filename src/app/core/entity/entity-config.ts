@@ -42,18 +42,6 @@ export interface EntityConfig {
 
   /**
    * color used for to highlight this entity type across the app.
-   * 
-   * Can be either:
-   * - A simple string (hex color code) for a single color
-   * - An array of ColorMapping objects for conditional colors based on entity properties
-   * 
-   * Example of conditional colors:
-   * ```json
-   * "color": [
-   *   { "condition": { "status": "active" }, "color": "#00FF00" },
-   *   { "condition": { "status": "inactive" }, "color": "#FF0000" }
-   * ]
-   * ```
    */
   color?: string | ColorMapping[];
 

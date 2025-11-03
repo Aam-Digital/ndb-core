@@ -29,7 +29,7 @@ L.Marker.prototype.options.icon = iconDefault;
  */
 export function getHueForEntity(entity: Entity, offset = 145): string {
   const color = entity.getColor();
-  
+
   if (!color) {
     return "0";
   }

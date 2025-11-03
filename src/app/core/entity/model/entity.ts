@@ -45,16 +45,11 @@ export type EntityConstructor<T extends Entity = Entity> = (new (
   typeof Entity;
 
 /**
- * Definition of conditions and the respective color for the entities under that condition.
- *
  * This allows defining different colors for entities based on their properties using MongoDB-style queries.
- * Supports any field type; simple equality checks, ranges, complex nested conditions, etc.
  */
 export interface ColorMapping {
   /** MongoDB-style query condition that must match for this color to apply */
   condition: DataFilter<any>;
-
-  /** The color (hex code) to use when the condition matches */
   color: string;
 }
 

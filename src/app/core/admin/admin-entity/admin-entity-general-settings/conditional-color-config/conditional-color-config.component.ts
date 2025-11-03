@@ -59,13 +59,13 @@ export class ConditionalColorConfigComponent
   /**
    * Initialize dropdown options for fields that can be used for conditional colors.
    */
-  private initColorFieldOptions() {
+  private initColorFieldOptions(): void {
     if (!this.entityConstructor?.schema) {
       return;
     }
 
     this.colorFieldOptions = Array.from(this.entityConstructor.schema.entries())
-      .filter(([key, field]) => field.label)
+      .filter(([_, field]) => field.label)
       .map(([key, field]) => ({ value: key, label: field.label }));
   }
 
@@ -89,7 +89,7 @@ export class ConditionalColorConfigComponent
         (mapping) =>
           mapping.condition && Object.keys(mapping.condition).length === 0,
       );
-      return fallback.color || "";
+      return fallback?.color || "";
     }
 
     return "";
@@ -98,29 +98,24 @@ export class ConditionalColorConfigComponent
   /**
    * Update the static/default color
    */
-  onStaticColorChange(newColor: string) {
-    if (typeof this.value === "string") {
+  onStaticColorChange(newColor: string): void {
+    if (typeof this.value === "string" || !Array.isArray(this.value)) {
       this.value = newColor;
       this.onChange(newColor);
-    } else if (Array.isArray(this.value)) {
-      const updatedMappings = this.value.filter(
-        (mapping) =>
-          mapping.condition && Object.keys(mapping.condition).length > 0,
-      );
-
-      if (newColor) {
-        updatedMappings.push({
-          condition: {},
-          color: newColor,
-        });
-      }
-
-      this.value = updatedMappings;
-      this.onChange(updatedMappings);
-    } else {
-      this.value = newColor;
-      this.onChange(newColor);
+      return;
     }
+
+    const conditionalMappings = this.getConditionalMappings();
+
+    if (newColor) {
+      conditionalMappings.push({
+        condition: {},
+        color: newColor,
+      });
+    }
+
+    this.value = conditionalMappings;
+    this.onChange(conditionalMappings);
   }
 
   /**
@@ -138,9 +133,9 @@ export class ConditionalColorConfigComponent
   }
 
   /**
-   * Update conditional mappings
+   * Update conditional mappings (preserves fallback color if present)
    */
-  onConditionalMappingsChange(newMappings: ColorMapping[]) {
+  onConditionalMappingsChange(newMappings: ColorMapping[]): void {
     const staticColor = this.getStaticColor();
     const allMappings = [...newMappings];
 
@@ -156,14 +151,18 @@ export class ConditionalColorConfigComponent
   }
 
   /**
-   * Detect which field is being used from existing value
+   * Detect which field is being used from existing conditional mappings.
    */
-  private detectSelectedField() {
+  private detectSelectedField(): void {
     const conditionalMappings = this.getConditionalMappings();
-    if (conditionalMappings.length > 0) {
-      const firstCondition = conditionalMappings[0]?.condition;
-      if (firstCondition && typeof firstCondition === "object") {
-        const fieldKey = Object.keys(firstCondition)[0];
+    if (conditionalMappings.length === 0) {
+      return;
+    }
+
+    const firstCondition = conditionalMappings[0]?.condition;
+    if (firstCondition && typeof firstCondition === "object") {
+      const fieldKey = Object.keys(firstCondition)[0];
+      if (fieldKey) {
         this.selectedColorField = fieldKey;
       }
     }
@@ -171,12 +170,13 @@ export class ConditionalColorConfigComponent
 
   /**
    * Called when user selects a field for conditional colors.
+   * Clears existing conditional mappings when changing fields.
    */
-  onColorFieldSelected(fieldKey: string | string[]) {
+  onColorFieldSelected(fieldKey: string | string[]): void {
     const selectedField = Array.isArray(fieldKey) ? fieldKey[0] : fieldKey;
 
+    // Reset conditional mappings if field changes
     if (this.selectedColorField && this.selectedColorField !== selectedField) {
-      const staticColor = this.getStaticColor();
       this.onConditionalMappingsChange([]);
     }
 
@@ -184,15 +184,15 @@ export class ConditionalColorConfigComponent
   }
 
   /**
-   * Open JSON editor for conditional color configuration
+   * Open JSON editor for conditional color configuration.
+   * Auto-generates template for selected field if no mappings exist.
    */
-  openColorJsonEditor() {
+  openColorJsonEditor(): void {
     const conditionalMappings = this.getConditionalMappings();
-    let initialValue = conditionalMappings;
-
-    if (this.selectedColorField && conditionalMappings.length === 0) {
-      initialValue = this.generateColorMappingTemplate(this.selectedColorField);
-    }
+    const initialValue =
+      this.selectedColorField && conditionalMappings.length === 0
+        ? this.generateColorMappingTemplate(this.selectedColorField)
+        : conditionalMappings;
 
     const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
       data: {
@@ -220,15 +220,15 @@ export class ConditionalColorConfigComponent
       return this.getBasicTemplate(fieldKey);
     }
 
-    // Special handling for ConfigurableEnum fields
+    // Special handling for ConfigurableEnum fields: auto-generate mappings for all enum values
+    // todo : may be we can remove this also
     if (
       field.dataType === ConfigurableEnumDatatype.dataType &&
       field.additional
     ) {
-      const enumId = field.additional;
-      const enumEntity = this.enumService.getEnum(enumId);
+      const enumEntity = this.enumService.getEnum(field.additional);
 
-      if (enumEntity && Array.isArray(enumEntity.values)) {
+      if (enumEntity?.values?.length > 0) {
         return enumEntity.values.map((enumValue) => ({
           condition: { [fieldKey]: enumValue.id },
           color: "",
@@ -240,7 +240,9 @@ export class ConditionalColorConfigComponent
   }
 
   /**
-   * Generate a basic example template for any field type
+   * Generate a basic example template for any field type.
+   * Provides two sample conditions with distinct colors.
+   * todo: may be we can remove this also
    */
   private getBasicTemplate(fieldKey: string): ColorMapping[] {
     return [

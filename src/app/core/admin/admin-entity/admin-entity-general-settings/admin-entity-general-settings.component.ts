@@ -195,7 +195,8 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
    */
   private initColorMode() {
     const colorValue = this.basicSettingsForm.get("color").value;
-    this.isConditionalColor = Array.isArray(colorValue) && colorValue.length > 0;
+    this.isConditionalColor =
+      Array.isArray(colorValue) && colorValue.length > 0;
   }
 
   /**
@@ -203,9 +204,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
    */
   toggleConditionalColorMode() {
     this.isConditionalColor = !this.isConditionalColor;
-    
     if (this.isConditionalColor) {
-      // Convert string to array with fallback
       const currentColor = this.basicSettingsForm.get("color").value;
       if (typeof currentColor === "string") {
         const mappings = currentColor
@@ -214,13 +213,11 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
         this.basicSettingsForm.get("color").setValue(mappings);
       }
     } else {
-      // Convert array back to string (extract fallback color)
       const colorValue = this.basicSettingsForm.get("color").value;
       if (Array.isArray(colorValue)) {
         const fallback = colorValue.find(
           (mapping) =>
-            mapping.condition &&
-            Object.keys(mapping.condition).length === 0
+            mapping.condition && Object.keys(mapping.condition).length === 0,
         );
         this.basicSettingsForm.get("color").setValue(fallback?.color || "");
       }
