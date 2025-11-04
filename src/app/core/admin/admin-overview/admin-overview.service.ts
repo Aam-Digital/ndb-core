@@ -47,8 +47,8 @@ export class AdminOverviewService {
   private readonly _sections: AdminSection[] = [
     {
       id: "subscription",
-      title: $localize`:admin section:Subscription (SaaS only)`,
-      description: $localize`:admin section description:Set up the core elements that define how your system works and communicates.`,
+      title: $localize`:admin section:Subscription (only to be visible in SAAS hosting environment)`,
+      description: $localize`:admin section description:Manage your subscription details, privacy settings, and access to advanced features.`,
       expanded: false,
       items: [
         {
@@ -67,8 +67,8 @@ export class AdminOverviewService {
     },
     {
       id: "configuration",
-      title: $localize`:admin section:Configuration and Site-wide Settings`,
-      description: $localize`:admin section description:Set up the core elements that define how your system works and communicates.`,
+      title: $localize`:admin section:Configuration and Site Wide Settings`,
+      description: $localize`:admin section description:Set up the essential elements that shape your site's structure and system behaviour.`,
       expanded: true,
       items: [
         {
@@ -92,7 +92,7 @@ export class AdminOverviewService {
     {
       id: "templates",
       title: $localize`:admin section:Templates and Forms`,
-      description: $localize`:admin section description:Define user access, site configuration, and initial setup.`,
+      description: $localize`:admin section description:Customise your templates and forms.`,
       expanded: false,
       items: [
         // This section is populated dynamically by feature modules:
@@ -104,7 +104,7 @@ export class AdminOverviewService {
     {
       id: "user-management",
       title: $localize`:admin section:User Management`,
-      description: $localize`:admin section description:Setup integrations, application data, and system diagnostics.`,
+      description: $localize`:admin section description:Set up and manage user accounts, roles, and permissions.`,
       expanded: false,
       items: [
         {
@@ -120,7 +120,7 @@ export class AdminOverviewService {
     {
       id: "export-backups",
       title: $localize`:admin section:Export and Backups`,
-      description: $localize`:admin section description:Manage data privacy, security controls and audit trails.`,
+      description: $localize`:admin section description:Define how your system keeps data protected and accessible.`,
       expanded: false,
       items: [
         // This section uses special template content with functional buttons
@@ -130,7 +130,7 @@ export class AdminOverviewService {
     {
       id: "technical",
       title: $localize`:admin section:Technical Administration`,
-      description: $localize`:admin section description:Find helpful articles and documentation to guide your setup and manage system effectively.`,
+      description: $localize`:admin section description:Manage advanced technical options for maintaining and troubleshooting your system.`,
       expanded: false,
       items: [
         // Most items in this section use special template content with functional buttons
