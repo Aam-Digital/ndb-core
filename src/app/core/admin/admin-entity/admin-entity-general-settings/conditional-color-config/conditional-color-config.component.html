@@ -34,11 +34,12 @@
                   [color]="mapping.color"
                   (colorChange)="updateRuleColor($index, $event)"
                 ></app-color-input>
-                <app-json-editor
+                <app-json-editor-button
                   [value]="mapping.condition"
                   (valueChange)="updateRuleCondition($index, $event)"
                   buttonLabel="Edit Condition"
-                ></app-json-editor>
+                  i18n-buttonLabel
+                ></app-json-editor-button>
 
                 <button
                   mat-icon-button

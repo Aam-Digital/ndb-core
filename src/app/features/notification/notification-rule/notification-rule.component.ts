@@ -29,7 +29,7 @@ import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
 } from "@angular/material/expansion";
-import { JsonEditorComponent } from "app/core/common-components/json-editor/json-editor.component";
+import { JsonEditorButtonComponent } from "app/core/common-components/json-editor-button/json-editor-button.component";
 
 /**
  * Configure a single notification rule.
@@ -52,7 +52,7 @@ import { JsonEditorComponent } from "app/core/common-components/json-editor/json
     MatSelect,
     MatExpansionPanel,
     MatExpansionPanelHeader,
-    JsonEditorComponent,
+    JsonEditorButtonComponent,
   ],
   templateUrl: "./notification-rule.component.html",
   styleUrl: "./notification-rule.component.scss",

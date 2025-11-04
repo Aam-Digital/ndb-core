@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { JsonEditorComponent } from "./json-editor.component";
+import { JsonEditorButtonComponent } from "./json-editor-button.component";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { JsonEditorDialogComponent } from "../../admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import { of } from "rxjs";
 
-describe("JsonEditorComponent", () => {
-  let component: JsonEditorComponent;
-  let fixture: ComponentFixture<JsonEditorComponent>;
+describe("JsonEditorButtonComponent", () => {
+  let component: JsonEditorButtonComponent;
+  let fixture: ComponentFixture<JsonEditorButtonComponent>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
   let mockDialogRef: jasmine.SpyObj<MatDialogRef<JsonEditorDialogComponent>>;
 
@@ -16,11 +16,11 @@ describe("JsonEditorComponent", () => {
     mockDialogRef.afterClosed.and.returnValue(of(undefined));
 
     await TestBed.configureTestingModule({
-      imports: [JsonEditorComponent],
+      imports: [JsonEditorButtonComponent],
       providers: [{ provide: MatDialog, useValue: mockDialog }],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(JsonEditorComponent);
+    fixture = TestBed.createComponent(JsonEditorButtonComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -44,9 +44,7 @@ describe("JsonEditorComponent", () => {
     });
   });
 
-  it("should use initialValue when current value is null", () => {
-    const initialValue = { default: "config" };
-    component.initialValue = initialValue;
+  it("should use empty object when current value is null", () => {
     component.value = null;
     mockDialog.open.and.returnValue(mockDialogRef);
 
@@ -54,7 +52,7 @@ describe("JsonEditorComponent", () => {
 
     expect(mockDialog.open).toHaveBeenCalledWith(JsonEditorDialogComponent, {
       data: {
-        value: initialValue,
+        value: {},
         closeButton: true,
       },
     });

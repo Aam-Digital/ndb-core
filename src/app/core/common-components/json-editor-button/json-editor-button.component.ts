@@ -14,24 +14,21 @@ import { JsonEditorDialogComponent } from "../../admin/json-editor/json-editor-d
  * edit any JSON structure. It can be used in reactive forms like any other form control.
  */
 @Component({
-  selector: "app-json-editor",
-  templateUrl: "./json-editor.component.html",
-  styleUrl: "./json-editor.component.scss",
+  selector: "app-json-editor-button",
+  templateUrl: "./json-editor-button.component.html",
+  styleUrl: "./json-editor-button.component.scss",
   imports: [MatButtonModule, MatTooltipModule, FontAwesomeModule],
   providers: [
     {
       provide: MatFormFieldControl,
-      useExisting: JsonEditorComponent,
+      useExisting: JsonEditorButtonComponent,
     },
   ],
 })
-export class JsonEditorComponent extends CustomFormControlDirective<any> {
+export class JsonEditorButtonComponent extends CustomFormControlDirective<any> {
   private readonly dialog = inject(MatDialog);
 
-  /** Label for the button that opens the editor */
   @Input() buttonLabel: string = $localize`Open Editor`;
-
-  /** Tooltip for the button */
   @Input() buttonTooltip: string = "";
 
   /** Icon for the button (optional) */

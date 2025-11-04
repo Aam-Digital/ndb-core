@@ -73,11 +73,11 @@
             >Conditions currently have to be edited using the JSON Editor. We
             will implement a visual UI here soon.</em
           >
-          <app-json-editor
+          <app-json-editor-button
             formControlName="conditions"
             buttonLabel="Open Conditions Editor"
             i18n-buttonLabel
-          ></app-json-editor>
+          ></app-json-editor-button>
         </div>
       </div>
 
@@ -91,14 +91,14 @@
           <span i18n>Delete</span>
         </button>
 
-        <app-json-editor
+        <app-json-editor-button
           formControlName="conditions"
           [iconButton]="true"
           buttonIcon="tools"
           buttonTooltip="Update Notification Condition via JSON editor"
           i18n-buttonTooltip
           [disabled]="!value.entityType"
-        ></app-json-editor>
+        ></app-json-editor-button>
 
         <!-- TODO: re-enable selection of "per-rule notification channels or remove completely (currently hidden to simplify UX)
         <mat-form-field class="flex-grow">

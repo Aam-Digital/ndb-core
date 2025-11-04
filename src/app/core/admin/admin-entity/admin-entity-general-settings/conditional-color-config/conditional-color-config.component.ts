@@ -12,7 +12,7 @@ import { CustomFormControlDirective } from "app/core/common-components/basic-aut
 import { ColorMapping, EntityConstructor } from "app/core/entity/model/entity";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ColorInputComponent } from "app/color-input/color-input.component";
-import { JsonEditorComponent } from "app/core/common-components/json-editor/json-editor.component";
+import { JsonEditorButtonComponent } from "app/core/common-components/json-editor-button/json-editor-button.component";
 
 /**
  * A form control for configuring conditional colors based on entity fields.
@@ -35,7 +35,7 @@ import { JsonEditorComponent } from "app/core/common-components/json-editor/json
     FontAwesomeModule,
     MatTooltipModule,
     ColorInputComponent,
-    JsonEditorComponent,
+    JsonEditorButtonComponent,
   ],
 })
 export class ConditionalColorConfigComponent
