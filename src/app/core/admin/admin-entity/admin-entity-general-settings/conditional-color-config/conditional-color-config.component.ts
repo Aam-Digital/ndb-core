@@ -126,7 +126,6 @@ export class ConditionalColorConfigComponent
    * Update conditional mappings (preserves fallback color if present)
    */
   onConditionalMappingsChange(newMappings: ColorMapping[]): void {
-    // Guard against invalid input
     if (!newMappings || !Array.isArray(newMappings)) {
       return;
     }
@@ -200,7 +199,6 @@ export class ConditionalColorConfigComponent
    * Update the condition of a specific mapping
    */
   updateRuleCondition(index: number, newCondition: any): void {
-    // Guard against undefined/null (e.g., when dialog is cancelled)
     if (!newCondition) {
       return;
     }
