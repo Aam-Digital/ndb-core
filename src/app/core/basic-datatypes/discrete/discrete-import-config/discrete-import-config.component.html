@@ -14,15 +14,18 @@
       <tr>
         <td style="padding-right: 20px">{{ ctrl.key }}:</td>
         <td>
-          <ng-container
-            [appDynamicComponent]="{
-              component: component,
-              config: {
-                formFieldConfig: schema,
-                formControl: ctrl.value,
-              },
-            }"
-          ></ng-container>
+          <mat-form-field>
+            <app-dynamic-edit
+              [formControl]="$any(ctrl.value)"
+              [formFieldConfig]="{
+                id: ctrl.key,
+                editComponent: component,
+                dataType: schema.dataType,
+                additional: schema.additional,
+                label: ctrl.key,
+              }"
+            ></app-dynamic-edit>
+          </mat-form-field>
         </td>
       </tr>
     }
