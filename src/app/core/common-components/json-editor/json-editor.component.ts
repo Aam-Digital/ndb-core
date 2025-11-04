@@ -12,14 +12,6 @@ import { JsonEditorDialogComponent } from "../../admin/json-editor/json-editor-d
  *
  * This component provides a button that opens a JSON editor dialog where users can
  * edit any JSON structure. It can be used in reactive forms like any other form control.
- *
- * Example usage:
- * ```html
- * <mat-form-field>
- *   <mat-label>Configuration</mat-label>
- *   <app-json-editor formControlName="config" buttonLabel="Edit JSON"></app-json-editor>
- * </mat-form-field>
- * ```
  */
 @Component({
   selector: "app-json-editor",
@@ -48,16 +40,13 @@ export class JsonEditorComponent extends CustomFormControlDirective<any> {
   /** Whether to show the button as icon button instead of stroked button */
   @Input() iconButton: boolean = false;
 
-  /** Initial value to use when the current value is undefined/null */
-  @Input() initialValue: any = {};
-
   /**
    * Open the JSON editor dialog to edit the value.
    */
   openJsonEditor() {
     const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
       data: {
-        value: this.value ?? this.initialValue,
+        value: this.value ?? {},
         closeButton: true,
       },
     });

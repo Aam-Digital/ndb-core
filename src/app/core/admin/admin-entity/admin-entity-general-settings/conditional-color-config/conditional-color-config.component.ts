@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import {
   MatFormFieldModule,
   MatFormFieldControl,
@@ -6,16 +6,13 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { MatSelectModule } from "@angular/material/select";
 import { ReactiveFormsModule } from "@angular/forms";
-import { MatDialog } from "@angular/material/dialog";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { ColorMapping, EntityConstructor } from "app/core/entity/model/entity";
-import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
-import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
-import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { ColorInputComponent } from "app/color-input/color-input.component";
+import { JsonEditorComponent } from "app/core/common-components/json-editor/json-editor.component";
 
 /**
  * A form control for configuring conditional colors based on entity fields.
@@ -38,15 +35,13 @@ import { ColorInputComponent } from "app/color-input/color-input.component";
     FontAwesomeModule,
     MatTooltipModule,
     ColorInputComponent,
+    JsonEditorComponent,
   ],
 })
 export class ConditionalColorConfigComponent
   extends CustomFormControlDirective<string | ColorMapping[]>
   implements OnInit
 {
-  private readonly dialog = inject(MatDialog);
-  private readonly enumService = inject(ConfigurableEnumService);
-
   @Input() entityConstructor: EntityConstructor;
   @Input() isConditionalMode: boolean = false;
 
@@ -131,6 +126,11 @@ export class ConditionalColorConfigComponent
    * Update conditional mappings (preserves fallback color if present)
    */
   onConditionalMappingsChange(newMappings: ColorMapping[]): void {
+    // Guard against invalid input
+    if (!newMappings || !Array.isArray(newMappings)) {
+      return;
+    }
+
     const staticColor = this.getStaticColor();
     const allMappings = [...newMappings];
 
@@ -163,10 +163,6 @@ export class ConditionalColorConfigComponent
     }
   }
 
-  /**
-   * Called when user selects a field for conditional colors.
-   * Clears existing conditional mappings when changing fields.
-   */
   onColorFieldSelected(fieldKey: string | string[]): void {
     const selectedField = Array.isArray(fieldKey) ? fieldKey[0] : fieldKey;
 
@@ -176,79 +172,80 @@ export class ConditionalColorConfigComponent
     }
 
     this.selectedColorField = selectedField;
+
+    const currentMappings = this.getConditionalMappings();
+    if (currentMappings.length === 0) {
+      this.addNewRule();
+    }
   }
 
   /**
-   * Open JSON editor for conditional color configuration.
-   * Auto-generates template for selected field if no mappings exist.
+   * Add a new color mapping rule
    */
-  openColorJsonEditor(): void {
-    const conditionalMappings = this.getConditionalMappings();
-    const initialValue =
-      this.selectedColorField && conditionalMappings.length === 0
-        ? this.generateColorMappingTemplate(this.selectedColorField)
-        : conditionalMappings;
-
-    const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
-      data: {
-        value: initialValue,
-        closeButton: true,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result !== undefined) {
-        this.onConditionalMappingsChange(result);
-        this.detectSelectedField();
-      }
-    });
-  }
-
-  /**
-   * Generate a template ColorMapping array for the selected field.
-   * For ConfigurableEnum fields, generates entries for all enum values.
-   * For other field types, generates a basic example template.
-   */
-  private generateColorMappingTemplate(fieldKey: string): ColorMapping[] {
-    const field = this.entityConstructor.schema.get(fieldKey);
-    if (!field) {
-      return this.getBasicTemplate(fieldKey);
+  addNewRule(): void {
+    if (!this.selectedColorField) {
+      return;
     }
 
-    // Special handling for ConfigurableEnum fields: auto-generate mappings for all enum values
-    // todo : may be we can remove this also
-    if (
-      field.dataType === ConfigurableEnumDatatype.dataType &&
-      field.additional
-    ) {
-      const enumEntity = this.enumService.getEnum(field.additional);
+    const currentMappings = this.getConditionalMappings();
+    const newMapping: ColorMapping = {
+      condition: { [this.selectedColorField]: "" },
+      color: "",
+    };
 
-      if (enumEntity?.values?.length > 0) {
-        return enumEntity.values.map((enumValue) => ({
-          condition: { [fieldKey]: enumValue.id },
-          color: "",
-        }));
-      }
-    }
-
-    return this.getBasicTemplate(fieldKey);
+    this.onConditionalMappingsChange([...currentMappings, newMapping]);
   }
 
   /**
-   * Generate a basic example template for any field type.
-   * Provides two sample conditions with distinct colors.
-   * todo: may be we can remove this also
+   * Update the condition of a specific mapping
    */
-  private getBasicTemplate(fieldKey: string): ColorMapping[] {
-    return [
-      {
-        condition: { [fieldKey]: "example-value" },
-        color: "#FF0000",
-      },
-      {
-        condition: { [fieldKey]: "another-value" },
-        color: "#00FF00",
-      },
-    ];
+  updateRuleCondition(index: number, newCondition: any): void {
+    // Guard against undefined/null (e.g., when dialog is cancelled)
+    if (!newCondition) {
+      return;
+    }
+
+    const currentMappings = this.getConditionalMappings();
+    if (index < 0 || index >= currentMappings.length) {
+      return;
+    }
+
+    currentMappings[index] = {
+      ...currentMappings[index],
+      condition: newCondition,
+    };
+
+    this.onConditionalMappingsChange([...currentMappings]);
+    this.detectSelectedField();
+  }
+
+  /**
+   * Update the color of a specific mapping
+   */
+  updateRuleColor(index: number, newColor: string): void {
+    const currentMappings = this.getConditionalMappings();
+    if (index < 0 || index >= currentMappings.length) {
+      return;
+    }
+
+    currentMappings[index] = {
+      ...currentMappings[index],
+      color: newColor,
+    };
+
+    this.onConditionalMappingsChange([...currentMappings]);
+  }
+
+  /**
+   * Delete a specific mapping
+   */
+  deleteRule(index: number): void {
+    const currentMappings = this.getConditionalMappings();
+    if (index < 0 || index >= currentMappings.length) {
+      return;
+    }
+
+    currentMappings.splice(index, 1);
+    this.onConditionalMappingsChange([...currentMappings]);
   }
 }
