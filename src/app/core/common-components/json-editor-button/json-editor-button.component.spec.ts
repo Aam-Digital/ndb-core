@@ -3,6 +3,7 @@ import { JsonEditorButtonComponent } from "./json-editor-button.component";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { JsonEditorDialogComponent } from "../../admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import { of } from "rxjs";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("JsonEditorButtonComponent", () => {
   let component: JsonEditorButtonComponent;
@@ -16,7 +17,7 @@ describe("JsonEditorButtonComponent", () => {
     mockDialogRef.afterClosed.and.returnValue(of(undefined));
 
     await TestBed.configureTestingModule({
-      imports: [JsonEditorButtonComponent],
+      imports: [JsonEditorButtonComponent, FontAwesomeTestingModule],
       providers: [{ provide: MatDialog, useValue: mockDialog }],
     }).compileComponents();
 

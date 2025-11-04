@@ -1,34 +1,20 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ConditionalColorConfigComponent } from "./conditional-color-config.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { MatDialog } from "@angular/material/dialog";
-import { of } from "rxjs";
 import { ColorMapping } from "app/core/entity/model/entity";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
-import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
-import { ConfigurableEnum } from "app/core/basic-datatypes/configurable-enum/configurable-enum";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ConditionalColorConfigComponent", () => {
   let component: ConditionalColorConfigComponent;
   let fixture: ComponentFixture<ConditionalColorConfigComponent>;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
-  let mockEnumService: jasmine.SpyObj<ConfigurableEnumService>;
 
   beforeEach(async () => {
-    mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
-    mockDialog.open.and.returnValue({
-      afterClosed: () => of(null),
-    } as any);
-
-    mockEnumService = jasmine.createSpyObj("ConfigurableEnumService", [
-      "getEnum",
-    ]);
-
     await TestBed.configureTestingModule({
-      imports: [ConditionalColorConfigComponent, NoopAnimationsModule],
-      providers: [
-        { provide: MatDialog, useValue: mockDialog },
-        { provide: ConfigurableEnumService, useValue: mockEnumService },
+      imports: [
+        ConditionalColorConfigComponent,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
       ],
     }).compileComponents();
 
@@ -57,63 +43,52 @@ describe("ConditionalColorConfigComponent", () => {
     expect(component.selectedColorField).toBe("status");
   });
 
-  it("should open JSON editor with empty array by default", () => {
-    component.openColorJsonEditor();
+  it("should add a new rule", () => {
+    component.selectedColorField = "status";
+    component.value = [];
 
-    expect(mockDialog.open).toHaveBeenCalledWith(
-      jasmine.anything(),
-      jasmine.objectContaining({
-        data: jasmine.objectContaining({
-          value: [],
-        }),
-      }),
-    );
+    component.addNewRule();
+
+    expect(component.value).toEqual([{ condition: { status: "" }, color: "" }]);
   });
 
-  it("should generate template when field is selected", () => {
-    const mockEnum = new ConfigurableEnum("test-enum");
-    mockEnum.values = [
-      { id: "option1", label: "Option 1" },
-      { id: "option2", label: "Option 2" },
-    ];
+  it("should update rule condition", () => {
+    component.value = [{ condition: { status: "active" }, color: "#00FF00" }];
+    const newCondition = { status: "inactive" };
 
-    mockEnumService.getEnum.and.returnValue(mockEnum);
+    component.updateRuleCondition(0, newCondition);
 
-    component.selectedColorField = "testField";
-    component.entityConstructor.schema.set("testField", {
-      dataType: "configurable-enum",
-      additional: "test-enum",
-      label: "Test Field",
-    } as any);
-
-    component.openColorJsonEditor();
-
-    expect(mockDialog.open).toHaveBeenCalledWith(
-      jasmine.anything(),
-      jasmine.objectContaining({
-        data: jasmine.objectContaining({
-          value: [
-            { condition: { testField: "option1" }, color: "" },
-            { condition: { testField: "option2" }, color: "" },
-          ],
-        }),
-      }),
-    );
+    expect(component.value[0].condition).toEqual(newCondition);
   });
 
-  it("should emit value change when JSON editor closes with result", () => {
-    const testMappings: ColorMapping[] = [
-      { condition: { status: "active" }, color: "#123456" },
+  it("should not update rule condition if new condition is null", () => {
+    const initialValue = [
+      { condition: { status: "active" }, color: "#00FF00" },
+    ];
+    component.value = [...initialValue];
+
+    component.updateRuleCondition(0, null);
+
+    expect(component.value).toEqual(initialValue);
+  });
+
+  it("should update rule color", () => {
+    component.value = [{ condition: { status: "active" }, color: "#00FF00" }];
+
+    component.updateRuleColor(0, "#FF0000");
+
+    expect(component.value[0].color).toBe("#FF0000");
+  });
+
+  it("should delete a rule", () => {
+    component.value = [
+      { condition: { status: "active" }, color: "#00FF00" },
+      { condition: { status: "inactive" }, color: "#FF0000" },
     ];
 
-    mockDialog.open.and.returnValue({
-      afterClosed: () => of(testMappings),
-    } as any);
+    component.deleteRule(0);
 
-    spyOn(component, "onChange");
-
-    component.openColorJsonEditor();
-
-    expect(component.onChange).toHaveBeenCalledWith(testMappings);
+    expect(component.value.length).toBe(1);
+    expect(component.value[0].condition).toEqual({ status: "inactive" });
   });
 });
