@@ -13,6 +13,9 @@ import { EntityFormComponent } from "../../common-components/entity-form/entity-
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { FieldGroup } from "./field-group";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
+import { PublicFormConfig } from "../../../features/public-form/public-form-config";
+import { PublicFormPermissionService } from "../../../features/public-form/public-form-permission.service";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -35,6 +38,8 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   private entityFormService = inject(EntityFormService);
   private alertService = inject(AlertService);
   private viewContext = inject(ViewComponentContext, { optional: true });
+  private permissionService = inject(PublicFormPermissionService);
+  private confirmationDialog = inject(ConfirmationDialogService);
 
   @Input() entity: E;
   @Input() creatingNew = false;
@@ -58,6 +63,15 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
 
   async saveClicked() {
     try {
+      // Check if this is a new PublicFormConfig and needs permission checking
+      if (
+        this.entity.getType() === PublicFormConfig.ENTITY_TYPE &&
+        this.entity.isNew
+      ) {
+        const canProceed = await this.checkPublicFormPermissions();
+        if (!canProceed) return; // User cancelled or there was an error
+      }
+
       await this.entityFormService.saveChanges(this.form, this.entity);
 
       if (this.creatingNew && !this.viewContext?.isDialog) {
@@ -79,6 +93,68 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
     }
     this.entityFormService.resetForm(this.form, this.entity);
     this.form.formGroup.disable();
+  }
+
+  /**
+   * Check PublicFormConfig permissions and handle missing permissions
+   */
+  private async checkPublicFormPermissions(): Promise<boolean> {
+    const entityType = this.form.formGroup.getRawValue()["entity"] as string;
+    if (!entityType) return true; // No entity type selected yet
+
+    const hasPermission =
+      await this.permissionService.hasPublicCreatePermission(entityType);
+    const canAddPermissions = this.permissionService.hasAdminPermission();
+
+    if (!hasPermission && canAddPermissions) {
+      return await this.handleMissingPermission(entityType);
+    }
+    return true; // No permission issue or user can't add permissions
+  }
+
+  /**
+   * Handle missing permission with user confirmation
+   */
+  private async handleMissingPermission(entityType: string): Promise<boolean> {
+    const customButtons = [
+      {
+        text: $localize`Add Permission & Save Form`,
+        dialogResult: "add-permission",
+        click() {},
+      },
+      {
+        text: $localize`Save Form Only`,
+        dialogResult: "save-only",
+        click() {},
+      },
+      { text: $localize`Cancel`, dialogResult: "cancel", click() {} },
+    ];
+
+    const result = await this.confirmationDialog.getConfirmation(
+      $localize`Missing Public Permission`,
+      $localize`This public form won't work because public users don't have permission to create "${entityType}" records.
+
+Would you like to add the required permission automatically?`,
+      customButtons,
+      true,
+    );
+
+    if (result === "add-permission") {
+      try {
+        await this.permissionService.addPublicCreatePermission(entityType);
+        this.alertService.addInfo(
+          $localize`Permission added successfully! Public users can now create ${entityType} records.`,
+        );
+        return true;
+      } catch (error) {
+        this.alertService.addDanger(
+          $localize`Failed to add permission: ${error.message}`,
+        );
+        return false;
+      }
+    }
+
+    return result === "save-only"; // true for save-only, false for cancel
   }
 }
 

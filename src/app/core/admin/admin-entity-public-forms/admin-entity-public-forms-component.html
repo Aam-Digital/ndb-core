@@ -5,6 +5,47 @@
   self-register this way and then review their data later.
 </app-hint-box>
 
+@if (!hasPublicCreatePermission() && !isCheckingPermissions()) {
+  <app-hint-box type="warning" class="margin-bottom-regular">
+    <div>
+      <strong i18n>⚠️ Missing Public Permission</strong>
+      <p i18n>
+        Public forms for "{{
+          entityConstructor?.label || entityConstructor?.ENTITY_TYPE
+        }}" records will not work because public users (visitors without
+        accounts) do not have permission to create new
+        {{ entityConstructor?.label || entityConstructor?.ENTITY_TYPE }}
+        records.
+      </p>
+      <p>
+        <strong i18n>Required:</strong>
+        <span i18n
+          >The "public" role needs "create" permission for "{{
+            entityConstructor?.ENTITY_TYPE
+          }}" entities.</span
+        >
+      </p>
+      <div class="flex-row gap-small margin-top-small">
+        @if (canAddPermissions()) {
+          <button
+            mat-raised-button
+            color="accent"
+            (click)="addPermissionAutomatically()"
+            i18n
+          >
+            Add Permission Automatically
+          </button>
+        } @else {
+          <p class="text-muted" i18n>
+            You need admin permissions to add the required permission
+            automatically.
+          </p>
+        }
+      </div>
+    </div>
+  </app-hint-box>
+}
+
 <app-view-title [disableBackButton]="true" [displayInPlace]="true" i18n>
   Public Forms
 </app-view-title>
