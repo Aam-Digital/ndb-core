@@ -129,7 +129,7 @@ describe("EditEntityComponent", () => {
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
     fixture.autoDetectChanges();
     tick();
-    expect(component.availableOptionsResource.value().entities).toEqual(
+    expect(component.availableOptionsResource().entities).toEqual(
       jasmine.arrayWithExactContents(test1Entities),
     );
   }));
@@ -142,7 +142,7 @@ describe("EditEntityComponent", () => {
     fixture.autoDetectChanges();
     tick();
 
-    expect(component.availableOptionsResource.value().entities).toEqual(
+    expect(component.availableOptionsResource().entities).toEqual(
       [...test1Entities, ...test2Entities].sort((a, b) =>
         a.toString().localeCompare(b.toString()),
       ),
@@ -169,9 +169,7 @@ describe("EditEntityComponent", () => {
       test1Entities[0].getId(),
       "missing_user",
     ]);
-    expect(
-      component.availableOptionsResource.value().hasInaccessible,
-    ).toBeTrue();
+    expect(component.availableOptionsResource().hasInaccessible).toBeTrue();
   }));
 
   it("shows inactive entities according to the includeInactive state", fakeAsync(() => {
@@ -181,21 +179,19 @@ describe("EditEntityComponent", () => {
     fixture.autoDetectChanges();
     tick();
 
-    expect(component.availableOptionsResource.value().entities.length).toEqual(
+    expect(component.availableOptionsResource().entities.length).toEqual(
       test1Entities.length - 2,
     );
     component.toggleIncludeInactive();
     tick();
-    expect(component.availableOptionsResource.value().entities.length).toEqual(
+    expect(component.availableOptionsResource().entities.length).toEqual(
       test1Entities.length,
     );
 
     test1Entities[2].isActive = true;
     component.toggleIncludeInactive();
     tick();
-    expect(component.availableOptionsResource.value().entities.length).toEqual(
-      3,
-    );
+    expect(component.availableOptionsResource().entities.length).toEqual(3);
   }));
 
   it("should update matchingInactive count when autocomplete filter changes", fakeAsync(() => {
@@ -233,7 +229,7 @@ describe("EditEntityComponent", () => {
         test2Entities[0].getId(),
       ]),
     );
-    expect(component.availableOptionsResource.value().entities).toEqual(
+    expect(component.availableOptionsResource().entities).toEqual(
       jasmine.arrayWithExactContents([...test1Entities, test2Entities[0]]),
     );
   }));

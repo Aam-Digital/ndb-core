@@ -9,7 +9,7 @@
     [optionToString]="accessor"
     (autocompleteFilterChange)="recalculateMatchingInactive($event)"
     [multi]="multi"
-    [options]="availableOptionsResource.value().entities"
+    [options]="availableOptionsResource().entities"
     [placeholder]="loading() ? loadingPlaceholder : placeholder"
     [createOption]="createNewEntityOption()"
   >
@@ -44,7 +44,7 @@
   }
 </div>
 
-@if (availableOptionsResource.value().hasInaccessible) {
+@if (availableOptionsResource().hasInaccessible) {
   <div class="hint-text">
     <fa-icon
       icon="warning"
