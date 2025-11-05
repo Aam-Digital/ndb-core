@@ -17,8 +17,8 @@ import { EntityAbility } from "../../core/permissions/ability/entity-ability";
   providedIn: "root",
 })
 export class PublicFormPermissionService {
-  private sessionInfo = inject(SessionSubject);
-  private entityMapper = inject(EntityMapperService);
+  private readonly sessionInfo = inject(SessionSubject);
+  private readonly entityMapper = inject(EntityMapperService);
 
   /**
    * Checks if public users (not logged in) have create permissions for a specific entity type.

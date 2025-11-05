@@ -19,8 +19,8 @@ import { AlertService } from "../../alerts/alert.service";
   ],
 })
 export class AdminEntityPublicFormsComponent implements OnInit {
-  private permissionService = inject(PublicFormPermissionService);
-  private alertService = inject(AlertService);
+  private readonly permissionService = inject(PublicFormPermissionService);
+  private readonly alertService = inject(AlertService);
 
   /**
    * The entity type for which to display public forms for.
