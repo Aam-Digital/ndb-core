@@ -118,8 +118,13 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   private async handleMissingPermission(entityType: string): Promise<boolean> {
     const customButtons = [
       {
-        text: $localize`Update Permissions`,
+        text: $localize`Update Permission & Save Form`,
         dialogResult: "add-permission",
+        click() {},
+      },
+      {
+        text: $localize`Save Form Only`,
+        dialogResult: "save-only",
         click() {},
       },
     ];
@@ -128,7 +133,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
       $localize`Missing Public Permission`,
       $localize`This public form won't work because public users don't have permission to create "${entityType}" records.
 
-The required permission will be added automatically.`,
+Would you like to add the required permission automatically?`,
       customButtons,
       true,
     );
@@ -148,7 +153,13 @@ The required permission will be added automatically.`,
       }
     }
 
-    return false; // User closed dialog without clicking the button
+    if (result === "save-only") {
+      // Allow saving the form even without permissions
+      this.alertService.addWarning(
+        $localize`This form will not work until an administrator adds create permissions for ${entityType} records.`,
+      );
+      return true;
+    }
   }
 }
 
