@@ -6,7 +6,6 @@ import {
 } from "../../core/permissions/permission-types";
 import { SessionSubject } from "../../core/session/auth/session-info";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
-import { EntityAbility } from "../../core/permissions/ability/entity-ability";
 
 /**
  * Service to check and manage public form permissions.
@@ -22,7 +21,6 @@ export class PublicFormPermissionService {
 
   /**
    * Checks if public users (not logged in) have create permissions for a specific entity type.
-   * Uses the EntityAbility service to leverage existing permission evaluation logic.
    * @param entityType The entity type to check (e.g., "Child", "School")
    * @returns Promise<boolean> true if public users can create entities of this type
    */
@@ -36,11 +34,14 @@ export class PublicFormPermissionService {
 
       const publicRules = permissionsConfig.data.public || [];
 
-      // Create a temporary ability instance to test public permissions
-      const publicAbility = new EntityAbility();
-      publicAbility.update(publicRules);
+      // Check if there's a matching rule for this entity type
+      const hasMatchingRule = publicRules.some(
+        (rule) =>
+          rule.subject === entityType &&
+          (rule.action === "create" || rule.action === "manage"),
+      );
 
-      return publicAbility.can("create", entityType);
+      return hasMatchingRule;
     } catch (error) {
       // If we can't load permissions, assume no access for safety
       return false;
@@ -62,10 +63,11 @@ export class PublicFormPermissionService {
    * @returns Promise<void>
    */
   async addPublicCreatePermission(entityType: string): Promise<void> {
-    const permissionsConfig = await this.loadPermissionsConfig();
+    let permissionsConfig = await this.loadPermissionsConfig();
 
+    // Create new config if it doesn't exist
     if (!permissionsConfig) {
-      throw new Error("Cannot load permissions configuration");
+      permissionsConfig = new Config(Config.PERMISSION_KEY, {});
     }
 
     // Initialize the data structure if it doesn't exist
