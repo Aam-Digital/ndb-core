@@ -118,23 +118,17 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   private async handleMissingPermission(entityType: string): Promise<boolean> {
     const customButtons = [
       {
-        text: $localize`Add Permission & Save Form`,
+        text: $localize`Update Permissions`,
         dialogResult: "add-permission",
         click() {},
       },
-      {
-        text: $localize`Save Form Only`,
-        dialogResult: "save-only",
-        click() {},
-      },
-      { text: $localize`Cancel`, dialogResult: "cancel", click() {} },
     ];
 
     const result = await this.confirmationDialog.getConfirmation(
       $localize`Missing Public Permission`,
       $localize`This public form won't work because public users don't have permission to create "${entityType}" records.
 
-Would you like to add the required permission automatically?`,
+The required permission will be added automatically.`,
       customButtons,
       true,
     );
@@ -154,7 +148,7 @@ Would you like to add the required permission automatically?`,
       }
     }
 
-    return result === "save-only"; // true for save-only, false for cancel
+    return false; // User closed dialog without clicking the button
   }
 }
 
