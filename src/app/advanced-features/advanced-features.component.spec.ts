@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AdvancedFeaturesComponent } from "./advanced-features.component";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AdvancedFeaturesComponent", () => {
   let component: AdvancedFeaturesComponent;
@@ -8,7 +9,7 @@ describe("AdvancedFeaturesComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdvancedFeaturesComponent],
+      imports: [AdvancedFeaturesComponent, FontAwesomeTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AdvancedFeaturesComponent);

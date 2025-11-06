@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DataPrivacyComponent } from "./data-privacy.component";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("DataPrivacyComponent", () => {
   let component: DataPrivacyComponent;
@@ -8,7 +9,7 @@ describe("DataPrivacyComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DataPrivacyComponent],
+      imports: [DataPrivacyComponent, FontAwesomeTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DataPrivacyComponent);

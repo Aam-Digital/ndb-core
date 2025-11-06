@@ -4,6 +4,7 @@ import { ConflictResolutionListComponent } from "./conflict-resolution-list.comp
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Database } from "../../../core/database/database";
 import { DatabaseResolverService } from "../../../core/database/database-resolver.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ConflictResolutionListComponent", () => {
   let component: ConflictResolutionListComponent;
@@ -21,7 +22,11 @@ describe("ConflictResolutionListComponent", () => {
     );
 
     TestBed.configureTestingModule({
-      imports: [ConflictResolutionListComponent, NoopAnimationsModule],
+      imports: [
+        ConflictResolutionListComponent,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
       providers: [
         {
           provide: DatabaseResolverService,

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AdminUserRolesComponent } from "./admin-user-roles.component";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AdminUserRolesComponent", () => {
   let component: AdminUserRolesComponent;
@@ -8,7 +9,7 @@ describe("AdminUserRolesComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminUserRolesComponent],
+      imports: [AdminUserRolesComponent, FontAwesomeTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AdminUserRolesComponent);
