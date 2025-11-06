@@ -4,17 +4,23 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+} from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { KeyValuePipe } from "@angular/common";
-import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { ConfigurableEnumService } from "../../configurable-enum/configurable-enum.service";
+import { DynamicEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/dynamic-edit.component";
 
 /**
  * UI to configure import value mappings for discrete datatypes like boolean or enum.
@@ -26,10 +32,12 @@ import { ConfigurableEnumService } from "../../configurable-enum/configurable-en
   styleUrls: ["./discrete-import-config.component.scss"],
   imports: [
     MatDialogModule,
+    MatFormFieldModule,
     KeyValuePipe,
-    DynamicComponentDirective,
     MatButtonModule,
     HelpButtonComponent,
+    ReactiveFormsModule,
+    DynamicEditComponent,
   ],
 })
 export class DiscreteImportConfigComponent implements OnInit {
