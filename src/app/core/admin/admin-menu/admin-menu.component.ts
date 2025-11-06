@@ -8,12 +8,13 @@ import { Config } from "app/core/config/config";
 import { MatButton } from "@angular/material/button";
 import { MenuItemForAdminUi } from "./menu-item-for-admin-ui";
 import { MenuItemListEditorComponent } from "../../ui/menu-item-list-editor/menu-item-list-editor.component";
+import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 
 /** Load and Store Menu Items for Administration */
 @Component({
   selector: "app-admin-menu",
   standalone: true,
-  imports: [MatButton, MenuItemListEditorComponent],
+  imports: [ViewTitleComponent, MatButton, MenuItemListEditorComponent],
   templateUrl: "./admin-menu.component.html",
   styleUrl: "./admin-menu.component.scss",
 })

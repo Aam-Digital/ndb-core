@@ -1,8 +1,9 @@
 import { Component } from "@angular/core";
+import { ViewTitleComponent } from "../core/common-components/view-title/view-title.component";
 
 @Component({
   selector: "app-data-privacy",
-  imports: [],
+  imports: [ViewTitleComponent],
   templateUrl: "./data-privacy.component.html",
   styleUrl: "./data-privacy.component.scss",
 })
