@@ -160,6 +160,9 @@ Would you like to add the required permission automatically?`,
       );
       return true;
     }
+
+    // User cancelled the dialog
+    return false;
   }
 }
 

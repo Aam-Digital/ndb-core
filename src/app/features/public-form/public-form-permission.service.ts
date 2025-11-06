@@ -1,9 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { Config } from "../../core/config/config";
-import {
-  DatabaseRules,
-  DatabaseRule,
-} from "../../core/permissions/permission-types";
+import { DatabaseRules } from "../../core/permissions/permission-types";
 import { SessionSubject } from "../../core/session/auth/session-info";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 
@@ -28,23 +25,17 @@ export class PublicFormPermissionService {
     try {
       const permissionsConfig = await this.loadPermissionsConfig();
       if (!permissionsConfig?.data) {
-        // No permissions config means everything is allowed by default
-        return true;
+        return true; // No permissions config means everything is allowed
       }
 
       const publicRules = permissionsConfig.data.public || [];
-
-      // Check if there's a matching rule for this entity type
-      const hasMatchingRule = publicRules.some(
+      return publicRules.some(
         (rule) =>
           rule.subject === entityType &&
           (rule.action === "create" || rule.action === "manage"),
       );
-
-      return hasMatchingRule;
-    } catch (error) {
-      // If we can't load permissions, assume no access for safety
-      return false;
+    } catch {
+      return false; // If we can't load permissions, assume no access
     }
   }
 
@@ -65,12 +56,10 @@ export class PublicFormPermissionService {
   async addPublicCreatePermission(entityType: string): Promise<void> {
     let permissionsConfig = await this.loadPermissionsConfig();
 
-    // Create new config if it doesn't exist
     if (!permissionsConfig) {
       permissionsConfig = new Config(Config.PERMISSION_KEY, {});
     }
 
-    // Initialize the data structure if it doesn't exist
     if (!permissionsConfig.data) {
       permissionsConfig.data = {};
     }
@@ -79,27 +68,25 @@ export class PublicFormPermissionService {
       permissionsConfig.data.public = [];
     }
 
-    // Check if permission already exists
-    const alreadyHasPermission =
-      await this.hasPublicCreatePermission(entityType);
+    // Check if permission already exists to avoid duplicates
+    const alreadyExists = permissionsConfig.data.public.some(
+      (rule) =>
+        rule.subject === entityType &&
+        (rule.action === "create" || rule.action === "manage"),
+    );
 
-    if (!alreadyHasPermission) {
-      // Add the new permission rule
-      const newRule: DatabaseRule = {
+    if (!alreadyExists) {
+      permissionsConfig.data.public.push({
         subject: entityType,
         action: "create",
-      };
+      });
 
-      permissionsConfig.data.public.push(newRule);
-
-      // Save the updated config
       await this.entityMapper.save(permissionsConfig, true);
     }
   }
 
   /**
    * Loads the permissions configuration from the database.
-   * @returns Promise<Config<DatabaseRules> | null>
    */
   private async loadPermissionsConfig(): Promise<Config<DatabaseRules> | null> {
     try {
@@ -107,9 +94,8 @@ export class PublicFormPermissionService {
         Config,
         Config.PERMISSION_KEY,
       );
-    } catch (error) {
-      // Config doesn't exist yet
-      return null;
+    } catch {
+      return null; // Config doesn't exist yet
     }
   }
 }
