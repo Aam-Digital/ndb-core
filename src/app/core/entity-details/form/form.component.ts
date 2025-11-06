@@ -13,6 +13,10 @@ import { EntityFormComponent } from "../../common-components/entity-form/entity-
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { FieldGroup } from "./field-group";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
+import { PublicFormConfig } from "../../../features/public-form/public-form-config";
+import { AdminEntityService } from "../../admin/admin-entity.service";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { EntityConfigService } from "../../entity/entity-config.service";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -35,6 +39,9 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   private entityFormService = inject(EntityFormService);
   private alertService = inject(AlertService);
   private viewContext = inject(ViewComponentContext, { optional: true });
+  private adminEntityService = inject(AdminEntityService);
+  private entities = inject(EntityRegistry);
+  private entityConfigService = inject(EntityConfigService);
 
   @Input() entity: E;
   @Input() creatingNew = false;
@@ -58,6 +65,11 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
 
   async saveClicked() {
     try {
+      // For PublicFormConfig: persist any new fields to entity config before saving
+      if (this.entity.getType() === PublicFormConfig.ENTITY_TYPE) {
+        await this.savePublicFormCustomFields();
+      }
+
       await this.entityFormService.saveChanges(this.form, this.entity);
 
       if (this.creatingNew && !this.viewContext?.isDialog) {
@@ -70,6 +82,31 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
       if (!(err instanceof InvalidFormFieldError)) {
         this.alertService.addDanger(err.message);
       }
+    }
+  }
+
+  /**
+   * Save new custom fields to entity config for PublicFormConfig.
+   */
+  private async savePublicFormCustomFields(): Promise<void> {
+    const publicFormConfig = this.entity as unknown as PublicFormConfig;
+    const entityType = publicFormConfig.entity;
+
+    const entityConstructor = this.entities.get(entityType);
+    const entityConfig =
+      this.entityConfigService.getEntityConfig(entityConstructor) || {};
+    const existingAttributes = entityConfig.attributes || {};
+
+    // Check if there are any fields in schema that aren't in global config yet
+    let hasNewFields = false;
+    for (const [fieldId] of entityConstructor.schema.entries()) {
+      if (!Object.hasOwn(existingAttributes, fieldId)) {
+        hasNewFields = true;
+        break;
+      }
+    }
+    if (hasNewFields) {
+      await this.adminEntityService.setAndSaveEntityConfig(entityConstructor);
     }
   }
 
