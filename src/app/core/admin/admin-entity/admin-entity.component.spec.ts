@@ -28,7 +28,7 @@ import { of } from "rxjs";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 
-fdescribe("AdminEntityComponent", () => {
+describe("AdminEntityComponent", () => {
   let component: AdminEntityComponent;
   let fixture: ComponentFixture<AdminEntityComponent>;
 
