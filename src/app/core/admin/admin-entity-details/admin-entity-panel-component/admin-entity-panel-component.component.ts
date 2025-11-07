@@ -220,6 +220,8 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     }
 
     const dialogRef = this.dialog.open(AdminRelatedEntityDetailsComponent, {
+      // using 99.8% width making it clear that there are multiple dialog layers open
+      // e.g., when edit field structure dialog opens this dialog remains partially visible in the background,
       width: "99.8%",
       height: "80vh",
       data: {
