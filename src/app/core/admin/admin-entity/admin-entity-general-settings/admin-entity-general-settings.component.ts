@@ -39,7 +39,6 @@ import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.compon
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ColorInputComponent } from "#src/app/color-input/color-input.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
-import { EntityBlockConfig } from "../../../basic-datatypes/entity/entity-block/entity-block-config";
 
 @Component({
   selector: "app-admin-entity-general-settings",
