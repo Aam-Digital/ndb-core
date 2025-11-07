@@ -56,7 +56,6 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
     MatTableModule,
     MatOptionModule,
     MatSelectModule,
-    MatTooltipModule,
     HelpButtonComponent,
     AnonymizeOptionsComponent,
     FaIconComponent,
@@ -83,15 +82,24 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   basicSettingsForm: FormGroup;
   toStringAttributesOptions: SimpleDropdownValue[] = [];
-  toBlockDetailsAttributesFieldOptions: SimpleDropdownValue[] = [];
   toBlockDetailsAttributesTitleOptions: SimpleDropdownValue[] = [];
   toBlockDetailsAttributesImageOptions: SimpleDropdownValue[] = [];
+  toBlockDetailsAttributesFieldsOptions: SimpleDropdownValue[] = [];
+  hasImageFields: boolean = false;
+  showTooltipDetails: boolean = false;
 
   ngOnInit(): void {
     this.init();
   }
 
   private init() {
+    // Initialize options first for proper value matching in autocomplete
+    this.initToStringAttributesOptions();
+    this.initToBlockDetailsAttributesOptions();
+
+    // Check if tooltip configuration should be enabled by default
+    this.showTooltipDetails = !!this.generalSettings.toBlockDetailsAttributes;
+
     this.basicSettingsForm = this.fb.group({
       label: [this.generalSettings.label, Validators.required],
       labelPlural: [this.generalSettings.labelPlural],
@@ -100,16 +108,19 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       toStringAttributes: [this.generalSettings.toStringAttributes],
       hasPII: [this.generalSettings.hasPII],
       enableUserAccounts: [this.generalSettings?.enableUserAccounts],
+      enableTooltipConfiguration: [this.showTooltipDetails],
       toBlockDetailsAttributes: this.fb.group({
         title: [this.generalSettings.toBlockDetailsAttributes?.title],
         image: [this.generalSettings.toBlockDetailsAttributes?.image],
         fields: [this.generalSettings.toBlockDetailsAttributes?.fields || []],
       }),
     });
+
     this.showPIIDetails = this.basicSettingsForm.get("hasPII").value;
     this.fetchAnonymizationTableData();
-    this.initToStringAttributesOptions();
-    this.initToBlockDetailsAttributesOptions();
+
+    // Patch tooltip values after options are initialized for proper display
+    this.patchTooltipValues();
 
     this.basicSettingsForm.valueChanges.subscribe((value) => {
       this.reorderedStringAttributesOptions();
@@ -146,6 +157,39 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.showPIIDetails = event.checked;
     this.basicSettingsForm.get("hasPII").setValue(this.showPIIDetails);
     this.fetchAnonymizationTableData();
+  }
+
+  toggleTooltipConfiguration(event: MatCheckboxChange) {
+    this.showTooltipDetails = event.checked;
+    this.basicSettingsForm
+      .get("enableTooltipConfiguration")
+      .setValue(this.showTooltipDetails);
+
+    if (!this.showTooltipDetails) {
+      // Clear the tooltip configuration when disabled
+      this.basicSettingsForm.get("toBlockDetailsAttributes").reset({
+        title: null,
+        image: null,
+        fields: [],
+      });
+    } else {
+      // Restore saved values when enabling
+      this.patchTooltipValues();
+    }
+  }
+
+  private patchTooltipValues(): void {
+    const block = this.generalSettings.toBlockDetailsAttributes || {
+      title: null,
+      image: null,
+      fields: [],
+    };
+
+    this.basicSettingsForm.get("toBlockDetailsAttributes").patchValue({
+      title: block.title ?? null,
+      image: block.image ?? null,
+      fields: block.fields ?? [],
+    });
   }
 
   changeFieldAnonymization(
@@ -194,42 +238,44 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   }
 
   private initToBlockDetailsAttributesOptions() {
-    // Get all fields that can be used for title, image, and other fields
+    // Get all fields with labels
     const allFieldOptions = Array.from(this.entityConstructor.schema.entries())
       .filter(([key, field]) => field.label)
       .map(([key, field]) => ({ value: key, label: field.label }));
+
+    // Supported datatypes for title field
+    const titleDataTypes = [
+      StringDatatype.dataType,
+      ConfigurableEnumDatatype.dataType,
+      DateOnlyDatatype.dataType,
+    ];
 
     // Title options (text-based fields)
     this.toBlockDetailsAttributesTitleOptions = allFieldOptions.filter(
       (option) => {
         const field = this.entityConstructor.schema.get(option.value);
-        return [
-          StringDatatype.dataType,
-          ConfigurableEnumDatatype.dataType,
-          DateOnlyDatatype.dataType,
-        ].includes(field.dataType);
+        return titleDataTypes.includes(field.dataType);
       },
     );
 
-    // Image options (typically file or photo fields)
+    // Image options (file/photo fields or fields with image-related names)
     this.toBlockDetailsAttributesImageOptions = allFieldOptions.filter(
       (option) => {
         const field = this.entityConstructor.schema.get(option.value);
+        const fieldName = option.value.toLowerCase();
         return (
           field.dataType === "file" ||
-          option.value.toLowerCase().includes("photo") ||
-          option.value.toLowerCase().includes("image")
+          field.dataType === "photo" ||
+          fieldName.includes("photo") ||
+          fieldName.includes("image") ||
+          fieldName.includes("avatar") ||
+          fieldName.includes("logo")
         );
       },
     );
 
-    // If no specific image fields found, include all fields as potential image options
-    if (this.toBlockDetailsAttributesImageOptions.length === 0) {
-      this.toBlockDetailsAttributesImageOptions = allFieldOptions;
-    }
-
-    // Field options (all fields with labels)
-    this.toBlockDetailsAttributesFieldOptions = allFieldOptions;
+    this.hasImageFields = this.toBlockDetailsAttributesImageOptions.length > 0;
+    this.toBlockDetailsAttributesFieldsOptions = allFieldOptions;
   }
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
