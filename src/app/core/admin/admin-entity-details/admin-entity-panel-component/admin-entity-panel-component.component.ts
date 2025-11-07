@@ -67,7 +67,16 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   @Output() relatedEntityModified = new EventEmitter<EntityConstructor>();
 
   entityConstructor: EntityConstructor;
-  selectedEntityType: string;
+  private _selectedEntityType = signal<string>("");
+
+  get selectedEntityType(): string {
+    return this._selectedEntityType();
+  }
+
+  set selectedEntityType(value: string) {
+    this._selectedEntityType.set(value);
+  }
+
   isDialogOpen = false;
 
   /** Stores the currently active/selected field IDs to be shown in the panel */
@@ -82,16 +91,11 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   }[];
 
   /**
-   * Signal to track the current entity type for reactive updates
-   */
-  private readonly currentEntityType = signal<string>("");
-
-  /**
    * Computed signal to determine if the "Edit data structure" button should be shown.
    * Hidden for Note and Todo entities as they have custom detail views.
    */
   showEditStructureButton = computed(() => {
-    const entityType = this.currentEntityType();
+    const entityType = this._selectedEntityType();
     return entityType !== "Note" && entityType !== "Todo";
   });
 
@@ -108,7 +112,6 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     this.activeFields = (this.config.config.columns ?? []).map((col) =>
       typeof col === "string" ? col : col.id,
     );
-    this.currentEntityType.set(this.selectedEntityType);
   }
 
   /**
@@ -158,7 +161,6 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     this.applyCustomOverrides(newType);
 
     this.activeFields = [];
-    this.currentEntityType.set(newType);
   }
 
   /**
