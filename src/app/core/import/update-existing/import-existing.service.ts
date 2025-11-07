@@ -112,12 +112,13 @@ export class ImportExistingService {
           e[idField],
           schemaField,
         );
+        const rawImportValue = rawImportEntity[idField];
 
+        // Compare the "database formats" (to match complex values like dates)
+        // Also allow match if both values are undefined/null (both records missing the field)
         return (
-          // compare the "database formats" (to match complex values like dates)
-          rawExistingValue === rawImportEntity[idField] ||
-          // allow partial match if a column is not part of the import:
-          !importEntity.hasOwnProperty(idField) ||
+          rawExistingValue === rawImportValue ||
+          (rawExistingValue == null && rawImportValue == null) ||
           !e.hasOwnProperty(idField)
         );
       }),
