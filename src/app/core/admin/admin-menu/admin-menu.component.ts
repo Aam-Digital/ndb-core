@@ -22,6 +22,8 @@ export class AdminMenuComponent implements OnInit {
   private readonly entityMapper = inject(EntityMapperService);
 
   menuItems: MenuItemForAdminUi[] = [];
+  private originalMenuItems: MenuItemForAdminUi[] = [];
+  hasChanges = false;
 
   async ngOnInit() {
     await this.loadNavigationConfig();
@@ -35,6 +37,13 @@ export class AdminMenuComponent implements OnInit {
     this.menuItems = MenuItemListEditorComponent.fromPlainMenuItems(
       configEntity.data.navigationMenu.items,
     );
+    this.resetChangeTracking();
+  }
+
+  private resetChangeTracking() {
+    // Store original state for change detection
+    this.originalMenuItems = JSON.parse(JSON.stringify(this.menuItems));
+    this.hasChanges = false;
   }
 
   async save() {
@@ -45,6 +54,8 @@ export class AdminMenuComponent implements OnInit {
     currentConfig.data.navigationMenu.items =
       MenuItemListEditorComponent.toPlainMenuItems(this.menuItems);
     await this.entityMapper.save(currentConfig);
+
+    this.resetChangeTracking();
   }
 
   async cancel() {
@@ -53,5 +64,8 @@ export class AdminMenuComponent implements OnInit {
 
   onMenuItemsChange(updatedItems: MenuItemForAdminUi[]) {
     this.menuItems = updatedItems;
+    // Check if changes have been made
+    this.hasChanges =
+      JSON.stringify(this.menuItems) !== JSON.stringify(this.originalMenuItems);
   }
 }

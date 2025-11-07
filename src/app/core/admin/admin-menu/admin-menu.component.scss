@@ -1,0 +1,5 @@
+@use "variables/sizes";
+
+.padding-regular {
+  padding-left: sizes.$x-small !important;
+}
