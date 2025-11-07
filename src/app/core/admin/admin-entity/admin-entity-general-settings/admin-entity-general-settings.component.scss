@@ -19,19 +19,3 @@
   overflow: auto;
 }
 
-.tooltip-config-section {
-  padding: 16px;
-  margin-top: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 4px;
-  background-color: rgba(0, 0, 0, 0.02);
-
-  mat-form-field {
-    width: 100%;
-    margin-bottom: 8px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-}

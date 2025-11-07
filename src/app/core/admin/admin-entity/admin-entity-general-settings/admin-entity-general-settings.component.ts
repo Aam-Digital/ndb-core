@@ -258,18 +258,14 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       },
     );
 
-    // Image options (file/photo fields or fields with image-related names)
+    // Image options (typically file or photo fields)
     this.toBlockDetailsAttributesImageOptions = allFieldOptions.filter(
       (option) => {
         const field = this.entityConstructor.schema.get(option.value);
         const fieldName = option.value.toLowerCase();
         return (
-          field.dataType === "file" ||
-          field.dataType === "photo" ||
-          fieldName.includes("photo") ||
-          fieldName.includes("image") ||
-          fieldName.includes("avatar") ||
-          fieldName.includes("logo")
+          this.isImageDataType(field.dataType) ||
+          this.isImageFieldName(fieldName)
         );
       },
     );
@@ -280,4 +276,13 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.value;
+
+  private isImageDataType(dataType: string): boolean {
+    return dataType === "file" || dataType === "photo";
+  }
+
+  private isImageFieldName(fieldName: string): boolean {
+    const imageKeywords = ["photo", "image", "avatar", "logo"];
+    return imageKeywords.some(keyword => fieldName.includes(keyword));
+  }
 }
