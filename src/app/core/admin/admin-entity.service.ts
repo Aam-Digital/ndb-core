@@ -108,7 +108,7 @@ export class AdminEntityService {
    * Determines if a field is an internal system field that should not be saved to the config.
    * Examples: _id, _rev, created, updated, inactive, anonymized
    */
-  private isInternalField(field: any): boolean {
+  private isInternalField(field: EntitySchemaField): boolean {
     return field.anonymize === "retain" && !field.label;
   }
 }
