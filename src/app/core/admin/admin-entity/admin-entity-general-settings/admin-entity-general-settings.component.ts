@@ -283,6 +283,6 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   private isImageFieldName(fieldName: string): boolean {
     const imageKeywords = ["photo", "image", "avatar", "logo"];
-    return imageKeywords.some(keyword => fieldName.includes(keyword));
+    return imageKeywords.some((keyword) => fieldName.includes(keyword));
   }
 }
