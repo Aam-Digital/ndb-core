@@ -91,11 +91,22 @@ export class ImportExistingService {
     importSettings: ImportSettings,
     importEntity: Entity,
   ) {
+    // Determine which of the selected identifier fields are actually mapped, in the column mapping
+    const mappedFields = (importSettings.columnMapping ?? [])
+      .filter((m) => !!m.propertyName)
+      .map((m) => m.propertyName as string);
+
+    const mappedMatchFields = (
+      importSettings.matchExistingByFields ?? []
+    ).filter((f) => mappedFields.includes(f));
+
+    if (mappedMatchFields.length === 0) return undefined;
+
     const rawImportEntity =
       this.schemaService.transformEntityToDatabaseFormat(importEntity);
 
     return this.existingEntitiesCache.find((e) =>
-      importSettings.matchExistingByFields.every((idField) => {
+      mappedMatchFields.every((idField) => {
         const schemaField = e.getSchema().get(idField);
         const rawExistingValue = this.schemaService.valueToDatabaseFormat(
           e[idField],
