@@ -67,7 +67,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   @Output() relatedEntityModified = new EventEmitter<EntityConstructor>();
 
   entityConstructor: EntityConstructor;
-  private _selectedEntityType = signal<string>("");
+  private readonly _selectedEntityType = signal<string>("");
 
   get selectedEntityType(): string {
     return this._selectedEntityType();
