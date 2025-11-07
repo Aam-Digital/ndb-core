@@ -94,7 +94,7 @@ export class ImportExistingService {
     // Determine which of the selected identifier fields are actually mapped, in the column mapping
     const mappedFields = (importSettings.columnMapping ?? [])
       .filter((m) => !!m.propertyName)
-      .map((m) => m.propertyName as string);
+      .map((m) => m.propertyName);
 
     const mappedMatchFields = (
       importSettings.matchExistingByFields ?? []
