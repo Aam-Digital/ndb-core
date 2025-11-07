@@ -39,6 +39,7 @@ import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.compon
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ColorInputComponent } from "#src/app/color-input/color-input.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { EntityBlockConfig } from "../../../basic-datatypes/entity/entity-block/entity-block-config";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -83,6 +84,9 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   basicSettingsForm: FormGroup;
   toStringAttributesOptions: SimpleDropdownValue[] = [];
+  toBlockDetailsAttributesFieldOptions: SimpleDropdownValue[] = [];
+  toBlockDetailsAttributesTitleOptions: SimpleDropdownValue[] = [];
+  toBlockDetailsAttributesImageOptions: SimpleDropdownValue[] = [];
 
   ngOnInit(): void {
     this.init();
@@ -97,10 +101,16 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       toStringAttributes: [this.generalSettings.toStringAttributes],
       hasPII: [this.generalSettings.hasPII],
       enableUserAccounts: [this.generalSettings?.enableUserAccounts],
+      toBlockDetailsAttributes: this.fb.group({
+        title: [this.generalSettings.toBlockDetailsAttributes?.title],
+        image: [this.generalSettings.toBlockDetailsAttributes?.image],
+        fields: [this.generalSettings.toBlockDetailsAttributes?.fields || []],
+      }),
     });
     this.showPIIDetails = this.basicSettingsForm.get("hasPII").value;
     this.fetchAnonymizationTableData();
     this.initToStringAttributesOptions();
+    this.initToBlockDetailsAttributesOptions();
 
     this.basicSettingsForm.valueChanges.subscribe((value) => {
       this.reorderedStringAttributesOptions();
@@ -182,6 +192,45 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       })),
       ...unselectedOptions,
     ];
+  }
+
+  private initToBlockDetailsAttributesOptions() {
+    // Get all fields that can be used for title, image, and other fields
+    const allFieldOptions = Array.from(this.entityConstructor.schema.entries())
+      .filter(([key, field]) => field.label)
+      .map(([key, field]) => ({ value: key, label: field.label }));
+
+    // Title options (text-based fields)
+    this.toBlockDetailsAttributesTitleOptions = allFieldOptions.filter(
+      (option) => {
+        const field = this.entityConstructor.schema.get(option.value);
+        return [
+          StringDatatype.dataType,
+          ConfigurableEnumDatatype.dataType,
+          DateOnlyDatatype.dataType,
+        ].includes(field.dataType);
+      },
+    );
+
+    // Image options (typically file or photo fields)
+    this.toBlockDetailsAttributesImageOptions = allFieldOptions.filter(
+      (option) => {
+        const field = this.entityConstructor.schema.get(option.value);
+        return (
+          field.dataType === "file" ||
+          option.value.toLowerCase().includes("photo") ||
+          option.value.toLowerCase().includes("image")
+        );
+      },
+    );
+
+    // If no specific image fields found, include all fields as potential image options
+    if (this.toBlockDetailsAttributesImageOptions.length === 0) {
+      this.toBlockDetailsAttributesImageOptions = allFieldOptions;
+    }
+
+    // Field options (all fields with labels)
+    this.toBlockDetailsAttributesFieldOptions = allFieldOptions;
   }
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;

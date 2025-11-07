@@ -12,7 +12,12 @@
         <div class="entity-form-cell">
           <mat-form-field>
             <mat-label i18n>Label</mat-label>
-            <input formControlName="label" matInput #formLabel />
+            <input
+              formControlName="label"
+              matInput
+              #formLabel
+              title="Entity label"
+            />
           </mat-form-field>
 
           <mat-form-field floatLabel="always">
@@ -29,6 +34,7 @@
               formControlName="labelPlural"
               matInput
               [placeholder]="formLabel.value"
+              title="Entity label plural"
             />
           </mat-form-field>
 
@@ -74,6 +80,70 @@
               [reorder]="true"
             ></app-basic-autocomplete>
           </mat-form-field>
+
+          <!-- Entity Block Tooltip Configuration Section -->
+          <div class="tooltip-config-section" formGroupName="toBlockDetailsAttributes">
+            <mat-form-field>
+              <mat-label>
+                <span i18n>Entity Block Tooltip Configuration</span>
+                &nbsp;
+                <fa-icon
+                  icon="question-circle"
+                  matTooltip="Configure what information is shown when hovering over entity blocks in lists and forms. This tooltip appears when users hover over entity references throughout the application."
+                  i18n-matTooltip
+                ></fa-icon>
+              </mat-label>
+              <app-basic-autocomplete
+                formControlName="title"
+                [options]="toBlockDetailsAttributesTitleOptions"
+                [optionToString]="objectToLabel"
+                [valueMapper]="objectToValue"
+                [multi]="false"
+                [placeholder]="'Select title field...'"
+              ></app-basic-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>
+                <span i18n>Tooltip Image Field</span>
+                &nbsp;
+                <fa-icon
+                  icon="question-circle"
+                  matTooltip="Optional: Select an image field to display a photo in the tooltip. Only fields that contain images (like profile photos) should be selected here."
+                  i18n-matTooltip
+                ></fa-icon>
+              </mat-label>
+              <app-basic-autocomplete
+                formControlName="image"
+                [options]="toBlockDetailsAttributesImageOptions"
+                [optionToString]="objectToLabel"
+                [valueMapper]="objectToValue"
+                [multi]="false"
+                [placeholder]="'Select image field (optional)...'"
+              ></app-basic-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>
+                <span i18n>Additional Tooltip Details</span>
+                &nbsp;
+                <fa-icon
+                  icon="question-circle"
+                  matTooltip="Select additional fields to display in the tooltip. These will appear below the title and provide more context about the entity. You can reorder them by dragging."
+                  i18n-matTooltip
+                ></fa-icon>
+              </mat-label>
+              <app-basic-autocomplete
+                formControlName="fields"
+                [options]="toBlockDetailsAttributesFieldOptions"
+                [optionToString]="objectToLabel"
+                [valueMapper]="objectToValue"
+                [multi]="true"
+                [reorder]="true"
+                [placeholder]="'Select detail fields...'"
+              ></app-basic-autocomplete>
+            </mat-form-field>
+          </div>
         </div>
       </div>
     </mat-tab>
