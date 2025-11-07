@@ -17,6 +17,7 @@ import { PublicFormConfig } from "../../../features/public-form/public-form-conf
 import { AdminEntityService } from "../../admin/admin-entity.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityConfigService } from "../../entity/entity-config.service";
+import { UnsavedChangesService } from "./unsaved-changes.service";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -42,6 +43,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   private adminEntityService = inject(AdminEntityService);
   private entities = inject(EntityRegistry);
   private entityConfigService = inject(EntityConfigService);
+  private unsavedChangesService = inject(UnsavedChangesService);
 
   @Input() entity: E;
   @Input() creatingNew = false;
@@ -106,6 +108,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
       }
     }
     if (hasNewFields) {
+      this.unsavedChangesService.pending = false;
       await this.adminEntityService.setAndSaveEntityConfig(entityConstructor);
     }
   }
