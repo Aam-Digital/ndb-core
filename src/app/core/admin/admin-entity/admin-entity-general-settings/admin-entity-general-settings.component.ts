@@ -39,6 +39,7 @@ import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.compon
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ColorInputComponent } from "#src/app/color-input/color-input.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { MatExpansionModule } from "@angular/material/expansion";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -56,6 +57,7 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
     MatTableModule,
     MatOptionModule,
     MatSelectModule,
+    MatExpansionModule,
     HelpButtonComponent,
     AnonymizeOptionsComponent,
     FaIconComponent,
@@ -108,7 +110,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       toStringAttributes: [this.generalSettings.toStringAttributes],
       hasPII: [this.generalSettings.hasPII],
       enableUserAccounts: [this.generalSettings?.enableUserAccounts],
-      enableTooltipConfiguration: [this.showTooltipDetails],
+
       toBlockDetailsAttributes: this.fb.group({
         title: [this.generalSettings.toBlockDetailsAttributes?.title],
         image: [this.generalSettings.toBlockDetailsAttributes?.image],
@@ -121,6 +123,16 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
     // Patch tooltip values after options are initialized for proper display
     this.patchTooltipValues();
+
+    // Disable the image form control if no image fields are available
+    const imageControl = this.basicSettingsForm.get(
+      "toBlockDetailsAttributes.image",
+    );
+    if (this.hasImageFields) {
+      imageControl?.enable();
+    } else {
+      imageControl?.disable();
+    }
 
     this.basicSettingsForm.valueChanges.subscribe((value) => {
       this.reorderedStringAttributesOptions();
@@ -157,25 +169,6 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.showPIIDetails = event.checked;
     this.basicSettingsForm.get("hasPII").setValue(this.showPIIDetails);
     this.fetchAnonymizationTableData();
-  }
-
-  toggleTooltipConfiguration(event: MatCheckboxChange) {
-    this.showTooltipDetails = event.checked;
-    this.basicSettingsForm
-      .get("enableTooltipConfiguration")
-      .setValue(this.showTooltipDetails);
-
-    if (!this.showTooltipDetails) {
-      // Clear the tooltip configuration when disabled
-      this.basicSettingsForm.get("toBlockDetailsAttributes").reset({
-        title: null,
-        image: null,
-        fields: [],
-      });
-    } else {
-      // Restore saved values when enabling
-      this.patchTooltipValues();
-    }
   }
 
   private patchTooltipValues(): void {

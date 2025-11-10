@@ -82,22 +82,18 @@
           </mat-form-field>
 
           <!-- Entity Block Tooltip Configuration Section -->
-          <div class="flex-row align-center">
-            <mat-checkbox
-              [checked]="showTooltipDetails"
-              (change)="toggleTooltipConfiguration($event)"
-              i18n
-              >Entity Block Tooltip Configuration</mat-checkbox
-            >
-            <fa-icon
-              icon="question-circle"
-              class="margin-left-small"
-              matTooltip="Configure custom tooltip content shown when hovering over entity blocks in lists and forms. When disabled, a default tooltip with basic information will be used."
-              i18n-matTooltip
-            ></fa-icon>
-          </div>
-
-          @if (showTooltipDetails) {
+          <mat-expansion-panel [expanded]="showTooltipDetails">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <span i18n>Entity Block Tooltip Configuration</span>
+                <fa-icon
+                  icon="question-circle"
+                  class="margin-left-small"
+                  matTooltip="Configure custom tooltip content shown when hovering over record blocks in lists and forms. When collapsed, default tooltip behavior will be used."
+                  i18n-matTooltip
+                ></fa-icon>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
             <mat-form-field
               formGroupName="toBlockDetailsAttributes"
               floatLabel="always"
@@ -128,7 +124,7 @@
                 &nbsp;
                 <fa-icon
                   icon="question-circle"
-                  matTooltip="Select additional fields to display in the tooltip. These will be shown below the title and provide extra context about the entity."
+                  matTooltip="Select additional fields to display in the tooltip. These will be shown below the title and provide extra context about the record."
                   i18n-matTooltip
                 ></fa-icon>
               </mat-label>
@@ -142,29 +138,44 @@
               ></app-basic-autocomplete>
             </mat-form-field>
 
-            @if (hasImageFields) {
-              <mat-form-field
-                formGroupName="toBlockDetailsAttributes"
-                floatLabel="always"
-              >
-                <mat-label>
-                  <span i18n>Image Field (Optional)</span>
-                  &nbsp;
-                  <fa-icon
-                    icon="question-circle"
-                    matTooltip="Optional: Select an image field to display a photo in the tooltip. Only fields that contain images (like profile photos) should be selected here."
-                    i18n-matTooltip
-                  ></fa-icon>
-                </mat-label>
-                <app-basic-autocomplete
-                  formControlName="image"
-                  [options]="toBlockDetailsAttributesImageOptions"
-                  [optionToString]="objectToLabel"
-                  [valueMapper]="objectToValue"
-                ></app-basic-autocomplete>
-              </mat-form-field>
-            }
-          }
+            <mat-form-field
+              formGroupName="toBlockDetailsAttributes"
+              floatLabel="always"
+            >
+              <mat-label>
+                <span i18n>Image Field (Optional)</span>
+                &nbsp;
+                <fa-icon
+                  icon="question-circle"
+                  [matTooltip]="
+                    hasImageFields
+                      ? 'Optional: Select an image field to display a photo in the tooltip. Only fields that contain images (like profile photos) should be selected here.'
+                      : 'No image fields are available for this record type.'
+                  "
+                  i18n-matTooltip
+                ></fa-icon>
+              </mat-label>
+              <app-basic-autocomplete
+                formControlName="image"
+                [options]="toBlockDetailsAttributesImageOptions"
+                [optionToString]="objectToLabel"
+                [valueMapper]="objectToValue"
+                [disabled]="!hasImageFields"
+                [placeholder]="
+                  hasImageFields
+                    ? 'Select image field (optional)...'
+                    : 'No image fields available'
+                "
+              ></app-basic-autocomplete>
+              @if (!hasImageFields) {
+                <mat-hint i18n>
+                  This record type has no image fields. Add fields with dataType
+                  'file' or 'photo', or field names containing 'photo', 'image',
+                  'avatar', or 'logo' to enable this option.
+                </mat-hint>
+              }
+            </mat-form-field>
+          </mat-expansion-panel>
         </div>
       </div>
     </mat-tab>
