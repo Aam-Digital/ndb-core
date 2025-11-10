@@ -40,10 +40,10 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   private entityFormService = inject(EntityFormService);
   private alertService = inject(AlertService);
   private viewContext = inject(ViewComponentContext, { optional: true });
-  private adminEntityService = inject(AdminEntityService);
-  private entities = inject(EntityRegistry);
-  private entityConfigService = inject(EntityConfigService);
-  private unsavedChangesService = inject(UnsavedChangesService);
+  private readonly adminEntityService = inject(AdminEntityService);
+  private readonly entities = inject(EntityRegistry);
+  private readonly entityConfigService = inject(EntityConfigService);
+  private readonly unsavedChangesService = inject(UnsavedChangesService);
 
   @Input() entity: E;
   @Input() creatingNew = false;
