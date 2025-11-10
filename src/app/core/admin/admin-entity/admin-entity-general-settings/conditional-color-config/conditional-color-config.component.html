@@ -1,71 +1,94 @@
 <div class="conditional-color-config">
-  @if (!isConditionalMode) {
+  <div class="flex-row gap-regular align-center">
     <app-color-input
       [color]="getStaticColor()"
       (colorChange)="onStaticColorChange($event)"
     ></app-color-input>
-  }
+
+    @if (isConditionalMode) {
+      <button
+        mat-stroked-button
+        type="button"
+        color="primary"
+        (click)="removeConditionalMode()"
+      >
+        <span i18n>Remove conditional colors</span>
+      </button>
+    } @else {
+      <button mat-stroked-button type="button" (click)="addConditionalMode()">
+        <span i18n>Add conditional colors</span>
+      </button>
+    }
+  </div>
 
   @if (isConditionalMode) {
-    <div class="conditional-section">
-      <mat-form-field class="full-width margin-bottom-regular">
-        <mat-label i18n>Conditional Color Field</mat-label>
-        <mat-select
-          [value]="selectedColorField"
-          (valueChange)="onColorFieldSelected($event)"
-          placeholder="Select field"
-          i18n-placeholder
-        >
-          @for (option of colorFieldOptions; track option.value) {
-            <mat-option [value]="option.value">{{ option.label }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+    <div class="conditional-section flex-column gap-regular padding-regular">
+      <div class="margin-bottom-regular">
+        <label class="mat-body-2" i18n>Conditional Color</label>
+        <app-color-input
+          [color]="getConditionalColor()"
+          (colorChange)="onConditionalColorChange($event)"
+        ></app-color-input>
+      </div>
 
-      @if (selectedColorField) {
-        <div class="rules-list">
-          @for (mapping of getConditionalMappings(); track $index) {
-            <div
-              class="rule-item flex-column gap-small padding-regular border-regular margin-bottom-regular"
-            >
-              <div class="flex-row gap-regular align-center">
-                <app-color-input
-                  class="flex-grow"
-                  [color]="mapping.color"
-                  (colorChange)="updateRuleColor($index, $event)"
-                ></app-color-input>
-                <app-json-editor-button
-                  [value]="mapping.condition"
-                  (valueChange)="updateRuleCondition($index, $event)"
-                  buttonLabel="Edit Condition"
-                  i18n-buttonLabel
-                ></app-json-editor-button>
-
-                <button
-                  mat-icon-button
-                  type="button"
-                  color="warn"
-                  (click)="deleteRule($index)"
-                  matTooltip="Delete rule"
-                  i18n-matTooltip
+      <div class="rules-list flex-column gap-small padding-regular">
+        @for (mapping of getConditionalMappings(); track $index) {
+          <div class="rule-item">
+            <div class="flex-row gap-regular align-center">
+              <mat-form-field class="flex-grow">
+                <mat-label i18n>Condition Field</mat-label>
+                <mat-select
+                  [value]="getConditionField(mapping)"
+                  (valueChange)="onConditionFieldChange($index, $event)"
                 >
-                  <fa-icon icon="trash"></fa-icon>
-                </button>
-              </div>
+                  @for (option of colorFieldOptions; track option.value) {
+                    <mat-option [value]="option.value">{{
+                      option.label
+                    }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              @if (getFormFieldConfigForIndex($index)) {
+                <mat-form-field class="flex-grow">
+                  <mat-label i18n>Condition Target Value</mat-label>
+                  <app-dynamic-edit
+                    [formFieldConfig]="getFormFieldConfigForIndex($index)"
+                    [formControl]="getFormControlForIndex($index)"
+                  ></app-dynamic-edit>
+                </mat-form-field>
+              }
+
+              <button
+                mat-icon-button
+                type="button"
+                color="warn"
+                (click)="deleteRule($index)"
+                matTooltip="Delete condition"
+                i18n-matTooltip
+              >
+                <fa-icon icon="trash"></fa-icon>
+              </button>
             </div>
-          }
+          </div>
+        }
+
+        <div class="buttons-container flex-column gap-small margin-top-small">
+          <button mat-stroked-button type="button" (click)="addNewRule()">
+            <fa-icon icon="plus" class="standard-icon-with-text"></fa-icon>
+            <span i18n>Add Condition</span>
+          </button>
 
           <button
             mat-stroked-button
             type="button"
-            (click)="addNewRule()"
-            class="margin-top-regular"
+            (click)="openFullJsonEditor()"
           >
-            <fa-icon icon="plus" class="standard-icon-with-text"></fa-icon>
-            <span i18n>Add New Rule</span>
+            <fa-icon icon="code" class="standard-icon-with-text"></fa-icon>
+            <span i18n>Edit Condition JSON</span>
           </button>
         </div>
-      }
+      </div>
     </div>
   }
 </div>

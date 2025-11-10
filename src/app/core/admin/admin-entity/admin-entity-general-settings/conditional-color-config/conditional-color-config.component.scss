@@ -1,45 +1,14 @@
-.conditional-color-config {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
 .conditional-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  background-color: var(--mdc-outlined-card-container-color, #f5f5f5);
+  border-radius: 4px;
 }
 
 .rules-list {
-  display: flex;
-  flex-direction: column;
-}
-
-.rule-item {
-  background-color: var(--mdc-outlined-card-container-color, #f5f5f5);
+  background-color: #fef0f0;
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 4px;
-
-  .label-text {
-    font-weight: 500;
-    font-size: 0.875rem;
-    color: rgba(0, 0, 0, 0.6);
-    margin-bottom: 0.25rem;
-  }
-
-  .condition-display {
-    display: block;
-    padding: 0.5rem;
-    background-color: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    border-radius: 4px;
-    font-family: monospace;
-    font-size: 0.875rem;
-    overflow-x: auto;
-    word-break: break-all;
-  }
 }
 
-.hint-text {
-  font-size: 0.875rem;
-  color: rgba(0, 0, 0, 0.6);
+.buttons-container {
+  align-items: flex-start;
 }

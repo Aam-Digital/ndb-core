@@ -1,18 +1,27 @@
-import { Component, Input, OnInit } from "@angular/core";
+import {
+  Component,
+  inject,
+  Input,
+  OnInit,
+  Output,
+  EventEmitter,
+} from "@angular/core";
 import {
   MatFormFieldModule,
   MatFormFieldControl,
 } from "@angular/material/form-field";
 import { MatButtonModule } from "@angular/material/button";
 import { MatSelectModule } from "@angular/material/select";
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { ColorMapping, EntityConstructor } from "app/core/entity/model/entity";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ColorInputComponent } from "app/color-input/color-input.component";
-import { JsonEditorButtonComponent } from "app/core/common-components/json-editor-button/json-editor-button.component";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { DynamicEditComponent } from "app/core/entity/entity-field-edit/dynamic-edit/dynamic-edit.component";
 
 /**
  * A form control for configuring conditional colors based on entity fields.
@@ -35,7 +44,7 @@ import { JsonEditorButtonComponent } from "app/core/common-components/json-edito
     FontAwesomeModule,
     MatTooltipModule,
     ColorInputComponent,
-    JsonEditorButtonComponent,
+    DynamicEditComponent,
   ],
 })
 export class ConditionalColorConfigComponent
@@ -44,13 +53,73 @@ export class ConditionalColorConfigComponent
 {
   @Input() entityConstructor: EntityConstructor;
   @Input() isConditionalMode: boolean = false;
+  @Output() isConditionalModeChange = new EventEmitter<boolean>();
+
+  private entitySchemaService = inject(EntitySchemaService);
 
   colorFieldOptions: SimpleDropdownValue[] = [];
-  selectedColorField: string = null;
+  conditionFormFieldConfigs: Map<number, FormFieldConfig> = new Map();
+  conditionFormControls: Map<number, FormControl> = new Map();
+
+  addConditionalMode(): void {
+    this.isConditionalModeChange.emit(true);
+  }
+
+  removeConditionalMode(): void {
+    this.isConditionalModeChange.emit(false);
+  }
 
   ngOnInit(): void {
     this.initColorFieldOptions();
-    this.detectSelectedField();
+    this.initializeFormControls();
+  }
+
+  /**
+   * Initialize form controls for existing conditions
+   */
+  private initializeFormControls(): void {
+    const conditionalMappings = this.getConditionalMappings();
+    conditionalMappings.forEach((mapping, index) => {
+      const fieldKey = this.getConditionField(mapping);
+      if (fieldKey) {
+        this.createFormConfigForMapping(mapping, index, fieldKey);
+      }
+    });
+  }
+
+  /**
+   * Get the field key from a condition mapping
+   */
+  getConditionField(mapping: ColorMapping): string | null {
+    if (!mapping?.condition || typeof mapping.condition !== "object") {
+      return null;
+    }
+    const keys = Object.keys(mapping.condition);
+    return keys.length > 0 ? keys[0] : null;
+  }
+
+  /**
+   * Handle condition field selection change
+   */
+  onConditionFieldChange(index: number, fieldKey: string): void {
+    const currentMappings = this.getConditionalMappings();
+    if (index < 0 || index >= currentMappings.length) {
+      return;
+    }
+
+    // Update the condition to use the new field
+    const newCondition = { [fieldKey]: "" };
+    currentMappings[index] = {
+      ...currentMappings[index],
+      condition: newCondition,
+    };
+
+    this.onConditionalMappingsChange([...currentMappings]);
+
+    // Recreate form config for this rule with the new field (deferred to avoid change detection error)
+    setTimeout(() => {
+      this.createFormConfigForMapping(currentMappings[index], index, fieldKey);
+    });
   }
 
   /**
@@ -109,16 +178,56 @@ export class ConditionalColorConfigComponent
   }
 
   /**
-   * Get conditional mappings
+   * Get the conditional color (shared by all conditions)
+   */
+  getConditionalColor(): string {
+    if (!Array.isArray(this.value)) {
+      return "";
+    }
+
+    // Get color from the first conditional mapping (they all share the same color)
+    const firstMapping = this.value.find(
+      (mapping) =>
+        mapping.condition && Object.keys(mapping.condition).length > 0,
+    );
+    return firstMapping?.color || "";
+  }
+
+  /**
+   * Update the conditional color (applies to all conditions)
+   */
+  onConditionalColorChange(newColor: string): void {
+    if (!Array.isArray(this.value)) {
+      return;
+    }
+
+    const updatedMappings = this.value.map((mapping) => {
+      // Update color for all conditional mappings (those with conditions)
+      if (mapping.condition && Object.keys(mapping.condition).length > 0) {
+        return { ...mapping, color: newColor };
+      }
+      // Keep fallback color unchanged
+      return mapping;
+    });
+
+    this.value = updatedMappings;
+    this.onChange(updatedMappings);
+  }
+
+  /**
+   * Get conditional mappings (only those with fields selected)
    */
   getConditionalMappings(): ColorMapping[] {
     if (!Array.isArray(this.value)) {
       return [];
     }
 
+    // Only include mappings that have at least one field in the condition
     return this.value.filter(
       (mapping) =>
-        mapping.condition && Object.keys(mapping.condition).length > 0,
+        mapping.condition &&
+        typeof mapping.condition === "object" &&
+        Object.keys(mapping.condition).length > 0,
     );
   }
 
@@ -145,54 +254,34 @@ export class ConditionalColorConfigComponent
   }
 
   /**
-   * Detect which field is being used from existing conditional mappings.
-   */
-  private detectSelectedField(): void {
-    const conditionalMappings = this.getConditionalMappings();
-    if (conditionalMappings.length === 0) {
-      return;
-    }
-
-    const firstCondition = conditionalMappings[0]?.condition;
-    if (firstCondition && typeof firstCondition === "object") {
-      const fieldKey = Object.keys(firstCondition)[0];
-      if (fieldKey) {
-        this.selectedColorField = fieldKey;
-      }
-    }
-  }
-
-  onColorFieldSelected(fieldKey: string | string[]): void {
-    const selectedField = Array.isArray(fieldKey) ? fieldKey[0] : fieldKey;
-
-    // Reset conditional mappings if field changes
-    if (this.selectedColorField && this.selectedColorField !== selectedField) {
-      this.onConditionalMappingsChange([]);
-    }
-
-    this.selectedColorField = selectedField;
-
-    const currentMappings = this.getConditionalMappings();
-    if (currentMappings.length === 0) {
-      this.addNewRule();
-    }
-  }
-
-  /**
-   * Add a new color mapping rule
+   * Add a new color mapping rule - uses shared conditional color
    */
   addNewRule(): void {
-    if (!this.selectedColorField) {
+    const currentMappings = this.getConditionalMappings();
+
+    // Create a new rule with the first available field selected
+    const defaultField = this.colorFieldOptions[0]?.value || "";
+
+    if (!defaultField) {
+      // No fields available, can't add a condition
       return;
     }
 
-    const currentMappings = this.getConditionalMappings();
+    // Use the shared conditional color
+    const conditionalColor = this.getConditionalColor();
+
     const newMapping: ColorMapping = {
-      condition: { [this.selectedColorField]: "" },
-      color: "",
+      condition: { [defaultField]: "" },
+      color: conditionalColor,
     };
 
+    const newIndex = currentMappings.length;
     this.onConditionalMappingsChange([...currentMappings, newMapping]);
+
+    // Create form config for the new rule
+    setTimeout(() => {
+      this.createFormConfigForMapping(newMapping, newIndex, defaultField);
+    });
   }
 
   /**
@@ -214,7 +303,6 @@ export class ConditionalColorConfigComponent
     };
 
     this.onConditionalMappingsChange([...currentMappings]);
-    this.detectSelectedField();
   }
 
   /**
@@ -244,6 +332,83 @@ export class ConditionalColorConfigComponent
     }
 
     currentMappings.splice(index, 1);
+    this.conditionFormFieldConfigs.delete(index);
+    this.conditionFormControls.delete(index);
     this.onConditionalMappingsChange([...currentMappings]);
+  }
+
+  /**
+   * Create FormFieldConfig for a condition based on the selected field's schema
+   */
+  private createFormConfigForMapping(
+    mapping: ColorMapping,
+    index: number,
+    fieldKey: string,
+  ): void {
+    if (!fieldKey) {
+      return;
+    }
+
+    const fieldSchema = this.entityConstructor?.schema?.get(fieldKey);
+    if (!fieldSchema) {
+      return;
+    }
+
+    // Get the current value from the condition
+    const currentValue = mapping.condition?.[fieldKey];
+
+    // Always recreate FormControl when field changes to ensure subscription uses correct fieldKey
+    const formControl = new FormControl(currentValue);
+    this.conditionFormControls.set(index, formControl);
+
+    // Subscribe to value changes to update the condition (deferred to avoid change detection error)
+    formControl.valueChanges.subscribe((value) => {
+      setTimeout(() => {
+        // Get the current field key from the mapping to ensure we're using the latest
+        const currentMappings = this.getConditionalMappings();
+        const currentMapping = currentMappings[index];
+        if (!currentMapping) return;
+
+        const currentFieldKey = this.getConditionField(currentMapping);
+        if (!currentFieldKey) return;
+
+        const updatedCondition = { [currentFieldKey]: value };
+        this.updateRuleCondition(index, updatedCondition);
+      });
+    });
+
+    // Build the FormFieldConfig
+    const formFieldConfig: FormFieldConfig = {
+      id: fieldKey,
+      editComponent: this.entitySchemaService.getComponent(fieldSchema, "edit"),
+      dataType: fieldSchema.dataType,
+      additional: fieldSchema.additional,
+      label: fieldSchema.label || fieldKey,
+    };
+
+    this.conditionFormFieldConfigs.set(index, formFieldConfig);
+  }
+
+  /**
+   * Open full JSON editor for all conditions
+   */
+  openFullJsonEditor(): void {
+    // This would open a dialog with the full ColorMapping[] array
+    // For now, we can use the existing json-editor-button on each rule
+    console.log("Full JSON editor not yet implemented");
+  }
+
+  /**
+   * Get FormFieldConfig for a specific rule index
+   */
+  getFormFieldConfigForIndex(index: number): FormFieldConfig {
+    return this.conditionFormFieldConfigs.get(index);
+  }
+
+  /**
+   * Get FormControl for a specific rule index
+   */
+  getFormControlForIndex(index: number): FormControl {
+    return this.conditionFormControls.get(index);
   }
 }

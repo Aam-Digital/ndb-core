@@ -37,29 +37,11 @@
             (iconChange)="basicSettingsForm.get('icon').setValue($event)"
           ></app-admin-icon-input>
 
-          <div class="flex-row gap-regular align-center">
-            <app-conditional-color-config
-              class="flex-grow"
-              formControlName="color"
-              [entityConstructor]="entityConstructor"
-              [isConditionalMode]="isConditionalColor"
-            ></app-conditional-color-config>
-
-            <button
-              mat-icon-button
-              type="button"
-              [color]="isConditionalColor ? 'primary' : ''"
-              (click)="toggleConditionalColorMode()"
-              [matTooltip]="
-                isConditionalColor
-                  ? 'Remove conditional colors'
-                  : 'Add conditional colors'
-              "
-              i18n-matTooltip
-            >
-              <fa-icon icon="code-branch"></fa-icon>
-            </button>
-          </div>
+          <app-conditional-color-config
+            formControlName="color"
+            [entityConstructor]="entityConstructor"
+            [(isConditionalMode)]="isConditionalColor"
+          ></app-conditional-color-config>
 
           <mat-checkbox formControlName="enableUserAccounts">
             <span i18n>Enable User Accounts</span>

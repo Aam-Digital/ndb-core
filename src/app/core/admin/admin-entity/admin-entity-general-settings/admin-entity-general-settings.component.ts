@@ -197,29 +197,4 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.isConditionalColor =
       Array.isArray(colorValue) && colorValue.length > 0;
   }
-
-  /**
-   * Toggle conditional color mode
-   */
-  toggleConditionalColorMode() {
-    this.isConditionalColor = !this.isConditionalColor;
-    if (this.isConditionalColor) {
-      const currentColor = this.basicSettingsForm.get("color").value;
-      if (typeof currentColor === "string") {
-        const mappings = currentColor
-          ? [{ condition: {}, color: currentColor }]
-          : [];
-        this.basicSettingsForm.get("color").setValue(mappings);
-      }
-    } else {
-      const colorValue = this.basicSettingsForm.get("color").value;
-      if (Array.isArray(colorValue)) {
-        const fallback = colorValue.find(
-          (mapping) =>
-            mapping.condition && Object.keys(mapping.condition).length === 0,
-        );
-        this.basicSettingsForm.get("color").setValue(fallback?.color || "");
-      }
-    }
-  }
 }
