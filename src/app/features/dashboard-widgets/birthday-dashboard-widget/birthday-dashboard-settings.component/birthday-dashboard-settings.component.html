@@ -21,7 +21,7 @@
             appearance="fill"
             class="full-width remove-margin-bottom"
           >
-            <mat-label i18n>Entity Type</mat-label>
+            <mat-label i18n>Record Type</mat-label>
             <app-entity-type-select
               [ngModel]="pair.entityType"
               (ngModelChange)="onEntityTypeChange($event, i)"
@@ -74,7 +74,7 @@
       <div class="margin-top-regular validation-error">
         <fa-icon icon="exclamation-triangle"></fa-icon>
         <span i18n
-          >Please select both entity type and property for all entries before
+          >Please select both record type and property for all entries before
           saving.</span
         >
       </div>

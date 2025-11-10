@@ -196,7 +196,7 @@ export class Entity {
   static extractEntityIdFromId(id: string): string {
     if (!id || typeof id !== "string") {
       throw new Error(
-        `Invalid entity id provided: ${id}. Expected a non-empty string.`,
+        `Invalid record id provided: ${id}. Expected a non-empty string.`,
       );
     }
     let type: string = undefined;
@@ -204,7 +204,7 @@ export class Entity {
       const split = id.indexOf(":");
       type = id.substring(split + 1);
     } catch (e) {
-      Logging.debug("Error extracting entityId from id", id, e);
+      Logging.debug("Error extracting recordId from id", id, e);
     }
     return type;
   }

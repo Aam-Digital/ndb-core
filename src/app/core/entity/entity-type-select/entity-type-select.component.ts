@@ -22,10 +22,10 @@ export class EntityTypeSelectComponent
 {
   @Input() override multi = false;
   @Input() override placeholder =
-    $localize`:EntityTypeSelect placeholder:Select Entity Type`;
+    $localize`:EntityTypeSelect placeholder:Select Record Type`;
 
   /**
-   * whether to include entity types without a human-readable label
+   * whether to include record types without a human-readable label
    * (usually only used internally for technical purposes)
    */
   @Input() showInternalTypes: boolean = false;

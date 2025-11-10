@@ -25,8 +25,7 @@
   </mat-expansion-panel>
 </mat-dialog-content>
 
-<mat-dialog-actions align="end" class="dialog-actions">
-  <button mat-button (click)="onCancel()" i18n>Cancel</button>
+<mat-dialog-actions class="dialog-actions">
   <button
     mat-raised-button
     color="accent"
@@ -35,6 +34,7 @@
     cdkFocusInitial
     i18n
   >
-    Save
+    Apply
   </button>
+  <button mat-button (click)="onCancel()" i18n>Cancel</button>
 </mat-dialog-actions>
