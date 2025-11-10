@@ -1,9 +1,9 @@
 # Core Module: Default Values
 
-An Entity's fields can have a "default value" configured, which is set while creating a new record (see `EntitySchemaField`).
+A Record's fields can have a "default value" configured, which is set while creating a new record (see `EntitySchemaField`).
 For advanced modes this value can also be updated later on, when the underlying rule is triggered.
 
-See `DefaultValueConfig` for the structure used in the entity schema.
+See `DefaultValueConfig` for the structure used in the record schema.
 
 -----
 This core module provides a framework with entrypoints to implement different default value modes.

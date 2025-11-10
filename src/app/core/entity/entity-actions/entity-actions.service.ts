@@ -140,7 +140,7 @@ export class EntityActionsService {
   ) {
     const snackBarRef = this.snackBar.open(
       message,
-      $localize`:Undo an entity action:Undo`,
+      $localize`:Undo a record action:Undo`,
       {
         duration: 8000,
       },
@@ -149,7 +149,7 @@ export class EntityActionsService {
     // Undo Action
     snackBarRef.onAction().subscribe(async () => {
       const undoProgressRef = this.confirmationDialog.showProgressDialog(
-        $localize`:Undo entity action progress dialog: Reverting changes ...`,
+        $localize`:Undo record action progress dialog: Reverting changes ...`,
       );
       await this.entityMapper.saveAll(previousEntitiesForUndo, true);
       undoProgressRef.close();
@@ -205,7 +205,7 @@ export class EntityActionsService {
     }
 
     const progressDialogRef = this.confirmationDialog.showProgressDialog(
-      $localize`:Entity action progress dialog:Processing ...`,
+      $localize`:Record action progress dialog:Processing ...`,
     );
     let result = new CascadingActionResult();
 
@@ -236,7 +236,7 @@ export class EntityActionsService {
         entities.length > 0
           ? entities
           : [result.originalEntitiesBeforeChange[0]],
-        $localize`:Entity action confirmation message verb:deleted`,
+        $localize`:Record action confirmation message verb:deleted`,
       ),
       result.originalEntitiesBeforeChange,
       currentUrl,
@@ -286,7 +286,7 @@ export class EntityActionsService {
     }
 
     const progressDialogRef = this.confirmationDialog.showProgressDialog(
-      $localize`:Entity action progress dialog:Processing ...`,
+      $localize`:Record action progress dialog:Processing ...`,
     );
     let result = new CascadingActionResult();
     for (let entity of entities) {
@@ -308,7 +308,7 @@ export class EntityActionsService {
         entities.length > 0
           ? entities
           : [result.originalEntitiesBeforeChange[0]],
-        $localize`:Entity action confirmation message verb:anonymized`,
+        $localize`:Record action confirmation message verb:anonymized`,
       ),
       result.originalEntitiesBeforeChange,
     );
@@ -332,7 +332,7 @@ export class EntityActionsService {
     this.showSnackbarConfirmationWithUndo(
       this.generateMessageForConfirmationWithUndo(
         newEntities,
-        $localize`:Entity action confirmation message verb:archived`,
+        $localize`:Record action confirmation message verb:archived`,
       ),
       originalEntities,
     );
@@ -355,7 +355,7 @@ export class EntityActionsService {
     this.showSnackbarConfirmationWithUndo(
       this.generateMessageForConfirmationWithUndo(
         newEntities,
-        $localize`:Entity action confirmation message verb:reactivated`,
+        $localize`:Record action confirmation message verb:reactivated`,
       ),
       originalEntities,
     );
@@ -367,11 +367,11 @@ export class EntityActionsService {
     action: string,
   ): string {
     if (entities.length > 1) {
-      return $localize`:Entity action confirmation message:${entities.length} ${
+      return $localize`:Record action confirmation message:${entities.length} ${
         entities[0].getConstructor().labelPlural
       } ${action}`;
     } else {
-      return $localize`:Entity action confirmation message:${
+      return $localize`:Record action confirmation message:${
         entities[0].getConstructor().label
       } "${entities.toString()}" ${action}`;
     }

@@ -31,7 +31,7 @@ export class AdminOverviewService {
       link: "/admin/conflicts",
     },
     {
-      label: $localize`:admin menu item:Configure Entity Types`,
+      label: $localize`:admin menu item:Configure Record Types`,
       link: "/admin/entity",
     },
     {
