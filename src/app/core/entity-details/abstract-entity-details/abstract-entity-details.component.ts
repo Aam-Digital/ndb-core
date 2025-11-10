@@ -83,7 +83,7 @@ export abstract class AbstractEntityDetailsComponent implements OnChanges {
       );
     } catch (error) {
       if (error?.status !== 404) {
-        Logging.warn("Error loading entity", error);
+        Logging.warn("Error loading record", error);
       }
       this.entity = null;
     }
