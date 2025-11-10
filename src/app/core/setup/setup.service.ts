@@ -74,7 +74,7 @@ export class SetupService {
           await this.entityMapper.save(entity);
         } else {
           Logging.warn(
-            "Invalid entity file. SetupService is skipping to import this.",
+            "Invalid record file. SetupService is skipping to import this.",
             fileName,
             doc,
           );
@@ -95,7 +95,7 @@ export class SetupService {
       Entity.extractTypeFromId(doc["_id"]),
     );
     if (!entityType) {
-      throw new Error("EntityType for entityToImport not found: " + doc["_id"]);
+      throw new Error("RecordType for recordToImport not found: " + doc["_id"]);
     }
 
     const entity = this.schemaService.loadDataIntoEntity(new entityType(), doc);
