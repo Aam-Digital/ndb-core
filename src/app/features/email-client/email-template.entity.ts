@@ -46,7 +46,7 @@ export class EmailTemplate extends Entity {
    * Optional entity types this template is available for.
    */
   @DatabaseField({
-    label: $localize`:EmailTemplate:Available for Entity Type(s)`,
+    label: $localize`:EmailTemplate:Available for Record Type(s)`,
     description: $localize`:EmailTemplate:Select for which records this template is offered. If none are selected, the template is available for all record types.`,
     editComponent: "EditEntityType",
     viewComponent: "DisplayEntityType",
