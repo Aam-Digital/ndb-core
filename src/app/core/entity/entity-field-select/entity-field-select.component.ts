@@ -23,7 +23,7 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
   string
 > {
   @Input() override placeholder: string =
-    $localize`:EntityFieldSelect placeholder:Select Entity Field`;
+    $localize`:EntityFieldSelect placeholder:Select Record Field`;
 
   override optionToString = (option: FormFieldConfig) => option.label;
   override valueMapper = (option: FormFieldConfig) => option.id;

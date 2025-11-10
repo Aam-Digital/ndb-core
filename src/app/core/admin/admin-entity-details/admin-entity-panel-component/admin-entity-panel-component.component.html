@@ -2,7 +2,7 @@
   @if (entityConstructor?.ENTITY_TYPE) {
     <div class="flex-row gap-regular align-center">
       <mat-form-field appearance="fill" class="margin-bottom-regular flex-grow">
-        <mat-label i18n>Entity Type</mat-label>
+        <mat-label i18n>Record Type</mat-label>
         <mat-select
           [(ngModel)]="selectedEntityType"
           (ngModelChange)="onEntityTypeChange($event)"

@@ -46,8 +46,8 @@ export class TemplateExport extends Entity {
    * The entity type(s) this template can be used with (i.e. placeholders matching the entity type)
    */
   @DatabaseField({
-    label: $localize`:TemplateExport:Applicable Entity Types`,
-    labelShort: $localize`:TemplateExport:Entity Types`,
+    label: $localize`:TemplateExport:Applicable Record Types`,
+    labelShort: $localize`:TemplateExport:Record Types`,
     editComponent: "EditEntityType",
     viewComponent: "DisplayEntityType",
     isArray: true,
@@ -60,7 +60,7 @@ export class TemplateExport extends Entity {
    */
   @DatabaseField({
     label: $localize`:TemplateExport:Template File`,
-    description: $localize`:TemplateExport:Upload a specially prepared document that contains placeholders, which will be replace with actual data from a specific entity when generating a PDF.`,
+    description: $localize`:TemplateExport:Upload a specially prepared document that contains placeholders, which will be replace with actual data from a specific record when generating a PDF.`,
     validators: { required: true },
     dataType: TemplateExportFileDatatype.dataType,
     additional: {
