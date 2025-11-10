@@ -67,7 +67,7 @@ export class WidgetComponentSelectComponent implements OnInit {
         },
       },
       {
-        label: $localize`Related-Entity Section`,
+        label: $localize`Related-Record Section`,
         value: {
           title: $localize`:Default title:New Related Section`,
           component: "RelatedEntities",
