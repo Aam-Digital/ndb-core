@@ -64,7 +64,7 @@ export class AdminEntityService {
 
     for (const [fieldId, field] of entityConstructor.schema.entries()) {
       // Skip internal fields that are defined in the base Entity class
-      if (this.isInternalField(fieldId)) {
+      if (field.isInternalField) {
         continue;
       }
       entitySchemaConfig.attributes[fieldId] = field;
@@ -101,21 +101,5 @@ export class AdminEntityService {
     }
 
     return config.data[entityConfigKey];
-  }
-
-  /**
-   * Determines if a field is an internal system field that should not be saved to the config.
-   * Examples: _id, _rev, created, updated, inactive, anonymized
-   */
-  private isInternalField(fieldName: string): boolean {
-    const internalFields = new Set([
-      "_id",
-      "_rev",
-      "created",
-      "updated",
-      "inactive",
-      "anonymized",
-    ]);
-    return internalFields.has(fieldName);
   }
 }
