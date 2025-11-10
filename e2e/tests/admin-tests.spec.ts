@@ -58,7 +58,7 @@ test("Edit existing Name field to set and reset default value", async ({
 
   await argosScreenshot(page, "admin-details-edit-field-advanced-options");
 
-  await dialog.getByRole("button", { name: "Save", exact: true }).click();
+  await dialog.getByRole("button", { name: "Apply", exact: true }).click();
   await expect(dialog).not.toBeVisible();
 
   await page.waitForTimeout(500);
@@ -77,7 +77,7 @@ test("Edit existing Name field to set and reset default value", async ({
   );
   await clearDefaultButton.click();
   await expect(defaultValueControl).toHaveValue("");
-  await dialog.getByRole("button", { name: "Save", exact: true }).click();
+  await dialog.getByRole("button", { name: "Apply", exact: true }).click();
   await expect(dialog).not.toBeVisible();
 
   await page.getByRole("button", { name: "Save" }).first().click();
