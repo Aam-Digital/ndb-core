@@ -114,13 +114,13 @@ export class ImportExistingService {
         );
         const rawImportValue = rawImportEntity[idField];
 
+        // If either value is null/undefined, don't match - identifier must have a value
+        if (rawExistingValue == null || rawImportValue == null) {
+          return false;
+        }
+
         // Compare the "database formats" (to match complex values like dates)
-        // Also allow match if both values are undefined/null (both records missing the field)
-        return (
-          rawExistingValue === rawImportValue ||
-          (rawExistingValue == null && rawImportValue == null) ||
-          !e.hasOwnProperty(idField)
-        );
+        return rawExistingValue === rawImportValue;
       }),
     );
   }
