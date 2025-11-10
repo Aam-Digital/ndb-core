@@ -1,7 +1,7 @@
 <div class="conditional-color-config">
   <div class="flex-row gap-regular align-center">
     <app-color-input
-      [color]="getStaticColor()"
+      [color]="staticColor"
       (colorChange)="onStaticColorChange($event)"
     ></app-color-input>
 
@@ -26,19 +26,19 @@
       <div class="margin-bottom-regular">
         <label class="mat-body-2" i18n>Conditional Color</label>
         <app-color-input
-          [color]="getConditionalColor()"
+          [color]="conditionalColor"
           (colorChange)="onConditionalColorChange($event)"
         ></app-color-input>
       </div>
 
       <div class="rules-list flex-column gap-small padding-regular">
-        @for (mapping of getConditionalMappings(); track $index) {
+        @for (condition of conditionalMappings; track $index) {
           <div class="rule-item">
             <div class="flex-row gap-regular align-center">
               <mat-form-field class="flex-grow">
                 <mat-label i18n>Condition Field</mat-label>
                 <mat-select
-                  [value]="getConditionField(mapping)"
+                  [value]="getConditionField(condition)"
                   (valueChange)="onConditionFieldChange($index, $event)"
                 >
                   @for (option of colorFieldOptions; track option.value) {
@@ -49,12 +49,14 @@
                 </mat-select>
               </mat-form-field>
 
-              @if (getFormFieldConfigForIndex($index)) {
-                <mat-form-field class="flex-grow">
-                  <mat-label i18n>Condition Target Value</mat-label>
+              @if (conditionFormFieldConfigs.get($index)) {
+                <mat-form-field class="flex-grow" >
+                  <mat-label>{{
+                    conditionFormFieldConfigs.get($index).label
+                  }}</mat-label>
                   <app-dynamic-edit
-                    [formFieldConfig]="getFormFieldConfigForIndex($index)"
-                    [formControl]="getFormControlForIndex($index)"
+                    [formFieldConfig]="conditionFormFieldConfigs.get($index)"
+                    [formControl]="conditionFormControls.get($index)"
                   ></app-dynamic-edit>
                 </mat-form-field>
               }
