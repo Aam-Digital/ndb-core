@@ -69,13 +69,13 @@ export class AdminEntityTypesComponent implements OnInit {
   }
 
   async create() {
-    const name = prompt("Please enter entity type name:");
+    const name = prompt("Please enter record type name:");
     if (!name) {
       return;
     }
     const id = generateIdFromLabel(name);
     if (this.entityTypeExists(id)) {
-      alert("Entity type already exists.");
+      alert("Record type already exists.");
       return;
     }
 
