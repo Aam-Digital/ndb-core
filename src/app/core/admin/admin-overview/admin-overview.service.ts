@@ -47,7 +47,7 @@ export class AdminOverviewService {
   private readonly _sections: AdminSection[] = [
     {
       id: "subscription",
-      title: $localize`:admin section:Subscription (only to be visible in SAAS hosting environment)`,
+      title: $localize`:admin section:Subscription`,
       description: $localize`:admin section description:Manage your subscription details, privacy settings, and access to advanced features.`,
       expanded: false,
       items: [
