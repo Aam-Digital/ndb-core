@@ -5,7 +5,7 @@
   you know what you are doing.
 </p>
 
-<mat-accordion class="admin-sections" multi>
+<mat-accordion class="admin-sections margin-top-large" multi>
   @for (section of adminOverviewService.sections; track section.id) {
     <!-- Hide subscription section if not in SaaS environment -->
     @if (section.id !== "subscription" || isSaasEnvironment()) {

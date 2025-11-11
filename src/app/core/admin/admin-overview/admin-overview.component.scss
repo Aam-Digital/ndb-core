@@ -1,9 +1,6 @@
-@use "../../../../styles/variables/colors";
 @use "../../../../styles/variables/sizes";
 
 .admin-sections {
-  margin-top: sizes.$large;
-
   .section-nav-list {
     margin: 0;
     padding: 0;

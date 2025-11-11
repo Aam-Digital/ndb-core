@@ -8,6 +8,8 @@ import { importProvidersFrom } from "@angular/core";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { AdminOverviewComponent } from "./admin-overview.component";
 import { AdminOverviewService } from "./admin-overview.service";
+import { AdminSection } from "./admin-section.interface";
+import { DEFAULT_ADMIN_SECTIONS } from "./admin-overview-sections";
 import { AlertService } from "../../alerts/alert.service";
 import { BackupService } from "../backup/backup.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -105,6 +107,36 @@ export const Primary = {
   args: {},
 };
 
+// Create extended sections for story demonstration
+const EXTENDED_SECTIONS: AdminSection[] = [
+  ...DEFAULT_ADMIN_SECTIONS.map((section) => {
+    if (section.id === "configuration") {
+      return {
+        ...section,
+        items: [
+          ...section.items,
+          { label: "Custom Field 1", link: "/admin/custom1" },
+          { label: "Custom Field 2", link: "/admin/custom2" },
+        ],
+      };
+    }
+    if (section.id === "templates") {
+      return {
+        ...section,
+        items: [
+          { label: "Email Templates", link: "/admin/email-templates" },
+          {
+            label: "Export Templates (PDF Generation)",
+            link: "/admin/export-templates",
+          },
+          { label: "Public Forms", link: "/admin/public-forms" },
+        ],
+      };
+    }
+    return section;
+  }),
+];
+
 export const WithExtendedSections = {
   render: Template,
   args: {},
@@ -114,91 +146,7 @@ export const WithExtendedSections = {
         {
           provide: AdminOverviewService,
           useValue: {
-            sections: [
-              {
-                id: "subscription",
-                title: "Subscription",
-                description:
-                  "Set up the core elements that define how your system works and communicates.",
-                expanded: false,
-                items: [
-                  {
-                    label: "Subscription Info",
-                    link: "/admin/subscription-info",
-                  },
-                  {
-                    label: "Advanced Features",
-                    link: "/admin/advanced-features",
-                  },
-                  { label: "Data Privacy", link: "/admin/data-privacy" },
-                ],
-              },
-              {
-                id: "configuration",
-                title: "Configuration and Site-wide Settings",
-                description:
-                  "Set up the core elements that define how your system works and communicates.",
-                expanded: true,
-                items: [
-                  { label: "Site Settings", link: "/admin/site-settings" },
-                  {
-                    label: "Data Structures & Entity Types",
-                    link: "/admin/entity",
-                  },
-                  { label: "Main Navigation Menu", link: "/admin/menu" },
-                  { label: "Setup Wizard", link: "/admin/setup-wizard" },
-                  { label: "Custom Field 1", link: "/admin/custom1" },
-                  { label: "Custom Field 2", link: "/admin/custom2" },
-                ],
-              },
-              {
-                id: "templates",
-                title: "Templates and Forms",
-                description:
-                  "Define user access, site configuration, and initial setup.",
-                expanded: false,
-                items: [
-                  { label: "Email Templates", link: "/admin/email-templates" },
-                  {
-                    label: "Export Templates (PDF Generation)",
-                    link: "/admin/export-templates",
-                  },
-                  { label: "Public Forms", link: "/admin/public-forms" },
-                ],
-              },
-              {
-                id: "user-management",
-                title: "User Management",
-                description:
-                  "Setup integrations, application data, and system diagnostics.",
-                expanded: false,
-                items: [
-                  { label: "User Roles", link: "/admin/user-roles" },
-                  {
-                    label: "Manage User Accounts",
-                    link: "/user",
-                  },
-                ],
-              },
-              {
-                id: "export-backups",
-                title: "Export and Backups",
-                description:
-                  "Manage data privacy, security controls and audit trails.",
-                expanded: false,
-                items: [],
-              },
-              {
-                id: "technical",
-                title: "Technical Administration",
-                description:
-                  "Find helpful articles and documentation to guide your setup and manage system effectively.",
-                expanded: false,
-                items: [
-                  { label: "Database Conflicts", link: "/admin/conflicts" },
-                ],
-              },
-            ],
+            sections: EXTENDED_SECTIONS,
             addMenuItems: () => {},
             addMenuItem: () => {},
             setSectionExpanded: () => {},
