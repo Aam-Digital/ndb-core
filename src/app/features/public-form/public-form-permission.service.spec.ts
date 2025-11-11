@@ -81,6 +81,17 @@ describe("PublicFormPermissionService", () => {
     expect(result).toBeFalse();
   });
 
+  it("should deny access when public role has read permission but not create permission", async () => {
+    const permissionsConfig = new Config(Config.PERMISSION_KEY, {
+      public: [{ subject: "Child", action: "read" }],
+    });
+    mockEntityMapper.load.and.resolveTo(permissionsConfig);
+
+    const result = await service.hasPublicCreatePermission("Child");
+
+    expect(result).toBeFalse();
+  });
+
   it("should detect admin permission when user has admin_app role", () => {
     mockSessionSubject.next({ roles: ["admin_app", "user"] });
 
@@ -152,5 +163,27 @@ describe("PublicFormPermissionService", () => {
     await service.addPublicCreatePermission("Child");
 
     expect(mockEntityMapper.save).not.toHaveBeenCalled();
+  });
+
+  it("should add create permission when only read permission exists", async () => {
+    const existingConfig = new Config(Config.PERMISSION_KEY, {
+      public: [{ subject: "Child", action: "read" }],
+    });
+    mockEntityMapper.load.and.resolveTo(existingConfig);
+    mockEntityMapper.save.and.resolveTo(undefined);
+
+    await service.addPublicCreatePermission("Child");
+
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        data: {
+          public: [
+            { subject: "Child", action: "read" },
+            { subject: "Child", action: "create" },
+          ],
+        },
+      }),
+      true,
+    );
   });
 });
