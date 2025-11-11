@@ -20,7 +20,7 @@
     </mat-label>
     <mat-select
       [(value)]="selectedReferenceField"
-      matTooltip="Select the field in the related entity that links it to this entity. For example, if a child's field is updated based on a school's value, this is the field in the school entity that references the child."
+      matTooltip="Select the field in the related record that links it to this record. For example, if a child's field is updated based on a school's value, this is the field in the school record that references the child."
       i18n-matTooltip
     >
       @for (field of availableReferenceFields; track field) {
@@ -42,7 +42,7 @@
     <mat-select
       [(value)]="selectedTriggerField"
       (selectionChange)="loadtriggerFieldValues($event.value)"
-      matTooltip="Choose the field in the related entity that will trigger updates to this field when it is changed."
+      matTooltip="Choose the field in the related record that will trigger updates to this field when it is changed."
       i18n-matTooltip
     >
       @for (field of availableTriggerFields; track field.id) {
@@ -50,7 +50,7 @@
       } @empty {
         <mat-option
           class="no-options-message"
-          matTooltip='The trigger field on the other, related entity must be of type "dropdown". It seems there are no such field on that record type.'
+          matTooltip='The trigger field on the other, related record must be of type "dropdown". It seems there are no such field on that record type.'
           i18n-matTooltip
           i18n
           >No suitable fields available in
