@@ -63,11 +63,8 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
 
   async saveClicked() {
     try {
-      // Check if this is a new PublicFormConfig and needs permission checking
-      if (
-        this.entity.getType() === PublicFormConfig.ENTITY_TYPE &&
-        this.entity.isNew
-      ) {
+      // Check if this is a PublicFormConfig and needs permission checking
+      if (this.entity.getType() === PublicFormConfig.ENTITY_TYPE) {
         const canProceed = await this.checkPublicFormPermissions();
         if (!canProceed) return; // User cancelled or there was an error
       }
@@ -104,18 +101,24 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
 
     const hasPermission =
       await this.permissionService.hasPublicCreatePermission(entityType);
+
+    if (hasPermission) return true;
+
     const canAddPermissions = this.permissionService.hasAdminPermission();
 
-    if (!hasPermission && canAddPermissions) {
-      return await this.handleMissingPermission(entityType);
+    if (canAddPermissions) {
+      return await this.handleMissingPermissionAdmin(entityType);
+    } else {
+      return await this.handleMissingPermissionNonAdmin(entityType);
     }
-    return true; // No permission issue or user can't add permissions
   }
 
   /**
-   * Handle missing permission with user confirmation
+   * Handle missing permission with user confirmation (Admin version)
    */
-  private async handleMissingPermission(entityType: string): Promise<boolean> {
+  private async handleMissingPermissionAdmin(
+    entityType: string,
+  ): Promise<boolean> {
     const customButtons = [
       {
         text: $localize`Update Permission & Save Form`,
@@ -162,6 +165,46 @@ Would you like to add the required permission automatically?`,
     }
 
     // User cancelled the dialog
+    return false;
+  }
+
+  /**
+   * Handle missing permission for non-admin users
+   */
+  private async handleMissingPermissionNonAdmin(
+    entityType: string,
+  ): Promise<boolean> {
+    const customButtons = [
+      {
+        text: $localize`Save Form Anyway`,
+        dialogResult: "save-anyway",
+        click() {},
+      },
+      {
+        text: $localize`Cancel`,
+        dialogResult: "cancel",
+        click() {},
+      },
+    ];
+
+    const result = await this.confirmationDialog.getConfirmation(
+      $localize`Missing Public Permission`,
+      $localize`This public form won't work because public users don't have permission to create "${entityType}" records.
+
+You need an administrator to add the required permissions. Do you still want to save this form?`,
+      customButtons,
+      true,
+    );
+
+    if (result === "save-anyway") {
+      // Allow saving the form even without permissions
+      this.alertService.addWarning(
+        $localize`This form will not work until an administrator adds create permissions for ${entityType} records.`,
+      );
+      return true;
+    }
+
+    // User cancelled
     return false;
   }
 }
