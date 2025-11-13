@@ -88,6 +88,13 @@ export class ConditionalColorConfigComponent
 
   removeConditionalMode(): void {
     this.isConditionalModeChange.emit(false);
+
+    // Remove all conditional sections and keep only the static color
+    if (Array.isArray(this.value)) {
+      const currentStaticColor = this.staticColor;
+      this.value = currentStaticColor;
+      this.onChange(this.value);
+    }
   }
 
   /**
@@ -143,35 +150,10 @@ export class ConditionalColorConfigComponent
   }
 
   /**
-   * Handle condition added to a section
+   * Handle any change in conditional sections that requires value update
    */
-  onConditionAdded(sectionIndex: number): void {
+  onConditionChange(): void {
     this.updateValue();
-  }
-
-  /**
-   * Handle condition deleted from a section
-   */
-  onConditionDeleted(sectionIndex: number, conditionIndex: number): void {
-    this.updateValue();
-  }
-
-  /**
-   * Handle condition field changed in a section
-   */
-  onConditionFieldChanged(
-    sectionIndex: number,
-    conditionIndex: number,
-    fieldKey: string,
-  ): void {
-    this.updateValue();
-  }
-
-  /**
-   * Get the field key from a condition object
-   */
-  getConditionField(condition: any): string {
-    return Object.keys(condition || {})[0] || "";
   }
 
   ngOnInit(): void {

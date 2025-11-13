@@ -3,33 +3,6 @@
   border-radius: 8px;
 }
 
-.conditional-section {
-  background-color: var(--mdc-outlined-card-container-color, #f5f5f5);
-  border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-}
-
-.section-header {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  padding-bottom: 8px;
-}
-
-.conditions-list {
-  background-color: #fefefe;
-  border-radius: 4px;
-}
-
-.condition-item {
-  padding: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 4px;
-  background-color: white;
-}
-
-.add-condition-button {
-  align-self: flex-start;
-}
-
 .add-section-container {
   display: flex;
   gap: 12px;

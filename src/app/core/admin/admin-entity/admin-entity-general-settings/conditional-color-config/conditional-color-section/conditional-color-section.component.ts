@@ -40,9 +40,7 @@ export class ConditionalColorSectionComponent implements OnInit {
 
   @Output() colorChange = new EventEmitter<string>();
   @Output() deleteSection = new EventEmitter<void>();
-  @Output() conditionAdded = new EventEmitter<void>();
-  @Output() conditionDeleted = new EventEmitter<number>();
-  @Output() conditionFieldChanged = new EventEmitter<{ conditionIndex: number; fieldKey: string }>();
+  @Output() conditionChange = new EventEmitter<void>();
 
   private entitySchemaService = inject(EntitySchemaService);
 
@@ -64,41 +62,6 @@ export class ConditionalColorSectionComponent implements OnInit {
   }
 
   /**
-   * Handle color change for this section
-   */
-  onColorChange(newColor: string): void {
-    this.colorChange.emit(newColor);
-  }
-
-  /**
-   * Handle delete section
-   */
-  onDeleteSection(): void {
-    this.deleteSection.emit();
-  }
-
-  /**
-   * Handle add condition to this section
-   */
-  onAddCondition(): void {
-    this.addConditionToSection();
-  }
-
-  /**
-   * Handle delete condition from this section
-   */
-  onDeleteCondition(conditionIndex: number): void {
-    this.deleteConditionFromSection(conditionIndex);
-  }
-
-  /**
-   * Handle condition field change
-   */
-  onConditionFieldChange(conditionIndex: number, fieldKey: string): void {
-    this.onConditionFieldChangeInternal(conditionIndex, fieldKey);
-  }
-
-  /**
    * Get the field key from a condition object
    */
   getConditionField(condition: any): string {
@@ -108,19 +71,19 @@ export class ConditionalColorSectionComponent implements OnInit {
   /**
    * Add a condition to this section
    */
-  private addConditionToSection(): void {
+  addCondition(): void {
     if (!(this.section.condition as any).$or) {
       (this.section.condition as any).$or = [];
     }
 
     (this.section.condition as any).$or.push({});
-    this.conditionAdded.emit();
+    this.conditionChange.emit();
   }
 
   /**
    * Delete a condition from this section
    */
-  private deleteConditionFromSection(conditionIndex: number): void {
+  deleteCondition(conditionIndex: number): void {
     const conditions = this.conditions;
     if (conditionIndex < 0 || conditionIndex >= conditions.length) return;
 
@@ -131,13 +94,13 @@ export class ConditionalColorSectionComponent implements OnInit {
     this.conditionFormFieldConfigs.delete(key);
     this.conditionFormControls.delete(key);
 
-    this.conditionDeleted.emit(conditionIndex);
+    this.conditionChange.emit();
   }
 
   /**
    * Handle condition field change
    */
-  private onConditionFieldChangeInternal(conditionIndex: number, fieldKey: string): void {
+  onConditionFieldChange(conditionIndex: number, fieldKey: string): void {
     const conditions = this.conditions;
     if (conditionIndex < 0 || conditionIndex >= conditions.length) return;
 
@@ -148,7 +111,7 @@ export class ConditionalColorSectionComponent implements OnInit {
     condition[fieldKey] = null;
 
     this.createFormConfigForCondition(conditionIndex, fieldKey);
-    this.conditionFieldChanged.emit({ conditionIndex, fieldKey });
+    this.conditionChange.emit();
   }
 
   /**

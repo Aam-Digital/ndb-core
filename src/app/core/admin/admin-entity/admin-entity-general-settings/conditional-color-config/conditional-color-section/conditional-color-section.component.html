@@ -3,13 +3,13 @@
     <label class="mat-body-2" i18n>Conditional Color {{ sectionIndex + 1 }}</label>
     <app-color-input
       [color]="section.color"
-      (colorChange)="onColorChange($event)"
+      (colorChange)="colorChange.emit($event)"
     ></app-color-input>
     <button
       mat-icon-button
       type="button"
       color="warn"
-      (click)="onDeleteSection()"
+      (click)="deleteSection.emit()"
       matTooltip="Delete conditional color section"
       i18n-matTooltip
     >
@@ -56,7 +56,7 @@
             mat-icon-button
             type="button"
             color="warn"
-            (click)="onDeleteCondition(conditionIdx)"
+            (click)="deleteCondition(conditionIdx)"
             matTooltip="Delete condition"
             i18n-matTooltip
           >
@@ -69,7 +69,7 @@
       <button
         mat-stroked-button
         type="button"
-        (click)="onAddCondition()"
+        (click)="addCondition()"
         class="add-condition-button"
       >
         <fa-icon icon="plus" class="standard-icon-with-text"></fa-icon>

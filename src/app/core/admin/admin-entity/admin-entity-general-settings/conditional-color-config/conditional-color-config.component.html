@@ -34,9 +34,7 @@
           [conditionFormControls]="conditionFormControls"
           (colorChange)="updateConditionalSectionColor($index, $event)"
           (deleteSection)="deleteConditionalColorSection($index)"
-          (conditionAdded)="onConditionAdded($index)"
-          (conditionDeleted)="onConditionDeleted($index, $event)"
-          (conditionFieldChanged)="onConditionFieldChanged($index, $event.conditionIndex, $event.fieldKey)"
+          (conditionChange)="onConditionChange()"
         ></app-conditional-color-section>
       }
 
