@@ -52,6 +52,8 @@ export class ConditionalColorSectionComponent implements OnInit {
   private entitySchemaService = inject(EntitySchemaService);
 
   ngOnInit(): void {
+    if (!this.entityConstructor) return;
+
     this.conditions.forEach((condition, index) => {
       const fieldKey = this.getConditionField(condition);
       if (fieldKey) {

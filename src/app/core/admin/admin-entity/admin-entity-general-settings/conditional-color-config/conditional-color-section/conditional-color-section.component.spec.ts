@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormControl } from "@angular/forms";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ConditionalColorSectionComponent } from "./conditional-color-section.component";
 import { ColorMapping } from "app/core/entity/model/entity";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { ComponentRegistry } from "#src/app/dynamic-components";
 
 describe("ConditionalColorSectionComponent", () => {
   let component: ConditionalColorSectionComponent;
@@ -23,17 +23,18 @@ describe("ConditionalColorSectionComponent", () => {
 
   const mockFormFieldConfig: FormFieldConfig = {
     id: "status",
-    editComponent: null,
-    dataType: null,
+    editComponent: "EditComponent",
     label: "Status",
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        ConditionalColorSectionComponent,
-        NoopAnimationsModule,
-        FontAwesomeTestingModule,
+      imports: [ConditionalColorSectionComponent, FontAwesomeTestingModule],
+      providers: [
+        {
+          provide: ComponentRegistry,
+          useValue: {},
+        },
       ],
     }).compileComponents();
 

@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ConditionalColorConfigComponent } from "./conditional-color-config.component";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ColorMapping } from "app/core/entity/model/entity";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -11,11 +10,7 @@ describe("ConditionalColorConfigComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        ConditionalColorConfigComponent,
-        NoopAnimationsModule,
-        FontAwesomeTestingModule,
-      ],
+      imports: [ConditionalColorConfigComponent, FontAwesomeTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ConditionalColorConfigComponent);
@@ -34,7 +29,7 @@ describe("ConditionalColorConfigComponent", () => {
 
   it("should detect selected field from existing value", () => {
     const testMappings: ColorMapping[] = [
-      { condition: { status: "active" }, color: "#00FF00" },
+      { condition: { $or: [{ status: "active" }] }, color: "#00FF00" },
     ];
 
     component.writeValue(testMappings);
@@ -52,7 +47,7 @@ describe("ConditionalColorConfigComponent", () => {
 
     expect(Array.isArray(component.value)).toBe(true);
     expect(component.value.length).toBe(2);
-    expect(component.value[1]).toEqual({ condition: { $or: [] }, color: "" });
+    expect(component.value[1]).toEqual({ condition: { $or: [{}] }, color: "" });
   });
 
   it("should update conditional section color", () => {
