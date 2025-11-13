@@ -81,28 +81,28 @@ describe("ConditionalColorSectionComponent", () => {
     expect(component.deleteSection.emit).toHaveBeenCalled();
   });
 
-  it("should emit addCondition when add condition button is clicked", () => {
-    spyOn(component.addCondition, "emit");
+  it("should emit conditionAdded when add condition button is clicked", () => {
+    spyOn(component.conditionAdded, "emit");
 
     component.onAddCondition();
 
-    expect(component.addCondition.emit).toHaveBeenCalled();
+    expect(component.conditionAdded.emit).toHaveBeenCalled();
   });
 
-  it("should emit deleteCondition when condition is deleted", () => {
-    spyOn(component.deleteCondition, "emit");
+  it("should emit conditionDeleted when condition is deleted", () => {
+    spyOn(component.conditionDeleted, "emit");
 
     component.onDeleteCondition(0);
 
-    expect(component.deleteCondition.emit).toHaveBeenCalledWith(0);
+    expect(component.conditionDeleted.emit).toHaveBeenCalledWith(0);
   });
 
-  it("should emit conditionFieldChange when condition field changes", () => {
-    spyOn(component.conditionFieldChange, "emit");
+  it("should emit conditionFieldChanged when condition field changes", () => {
+    spyOn(component.conditionFieldChanged, "emit");
 
     component.onConditionFieldChange(0, "name");
 
-    expect(component.conditionFieldChange.emit).toHaveBeenCalledWith({
+    expect(component.conditionFieldChanged.emit).toHaveBeenCalledWith({
       conditionIndex: 0,
       fieldKey: "name",
     });

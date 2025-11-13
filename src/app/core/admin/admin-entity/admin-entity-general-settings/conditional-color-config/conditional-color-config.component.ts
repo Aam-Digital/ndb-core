@@ -92,10 +92,10 @@ export class ConditionalColorConfigComponent
       this.value = [{ condition: {}, color: this.staticColor }];
     }
     
-    // Add new conditional section with empty $or conditions
+    // Add new conditional section with one empty condition to start
     const newSection: ColorMapping = {
-      condition: { $or: [] },
-      color: ""
+      condition: { $or: [{}] }, // Initialize with one empty condition
+      color: "#FFFFFF" // Default white color
     };
     
     this.value = [...this.value, newSection];

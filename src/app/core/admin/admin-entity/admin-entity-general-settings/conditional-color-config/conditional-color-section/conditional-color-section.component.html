@@ -1,5 +1,5 @@
-<div class="conditional-section flex-column gap-regular padding-regular border-regular">
-  <div class="section-header flex-row gap-regular align-center">
+<div class="conditional-section flex-column  border-regular">
+  <div class=" flex-row  align-center">
     <label class="mat-body-2" i18n>Conditional Color {{ sectionIndex + 1 }}</label>
     <app-color-input
       [color]="section.color"
@@ -18,29 +18,63 @@
   </div>
 
   <!-- Conditions for this section -->
-  <div class="conditions-list flex-column gap-small">
-    @for (condition of conditions; track condition; let conditionIdx = $index) {
-      <app-condition-item
-        [sectionIndex]="sectionIndex"
-        [conditionIndex]="conditionIdx"
-        [condition]="condition"
-        [colorFieldOptions]="colorFieldOptions"
-        [formFieldConfig]="conditionFormFieldConfigs.get(sectionIndex + '-' + conditionIdx)"
-        [formControl]="conditionFormControls.get(sectionIndex + '-' + conditionIdx)"
-        (deleteCondition)="onDeleteCondition(conditionIdx)"
-        (conditionFieldChange)="onConditionFieldChange(conditionIdx, $event)"
-      ></app-condition-item>
-    }
+  <div class="conditions-container">
+    <div class="conditions-list flex-column">
+      @for (condition of conditions; track condition; let conditionIdx = $index) {
+        <div class="condition-item flex-row gap-regular align-center">
+          <!-- Field Selector -->
+          <mat-form-field class="field-selector">
+            <mat-label i18n>Field</mat-label>
+            <mat-select
+              [value]="getConditionField(condition)"
+              (selectionChange)="onConditionFieldChange(conditionIdx, $event.value)"
+            >
+              <mat-option [value]="null" i18n>Select field</mat-option>
+              @for (option of colorFieldOptions; track option.value) {
+                <mat-option [value]="option.value">
+                  {{ option.label }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
 
-    <!-- Add Condition Button for this section -->
-    <button
-      mat-stroked-button
-      type="button"
-      (click)="onAddCondition()"
-      class="add-condition-button"
-    >
-      <fa-icon icon="plus" class="standard-icon-with-text"></fa-icon>
-      <span i18n>Add Condition</span>
-    </button>
+          <!-- Value Input -->
+          @if (conditionFormFieldConfigs.get(sectionIndex + '-' + conditionIdx); as formFieldConfig) {
+            @if (conditionFormControls.get(sectionIndex + '-' + conditionIdx); as formControl) {
+              <mat-form-field class="value-input" floatLabel="always">
+                <mat-label>{{ formFieldConfig.label }}</mat-label>
+                <app-dynamic-edit
+                  [formFieldConfig]="formFieldConfig"
+                  [formControl]="formControl"
+                ></app-dynamic-edit>
+              </mat-form-field>
+            }
+          }
+
+          <!-- Delete Button -->
+          <button
+            mat-icon-button
+            type="button"
+            color="warn"
+            (click)="onDeleteCondition(conditionIdx)"
+            matTooltip="Delete condition"
+            i18n-matTooltip
+          >
+            <fa-icon icon="trash"></fa-icon>
+          </button>
+        </div>
+      }
+
+      <!-- Add Condition Button for this section -->
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="onAddCondition()"
+        class="add-condition-button"
+      >
+        <fa-icon icon="plus" class="standard-icon-with-text"></fa-icon>
+        <span i18n>Add Condition</span>
+      </button>
+    </div>
   </div>
 </div>

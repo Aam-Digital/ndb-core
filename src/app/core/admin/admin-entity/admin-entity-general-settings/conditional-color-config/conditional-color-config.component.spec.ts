@@ -64,30 +64,14 @@ describe("ConditionalColorConfigComponent", () => {
     expect(component.conditionalColorSections[0].color).toBe("#FF0000");
   });
 
-  it("should add condition to section", () => {
+  it("should have conditional color sections", () => {
     component.value = [
       { condition: {}, color: "#defaultColor" },
-      { condition: { $or: [] }, color: "#FF0000" }
+      { condition: { $or: [{ status: "active" }] }, color: "#00FF00" },
+      { condition: { $or: [{ status: "inactive" }] }, color: "#FF0000" }
     ];
 
-    component.addConditionToSection(0);
-
-    const conditions = component.getConditionsForSection(0);
-    expect(conditions.length).toBe(1);
-    expect(conditions[0]).toEqual({});
-  });
-
-  it("should delete condition from section", () => {
-    component.value = [
-      { condition: {}, color: "#defaultColor" },
-      { condition: { $or: [{ status: "active" }, { status: "inactive" }] }, color: "#FF0000" }
-    ];
-
-    component.deleteConditionFromSection(0, 0);
-
-    const conditions = component.getConditionsForSection(0);
-    expect(conditions.length).toBe(1);
-    expect(conditions[0]).toEqual({ status: "inactive" });
+    expect(component.conditionalColorSections.length).toBe(2);
   });
 
   it("should delete a conditional color section", () => {

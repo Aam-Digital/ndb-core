@@ -1,16 +1,16 @@
-import { Component, Input, Output, EventEmitter, inject } from "@angular/core";
+import { Component, Input, Output, EventEmitter, inject, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { FormControl } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { ColorMapping, EntityConstructor } from "app/core/entity/model/entity";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ColorInputComponent } from "app/color-input/color-input.component";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
-import { ConditionItemComponent } from "../condition-item/condition-item.component";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { DynamicEditComponent } from "app/core/entity/entity-field-edit/dynamic-edit/dynamic-edit.component";
 
 /**
  * Component for managing a single conditional color section
@@ -26,10 +26,11 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
     MatTooltipModule,
     FontAwesomeModule,
     ColorInputComponent,
-    ConditionItemComponent,
+    DynamicEditComponent,
+    ReactiveFormsModule,
   ],
 })
-export class ConditionalColorSectionComponent {
+export class ConditionalColorSectionComponent implements OnInit {
   @Input() sectionIndex!: number;
   @Input() section!: ColorMapping;
   @Input() entityConstructor!: EntityConstructor;
@@ -44,6 +45,16 @@ export class ConditionalColorSectionComponent {
   @Output() conditionFieldChanged = new EventEmitter<{ conditionIndex: number; fieldKey: string }>();
 
   private entitySchemaService = inject(EntitySchemaService);
+
+  ngOnInit(): void {
+    // Initialize form controls for existing conditions
+    this.conditions.forEach((condition, index) => {
+      const fieldKey = this.getConditionField(condition);
+      if (fieldKey) {
+        this.createFormConfigForCondition(index, fieldKey);
+      }
+    });
+  }
 
   /**
    * Get the conditions array for this section
