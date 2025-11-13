@@ -22,74 +22,44 @@
   </div>
 
   @if (isConditionalMode) {
-    <div class="conditional-section flex-column gap-regular padding-regular">
-      <div class="margin-bottom-regular">
-        <label class="mat-body-2" i18n>Conditional Color</label>
-        <app-color-input
-          [color]="conditionalColor"
-          (colorChange)="onConditionalColorChange($event)"
-        ></app-color-input>
-      </div>
+    <div class="conditional-sections flex-column gap-regular padding-regular">
+      <!-- Each Conditional Color Section -->
+      @for (section of conditionalColorSections; track $index) {
+        <app-conditional-color-section
+          [sectionIndex]="$index"
+          [section]="section"
+          [entityConstructor]="entityConstructor"
+          [colorFieldOptions]="colorFieldOptions"
+          [conditionFormFieldConfigs]="conditionFormFieldConfigs"
+          [conditionFormControls]="conditionFormControls"
+          (colorChange)="updateConditionalSectionColor($index, $event)"
+          (deleteSection)="deleteConditionalColorSection($index)"
+          (conditionAdded)="onConditionAdded($index)"
+          (conditionDeleted)="onConditionDeleted($index, $event)"
+          (conditionFieldChanged)="onConditionFieldChanged($index, $event.conditionIndex, $event.fieldKey)"
+        ></app-conditional-color-section>
+      }
 
-      <div class="rules-list flex-column gap-small padding-regular">
-        @for (condition of conditionalMappings; track $index) {
-          <div class="rule-item">
-            <div class="flex-row gap-regular align-center">
-              <mat-form-field class="flex-grow">
-                <mat-label i18n>Condition Field</mat-label>
-                <mat-select
-                  [value]="getConditionField(condition)"
-                  (valueChange)="onConditionFieldChange($index, $event)"
-                >
-                  @for (option of colorFieldOptions; track option.value) {
-                    <mat-option [value]="option.value">{{
-                      option.label
-                    }}</mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
+      <!-- Add Another Conditional Color Button -->
+      <div class="add-section-container">
+        <button 
+          mat-stroked-button 
+          type="button" 
+          (click)="addConditionalColorSection()"
+          color="primary"
+        >
+          <fa-icon icon="palette" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Add Another Conditional Color</span>
+        </button>
 
-              @if (conditionFormFieldConfigs.get($index)) {
-                <mat-form-field class="flex-grow" floatLabel="always">
-                  <mat-label>{{
-                    conditionFormFieldConfigs.get($index).label
-                  }}</mat-label>
-                  <app-dynamic-edit
-                    [formFieldConfig]="conditionFormFieldConfigs.get($index)"
-                    [formControl]="conditionFormControls.get($index)"
-                  ></app-dynamic-edit>
-                </mat-form-field>
-              }
-
-              <button
-                mat-icon-button
-                type="button"
-                color="warn"
-                (click)="deleteRule($index)"
-                matTooltip="Delete condition"
-                i18n-matTooltip
-              >
-                <fa-icon icon="trash"></fa-icon>
-              </button>
-            </div>
-          </div>
-        }
-
-        <div class="buttons-container flex-column gap-small margin-top-small">
-          <button mat-stroked-button type="button" (click)="addNewRule()">
-            <fa-icon icon="plus" class="standard-icon-with-text"></fa-icon>
-            <span i18n>Add Condition</span>
-          </button>
-
-          <button
-            mat-stroked-button
-            type="button"
-            (click)="openFullJsonEditor()"
-          >
-            <fa-icon icon="code" class="standard-icon-with-text"></fa-icon>
-            <span i18n>Edit Condition JSON</span>
-          </button>
-        </div>
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="openFullJsonEditor()"
+        >
+          <fa-icon icon="code" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Edit All Conditions JSON</span>
+        </button>
       </div>
     </div>
   }

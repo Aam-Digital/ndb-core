@@ -38,57 +38,68 @@ describe("ConditionalColorConfigComponent", () => {
     ];
 
     component.writeValue(testMappings);
-    component["detectSelectedField"]();
 
-    expect(component.selectedColorField).toBe("status");
+    expect(component.conditionalColorSections.length).toBe(1);
+    expect(component.conditionalColorSections[0].condition).toEqual({ $or: [{ status: "active" }] });
   });
 
-  it("should add a new rule", () => {
-    component.selectedColorField = "status";
-    component.value = [];
+  it("should add a new conditional color section", () => {
+    component.value = [{ condition: {}, color: "#defaultColor" }];
 
-    component.addNewRule();
+    component.addConditionalColorSection();
 
-    expect(component.value).toEqual([{ condition: { status: "" }, color: "" }]);
+    expect(Array.isArray(component.value)).toBe(true);
+    expect(component.value.length).toBe(2);
+    expect(component.value[1]).toEqual({ condition: { $or: [] }, color: "" });
   });
 
-  it("should update rule condition", () => {
-    component.value = [{ condition: { status: "active" }, color: "#00FF00" }];
-    const newCondition = { status: "inactive" };
-
-    component.updateRuleCondition(0, newCondition);
-
-    expect(component.value[0].condition).toEqual(newCondition);
-  });
-
-  it("should not update rule condition if new condition is null", () => {
-    const initialValue = [
-      { condition: { status: "active" }, color: "#00FF00" },
-    ];
-    component.value = [...initialValue];
-
-    component.updateRuleCondition(0, null);
-
-    expect(component.value).toEqual(initialValue);
-  });
-
-  it("should update rule color", () => {
-    component.value = [{ condition: { status: "active" }, color: "#00FF00" }];
-
-    component.updateRuleColor(0, "#FF0000");
-
-    expect(component.value[0].color).toBe("#FF0000");
-  });
-
-  it("should delete a rule", () => {
+  it("should update conditional section color", () => {
     component.value = [
-      { condition: { status: "active" }, color: "#00FF00" },
-      { condition: { status: "inactive" }, color: "#FF0000" },
+      { condition: {}, color: "#defaultColor" },
+      { condition: { $or: [{ status: "active" }] }, color: "#00FF00" }
     ];
 
-    component.deleteRule(0);
+    component.updateConditionalSectionColor(0, "#FF0000");
 
-    expect(component.value.length).toBe(1);
-    expect(component.value[0].condition).toEqual({ status: "inactive" });
+    expect(component.conditionalColorSections[0].color).toBe("#FF0000");
+  });
+
+  it("should add condition to section", () => {
+    component.value = [
+      { condition: {}, color: "#defaultColor" },
+      { condition: { $or: [] }, color: "#FF0000" }
+    ];
+
+    component.addConditionToSection(0);
+
+    const conditions = component.getConditionsForSection(0);
+    expect(conditions.length).toBe(1);
+    expect(conditions[0]).toEqual({});
+  });
+
+  it("should delete condition from section", () => {
+    component.value = [
+      { condition: {}, color: "#defaultColor" },
+      { condition: { $or: [{ status: "active" }, { status: "inactive" }] }, color: "#FF0000" }
+    ];
+
+    component.deleteConditionFromSection(0, 0);
+
+    const conditions = component.getConditionsForSection(0);
+    expect(conditions.length).toBe(1);
+    expect(conditions[0]).toEqual({ status: "inactive" });
+  });
+
+  it("should delete a conditional color section", () => {
+    component.value = [
+      { condition: {}, color: "#defaultColor" },
+      { condition: { $or: [{ status: "active" }] }, color: "#00FF00" },
+      { condition: { $or: [{ status: "inactive" }] }, color: "#FF0000" }
+    ];
+
+    component.deleteConditionalColorSection(0);
+
+    expect(component.conditionalColorSections.length).toBe(1);
+    expect(component.conditionalColorSections[0].condition).toEqual({ $or: [{ status: "inactive" }] });
   });
 });

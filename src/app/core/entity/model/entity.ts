@@ -390,6 +390,12 @@ export class Entity {
    * Override this method as needed.
    */
   public getColor(): string {
+    // First check if there are conditional colors configured
+    const conditionalColor = Entity.getColorWithConditions(this);
+    if (conditionalColor) {
+      return conditionalColor;
+    }
+    // Fall back to warning level colors
     return getWarningLevelColor(this.getWarningLevel());
   }
 
@@ -445,15 +451,17 @@ export class Entity {
             continue;
           }
 
-          // Empty condition {} serves as fallback
-          if (Object.keys(mapping.condition).length === 0) {
-            return mapping.color;
+          // Empty condition {} serves as fallback (skip it for now, evaluate after all conditions)
+          const conditionKeys = Object.keys(mapping.condition);
+          if (conditionKeys.length === 0) {
+            continue; // Skip fallback for now
           }
 
           // Evaluate the condition against this entity
           try {
             const test = interpret(mapping.condition as any);
             if (test(entity)) {
+              console.log("Conditional color matched:", entity.getId(), mapping.condition, mapping.color);
               return mapping.color;
             }
           } catch (e) {
@@ -464,11 +472,23 @@ export class Entity {
             );
           }
         }
+
+        // No conditional match found, look for fallback (empty condition)
+        for (const mapping of colorConfig) {
+          if (!mapping.condition || !mapping.color) {
+            continue;
+          }
+          if (Object.keys(mapping.condition).length === 0) {
+            console.log("Using fallback color for:", entity.getId(), mapping.color);
+            return mapping.color;
+          }
+        }
       } catch (e) {
         Logging.warn("Error processing conditional colors", e);
       }
 
       // If no conditions matched, fall back to warning level color
+      console.log("No color config matched, using warning level for:", entity.getId());
       return getWarningLevelColor(entity.getWarningLevel());
     }
 
