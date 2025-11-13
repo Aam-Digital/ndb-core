@@ -1,6 +1,6 @@
-<div class="conditional-section flex-column  border-regular">
-  <div class=" flex-row  align-center">
-    <label class="mat-body-2" i18n>Conditional Color {{ sectionIndex + 1 }}</label>
+<div class="conditional-section flex-column border-regular">
+  <div class="flex-row align-center">
+    <label class="mat-body-2" i18n>Conditional Color</label>
     <app-color-input
       [color]="section.color"
       (colorChange)="colorChange.emit($event)"
@@ -17,19 +17,22 @@
     </button>
   </div>
 
-  <!-- Conditions for this section -->
   <div class="conditions-container">
     <div class="conditions-list flex-column">
-      @for (condition of conditions; track condition; let conditionIdx = $index) {
+      @for (
+        condition of conditions;
+        track condition;
+        let conditionId = $index
+      ) {
         <div class="condition-item flex-row gap-regular align-center">
-          <!-- Field Selector -->
           <mat-form-field class="field-selector">
             <mat-label i18n>Field</mat-label>
             <mat-select
               [value]="getConditionField(condition)"
-              (selectionChange)="onConditionFieldChange(conditionIdx, $event.value)"
+              (selectionChange)="
+                onConditionFieldChange(conditionId, $event.value)
+              "
             >
-              <mat-option [value]="null" i18n>Select field</mat-option>
               @for (option of colorFieldOptions; track option.value) {
                 <mat-option [value]="option.value">
                   {{ option.label }}
@@ -38,9 +41,14 @@
             </mat-select>
           </mat-form-field>
 
-          <!-- Value Input -->
-          @if (conditionFormFieldConfigs.get(sectionIndex + '-' + conditionIdx); as formFieldConfig) {
-            @if (conditionFormControls.get(sectionIndex + '-' + conditionIdx); as formControl) {
+          @if (
+            conditionFormFieldConfigs.get(sectionIndex + "-" + conditionId);
+            as formFieldConfig
+          ) {
+            @if (
+              conditionFormControls.get(sectionIndex + "-" + conditionId);
+              as formControl
+            ) {
               <mat-form-field class="value-input" floatLabel="always">
                 <mat-label>{{ formFieldConfig.label }}</mat-label>
                 <app-dynamic-edit
@@ -51,12 +59,11 @@
             }
           }
 
-          <!-- Delete Button -->
           <button
             mat-icon-button
             type="button"
             color="warn"
-            (click)="deleteCondition(conditionIdx)"
+            (click)="deleteCondition(conditionId)"
             matTooltip="Delete condition"
             i18n-matTooltip
           >
@@ -65,7 +72,6 @@
         </div>
       }
 
-      <!-- Add Condition Button for this section -->
       <button
         mat-stroked-button
         type="button"

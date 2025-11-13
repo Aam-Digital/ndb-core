@@ -1,13 +1,10 @@
-// Styles for conditional color section component
 .conditional-section {
   background-color: transparent;
   border-radius: 8px;
-  border: none;
 }
 
 .conditions-container {
-  background-color: #fef5f5; // Light pink/beige background for the whole container
-  border: 1px solid #e0e0e0;
+  background-color: #fef5f5;
   border-radius: 8px;
   padding: 16px;
 }
@@ -20,9 +17,9 @@
   padding: 16px;
   background-color: transparent;
   border: none;
-  border-bottom: 1px solid #e0e0e0; // Separator line between conditions
+  border-bottom: 1px solid #e0e0e0;
   margin-bottom: 0;
-  
+
   &:last-of-type {
     border-bottom: none; // Remove border from last condition item
   }
@@ -38,7 +35,4 @@
 
 .add-condition-button {
   align-self: flex-start;
-  margin-top: 16px;
-  background-color: transparent;
-  border: none;
 }

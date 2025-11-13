@@ -1,5 +1,5 @@
 <div class="conditional-color-config">
-  <div class="flex-row gap-regular align-center">
+  <div class="color-row">
     <app-color-input
       [color]="staticColor"
       (colorChange)="onStaticColorChange($event)"
@@ -23,7 +23,6 @@
 
   @if (isConditionalMode) {
     <div class="conditional-sections flex-column gap-regular padding-regular">
-      <!-- Each Conditional Color Section -->
       @for (section of conditionalColorSections; track $index) {
         <app-conditional-color-section
           [sectionIndex]="$index"
@@ -38,25 +37,19 @@
         ></app-conditional-color-section>
       }
 
-      <!-- Add Another Conditional Color Button -->
-      <div class="add-section-container">
-        <button 
-          mat-stroked-button 
-          type="button" 
+      <div class="flex-column gap-regular margin-top-regular align-start">
+        <button mat-stroked-button type="button" (click)="openFullJsonEditor()">
+          <fa-icon icon="code" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Edit All Conditions JSON</span>
+        </button>
+        <button
+          mat-stroked-button
+          type="button"
           (click)="addConditionalColorSection()"
           color="primary"
         >
           <fa-icon icon="palette" class="standard-icon-with-text"></fa-icon>
           <span i18n>Add Another Conditional Color</span>
-        </button>
-
-        <button
-          mat-stroked-button
-          type="button"
-          (click)="openFullJsonEditor()"
-        >
-          <fa-icon icon="code" class="standard-icon-with-text"></fa-icon>
-          <span i18n>Edit All Conditions JSON</span>
         </button>
       </div>
     </div>
