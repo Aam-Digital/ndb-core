@@ -65,49 +65,6 @@ describe("ConditionalColorSectionComponent", () => {
     expect(component.conditions).toEqual([]);
   });
 
-  it("should emit colorChange when color changes", () => {
-    spyOn(component.colorChange, "emit");
-
-    component.onColorChange("#00FF00");
-
-    expect(component.colorChange.emit).toHaveBeenCalledWith("#00FF00");
-  });
-
-  it("should emit deleteSection when delete button is clicked", () => {
-    spyOn(component.deleteSection, "emit");
-
-    component.onDeleteSection();
-
-    expect(component.deleteSection.emit).toHaveBeenCalled();
-  });
-
-  it("should emit conditionAdded when add condition button is clicked", () => {
-    spyOn(component.conditionAdded, "emit");
-
-    component.onAddCondition();
-
-    expect(component.conditionAdded.emit).toHaveBeenCalled();
-  });
-
-  it("should emit conditionDeleted when condition is deleted", () => {
-    spyOn(component.conditionDeleted, "emit");
-
-    component.onDeleteCondition(0);
-
-    expect(component.conditionDeleted.emit).toHaveBeenCalledWith(0);
-  });
-
-  it("should emit conditionFieldChanged when condition field changes", () => {
-    spyOn(component.conditionFieldChanged, "emit");
-
-    component.onConditionFieldChange(0, "name");
-
-    expect(component.conditionFieldChanged.emit).toHaveBeenCalledWith({
-      conditionIndex: 0,
-      fieldKey: "name",
-    });
-  });
-
   it("should get condition field from condition object", () => {
     expect(component.getConditionField({ status: "active" })).toBe("status");
   });

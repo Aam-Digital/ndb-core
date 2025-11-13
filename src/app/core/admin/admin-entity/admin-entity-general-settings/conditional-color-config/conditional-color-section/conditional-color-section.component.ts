@@ -1,4 +1,11 @@
-import { Component, Input, Output, EventEmitter, inject, OnInit } from "@angular/core";
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  inject,
+  OnInit,
+} from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
@@ -45,7 +52,6 @@ export class ConditionalColorSectionComponent implements OnInit {
   private entitySchemaService = inject(EntitySchemaService);
 
   ngOnInit(): void {
-    // Initialize form controls for existing conditions
     this.conditions.forEach((condition, index) => {
       const fieldKey = this.getConditionField(condition);
       if (fieldKey) {
@@ -89,7 +95,6 @@ export class ConditionalColorSectionComponent implements OnInit {
 
     conditions.splice(conditionIndex, 1);
 
-    // Clean up form controls
     const key = `${this.sectionIndex}-${conditionIndex}`;
     this.conditionFormFieldConfigs.delete(key);
     this.conditionFormControls.delete(key);
@@ -106,8 +111,7 @@ export class ConditionalColorSectionComponent implements OnInit {
 
     const condition = conditions[conditionIndex];
 
-    // Clear old condition and set new field
-    Object.keys(condition).forEach(key => delete condition[key]);
+    Object.keys(condition).forEach((key) => delete condition[key]);
     condition[fieldKey] = null;
 
     this.createFormConfigForCondition(conditionIndex, fieldKey);
@@ -117,7 +121,10 @@ export class ConditionalColorSectionComponent implements OnInit {
   /**
    * Create form configuration for a specific condition
    */
-  private createFormConfigForCondition(conditionIndex: number, fieldKey: string): void {
+  private createFormConfigForCondition(
+    conditionIndex: number,
+    fieldKey: string,
+  ): void {
     const key = `${this.sectionIndex}-${conditionIndex}`;
     const fieldConfig = this.entityConstructor.schema.get(fieldKey);
     if (!fieldConfig) return;
@@ -125,14 +132,18 @@ export class ConditionalColorSectionComponent implements OnInit {
     const conditions = this.conditions;
     const condition = conditions[conditionIndex];
 
-    // Create form control
-    const initialValue = this.entitySchemaService.valueToEntityFormat(condition[fieldKey], fieldConfig);
+    const initialValue = this.entitySchemaService.valueToEntityFormat(
+      condition[fieldKey],
+      fieldConfig,
+    );
     const formControl = new FormControl(initialValue);
     this.conditionFormControls.set(key, formControl);
 
-    // Subscribe to value changes
     formControl.valueChanges.subscribe((value) => {
-      const dbValue = this.entitySchemaService.valueToDatabaseFormat(value, fieldConfig);
+      const dbValue = this.entitySchemaService.valueToDatabaseFormat(
+        value,
+        fieldConfig,
+      );
       condition[fieldKey] = dbValue;
     });
 

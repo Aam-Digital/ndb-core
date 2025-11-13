@@ -40,7 +40,9 @@ describe("ConditionalColorConfigComponent", () => {
     component.writeValue(testMappings);
 
     expect(component.conditionalColorSections.length).toBe(1);
-    expect(component.conditionalColorSections[0].condition).toEqual({ $or: [{ status: "active" }] });
+    expect(component.conditionalColorSections[0].condition).toEqual({
+      $or: [{ status: "active" }],
+    });
   });
 
   it("should add a new conditional color section", () => {
@@ -56,7 +58,7 @@ describe("ConditionalColorConfigComponent", () => {
   it("should update conditional section color", () => {
     component.value = [
       { condition: {}, color: "#defaultColor" },
-      { condition: { $or: [{ status: "active" }] }, color: "#00FF00" }
+      { condition: { $or: [{ status: "active" }] }, color: "#00FF00" },
     ];
 
     component.updateConditionalSectionColor(0, "#FF0000");
@@ -68,7 +70,7 @@ describe("ConditionalColorConfigComponent", () => {
     component.value = [
       { condition: {}, color: "#defaultColor" },
       { condition: { $or: [{ status: "active" }] }, color: "#00FF00" },
-      { condition: { $or: [{ status: "inactive" }] }, color: "#FF0000" }
+      { condition: { $or: [{ status: "inactive" }] }, color: "#FF0000" },
     ];
 
     expect(component.conditionalColorSections.length).toBe(2);
@@ -78,12 +80,14 @@ describe("ConditionalColorConfigComponent", () => {
     component.value = [
       { condition: {}, color: "#defaultColor" },
       { condition: { $or: [{ status: "active" }] }, color: "#00FF00" },
-      { condition: { $or: [{ status: "inactive" }] }, color: "#FF0000" }
+      { condition: { $or: [{ status: "inactive" }] }, color: "#FF0000" },
     ];
 
     component.deleteConditionalColorSection(0);
 
     expect(component.conditionalColorSections.length).toBe(1);
-    expect(component.conditionalColorSections[0].condition).toEqual({ $or: [{ status: "inactive" }] });
+    expect(component.conditionalColorSections[0].condition).toEqual({
+      $or: [{ status: "inactive" }],
+    });
   });
 });
