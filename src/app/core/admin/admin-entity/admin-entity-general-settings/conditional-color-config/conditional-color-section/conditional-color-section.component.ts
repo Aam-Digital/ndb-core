@@ -145,7 +145,7 @@ export class ConditionalColorSectionComponent implements OnInit {
 
     // Clear old condition and set new field
     Object.keys(condition).forEach(key => delete condition[key]);
-    condition[fieldKey] = "";
+    condition[fieldKey] = null;
 
     this.createFormConfigForCondition(conditionIndex, fieldKey);
     this.conditionFieldChanged.emit({ conditionIndex, fieldKey });
@@ -163,12 +163,14 @@ export class ConditionalColorSectionComponent implements OnInit {
     const condition = conditions[conditionIndex];
 
     // Create form control
-    const formControl = new FormControl(condition[fieldKey] || "");
+    const initialValue = this.entitySchemaService.valueToEntityFormat(condition[fieldKey], fieldConfig);
+    const formControl = new FormControl(initialValue);
     this.conditionFormControls.set(key, formControl);
 
     // Subscribe to value changes
     formControl.valueChanges.subscribe((value) => {
-      condition[fieldKey] = value;
+      const dbValue = this.entitySchemaService.valueToDatabaseFormat(value, fieldConfig);
+      condition[fieldKey] = dbValue;
     });
 
     // Create form field config

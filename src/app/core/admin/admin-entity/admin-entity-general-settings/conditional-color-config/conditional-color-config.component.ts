@@ -68,7 +68,10 @@ export class ConditionalColorConfigComponent
   get staticColor(): string {
     if (typeof this.value === "string") return this.value;
     if (!Array.isArray(this.value)) return "";
-    return this.value.find((m) => !Object.keys(m.condition || {}).length)?.color || "";
+    return (
+      this.value.find((m) => !Object.keys(m.condition || {}).length)?.color ||
+      ""
+    );
   }
 
   get conditionalColorSections(): ColorMapping[] {
@@ -78,6 +81,9 @@ export class ConditionalColorConfigComponent
 
   addConditionalMode(): void {
     this.isConditionalModeChange.emit(true);
+    if (this.conditionalColorSections.length === 0) {
+      this.addConditionalColorSection();
+    }
   }
 
   removeConditionalMode(): void {
@@ -91,13 +97,13 @@ export class ConditionalColorConfigComponent
     if (!Array.isArray(this.value)) {
       this.value = [{ condition: {}, color: this.staticColor }];
     }
-    
+
     // Add new conditional section with one empty condition to start
     const newSection: ColorMapping = {
-      condition: { $or: [{}] }, // Initialize with one empty condition
-      color: "#FFFFFF" // Default white color
+      condition: { $or: [{}] },
+      color: "",
     };
-    
+
     this.value = [...this.value, newSection];
     this.onChange(this.value);
   }
@@ -107,15 +113,21 @@ export class ConditionalColorConfigComponent
    */
   deleteConditionalColorSection(sectionIndex: number): void {
     if (!Array.isArray(this.value)) return;
-    
+
     const conditionalSections = this.conditionalColorSections;
     if (sectionIndex < 0 || sectionIndex >= conditionalSections.length) return;
-    
+
     // Remove the section
-    const staticMapping = this.value.find(m => !Object.keys(m.condition || {}).length);
-    const remainingSections = conditionalSections.filter((_, index) => index !== sectionIndex);
-    
-    this.value = staticMapping ? [staticMapping, ...remainingSections] : remainingSections;
+    const staticMapping = this.value.find(
+      (m) => !Object.keys(m.condition || {}).length,
+    );
+    const remainingSections = conditionalSections.filter(
+      (_, index) => index !== sectionIndex,
+    );
+
+    this.value = staticMapping
+      ? [staticMapping, ...remainingSections]
+      : remainingSections;
     this.onChange(this.value);
   }
 
@@ -125,7 +137,7 @@ export class ConditionalColorConfigComponent
   updateConditionalSectionColor(sectionIndex: number, newColor: string): void {
     const conditionalSections = this.conditionalColorSections;
     if (sectionIndex < 0 || sectionIndex >= conditionalSections.length) return;
-    
+
     conditionalSections[sectionIndex].color = newColor;
     this.updateValue();
   }
@@ -147,7 +159,11 @@ export class ConditionalColorConfigComponent
   /**
    * Handle condition field changed in a section
    */
-  onConditionFieldChanged(sectionIndex: number, conditionIndex: number, fieldKey: string): void {
+  onConditionFieldChanged(
+    sectionIndex: number,
+    conditionIndex: number,
+    fieldKey: string,
+  ): void {
     this.updateValue();
   }
 
@@ -178,14 +194,16 @@ export class ConditionalColorConfigComponent
       this.value = [{ condition: {}, color: newColor }];
     } else {
       // Update or add static mapping
-      const staticIndex = this.value.findIndex(m => !Object.keys(m.condition || {}).length);
+      const staticIndex = this.value.findIndex(
+        (m) => !Object.keys(m.condition || {}).length,
+      );
       if (staticIndex >= 0) {
         this.value[staticIndex].color = newColor;
       } else {
         this.value.unshift({ condition: {}, color: newColor });
       }
     }
-    
+
     this.onChange(this.value);
   }
 
@@ -203,7 +221,9 @@ export class ConditionalColorConfigComponent
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result !== undefined && Array.isArray(this.value)) {
-        const staticMapping = this.value.find(m => !Object.keys(m.condition || {}).length);
+        const staticMapping = this.value.find(
+          (m) => !Object.keys(m.condition || {}).length,
+        );
         this.value = staticMapping ? [staticMapping, ...result] : result;
         this.onChange(this.value);
       }
