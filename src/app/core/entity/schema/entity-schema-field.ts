@@ -138,6 +138,12 @@ export interface EntitySchemaField {
    * "retain-anonymized" triggers a special dataType action to retain the data partially in a special, anonymized form.
    */
   anonymize?: "retain" | "retain-anonymized";
+
+  /**
+   * If true, this field is an internal system field (e.g., _id, _rev, created, updated)
+   * that should not be shown in the admin form builder or saved to config.
+   */
+  isInternalField?: boolean;
 }
 
 /**

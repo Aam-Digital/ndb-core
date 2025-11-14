@@ -217,28 +217,31 @@ export class Entity {
    * This is usually combined from the ENTITY_TYPE as a prefix with the entityId field `EntityType:entityId`
    * @example "Entity:123"
    */
-  @DatabaseField({ anonymize: "retain" }) private _id: string;
+  @DatabaseField({ anonymize: "retain", isInternalField: true })
+  private _id: string;
 
   /** internal database doc revision, used to detect conflicts by PouchDB/CouchDB */
-  @DatabaseField({ anonymize: "retain" }) _rev: string;
+  @DatabaseField({ anonymize: "retain", isInternalField: true }) _rev: string;
 
   @DatabaseField({
     anonymize: "retain",
+    isInternalField: true,
   })
   created: UpdateMetadata;
 
   @DatabaseField({
     anonymize: "retain",
+    isInternalField: true,
   })
   updated: UpdateMetadata;
 
-  @DatabaseField({ anonymize: "retain" })
+  @DatabaseField({ anonymize: "retain", isInternalField: true })
   inactive: boolean;
 
   /**
    * Whether this entity has been anonymized and therefore cannot be re-activated.
    */
-  @DatabaseField({ anonymize: "retain" })
+  @DatabaseField({ anonymize: "retain", isInternalField: true })
   anonymized: boolean;
 
   /** whether this entity object is newly created and not yet saved to database */
