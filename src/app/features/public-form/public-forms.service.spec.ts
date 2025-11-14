@@ -3,6 +3,8 @@ import { PublicFormsService } from "./public-forms.service";
 import { PublicFormConfig } from "./public-form-config";
 import { Entity } from "app/core/entity/model/entity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { EntityConfigService } from "app/core/entity/entity-config.service";
 
 describe("PublicFormsService", () => {
   let service: PublicFormsService;
@@ -13,6 +15,14 @@ describe("PublicFormsService", () => {
         {
           provide: EntityMapperService,
           useValue: jasmine.createSpyObj(["load"]),
+        },
+        {
+          provide: EntityRegistry,
+          useValue: jasmine.createSpyObj(["get"]),
+        },
+        {
+          provide: EntityConfigService,
+          useValue: jasmine.createSpyObj(["getEntityConfig"]),
         },
       ],
     });
