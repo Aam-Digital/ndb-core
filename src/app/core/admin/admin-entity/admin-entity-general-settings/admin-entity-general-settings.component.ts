@@ -37,8 +37,8 @@ import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-
 import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.datatype";
 import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.component";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
-import { ColorInputComponent } from "#src/app/color-input/color-input.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { ConditionalColorConfigComponent } from "./conditional-color-config/conditional-color-config.component";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -61,7 +61,7 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
     AnonymizeOptionsComponent,
     FaIconComponent,
     AdminIconComponent,
-    ColorInputComponent,
+    ConditionalColorConfigComponent,
     HintBoxComponent,
   ],
 })
@@ -83,6 +83,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   basicSettingsForm: FormGroup;
   toStringAttributesOptions: SimpleDropdownValue[] = [];
+  isConditionalColor: boolean = false;
 
   ngOnInit(): void {
     this.init();
@@ -101,6 +102,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.showPIIDetails = this.basicSettingsForm.get("hasPII").value;
     this.fetchAnonymizationTableData();
     this.initToStringAttributesOptions();
+    this.initColorMode();
 
     this.basicSettingsForm.valueChanges.subscribe((value) => {
       this.reorderedStringAttributesOptions();
@@ -186,4 +188,13 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.value;
+
+  /**
+   * Initialize color mode from existing configuration
+   */
+  private initColorMode() {
+    const colorValue = this.basicSettingsForm.get("color").value;
+    this.isConditionalColor =
+      Array.isArray(colorValue) && colorValue.length > 0;
+  }
 }

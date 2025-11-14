@@ -23,14 +23,14 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NotificationRule } from "../model/notification-config";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { MatDialog } from "@angular/material/dialog";
 import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
-import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
+import { JsonEditorDialogComponent } from "#src/app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
 } from "@angular/material/expansion";
+import { MatDialog } from "@angular/material/dialog";
 
 /**
  * Configure a single notification rule.

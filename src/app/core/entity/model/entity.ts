@@ -26,6 +26,12 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { UpdateMetadata } from "./update-metadata";
 import { EntityBlockConfig } from "../../basic-datatypes/entity/entity-block/entity-block-config";
 import { Logging } from "../../logging/logging.service";
+import { DataFilter } from "../../filter/filters/filters";
+import {
+  allInterpreters,
+  allParsingInstructions,
+  createFactory,
+} from "@ucast/mongo2js";
 
 /**
  * This represents a static class of type <T>.
@@ -37,6 +43,15 @@ export type EntityConstructor<T extends Entity = Entity> = (new (
   id?: string,
 ) => T) &
   typeof Entity;
+
+/**
+ * This allows defining different colors for entities based on their properties using MongoDB-style queries.
+ */
+export interface ColorMapping {
+  /** MongoDB-style query condition that must match for this color to apply */
+  condition: DataFilter<any>;
+  color: string;
+}
 
 /**
  * "Entity" is a base class for all domain model classes.
@@ -135,9 +150,13 @@ export class Entity {
   static icon: IconName;
 
   /**
-   * color used for to highlight this entity type across the app
+   * color used for to highlight this entity type across the app.
+   *
+   * Can be either:
+   * - A simple string (hex color code) for a single color
+   * - An array of ColorMapping objects for conditional colors based on entity properties
    */
-  static color: string;
+  static color: string | ColorMapping[];
 
   /**
    * Base route of the entity (list/details) view for this entity type.
@@ -380,6 +399,103 @@ export class Entity {
    */
   public getWarningLevel(): WarningLevel {
     return WarningLevel.NONE;
+  }
+
+  /**
+   * Static method to evaluate conditional colors for an entity based on ColorMapping configuration.
+   * This method can be used in contexts where you need conditional color evaluation
+   */
+  static getColorWithConditions(entity: Entity): string {
+    const colorConfig = entity.getConstructor().color;
+
+    if (Array.isArray(colorConfig) && colorConfig.length > 0) {
+      try {
+        // Custom compare function to handle ConfigurableEnum values
+        const customCompare = <T>(a: T, b: T): 1 | -1 | 0 => {
+          // Handle ConfigurableEnum objects: compare by id property
+          if (
+            a &&
+            typeof a === "object" &&
+            "id" in a &&
+            typeof b === "string"
+          ) {
+            return (a as any).id === b ? 0 : (a as any).id < b ? -1 : 1;
+          }
+          if (
+            b &&
+            typeof b === "object" &&
+            "id" in b &&
+            typeof a === "string"
+          ) {
+            return (b as any).id === a ? 0 : a < (b as any).id ? -1 : 1;
+          }
+          // Default comparison
+          return a === b ? 0 : a < b ? -1 : 1;
+        };
+
+        const interpret = createFactory(
+          allParsingInstructions,
+          allInterpreters,
+          { compare: customCompare },
+        );
+
+        // Evaluate each condition in order
+        for (const mapping of colorConfig) {
+          if (!mapping.condition || !mapping.color) {
+            continue;
+          }
+
+          // Empty condition {} serves as fallback (skip it for now, evaluate after all conditions)
+          const conditionKeys = Object.keys(mapping.condition);
+          if (conditionKeys.length === 0) {
+            continue; // Skip fallback for now
+          }
+
+          // Evaluate the condition against this entity
+          try {
+            const test = interpret(mapping.condition as any);
+            if (test(entity)) {
+              console.log(
+                "Conditional color matched:",
+                entity.getId(),
+                mapping.condition,
+                mapping.color,
+              );
+              return mapping.color;
+            }
+          } catch (e) {
+            Logging.debug(
+              "Error evaluating color condition",
+              mapping.condition,
+              e,
+            );
+          }
+        }
+
+        // No conditional match found, look for fallback (empty condition)
+        for (const mapping of colorConfig) {
+          if (!mapping.condition || !mapping.color) {
+            continue;
+          }
+          if (Object.keys(mapping.condition).length === 0) {
+            return mapping.color;
+          }
+        }
+      } catch (e) {
+        Logging.warn("Error processing conditional colors", e);
+      }
+
+      // If no conditions matched, fall back to warning level color
+      return getWarningLevelColor(entity.getWarningLevel());
+    }
+
+    // Handle simple string color
+    if (typeof colorConfig === "string" && colorConfig) {
+      return colorConfig;
+    }
+
+    // No color configured - return warning level color directly to avoid infinite recursion
+    return getWarningLevelColor(entity.getWarningLevel());
   }
 
   /**

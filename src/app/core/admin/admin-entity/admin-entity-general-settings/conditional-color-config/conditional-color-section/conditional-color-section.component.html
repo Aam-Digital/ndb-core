@@ -1,0 +1,86 @@
+<div class="conditional-section flex-column border-regular">
+  <div class="flex-row align-center">
+    <label class="mat-body-2" i18n>Conditional Color</label>
+    <app-color-input
+      [color]="section.color"
+      (colorChange)="colorChange.emit($event)"
+    ></app-color-input>
+    <button
+      mat-icon-button
+      type="button"
+      color="warn"
+      (click)="deleteSection.emit()"
+      matTooltip="Delete conditional color section"
+      i18n-matTooltip
+    >
+      <fa-icon icon="trash"></fa-icon>
+    </button>
+  </div>
+
+  <div class="conditions-container">
+    <div class="conditions-list flex-column">
+      @for (
+        condition of conditions;
+        track condition;
+        let conditionId = $index
+      ) {
+        <div class="condition-item flex-row gap-regular align-center">
+          <mat-form-field class="field-selector">
+            <mat-label i18n>Field</mat-label>
+            <mat-select
+              [value]="getConditionField(condition)"
+              (selectionChange)="
+                onConditionFieldChange(conditionId, $event.value)
+              "
+            >
+              @for (option of colorFieldOptions; track option.value) {
+                <mat-option [value]="option.value">
+                  {{ option.label }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          @if (
+            conditionFormFieldConfigs.get(sectionIndex + "-" + conditionId);
+            as formFieldConfig
+          ) {
+            @if (
+              conditionFormControls.get(sectionIndex + "-" + conditionId);
+              as formControl
+            ) {
+              <mat-form-field class="value-input" floatLabel="always">
+                <mat-label>{{ formFieldConfig.label }}</mat-label>
+                <app-dynamic-edit
+                  [formFieldConfig]="formFieldConfig"
+                  [formControl]="formControl"
+                ></app-dynamic-edit>
+              </mat-form-field>
+            }
+          }
+
+          <button
+            mat-icon-button
+            type="button"
+            color="warn"
+            (click)="deleteCondition(conditionId)"
+            matTooltip="Delete condition"
+            i18n-matTooltip
+          >
+            <fa-icon icon="trash"></fa-icon>
+          </button>
+        </div>
+      }
+
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="addCondition()"
+        class="add-condition-button"
+      >
+        <fa-icon icon="plus" class="standard-icon-with-text"></fa-icon>
+        <span i18n>Add Condition</span>
+      </button>
+    </div>
+  </div>
+</div>
