@@ -88,6 +88,8 @@ export class ConditionalColorConfigComponent
 
   removeConditionalMode(): void {
     this.isConditionalModeChange.emit(false);
+    this.conditionFormFieldConfigs.clear();
+    this.conditionFormControls.clear();
 
     // Remove all conditional sections and keep only the static color
     if (Array.isArray(this.value)) {
