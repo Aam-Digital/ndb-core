@@ -31,7 +31,7 @@ export class DisplayConfigurableEnumComponent
     }
 
     if (Array.isArray(this.value)) {
-      this.iterableValue = this.value;
+      this.iterableValue = this.value.filter((v) => v != null);
     } else if (this.value) {
       this.iterableValue = [this.value];
     }
@@ -40,6 +40,7 @@ export class DisplayConfigurableEnumComponent
   get extraLabels(): string {
     return this.iterableValue
       .slice(3)
+      .filter((v) => v != null)
       .map((v) => v.label)
       .join(", ");
   }
