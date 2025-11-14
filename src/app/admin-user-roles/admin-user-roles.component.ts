@@ -3,16 +3,15 @@ import { ViewTitleComponent } from "../core/common-components/view-title/view-ti
 import { UserAdminService } from "../core/user/user-admin-service/user-admin.service";
 import { UserAccount } from "../core/user/user-admin-service/user-account";
 import { MatTableModule } from "@angular/material/table";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @Component({
   selector: "app-admin-user-roles",
-  imports: [ViewTitleComponent, MatTableModule, MatProgressSpinnerModule],
+  imports: [ViewTitleComponent, MatTableModule],
   templateUrl: "./admin-user-roles.component.html",
   styleUrl: "./admin-user-roles.component.scss",
 })
 export class AdminUserRolesComponent implements OnInit {
-  private userAdminService = inject(UserAdminService);
+  private readonly userAdminService = inject(UserAdminService);
 
   users = signal<UserAccount[]>([]);
   displayedColumns: string[] = [
