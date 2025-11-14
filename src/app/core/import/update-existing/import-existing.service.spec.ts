@@ -88,7 +88,7 @@ describe("ImportExistingService", () => {
 
     let expectedEntities: any[] = [
       {
-        _rev: existingRecords[0]["_rev"], // matched by name + dateOfBirth
+        _rev: existingRecords[0]["_rev"], // matched by name AND category (both have values)
         _id: existingRecords[0]["_id"],
         name: "A",
         category: genders[1].id,
@@ -101,14 +101,12 @@ describe("ImportExistingService", () => {
         category: genders[1].id,
       },
       {
-        _rev: existingRecords[1]["_rev"], // matched by name, entity missing dateOfBirth
-        _id: existingRecords[1]["_id"],
+        _id: jasmine.any(String), // not matched (existing B has no category, so can't match)
         name: "B",
         category: "O1",
       },
       {
-        _rev: existingRecords[2]["_rev"], // matched by name, imported row missing dateOfBirth
-        _id: existingRecords[2]["_id"],
+        _id: jasmine.any(String), // not matched (import row C has no category, so can't match)
         name: "C",
       },
       {
