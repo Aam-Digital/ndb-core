@@ -4,7 +4,16 @@ import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormCo
 import { RelatedEntitiesComponentConfig } from "#src/app/core/entity-details/related-entity-config";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
 import { CommonModule } from "@angular/common";
-import { Component, Input, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  inject,
+  computed,
+  signal,
+  Output,
+  EventEmitter,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatOptionModule } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -17,6 +26,14 @@ import {
 } from "app/utils/related-entities-default-config";
 import { PanelComponent } from "../../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../../entity/model/entity";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import {
+  AdminRelatedEntityDetailsComponent,
+  AdminRelatedEntityDetailsResult,
+} from "../admin-related-entity-details/admin-related-entity-details.component";
+import { MatButtonModule } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: "app-admin-entity-panel-component",
@@ -27,6 +44,10 @@ import { EntityConstructor } from "../../../entity/model/entity";
     FormsModule,
     MatOptionModule,
     MatSelectModule,
+    MatButtonModule,
+    MatTooltipModule,
+    FaIconComponent,
+    MatDialogModule,
   ],
   templateUrl: "./admin-entity-panel-component.component.html",
   styleUrl: "./admin-entity-panel-component.component.scss",
@@ -35,12 +56,27 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   private entities = inject(EntityRegistry);
   private confirmation = inject(ConfirmationDialogService);
   private entityRelationsService = inject(EntityRelationsService);
+  private readonly dialog = inject(MatDialog);
 
   @Input() config: PanelComponent;
   @Input() entityType: EntityConstructor;
 
+  /**
+   * emitted when a related entity's schema has been modified.
+   */
+  @Output() relatedEntityModified = new EventEmitter<EntityConstructor>();
+
   entityConstructor: EntityConstructor;
-  selectedEntityType: string;
+  private readonly _selectedEntityType = signal<string>("");
+
+  get selectedEntityType(): string {
+    return this._selectedEntityType();
+  }
+
+  set selectedEntityType(value: string) {
+    this._selectedEntityType.set(value);
+  }
+
   isDialogOpen = false;
 
   /** Stores the currently active/selected field IDs to be shown in the panel */
@@ -53,6 +89,15 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     label: string;
     entityType: string;
   }[];
+
+  /**
+   * Computed signal to determine if the "Edit data structure" button should be shown.
+   * Hidden for Note and Todo entities as they have custom detail views.
+   */
+  showEditStructureButton = computed(() => {
+    const entityType = this._selectedEntityType();
+    return entityType !== "Note" && entityType !== "Todo";
+  });
 
   ngOnInit(): void {
     if (!this.config.config?.entityType) return;
@@ -162,5 +207,42 @@ export class AdminEntityPanelComponentComponent implements OnInit {
         ...overrideRelatedConfig,
       };
     }
+  }
+
+  /**
+   * Opens a dialog showing the related entity's column selection and ordering.
+   * When "Apply" is clicked, updates the columns in the config.
+   * If the related entity's schema was modified, emits an event so the parent can save it.
+   */
+  openRelatedEntityDetailsConfig(): void {
+    if (!this.entityConstructor) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(AdminRelatedEntityDetailsComponent, {
+      // using 76vh height making it clear that there are multiple dialog layers open
+      // e.g., when edit field structure dialog opens this dialog remains partially visible in the background,
+      width: "90vw",
+      minHeight: "76vh",
+      data: {
+        entityConstructor: this.entityConstructor,
+        currentColumns: this.activeFields.map((col) =>
+          typeof col === "string" ? col : col.id,
+        ),
+      },
+    });
+
+    dialogRef
+      .afterClosed()
+      .subscribe((result: AdminRelatedEntityDetailsResult) => {
+        if (result) {
+          this.config.config.columns = result.fieldIds;
+          this.activeFields = result.fieldIds;
+
+          if (result.schemaChanged) {
+            this.relatedEntityModified.emit(this.entityConstructor);
+          }
+        }
+      });
   }
 }

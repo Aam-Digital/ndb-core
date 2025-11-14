@@ -42,6 +42,7 @@ export class AdminEntityService {
    * @param configEntitySettings (optional) general entity settings to also be applied
    * @param configListView (optional) list view settings also to be applied
    * @param configDetailsView (optional) details view settings also to be applied
+   * @param additionalEntityConstructors (optional) additional entity types to save in the same transaction
    */
   public async setAndSaveEntityConfig(
     entityConstructor: EntityConstructor,
@@ -50,6 +51,7 @@ export class AdminEntityService {
     configDetailsView?: DynamicComponentConfig<
       EntityDetailsConfig | NoteDetailsConfig
     >,
+    additionalEntityConstructors?: EntityConstructor[],
   ): Promise<{ previous: Config; current: Config }> {
     const originalConfig = await this.entityMapper.load(
       Config,
@@ -57,6 +59,7 @@ export class AdminEntityService {
     );
     const newConfig = originalConfig.copy();
 
+    // Update the main entity schema
     let entitySchemaConfig: EntityConfig =
       this.getEntitySchemaFromConfig(newConfig, entityConstructor) ?? {};
     // Initialize config if not present
@@ -81,6 +84,22 @@ export class AdminEntityService {
         configDetailsView;
     }
 
+    // Update additional entity schemas (e.g., related entities modified through panels)
+    if (
+      additionalEntityConstructors &&
+      additionalEntityConstructors.length > 0
+    ) {
+      for (const additionalEntity of additionalEntityConstructors) {
+        let additionalEntitySchemaConfig: EntityConfig =
+          this.getEntitySchemaFromConfig(newConfig, additionalEntity) ?? {};
+        additionalEntitySchemaConfig.attributes =
+          additionalEntitySchemaConfig.attributes ?? {};
+
+        for (const [fieldId, field] of additionalEntity.schema.entries()) {
+          additionalEntitySchemaConfig.attributes[fieldId] = field;
+        }
+      }
+    }
     const updatedConfig: Config = await this.entityMapper.save(newConfig);
     return { previous: originalConfig, current: updatedConfig };
   }
