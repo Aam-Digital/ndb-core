@@ -7,7 +7,7 @@ import {
   map,
   switchMap,
 } from "rxjs/operators";
-import { Observable, of, throwError } from "rxjs";
+import { forkJoin, Observable, of, throwError } from "rxjs";
 import { UserAdminApiError, UserAdminService } from "./user-admin.service";
 import { KeycloakUserDto } from "./keycloak-user-dto";
 import { Logging } from "../../logging/logging.service";
@@ -245,6 +245,30 @@ export class KeycloakAdminService extends UserAdminService {
     return this.http
       .get<Role[]>(`${this.keycloakUrl}/roles`)
       .pipe(map((roles) => this.filterNonTechnicalRoles(roles)));
+  }
+
+  getAllUsers(): Observable<UserAccount[]> {
+    return this.findUsersBy({}).pipe(
+      switchMap((users) => {
+        // For each user, fetch their roles
+        const usersWithRoles$ = users.map((user) =>
+          this.getRolesOfUser(user.id).pipe(
+            map((roles) => {
+              console.log("user", user);
+              return {
+                id: user.id,
+                email: user.email,
+                userEntityId: user.attributes?.exact_username?.[0],
+                enabled: user.enabled,
+                emailVerified: user.emailVerified,
+                roles,
+              } as UserAccount;
+            }),
+          ),
+        );
+        return usersWithRoles$.length > 0 ? forkJoin(usersWithRoles$) : of([]);
+      }),
+    );
   }
 
   private filterNonTechnicalRoles(roles: Role[]) {
