@@ -15,7 +15,13 @@
         <span i18n>Remove conditional colors</span>
       </button>
     } @else {
-      <button mat-stroked-button type="button" (click)="addConditionalMode()">
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="addConditionalMode()"
+        matTooltip="Customize colors dynamically based on data values"
+        i18n-matTooltip
+      >
         <span i18n>Add conditional colors</span>
       </button>
     }
