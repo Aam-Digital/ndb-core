@@ -2,6 +2,11 @@
 @use "variables/sizes";
 
 @use "../special-option-labels.scss";
+
+:host {
+  overflow: hidden;
+}
+
 em {
   color: colors.$primary;
 }
