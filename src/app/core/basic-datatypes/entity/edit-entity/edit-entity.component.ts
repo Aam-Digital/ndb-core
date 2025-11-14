@@ -212,63 +212,54 @@ export class EditEntityComponent<
 
   includeInactive = signal<boolean>(false);
 
-  private readonly availableEntitiesResource: Resource<E[]> =
-    resourceWithRetention({
-      defaultValue: [],
-      params: () => ({
-        allEntities: this.allEntities.value(),
-        values: this.values(),
-        includeInactive: this.includeInactive(),
-        getEntity: (id: string) => this.getEntity(id), // we cannot directly access `this.` within the loader (see https://github.com/Aam-Digital/ndb-core/pull/3410#issuecomment-3438380605)
-      }),
-      loader: async ({ params }) => {
-        const availableEntities = params.allEntities.filter(
-          (e) =>
-            params.values.includes(e.getId()) ||
-            params.includeInactive ||
-            e.isActive,
-        );
+  readonly availableEntitiesResource: Resource<E[]> = resourceWithRetention({
+    defaultValue: [],
+    params: () => ({
+      allEntities: this.allEntities.value(),
+      values: this.values(),
+      includeInactive: this.includeInactive(),
+      getEntity: (id: string) => this.getEntity(id), // we cannot directly access `this.` within the loader (see https://github.com/Aam-Digital/ndb-core/pull/3410#issuecomment-3438380605)
+    }),
+    loader: async ({ params }) => {
+      const availableEntities = params.allEntities.filter(
+        (e) =>
+          params.values.includes(e.getId()) ||
+          params.includeInactive ||
+          e.isActive,
+      );
 
-        for (const id of params.values) {
-          if (id === null || id === undefined || id === "") {
-            continue;
-          }
-
-          if (availableEntities.find((e) => id === e.getId())) {
-            continue;
-          }
-
-          const additionalEntity = await params.getEntity(id);
-          if (additionalEntity) {
-            availableEntities.push(additionalEntity);
-          } else {
-            availableEntities.push({
-              getId: () => id,
-              isHidden: true,
-            } as unknown as E);
-          }
+      for (const id of params.values) {
+        if (id === null || id === undefined || id === "") {
+          continue;
         }
 
-        return availableEntities;
-      },
-    });
+        if (availableEntities.find((e) => id === e.getId())) {
+          continue;
+        }
 
-  readonly availableOptionsResource: Signal<{
-    entities: E[];
-    hasInaccessible?: boolean;
-  }> = computed(() => {
+        const additionalEntity = await params.getEntity(id);
+        if (additionalEntity) {
+          availableEntities.push(additionalEntity);
+        } else {
+          availableEntities.push({
+            getId: () => id,
+            isHidden: true,
+          } as unknown as E);
+        }
+      }
+
+      return availableEntities;
+    },
+  });
+
+  readonly hasInaccessible: Signal<boolean> = computed(() => {
     const entities = this.availableEntitiesResource.value();
     const currentValues = this.values();
-    const hasInaccessible = currentValues.some((id) => {
+    return currentValues.some((id) => {
       if (!id) return false;
       const entity = entities.find((e) => e.getId() === id);
       return entity && (entity as any).isHidden === true;
     });
-
-    return {
-      entities,
-      hasInaccessible,
-    };
   });
 
   private async getEntity(selectedId: string): Promise<E | undefined> {
