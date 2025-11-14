@@ -212,11 +212,8 @@ export class EditEntityComponent<
 
   includeInactive = signal<boolean>(false);
 
-  readonly availableOptionsResource: Resource<{
-    entities: E[];
-    hasInaccessible?: boolean;
-  }> = resourceWithRetention({
-    defaultValue: { entities: [], hasInaccessible: false },
+  readonly availableEntitiesResource: Resource<E[]> = resourceWithRetention({
+    defaultValue: [],
     params: () => ({
       allEntities: this.allEntities.value(),
       values: this.values(),
@@ -230,7 +227,6 @@ export class EditEntityComponent<
           params.includeInactive ||
           e.isActive,
       );
-      let hasInaccessibleEntities = false;
 
       for (const id of params.values) {
         if (id === null || id === undefined || id === "") {
@@ -245,7 +241,6 @@ export class EditEntityComponent<
         if (additionalEntity) {
           availableEntities.push(additionalEntity);
         } else {
-          hasInaccessibleEntities = true;
           availableEntities.push({
             getId: () => id,
             isHidden: true,
@@ -253,11 +248,18 @@ export class EditEntityComponent<
         }
       }
 
-      return {
-        entities: availableEntities,
-        hasInaccessible: hasInaccessibleEntities,
-      };
+      return availableEntities;
     },
+  });
+
+  readonly hasInaccessible: Signal<boolean> = computed(() => {
+    const entities = this.availableEntitiesResource.value();
+    const currentValues = this.values();
+    return currentValues.some((id) => {
+      if (!id) return false;
+      const entity = entities.find((e) => e.getId() === id);
+      return entity && (entity as any).isHidden === true;
+    });
   });
 
   private async getEntity(selectedId: string): Promise<E | undefined> {
