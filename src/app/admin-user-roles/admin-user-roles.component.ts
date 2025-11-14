@@ -4,7 +4,6 @@ import { UserAdminService } from "../core/user/user-admin-service/user-admin.ser
 import { UserAccount } from "../core/user/user-admin-service/user-account";
 import { MatTableModule } from "@angular/material/table";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { Router } from "@angular/router";
 
 @Component({
   selector: "app-admin-user-roles",
@@ -14,7 +13,6 @@ import { Router } from "@angular/router";
 })
 export class AdminUserRolesComponent implements OnInit {
   private userAdminService = inject(UserAdminService);
-  private router = inject(Router);
 
   users = signal<UserAccount[]>([]);
   displayedColumns: string[] = [
@@ -38,14 +36,6 @@ export class AdminUserRolesComponent implements OnInit {
         console.error("Failed to load users:", err);
       },
     });
-  }
-
-  onUserClick(userAccount: UserAccount) {
-    if (!userAccount.userEntityId) {
-      return;
-    }
-
-    this.router.navigate(["/user", userAccount.userEntityId]);
   }
 
   getRoleNames(userAccount: UserAccount): string {

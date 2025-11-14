@@ -6,14 +6,11 @@ import { UserAdminService } from "../core/user/user-admin-service/user-admin.ser
 import { of } from "rxjs";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { UserAccount } from "../core/user/user-admin-service/user-account";
-import { Router } from "@angular/router";
-import { RouterTestingModule } from "@angular/router/testing";
 
 describe("AdminUserRolesComponent", () => {
   let component: AdminUserRolesComponent;
   let fixture: ComponentFixture<AdminUserRolesComponent>;
   let mockUserAdminService: jasmine.SpyObj<UserAdminService>;
-  let router: Router;
 
   const mockUsers: UserAccount[] = [
     {
@@ -45,7 +42,6 @@ describe("AdminUserRolesComponent", () => {
         AdminUserRolesComponent,
         FontAwesomeTestingModule,
         NoopAnimationsModule,
-        RouterTestingModule,
       ],
       providers: [
         { provide: UserAdminService, useValue: mockUserAdminService },
@@ -54,8 +50,6 @@ describe("AdminUserRolesComponent", () => {
 
     fixture = TestBed.createComponent(AdminUserRolesComponent);
     component = fixture.componentInstance;
-    router = TestBed.inject(Router);
-    spyOn(router, "navigate");
     fixture.detectChanges();
   });
 

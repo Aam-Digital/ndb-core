@@ -2,7 +2,6 @@
 
 <p i18n class="margin-bottom-regular">
   This page displays all user accounts registered in Keycloak for this realm.
-  Click on a user to manage their account settings and permissions.
 </p>
 
 <table
@@ -36,10 +35,5 @@
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr
-    mat-row
-    *matRowDef="let row; columns: displayedColumns"
-    (click)="onUserClick(row)"
-    class="clickable-row"
-  ></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
