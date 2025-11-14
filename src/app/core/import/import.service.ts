@@ -111,18 +111,25 @@ export class ImportService {
           continue;
         }
 
+        const val = row[col];
+        const hasSourceValue = val !== undefined && val !== null && val !== "";
+
         const parsed = await this.parseCell(
-          row[col],
+          val,
           mapping,
           entity,
           importProcessingContext,
         );
-        if (parsed === undefined) {
-          continue;
-        }
 
-        entity[mapping.propertyName] = parsed;
-        hasMappedProperty = true;
+        if (parsed !== undefined) {
+          // For entity references with multiple column mappings to the same field,
+          entity[mapping.propertyName] = parsed;
+          hasMappedProperty = true;
+        } else if (hasSourceValue) {
+          // Source had a value but parsing/matching failed; still count as mapped
+          // ensures rows aren't skipped just because entity references don't match
+          hasMappedProperty = true;
+        }
       }
 
       if (hasMappedProperty) {
