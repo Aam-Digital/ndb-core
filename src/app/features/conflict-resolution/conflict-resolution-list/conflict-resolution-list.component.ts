@@ -10,6 +10,7 @@ import { MatSortModule } from "@angular/material/sort";
 import { CompareRevComponent } from "../compare-rev/compare-rev.component";
 import { RouteTarget } from "../../../route-target";
 import { DatabaseResolverService } from "../../../core/database/database-resolver.service";
+import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 
 /**
  * List all document conflicts and allow the user to expand for details and manual resolution.
@@ -19,6 +20,7 @@ import { DatabaseResolverService } from "../../../core/database/database-resolve
   selector: "app-conflict-resolution-list",
   templateUrl: "./conflict-resolution-list.component.html",
   imports: [
+    ViewTitleComponent,
     MatProgressBarModule,
     AsyncPipe,
     MatTableModule,

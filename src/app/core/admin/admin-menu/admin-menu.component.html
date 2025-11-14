@@ -1,9 +1,24 @@
-<div class="flex-row align-center gap-regular margin-bottom-regular">
-  <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
-  <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+<div class="flex-row flex-wrap justify-space-between">
+  <app-view-title i18n [displayInPlace]="true"
+    >Main Navigation Menu</app-view-title
+  >
+
+  <div class="flex-row gap-small">
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="save()"
+      [disabled]="!hasChanges"
+      i18n
+    >
+      Save
+    </button>
+    <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+  </div>
 </div>
 
 <app-menu-item-list-editor
+  class="margin-top-large"
   [items]="menuItems"
   containerId="navigation-container"
   (itemsChange)="onMenuItemsChange($event)"

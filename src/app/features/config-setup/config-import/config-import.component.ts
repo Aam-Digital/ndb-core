@@ -10,6 +10,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { ClipboardModule } from "@angular/cdk/clipboard";
 import { RouteTarget } from "../../../route-target";
+import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 
 /**
  * UI to upload a config definition and generate a new app `Config` from the imported file.
@@ -20,6 +21,7 @@ import { RouteTarget } from "../../../route-target";
   templateUrl: "./config-import.component.html",
   styleUrls: ["./config-import.component.scss"],
   imports: [
+    ViewTitleComponent,
     MatFormFieldModule,
     FormsModule,
     MatInputModule,
