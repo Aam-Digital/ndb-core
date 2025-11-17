@@ -31,7 +31,7 @@ export class DisplayConfigurableEnumComponent
     }
 
     if (Array.isArray(this.value)) {
-      this.iterableValue = this.value.filter((v) => v != null);
+      this.iterableValue = this.value;
     } else if (this.value) {
       this.iterableValue = [this.value];
     }
