@@ -269,6 +269,9 @@ export class BasicAutocompleteComponent<O, V = O>
   /**
    * Set the width of the dropdown panel programmatically to match the parent form field.
    * (this is not possible with pure CSS)
+   *
+   * Note: If the field is close to the viewport edge, Angular Material's overlay system may shift the dropdown horizontally
+   * to keep it visible, causing minor misalignment. This is expected and ensures accessibility.
    */
   public updatePanelWidth() {
     // Use closest .mat-mdc-form-field or .mat-form-field from input element
@@ -453,7 +456,6 @@ export class BasicAutocompleteComponent<O, V = O>
       !this.elementRef.nativeElement.contains(event.relatedTarget as Element)
     ) {
       if (!this.multi && this.autocompleteForm.value === "") {
-        this.select(undefined);
       }
       this.isInSearchMode.set(false);
       this.retainSearchValue = "";
