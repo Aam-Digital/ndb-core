@@ -266,6 +266,10 @@ export class BasicAutocompleteComponent<O, V = O>
     }, 0);
   }
 
+  /**
+   * Set the width of the dropdown panel programmatically to match the parent form field.
+   * (this is not possible with pure CSS)
+   */
   public updatePanelWidth() {
     // Use closest .mat-mdc-form-field or .mat-form-field from input element
     const fieldEl = this.inputElement?._elementRef?.nativeElement.closest(
