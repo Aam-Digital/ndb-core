@@ -116,6 +116,8 @@ const viewConfigs: ViewConfig[] = [
                       {
                         id: "public_form_permission_warning",
                         viewComponent: "PublicFormPermissionWarning",
+                        showInView: true,
+                        showInEdit: true,
                       },
                       "logo",
                       "showSubmitAnotherButton",
