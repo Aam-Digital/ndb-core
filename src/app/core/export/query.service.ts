@@ -265,7 +265,7 @@ export class QueryService {
    */
   private toEntities(ids: string[], entityPrefix: string): Entity[] {
     if (!entityPrefix) {
-      throw new Error("Entity type not defined");
+      throw new Error("Record type not defined");
     }
     if (!ids) {
       return [];

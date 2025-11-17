@@ -17,6 +17,7 @@
     <app-entity-field-select
       [multi]="true"
       [entityType]="entityType"
+      [value]="matchExistingByFields"
       (valueChange)="updateValue($event)"
     ></app-entity-field-select>
     <mat-hint i18n
