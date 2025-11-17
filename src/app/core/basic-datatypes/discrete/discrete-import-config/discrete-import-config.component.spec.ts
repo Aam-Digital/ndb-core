@@ -108,4 +108,26 @@ describe("DiscreteImportConfigComponent", () => {
       other: "other",
     });
   });
+
+  it("should correctly auto-map numeric CSV values (parsed as numbers) to string enum option IDs", () => {
+    const numericEnumOptions = [
+      { id: "1a", label: "1a" },
+      { id: "2", label: "2" },
+    ];
+    spyOn(
+      TestBed.inject(ConfigurableEnumService),
+      "getEnumValues",
+    ).and.returnValue(numericEnumOptions);
+
+    data.values = ["1a", 2];
+    data.col.additional = undefined;
+
+    component.ngOnInit();
+
+    const formValue = component.form.getRawValue();
+    expect(formValue["1a"]).toEqual(numericEnumOptions[0]);
+    expect(formValue["1a"].isInvalidOption).toBeUndefined();
+    expect(formValue[2]).toEqual(numericEnumOptions[1]);
+    expect(formValue[2].isInvalidOption).toBeUndefined();
+  });
 });
