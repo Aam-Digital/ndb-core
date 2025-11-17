@@ -21,14 +21,14 @@ L.Marker.prototype.options.icon = iconDefault;
 
 /**
  * Translates the color of an entity to the necessary hue-rotate filter.
- * Uses the entity's getColor() method which evaluates conditional colors based on the entity's properties.
+ * Uses conditional color mappings if configured for the entity type.
  * @param entity to get color from
  * @param offset hue offset which should be added on top.
  *  default 145 (rough guess of the default leaflet marker icon)
  *
  */
 export function getHueForEntity(entity: Entity, offset = 145): string {
-  const color = entity.getColor();
+  const color = entity.getColor(true);
 
   if (!color) {
     return "0";

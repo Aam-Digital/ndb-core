@@ -32,6 +32,7 @@ import {
   allParsingInstructions,
   createFactory,
 } from "@ucast/mongo2js";
+import { extendedCompare } from "../../../utils/filter-compare-utils";
 
 /**
  * This represents a static class of type <T>.
@@ -387,9 +388,13 @@ export class Entity {
 
   /**
    * Used by some generic UI components to set the color for the entity instance.
+   * @param useConditionalColors Whether to evaluate conditional color mappings (default: false for backward compatibility)
    * Override this method as needed.
    */
-  public getColor(): string {
+  public getColor(useConditionalColors: boolean = false): string {
+    if (useConditionalColors) {
+      return Entity.getColorWithConditions(this);
+    }
     return getWarningLevelColor(this.getWarningLevel());
   }
 
@@ -403,66 +408,40 @@ export class Entity {
 
   /**
    * Static method to evaluate conditional colors for an entity based on ColorMapping configuration.
-   * This method can be used in contexts where you need conditional color evaluation
    */
   static getColorWithConditions(entity: Entity): string {
     const colorConfig = entity.getConstructor().color;
 
+    // Handle simple string color
+    if (typeof colorConfig === "string" && colorConfig) {
+      return colorConfig;
+    }
+
+    // Handle conditional colors array
     if (Array.isArray(colorConfig) && colorConfig.length > 0) {
       try {
-        // Custom compare function to handle ConfigurableEnum values
-        const customCompare = <T>(a: T, b: T): 1 | -1 | 0 => {
-          // Handle ConfigurableEnum objects: compare by id property
-          if (
-            a &&
-            typeof a === "object" &&
-            "id" in a &&
-            typeof b === "string"
-          ) {
-            return (a as any).id === b ? 0 : (a as any).id < b ? -1 : 1;
-          }
-          if (
-            b &&
-            typeof b === "object" &&
-            "id" in b &&
-            typeof a === "string"
-          ) {
-            return (b as any).id === a ? 0 : a < (b as any).id ? -1 : 1;
-          }
-          // Default comparison
-          return a === b ? 0 : a < b ? -1 : 1;
-        };
-
         const interpret = createFactory(
           allParsingInstructions,
           allInterpreters,
-          { compare: customCompare },
+          { compare: extendedCompare },
         );
+        let fallbackColor: string | null = null;
 
-        // Evaluate each condition in order
         for (const mapping of colorConfig) {
-          if (!mapping.condition || !mapping.color) {
+          if (!mapping.color) continue;
+
+          const conditionKeys = mapping.condition
+            ? Object.keys(mapping.condition)
+            : [];
+
+          if (conditionKeys.length === 0) {
+            fallbackColor = mapping.color;
             continue;
           }
 
-          // Empty condition {} serves as fallback (skip it for now, evaluate after all conditions)
-          const conditionKeys = Object.keys(mapping.condition);
-          if (conditionKeys.length === 0) {
-            continue; // Skip fallback for now
-          }
-
-          // Evaluate the condition against this entity
           try {
             const test = interpret(mapping.condition as any);
-            if (test(entity)) {
-              console.log(
-                "Conditional color matched:",
-                entity.getId(),
-                mapping.condition,
-                mapping.color,
-              );
-              return mapping.color;
-            }
+            if (test(entity)) return mapping.color;
           } catch (e) {
             Logging.debug(
               "Error evaluating color condition",
@@ -472,29 +451,13 @@ export class Entity {
           }
         }
 
-        // No conditional match found, look for fallback (empty condition)
-        for (const mapping of colorConfig) {
-          if (!mapping.condition || !mapping.color) {
-            continue;
-          }
-          if (Object.keys(mapping.condition).length === 0) {
-            return mapping.color;
-          }
-        }
+        return fallbackColor;
       } catch (e) {
         Logging.warn("Error processing conditional colors", e);
       }
-
-      // If no conditions matched, fall back to warning level color
-      return getWarningLevelColor(entity.getWarningLevel());
     }
 
-    // Handle simple string color
-    if (typeof colorConfig === "string" && colorConfig) {
-      return colorConfig;
-    }
-
-    // No color configured - return warning level color directly to avoid infinite recursion
+    // Default fallback
     return getWarningLevelColor(entity.getWarningLevel());
   }
 
