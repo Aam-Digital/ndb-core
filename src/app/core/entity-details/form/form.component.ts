@@ -13,8 +13,6 @@ import { EntityFormComponent } from "../../common-components/entity-form/entity-
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { FieldGroup } from "./field-group";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
-import { PublicFormConfig } from "../../../features/public-form/public-form-config";
-import { PublicFormsService } from "../../../features/public-form/public-forms.service";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -37,7 +35,6 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   private entityFormService = inject(EntityFormService);
   private alertService = inject(AlertService);
   private viewContext = inject(ViewComponentContext, { optional: true });
-  private readonly publicFormsService = inject(PublicFormsService);
 
   @Input() entity: E;
   @Input() creatingNew = false;
@@ -61,13 +58,6 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
 
   async saveClicked() {
     try {
-      // For PublicFormConfig: persist any new fields to entity config before saving
-      if (this.entity.getType() === PublicFormConfig.ENTITY_TYPE) {
-        await this.publicFormsService.saveCustomFieldsToEntityConfig(
-          this.entity as unknown as PublicFormConfig,
-        );
-      }
-
       await this.entityFormService.saveChanges(this.form, this.entity);
 
       if (this.creatingNew && !this.viewContext?.isDialog) {
