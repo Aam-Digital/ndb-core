@@ -116,8 +116,8 @@ export class ImportExistingService {
 
         // If either value is null/undefined, don't match - identifier must have a value
         if (
-          this.hasImportValue(rawExistingValue) ||
-          this.hasImportValue(rawImportValue)
+          this.isEmptyImportValue(rawExistingValue) ||
+          this.isEmptyImportValue(rawImportValue)
         ) {
           return false;
         }
@@ -185,7 +185,7 @@ export class ImportExistingService {
     await Promise.all(reverts);
   }
 
-  hasImportValue(value: any): boolean {
+  isEmptyImportValue(value: any): boolean {
     return value === null || value === undefined || value === "";
   }
 }
