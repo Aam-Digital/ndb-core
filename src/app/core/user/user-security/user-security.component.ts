@@ -26,6 +26,7 @@ import {
 import { Role, UserAccount } from "../user-admin-service/user-account";
 import { Logging } from "app/core/logging/logging.service";
 import { of } from "rxjs";
+import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 
 @UntilDestroy()
 @DynamicComponent("UserSecurity")
@@ -40,6 +41,7 @@ import { of } from "rxjs";
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatDialogModule,
   ],
 })
 export class UserSecurityComponent implements OnInit {
@@ -47,6 +49,7 @@ export class UserSecurityComponent implements OnInit {
   private fb = inject(FormBuilder);
   private alertService = inject(AlertService);
   private http = inject(HttpClient);
+  private dialogData = inject(MAT_DIALOG_DATA, { optional: true });
 
   @Input() entity: Entity;
   form: FormGroup;
@@ -97,6 +100,12 @@ export class UserSecurityComponent implements OnInit {
     if (!this.userIsPermitted) {
       return;
     }
+
+    // Support both @Input and dialog injection
+    if (this.dialogData?.entity) {
+      this.entity = this.dialogData.entity;
+    }
+
     this.form.get("userEntityId").setValue(this.entity.getId());
     this.userAdminService
       .getUser(this.entity.getId())

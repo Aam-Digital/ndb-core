@@ -4,6 +4,9 @@ import { UserAdminService } from "../core/user/user-admin-service/user-admin.ser
 import { UserAccount } from "../core/user/user-admin-service/user-account";
 import { MatTableModule } from "@angular/material/table";
 import { Logging } from "../core/logging/logging.service";
+import { MatDialog } from "@angular/material/dialog";
+import { UserSecurityComponent } from "../core/user/user-security/user-security.component";
+import { Entity } from "../core/entity/model/entity";
 
 @Component({
   selector: "app-admin-user-roles",
@@ -13,6 +16,7 @@ import { Logging } from "../core/logging/logging.service";
 })
 export class AdminUserRolesComponent implements OnInit {
   private readonly userAdminService = inject(UserAdminService);
+  private readonly dialog = inject(MatDialog);
 
   users = signal<UserAccount[]>([]);
   displayedColumns: string[] = [
@@ -40,5 +44,23 @@ export class AdminUserRolesComponent implements OnInit {
 
   getRoleNames(userAccount: UserAccount): string {
     return userAccount.roles?.map((r) => r.name).join(", ") || "-";
+  }
+
+  openUserSecurity(user: UserAccount) {
+    // Only open dialog if user has a userEntityId
+    if (!user.userEntityId) {
+      return;
+    }
+
+    // Create a minimal entity object with the user's ID
+    const entityMock = new Entity(user.userEntityId);
+
+    this.dialog.open(UserSecurityComponent, {
+      data: { entity: entityMock },
+    });
+  }
+
+  isRowClickable(user: UserAccount): boolean {
+    return !!user.userEntityId;
   }
 }
