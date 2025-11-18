@@ -456,6 +456,7 @@ export class BasicAutocompleteComponent<O, V = O>
       !this.elementRef.nativeElement.contains(event.relatedTarget as Element)
     ) {
       if (!this.multi && this.autocompleteForm.value === "") {
+        this.select(undefined);
       }
       this.isInSearchMode.set(false);
       this.retainSearchValue = "";
