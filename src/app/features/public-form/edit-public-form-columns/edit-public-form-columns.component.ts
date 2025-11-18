@@ -57,8 +57,8 @@ export class EditPublicFormColumnsComponent
   isDisabled = signal(false);
 
   private entities = inject(EntityRegistry);
-  private entityMapper = inject(EntityMapperService);
-  private publicFormsService = inject(PublicFormsService);
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly publicFormsService = inject(PublicFormsService);
 
   get formControl(): FormControl<FieldGroup[]> {
     return this.ngControl.control as FormControl<FieldGroup[]>;
