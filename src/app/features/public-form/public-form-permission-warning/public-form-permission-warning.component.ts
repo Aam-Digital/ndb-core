@@ -105,7 +105,7 @@ export class PublicFormPermissionWarningComponent implements OnInit, OnChanges {
       this.alertService.addInfo(
         $localize`Permission added successfully! The public form should now work correctly.`,
       );
-      this.hasPublicCreatePermission.set(true);
+      await this.checkPermissions();
     } catch (error) {
       console.error("Failed to add permission:", error);
       this.alertService.addDanger(
