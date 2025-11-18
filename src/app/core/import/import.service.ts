@@ -112,7 +112,7 @@ export class ImportService {
         }
 
         const val = row[col];
-        const hasSourceValue = val !== undefined && val !== null && val !== "";
+        const hasSourceValue = !this.importExistingService.hasImportValue(val);
 
         const parsed = await this.parseCell(
           val,
