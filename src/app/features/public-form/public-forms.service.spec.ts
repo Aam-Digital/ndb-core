@@ -5,11 +5,24 @@ import { Entity } from "app/core/entity/model/entity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
+import { AdminEntityService } from "app/core/admin/admin-entity.service";
+import { TestEntity } from "../../utils/test-utils/TestEntity";
 
 describe("PublicFormsService", () => {
   let service: PublicFormsService;
+  let mockEntityRegistry: jasmine.SpyObj<EntityRegistry>;
+  let mockEntityConfigService: jasmine.SpyObj<EntityConfigService>;
+  let mockAdminEntityService: jasmine.SpyObj<AdminEntityService>;
 
   beforeEach(() => {
+    mockEntityRegistry = jasmine.createSpyObj("EntityRegistry", ["get"]);
+    mockEntityConfigService = jasmine.createSpyObj("EntityConfigService", [
+      "getEntityConfig",
+    ]);
+    mockAdminEntityService = jasmine.createSpyObj("AdminEntityService", [
+      "setAndSaveEntityConfig",
+    ]);
+
     TestBed.configureTestingModule({
       providers: [
         {
@@ -18,11 +31,15 @@ describe("PublicFormsService", () => {
         },
         {
           provide: EntityRegistry,
-          useValue: jasmine.createSpyObj(["get"]),
+          useValue: mockEntityRegistry,
         },
         {
           provide: EntityConfigService,
-          useValue: jasmine.createSpyObj(["getEntityConfig"]),
+          useValue: mockEntityConfigService,
+        },
+        {
+          provide: AdminEntityService,
+          useValue: mockAdminEntityService,
         },
       ],
     });
@@ -217,5 +234,56 @@ describe("PublicFormsService", () => {
 
     const result = await service.isEntityTypeLinkedToConfig(config, entity);
     expect(result).toBe(true);
+  });
+
+  it("should add new field to global schema when field is not in base schema", async () => {
+    const publicFormConfig = new PublicFormConfig();
+    publicFormConfig.entity = TestEntity.ENTITY_TYPE;
+
+    // new custom field that doesn't exist in global config
+    const newFieldId = "testField";
+    TestEntity.schema.set(newFieldId, {
+      label: "Test Field",
+      dataType: "string",
+    });
+
+    mockEntityRegistry.get.and.returnValue(TestEntity);
+    // Global config only has the original TestEntity fields (name, other) but is missing our new testField
+    mockEntityConfigService.getEntityConfig.and.returnValue({
+      attributes: {
+        name: { label: "Name" },
+        other: { label: "Other" },
+      },
+    });
+
+    await service.saveCustomFieldsToEntityConfig(publicFormConfig);
+
+    // Verify the new field is added to global schema via setAndSaveEntityConfig
+    expect(mockAdminEntityService.setAndSaveEntityConfig).toHaveBeenCalledWith(
+      TestEntity,
+    );
+
+    TestEntity.schema.delete(newFieldId);
+  });
+
+  it("should NOT update global schema when only existing field label is modified (local override)", async () => {
+    const config = new PublicFormConfig();
+    config.entity = TestEntity.ENTITY_TYPE;
+
+    mockEntityRegistry.get.and.returnValue(TestEntity);
+    const attributes = {};
+    for (const [fieldId, fieldDef] of TestEntity.schema.entries()) {
+      attributes[fieldId] = { label: fieldDef.label };
+    }
+    mockEntityConfigService.getEntityConfig.and.returnValue({
+      attributes: attributes,
+    });
+
+    await service.saveCustomFieldsToEntityConfig(config);
+
+    // should not call setAndSaveEntityConfig because all fields already exist in global schema
+    expect(
+      mockAdminEntityService.setAndSaveEntityConfig,
+    ).not.toHaveBeenCalled();
   });
 });
