@@ -55,8 +55,15 @@ export class AdminUserRolesComponent implements OnInit {
     // Create a minimal entity object with the user's ID
     const entityMock = new Entity(user.userEntityId);
 
-    this.dialog.open(UserSecurityComponent, {
+    const dialogRef = this.dialog.open(UserSecurityComponent, {
       data: { entity: entityMock },
+      width: '600px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadUsers();
+      }
     });
   }
 
