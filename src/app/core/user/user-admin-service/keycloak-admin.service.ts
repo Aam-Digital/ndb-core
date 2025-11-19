@@ -247,25 +247,44 @@ export class KeycloakAdminService extends UserAdminService {
       .pipe(map((roles) => this.filterNonTechnicalRoles(roles)));
   }
 
+  /**
+   * Fetches all users with their roles.
+   */
   getAllUsers(): Observable<UserAccount[]> {
     return this.findUsersBy({}).pipe(
       switchMap((users) => {
-        // For each user, fetch their roles
+        if (users.length === 0) {
+          return of([]);
+        }
+
+        // For each user, fetch their roles with individual error handling
         const usersWithRoles$ = users.map((user) =>
           this.getRolesOfUser(user.id).pipe(
-            map((roles) => {
-              return {
+            map((roles) => ({
+              id: user.id,
+              email: user.email,
+              userEntityId: user.attributes?.exact_username?.[0],
+              enabled: user.enabled,
+              emailVerified: user.emailVerified,
+              roles,
+            })),
+            catchError((error) => {
+              // Log the error but don't fail the entire operation
+              Logging.warn(`Failed to fetch roles for user ${user.id}`, error);
+              // Return user without roles
+              return of({
                 id: user.id,
                 email: user.email,
                 userEntityId: user.attributes?.exact_username?.[0],
                 enabled: user.enabled,
                 emailVerified: user.emailVerified,
-                roles,
-              } as UserAccount;
+                roles: [],
+              } as UserAccount);
             }),
           ),
         );
-        return usersWithRoles$.length > 0 ? forkJoin(usersWithRoles$) : of([]);
+
+        return forkJoin(usersWithRoles$);
       }),
     );
   }

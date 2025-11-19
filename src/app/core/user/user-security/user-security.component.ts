@@ -49,7 +49,7 @@ export class UserSecurityComponent implements OnInit {
   private fb = inject(FormBuilder);
   private alertService = inject(AlertService);
   private http = inject(HttpClient);
-  private dialogData = inject(MAT_DIALOG_DATA, { optional: true });
+  private readonly dialogData = inject(MAT_DIALOG_DATA, { optional: true });
 
   @Input() entity: Entity;
   form: FormGroup;

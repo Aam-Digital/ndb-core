@@ -6,11 +6,16 @@ import { UserAdminService } from "../core/user/user-admin-service/user-admin.ser
 import { of } from "rxjs";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { UserAccount } from "../core/user/user-admin-service/user-account";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { UserSecurityComponent } from "../core/user/user-security/user-security.component";
+import { Entity } from "../core/entity/model/entity";
 
-describe("AdminUserRolesComponent", () => {
+fdescribe("AdminUserRolesComponent", () => {
   let component: AdminUserRolesComponent;
   let fixture: ComponentFixture<AdminUserRolesComponent>;
   let mockUserAdminService: jasmine.SpyObj<UserAdminService>;
+  let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockDialogRef: jasmine.SpyObj<MatDialogRef<UserSecurityComponent>>;
 
   const mockUsers: UserAccount[] = [
     {
@@ -29,9 +34,53 @@ describe("AdminUserRolesComponent", () => {
       emailVerified: false,
       roles: [{ id: "role2", name: "admin_app" }],
     },
+    {
+      id: "user3",
+      userEntityId: undefined, // User without entity ID
+      email: "user3@example.com",
+      enabled: true,
+      emailVerified: true,
+      roles: [{ id: "role1", name: "user_app" }],
+    },
+  ];
+
+  const updatedMockUsers: UserAccount[] = [
+    {
+      id: "user1",
+      userEntityId: "User:user1",
+      email: "updated@example.com", // Updated email
+      enabled: true,
+      emailVerified: true,
+      roles: [
+        { id: "role1", name: "user_app" },
+        { id: "role3", name: "account_manager" }, // Added role
+      ],
+    },
+    {
+      id: "user2",
+      userEntityId: "User:user2",
+      email: "user2@example.com",
+      enabled: false,
+      emailVerified: false,
+      roles: [{ id: "role2", name: "admin_app" }],
+    },
+    {
+      id: "user3",
+      userEntityId: undefined,
+      email: "user3@example.com",
+      enabled: true,
+      emailVerified: true,
+      roles: [{ id: "role1", name: "user_app" }],
+    },
   ];
 
   beforeEach(async () => {
+    mockDialogRef = jasmine.createSpyObj("MatDialogRef", ["afterClosed"]);
+    mockDialogRef.afterClosed.and.returnValue(of(true));
+
+    mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
+    mockDialog.open.and.returnValue(mockDialogRef);
+
     mockUserAdminService = jasmine.createSpyObj("UserAdminService", [
       "getAllUsers",
     ]);
@@ -45,6 +94,7 @@ describe("AdminUserRolesComponent", () => {
       ],
       providers: [
         { provide: UserAdminService, useValue: mockUserAdminService },
+        { provide: MatDialog, useValue: mockDialog },
       ],
     }).compileComponents();
 
@@ -81,5 +131,62 @@ describe("AdminUserRolesComponent", () => {
     };
     const roleNames = component.getRoleNames(userWithoutRoles);
     expect(roleNames).toBe("-");
+  });
+
+  it("should not open dialog when clicking row without userEntityId", () => {
+    component.openUserSecurity(mockUsers[2]);
+
+    expect(mockDialog.open).not.toHaveBeenCalled();
+  });
+
+  it("should reload users after dialog is closed with result", () => {
+    mockUserAdminService.getAllUsers.calls.reset();
+    mockUserAdminService.getAllUsers.and.returnValue(of(updatedMockUsers));
+    mockDialogRef.afterClosed.and.returnValue(of(true));
+
+    const user = mockUsers[0];
+    component.openUserSecurity(user);
+
+    expect(mockUserAdminService.getAllUsers).toHaveBeenCalledTimes(1);
+    expect(component.users()).toEqual(updatedMockUsers);
+  });
+
+  it("should not reload users if dialog is closed without result", () => {
+    mockUserAdminService.getAllUsers.calls.reset();
+    mockDialogRef.afterClosed.and.returnValue(of(null));
+
+    const user = mockUsers[0];
+    component.openUserSecurity(user);
+
+    expect(mockUserAdminService.getAllUsers).not.toHaveBeenCalled();
+  });
+
+  it("should reflect updated roles in the table after dialog closes", () => {
+    mockUserAdminService.getAllUsers.calls.reset();
+    mockUserAdminService.getAllUsers.and.returnValue(of(updatedMockUsers));
+    mockDialogRef.afterClosed.and.returnValue(of(true));
+
+    const user = mockUsers[0];
+    component.openUserSecurity(user);
+
+    const updatedUser = component.users()[0];
+    expect(updatedUser.email).toBe("updated@example.com");
+    expect(component.getRoleNames(updatedUser)).toBe(
+      "user_app, account_manager",
+    );
+  });
+
+  it("should reflect updated email in the table after dialog closes", () => {
+    mockUserAdminService.getAllUsers.calls.reset();
+    mockUserAdminService.getAllUsers.and.returnValue(of(updatedMockUsers));
+    mockDialogRef.afterClosed.and.returnValue(of(true));
+
+    const user = mockUsers[0];
+    const originalEmail = user.email;
+    component.openUserSecurity(user);
+
+    const updatedUser = component.users()[0];
+    expect(updatedUser.email).not.toBe(originalEmail);
+    expect(updatedUser.email).toBe("updated@example.com");
   });
 });
