@@ -27,6 +27,8 @@ import { MatIconButton } from "@angular/material/button";
 })
 export class MenuItemFormComponent implements OnInit {
   @Input() item!: MenuItem;
+  @Input() hideLabel = false;
+  @Input() hideLink = false;
 
   /**
    * Available routes that are offered to the user for selection.

@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
+import { ChangeDetectorRef, OnDestroy } from "@angular/core";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { MatButtonModule } from "@angular/material/button";
@@ -28,12 +29,15 @@ import { ActivityAttendance } from "../../../child-dev-project/attendance/model/
     DisableEntityOperationDirective,
     FontAwesomeModule,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PrimaryActionComponent {
+export class PrimaryActionComponent implements OnDestroy {
+  ngOnDestroy() {
+    this.configSub.unsubscribe();
+  }
   private formDialog = inject(FormDialogService);
   private configService = inject(ConfigService);
   private router = inject(Router);
+  private cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   private defaultConfig: PrimaryActionConfig = {
     icon: "plus",
@@ -48,9 +52,14 @@ export class PrimaryActionComponent {
     ActivityAttendance,
   };
 
-  config: PrimaryActionConfig =
-    this.configService.getConfig<PrimaryActionConfig>("primaryAction") ??
-    this.defaultConfig;
+  config: PrimaryActionConfig = this.defaultConfig;
+
+  private configSub = this.configService.configUpdates.subscribe(() => {
+    this.config =
+      this.configService.getConfig<PrimaryActionConfig>("primaryAction") ??
+      this.defaultConfig;
+    this.cdr.markForCheck();
+  });
 
   get entityConstructor() {
     const ctor = this.entityRegistry[this.config.entityType ?? "Note"];
