@@ -254,7 +254,6 @@ export class KeycloakAdminService extends UserAdminService {
         const usersWithRoles$ = users.map((user) =>
           this.getRolesOfUser(user.id).pipe(
             map((roles) => {
-              console.log("user", user);
               return {
                 id: user.id,
                 email: user.email,
