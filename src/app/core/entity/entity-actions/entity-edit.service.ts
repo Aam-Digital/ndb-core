@@ -10,6 +10,7 @@ import {
 import { MatDialog } from "@angular/material/dialog";
 import { EntityActionsService } from "./entity-actions.service";
 import { asArray } from "app/utils/asArray";
+import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 /**
  * Bulk edit fields of multiple entities at once.
@@ -21,6 +22,7 @@ export class EntityEditService extends CascadingEntityAction {
   private matDialog = inject(MatDialog);
   private entityActionsService = inject(EntityActionsService);
   private unsavedChanges = inject(UnsavedChangesService);
+  private confirmationDialog = inject(ConfirmationDialogService);
 
   /**
    * Shows a confirmation dialog to the user
@@ -70,10 +72,18 @@ export class EntityEditService extends CascadingEntityAction {
 
     for (const e of newEntities) {
       e[action.selectedField] = action.value;
-      await this.entityMapper.save(e);
     }
 
+    // todo: its not working as expected auto closed too early
+    const progressDialog = this.confirmationDialog.showProgressDialog(
+      $localize`:Bulk edit progress message:Saving ${newEntities.length}:count: records...`,
+    );
+      await this.entityMapper.saveAll(newEntities);
+   
+
     this.unsavedChanges.pending = false;
+      progressDialog.close();
+
     return {
       success: true,
       originalEntities,
