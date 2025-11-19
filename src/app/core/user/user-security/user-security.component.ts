@@ -26,7 +26,14 @@ import {
 import { Role, UserAccount } from "../user-admin-service/user-account";
 import { Logging } from "app/core/logging/logging.service";
 import { of } from "rxjs";
-import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
+import { MatIconModule } from "@angular/material/icon";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 
 @UntilDestroy()
 @DynamicComponent("UserSecurity")
@@ -42,6 +49,9 @@ import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
     MatInputModule,
     MatSelectModule,
     MatDialogModule,
+    MatIconModule,
+    FontAwesomeModule,
+    DialogCloseComponent,
   ],
 })
 export class UserSecurityComponent implements OnInit {
@@ -50,6 +60,9 @@ export class UserSecurityComponent implements OnInit {
   private alertService = inject(AlertService);
   private http = inject(HttpClient);
   private readonly dialogData = inject(MAT_DIALOG_DATA, { optional: true });
+  private readonly dialogRef = inject(MatDialogRef<UserSecurityComponent>, {
+    optional: true,
+  });
 
   @Input() entity: Entity;
   form: FormGroup;
@@ -57,6 +70,7 @@ export class UserSecurityComponent implements OnInit {
   user: UserAccount;
   editing = true;
   userIsPermitted = false;
+  isInDialog = false;
 
   constructor() {
     const sessionInfo = inject(SessionSubject);
@@ -104,6 +118,7 @@ export class UserSecurityComponent implements OnInit {
     // Support both @Input and dialog injection
     if (this.dialogData?.entity) {
       this.entity = this.dialogData.entity;
+      this.isInDialog = true;
     }
 
     this.form.get("userEntityId").setValue(this.entity.getId());
@@ -126,7 +141,8 @@ export class UserSecurityComponent implements OnInit {
   private assignUser(user: UserAccount) {
     this.user = user;
     this.initializeForm();
-    if (this.user) {
+    if (this.user && !this.isInDialog) {
+      // In dialog mode, keep editing enabled; otherwise disable for normal view
       this.disableForm();
     }
   }
@@ -208,7 +224,14 @@ export class UserSecurityComponent implements OnInit {
       next: () => {
         this.alertService.addInfo(message);
         Object.assign(this.user, update);
-        this.disableForm();
+
+        if (this.isInDialog) {
+          // Close dialog after successful update
+          this.closeDialog();
+        } else {
+          this.disableForm();
+        }
+
         if (update.roles?.length > 0) {
           // roles changed, user might have more permissions now
           this.triggerSyncReset();
@@ -261,5 +284,9 @@ export class UserSecurityComponent implements OnInit {
     }
 
     this.form.setErrors({ failed: errorMessage });
+  }
+
+  closeDialog() {
+    this.dialogRef?.close();
   }
 }

@@ -3,7 +3,13 @@
     You account does not have the required permissions to see this page.
   </em>
 } @else {
-  <div class="flex-column">
+  @if (isInDialog) {
+    <div>
+      <h2 mat-dialog-title i18n>Edit User Security</h2>
+      <app-dialog-close (click)="closeDialog()"></app-dialog-close>
+    </div>
+  }
+  <div class="flex-column padding-right-regular padding-left-regular">
     @if (!user) {
       <div class="buttons-wrapper align-self-start">
         <p
@@ -33,7 +39,7 @@
       <div
         class="padding-bottom-small flex-row gap-small align-self-end flex-wrap padding-top-small"
       >
-        @if (editing && user?.enabled) {
+        @if (editing && user?.enabled && !isInDialog) {
           <button
             mat-stroked-button
             color="warn"
@@ -44,7 +50,7 @@
             Deactivate user
           </button>
         }
-        @if (editing && !user?.enabled) {
+        @if (editing && !user?.enabled && !isInDialog) {
           <button
             mat-raised-button
             color="accent"
@@ -70,7 +76,7 @@
           <button
             mat-stroked-button
             class="action-button"
-            (click)="disableForm()"
+            (click)="isInDialog ? closeDialog() : disableForm()"
             i18n="Cancel button for forms"
           >
             Cancel
