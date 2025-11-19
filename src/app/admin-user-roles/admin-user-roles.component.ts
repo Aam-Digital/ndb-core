@@ -57,7 +57,6 @@ export class AdminUserRolesComponent implements OnInit {
 
     const dialogRef = this.dialog.open(UserSecurityComponent, {
       data: { entity: entityMock },
-      width: '600px',
     });
 
     dialogRef.afterClosed().subscribe((result) => {
