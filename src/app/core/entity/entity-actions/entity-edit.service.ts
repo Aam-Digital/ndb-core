@@ -78,11 +78,10 @@ export class EntityEditService extends CascadingEntityAction {
     const progressDialog = this.confirmationDialog.showProgressDialog(
       $localize`:Bulk edit progress message:Saving ${newEntities.length}:count: records...`,
     );
-      await this.entityMapper.saveAll(newEntities);
-   
+    await this.entityMapper.saveAll(newEntities);
 
     this.unsavedChanges.pending = false;
-      progressDialog.close();
+    progressDialog.close();
 
     return {
       success: true,
