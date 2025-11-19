@@ -8,9 +8,8 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { UserAccount } from "../core/user/user-admin-service/user-account";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { UserSecurityComponent } from "../core/user/user-security/user-security.component";
-import { Entity } from "../core/entity/model/entity";
 
-fdescribe("AdminUserRolesComponent", () => {
+describe("AdminUserRolesComponent", () => {
   let component: AdminUserRolesComponent;
   let fixture: ComponentFixture<AdminUserRolesComponent>;
   let mockUserAdminService: jasmine.SpyObj<UserAdminService>;
