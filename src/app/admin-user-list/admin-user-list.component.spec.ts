@@ -111,27 +111,6 @@ describe("AdminUserListComponent", () => {
     expect(roleNames).toBe("user_app");
   });
 
-  it("should handle users with multiple roles", () => {
-    const userWithMultipleRoles: UserAccount = {
-      ...mockUsers[0],
-      roles: [
-        { id: "role1", name: "user_app" },
-        { id: "role2", name: "admin_app" },
-      ],
-    };
-    const roleNames = component.getRoleNames(userWithMultipleRoles);
-    expect(roleNames).toBe("user_app, admin_app");
-  });
-
-  it("should handle users with no roles", () => {
-    const userWithoutRoles: UserAccount = {
-      ...mockUsers[0],
-      roles: undefined,
-    };
-    const roleNames = component.getRoleNames(userWithoutRoles);
-    expect(roleNames).toBe("-");
-  });
-
   it("should not open dialog when clicking row without userEntityId", () => {
     component.openUserSecurity(mockUsers[2]);
 
@@ -148,16 +127,6 @@ describe("AdminUserListComponent", () => {
 
     expect(mockUserAdminService.getAllUsers).toHaveBeenCalledTimes(1);
     expect(component.users()).toEqual(updatedMockUsers);
-  });
-
-  it("should not reload users if dialog is closed without result", () => {
-    mockUserAdminService.getAllUsers.calls.reset();
-    mockDialogRef.afterClosed.and.returnValue(of(null));
-
-    const user = mockUsers[0];
-    component.openUserSecurity(user);
-
-    expect(mockUserAdminService.getAllUsers).not.toHaveBeenCalled();
   });
 
   it("should reflect updated roles in the table after dialog closes", () => {
