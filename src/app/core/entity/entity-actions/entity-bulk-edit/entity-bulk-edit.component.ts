@@ -8,7 +8,6 @@ import {
   Validators,
 } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
-import { MatOption } from "@angular/material/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -23,6 +22,7 @@ import { DialogCloseComponent } from "app/core/common-components/dialog-close/di
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { Entity, EntityConstructor } from "../../model/entity";
+import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
 
 @Component({
   selector: "app-entity-bulk-edit",
@@ -35,10 +35,10 @@ import { Entity, EntityConstructor } from "../../model/entity";
     ReactiveFormsModule,
     FontAwesomeModule,
     MatTooltipModule,
-    MatOption,
     MatFormFieldModule,
     MatSelectModule,
     EntityFieldEditComponent,
+    EntityFieldSelectComponent,
   ],
   templateUrl: "./entity-bulk-edit.component.html",
   styleUrl: "./entity-bulk-edit.component.scss",
@@ -75,30 +75,18 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.fetchEntityFieldsData();
   }
 
   private initForm() {
     this.selectedFieldFormControl = new FormControl("", Validators.required);
   }
 
-  fetchEntityFieldsData() {
-    this.entityFields = Array.from(this.entityConstructor.schema.entries())
-      .filter(([key, field]) => field.label)
-      .map(([key, field]) => ({
-        key: key,
-        label: field.label,
-        field: field,
-      }));
-  }
-
-  async onChangeProperty(fieldId: string) {
+  async onChangeProperty(fieldId: string | string[]) {
+    fieldId = fieldId as string; // we use single-select mode
     this.selectedField = this.entityFormService.extendFormFieldConfig(
       fieldId,
       this.entityConstructor,
     );
-
-    this.fetchEntityFieldsData();
 
     const fieldKeys = this.entityFields.map((item) => item.key);
     await this.createEntityForm(fieldKeys);

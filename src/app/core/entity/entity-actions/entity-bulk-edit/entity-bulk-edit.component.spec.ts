@@ -73,14 +73,6 @@ describe("EntityBulkEditComponent", () => {
     expect(component.selectedFieldFormControl.value).toBe("");
   });
 
-  it("should fetch and populate entity fields", () => {
-    component.fetchEntityFieldsData();
-
-    expect(component.entityFields.length).toBe(2);
-    expect(component.entityFields[0].key).toBe("name");
-    expect(component.entityFields[0].label).toBe("foo");
-  });
-
   it("should not save if the form is invalid", () => {
     component.selectedFieldFormControl.setValue("");
 
