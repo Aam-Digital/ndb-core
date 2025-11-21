@@ -8,6 +8,7 @@ import { EntityPermissionGuard } from "../permissions/permission-guard/entity-pe
 import { SetupWizardComponent } from "./setup-wizard/setup-wizard.component";
 import { AdminMenuComponent } from "./admin-menu/admin-menu.component";
 import { AdminUserRolesComponent } from "../../admin-user-roles/admin-user-roles.component";
+import { AdminUserListComponent } from "../../admin-user-list/admin-user-list.component";
 import { SubscriptionInfoComponent } from "../../subscription-info/subscription-info.component";
 import { AdvancedFeaturesComponent } from "../../advanced-features/advanced-features.component";
 import { DataPrivacyComponent } from "../../data-privacy/data-privacy.component";
@@ -32,6 +33,14 @@ export const adminRoutes: Routes = [
   {
     path: "user-roles",
     component: AdminUserRolesComponent,
+    canActivate: [UserRoleGuard],
+    data: {
+      permittedUserRoles: ["admin_app"],
+    },
+  },
+  {
+    path: "user-list",
+    component: AdminUserListComponent,
     canActivate: [UserRoleGuard],
     data: {
       permittedUserRoles: ["admin_app"],

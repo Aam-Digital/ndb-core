@@ -74,7 +74,7 @@ export const DEFAULT_ADMIN_SECTIONS: AdminSection[] = [
       },
       {
         label: $localize`:admin menu item:Manage User Accounts`,
-        link: "/user",
+        link: "/admin/user-list",
       },
     ],
   },

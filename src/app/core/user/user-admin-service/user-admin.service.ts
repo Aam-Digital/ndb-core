@@ -54,6 +54,12 @@ export abstract class UserAdminService {
    * Get all available roles of the server
    */
   abstract getAllRoles(): Observable<Role[]>;
+
+  /**
+   * Get all users registered in the authentication server (Keycloak) for this realm
+   * @returns An array of all user accounts with their details, including only non-technical roles
+   */
+  abstract getAllUsers(): Observable<UserAccount[]>;
 }
 
 export class UserAdminApiError extends Error {
