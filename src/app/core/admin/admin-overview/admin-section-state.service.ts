@@ -11,7 +11,7 @@ import { Injectable, signal } from "@angular/core";
 @Injectable({ providedIn: "root" })
 export class AdminSectionStateService {
   // Holds the currently expanded section id (default: 'config')
-  private expandedSection = signal<string | null>("config");
+  private readonly expandedSection = signal<string | null>("config");
 
   setExpanded(sectionId: string): void {
     this.expandedSection.set(sectionId);

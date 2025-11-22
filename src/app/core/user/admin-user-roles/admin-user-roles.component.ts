@@ -15,9 +15,9 @@ import { MatButtonModule } from "@angular/material/button";
   styleUrl: "./admin-user-roles.component.scss",
 })
 export class AdminUserRolesComponent {
-  private jsonEditorService = inject(JsonEditorService);
-  private entityMapper = inject(EntityMapperService);
-  private snackBar = inject(MatSnackBar);
+  private readonly jsonEditorService = inject(JsonEditorService);
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly snackBar = inject(MatSnackBar);
 
   async editPermissions() {
     const permissionsConfig = await this.entityMapper

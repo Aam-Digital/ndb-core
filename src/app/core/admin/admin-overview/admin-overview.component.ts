@@ -49,9 +49,9 @@ export class AdminOverviewComponent {
   protected adminOverviewService = inject(AdminOverviewService);
   private jsonEditorService = inject(JsonEditorService);
   private entityMapper = inject(EntityMapperService);
+  private readonly sectionStateService = inject(AdminSectionStateService);
 
   public templates: MenuItem[] = [];
-  private sectionStateService = inject(AdminSectionStateService);
   expandedSection = computed(() => this.sectionStateService.getExpanded());
 
   isSaasEnvironment: boolean;
