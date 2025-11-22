@@ -67,15 +67,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   @Output() relatedEntityModified = new EventEmitter<EntityConstructor>();
 
   entityConstructor: EntityConstructor;
-  private readonly _selectedEntityType = signal<string>("");
-
-  get selectedEntityType(): string {
-    return this._selectedEntityType();
-  }
-
-  set selectedEntityType(value: string) {
-    this._selectedEntityType.set(value);
-  }
+  selectedEntityType = signal<string>("");
 
   isDialogOpen = false;
 
@@ -95,7 +87,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
    * Hidden for Note and Todo entities as they have custom detail views.
    */
   showEditStructureButton = computed(() => {
-    const entityType = this._selectedEntityType();
+    const entityType = this.selectedEntityType();
     return entityType !== "Note" && entityType !== "Todo";
   });
 
@@ -107,8 +99,8 @@ export class AdminEntityPanelComponentComponent implements OnInit {
         label: refType.entityType.label || refType.entityType.ENTITY_TYPE,
         entityType: refType.entityType.ENTITY_TYPE,
       }));
-    this.selectedEntityType = this.config.config.entityType;
-    this.entityConstructor = this.entities.get(this.selectedEntityType);
+    this.selectedEntityType.set(this.config.config.entityType);
+    this.entityConstructor = this.entities.get(this.selectedEntityType());
     this.activeFields = (this.config.config.columns ?? []).map((col) =>
       typeof col === "string" ? col : col.id,
     );
@@ -153,7 +145,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     this.isDialogOpen = false;
 
     if (!confirmed) {
-      this.selectedEntityType = this.config.config.entityType;
+      this.selectedEntityType.set(this.config.config.entityType);
       return;
     }
 
@@ -171,7 +163,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
    * @param newType - The new entity type selected.
    */
   private updateConfigForNewEntityType(newType: string) {
-    this.selectedEntityType = newType;
+    this.selectedEntityType.set(newType);
     this.config.config.entityType = newType;
     this.entityConstructor = this.entities.get(newType);
 

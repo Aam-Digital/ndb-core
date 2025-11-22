@@ -4,7 +4,7 @@
       <mat-form-field appearance="fill" class="margin-bottom-regular flex-grow">
         <mat-label i18n>Record Type</mat-label>
         <mat-select
-          [(ngModel)]="selectedEntityType"
+          [ngModel]="selectedEntityType()"
           (ngModelChange)="onEntityTypeChange($event)"
         >
           @for (
