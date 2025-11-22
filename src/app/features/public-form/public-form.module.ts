@@ -66,6 +66,13 @@ const dynamicComponents: [string, AsyncComponent][] = [
         "app/features/public-form/edit-public-form-related-entities/edit-public-form-related-entities.component"
       ).then((c) => c.EditPublicFormRelatedEntitiesComponent),
   ],
+  [
+    "PublicFormPermissionWarning",
+    () =>
+      import(
+        "app/features/public-form/public-form-permission-warning/public-form-permission-warning.component"
+      ).then((c) => c.PublicFormPermissionWarningComponent),
+  ],
 ];
 
 const viewConfigs: ViewConfig[] = [
@@ -106,6 +113,10 @@ const viewConfigs: ViewConfig[] = [
                         If you are seeing problems submitting the form, please contact your **technical support team**.`,
                       },
                       "entity",
+                      {
+                        id: "public_form_permission_warning",
+                        viewComponent: "PublicFormPermissionWarning",
+                      },
                       "logo",
                       "showSubmitAnotherButton",
                     ],
