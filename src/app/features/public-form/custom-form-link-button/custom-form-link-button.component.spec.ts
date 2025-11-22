@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { CustomFormLinkButtonComponent } from "./custom-form-link-button.component";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
+import { EntityConfigService } from "#src/app/core/entity/entity-config.service";
 
 describe("CustomFormLinkButtonComponent", () => {
   let component: CustomFormLinkButtonComponent;
@@ -14,6 +16,14 @@ describe("CustomFormLinkButtonComponent", () => {
         {
           provide: EntityMapperService,
           useValue: jasmine.createSpyObj(["load"]),
+        },
+        {
+          provide: EntityRegistry,
+          useValue: jasmine.createSpyObj(["get"]),
+        },
+        {
+          provide: EntityConfigService,
+          useValue: jasmine.createSpyObj(["getEntityConfig"]),
         },
       ],
     }).compileComponents();

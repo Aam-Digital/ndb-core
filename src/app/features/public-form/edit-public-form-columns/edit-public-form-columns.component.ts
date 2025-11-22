@@ -21,7 +21,11 @@ import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { PublicFormConfig } from "../public-form-config";
 import { migratePublicFormConfig } from "../public-form.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { PublicFormsService } from "../public-forms.service";
 
+@UntilDestroy()
 @DynamicComponent("EditPublicFormColumns")
 @Component({
   selector: "app-edit-public-form-columns",
@@ -53,6 +57,8 @@ export class EditPublicFormColumnsComponent
   isDisabled = signal(false);
 
   private entities = inject(EntityRegistry);
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly publicFormsService = inject(PublicFormsService);
 
   get formControl(): FormControl<FieldGroup[]> {
     return this.ngControl.control as FormControl<FieldGroup[]>;
@@ -72,7 +78,23 @@ export class EditPublicFormColumnsComponent
       this.setupFormStateDetection();
       // Set initial disabled state
       this.isDisabled.set(this.formControl.disabled);
+      this.subscribeToPublicFormConfigSave();
     }
+  }
+
+  /**
+   * Subscribe to entity save events to persist custom fields to global schema
+   * after the PublicFormConfig is saved.
+   */
+  private subscribeToPublicFormConfigSave() {
+    this.entityMapper
+      .receiveUpdates(PublicFormConfig)
+      .pipe(untilDestroyed(this))
+      .subscribe(async (update) => {
+        await this.publicFormsService.saveCustomFieldsToEntityConfig(
+          update.entity,
+        );
+      });
   }
 
   updateValue(newConfig: FormConfig) {
