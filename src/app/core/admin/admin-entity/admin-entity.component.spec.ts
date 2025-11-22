@@ -207,6 +207,6 @@ describe("AdminEntityComponent", () => {
     expect(savedAttributes["anonymized"]).toBeUndefined();
 
     // cleanup:
-    AdminTestEntity.schema.delete(" name");
+    AdminTestEntity.schema.delete("name");
   }));
 });
