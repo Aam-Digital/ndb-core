@@ -84,12 +84,11 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
   async onChangeProperty(fieldId: string | string[]) {
     fieldId = fieldId as string; // we use single-select mode
     this.selectedField = this.entityFormService.extendFormFieldConfig(
-      fieldId,
+      { id: fieldId },
       this.entityConstructor,
     );
 
-    const fieldKeys = this.entityFields.map((item) => item.key);
-    await this.createEntityForm(fieldKeys);
+    await this.createEntityForm([fieldId]);
 
     this.showValueForm = true;
   }
