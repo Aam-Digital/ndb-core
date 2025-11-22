@@ -56,7 +56,8 @@ export class AdminEntityDetailsComponent {
   @Input() config: EntityDetailsConfig;
 
   /**
-   * Event emitted when a related entity's schema has been modified.
+   * Event emitted when a related entity's schema has been modified,
+   * to ensure changes are saved centrally by parent component.
    */
   @Output() relatedEntityModified = new EventEmitter<EntityConstructor>();
 
@@ -87,12 +88,5 @@ export class AdminEntityDetailsComponent {
     }
 
     moveItemInArray(panel.components, event.previousIndex, event.currentIndex);
-  }
-
-  /**
-   * Handle related entity modification event from panel component
-   */
-  onRelatedEntityModified(entityConstructor: EntityConstructor): void {
-    this.relatedEntityModified.emit(entityConstructor);
   }
 }

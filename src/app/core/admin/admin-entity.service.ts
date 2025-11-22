@@ -60,6 +60,36 @@ export class AdminEntityService {
     const newConfig = originalConfig.copy();
 
     // Update the main entity schema
+    this.updateConfigWithEntitySchema(
+      newConfig,
+      entityConstructor,
+      configEntitySettings,
+    );
+
+    // Add additional view config if available
+    if (configListView) {
+      newConfig.data[EntityConfigService.getListViewId(entityConstructor)] =
+        configListView;
+    }
+    if (configDetailsView) {
+      newConfig.data[EntityConfigService.getDetailsViewId(entityConstructor)] =
+        configDetailsView;
+    }
+
+    // Update additional entity schemas (e.g., related entities modified through panels)
+    for (const additionalEntity of additionalEntityConstructors ?? []) {
+      this.updateConfigWithEntitySchema(newConfig, additionalEntity);
+    }
+
+    const updatedConfig: Config = await this.entityMapper.save(newConfig);
+    return { previous: originalConfig, current: updatedConfig };
+  }
+
+  private updateConfigWithEntitySchema(
+    newConfig: Config,
+    entityConstructor: EntityConstructor,
+    configEntitySettings?: EntityConfig,
+  ) {
     let entitySchemaConfig: EntityConfig =
       this.getEntitySchemaFromConfig(newConfig, entityConstructor) ?? {};
     // Initialize config if not present
@@ -73,35 +103,6 @@ export class AdminEntityService {
     if (configEntitySettings) {
       Object.assign(entitySchemaConfig, configEntitySettings);
     }
-
-    // Add additional view config if available
-    if (configListView) {
-      newConfig.data[EntityConfigService.getListViewId(entityConstructor)] =
-        configListView;
-    }
-    if (configDetailsView) {
-      newConfig.data[EntityConfigService.getDetailsViewId(entityConstructor)] =
-        configDetailsView;
-    }
-
-    // Update additional entity schemas (e.g., related entities modified through panels)
-    if (
-      additionalEntityConstructors &&
-      additionalEntityConstructors.length > 0
-    ) {
-      for (const additionalEntity of additionalEntityConstructors) {
-        let additionalEntitySchemaConfig: EntityConfig =
-          this.getEntitySchemaFromConfig(newConfig, additionalEntity) ?? {};
-        additionalEntitySchemaConfig.attributes =
-          additionalEntitySchemaConfig.attributes ?? {};
-
-        for (const [fieldId, field] of additionalEntity.schema.entries()) {
-          additionalEntitySchemaConfig.attributes[fieldId] = field;
-        }
-      }
-    }
-    const updatedConfig: Config = await this.entityMapper.save(newConfig);
-    return { previous: originalConfig, current: updatedConfig };
   }
 
   private getEntitySchemaFromConfig(

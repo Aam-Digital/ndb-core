@@ -65,7 +65,7 @@
                 <app-admin-entity-panel-component
                   [config]="componentConfig"
                   [entityType]="entityConstructor"
-                  (relatedEntityModified)="onRelatedEntityModified($event)"
+                  (relatedEntityModified)="relatedEntityModified.emit($event)"
                 ></app-admin-entity-panel-component>
               }
             </div>

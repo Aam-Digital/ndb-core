@@ -174,7 +174,7 @@ export class AdminEntityComponent implements OnInit {
    * Register a related entity as modified, so its schema will be saved when the main Save button is clicked.
    * This is called from child components (e.g., panel components) when they modify related entity schemas.
    */
-  emitUpdatedRelatedEntity(entityConstructor: EntityConstructor): void {
+  registerRelatedEntityForSave(entityConstructor: EntityConstructor): void {
     this.modifiedRelatedEntities.add(entityConstructor);
   }
 }
