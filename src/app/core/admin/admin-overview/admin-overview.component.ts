@@ -86,6 +86,7 @@ export class AdminOverviewComponent {
     const backup = await this.backupService.getDatabaseExport();
     await this.downloadService.triggerDownload(backup, "json", "backup");
   }
+
   /**
    * Download a full export of the database as csv file.
    */
