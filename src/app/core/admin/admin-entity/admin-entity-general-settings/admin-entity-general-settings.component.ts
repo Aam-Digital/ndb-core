@@ -125,7 +125,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   fetchAnonymizationTableData() {
     if (this.showPIIDetails) {
       const fields = Array.from(this.entityConstructor.schema.entries())
-        .filter(([key, field]) => field.label)
+        .filter(([key, field]) => !field.isInternalField)
         .map(([key, field]) => ({
           key: key,
           label: field.label,
