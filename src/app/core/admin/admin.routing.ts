@@ -1,12 +1,15 @@
 import { Routes } from "@angular/router";
 import { RoutedViewComponent } from "../ui/routed-view/routed-view.component";
 import { AdminOverviewComponent } from "./admin-overview/admin-overview.component";
-import { ConfigImportComponent } from "../../features/config-setup/config-import/config-import.component";
 import { ConflictResolutionListComponent } from "../../features/conflict-resolution/conflict-resolution-list/conflict-resolution-list.component";
 import { UserRoleGuard } from "../permissions/permission-guard/user-role.guard";
 import { EntityPermissionGuard } from "../permissions/permission-guard/entity-permission.guard";
 import { SetupWizardComponent } from "./setup-wizard/setup-wizard.component";
 import { AdminMenuComponent } from "./admin-menu/admin-menu.component";
+import { AdminUserRolesComponent } from "../user/admin-user-roles/admin-user-roles.component";
+import { SubscriptionInfoComponent } from "./subscription-info/subscription-info.component";
+import { AdvancedFeaturesComponent } from "./advanced-features/advanced-features.component";
+import { DataPrivacyComponent } from "./data-privacy/data-privacy.component";
 
 export const adminRoutes: Routes = [
   {
@@ -24,6 +27,38 @@ export const adminRoutes: Routes = [
   {
     path: "menu",
     component: AdminMenuComponent,
+  },
+  {
+    path: "user-roles",
+    component: AdminUserRolesComponent,
+    canActivate: [UserRoleGuard],
+    data: {
+      permittedUserRoles: ["admin_app"],
+    },
+  },
+  {
+    path: "subscription-info",
+    component: SubscriptionInfoComponent,
+    canActivate: [UserRoleGuard],
+    data: {
+      permittedUserRoles: ["admin_app"],
+    },
+  },
+  {
+    path: "advanced-features",
+    component: AdvancedFeaturesComponent,
+    canActivate: [UserRoleGuard],
+    data: {
+      permittedUserRoles: ["admin_app"],
+    },
+  },
+  {
+    path: "data-privacy",
+    component: DataPrivacyComponent,
+    canActivate: [UserRoleGuard],
+    data: {
+      permittedUserRoles: ["admin_app"],
+    },
   },
   {
     path: "entity",
@@ -101,14 +136,6 @@ export const adminRoutes: Routes = [
       requiredPermissionOperation: "update",
     },
     canActivate: [EntityPermissionGuard],
-  },
-  {
-    path: "config-import",
-    component: ConfigImportComponent,
-    canActivate: [UserRoleGuard],
-    data: {
-      permittedUserRoles: ["admin_app"],
-    },
   },
   {
     path: "conflicts",

@@ -19,6 +19,7 @@ import { RouterLink } from "@angular/router";
 import { generateIdFromLabel } from "../../../utils/generate-id-from-label/generate-id-from-label";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityConfig } from "../../entity/entity-config";
+import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { EntityDetailsConfig } from "../../entity-details/EntityDetailsConfig";
 import { EntityListConfig } from "../../entity-list/EntityListConfig";
 import { Config } from "../../config/config";
@@ -34,6 +35,7 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
 @Component({
   selector: "app-admin-entity-types",
   imports: [
+    ViewTitleComponent,
     MatHeaderRow,
     MatHeaderRowDef,
     MatRow,

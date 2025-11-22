@@ -6,6 +6,7 @@ import {
   EntityRegistry,
 } from "../../entity/database-entity.decorator";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AdminEntityTypesComponent", () => {
   let component: AdminEntityTypesComponent;
@@ -13,7 +14,7 @@ describe("AdminEntityTypesComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminEntityTypesComponent],
+      imports: [AdminEntityTypesComponent, FontAwesomeTestingModule],
       providers: [
         { provide: EntityRegistry, useValue: entityRegistry },
         {

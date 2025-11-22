@@ -39,22 +39,11 @@
           "icon": "line-chart",
           "link": "/report"
         },
-        {
-          "label": "Admin",
-          "icon": "wrench",
-          "subMenu": [
-            {
-              "label": "Admin Übersicht",
-              "icon": "wrench",
-              "link": "/admin"
-            },
-            {
-              "label": "Nutzer:innen",
-              "icon": "users",
-              "link": "/user"
-            }
-          ]
-        }
+          {
+            "label": "Nutzer:innen",
+            "icon": "users",
+            "link": "/user"
+          }
       ]
     },
     "view:": {

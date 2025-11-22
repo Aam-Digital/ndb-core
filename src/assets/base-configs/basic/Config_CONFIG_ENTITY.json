@@ -34,11 +34,6 @@
           "icon": "line-chart",
           "link": "/report"
         },
-        {
-          "label": "Admin",
-          "icon": "wrench",
-          "link": "/admin"
-        }
       ]
     },
     "view:": {

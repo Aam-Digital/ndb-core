@@ -16,6 +16,7 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("SetupWizardComponent", () => {
   let component: SetupWizardComponent;
@@ -23,7 +24,7 @@ describe("SetupWizardComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SetupWizardComponent],
+      imports: [SetupWizardComponent, FontAwesomeTestingModule],
       providers: [
         {
           provide: EntityMapperService,

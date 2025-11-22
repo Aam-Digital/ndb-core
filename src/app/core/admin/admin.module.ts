@@ -2,7 +2,6 @@ import { NgModule, inject } from "@angular/core";
 import { ComponentRegistry } from "../../dynamic-components";
 import { CommonModule } from "@angular/common";
 import { ConflictResolutionModule } from "../../features/conflict-resolution/conflict-resolution.module";
-import { ConfigSetupModule } from "../../features/config-setup/config-setup.module";
 import { adminRoutes } from "./admin.routing";
 
 /**
@@ -12,7 +11,7 @@ import { adminRoutes } from "./admin.routing";
  * This module provides its own routing and can be lazy-loaded as a whole module.
  */
 @NgModule({
-  imports: [CommonModule, ConflictResolutionModule, ConfigSetupModule],
+  imports: [CommonModule, ConflictResolutionModule],
 })
 export class AdminModule {
   static routes = adminRoutes;
