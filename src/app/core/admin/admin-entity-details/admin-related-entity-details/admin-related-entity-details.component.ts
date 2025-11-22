@@ -74,7 +74,7 @@ export class AdminRelatedEntityDetailsComponent implements OnInit {
         this.entityConstructor.schema.keys(),
       ).filter((fieldId) => {
         const field = this.entityConstructor.schema.get(fieldId);
-        return field?.label;
+        return !field?.isInternalField;
       });
 
       this.formConfig = {
