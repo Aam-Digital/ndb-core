@@ -37,7 +37,6 @@ export interface AdminRelatedEntityDetailsResult {
     HintBoxComponent,
   ],
   templateUrl: "./admin-related-entity-details.component.html",
-  styleUrls: ["../../../common-components/hint-box/hint-box.component.scss"],
 })
 export class AdminRelatedEntityDetailsComponent implements OnInit {
   private readonly dialogRef = inject(
