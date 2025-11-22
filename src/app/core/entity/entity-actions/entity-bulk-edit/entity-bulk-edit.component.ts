@@ -8,7 +8,6 @@ import {
   Validators,
 } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
-import { MatOption } from "@angular/material/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -16,13 +15,13 @@ import {
 } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DialogCloseComponent } from "app/core/common-components/dialog-close/dialog-close.component";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { Entity, EntityConstructor } from "../../model/entity";
+import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
 
 @Component({
   selector: "app-entity-bulk-edit",
@@ -35,10 +34,9 @@ import { Entity, EntityConstructor } from "../../model/entity";
     ReactiveFormsModule,
     FontAwesomeModule,
     MatTooltipModule,
-    MatOption,
     MatFormFieldModule,
-    MatSelectModule,
     EntityFieldEditComponent,
+    EntityFieldSelectComponent,
   ],
   templateUrl: "./entity-bulk-edit.component.html",
   styleUrl: "./entity-bulk-edit.component.scss",
@@ -52,11 +50,6 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
 
   selectedFieldFormControl: FormControl;
   fieldValueForm: EntityForm<E>;
-
-  /**
-   * The available fields of the entity, from which the user can choose.
-   */
-  entityFields: Array<{ key: string; label: string; field: any }> = [];
 
   entityData: E;
   showValueForm: boolean = false;
@@ -75,33 +68,20 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.fetchEntityFieldsData();
   }
 
   private initForm() {
     this.selectedFieldFormControl = new FormControl("", Validators.required);
   }
 
-  fetchEntityFieldsData() {
-    this.entityFields = Array.from(this.entityConstructor.schema.entries())
-      .filter(([key, field]) => field.label)
-      .map(([key, field]) => ({
-        key: key,
-        label: field.label,
-        field: field,
-      }));
-  }
-
-  async onChangeProperty(fieldId: string) {
+  async onChangeProperty(fieldId: string | string[]) {
+    fieldId = fieldId as string; // we use single-select mode
     this.selectedField = this.entityFormService.extendFormFieldConfig(
-      fieldId,
+      { id: fieldId },
       this.entityConstructor,
     );
 
-    this.fetchEntityFieldsData();
-
-    const fieldKeys = this.entityFields.map((item) => item.key);
-    await this.createEntityForm(fieldKeys);
+    await this.createEntityForm([fieldId]);
 
     this.showValueForm = true;
   }

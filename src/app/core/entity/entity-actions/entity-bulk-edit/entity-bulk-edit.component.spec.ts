@@ -6,6 +6,10 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "../../database-entity.decorator";
 
 describe("EntityBulkEditComponent", () => {
   let component: EntityBulkEditComponent<any>;
@@ -54,6 +58,7 @@ describe("EntityBulkEditComponent", () => {
         { provide: EntityFormService, useValue: mockEntityFormService },
         FormBuilder,
         AdminEntityService,
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();
 
@@ -65,20 +70,16 @@ describe("EntityBulkEditComponent", () => {
   it("should create the component", () => {
     expect(component).toBeTruthy();
   });
+  it("should initialize form controls", () => {
+    expect(component.selectedFieldFormControl).toBeDefined();
+    expect(component.selectedFieldFormControl.validator).toBeDefined();
+  });
 
   it("should initialize selectedField with proper values", () => {
     component.selectedField = { id: "foo", label: "Test Label" };
 
     component.ngOnInit();
     expect(component.selectedFieldFormControl.value).toBe("");
-  });
-
-  it("should fetch and populate entity fields", () => {
-    component.fetchEntityFieldsData();
-
-    expect(component.entityFields.length).toBe(2);
-    expect(component.entityFields[0].key).toBe("name");
-    expect(component.entityFields[0].label).toBe("foo");
   });
 
   it("should not save if the form is invalid", () => {

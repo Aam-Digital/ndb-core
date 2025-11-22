@@ -115,7 +115,10 @@ export class ImportExistingService {
         const rawImportValue = rawImportEntity[idField];
 
         // If either value is null/undefined, don't match - identifier must have a value
-        if (rawExistingValue == null || rawImportValue == null) {
+        if (
+          this.isEmptyImportValue(rawExistingValue) ||
+          this.isEmptyImportValue(rawImportValue)
+        ) {
           return false;
         }
 
@@ -180,5 +183,9 @@ export class ImportExistingService {
     });
 
     await Promise.all(reverts);
+  }
+
+  isEmptyImportValue(value: any): boolean {
+    return value === null || value === undefined || value === "";
   }
 }
