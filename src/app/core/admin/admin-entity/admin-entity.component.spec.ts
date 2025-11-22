@@ -181,10 +181,10 @@ describe("AdminEntityComponent", () => {
 
   it("should not save internal default fields to config attributes", waitForAsync(async () => {
     const userDefinedField: EntitySchemaField = {
-      label: "name",
+      label: "testField",
       dataType: "string",
     };
-    AdminTestEntity.schema.set("name", userDefinedField);
+    AdminTestEntity.schema.set("testField", userDefinedField);
 
     await component.save();
 
@@ -197,7 +197,7 @@ describe("AdminEntityComponent", () => {
     const savedAttributes = actual.data[entityConfigId].attributes;
 
     // Verify user-defined field IS saved
-    expect(savedAttributes["name"]).toBeDefined();
+    expect(savedAttributes["testField"]).toBeDefined();
     // Verify internal fields are NOT saved
     expect(savedAttributes["_id"]).toBeUndefined();
     expect(savedAttributes["_rev"]).toBeUndefined();
@@ -207,6 +207,6 @@ describe("AdminEntityComponent", () => {
     expect(savedAttributes["anonymized"]).toBeUndefined();
 
     // cleanup:
-    AdminTestEntity.schema.delete("name");
+    AdminTestEntity.schema.delete("testField");
   }));
 });
