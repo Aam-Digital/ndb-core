@@ -78,6 +78,7 @@ export class AdminOverviewComponent {
     console.log("DatabaseResolverService", this.dbResolver);
     console.log('"app" database', this.dbResolver.getDatabase());
   }
+
   /**
    * Download a full backup of the database as (json) file.
    */
