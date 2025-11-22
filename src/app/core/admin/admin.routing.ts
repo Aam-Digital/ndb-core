@@ -118,4 +118,13 @@ export const adminRoutes: Routes = [
       permittedUserRoles: ["admin_app"],
     },
   },
+  {
+    path: "primary-action",
+    component: RoutedViewComponent,
+    data: {
+      component: "PrimaryActionConfigForm",
+      requiredPermissionOperation: "update",
+    },
+    canActivate: [UserRoleGuard],
+  },
 ];

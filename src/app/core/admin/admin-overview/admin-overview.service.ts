@@ -31,5 +31,9 @@ export class AdminOverviewService {
       label: $localize`:admin menu item:Configure Main Menu`,
       link: "/admin/menu",
     },
+    {
+      label: $localize`:admin menu item:Primary Action Button`,
+      link: "/admin/primary-action",
+    },
   ];
 }

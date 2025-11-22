@@ -1685,6 +1685,11 @@
           }
         }
       }
+    },
+    "primaryAction": {
+      "icon": "calendar-check",
+      "actionType": "createEntity",
+      "entityType": "Todo"
     }
   }
 }

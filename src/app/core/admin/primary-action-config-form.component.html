@@ -1,0 +1,30 @@
+<div class="primary-action-config-form">
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label i18n>Action Type</mat-label>
+    <mat-select [(ngModel)]="actionType">
+      <mat-option value="createEntity" i18n>Create Entity</mat-option>
+      <mat-option value="navigate" i18n>Navigate</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  @if (showEntityType) {
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label i18n>Record Type</mat-label>
+      <app-entity-type-select
+        [value]="entityType"
+        (valueChange)="onEntityTypeChange($event)"
+        [multi]="false"
+      ></app-entity-type-select>
+    </mat-form-field>
+  }
+
+  <app-menu-item-form
+    [item]="menuItem"
+    [linkOptions]="routeOptions"
+    (itemChange)="menuItem = $event"
+    [hideLabel]="true"
+    [hideLink]="actionType !== 'navigate'"
+  ></app-menu-item-form>
+
+  <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
+</div>
