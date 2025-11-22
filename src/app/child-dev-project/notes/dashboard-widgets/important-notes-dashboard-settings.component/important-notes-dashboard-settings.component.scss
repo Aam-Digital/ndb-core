@@ -1,0 +1,9 @@
+@use "variables/breakpoints";
+
+mat-form-field {
+  width: 100%;
+
+  @media (min-width: breakpoints.$xl) {
+    width: 40%;
+  }
+}
