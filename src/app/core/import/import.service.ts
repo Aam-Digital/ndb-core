@@ -118,7 +118,7 @@ export class ImportService {
   }
 
   /**
-   * Parse a signle row of imported raw data into an Entity instance.
+   * Parse a single row of imported raw data into an Entity instance.
    * If not a single property is mapped, undefined is returned.
    * @param row The raw data row to parse
    * @param entityConstructor The entity type to create
