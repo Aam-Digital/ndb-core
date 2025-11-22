@@ -1,0 +1,36 @@
+.conditional-color-config {
+  width: 100%;
+}
+
+.color-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+
+  app-color-input {
+    flex: 1;
+  }
+
+  button {
+    flex-shrink: 0;
+  }
+}
+
+.conditional-sections {
+  background-color: var(--mdc-outlined-card-container-color, #fafafa);
+  border-radius: 8px;
+  width: 100%;
+}
+
+.add-section-container {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  background-color: #fafafa;
+  width: 100%;
+}

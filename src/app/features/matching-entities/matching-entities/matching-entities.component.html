@@ -140,6 +140,7 @@
             clickMode="none"
             (entityClick)="side.selectMatch($event)"
             [filter]="side.filterObj"
+            [getBackgroundColor]="getEntityBackgroundColor"
           ></app-entities-table>
         </div>
       }

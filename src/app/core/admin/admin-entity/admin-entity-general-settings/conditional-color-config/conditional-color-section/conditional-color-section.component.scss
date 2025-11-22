@@ -1,0 +1,38 @@
+.conditional-section {
+  background-color: transparent;
+  border-radius: 8px;
+}
+
+.conditions-container {
+  background-color: #fef5f5;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.conditions-list {
+  margin-top: 0;
+}
+
+.condition-item {
+  padding: 16px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 0;
+
+  &:last-of-type {
+    border-bottom: none; // Remove border from last condition item
+  }
+}
+
+.field-selector {
+  flex: 0 0 250px;
+}
+
+.value-input {
+  flex: 1;
+}
+
+.add-condition-button {
+  align-self: flex-start;
+}

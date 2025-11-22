@@ -281,9 +281,27 @@ export class MatchingEntitiesComponent implements OnInit {
         newSelectedEntity.getConstructor().prototype.getColor;
     } else {
       newSelectedEntity.getColor = () =>
-        addAlphaToHexColor(newSelectedEntity.getConstructor().color, 0.2);
+        addAlphaToHexColor(
+          Entity.getColorWithConditions(newSelectedEntity),
+          0.2,
+        );
     }
   }
+
+  /**
+   * Get background color for entity rows in matching tables.
+   */
+  getEntityBackgroundColor = (entity: Entity): string => {
+    const isSelected = this.sideDetails?.some((side) =>
+      side.selected?.some((selected) => selected.getId() === entity.getId()),
+    );
+    if (isSelected) {
+      const color = Entity.getColorWithConditions(entity);
+      return addAlphaToHexColor(color, 0.2);
+    }
+
+    return "";
+  };
 
   async createMatch() {
     const newMatchEntity = new (this.entityRegistry.get(

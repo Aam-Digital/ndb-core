@@ -1,0 +1,63 @@
+<div class="conditional-color-config">
+  <div class="color-row">
+    <app-color-input
+      [color]="staticColor"
+      (colorChange)="onStaticColorChange($event)"
+    ></app-color-input>
+
+    @if (isConditionalMode) {
+      <button
+        mat-stroked-button
+        type="button"
+        color="primary"
+        (click)="removeConditionalMode()"
+      >
+        <span i18n>Remove conditional colors</span>
+      </button>
+    } @else {
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="addConditionalMode()"
+        matTooltip="Customize colors dynamically based on data values"
+        i18n-matTooltip
+      >
+        <span i18n>Add conditional colors</span>
+      </button>
+    }
+  </div>
+
+  @if (isConditionalMode) {
+    <div class="conditional-sections flex-column gap-regular padding-regular">
+      @for (section of conditionalColorSections; track $index) {
+        <app-conditional-color-section
+          [sectionIndex]="$index"
+          [section]="section"
+          [entityConstructor]="entityConstructor"
+          [colorFieldOptions]="colorFieldOptions"
+          [conditionFormFieldConfigs]="conditionFormFieldConfigs"
+          [conditionFormControls]="conditionFormControls"
+          (colorChange)="updateConditionalSectionColor($index, $event)"
+          (deleteSection)="deleteConditionalColorSection($index)"
+          (conditionChange)="onConditionChange()"
+        ></app-conditional-color-section>
+      }
+
+      <div class="flex-column gap-regular margin-top-regular align-start">
+        <button mat-stroked-button type="button" (click)="openFullJsonEditor()">
+          <fa-icon icon="code" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Edit All Conditions JSON</span>
+        </button>
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="addConditionalColorSection()"
+          color="primary"
+        >
+          <fa-icon icon="palette" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Add Another Conditional Color</span>
+        </button>
+      </div>
+    </div>
+  }
+</div>
