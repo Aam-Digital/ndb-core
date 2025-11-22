@@ -96,6 +96,10 @@ export class AdminEntityService {
     entitySchemaConfig.attributes = entitySchemaConfig.attributes ?? {};
 
     for (const [fieldId, field] of entityConstructor.schema.entries()) {
+      // Skip internal fields that are defined in the base Entity class
+      if (field.isInternalField) {
+        continue;
+      }
       entitySchemaConfig.attributes[fieldId] = field;
     }
 
