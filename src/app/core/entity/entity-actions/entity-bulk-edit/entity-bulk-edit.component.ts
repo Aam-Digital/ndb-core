@@ -15,7 +15,6 @@ import {
 } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DialogCloseComponent } from "app/core/common-components/dialog-close/dialog-close.component";
@@ -36,7 +35,6 @@ import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-se
     FontAwesomeModule,
     MatTooltipModule,
     MatFormFieldModule,
-    MatSelectModule,
     EntityFieldEditComponent,
     EntityFieldSelectComponent,
   ],
@@ -52,11 +50,6 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
 
   selectedFieldFormControl: FormControl;
   fieldValueForm: EntityForm<E>;
-
-  /**
-   * The available fields of the entity, from which the user can choose.
-   */
-  entityFields: Array<{ key: string; label: string; field: any }> = [];
 
   entityData: E;
   showValueForm: boolean = false;
