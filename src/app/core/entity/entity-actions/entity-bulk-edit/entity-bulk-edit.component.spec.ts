@@ -6,6 +6,10 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "../../database-entity.decorator";
 
 describe("EntityBulkEditComponent", () => {
   let component: EntityBulkEditComponent<any>;
@@ -54,6 +58,7 @@ describe("EntityBulkEditComponent", () => {
         { provide: EntityFormService, useValue: mockEntityFormService },
         FormBuilder,
         AdminEntityService,
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();
 
@@ -64,6 +69,10 @@ describe("EntityBulkEditComponent", () => {
 
   it("should create the component", () => {
     expect(component).toBeTruthy();
+  });
+  it("should initialize form controls", () => {
+    expect(component.selectedFieldFormControl).toBeDefined();
+    expect(component.selectedFieldFormControl.validator).toBeDefined();
   });
 
   it("should initialize selectedField with proper values", () => {

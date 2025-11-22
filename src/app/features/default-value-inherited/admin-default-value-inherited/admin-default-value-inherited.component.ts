@@ -122,7 +122,7 @@ export class AdminDefaultValueInheritedComponent
     }
 
     const availableFields = Array.from(referencedEntityType.schema.entries())
-      .filter(([_, schema]) => !schema.isInternalField)
+      .filter(([_, schema]) => !schema.isInternalField && !!schema.label)
       .map(([id]) => id);
 
     this.currentInheritanceFields = {
