@@ -63,7 +63,7 @@ export class TemplateExportModule {
       },
     ]);
 
-    adminOverviewService.addMenuItems("templates", {
+    adminOverviewService.addTemplateItems({
       label: $localize`:admin menu item:Configure Export Templates`,
       link: TemplateExport.route,
     });

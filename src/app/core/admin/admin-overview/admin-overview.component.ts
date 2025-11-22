@@ -1,4 +1,5 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, computed } from "@angular/core";
+import { AdminSectionStateService } from "./admin-section-state.service";
 import { BackupService } from "../backup/backup.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -13,12 +14,13 @@ import { MatListModule } from "@angular/material/list";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatIconModule } from "@angular/material/icon";
 import { RouteTarget } from "../../../route-target";
-import { AdminOverviewService } from "./admin-overview.service";
+import { MenuItem } from "../../ui/navigation/menu-item";
 import { JsonEditorService } from "#src/app/core/admin/json-editor/json-editor.service";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { Config } from "#src/app/core/config/config";
 import { environment } from "#src/environments/environment";
 import moment from "moment";
+import { AdminOverviewService } from "./admin-overview.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -48,22 +50,24 @@ export class AdminOverviewComponent {
   private jsonEditorService = inject(JsonEditorService);
   private entityMapper = inject(EntityMapperService);
 
-  /**
-   * Check if the application is running in a SaaS environment.
-   * This determines whether to show subscription-related admin options.
-   */
-  isSaasEnvironment(): boolean {
-    return environment.SaaS === true;
+  public templates: MenuItem[] = [];
+  private sectionStateService = inject(AdminSectionStateService);
+  expandedSection = computed(() => this.sectionStateService.getExpanded());
+
+  isSaasEnvironment: boolean;
+
+  constructor() {
+    this.templates = this.adminOverviewService.templates;
+    this.isSaasEnvironment = environment.SaaS === true;
   }
 
-  /**
-   * Handle expansion state change for accordion panels.
-   * This ensures the expanded state is persisted when navigating away and back.
-   */
-  onSectionExpandedChange(sectionId: string, expanded: boolean): void {
-    this.adminOverviewService.setSectionExpanded(sectionId, expanded);
+  setExpanded(sectionId: string) {
+    this.sectionStateService.setExpanded(sectionId);
   }
 
+  isExpanded(sectionId: string): boolean {
+    return this.expandedSection() === sectionId;
+  }
   /**
    * Send a reference of the PouchDB to the browser's developer console for real-time debugging.
    */
@@ -74,7 +78,6 @@ export class AdminOverviewComponent {
     console.log("DatabaseResolverService", this.dbResolver);
     console.log('"app" database', this.dbResolver.getDatabase());
   }
-
   /**
    * Download a full backup of the database as (json) file.
    */
@@ -82,7 +85,6 @@ export class AdminOverviewComponent {
     const backup = await this.backupService.getDatabaseExport();
     await this.downloadService.triggerDownload(backup, "json", "backup");
   }
-
   /**
    * Download a full export of the database as csv file.
    */
@@ -118,33 +120,6 @@ export class AdminOverviewComponent {
 
         this.showConfirmationWithUndoOption(async () => {
           await this.configService.saveConfig(originalData);
-          await this.entityMapper.remove(previousConfigBackup);
-        });
-      });
-  }
-
-  async editPermissions() {
-    const permissionsConfig = await this.entityMapper
-      .load(Config, Config.PERMISSION_KEY)
-      .catch(() => new Config(Config.PERMISSION_KEY, {}));
-
-    this.jsonEditorService
-      .openJsonEditorDialog(permissionsConfig.data)
-      .subscribe(async (updatedData) => {
-        if (!updatedData) return;
-
-        const previousConfigBackup = new Config(
-          Config.PERMISSION_KEY + ":" + moment().format("YYYY-MM-DD_HH-mm-ss"),
-          permissionsConfig.data,
-        );
-        await this.entityMapper.save(previousConfigBackup);
-
-        permissionsConfig.data = updatedData;
-        await this.entityMapper.save(permissionsConfig);
-
-        this.showConfirmationWithUndoOption(async () => {
-          permissionsConfig.data = previousConfigBackup.data;
-          await this.entityMapper.save(permissionsConfig);
           await this.entityMapper.remove(previousConfigBackup);
         });
       });

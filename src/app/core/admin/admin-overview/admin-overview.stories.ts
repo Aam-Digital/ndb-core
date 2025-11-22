@@ -8,8 +8,6 @@ import { importProvidersFrom } from "@angular/core";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { AdminOverviewComponent } from "./admin-overview.component";
 import { AdminOverviewService } from "./admin-overview.service";
-import { AdminSection } from "./admin-section.interface";
-import { DEFAULT_ADMIN_SECTIONS } from "./admin-overview-sections";
 import { AlertService } from "../../alerts/alert.service";
 import { BackupService } from "../backup/backup.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -20,6 +18,7 @@ import { DownloadService } from "../../export/download-service/download.service"
 import { JsonEditorService } from "../json-editor/json-editor.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { of } from "rxjs";
+import { MenuItem } from "../../ui/navigation/menu-item";
 
 // Mock services for Storybook
 const mockAlertService = {
@@ -107,37 +106,17 @@ export const Primary = {
   args: {},
 };
 
-// Create extended sections for story demonstration
-const EXTENDED_SECTIONS: AdminSection[] = [
-  ...DEFAULT_ADMIN_SECTIONS.map((section) => {
-    if (section.id === "configuration") {
-      return {
-        ...section,
-        items: [
-          ...section.items,
-          { label: "Custom Field 1", link: "/admin/custom1" },
-          { label: "Custom Field 2", link: "/admin/custom2" },
-        ],
-      };
-    }
-    if (section.id === "templates") {
-      return {
-        ...section,
-        items: [
-          { label: "Email Templates", link: "/admin/email-templates" },
-          {
-            label: "Export Templates (PDF Generation)",
-            link: "/admin/export-templates",
-          },
-          { label: "Public Forms", link: "/admin/public-forms" },
-        ],
-      };
-    }
-    return section;
-  }),
+// Create mock templates for story demonstration
+const MOCK_TEMPLATES: MenuItem[] = [
+  { label: "Email Templates", link: "/admin/email-templates" },
+  {
+    label: "Export Templates (PDF Generation)",
+    link: "/admin/export-templates",
+  },
+  { label: "Public Forms", link: "/admin/public-forms" },
 ];
 
-export const WithExtendedSections = {
+export const WithTemplates = {
   render: Template,
   args: {},
   decorators: [
@@ -146,10 +125,8 @@ export const WithExtendedSections = {
         {
           provide: AdminOverviewService,
           useValue: {
-            sections: EXTENDED_SECTIONS,
-            addMenuItems: () => {},
-            addMenuItem: () => {},
-            setSectionExpanded: () => {},
+            templates: MOCK_TEMPLATES,
+            addTemplateItems: () => {},
           },
         },
       ],
