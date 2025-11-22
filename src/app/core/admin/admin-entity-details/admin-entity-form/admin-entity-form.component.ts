@@ -187,7 +187,7 @@ export class AdminEntityFormComponent implements OnChanges {
     );
     const unusedFields = Array.from(this.entityType.schema.entries())
       .filter(([key]) => !usedFields.some((x) => x.id === key))
-      .filter(([key, value]) => value.label) // no technical, internal fields
+      .filter(([key, value]) => !value.isInternalField) // no technical, internal fields
       .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
       .map(([key]) => key);
 
