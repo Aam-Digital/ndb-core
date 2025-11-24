@@ -40,6 +40,11 @@ export class ColorInputComponent implements OnInit, OnChanges {
    */
   @Input() compact = false;
 
+  /**
+   * Label for the color input field.
+   */
+  @Input() label: string = "Color";
+
   colorControl = new FormControl("");
 
   ngOnInit() {

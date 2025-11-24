@@ -1,8 +1,8 @@
 <div class="conditional-section flex-column border-regular">
   <div class="flex-row align-center">
-    <label class="mat-body-2" i18n>Conditional Color</label>
     <app-color-input
       [color]="section.color"
+      [label]="'Conditional Color'"
       (colorChange)="colorChange.emit($event)"
     ></app-color-input>
     <button
@@ -24,7 +24,7 @@
         track condition;
         let conditionId = $index
       ) {
-        <div class="condition-item flex-row gap-regular align-center">
+        <div class="condition-item flex-row flex-wrap gap-regular align-center">
           <mat-form-field class="field-selector">
             <mat-label i18n>Field</mat-label>
             <mat-select

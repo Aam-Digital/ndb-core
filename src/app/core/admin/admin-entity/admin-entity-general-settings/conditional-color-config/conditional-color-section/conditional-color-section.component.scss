@@ -14,23 +14,11 @@
 }
 
 .condition-item {
-  padding: 16px;
-  background-color: transparent;
-  border: none;
-  border-bottom: 1px solid #e0e0e0;
-  margin-bottom: 0;
-
-  &:last-of-type {
-    border-bottom: none; // Remove border from last condition item
-  }
+  align-items: end;
 }
 
 .field-selector {
   flex: 0 0 250px;
-}
-
-.value-input {
-  flex: 1;
 }
 
 .add-condition-button {
