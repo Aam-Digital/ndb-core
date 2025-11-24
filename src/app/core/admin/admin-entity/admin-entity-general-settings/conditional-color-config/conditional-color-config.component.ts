@@ -20,7 +20,6 @@ import { CustomFormControlDirective } from "app/core/common-components/basic-aut
 import { ColorMapping, EntityConstructor } from "app/core/entity/model/entity";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ColorInputComponent } from "app/color-input/color-input.component";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import { ConditionalColorSectionComponent } from "./conditional-color-section/conditional-color-section.component";
@@ -57,8 +56,7 @@ export class ConditionalColorConfigComponent
   @Input() isConditionalMode: boolean = false;
   @Output() isConditionalModeChange = new EventEmitter<boolean>();
 
-  private entitySchemaService = inject(EntitySchemaService);
-  private dialog = inject(MatDialog);
+  private readonly dialog = inject(MatDialog);
 
   colorFieldOptions: SimpleDropdownValue[] = [];
   conditionFormFieldConfigs = new Map<string, FormFieldConfig>();

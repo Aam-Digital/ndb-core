@@ -49,7 +49,7 @@ export class ConditionalColorSectionComponent implements OnInit {
   @Output() deleteSection = new EventEmitter<void>();
   @Output() conditionChange = new EventEmitter<void>();
 
-  private entitySchemaService = inject(EntitySchemaService);
+  private readonly entitySchemaService = inject(EntitySchemaService);
 
   ngOnInit(): void {
     if (!this.entityConstructor) return;
@@ -97,9 +97,16 @@ export class ConditionalColorSectionComponent implements OnInit {
 
     conditions.splice(conditionIndex, 1);
 
-    const key = `${this.sectionIndex}-${conditionIndex}`;
-    this.conditionFormFieldConfigs.delete(key);
-    this.conditionFormControls.delete(key);
+    // Clear all form configs and rebuild them with correct indices
+    this.conditionFormFieldConfigs.clear();
+    this.conditionFormControls.clear();
+
+    conditions.forEach((condition, index) => {
+      const fieldKey = this.getConditionField(condition);
+      if (fieldKey) {
+        this.createFormConfigForCondition(index, fieldKey);
+      }
+    });
 
     this.conditionChange.emit();
   }

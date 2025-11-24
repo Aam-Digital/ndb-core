@@ -2,7 +2,7 @@ import { compare } from "@ucast/mongo2js";
 import moment from "moment";
 
 /**
- * Extended comparison function that handles special cases like ConfigurableEnum objects and Dates.
+ * Handles special cases like ConfigurableEnum objects and Dates.
  * Used for filter evaluation and conditional color matching.
  *
  * This utility is kept separate to avoid circular dependencies between Entity and FilterService.
