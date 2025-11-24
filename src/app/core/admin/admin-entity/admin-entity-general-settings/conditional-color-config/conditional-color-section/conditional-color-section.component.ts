@@ -44,8 +44,6 @@ export class ConditionalColorSectionComponent implements OnInit {
   @Input() section!: ColorMapping;
   @Input() entityConstructor!: EntityConstructor;
   @Input() colorFieldOptions: SimpleDropdownValue[] = [];
-  @Input() conditionFormFieldConfigs = new Map<string, FormFieldConfig>();
-  @Input() conditionFormControls = new Map<string, FormControl>();
 
   @Output() colorChange = new EventEmitter<string>();
   @Output() deleteSection = new EventEmitter<void>();
@@ -54,15 +52,13 @@ export class ConditionalColorSectionComponent implements OnInit {
   private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly dialog = inject(MatDialog);
 
+  conditionFormFieldConfigs = new Map<string, FormFieldConfig>();
+  conditionFormControls = new Map<string, FormControl>();
+
   ngOnInit(): void {
     if (!this.entityConstructor) return;
 
-    this.conditions.forEach((condition, index) => {
-      const fieldKey = this.getConditionField(condition);
-      if (fieldKey) {
-        this.createFormConfigForCondition(index, fieldKey);
-      }
-    });
+    this.rebuildFormConfigs();
   }
 
   /**
@@ -99,18 +95,7 @@ export class ConditionalColorSectionComponent implements OnInit {
     if (conditionIndex < 0 || conditionIndex >= conditions.length) return;
 
     conditions.splice(conditionIndex, 1);
-
-    // Clear all form configs and rebuild them with correct indices
-    this.conditionFormFieldConfigs.clear();
-    this.conditionFormControls.clear();
-
-    conditions.forEach((condition, index) => {
-      const fieldKey = this.getConditionField(condition);
-      if (fieldKey) {
-        this.createFormConfigForCondition(index, fieldKey);
-      }
-    });
-
+    this.rebuildFormConfigs();
     this.conditionChange.emit();
   }
 
@@ -170,6 +155,22 @@ export class ConditionalColorSectionComponent implements OnInit {
   }
 
   /**
+   * Rebuild all form configurations for current conditions
+   */
+  private rebuildFormConfigs(): void {
+    this.conditionFormFieldConfigs.clear();
+    this.conditionFormControls.clear();
+
+    // Rebuild form configs for all conditions
+    this.conditions.forEach((condition, index) => {
+      const fieldKey = this.getConditionField(condition);
+      if (fieldKey) {
+        this.createFormConfigForCondition(index, fieldKey);
+      }
+    });
+  }
+
+  /**
    * Open JSON editor for this section's condition
    */
   openJsonEditor(): void {
@@ -181,18 +182,7 @@ export class ConditionalColorSectionComponent implements OnInit {
       if (result !== undefined) {
         // Update the entire section with the edited JSON
         Object.assign(this.section, result);
-
-        // Clear and rebuild form configs for all conditions
-        this.conditionFormFieldConfigs.clear();
-        this.conditionFormControls.clear();
-
-        this.conditions.forEach((condition, index) => {
-          const fieldKey = this.getConditionField(condition);
-          if (fieldKey) {
-            this.createFormConfigForCondition(index, fieldKey);
-          }
-        });
-
+        this.rebuildFormConfigs();
         this.conditionChange.emit();
       }
     });

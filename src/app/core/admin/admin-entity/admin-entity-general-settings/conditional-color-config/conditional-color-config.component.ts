@@ -1,25 +1,15 @@
-import {
-  Component,
-  inject,
-  Input,
-  OnInit,
-  Output,
-  EventEmitter,
-} from "@angular/core";
+import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
 import {
   MatFormFieldModule,
   MatFormFieldControl,
 } from "@angular/material/form-field";
 import { MatButtonModule } from "@angular/material/button";
-import { MatSelectModule } from "@angular/material/select";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { ColorMapping, EntityConstructor } from "app/core/entity/model/entity";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ColorInputComponent } from "app/color-input/color-input.component";
-import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { ConditionalColorSectionComponent } from "./conditional-color-section/conditional-color-section.component";
 
 /**
@@ -38,8 +28,6 @@ import { ConditionalColorSectionComponent } from "./conditional-color-section/co
   imports: [
     MatFormFieldModule,
     MatButtonModule,
-    MatSelectModule,
-    ReactiveFormsModule,
     FontAwesomeModule,
     MatTooltipModule,
     ColorInputComponent,
@@ -55,8 +43,6 @@ export class ConditionalColorConfigComponent
   @Output() isConditionalModeChange = new EventEmitter<boolean>();
 
   colorFieldOptions: SimpleDropdownValue[] = [];
-  conditionFormFieldConfigs = new Map<string, FormFieldConfig>();
-  conditionFormControls = new Map<string, FormControl>();
 
   // Cached values to avoid recalculating in template
   get staticColor(): string {
@@ -71,26 +57,6 @@ export class ConditionalColorConfigComponent
   get conditionalColorSections(): ColorMapping[] {
     if (!Array.isArray(this.value)) return [];
     return this.value.filter((m) => Object.keys(m.condition || {}).length > 0);
-  }
-
-  addConditionalMode(): void {
-    this.isConditionalModeChange.emit(true);
-    if (this.conditionalColorSections.length === 0) {
-      this.addConditionalColorSection();
-    }
-  }
-
-  removeConditionalMode(): void {
-    this.isConditionalModeChange.emit(false);
-    this.conditionFormFieldConfigs.clear();
-    this.conditionFormControls.clear();
-
-    // Remove all conditional sections and keep only the static color
-    if (Array.isArray(this.value)) {
-      const currentStaticColor = this.staticColor;
-      this.value = currentStaticColor;
-      this.onChange(this.value);
-    }
   }
 
   /**
