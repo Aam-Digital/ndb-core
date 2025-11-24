@@ -12,12 +12,14 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { MatDialog } from "@angular/material/dialog";
 import { ColorMapping, EntityConstructor } from "app/core/entity/model/entity";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ColorInputComponent } from "app/color-input/color-input.component";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { DynamicEditComponent } from "app/core/entity/entity-field-edit/dynamic-edit/dynamic-edit.component";
+import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 
 /**
  * Component for managing a single conditional color section
@@ -50,6 +52,7 @@ export class ConditionalColorSectionComponent implements OnInit {
   @Output() conditionChange = new EventEmitter<void>();
 
   private readonly entitySchemaService = inject(EntitySchemaService);
+  private readonly dialog = inject(MatDialog);
 
   ngOnInit(): void {
     if (!this.entityConstructor) return;
@@ -164,5 +167,34 @@ export class ConditionalColorSectionComponent implements OnInit {
       additional: fieldConfig.additional,
       label: fieldConfig.label || fieldKey,
     } as FormFieldConfig);
+  }
+
+  /**
+   * Open JSON editor for this section's condition
+   */
+  openJsonEditor(): void {
+    const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
+      data: { value: this.section, closeButton: true },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result !== undefined) {
+        // Update the entire section with the edited JSON
+        Object.assign(this.section, result);
+
+        // Clear and rebuild form configs for all conditions
+        this.conditionFormFieldConfigs.clear();
+        this.conditionFormControls.clear();
+
+        this.conditions.forEach((condition, index) => {
+          const fieldKey = this.getConditionField(condition);
+          if (fieldKey) {
+            this.createFormConfigForCondition(index, fieldKey);
+          }
+        });
+
+        this.conditionChange.emit();
+      }
+    });
   }
 }

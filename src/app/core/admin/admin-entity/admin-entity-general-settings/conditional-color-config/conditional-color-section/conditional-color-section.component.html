@@ -1,5 +1,5 @@
 <div class="conditional-section flex-column border-regular">
-  <div class="flex-row align-center">
+  <div class="section-header flex-row">
     <app-color-input
       [color]="section.color"
       [label]="'Conditional Color'"
@@ -80,6 +80,16 @@
       >
         <fa-icon icon="plus" class="standard-icon-with-text"></fa-icon>
         <span i18n>Add Condition</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="openJsonEditor()"
+        class="edit-json-button"
+      >
+        <fa-icon icon="code" class="standard-icon-with-text"></fa-icon>
+        <span i18n>Edit JSON</span>
       </button>
     </div>
   </div>

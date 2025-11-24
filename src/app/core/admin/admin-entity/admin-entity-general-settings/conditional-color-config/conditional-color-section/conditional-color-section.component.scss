@@ -1,6 +1,10 @@
 .conditional-section {
   background-color: transparent;
   border-radius: 8px;
+
+  .section-header {
+    justify-content: space-between;
+  }
 }
 
 .conditions-container {
@@ -19,6 +23,10 @@
 
 .field-selector {
   flex: 0 0 250px;
+}
+
+.value-input {
+  flex: 1;
 }
 
 .add-condition-button {

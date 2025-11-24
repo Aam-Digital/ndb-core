@@ -15,13 +15,11 @@ import { MatSelectModule } from "@angular/material/select";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatDialog } from "@angular/material/dialog";
 import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { ColorMapping, EntityConstructor } from "app/core/entity/model/entity";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ColorInputComponent } from "app/color-input/color-input.component";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
-import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import { ConditionalColorSectionComponent } from "./conditional-color-section/conditional-color-section.component";
 
 /**
@@ -55,8 +53,6 @@ export class ConditionalColorConfigComponent
   @Input() entityConstructor: EntityConstructor;
   @Input() isConditionalMode: boolean = false;
   @Output() isConditionalModeChange = new EventEmitter<boolean>();
-
-  private readonly dialog = inject(MatDialog);
 
   colorFieldOptions: SimpleDropdownValue[] = [];
   conditionFormFieldConfigs = new Map<string, FormFieldConfig>();
@@ -101,6 +97,11 @@ export class ConditionalColorConfigComponent
    * Add a new conditional color section
    */
   addConditionalColorSection(): void {
+    // Enable conditional mode if not already enabled
+    if (!this.isConditionalMode) {
+      this.isConditionalModeChange.emit(true);
+    }
+
     if (!Array.isArray(this.value)) {
       this.value = [{ condition: {}, color: this.staticColor }];
     }
@@ -191,24 +192,5 @@ export class ConditionalColorConfigComponent
 
   private updateValue(): void {
     this.onChange(this.value);
-  }
-
-  /**
-   * Open full JSON editor for all conditional mappings
-   */
-  openFullJsonEditor(): void {
-    const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
-      data: { value: this.conditionalColorSections, closeButton: true },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result !== undefined && Array.isArray(this.value)) {
-        const staticMapping = this.value.find(
-          (m) => !Object.keys(m.condition || {}).length,
-        );
-        this.value = staticMapping ? [staticMapping, ...result] : result;
-        this.onChange(this.value);
-      }
-    });
   }
 }
