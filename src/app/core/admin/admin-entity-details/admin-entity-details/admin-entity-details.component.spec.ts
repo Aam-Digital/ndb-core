@@ -8,8 +8,14 @@ import { EntityDetailsConfig } from "../../../entity-details/EntityDetailsConfig
 import { Entity } from "../../../entity/model/entity";
 import { MatTabsModule } from "@angular/material/tabs";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { DatabaseEntity } from "../../../entity/database-entity.decorator";
+import {
+  DatabaseEntity,
+  entityRegistry,
+  EntityRegistry,
+} from "../../../entity/database-entity.decorator";
 import { DatabaseField } from "../../../entity/database-field.decorator";
+import { SyncStateSubject } from "#src/app/core/session/session-type";
+import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 
 describe("AdminEntityDetailsComponent", () => {
   let component: AdminEntityDetailsComponent;
@@ -39,7 +45,15 @@ describe("AdminEntityDetailsComponent", () => {
         NoopAnimationsModule,
         FontAwesomeTestingModule,
       ],
-      providers: [{ provide: MatDialog, useValue: mockDialog }],
+      providers: [
+        { provide: EntityRegistry, useValue: entityRegistry },
+        SyncStateSubject,
+        CurrentUserSubject,
+      ],
+    }).overrideComponent(AdminEntityDetailsComponent, {
+      set: {
+        providers: [{ provide: MatDialog, useValue: mockDialog }],
+      },
     });
     fixture = TestBed.createComponent(AdminEntityDetailsComponent);
     component = fixture.componentInstance;
@@ -65,8 +79,8 @@ describe("AdminEntityDetailsComponent", () => {
     } as any);
 
     component.addComponent(component.config.panels[0]);
-    expect(component.config.panels[0].components.length).toBe(1);
 
+    expect(component.config.panels[0].components.length).toBe(1);
     expect(component.config.panels[0].components[0]).toEqual(defaultConfig);
   });
 });
