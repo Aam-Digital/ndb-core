@@ -78,7 +78,7 @@ export class EntityUserComponent implements OnInit {
   formMode = signal<"create" | "edit" | "view">("view");
 
   // ViewChild reference to UserDetailsComponent
-  @ViewChild('userDetailsForm') userDetailsForm: UserDetailsComponent;
+  @ViewChild("userDetailsForm") userDetailsForm: UserDetailsComponent;
 
   constructor() {
     // Check permissions
@@ -111,10 +111,12 @@ export class EntityUserComponent implements OnInit {
     }
 
     // Support both input and dialog injection
-    let entityToUse = this.entity();
+    let entityToUse;
     if (this.dialogData?.entity) {
       entityToUse = this.dialogData.entity;
       this.isInDialog.set(true);
+    } else {
+      entityToUse = this.entity();
     }
 
     if (!entityToUse) {
