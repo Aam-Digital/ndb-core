@@ -3,6 +3,7 @@ import {
   Component,
   inject,
   input,
+  Input,
   OnInit,
   signal,
   ViewChild,
@@ -66,8 +67,14 @@ export class EntityUserComponent implements OnInit {
   });
   private sessionInfo = inject(SessionSubject);
 
-  // Inputs
+  // Inputs - support both new signal-based and old decorator-based for backward compatibility
   entity = input<Entity>();
+  @Input() set entityInput(value: Entity) {
+    if (value) {
+      this._entity = value;
+    }
+  }
+  private _entity: Entity | undefined;
 
   // Signals
   user = signal<UserAccount | null>(null);
@@ -105,18 +112,36 @@ export class EntityUserComponent implements OnInit {
     }
   }
 
+  private getEntity(): Entity | undefined {
+    if (this.dialogData?.entity) {
+      return this.dialogData.entity;
+    }
+    if (this._entity) {
+      return this._entity;
+    }
+    if (typeof this.entity === 'function') {
+      const result = this.entity();
+      return result;
+    }
+    // Handle case where entity is directly set as an object (dynamic component binding)
+    if (this.entity && typeof this.entity === 'object') {
+      const entityObj = this.entity as any;
+      if (entityObj instanceof Entity) {
+        return entityObj;
+      }
+    }
+    return undefined;
+  }
+
   ngOnInit() {
     if (!this.userIsPermitted()) {
       return;
     }
 
-    // Support both input and dialog injection
-    let entityToUse;
+    // Get entity from any available source
+    const entityToUse = this.getEntity();
     if (this.dialogData?.entity) {
-      entityToUse = this.dialogData.entity;
       this.isInDialog.set(true);
-    } else {
-      entityToUse = this.entity();
     }
 
     if (!entityToUse) {
@@ -142,15 +167,6 @@ export class EntityUserComponent implements OnInit {
 
   private assignUser(user: UserAccount | null) {
     this.user.set(user);
-    // if (user && !this.isInDialog()) {
-    //   // In dialog mode, keep editing enabled; otherwise start in view mode
-    //   this.disableForm();
-    // } else if (user) {
-    //   this.formMode.set("edit");
-    // } else {
-    //   // No user exists, set to create mode
-    //   this.formMode.set("create");
-    // }
   }
 
   toggleAccount(enabled: boolean) {
@@ -205,7 +221,8 @@ export class EntityUserComponent implements OnInit {
   }
 
   createAccount(formData: Partial<UserAccount>) {
-    const entityToUse = this.entity() || this.dialogData?.entity;
+    const entityToUse = this.getEntity();
+    
     if (!entityToUse) {
       return;
     }
