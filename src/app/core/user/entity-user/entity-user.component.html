@@ -24,7 +24,7 @@
           <button
             mat-raised-button
             type="submit"
-            (click)="createNewAccount()"
+            (click)="submitForm()"
             class="invite-button"
             color="accent"
             [class.invite-button-animate]="true"
@@ -67,7 +67,7 @@
             mat-raised-button
             color="accent"
             class="action-button"
-            (click)="saveAccount()"
+            (click)="submitForm()"
             i18n="Save button for forms"
           >
             Save

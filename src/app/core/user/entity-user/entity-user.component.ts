@@ -206,14 +206,7 @@ export class EntityUserComponent implements OnInit {
     }
   }
 
-  createNewAccount() {
-    // Trigger form submission from the child component
-    if (this.userDetailsForm) {
-      this.userDetailsForm.onSubmit();
-    }
-  }
-
-  saveAccount() {
+  submitForm() {
     // Trigger form submission from the child component
     if (this.userDetailsForm) {
       this.userDetailsForm.onSubmit();
