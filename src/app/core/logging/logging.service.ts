@@ -1,11 +1,11 @@
 import { LogLevel } from "./log-level";
-import { Injectable } from "@angular/core";
 import * as Sentry from "@sentry/angular";
 import { environment } from "../../../environments/environment";
 import {
   ErrorHandler,
   Provider,
   inject,
+  Injectable,
   provideAppInitializer,
   EnvironmentProviders,
 } from "@angular/core";
