@@ -7,14 +7,14 @@ import { of } from "rxjs";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { UserAccount } from "../core/user/user-admin-service/user-account";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { UserSecurityComponent } from "../core/user/user-security/user-security.component";
+import { EntityUserComponent } from "../core/user/entity-user/entity-user.component";
 
 describe("AdminUserListComponent", () => {
   let component: AdminUserListComponent;
   let fixture: ComponentFixture<AdminUserListComponent>;
   let mockUserAdminService: jasmine.SpyObj<UserAdminService>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
-  let mockDialogRef: jasmine.SpyObj<MatDialogRef<UserSecurityComponent>>;
+  let mockDialogRef: jasmine.SpyObj<MatDialogRef<EntityUserComponent>>;
 
   const mockUsers: UserAccount[] = [
     {

@@ -5,12 +5,13 @@ import { UserAccount } from "../core/user/user-admin-service/user-account";
 import { MatTableModule } from "@angular/material/table";
 import { Logging } from "../core/logging/logging.service";
 import { MatDialog } from "@angular/material/dialog";
-import { UserSecurityComponent } from "../core/user/user-security/user-security.component";
+import { EntityUserComponent } from "../core/user/entity-user/entity-user.component";
 import { Entity } from "../core/entity/model/entity";
+import { EntityBlockComponent } from "../core/basic-datatypes/entity/entity-block/entity-block.component";
 
 @Component({
   selector: "app-admin-user-list",
-  imports: [ViewTitleComponent, MatTableModule],
+  imports: [ViewTitleComponent, MatTableModule, EntityBlockComponent],
   templateUrl: "./admin-user-list.component.html",
   styleUrl: "./admin-user-list.component.scss",
 })
@@ -20,12 +21,13 @@ export class AdminUserListComponent implements OnInit {
 
   users = signal<UserAccount[]>([]);
   displayedColumns: string[] = [
-    "userEntityId",
     "email",
+    "userEntityId",
     "enabled",
     "emailVerified",
     "roles",
   ];
+  currentEntity: Entity | undefined;
 
   ngOnInit() {
     this.loadUsers();
@@ -54,8 +56,9 @@ export class AdminUserListComponent implements OnInit {
 
     // Create a minimal entity object with the user's ID
     const entityMock = new Entity(user.userEntityId);
+    this.currentEntity = entityMock;
 
-    const dialogRef = this.dialog.open(UserSecurityComponent, {
+    const dialogRef = this.dialog.open(EntityUserComponent, {
       data: { entity: entityMock },
     });
 
