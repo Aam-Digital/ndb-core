@@ -3,7 +3,6 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { ConditionalColorSectionComponent } from "./conditional-color-section.component";
 import { ColorMapping } from "app/core/entity/model/entity";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
-import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { ComponentRegistry } from "#src/app/dynamic-components";
 
 describe("ConditionalColorSectionComponent", () => {
@@ -18,12 +17,6 @@ describe("ConditionalColorSectionComponent", () => {
   const mockSection: ColorMapping = {
     condition: { $or: [{ status: "active" }] },
     color: "#FF0000",
-  };
-
-  const mockFormFieldConfig: FormFieldConfig = {
-    id: "status",
-    editComponent: "EditComponent",
-    label: "Status",
   };
 
   beforeEach(async () => {

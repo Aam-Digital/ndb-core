@@ -97,7 +97,6 @@ describe("ConditionsEditorComponent", () => {
   });
 
   it("should rebuild form configs on init with existing conditions", () => {
-    const fieldConfig = component.entityConstructor.schema.get("name");
     mockEntitySchemaService.getComponent.and.returnValue("test-component");
     mockEntitySchemaService.valueToEntityFormat.and.returnValue("Test Value");
 
