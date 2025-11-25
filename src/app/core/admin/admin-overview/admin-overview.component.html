@@ -43,18 +43,13 @@
       >
     </mat-expansion-panel-header>
     <mat-nav-list class="section-nav-list">
-      <mat-list-item [routerLink]="['/admin/site-settings']">
-        <span matListItemTitle i18n>Site Settings</span>
-      </mat-list-item>
-      <mat-list-item [routerLink]="['/admin/entity']">
-        <span matListItemTitle i18n>Data Structures &amp; Entity Types</span>
-      </mat-list-item>
-      <mat-list-item [routerLink]="['/admin/menu']">
-        <span matListItemTitle i18n>Main Navigation Menu</span>
-      </mat-list-item>
-      <mat-list-item [routerLink]="['/admin/setup-wizard']">
-        <span matListItemTitle i18n>Setup Wizard</span>
-      </mat-list-item>
+      @for (item of configurationMenuItems; track item.label) {
+        @if (item.link) {
+          <mat-list-item [routerLink]="[item.link]">
+            <span matListItemTitle i18n>{{ item.label }}</span>
+          </mat-list-item>
+        }
+      }
     </mat-nav-list>
   </mat-expansion-panel>
 

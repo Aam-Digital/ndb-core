@@ -52,12 +52,15 @@ export class AdminOverviewComponent {
   private readonly sectionStateService = inject(AdminSectionStateService);
 
   public templates: MenuItem[] = [];
+  public configurationMenuItems: MenuItem[] = [];
   expandedSection = computed(() => this.sectionStateService.getExpanded());
 
   isSaasEnvironment: boolean;
 
   constructor() {
     this.templates = this.adminOverviewService.templates;
+    this.configurationMenuItems =
+      this.adminOverviewService.configurationMenuItems;
     this.isSaasEnvironment = environment.SaaS === true;
   }
 

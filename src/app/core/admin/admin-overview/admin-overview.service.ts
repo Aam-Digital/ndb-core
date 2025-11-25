@@ -24,8 +24,10 @@ export class AdminOverviewService {
     const itemsArray = Array.isArray(items) ? items : [items];
     this._templates.push(...itemsArray);
   }
-
-  menuItems: MenuItem[] = [
+  /**
+   * Configuration section menu items for Admin Overview.
+   */
+  configurationMenuItems: MenuItem[] = [
     {
       label: $localize`:admin menu item:Site Settings`,
       link: "/admin/site-settings",
