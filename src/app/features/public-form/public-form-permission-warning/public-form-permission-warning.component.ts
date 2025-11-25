@@ -28,10 +28,6 @@ export class PublicFormPermissionWarningComponent implements OnInit, OnChanges {
    */
   @Input() entity?: Entity;
 
-  constructor() {
-    // Component initialized
-  }
-
   /**
    * Whether public users have create permission for this entity type
    */
