@@ -81,6 +81,7 @@ export class AdminOverviewComponent {
     console.log("DatabaseResolverService", this.dbResolver);
     console.log('"app" database', this.dbResolver.getDatabase());
   }
+
   /**
    * Download a full backup of the database as (json) file.
    */
@@ -88,6 +89,7 @@ export class AdminOverviewComponent {
     const backup = await this.backupService.getDatabaseExport();
     await this.downloadService.triggerDownload(backup, "json", "backup");
   }
+
   /**
    * Download a full export of the database as csv file.
    */

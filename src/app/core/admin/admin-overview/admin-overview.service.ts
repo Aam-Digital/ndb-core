@@ -16,6 +16,10 @@ export class AdminOverviewService {
     return this._templates;
   }
 
+  /**
+   * Register a menu entry for the "Templates" section of the Admin Overview.
+   * Use this from feature modules to extend the Admin UI.
+   */
   addTemplateItems(items: MenuItem | MenuItem[]): void {
     const itemsArray = Array.isArray(items) ? items : [items];
     this._templates.push(...itemsArray);

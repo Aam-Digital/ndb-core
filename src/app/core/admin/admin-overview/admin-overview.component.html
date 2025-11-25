@@ -69,7 +69,7 @@
         @for (item of templates; track item.label) {
           @if (item.link) {
             <mat-list-item [routerLink]="[item.link]">
-              <span matListItemTitle i18n>{{ item.label }}</span>
+              <span matListItemTitle>{{ item.label }}</span>
             </mat-list-item>
           }
         }
@@ -90,11 +90,11 @@
       >
     </mat-expansion-panel-header>
     <mat-nav-list class="section-nav-list">
-      <mat-list-item [routerLink]="['/admin/user-roles']">
-        <span matListItemTitle i18n>User Roles</span>
-      </mat-list-item>
       <mat-list-item [routerLink]="['/user']">
         <span matListItemTitle i18n>Manage User Accounts</span>
+      </mat-list-item>
+      <mat-list-item [routerLink]="['/admin/user-roles']">
+        <span matListItemTitle i18n>User Roles</span>
       </mat-list-item>
     </mat-nav-list>
   </mat-expansion-panel>
