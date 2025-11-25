@@ -43,7 +43,7 @@ export class ColorInputComponent implements OnInit, OnChanges {
   /**
    * Label for the color input field.
    */
-  @Input() label: string = "Color";
+  @Input() label: string = $localize`Color`;
 
   colorControl = new FormControl("");
 
