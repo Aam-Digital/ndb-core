@@ -6,29 +6,3 @@
     justify-content: space-between;
   }
 }
-
-.conditions-container {
-  background-color: #fef5f5;
-  border-radius: 8px;
-  padding: 16px;
-}
-
-.conditions-list {
-  margin-top: 0;
-}
-
-.condition-item {
-  align-items: flex-end;
-}
-
-.field-selector {
-  flex: 0 0 250px;
-}
-
-.value-input {
-  flex: 1;
-}
-
-.add-condition-button {
-  align-self: flex-start;
-}

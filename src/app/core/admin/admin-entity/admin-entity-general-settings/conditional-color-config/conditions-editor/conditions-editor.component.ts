@@ -1,0 +1,183 @@
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  inject,
+} from "@angular/core";
+import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { EntityConstructor } from "app/core/entity/model/entity";
+import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { DynamicEditComponent } from "app/core/entity/entity-field-edit/dynamic-edit/dynamic-edit.component";
+import { MatDialog } from "@angular/material/dialog";
+import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
+
+/**
+ * Reusable component for editing conditions (field-value pairs) with JSON support
+ */
+@Component({
+  selector: "app-conditions-editor",
+  templateUrl: "./conditions-editor.component.html",
+  styleUrls: ["./conditions-editor.component.scss"],
+  imports: [
+    MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatTooltipModule,
+    FontAwesomeModule,
+    DynamicEditComponent,
+    ReactiveFormsModule,
+  ],
+})
+export class ConditionsEditorComponent implements OnInit {
+  @Input() conditions: any = { $or: [] };
+  @Input() entityConstructor: EntityConstructor;
+  @Input() fieldOptions: SimpleDropdownValue[] = [];
+
+  @Output() conditionsChange = new EventEmitter<any>();
+
+  conditionFormFieldConfigs = new Map<string, FormFieldConfig>();
+  conditionFormControls = new Map<string, FormControl>();
+
+  private entitySchemaService = inject(EntitySchemaService);
+  private dialog = inject(MatDialog);
+
+  ngOnInit(): void {
+    if (!this.entityConstructor) return;
+    this.rebuildFormConfigs();
+  }
+
+  /**
+   * Get the conditions array
+   */
+  getConditionsArray(): any[] {
+    return this.conditions?.$or || [];
+  }
+
+  /**
+   * Get the field key from a condition object
+   */
+  getConditionField(condition: any): string {
+    return Object.keys(condition || {})[0] || "";
+  }
+
+  /**
+   * Add a new condition
+   */
+  addCondition(): void {
+    if (!this.conditions.$or) {
+      this.conditions.$or = [];
+    }
+
+    this.conditions.$or.push({});
+    this.conditionsChange.emit(this.conditions);
+  }
+
+  /**
+   * Delete a condition
+   */
+  deleteCondition(conditionIndex: number): void {
+    const conditions = this.getConditionsArray();
+    if (conditionIndex < 0 || conditionIndex >= conditions.length) return;
+
+    conditions.splice(conditionIndex, 1);
+
+    this.rebuildFormConfigs();
+    this.conditionsChange.emit(this.conditions);
+  }
+
+  /**
+   * Handle condition field change
+   */
+  onConditionFieldChange(conditionIndex: number, fieldKey: string): void {
+    const conditions = this.getConditionsArray();
+    if (conditionIndex < 0 || conditionIndex >= conditions.length) return;
+
+    const condition = conditions[conditionIndex];
+
+    Object.keys(condition).forEach((key) => delete condition[key]);
+    condition[fieldKey] = "";
+
+    this.createFormConfigForCondition(conditionIndex, fieldKey);
+    this.conditionsChange.emit(this.conditions);
+  }
+
+  /**
+   * Create form configuration for a specific condition
+   */
+  private createFormConfigForCondition(
+    conditionIndex: number,
+    fieldKey: string,
+  ): void {
+    const key = `${conditionIndex}`;
+    const fieldConfig = this.entityConstructor.schema.get(fieldKey);
+    if (!fieldConfig) return;
+
+    const conditions = this.getConditionsArray();
+    const condition = conditions[conditionIndex];
+
+    const initialValue = this.entitySchemaService.valueToEntityFormat(
+      condition[fieldKey],
+      fieldConfig,
+    );
+    const formControl = new FormControl(initialValue);
+    this.conditionFormControls.set(key, formControl);
+
+    formControl.valueChanges.subscribe((value) => {
+      const dbValue = this.entitySchemaService.valueToDatabaseFormat(
+        value,
+        fieldConfig,
+      );
+      condition[fieldKey] = dbValue;
+      this.conditionsChange.emit(this.conditions);
+    });
+
+    this.conditionFormFieldConfigs.set(key, {
+      id: fieldKey,
+      editComponent: this.entitySchemaService.getComponent(fieldConfig, "edit"),
+      dataType: fieldConfig.dataType,
+      additional: fieldConfig.additional,
+      label: fieldConfig.label || fieldKey,
+    } as FormFieldConfig);
+  }
+
+  /**
+   * Rebuild form configs for all conditions
+   */
+  private rebuildFormConfigs(): void {
+    this.conditionFormFieldConfigs.clear();
+    this.conditionFormControls.clear();
+
+    this.getConditionsArray().forEach((condition, index) => {
+      const fieldKey = this.getConditionField(condition);
+      if (fieldKey) {
+        this.createFormConfigForCondition(index, fieldKey);
+      }
+    });
+  }
+
+  /**
+   * Open JSON editor for conditions
+   */
+  openJsonEditor(): void {
+    const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
+      data: { value: this.conditions, closeButton: true },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.conditions = result;
+        this.rebuildFormConfigs();
+        this.conditionsChange.emit(this.conditions);
+      }
+    });
+  }
+}

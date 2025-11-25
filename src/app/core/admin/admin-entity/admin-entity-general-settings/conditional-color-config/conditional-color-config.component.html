@@ -21,7 +21,6 @@
     <div class="conditional-sections flex-column gap-regular padding-regular">
       @for (section of conditionalColorSections; track $index) {
         <app-conditional-color-section
-          [sectionIndex]="$index"
           [section]="section"
           [entityConstructor]="entityConstructor"
           [colorFieldOptions]="colorFieldOptions"
