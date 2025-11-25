@@ -41,85 +41,91 @@ export class PublicFormPermissionService {
       return false; // If we can't load permissions, assume no access
     }
   }
+  /**
+   * Handles the dialog logic for missing public create permission.
+   * Returns true if save should proceed, false if cancelled or error.
+   */
+  private async handleMissingPermissionDialog(
+    entityType: string,
+    isAdmin: boolean,
+  ): Promise<boolean> {
+    const buttons = isAdmin
+      ? [
+          {
+            text: $localize`Update Permission & Save Form`,
+            dialogResult: "add-permission",
+            click() {},
+          },
+          {
+            text: $localize`Save Form Only`,
+            dialogResult: "save-only",
+            click() {},
+          },
+        ]
+      : [
+          {
+            text: $localize`Save Form Anyway`,
+            dialogResult: "save-anyway",
+            click() {},
+          },
+          {
+            text: $localize`Cancel`,
+            dialogResult: "cancel",
+            click() {},
+          },
+        ];
+
+    const dialogText = isAdmin
+      ? $localize`This public form will currently not work for external users without an account because the "public" role does not have permission to create new "${entityType}" records.\n\nWould you like to add the required permission automatically?`
+      : $localize`This public form will currently not work for external users without an account because the "public" role does not have permission to create new "${entityType}" records.\n\nYou need an administrator to add the required permissions. Do you still want to save this form?`;
+
+    const dialogResult = await this.confirmationDialog.getConfirmation(
+      $localize`Missing Public Permission`,
+      dialogText,
+      buttons,
+      true,
+    );
+
+    if (isAdmin && dialogResult === "add-permission") {
+      try {
+        await this.addPublicCreatePermission(entityType);
+        this.alertService.addInfo(
+          $localize`Permission added successfully! Public users can now create ${entityType} records.`,
+        );
+        return true;
+      } catch (error) {
+        this.alertService.addDanger(
+          $localize`Failed to add permission: ${error.message}`,
+        );
+        return false;
+      }
+    }
+    if (
+      (isAdmin && dialogResult === "save-only") ||
+      (!isAdmin && dialogResult === "save-anyway")
+    ) {
+      this.alertService.addWarning(
+        $localize`This form will not work until an administrator adds create permissions for ${entityType} records.`,
+      );
+      return true;
+    }
+    return false; // User cancelled
+  }
 
   /**
    * Centralized permission check and dialog logic for public form save.
    * Returns true if save should proceed, false if cancelled or error.
    */
   async checkOnSave(entityType: string): Promise<boolean> {
-    let result = false;
     if (!entityType) {
-      result = true; // No entity type selected yet
-    } else {
-      const hasPermission = await this.hasPublicCreatePermission(entityType);
-      if (hasPermission) {
-        result = true;
-      } else {
-        const isAdmin = this.hasAdminPermission();
-        const buttons = isAdmin
-          ? [
-              {
-                text: $localize`Update Permission & Save Form`,
-                dialogResult: "add-permission",
-                click() {},
-              },
-              {
-                text: $localize`Save Form Only`,
-                dialogResult: "save-only",
-                click() {},
-              },
-            ]
-          : [
-              {
-                text: $localize`Save Form Anyway`,
-                dialogResult: "save-anyway",
-                click() {},
-              },
-              {
-                text: $localize`Cancel`,
-                dialogResult: "cancel",
-                click() {},
-              },
-            ];
-
-        const dialogText = isAdmin
-          ? $localize`This public form will currently not work for external users without an account because the "public" role does not have permission to create new "${entityType}" records.\n\nWould you like to add the required permission automatically?`
-          : $localize`This public form will currently not work for external users without an account because the "public" role does not have permission to create new "${entityType}" records.\n\nYou need an administrator to add the required permissions. Do you still want to save this form?`;
-
-        const dialogResult = await this.confirmationDialog.getConfirmation(
-          $localize`Missing Public Permission`,
-          dialogText,
-          buttons,
-          true,
-        );
-
-        if (isAdmin && dialogResult === "add-permission") {
-          try {
-            await this.addPublicCreatePermission(entityType);
-            this.alertService.addInfo(
-              $localize`Permission added successfully! Public users can now create ${entityType} records.`,
-            );
-            result = true;
-          } catch (error) {
-            this.alertService.addDanger(
-              $localize`Failed to add permission: ${error.message}`,
-            );
-            result = false;
-          }
-        } else if (
-          (isAdmin && dialogResult === "save-only") ||
-          (!isAdmin && dialogResult === "save-anyway")
-        ) {
-          this.alertService.addWarning(
-            $localize`This form will not work until an administrator adds create permissions for ${entityType} records.`,
-          );
-          result = true;
-        } else {
-          result = false; // User cancelled
-        }
-      }
+      return true; // No entity type selected yet
     }
-    return result;
+    const hasPermission = await this.hasPublicCreatePermission(entityType);
+    if (hasPermission) {
+      return true;
+    }
+    const isAdmin = this.hasAdminPermission();
+    return await this.handleMissingPermissionDialog(entityType, isAdmin);
   }
 
   /**
