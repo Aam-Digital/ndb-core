@@ -21,9 +21,9 @@ export class AdminOverviewService {
     this._templates.push(...itemsArray);
   }
   /**
-   * Backwards-compatible flat list for older code. Prefer using `sections`.
+   * Configuration section menu items for Admin Overview.
    */
-  menuItems: MenuItem[] = [
+  configurationMenuItems: MenuItem[] = [
     {
       label: $localize`:admin menu item:Site Settings`,
       link: "/admin/site-settings",
