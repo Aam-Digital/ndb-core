@@ -1,7 +1,5 @@
 import { Injectable } from "@angular/core";
 import { MenuItem } from "../../ui/navigation/menu-item";
-import { AdminSection } from "./admin-section.interface";
-import { DEFAULT_ADMIN_SECTIONS } from "./admin-overview-sections";
 
 /**
  * Settings for the Admin Overview page.
@@ -12,9 +10,21 @@ import { DEFAULT_ADMIN_SECTIONS } from "./admin-overview-sections";
   providedIn: "root",
 })
 export class AdminOverviewService {
+  private readonly _templates: MenuItem[] = [];
+
+  get templates(): MenuItem[] {
+    return this._templates;
+  }
+
   /**
-   * Backwards-compatible flat list for older code. Prefer using `sections`.
+   * Register a menu entry for the "Templates" section of the Admin Overview.
+   * Use this from feature modules to extend the Admin UI.
    */
+  addTemplateItems(items: MenuItem | MenuItem[]): void {
+    const itemsArray = Array.isArray(items) ? items : [items];
+    this._templates.push(...itemsArray);
+  }
+
   menuItems: MenuItem[] = [
     {
       label: $localize`:admin menu item:Site Settings`,
@@ -37,44 +47,4 @@ export class AdminOverviewService {
       link: "/admin/menu",
     },
   ];
-
-  private readonly _sections: AdminSection[] = DEFAULT_ADMIN_SECTIONS;
-
-  get sections(): AdminSection[] {
-    return this._sections;
-  }
-
-  /**
-   * Register menu item(s) in a specific section.
-   * @param sectionId The ID of the section to add the item(s) to
-   * @param items The menu item(s) to add - can be a single item or an array
-   */
-  addMenuItems(sectionId: string, items: MenuItem | MenuItem[]): void {
-    const section = this._sections.find((s) => s.id === sectionId);
-    if (section) {
-      const itemsArray = Array.isArray(items) ? items : [items];
-      section.items.push(...itemsArray);
-    } else {
-      console.warn(`Admin section with ID "${sectionId}" not found`);
-    }
-  }
-
-  /**
-   * @deprecated Use addMenuItems instead. Kept for backwards compatibility.
-   */
-  addMenuItem(sectionId: string, item: MenuItem): void {
-    this.addMenuItems(sectionId, item);
-  }
-
-  /**
-   * Set expansion state for a section
-   * @param sectionId The ID of the section
-   * @param expanded Whether the section should be expanded
-   */
-  setSectionExpanded(sectionId: string, expanded: boolean): void {
-    const section = this._sections.find((s) => s.id === sectionId);
-    if (section) {
-      section.expanded = expanded;
-    }
-  }
 }

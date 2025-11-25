@@ -59,6 +59,7 @@
               <app-admin-entity-details
                 [entityConstructor]="entityConstructor"
                 [config]="configDetailsView.config"
+                (relatedEntityModified)="registerRelatedEntityForSave($event)"
               ></app-admin-entity-details>
             }
             @case ("NoteDetails") {

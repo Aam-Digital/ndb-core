@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { ViewTitleComponent } from "../core/common-components/view-title/view-title.component";
+import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 
 @Component({
   selector: "app-subscription-info",
