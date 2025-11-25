@@ -187,7 +187,7 @@ export class AdminEntityFormComponent implements OnChanges {
     );
     const unusedFields = Array.from(this.entityType.schema.entries())
       .filter(([key]) => !usedFields.some((x) => x.id === key))
-      .filter(([key, value]) => value.label) // no technical, internal fields
+      .filter(([key, value]) => !value.isInternalField) // no technical, internal fields
       .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
       .map(([key]) => key);
 
@@ -375,20 +375,28 @@ export class AdminEntityFormComponent implements OnChanges {
       return;
     }
 
-    // new fields always have to be added to the entity's schema globally
-    this.adminEntityService.updateSchemaField(
-      this.entityType,
-      newField.id,
-      newField,
-    );
-
     const newFieldId = newField.id;
+
+    if (this.updateEntitySchema) {
+      this.adminEntityService.updateSchemaField(
+        this.entityType,
+        newField.id,
+        newField,
+      );
+      // the schema update has added the new field to the available fields already, remove it from there
+      this.availableFields.splice(this.availableFields.indexOf(newFieldId), 1);
+    } else {
+      // For local-only updates (e.g., public forms), manually update schema
+      this.entityType.schema.set(newField.id, newField);
+      const fieldIndex = this.availableFields.indexOf(newFieldId);
+      if (fieldIndex !== -1) {
+        this.availableFields.splice(fieldIndex, 1);
+      }
+    }
+
     this.dummyForm.formGroup.addControl(newFieldId, new FormControl());
     this.dummyForm.formGroup.disable();
     event.container.data.splice(event.currentIndex, 0, newFieldId);
-
-    // the schema update has added the new field to the available fields already, remove it from there
-    this.availableFields.splice(this.availableFields.indexOf(newFieldId), 1);
 
     this.emitUpdatedConfig();
   }

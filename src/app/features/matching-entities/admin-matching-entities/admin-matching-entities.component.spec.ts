@@ -9,6 +9,8 @@ import { Config } from "../../../core/config/config";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { FormBuilder } from "@angular/forms";
+import { SyncStateSubject } from "#src/app/core/session/session-type";
+import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 
 const MOCK_ENTITY_TYPES = [TestEntity];
 
@@ -74,6 +76,8 @@ describe("AdminMatchingEntitiesComponent", () => {
         },
         { provide: EntityFormService, useValue: mockEntityFormService },
         { provide: EntityRegistry, useValue: mockEntityRegistry },
+        SyncStateSubject,
+        CurrentUserSubject,
       ],
     }).compileComponents();
 

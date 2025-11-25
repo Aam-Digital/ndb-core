@@ -1,10 +1,10 @@
 <div class="padding-regular">
   @if (entityConstructor?.ENTITY_TYPE) {
-    <div class="flex-row">
+    <div class="flex-row gap-regular align-center">
       <mat-form-field appearance="fill" class="margin-bottom-regular flex-grow">
         <mat-label i18n>Record Type</mat-label>
         <mat-select
-          [(ngModel)]="selectedEntityType"
+          [ngModel]="selectedEntityType()"
           (ngModelChange)="onEntityTypeChange($event)"
         >
           @for (
@@ -18,7 +18,20 @@
         </mat-select>
       </mat-form-field>
 
-      <div class="flex-grow"></div>
+      @if (showEditStructureButton()) {
+        <button
+          mat-stroked-button
+          (click)="openRelatedEntityDetailsConfig()"
+          matTooltip="If you need additional fields, edit the related record type here."
+          i18n-matTooltip
+        >
+          <fa-icon icon="edit" class="standard-icon-with-text"></fa-icon>
+          <span i18n
+            >Edit data structure of
+            {{ entityConstructor.label || entityConstructor.ENTITY_TYPE }}</span
+          >
+        </button>
+      }
     </div>
 
     <div class="margin-top-regular hint-text">

@@ -42,6 +42,7 @@ export class AdminEntityService {
    * @param configEntitySettings (optional) general entity settings to also be applied
    * @param configListView (optional) list view settings also to be applied
    * @param configDetailsView (optional) details view settings also to be applied
+   * @param additionalEntityConstructors (optional) additional entity types to save in the same transaction
    */
   public async setAndSaveEntityConfig(
     entityConstructor: EntityConstructor,
@@ -50,6 +51,7 @@ export class AdminEntityService {
     configDetailsView?: DynamicComponentConfig<
       EntityDetailsConfig | NoteDetailsConfig
     >,
+    additionalEntityConstructors?: EntityConstructor[],
   ): Promise<{ previous: Config; current: Config }> {
     const originalConfig = await this.entityMapper.load(
       Config,
@@ -57,19 +59,12 @@ export class AdminEntityService {
     );
     const newConfig = originalConfig.copy();
 
-    let entitySchemaConfig: EntityConfig =
-      this.getEntitySchemaFromConfig(newConfig, entityConstructor) ?? {};
-    // Initialize config if not present
-    entitySchemaConfig.attributes = entitySchemaConfig.attributes ?? {};
-
-    for (const [fieldId, field] of entityConstructor.schema.entries()) {
-      entitySchemaConfig.attributes[fieldId] = field;
-    }
-
-    // Add additional general settings if available
-    if (configEntitySettings) {
-      Object.assign(entitySchemaConfig, configEntitySettings);
-    }
+    // Update the main entity schema
+    this.updateConfigWithEntitySchema(
+      newConfig,
+      entityConstructor,
+      configEntitySettings,
+    );
 
     // Add additional view config if available
     if (configListView) {
@@ -81,8 +76,37 @@ export class AdminEntityService {
         configDetailsView;
     }
 
+    // Update additional entity schemas (e.g., related entities modified through panels)
+    for (const additionalEntity of additionalEntityConstructors ?? []) {
+      this.updateConfigWithEntitySchema(newConfig, additionalEntity);
+    }
+
     const updatedConfig: Config = await this.entityMapper.save(newConfig);
     return { previous: originalConfig, current: updatedConfig };
+  }
+
+  private updateConfigWithEntitySchema(
+    newConfig: Config,
+    entityConstructor: EntityConstructor,
+    configEntitySettings?: EntityConfig,
+  ) {
+    let entitySchemaConfig: EntityConfig =
+      this.getEntitySchemaFromConfig(newConfig, entityConstructor) ?? {};
+    // Initialize config if not present
+    entitySchemaConfig.attributes = entitySchemaConfig.attributes ?? {};
+
+    for (const [fieldId, field] of entityConstructor.schema.entries()) {
+      // Skip internal fields that are defined in the base Entity class
+      if (field.isInternalField) {
+        continue;
+      }
+      entitySchemaConfig.attributes[fieldId] = field;
+    }
+
+    // Add additional general settings if available
+    if (configEntitySettings) {
+      Object.assign(entitySchemaConfig, configEntitySettings);
+    }
   }
 
   private getEntitySchemaFromConfig(

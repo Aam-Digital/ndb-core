@@ -91,24 +91,39 @@ export class ImportExistingService {
     importSettings: ImportSettings,
     importEntity: Entity,
   ) {
+    // Determine which of the selected identifier fields are actually mapped, in the column mapping
+    const mappedFields = (importSettings.columnMapping ?? [])
+      .filter((m) => !!m.propertyName)
+      .map((m) => m.propertyName);
+
+    const mappedMatchFields = (
+      importSettings.matchExistingByFields ?? []
+    ).filter((f) => mappedFields.includes(f));
+
+    if (mappedMatchFields.length === 0) return undefined;
+
     const rawImportEntity =
       this.schemaService.transformEntityToDatabaseFormat(importEntity);
 
     return this.existingEntitiesCache.find((e) =>
-      importSettings.matchExistingByFields.every((idField) => {
+      mappedMatchFields.every((idField) => {
         const schemaField = e.getSchema().get(idField);
         const rawExistingValue = this.schemaService.valueToDatabaseFormat(
           e[idField],
           schemaField,
         );
+        const rawImportValue = rawImportEntity[idField];
 
-        return (
-          // compare the "database formats" (to match complex values like dates)
-          rawExistingValue === rawImportEntity[idField] ||
-          // allow partial match if a column is not part of the import:
-          !importEntity.hasOwnProperty(idField) ||
-          !e.hasOwnProperty(idField)
-        );
+        // If either value is null/undefined, don't match - identifier must have a value
+        if (
+          this.isEmptyImportValue(rawExistingValue) ||
+          this.isEmptyImportValue(rawImportValue)
+        ) {
+          return false;
+        }
+
+        // Compare the "database formats" (to match complex values like dates)
+        return rawExistingValue === rawImportValue;
       }),
     );
   }
@@ -168,5 +183,9 @@ export class ImportExistingService {
     });
 
     await Promise.all(reverts);
+  }
+
+  isEmptyImportValue(value: any): boolean {
+    return value === null || value === undefined || value === "";
   }
 }
