@@ -1,3 +1,5 @@
+import { AlertService } from "app/core/alerts/alert.service";
+import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { Injectable, inject } from "@angular/core";
 import { Config } from "../../core/config/config";
 import { DatabaseRules } from "../../core/permissions/permission-types";
@@ -13,6 +15,8 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
   providedIn: "root",
 })
 export class PublicFormPermissionService {
+  private readonly alertService = inject(AlertService);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly sessionInfo = inject(SessionSubject);
   private readonly entityMapper = inject(EntityMapperService);
 
@@ -27,7 +31,6 @@ export class PublicFormPermissionService {
       if (!permissionsConfig?.data) {
         return true; // No permissions config means everything is allowed
       }
-
       const publicRules = permissionsConfig.data.public || [];
       return publicRules.some(
         (rule) =>
@@ -37,6 +40,85 @@ export class PublicFormPermissionService {
     } catch {
       return false; // If we can't load permissions, assume no access
     }
+  }
+
+  /**
+   * Centralized permission check and dialog logic for public form save.
+   * Returns true if save should proceed, false if cancelled or error.
+   */
+  async checkOnSave(entityType: string): Promise<boolean> {
+    if (!entityType) return true; // No entity type selected yet
+
+    const hasPermission = await this.hasPublicCreatePermission(entityType);
+    if (hasPermission) return true;
+
+    const isAdmin = this.hasAdminPermission();
+
+    // Shared dialog config
+    const buttons = isAdmin
+      ? [
+          {
+            text: $localize`Update Permission & Save Form`,
+            dialogResult: "add-permission",
+            click() {},
+          },
+          {
+            text: $localize`Save Form Only`,
+            dialogResult: "save-only",
+            click() {},
+          },
+        ]
+      : [
+          {
+            text: $localize`Save Form Anyway`,
+            dialogResult: "save-anyway",
+            click() {},
+          },
+          {
+            text: $localize`Cancel`,
+            dialogResult: "cancel",
+            click() {},
+          },
+        ];
+
+    const baseMessage = $localize`This public form will currently not work for external users without an account because the "public" role does not have permission to create new "${entityType}" records.`;
+    const dialogText = isAdmin
+      ? `${baseMessage}\n\n${$localize`Would you like to add the required permission automatically?`}`
+      : `${baseMessage}\n\n${$localize`You need an administrator to add the required permissions. Do you still want to save this form?`}`;
+
+    const result = await this.confirmationDialog.getConfirmation(
+      $localize`Missing Public Permission`,
+      dialogText,
+      buttons,
+      true,
+    );
+
+    if (isAdmin && result === "add-permission") {
+      try {
+        await this.addPublicCreatePermission(entityType);
+        this.alertService.addInfo(
+          $localize`Permission added successfully! Public users can now create ${entityType} records.`,
+        );
+        return true;
+      } catch (error) {
+        this.alertService.addDanger(
+          $localize`Failed to add permission: ${error.message}`,
+        );
+        return false;
+      }
+    }
+
+    if (
+      (isAdmin && result === "save-only") ||
+      (!isAdmin && result === "save-anyway")
+    ) {
+      this.alertService.addWarning(
+        $localize`This form will not work until an administrator adds create permissions for ${entityType} records.`,
+      );
+      return true;
+    }
+
+    return false; // User cancelled
   }
 
   /**
@@ -68,7 +150,22 @@ export class PublicFormPermissionService {
       permissionsConfig.data.public = [];
     }
 
-    // Check if permission already exists to avoid duplicates
+    if (!permissionsConfig.data.default) {
+      permissionsConfig.data.default = [];
+    }
+
+    // Always ensure default manage rule for authenticated users
+    const defaultExists = permissionsConfig.data.default.some(
+      (rule) => rule.subject === "all" && rule.action === "manage",
+    );
+    if (!defaultExists) {
+      permissionsConfig.data.default.push({
+        subject: "all",
+        action: "manage",
+      });
+    }
+
+    // Check if public create permission already exists to avoid duplicates
     const alreadyExists = permissionsConfig.data.public.some(
       (rule) =>
         rule.subject === entityType &&
@@ -80,7 +177,6 @@ export class PublicFormPermissionService {
         subject: entityType,
         action: "create",
       });
-
       await this.entityMapper.save(permissionsConfig, true);
     }
   }

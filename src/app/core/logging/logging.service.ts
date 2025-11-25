@@ -1,4 +1,5 @@
 import { LogLevel } from "./log-level";
+import { Injectable } from "@angular/core";
 import * as Sentry from "@sentry/angular";
 import { environment } from "../../../environments/environment";
 import {
@@ -24,6 +25,7 @@ import { TraceService } from "@sentry/angular";
  *
  * Import the constant `Logging` to use this from anywhere (without Angular DI).
  */
+@Injectable({ providedIn: "root" })
 export class LoggingService {
   /**
    * Initialize the remote logging module with the given options.

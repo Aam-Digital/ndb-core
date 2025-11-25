@@ -13,6 +13,7 @@ import { PublicFormPermissionService } from "../public-form-permission.service";
 import { PublicFormConfig } from "../public-form-config";
 import { HintBoxComponent } from "app/core/common-components/hint-box/hint-box.component";
 import { MatButtonModule } from "@angular/material/button";
+import { LoggingService } from "app/core/logging/logging.service";
 
 @Component({
   selector: "app-public-form-permission-warning",
@@ -22,6 +23,7 @@ import { MatButtonModule } from "@angular/material/button";
 export class PublicFormPermissionWarningComponent implements OnInit, OnChanges {
   private readonly permissionService = inject(PublicFormPermissionService);
   private readonly alertService = inject(AlertService);
+  private readonly loggingService = inject(LoggingService);
 
   /**
    * The entity being edited (PublicFormConfig)
@@ -43,23 +45,27 @@ export class PublicFormPermissionWarningComponent implements OnInit, OnChanges {
    */
   canAddPermissions = signal<boolean>(false);
 
+  /**
+   * Store the entity type for template use (avoids method calls in template)
+   */
+  entityType: string = "";
+
+  private updateEntityType() {
+    const formConfig = this.entity as PublicFormConfig;
+    this.entityType = formConfig?.entity || "";
+  }
+
   async ngOnInit(): Promise<void> {
     this.canAddPermissions.set(this.permissionService.hasAdminPermission());
+    this.updateEntityType();
     await this.checkPermissions();
   }
 
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes["entity"]) {
+      this.updateEntityType();
       await this.checkPermissions();
     }
-  }
-
-  /**
-   * Get the entity type from the form configuration
-   */
-  getEntityType(): string {
-    const formConfig = this.entity as PublicFormConfig;
-    return formConfig?.entity || "";
   }
 
   /**
@@ -82,7 +88,7 @@ export class PublicFormPermissionWarningComponent implements OnInit, OnChanges {
         );
       this.hasPublicCreatePermission.set(hasPermission);
     } catch (error) {
-      console.warn("Failed to check public permissions:", error);
+      this.loggingService.warn("Failed to check public permissions:", error);
       this.hasPublicCreatePermission.set(false);
     } finally {
       this.isCheckingPermissions.set(false);
@@ -103,7 +109,7 @@ export class PublicFormPermissionWarningComponent implements OnInit, OnChanges {
       );
       await this.checkPermissions();
     } catch (error) {
-      console.error("Failed to add permission:", error);
+      this.loggingService.error("Failed to add permission:", error);
       this.alertService.addDanger(
         $localize`Failed to add permission automatically. Please contact an administrator or check the permissions configuration manually.`,
       );

@@ -3,16 +3,15 @@
     <div>
       <strong i18n>⚠️ Missing Public Permission</strong>
       <p i18n>
-        This public form will not work because public users (visitors without
-        accounts) do not have permission to create new
-        {{ getEntityType() }} records.
+        This public form will currently not work for external users without an
+        account because the "public" role does not have permission to create new
+        {{ entityType }} records.
       </p>
       <p>
         <strong i18n>Required:</strong>
         <span i18n>
-          The "public" role needs "create" permission for "{{
-            getEntityType()
-          }}" entities.
+          The "public" role needs "create" permission for "{{ entityType }}"
+          entities.
         </span>
       </p>
       <div class="flex-row gap-small margin-top-small">

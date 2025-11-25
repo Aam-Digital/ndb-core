@@ -126,6 +126,7 @@ describe("PublicFormPermissionService", () => {
       jasmine.objectContaining({
         data: {
           public: [{ subject: "Child", action: "create" }],
+          default: [{ subject: "all", action: "manage" }],
         },
       }),
       true,
@@ -148,6 +149,7 @@ describe("PublicFormPermissionService", () => {
             { subject: "School", action: "create" },
             { subject: "Child", action: "create" },
           ],
+          default: [{ subject: "all", action: "manage" }],
         },
       }),
       true,
@@ -181,6 +183,7 @@ describe("PublicFormPermissionService", () => {
             { subject: "Child", action: "read" },
             { subject: "Child", action: "create" },
           ],
+          default: [{ subject: "all", action: "manage" }],
         },
       }),
       true,
