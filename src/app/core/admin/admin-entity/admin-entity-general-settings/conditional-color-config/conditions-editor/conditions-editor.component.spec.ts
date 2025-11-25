@@ -4,6 +4,13 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
 import { MatDialog } from "@angular/material/dialog";
 import { MockedTestingModule } from "app/utils/mocked-testing.module";
 import { Entity } from "app/core/entity/model/entity";
+import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
+import { DatabaseField } from "app/core/entity/database-field.decorator";
+
+@DatabaseEntity("ConditionsEditorTestEntity")
+class ConditionsEditorTestEntity extends Entity {
+  @DatabaseField() name: string;
+}
 
 describe("ConditionsEditorComponent", () => {
   let component: ConditionsEditorComponent;
@@ -29,7 +36,7 @@ describe("ConditionsEditorComponent", () => {
 
     fixture = TestBed.createComponent(ConditionsEditorComponent);
     component = fixture.componentInstance;
-    component.entityConstructor = Entity;
+    component.entityConstructor = ConditionsEditorTestEntity;
     component.conditions = { $or: [] };
     fixture.detectChanges();
   });
@@ -67,16 +74,12 @@ describe("ConditionsEditorComponent", () => {
 
   it("should handle condition field change", () => {
     component.addCondition();
-    const fieldConfig = {
-      dataType: "string",
-      label: "Name",
-    };
-    component.entityConstructor.schema.set("name", fieldConfig as any);
+    const fieldConfig = component.entityConstructor.schema.get("name");
     mockEntitySchemaService.getComponent.and.returnValue("test-component");
 
     component.onConditionFieldChange(0, "name");
 
-    expect(component.getConditionsArray()[0]).toEqual({ name: null });
+    expect(component.getConditionsArray()[0]).toEqual({ name: "" });
     expect(mockEntitySchemaService.getComponent).toHaveBeenCalledWith(
       fieldConfig,
       "edit",
@@ -94,11 +97,7 @@ describe("ConditionsEditorComponent", () => {
   });
 
   it("should rebuild form configs on init with existing conditions", () => {
-    const fieldConfig = {
-      dataType: "string",
-      label: "Name",
-    };
-    component.entityConstructor.schema.set("name", fieldConfig as any);
+    const fieldConfig = component.entityConstructor.schema.get("name");
     mockEntitySchemaService.getComponent.and.returnValue("test-component");
     mockEntitySchemaService.valueToEntityFormat.and.returnValue("Test Value");
 
