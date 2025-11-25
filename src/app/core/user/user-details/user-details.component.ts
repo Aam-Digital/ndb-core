@@ -4,7 +4,6 @@ import {
   effect,
   inject,
   input,
-  OnInit,
   output,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -47,14 +46,11 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 export class UserDetailsComponent {
   private fb = inject(FormBuilder);
 
-  // Inputs
   userAccount = input<UserAccount | null>();
   availableRoles = input<Role[]>([]);
-
-  // Field visibility controls
   showPasswordChange = input<boolean>(false);
+  disabled = input<boolean>(false);
 
-  // Outputs
   formSubmit = output<Partial<UserAccount>>();
   formCancel = output<void>();
 
@@ -75,11 +71,18 @@ export class UserDetailsComponent {
       }
     });
 
-    // Update form when userAccount input changes
     effect(() => {
       const user = this.userAccount();
       if (user) {
         this.updateFormFromUser(user);
+      }
+    });
+
+    effect(() => {
+      if (this.disabled()) {
+        this.form.disable();
+      } else {
+        this.form.enable();
       }
     });
   }

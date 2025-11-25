@@ -1,9 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   input,
-  Input,
   OnInit,
   signal,
   ViewChild,
@@ -67,28 +67,20 @@ export class EntityUserComponent implements OnInit {
   });
   private sessionInfo = inject(SessionSubject);
 
-  // Inputs - support both new signal-based and old decorator-based for backward compatibility
   entity = input<Entity>();
-  @Input() set entityInput(value: Entity) {
-    if (value) {
-      this._entity = value;
-    }
-  }
-  private _entity: Entity | undefined;
-
-  // Signals
   user = signal<UserAccount | null>(null);
   availableRoles = signal<Role[]>([]);
-  editing = signal<boolean>(true);
+  editing = computed(
+    () => this.formMode() === "edit" || this.formMode() === "create",
+  );
   userIsPermitted = signal<boolean>(false);
   isInDialog = signal<boolean>(false);
-  formMode = signal<"create" | "edit" | "view">("view");
+  formMode = signal<"create" | "edit" | "view">("create");
 
   // ViewChild reference to UserDetailsComponent
   @ViewChild("userDetailsForm") userDetailsForm: UserDetailsComponent;
 
   constructor() {
-    // Check permissions
     if (
       this.sessionInfo.value?.roles.includes(
         UserAdminService.ACCOUNT_MANAGER_ROLE,
@@ -97,40 +89,18 @@ export class EntityUserComponent implements OnInit {
       this.userIsPermitted.set(true);
     }
 
-    // Load available roles
     this.userAdminService.getAllRoles().subscribe((roles) => {
       this.availableRoles.set(roles);
-      this.initializeDefaultRoles(roles);
     });
-  }
-
-  private initializeDefaultRoles(roles: Role[]) {
-    if (!this.user()) {
-      // assign "user_app" as default role for new users
-      const userAppRole = roles.find(({ name }) => name === "user_app");
-      // Default role will be handled by the form component
-    }
   }
 
   private getEntity(): Entity | undefined {
     if (this.dialogData?.entity) {
       return this.dialogData.entity;
     }
-    if (this._entity) {
-      return this._entity;
-    }
-    if (typeof this.entity === "function") {
-      const result = this.entity();
-      return result;
-    }
-    // Handle case where entity is directly set as an object (dynamic component binding)
-    if (this.entity && typeof this.entity === "object") {
-      const entityObj = this.entity as any;
-      if (entityObj instanceof Entity) {
-        return entityObj;
-      }
-    }
-    return undefined;
+    const entityValue =
+      typeof this.entity === "function" ? this.entity() : this.entity;
+    return entityValue;
   }
 
   ngOnInit() {
@@ -138,7 +108,6 @@ export class EntityUserComponent implements OnInit {
       return;
     }
 
-    // Get entity from any available source
     const entityToUse = this.getEntity();
     if (this.dialogData?.entity) {
       this.isInDialog.set(true);
@@ -148,11 +117,9 @@ export class EntityUserComponent implements OnInit {
       return;
     }
 
-    // Load user account
     this.userAdminService
       .getUser(entityToUse.getId())
       .pipe(
-        // fallback: retry without entity prefix for legacy users
         switchMap((user) =>
           user === null
             ? this.userAdminService.getUser(entityToUse.getId(true))
@@ -160,13 +127,16 @@ export class EntityUserComponent implements OnInit {
         ),
       )
       .subscribe({
-        next: (res) => this.assignUser(res),
+        next: (res) => {
+          this.user.set(res);
+          if (res) {
+            this.formMode.set(this.isInDialog() ? "edit" : "view");
+          } else {
+            this.formMode.set("create");
+          }
+        },
         error: (err) => this.setError(err),
       });
-  }
-
-  private assignUser(user: UserAccount | null) {
-    this.user.set(user);
   }
 
   toggleAccount(enabled: boolean) {
@@ -178,22 +148,18 @@ export class EntityUserComponent implements OnInit {
   }
 
   editForm() {
-    this.editing.set(true);
     this.formMode.set("edit");
   }
 
   disableForm() {
-    this.editing.set(false);
     this.formMode.set("view");
   }
 
   onFormSubmit(formData: Partial<UserAccount>) {
     const currentUser = this.user();
     if (currentUser) {
-      // Update existing user
       this.updateAccount(formData);
     } else {
-      // Create new user
       this.createAccount(formData);
     }
   }
@@ -207,7 +173,6 @@ export class EntityUserComponent implements OnInit {
   }
 
   submitForm() {
-    // Trigger form submission from the child component
     if (this.userDetailsForm) {
       this.userDetailsForm.onSubmit();
     }

@@ -107,6 +107,7 @@
       [userAccount]="user()"
       [availableRoles]="availableRoles()"
       [showPasswordChange]="false"
+      [disabled]="!editing()"
       (formSubmit)="onFormSubmit($event)"
       (formCancel)="onFormCancel()"
     ></app-user-details>
