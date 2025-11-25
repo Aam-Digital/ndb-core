@@ -2,7 +2,8 @@
   <div class="section-header flex-row">
     <app-color-input
       [color]="section.color"
-      [label]="'Conditional Color'"
+      label="Conditional Color"
+      i18n-label
       (colorChange)="colorChange.emit($event)"
     ></app-color-input>
     <button
