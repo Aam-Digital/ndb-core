@@ -119,12 +119,12 @@ export class EntityUserComponent implements OnInit {
     if (this._entity) {
       return this._entity;
     }
-    if (typeof this.entity === 'function') {
+    if (typeof this.entity === "function") {
       const result = this.entity();
       return result;
     }
     // Handle case where entity is directly set as an object (dynamic component binding)
-    if (this.entity && typeof this.entity === 'object') {
+    if (this.entity && typeof this.entity === "object") {
       const entityObj = this.entity as any;
       if (entityObj instanceof Entity) {
         return entityObj;
@@ -222,7 +222,7 @@ export class EntityUserComponent implements OnInit {
 
   createAccount(formData: Partial<UserAccount>) {
     const entityToUse = this.getEntity();
-    
+
     if (!entityToUse) {
       return;
     }
