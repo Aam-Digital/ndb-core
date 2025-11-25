@@ -47,8 +47,8 @@ export class ConditionsEditorComponent implements OnInit {
   conditionFormFieldConfigs = new Map<string, FormFieldConfig>();
   conditionFormControls = new Map<string, FormControl>();
 
-  private entitySchemaService = inject(EntitySchemaService);
-  private dialog = inject(MatDialog);
+  private readonly entitySchemaService = inject(EntitySchemaService);
+  private readonly dialog = inject(MatDialog);
 
   ngOnInit(): void {
     if (!this.entityConstructor) return;
