@@ -251,15 +251,11 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       },
     );
 
-    // Image options (typically file or photo fields)
+    // Image options: only fields with correct dataType
     this.toBlockDetailsAttributesImageOptions = allFieldOptions.filter(
       (option) => {
         const field = this.entityConstructor.schema.get(option.value);
-        const fieldName = option.value.toLowerCase();
-        return (
-          this.isImageDataType(field.dataType) ||
-          this.isImageFieldName(fieldName)
-        );
+        return field.dataType === "file" || field.dataType === "photo";
       },
     );
 
@@ -272,10 +268,5 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   private isImageDataType(dataType: string): boolean {
     return dataType === "file" || dataType === "photo";
-  }
-
-  private isImageFieldName(fieldName: string): boolean {
-    const imageKeywords = ["photo", "image", "avatar", "logo"];
-    return imageKeywords.some((keyword) => fieldName.includes(keyword));
   }
 }
