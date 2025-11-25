@@ -10,7 +10,9 @@
           <mat-label i18n>Field</mat-label>
           <mat-select
             [value]="getConditionField(condition)"
-            (selectionChange)="onConditionFieldChange(conditionId, $event.value)"
+            (selectionChange)="
+              onConditionFieldChange(conditionId, $event.value)
+            "
           >
             @for (option of fieldOptions; track option.value) {
               <mat-option [value]="option.value">
@@ -24,10 +26,7 @@
           conditionFormFieldConfigs.get(conditionId + "");
           as formFieldConfig
         ) {
-          @if (
-            conditionFormControls.get(conditionId + "");
-            as formControl
-          ) {
+          @if (conditionFormControls.get(conditionId + ""); as formControl) {
             <mat-form-field class="value-input" floatLabel="always">
               <mat-label>{{ formFieldConfig.label }}</mat-label>
               <app-dynamic-edit
@@ -63,15 +62,15 @@
         <span i18n>Add Condition</span>
       </button>
 
-        <button
-          mat-stroked-button
-          type="button"
-          (click)="openJsonEditor()"
-          class="edit-json-button"
-        >
-          <fa-icon icon="code" class="standard-icon-with-text"></fa-icon>
-          <span i18n>Edit JSON</span>
-        </button>
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="openJsonEditor()"
+        class="edit-json-button"
+      >
+        <fa-icon icon="code" class="standard-icon-with-text"></fa-icon>
+        <span i18n>Edit JSON</span>
+      </button>
     </div>
   </div>
 </div>
