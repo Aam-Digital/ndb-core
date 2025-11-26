@@ -178,7 +178,6 @@ export class PublicFormPermissionService {
         subject: entityType,
         action: "create",
       });
-      await this.entityMapper.save(permissionsConfig, true);
     }
 
     // basic read permissions on config elements is required for public forms to work:
