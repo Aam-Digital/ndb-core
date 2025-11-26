@@ -75,9 +75,9 @@ export class PublicFormPermissionService {
           },
         ];
 
-    const dialogText = isAdmin
-      ? $localize`This public form will currently not work for external users without an account because the "public" role does not have permission to create new "${entityType}" records.\n\nWould you like to add the required permission automatically?`
-      : $localize`This public form will currently not work for external users without an account because the "public" role does not have permission to create new "${entityType}" records.\n\nYou need an administrator to add the required permissions. Do you still want to save this form?`;
+    let dialogText = $localize`This public form will currently not work for external users without an account because the "public" role does not have permission to create new "${entityType}" records.\n\n` + (isAdmin
+      ? $localize`Would you like to add the required permission automatically?`
+      : $localize`You need an administrator to add the required permissions. Do you still want to save this form?`);
 
     const dialogResult = await this.confirmationDialog.getConfirmation(
       $localize`Missing Public Permission`,
