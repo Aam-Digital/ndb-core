@@ -5,6 +5,8 @@ import {
   EventEmitter,
   OnInit,
   inject,
+  computed,
+  signal,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -44,6 +46,8 @@ export class ConditionsEditorComponent implements OnInit {
 
   @Output() conditionsChange = new EventEmitter<any>();
 
+  private conditionsSignal = signal<any>({ $or: [] });
+
   conditionFormFieldConfigs = new Map<string, FormFieldConfig>();
   conditionFormControls = new Map<string, FormControl>();
 
@@ -52,18 +56,17 @@ export class ConditionsEditorComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this.entityConstructor) return;
+    this.conditionsSignal.set(this.conditions);
     this.rebuildFormConfigs();
   }
 
   /**
-   * Get the conditions array
+   * Computed signal for the conditions array
    */
-  getConditionsArray(): any[] {
-    return this.conditions?.$or || [];
-  }
+  conditionsArray = computed(() => this.conditionsSignal()?.$or || []);
 
   /**
-   * Get the field key from a condition object
+   * Get the field key from a condition object (static helper)
    */
   getConditionField(condition: any): string {
     return Object.keys(condition || {})[0] || "";
@@ -78,6 +81,7 @@ export class ConditionsEditorComponent implements OnInit {
     }
 
     this.conditions.$or.push({});
+    this.conditionsSignal.set({ ...this.conditions });
     this.conditionsChange.emit(this.conditions);
   }
 
@@ -85,10 +89,11 @@ export class ConditionsEditorComponent implements OnInit {
    * Delete a condition
    */
   deleteCondition(conditionIndex: number): void {
-    const conditions = this.getConditionsArray();
+    const conditions = this.conditionsArray();
     if (conditionIndex < 0 || conditionIndex >= conditions.length) return;
 
     conditions.splice(conditionIndex, 1);
+    this.conditionsSignal.set({ ...this.conditions });
 
     this.rebuildFormConfigs();
     this.conditionsChange.emit(this.conditions);
@@ -98,13 +103,14 @@ export class ConditionsEditorComponent implements OnInit {
    * Handle condition field change
    */
   onConditionFieldChange(conditionIndex: number, fieldKey: string): void {
-    const conditions = this.getConditionsArray();
+    const conditions = this.conditionsArray();
     if (conditionIndex < 0 || conditionIndex >= conditions.length) return;
 
     const condition = conditions[conditionIndex];
 
     Object.keys(condition).forEach((key) => delete condition[key]);
     condition[fieldKey] = "";
+    this.conditionsSignal.set({ ...this.conditions });
 
     this.createFormConfigForCondition(conditionIndex, fieldKey);
     this.conditionsChange.emit(this.conditions);
@@ -121,7 +127,7 @@ export class ConditionsEditorComponent implements OnInit {
     const fieldConfig = this.entityConstructor.schema.get(fieldKey);
     if (!fieldConfig) return;
 
-    const conditions = this.getConditionsArray();
+    const conditions = this.conditionsArray();
     const condition = conditions[conditionIndex];
 
     const initialValue = this.entitySchemaService.valueToEntityFormat(
@@ -156,7 +162,7 @@ export class ConditionsEditorComponent implements OnInit {
     this.conditionFormFieldConfigs.clear();
     this.conditionFormControls.clear();
 
-    this.getConditionsArray().forEach((condition, index) => {
+    this.conditionsArray().forEach((condition, index) => {
       const fieldKey = this.getConditionField(condition);
       if (fieldKey) {
         this.createFormConfigForCondition(index, fieldKey);
@@ -175,6 +181,7 @@ export class ConditionsEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.conditions = result;
+        this.conditionsSignal.set(result);
         this.rebuildFormConfigs();
         this.conditionsChange.emit(this.conditions);
       }

@@ -46,22 +46,22 @@ describe("ConditionsEditorComponent", () => {
   });
 
   it("should initialize with empty conditions", () => {
-    expect(component.getConditionsArray()).toEqual([]);
+    expect(component.conditionsArray()).toEqual([]);
   });
 
   it("should add a new condition", () => {
     component.addCondition();
-    expect(component.getConditionsArray().length).toBe(1);
-    expect(component.getConditionsArray()[0]).toEqual({});
+    expect(component.conditionsArray().length).toBe(1);
+    expect(component.conditionsArray()[0]).toEqual({});
   });
 
   it("should delete a condition", () => {
     component.conditions = { $or: [{ name: "Test" }] };
     component.ngOnInit();
-    expect(component.getConditionsArray().length).toBe(1);
+    expect(component.conditionsArray().length).toBe(1);
 
     component.deleteCondition(0);
-    expect(component.getConditionsArray().length).toBe(0);
+    expect(component.conditionsArray().length).toBe(0);
   });
 
   it("should emit conditionsChange when conditions are modified", () => {
@@ -79,7 +79,7 @@ describe("ConditionsEditorComponent", () => {
 
     component.onConditionFieldChange(0, "name");
 
-    expect(component.getConditionsArray()[0]).toEqual({ name: "" });
+    expect(component.conditionsArray()[0]).toEqual({ name: "" });
     expect(mockEntitySchemaService.getComponent).toHaveBeenCalledWith(
       fieldConfig,
       "edit",
