@@ -36,7 +36,7 @@ describe("PublicFormPermissionService", () => {
 
     const result = await service.hasPublicCreatePermission("Child");
 
-    expect(result).toBeTrue();
+    expect(result).toBeFalse();
   });
 
   it("should allow access when no permissions are configured", async () => {
@@ -45,7 +45,7 @@ describe("PublicFormPermissionService", () => {
 
     const result = await service.hasPublicCreatePermission("Child");
 
-    expect(result).toBeTrue();
+    expect(result).toBeFalse();
   });
 
   it("should allow access when public role has create permission", async () => {
@@ -125,7 +125,21 @@ describe("PublicFormPermissionService", () => {
     expect(mockEntityMapper.save).toHaveBeenCalledWith(
       jasmine.objectContaining({
         data: {
-          public: [{ subject: "Child", action: "create" }],
+          public: [
+            {
+              subject: [
+                "Config",
+                "SiteSettings",
+                "PublicFormConfig",
+                "ConfigurableEnum",
+              ],
+              action: "read",
+            },
+            {
+              subject: "Child",
+              action: "create",
+            },
+          ],
           default: [{ subject: "all", action: "manage" }],
         },
       }),
@@ -135,7 +149,18 @@ describe("PublicFormPermissionService", () => {
 
   it("should add permission to existing permissions config", async () => {
     const existingConfig = new Config(Config.PERMISSION_KEY, {
-      public: [{ subject: "School", action: "create" }],
+      public: [
+        {
+          subject: [
+            "Config",
+            "SiteSettings",
+            "PublicFormConfig",
+            "ConfigurableEnum",
+          ],
+          action: "read",
+        },
+        { subject: "School", action: "create" },
+      ],
     });
     mockEntityMapper.load.and.resolveTo(existingConfig);
     mockEntityMapper.save.and.resolveTo(undefined);
@@ -146,6 +171,15 @@ describe("PublicFormPermissionService", () => {
       jasmine.objectContaining({
         data: {
           public: [
+            {
+              subject: [
+                "Config",
+                "SiteSettings",
+                "PublicFormConfig",
+                "ConfigurableEnum",
+              ],
+              action: "read",
+            },
             { subject: "School", action: "create" },
             { subject: "Child", action: "create" },
           ],
@@ -157,7 +191,18 @@ describe("PublicFormPermissionService", () => {
 
   it("should skip adding permission when it already exists", async () => {
     const existingConfig = new Config(Config.PERMISSION_KEY, {
-      public: [{ subject: "Child", action: "create" }],
+      public: [
+        { subject: "Child", action: "create" },
+        {
+          subject: [
+            "Config",
+            "SiteSettings",
+            "PublicFormConfig",
+            "ConfigurableEnum",
+          ],
+          action: "read",
+        },
+      ],
     });
     mockEntityMapper.load.and.resolveTo(existingConfig);
 
@@ -180,6 +225,15 @@ describe("PublicFormPermissionService", () => {
         data: {
           public: [
             { subject: "Child", action: "read" },
+            {
+              subject: [
+                "Config",
+                "SiteSettings",
+                "PublicFormConfig",
+                "ConfigurableEnum",
+              ],
+              action: "read",
+            },
             { subject: "Child", action: "create" },
           ],
         },

@@ -167,19 +167,6 @@ export class PublicFormPermissionService {
       permissionsConfig.data.default = [{ subject: "all", action: "manage" }];
     }
 
-    // Check if public create permission already exists to avoid duplicates
-    const createExists = permissionsConfig.data.public.some(
-      (rule) =>
-        rule.subject === entityType &&
-        (rule.action === "create" || rule.action === "manage"),
-    );
-    if (!createExists) {
-      permissionsConfig.data.public.push({
-        subject: entityType,
-        action: "create",
-      });
-    }
-
     // basic read permissions on config elements is required for public forms to work:
     const formReadExists =
       permissionsConfig.data.public.some(
@@ -201,6 +188,19 @@ export class PublicFormPermissionService {
           "ConfigurableEnum",
         ],
         action: "read",
+      });
+    }
+
+    // Check if public create permission already exists to avoid duplicates
+    const createExists = permissionsConfig.data.public.some(
+      (rule) =>
+        rule.subject === entityType &&
+        (rule.action === "create" || rule.action === "manage"),
+    );
+    if (!createExists) {
+      permissionsConfig.data.public.push({
+        subject: entityType,
+        action: "create",
       });
     }
 
