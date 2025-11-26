@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { NgModule, inject } from "@angular/core";
+import { inject, NgModule } from "@angular/core";
 import { AsyncComponent, ComponentRegistry } from "app/dynamic-components";
 import { AdminOverviewService } from "../../core/admin/admin-overview/admin-overview.service";
 import { RouterService } from "../../core/config/dynamic-routing/router.service";
@@ -30,7 +30,7 @@ export class PublicFormModule {
     components.addAll(dynamicComponents);
     routerService.addRoutes(viewConfigs);
     adminOverviewService.addTemplateItems({
-      label: $localize`:admin menu item:Configure Public Forms`,
+      label: $localize`:admin menu item:Public Forms`,
       link: PublicFormConfig.route,
     });
     publicFormsService.initCustomFormActions();
