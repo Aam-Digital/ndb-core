@@ -13,7 +13,7 @@ import { PublicFormPermissionService } from "../public-form-permission.service";
 import { PublicFormConfig } from "../public-form-config";
 import { HintBoxComponent } from "app/core/common-components/hint-box/hint-box.component";
 import { MatButtonModule } from "@angular/material/button";
-import { LoggingService } from "app/core/logging/logging.service";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 @Component({
   selector: "app-public-form-permission-warning",
@@ -23,7 +23,6 @@ import { LoggingService } from "app/core/logging/logging.service";
 export class PublicFormPermissionWarningComponent implements OnInit, OnChanges {
   private readonly permissionService = inject(PublicFormPermissionService);
   private readonly alertService = inject(AlertService);
-  private readonly loggingService = inject(LoggingService);
 
   /**
    * The entity being edited (PublicFormConfig)
@@ -88,7 +87,7 @@ export class PublicFormPermissionWarningComponent implements OnInit, OnChanges {
         );
       this.hasPublicCreatePermission.set(hasPermission);
     } catch (error) {
-      this.loggingService.warn("Failed to check public permissions:", error);
+      Logging.error("Failed to check public permissions:", error);
       this.hasPublicCreatePermission.set(false);
     } finally {
       this.isCheckingPermissions.set(false);
@@ -109,7 +108,7 @@ export class PublicFormPermissionWarningComponent implements OnInit, OnChanges {
       );
       await this.checkPermissions();
     } catch (error) {
-      this.loggingService.error("Failed to add permission:", error);
+      Logging.error("Failed to add permission:", error);
       this.alertService.addDanger(
         $localize`Failed to add permission automatically. Please contact an administrator or check the permissions configuration manually.`,
       );

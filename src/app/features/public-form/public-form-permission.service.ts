@@ -75,9 +75,11 @@ export class PublicFormPermissionService {
           },
         ];
 
-    let dialogText = $localize`This public form will currently not work for external users without an account because the "public" role does not have permission to create new "${entityType}" records.\n\n` + (isAdmin
-      ? $localize`Would you like to add the required permission automatically?`
-      : $localize`You need an administrator to add the required permissions. Do you still want to save this form?`);
+    let dialogText =
+      $localize`This public form will currently not work for external users without an account because the "public" role does not have permission to create new "${entityType}" records.\n\n` +
+      (isAdmin
+        ? $localize`Would you like to add the required permission automatically?`
+        : $localize`You need an administrator to add the required permissions. Do you still want to save this form?`);
 
     const dialogResult = await this.confirmationDialog.getConfirmation(
       $localize`Missing Public Permission`,
@@ -145,6 +147,7 @@ export class PublicFormPermissionService {
   async addPublicCreatePermission(entityType: string): Promise<void> {
     let permissionsConfig = await this.loadPermissionsConfig();
 
+    const isNewConfig = !permissionsConfig;
     if (!permissionsConfig) {
       permissionsConfig = new Config(Config.PERMISSION_KEY, {});
     }
@@ -157,19 +160,9 @@ export class PublicFormPermissionService {
       permissionsConfig.data.public = [];
     }
 
-    if (!permissionsConfig.data.default) {
-      permissionsConfig.data.default = [];
-    }
-
-    // Always ensure default manage rule for authenticated users
-    const defaultExists = permissionsConfig.data.default.some(
-      (rule) => rule.subject === "all" && rule.action === "manage",
-    );
-    if (!defaultExists) {
-      permissionsConfig.data.default.push({
-        subject: "all",
-        action: "manage",
-      });
+    // Only add default rule if creating a new config
+    if (isNewConfig) {
+      permissionsConfig.data.default = [{ subject: "all", action: "manage" }];
     }
 
     // Check if public create permission already exists to avoid duplicates
