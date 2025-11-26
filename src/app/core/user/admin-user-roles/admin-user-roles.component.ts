@@ -7,10 +7,16 @@ import { Config } from "../../config/config";
 import moment from "moment";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
+import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 
 @Component({
   selector: "app-admin-user-roles",
-  imports: [ViewTitleComponent, FaIconComponent, MatButtonModule],
+  imports: [
+    ViewTitleComponent,
+    FaIconComponent,
+    MatButtonModule,
+    HintBoxComponent,
+  ],
   templateUrl: "./admin-user-roles.component.html",
   styleUrl: "./admin-user-roles.component.scss",
 })

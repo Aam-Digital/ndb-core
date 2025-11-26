@@ -1,2 +1,15 @@
 <app-view-title i18n>Advanced Features</app-view-title>
-<p i18n>This feature is under development.</p>
+
+<app-hint-box i18n
+  >This page is still under development. More information and configuration
+  options coming soon.
+</app-hint-box>
+
+<table>
+  @for (f of features; track f.title) {
+    <tr>
+      <td [matTooltip]="f.description">{{ f.title }}</td>
+      <td>{{ f.status }}</td>
+    </tr>
+  }
+</table>
