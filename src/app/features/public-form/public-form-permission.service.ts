@@ -185,7 +185,7 @@ export class PublicFormPermissionService {
     const formReadExists =
       permissionsConfig.data.public.some(
         (rule) =>
-          rule.subject?.includes("PublicForm") &&
+          rule.subject?.includes("PublicFormConfig") &&
           (rule.action === "read" || rule.action === "manage"),
       ) &&
       permissionsConfig.data.public.some(
