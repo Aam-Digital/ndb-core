@@ -46,7 +46,7 @@
       @for (item of configurationMenuItems; track item.label) {
         @if (item.link) {
           <mat-list-item [routerLink]="[item.link]">
-            <span matListItemTitle i18n>{{ item.label }}</span>
+            <span matListItemTitle>{{ item.label }}</span>
           </mat-list-item>
         }
       }
