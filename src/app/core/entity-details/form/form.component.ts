@@ -15,7 +15,6 @@ import { FieldGroup } from "./field-group";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
 import { PublicFormConfig } from "../../../features/public-form/public-form-config";
 import { PublicFormPermissionService } from "../../../features/public-form/public-form-permission.service";
-import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
