@@ -1,6 +1,6 @@
 import { AlertService } from "app/core/alerts/alert.service";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Config } from "../../core/config/config";
 import { DatabaseRules } from "../../core/permissions/permission-types";
 import { SessionSubject } from "../../core/session/auth/session-info";
@@ -29,7 +29,7 @@ export class PublicFormPermissionService {
     try {
       const permissionsConfig = await this.loadPermissionsConfig();
       if (!permissionsConfig?.data) {
-        return true; // No permissions config means everything is allowed
+        return false; // No permissions config means "public" users have no access
       }
       const publicRules = permissionsConfig.data.public || [];
       return publicRules.some(
@@ -41,6 +41,7 @@ export class PublicFormPermissionService {
       return false; // If we can't load permissions, assume no access
     }
   }
+
   /**
    * Handles the dialog logic for missing public create permission.
    * Returns true if save should proceed, false if cancelled or error.
@@ -162,21 +163,49 @@ export class PublicFormPermissionService {
 
     // Only add default rule if creating a new config
     if (isNewConfig) {
+      // all logged-in users should continue to have full access (which is default without a permission doc):
       permissionsConfig.data.default = [{ subject: "all", action: "manage" }];
     }
 
     // Check if public create permission already exists to avoid duplicates
-    const alreadyExists = permissionsConfig.data.public.some(
+    const createExists = permissionsConfig.data.public.some(
       (rule) =>
         rule.subject === entityType &&
         (rule.action === "create" || rule.action === "manage"),
     );
-
-    if (!alreadyExists) {
+    if (!createExists) {
       permissionsConfig.data.public.push({
         subject: entityType,
         action: "create",
       });
+      await this.entityMapper.save(permissionsConfig, true);
+    }
+
+    // basic read permissions on config elements is required for public forms to work:
+    const formReadExists =
+      permissionsConfig.data.public.some(
+        (rule) =>
+          rule.subject?.includes("PublicForm") &&
+          (rule.action === "read" || rule.action === "manage"),
+      ) &&
+      permissionsConfig.data.public.some(
+        (rule) =>
+          rule.subject?.includes("Config") &&
+          (rule.action === "read" || rule.action === "manage"),
+      );
+    if (!formReadExists) {
+      permissionsConfig.data.public.push({
+        subject: [
+          "Config",
+          "SiteSettings",
+          "PublicFormConfig",
+          "ConfigurableEnum",
+        ],
+        action: "read",
+      });
+    }
+
+    if (!createExists || !formReadExists) {
       await this.entityMapper.save(permissionsConfig, true);
     }
   }
