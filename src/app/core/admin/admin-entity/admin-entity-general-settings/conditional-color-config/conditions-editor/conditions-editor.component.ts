@@ -46,7 +46,7 @@ export class ConditionsEditorComponent implements OnInit {
 
   @Output() conditionsChange = new EventEmitter<any>();
 
-  private conditionsSignal = signal<any>({ $or: [] });
+  private readonly conditionsSignal = signal<any>({ $or: [] });
 
   conditionFormFieldConfigs = new Map<string, FormFieldConfig>();
   conditionFormControls = new Map<string, FormControl>();
