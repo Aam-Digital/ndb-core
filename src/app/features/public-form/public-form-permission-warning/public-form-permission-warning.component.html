@@ -1,0 +1,36 @@
+@if (!hasPublicCreatePermission() && !isCheckingPermissions()) {
+  <app-hint-box type="warning" class="margin-bottom-regular">
+    <div>
+      <strong i18n>⚠️ Missing Public Permission</strong>
+      <p i18n>
+        This public form will currently not work for external users without an
+        account because the "public" role does not have permission to create new
+        {{ entityType }} records.
+      </p>
+      <p>
+        <strong i18n>Required:</strong>
+        <span i18n>
+          The "public" role needs "create" permission for "{{ entityType }}"
+          entities.
+        </span>
+      </p>
+      <div class="flex-row gap-small margin-top-small">
+        @if (canAddPermissions()) {
+          <button
+            mat-raised-button
+            color="accent"
+            (click)="addPermissionAutomatically()"
+            i18n
+          >
+            Update Permission & Save Form
+          </button>
+        } @else {
+          <p class="text-secondary" i18n>
+            You need admin permissions to add the required permission
+            automatically.
+          </p>
+        }
+      </div>
+    </div>
+  </app-hint-box>
+}
