@@ -391,7 +391,6 @@ export class Entity {
 
   /**
    * Used by some generic UI components to set the color for the entity instance.
-   * @param useConditionalColors Whether to evaluate conditional color mappings (default: false for backward compatibility)
    * Override this method as needed.
    */
   public getColor(): string {

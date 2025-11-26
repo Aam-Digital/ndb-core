@@ -223,10 +223,7 @@ export class ActivityAttendance extends Entity {
     }
   }
 
-  public override getColor(
-    useConditionalColors: boolean = false,
-    forChildId?: string,
-  ): string {
+  public override getColor(forChildId?: string): string {
     return getWarningLevelColor(this.getWarningLevel(forChildId));
   }
 }

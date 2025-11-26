@@ -169,5 +169,5 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
 
   getBackgroundColor?: (rec: ActivityAttendance) => string = (
     rec: ActivityAttendance,
-  ) => rec.getColor(false, this.forChild);
+  ) => rec.getColor(this.forChild);
 }
