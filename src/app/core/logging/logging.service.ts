@@ -1,19 +1,18 @@
 import { LogLevel } from "./log-level";
 import * as Sentry from "@sentry/angular";
+import { TraceService } from "@sentry/angular";
 import { environment } from "../../../environments/environment";
 import {
-  ErrorHandler,
-  Provider,
-  inject,
-  Injectable,
-  provideAppInitializer,
   EnvironmentProviders,
+  ErrorHandler,
+  inject,
+  provideAppInitializer,
+  Provider,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { LoginStateSubject } from "../session/session-type";
 import { SessionSubject } from "../session/auth/session-info";
-import { TraceService } from "@sentry/angular";
 
 /**
  * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
@@ -25,7 +24,6 @@ import { TraceService } from "@sentry/angular";
  *
  * Import the constant `Logging` to use this from anywhere (without Angular DI).
  */
-@Injectable({ providedIn: "root" })
 export class LoggingService {
   /**
    * Initialize the remote logging module with the given options.
