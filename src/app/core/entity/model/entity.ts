@@ -394,11 +394,13 @@ export class Entity {
    * @param useConditionalColors Whether to evaluate conditional color mappings (default: false for backward compatibility)
    * Override this method as needed.
    */
-  public getColor(useConditionalColors: boolean = false): string {
-    if (useConditionalColors) {
-      return Entity.getColorWithConditions(this);
+  public getColor(): string {
+    const color = Entity.getColorWithConditions(this);
+    if (color) {
+      return color;
+    } else {
+      return getWarningLevelColor(this.getWarningLevel());
     }
-    return getWarningLevelColor(this.getWarningLevel());
   }
 
   /**

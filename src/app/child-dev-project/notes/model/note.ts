@@ -197,12 +197,12 @@ export class Note extends Entity {
     }
   }
 
-  public override getColor(useConditionalColors: boolean = false) {
+  public override getColor() {
     const actualLevel = this.getWarningLevel();
     if (actualLevel === WarningLevel.OK || actualLevel === WarningLevel.NONE) {
       return this.category?.color;
     } else {
-      return super.getColor(useConditionalColors);
+      return super.getColor();
     }
   }
 
