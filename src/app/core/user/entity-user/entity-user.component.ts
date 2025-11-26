@@ -58,14 +58,14 @@ import { UserDetailsComponent } from "../user-details/user-details.component";
   ],
 })
 export class EntityUserComponent implements OnInit {
-  private userAdminService = inject(UserAdminService);
-  private alertService = inject(AlertService);
-  private http = inject(HttpClient);
+  private readonly userAdminService = inject(UserAdminService);
+  private readonly alertService = inject(AlertService);
+  private readonly http = inject(HttpClient);
   private readonly dialogData = inject(MAT_DIALOG_DATA, { optional: true });
   private readonly dialogRef = inject(MatDialogRef<EntityUserComponent>, {
     optional: true,
   });
-  private sessionInfo = inject(SessionSubject);
+  private readonly sessionInfo = inject(SessionSubject);
 
   entity = input<Entity>();
   user = signal<UserAccount | null>(null);
@@ -77,7 +77,6 @@ export class EntityUserComponent implements OnInit {
   isInDialog = signal<boolean>(false);
   formMode = signal<"create" | "edit" | "view">("create");
 
-  // ViewChild reference to UserDetailsComponent
   @ViewChild("userDetailsForm") userDetailsForm: UserDetailsComponent;
 
   constructor() {
@@ -214,7 +213,6 @@ export class EntityUserComponent implements OnInit {
       return;
     }
 
-    // Only send values that have changed
     const update: Partial<UserAccount> = {};
     if (formData.email !== currentUser.email) {
       update.email = formData.email;
@@ -223,7 +221,6 @@ export class EntityUserComponent implements OnInit {
       update.roles = formData.roles;
     }
 
-    // If nothing changed, just close/disable
     if (Object.keys(update).length === 0) {
       if (this.isInDialog()) {
         this.closeDialog();
@@ -251,14 +248,12 @@ export class EntityUserComponent implements OnInit {
         this.user.set({ ...currentUser, ...update });
 
         if (this.isInDialog()) {
-          // Close dialog after successful update
           this.closeDialog();
         } else {
           this.disableForm();
         }
 
         if (update.roles?.length > 0) {
-          // roles changed, user might have more permissions now
           this.triggerSyncReset();
         }
       },
@@ -297,7 +292,6 @@ export class EntityUserComponent implements OnInit {
       Logging.warn("Unexpected error from UserAdminService", err);
     }
 
-    // Set error on the child form component if available
     if (this.userDetailsForm) {
       this.userDetailsForm.setGlobalError(errorMessage);
     }
