@@ -76,7 +76,10 @@
           </mat-form-field>
 
           <!-- Entity Block Tooltip Configuration Section -->
-          <mat-expansion-panel [(expanded)]="showTooltipDetails">
+          <mat-expansion-panel
+            [(expanded)]="showTooltipDetails"
+            style="margin: 0.5em"
+          >
             <mat-expansion-panel-header>
               <mat-panel-title>
                 <span i18n>Tooltip Configuration</span>
@@ -101,12 +104,11 @@
                   i18n-matTooltip
                 ></fa-icon>
               </mat-label>
-              <app-basic-autocomplete
+              <app-entity-field-select
                 formControlName="title"
-                [options]="toBlockDetailsAttributesTitleOptions"
-                [optionToString]="objectToLabel"
-                [valueMapper]="objectToValue"
-              ></app-basic-autocomplete>
+                [entityType]="entityConstructor"
+                [hideOption]="hideNonTextOption"
+              ></app-entity-field-select>
             </mat-form-field>
 
             <mat-form-field
@@ -122,14 +124,12 @@
                   i18n-matTooltip
                 ></fa-icon>
               </mat-label>
-              <app-basic-autocomplete
+              <app-entity-field-select
                 formControlName="fields"
-                [options]="toBlockDetailsAttributesFieldsOptions"
-                [optionToString]="objectToLabel"
-                [valueMapper]="objectToValue"
+                [entityType]="entityConstructor"
                 [multi]="true"
-                [reorder]="true"
-              ></app-basic-autocomplete>
+                [hideOption]="hideNonTextOption"
+              ></app-entity-field-select>
             </mat-form-field>
 
             <mat-form-field
@@ -149,19 +149,12 @@
                   i18n-matTooltip
                 ></fa-icon>
               </mat-label>
-              <app-basic-autocomplete
+              <app-entity-field-select
                 formControlName="image"
-                [options]="toBlockDetailsAttributesImageOptions"
-                [optionToString]="objectToLabel"
-                [valueMapper]="objectToValue"
+                [entityType]="entityConstructor"
+                [hideOption]="hideImageOption"
                 [disabled]="!hasImageFields"
-                i18n-placeholder
-                [placeholder]="
-                  hasImageFields
-                    ? 'Select image field (optional)...'
-                    : 'No image fields available'
-                "
-              ></app-basic-autocomplete>
+              ></app-entity-field-select>
               @if (!hasImageFields) {
                 <mat-hint i18n>
                   This record type has no image fields. Add fields with dataType

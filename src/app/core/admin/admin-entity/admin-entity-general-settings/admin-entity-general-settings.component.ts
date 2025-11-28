@@ -37,9 +37,11 @@ import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-
 import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.datatype";
 import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.component";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
+import { PhotoDatatype } from "app/features/file/photo.datatype";
 import { ColorInputComponent } from "#src/app/color-input/color-input.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 import { MatExpansionModule } from "@angular/material/expansion";
+import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -64,6 +66,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
     AdminIconComponent,
     ColorInputComponent,
     HintBoxComponent,
+    EntityFieldSelectComponent,
   ],
 })
 export class AdminEntityGeneralSettingsComponent implements OnInit {
@@ -84,9 +87,6 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   basicSettingsForm: FormGroup;
   toStringAttributesOptions: SimpleDropdownValue[] = [];
-  toBlockDetailsAttributesTitleOptions: SimpleDropdownValue[] = [];
-  toBlockDetailsAttributesImageOptions: SimpleDropdownValue[] = [];
-  toBlockDetailsAttributesFieldsOptions: SimpleDropdownValue[] = [];
   hasImageFields: boolean = false;
   showTooltipDetails: boolean = false;
 
@@ -95,9 +95,12 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   }
 
   private init() {
-    // Initialize options first for proper value matching in autocomplete
+    // Initialize options for toStringAttributes only
     this.initToStringAttributesOptions();
-    this.initToBlockDetailsAttributesOptions();
+    // Determine if any image fields exist
+    this.hasImageFields = Array.from(
+      this.entityConstructor.schema.values(),
+    ).some((field) => field.dataType === "file" || field.dataType === "photo");
 
     // Check if tooltip configuration should be enabled by default
     this.showTooltipDetails = !!this.generalSettings.toBlockDetailsAttributes;
@@ -230,38 +233,16 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     ];
   }
 
-  private initToBlockDetailsAttributesOptions() {
-    // Get all fields with labels
-    const allFieldOptions = Array.from(this.entityConstructor.schema.entries())
-      .filter(([key, field]) => field.label)
-      .map(([key, field]) => ({ value: key, label: field.label }));
+  // Filter functions for app-entity-field-select
+  hideNonTextOption = (field: EntitySchemaField): boolean => {
+    // Hide image fields from title and additional selection
+    return field.dataType === "file" || field.dataType === "photo";
+  };
 
-    // Supported datatypes for title field
-    const titleDataTypes = [
-      StringDatatype.dataType,
-      ConfigurableEnumDatatype.dataType,
-      DateOnlyDatatype.dataType,
-    ];
-
-    // Title options (text-based fields)
-    this.toBlockDetailsAttributesTitleOptions = allFieldOptions.filter(
-      (option) => {
-        const field = this.entityConstructor.schema.get(option.value);
-        return titleDataTypes.includes(field.dataType);
-      },
-    );
-
-    // Image options: only fields with correct dataType
-    this.toBlockDetailsAttributesImageOptions = allFieldOptions.filter(
-      (option) => {
-        const field = this.entityConstructor.schema.get(option.value);
-        return field.dataType === "file" || field.dataType === "photo";
-      },
-    );
-
-    this.hasImageFields = this.toBlockDetailsAttributesImageOptions.length > 0;
-    this.toBlockDetailsAttributesFieldsOptions = allFieldOptions;
-  }
+  hideImageOption = (field: EntitySchemaField): boolean => {
+    // Only allow photo fields for image selection
+    return field.dataType !== PhotoDatatype.dataType;
+  };
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.value;
