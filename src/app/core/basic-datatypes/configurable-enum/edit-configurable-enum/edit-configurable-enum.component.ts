@@ -7,7 +7,9 @@ import {
   OnChanges,
   OnInit,
   ViewChild,
+  DestroyRef,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -73,6 +75,7 @@ export class EditConfigurableEnumComponent
   private readonly dialog = inject(MatDialog);
   private readonly confirmation = inject(ConfirmationDialogService);
   private readonly changeDetector = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   enumId: string;
   multi = false;
@@ -100,9 +103,11 @@ export class EditConfigurableEnumComponent
 
     // Subscribe to value changes to trigger change detection
     if (this.formControl) {
-      this.formControl.valueChanges.subscribe(() => {
-        this.changeDetector.markForCheck();
-      });
+      this.formControl.valueChanges
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          this.changeDetector.markForCheck();
+        });
     }
   }
 
@@ -184,6 +189,7 @@ export class EditConfigurableEnumComponent
     this.dialog
       .open(ConfigureEnumPopupComponent, { data: this.enumEntity })
       .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.updateOptions());
   }
 
