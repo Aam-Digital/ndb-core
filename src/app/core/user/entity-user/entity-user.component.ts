@@ -36,8 +36,7 @@ import { DialogCloseComponent } from "../../common-components/dialog-close/dialo
 import { UserDetailsComponent } from "../user-details/user-details.component";
 
 /**
- * Component for managing user account security settings.
- * Used by admins to create, edit, and manage other users' accounts.
+ * Display User Account details and configuration related to a given profile Entity.
  * Can be used as a standalone view or in a dialog.
  */
 @UntilDestroy()
