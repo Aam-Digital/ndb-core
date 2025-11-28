@@ -124,7 +124,7 @@ export class AdminDefaultValueUpdatedComponent
     const relatedEntities =
       this.entityRelationsService.getEntityTypesReferencingType(entityType);
     return relatedEntities
-      .filter((refType) => !refType.entityType.isInternalEntity)
+      .filter((refType) => !refType.entityType.isInternalEntity && !!refType.entityType.label)
       .map((refType) => ({
         label: refType.entityType.label,
         entityType: refType.entityType.ENTITY_TYPE,
