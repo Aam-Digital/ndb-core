@@ -234,12 +234,12 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   }
 
   // Filter functions for app-entity-field-select
-  hideNonTextOption = (field: EntitySchemaField): boolean => {
+  hideNonTextFields = (field: EntitySchemaField): boolean => {
     // Hide image fields from title and additional selection
     return field.dataType === "file" || field.dataType === "photo";
   };
 
-  hideImageOption = (field: EntitySchemaField): boolean => {
+  showOnlyImageFields = (field: EntitySchemaField): boolean => {
     // Only allow photo fields for image selection
     return field.dataType !== PhotoDatatype.dataType;
   };

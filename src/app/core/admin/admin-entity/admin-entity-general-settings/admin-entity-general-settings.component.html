@@ -107,7 +107,7 @@
               <app-entity-field-select
                 formControlName="title"
                 [entityType]="entityConstructor"
-                [hideOption]="hideNonTextOption"
+                [hideOption]="hideNonTextFields"
               ></app-entity-field-select>
             </mat-form-field>
 
@@ -128,7 +128,7 @@
                 formControlName="fields"
                 [entityType]="entityConstructor"
                 [multi]="true"
-                [hideOption]="hideNonTextOption"
+                [hideOption]="hideNonTextFields"
               ></app-entity-field-select>
             </mat-form-field>
 
@@ -152,7 +152,7 @@
               <app-entity-field-select
                 formControlName="image"
                 [entityType]="entityConstructor"
-                [hideOption]="hideImageOption"
+                [hideOption]="showOnlyImageFields"
                 [disabled]="!hasImageFields"
               ></app-entity-field-select>
               @if (!hasImageFields) {
