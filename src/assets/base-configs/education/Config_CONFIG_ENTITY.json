@@ -40,20 +40,9 @@
           "link": "/report"
         },
         {
-          "label": "Admin",
-          "icon": "wrench",
-          "subMenu": [
-            {
-              "label": "Admin Overview",
-              "icon": "wrench",
-              "link": "/admin"
-            },
-            {
-              "label": "Users",
-              "icon": "users",
-              "link": "/user"
-            }
-          ]
+          "label": "Users",
+          "icon": "users",
+          "link": "/user"
         }
       ]
     },
