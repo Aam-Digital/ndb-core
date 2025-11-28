@@ -97,6 +97,13 @@ export class EditConfigurableEnumComponent
     this.enumId = this.formFieldConfig?.additional;
     this.updateEnumData();
     this.updateInvalidOptions();
+
+    // Subscribe to value changes to trigger change detection
+    if (this.formControl) {
+      this.formControl.valueChanges.subscribe(() => {
+        this.changeDetector.markForCheck();
+      });
+    }
   }
 
   ngOnChanges(): void {
