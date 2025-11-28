@@ -29,24 +29,20 @@ export class AdminOverviewService {
    */
   configurationMenuItems: MenuItem[] = [
     {
+      label: $localize`:admin menu item:Record Types & Data Structures`,
+      link: "/admin/entity",
+    },
+    {
+      label: $localize`:admin menu item:Main Navigation Menu`,
+      link: "/admin/menu",
+    },
+    {
       label: $localize`:admin menu item:Site Settings`,
       link: "/admin/site-settings",
     },
     {
-      label: $localize`:admin menu item:Database Conflicts`,
-      link: "/admin/conflicts",
-    },
-    {
-      label: $localize`:admin menu item:Configure Record Types`,
-      link: "/admin/entity",
-    },
-    {
       label: $localize`:admin menu item:Setup Wizard`,
       link: "/admin/setup-wizard",
-    },
-    {
-      label: $localize`:admin menu item:Configure Main Menu`,
-      link: "/admin/menu",
     },
   ];
 }

@@ -51,7 +51,7 @@ export class EmailClientServiceModule {
     ]);
 
     adminOverviewService.addTemplateItems({
-      label: $localize`:admin menu item:Manage Email Templates`,
+      label: $localize`:admin menu item:Email Templates`,
       link: EmailTemplate.route,
     });
   }

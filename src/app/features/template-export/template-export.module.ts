@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { NgModule, inject } from "@angular/core";
+import { inject, NgModule } from "@angular/core";
 import { AdminOverviewService } from "../../core/admin/admin-overview/admin-overview.service";
 import { RouterService } from "../../core/config/dynamic-routing/router.service";
 import { ViewConfig } from "../../core/config/dynamic-routing/view-config.interface";
@@ -64,7 +64,7 @@ export class TemplateExportModule {
     ]);
 
     adminOverviewService.addTemplateItems({
-      label: $localize`:admin menu item:Configure Export Templates`,
+      label: $localize`:admin menu item:Export Templates`,
       link: TemplateExport.route,
     });
   }
