@@ -28,6 +28,11 @@ export class AutomatedStatusUpdateConfigService {
   private configService = inject(ConfigService);
 
   /**
+   * Track processed entities to prevent duplicate automated status updates
+   */
+  private readonly processedEntities = new Set<string>();
+
+  /**
    * List of entities impacted by automated status updates.
    * For example, if a field in the "Schools" entity is linked to a field in the "Child" entity,
    * and the field in "Schools" (trigger field) is updated, the "Child" entity will be affected.
@@ -140,6 +145,13 @@ export class AutomatedStatusUpdateConfigService {
     entity: Entity,
     entityBeforeChanges: Entity,
   ): Promise<void> {
+    // skip if already processed this entity
+    const entityKey = `${entity.getId()}`;
+    if (this.processedEntities.has(entityKey)) {
+      return;
+    }
+    this.processedEntities.add(entityKey);
+
     const affectedEntities: AffectedEntity[] = [];
     const changedFields = this.getChangedFields(entity, entityBeforeChanges);
     await this.applyFieldMappings(changedFields, entity, affectedEntities);
@@ -336,7 +348,6 @@ export class AutomatedStatusUpdateConfigService {
       maxHeight: "90vh",
       data: { entities: entitiesToUpdate },
     });
-
     return await lastValueFrom(dialogRef.afterClosed());
   }
 }
