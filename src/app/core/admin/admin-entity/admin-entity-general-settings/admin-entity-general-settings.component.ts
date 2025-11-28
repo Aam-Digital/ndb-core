@@ -97,10 +97,10 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   private init() {
     // Initialize options for toStringAttributes only
     this.initToStringAttributesOptions();
-    // Determine if any image fields exist
+    // Determine if any photo fields exist (for image selector)
     this.hasImageFields = Array.from(
       this.entityConstructor.schema.values(),
-    ).some((field) => field.dataType === "file" || field.dataType === "photo");
+    ).some((field) => field.dataType === PhotoDatatype.dataType);
 
     // Check if tooltip configuration should be enabled by default
     this.showTooltipDetails = !!this.generalSettings.toBlockDetailsAttributes;
