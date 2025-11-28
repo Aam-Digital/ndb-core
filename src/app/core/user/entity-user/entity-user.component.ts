@@ -3,37 +3,28 @@ import {
   Component,
   computed,
   inject,
-  input,
+  Input,
   OnInit,
   signal,
-  ViewChild,
 } from "@angular/core";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../alerts/alert.service";
 import { HttpClient } from "@angular/common/http";
-import { MatButtonModule } from "@angular/material/button";
-import { MatTooltipModule } from "@angular/material/tooltip";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { SessionSubject } from "../../session/auth/session-info";
 import { Entity } from "../../entity/model/entity";
 import { switchMap } from "rxjs/operators";
 import { environment } from "../../../../environments/environment";
 import {
-  UserAdminApiError,
   UserAdminService,
 } from "../user-admin-service/user-admin.service";
-import { Role, UserAccount } from "../user-admin-service/user-account";
-import { Logging } from "app/core/logging/logging.service";
+import { UserAccount } from "../user-admin-service/user-account";
 import { of } from "rxjs";
 import {
   MAT_DIALOG_DATA,
-  MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { MatIconModule } from "@angular/material/icon";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
-import { UserDetailsComponent } from "../user-details/user-details.component";
+import { UserDetailsComponent, UserDetailsConfig, UserDetailsAction } from "../user-details/user-details.component";
 
 /**
  * Display User Account details and configuration related to a given profile Entity.
@@ -47,12 +38,6 @@ import { UserDetailsComponent } from "../user-details/user-details.component";
   styleUrls: ["./entity-user.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButtonModule,
-    MatTooltipModule,
-    MatDialogModule,
-    MatIconModule,
-    FontAwesomeModule,
-    DialogCloseComponent,
     UserDetailsComponent,
   ],
 })
@@ -66,9 +51,8 @@ export class EntityUserComponent implements OnInit {
   });
   private readonly sessionInfo = inject(SessionSubject);
 
-  entity = input<Entity>();
+  @Input() entity?: Entity;
   user = signal<UserAccount | null>(null);
-  availableRoles = signal<Role[]>([]);
   editing = computed(
     () => this.formMode() === "edit" || this.formMode() === "create",
   );
@@ -76,7 +60,46 @@ export class EntityUserComponent implements OnInit {
   isInDialog = signal<boolean>(false);
   formMode = signal<"create" | "edit" | "view">("create");
 
-  @ViewChild("userDetailsForm") userDetailsForm: UserDetailsComponent;
+  // Computed configuration object for UserDetailsComponent
+  userDetailsConfig = computed((): UserDetailsConfig => ({
+    userAccount: this.user(),
+    entity: this.getEntity() || null,
+    showPasswordChange: false,
+    disabled: !this.editing(),
+    editing: this.editing(),
+    userIsPermitted: this.userIsPermitted(),
+    isInDialog: this.isInDialog(),
+  }));
+
+  // Handle all actions from UserDetailsComponent
+  onUserDetailsAction(action: UserDetailsAction) {
+    switch (action.type) {
+      case 'formCancel':
+        this.onFormCancel();
+        break;
+      case 'editRequested':
+        this.editForm();
+        break;
+      case 'closeDialog':
+        this.closeDialog();
+        break;
+      case 'accountCreated':
+        this.user.set(action.data);
+        this.disableForm();
+        break;
+      case 'accountUpdated':
+        this.user.set(action.data.user);
+        if (this.isInDialog()) {
+          this.closeDialog();
+        } else {
+          this.disableForm();
+        }
+        if (action.data.triggerSyncReset) {
+          this.triggerSyncReset();
+        }
+        break;
+    }
+  }
 
   constructor() {
     if (
@@ -86,19 +109,13 @@ export class EntityUserComponent implements OnInit {
     ) {
       this.userIsPermitted.set(true);
     }
-
-    this.userAdminService.getAllRoles().subscribe((roles) => {
-      this.availableRoles.set(roles);
-    });
   }
 
   private getEntity(): Entity | undefined {
     if (this.dialogData?.entity) {
       return this.dialogData.entity;
     }
-    const entityValue =
-      typeof this.entity === "function" ? this.entity() : this.entity;
-    return entityValue;
+    return this.entity;
   }
 
   ngOnInit() {
@@ -133,16 +150,12 @@ export class EntityUserComponent implements OnInit {
             this.formMode.set("create");
           }
         },
-        error: (err) => this.setError(err),
+        error: (err) => {
+          this.alertService.addDanger(
+            err?.error?.message || err?.message || "Failed to load user account"
+          );
+        },
       });
-  }
-
-  toggleAccount(enabled: boolean) {
-    let message = $localize`:Snackbar message:Account has been disabled, user will not be able to login anymore.`;
-    if (enabled) {
-      message = $localize`:Snackbar message:Account has been activated, user can login again.`;
-    }
-    this.updateUserAccount({ enabled }, message);
   }
 
   editForm() {
@@ -153,114 +166,12 @@ export class EntityUserComponent implements OnInit {
     this.formMode.set("view");
   }
 
-  onFormSubmit(formData: Partial<UserAccount>) {
-    const currentUser = this.user();
-    if (currentUser) {
-      this.updateAccount(formData);
-    } else {
-      this.createAccount(formData);
-    }
-  }
-
   onFormCancel() {
     if (this.isInDialog()) {
       this.closeDialog();
     } else {
       this.disableForm();
     }
-  }
-
-  submitForm() {
-    if (this.userDetailsForm) {
-      this.userDetailsForm.onSubmit();
-    }
-  }
-
-  createAccount(formData: Partial<UserAccount>) {
-    const entityToUse = this.getEntity();
-
-    if (!entityToUse) {
-      return;
-    }
-
-    const userEntityId = entityToUse.getId();
-    if (!formData.email || !formData.roles) {
-      return;
-    }
-
-    this.userAdminService
-      .createUser(userEntityId, formData.email, formData.roles)
-      .subscribe({
-        next: () => {
-          this.alertService.addInfo(
-            $localize`:Snackbar message:Account created. An email has been sent to ${formData.email}`,
-          );
-          this.user.set({
-            ...formData,
-            userEntityId: userEntityId,
-            enabled: true,
-          } as UserAccount);
-          this.disableForm();
-        },
-        error: (err) => this.setError(err),
-      });
-  }
-
-  updateAccount(formData: Partial<UserAccount>) {
-    const currentUser = this.user();
-    if (!currentUser) {
-      return;
-    }
-
-    const update: Partial<UserAccount> = {};
-    if (formData.email !== currentUser.email) {
-      update.email = formData.email;
-    }
-    if (JSON.stringify(formData.roles) !== JSON.stringify(currentUser.roles)) {
-      update.roles = formData.roles;
-    }
-
-    if (Object.keys(update).length === 0) {
-      if (this.isInDialog()) {
-        this.closeDialog();
-      } else {
-        this.disableForm();
-      }
-      return;
-    }
-
-    this.updateUserAccount(
-      update,
-      $localize`:Snackbar message:Successfully updated user`,
-    );
-  }
-
-  private updateUserAccount(update: Partial<UserAccount>, message: string) {
-    const currentUser = this.user();
-    if (!currentUser) {
-      return;
-    }
-
-    this.userAdminService.updateUser(currentUser.id, update).subscribe({
-      next: () => {
-        this.alertService.addInfo(message);
-        this.user.set({ ...currentUser, ...update });
-
-        if (this.isInDialog()) {
-          this.closeDialog();
-        } else {
-          this.disableForm();
-        }
-
-        if (update.roles?.length > 0) {
-          this.triggerSyncReset();
-        }
-      },
-      error: (error) => {
-        console.log(error);
-        this.setError(error);
-      },
-    });
   }
 
   /**
@@ -281,19 +192,6 @@ export class EntityUserComponent implements OnInit {
         // request fails if no permission backend is used - this is fine
         error: () => undefined,
       });
-  }
-
-  private setError(err: UserAdminApiError | any) {
-    let errorMessage = err?.error?.message ?? err?.message;
-    if (err instanceof UserAdminApiError) {
-      errorMessage = err.message;
-    } else {
-      Logging.warn("Unexpected error from UserAdminService", err);
-    }
-
-    if (this.userDetailsForm) {
-      this.userDetailsForm.setGlobalError(errorMessage);
-    }
   }
 
   closeDialog() {

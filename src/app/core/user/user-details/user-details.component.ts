@@ -6,6 +6,7 @@ import {
   input,
   output,
   ChangeDetectionStrategy,
+  signal,
 } from "@angular/core";
 import {
   FormBuilder,
@@ -19,13 +20,36 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
+import { MatDialogModule } from "@angular/material/dialog";
 import { Role, UserAccount } from "../user-admin-service/user-account";
+import { UserAdminService } from "../user-admin-service/user-admin.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
+import { AlertService } from "../../alerts/alert.service";
+import { Entity } from "../../entity/model/entity";
+
+export interface UserDetailsConfig {
+  userAccount: UserAccount | null;
+  entity: Entity | null;
+  showPasswordChange: boolean;
+  disabled: boolean;
+  editing: boolean;
+  userIsPermitted: boolean;
+  isInDialog: boolean;
+}
+
+export interface UserDetailsAction {
+  type:
+    | "formCancel"
+    | "editRequested"
+    | "closeDialog"
+    | "accountCreated"
+    | "accountUpdated";
+  data?: any;
+}
 
 /**
  * Reusable user account details form component.
- * Used by EntityUserComponent and ProfileComponent for consistent user management UI.
  */
 @UntilDestroy()
 @Component({
@@ -40,19 +64,28 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
     MatSelectModule,
     MatTooltipModule,
     MatButtonModule,
-    MatSlideToggleModule,
+    MatDialogModule,
+    DialogCloseComponent,
   ],
 })
 export class UserDetailsComponent {
   private fb = inject(FormBuilder);
+  private userAdminService = inject(UserAdminService);
+  private alertService = inject(AlertService);
 
-  userAccount = input<UserAccount | null>();
-  availableRoles = input<Role[]>([]);
-  showPasswordChange = input<boolean>(false);
-  disabled = input<boolean>(false);
+  config = input.required<UserDetailsConfig>();
 
-  formSubmit = output<Partial<UserAccount>>();
-  formCancel = output<void>();
+  userAccount = computed(() => this.config().userAccount);
+  entity = computed(() => this.config().entity);
+  showPasswordChange = computed(() => this.config().showPasswordChange);
+  disabled = computed(() => this.config().disabled);
+  editing = computed(() => this.config().editing);
+  userIsPermitted = computed(() => this.config().userIsPermitted);
+  isInDialog = computed(() => this.config().isInDialog);
+
+  availableRoles = signal<Role[]>([]);
+
+  action = output<UserDetailsAction>();
 
   form: FormGroup;
 
@@ -61,6 +94,19 @@ export class UserDetailsComponent {
       email: ["", [Validators.required, Validators.email]],
       roles: new FormControl<Role[]>([], Validators.required),
     });
+
+    this.userAdminService
+      .getAllRoles()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (roles) => {
+          this.availableRoles.set(roles);
+        },
+        error: (err) => {
+          console.error("Failed to load available roles:", err);
+          this.availableRoles.set([]);
+        },
+      });
 
     // Auto-trim whitespace from email
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((next) => {
@@ -107,11 +153,115 @@ export class UserDetailsComponent {
     }
 
     const formValue = this.form.getRawValue();
-    this.formSubmit.emit(formValue);
+    const currentUser = this.userAccount();
+
+    if (currentUser) {
+      this.updateAccount(formValue);
+    } else {
+      this.createAccount(formValue);
+    }
+  }
+
+  private createAccount(formData: Partial<UserAccount>) {
+    const entity = this.entity();
+    if (!entity) {
+      this.alertService.addDanger("No entity available for user creation");
+      return;
+    }
+
+    const userEntityId = entity.getId();
+    if (!formData.email || !formData.roles) {
+      return;
+    }
+
+    this.userAdminService
+      .createUser(userEntityId, formData.email, formData.roles)
+      .subscribe({
+        next: (createdUser) => {
+          this.alertService.addInfo(
+            $localize`:Snackbar message:Account created. An email has been sent to ${formData.email}`,
+          );
+          this.action.emit({
+            type: "accountCreated",
+            data: {
+              ...formData,
+              userEntityId: userEntityId,
+              enabled: true,
+            } as UserAccount,
+          });
+        },
+        error: (err) => {
+          this.alertService.addDanger(
+            err?.error?.message || err?.message || "Failed to create account",
+          );
+        },
+      });
+  }
+
+  private updateAccount(formData: Partial<UserAccount>) {
+    const currentUser = this.userAccount();
+    if (!currentUser) {
+      return;
+    }
+
+    const update: Partial<UserAccount> = {};
+    if (formData.email !== currentUser.email) {
+      update.email = formData.email;
+    }
+    if (JSON.stringify(formData.roles) !== JSON.stringify(currentUser.roles)) {
+      update.roles = formData.roles;
+    }
+
+    if (Object.keys(update).length === 0) {
+      this.action.emit({ type: "formCancel" });
+      return;
+    }
+
+    this.updateUserAccount(
+      update,
+      $localize`:Snackbar message:Successfully updated user`,
+    );
+  }
+
+  private updateUserAccount(update: Partial<UserAccount>, message: string) {
+    const currentUser = this.userAccount();
+    if (!currentUser) {
+      return;
+    }
+
+    this.userAdminService.updateUser(currentUser.id, update).subscribe({
+      next: () => {
+        this.alertService.addInfo(message);
+        const updatedUser = { ...currentUser, ...update };
+        this.action.emit({
+          type: "accountUpdated",
+          data: {
+            user: updatedUser,
+            triggerSyncReset: update.roles?.length > 0,
+          },
+        });
+      },
+      error: (error) => {
+        console.log(error);
+        this.alertService.addDanger(
+          error?.error?.message ||
+            error?.message ||
+            "Failed to update user account",
+        );
+      },
+    });
+  }
+
+  onToggleAccount(enabled: boolean) {
+    const message = enabled
+      ? $localize`:Snackbar message:Account has been activated, user can login again.`
+      : $localize`:Snackbar message:Account has been disabled, user will not be able to login anymore.`;
+
+    this.updateUserAccount({ enabled }, message);
   }
 
   onCancel() {
-    this.formCancel.emit();
+    this.action.emit({ type: "formCancel" });
   }
 
   getFormError(field: string, errorType: string): boolean {
@@ -122,11 +272,11 @@ export class UserDetailsComponent {
     return this.form.getError("failed");
   }
 
-  setGlobalError(message: string) {
-    this.form.setErrors({ failed: message });
+  onEdit() {
+    this.action.emit({ type: "editRequested" });
   }
 
-  clearErrors() {
-    this.form.setErrors({});
+  onCloseDialog() {
+    this.action.emit({ type: "closeDialog" });
   }
 }
