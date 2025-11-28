@@ -265,8 +265,4 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.value;
-
-  private isImageDataType(dataType: string): boolean {
-    return dataType === "file" || dataType === "photo";
-  }
 }
