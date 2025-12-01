@@ -18,26 +18,26 @@ The SQS image is not available as open source and needs a licence. It is pulled 
 
 ## Using Copilot to generate SQL Queries
 
-```json
+```javascript
 // copy the full Config:CONFIG_ENTITY doc from the database
 // and use the following code to extract the entities as context for Copilot
 entities = Object.entries(x.data).filter(([k, v]) => k.startsWith("entity:")).map(([k, v]) => v);
 ```
 
-Use the following prompt sample:
+Use the following prompt sample (for "v1" SQL reports, which have multiple columns as output):
 
-```
+```text
 The database schema is defined in the entities.json file:
 [ "entity:<TYPE>", { attributes: { "<FIELD_NAME>": { ...FIELD_DETAILS } }}].
 
 - <TYPE> matches the table name in SQL.
 - <FIELD_NAME> matches the column name within that table.
 
-for some queries there are example snippets available: https://docs.google.com/document/d/14JqS6xgZzC1xHUogDho5n1kyNLzX1Eoyv6MeZtRejuM/edit?tab=t.0#heading=h.fgg5yam3yaf1
+For some queries there are example snippets available: https://docs.google.com/document/d/14JqS6xgZzC1xHUogDho5n1kyNLzX1Eoyv6MeZtRejuM/edit?tab=t.0#heading=h.fgg5yam3yaf1
 
 
 Write a native SQL query (SQLite), no Angular or Typescript code.
-Output both a formated SQL and also as a 
+Output both a formatted SQL and also as a 
 single line for easier copying (using single instead of double quotes; no semicolon at end).
 
 The query should output the following:
