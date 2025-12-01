@@ -1,9 +1,9 @@
-@if (!userIsPermitted()) {
+@if (!(userIsPermitted() || dialogData?.userIsPermitted)) {
   <em i18n="Placeholder text when permissions are missing">
     You account does not have the required permissions to see this page.
   </em>
 } @else {
-  @if (isInDialog()) {
+  @if (isInDialog() || dialogData?.isInDialog) {
     <div>
       <h2 mat-dialog-title i18n>Edit User Security</h2>
       <app-dialog-close (click)="onCloseDialog()"></app-dialog-close>
@@ -11,7 +11,7 @@
   }
 
   <div class="flex-column padding-right-regular padding-left-regular">
-    @if (!userAccount()) {
+    @if (!currentUserAccount()) {
       <div class="buttons-wrapper align-self-start">
         <p
           i18n="notice about user without account"
@@ -20,7 +20,7 @@
           There is no user account set up for this user yet. Enable this user to
           log into the app by filling the details below.
         </p>
-        @if (editing() && !userAccount()) {
+        @if ((editing() || dialogData?.editing) && !currentUserAccount()) {
           <button
             mat-raised-button
             type="submit"
@@ -36,11 +36,15 @@
       </div>
     }
 
-    @if (userAccount()) {
+    @if (currentUserAccount()) {
       <div
         class="padding-bottom-small flex-row gap-small align-self-end flex-wrap padding-top-small"
       >
-        @if (editing() && userAccount()?.enabled && !isInDialog()) {
+        @if (
+          (editing() || dialogData?.editing) &&
+          currentUserAccount()?.enabled &&
+          !(isInDialog() || dialogData?.isInDialog)
+        ) {
           <button
             mat-stroked-button
             color="warn"
@@ -51,7 +55,11 @@
             Deactivate user
           </button>
         }
-        @if (editing() && !userAccount()?.enabled && !isInDialog()) {
+        @if (
+          (editing() || dialogData?.editing) &&
+          !currentUserAccount()?.enabled &&
+          !(isInDialog() || dialogData?.isInDialog)
+        ) {
           <button
             mat-raised-button
             color="accent"
@@ -62,7 +70,12 @@
             Activate user
           </button>
         }
-        @if (editing() && userAccount()?.enabled) {
+        @if (
+          (editing() || dialogData?.editing) &&
+          (isInDialog() ||
+            dialogData?.isInDialog ||
+            currentUserAccount()?.enabled)
+        ) {
           <button
             mat-raised-button
             color="accent"
@@ -73,7 +86,7 @@
             Save
           </button>
         }
-        @if (editing()) {
+        @if (editing() || dialogData?.editing) {
           <button
             mat-stroked-button
             class="action-button"
@@ -83,7 +96,7 @@
             Cancel
           </button>
         }
-        @if (!editing()) {
+        @if (!(editing() || dialogData?.editing)) {
           <button
             mat-raised-button
             class="action-button"
@@ -96,7 +109,7 @@
       </div>
     }
 
-    @if (userAccount() && !userAccount()?.enabled) {
+    @if (currentUserAccount() && !currentUserAccount()?.enabled) {
       <p i18n="Hint in user account page" class="field-hint field-warning">
         User is currently disabled and will not be able to login to the app
       </p>
@@ -131,15 +144,15 @@
             }
           </mat-select>
           <mat-hint i18n="hint about assigning user roles" class="field-hint">
-            You should select at least one user role. Otherwise this user will not
-            even be able to access the basic app layout like the menu.
+            You should select at least one user role. Otherwise this user will
+            not even be able to access the basic app layout like the menu.
           </mat-hint>
           @if (getFormError("roles", "required")) {
             <mat-error i18n> This field is required </mat-error>
           }
         </mat-form-field>
 
-        @if (showPasswordChange()) {
+        @if (showPasswordChange() || dialogData?.showPasswordChange) {
           <div class="field-row">
             <button
               mat-stroked-button

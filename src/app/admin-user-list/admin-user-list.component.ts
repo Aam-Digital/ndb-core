@@ -5,9 +5,13 @@ import { UserAccount } from "../core/user/user-admin-service/user-account";
 import { MatTableModule } from "@angular/material/table";
 import { Logging } from "../core/logging/logging.service";
 import { MatDialog } from "@angular/material/dialog";
-import { EntityUserComponent } from "../core/user/entity-user/entity-user.component";
-import { Entity } from "../core/entity/model/entity";
+import {
+  UserDetailsComponent,
+  UserDetailsAction,
+  UserDetailsDialogData,
+} from "../core/user/user-details/user-details.component";
 import { EntityBlockComponent } from "../core/basic-datatypes/entity/entity-block/entity-block.component";
+import { SessionSubject } from "../core/session/auth/session-info";
 
 @Component({
   selector: "app-admin-user-list",
@@ -18,6 +22,7 @@ import { EntityBlockComponent } from "../core/basic-datatypes/entity/entity-bloc
 export class AdminUserListComponent implements OnInit {
   private readonly userAdminService = inject(UserAdminService);
   private readonly dialog = inject(MatDialog);
+  private readonly sessionInfo = inject(SessionSubject);
 
   users = signal<UserAccount[]>([]);
   displayedColumns: string[] = [
@@ -27,7 +32,6 @@ export class AdminUserListComponent implements OnInit {
     "emailVerified",
     "roles",
   ];
-  currentEntity: Entity | undefined;
 
   ngOnInit() {
     this.loadUsers();
@@ -49,25 +53,47 @@ export class AdminUserListComponent implements OnInit {
   }
 
   openUserSecurity(user: UserAccount) {
-    // Only open dialog if user has a userEntityId
-    if (!user.userEntityId) {
-      return;
-    }
+    const userIsPermitted =
+      this.sessionInfo.value?.roles.includes(
+        UserAdminService.ACCOUNT_MANAGER_ROLE,
+      ) ?? false;
 
-    // Create a minimal entity object with the user's ID
-    const entityMock = new Entity(user.userEntityId);
-    this.currentEntity = entityMock;
+    const dialogData: UserDetailsDialogData = {
+      userAccount: user,
+      entity: null,
+      showPasswordChange: false,
+      disabled: false,
+      editing: true,
+      userIsPermitted,
+      isInDialog: true,
+    };
 
-    const dialogRef = this.dialog.open(EntityUserComponent, {
-      data: { entity: entityMock },
+    const dialogRef = this.dialog.open(UserDetailsComponent, {
+      data: dialogData,
     });
+
+    dialogRef.componentInstance.action.subscribe(
+      (action: UserDetailsAction) => {
+        switch (action.type) {
+          case "accountUpdated":
+            const updatedUsers = this.users().map((u) =>
+              u.id === action.data.user.id ? action.data.user : u,
+            );
+            this.users.set(updatedUsers);
+            dialogRef.close();
+            break;
+          case "closeDialog":
+            dialogRef.close();
+            break;
+          case "formCancel":
+            dialogRef.close();
+            break;
+        }
+      },
+    );
 
     dialogRef.afterClosed().subscribe(() => {
       this.loadUsers();
     });
-  }
-
-  isRowClickable(user: UserAccount): boolean {
-    return !!user.userEntityId;
   }
 }

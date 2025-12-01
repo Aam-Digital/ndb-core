@@ -20,7 +20,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
-import { MatDialogModule } from "@angular/material/dialog";
+import { MatDialogModule, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { Role, UserAccount } from "../user-admin-service/user-account";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -28,14 +28,14 @@ import { DialogCloseComponent } from "../../common-components/dialog-close/dialo
 import { AlertService } from "../../alerts/alert.service";
 import { Entity } from "../../entity/model/entity";
 
-export interface UserDetailsConfig {
-  userAccount: UserAccount | null;
-  entity: Entity | null;
-  showPasswordChange: boolean;
-  disabled: boolean;
-  editing: boolean;
-  userIsPermitted: boolean;
-  isInDialog: boolean;
+export interface UserDetailsDialogData {
+  userAccount?: UserAccount | null;
+  entity?: Entity | null;
+  showPasswordChange?: boolean;
+  disabled?: boolean;
+  editing?: boolean;
+  userIsPermitted?: boolean;
+  isInDialog?: boolean;
 }
 
 export interface UserDetailsAction {
@@ -72,16 +72,26 @@ export class UserDetailsComponent {
   private fb = inject(FormBuilder);
   private userAdminService = inject(UserAdminService);
   private alertService = inject(AlertService);
+  private _dialogData = inject(MAT_DIALOG_DATA, { optional: true });
 
-  config = input.required<UserDetailsConfig>();
+  get dialogData() {
+    return this._dialogData;
+  }
 
-  userAccount = computed(() => this.config().userAccount);
-  entity = computed(() => this.config().entity);
-  showPasswordChange = computed(() => this.config().showPasswordChange);
-  disabled = computed(() => this.config().disabled);
-  editing = computed(() => this.config().editing);
-  userIsPermitted = computed(() => this.config().userIsPermitted);
-  isInDialog = computed(() => this.config().isInDialog);
+  userAccount = input<UserAccount | null>();
+  entity = input<Entity | null>();
+  showPasswordChange = input<boolean>(false);
+  disabled = input<boolean>(false);
+  editing = input<boolean>(false);
+  userIsPermitted = input<boolean>(false);
+  isInDialog = input<boolean>(false);
+
+  currentUserAccount = computed(
+    () => this.userAccount() ?? this._dialogData?.userAccount ?? null,
+  );
+  currentEntity = computed(
+    () => this.entity() ?? this._dialogData?.entity ?? null,
+  );
 
   availableRoles = signal<Role[]>([]);
 
@@ -118,14 +128,15 @@ export class UserDetailsComponent {
     });
 
     effect(() => {
-      const user = this.userAccount();
+      const user = this.currentUserAccount();
       if (user) {
         this.updateFormFromUser(user);
       }
     });
 
     effect(() => {
-      if (this.disabled()) {
+      const isDisabled = this.disabled() || this._dialogData?.disabled || false;
+      if (isDisabled) {
         this.form.disable();
       } else {
         this.form.enable();
@@ -153,7 +164,7 @@ export class UserDetailsComponent {
     }
 
     const formValue = this.form.getRawValue();
-    const currentUser = this.userAccount();
+    const currentUser = this.currentUserAccount();
 
     if (currentUser) {
       this.updateAccount(formValue);
@@ -163,7 +174,7 @@ export class UserDetailsComponent {
   }
 
   private createAccount(formData: Partial<UserAccount>) {
-    const entity = this.entity();
+    const entity = this.currentEntity();
     if (!entity) {
       this.alertService.addDanger("No entity available for user creation");
       return;
@@ -199,7 +210,7 @@ export class UserDetailsComponent {
   }
 
   private updateAccount(formData: Partial<UserAccount>) {
-    const currentUser = this.userAccount();
+    const currentUser = this.currentUserAccount();
     if (!currentUser) {
       return;
     }
@@ -224,7 +235,7 @@ export class UserDetailsComponent {
   }
 
   private updateUserAccount(update: Partial<UserAccount>, message: string) {
-    const currentUser = this.userAccount();
+    const currentUser = this.currentUserAccount();
     if (!currentUser) {
       return;
     }

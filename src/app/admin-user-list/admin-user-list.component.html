@@ -15,13 +15,17 @@
   </ng-container>
 
   <ng-container matColumnDef="userEntityId">
-    <th mat-header-cell *matHeaderCellDef i18n>Username</th>
+    <th mat-header-cell *matHeaderCellDef i18n>Profile</th>
     <td mat-cell *matCellDef="let user">
-      <app-entity-block
-        [entityId]="user.userEntityId"
-        entityType="currentEntity?.entityType"
-      >
-      </app-entity-block>
+      @if (user.userEntityId) {
+        <app-entity-block
+          [entityId]="user.userEntityId"
+          entityType="currentEntity?.entityType"
+        >
+        </app-entity-block>
+      } @else {
+        <span>-</span>
+      }
     </td>
   </ng-container>
 
@@ -57,7 +61,6 @@
     mat-row
     *matRowDef="let row; columns: displayedColumns"
     (click)="openUserSecurity(row)"
-    [class.clickable-row]="isRowClickable(row)"
-    [class.disabled-row]="!isRowClickable(row)"
+    class="clickable-row"
   ></tr>
 </table>

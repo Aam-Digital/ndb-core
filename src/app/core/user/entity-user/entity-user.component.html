@@ -1,4 +1,10 @@
 <app-user-details
-  [config]="userDetailsConfig()"
+  [userAccount]="user()"
+  [entity]="getEntity()"
+  [showPasswordChange]="false"
+  [disabled]="!editing()"
+  [editing]="editing()"
+  [userIsPermitted]="userIsPermitted()"
+  [isInDialog]="isInDialog()"
   (action)="onUserDetailsAction($event)"
 ></app-user-details>

@@ -15,16 +15,14 @@ import { SessionSubject } from "../../session/auth/session-info";
 import { Entity } from "../../entity/model/entity";
 import { switchMap } from "rxjs/operators";
 import { environment } from "../../../../environments/environment";
-import {
-  UserAdminService,
-} from "../user-admin-service/user-admin.service";
+import { UserAdminService } from "../user-admin-service/user-admin.service";
 import { UserAccount } from "../user-admin-service/user-account";
 import { of } from "rxjs";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import {
-  MAT_DIALOG_DATA,
-  MatDialogRef,
-} from "@angular/material/dialog";
-import { UserDetailsComponent, UserDetailsConfig, UserDetailsAction } from "../user-details/user-details.component";
+  UserDetailsComponent,
+  UserDetailsAction,
+} from "../user-details/user-details.component";
 
 /**
  * Display User Account details and configuration related to a given profile Entity.
@@ -37,9 +35,7 @@ import { UserDetailsComponent, UserDetailsConfig, UserDetailsAction } from "../u
   templateUrl: "./entity-user.component.html",
   styleUrls: ["./entity-user.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    UserDetailsComponent,
-  ],
+  imports: [UserDetailsComponent],
 })
 export class EntityUserComponent implements OnInit {
   private readonly userAdminService = inject(UserAdminService);
@@ -60,34 +56,23 @@ export class EntityUserComponent implements OnInit {
   isInDialog = signal<boolean>(false);
   formMode = signal<"create" | "edit" | "view">("create");
 
-  // Computed configuration object for UserDetailsComponent
-  userDetailsConfig = computed((): UserDetailsConfig => ({
-    userAccount: this.user(),
-    entity: this.getEntity() || null,
-    showPasswordChange: false,
-    disabled: !this.editing(),
-    editing: this.editing(),
-    userIsPermitted: this.userIsPermitted(),
-    isInDialog: this.isInDialog(),
-  }));
-
   // Handle all actions from UserDetailsComponent
   onUserDetailsAction(action: UserDetailsAction) {
     switch (action.type) {
-      case 'formCancel':
+      case "formCancel":
         this.onFormCancel();
         break;
-      case 'editRequested':
+      case "editRequested":
         this.editForm();
         break;
-      case 'closeDialog':
+      case "closeDialog":
         this.closeDialog();
         break;
-      case 'accountCreated':
+      case "accountCreated":
         this.user.set(action.data);
         this.disableForm();
         break;
-      case 'accountUpdated':
+      case "accountUpdated":
         this.user.set(action.data.user);
         if (this.isInDialog()) {
           this.closeDialog();
@@ -111,7 +96,7 @@ export class EntityUserComponent implements OnInit {
     }
   }
 
-  private getEntity(): Entity | undefined {
+  getEntity(): Entity | undefined {
     if (this.dialogData?.entity) {
       return this.dialogData.entity;
     }
@@ -152,7 +137,9 @@ export class EntityUserComponent implements OnInit {
         },
         error: (err) => {
           this.alertService.addDanger(
-            err?.error?.message || err?.message || "Failed to load user account"
+            err?.error?.message ||
+              err?.message ||
+              "Failed to load user account",
           );
         },
       });
