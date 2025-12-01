@@ -33,9 +33,9 @@ import { ConditionalColorSectionComponent } from "./conditional-color-section/co
     ConditionalColorSectionComponent,
   ],
 })
-export class ConditionalColorConfigComponent
-  extends CustomFormControlDirective<string | ColorMapping[]>
-{
+export class ConditionalColorConfigComponent extends CustomFormControlDirective<
+  string | ColorMapping[]
+> {
   @Input() entityConstructor: EntityConstructor;
   @Input() isConditionalMode: boolean = false;
   @Output() isConditionalModeChange = new EventEmitter<boolean>();

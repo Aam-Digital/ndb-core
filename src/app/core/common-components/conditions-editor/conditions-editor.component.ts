@@ -100,7 +100,10 @@ export class ConditionsEditorComponent implements OnInit {
   /**
    * Handle condition field change
    */
-  onConditionFieldChange(conditionIndex: number, fieldKey: string | string[]): void {
+  onConditionFieldChange(
+    conditionIndex: number,
+    fieldKey: string | string[],
+  ): void {
     const conditions = this.conditionsArray();
     if (conditionIndex < 0 || conditionIndex >= conditions.length) return;
 
