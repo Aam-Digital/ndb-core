@@ -22,6 +22,10 @@
     "Abhinegi2"
   ],
   "rangeStrategy": "bump",
+  "ignoreDeps": [
+    "zone.js",
+    "moment"
+  ],
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": false,
