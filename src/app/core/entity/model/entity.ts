@@ -26,6 +26,13 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { UpdateMetadata } from "./update-metadata";
 import { EntityBlockConfig } from "../../basic-datatypes/entity/entity-block/entity-block-config";
 import { Logging } from "../../logging/logging.service";
+import { DataFilter } from "../../filter/filters/filters";
+import {
+  allInterpreters,
+  allParsingInstructions,
+  createFactory,
+} from "@ucast/mongo2js";
+import { extendedCompare } from "../../../utils/filter-compare-utils";
 
 /**
  * This represents a static class of type <T>.
@@ -37,6 +44,15 @@ export type EntityConstructor<T extends Entity = Entity> = (new (
   id?: string,
 ) => T) &
   typeof Entity;
+
+/**
+ * This allows defining different colors for entities based on their properties using MongoDB-style queries.
+ */
+export interface ColorMapping {
+  /** MongoDB-style query condition that must match for this color to apply */
+  condition: DataFilter<any>;
+  color: string;
+}
 
 /**
  * "Entity" is a base class for all domain model classes.
@@ -135,9 +151,13 @@ export class Entity {
   static icon: IconName;
 
   /**
-   * color used for to highlight this entity type across the app
+   * color used for to highlight this entity type across the app.
+   *
+   * Can be either:
+   * - A simple string (hex color code) for a single color
+   * - An array of ColorMapping objects for conditional colors based on entity properties
    */
-  static color: string;
+  static color: string | ColorMapping[];
 
   /**
    * Base route of the entity (list/details) view for this entity type.
@@ -374,7 +394,62 @@ export class Entity {
    * Override this method as needed.
    */
   public getColor(): string {
-    return getWarningLevelColor(this.getWarningLevel());
+    return Entity.getColorWithConditions(this);
+  }
+
+  /**
+   * Static method to evaluate conditional colors for an entity based on ColorMapping configuration.
+   */
+  static getColorWithConditions(entity: Entity): string {
+    const colorConfig = entity.getConstructor().color;
+
+    // Handle simple string color
+    if (typeof colorConfig === "string" && colorConfig) {
+      return colorConfig;
+    }
+
+    // Handle conditional colors array
+    if (Array.isArray(colorConfig) && colorConfig.length > 0) {
+      try {
+        const interpret = createFactory(
+          allParsingInstructions,
+          allInterpreters,
+          { compare: extendedCompare },
+        );
+        let fallbackColor: string | null = null;
+
+        for (const mapping of colorConfig) {
+          if (!mapping.color) continue;
+
+          const conditionKeys = mapping.condition
+            ? Object.keys(mapping.condition)
+            : [];
+
+          if (conditionKeys.length === 0) {
+            fallbackColor = mapping.color;
+            continue;
+          }
+
+          try {
+            const test = interpret(mapping.condition as any);
+            if (test(entity)) return mapping.color;
+          } catch (e) {
+            Logging.debug(
+              "Error evaluating color condition",
+              mapping.condition,
+              e,
+            );
+          }
+        }
+
+        return fallbackColor;
+      } catch (e) {
+        Logging.warn("Error processing conditional colors", e);
+      }
+    }
+
+    // Default fallback
+    return getWarningLevelColor(entity.getWarningLevel());
   }
 
   /**
