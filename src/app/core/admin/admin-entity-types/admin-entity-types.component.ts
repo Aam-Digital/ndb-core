@@ -19,6 +19,7 @@ import { RouterLink } from "@angular/router";
 import { generateIdFromLabel } from "../../../utils/generate-id-from-label/generate-id-from-label";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityConfig } from "../../entity/entity-config";
+import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { EntityDetailsConfig } from "../../entity-details/EntityDetailsConfig";
 import { EntityListConfig } from "../../entity-list/EntityListConfig";
 import { Config } from "../../config/config";
@@ -34,6 +35,7 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
 @Component({
   selector: "app-admin-entity-types",
   imports: [
+    ViewTitleComponent,
     MatHeaderRow,
     MatHeaderRowDef,
     MatRow,
@@ -69,13 +71,13 @@ export class AdminEntityTypesComponent implements OnInit {
   }
 
   async create() {
-    const name = prompt("Please enter entity type name:");
+    const name = prompt("Please enter record type name:");
     if (!name) {
       return;
     }
     const id = generateIdFromLabel(name);
     if (this.entityTypeExists(id)) {
-      alert("Entity type already exists.");
+      alert("Record type already exists.");
       return;
     }
 

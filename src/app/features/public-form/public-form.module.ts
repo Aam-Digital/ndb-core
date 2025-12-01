@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { NgModule, inject } from "@angular/core";
+import { inject, NgModule } from "@angular/core";
 import { AsyncComponent, ComponentRegistry } from "app/dynamic-components";
 import { AdminOverviewService } from "../../core/admin/admin-overview/admin-overview.service";
 import { RouterService } from "../../core/config/dynamic-routing/router.service";
@@ -29,8 +29,8 @@ export class PublicFormModule {
 
     components.addAll(dynamicComponents);
     routerService.addRoutes(viewConfigs);
-    adminOverviewService.menuItems.push({
-      label: $localize`:admin menu item:Configure Public Forms`,
+    adminOverviewService.addTemplateItems({
+      label: $localize`:admin menu item:Public Forms`,
       link: PublicFormConfig.route,
     });
     publicFormsService.initCustomFormActions();
@@ -41,30 +41,37 @@ const dynamicComponents: [string, AsyncComponent][] = [
   [
     "EditPublicFormColumns",
     () =>
-      import(
-        "app/features/public-form/edit-public-form-columns/edit-public-form-columns.component"
-      ).then((c) => c.EditPublicFormColumnsComponent),
+      import("app/features/public-form/edit-public-form-columns/edit-public-form-columns.component").then(
+        (c) => c.EditPublicFormColumnsComponent,
+      ),
   ],
   [
     "EditPrefilledValuesComponent",
     () =>
-      import(
-        "app/features/public-form/edit-prefilled-values/edit-prefilled-values.component"
-      ).then((c) => c.EditPrefilledValuesComponent),
+      import("app/features/public-form/edit-prefilled-values/edit-prefilled-values.component").then(
+        (c) => c.EditPrefilledValuesComponent,
+      ),
   ],
   [
     "EditPublicformRoute",
     () =>
-      import(
-        "app/features/public-form/edit-publicform-route/edit-publicform-route.component"
-      ).then((c) => c.EditPublicformRouteComponent),
+      import("app/features/public-form/edit-publicform-route/edit-publicform-route.component").then(
+        (c) => c.EditPublicformRouteComponent,
+      ),
   ],
   [
     "EditPublicFormRelatedEntitiesComponent",
     () =>
-      import(
-        "app/features/public-form/edit-public-form-related-entities/edit-public-form-related-entities.component"
-      ).then((c) => c.EditPublicFormRelatedEntitiesComponent),
+      import("app/features/public-form/edit-public-form-related-entities/edit-public-form-related-entities.component").then(
+        (c) => c.EditPublicFormRelatedEntitiesComponent,
+      ),
+  ],
+  [
+    "PublicFormPermissionWarning",
+    () =>
+      import("app/features/public-form/public-form-permission-warning/public-form-permission-warning.component").then(
+        (c) => c.PublicFormPermissionWarningComponent,
+      ),
   ],
 ];
 
@@ -106,6 +113,10 @@ const viewConfigs: ViewConfig[] = [
                         If you are seeing problems submitting the form, please contact your **technical support team**.`,
                       },
                       "entity",
+                      {
+                        id: "public_form_permission_warning",
+                        viewComponent: "PublicFormPermissionWarning",
+                      },
                       "logo",
                       "showSubmitAnotherButton",
                     ],

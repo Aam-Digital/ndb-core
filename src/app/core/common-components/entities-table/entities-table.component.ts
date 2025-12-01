@@ -3,11 +3,11 @@ import {
   Component,
   ContentChildren,
   EventEmitter,
+  inject,
   Input,
   Output,
   QueryList,
   ViewChild,
-  inject,
 } from "@angular/core";
 import {
   MatCheckboxChange,
@@ -75,9 +75,9 @@ import { TableStateUrlService } from "./table-state-url.service";
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
 })
-export class EntitiesTableComponent<T extends Entity>
-  implements AfterContentInit
-{
+export class EntitiesTableComponent<
+  T extends Entity,
+> implements AfterContentInit {
   private entityFormService = inject(EntityFormService);
   private formDialog = inject(FormDialogService);
   private router = inject(Router);
@@ -271,8 +271,16 @@ export class EntitiesTableComponent<T extends Entity>
     this.recordsDataSource.filter = value;
   }
 
+  /**
+   * Whether the list's default row coloring should reflect each entity's color.
+   */
+  @Input() showEntityColor: boolean = false;
+
   /** function returns the background color for each row*/
-  @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
+  @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => {
+    if (this.showEntityColor) return rec.getColor();
+    else return "";
+  };
   idForSavingPagination: string;
 
   /**
@@ -312,13 +320,12 @@ export class EntitiesTableComponent<T extends Entity>
   selectRow(row: TableRow<T>, checked: boolean) {
     if (checked) {
       if (!this.selectedRecords.includes(row.record)) {
-        this.selectedRecords.push(row.record);
+        this.selectedRecords = [...this.selectedRecords, row.record];
       }
-    } else {
-      const index = this.selectedRecords.indexOf(row.record);
-      if (index > -1) {
-        this.selectedRecords.splice(index, 1);
-      }
+    } else if (this.selectedRecords.includes(row.record)) {
+      this.selectedRecords = this.selectedRecords.filter(
+        (r) => r !== row.record,
+      );
     }
     this.selectedRecordsChange.emit(this.selectedRecords);
   }

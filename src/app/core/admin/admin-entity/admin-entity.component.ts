@@ -59,6 +59,12 @@ export class AdminEntityComponent implements OnInit {
   entityConstructor: EntityConstructor;
   private originalEntitySchemaFields: [string, EntitySchemaField][];
 
+  /**
+   * Track related entity types that have been modified through the panel config dialog.
+   * These will need to be saved when the main Save button is clicked.
+   */
+  private readonly modifiedRelatedEntities = new Set<EntityConstructor>();
+
   configDetailsView: DynamicComponentConfig<any>; // typed any to avoid type issues with different detail components
   configListView: DynamicComponentConfig<EntityListConfig>;
   configEntitySettings: EntityConfig;
@@ -94,7 +100,7 @@ export class AdminEntityComponent implements OnInit {
   private getEntitySettingsFromConstructor(
     entityCtr: EntityConstructor,
   ): EntityConfig {
-    return {
+    const config: EntityConfig = {
       label: entityCtr.label,
       labelPlural: entityCtr.labelPlural,
       icon: entityCtr.icon,
@@ -103,6 +109,19 @@ export class AdminEntityComponent implements OnInit {
       hasPII: entityCtr.hasPII,
       enableUserAccounts: entityCtr.enableUserAccounts,
     };
+
+    // Only include toBlockDetailsAttributes if it has meaningful values
+    if (
+      entityCtr.toBlockDetailsAttributes &&
+      (entityCtr.toBlockDetailsAttributes.title ||
+        entityCtr.toBlockDetailsAttributes.image ||
+        (entityCtr.toBlockDetailsAttributes.fields &&
+          entityCtr.toBlockDetailsAttributes.fields.length > 0))
+    ) {
+      config.toBlockDetailsAttributes = entityCtr.toBlockDetailsAttributes;
+    }
+
+    return config;
   }
 
   private loadViewConfig(
@@ -147,11 +166,13 @@ export class AdminEntityComponent implements OnInit {
   }
 
   async save() {
+    // Save the main entity configuration along with all related entities in a single transaction
     const result = await this.adminEntityService.setAndSaveEntityConfig(
       this.entityConstructor,
       this.configEntitySettings,
       this.configListView,
       this.configDetailsView,
+      Array.from(this.modifiedRelatedEntities),
     );
 
     this.entityActionsService.showSnackbarConfirmationWithUndo(
@@ -160,5 +181,13 @@ export class AdminEntityComponent implements OnInit {
     );
 
     this.location.back();
+  }
+
+  /**
+   * Register a related entity as modified, so its schema will be saved when the main Save button is clicked.
+   * This is called from child components (e.g., panel components) when they modify related entity schemas.
+   */
+  registerRelatedEntityForSave(entityConstructor: EntityConstructor): void {
+    this.modifiedRelatedEntities.add(entityConstructor);
   }
 }

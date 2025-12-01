@@ -43,9 +43,22 @@ export class EmailClientService {
       this.getEmailsForEntities(entityList);
 
     if (!recipients.length) {
-      this.alertService.addWarning(
-        $localize`Please fill an email address for this record to use this functionality.`,
-      );
+      await this.dialog
+        .open(ConfirmationDialogComponent, {
+          data: {
+            title: $localize`Email Error`,
+            text: $localize`Please fill an email address for this record to use this functionality.`,
+            buttons: [
+              {
+                text: $localize`:Confirmation dialog OK:OK`,
+                dialogResult: true,
+                click() {},
+              },
+            ],
+          } as ConfirmationDialogConfig,
+        })
+        .afterClosed()
+        .toPromise();
       return false;
     }
 

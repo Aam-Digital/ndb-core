@@ -1,12 +1,12 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   OnInit,
   Output,
   SimpleChanges,
-  inject,
 } from "@angular/core";
 import { EntityConstructor } from "../../entity/model/entity";
 import {
@@ -50,7 +50,7 @@ export class EntityFieldsMenuComponent implements OnChanges, OnInit {
 
         return mappedField;
       })
-      .filter((field) => field.label);
+      .filter((field) => !field.isInternalField && field.label);
 
     const deduplicatedFieldsById: Record<string, FormFieldConfig> = {};
     for (const field of fieldsConfig) {

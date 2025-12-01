@@ -1,10 +1,15 @@
 import { Logging } from "#src/app/core/logging/logging.service";
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { AlertService } from "app/core/alerts/alert.service";
 import { EntityActionsMenuService } from "app/core/entity-details/entity-actions-menu/entity-actions-menu.service";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "app/core/entity/model/entity";
 import { PublicFormConfig } from "./public-form-config";
+import { asArray } from "#src/app/utils/asArray";
+import { AdminEntityService } from "app/core/admin/admin-entity.service";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { EntityConfigService } from "app/core/entity/entity-config.service";
+import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
 
 @Injectable({
   providedIn: "root",
@@ -13,6 +18,10 @@ export class PublicFormsService {
   private entityMapper = inject(EntityMapperService);
   private alertService = inject(AlertService);
   private entityActionsMenuService = inject(EntityActionsMenuService);
+  private readonly adminEntityService = inject(AdminEntityService);
+  private readonly entities = inject(EntityRegistry);
+  private readonly entityConfigService = inject(EntityConfigService);
+  private readonly unsavedChangesService = inject(UnsavedChangesService);
 
   /**
    * Initializes and registers custom form actions for entities.
@@ -36,13 +45,17 @@ export class PublicFormsService {
       this.entityActionsMenuService.registerActions([
         {
           action: `copy-form-${config.getId()}`,
-          execute: (entity) =>
-            this.copyPublicFormLinkFromConfig(config, entity),
+          execute: (entity) => {
+            const singleEntity = Array.isArray(entity) ? entity[0] : entity;
+            return this.copyPublicFormLinkFromConfig(config, singleEntity);
+          },
           permission: "read",
           icon: "link",
           label: $localize`Copy Custom Form (${config.title})`,
           tooltip: $localize`Copy link to public form "${config.title}" that will connect submissions to this individual record.`,
-          visible: (entity) => this.isEntityTypeLinkedToConfig(config, entity),
+          visible: (entity) =>
+            this.isEntityTypeLinkedToConfig(config, asArray(entity)[0]),
+          availableFor: "individual-only",
         },
       ]);
     }
@@ -121,5 +134,39 @@ export class PublicFormsService {
    */
   private hasLinkedEntities(config: PublicFormConfig): boolean {
     return !!config.linkedEntities?.length;
+  }
+
+  /**
+   * Save new custom fields to entity config for a PublicFormConfig.
+   * When fields are created in the public form columns editor, they're added to the in-memory schema
+   * but not persisted to the config. This method persists them.
+   *
+   * @param publicFormConfig The PublicFormConfig entity being saved
+   */
+  async saveCustomFieldsToEntityConfig(
+    publicFormConfig: PublicFormConfig,
+  ): Promise<void> {
+    if (!publicFormConfig.entity) {
+      return;
+    }
+
+    const entityConstructor = this.entities.get(publicFormConfig.entity);
+    const entityConfig =
+      this.entityConfigService.getEntityConfig(entityConstructor) || {};
+    const existingAttributes = entityConfig.attributes || {};
+
+    // Check if there are any fields in schema that aren't in global config yet
+    let hasNewFields = false;
+    for (const [fieldId] of entityConstructor.schema.entries()) {
+      if (!Object.hasOwn(existingAttributes, fieldId)) {
+        hasNewFields = true;
+        break;
+      }
+    }
+
+    if (hasNewFields) {
+      this.unsavedChangesService.pending = false;
+      await this.adminEntityService.setAndSaveEntityConfig(entityConstructor);
+    }
   }
 }

@@ -18,7 +18,14 @@ export abstract class LatestEntityLoader<T extends Entity> {
     private entityCtor: EntityConstructor<T>,
     private entityID: string,
     protected entityMapper: EntityMapperService,
-  ) {}
+  ) {
+    this.onInit();
+  }
+
+  /**
+   * Override this to trigger actions upon initialization of the service
+   */
+  protected onInit() {}
 
   /**
    * Initialize the loader to make the entity available and emit continuous updates
@@ -48,7 +55,7 @@ export abstract class LatestEntityLoader<T extends Entity> {
     } catch (err) {
       if (err?.status !== HttpStatusCode.NotFound) {
         Logging.error(
-          `Initial loading of entity "${this.entityCtor.ENTITY_TYPE}:${this.entityID}" failed [Service based on LatestEntityLoader]`,
+          `Initial loading of record "${this.entityCtor.ENTITY_TYPE}:${this.entityID}" failed [Service based on LatestEntityLoader]`,
           err,
         );
       }

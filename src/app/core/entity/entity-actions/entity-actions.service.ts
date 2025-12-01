@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable, Injector } from "@angular/core";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { Entity } from "../model/entity";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -13,6 +13,9 @@ import { EntityActionsMenuService } from "../../entity-details/entity-actions-me
 import { DuplicateRecordService } from "app/core/entity-list/duplicate-records/duplicate-records.service";
 import { PublicFormsService } from "app/features/public-form/public-forms.service";
 import { PublicFormConfig } from "app/features/public-form/public-form-config";
+import { EntityEditService } from "./entity-edit.service";
+import { BulkMergeService } from "#src/app/features/de-duplication/bulk-merge-service";
+import { asArray } from "#src/app/utils/asArray";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -22,6 +25,7 @@ import { PublicFormConfig } from "app/features/public-form/public-form-config";
   providedIn: "root",
 })
 export class EntityActionsService {
+  private readonly injector = inject(Injector);
   private confirmationDialog = inject(ConfirmationDialogService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
@@ -30,6 +34,7 @@ export class EntityActionsService {
   private entityAnonymize = inject(EntityAnonymizeService);
   private duplicateRecordService = inject(DuplicateRecordService);
   private publicFormsService = inject(PublicFormsService);
+  private readonly bulkMergeService = inject(BulkMergeService);
 
   constructor() {
     const entityActionsMenuService = inject(EntityActionsMenuService);
@@ -43,7 +48,11 @@ export class EntityActionsService {
         label: $localize`:entity context menu:Archive`,
         tooltip: $localize`:entity context menu tooltip:Mark the record as inactive, hiding it from lists by default while keeping the data.`,
         primaryAction: true,
-        visible: async (entity) => entity.isActive && !entity.anonymized,
+        visible: async (entity) => {
+          const entities = asArray(entity);
+          return entities.some((e) => e.isActive && !e.anonymized);
+        },
+        availableFor: "all",
       },
       {
         action: "anonymize",
@@ -52,8 +61,13 @@ export class EntityActionsService {
         icon: "user-secret",
         label: $localize`:entity context menu:Anonymize`,
         tooltip: $localize`:entity context menu tooltip:Remove all personal data and keep an archived basic record for statistical reporting.`,
-        visible: async (entity) =>
-          !entity.anonymized && entity.getConstructor().hasPII === true,
+        visible: async (entity) => {
+          const entities = asArray(entity);
+          return entities.some(
+            (e) => !e?.anonymized && e?.getConstructor().hasPII === true,
+          );
+        },
+        availableFor: "all",
       },
       {
         action: "delete",
@@ -62,6 +76,7 @@ export class EntityActionsService {
         icon: "trash",
         label: $localize`:entity context menu:Delete`,
         tooltip: $localize`:entity context menu tooltip:Remove the record completely from the database.`,
+        availableFor: "all",
       },
       {
         action: "duplicate",
@@ -71,6 +86,46 @@ export class EntityActionsService {
         icon: "copy",
         label: $localize`:entity context menu:Duplicate`,
         tooltip: $localize`:entity context menu tooltip:Create a copy of this record.`,
+        availableFor: "all",
+      },
+      {
+        action: "bulk-edit",
+        label: $localize`:entity context menu:Bulk Edit`,
+        icon: "edit",
+        tooltip: $localize`:entity context menu tooltip:Edit multiple records at once.`,
+        availableFor: "bulk-only",
+        permission: "update",
+        execute: async (entity: Entity) => {
+          const entities = Array.isArray(entity) ? entity : [entity];
+          if (!entities.length) return false;
+          const entityType = entities[0].getConstructor();
+          if (!entityType) return false;
+          const entityEditService = this.injector.get(EntityEditService);
+          return entityEditService.edit(entities, entityType);
+        },
+      },
+      {
+        action: "merge",
+        label: $localize`:entity context menu:Merge`,
+        icon: "object-group",
+        tooltip: $localize`:entity context menu tooltip:Merge two records into one, combining their data and deleting duplicates.`,
+        availableFor: "bulk-only",
+        permission: "update",
+        execute: async (entity: Entity) => {
+          const entities = Array.isArray(entity) ? entity : [entity];
+          if (entities.length !== 2) {
+            await this.confirmationDialog.getConfirmation(
+              $localize`:bulk merge error:Invalid selection`,
+              $localize`:bulk merge error:You need to select exactly two records for merge.`,
+              OkButton,
+            );
+            return false;
+          }
+          const entityType = entities[0].getConstructor();
+          if (!entityType) return false;
+          await this.bulkMergeService.showMergeDialog(entities, entityType);
+          return true;
+        },
       },
     ]);
     this.entityMapper.receiveUpdates(PublicFormConfig).subscribe(() => {
@@ -85,7 +140,7 @@ export class EntityActionsService {
   ) {
     const snackBarRef = this.snackBar.open(
       message,
-      $localize`:Undo an entity action:Undo`,
+      $localize`:Undo a record action:Undo`,
       {
         duration: 8000,
       },
@@ -94,7 +149,7 @@ export class EntityActionsService {
     // Undo Action
     snackBarRef.onAction().subscribe(async () => {
       const undoProgressRef = this.confirmationDialog.showProgressDialog(
-        $localize`:Undo entity action progress dialog: Reverting changes ...`,
+        $localize`:Undo record action progress dialog: Reverting changes ...`,
       );
       await this.entityMapper.saveAll(previousEntitiesForUndo, true);
       undoProgressRef.close();
@@ -150,7 +205,7 @@ export class EntityActionsService {
     }
 
     const progressDialogRef = this.confirmationDialog.showProgressDialog(
-      $localize`:Entity action progress dialog:Processing ...`,
+      $localize`:Record action progress dialog:Processing ...`,
     );
     let result = new CascadingActionResult();
 
@@ -181,7 +236,7 @@ export class EntityActionsService {
         entities.length > 0
           ? entities
           : [result.originalEntitiesBeforeChange[0]],
-        $localize`:Entity action confirmation message verb:deleted`,
+        $localize`:Record action confirmation message verb:deleted`,
       ),
       result.originalEntitiesBeforeChange,
       currentUrl,
@@ -231,7 +286,7 @@ export class EntityActionsService {
     }
 
     const progressDialogRef = this.confirmationDialog.showProgressDialog(
-      $localize`:Entity action progress dialog:Processing ...`,
+      $localize`:Record action progress dialog:Processing ...`,
     );
     let result = new CascadingActionResult();
     for (let entity of entities) {
@@ -253,7 +308,7 @@ export class EntityActionsService {
         entities.length > 0
           ? entities
           : [result.originalEntitiesBeforeChange[0]],
-        $localize`:Entity action confirmation message verb:anonymized`,
+        $localize`:Record action confirmation message verb:anonymized`,
       ),
       result.originalEntitiesBeforeChange,
     );
@@ -277,7 +332,7 @@ export class EntityActionsService {
     this.showSnackbarConfirmationWithUndo(
       this.generateMessageForConfirmationWithUndo(
         newEntities,
-        $localize`:Entity action confirmation message verb:archived`,
+        $localize`:Record action confirmation message verb:archived`,
       ),
       originalEntities,
     );
@@ -300,7 +355,7 @@ export class EntityActionsService {
     this.showSnackbarConfirmationWithUndo(
       this.generateMessageForConfirmationWithUndo(
         newEntities,
-        $localize`:Entity action confirmation message verb:reactivated`,
+        $localize`:Record action confirmation message verb:reactivated`,
       ),
       originalEntities,
     );
@@ -312,11 +367,11 @@ export class EntityActionsService {
     action: string,
   ): string {
     if (entities.length > 1) {
-      return $localize`:Entity action confirmation message:${entities.length} ${
+      return $localize`:Record action confirmation message:${entities.length} ${
         entities[0].getConstructor().labelPlural
       } ${action}`;
     } else {
-      return $localize`:Entity action confirmation message:${
+      return $localize`:Record action confirmation message:${
         entities[0].getConstructor().label
       } "${entities.toString()}" ${action}`;
     }

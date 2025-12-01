@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AdminEntityPanelComponentComponent } from "./admin-entity-panel-component.component";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
+import { MatDialogModule } from "@angular/material/dialog";
 
 describe("AdminEntityPanelComponentComponent", () => {
   let component: AdminEntityPanelComponentComponent;
@@ -15,7 +16,7 @@ describe("AdminEntityPanelComponentComponent", () => {
       ["getEntityTypesReferencingType"],
     );
     await TestBed.configureTestingModule({
-      imports: [AdminEntityPanelComponentComponent],
+      imports: [AdminEntityPanelComponentComponent, MatDialogModule],
       providers: [
         EntityRegistry,
         {

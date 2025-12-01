@@ -38,11 +38,6 @@
           "label": "Users",
           "icon": "users",
           "link": "/user"
-        },
-        {
-          "label": "Admin",
-          "icon": "wrench",
-          "link": "/admin"
         }
       ]
     },

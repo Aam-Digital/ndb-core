@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { NgModule, inject } from "@angular/core";
+import { inject, NgModule } from "@angular/core";
 import { AdminOverviewService } from "../../core/admin/admin-overview/admin-overview.service";
 import { RouterService } from "../../core/config/dynamic-routing/router.service";
 import { ViewConfig } from "../../core/config/dynamic-routing/view-config.interface";
@@ -59,11 +59,12 @@ export class TemplateExportModule {
             await templateExportService.isExportServerEnabled();
           return isAdmin || isExportEnabled;
         },
+        availableFor: "all",
       },
     ]);
 
-    adminOverviewService.menuItems.push({
-      label: $localize`:admin menu item:Configure Export Templates`,
+    adminOverviewService.addTemplateItems({
+      label: $localize`:admin menu item:Export Templates`,
       link: TemplateExport.route,
     });
   }
@@ -73,9 +74,9 @@ const dynamicComponents: [string, AsyncComponent][] = [
   [
     "EditTemplateExportFile",
     () =>
-      import(
-        "./template-export-file-datatype/edit-template-export-file.component"
-      ).then((c) => c.EditTemplateExportFileComponent),
+      import("./template-export-file-datatype/edit-template-export-file.component").then(
+        (c) => c.EditTemplateExportFileComponent,
+      ),
   ],
 ];
 
@@ -118,7 +119,7 @@ const viewConfigs: ViewConfig[] = [
                         viewComponent: "DisplayDescriptionOnly",
                         label: $localize`:TemplateExport:Upload a specially prepared template file here.
 The file can contain placeholders that will be replaced with actual data when a file is generated for a selected record.
-For example {d.name} will be replaced with the value in the "name" field of the given entity.
+For example {d.name} will be replaced with the value in the "name" field of the given record.
 See the documentation of the [carbone system](https://carbone.io/documentation.html#substitutions) for more information.
 
 The placeholder keys must match the field "Field ID" of the record data structure in Aam Digital.
