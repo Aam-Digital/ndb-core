@@ -37,7 +37,11 @@ import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-
 import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.datatype";
 import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.component";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
+import { PhotoDatatype } from "app/features/file/photo.datatype";
+import { ColorInputComponent } from "#src/app/color-input/color-input.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
 import { ConditionalColorConfigComponent } from "./conditional-color-config/conditional-color-config.component";
 
 @Component({
@@ -56,13 +60,14 @@ import { ConditionalColorConfigComponent } from "./conditional-color-config/cond
     MatTableModule,
     MatOptionModule,
     MatSelectModule,
-    MatTooltipModule,
+    MatExpansionModule,
     HelpButtonComponent,
     AnonymizeOptionsComponent,
     FaIconComponent,
     AdminIconComponent,
     ConditionalColorConfigComponent,
     HintBoxComponent,
+    EntityFieldSelectComponent,
   ],
 })
 export class AdminEntityGeneralSettingsComponent implements OnInit {
@@ -83,6 +88,8 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   basicSettingsForm: FormGroup;
   toStringAttributesOptions: SimpleDropdownValue[] = [];
+  hasImageFields: boolean = false;
+  showTooltipDetails: boolean = false;
   isConditionalColor: boolean = false;
 
   ngOnInit(): void {
@@ -90,6 +97,16 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   }
 
   private init() {
+    // Initialize options for toStringAttributes only
+    this.initToStringAttributesOptions();
+    // Determine if any photo fields exist (for image selector)
+    this.hasImageFields = Array.from(
+      this.entityConstructor.schema.values(),
+    ).some((field) => field.dataType === PhotoDatatype.dataType);
+
+    // Check if tooltip configuration should be enabled by default
+    this.showTooltipDetails = !!this.generalSettings.toBlockDetailsAttributes;
+
     this.basicSettingsForm = this.fb.group({
       label: [this.generalSettings.label, Validators.required],
       labelPlural: [this.generalSettings.labelPlural],
@@ -98,10 +115,18 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       toStringAttributes: [this.generalSettings.toStringAttributes],
       hasPII: [this.generalSettings.hasPII],
       enableUserAccounts: [this.generalSettings?.enableUserAccounts],
+
+      toBlockDetailsAttributes: this.fb.group({
+        title: [this.generalSettings.toBlockDetailsAttributes?.title],
+        image: [this.generalSettings.toBlockDetailsAttributes?.image],
+        fields: [this.generalSettings.toBlockDetailsAttributes?.fields || []],
+      }),
     });
+
     this.showPIIDetails = this.basicSettingsForm.get("hasPII").value;
     this.fetchAnonymizationTableData();
     this.initToStringAttributesOptions();
+    this.initToBlockAttributes();
     this.initColorMode();
 
     this.basicSettingsForm.valueChanges.subscribe((value) => {
@@ -139,6 +164,31 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.showPIIDetails = event.checked;
     this.basicSettingsForm.get("hasPII").setValue(this.showPIIDetails);
     this.fetchAnonymizationTableData();
+  }
+
+  private initToBlockAttributes() {
+    // Patch tooltip values after options are initialized for proper display
+    const block = this.generalSettings.toBlockDetailsAttributes || {
+      title: null,
+      image: null,
+      fields: [],
+    };
+
+    this.basicSettingsForm.get("toBlockDetailsAttributes").patchValue({
+      title: block.title ?? null,
+      image: block.image ?? null,
+      fields: block.fields ?? [],
+    });
+
+    // Disable the image form control if no image fields are available
+    const imageControl = this.basicSettingsForm.get(
+      "toBlockDetailsAttributes.image",
+    );
+    if (this.hasImageFields) {
+      imageControl?.enable();
+    } else {
+      imageControl?.disable();
+    }
   }
 
   changeFieldAnonymization(
@@ -185,6 +235,17 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       ...unselectedOptions,
     ];
   }
+
+  // Filter functions for app-entity-field-select
+  hideNonTextFields = (field: EntitySchemaField): boolean => {
+    // Hide image fields from title and additional selection
+    return field.dataType === "file" || field.dataType === "photo";
+  };
+
+  showOnlyImageFields = (field: EntitySchemaField): boolean => {
+    // Only allow photo fields for image selection
+    return field.dataType !== PhotoDatatype.dataType;
+  };
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.value;

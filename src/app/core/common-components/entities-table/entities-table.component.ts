@@ -75,9 +75,9 @@ import { TableStateUrlService } from "./table-state-url.service";
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
 })
-export class EntitiesTableComponent<T extends Entity>
-  implements AfterContentInit
-{
+export class EntitiesTableComponent<
+  T extends Entity,
+> implements AfterContentInit {
   private entityFormService = inject(EntityFormService);
   private formDialog = inject(FormDialogService);
   private router = inject(Router);

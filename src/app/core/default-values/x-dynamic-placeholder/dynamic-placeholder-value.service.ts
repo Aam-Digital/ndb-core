@@ -24,9 +24,10 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
   private currentUser = inject(CurrentUserSubject);
 
   override async getAdminUI(): Promise<AdminDefaultValueContext> {
-    const component = await import(
-      "./admin-default-value-dynamic/admin-default-value-dynamic.component"
-    ).then((c) => c.AdminDefaultValueDynamicComponent);
+    const component =
+      await import("./admin-default-value-dynamic/admin-default-value-dynamic.component").then(
+        (c) => c.AdminDefaultValueDynamicComponent,
+      );
 
     return {
       mode: this.mode,

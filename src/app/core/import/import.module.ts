@@ -70,22 +70,22 @@ const importComponents: ComponentTuple[] = [
   [
     "DiscreteImportConfig",
     () =>
-      import(
-        "../basic-datatypes/discrete/discrete-import-config/discrete-import-config.component"
-      ).then((c) => c.DiscreteImportConfigComponent),
+      import("../basic-datatypes/discrete/discrete-import-config/discrete-import-config.component").then(
+        (c) => c.DiscreteImportConfigComponent,
+      ),
   ],
   [
     "DateImportConfig",
     () =>
-      import(
-        "../basic-datatypes/date/date-import-config/date-import-config.component"
-      ).then((c) => c.DateImportConfigComponent),
+      import("../basic-datatypes/date/date-import-config/date-import-config.component").then(
+        (c) => c.DateImportConfigComponent,
+      ),
   ],
   [
     "EntityImportConfig",
     () =>
-      import(
-        "../basic-datatypes/entity/entity-import-config/entity-import-config.component"
-      ).then((c) => c.EntityImportConfigComponent),
+      import("../basic-datatypes/entity/entity-import-config/entity-import-config.component").then(
+        (c) => c.EntityImportConfigComponent,
+      ),
   ],
 ];
