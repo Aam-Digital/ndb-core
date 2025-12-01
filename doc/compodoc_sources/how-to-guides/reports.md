@@ -21,7 +21,9 @@ The SQS image is not available as open source and needs a licence. It is pulled 
 ```javascript
 // copy the full Config:CONFIG_ENTITY doc from the database
 // and use the following code to extract the entities as context for Copilot
-entities = Object.entries(x.data).filter(([k, v]) => k.startsWith("entity:")).map(([k, v]) => v);
+entities = Object.entries(x.data)
+  .filter(([k, v]) => k.startsWith("entity:"))
+  .map(([k, v]) => v);
 ```
 
 Use the following prompt sample (for "v1" SQL reports, which have multiple columns as output):
@@ -37,7 +39,7 @@ For some queries there are example snippets available: https://docs.google.com/d
 
 
 Write a native SQL query (SQLite), no Angular or Typescript code.
-Output both a formatted SQL and also as a 
+Output both a formatted SQL and also as a
 single line for easier copying (using single instead of double quotes; no semicolon at end).
 
 The query should output the following:
@@ -46,7 +48,6 @@ All equipments with the following columns:
 - Description of Item
 - Specifications
 ```
-
 
 ## Deployment
 
