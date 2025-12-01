@@ -11,6 +11,7 @@ import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-ic
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 
 describe("AdminEntityGeneralSettingsComponent", () => {
   let component: AdminEntityGeneralSettingsComponent;
@@ -47,6 +48,7 @@ describe("AdminEntityGeneralSettingsComponent", () => {
           provide: EntityMapperService,
           useValue: jasmine.createSpyObj(["load"]),
         },
+        EntityRegistry,
       ],
     }).compileComponents();
   });
