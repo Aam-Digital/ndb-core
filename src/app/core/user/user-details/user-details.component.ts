@@ -29,13 +29,12 @@ import { AlertService } from "../../alerts/alert.service";
 import { Entity } from "../../entity/model/entity";
 
 export interface UserDetailsDialogData {
-  userAccount?: UserAccount | null;
-  entity?: Entity | null;
-  showPasswordChange?: boolean;
-  disabled?: boolean;
-  editing?: boolean;
-  userIsPermitted?: boolean;
-  isInDialog?: boolean;
+  userAccount: UserAccount | null;
+  showPasswordChange: boolean;
+  disabled: boolean;
+  editing: boolean;
+  userIsPermitted: boolean;
+  isInDialog: boolean;
 }
 
 export interface UserDetailsAction {

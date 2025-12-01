@@ -60,7 +60,6 @@ export class AdminUserListComponent implements OnInit {
 
     const dialogData: UserDetailsDialogData = {
       userAccount: user,
-      entity: null,
       showPasswordChange: false,
       disabled: false,
       editing: true,
