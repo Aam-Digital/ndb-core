@@ -394,20 +394,7 @@ export class Entity {
    * Override this method as needed.
    */
   public getColor(): string {
-    const color = Entity.getColorWithConditions(this);
-    if (color) {
-      return color;
-    } else {
-      return getWarningLevelColor(this.getWarningLevel());
-    }
-  }
-
-  /**
-   * Override getWarningLevel() to define when the entity is in a critical condition and should be color-coded
-   * and highlighted in generic components of the UI.
-   */
-  public getWarningLevel(): WarningLevel {
-    return WarningLevel.NONE;
+    return Entity.getColorWithConditions(this);
   }
 
   /**
@@ -463,6 +450,14 @@ export class Entity {
 
     // Default fallback
     return getWarningLevelColor(entity.getWarningLevel());
+  }
+
+  /**
+   * Override getWarningLevel() to define when the entity is in a critical condition and should be color-coded
+   * and highlighted in generic components of the UI.
+   */
+  public getWarningLevel(): WarningLevel {
+    return WarningLevel.NONE;
   }
 
   /**
