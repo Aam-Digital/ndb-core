@@ -79,7 +79,7 @@ describe("ConditionsEditorComponent", () => {
 
     component.onConditionFieldChange(0, "name");
 
-    expect(component.conditionsArray()[0]).toEqual({ name: "" });
+    expect(component.conditionsArray()[0]).toEqual({ name: null });
     expect(mockEntitySchemaService.getComponent).toHaveBeenCalledWith(
       fieldConfig,
       "edit",

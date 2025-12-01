@@ -23,7 +23,6 @@
         <app-conditional-color-section
           [section]="section"
           [entityConstructor]="entityConstructor"
-          [colorFieldOptions]="colorFieldOptions"
           (colorChange)="updateConditionalSectionColor($index, $event)"
           (deleteSection)="deleteConditionalColorSection($index)"
           (conditionChange)="onConditionChange()"

@@ -3,9 +3,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ColorMapping, EntityConstructor } from "app/core/entity/model/entity";
-import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ColorInputComponent } from "app/color-input/color-input.component";
-import { ConditionsEditorComponent } from "../conditions-editor/conditions-editor.component";
+import { ConditionsEditorComponent } from "app/core/common-components/conditions-editor/conditions-editor.component";
 
 /**
  * Component for managing a single conditional color section
@@ -25,7 +24,6 @@ import { ConditionsEditorComponent } from "../conditions-editor/conditions-edito
 export class ConditionalColorSectionComponent {
   @Input() section: ColorMapping;
   @Input() entityConstructor: EntityConstructor;
-  @Input() colorFieldOptions: SimpleDropdownValue[] = [];
 
   @Output() colorChange = new EventEmitter<string>();
   @Output() deleteSection = new EventEmitter<void>();

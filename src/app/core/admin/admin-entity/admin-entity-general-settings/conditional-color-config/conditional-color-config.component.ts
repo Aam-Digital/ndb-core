@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 import {
   MatFormFieldModule,
   MatFormFieldControl,
@@ -8,7 +8,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { ColorMapping, EntityConstructor } from "app/core/entity/model/entity";
-import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ColorInputComponent } from "app/color-input/color-input.component";
 import { ConditionalColorSectionComponent } from "./conditional-color-section/conditional-color-section.component";
 
@@ -36,13 +35,10 @@ import { ConditionalColorSectionComponent } from "./conditional-color-section/co
 })
 export class ConditionalColorConfigComponent
   extends CustomFormControlDirective<string | ColorMapping[]>
-  implements OnInit
 {
   @Input() entityConstructor: EntityConstructor;
   @Input() isConditionalMode: boolean = false;
   @Output() isConditionalModeChange = new EventEmitter<boolean>();
-
-  colorFieldOptions: SimpleDropdownValue[] = [];
 
   // Cached values to avoid recalculating in template
   get staticColor(): string {
@@ -121,12 +117,6 @@ export class ConditionalColorConfigComponent
    */
   onConditionChange(): void {
     this.updateValue();
-  }
-
-  ngOnInit(): void {
-    this.colorFieldOptions = Array.from(this.entityConstructor.schema.entries())
-      .filter(([_, field]) => field.label)
-      .map(([key, field]) => ({ value: key, label: field.label }));
   }
 
   /**

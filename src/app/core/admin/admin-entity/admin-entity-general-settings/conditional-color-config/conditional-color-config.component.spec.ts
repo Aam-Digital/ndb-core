@@ -23,10 +23,6 @@ describe("ConditionalColorConfigComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should initialize field options from entity schema", () => {
-    expect(component.colorFieldOptions.length).toBeGreaterThanOrEqual(0);
-  });
-
   it("should detect selected field from existing value", () => {
     const testMappings: ColorMapping[] = [
       { condition: { $or: [{ status: "active" }] }, color: "#00FF00" },

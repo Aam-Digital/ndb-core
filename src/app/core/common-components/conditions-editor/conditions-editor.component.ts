@@ -10,17 +10,16 @@ import {
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { EntityConstructor } from "app/core/entity/model/entity";
-import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { DynamicEditComponent } from "app/core/entity/entity-field-edit/dynamic-edit/dynamic-edit.component";
 import { MatDialog } from "@angular/material/dialog";
 import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
+import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 
 /**
  * Reusable component for editing conditions (field-value pairs) with JSON support
@@ -32,17 +31,16 @@ import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-edito
   imports: [
     MatButtonModule,
     MatFormFieldModule,
-    MatSelectModule,
     MatTooltipModule,
     FontAwesomeModule,
     DynamicEditComponent,
     ReactiveFormsModule,
+    EntityFieldSelectComponent,
   ],
 })
 export class ConditionsEditorComponent implements OnInit {
   @Input() conditions: any = { $or: [] };
   @Input() entityConstructor: EntityConstructor;
-  @Input() fieldOptions: SimpleDropdownValue[] = [];
 
   @Output() conditionsChange = new EventEmitter<any>();
 
@@ -102,17 +100,20 @@ export class ConditionsEditorComponent implements OnInit {
   /**
    * Handle condition field change
    */
-  onConditionFieldChange(conditionIndex: number, fieldKey: string): void {
+  onConditionFieldChange(conditionIndex: number, fieldKey: string | string[]): void {
     const conditions = this.conditionsArray();
     if (conditionIndex < 0 || conditionIndex >= conditions.length) return;
+
+    const actualFieldKey = Array.isArray(fieldKey) ? fieldKey[0] : fieldKey;
+    if (!actualFieldKey) return;
 
     const condition = conditions[conditionIndex];
 
     Object.keys(condition).forEach((key) => delete condition[key]);
-    condition[fieldKey] = "";
+    condition[actualFieldKey] = null;
     this.conditionsSignal.set({ ...this.conditions });
 
-    this.createFormConfigForCondition(conditionIndex, fieldKey);
+    this.createFormConfigForCondition(conditionIndex, actualFieldKey);
     this.conditionsChange.emit(this.conditions);
   }
 

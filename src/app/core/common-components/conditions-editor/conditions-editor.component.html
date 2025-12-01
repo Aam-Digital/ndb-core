@@ -8,18 +8,11 @@
       <div class="condition-item flex-row flex-wrap gap-regular align-center">
         <mat-form-field class="field-selector">
           <mat-label i18n>Field</mat-label>
-          <mat-select
+          <app-entity-field-select
+            [entityType]="entityConstructor"
             [value]="getConditionField(condition)"
-            (selectionChange)="
-              onConditionFieldChange(conditionId, $event.value)
-            "
-          >
-            @for (option of fieldOptions; track option.value) {
-              <mat-option [value]="option.value">
-                {{ option.label }}
-              </mat-option>
-            }
-          </mat-select>
+            (valueChange)="onConditionFieldChange(conditionId, $event)"
+          ></app-entity-field-select>
         </mat-form-field>
 
         @if (
