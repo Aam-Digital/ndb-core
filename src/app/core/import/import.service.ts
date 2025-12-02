@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 import { ImportMetadata, ImportSettings } from "./import-metadata";
@@ -95,7 +95,7 @@ export class ImportService {
     const entityConstructor = this.entityTypes.get(importSettings.entityType);
 
     const mappedEntities: Entity[] = [];
-    const importProcessingContext = new ImportProcessingContext();
+    const importProcessingContext = new ImportProcessingContext(importSettings);
     for (const row of rawData) {
       importProcessingContext.row = row;
       importProcessingContext.rowIndex++;
