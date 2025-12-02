@@ -28,9 +28,9 @@ export class AutomatedStatusUpdateConfigService {
   private configService = inject(ConfigService);
 
   /**
-   * Track processed entities to prevent duplicate automated status updates
+   * Track processed entity revisions to prevent duplicate automated status updates within the same save operation
    */
-  private readonly processedEntities = new Set<string>();
+  private processedRevisions = new Set<string>();
 
   /**
    * List of entities impacted by automated status updates.
@@ -145,12 +145,12 @@ export class AutomatedStatusUpdateConfigService {
     entity: Entity,
     entityBeforeChanges: Entity,
   ): Promise<void> {
-    // skip if already processed this entity
-    const entityKey = `${entity.getId()}`;
-    if (this.processedEntities.has(entityKey)) {
+    // skip if already processed this specific entity revision
+    const entityKey = `${entity.getId()}-${entity._rev}`;
+    if (this.processedRevisions.has(entityKey)) {
       return;
     }
-    this.processedEntities.add(entityKey);
+    this.processedRevisions.add(entityKey);
 
     const affectedEntities: AffectedEntity[] = [];
     const changedFields = this.getChangedFields(entity, entityBeforeChanges);
