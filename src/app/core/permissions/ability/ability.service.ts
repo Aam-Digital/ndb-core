@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
@@ -125,7 +125,8 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
       const value = get(dynamicPlaceholders, name);
 
       if (typeof value === "undefined") {
-        throw new ReferenceError(`Variable ${name} is not defined`);
+        Logging.debug("[AbilityService] Variable not defined:", name);
+        return null;
       }
 
       return value;
