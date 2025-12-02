@@ -30,7 +30,7 @@ export class AutomatedStatusUpdateConfigService {
   /**
    * Track processed entity revisions to prevent duplicate automated status updates within the same save operation
    */
-  private processedRevisions = new Set<string>();
+  private readonly processedRevisions = new Set<string>();
 
   /**
    * List of entities impacted by automated status updates.
