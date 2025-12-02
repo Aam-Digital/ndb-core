@@ -47,9 +47,9 @@ import { ConfirmationDialogService } from "../../confirmation-dialog/confirmatio
     EntityFieldEditComponent,
   ],
 })
-export class EntityFormComponent<T extends Entity = Entity>
-  implements OnChanges
-{
+export class EntityFormComponent<
+  T extends Entity = Entity,
+> implements OnChanges {
   private entityMapper = inject(EntityMapperService);
   private confirmationDialog = inject(ConfirmationDialogService);
   private ability = inject(EntityAbility);
