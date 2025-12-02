@@ -99,9 +99,6 @@ test("Configure automated status update and verify UI", async ({ page }) => {
   await page.getByText("Details View & Fields").click();
   await page.waitForLoadState("networkidle");
 
-  // Take screenshot showing the admin interface
-  await argosScreenshot(page, "admin-fields-configuration");
-
   // Look for the Name field specifically
   const nameTextbox = page.locator("mat-form-field").getByText("Name");
   await expect(nameTextbox).toBeVisible();
@@ -119,24 +116,20 @@ test("Configure automated status update and verify UI", async ({ page }) => {
 
   const dialog = page.locator("mat-dialog-container");
   await expect(dialog).toBeVisible();
-  await argosScreenshot(page, "admin-field-edit-dialog");
 
   // Navigate to Advanced Options tab
   await dialog
     .getByRole("tab", { name: "Advanced Options & Validation" })
     .click();
-  await argosScreenshot(page, "admin-advanced-options");
 
   // Look for default value configuration
   const defaultValueSection = dialog.locator("app-admin-default-value");
   await expect(defaultValueSection).toBeVisible();
-  await argosScreenshot(page, "admin-default-value-options");
 
   const automatedModeSection = defaultValueSection.locator(
     "mat-button-toggle-group",
   );
   await expect(automatedModeSection).toBeVisible();
-  await argosScreenshot(page, "admin-default-value-modes-three-options");
 
   // Click the automated rule option (
   const automatedRuleToggle = automatedModeSection
@@ -145,12 +138,9 @@ test("Configure automated status update and verify UI", async ({ page }) => {
   await expect(automatedRuleToggle).toBeVisible();
   await automatedRuleToggle.click();
 
-  await argosScreenshot(page, "admin-automated-rule-mode-selected");
-
   // Look for entity dropdown that should appear after selecting automated rule
   const entityDropdown = dialog.locator("mat-select").first();
   await expect(entityDropdown).toBeVisible();
-  await argosScreenshot(page, "entity-dropdown-visible");
 
   // Click the dropdown to see entity options
   await entityDropdown.click();
@@ -162,19 +152,15 @@ test("Configure automated status update and verify UI", async ({ page }) => {
     .getByText("Note", { exact: false });
   await expect(noteOption).toBeVisible();
   await noteOption.click();
-  await argosScreenshot(page, "note-entity-selected");
 
   // Check if automation configuration dialog appears
   const automationDialog = page.locator("mat-dialog-container").nth(1);
-  await argosScreenshot(page, "automation-rule-config-dialog");
 
   // Look for automation trigger field dropdown (should be the second dropdown)
   const triggerFieldDropdown = automationDialog.locator("mat-select").nth(1);
-  await argosScreenshot(page, "trigger-field-dropdown-visible");
 
   // Click the trigger field dropdown (2nd dropdown)
   await triggerFieldDropdown.click();
-  await argosScreenshot(page, "trigger-field-options");
 
   // Look for "status" option with different variations
   const statusOption = page
@@ -185,8 +171,6 @@ test("Configure automated status update and verify UI", async ({ page }) => {
     .first();
 
   await statusOption.click();
-  await argosScreenshot(page, "status-field-selected");
-  await argosScreenshot(page, "automation-mapping-fields-visible");
 
   // Fill in the name mappings for each status value
   const mappingSection = automationDialog.locator(".mapping-grid");
@@ -219,17 +203,13 @@ test("Configure automated status update and verify UI", async ({ page }) => {
   await argosScreenshot(page, "automation-rule-saved");
 
   // Now back in the main field configuration dialog, click Apply button
-  await argosScreenshot(page, "back-to-field-config-dialog");
   await page.getByRole("button", { name: "Apply" }).first().click();
 
   await page.waitForTimeout(1000);
-  await argosScreenshot(page, "field-config-applied");
 
   // Save the overall configuration changes
   await page.getByRole("button", { name: "Save" }).first().click();
   await expect(page.getByText("Configuration updated")).toBeVisible();
-
-  await argosScreenshot(page, "admin-configuration-complete");
 });
 
 /*
