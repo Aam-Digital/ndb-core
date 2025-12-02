@@ -146,6 +146,7 @@ export class AutomatedStatusUpdateConfigService {
     entityBeforeChanges: Entity,
   ): Promise<void> {
     // skip if already processed this specific entity revision
+    // Note views can otherwise open multiple overlapping dialogs (because the note-details component contains three components, all sharing the same form instance)
     const entityKey = `${entity.getId()}-${entity._rev}`;
     if (this.processedRevisions.has(entityKey)) {
       return;
