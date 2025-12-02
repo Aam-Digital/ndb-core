@@ -210,7 +210,8 @@ export class UserDetailsComponent {
 
     effect(() => {
       const user = this.currentUserAccount();
-      if (user) {
+      const roles = this.availableRoles();
+      if (user && roles.length > 0) {
         this.updateFormFromUser(user);
       }
     });
@@ -229,9 +230,9 @@ export class UserDetailsComponent {
     this.form.patchValue(
       {
         email: user.email,
-        roles: (user.roles ?? []).map((role) =>
-          this.availableRoles().find((r) => r.id === role.id),
-        ),
+        roles: (user.roles ?? [])
+          .map((role) => this.availableRoles().find((r) => r.id === role.id))
+          .filter((role): role is Role => role !== undefined), // Filter out undefined roles
       },
       { emitEvent: false },
     );

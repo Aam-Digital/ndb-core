@@ -72,9 +72,7 @@
         }
         @if (
           (editing() || dialogData?.editing) &&
-          (isInDialog() ||
-            dialogData?.isInDialog ||
-            currentUserAccount()?.enabled)
+          (isInDialog() || currentUserAccount()?.enabled)
         ) {
           <button
             mat-raised-button

@@ -4,11 +4,7 @@
   This page displays all user accounts registered in Keycloak for this realm.
 </p>
 
-<table
-  mat-table
-  [dataSource]="users()"
-  class="mat-elevation-z2 full-width-table"
->
+<table mat-table [dataSource]="users()" class="mat-elevation-z2 full-width">
   <ng-container matColumnDef="email">
     <th mat-header-cell *matHeaderCellDef i18n>Email</th>
     <td mat-cell *matCellDef="let user">{{ user.email || "-" }}</td>

@@ -69,26 +69,24 @@ export class AdminUserListComponent implements OnInit {
       data: dialogData,
     });
 
-    dialogRef.componentInstance.action
-      .pipe(takeUntil(dialogRef.afterClosed()))
-      .subscribe(
-        (action: UserDetailsAction) => {
-          switch (action.type) {
-            case "accountUpdated": {
-              const updatedUsers = this.users().map((u) =>
-                u.id === action.data.user.id ? action.data.user : u,
-              );
-              this.users.set(updatedUsers);
-              dialogRef.close();
-              break;
-            }
-            case "closeDialog":
-            case "formCancel":
-              dialogRef.close();
-              break;
+    dialogRef.componentInstance.action.subscribe(
+      (action: UserDetailsAction) => {
+        switch (action.type) {
+          case "accountUpdated": {
+            const updatedUsers = this.users().map((u) =>
+              u.id === action.data.user.id ? action.data.user : u,
+            );
+            this.users.set(updatedUsers);
+            dialogRef.close();
+            break;
           }
-        },
-      );
+          case "closeDialog":
+          case "formCancel":
+            dialogRef.close();
+            break;
+        }
+      },
+    );
 
     dialogRef.afterClosed().subscribe(() => {
       this.loadUsers();
