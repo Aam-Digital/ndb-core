@@ -72,21 +72,18 @@ export class EntityDatatype extends StringDatatype {
 
     await this.loadImportMapEntities(schemaField.additional, context);
 
-    // if not filtered yet, apply all conditions
-    if (context.filteredEntities.length > 1) {
-      // find all columns that map to this schemaField from importProcessingContext
-      // and filter entities accordingly (for all conditions)
-      for (const colMapping of importProcessingContext.importSettings.columnMapping.filter(
-        (m) => m.propertyName === schemaField.id,
-      )) {
-        const colValue = importProcessingContext.row[colMapping.column];
+    // find all columns that map to this schemaField from importProcessingContext
+    // and filter entities accordingly (for all conditions)
+    for (const colMapping of importProcessingContext.importSettings.columnMapping.filter(
+      (m) => m.propertyName === schemaField.id,
+    )) {
+      const colValue = importProcessingContext.row[colMapping.column];
 
-        context.filteredEntities = context.filteredEntities.filter(
-          (entity) =>
-            normalizeValue(entity[colMapping.additional]) ===
-            normalizeValue(colValue),
-        );
-      }
+      context.filteredEntities = context.filteredEntities.filter(
+        (entity) =>
+          normalizeValue(entity[colMapping.additional]) ===
+          normalizeValue(colValue),
+      );
     }
 
     if (context.filteredEntities.length === 1) {
