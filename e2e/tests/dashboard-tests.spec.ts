@@ -1,6 +1,12 @@
 import { range } from "lodash-es";
 
-import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
+import {
+  argosScreenshot,
+  expect,
+  loadApp,
+  test,
+  waitForDashboardWidgetsToLoad,
+} from "#e2e/fixtures.js";
 
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
@@ -49,6 +55,10 @@ test("Dashboard widgets and actions", async ({ page }) => {
   await expect(
     page.getByText("5 Children having no recent reports"),
   ).toBeVisible();
+
+  // Wait for all dashboard widgets to finish loading before taking screenshot
+  await waitForDashboardWidgetsToLoad(page);
+
   await argosScreenshot(page, "dashboard");
 
   await page.getByText("Record attendance").click();
