@@ -27,14 +27,22 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { AlertService } from "../../alerts/alert.service";
 import { Entity } from "../../entity/model/entity";
+import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
+import { SessionSubject } from "../../session/auth/session-info";
+import { CurrentUserSubject } from "../../session/current-user-subject";
+import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
+import { AsyncPipe } from "@angular/common";
+import { Angulartics2Module } from "angulartics2";
+import { environment } from "../../../../environments/environment";
+import { SessionType } from "../../session/session-type";
+
+export type UserDetailsMode = "profile" | "entity" | "dialog";
 
 export interface UserDetailsDialogData {
   userAccount: UserAccount | null;
-  showPasswordChange: boolean;
-  disabled: boolean;
+  mode: UserDetailsMode;
   editing: boolean;
   userIsPermitted: boolean;
-  isInDialog: boolean;
 }
 
 export interface UserDetailsAction {
@@ -65,6 +73,9 @@ export interface UserDetailsAction {
     MatButtonModule,
     MatDialogModule,
     DialogCloseComponent,
+    Angulartics2Module,
+    EntityBlockComponent,
+    AsyncPipe,
   ],
 })
 export class UserDetailsComponent {
@@ -72,6 +83,9 @@ export class UserDetailsComponent {
   private userAdminService = inject(UserAdminService);
   private alertService = inject(AlertService);
   private _dialogData = inject(MAT_DIALOG_DATA, { optional: true });
+  private authService = inject(KeycloakAuthService, { optional: true });
+  protected sessionInfo = inject(SessionSubject, { optional: true });
+  protected currentUser = inject(CurrentUserSubject, { optional: true });
 
   get dialogData() {
     return this._dialogData;
@@ -79,15 +93,66 @@ export class UserDetailsComponent {
 
   userAccount = input<UserAccount | null>();
   entity = input<Entity | null>();
-  showPasswordChange = input<boolean>(false);
-  disabled = input<boolean>(false);
+  mode = input<UserDetailsMode>("entity");
   editing = input<boolean>(false);
   userIsPermitted = input<boolean>(false);
-  isInDialog = input<boolean>(false);
 
-  currentUserAccount = computed(
-    () => this.userAccount() ?? this._dialogData?.userAccount ?? null,
+  disabled = computed(() => !this.editing());
+
+  userIsPermittedComputed = computed(
+    () =>
+      this.userIsPermitted() ||
+      this._dialogData?.userIsPermitted ||
+      this.mode() === "profile",
   );
+
+  isInDialog = computed(
+    () =>
+      this.mode() === "dialog" ||
+      this._dialogData?.mode === "dialog" ||
+      !!this._dialogData,
+  );
+
+  showUsername = computed(() => this.mode() === "profile" || this.isInDialog());
+
+  showPasswordChange = computed(() => this.mode() === "profile");
+
+  showEntityProfile = computed(() => this.mode() === "profile");
+
+  passwordChangeDisabled = computed(() => {
+    if (this.mode() !== "profile") return false;
+
+    if (environment.session_type !== SessionType.synced) {
+      return true; // Disabled in demo mode
+    }
+    if (typeof navigator !== "undefined" && !navigator.onLine) {
+      return true; // Disabled when offline
+    }
+    return false;
+  });
+
+  currentUserAccount = computed(() => {
+    // If userAccount is provided directly, use it
+    const directUser = this.userAccount() ?? this._dialogData?.userAccount;
+    if (directUser) {
+      return directUser;
+    }
+
+    const isProfileMode = this.showUsername();
+    if (isProfileMode && this.sessionInfo?.value) {
+      return {
+        email: this.sessionInfo.value.email,
+        enabled: true,
+        roles:
+          this.sessionInfo.value.roles?.map((role) => ({
+            id: role,
+            name: role,
+          })) || [],
+      } as UserAccount;
+    }
+
+    return null;
+  });
   currentEntity = computed(
     () => this.entity() ?? this._dialogData?.entity ?? null,
   );
@@ -101,7 +166,22 @@ export class UserDetailsComponent {
   constructor() {
     this.form = this.fb.group({
       email: ["", [Validators.required, Validators.email]],
-      roles: new FormControl<Role[]>([], Validators.required),
+      roles: new FormControl<Role[]>([]),
+    });
+
+    // Add roles validation only when not in profile mode
+    effect(() => {
+      const isProfileMode =
+        this.showUsername() || this._dialogData?.mode === "profile";
+      const rolesControl = this.form.get("roles");
+      if (rolesControl) {
+        if (isProfileMode) {
+          rolesControl.clearValidators();
+        } else {
+          rolesControl.setValidators([Validators.required]);
+        }
+        rolesControl.updateValueAndValidity();
+      }
     });
 
     this.userAdminService
@@ -288,5 +368,11 @@ export class UserDetailsComponent {
 
   onCloseDialog() {
     this.action.emit({ type: "closeDialog" });
+  }
+
+  onChangePassword() {
+    if (this.authService) {
+      this.authService.changePassword();
+    }
   }
 }

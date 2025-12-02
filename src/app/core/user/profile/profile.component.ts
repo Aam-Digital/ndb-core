@@ -15,25 +15,12 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  inject,
-} from "@angular/core";
-import { environment } from "../../../../environments/environment";
-import { SessionType } from "../../session/session-type";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { MatTabsModule } from "@angular/material/tabs";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatInputModule } from "@angular/material/input";
-import { AccountPageComponent } from "../account-page/account-page.component";
-import { CurrentUserSubject } from "../../session/current-user-subject";
-import { AsyncPipe } from "@angular/common";
-import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
-import { SessionSubject } from "../../session/auth/session-info";
 import { NotificationSettingsComponent } from "../../../features/notification/notification-settings/notification-settings.component";
+import { UserDetailsComponent } from "../user-details/user-details.component";
 
 /**
  * User profile page that allows the user to view and edit their own account information.
@@ -47,35 +34,9 @@ import { NotificationSettingsComponent } from "../../../features/notification/no
   imports: [
     MatTabsModule,
     TabStateModule,
-    MatFormFieldModule,
     MatTooltipModule,
-    MatInputModule,
-    AccountPageComponent,
-    AsyncPipe,
-    EntityBlockComponent,
+    UserDetailsComponent,
     NotificationSettingsComponent,
   ],
 })
-export class ProfileComponent implements OnInit {
-  protected currentUser = inject(CurrentUserSubject);
-  protected sessionInfo = inject(SessionSubject);
-
-  passwordChangeDisabled = false;
-  tooltipText: string;
-
-  ngOnInit() {
-    this.checkIfPasswordChangeAllowed();
-  }
-
-  checkIfPasswordChangeAllowed() {
-    this.passwordChangeDisabled = false;
-    this.tooltipText = "";
-
-    if (environment.session_type !== SessionType.synced) {
-      this.passwordChangeDisabled = true;
-      this.tooltipText = $localize`:Password reset disabled tooltip:Password change is not allowed in demo mode.`;
-    } else if (!navigator.onLine) {
-      this.tooltipText = $localize`:Password reset disabled tooltip:Password change is not possible while being offline.`;
-    }
-  }
-}
+export class ProfileComponent {}

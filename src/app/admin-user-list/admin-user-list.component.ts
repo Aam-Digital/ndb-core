@@ -60,11 +60,9 @@ export class AdminUserListComponent implements OnInit {
 
     const dialogData: UserDetailsDialogData = {
       userAccount: user,
-      showPasswordChange: false,
-      disabled: false,
+      mode: "dialog",
       editing: true,
       userIsPermitted,
-      isInDialog: true,
     };
 
     const dialogRef = this.dialog.open(UserDetailsComponent, {

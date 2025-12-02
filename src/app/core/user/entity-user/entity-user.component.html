@@ -1,10 +1,8 @@
 <app-user-details
   [userAccount]="user()"
   [entity]="getEntity()"
-  [showPasswordChange]="false"
-  [disabled]="!editing()"
+  [mode]="isInDialog() ? 'dialog' : 'entity'"
   [editing]="editing()"
   [userIsPermitted]="userIsPermitted()"
-  [isInDialog]="isInDialog()"
   (action)="onUserDetailsAction($event)"
 ></app-user-details>
