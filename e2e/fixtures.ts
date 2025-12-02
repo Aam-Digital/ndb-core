@@ -66,6 +66,20 @@ export async function argosScreenshot(
   if (process.env.CI || process.env.SCREENSHOT) {
     await argosScreenshotBase(page, name, {
       fullPage: true,
+      // Custom path builder that removes retry suffixes (retry1, retry2, etc.)
+      // to ensure retries are compared against the same baseline
+      pathBuilder: ({
+        testInfo,
+        baseName,
+      }: {
+        testInfo: unknown;
+        baseName: string;
+      }) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+        const outputDir: string = (testInfo as any).outputDir;
+        const normalizedOutputDir = outputDir.replace(/-retry\d+$/, "");
+        return `${normalizedOutputDir}/argos/${baseName}.png`;
+      },
       ...(options || {}),
     });
   }
