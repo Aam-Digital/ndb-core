@@ -56,17 +56,10 @@ export class EntityUserComponent implements OnInit {
   isInDialog = signal<boolean>(false);
   formMode = signal<"create" | "edit" | "view">("create");
 
-  // Handle all actions from UserDetailsComponent
   onUserDetailsAction(action: UserDetailsAction) {
     switch (action.type) {
       case "formCancel":
         this.onFormCancel();
-        break;
-      case "editRequested":
-        this.editForm();
-        break;
-      case "closeDialog":
-        this.closeDialog();
         break;
       case "accountCreated":
         this.user.set(action.data);

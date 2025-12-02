@@ -39,7 +39,7 @@ describe("AdminUserListComponent", () => {
     },
     {
       id: "user3",
-      userEntityId: undefined, // User without entity ID
+      userEntityId: undefined,
       email: "user3@example.com",
       enabled: true,
       emailVerified: true,
@@ -51,12 +51,12 @@ describe("AdminUserListComponent", () => {
     {
       id: "user1",
       userEntityId: "User:user1",
-      email: "updated@example.com", // Updated email
+      email: "updated@example.com",
       enabled: true,
       emailVerified: true,
       roles: [
         { id: "role1", name: "user_app" },
-        { id: "role3", name: "account_manager" }, // Added role
+        { id: "role3", name: "account_manager" },
       ],
     },
     {
@@ -78,7 +78,6 @@ describe("AdminUserListComponent", () => {
   ];
 
   beforeEach(async () => {
-    // Create mock component instance with action output
     const mockComponentInstance = {
       action: {
         subscribe: jasmine.createSpy("subscribe"),
