@@ -258,7 +258,9 @@ export class UserDetailsComponent {
   private createAccount(formData: Partial<UserAccount>) {
     const entity = this.currentEntity();
     if (!entity) {
-      this.alertService.addDanger("No entity available for user creation");
+      this.alertService.addDanger(
+        $localize`:Error message:No entity available for user creation`,
+      );
       return;
     }
 
@@ -285,7 +287,9 @@ export class UserDetailsComponent {
         },
         error: (err) => {
           this.alertService.addDanger(
-            err?.error?.message || err?.message || "Failed to create account",
+            err?.error?.message ||
+              err?.message ||
+              $localize`:Error message:Failed to create account`,
           );
         },
       });
@@ -339,7 +343,7 @@ export class UserDetailsComponent {
         this.alertService.addDanger(
           error?.error?.message ||
             error?.message ||
-            "Failed to update user account",
+            $localize`:Error message:Failed to update user account`,
         );
       },
     });
