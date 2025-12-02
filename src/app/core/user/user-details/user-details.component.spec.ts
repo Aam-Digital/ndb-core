@@ -1,10 +1,23 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { UserDetailsComponent } from "./user-details.component";
 import { Role, UserAccount } from "../user-admin-service/user-account";
+import { UserAdminService } from "../user-admin-service/user-admin.service";
+import { AlertService } from "../../alerts/alert.service";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
+import { SessionSubject } from "../../session/auth/session-info";
+import { CurrentUserSubject } from "../../session/current-user-subject";
+import { of } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 
 describe("UserDetailsComponent", () => {
   let component: UserDetailsComponent;
   let fixture: ComponentFixture<UserDetailsComponent>;
+  let mockUserAdminService: jasmine.SpyObj<UserAdminService>;
+  let mockAlertService: jasmine.SpyObj<AlertService>;
+  let mockKeycloakService: jasmine.SpyObj<KeycloakAuthService>;
+  let mockSessionSubject: BehaviorSubject<any>;
+  let mockCurrentUserSubject: BehaviorSubject<any>;
 
   const mockRole: Role = {
     id: "test-role",
@@ -14,7 +27,6 @@ describe("UserDetailsComponent", () => {
 
   const mockUserAccount: UserAccount = {
     id: "test-user-id",
-    userEntityId: "User:test",
     email: "test@example.com",
     roles: [mockRole],
     enabled: true,
@@ -22,8 +34,41 @@ describe("UserDetailsComponent", () => {
   };
 
   beforeEach(async () => {
+    mockUserAdminService = jasmine.createSpyObj("UserAdminService", [
+      "getAllRoles",
+      "createUser",
+      "updateUser",
+    ]);
+    mockUserAdminService.getAllRoles.and.returnValue(of([mockRole]));
+    mockUserAdminService.updateUser.and.returnValue(of({ userUpdated: true }));
+
+    mockAlertService = jasmine.createSpyObj("AlertService", [
+      "addInfo",
+      "addAlert",
+      "addDanger",
+    ]);
+    mockKeycloakService = jasmine.createSpyObj("KeycloakAuthService", [
+      "changePassword",
+    ]);
+
+    mockSessionSubject = new BehaviorSubject({
+      name: "test-user",
+      email: "test@example.com",
+      roles: ["user_app"],
+    });
+
+    mockCurrentUserSubject = new BehaviorSubject(null);
+
     await TestBed.configureTestingModule({
       imports: [UserDetailsComponent],
+      providers: [
+        { provide: UserAdminService, useValue: mockUserAdminService },
+        { provide: AlertService, useValue: mockAlertService },
+        { provide: MAT_DIALOG_DATA, useValue: null },
+        { provide: KeycloakAuthService, useValue: mockKeycloakService },
+        { provide: SessionSubject, useValue: mockSessionSubject },
+        { provide: CurrentUserSubject, useValue: mockCurrentUserSubject },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(UserDetailsComponent);
@@ -43,32 +88,27 @@ describe("UserDetailsComponent", () => {
 
   it("should populate form when userAccount input is set", () => {
     fixture.componentRef.setInput("userAccount", mockUserAccount);
-    fixture.componentRef.setInput("availableRoles", [mockRole]);
     fixture.detectChanges();
 
     expect(component.form.get("email")?.value).toBe(mockUserAccount.email);
-    expect(component.form.get("userEntityId")?.value).toBe(
-      mockUserAccount.userEntityId,
-    );
+    expect(component.form.get("roles")?.value).toEqual(mockUserAccount.roles);
   });
 
   it("should disable form in view mode", () => {
-    fixture.componentRef.setInput("mode", "view");
+    fixture.componentRef.setInput("editing", false);
     fixture.detectChanges();
 
-    expect(component.form.disabled).toBe(true);
+    expect(component.disabled()).toBe(true);
   });
 
   it("should enable form in edit mode", () => {
-    fixture.componentRef.setInput("mode", "edit");
+    fixture.componentRef.setInput("editing", true);
     fixture.detectChanges();
 
-    expect(component.form.get("email")?.disabled).toBe(false);
-    expect(component.form.get("roles")?.disabled).toBe(false);
+    expect(component.disabled()).toBe(false);
   });
 
   it("should trim whitespace from email", () => {
-    fixture.componentRef.setInput("mode", "edit");
     fixture.detectChanges();
 
     component.form.get("email")?.setValue("  test@example.com  ");
@@ -78,7 +118,8 @@ describe("UserDetailsComponent", () => {
   });
 
   it("should validate required email", () => {
-    fixture.componentRef.setInput("mode", "edit");
+    fixture.componentRef.setInput("mode", "entity");
+    fixture.componentRef.setInput("editing", true);
     fixture.detectChanges();
 
     component.form.get("email")?.setValue("");
@@ -86,7 +127,8 @@ describe("UserDetailsComponent", () => {
   });
 
   it("should validate email format", () => {
-    fixture.componentRef.setInput("mode", "edit");
+    fixture.componentRef.setInput("mode", "entity");
+    fixture.componentRef.setInput("editing", true);
     fixture.detectChanges();
 
     component.form.get("email")?.setValue("invalid-email");
@@ -97,15 +139,19 @@ describe("UserDetailsComponent", () => {
   });
 
   it("should emit formSubmit when form is valid", () => {
-    fixture.componentRef.setInput("mode", "edit");
-    fixture.componentRef.setInput("availableRoles", [mockRole]);
+    fixture.componentRef.setInput("mode", "entity");
+    fixture.componentRef.setInput("editing", true);
+    fixture.componentRef.setInput("userAccount", mockUserAccount);
     fixture.detectChanges();
 
-    const submitSpy = jasmine.createSpy("formSubmit");
-    component.formSubmit.subscribe(submitSpy);
+    // Set the available roles manually since it's auto-populated from service
+    component.availableRoles.set([mockRole]);
+
+    const submitSpy = jasmine.createSpy("action");
+    component.action.subscribe(submitSpy);
 
     component.form.patchValue({
-      email: "test@example.com",
+      email: "updated@example.com",
       roles: [mockRole],
     });
 
@@ -113,39 +159,40 @@ describe("UserDetailsComponent", () => {
 
     expect(submitSpy).toHaveBeenCalledWith(
       jasmine.objectContaining({
-        email: "test@example.com",
-        roles: [mockRole],
+        type: "accountUpdated",
+        data: jasmine.anything(),
       }),
     );
   });
 
   it("should not emit formSubmit when form is invalid", () => {
-    fixture.componentRef.setInput("mode", "edit");
+    fixture.componentRef.setInput("mode", "entity");
+    fixture.componentRef.setInput("editing", true);
     fixture.detectChanges();
 
-    const submitSpy = jasmine.createSpy("formSubmit");
-    component.formSubmit.subscribe(submitSpy);
+    const submitSpy = jasmine.createSpy("action");
+    component.action.subscribe(submitSpy);
 
-    component.form.patchValue({ email: "" }); // Invalid: required field empty
+    component.form.patchValue({ email: "" });
     component.onSubmit();
 
     expect(submitSpy).not.toHaveBeenCalled();
   });
 
-  it("should emit formCancel when cancel is called", () => {
-    const cancelSpy = jasmine.createSpy("formCancel");
-    component.formCancel.subscribe(cancelSpy);
+  it("should emit formCancel action when cancel is called", () => {
+    const cancelSpy = jasmine.createSpy("action");
+    component.action.subscribe(cancelSpy);
 
     component.onCancel();
 
-    expect(cancelSpy).toHaveBeenCalled();
+    expect(cancelSpy).toHaveBeenCalledWith({ type: "formCancel" });
   });
 
   it("should set and clear global errors", () => {
-    component.setGlobalError("Test error message");
+    component.form.setErrors({ failed: "Test error message" });
     expect(component.getGlobalError()).toBe("Test error message");
 
-    component.clearErrors();
+    component.form.setErrors(null);
     expect(component.getGlobalError()).toBeNull();
   });
 });

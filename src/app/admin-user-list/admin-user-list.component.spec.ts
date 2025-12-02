@@ -3,18 +3,22 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AdminUserListComponent } from "./admin-user-list.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { UserAdminService } from "../core/user/user-admin-service/user-admin.service";
-import { of } from "rxjs";
+import { BehaviorSubject, of } from "rxjs";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { UserAccount } from "../core/user/user-admin-service/user-account";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { EntityUserComponent } from "../core/user/entity-user/entity-user.component";
-
+import { SessionSubject } from "../core/session/auth/session-info";
+import { SyncStateSubject } from "../core/session/session-type";
+import { CurrentUserSubject } from "../core/session/current-user-subject";
+import { EntityRegistry } from "../core/entity/database-entity.decorator";
 describe("AdminUserListComponent", () => {
   let component: AdminUserListComponent;
   let fixture: ComponentFixture<AdminUserListComponent>;
   let mockUserAdminService: jasmine.SpyObj<UserAdminService>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
   let mockDialogRef: jasmine.SpyObj<MatDialogRef<EntityUserComponent>>;
+  let mockSessionSubject: BehaviorSubject<any>;
 
   const mockUsers: UserAccount[] = [
     {
@@ -74,8 +78,19 @@ describe("AdminUserListComponent", () => {
   ];
 
   beforeEach(async () => {
-    mockDialogRef = jasmine.createSpyObj("MatDialogRef", ["afterClosed"]);
+    // Create mock component instance with action output
+    const mockComponentInstance = {
+      action: {
+        subscribe: jasmine.createSpy("subscribe"),
+      },
+    };
+
+    mockDialogRef = jasmine.createSpyObj("MatDialogRef", [
+      "afterClosed",
+      "close",
+    ]);
     mockDialogRef.afterClosed.and.returnValue(of(true));
+    mockDialogRef.componentInstance = mockComponentInstance as any;
 
     mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
     mockDialog.open.and.returnValue(mockDialogRef);
@@ -84,6 +99,12 @@ describe("AdminUserListComponent", () => {
       "getAllUsers",
     ]);
     mockUserAdminService.getAllUsers.and.returnValue(of(mockUsers));
+
+    mockSessionSubject = new BehaviorSubject({
+      name: "test-user",
+      email: "test@example.com",
+      roles: ["user_app"],
+    });
 
     await TestBed.configureTestingModule({
       imports: [
@@ -94,6 +115,10 @@ describe("AdminUserListComponent", () => {
       providers: [
         { provide: UserAdminService, useValue: mockUserAdminService },
         { provide: MatDialog, useValue: mockDialog },
+        { provide: SessionSubject, useValue: mockSessionSubject },
+        SyncStateSubject,
+        CurrentUserSubject,
+        EntityRegistry,
       ],
     }).compileComponents();
 
@@ -109,12 +134,6 @@ describe("AdminUserListComponent", () => {
   it("should format role names correctly", () => {
     const roleNames = component.getRoleNames(mockUsers[0]);
     expect(roleNames).toBe("user_app");
-  });
-
-  it("should not open dialog when clicking row without userEntityId", () => {
-    component.openUserSecurity(mockUsers[2]);
-
-    expect(mockDialog.open).not.toHaveBeenCalled();
   });
 
   it("should reload users after dialog is closed with result", () => {
