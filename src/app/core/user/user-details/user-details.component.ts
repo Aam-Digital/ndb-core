@@ -80,10 +80,10 @@ export interface UserDetailsAction {
 })
 export class UserDetailsComponent {
   private fb = inject(FormBuilder);
-  private userAdminService = inject(UserAdminService);
-  private alertService = inject(AlertService);
-  private _dialogData = inject(MAT_DIALOG_DATA, { optional: true });
-  private authService = inject(KeycloakAuthService, { optional: true });
+  private readonly userAdminService = inject(UserAdminService);
+  private readonly alertService = inject(AlertService);
+  private readonly _dialogData = inject(MAT_DIALOG_DATA, { optional: true });
+  private readonly authService = inject(KeycloakAuthService, { optional: true });
   protected sessionInfo = inject(SessionSubject, { optional: true });
   protected currentUser = inject(CurrentUserSubject, { optional: true });
 

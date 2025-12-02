@@ -73,8 +73,8 @@ export class AdminUserListComponent implements OnInit {
       (action: UserDetailsAction) => {
         switch (action.type) {
           case "accountUpdated":
-            const updatedUsers = this.users().map((u) =>
-              u.id === action.data.user.id ? action.data.user : u,
+            const updatedUsers = this.users().map((user) =>
+              user.id === action.data.user.id ? action.data.user : user,
             );
             this.users.set(updatedUsers);
             dialogRef.close();

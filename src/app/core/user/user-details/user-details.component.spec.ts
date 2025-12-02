@@ -7,8 +7,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { of } from "rxjs";
-import { BehaviorSubject } from "rxjs";
+import { of, BehaviorSubject } from "rxjs";
 
 describe("UserDetailsComponent", () => {
   let component: UserDetailsComponent;
