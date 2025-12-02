@@ -9,8 +9,11 @@ import { ConfigService } from "../config/config.service";
 import { PrimaryActionConfig } from "../config/primary-action-config";
 import { CommonModule } from "@angular/common";
 import { EntityTypeSelectComponent } from "../entity/entity-type-select/entity-type-select.component";
+import { entityRegistry } from "../entity/database-entity.decorator";
+import { EntityConstructor } from "../entity/model/entity";
 import { MenuItem } from "../ui/navigation/menu-item";
 import { FormsModule } from "@angular/forms";
+import { ViewTitleComponent } from "../common-components/view-title/view-title.component";
 
 @Component({
   selector: "app-primary-action-config-form",
@@ -24,6 +27,7 @@ import { FormsModule } from "@angular/forms";
     MenuItemFormComponent,
     EntityTypeSelectComponent,
     FormsModule,
+    ViewTitleComponent,
   ],
   templateUrl: "./primary-action-config-form.component.html",
   styleUrls: ["./primary-action-config-form.component.scss"],
@@ -59,6 +63,18 @@ export class PrimaryActionConfigFormComponent {
   actionType: "createEntity" | "navigate" = this.currentConfig.actionType;
   entityType: string = this.currentConfig.entityType ?? "Note";
 
+  // Only show user-facing entities that support dialog-based creation
+  entityTypeOptions: EntityConstructor[] = entityRegistry
+    .getEntityTypes(true)
+    .map(({ value }) => value)
+    .filter(
+      (ctor) =>
+        ctor.schema &&
+        ctor.label &&
+        typeof ctor === "function" &&
+        ctor.schema.size > 0,
+    );
+
   get showEntityType(): boolean {
     return this.actionType === "createEntity";
   }
@@ -78,6 +94,9 @@ export class PrimaryActionConfigFormComponent {
     const current = this.configService.exportConfig(true) as any;
     current["primaryAction"] = config;
     this.configService.saveConfig(current);
-    // TODO: Add success message/snackbar
+  }
+
+  cancel(){
+    
   }
 }

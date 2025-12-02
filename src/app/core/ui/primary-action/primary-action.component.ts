@@ -1,7 +1,8 @@
 import { Component, inject } from "@angular/core";
 import { ChangeDetectorRef, OnDestroy } from "@angular/core";
-import { Note } from "../../../child-dev-project/notes/model/note";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
+import { entityRegistry } from "../../entity/database-entity.decorator";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
@@ -9,9 +10,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Router } from "@angular/router";
 import { ConfigService } from "../../config/config.service";
 import { PrimaryActionConfig } from "../../config/primary-action-config";
-import { Todo } from "../../../features/todos/model/todo";
-import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
-import { ActivityAttendance } from "../../../child-dev-project/attendance/model/activity-attendance";
+import { EntityConfigService } from "../../entity/entity-config.service";
+import { Note } from "#src/app/child-dev-project/notes/model/note";
 
 /**
  * The "Primary Action" is always displayed hovering over the rest of the app as a quick action for the user.
@@ -36,6 +36,7 @@ export class PrimaryActionComponent implements OnDestroy {
   }
   private formDialog = inject(FormDialogService);
   private configService = inject(ConfigService);
+  private entityConfigService = inject(EntityConfigService);
   private router = inject(Router);
   private cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
@@ -45,14 +46,21 @@ export class PrimaryActionComponent implements OnDestroy {
     entityType: "Note",
   };
 
-  private entityRegistry: Record<string, any> = {
-    Note,
-    Todo,
-    RecurringActivity,
-    ActivityAttendance,
-  };
-
   config: PrimaryActionConfig = this.defaultConfig;
+
+  // Dynamically get all user-facing entity types that support dialog-based creation
+  get entityTypeOptions(): EntityConstructor[] {
+    return entityRegistry
+      .getEntityTypes(true)
+      .map(({ value }) => value)
+      .filter(
+        (ctor) =>
+          ctor.schema &&
+          ctor.label &&
+          typeof ctor === "function" &&
+          ctor.schema.size > 0,
+      );
+  }
 
   private configSub = this.configService.configUpdates.subscribe(() => {
     this.config =
@@ -61,9 +69,21 @@ export class PrimaryActionComponent implements OnDestroy {
     this.cdr.markForCheck();
   });
 
-  get entityConstructor() {
-    const ctor = this.entityRegistry[this.config.entityType ?? "Note"];
-    return ctor ?? this.entityRegistry["Note"];
+  get entityConstructor(): EntityConstructor {
+    // Use dynamic registry to support all user-facing entities
+    const entityType = this.config.entityType ?? "Note";
+    const ctor = entityRegistry
+      .getEntityTypes(true)
+      .map(({ value }) => value)
+      .find((c) => c.ENTITY_TYPE === entityType);
+    // Fallback to Note if not found
+    return (
+      ctor ??
+      entityRegistry
+        .getEntityTypes(true)
+        .map(({ value }) => value)
+        .find((c) => c.ENTITY_TYPE === "Note")
+    );
   }
 
   /**
@@ -71,14 +91,31 @@ export class PrimaryActionComponent implements OnDestroy {
    */
   primaryAction() {
     if (this.config.actionType === "createEntity") {
-      const ctor = this.entityRegistry[this.config.entityType ?? "Note"];
+      const ctor = this.entityConstructor;
       if (ctor) {
-        this.formDialog.openView(new ctor(), "EntityDetails");
-      } else {
-        this.formDialog.openView(new Note(), "EntityDetails");
+        const newEntity = new ctor();
+        this.openCreateDialog(newEntity);
       }
     } else if (this.config.actionType === "navigate" && this.config.route) {
       this.router.navigate([this.config.route]);
+    }
+  }
+
+  /**
+   * Open the appropriate type of dialog window for a new entity of the given type.
+   */
+  private openCreateDialog(entity: Entity) {
+    // if view config ("view:entityType/:id") is available, then use formDialog.openView
+    if(this.entityConfigService.getDetailsViewConfig(entity.getConstructor())) {
+      if (entity.getType() === Note.ENTITY_TYPE) {
+        // for Note entities, pass a special component
+        this.formDialog.openView(entity, "NoteDetails");
+      } else {
+        this.formDialog.openView(entity, "EntityDetails");
+      }
+    } else {
+      // if no view config, then fall back to formDialog.openFormPopup
+      this.formDialog.openFormPopup(entity);
     }
   }
 }
