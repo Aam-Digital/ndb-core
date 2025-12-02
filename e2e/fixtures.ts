@@ -66,20 +66,6 @@ export async function argosScreenshot(
   if (process.env.CI || process.env.SCREENSHOT) {
     await argosScreenshotBase(page, name, {
       fullPage: true,
-      // Custom path builder that removes retry suffixes (retry1, retry2, etc.)
-      // to ensure retries are compared against the same baseline
-      pathBuilder: ({
-        testInfo,
-        baseName,
-      }: {
-        testInfo: unknown;
-        baseName: string;
-      }) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-        const outputDir: string = (testInfo as any).outputDir;
-        const normalizedOutputDir = outputDir.replace(/-retry\d+$/, "");
-        return `${normalizedOutputDir}/argos/${baseName}.png`;
-      },
       ...(options || {}),
     });
   }
@@ -90,24 +76,23 @@ export async function argosScreenshot(
  * This should be called before taking screenshots of the dashboard to avoid capturing loading states.
  */
 export async function waitForDashboardWidgetsToLoad(page: Page): Promise<void> {
-  // Wait for all "Loading..." text to disappear
+  // Wait for all "Loading..." text and spinners to disappear
   await page.waitForFunction(
     () => {
+      // Check for "Loading..." text
       const loadingTexts = Array.from(
         document.querySelectorAll(".widget-content .headline"),
       );
-      return !loadingTexts.some((el) => el.textContent?.includes("Loading..."));
-    },
-    { timeout: 10_000 },
-  );
+      const hasLoadingText = loadingTexts.some((el) =>
+        el.textContent?.includes("Loading..."),
+      );
 
-  // Wait for all mat-spinner elements in widgets to disappear
-  await page.waitForFunction(
-    () => {
+      // Check for spinners
       const spinners = document.querySelectorAll(
         ".widget-title mat-spinner, .widget-header mat-spinner",
       );
-      return spinners.length === 0;
+
+      return !hasLoadingText && spinners.length === 0;
     },
     { timeout: 10_000 },
   );
