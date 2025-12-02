@@ -42,6 +42,7 @@ import { ColorInputComponent } from "#src/app/color-input/color-input.component"
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
+import { ConditionalColorConfigComponent } from "./conditional-color-config/conditional-color-config.component";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -64,7 +65,7 @@ import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-se
     AnonymizeOptionsComponent,
     FaIconComponent,
     AdminIconComponent,
-    ColorInputComponent,
+    ConditionalColorConfigComponent,
     HintBoxComponent,
     EntityFieldSelectComponent,
   ],
@@ -89,6 +90,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   toStringAttributesOptions: SimpleDropdownValue[] = [];
   hasImageFields: boolean = false;
   showTooltipDetails: boolean = false;
+  isConditionalColor: boolean = false;
 
   ngOnInit(): void {
     this.init();
@@ -123,19 +125,9 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
     this.showPIIDetails = this.basicSettingsForm.get("hasPII").value;
     this.fetchAnonymizationTableData();
-
-    // Patch tooltip values after options are initialized for proper display
-    this.patchTooltipValues();
-
-    // Disable the image form control if no image fields are available
-    const imageControl = this.basicSettingsForm.get(
-      "toBlockDetailsAttributes.image",
-    );
-    if (this.hasImageFields) {
-      imageControl?.enable();
-    } else {
-      imageControl?.disable();
-    }
+    this.initToStringAttributesOptions();
+    this.initToBlockAttributes();
+    this.initColorMode();
 
     this.basicSettingsForm.valueChanges.subscribe((value) => {
       this.reorderedStringAttributesOptions();
@@ -174,7 +166,8 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.fetchAnonymizationTableData();
   }
 
-  private patchTooltipValues(): void {
+  private initToBlockAttributes() {
+    // Patch tooltip values after options are initialized for proper display
     const block = this.generalSettings.toBlockDetailsAttributes || {
       title: null,
       image: null,
@@ -186,6 +179,16 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       image: block.image ?? null,
       fields: block.fields ?? [],
     });
+
+    // Disable the image form control if no image fields are available
+    const imageControl = this.basicSettingsForm.get(
+      "toBlockDetailsAttributes.image",
+    );
+    if (this.hasImageFields) {
+      imageControl?.enable();
+    } else {
+      imageControl?.disable();
+    }
   }
 
   changeFieldAnonymization(
@@ -246,4 +249,13 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.value;
+
+  /**
+   * Initialize color mode from existing configuration
+   */
+  private initColorMode() {
+    const colorValue = this.basicSettingsForm.get("color").value;
+    this.isConditionalColor =
+      Array.isArray(colorValue) && colorValue.length > 0;
+  }
 }

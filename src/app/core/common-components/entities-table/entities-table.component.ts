@@ -271,8 +271,16 @@ export class EntitiesTableComponent<
     this.recordsDataSource.filter = value;
   }
 
+  /**
+   * Whether the list's default row coloring should reflect each entity's color.
+   */
+  @Input() showEntityColor: boolean = false;
+
   /** function returns the background color for each row*/
-  @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
+  @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => {
+    if (this.showEntityColor) return rec.getColor();
+    else return "";
+  };
   idForSavingPagination: string;
 
   /**
