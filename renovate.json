@@ -33,6 +33,9 @@
       "after 00:00 and before 04:00 on Wednesday"
     ]
   },
+  "constraints": {
+    "npm": ">=11.0.0"
+  },
   "packageRules": [
     {
       "matchManagers": [
