@@ -282,9 +282,9 @@ describe("AbilityService", () => {
       "user.entityId",
     );
 
-    // Verify that permission checks work gracefully (undefined becomes null in condition)
+    // Verify that permission checks work gracefully (undefined becomes static placeholder in condition)
     const testEntity = new TestEntity(TEST_USER);
-    // When entityId is undefined/null, the condition "_id: null" won't match any entity
+    // When entityId is undefined, the condition "_id: <PLACEHOLDER>" won't match any entity
     expect(ability.cannot("manage", testEntity)).toBeTrue();
   }));
 
