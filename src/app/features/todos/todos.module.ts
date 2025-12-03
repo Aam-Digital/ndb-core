@@ -33,9 +33,9 @@ const dynamicComponents: [string, AsyncComponent][] = [
   [
     "TodosRelatedToEntity",
     () =>
-      import(
-        "./todos-related-to-entity/todos-related-to-entity.component"
-      ).then((c) => c.TodosRelatedToEntityComponent),
+      import("./todos-related-to-entity/todos-related-to-entity.component").then(
+        (c) => c.TodosRelatedToEntityComponent,
+      ),
   ],
   [
     "TodosDashboard",
@@ -47,36 +47,36 @@ const dynamicComponents: [string, AsyncComponent][] = [
   [
     "EditRecurringInterval",
     () =>
-      import(
-        "./recurring-interval/edit-recurring-interval/edit-recurring-interval.component"
-      ).then((c) => c.EditRecurringIntervalComponent),
+      import("./recurring-interval/edit-recurring-interval/edit-recurring-interval.component").then(
+        (c) => c.EditRecurringIntervalComponent,
+      ),
   ],
   [
     "DisplayRecurringInterval",
     () =>
-      import(
-        "./recurring-interval/display-recurring-interval/display-recurring-interval.component"
-      ).then((c) => c.DisplayRecurringIntervalComponent),
+      import("./recurring-interval/display-recurring-interval/display-recurring-interval.component").then(
+        (c) => c.DisplayRecurringIntervalComponent,
+      ),
   ],
   [
     "EditTodoCompletion",
     () =>
-      import(
-        "./todo-completion/edit-todo-completion/edit-todo-completion.component"
-      ).then((c) => c.EditTodoCompletionComponent),
+      import("./todo-completion/edit-todo-completion/edit-todo-completion.component").then(
+        (c) => c.EditTodoCompletionComponent,
+      ),
   ],
   [
     "DisplayTodoCompletion",
     () =>
-      import(
-        "./todo-completion/display-todo-completion/display-todo-completion.component"
-      ).then((c) => c.DisplayTodoCompletionComponent),
+      import("./todo-completion/display-todo-completion/display-todo-completion.component").then(
+        (c) => c.DisplayTodoCompletionComponent,
+      ),
   ],
   [
     "TodosDashboardSettings",
     () =>
-      import(
-        "./todos-dashboard-settings.component/todos-dashboard-settings.component"
-      ).then((c) => c.TodosDashboardSettingsComponent),
+      import("./todos-dashboard-settings.component/todos-dashboard-settings.component").then(
+        (c) => c.TodosDashboardSettingsComponent,
+      ),
   ],
 ];

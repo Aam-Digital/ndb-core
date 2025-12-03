@@ -75,9 +75,9 @@ import { TableStateUrlService } from "./table-state-url.service";
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
 })
-export class EntitiesTableComponent<T extends Entity>
-  implements AfterContentInit
-{
+export class EntitiesTableComponent<
+  T extends Entity,
+> implements AfterContentInit {
   private entityFormService = inject(EntityFormService);
   private formDialog = inject(FormDialogService);
   private router = inject(Router);
@@ -271,8 +271,16 @@ export class EntitiesTableComponent<T extends Entity>
     this.recordsDataSource.filter = value;
   }
 
+  /**
+   * Whether the list's default row coloring should reflect each entity's color.
+   */
+  @Input() showEntityColor: boolean = false;
+
   /** function returns the background color for each row*/
-  @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
+  @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => {
+    if (this.showEntityColor) return rec.getColor();
+    else return "";
+  };
   idForSavingPagination: string;
 
   /**

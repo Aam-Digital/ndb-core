@@ -1,6 +1,6 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { Entity } from "../entity/model/entity";
+import { Entity, EntityConstructor } from "../entity/model/entity";
 import { ImportMetadata, ImportSettings } from "./import-metadata";
 import { ColumnMapping } from "./column-mapping";
 import { EntityRegistry } from "../entity/database-entity.decorator";
@@ -95,38 +95,19 @@ export class ImportService {
     const entityConstructor = this.entityTypes.get(importSettings.entityType);
 
     const mappedEntities: Entity[] = [];
-    const importProcessingContext = new ImportProcessingContext();
+    const importProcessingContext = new ImportProcessingContext(importSettings);
     for (const row of rawData) {
       importProcessingContext.row = row;
       importProcessingContext.rowIndex++;
 
-      let entity = new entityConstructor();
-
-      let hasMappedProperty = false; // to avoid empty records being created
-      for (const col in row) {
-        const mapping: ColumnMapping = importSettings.columnMapping.find(
-          (c) => c.column === col,
-        );
-        if (!mapping) {
-          continue;
-        }
-
-        const parsed = await this.parseCell(
-          row[col],
-          mapping,
-          entity,
-          importProcessingContext,
-        );
-        if (parsed === undefined) {
-          continue;
-        }
-
-        entity[mapping.propertyName] = parsed;
-        hasMappedProperty = true;
-      }
-
-      if (hasMappedProperty) {
-        mappedEntities.push(entity);
+      const newEntity = await this.parseRow(
+        row,
+        entityConstructor,
+        importSettings,
+        importProcessingContext,
+      );
+      if (newEntity !== undefined) {
+        mappedEntities.push(newEntity);
       }
     }
 
@@ -134,6 +115,52 @@ export class ImportService {
       mappedEntities,
       importSettings,
     );
+  }
+
+  /**
+   * Parse a single row of imported raw data into an Entity instance.
+   * If not a single property is mapped, undefined is returned.
+   * @param row The raw data row to parse
+   * @param entityConstructor The entity type to create
+   * @param importSettings
+   * @param importProcessingContext
+   */
+  private async parseRow(
+    row: any,
+    entityConstructor: EntityConstructor,
+    importSettings: ImportSettings,
+    importProcessingContext: ImportProcessingContext,
+  ): Promise<Entity | undefined> {
+    let entity = new entityConstructor();
+    let hasMappedProperty = false; // to avoid empty records being created
+
+    for (const col in row) {
+      const mapping: ColumnMapping = importSettings.columnMapping.find(
+        (c) => c.column === col,
+      );
+      if (!mapping) {
+        continue;
+      }
+
+      const parsed = await this.parseCell(
+        row[col],
+        mapping,
+        entity,
+        importProcessingContext,
+      );
+
+      if (parsed === undefined) {
+        continue;
+      }
+
+      entity[mapping.propertyName] = parsed;
+      hasMappedProperty = true;
+    }
+
+    if (hasMappedProperty) {
+      // only return entity if at least one property was mapped
+      return entity;
+    }
   }
 
   private async parseCell(

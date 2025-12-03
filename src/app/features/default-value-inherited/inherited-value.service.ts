@@ -29,9 +29,10 @@ export class InheritedValueService extends DefaultValueStrategy {
   private entityMapper = inject(EntityMapperService);
 
   override async getAdminUI(): Promise<AdminDefaultValueContext> {
-    const component = await import(
-      "./admin-default-value-inherited/admin-default-value-inherited.component"
-    ).then((c) => c.AdminDefaultValueInheritedComponent);
+    const component =
+      await import("./admin-default-value-inherited/admin-default-value-inherited.component").then(
+        (c) => c.AdminDefaultValueInheritedComponent,
+      );
 
     return {
       mode: this.mode,

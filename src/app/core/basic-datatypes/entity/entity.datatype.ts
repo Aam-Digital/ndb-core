@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { StringDatatype } from "../string/string.datatype";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -72,18 +72,35 @@ export class EntityDatatype extends StringDatatype {
 
     await this.loadImportMapEntities(schemaField.additional, context);
 
-    context.filteredEntities = context.filteredEntities.filter(
-      (entity) => normalizeValue(entity[additional]) === normalizeValue(val),
-    );
+    // find all columns that map to this schemaField from importProcessingContext
+    // and filter entities accordingly (for all conditions)
+    for (const colMapping of importProcessingContext.importSettings.columnMapping.filter(
+      (m) => m.propertyName === schemaField.id,
+    )) {
+      const colValue = importProcessingContext.row[colMapping.column];
 
-    // return first match
-    return context.filteredEntities.length > 0
-      ? context.filteredEntities[0]._id
-      : undefined;
+      context.filteredEntities = context.filteredEntities.filter(
+        (entity) =>
+          normalizeValue(entity[colMapping.additional]) ===
+          normalizeValue(colValue),
+      );
+    }
+
+    if (context.filteredEntities.length === 1) {
+      return context.filteredEntities[0]._id;
+    } else {
+      if (context.filteredEntities.length > 1) {
+        Logging.debug(
+          "No unique match found in EntityDatatype importMapFunction",
+          context.filteredEntities.length,
+        );
+      }
+      return undefined;
+    }
   }
 
   /**
-   * Load the required entity type's entities into cache if not available yet.
+   * Load the required entity type's entities into context's cache if not available yet.
    * @private
    */
   private async loadImportMapEntities(

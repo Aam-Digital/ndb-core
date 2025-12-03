@@ -44,14 +44,11 @@ describe("Schema data type: entity (advanced functionality)", () => {
     c1.other = "456"; // Ensure "other" is a string
     await entityMapper.saveAll([c1]);
 
+    const importContext = createImportContext("456", schema.id, "other");
+
     // "simple" case: imported value is string already
     await expectAsync(
-      dataType.importMapFunction(
-        "456",
-        schema,
-        "other",
-        new ImportProcessingContext(),
-      ),
+      dataType.importMapFunction("456", schema, "other", importContext),
     ).toBeResolvedTo(c1.getId());
   });
 
@@ -60,20 +57,15 @@ describe("Schema data type: entity (advanced functionality)", () => {
     c2.other = "456"; // Ensure "other" is a string
     await entityMapper.saveAll([c2]);
 
+    const importContext = createImportContext(456, schema.id, "other");
+
     // "advanced" case: imported value is number but should match also
     await expectAsync(
-      dataType.importMapFunction(
-        456,
-        schema,
-        "other",
-        new ImportProcessingContext(),
-      ),
+      dataType.importMapFunction(456, schema, "other", importContext),
     ).toBeResolvedTo(c2.getId());
   });
 
   it("should importMap by matching multiple fields", async () => {
-    const context = new ImportProcessingContext();
-
     const c1 = new TestEntity();
     c1.name = "Joe";
     c1.other = "1";
@@ -88,20 +80,59 @@ describe("Schema data type: entity (advanced functionality)", () => {
 
     await entityMapper.saveAll([c1, c2, c3]);
 
+    let importContext = new ImportProcessingContext({
+      entityType: TestEntity.ENTITY_TYPE,
+      columnMapping: [
+        {
+          column: "iName",
+          propertyName: schema.id,
+          additional: "name",
+        },
+        {
+          column: "iOther",
+          propertyName: schema.id,
+          additional: "other",
+        },
+      ],
+    });
+    importContext.row = { iName: "Joe", iOther: "2", iRef: "x" };
     let result = await dataType.importMapFunction(
       "Joe",
       schema,
       "name",
-      context,
+      importContext,
     );
-    // expect initial match immediately
-    expect(result).toBe(c1.getId());
 
-    result = await dataType.importMapFunction("2", schema, "other", context);
-    // expect to filter further and update result upon second column's criteria
+    // expect to filter all column conditions and update result upon second column's criteria
     expect(result).toBe(c3.getId());
 
-    result = await dataType.importMapFunction("x", schema, "ref", context);
+    let importContext2 = new ImportProcessingContext({
+      entityType: TestEntity.ENTITY_TYPE,
+      columnMapping: [
+        {
+          column: "iName",
+          propertyName: schema.id,
+          additional: "name",
+        },
+        {
+          column: "iOther",
+          propertyName: schema.id,
+          additional: "other",
+        },
+        {
+          column: "iRef",
+          propertyName: schema.id,
+          additional: "ref",
+        },
+      ],
+    });
+    importContext2.row = { iName: "Joe", iOther: "2", iRef: "x" };
+    result = await dataType.importMapFunction(
+      "x",
+      schema,
+      "ref",
+      importContext2,
+    );
     // expect reset to undefined if further criteria does not match anymore
     expect(result).toBe(undefined);
   });
@@ -129,4 +160,24 @@ describe("Schema data type: entity (advanced functionality)", () => {
     expect(anonymizedValue).toEqual(testValue);
     expect(removeService.anonymize).toHaveBeenCalledWith(referencedEntity);
   });
+
+  function createImportContext(
+    value: any,
+    fieldId: string,
+    additional: string,
+  ): ImportProcessingContext {
+    const importContext = new ImportProcessingContext({
+      entityType: TestEntity.ENTITY_TYPE,
+      columnMapping: [
+        {
+          column: "x",
+          propertyName: fieldId,
+          additional: additional,
+        },
+      ],
+    });
+    importContext.row = { x: value };
+
+    return importContext;
+  }
 });

@@ -1,0 +1,33 @@
+<div class="conditional-color-config">
+  <div class="color-row">
+    <app-color-input
+      [color]="staticColor"
+      (colorChange)="onStaticColorChange($event)"
+    ></app-color-input>
+
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="addConditionalColorSection()"
+      color="accent"
+      matTooltip="Customize colors dynamically based on data values"
+      i18n-matTooltip
+    >
+      <span i18n>Add Conditional Color</span>
+    </button>
+  </div>
+
+  @if (isConditionalMode) {
+    <div class="conditional-sections flex-column gap-regular padding-regular">
+      @for (section of conditionalColorSections; track $index) {
+        <app-conditional-color-section
+          [section]="section"
+          [entityConstructor]="entityConstructor"
+          (colorChange)="updateConditionalSectionColor($index, $event)"
+          (deleteSection)="deleteConditionalColorSection($index)"
+          (conditionChange)="onConditionChange()"
+        ></app-conditional-color-section>
+      }
+    </div>
+  }
+</div>
