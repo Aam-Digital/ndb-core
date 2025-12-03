@@ -39,7 +39,7 @@ export class PrimaryActionComponent implements OnDestroy {
   private readonly router = inject(Router);
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
-  private defaultConfig: PrimaryActionConfig = {
+  private readonly defaultConfig: PrimaryActionConfig = {
     icon: "plus",
     actionType: "createEntity",
     entityType: "Note",
@@ -61,7 +61,7 @@ export class PrimaryActionComponent implements OnDestroy {
       );
   }
 
-  private configSub = this.configService.configUpdates.subscribe(() => {
+  private readonly configSub = this.configService.configUpdates.subscribe(() => {
     this.config =
       this.configService.getConfig<PrimaryActionConfig>("primaryAction") ??
       this.defaultConfig;
