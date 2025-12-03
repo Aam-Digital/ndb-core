@@ -46,8 +46,7 @@ export class AdminModule {
         () =>
           import(
             "./primary-action-config-form/primary-action-config-form.component"
-            (c) => c.PrimaryActionConfigFormComponent,
-          ),
+          ).then((c) => c.PrimaryActionConfigFormComponent),
       ],
     ]);
   }
