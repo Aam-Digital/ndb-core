@@ -61,6 +61,9 @@ export class EntityUserComponent implements OnInit {
       case "formCancel":
         this.onFormCancel();
         break;
+      case "editRequested":
+        this.editForm();
+        break;
       case "accountCreated":
         this.user.set(action.data);
         this.disableForm();

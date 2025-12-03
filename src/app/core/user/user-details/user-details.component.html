@@ -78,6 +78,7 @@
             mat-raised-button
             color="accent"
             class="action-button"
+            [disabled]="!form.valid || !form.dirty"
             (click)="onSubmit()"
             i18n="Save button for forms"
           >
@@ -138,6 +139,14 @@
               </mat-hint>
             }
           </mat-form-field>
+        }
+
+        @if (isInDialog() && currentUserAccount()?.userEntityId) {
+          <div class="margin-bottom-regular padding-left-regular">
+            <label i18n="label for profile entity">Profile -</label>
+            <app-entity-block [entityId]="currentUserAccount()?.userEntityId">
+            </app-entity-block>
+          </div>
         }
 
         <mat-form-field class="full-width">

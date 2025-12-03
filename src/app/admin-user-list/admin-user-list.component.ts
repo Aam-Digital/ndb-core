@@ -67,6 +67,7 @@ export class AdminUserListComponent implements OnInit {
 
     const dialogRef = this.dialog.open(UserDetailsComponent, {
       data: dialogData,
+      width: "99%",
     });
 
     dialogRef.componentInstance.action.subscribe(
@@ -80,6 +81,8 @@ export class AdminUserListComponent implements OnInit {
             dialogRef.close();
             break;
           }
+          case "editRequested":
+            break;
           case "closeDialog":
           case "formCancel":
             dialogRef.close();

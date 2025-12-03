@@ -14,11 +14,7 @@
     <th mat-header-cell *matHeaderCellDef i18n>Profile</th>
     <td mat-cell *matCellDef="let user">
       @if (user.userEntityId) {
-        <app-entity-block
-          [entityId]="user.userEntityId"
-          entityType="currentEntity?.entityType"
-        >
-        </app-entity-block>
+        <app-entity-block [entityId]="user.userEntityId"> </app-entity-block>
       } @else {
         <span>-</span>
       }

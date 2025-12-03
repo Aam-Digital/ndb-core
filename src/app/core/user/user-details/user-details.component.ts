@@ -99,7 +99,7 @@ export class UserDetailsComponent {
   editing = input<boolean>(false);
   userIsPermitted = input<boolean>(false);
 
-  disabled = computed(() => !this.editing());
+  disabled = computed(() => !this.editing() && !this._dialogData?.editing);
 
   userIsPermittedComputed = computed(
     () =>
@@ -115,7 +115,9 @@ export class UserDetailsComponent {
       !!this._dialogData,
   );
 
-  showUsername = computed(() => this.mode() === "profile" || this.isInDialog());
+  showUsername = computed(
+    () => this.mode() === "profile" && !this.isInDialog(),
+  );
 
   showPasswordChange = computed(() => this.mode() === "profile");
 
@@ -169,6 +171,10 @@ export class UserDetailsComponent {
     this.form = this.fb.group({
       email: ["", [Validators.required, Validators.email]],
       roles: new FormControl<Role[]>([]),
+    });
+    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.form.markAllAsTouched();
+      this.form.markAsDirty();
     });
 
     // Add roles validation only when not in profile mode
