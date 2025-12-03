@@ -59,6 +59,14 @@ export class ConfigService extends LatestEntityLoader<Config> {
   }
 
   public saveConfig(config: any): Promise<void> {
+    // Debug: log entityType value when saving primaryAction
+    if (config && config.primaryAction) {
+      console.log(
+        "[ConfigService] Saving primaryAction.entityType:",
+        config.primaryAction.entityType,
+        typeof config.primaryAction.entityType,
+      );
+    }
     return this.entityMapper.save(new Config(Config.CONFIG_KEY, config), true);
   }
 

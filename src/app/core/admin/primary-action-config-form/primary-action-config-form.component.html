@@ -7,6 +7,7 @@
     <button
       mat-raised-button
       color="accent"
+      [disabled]="!hasChanges"
       (click)="save()"
       i18n
     >
@@ -14,27 +15,27 @@
     </button>
     <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
   </div>
-
 </div>
+<mat-form-field appearance="fill" class="full-width">
+  <mat-label i18n>Action Type</mat-label>
+  <mat-select [(ngModel)]="actionType">
+    <mat-option value="createEntity" i18n>Create Entity</mat-option>
+    <mat-option value="navigate" i18n>Navigate</mat-option>
+  </mat-select>
+</mat-form-field>
+
+@if (showEntityType) {
   <mat-form-field appearance="fill" class="full-width">
-    <mat-label i18n>Action Type</mat-label>
-    <mat-select [(ngModel)]="actionType">
-      <mat-option value="createEntity" i18n>Create Entity</mat-option>
-      <mat-option value="navigate" i18n>Navigate</mat-option>
-    </mat-select>
+    <mat-label i18n>Record Type</mat-label>
+    <app-entity-type-select
+      [value]="entityType"
+      (valueChange)="onEntityTypeChange($event)"
+      [multi]="false"
+    ></app-entity-type-select>
   </mat-form-field>
+}
 
-  @if (showEntityType) {
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label i18n>Record Type</mat-label>
-      <app-entity-type-select
-        [value]="entityType"
-        (valueChange)="onEntityTypeChange($event)"
-        [multi]="false"
-      ></app-entity-type-select>
-    </mat-form-field>
-  }
-
+@for (key of [menuItemKey]; track key) {
   <app-menu-item-form
     [item]="menuItem"
     [linkOptions]="routeOptions"
@@ -42,3 +43,4 @@
     [hideLabel]="true"
     [hideLink]="actionType !== 'navigate'"
   ></app-menu-item-form>
+}
