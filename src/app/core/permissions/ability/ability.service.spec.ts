@@ -256,12 +256,12 @@ describe("AbilityService", () => {
       entityId: undefined, // User account exists but has no linked entity
     });
     TestBed.inject(CurrentUserSubject).next(null); // No linked user entity
-    
+
     service.initializeRules();
     tick();
 
     const debugSpy = spyOn(Logging, "debug");
-    
+
     // Create rules that reference the user's entityId
     const config = new Config<DatabaseRules>(Config.PERMISSION_KEY, {
       user_app: [
@@ -272,7 +272,7 @@ describe("AbilityService", () => {
         },
       ],
     });
-    
+
     entityUpdates.next({ entity: config, type: "update" });
     tick();
 
