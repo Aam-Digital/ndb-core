@@ -128,7 +128,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
       if (!has(dynamicPlaceholders, name)) {
         // log instead of silent failure
         Logging.warn(
-          `Variable ${name} is not defined for user ${user?.getId()}`,
+          `Variable ${name} is not defined for user ${sessionInfo.id}`,
         );
         return AbilityService.USER_PROPERTY_UNDEFINED;
       }
