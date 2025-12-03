@@ -42,7 +42,7 @@ export class PrimaryActionComponent implements OnDestroy {
 
   config: PrimaryActionConfig = this.primaryActionService.defaultConfig;
 
-  private configSub = this.configService.configUpdates.subscribe(() => {
+  private readonly configSub = this.configService.configUpdates.subscribe(() => {
     this.config = this.primaryActionService.getCurrentConfig();
     this.cdr.markForCheck();
   });
