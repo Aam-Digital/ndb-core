@@ -1,4 +1,9 @@
-import { argosScreenshot, expect, test } from "#e2e/fixtures.js";
+import {
+  argosScreenshot,
+  expect,
+  test,
+  waitForDashboardWidgetsToLoad,
+} from "#e2e/fixtures.js";
 
 test("Translated and localized app versions (i18n)", async ({ page }) => {
   await page.goto("/");
@@ -29,6 +34,9 @@ test("Translated and localized app versions (i18n)", async ({ page }) => {
   await page.getByRole("navigation").getByText("Schüler:innen").click();
   await page.getByRole("navigation").getByText("Dashboard").click();
   await expect(page.getByText("8 Schüler:innen")).toBeVisible();
+
+  // Wait for all dashboard widgets to finish loading before taking screenshot
+  await waitForDashboardWidgetsToLoad(page);
 
   await argosScreenshot(page, "i18n-de_dashboard");
 });
