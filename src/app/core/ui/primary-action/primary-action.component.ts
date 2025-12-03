@@ -1,6 +1,5 @@
 import { Component, inject, ChangeDetectorRef, OnDestroy } from "@angular/core";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
-import { entityRegistry } from "../../entity/database-entity.decorator";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
@@ -9,6 +8,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Router } from "@angular/router";
 import { ConfigService } from "../../config/config.service";
 import { PrimaryActionConfig } from "../../admin/primary-action-config-form/primary-action-config";
+import { PrimaryActionService } from "../../admin/primary-action-config-form/primary-action.service";
 import { EntityConfigService } from "../../entity/entity-config.service";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 
@@ -38,52 +38,18 @@ export class PrimaryActionComponent implements OnDestroy {
   private readonly entityConfigService = inject(EntityConfigService);
   private readonly router = inject(Router);
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private readonly primaryActionService = inject(PrimaryActionService);
 
-  private readonly defaultConfig: PrimaryActionConfig = {
-    icon: "plus",
-    actionType: "createEntity",
-    entityType: "Note",
-  };
+  config: PrimaryActionConfig = this.primaryActionService.defaultConfig;
 
-  config: PrimaryActionConfig = this.defaultConfig;
-
-  // Dynamically get all user-facing entity types that support dialog-based creation
-  get entityTypeOptions(): EntityConstructor[] {
-    return entityRegistry
-      .getEntityTypes(true)
-      .map(({ value }) => value)
-      .filter(
-        (ctor) =>
-          ctor.schema &&
-          ctor.label &&
-          typeof ctor === "function" &&
-          ctor.schema.size > 0,
-      );
-  }
-
-  private readonly configSub = this.configService.configUpdates.subscribe(
-    () => {
-      this.config =
-        this.configService.getConfig<PrimaryActionConfig>("primaryAction") ??
-        this.defaultConfig;
-      this.cdr.markForCheck();
-    },
-  );
+  private configSub = this.configService.configUpdates.subscribe(() => {
+    this.config = this.primaryActionService.getCurrentConfig();
+    this.cdr.markForCheck();
+  });
 
   get entityConstructor(): EntityConstructor {
-    // Use dynamic registry to support all user-facing entities
-    const entityType = this.config.entityType ?? "Note";
-    const ctor = entityRegistry
-      .getEntityTypes(true)
-      .map(({ value }) => value)
-      .find((c) => c.ENTITY_TYPE === entityType);
-    // Fallback to Note if not found
-    return (
-      ctor ??
-      entityRegistry
-        .getEntityTypes(true)
-        .map(({ value }) => value)
-        .find((c) => c.ENTITY_TYPE === "Note")
+    return this.primaryActionService.getEntityConstructor(
+      this.config.entityType,
     );
   }
 
