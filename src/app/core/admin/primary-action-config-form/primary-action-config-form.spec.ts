@@ -6,7 +6,6 @@ import { ConfigService } from "../../config/config.service";
 describe("PrimaryActionConfigFormComponent", () => {
   let component: PrimaryActionConfigFormComponent;
   let fixture: ComponentFixture<PrimaryActionConfigFormComponent>;
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
 
   beforeEach(async () => {
     const configSpy = jasmine.createSpyObj(
@@ -41,10 +40,6 @@ describe("PrimaryActionConfigFormComponent", () => {
       ],
       providers: [{ provide: ConfigService, useValue: configSpy }],
     }).compileComponents();
-
-    mockConfigService = TestBed.inject(
-      ConfigService,
-    ) as jasmine.SpyObj<ConfigService>;
 
     fixture = TestBed.createComponent(PrimaryActionConfigFormComponent);
     component = fixture.componentInstance;

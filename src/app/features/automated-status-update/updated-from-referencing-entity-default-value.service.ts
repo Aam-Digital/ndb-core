@@ -16,10 +16,9 @@ export class UpdatedFromReferencingEntityDefaultValueService extends DefaultValu
   override readonly mode = "updated-from-referencing-entity";
 
   override async getAdminUI(): Promise<AdminDefaultValueContext> {
-    const component =
-      await import("./admin-default-value-updated/admin-default-value-updated.component").then(
-        (c) => c.AdminDefaultValueUpdatedComponent,
-      );
+    const component = await import(
+      "./admin-default-value-updated/admin-default-value-updated.component"
+    ).then((c) => c.AdminDefaultValueUpdatedComponent);
 
     return {
       mode: this.mode,

@@ -1,5 +1,4 @@
-import { Component, inject } from "@angular/core";
-import { ChangeDetectorRef, OnDestroy } from "@angular/core";
+import { Component, inject, ChangeDetectorRef, OnDestroy } from "@angular/core";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { entityRegistry } from "../../entity/database-entity.decorator";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
@@ -35,10 +34,10 @@ export class PrimaryActionComponent implements OnDestroy {
     this.configSub.unsubscribe();
   }
   private formDialog = inject(FormDialogService);
-  private configService = inject(ConfigService);
-  private entityConfigService = inject(EntityConfigService);
-  private router = inject(Router);
-  private cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private readonly configService = inject(ConfigService);
+  private readonly entityConfigService = inject(EntityConfigService);
+  private readonly router = inject(Router);
+  private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   private defaultConfig: PrimaryActionConfig = {
     icon: "plus",

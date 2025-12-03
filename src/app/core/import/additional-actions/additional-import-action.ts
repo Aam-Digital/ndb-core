@@ -50,7 +50,8 @@ export interface AdditonalDirectLinkAction extends AdditionalImportBaseAction {
  * Details of an import action that is executed in addition to creating the primary imported entities,
  * linking imported data indirectly to another existing entity (by creating new "relationship" entities).
  */
-export interface AdditionalIndirectLinkAction extends AdditionalImportBaseAction {
+export interface AdditionalIndirectLinkAction
+  extends AdditionalImportBaseAction {
   mode: "indirect";
 
   /**

@@ -41,37 +41,37 @@ const dynamicComponents: [string, AsyncComponent][] = [
   [
     "EditPublicFormColumns",
     () =>
-      import("app/features/public-form/edit-public-form-columns/edit-public-form-columns.component").then(
-        (c) => c.EditPublicFormColumnsComponent,
-      ),
+      import(
+        "app/features/public-form/edit-public-form-columns/edit-public-form-columns.component"
+      ).then((c) => c.EditPublicFormColumnsComponent),
   ],
   [
     "EditPrefilledValuesComponent",
     () =>
-      import("app/features/public-form/edit-prefilled-values/edit-prefilled-values.component").then(
-        (c) => c.EditPrefilledValuesComponent,
-      ),
+      import(
+        "app/features/public-form/edit-prefilled-values/edit-prefilled-values.component"
+      ).then((c) => c.EditPrefilledValuesComponent),
   ],
   [
     "EditPublicformRoute",
     () =>
-      import("app/features/public-form/edit-publicform-route/edit-publicform-route.component").then(
-        (c) => c.EditPublicformRouteComponent,
-      ),
+      import(
+        "app/features/public-form/edit-publicform-route/edit-publicform-route.component"
+      ).then((c) => c.EditPublicformRouteComponent),
   ],
   [
     "EditPublicFormRelatedEntitiesComponent",
     () =>
-      import("app/features/public-form/edit-public-form-related-entities/edit-public-form-related-entities.component").then(
-        (c) => c.EditPublicFormRelatedEntitiesComponent,
-      ),
+      import(
+        "app/features/public-form/edit-public-form-related-entities/edit-public-form-related-entities.component"
+      ).then((c) => c.EditPublicFormRelatedEntitiesComponent),
   ],
   [
     "PublicFormPermissionWarning",
     () =>
-      import("app/features/public-form/public-form-permission-warning/public-form-permission-warning.component").then(
-        (c) => c.PublicFormPermissionWarningComponent,
-      ),
+      import(
+        "app/features/public-form/public-form-permission-warning/public-form-permission-warning.component"
+      ).then((c) => c.PublicFormPermissionWarningComponent),
   ],
 ];
 

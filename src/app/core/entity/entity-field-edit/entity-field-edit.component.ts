@@ -52,9 +52,9 @@ import { DynamicEditComponent } from "./dynamic-edit/dynamic-edit.component";
     ErrorHintComponent,
   ],
 })
-export class EntityFieldEditComponent<
-  T extends Entity = Entity,
-> implements OnChanges {
+export class EntityFieldEditComponent<T extends Entity = Entity>
+  implements OnChanges
+{
   private entityFormService = inject(EntityFormService);
   private entitySchemaService = inject(EntitySchemaService);
 

@@ -33,10 +33,6 @@ export class AdminOverviewService {
       link: "/admin/entity",
     },
     {
-      label: $localize`:admin menu item:Main Navigation Menu`,
-      link: "/admin/menu",
-    },
-    {
       label: $localize`:admin menu item:Site Settings`,
       link: "/admin/site-settings",
     },
@@ -49,7 +45,7 @@ export class AdminOverviewService {
       link: "/admin/menu",
     },
     {
-      label: $localize`:admin menu item:Primary Action Button`,
+      label: $localize`:admin menu item:Configure Primary Action`,
       link: "/admin/primary-action",
     },
   ];

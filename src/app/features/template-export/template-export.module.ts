@@ -74,9 +74,9 @@ const dynamicComponents: [string, AsyncComponent][] = [
   [
     "EditTemplateExportFile",
     () =>
-      import("./template-export-file-datatype/edit-template-export-file.component").then(
-        (c) => c.EditTemplateExportFileComponent,
-      ),
+      import(
+        "./template-export-file-datatype/edit-template-export-file.component"
+      ).then((c) => c.EditTemplateExportFileComponent),
   ],
 ];
 

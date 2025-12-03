@@ -15,7 +15,7 @@ import { EntityConstructor } from "../../entity/model/entity";
   providedIn: "root",
 })
 export class PrimaryActionService {
-  private configService = inject(ConfigService);
+  private readonly configService = inject(ConfigService);
 
   /**
    * Default configuration for the primary action.
