@@ -151,6 +151,11 @@ export class EntityListComponent<T extends Entity>
   mobileColumnGroup = "";
   @Input() filters: FilterConfig[] = [];
 
+  /**
+   * Whether the list's default row coloring should reflect each entity's color.
+   */
+  @Input() showEntityColor: boolean = false;
+
   columnsToDisplay: string[];
 
   filterObj: DataFilter<T>;

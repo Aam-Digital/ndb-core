@@ -100,7 +100,7 @@ export class AdminEntityComponent implements OnInit {
   private getEntitySettingsFromConstructor(
     entityCtr: EntityConstructor,
   ): EntityConfig {
-    return {
+    const config: EntityConfig = {
       label: entityCtr.label,
       labelPlural: entityCtr.labelPlural,
       icon: entityCtr.icon,
@@ -109,6 +109,19 @@ export class AdminEntityComponent implements OnInit {
       hasPII: entityCtr.hasPII,
       enableUserAccounts: entityCtr.enableUserAccounts,
     };
+
+    // Only include toBlockDetailsAttributes if it has meaningful values
+    if (
+      entityCtr.toBlockDetailsAttributes &&
+      (entityCtr.toBlockDetailsAttributes.title ||
+        entityCtr.toBlockDetailsAttributes.image ||
+        (entityCtr.toBlockDetailsAttributes.fields &&
+          entityCtr.toBlockDetailsAttributes.fields.length > 0))
+    ) {
+      config.toBlockDetailsAttributes = entityCtr.toBlockDetailsAttributes;
+    }
+
+    return config;
   }
 
   private loadViewConfig(
