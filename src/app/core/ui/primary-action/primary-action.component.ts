@@ -61,12 +61,14 @@ export class PrimaryActionComponent implements OnDestroy {
       );
   }
 
-  private readonly configSub = this.configService.configUpdates.subscribe(() => {
-    this.config =
-      this.configService.getConfig<PrimaryActionConfig>("primaryAction") ??
-      this.defaultConfig;
-    this.cdr.markForCheck();
-  });
+  private readonly configSub = this.configService.configUpdates.subscribe(
+    () => {
+      this.config =
+        this.configService.getConfig<PrimaryActionConfig>("primaryAction") ??
+        this.defaultConfig;
+      this.cdr.markForCheck();
+    },
+  );
 
   get entityConstructor(): EntityConstructor {
     // Use dynamic registry to support all user-facing entities
