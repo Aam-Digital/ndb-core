@@ -1,11 +1,11 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
 import { EntityAbility } from "./entity-ability";
 import { Config } from "../../config/config";
 import { Logging } from "../../logging/logging.service";
-import { get } from "lodash-es";
+import { get, has } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
 import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
@@ -20,6 +20,8 @@ import { map } from "rxjs/operators";
  */
 @Injectable()
 export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
+  static readonly USER_PROPERTY_UNDEFINED = "__USER_PROPERTY_UNDEFINED__";
+
   private ability = inject(EntityAbility);
   private sessionInfo = inject(SessionSubject);
   private currentUser = inject(CurrentUserSubject);
@@ -122,10 +124,19 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
         // mapping the previously valid ${user.name} here for backwards compatibility
         name = "user.entityId";
       }
-      const value = get(dynamicPlaceholders, name);
 
+      if (!has(dynamicPlaceholders, name)) {
+        // log instead of silent failure
+        Logging.warn(
+          `Variable ${name} is not defined for user ${sessionInfo.id}`,
+        );
+        return AbilityService.USER_PROPERTY_UNDEFINED;
+      }
+
+      const value = get(dynamicPlaceholders, name);
       if (typeof value === "undefined") {
-        throw new ReferenceError(`Variable ${name} is not defined`);
+        Logging.debug("[AbilityService] Variable not defined:", name);
+        return AbilityService.USER_PROPERTY_UNDEFINED;
       }
 
       return value;
