@@ -124,7 +124,7 @@
               placeholder="Username"
               matInput
               type="text"
-              [value]="currentUserAccount()?.email || sessionInfo?.value?.email"
+              [value]="sessionInfo?.value?.email"
               disabled
             />
             @if (
@@ -157,6 +157,11 @@
           }
           @if (getFormError("email", "required")) {
             <mat-error i18n> This field is required </mat-error>
+          }
+          @if (isInDialog() && currentUserAccount()?.userEntityId) {
+            <mat-hint i18n="hint showing username/entity ID in dialog">
+              Username: {{ currentUserAccount()?.userEntityId }}
+            </mat-hint>
           }
           @if (
             showPasswordChange() &&
