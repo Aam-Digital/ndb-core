@@ -6,8 +6,6 @@
     </mat-form-field>
   }
 
-  <app-admin-icon-input [(icon)]="item.icon"></app-admin-icon-input>
-
   @if (!hideLink) {
     <div class="flex-row align-center gap-small">
       <mat-form-field appearance="fill" class="full-width">
@@ -62,4 +60,6 @@
       }
     </div>
   }
+
+  <app-admin-icon-input [(icon)]="item.icon"></app-admin-icon-input>
 </div>
