@@ -3,7 +3,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ColorMapping, EntityConstructor } from "app/core/entity/model/entity";
-import { ColorInputComponent } from "app/color-input/color-input.component";
+import { ColorInputComponent } from "#src/app/core/common-components/color-input/color-input.component";
 import { ConditionsEditorComponent } from "app/core/common-components/conditions-editor/conditions-editor.component";
 
 /**
