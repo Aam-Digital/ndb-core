@@ -4,7 +4,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { MatButtonModule } from "@angular/material/button";
-import { MenuItemFormComponent } from "#src/app/menu-item-form/menu-item-form.component";
+import { MenuItemFormComponent } from "../../admin/admin-menu/menu-item-form/menu-item-form.component";
 import { ConfigService } from "../../config/config.service";
 import { PrimaryActionConfig } from "./primary-action-config";
 import { PrimaryActionService } from "./primary-action.service";
