@@ -1,9 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
-import { MenuItem } from "../core/ui/navigation/menu-item";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { MenuItem } from "../../../ui/navigation/menu-item";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
-import { AdminIconComponent } from "../admin-icon-input/admin-icon-input.component";
+import { IconComponent } from "../../../common-components/icon-input/icon-input.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatSelectModule } from "@angular/material/select";
@@ -16,7 +16,7 @@ import { MatIconButton } from "@angular/material/button";
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
-    AdminIconComponent,
+    IconComponent,
     FaIconComponent,
     MatTooltipModule,
     MatSelectModule,

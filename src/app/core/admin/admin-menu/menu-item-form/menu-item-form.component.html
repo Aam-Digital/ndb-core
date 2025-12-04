@@ -6,10 +6,11 @@
     </mat-form-field>
   }
 
-  @if (!hideLink) {
-    <div class="flex-row align-center gap-small">
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label i18n>Link</mat-label>
+  <app-icon-input [(icon)]="item.icon"></app-icon-input>
+
+  <div class="flex-row align-center gap-small">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label i18n>Link</mat-label>
 
         @if (linkOptions?.length && !customLinkMode) {
           <mat-select [(ngModel)]="item.link" (ngModelChange)="onChange()">
