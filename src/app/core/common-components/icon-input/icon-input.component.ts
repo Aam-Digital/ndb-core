@@ -10,7 +10,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
  * (showing some additional explanation in the UI).
  */
 @Component({
-  selector: "app-admin-icon-input",
+  selector: "app-icon-input",
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -19,10 +19,10 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
     MatTooltipModule,
     FaIconComponent,
   ],
-  templateUrl: "./admin-icon-input.component.html",
-  styleUrl: "./admin-icon-input.component.scss",
+  templateUrl: "./icon-input.component.html",
+  styleUrl: "./icon-input.component.scss",
 })
-export class AdminIconComponent implements OnInit {
+export class IconComponent implements OnInit {
   @Input() icon: string;
   @Output() iconChange = new EventEmitter<string>();
 
