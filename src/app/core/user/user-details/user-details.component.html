@@ -5,7 +5,7 @@
 } @else {
   @if (isInDialog()) {
     <div>
-      <h2 mat-dialog-title i18n>Edit User Security</h2>
+      <h2 mat-dialog-title i18n>Edit User Account</h2>
       <app-dialog-close (click)="onCloseDialog()"></app-dialog-close>
     </div>
   }
@@ -141,14 +141,6 @@
           </mat-form-field>
         }
 
-        @if (isInDialog() && currentUserAccount()?.userEntityId) {
-          <div class="margin-bottom-regular padding-left-regular">
-            <label i18n="label for profile entity">Profile -</label>
-            <app-entity-block [entityId]="currentUserAccount()?.userEntityId">
-            </app-entity-block>
-          </div>
-        }
-
         <mat-form-field class="full-width">
           <mat-label i18n="label of email input">Email</mat-label>
           <input matInput type="text" formControlName="email" />
@@ -231,30 +223,19 @@
           </div>
         }
 
+        <mat-form-field class="full-width">
+          <mat-label i18n>Profile</mat-label>
+          <app-edit-entity formControlName="userEntityId"></app-edit-entity>
+          <mat-hint i18n>
+            Editing linked profile record is not possible here. Please contact
+            user support.
+          </mat-hint>
+        </mat-form-field>
+
         @if (getGlobalError()) {
           <mat-error class="global-error">{{ getGlobalError() }}</mat-error>
         }
       </form>
     </div>
-
-    @if (showEntityProfile()) {
-      <hr />
-
-      <h2 i18n>Your profile:</h2>
-      @if (currentUser | async) {
-        <app-entity-block
-          [entity]="currentUser | async"
-          class="entity-box"
-        ></app-entity-block>
-      } @else if (sessionInfo?.value?.entityId) {
-        <div i18n>
-          Couldn't find the record that your user account is linked to ({{
-            sessionInfo?.value?.entityId
-          }}).
-        </div>
-      } @else {
-        <div i18n>Your user account is not linked to any record.</div>
-      }
-    }
   </div>
 }

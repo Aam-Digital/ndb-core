@@ -30,11 +30,11 @@ import { Entity } from "../../entity/model/entity";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
-import { AsyncPipe } from "@angular/common";
 import { Angulartics2Module } from "angulartics2";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
+import { EditEntityComponent } from "../../basic-datatypes/entity/edit-entity/edit-entity.component";
+import { filter } from "rxjs";
 
 export type UserDetailsMode = "profile" | "entity" | "dialog";
 
@@ -74,8 +74,7 @@ export interface UserDetailsAction {
     MatDialogModule,
     DialogCloseComponent,
     Angulartics2Module,
-    EntityBlockComponent,
-    AsyncPipe,
+    EditEntityComponent,
   ],
 })
 export class UserDetailsComponent {
@@ -120,8 +119,6 @@ export class UserDetailsComponent {
   );
 
   showPasswordChange = computed(() => this.mode() === "profile");
-
-  showEntityProfile = computed(() => this.mode() === "profile");
 
   passwordChangeDisabled = computed(() => {
     if (this.mode() !== "profile") return false;
@@ -171,7 +168,18 @@ export class UserDetailsComponent {
     this.form = this.fb.group({
       email: ["", [Validators.required, Validators.email]],
       roles: new FormControl<Role[]>([]),
+      userEntityId: new FormControl<string | null>(null),
     });
+
+    // keep userEntityId disabled always
+    this.form
+      .get("userEntityId")
+      .statusChanges.pipe(
+        untilDestroyed(this),
+        filter(() => this.form.get("userEntityId").enabled),
+      )
+      .subscribe(() => this.form.get("userEntityId").disable());
+
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.form.markAllAsTouched();
       this.form.markAsDirty();
@@ -239,9 +247,15 @@ export class UserDetailsComponent {
         roles: (user.roles ?? [])
           .map((role) => this.availableRoles().find((r) => r.id === role.id))
           .filter((role): role is Role => role !== undefined), // Filter out undefined roles
+        userEntityId: !user.userEntityId
+          ? null
+          : user.userEntityId.includes(":")
+            ? user.userEntityId
+            : "User:" + user.userEntityId,
       },
       { emitEvent: false },
     );
+
     this.form.markAsPristine();
   }
 
