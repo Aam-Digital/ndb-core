@@ -5,13 +5,16 @@ import { DefaultValueConfigInheritedField } from "./inherited-field-config";
  * Transform DefaultValueConfigInherited and DefaultValueConfigUpdatedFromReferencingEntity configs
  * to DefaultValueConfigInheritedField.
  */
-export const migrateInheritedFieldConfig: ConfigMigration = (key, configPart) => {
+export const migrateInheritedFieldConfig: ConfigMigration = (
+  key,
+  configPart,
+) => {
   if (key !== "defaultValue" || !configPart?.config) {
     return configPart;
   }
 
   const config = configPart.config;
-  
+
   if (configPart.mode === "inherited-from-referenced-entity") {
     const newConfig: DefaultValueConfigInheritedField = {
       sourceReferenceField: config.localAttribute,
@@ -35,7 +38,7 @@ export const migrateInheritedFieldConfig: ConfigMigration = (key, configPart) =>
 
     return {
       ...configPart,
-      mode: "inherited-field", 
+      mode: "inherited-field",
       config: newConfig,
     };
   }
