@@ -1,0 +1,943 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >AutomatedStatusUpdateConfigService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/automated-status-update/automated-status-update-config-service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Service to automatically update related entities based on configured rules.
+It finds dependent entities and updates their fields based on changes in the source entity.</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#relatedEntities" >relatedEntities</a>
+                            </li>
+                            <li>
+                                <a href="#relatedReferenceFieldConfig" >relatedReferenceFieldConfig</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#applyRulesToDependentEntities" >applyRulesToDependentEntities</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#findEntitiesDependingOnField" >findEntitiesDependingOnField</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">src/app/features/automated-status-update/automated-status-update-config-service.ts:64</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="applyRulesToDependentEntities"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>applyRulesToDependentEntities</b></span>
+                        <a href="#applyRulesToDependentEntities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>applyRulesToDependentEntities(entity: <a href="../classes/Entity.html" target="_self">Entity</a>, entityBeforeChanges: <a href="../classes/Entity.html" target="_self">Entity</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="144"
+                                    class="link-to-prism">src/app/features/automated-status-update/automated-status-update-config-service.ts:144</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Applies rules to dependent entities based on changes in the provided entity.
+Also prompts user confirmation and saves updates if any changes were made.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The source entity whose changes should trigger updates</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>entityBeforeChanges</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The state of the entity before changes were applied to identify what has changed</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findEntitiesDependingOnField"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>findEntitiesDependingOnField</b></span>
+                        <a href="#findEntitiesDependingOnField"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findEntitiesDependingOnField(sourceEntityType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, changedField: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="131"
+                                    class="link-to-prism">src/app/features/automated-status-update/automated-status-update-config-service.ts:131</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Retrieves all automated rules for a given source entity field.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>sourceEntityType</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The entity type of the source</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>changedField</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The changed field in the source entity</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="relatedEntities"></a>
+                    <span class="name">
+                        <span ><b>relatedEntities</b></span>
+                        <a href="#relatedEntities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/features/automated-status-update/automated-status-update-config-service.ts:41</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>List of entities impacted by automated status updates.
+For example, if a field in the &quot;Schools&quot; entity is linked to a field in the &quot;Child&quot; entity,
+and the field in &quot;Schools&quot; (trigger field) is updated, the &quot;Child&quot; entity will be affected.
+The IDs of the affected &quot;Child&quot; entities will be stored in this list.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="relatedReferenceFieldConfig"></a>
+                    <span class="name">
+                        <span ><b>relatedReferenceFieldConfig</b></span>
+                        <a href="#relatedReferenceFieldConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/features/automated-status-update/automated-status-update-config-service.ts:46</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The relatedReferenceField configuration, which is used to show the label of related reference field in dialog.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { Entity, EntityConstructor } from &quot;app/core/entity/model/entity&quot;;
+import { EntityMapperService } from &quot;app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import { EntityRegistry } from &quot;app/core/entity/database-entity.decorator&quot;;
+import { MatDialog } from &quot;@angular/material/dialog&quot;;
+import {
+  AffectedEntity,
+  AutomatedStatusUpdateComponent,
+} from &quot;./automated-status-update.component&quot;;
+import { lastValueFrom } from &quot;rxjs&quot;;
+import { EntitySchemaField } from &quot;app/core/entity/schema/entity-schema-field&quot;;
+import { EntitySchemaService } from &quot;app/core/entity/schema/entity-schema.service&quot;;
+import { UnsavedChangesService } from &quot;app/core/entity-details/form/unsaved-changes.service&quot;;
+import { ConfigService } from &quot;app/core/config/config.service&quot;;
+import { DefaultValueConfigUpdatedFromReferencingEntity } from &quot;./default-value-config-updated-from-referencing-entity&quot;;
+
+/**
+ * Service to automatically update related entities based on configured rules.
+ * It finds dependent entities and updates their fields based on changes in the source entity.
+ */
+@Injectable({ providedIn: &quot;root&quot; })
+export class AutomatedStatusUpdateConfigService {
+  private entityRegistry &#x3D; inject(EntityRegistry);
+  private entityMapper &#x3D; inject(EntityMapperService);
+  private dialog &#x3D; inject(MatDialog);
+  private unsavedChangesService &#x3D; inject(UnsavedChangesService);
+  private entitySchemaService &#x3D; inject(EntitySchemaService);
+  private configService &#x3D; inject(ConfigService);
+
+  /**
+   * Track processed entity revisions to prevent duplicate automated status updates within the same save operation
+   */
+  private readonly processedRevisions &#x3D; new Set&lt;string&gt;();
+
+  /**
+   * List of entities impacted by automated status updates.
+   * For example, if a field in the &quot;Schools&quot; entity is linked to a field in the &quot;Child&quot; entity,
+   * and the field in &quot;Schools&quot; (trigger field) is updated, the &quot;Child&quot; entity will be affected.
+   * The IDs of the affected &quot;Child&quot; entities will be stored in this list.
+   */
+  relatedEntities: Entity[] &#x3D; [];
+
+  /**
+   * The relatedReferenceField configuration, which is used to show the label of related reference field in dialog.
+   */
+  relatedReferenceFieldConfig: EntitySchemaField;
+
+  /**
+   * A map that tracks dependencies between entities and their fields for automated status updates.
+   * - Key: A unique identifier in the format &quot;entityType|fieldId&quot; (e.g., &quot;School|schoolStatus&quot;).
+   * - Value: An array of rules that define how changes in the specified field affect related entities and fields.
+   *
+   * This map is used to determine which entities and fields need to be updated automatically
+   * when a specific field in a source entity changes.
+   */
+  private dependencyMap &#x3D; new Map&lt;
+    string,
+    {
+      targetEntityType: EntityConstructor;
+      targetFieldId: string;
+      relatedReferenceField: string;
+      rule: DefaultValueConfigUpdatedFromReferencingEntity;
+    }[]
+  &gt;();
+
+  constructor() {
+    this.configService.configUpdates.subscribe(() &#x3D;&gt;
+      // wait until EntityConfigService has updated the entityRegistry
+      setTimeout(() &#x3D;&gt; this.buildDependencyMap()),
+    );
+  }
+
+  /**
+   * Builds a map of dependent field rules from entity schema config
+   * to be used during automatic updates.
+   */
+  private buildDependencyMap() {
+    this.dependencyMap.clear();
+    for (const targetType of this.entityRegistry.values()) {
+      for (const [fieldKey, fieldConfig] of targetType.schema.entries()) {
+        this.processFieldConfig(targetType, fieldKey, fieldConfig);
+      }
+    }
+  }
+
+  /**
+   * Processes a single field configuration to extract automated rules
+   */
+  private processFieldConfig(
+    targetType: EntityConstructor,
+    fieldKey: string,
+    fieldConfig: EntitySchemaField,
+  ) {
+    const rule &#x3D; fieldConfig.defaultValue?.config;
+    if (
+      fieldConfig.defaultValue?.mode &#x3D;&#x3D;&#x3D; &quot;updated-from-referencing-entity&quot; &amp;&amp;
+      rule
+    ) {
+      this.processAutomatedRule(targetType, fieldKey, rule);
+    }
+  }
+
+  /**
+   * Processes a single automation rule and adds it to the dependency map
+   * @param targetEntityType - Type of entity that contains the rule
+   * @param targetFieldId - Field ID where the rule is defined
+   * @param rule - Automation rule configuration
+   */
+  private processAutomatedRule(
+    targetEntityType: EntityConstructor,
+    targetFieldId: string,
+    rule: DefaultValueConfigUpdatedFromReferencingEntity,
+  ) {
+    const key &#x3D; &#x60;${rule.relatedEntityType}|${rule.relatedTriggerField}&#x60;;
+    const entry &#x3D; {
+      targetEntityType: targetEntityType,
+      targetFieldId: targetFieldId,
+      relatedReferenceField: rule.relatedReferenceField,
+      rule: rule,
+    };
+
+    const existingEntries &#x3D; this.dependencyMap.get(key) || [];
+    this.dependencyMap.set(key, [...existingEntries, entry]);
+  }
+
+  /**
+   * Retrieves all automated rules for a given source entity field.
+   * @param sourceEntityType - The entity type of the source
+   * @param changedField - The changed field in the source entity
+   */
+  public findEntitiesDependingOnField(
+    sourceEntityType: string,
+    changedField: string,
+  ) {
+    return this.dependencyMap.get(&#x60;${sourceEntityType}|${changedField}&#x60;) || [];
+  }
+
+  /**
+   * Applies rules to dependent entities based on changes in the provided entity.
+   * Also prompts user confirmation and saves updates if any changes were made.
+   * @param entity - The source entity whose changes should trigger updates
+   * @param entityBeforeChanges The state of the entity before changes were applied to identify what has changed
+   */
+  public async applyRulesToDependentEntities(
+    entity: Entity,
+    entityBeforeChanges: Entity,
+  ): Promise&lt;void&gt; {
+    // skip if already processed this specific entity revision
+    // Note views can otherwise open multiple overlapping dialogs (because the note-details component contains three components, all sharing the same form instance)
+    const entityKey &#x3D; &#x60;${entity.getId()}-${entity._rev}&#x60;;
+    if (this.processedRevisions.has(entityKey)) {
+      return;
+    }
+    this.processedRevisions.add(entityKey);
+
+    const affectedEntities: AffectedEntity[] &#x3D; [];
+    const changedFields &#x3D; this.getChangedFields(entity, entityBeforeChanges);
+    await this.applyFieldMappings(changedFields, entity, affectedEntities);
+
+    if (affectedEntities.length &gt; 0) {
+      await this.confirmAndSaveAffectedEntities(affectedEntities);
+    }
+  }
+
+  /**
+   * Analyze which fields changed during the current editing.
+   * @param newEntity Updated entity after saving
+   * @param originalEntity Entity before changes were applied
+   * @return List of key-value pairs of all changed fields (field ID and new value in that field)
+   * @private
+   */
+  private getChangedFields(
+    newEntity: Entity,
+    originalEntity: Entity,
+  ): [string, any][] {
+    const changedFields: [string, any][] &#x3D; [];
+
+    for (const [key] of originalEntity.getSchema().entries()) {
+      if (
+        JSON.stringify(originalEntity[key]) !&#x3D;&#x3D; JSON.stringify(newEntity[key])
+      ) {
+        changedFields.push([key, newEntity[key]]);
+      }
+    }
+
+    return changedFields;
+  }
+
+  /**
+   * Iterates through changed fields and applies mappings to relevant dependent entities
+   * @param changedFields - List of changed fields with their values
+   * @param entity - The source entity containing changes
+   * @param affectedEntities - Array to collect affected entity changes
+   */
+  private async applyFieldMappings(
+    changedFields: [string, any][],
+    entity: Entity,
+    affectedEntities: AffectedEntity[],
+  ): Promise&lt;void&gt; {
+    for (const [changedField, changedValue] of changedFields) {
+      const affectedRecords &#x3D; this.findEntitiesDependingOnField(
+        entity.getType(),
+        changedField,
+      );
+      for (const affected of affectedRecords) {
+        if (changedField &#x3D;&#x3D; affected.rule.relatedTriggerField) {
+          await this.applyMappingToAffectedRecord(
+            entity,
+            affected,
+            changedValue,
+            affectedEntities,
+          );
+        }
+      }
+    }
+  }
+
+  /**
+   * Applies field mapping rule to a single affected record
+   * @param sourceEntity - Entity where change occurred
+   * @param affected - Configuration for the affected entity/field
+   * @param changedValue - New value from source field
+   * @param affectedEntities - Array to collect resulting changes
+   */
+  private async applyMappingToAffectedRecord(
+    sourceEntity: Entity,
+    affected: any,
+    changedValue: any,
+    affectedEntities: AffectedEntity[],
+  ): Promise&lt;void&gt; {
+    const entity &#x3D; sourceEntity[affected.relatedReferenceField];
+    this.relatedReferenceFieldConfig &#x3D; sourceEntity
+      .getSchema()
+      .get(affected.relatedReferenceField);
+    if (!entity) return;
+    const newValue &#x3D; affected.rule.automatedMapping[changedValue.id];
+    const loadedEntities &#x3D; await this.loadRelatedEntities(
+      entity,
+      affected.targetEntityType,
+    );
+
+    for (const targetEntity of loadedEntities) {
+      await this.updateTargetEntityField(
+        targetEntity,
+        affected,
+        newValue,
+        affectedEntities,
+      );
+    }
+  }
+
+  /**
+   * Loads entities by ID using the entity mapper.
+   * @param entityids - List of entity entityiDs to load
+   * @param entityType - The constructor/type of the entities
+   */
+  private async loadRelatedEntities(
+    entityids: string[] | string,
+    entityType: string,
+  ): Promise&lt;Entity[]&gt; {
+    const relatedEntities &#x3D; Array.isArray(entityids) ? entityids : [entityids];
+
+    const loadedEntities &#x3D; await Promise.all(
+      relatedEntities.map((id) &#x3D;&gt; this.entityMapper.load(entityType, id)),
+    );
+
+    this.relatedEntities.push(...loadedEntities);
+
+    return loadedEntities;
+  }
+
+  /**
+   * Updates the target field in a dependent entity and tracks the change
+   * for later confirmation and saving.
+   * @param targetEntity - The entity to be updated
+   * @param affected - Config defining which field to update
+   * @param newValue - The new value to assign to the field
+   * @param affectedEntities - Array to record changes
+   */
+  private async updateTargetEntityField(
+    targetEntity: Entity,
+    affected: any,
+    newValue: any,
+    affectedEntities: AffectedEntity[],
+  ): Promise&lt;void&gt; {
+    const targetFieldId &#x3D; affected.targetFieldId;
+    const fieldConfig &#x3D; affected.targetEntityType.schema.get(targetFieldId);
+    const newValues &#x3D; this.entitySchemaService.valueToEntityFormat(
+      newValue,
+      fieldConfig,
+    );
+
+    if (targetEntity[targetFieldId] !&#x3D;&#x3D; newValue) {
+      targetEntity[targetFieldId] &#x3D; newValue;
+      affectedEntities.push({
+        id: targetEntity.getId(),
+        newStatus: newValues,
+        targetFieldId,
+        targetEntityType: affected.targetEntityType,
+        selectedField: { ...fieldConfig, id: targetFieldId },
+        affectedEntity: targetEntity,
+        relatedReferenceField: this.relatedReferenceFieldConfig.label,
+      });
+    }
+  }
+
+  /**
+   * Opens a dialog to confirm entity updates with the user.
+   * Saves entities only if the user confirms the changes.
+   */
+  private async confirmAndSaveAffectedEntities(
+    affectedEntities: AffectedEntity[],
+  ): Promise&lt;void&gt; {
+    const userConfirmed &#x3D; await this.showConfirmationDialog(affectedEntities);
+    if (!userConfirmed) return;
+
+    // Todo: Currently if there are multiple rule set for same entity and field, we are showing in UI as multiple entries,
+    // we need a proper UI to show the same entity and field with multiple values
+    const updatesByEntityId &#x3D; new Map&lt;string, AffectedEntity[]&gt;();
+    userConfirmed.forEach((update) &#x3D;&gt; {
+      const existing &#x3D; updatesByEntityId.get(update.id) || [];
+      existing.push(update);
+      updatesByEntityId.set(update.id, existing);
+    });
+
+    const savePromises: Promise&lt;any&gt;[] &#x3D; [];
+    updatesByEntityId.forEach((updates, entityId) &#x3D;&gt; {
+      const entity &#x3D; this.relatedEntities.find((e) &#x3D;&gt; e.getId() &#x3D;&#x3D;&#x3D; entityId);
+      if (entity) {
+        updates.forEach((update) &#x3D;&gt; {
+          entity[update.targetFieldId] &#x3D; update.newStatus;
+        });
+        savePromises.push(this.entityMapper.save(entity));
+      }
+    });
+
+    this.unsavedChangesService.pending &#x3D; false;
+    await Promise.all(savePromises);
+  }
+
+  /**
+   * Opens the confirmation dialog to let user to approve or update the changes.
+   * @param entitiesToUpdate - List of entities with pending updates
+   */
+  private async showConfirmationDialog(
+    entitiesToUpdate: AffectedEntity[],
+  ): Promise&lt;AffectedEntity[] | null&gt; {
+    const dialogRef &#x3D; this.dialog.open(AutomatedStatusUpdateComponent, {
+      maxHeight: &quot;90vh&quot;,
+      data: { entities: entitiesToUpdate },
+    });
+    return await lastValueFrom(dialogRef.afterClosed());
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'AutomatedStatusUpdateConfigService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

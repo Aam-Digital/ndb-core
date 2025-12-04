@@ -1,0 +1,626 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >SetupService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/setup/setup.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Loads available &quot;scenarios&quot; of base configs
+that users can select to start with setting up their system.</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAvailableBaseConfig" >getAvailableBaseConfig</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#initSystemWithBaseConfig" >initSystemWithBaseConfig</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#waitForConfigReady" >waitForConfigReady</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAvailableBaseConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAvailableBaseConfig</b></span>
+                        <a href="#getAvailableBaseConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAvailableBaseConfig()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="33"
+                                    class="link-to-prism">src/app/core/setup/setup.service.ts:33</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/BaseConfig.html" target="_self" >Promise&lt;BaseConfig[]&gt;</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="initSystemWithBaseConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>initSystemWithBaseConfig</b></span>
+                        <a href="#initSystemWithBaseConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>initSystemWithBaseConfig(baseConfig: <a href="../interfaces/BaseConfig.html" target="_self">BaseConfig</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="59"
+                                    class="link-to-prism">src/app/core/setup/setup.service.ts:59</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Initialize the system with the given base config,
+saving all given base-config entities to the database.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>baseConfig</td>
+                                            <td>
+                                                            <code><a href="../interfaces/BaseConfig.html" target="_self" >BaseConfig</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="waitForConfigReady"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>waitForConfigReady</b></span>
+                        <a href="#waitForConfigReady"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>waitForConfigReady(mustHaveConfigAndSync: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="115"
+                                    class="link-to-prism">src/app/core/setup/setup.service.ts:115</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Wait until config is ready and/or sync is complete.
+If true, waits for both config and sync.
+If false, resolves when either:</p>
+<ul>
+<li>configUpdates emits a non-undefined config, or</li>
+<li>SyncState.COMPLETED is reached and config loads afterward.</li>
+</ul>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>mustHaveConfigAndSync</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>If true, waits for both config and sync.
+If false, resolves when either:</p>
+<ul>
+<li>configUpdates emits a non-undefined config, or</li>
+<li>SyncState.COMPLETED is reached and config loads afterward.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { BaseConfig } from &quot;./base-config&quot;;
+import { EntityMapperService } from &quot;../entity/entity-mapper/entity-mapper.service&quot;;
+import { HttpClient } from &quot;@angular/common/http&quot;;
+import { combineLatest, filter, firstValueFrom, merge, of } from &quot;rxjs&quot;;
+import { EntitySchemaService } from &quot;../entity/schema/entity-schema.service&quot;;
+import { EntityRegistry } from &quot;../entity/database-entity.decorator&quot;;
+import { Entity } from &quot;../entity/model/entity&quot;;
+import { Logging } from &quot;../logging/logging.service&quot;;
+import { SyncStateSubject } from &quot;../session/session-type&quot;;
+import { ConfigService } from &quot;../config/config.service&quot;;
+import { SyncState } from &quot;../session/session-states/sync-state.enum&quot;;
+import { catchError, switchMap } from &quot;rxjs/operators&quot;;
+import { asArray } from &quot;../../utils/asArray&quot;;
+
+/**
+ * Loads available &quot;scenarios&quot; of base configs
+ * that users can select to start with setting up their system.
+ */
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class SetupService {
+  private readonly BASE_CONFIGS_FOLDER &#x3D; &quot;assets/base-configs&quot;;
+
+  private readonly httpClient &#x3D; inject(HttpClient);
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly schemaService &#x3D; inject(EntitySchemaService);
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
+  private readonly configService &#x3D; inject(ConfigService);
+  private readonly syncState &#x3D; inject(SyncStateSubject);
+
+  async getAvailableBaseConfig(): Promise&lt;BaseConfig[]&gt; {
+    const doc &#x3D; await firstValueFrom(
+      this.httpClient
+        .get&lt;
+          BaseConfig[]
+        &gt;(this.BASE_CONFIGS_FOLDER + &quot;/available-configs.json&quot;, { responseType: &quot;json&quot; })
+        .pipe(
+          catchError((e) &#x3D;&gt; {
+            if (e.status &#x3D;&#x3D;&#x3D; 404) {
+              Logging.warn(&quot;No available-configs.json found.&quot;);
+              return of([]);
+            } else {
+              throw e;
+            }
+          }),
+        ),
+    );
+
+    return doc;
+  }
+
+  /**
+   * Initialize the system with the given base config,
+   * saving all given base-config entities to the database.
+   * @param baseConfig
+   */
+  async initSystemWithBaseConfig(baseConfig: BaseConfig): Promise&lt;void&gt; {
+    Logging.debug(&quot;Initializing system with new base config&quot;, baseConfig);
+
+    for (const file of baseConfig.entitiesToImport) {
+      const fileName &#x3D; &#x60;${this.BASE_CONFIGS_FOLDER}/${file}&#x60;;
+
+      const docs &#x3D; await firstValueFrom(
+        this.httpClient.get&lt;Object | Object[]&gt;(fileName, {
+          responseType: &quot;json&quot;,
+        }),
+      );
+
+      for (const doc of asArray(docs)) {
+        const entity &#x3D; this.parseObjectToEntity(doc);
+        if (entity) {
+          await this.entityMapper.save(entity);
+        } else {
+          Logging.warn(
+            &quot;Invalid record file. SetupService is skipping to import this.&quot;,
+            fileName,
+            doc,
+          );
+        }
+      }
+    }
+  }
+
+  /**
+   * (Try to) convert the given doc to an Entity instance to be saved to the database.
+   */
+  private parseObjectToEntity(doc: any): Entity | undefined {
+    if (!doc || !doc[&quot;_id&quot;]) {
+      return;
+    }
+
+    const entityType &#x3D; this.entityRegistry.get(
+      Entity.extractTypeFromId(doc[&quot;_id&quot;]),
+    );
+    if (!entityType) {
+      throw new Error(&quot;RecordType for recordToImport not found: &quot; + doc[&quot;_id&quot;]);
+    }
+
+    const entity &#x3D; this.schemaService.loadDataIntoEntity(new entityType(), doc);
+    Logging.debug(&quot;Importing baseConfig entity&quot;, entity);
+
+    return entity;
+  }
+
+  /**
+   * Wait until config is ready and/or sync is complete.
+   * @param mustHaveConfigAndSync
+   * If true, waits for both config and sync.
+   * If false, resolves when either:
+   * - configUpdates emits a non-undefined config, or
+   * - SyncState.COMPLETED is reached and config loads afterward.
+   */
+  public async waitForConfigReady(
+    mustHaveConfigAndSync: boolean &#x3D; false,
+  ): Promise&lt;boolean&gt; {
+    const configReady$ &#x3D; this.configService.configUpdates.pipe(
+      filter((c) &#x3D;&gt; c !&#x3D;&#x3D; undefined),
+    );
+    const sync$ &#x3D; this.syncState.pipe(
+      filter((state) &#x3D;&gt; state &#x3D;&#x3D;&#x3D; SyncState.COMPLETED),
+      // make sure config update is already done after the sync:
+      switchMap(() &#x3D;&gt; this.configService.loadOnce()),
+    );
+
+    if (mustHaveConfigAndSync) {
+      await firstValueFrom(combineLatest([configReady$, sync$]));
+    } else {
+      await firstValueFrom(merge(configReady$, sync$));
+    }
+
+    return true;
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'SetupService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
