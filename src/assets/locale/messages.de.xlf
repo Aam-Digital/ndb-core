@@ -131,10 +131,6 @@
           <context context-type="linenumber">45</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu.component.html</context>
-          <context context-type="linenumber">2</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.html</context>
           <context context-type="linenumber">60</context>
         </context-group>
@@ -1300,7 +1296,7 @@
         <note priority="1" from="meaning">Slider that allows a user to also include events</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/notes-manager/notes-manager.component.html</context>
-          <context context-type="linenumber">28,33</context>
+          <context context-type="linenumber">29,34</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5191402552920528867" datatype="html">
@@ -1318,7 +1314,7 @@
         <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="us-circle&quot;             class=&quot;standard-icon-with-text&quot;           &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="A"/> Sektion hinzufügen </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-details/admin-entity-details.component.html</context>
-          <context context-type="linenumber">82,88</context>
+          <context context-type="linenumber">83,89</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6614677774493793726" datatype="html">
@@ -1359,6 +1355,10 @@
           <context context-type="linenumber">226</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-related-entity-details/admin-related-entity-details.component.html</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
@@ -1368,7 +1368,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu.component.html</context>
-          <context context-type="linenumber">3</context>
+          <context context-type="linenumber">16</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-widget-dialog/admin-widget-dialog.component.html</context>
@@ -1435,6 +1435,10 @@
           <context context-type="linenumber">6</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
+          <context context-type="linenumber">73</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
@@ -1479,12 +1483,12 @@
           <context context-type="linenumber">14</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="linenumber">3</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
-          <context context-type="linenumber">3</context>
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
+          <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3302047227207916068" datatype="html">
@@ -1737,7 +1741,7 @@
         <target>einfacher, fester Standard-Wert</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/default-values/x-static/static-default-value.service.ts</context>
-          <context context-type="linenumber">31</context>
+          <context context-type="linenumber">32</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1965232748981290211" datatype="html">
@@ -1745,7 +1749,7 @@
         <target>dynamischer Platzhalter (z.B. aktuelles Datum oder Nutzer:in)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/default-values/x-dynamic-placeholder/dynamic-placeholder-value.service.ts</context>
-          <context context-type="linenumber">35</context>
+          <context context-type="linenumber">36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8383482611127275827" datatype="html">
@@ -1753,7 +1757,7 @@
         <target>Wert &quot;geerbt&quot; aus einem anderen, verknüpften Datensatz (benötigt ein anderes Feld in diesem Datensatz, das eine Verknüpfung zu einem Datensatz ist)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/default-value-inherited/inherited-value.service.ts</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">41</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6585878881795141289" datatype="html">
@@ -1842,7 +1846,7 @@
         <target> Unteransichten können hier noch nicht bearbeitet werden. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.html</context>
-          <context context-type="linenumber">42,44</context>
+          <context context-type="linenumber">55,57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2118667939256192500" datatype="html">
@@ -1875,20 +1879,20 @@
         <source>Icon</source>
         <target>Icon</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/admin-icon-input/admin-icon-input.component.html</context>
-          <context context-type="linenumber">3</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-types/admin-entity-types.component.html</context>
+          <context context-type="linenumber">44</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-types/admin-entity-types.component.html</context>
-          <context context-type="linenumber">42</context>
+          <context context-type="sourcefile">src/app/core/common-components/icon-input/icon-input.component.html</context>
+          <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9011959596901584887" datatype="html">
         <source>Color</source>
         <target>Farbe</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/color-input/color-input.component.html</context>
-          <context context-type="linenumber">30</context>
+          <context context-type="sourcefile">src/app/core/common-components/color-input/color-input.component.ts</context>
+          <context context-type="linenumber">46</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6648629370488895575" datatype="html">
@@ -1896,7 +1900,7 @@
         <target>Generierter Titel eines Datensatzes</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">59</context>
+          <context context-type="linenumber">60</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8703736367007810623" datatype="html">
@@ -1904,7 +1908,7 @@
         <target>Die Werte der ausgewählten Felder werden (in dieser Reihenfolge) genutzt um eine Bezeichnung für einen konkreten Datensatz zu erzeugen. (Nur Felder vom Typ &quot;Text&quot; sind hierfür verfügbar)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">63</context>
+          <context context-type="linenumber">64</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5045392956487283965" datatype="html">
@@ -1912,7 +1916,7 @@
         <target>Anonymisierung konfigurieren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">85</context>
+          <context context-type="linenumber">175</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7782904061382038164" datatype="html">
@@ -1920,7 +1924,7 @@
         <target>Enthält persönliche Daten (DSGVO-relevant)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">95</context>
+          <context context-type="linenumber">185</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4379176514372959023" datatype="html">
@@ -1928,7 +1932,7 @@
         <target>Auswählen, wenn Angaben dieses Datentyps persönliche Daten enthalten können. Diese Option aktiviert die &quot;Anonymisierungs-Funktion&quot;. Damit können Nutzer:innen einen Datensatz dieses Typs anonymisieren, anstatt diesen nur zu archivieren oder komplett zu löschen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">98</context>
+          <context context-type="linenumber">188</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5591054546376436766" datatype="html">
@@ -1936,7 +1940,7 @@
         <target> Einstellungen wie Datensätze dieses Typs anonymisiert werden. Nutzer:innen können einen Eintrag &quot;anonymisieren&quot; als Alternative dazu ihn zu archivieren (wobei alle persönlichen Daten gespeichert bleiben) oder zu löschen (wobei jegliche Spur des Datensatzes entfernt wird, selbst ihn Berichten und sonstigen Auswertungen). Die Liste aller Profilfelder hier definiert, welche Felder &quot;erhalten&quot; bleiben können, um weiterhin statistische Auswertungen zu ermöglichen, und welche Felder entfernt werden müssen, da sie persönliche Daten enthalten. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">105,113</context>
+          <context context-type="linenumber">195,203</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3620188369327429839" datatype="html">
@@ -1945,6 +1949,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
           <context context-type="linenumber">14,16</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu.component.html</context>
+          <context context-type="linenumber">13,15</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component.html</context>
@@ -1995,7 +2003,7 @@
         <target> Diese Komponente (<x id="INTERPOLATION" equiv-text="{{ configDetailsView.component }}"/>) kann aktuell noch nicht von Nutzer:innen in der Admin-Oberfläche bearbeitet werden. Bitte kontaktieren Sie Ihr technisches Support-Team, um hier Änderungen vorzunehmen. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
-          <context context-type="linenumber">71,75</context>
+          <context context-type="linenumber">72,76</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5103146006962696736" datatype="html">
@@ -2004,11 +2012,11 @@
         <note priority="1" from="description">Save config confirmation message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.ts</context>
-          <context context-type="linenumber">158</context>
+          <context context-type="linenumber">179</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
-          <context context-type="linenumber">144</context>
+          <context context-type="linenumber">138</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6236690165266443105" datatype="html">
@@ -2017,11 +2025,11 @@
         <note priority="1" from="description">admin menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
-          <context context-type="linenumber">15</context>
+          <context context-type="linenumber">40</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin.routing.ts</context>
-          <context context-type="linenumber">79</context>
+          <context context-type="linenumber">114</context>
         </context-group>
       </trans-unit>
       <trans-unit id="657496228690855434" datatype="html">
@@ -2029,8 +2037,12 @@
         <target>Database Conflicts</target>
         <note priority="1" from="description">admin menu item</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
-          <context context-type="linenumber">19</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">161</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/conflict-resolution/conflict-resolution-list/conflict-resolution-list.component.html</context>
+          <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2825615697460398548" datatype="html">
@@ -2039,11 +2051,15 @@
         <note priority="1" from="description">admin menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
-          <context context-type="linenumber">27</context>
+          <context context-type="linenumber">44</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-button/setup-wizard-button.component.html</context>
           <context context-type="linenumber">10</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard.component.html</context>
+          <context context-type="linenumber">1</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/setup/assistant-dialog/assistant-dialog.component.html</context>
@@ -2115,7 +2131,7 @@
         <target> Weiter </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard.component.html</context>
-          <context context-type="linenumber">29,31</context>
+          <context context-type="linenumber">31,33</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
@@ -2135,7 +2151,7 @@
         <target>Der Setup-Assistent wird im Hauptmenü versteckt, nachdem Sie den Prozess hiermit abschließen. Sie können diesen Bildschirm aber weiterhin über dem Admin-Bereich aufrufen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard.component.html</context>
-          <context context-type="linenumber">38</context>
+          <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3042808158953329493" datatype="html">
@@ -2143,7 +2159,7 @@
         <target> Abschließen </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard.component.html</context>
-          <context context-type="linenumber">41,43</context>
+          <context context-type="linenumber">43,45</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5660447479407641213" datatype="html">
@@ -2234,7 +2250,7 @@
         <target>Neue Option konnte nicht erstellt werden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component.ts</context>
-          <context context-type="linenumber">150</context>
+          <context context-type="linenumber">162</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6031162605459514264" datatype="html">
@@ -2242,7 +2258,7 @@
         <target>Bitte prüfen Sie, ob der Wert bereits existiert.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component.ts</context>
-          <context context-type="linenumber">151</context>
+          <context context-type="linenumber">163</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5432260252143962374" datatype="html">
@@ -2250,7 +2266,7 @@
         <target>Erstelle eine neue Option</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component.ts</context>
-          <context context-type="linenumber">162</context>
+          <context context-type="linenumber">174</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5006850401853518123" datatype="html">
@@ -2258,7 +2274,7 @@
         <target>Wollen sie die neue Option &quot;<x id="PH" equiv-text="option"/>&quot; erstellen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component.ts</context>
-          <context context-type="linenumber">163</context>
+          <context context-type="linenumber">175</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3938396793871184620" datatype="html">
@@ -3349,7 +3365,7 @@
         <note priority="1" from="description">Add a new entity to a list of multiple entities</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">165,167</context>
+          <context context-type="linenumber">166,168</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2623334410136043738" datatype="html">
@@ -3358,7 +3374,7 @@
         <note priority="1" from="description">Show filter options popup for list</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">177</context>
+          <context context-type="linenumber">178</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5565098424836208406" datatype="html">
@@ -3367,7 +3383,7 @@
         <note priority="1" from="description">Download list contents as CSV</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">196</context>
+          <context context-type="linenumber">197</context>
         </context-group>
       </trans-unit>
       <trans-unit id="880922127227000253" datatype="html">
@@ -3376,7 +3392,7 @@
         <note priority="1" from="description">Download list contents as CSV</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">214</context>
+          <context context-type="linenumber">215</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6689023236721719187" datatype="html">
@@ -3384,7 +3400,7 @@
         <target> Datei importieren </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">230</context>
+          <context context-type="linenumber">231</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1040786538618991636" datatype="html">
@@ -3392,7 +3408,7 @@
         <target>Wählen Sie mehrere Datensätze aus, um gemeinsame Aktionen für alle auszuführen (z.B. Duplizieren oder Löschen)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">236</context>
+          <context context-type="linenumber">237</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4784348917657601711" datatype="html">
@@ -3400,7 +3416,7 @@
         <target> Massen-Bearbeitung </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">245</context>
+          <context context-type="linenumber">246</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7532581571486706488" datatype="html">
@@ -3470,7 +3486,7 @@
         <note priority="1" from="description">Undo an entity action</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
-          <context context-type="linenumber">145</context>
+          <context context-type="linenumber">139</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-actions.service.ts</context>
@@ -3479,6 +3495,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-confirm-summary/import-confirm-summary.component.ts</context>
           <context context-type="linenumber">58</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/admin-user-roles/admin-user-roles.component.ts</context>
+          <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6086328370144243980" datatype="html">
@@ -3733,7 +3753,7 @@
         <note priority="1" from="description">Entity.toString fallback for anonymized record</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/model/entity.ts</context>
-          <context context-type="linenumber">353,355</context>
+          <context context-type="linenumber">373,375</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6116431777503568524" datatype="html">
@@ -5105,12 +5125,12 @@
         <target>Link</target>
         <note priority="1" from="description">A link that takes a user to a center</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
-          <context context-type="linenumber">107</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="linenumber">11</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
-          <context context-type="linenumber">11</context>
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
+          <context context-type="linenumber">107</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6680431077518392028" datatype="html">
@@ -5625,7 +5645,7 @@
         <note priority="1" from="description">Matching View column name</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/matching-entities/matching-entities/matching-entities.component.ts</context>
-          <context context-type="linenumber">387</context>
+          <context context-type="linenumber">405</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2468578017924444574" datatype="html">
@@ -5998,6 +6018,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
           <context context-type="linenumber">18</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.module.ts</context>
+          <context context-type="linenumber">67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7635494124656371456" datatype="html">
@@ -6603,7 +6627,7 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
         <note priority="1" from="description">PublicFormConfig admin form panel</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">91</context>
+          <context context-type="linenumber">98</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7429211262318065236" datatype="html">
@@ -6612,7 +6636,7 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
         <note priority="1" from="description">PublicFormConfig admin form panel</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">119</context>
+          <context context-type="linenumber">130</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1155564940038634158" datatype="html">
@@ -7078,7 +7102,7 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
         <note priority="1" from="description">Navigate to user profile page</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
-          <context context-type="linenumber">105</context>
+          <context context-type="linenumber">119</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2949848596707725099" datatype="html">
@@ -7087,7 +7111,7 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
         <note priority="1" from="description">Sign out of the app</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
-          <context context-type="linenumber">112</context>
+          <context context-type="linenumber">126</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8874875360289253570" datatype="html">
@@ -7169,7 +7193,7 @@ Falls Sie Probleme beim Absenden des Formulars feststellen, kontaktieren Sie bit
         <note priority="1" from="description">PublicFormConfig admin form</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">105,106</context>
+          <context context-type="linenumber">112,113</context>
         </context-group>
       </trans-unit>
       <trans-unit id="892832265477968679" datatype="html">
@@ -7213,10 +7237,18 @@ Falls Sie Probleme beim Absenden des Formulars feststellen, kontaktieren Sie bit
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="4820528532769775314" datatype="html">
         <source>Field</source>
         <target>Feld</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/conditions-editor/conditions-editor.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.html</context>
           <context context-type="linenumber">18</context>
@@ -7270,7 +7302,7 @@ Falls Sie Probleme beim Absenden des Formulars feststellen, kontaktieren Sie bit
         <note priority="1" from="description">PublicFormConfig admin form panel</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">134</context>
+          <context context-type="linenumber">145</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7201028907562937044" datatype="html">
@@ -8034,6 +8066,10 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Benachrichtigungen</target>
         <note priority="1" from="description">notifications toolbar icon tooltip</note>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.ts</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
@@ -8470,7 +8506,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Automatische Aktualisierung bei Änderungen in einem anderen Datensatz</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/automated-status-update/updated-from-referencing-entity-default-value.service.ts</context>
-          <context context-type="linenumber">27</context>
+          <context context-type="linenumber">28</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8619278871301655803" datatype="html">
@@ -8518,7 +8554,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Nutzer-Konten aktivieren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5738647397477293182" datatype="html">
@@ -8565,7 +8601,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source>Enter the ID of an icon here, which will be displayed as a visual icon then.</source>
         <target>Tragen Sie hier die ID eines Icons ein, welches dann als Symbol angezeigt wird.</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/admin-icon-input/admin-icon-input.component.html</context>
+          <context context-type="sourcefile">src/app/core/common-components/icon-input/icon-input.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
       </trans-unit>
@@ -8573,7 +8609,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source> Find available icon names at <x id="START_LINK" ctype="x-a" equiv-text="&lt;a       href=&quot;https://fontawesome.com/v6/search?o=r&amp;m=free&quot;       target=&quot;_blank&quot;       rel=&quot;noopener&quot;     &gt;"/> fontawesome.com <x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></source>
         <target>Verfügbare Symbolnamen finden Sie unter <x id="START_LINK" ctype="x-a" equiv-text="&lt;a href=&quot;https://fontawesome.com/v6/search?o=r&amp;m=free&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; &gt;"/> fontawesome.com <x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/admin-icon-input/admin-icon-input.component.html</context>
+          <context context-type="sourcefile">src/app/core/common-components/icon-input/icon-input.component.html</context>
           <context context-type="linenumber">12,20</context>
         </context-group>
       </trans-unit>
@@ -8945,7 +8981,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Wählen Sie aus, welche Felder in diesem Bereich angezeigt werden sollen. Sie können die Reihenfolge der Anzeige ändern. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.html</context>
-          <context context-type="linenumber">25,28</context>
+          <context context-type="linenumber">38,41</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5650184231889504762" datatype="html">
@@ -8953,7 +8989,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Angezeigte Spalten:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.html</context>
-          <context context-type="linenumber">35</context>
+          <context context-type="linenumber">48</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4651008079244358967" datatype="html">
@@ -8961,7 +8997,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Entitätstyp ändern</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.ts</context>
-          <context context-type="linenumber">104</context>
+          <context context-type="linenumber">141</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6472567986999223209" datatype="html">
@@ -8969,7 +9005,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Durch das Ändern des Typs werden alle ausgewählten Felder verworfen. Fortfahren?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.ts</context>
-          <context context-type="linenumber">105</context>
+          <context context-type="linenumber">142</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4815129362025568896" datatype="html">
@@ -9042,7 +9078,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Konfiguration wird zurückgesetzt ...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
-          <context context-type="linenumber">151</context>
+          <context context-type="linenumber">145</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1457221223987054747" datatype="html">
@@ -9300,7 +9336,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source>Pick a color or enter a color code (e.g. #ff0000).</source>
         <target>Wählen Sie eine Farbe oder geben Sie einen Farbcode ein.</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/color-input/color-input.component.html</context>
+          <context context-type="sourcefile">src/app/core/common-components/color-input/color-input.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
       </trans-unit>
@@ -9655,15 +9691,6 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
           <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="732955514089887947" datatype="html">
-        <source>Manage Email Templates</source>
-        <target>E-Mail-Vorlagen verwalten</target>
-        <note priority="1" from="description">admin menu item</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/email-client/email-client.module.ts</context>
-          <context context-type="linenumber">54</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="4770742988376477776" datatype="html">
         <source>Email Template</source>
         <target>E-Mail-Vorlage</target>
@@ -9677,6 +9704,10 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source>Email Templates</source>
         <target>E-Mail-Vorlagen</target>
         <note priority="1" from="description">EmailTemplate</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/email-client/email-client.module.ts</context>
+          <context context-type="linenumber">54</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/email-client/email-template.entity.ts</context>
           <context context-type="linenumber">20</context>
@@ -9830,15 +9861,6 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
           <context context-type="linenumber">7,11</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="4573254213743080336" datatype="html">
-        <source>Configure Main Menu</source>
-        <target>Hauptmenü konfigurieren</target>
-        <note priority="1" from="description">admin menu item</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
-          <context context-type="linenumber">31</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="1387821177490888950" datatype="html">
         <source>Configure Data Structure</source>
         <target>Datenstruktur konfigurieren</target>
@@ -9848,25 +9870,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">279</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5062316330239811205" datatype="html">
-        <source>Configure Public Forms</source>
-        <target>Öffentliche Formulare konfigurieren</target>
-        <note priority="1" from="description">admin menu item</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">33</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8482950974786730940" datatype="html">
-        <source>Configure Export Templates</source>
-        <target>Exportvorlagen konfigurieren</target>
-        <note priority="1" from="description">admin menu item</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/template-export/template-export.module.ts</context>
-          <context context-type="linenumber">67</context>
+          <context context-type="linenumber">280</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8112028716281298918" datatype="html">
@@ -9966,7 +9970,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source>Switch to select mode</source>
         <target>In den Auswahlmodus wechseln</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
           <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
@@ -9974,7 +9978,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source>Switch to custom link mode</source>
         <target>Wechseln Sie in den benutzerdefinierten Linkmodus</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
           <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
@@ -10059,7 +10063,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <note priority="1" from="description">PublicFormConfig admin form</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">145</context>
+          <context context-type="linenumber">156</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5763258212323881741" datatype="html">
@@ -10068,7 +10072,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <note priority="1" from="description">PublicFormConfig admin form</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">151</context>
+          <context context-type="linenumber">162</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7028415224590522432" datatype="html">
@@ -10238,7 +10242,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Details zum technischen Support anzeigen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
-          <context context-type="linenumber">122</context>
+          <context context-type="linenumber">136</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4001308903727090607" datatype="html">
@@ -10358,6 +10362,10 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
           <context context-type="linenumber">225</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-related-entity-details/admin-related-entity-details.component.html</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu-item-details/admin-menu-item-details.component.html</context>
           <context context-type="linenumber">48</context>
         </context-group>
@@ -10410,7 +10418,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Neuen Datensatztyp hinzufügen </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-types/admin-entity-types.component.html</context>
-          <context context-type="linenumber">6,8</context>
+          <context context-type="linenumber">8,10</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2207177531607525223" datatype="html">
@@ -10418,7 +10426,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target> Auch interne Typen laden </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-types/admin-entity-types.component.html</context>
-          <context context-type="linenumber">15,17</context>
+          <context context-type="linenumber">17,19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4545736131178653344" datatype="html">
@@ -10426,7 +10434,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target> Datensatztyp </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-types/admin-entity-types.component.html</context>
-          <context context-type="linenumber">22,24</context>
+          <context context-type="linenumber">24,26</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1089828722398015601" datatype="html">
@@ -10434,7 +10442,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target> Datensatztyp (ID) </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-types/admin-entity-types.component.html</context>
-          <context context-type="linenumber">32,34</context>
+          <context context-type="linenumber">34,36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4007594527486793026" datatype="html">
@@ -10461,7 +10469,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Prüfen Sie, ob Datensätze dieses Typs mit Benutzerkonten und Anmeldeinformationen verknüpft werden können. Dies ermöglicht die Zuweisung von Rollen und die Verwaltung des Zugriffs.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">50</context>
+          <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5726055582457551689" datatype="html">
@@ -10470,15 +10478,6 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu-item-details/admin-menu-item-details.component.html</context>
           <context context-type="linenumber">29,32</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6772482876773868010" datatype="html">
-        <source>Configure Record Types</source>
-        <target>Datensatztypen konfigurieren</target>
-        <note priority="1" from="description">admin menu item</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
-          <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1210526572753357231" datatype="html">
@@ -10715,7 +10714,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <source> You can define a link manually. To create a new link, open Aam Digital in a new tab, go to the desired record type, copy everything after ‘https://&lt;your-system&gt;.aam-digital.app/’, and paste it here as the link target. </source>
         <target>Sie können einen Link manuell definieren. Um einen neuen Link zu erstellen, öffnen Sie Aam Digital in einem neuen Tab, gehen Sie zum gewünschten Datensatztyp, kopieren Sie alles nach „https://&lt;Ihr-System&gt;.aam-digital.app/“ und fügen Sie es hier als Linkziel ein. </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
           <context context-type="linenumber">26,31</context>
         </context-group>
       </trans-unit>
@@ -10725,6 +10724,735 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
           <context context-type="linenumber">25,28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4338073449583918499" datatype="html">
+        <source>If you need additional fields, edit the related record type here.</source>
+        <target>Falls Sie zusätzliche Felder benötigen, bearbeiten Sie hier den zugehörigen Datensatztyp.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.html</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1483788781057952096" datatype="html">
+        <source>Edit data structure of <x id="INTERPOLATION" equiv-text="{{ entityConstructor.label || entityConstructor.ENTITY_TYPE }}"/></source>
+        <target>Bearbeiten Sie die Datenstruktur &quot;<x id="INTERPOLATION" equiv-text="{{ entityConstructor.label || entityConstructor.ENTITY_TYPE }}"/>&quot;</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.html</context>
+          <context context-type="linenumber">30,32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8150213210303584067" datatype="html">
+        <source> Edit data structure: <x id="INTERPOLATION" equiv-text="{{ entityConstructor?.label || entityConstructor?.ENTITY_TYPE }}"/>
+</source>
+        <target>Datenstruktur bearbeiten: <x id="INTERPOLATION" equiv-text="{{ entityConstructor?.label || entityConstructor?.ENTITY_TYPE }}"/>
+
+</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-related-entity-details/admin-related-entity-details.component.html</context>
+          <context context-type="linenumber">1,4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8939859085638694188" datatype="html">
+        <source> Configure which fields are displayed when editing records of this type through a related entity form. You can select from existing fields or add new fields directly from here! Drag and drop fields to reorder and group them as needed. We recommend to keep things simple: Only add fields that you really need for your work. </source>
+        <target>Konfigurieren Sie, welche Felder beim Bearbeiten von Datensätzen dieses Typs über die Ansicht verknüpfter Datensätze angezeigt werden. Sie können aus vorhandenen Feldern auswählen oder direkt hier neue Felder hinzufügen. Per Drag &amp; Drop können Sie die Felder neu anordnen und gruppieren. Wir empfehlen, es einfach zu halten: Fügen Sie nur die Felder hinzu, die Sie für Ihre Arbeit wirklich benötigen. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-related-entity-details/admin-related-entity-details.component.html</context>
+          <context context-type="linenumber">8,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="570144654393324813" datatype="html">
+        <source>Data Structures &amp; Entity Types</source>
+        <target>Datenstruktur &amp; Datensatz-Typen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-types/admin-entity-types.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7523721305083860907" datatype="html">
+        <source>Main Navigation Menu</source>
+        <target>Hauptmenü</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7830707034534607415" datatype="html">
+        <source>Subscription</source>
+        <target>Abonnement</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4001172053236623696" datatype="html">
+        <source>Manage your subscription details, privacy settings, and access to advanced features.</source>
+        <target>Verwalten Sie Ihre Abonnementdetails, Datenschutzeinstellungen und den Zugriff auf erweiterte Funktionen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">13,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1306396585538771834" datatype="html">
+        <source>Subscription Info</source>
+        <target>Abonnementinformationen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/subscription-info/subscription-info.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8405225719517614548" datatype="html">
+        <source>Advanced Features</source>
+        <target>Erweiterte Funktionen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8848927603663776704" datatype="html">
+        <source>Data Privacy</source>
+        <target>Datenschutz</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/data-privacy/data-privacy.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6780818241181633247" datatype="html">
+        <source>Configuration and Site Wide Settings</source>
+        <target>Konfiguration und System-weite Einstellungen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1459406520299597519" datatype="html">
+        <source>Set up the essential elements that shape your site&apos;s structure and system behaviour.</source>
+        <target>Richten Sie Elemente ein der Struktur und des Verhaltens Ihres Systems ein.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">41,42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8896852203168922246" datatype="html">
+        <source>Templates and Forms</source>
+        <target>Vorlagen und Formulare</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">62</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3557340680423304308" datatype="html">
+        <source>Customise your templates and forms.</source>
+        <target>Passen Sie Ihre Vorlagen und Formulare individuell an.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">64</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2550377588620126747" datatype="html">
+        <source>User Management</source>
+        <target>Benutzerverwaltung</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">86</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2029626246030525073" datatype="html">
+        <source>Set up and manage user accounts, roles, and permissions.</source>
+        <target>Benutzerkonten, Rollen und Berechtigungen einrichten und verwalten.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">88,89</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2804900504095272066" datatype="html">
+        <source>User Accounts</source>
+        <target>Benutzerkonten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">94</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7339572341549652441" datatype="html">
+        <source>User Roles &amp; Permissions</source>
+        <target>Benutzerrollen &amp; Berechtigungen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">97</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.ts</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7308019926144106513" datatype="html">
+        <source>Export and Backups</source>
+        <target>Export und Backups</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">108</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5954113826650862646" datatype="html">
+        <source>Define how your system keeps data protected and accessible.</source>
+        <target>Definieren Sie, wie Ihr System Daten schützt und zugänglich hält.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">110,111</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4347616266426103167" datatype="html">
+        <source>Download Backup (.json)</source>
+        <target>Backup herunterladen (.json)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">116</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6606967390697286397" datatype="html">
+        <source>Restore Backup (.json)</source>
+        <target>Backup wiederherstellen (.json)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">119</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2040881881182678941" datatype="html">
+        <source>Full Database Export (.csv)</source>
+        <target>Vollständiger Datenbankexport (.csv)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">122</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3514317525562069691" datatype="html">
+        <source>Technical Administration</source>
+        <target>Technische Administration</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">134</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2175509936387719972" datatype="html">
+        <source>Manage advanced technical options for maintaining and troubleshooting your system.</source>
+        <target>Verwalten Sie erweiterte technische Optionen zur Wartung und Fehlerbehebung Ihres Systems.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">136,137</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5175865316017005772" datatype="html">
+        <source>Edit Application Configuration (JSON)</source>
+        <target>Anwendungskonfiguration bearbeiten (JSON)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">142</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8162757748489667702" datatype="html">
+        <source>Download Application Configuration (JSON)</source>
+        <target>Anwendungskonfiguration herunterladen (JSON)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">146</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1393034033076929263" datatype="html">
+        <source>Upload Application Configuration (JSON)</source>
+        <target>Anwendungskonfiguration hochladen (JSON)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">151</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2723546963441188718" datatype="html">
+        <source>PouchDB Debug: Send to console.log()</source>
+        <target>PouchDB-Debug: Senden an console.log()</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">155</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3017100262262011992" datatype="html">
+        <source>Empty Database</source>
+        <target>Datenbank leeren</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">158</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5880257648610696148" datatype="html">
+        <source>Record Types &amp; Data Structures</source>
+        <target>Datensatztypen und Datenstrukturen</target>
+        <note priority="1" from="description">admin menu item</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
+          <context context-type="linenumber">32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4496728609089245486" datatype="html">
+        <source>This page is still under development. More information and configuration options coming soon.
+</source>
+        <target>Diese Seite befindet sich noch im Aufbau. Weitere Informationen und Konfigurationsoptionen folgen in Kürze.
+
+</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.html</context>
+          <context context-type="linenumber">4,6</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/subscription-info/subscription-info.component.html</context>
+          <context context-type="linenumber">4,6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2330698421442442186" datatype="html">
+        <source>Offline Usage</source>
+        <target>Offline-Nutzung</target>
+        <note priority="1" from="description">Admin UI advanced features list</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.ts</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="803737884051929116" datatype="html">
+        <source>Our application supports offline usage, allowing you to access and modify data without an internet connection. Changes made offline will be synchronized once you&apos;re back online.</source>
+        <target>Unsere Anwendung unterstützt die Offline-Nutzung, sodass Sie auch ohne Internetverbindung auf Ihre Daten zugreifen und diese bearbeiten können. Offline vorgenommene Änderungen werden synchronisiert, sobald Sie wieder online sind.</target>
+        <note priority="1" from="description">Admin UI advanced features list</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.ts</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5271836741520426311" datatype="html">
+        <source>Define different roles to control access to various features and data within the application. Assign these individually, so that users have appropriate access levels.</source>
+        <target>Definieren Sie verschiedene Rollen, um den Zugriff auf unterschiedliche Funktionen und Daten innerhalb der Anwendung zu steuern. Weisen Sie diese individuell zu, damit die Benutzer über die entsprechenden Zugriffsrechte verfügen.</target>
+        <note priority="1" from="description">Admin UI advanced features list</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4738425936742586225" datatype="html">
+        <source>Reporting &amp; Analysis</source>
+        <target>Berichterstattung und Analyse</target>
+        <note priority="1" from="description">Admin UI advanced features list</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.ts</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2287379711202666874" datatype="html">
+        <source>Calculate advanced statistics and analyze records across their relationships using custom SQL queries.</source>
+        <target>Berechnen Sie fortgeschrittene Statistiken und analysieren Sie Datensätze hinsichtlich ihrer Beziehungen mithilfe benutzerdefinierter SQL-Abfragen.</target>
+        <note priority="1" from="description">Admin UI advanced features list</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.ts</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9048847954573135859" datatype="html">
+        <source>PDF Generation</source>
+        <target>PDF-Generierung</target>
+        <note priority="1" from="description">Admin UI advanced features list</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.ts</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="142972917768093064" datatype="html">
+        <source>Generate PDF documents from your data entries based on custom Word templates for easy sharing and printing.</source>
+        <target>Erstellen Sie PDF-Dokumente aus Ihren Dateneingaben anhand von benutzerdefinierten Word-Vorlagen zum einfachen Teilen und Drucken.</target>
+        <note priority="1" from="description">Admin UI advanced features list</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.ts</context>
+          <context context-type="linenumber">32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6007366206490894237" datatype="html">
+        <source>Stay informed with in-app notifications about important events and updates relevant to the activities of your team.</source>
+        <target>Bleiben Sie mit In-App-Benachrichtigungen über wichtige Ereignisse und Aktualisierungen, die für die Aktivitäten Ihres Teams relevant sind, auf dem Laufenden.</target>
+        <note priority="1" from="description">Admin UI advanced features list</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.ts</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7529703822114252129" datatype="html">
+        <source>API Integrations</source>
+        <target>API-Integrationen</target>
+        <note priority="1" from="description">Admin UI advanced features list</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.ts</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="891320221608265471" datatype="html">
+        <source>Connect with third-party systems to automatically pass data from Aam Digital to other tools in real-time to automate more of your workflows.</source>
+        <target>Verbinden Sie sich mit Drittsystemen, um Daten von Aam Digital automatisch und in Echtzeit an andere Tools weiterzuleiten und so mehr Ihrer Arbeitsabläufe zu automatisieren.</target>
+        <note priority="1" from="description">Admin UI advanced features list</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.ts</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2223640905439252475" datatype="html">
+        <source>Single Sign-On (SSO)</source>
+        <target>Single Sign-On (SSO)</target>
+        <note priority="1" from="description">Admin UI advanced features list</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.ts</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7351263423194382299" datatype="html">
+        <source>Simplify the login process by integrating with your organization&apos;s identity provider, allowing users to access the application using their existing credentials.</source>
+        <target>Vereinfachen Sie den Anmeldeprozess durch die Integration mit dem Identitätsanbieter Ihrer Organisation, sodass Benutzer mit ihren bestehenden Konten auf die Anwendung zugreifen können.</target>
+        <note priority="1" from="description">Admin UI advanced features list</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.ts</context>
+          <context context-type="linenumber">47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6122593225333791059" datatype="html">
+        <source>see Privacy Policy</source>
+        <target>siehe Datenschutzrichtlinie</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/data-privacy/data-privacy.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4930506384627295710" datatype="html">
+        <source>Settings</source>
+        <target>Einstellungen</target>
+        <note priority="1" from="description">Navigate to settings page</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
+          <context context-type="linenumber">107</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4895951936818049043" datatype="html">
+        <source>User Roles</source>
+        <target>Benutzerrollen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/admin-user-roles/admin-user-roles.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6721205905819727298" datatype="html">
+        <source> This page is still under development. Use the raw JSON Editor below to make adjustments or contact user support.
+</source>
+        <target> Diese Seite befindet sich noch in der Entwicklung. Nutzen Sie den unten stehenden JSON-Editor, um Anpassungen vorzunehmen, oder kontaktieren Sie den Support.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/admin-user-roles/admin-user-roles.component.html</context>
+          <context context-type="linenumber">3,6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="999679575053212375" datatype="html">
+        <source>Edit Permissions Configuration (JSON)</source>
+        <target>Berechtigungskonfiguration bearbeiten (JSON)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/admin-user-roles/admin-user-roles.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3061362835271417984" datatype="html">
+        <source>Permissions updated</source>
+        <target>Berechtigungen aktualisiert</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/admin-user-roles/admin-user-roles.component.ts</context>
+          <context context-type="linenumber">49</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2653335465141349625" datatype="html">
+        <source>conflicts to resolve:</source>
+        <target>Zu lösende Konflikte:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/conflict-resolution/conflict-resolution-list/conflict-resolution-list.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6165568910552686720" datatype="html">
+        <source>⚠️ Missing Public Permission</source>
+        <target>⚠️ Fehlende öffentliche Berechtigung</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission-warning/public-form-permission-warning.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4134493198693532218" datatype="html">
+        <source> This public form will currently not work for external users without an account because the &quot;public&quot; role does not have permission to create new <x id="INTERPOLATION" equiv-text="{{ entityType }}"/> records. </source>
+        <target>Dieses öffentliche Formular funktioniert derzeit nicht für externe Benutzer ohne Konto, da die Rolle &quot;public&quot; keine Berechtigung zum Erstellen neuer <x id="INTERPOLATION" equiv-text="{{ entityType }}"/>-Datensätze hat. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission-warning/public-form-permission-warning.component.html</context>
+          <context context-type="linenumber">5,9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4981729030739812160" datatype="html">
+        <source>Required:</source>
+        <target>Erforderlich:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission-warning/public-form-permission-warning.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9172579209381285884" datatype="html">
+        <source> The &quot;public&quot; role needs &quot;create&quot; permission for &quot;<x id="INTERPOLATION" equiv-text="{{ entityType }}"/>&quot; entities. </source>
+        <target> Die Rolle &quot;public&quot; benötigt die Berechtigung &quot;create&quot; für &quot;<x id="INTERPOLATION" equiv-text="{{ entityType }}"/>&quot; Datensätze. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission-warning/public-form-permission-warning.component.html</context>
+          <context context-type="linenumber">12,15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2293700659607847541" datatype="html">
+        <source> Update Permission &amp; Save Form </source>
+        <target>Berechtigungen aktualisieren &amp; Formular speichern </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission-warning/public-form-permission-warning.component.html</context>
+          <context context-type="linenumber">24,26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="685397946196913585" datatype="html">
+        <source> You need admin permissions to add the required permission automatically. </source>
+        <target>Sie benötigen Administratorrechte, um die erforderliche Berechtigung automatisch hinzuzufügen. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission-warning/public-form-permission-warning.component.html</context>
+          <context context-type="linenumber">28,31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4875537486638765777" datatype="html">
+        <source>Permission added successfully! The public form should now work correctly.</source>
+        <target>Berechtigung erfolgreich hinzugefügt! Das öffentliche Formular sollte nun korrekt funktionieren.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission-warning/public-form-permission-warning.component.ts</context>
+          <context context-type="linenumber">107</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1002577976478620306" datatype="html">
+        <source>Failed to add permission automatically. Please contact an administrator or check the permissions configuration manually.</source>
+        <target>Die Berechtigung konnte nicht automatisch hinzugefügt werden. Bitte wenden Sie sich an einen Administrator oder überprüfen Sie die Berechtigungskonfiguration manuell.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission-warning/public-form-permission-warning.component.ts</context>
+          <context context-type="linenumber">113</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5726225952430992812" datatype="html">
+        <source>Update Permission &amp; Save Form</source>
+        <target>Berechtigungen aktualisieren &amp; Formular speichern</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
+          <context context-type="linenumber">56</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7254372044150496363" datatype="html">
+        <source>Save Form Only</source>
+        <target>Nur Formular speichern</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7570620550808005362" datatype="html">
+        <source>Save Form Anyway</source>
+        <target>Formular trotzdem speichern</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
+          <context context-type="linenumber">68</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6924444017190786407" datatype="html">
+        <source>This public form will currently not work for external users without an account because the &quot;public&quot; role does not have permission to create new &quot;<x id="PH" equiv-text="entityType"/>&quot; records.
+
+</source>
+        <target>Dieses öffentliche Formular funktioniert derzeit nicht für externe Benutzer ohne Konto, da die Rolle „public“ keine Berechtigung zum Erstellen neuer Datensätze vom Typ „<x id="PH" equiv-text="entityType"/>“ besitzt.
+
+</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
+          <context context-type="linenumber">80</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6682396402659725802" datatype="html">
+        <source>Would you like to add the required permission automatically?</source>
+        <target>Möchten Sie die erforderliche Berechtigung automatisch hinzufügen?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
+          <context context-type="linenumber">82</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="331191096996827580" datatype="html">
+        <source>You need an administrator to add the required permissions. Do you still want to save this form?</source>
+        <target>Sie benötigen einen Administrator, um die erforderlichen Berechtigungen hinzuzufügen. Möchten Sie dieses Formular trotzdem speichern?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
+          <context context-type="linenumber">83</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7922636663503470564" datatype="html">
+        <source>Missing Public Permission</source>
+        <target>Fehlende öffentliche Genehmigung</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
+          <context context-type="linenumber">86</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6095432458023282870" datatype="html">
+        <source>Permission added successfully! Public users can now create <x id="PH" equiv-text="entityType"/> records.</source>
+        <target>Berechtigung erfolgreich hinzugefügt! Öffentliche Benutzer können nun &quot;<x id="PH" equiv-text="entityType"/>&quot;-Datensätze erstellen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
+          <context context-type="linenumber">96</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6877055378348105917" datatype="html">
+        <source>Failed to add permission: <x id="PH" equiv-text="error.message"/></source>
+        <target>Berechtigung konnte nicht hinzugefügt werden: <x id="PH" equiv-text="error.message"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
+          <context context-type="linenumber">101</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7776181507119320644" datatype="html">
+        <source>This form will not work until an administrator adds create permissions for <x id="PH" equiv-text="entityType"/> records.</source>
+        <target>Dieses Formular funktioniert erst, wenn ein Administrator die Berechtigung zum Erstellen von <x id="PH" equiv-text="entityType"/>-Datensätzen hinzufügt.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
+          <context context-type="linenumber">111</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3543251350251737454" datatype="html">
+        <source>Tooltip Configuration</source>
+        <target>Tooltip-Konfiguration</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">86</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8719772987330859163" datatype="html">
+        <source>Customise the details shown when hovering over record type in lists and forms.</source>
+        <target>Passen Sie die Details an, die beim Überfahren eines Datensatztyps in Listen und Formularen mit der Maus angezeigt werden.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">90</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1819982101974372425" datatype="html">
+        <source>Title Field</source>
+        <target>Titelfeld</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">100</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4836160543012752684" datatype="html">
+        <source>Select the main field to display as the tooltip header. This should be a descriptive field like &apos;name&apos; or &apos;title&apos;.</source>
+        <target>Wählen Sie das Hauptfeld aus, das als Tooltip-Überschrift angezeigt werden soll. Dies sollte ein beschreibendes Feld wie „Name“ oder „Titel“ sein.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">104</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="882021939455352545" datatype="html">
+        <source>Additional Detail Fields</source>
+        <target>Zusätzliche Detailfelder</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">120</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3484013218111844551" datatype="html">
+        <source>Select additional fields to display in the tooltip. These will be shown below the title and provide extra context about the record.</source>
+        <target>Wählen Sie zusätzliche Felder aus, die in der QuickInfo angezeigt werden sollen. Diese werden unterhalb des Titels angezeigt und liefern zusätzlichen Kontext zum Datensatz.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">124</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2851683403336555512" datatype="html">
+        <source>Image Field (Optional)</source>
+        <target>Bildfeld (optional)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">141</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7447116526599213357" datatype="html">
+        <source> This record type has no image fields. Add fields with dataType &apos;file&apos; or &apos;photo&apos; to enable this option. </source>
+        <target>Dieser Datensatztyp enthält keine Bildfelder. Fügen Sie Felder mit dem Datentyp „Datei“ oder „Foto“ hinzu, um diese Option zu aktivieren. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">160,163</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4370251734130472356" datatype="html">
+        <source>Customize colors dynamically based on data values</source>
+        <target>Farben dynamisch anhand von Regeln anpassen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/conditional-color-config/conditional-color-config.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3066893258019141263" datatype="html">
+        <source>Add Conditional Color</source>
+        <target>Farb-Bedingung hinzufügen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/conditional-color-config/conditional-color-config.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8628760129337310124" datatype="html">
+        <source>Conditional Color</source>
+        <target>Farbe mit Bedingung</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/conditional-color-config/conditional-color-section/conditional-color-section.component.html</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="43723320582334832" datatype="html">
+        <source>Delete conditional color section</source>
+        <target>Abschnitt „Farb-Bedingungen“ löschen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/conditional-color-config/conditional-color-section/conditional-color-section.component.html</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="480463027307153751" datatype="html">
+        <source>Delete condition</source>
+        <target>Bedingung löschen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/conditions-editor/conditions-editor.component.html</context>
+          <context context-type="linenumber">39</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="321733818761457680" datatype="html">
+        <source>Add Condition</source>
+        <target>Bedingung hinzufügen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/conditions-editor/conditions-editor.component.html</context>
+          <context context-type="linenumber">55</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5786452744215028715" datatype="html">
+        <source>Edit JSON</source>
+        <target>JSON bearbeiten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/conditions-editor/conditions-editor.component.html</context>
+          <context context-type="linenumber">65</context>
         </context-group>
       </trans-unit>
     </body>
