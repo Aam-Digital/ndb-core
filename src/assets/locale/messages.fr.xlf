@@ -1478,12 +1478,12 @@
           <context context-type="linenumber">14</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="linenumber">3</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
-          <context context-type="linenumber">3</context>
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
+          <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3302047227207916068" datatype="html">
@@ -1873,19 +1873,19 @@
         <source>Icon</source>
         <target>Icône</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/admin-icon-input/admin-icon-input.component.html</context>
-          <context context-type="linenumber">3</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-types/admin-entity-types.component.html</context>
           <context context-type="linenumber">44</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/icon-input/icon-input.component.html</context>
+          <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9011959596901584887" datatype="html">
         <source>Color</source>
         <target>Couleur</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/color-input/color-input.component.ts</context>
+          <context context-type="sourcefile">src/app/core/common-components/color-input/color-input.component.ts</context>
           <context context-type="linenumber">46</context>
         </context-group>
       </trans-unit>
@@ -5105,12 +5105,12 @@
         <target>Lien</target>
         <note priority="1" from="description">A link that takes a user to a center</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
-          <context context-type="linenumber">107</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="linenumber">11</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
-          <context context-type="linenumber">11</context>
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
+          <context context-type="linenumber">107</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6680431077518392028" datatype="html">
@@ -8582,7 +8582,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <source>Enter the ID of an icon here, which will be displayed as a visual icon then.</source>
         <target>Saisissez ici l&apos;ID d&apos;une icône, qui sera alors affichée sous forme d&apos;icône visuelle.</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/admin-icon-input/admin-icon-input.component.html</context>
+          <context context-type="sourcefile">src/app/core/common-components/icon-input/icon-input.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
       </trans-unit>
@@ -8590,7 +8590,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <source> Find available icon names at <x id="START_LINK" ctype="x-a" equiv-text="&lt;a       href=&quot;https://fontawesome.com/v6/search?o=r&amp;m=free&quot;       target=&quot;_blank&quot;       rel=&quot;noopener&quot;     &gt;"/> fontawesome.com <x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></source>
         <target>Trouvez les noms d&apos;icônes disponibles sur <x id="START_LINK" ctype="x-a" equiv-text="&lt;a href=&quot;https://fontawesome.com/v6/search?o=r&amp;m=free&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; &gt;"/> fontawesome.com <x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/admin-icon-input/admin-icon-input.component.html</context>
+          <context context-type="sourcefile">src/app/core/common-components/icon-input/icon-input.component.html</context>
           <context context-type="linenumber">12,20</context>
         </context-group>
       </trans-unit>
@@ -9316,7 +9316,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <source>Pick a color or enter a color code (e.g. #ff0000).</source>
         <target>Choisissez une couleur ou entrez un code couleur (par exemple #ff0000).</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/color-input/color-input.component.html</context>
+          <context context-type="sourcefile">src/app/core/common-components/color-input/color-input.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
       </trans-unit>
@@ -9949,7 +9949,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <source>Switch to select mode</source>
         <target>Passer au mode de sélection</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
           <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
@@ -9957,7 +9957,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <source>Switch to custom link mode</source>
         <target>Passer au mode lien personnalisé</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
           <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
@@ -10690,7 +10690,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <source> You can define a link manually. To create a new link, open Aam Digital in a new tab, go to the desired record type, copy everything after ‘https://&lt;your-system&gt;.aam-digital.app/’, and paste it here as the link target. </source>
         <target>Vous pouvez définir un lien manuellement. Pour créer un nouveau lien, ouvrez Aam Digital dans un nouvel onglet, accédez au type d&apos;enregistrement souhaité, copiez tout ce qui suit « https://&lt;votre-système&gt;.aam-digital.app/ » et collez-le ici comme cible du lien. </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
           <context context-type="linenumber">26,31</context>
         </context-group>
       </trans-unit>
@@ -10951,7 +10951,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
       </trans-unit>
       <trans-unit id="1393034033076929263" datatype="html">
         <source>Upload Application Configuration (JSON)</source>
-        <target>Télécharger la configuration de l&apos;application (JSON)</target>
+        <target>Importer la configuration de l&apos;application (JSON)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
           <context context-type="linenumber">151</context>
@@ -11371,14 +11371,6 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
           <context context-type="linenumber">160,163</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="187187500641108332" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ label }}"/></source>
-        <target><x id="INTERPOLATION" equiv-text="{{ label }}"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/color-input/color-input.component.html</context>
-          <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4370251734130472356" datatype="html">

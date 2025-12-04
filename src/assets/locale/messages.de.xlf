@@ -1483,12 +1483,12 @@
           <context context-type="linenumber">14</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="linenumber">3</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
-          <context context-type="linenumber">3</context>
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
+          <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3302047227207916068" datatype="html">
@@ -1879,19 +1879,19 @@
         <source>Icon</source>
         <target>Icon</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/admin-icon-input/admin-icon-input.component.html</context>
-          <context context-type="linenumber">3</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-types/admin-entity-types.component.html</context>
           <context context-type="linenumber">44</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/icon-input/icon-input.component.html</context>
+          <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9011959596901584887" datatype="html">
         <source>Color</source>
         <target>Farbe</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/color-input/color-input.component.ts</context>
+          <context context-type="sourcefile">src/app/core/common-components/color-input/color-input.component.ts</context>
           <context context-type="linenumber">46</context>
         </context-group>
       </trans-unit>
@@ -5125,12 +5125,12 @@
         <target>Link</target>
         <note priority="1" from="description">A link that takes a user to a center</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
-          <context context-type="linenumber">107</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="linenumber">11</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
-          <context context-type="linenumber">11</context>
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
+          <context context-type="linenumber">107</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6680431077518392028" datatype="html">
@@ -8601,7 +8601,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source>Enter the ID of an icon here, which will be displayed as a visual icon then.</source>
         <target>Tragen Sie hier die ID eines Icons ein, welches dann als Symbol angezeigt wird.</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/admin-icon-input/admin-icon-input.component.html</context>
+          <context context-type="sourcefile">src/app/core/common-components/icon-input/icon-input.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
       </trans-unit>
@@ -8609,7 +8609,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source> Find available icon names at <x id="START_LINK" ctype="x-a" equiv-text="&lt;a       href=&quot;https://fontawesome.com/v6/search?o=r&amp;m=free&quot;       target=&quot;_blank&quot;       rel=&quot;noopener&quot;     &gt;"/> fontawesome.com <x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></source>
         <target>Verfügbare Symbolnamen finden Sie unter <x id="START_LINK" ctype="x-a" equiv-text="&lt;a href=&quot;https://fontawesome.com/v6/search?o=r&amp;m=free&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; &gt;"/> fontawesome.com <x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/admin-icon-input/admin-icon-input.component.html</context>
+          <context context-type="sourcefile">src/app/core/common-components/icon-input/icon-input.component.html</context>
           <context context-type="linenumber">12,20</context>
         </context-group>
       </trans-unit>
@@ -9336,7 +9336,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source>Pick a color or enter a color code (e.g. #ff0000).</source>
         <target>Wählen Sie eine Farbe oder geben Sie einen Farbcode ein.</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/color-input/color-input.component.html</context>
+          <context context-type="sourcefile">src/app/core/common-components/color-input/color-input.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
       </trans-unit>
@@ -9970,7 +9970,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source>Switch to select mode</source>
         <target>In den Auswahlmodus wechseln</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
           <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
@@ -9978,7 +9978,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source>Switch to custom link mode</source>
         <target>Wechseln Sie in den benutzerdefinierten Linkmodus</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
           <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
@@ -10714,7 +10714,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <source> You can define a link manually. To create a new link, open Aam Digital in a new tab, go to the desired record type, copy everything after ‘https://&lt;your-system&gt;.aam-digital.app/’, and paste it here as the link target. </source>
         <target>Sie können einen Link manuell definieren. Um einen neuen Link zu erstellen, öffnen Sie Aam Digital in einem neuen Tab, gehen Sie zum gewünschten Datensatztyp, kopieren Sie alles nach „https://&lt;Ihr-System&gt;.aam-digital.app/“ und fügen Sie es hier als Linkziel ein. </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/menu-item-form/menu-item-form.component.html</context>
+          <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
           <context context-type="linenumber">26,31</context>
         </context-group>
       </trans-unit>
@@ -11397,14 +11397,6 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
           <context context-type="linenumber">160,163</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="187187500641108332" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ label }}"/></source>
-        <target><x id="INTERPOLATION" equiv-text="{{ label }}"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/color-input/color-input.component.html</context>
-          <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4370251734130472356" datatype="html">
