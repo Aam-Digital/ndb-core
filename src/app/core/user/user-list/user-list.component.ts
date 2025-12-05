@@ -37,7 +37,25 @@ export class UserListComponent implements OnInit {
   ];
 
   ngOnInit() {
-    this.loadUsers();
+    // Check permissions before attempting to load users to avoid errors
+    // for users without access or when device is offline
+    const hasPermission = this.sessionInfo.value?.roles.includes(
+      UserAdminService.ACCOUNT_MANAGER_ROLE,
+    );
+
+    const isOnline = typeof navigator !== "undefined" ? navigator.onLine : true;
+
+    if (hasPermission && isOnline) {
+      this.loadUsers();
+    } else if (!hasPermission) {
+      this.alertService.addInfo(
+        "You don't have permission to view user accounts.",
+      );
+    } else if (!isOnline) {
+      this.alertService.addInfo(
+        "User accounts cannot be loaded while offline.",
+      );
+    }
   }
 
   loadUsers() {
@@ -47,7 +65,9 @@ export class UserListComponent implements OnInit {
       },
       error: (err) => {
         Logging.error("Failed to load users:", err);
-        this.alertService.addWarning("Failed to load users.");
+        this.alertService.addWarning(
+          "Failed to load users.Please contact user support.",
+        );
       },
     });
   }

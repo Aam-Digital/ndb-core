@@ -26,7 +26,6 @@ import { UserAdminService } from "../user-admin-service/user-admin.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { AlertService } from "../../alerts/alert.service";
-import { Entity } from "../../entity/model/entity";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
@@ -88,7 +87,6 @@ export class UserDetailsComponent {
   }
 
   userAccount = input<UserAccount | null>();
-  entity = input<Entity | null>();
   editing = input<boolean>(false);
   userIsPermitted = input<boolean>(false);
   isInDialog = input<boolean>(false);
@@ -150,9 +148,6 @@ export class UserDetailsComponent {
 
     return null;
   });
-  currentEntity = computed(
-    () => this.entity() ?? this._dialogData?.entity ?? null,
-  );
 
   availableRoles = signal<Role[]>([]);
 
@@ -271,15 +266,14 @@ export class UserDetailsComponent {
   }
 
   private createAccount(formData: Partial<UserAccount>) {
-    const entity = this.currentEntity();
-    if (!entity) {
+    const userEntityId = formData.userEntityId;
+    if (!userEntityId) {
       this.alertService.addDanger(
-        $localize`:Error message:No entity available for user creation`,
+        $localize`:Error message:No profile ID available for user creation`,
       );
       return;
     }
 
-    const userEntityId = entity.getId();
     if (!formData.email || !formData.roles) {
       return;
     }

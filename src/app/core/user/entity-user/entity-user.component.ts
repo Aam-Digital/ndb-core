@@ -86,6 +86,23 @@ export class EntityUserComponent implements OnInit {
     return this.entity;
   }
 
+  getUserAccountForDetails(): UserAccount | null {
+    if (this.user()) {
+      return this.user();
+    }
+    const entity = this.getEntity();
+    if (entity) {
+      return {
+        userEntityId: entity.getId(),
+        email: "",
+        enabled: true,
+        roles: [],
+      } as UserAccount;
+    }
+
+    return null;
+  }
+
   ngOnInit() {
     if (!this.userIsPermitted()) {
       return;
