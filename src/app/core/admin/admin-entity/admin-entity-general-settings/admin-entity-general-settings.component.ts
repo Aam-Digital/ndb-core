@@ -190,6 +190,10 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     }
   }
 
+  clearToBlockAttributes() {
+    this.basicSettingsForm.get("toBlockDetailsAttributes").reset();
+  }
+
   changeFieldAnonymization(
     fieldSchema: EntitySchemaField,
     newAnonymizationValue,
