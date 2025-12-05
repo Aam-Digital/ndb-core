@@ -10,6 +10,7 @@ import { AdminUserRolesComponent } from "../user/admin-user-roles/admin-user-rol
 import { SubscriptionInfoComponent } from "./subscription-info/subscription-info.component";
 import { AdvancedFeaturesComponent } from "./advanced-features/advanced-features.component";
 import { DataPrivacyComponent } from "./data-privacy/data-privacy.component";
+import { PrimaryActionConfigFormComponent } from "./primary-action-config-form/primary-action-config-form.component";
 
 export const adminRoutes: Routes = [
   {
@@ -27,6 +28,10 @@ export const adminRoutes: Routes = [
   {
     path: "menu",
     component: AdminMenuComponent,
+  },
+  {
+    path: "primary-action",
+    component: PrimaryActionConfigFormComponent,
   },
   {
     path: "user-roles",

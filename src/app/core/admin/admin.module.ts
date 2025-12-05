@@ -41,6 +41,13 @@ export class AdminModule {
             (c) => c.AdminEntityTypesComponent,
           ),
       ],
+      [
+        "PrimaryActionConfigForm",
+        () =>
+          import("./primary-action-config-form/primary-action-config-form.component").then(
+            (c) => c.PrimaryActionConfigFormComponent,
+          ),
+      ],
     ]);
   }
 }
