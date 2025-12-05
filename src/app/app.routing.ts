@@ -17,7 +17,7 @@
 
 import { Routes } from "@angular/router";
 import { NotFoundComponent } from "./core/config/dynamic-routing/not-found/not-found.component";
-import { UserAccountComponent } from "./core/user/user-account/user-account.component";
+import { ProfileComponent } from "./core/user/profile/profile.component";
 import { SupportComponent } from "./core/support/support/support.component";
 import { AuthGuard } from "./core/session/auth.guard";
 import { LoginComponent } from "./core/session/login/login.component";
@@ -39,7 +39,7 @@ export const allRoutes: Routes = [
   },
   {
     path: "user-account",
-    component: UserAccountComponent,
+    component: ProfileComponent,
     canActivate: [AuthGuard],
   },
   { path: "support", component: SupportComponent },

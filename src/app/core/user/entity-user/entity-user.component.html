@@ -1,0 +1,6 @@
+<app-user-details
+  [userAccount]="getUserAccountForDetails()"
+  [editing]="editing()"
+  [userIsPermitted]="userIsPermitted()"
+  (action)="onUserDetailsAction($event)"
+></app-user-details>

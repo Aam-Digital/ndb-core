@@ -10,6 +10,7 @@ import { AdminUserRolesComponent } from "../user/admin-user-roles/admin-user-rol
 import { SubscriptionInfoComponent } from "./subscription-info/subscription-info.component";
 import { AdvancedFeaturesComponent } from "./advanced-features/advanced-features.component";
 import { DataPrivacyComponent } from "./data-privacy/data-privacy.component";
+import { UserListComponent } from "../user/user-list/user-list.component";
 
 export const adminRoutes: Routes = [
   {
@@ -31,6 +32,14 @@ export const adminRoutes: Routes = [
   {
     path: "user-roles",
     component: AdminUserRolesComponent,
+    canActivate: [UserRoleGuard],
+    data: {
+      permittedUserRoles: ["admin_app"],
+    },
+  },
+  {
+    path: "user-list",
+    component: UserListComponent,
     canActivate: [UserRoleGuard],
     data: {
       permittedUserRoles: ["admin_app"],
