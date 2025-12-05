@@ -12,6 +12,7 @@ import {
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { MatTableModule } from "@angular/material/table";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
+import { AlertService } from "../../alerts/alert.service";
 
 @Component({
   selector: "app-user-list",
@@ -24,6 +25,7 @@ export class UserListComponent implements OnInit {
   private readonly userAdminService = inject(UserAdminService);
   private readonly dialog = inject(MatDialog);
   private readonly sessionInfo = inject(SessionSubject);
+  private readonly alertService = inject(AlertService);
 
   users = signal<UserAccount[]>([]);
   displayedColumns: string[] = [
@@ -45,6 +47,7 @@ export class UserListComponent implements OnInit {
       },
       error: (err) => {
         Logging.error("Failed to load users:", err);
+        this.alertService.addWarning("Failed to load users.");
       },
     });
   }
@@ -61,9 +64,9 @@ export class UserListComponent implements OnInit {
 
     const dialogData: UserDetailsDialogData = {
       userAccount: user,
-      mode: "dialog",
       editing: true,
       userIsPermitted,
+      isInDialog: true,
     };
 
     const dialogRef = this.dialog.open(UserDetailsComponent, {
@@ -84,7 +87,6 @@ export class UserListComponent implements OnInit {
           }
           case "editRequested":
             break;
-          case "closeDialog":
           case "formCancel":
             dialogRef.close();
             break;

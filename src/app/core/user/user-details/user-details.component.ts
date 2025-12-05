@@ -40,18 +40,13 @@ export type UserDetailsMode = "profile" | "entity" | "dialog";
 
 export interface UserDetailsDialogData {
   userAccount: UserAccount | null;
-  mode: UserDetailsMode;
   editing: boolean;
   userIsPermitted: boolean;
+  isInDialog?: boolean;
 }
 
 export interface UserDetailsAction {
-  type:
-    | "formCancel"
-    | "editRequested"
-    | "closeDialog"
-    | "accountCreated"
-    | "accountUpdated";
+  type: "formCancel" | "editRequested" | "accountCreated" | "accountUpdated";
   data?: any;
 }
 
@@ -94,9 +89,17 @@ export class UserDetailsComponent {
 
   userAccount = input<UserAccount | null>();
   entity = input<Entity | null>();
-  mode = input<UserDetailsMode>("entity");
   editing = input<boolean>(false);
   userIsPermitted = input<boolean>(false);
+  isInDialog = input<boolean>(false);
+
+  mode = computed(() =>
+    this.isInDialogComputed() ? "dialog" : ("entity" as UserDetailsMode),
+  );
+
+  isInDialogComputed = computed(
+    () => this.isInDialog() || this._dialogData?.isInDialog || false,
+  );
 
   disabled = computed(() => !this.editing() && !this._dialogData?.editing);
 
@@ -107,15 +110,8 @@ export class UserDetailsComponent {
       this.mode() === "profile",
   );
 
-  isInDialog = computed(
-    () =>
-      this.mode() === "dialog" ||
-      this._dialogData?.mode === "dialog" ||
-      !!this._dialogData,
-  );
-
   showUsername = computed(
-    () => this.mode() === "profile" && !this.isInDialog(),
+    () => this.mode() === "profile" && !this.isInDialogComputed(),
   );
 
   showPasswordChange = computed(() => this.mode() === "profile");
@@ -187,8 +183,7 @@ export class UserDetailsComponent {
 
     // Add roles validation only when not in profile mode
     effect(() => {
-      const isProfileMode =
-        this.showUsername() || this._dialogData?.mode === "profile";
+      const isProfileMode = this.mode() === "profile";
       const rolesControl = this.form.get("roles");
       if (rolesControl) {
         if (isProfileMode) {
@@ -394,7 +389,7 @@ export class UserDetailsComponent {
   }
 
   onCloseDialog() {
-    this.action.emit({ type: "closeDialog" });
+    this.action.emit({ type: "formCancel" });
   }
 
   onChangePassword() {

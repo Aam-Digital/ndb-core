@@ -6,6 +6,10 @@ import { SessionSubject } from "../../session/auth/session-info";
 import { Entity } from "../../entity/model/entity";
 import { Role, UserAccount } from "../user-admin-service/user-account";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
+import { SyncStateSubject } from "../../session/session-type";
+import { CurrentUserSubject } from "../../session/current-user-subject";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 describe("EntityUserComponent", () => {
   let component: EntityUserComponent;
@@ -59,6 +63,10 @@ describe("EntityUserComponent", () => {
             roles: [UserAdminService.ACCOUNT_MANAGER_ROLE],
           }),
         },
+        SyncStateSubject,
+        CurrentUserSubject,
+        EntityRegistry,
+        EntityAbility,
       ],
     }).compileComponents();
 

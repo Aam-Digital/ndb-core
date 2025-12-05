@@ -28,4 +28,5 @@ export type DefaultValueMode =
   | "inherited-from-referenced-entity"
   | "static"
   | "dynamic"
-  | "updated-from-referencing-entity";
+  | "updated-from-referencing-entity"
+  | "inherited-field";

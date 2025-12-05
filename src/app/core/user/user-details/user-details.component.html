@@ -36,11 +36,7 @@
       </div>
     }
 
-    @if (
-      currentUserAccount() &&
-      mode() !== "profile" &&
-      (!dialogData || dialogData?.mode !== "profile")
-    ) {
+    @if (currentUserAccount() && mode() !== "profile") {
       <div
         class="padding-bottom-small flex-row gap-small align-self-end flex-wrap padding-top-small"
       >
@@ -127,9 +123,7 @@
               [value]="sessionInfo?.value?.email"
               disabled
             />
-            @if (
-              !isInDialog() && (!dialogData || dialogData?.mode !== "dialog")
-            ) {
+            @if (!isInDialogComputed()) {
               <mat-hint>
                 @if (currentUserAccount()?.email) {
                   {{ currentUserAccount()?.email }}
@@ -150,16 +144,12 @@
           @if (getFormError("email", "required")) {
             <mat-error i18n> This field is required </mat-error>
           }
-          @if (isInDialog() && currentUserAccount()?.userEntityId) {
+          @if (isInDialogComputed() && currentUserAccount()?.userEntityId) {
             <mat-hint i18n="hint showing username/entity ID in dialog">
               Username: {{ currentUserAccount()?.userEntityId }}
             </mat-hint>
           }
-          @if (
-            showPasswordChange() &&
-            mode() === "profile" &&
-            (!dialogData || dialogData?.mode === "profile")
-          ) {
+          @if (showPasswordChange() && mode() === "profile") {
             <mat-hint i18n>
               Changing your email is temporarily only possible for
               administrators. Please contact your project coordinator or the
@@ -168,10 +158,7 @@
           }
         </mat-form-field>
 
-        @if (
-          mode() !== "profile" &&
-          (!dialogData || dialogData?.mode !== "profile")
-        ) {
+        @if (mode() !== "profile") {
           <mat-form-field class="full-width">
             <mat-label i18n="label of roles input">Roles</mat-label>
             <mat-select formControlName="roles" multiple>
@@ -187,9 +174,7 @@
                 </mat-option>
               }
             </mat-select>
-            @if (
-              !isInDialog() && (!dialogData || dialogData?.mode !== "dialog")
-            ) {
+            @if (!isInDialogComputed()) {
               <mat-hint
                 i18n="hint about assigning user roles"
                 class="field-hint"

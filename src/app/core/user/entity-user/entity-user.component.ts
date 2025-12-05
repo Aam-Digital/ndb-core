@@ -18,7 +18,6 @@ import { environment } from "../../../../environments/environment";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
 import { UserAccount } from "../user-admin-service/user-account";
 import { of } from "rxjs";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import {
   UserDetailsComponent,
   UserDetailsAction,
@@ -26,10 +25,10 @@ import {
 
 /**
  * Display User Account details and configuration related to a given profile Entity.
- * Can be used as a standalone view or in a dialog.
  */
 @UntilDestroy()
-@DynamicComponent("UserSecurity")
+@DynamicComponent("EntityUser")
+@DynamicComponent("UserSecurity") // for backwards compatibility. Prefer to use "EntityUser"
 @Component({
   selector: "app-entity-user",
   templateUrl: "./entity-user.component.html",
@@ -41,10 +40,6 @@ export class EntityUserComponent implements OnInit {
   private readonly userAdminService = inject(UserAdminService);
   private readonly alertService = inject(AlertService);
   private readonly http = inject(HttpClient);
-  private readonly dialogData = inject(MAT_DIALOG_DATA, { optional: true });
-  private readonly dialogRef = inject(MatDialogRef<EntityUserComponent>, {
-    optional: true,
-  });
   private readonly sessionInfo = inject(SessionSubject);
 
   @Input() entity?: Entity;
@@ -53,7 +48,6 @@ export class EntityUserComponent implements OnInit {
     () => this.formMode() === "edit" || this.formMode() === "create",
   );
   userIsPermitted = signal<boolean>(false);
-  isInDialog = signal<boolean>(false);
   formMode = signal<"create" | "edit" | "view">("create");
 
   onUserDetailsAction(action: UserDetailsAction) {
@@ -70,11 +64,7 @@ export class EntityUserComponent implements OnInit {
         break;
       case "accountUpdated":
         this.user.set(action.data.user);
-        if (this.isInDialog()) {
-          this.closeDialog();
-        } else {
-          this.disableForm();
-        }
+        this.disableForm();
         if (action.data.triggerSyncReset) {
           this.triggerSyncReset();
         }
@@ -93,9 +83,6 @@ export class EntityUserComponent implements OnInit {
   }
 
   getEntity(): Entity | undefined {
-    if (this.dialogData?.entity) {
-      return this.dialogData.entity;
-    }
     return this.entity;
   }
 
@@ -105,9 +92,6 @@ export class EntityUserComponent implements OnInit {
     }
 
     const entityToUse = this.getEntity();
-    if (this.dialogData?.entity) {
-      this.isInDialog.set(true);
-    }
 
     if (!entityToUse) {
       return;
@@ -126,7 +110,7 @@ export class EntityUserComponent implements OnInit {
         next: (res) => {
           this.user.set(res);
           if (res) {
-            this.formMode.set(this.isInDialog() ? "edit" : "view");
+            this.formMode.set("view");
           } else {
             this.formMode.set("create");
           }
@@ -150,11 +134,7 @@ export class EntityUserComponent implements OnInit {
   }
 
   onFormCancel() {
-    if (this.isInDialog()) {
-      this.closeDialog();
-    } else {
-      this.disableForm();
-    }
+    this.disableForm();
   }
 
   /**
@@ -175,9 +155,5 @@ export class EntityUserComponent implements OnInit {
         // request fails if no permission backend is used - this is fine
         error: () => undefined,
       });
-  }
-
-  closeDialog() {
-    this.dialogRef?.close();
   }
 }

@@ -117,7 +117,7 @@ describe("UserDetailsComponent", () => {
   });
 
   it("should validate required email", () => {
-    fixture.componentRef.setInput("mode", "entity");
+    fixture.componentRef.setInput("isInDialog", false); // entity mode
     fixture.componentRef.setInput("editing", true);
     fixture.detectChanges();
 
@@ -126,7 +126,7 @@ describe("UserDetailsComponent", () => {
   });
 
   it("should validate email format", () => {
-    fixture.componentRef.setInput("mode", "entity");
+    fixture.componentRef.setInput("isInDialog", false); // entity mode
     fixture.componentRef.setInput("editing", true);
     fixture.detectChanges();
 
@@ -138,7 +138,7 @@ describe("UserDetailsComponent", () => {
   });
 
   it("should emit formSubmit when form is valid", () => {
-    fixture.componentRef.setInput("mode", "entity");
+    fixture.componentRef.setInput("isInDialog", false); // entity mode
     fixture.componentRef.setInput("editing", true);
     fixture.componentRef.setInput("userAccount", mockUserAccount);
     fixture.detectChanges();
@@ -165,7 +165,7 @@ describe("UserDetailsComponent", () => {
   });
 
   it("should not emit formSubmit when form is invalid", () => {
-    fixture.componentRef.setInput("mode", "entity");
+    fixture.componentRef.setInput("isInDialog", false); // entity mode
     fixture.componentRef.setInput("editing", true);
     fixture.detectChanges();
 
