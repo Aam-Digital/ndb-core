@@ -323,95 +323,6 @@
           "anonymize": "retain",
           "dataType": "boolean",
           "id": "anonymized"
-        },
-        "enumDropdown": {
-          "id": "enumDropdown",
-          "label": "enum dropdown",
-          "dataType": "configurable-enum",
-          "additional": "center"
-        },
-        "enumMulti": {
-          "id": "enumMulti",
-          "label": "enum multi",
-          "dataType": "configurable-enum",
-          "isArray": true,
-          "additional": "center"
-        },
-        "numberField": {
-          "id": "numberField",
-          "label": "Number Field",
-          "dataType": "number"
-        },
-        "longTextField": {
-          "id": "longTextField",
-          "label": "Long Text Field",
-          "dataType": "long-text"
-        },
-        "dateOnlyField": {
-          "id": "dateOnlyField",
-          "label": "Date Only Field",
-          "dataType": "date-only"
-        },
-        "dateWithAgeField": {
-          "id": "dateWithAgeField",
-          "label": "Date with Age Field",
-          "dataType": "date-with-age"
-        },
-        "monthField": {
-          "id": "monthField",
-          "label": "Month Field",
-          "dataType": "month"
-        },
-        "dateField": {
-          "id": "dateField",
-          "label": "Date Field",
-          "dataType": "date"
-        },
-        "entityField": {
-          "id": "entityField",
-          "label": "Entity Field",
-          "dataType": "entity",
-          "additional": "Child"
-        },
-        "percentageField": {
-          "id": "percentageField",
-          "label": "Percentage Field",
-          "dataType": "percentage"
-        },
-        "emailField": {
-          "id": "emailField",
-          "label": "Email Field",
-          "dataType": "email"
-        },
-        "fileField": {
-          "id": "fileField",
-          "label": "File Field",
-          "dataType": "file"
-        },
-        "photoField": {
-          "id": "photoField",
-          "label": "Photo Field",
-          "dataType": "photo"
-        },
-        "timeIntervalField": {
-          "id": "timeIntervalField",
-          "label": "Time Interval Field",
-          "dataType": "time-interval"
-        },
-        "eventAttendanceField": {
-          "id": "eventAttendanceField",
-          "label": "Event Attendance Field",
-          "dataType": "event-attendance"
-        },
-        "eventAttendanceMapField": {
-          "id": "eventAttendanceMapField",
-          "label": "Event Attendance Map Field",
-          "dataType": "event-attendance-map"
-        },
-        "templateExportFileField": {
-          "id": "templateExportFileField",
-          "label": "Template Export File Field",
-          "dataType": "template-export-file"
         }
       },
       "hasPII": false,
@@ -467,28 +378,6 @@
                       "fields": [
                         "language",
                         "timing"
-                      ]
-                    },
-                    {
-                      "fields": [
-                        "remarks",
-                        "enumDropdown",
-                        "enumMulti",
-                        "numberField",
-                        "longTextField",
-                        "dateOnlyField",
-                        "dateWithAgeField",
-                        "monthField",
-                        "dateField",
-                        "entityField",
-                        "percentageField",
-                        "emailField",
-                        "fileField",
-                        "photoField",
-                        "timeIntervalField",
-                        "eventAttendanceField",
-                        "eventAttendanceMapField",
-                        "templateExportFileField"
                       ]
                     }
                   ]
