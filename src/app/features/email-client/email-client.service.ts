@@ -5,16 +5,16 @@ import { inject, Injectable } from "@angular/core";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { MatDialog } from "@angular/material/dialog";
 import {
-  EmailTemplateSelectionDialogComponent,
-  EmailTemplateSelectionDialogData,
-} from "../email-template-selection-dialog/email-template-selection-dialog.component";
+    EmailTemplateSelectionDialogComponent,
+    EmailTemplateSelectionDialogData,
+} from "./email-template-selection-dialog/email-template-selection-dialog.component";
 import { lastValueFrom } from "rxjs";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { EmailTemplate } from "./email-template.entity";
 import {
-  ConfirmationDialogComponent,
-  ConfirmationDialogConfig,
+    ConfirmationDialogComponent,
+    ConfirmationDialogConfig,
 } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { asArray } from "#src/app/utils/asArray";
 
