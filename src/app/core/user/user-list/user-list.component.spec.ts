@@ -142,7 +142,7 @@ describe("UserListComponent", () => {
     mockDialogRef.afterClosed.and.returnValue(of(true));
 
     const user = mockUsers[0];
-    component.openUserSecurity(user);
+    component.openUserDetails(user);
 
     expect(mockUserAdminService.getAllUsers).toHaveBeenCalledTimes(1);
     expect(component.users()).toEqual(updatedMockUsers);
@@ -154,7 +154,7 @@ describe("UserListComponent", () => {
     mockDialogRef.afterClosed.and.returnValue(of(true));
 
     const user = mockUsers[0];
-    component.openUserSecurity(user);
+    component.openUserDetails(user);
 
     const updatedUser = component.users()[0];
     expect(updatedUser.email).toBe("updated@example.com");
@@ -170,7 +170,7 @@ describe("UserListComponent", () => {
 
     const user = mockUsers[0];
     const originalEmail = user.email;
-    component.openUserSecurity(user);
+    component.openUserDetails(user);
 
     const updatedUser = component.users()[0];
     expect(updatedUser.email).not.toBe(originalEmail);

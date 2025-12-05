@@ -53,7 +53,7 @@ export class UserListComponent implements OnInit {
     return userAccount.roles?.map((r) => r.name).join(", ") || "-";
   }
 
-  openUserSecurity(user: UserAccount) {
+  openUserDetails(user: UserAccount) {
     const userIsPermitted =
       this.sessionInfo.value?.roles.includes(
         UserAdminService.ACCOUNT_MANAGER_ROLE,
