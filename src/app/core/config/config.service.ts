@@ -510,7 +510,9 @@ const migrateChildSchoolOverviewComponent: ConfigMigration = (
 
   // determine if this is part of EntityDetails for Child or for School
   if (typeof configPart === "object" && Array.isArray(configPart?.panels)) {
-    const isChildDetails = configPart?.entityType?.toLowerCase() === "child";
+    const entityType = configPart?.entityType;
+    const isChildDetails =
+      typeof entityType === "string" && entityType.toLowerCase() === "child";
 
     configPart.panels.forEach((panel) => {
       panel.components?.forEach((component, index) => {
