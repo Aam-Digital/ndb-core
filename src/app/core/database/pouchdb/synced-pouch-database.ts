@@ -17,6 +17,7 @@ import {
 } from "../../session/session-type";
 import { from, interval, merge, of, Subject } from "rxjs";
 import { LoginState } from "../../session/session-states/login-state.enum";
+import { NotificationEvent } from "#src/app/features/notification/model/notification-event";
 
 /**
  * An alternative implementation of PouchDatabase that additionally
@@ -147,7 +148,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * Check if this is a notifications database based on the database name.
    */
   private isNotificationsDatabase(): boolean {
-    return this.dbName?.startsWith("notifications") ?? false;
+    return this.dbName?.startsWith(NotificationEvent.DATABASE) ?? false;
   }
 
   /**
