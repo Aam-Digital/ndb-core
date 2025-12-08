@@ -71,13 +71,6 @@ describe("PrimaryActionService", () => {
     expect(result.ENTITY_TYPE).toBe("Note");
   });
 
-  it("should return Note constructor when entityType is undefined", () => {
-    const result = service.getEntityConstructor(undefined);
-
-    expect(result).toBeDefined();
-    expect(result.ENTITY_TYPE).toBe("Note");
-  });
-
   it("should return Note constructor when entityType is not provided", () => {
     const result = service.getEntityConstructor();
 
