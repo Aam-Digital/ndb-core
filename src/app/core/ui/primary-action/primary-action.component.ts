@@ -7,8 +7,8 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Router } from "@angular/router";
 import { ConfigService } from "../../config/config.service";
-import { PrimaryActionConfig } from "../../admin/primary-action-config-form/primary-action-config";
-import { PrimaryActionService } from "../../admin/primary-action-config-form/primary-action.service";
+import { PrimaryActionConfig } from "../../admin/admin-primary-action/primary-action-config";
+import { PrimaryActionService } from "../../admin/admin-primary-action/primary-action.service";
 import { EntityConfigService } from "../../entity/entity-config.service";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 

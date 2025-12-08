@@ -4,7 +4,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { MatButtonModule } from "@angular/material/button";
-import { MenuItemFormComponent } from "../../admin/admin-menu/menu-item-form/menu-item-form.component";
+import { MenuItemFormComponent } from "../admin-menu/menu-item-form/menu-item-form.component";
 import { ConfigService } from "../../config/config.service";
 import { PrimaryActionConfig } from "./primary-action-config";
 import { PrimaryActionService } from "./primary-action.service";
@@ -14,9 +14,11 @@ import { EntityConstructor } from "../../entity/model/entity";
 import { MenuItem } from "../../ui/navigation/menu-item";
 import { FormsModule } from "@angular/forms";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
+import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
+import { HintBoxComponent } from "../../common-components/hint-box/hint-box.component";
 
 @Component({
-  selector: "app-primary-action-config-form",
+  selector: "app-admin-primary-action",
   standalone: true,
   imports: [
     CommonModule,
@@ -28,11 +30,13 @@ import { ViewTitleComponent } from "../../common-components/view-title/view-titl
     EntityTypeSelectComponent,
     FormsModule,
     ViewTitleComponent,
+    ViewActionsComponent,
+    HintBoxComponent,
   ],
-  templateUrl: "./primary-action-config-form.component.html",
-  styleUrls: ["./primary-action-config-form.component.scss"],
+  templateUrl: "./admin-primary-action.component.html",
+  styleUrls: ["./admin-primary-action.component.scss"],
 })
-export class PrimaryActionConfigFormComponent {
+export class AdminPrimaryActionComponent {
   private readonly configService = inject(ConfigService);
   private readonly menuService = inject(MenuService);
   private readonly primaryActionService = inject(PrimaryActionService);
@@ -41,15 +45,34 @@ export class PrimaryActionConfigFormComponent {
     return this.primaryActionService.getCurrentConfig();
   }
 
-  menuItem: MenuItem = this.getInitialMenuItem();
-  menuItemKey = 0; // Used to force component recreation
+  menuItem: MenuItem;
 
-  routeOptions = this.menuService.loadAvailableRoutes();
+  routeOptions: { value: string; label: string }[] = [];
 
-  actionType: "createEntity" | "navigate" = this.currentConfig.actionType;
-  entityType: string = this.currentConfig.entityType ?? "Note";
+  actionType: "createEntity" | "navigate";
+  entityType: string;
 
-  private initialConfigString = JSON.stringify(this.getCurrentFormState());
+  private initialConfigString: string;
+
+  constructor() {
+    this.routeOptions = this.menuService.loadAvailableRoutes();
+    this.initForm();
+  }
+
+  private initForm() {
+    const current = this.currentConfig;
+    this.actionType = current.actionType;
+    this.entityType = current.entityType ?? "Note";
+    // Create a completely new object reference to trigger change detection
+    this.menuItem = JSON.parse(
+      JSON.stringify({
+        label: "",
+        icon: current.icon,
+        link: current.route ?? "",
+      }),
+    );
+    this.initialConfigString = JSON.stringify(this.getCurrentFormState());
+  }
 
   get hasChanges(): boolean {
     return (
@@ -72,15 +95,6 @@ export class PrimaryActionConfigFormComponent {
 
   get showEntityType(): boolean {
     return this.actionType === "createEntity";
-  }
-
-  private getInitialMenuItem(): MenuItem {
-    const current = this.currentConfig;
-    return {
-      label: "",
-      icon: current.icon,
-      link: current.route ?? "",
-    };
   }
 
   onEntityTypeChange(value: string | string[]) {
@@ -108,15 +122,6 @@ export class PrimaryActionConfigFormComponent {
 
   cancel() {
     // Reset form to current saved configuration
-    const current = this.currentConfig;
-    this.actionType = current.actionType;
-    this.entityType = current.entityType ?? "Note";
-    this.menuItem = this.getInitialMenuItem();
-
-    // Reset change tracking
-    this.initialConfigString = JSON.stringify(this.getCurrentFormState());
-
-    // Increment key to force component recreation
-    this.menuItemKey++;
+    this.initForm();
   }
 }

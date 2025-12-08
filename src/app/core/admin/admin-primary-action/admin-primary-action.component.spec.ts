@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { PrimaryActionConfigFormComponent } from "./primary-action-config-form.component";
+import { AdminPrimaryActionComponent } from "./admin-primary-action.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ConfigService } from "../../config/config.service";
 
-describe("PrimaryActionConfigFormComponent", () => {
-  let component: PrimaryActionConfigFormComponent;
-  let fixture: ComponentFixture<PrimaryActionConfigFormComponent>;
+describe("AdminPrimaryActionComponent", () => {
+  let component: AdminPrimaryActionComponent;
+  let fixture: ComponentFixture<AdminPrimaryActionComponent>;
 
   beforeEach(async () => {
     const configSpy = jasmine.createSpyObj(
@@ -34,14 +34,11 @@ describe("PrimaryActionConfigFormComponent", () => {
     configSpy.getAllConfigs.and.returnValue([]);
 
     await TestBed.configureTestingModule({
-      imports: [
-        PrimaryActionConfigFormComponent,
-        MockedTestingModule.withState(),
-      ],
+      imports: [AdminPrimaryActionComponent, MockedTestingModule.withState()],
       providers: [{ provide: ConfigService, useValue: configSpy }],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(PrimaryActionConfigFormComponent);
+    fixture = TestBed.createComponent(AdminPrimaryActionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

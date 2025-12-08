@@ -45,13 +45,7 @@ export class PrimaryActionService {
     return entityRegistry
       .getEntityTypes(true)
       .map(({ value }) => value)
-      .filter(
-        (ctor) =>
-          ctor.schema &&
-          ctor.label &&
-          typeof ctor === "function" &&
-          ctor.schema.size > 0,
-      );
+      .filter((ctor) => ctor.label && !ctor.isInternalEntity);
   }
 
   /**
@@ -60,8 +54,6 @@ export class PrimaryActionService {
   getEntityConstructor(entityType?: string): EntityConstructor {
     const targetType = entityType ?? "Note";
     const entityTypes = this.getEntityTypeOptions();
-    const ctor = entityTypes.find((c) => c.ENTITY_TYPE === targetType);
-    // Fallback to Note if not found
-    return ctor ?? entityTypes.find((c) => c.ENTITY_TYPE === "Note")!;
+    return entityTypes.find((c) => c.ENTITY_TYPE === targetType)!;
   }
 }

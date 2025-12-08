@@ -42,10 +42,10 @@ export class AdminModule {
           ),
       ],
       [
-        "PrimaryActionConfigForm",
+        "AdminPrimaryAction",
         () =>
-          import("./primary-action-config-form/primary-action-config-form.component").then(
-            (c) => c.PrimaryActionConfigFormComponent,
+          import("./admin-primary-action/admin-primary-action.component").then(
+            (c) => c.AdminPrimaryActionComponent,
           ),
       ],
     ]);
