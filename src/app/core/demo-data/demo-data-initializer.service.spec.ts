@@ -104,7 +104,7 @@ describe("DemoDataInitializerService", () => {
     spyOn(database, "isEmpty").and.resolveTo(true);
     service.logInDemoUser();
 
-    expect(sessionManager.offlineLogin).toHaveBeenCalledWith(normalUser);
+    expect(sessionManager.offlineLogin).toHaveBeenCalledWith(adminUser);
     expect(mockDemoDataService.publishDemoData).not.toHaveBeenCalled();
     tick();
 
