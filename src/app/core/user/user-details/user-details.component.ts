@@ -90,10 +90,15 @@ export class UserDetailsComponent {
   editing = input<boolean>(false);
   userIsPermitted = input<boolean>(false);
   isInDialog = input<boolean>(false);
+  mode = input<UserDetailsMode>("entity");
 
-  mode = computed(() =>
-    this.isInDialogComputed() ? "dialog" : ("entity" as UserDetailsMode),
-  );
+  modeComputed = computed(() => {
+    if (this.mode() === "profile") {
+      return "profile";
+    }
+    //  use dialog vs entity based on dialog state
+    return this.isInDialogComputed() ? "dialog" : "entity";
+  });
 
   isInDialogComputed = computed(
     () => this.isInDialog() || this._dialogData?.isInDialog || false,
@@ -105,17 +110,17 @@ export class UserDetailsComponent {
     () =>
       this.userIsPermitted() ||
       this._dialogData?.userIsPermitted ||
-      this.mode() === "profile",
+      this.modeComputed() === "profile",
   );
 
   showUsername = computed(
-    () => this.mode() === "profile" && !this.isInDialogComputed(),
+    () => this.modeComputed() === "profile" && !this.isInDialogComputed(),
   );
 
-  showPasswordChange = computed(() => this.mode() === "profile");
+  showPasswordChange = computed(() => this.modeComputed() === "profile");
 
   passwordChangeDisabled = computed(() => {
-    if (this.mode() !== "profile") return false;
+    if (this.modeComputed() !== "profile") return false;
 
     if (environment.session_type !== SessionType.synced) {
       return true; // Disabled in demo mode
@@ -178,7 +183,7 @@ export class UserDetailsComponent {
 
     // Add roles validation only when not in profile mode
     effect(() => {
-      const isProfileMode = this.mode() === "profile";
+      const isProfileMode = this.modeComputed() === "profile";
       const rolesControl = this.form.get("roles");
       if (rolesControl) {
         if (isProfileMode) {

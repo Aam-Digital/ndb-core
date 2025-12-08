@@ -36,7 +36,7 @@
       </div>
     }
 
-    @if (currentUserAccount() && mode() !== "profile") {
+    @if (currentUserAccount() && modeComputed() !== "profile") {
       <div
         class="padding-bottom-small flex-row gap-small align-self-end flex-wrap padding-top-small"
       >
@@ -149,7 +149,7 @@
               Username: {{ currentUserAccount()?.userEntityId }}
             </mat-hint>
           }
-          @if (showPasswordChange() && mode() === "profile") {
+          @if (showPasswordChange() && modeComputed() === "profile") {
             <mat-hint i18n>
               Changing your email is temporarily only possible for
               administrators. Please contact your project coordinator or the
@@ -158,7 +158,7 @@
           }
         </mat-form-field>
 
-        @if (mode() !== "profile") {
+        @if (modeComputed() !== "profile") {
           <mat-form-field class="full-width">
             <mat-label i18n="label of roles input">Roles</mat-label>
             <mat-select formControlName="roles" multiple>
