@@ -51,7 +51,6 @@ import { LoginStateSubject } from "../../session/session-type";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { ConfigService } from "../../config/config.service";
-import { MatTooltip } from "@angular/material/tooltip";
 import { SessionSubject } from "../../session/auth/session-info";
 
 /**
@@ -83,7 +82,6 @@ import { SessionSubject } from "../../session/auth/session-info";
     GotoThirdPartySystemComponent,
     AssistantButtonComponent,
     AsyncPipe,
-    MatTooltip,
   ],
 })
 export class UiComponent {
