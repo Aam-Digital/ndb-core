@@ -41,11 +41,11 @@ export class AdminOverviewService {
       link: "/admin/setup-wizard",
     },
     {
-      label: $localize`:admin menu item:Configure Main Menu`,
+      label: $localize`:admin menu item:Main Menu`,
       link: "/admin/menu",
     },
     {
-      label: $localize`:admin menu item:Configure Primary Action`,
+      label: $localize`:admin menu item:Primary Action`,
       link: "/admin/primary-action",
     },
   ];
