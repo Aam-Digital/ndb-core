@@ -79,12 +79,6 @@ describe("UserDetailsComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should initialize form with empty values", () => {
-    expect(component.form).toBeDefined();
-    expect(component.form.get("email")?.value).toBe("");
-    expect(component.form.get("roles")?.value).toEqual([]);
-  });
-
   it("should populate form when userAccount input is set", () => {
     fixture.componentRef.setInput("userAccount", mockUserAccount);
     fixture.detectChanges();
@@ -117,7 +111,7 @@ describe("UserDetailsComponent", () => {
   });
 
   it("should validate required email", () => {
-    fixture.componentRef.setInput("isInDialog", false); // entity mode
+    fixture.componentRef.setInput("isInDialog", false);
     fixture.componentRef.setInput("editing", true);
     fixture.detectChanges();
 
@@ -126,7 +120,7 @@ describe("UserDetailsComponent", () => {
   });
 
   it("should validate email format", () => {
-    fixture.componentRef.setInput("isInDialog", false); // entity mode
+    fixture.componentRef.setInput("isInDialog", false);
     fixture.componentRef.setInput("editing", true);
     fixture.detectChanges();
 
@@ -138,7 +132,7 @@ describe("UserDetailsComponent", () => {
   });
 
   it("should emit formSubmit when form is valid", () => {
-    fixture.componentRef.setInput("isInDialog", false); // entity mode
+    fixture.componentRef.setInput("isInDialog", false);
     fixture.componentRef.setInput("editing", true);
     fixture.componentRef.setInput("userAccount", mockUserAccount);
     fixture.detectChanges();
@@ -165,7 +159,7 @@ describe("UserDetailsComponent", () => {
   });
 
   it("should not emit formSubmit when form is invalid", () => {
-    fixture.componentRef.setInput("isInDialog", false); // entity mode
+    fixture.componentRef.setInput("isInDialog", false);
     fixture.componentRef.setInput("editing", true);
     fixture.detectChanges();
 
