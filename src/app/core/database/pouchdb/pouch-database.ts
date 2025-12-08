@@ -385,10 +385,10 @@ export class PouchDatabase extends Database {
  */
 export class DatabaseException extends Error {
   constructor(
-    error: PouchDB.Core.Error | { [key: string]: any },
+    error: PouchDB.Core.Error | { message: string; [key: string]: any },
     entityId?: string,
   ) {
-    super();
+    super(error?.message);
 
     if (entityId) {
       error["entityId"] = entityId;
