@@ -1,11 +1,11 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
   inject,
   input,
   output,
-  ChangeDetectionStrategy,
   signal,
 } from "@angular/core";
 import {
@@ -20,7 +20,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
-import { MatDialogModule, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { Role, UserAccount } from "../user-admin-service/user-account";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -236,20 +236,17 @@ export class UserDetailsComponent {
   }
 
   private updateFormFromUser(user: UserAccount) {
-    this.form.patchValue(
-      {
-        email: user.email,
-        roles: (user.roles ?? [])
-          .map((role) => this.availableRoles().find((r) => r.id === role.id))
-          .filter((role): role is Role => role !== undefined), // Filter out undefined roles
-        userEntityId: !user.userEntityId
-          ? null
-          : user.userEntityId.includes(":")
-            ? user.userEntityId
-            : "User:" + user.userEntityId,
-      },
-      { emitEvent: false },
-    );
+    this.form.patchValue({
+      email: user.email,
+      roles: (user.roles ?? [])
+        .map((role) => this.availableRoles().find((r) => r.id === role.id))
+        .filter((role): role is Role => role !== undefined), // Filter out undefined roles
+      userEntityId: !user.userEntityId
+        ? null
+        : user.userEntityId.includes(":")
+          ? user.userEntityId
+          : "User:" + user.userEntityId,
+    });
 
     this.form.markAsPristine();
   }
