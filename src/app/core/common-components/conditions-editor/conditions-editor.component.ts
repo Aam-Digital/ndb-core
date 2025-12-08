@@ -4,6 +4,8 @@ import {
   Output,
   EventEmitter,
   OnInit,
+  OnChanges,
+  SimpleChanges,
   inject,
   computed,
   signal,
@@ -111,6 +113,10 @@ export class ConditionsEditorComponent implements OnInit {
     if (!actualFieldKey) return;
 
     const condition = conditions[conditionIndex];
+    const currentFieldKey = this.getConditionField(condition);
+
+    // Only update if the field actually changed
+    if (currentFieldKey === actualFieldKey) return;
 
     Object.keys(condition).forEach((key) => delete condition[key]);
     condition[actualFieldKey] = null;
