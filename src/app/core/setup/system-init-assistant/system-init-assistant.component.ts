@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from "@angular/core";
 import { SetupService } from "../setup.service";
 import { BaseConfig } from "../base-config";
 import { MatButtonModule } from "@angular/material/button";
@@ -30,6 +35,7 @@ import { AssistantService } from "#src/app/core/setup/assistant.service";
   ],
   templateUrl: "./system-init-assistant.component.html",
   styleUrl: "./system-init-assistant.component.scss",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SystemInitAssistantComponent implements OnInit {
   private dialogRef =
@@ -41,7 +47,7 @@ export class SystemInitAssistantComponent implements OnInit {
 
   availableUseCases: BaseConfig[] = [];
   selectedUseCase: BaseConfig | null = null;
-  generateDemoData: boolean;
+  generateDemoData: boolean = environment.demo_mode;
 
   demoInitialized: boolean = false;
   generatingData: boolean = false;
@@ -52,7 +58,6 @@ export class SystemInitAssistantComponent implements OnInit {
 
     this.availableUseCases = await this.setupService.getAvailableBaseConfig();
     this.availableLocales = this.getAvailableLocalesForUseCases();
-    this.generateDemoData = environment.demo_mode;
 
     await this.initFromQueryParamAutomatically();
   }
