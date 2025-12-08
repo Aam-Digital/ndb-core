@@ -40,8 +40,7 @@ export class PrimaryActionComponent implements OnDestroy {
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
   private readonly primaryActionService = inject(PrimaryActionService);
 
-  config: PrimaryActionConfig =
-    this.primaryActionService.getCurrentConfig();
+  config: PrimaryActionConfig = this.primaryActionService.getCurrentConfig();
 
   private readonly configSub = this.configService.configUpdates.subscribe(
     () => {
