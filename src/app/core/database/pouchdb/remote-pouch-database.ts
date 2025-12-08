@@ -61,12 +61,19 @@ export class RemotePouchDatabase extends PouchDatabase {
       environment.DB_PROXY_PREFIX + url.split(environment.DB_PROXY_PREFIX)[1];
     this.authService.addAuthHeader(opts.headers);
 
+    const isNotificationsDb = this.isNotificationsDatabase();
+
     let result: Response;
     try {
       result = await PouchDB.fetch(remoteUrl, opts);
     } catch (err) {
       Logging.debug("navigator.onLine", navigator.onLine);
-      Logging.warn("Failed to fetch from DB", err);
+      // For notifications database, log 404 errors as debug instead of warning
+      if (isNotificationsDb) {
+        Logging.debug("Failed to fetch from notifications DB", err);
+      } else {
+        Logging.warn("Failed to fetch from DB", err);
+      }
     }
 
     // retry login if request failed with unauthorized
@@ -80,8 +87,21 @@ export class RemotePouchDatabase extends PouchDatabase {
         result = await PouchDB.fetch(remoteUrl, opts);
       } catch (err) {
         Logging.debug("navigator.onLine", navigator.onLine);
-        Logging.warn("Failed to fetch from DB", err);
+        // For notifications database, log 404 errors as debug instead of warning
+        if (isNotificationsDb) {
+          Logging.debug("Failed to fetch from notifications DB", err);
+        } else {
+          Logging.warn("Failed to fetch from DB", err);
+        }
       }
+    }
+
+    // For notifications database, ignore 404 errors (database may not exist yet)
+    if (isNotificationsDb && result?.status === HttpStatusCode.NotFound) {
+      Logging.debug(
+        "Notifications database not found (404) - this is expected if no events have been triggered yet",
+      );
+      return result;
     }
 
     if (!result || result.status >= 500) {
@@ -96,4 +116,11 @@ export class RemotePouchDatabase extends PouchDatabase {
 
     return result;
   };
+
+  /**
+   * Check if this is a notifications database based on the database name.
+   */
+  private isNotificationsDatabase(): boolean {
+    return this.dbName?.startsWith("notifications") ?? false;
+  }
 }

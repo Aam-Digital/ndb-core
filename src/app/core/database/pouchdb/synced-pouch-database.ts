@@ -127,10 +127,31 @@ export class SyncedPouchDatabase extends PouchDatabase {
         return res as SyncResult;
       })
       .catch((err) => {
+        // Handle 404 errors for notifications database (may not exist yet if no event was triggered)
+        if (
+          this.isNotificationsDatabase() &&
+          err?.status === 404 &&
+          err?.name === "not_found"
+        ) {
+          Logging.debug(
+            "Notifications database does not exist yet on server - this is expected",
+            err,
+          );
+          this.syncState.next(SyncState.COMPLETED);
+          return {};
+        }
+
         Logging.debug("sync error", err);
         this.syncState.next(SyncState.FAILED);
         throw err;
       });
+  }
+
+  /**
+   * Check if this is a notifications database based on the database name.
+   */
+  private isNotificationsDatabase(): boolean {
+    return this.dbName?.startsWith("notifications") ?? false;
   }
 
   /**
