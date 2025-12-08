@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  OnInit,
-} from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { SetupService } from "../setup.service";
 import { BaseConfig } from "../base-config";
 import { MatButtonModule } from "@angular/material/button";
@@ -35,7 +30,7 @@ import { AssistantService } from "#src/app/core/setup/assistant.service";
   ],
   templateUrl: "./system-init-assistant.component.html",
   styleUrl: "./system-init-assistant.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush is not supported here with form state changes yet
 })
 export class SystemInitAssistantComponent implements OnInit {
   private dialogRef =
