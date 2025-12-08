@@ -32,10 +32,10 @@
             />
           </mat-form-field>
 
-          <app-admin-icon-input
+          <app-icon-input
             [icon]="basicSettingsForm.get('icon').value"
             (iconChange)="basicSettingsForm.get('icon').setValue($event)"
-          ></app-admin-icon-input>
+          ></app-icon-input>
 
           <app-conditional-color-config
             formControlName="color"

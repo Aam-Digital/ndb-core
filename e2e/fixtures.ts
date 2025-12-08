@@ -72,6 +72,33 @@ export async function argosScreenshot(
 }
 
 /**
+ * Wait for all dashboard widgets to finish loading by ensuring no loading indicators are visible.
+ * This should be called before taking screenshots of the dashboard to avoid capturing loading states.
+ */
+export async function waitForDashboardWidgetsToLoad(page: Page): Promise<void> {
+  // Wait for all "Loading..." text and spinners to disappear
+  await page.waitForFunction(
+    () => {
+      // Check for "Loading..." text
+      const loadingTexts = Array.from(
+        document.querySelectorAll(".widget-content .headline"),
+      );
+      const hasLoadingText = loadingTexts.some((el) =>
+        el.textContent?.includes("Loading..."),
+      );
+
+      // Check for spinners
+      const spinners = document.querySelectorAll(
+        ".widget-title mat-spinner, .widget-header mat-spinner",
+      );
+
+      return !hasLoadingText && spinners.length === 0;
+    },
+    { timeout: 10_000 },
+  );
+}
+
+/**
  * Load the app into `page` and send `entities` to the app to be loaded into the
  * database.
  *

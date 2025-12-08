@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MenuItemFormComponent } from "./menu-item-form.component";
-import { MenuItem } from "../core/ui/navigation/menu-item";
+import { MenuItem } from "../../../ui/navigation/menu-item";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("MenuItemFormComponent", () => {
