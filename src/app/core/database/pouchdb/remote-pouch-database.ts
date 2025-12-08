@@ -65,8 +65,8 @@ export class RemotePouchDatabase extends PouchDatabase {
     try {
       result = await PouchDB.fetch(remoteUrl, opts);
     } catch (err) {
+      Logging.debug("Failed initial fetch from DB", err);
       Logging.debug("navigator.onLine", navigator.onLine);
-      Logging.warn("Failed to fetch from DB", err);
     }
 
     // retry login if request failed with unauthorized
@@ -79,8 +79,7 @@ export class RemotePouchDatabase extends PouchDatabase {
         this.authService.addAuthHeader(opts.headers);
         result = await PouchDB.fetch(remoteUrl, opts);
       } catch (err) {
-        Logging.debug("navigator.onLine", navigator.onLine);
-        Logging.warn("Failed to fetch from DB", err);
+        Logging.debug("Failed retried fetch from DB after 401", err);
       }
     }
 
@@ -88,10 +87,22 @@ export class RemotePouchDatabase extends PouchDatabase {
       Logging.debug("Actual DB Fetch response", result);
       Logging.debug("navigator.onLine", navigator.onLine);
       throw new DatabaseException({
-        error: "Failed to fetch from DB",
+        message: "Failed to fetch from DB",
+        requestedUrl: remoteUrl,
         actualResponse: JSON.stringify(result),
         actualResponseBody: await result?.text(),
       });
+    }
+
+    // additional output for debugging
+    if (result?.status >= 400) {
+      if (this.isNotificationsDatabase() && result.status === 404) {
+        Logging.debug(
+          "Notifications database not found (404) - may be expected",
+        );
+      } else {
+        Logging.warn("Failed to fetch from DB with 40X error", result);
+      }
     }
 
     return result;
