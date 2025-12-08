@@ -113,10 +113,6 @@ export class UserDetailsComponent {
       this.modeComputed() === "profile",
   );
 
-  showUsername = computed(
-    () => this.modeComputed() === "profile" && !this.isInDialogComputed(),
-  );
-
   showPasswordChange = computed(() => this.modeComputed() === "profile");
 
   passwordChangeDisabled = computed(() => {
@@ -138,16 +134,20 @@ export class UserDetailsComponent {
       return directUser;
     }
 
-    const isProfileMode = this.showUsername();
-    if (isProfileMode && this.sessionInfo?.value) {
+    if (this.sessionInfo?.value) {
+      const sessionRoles = this.sessionInfo.value.roles || [];
+      const mappedRoles = sessionRoles
+        .map((roleName) =>
+          this.availableRoles().find(
+            (r) => r.id === roleName || r.name === roleName,
+          ),
+        )
+        .filter((role): role is Role => role !== undefined);
+
       return {
         email: this.sessionInfo.value.email,
         enabled: true,
-        roles:
-          this.sessionInfo.value.roles?.map((role) => ({
-            id: role,
-            name: role,
-          })) || [],
+        roles: mappedRoles,
       } as UserAccount;
     }
 
