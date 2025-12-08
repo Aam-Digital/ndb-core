@@ -4,11 +4,18 @@
     color="primary"
     [matMenuTriggerFor]="additional"
     class="dashboard-menu-btn"
+    matTooltip="Configure the dashboard"
+    i18n-matTooltip
   >
     <fa-icon icon="ellipsis-v"></fa-icon>
   </button>
   <mat-menu #additional>
-    <button mat-menu-item [routerLink]="['/admin/dashboard', dashboardViewId]">
+    <button
+      mat-menu-item
+      [routerLink]="['/admin/dashboard', dashboardViewId]"
+      matTooltip="Configure, add and remove dashboard widgets"
+      i18n-matTooltip
+    >
       <fa-icon
         class="standard-icon-with-text color-accent"
         icon="tools"
