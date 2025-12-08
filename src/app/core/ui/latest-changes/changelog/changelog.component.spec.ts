@@ -29,6 +29,7 @@ import { ComponentRegistry } from "../../../../dynamic-components";
 import { LatestChangesModule } from "../latest-changes.module";
 import { UpdateManagerService } from "../update-manager.service";
 import { MarkdownModule } from "ngx-markdown";
+import { ActivatedRoute } from "@angular/router";
 
 describe("ChangelogComponent", () => {
   let component: ChangelogComponent;
@@ -68,6 +69,7 @@ describe("ChangelogComponent", () => {
         { provide: MAT_DIALOG_DATA, useValue: of([testChangelog]) },
         { provide: LatestChangesService, useValue: mockLatestChangesService },
         { provide: SwUpdate, useValue: {} },
+        { provide: ActivatedRoute, useValue: {} },
         ComponentRegistry,
       ],
     }).compileComponents();

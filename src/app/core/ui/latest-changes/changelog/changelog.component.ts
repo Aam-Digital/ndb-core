@@ -18,9 +18,9 @@
 import {
   Component,
   ElementRef,
+  inject,
   OnInit,
   ViewChild,
-  inject,
 } from "@angular/core";
 import { Changelog } from "../changelog";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
@@ -32,6 +32,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DatePipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MarkedRendererCustom } from "./MarkedRendererCustom";
+import { RouterLink } from "@angular/router";
 
 /**
  * Display information from the changelog for the latest version.
@@ -48,6 +49,7 @@ import { MarkedRendererCustom } from "./MarkedRendererCustom";
     FontAwesomeModule,
     DatePipe,
     MatButtonModule,
+    RouterLink,
   ],
 })
 export class ChangelogComponent implements OnInit {
