@@ -7,6 +7,7 @@ import { HttpStatusCode } from "@angular/common/http";
 import { environment } from "environments/environment";
 import { SyncState } from "app/core/session/session-states/sync-state.enum";
 import { SyncStateSubject } from "app/core/session/session-type";
+import { NotificationEvent } from "#src/app/features/notification/model/notification-event";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -377,6 +378,14 @@ export class PouchDatabase extends Database {
   private mergeObjects(_existingObject: any, _newObject: any) {
     // TODO: implement automatic merging of conflicting entity versions
     return undefined;
+  }
+
+  /**
+   * Check if this is a notifications database based on the database name.
+   * (may be used for special handling of notification DBs)
+   */
+  protected isNotificationsDatabase(): boolean {
+    return this.dbName?.startsWith(NotificationEvent.DATABASE) ?? false;
   }
 }
 
