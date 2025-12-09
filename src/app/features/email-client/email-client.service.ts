@@ -5,16 +5,17 @@ import { inject, Injectable } from "@angular/core";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { MatDialog } from "@angular/material/dialog";
 import {
-    EmailTemplateSelectionDialogComponent,
-    EmailTemplateSelectionDialogData,
+  EmailTemplateSelectionDialogComponent,
+  EmailTemplateSelectionDialogData,
+  EmailTemplateSelectionResult,
 } from "./email-template-selection-dialog/email-template-selection-dialog.component";
 import { lastValueFrom } from "rxjs";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { EmailTemplate } from "./email-template.entity";
 import {
-    ConfirmationDialogComponent,
-    ConfirmationDialogConfig,
+  ConfirmationDialogComponent,
+  ConfirmationDialogConfig,
 } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { asArray } from "#src/app/utils/asArray";
 
@@ -73,9 +74,11 @@ export class EmailClientService {
     );
     if (!result) return false;
 
-    const { template, createNote, sendAsBCC } = result;
+    const { template, createNote, sendAsBCC, sendSemikolonSeparated } = result;
     const mailto = this.buildMailtoLink(
-      isBulk ? recipients : recipients[0],
+      isBulk
+        ? asArray(recipients).join(sendSemikolonSeparated ? ";" : ",")
+        : recipients[0],
       template.subject,
       template.body,
       sendAsBCC,
@@ -91,10 +94,7 @@ export class EmailClientService {
     entity: Entity,
     excludedEntitiesCount: number,
     isBulk: boolean,
-  ): Promise<
-    | { template: EmailTemplate; createNote: boolean; sendAsBCC: boolean }
-    | undefined
-  > {
+  ): Promise<EmailTemplateSelectionResult | undefined> {
     const dialogRef = this.dialog.open(EmailTemplateSelectionDialogComponent, {
       data: {
         entity,
@@ -106,12 +106,12 @@ export class EmailClientService {
   }
 
   public buildMailtoLink(
-    recipients: string | string[],
+    recipients: string,
     subject: string,
     body: string,
     sendAsBCC = false,
   ): string {
-    let recipientsString = encodeURIComponent(asArray(recipients).join(","));
+    let recipientsString = encodeURIComponent(recipients);
 
     const params: string[] = [];
     params.push(`subject=${encodeURIComponent(subject.trim())}`);

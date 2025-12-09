@@ -7,21 +7,23 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatCheckbox } from "@angular/material/checkbox";
 import {
-    MAT_DIALOG_DATA,
-    MatDialogActions,
-    MatDialogClose,
-    MatDialogContent,
-    MatDialogRef,
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
 } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouterLink } from "@angular/router";
 import { EmailTemplate } from "../email-template.entity";
+import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
 
 export interface EmailTemplateSelectionDialogData {
   entity: Entity;
   excludedEntitiesCount: number;
   isBulk: boolean;
+  semikolonSeparated?: boolean;
 }
 
 @Component({
@@ -38,6 +40,7 @@ export interface EmailTemplateSelectionDialogData {
     ReactiveFormsModule,
     MatTooltipModule,
     MatFormFieldModule,
+    HelpButtonComponent,
   ],
   templateUrl: "./email-template-selection-dialog.component.html",
   styleUrl: "./email-template-selection-dialog.component.scss",
@@ -46,6 +49,7 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
   emailTemplateSelectionForm: FormControl = new FormControl();
   createNoteControl = new FormControl<boolean>(true);
   sendAsBCC = new FormControl<boolean>(true);
+  sendSemikolonSeparated = new FormControl<boolean>(false);
   EmailTemplate = EmailTemplate;
   excludedEntitiesCount: number = 0;
   isBulkEmail: boolean = false;
@@ -87,10 +91,14 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
       template: selectedTemplate,
       createNote: !!this.createNoteControl.value,
       sendAsBCC: this.isBulkEmail ? !!this.sendAsBCC.value : false,
-    } as {
-      template: EmailTemplate;
-      createNote: boolean;
-      sendAsBCC: boolean;
-    });
+      sendSemikolonSeparated: !!this.sendSemikolonSeparated.value,
+    } as EmailTemplateSelectionResult);
   }
+}
+
+export interface EmailTemplateSelectionResult {
+  template: EmailTemplate;
+  createNote: boolean;
+  sendAsBCC: boolean;
+  sendSemikolonSeparated: boolean;
 }
