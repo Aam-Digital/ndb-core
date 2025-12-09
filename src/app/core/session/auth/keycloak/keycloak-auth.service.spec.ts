@@ -1,10 +1,10 @@
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
-
 import { KeycloakAuthService } from "./keycloak-auth.service";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakEventTypeLegacy, KeycloakService } from "keycloak-angular";
 import { Subject } from "rxjs";
 import { ActivatedRoute } from "@angular/router";
+import { RemoteLoginNotAvailableError } from "./remote-login-not-available.error";
 
 /**
  * Check {@link https://jwt.io} to decode the token.
@@ -136,6 +136,20 @@ describe("KeycloakAuthService", () => {
     await service.login();
 
     expect(mockKeycloak.init).toHaveBeenCalledTimes(2);
+  });
+
+  it("should throw RemoteLoginNotAvailableError when keycloak init times out", async () => {
+    const timeoutError = new Error(
+      "Timeout when waiting for 3rd party check iframe message.",
+    );
+    mockKeycloak.init.and.rejectWith(timeoutError);
+
+    try {
+      await service.login();
+      fail("Expected login to throw RemoteLoginNotAvailableError");
+    } catch (error) {
+      expect(error).toBeInstanceOf(RemoteLoginNotAvailableError);
+    }
   });
 
   xit("should gracefully handle failed re-authorization", fakeAsync(() => {

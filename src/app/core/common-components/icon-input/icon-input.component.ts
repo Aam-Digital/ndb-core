@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -22,7 +30,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
   templateUrl: "./icon-input.component.html",
   styleUrl: "./icon-input.component.scss",
 })
-export class IconComponent implements OnInit {
+export class IconComponent implements OnInit, OnChanges {
   @Input() icon: string;
   @Output() iconChange = new EventEmitter<string>();
 
@@ -33,5 +41,11 @@ export class IconComponent implements OnInit {
     this.iconControl.valueChanges.subscribe((value) =>
       this.iconChange.emit(value),
     );
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes["icon"] && this.iconControl) {
+      this.iconControl.setValue(this.icon || "", { emitEvent: false });
+    }
   }
 }
