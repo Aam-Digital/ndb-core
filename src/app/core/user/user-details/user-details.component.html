@@ -36,7 +36,7 @@
       </div>
     }
 
-    @if (currentUserAccount() && mode() !== "profile") {
+    @if (currentUserAccount() && !isProfileMode()) {
       <div
         class="padding-bottom-small flex-row gap-small align-self-end flex-wrap padding-top-small"
       >
@@ -126,7 +126,7 @@
               Username: {{ currentUserAccount()?.userEntityId }}
             </mat-hint>
           }
-          @if (mode() === "profile") {
+          @if (isProfileMode()) {
             <mat-hint i18n>
               Changing your email is temporarily only possible for
               administrators. Please contact your project coordinator or the
@@ -140,7 +140,7 @@
           <mat-select
             formControlName="roles"
             multiple
-            [disabled]="mode() === 'profile'"
+            [disabled]="isProfileMode()"
           >
             <mat-select-trigger>
               @for (role of form.get("roles")?.value; track role) {
@@ -154,13 +154,13 @@
               </mat-option>
             }
           </mat-select>
-          @if (!isInDialog() && mode() !== "profile") {
+          @if (!isInDialog() && !isProfileMode()) {
             <mat-hint i18n="hint about assigning user roles" class="field-hint">
               You should select at least one user role. Otherwise this user will
               not even be able to access the basic app layout like the menu.
             </mat-hint>
           }
-          @if (mode() === "profile") {
+          @if (isProfileMode()) {
             <mat-hint i18n="hint for readonly roles in profile mode">
               Contact an administrator to change your roles.
             </mat-hint>
