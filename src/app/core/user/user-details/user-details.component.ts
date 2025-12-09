@@ -35,8 +35,6 @@ import { SessionType } from "../../session/session-type";
 import { EditEntityComponent } from "../../basic-datatypes/entity/edit-entity/edit-entity.component";
 import { filter } from "rxjs";
 
-export type UserDetailsMode = "profile" | "entity" | "dialog";
-
 export interface UserDetailsDialogData {
   userAccount: UserAccount | null;
   editing: boolean;
