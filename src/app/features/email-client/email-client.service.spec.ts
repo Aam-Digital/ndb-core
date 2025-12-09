@@ -103,7 +103,7 @@ describe("EmailClientService", () => {
     expect(mailto).toBe("mailto:test%40example.com?subject=Subject&body=Body");
   });
 
-  it("should generate mailto link with semicolon-separated recipients when sendSemikolonSeparated is true", fakeAsync(() => {
+  it("should generate mailto link with semicolon-separated recipients when sendSemicolonSeparated is true", fakeAsync(() => {
     const entity1 = new EntityWithEmail();
     entity1.email = "test@example.com";
     const entity2 = new EntityWithEmail();
@@ -118,7 +118,7 @@ describe("EmailClientService", () => {
           template: { subject: "Subject", body: "Body" },
           createNote: false,
           sendAsBCC: false,
-          sendSemikolonSeparated: true,
+          sendSemicolonSeparated: true,
         }),
       close: jasmine.createSpy("close"),
     } as any);
@@ -135,7 +135,7 @@ describe("EmailClientService", () => {
     );
   }));
 
-  it("should generate mailto link with comma-separated recipients when sendSemikolonSeparated is false", fakeAsync(() => {
+  it("should generate mailto link with comma-separated recipients when sendSemicolonSeparated is false", fakeAsync(() => {
     const entity1 = new EntityWithEmail();
     entity1.email = "test@example.com";
     const entity2 = new EntityWithEmail();
@@ -150,7 +150,7 @@ describe("EmailClientService", () => {
           template: { subject: "Subject", body: "Body" },
           createNote: false,
           sendAsBCC: false,
-          sendSemikolonSeparated: false,
+          sendSemicolonSeparated: false,
         }),
       close: jasmine.createSpy("close"),
     } as any);

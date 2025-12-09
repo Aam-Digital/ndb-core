@@ -49,7 +49,7 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
   emailTemplateSelectionForm: FormControl = new FormControl();
   createNoteControl = new FormControl<boolean>(true);
   sendAsBCC = new FormControl<boolean>(true);
-  sendSemikolonSeparated = new FormControl<boolean>(false);
+  sendSemicolonSeparated = new FormControl<boolean>(false);
   EmailTemplate = EmailTemplate;
   excludedEntitiesCount: number = 0;
   isBulkEmail: boolean = false;
@@ -91,7 +91,7 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
       template: selectedTemplate,
       createNote: !!this.createNoteControl.value,
       sendAsBCC: this.isBulkEmail ? !!this.sendAsBCC.value : false,
-      sendSemikolonSeparated: !!this.sendSemikolonSeparated.value,
+      sendSemicolonSeparated: !!this.sendSemicolonSeparated.value,
     } as EmailTemplateSelectionResult);
   }
 }
@@ -100,5 +100,5 @@ export interface EmailTemplateSelectionResult {
   template: EmailTemplate;
   createNote: boolean;
   sendAsBCC: boolean;
-  sendSemikolonSeparated: boolean;
+  sendSemicolonSeparated: boolean;
 }

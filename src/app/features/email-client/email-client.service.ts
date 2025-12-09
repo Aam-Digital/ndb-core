@@ -76,10 +76,10 @@ export class EmailClientService {
     );
     if (!result) return false;
 
-    const { template, createNote, sendAsBCC, sendSemikolonSeparated } = result;
+    const { template, createNote, sendAsBCC, sendSemicolonSeparated } = result;
     const mailto = this.buildMailtoLink(
       isBulk
-        ? asArray(recipients).join(sendSemikolonSeparated ? ";" : ",")
+        ? asArray(recipients).join(sendSemicolonSeparated ? ";" : ",")
         : recipients[0],
       template.subject,
       template.body,
