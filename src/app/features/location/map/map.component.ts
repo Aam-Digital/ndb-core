@@ -163,9 +163,8 @@ export class MapComponent implements AfterViewInit {
     this.map.on("zoomend", () => {
       const allMarkers = this.markerClusterGroup.getLayers() as L.Marker[];
       allMarkers.forEach((marker: any) => {
-        const highlighted = marker["highlighted"];
-        if (marker["entity"]) {
-          this.addMarkerStyle(marker, highlighted);
+        if (marker["hasDivIcon"]) {
+          this.addMarkerStyle(marker, marker["highlighted"]);
         }
       });
     });
@@ -347,6 +346,7 @@ export class MapComponent implements AfterViewInit {
             marker.on("click", () => this.entityClick.emit(entity));
             marker["entity"] = entity;
             marker["highlighted"] = highlighted;
+            marker["hasDivIcon"] = !!entityColor;
 
             marker.on("add", () => {
               this.addMarkerStyle(marker, highlighted);
@@ -366,6 +366,9 @@ export class MapComponent implements AfterViewInit {
    * Applies opacity styling to colored markers based on highlight status.
    */
   private addMarkerStyle(marker: L.Marker, highlighted: boolean) {
+    // Only apply styling to markers with custom DivIcon (colored entities)
+    if (!marker["hasDivIcon"]) return;
+
     const icon = marker["_icon"] as HTMLElement;
     const innerSpan = icon?.querySelector("span") as HTMLElement;
 
