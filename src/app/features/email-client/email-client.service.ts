@@ -18,6 +18,7 @@ import {
   ConfirmationDialogConfig,
 } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { asArray } from "#src/app/utils/asArray";
+import { WINDOW_TOKEN } from "#src/app/utils/di-tokens";
 
 @Injectable({
   providedIn: "root",
@@ -30,6 +31,7 @@ export class EmailClientService {
   private readonly alertService = inject(AlertService);
   private readonly dialog = inject(MatDialog);
   private readonly formDialog = inject(FormDialogService);
+  private readonly window = inject(WINDOW_TOKEN);
 
   /**
    * Build a mailto link from an entity's email fields and open the local mail client.
@@ -84,7 +86,7 @@ export class EmailClientService {
       sendAsBCC,
     );
 
-    window.location.href = mailto;
+    this.window.location.href = mailto;
 
     this.showConfirmationAndOpenNote(filteredEntities, template, createNote);
     return true;
