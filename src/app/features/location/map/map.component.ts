@@ -15,7 +15,7 @@ import { BehaviorSubject, Observable, timeInterval } from "rxjs";
 import { debounceTime, filter, map } from "rxjs/operators";
 import { Coordinates } from "../coordinates";
 import { Entity } from "../../../core/entity/model/entity";
-import { getHueForEntity, getLocationProperties } from "../map-utils";
+import { getLocationProperties, createColoredDivIcon } from "../map-utils";
 import { ConfigService } from "../../../core/config/config.service";
 import { MAP_CONFIG_KEY, MapConfig } from "../map-config";
 import { MatDialog } from "@angular/material/dialog";
@@ -163,10 +163,9 @@ export class MapComponent implements AfterViewInit {
     this.map.on("zoomend", () => {
       const allMarkers = this.markerClusterGroup.getLayers() as L.Marker[];
       allMarkers.forEach((marker: any) => {
-        const entity = marker["entity"];
         const highlighted = marker["highlighted"];
-        if (entity) {
-          this.addMarkerStyle(marker, entity, highlighted);
+        if (marker["entity"]) {
+          this.addMarkerStyle(marker, highlighted);
         }
       });
     });
@@ -337,14 +336,20 @@ export class MapComponent implements AfterViewInit {
           .map((prop) => entity[prop]?.geoLookup)
           .filter((loc: GeoResult) => !!loc)
           .forEach((loc: GeoResult) => {
-            const marker = L.marker([loc.lat, loc.lon]);
+            const entityColor = entity.getColor();
+            const marker = entityColor
+              ? L.marker([loc.lat, loc.lon], {
+                  icon: createColoredDivIcon(entityColor),
+                })
+              : L.marker([loc.lat, loc.lon]);
+
             marker.bindTooltip(entity.toString());
             marker.on("click", () => this.entityClick.emit(entity));
             marker["entity"] = entity;
             marker["highlighted"] = highlighted;
 
             marker.on("add", () => {
-              this.addMarkerStyle(marker, entity, highlighted);
+              this.addMarkerStyle(marker, highlighted);
               if (highlighted) {
                 marker.openTooltip();
                 marker.bindTooltip(entity.toString(), { permanent: true });
@@ -358,20 +363,16 @@ export class MapComponent implements AfterViewInit {
   }
 
   /**
-   * Applies custom styles to a marker icon based on entity and highlight status.
+   * Applies opacity styling to colored markers based on highlight status.
    */
-  private addMarkerStyle(
-    marker: L.Marker,
-    entity: Entity,
-    highlighted: boolean,
-  ) {
+  private addMarkerStyle(marker: L.Marker, highlighted: boolean) {
     const icon = marker["_icon"] as HTMLElement;
-    if (icon) {
-      icon.style.filter = "";
-      icon.style.opacity = "";
-      const degree = entity ? getHueForEntity(entity) : "145";
-      icon.style.filter = `hue-rotate(${degree}deg)`;
-      icon.style.opacity = highlighted ? "1" : "0.5";
+    const innerSpan = icon?.querySelector("span") as HTMLElement;
+
+    if (innerSpan) {
+      const opacityValue = highlighted ? "1" : "0.5";
+      innerSpan.style.setProperty("opacity", opacityValue, "important");
+      icon.style.setProperty("opacity", "1", "important");
     }
   }
 
