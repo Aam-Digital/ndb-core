@@ -226,7 +226,6 @@ export class UserDetailsComponent {
 
     effect(() => {
       const user = this.currentUserAccount();
-      const roles = this.availableRoles();
       if (user) {
         this.updateFormFromUser(user);
       }
@@ -250,17 +249,20 @@ export class UserDetailsComponent {
   }
 
   private updateFormFromUser(user: UserAccount) {
-    this.form.patchValue({
-      email: user.email,
-      roles: (user.roles ?? [])
-        .map((role) => this.availableRoles().find((r) => r.id === role.id))
-        .filter((role): role is Role => role !== undefined), // Filter out undefined roles
-      userEntityId: !user.userEntityId
-        ? null
-        : user.userEntityId.includes(":")
-          ? user.userEntityId
-          : "User:" + user.userEntityId,
-    });
+    this.form.patchValue(
+      {
+        email: user.email,
+        roles: (user.roles ?? [])
+          .map((role) => this.availableRoles().find((r) => r.id === role.id))
+          .filter((role): role is Role => role !== undefined), // Filter out undefined roles
+        userEntityId: !user.userEntityId
+          ? null
+          : user.userEntityId.includes(":")
+            ? user.userEntityId
+            : "User:" + user.userEntityId,
+      },
+      { emitEvent: false },
+    );
 
     this.form.markAsPristine();
   }
