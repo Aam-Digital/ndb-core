@@ -41,6 +41,13 @@ export class AdminModule {
             (c) => c.AdminEntityTypesComponent,
           ),
       ],
+      [
+        "AdminPrimaryAction",
+        () =>
+          import("./admin-primary-action/admin-primary-action.component").then(
+            (c) => c.AdminPrimaryActionComponent,
+          ),
+      ],
     ]);
   }
 }

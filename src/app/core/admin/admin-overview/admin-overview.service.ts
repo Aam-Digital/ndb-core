@@ -33,16 +33,20 @@ export class AdminOverviewService {
       link: "/admin/entity",
     },
     {
-      label: $localize`:admin menu item:Main Navigation Menu`,
-      link: "/admin/menu",
-    },
-    {
       label: $localize`:admin menu item:Site Settings`,
       link: "/admin/site-settings",
     },
     {
       label: $localize`:admin menu item:Setup Wizard`,
       link: "/admin/setup-wizard",
+    },
+    {
+      label: $localize`:admin menu item:Main Menu`,
+      link: "/admin/menu",
+    },
+    {
+      label: $localize`:admin menu item:Primary Action`,
+      link: "/admin/primary-action",
     },
   ];
 }

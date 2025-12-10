@@ -3,11 +3,11 @@ import { MenuItem } from "../../../ui/navigation/menu-item";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
-import { IconComponent } from "../../../common-components/icon-input/icon-input.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatSelectModule } from "@angular/material/select";
 import { MatIconButton } from "@angular/material/button";
+import { IconComponent } from "#src/app/core/common-components/icon-input/icon-input.component";
 
 @Component({
   selector: "app-menu-item-form",
@@ -27,6 +27,8 @@ import { MatIconButton } from "@angular/material/button";
 })
 export class MenuItemFormComponent implements OnInit {
   @Input() item!: MenuItem;
+  @Input() hideLabel = false;
+  @Input() hideLink = false;
 
   /**
    * Available routes that are offered to the user for selection.

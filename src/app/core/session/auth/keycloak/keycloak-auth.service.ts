@@ -57,8 +57,9 @@ export class KeycloakAuthService {
       });
     } catch (err) {
       if (
-        err?.error ===
-        "Timeout when waiting for 3rd party check iframe message."
+        err?.message?.includes(
+          "Timeout when waiting for 3rd party check iframe message.",
+        )
       ) {
         // this is actually an expected scenario, user's internet is slow or not available
         err = new RemoteLoginNotAvailableError();
