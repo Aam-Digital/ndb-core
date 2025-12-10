@@ -6,9 +6,9 @@
   angularticsCategory="Navigation"
   angularticsAction="primary_action_click"
   *appDisabledEntityOperation="{
-    entity: noteConstructor,
+    entity: entityConstructor,
     operation: 'create',
   }"
 >
-  <fa-icon icon="file-alt"></fa-icon>
+  <fa-icon [icon]="config.icon"></fa-icon>
 </button>

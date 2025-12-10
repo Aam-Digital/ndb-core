@@ -127,6 +127,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
         return res as SyncResult;
       })
       .catch((err) => {
+        // Handle 404 errors for notifications database (may not exist yet if no event was triggered)
+        if (this.isNotificationsDatabase() && err?.status === 404) {
+          Logging.debug(
+            "Notifications database does not exist yet on server - this may be expected",
+            err,
+          );
+          this.syncState.next(SyncState.COMPLETED);
+          return {};
+        }
+
         Logging.debug("sync error", err);
         this.syncState.next(SyncState.FAILED);
         throw err;

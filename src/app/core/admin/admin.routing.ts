@@ -11,6 +11,7 @@ import { SubscriptionInfoComponent } from "./subscription-info/subscription-info
 import { AdvancedFeaturesComponent } from "./advanced-features/advanced-features.component";
 import { DataPrivacyComponent } from "./data-privacy/data-privacy.component";
 import { UserListComponent } from "../user/user-list/user-list.component";
+import { AdminPrimaryActionComponent } from "./admin-primary-action/admin-primary-action.component";
 
 export const adminRoutes: Routes = [
   {
@@ -28,6 +29,10 @@ export const adminRoutes: Routes = [
   {
     path: "menu",
     component: AdminMenuComponent,
+  },
+  {
+    path: "primary-action",
+    component: AdminPrimaryActionComponent,
   },
   {
     path: "user-roles",
