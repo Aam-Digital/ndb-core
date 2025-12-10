@@ -58,8 +58,6 @@ export class AdminDefaultValueUpdatedComponent
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly matDialog = inject(MatDialog);
 
-  relatedEntityType: any;
-
   availableRelatedEntities: {
     label: string;
     entityType: string;
@@ -67,7 +65,12 @@ export class AdminDefaultValueUpdatedComponent
   }[];
 
   ngOnInit() {
-    this.relatedEntityType = this.value?.sourceEntityType;
+    if (!this.value) {
+      this.value = {
+        sourceReferenceField: "",
+        sourceValueField: "",
+      };
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -80,7 +83,10 @@ export class AdminDefaultValueUpdatedComponent
   }
 
   onEntityTypeSelected(newEntityType: any) {
-    this.relatedEntityType = newEntityType;
+    this.value = {
+      ...this.value,
+      sourceEntityType: newEntityType,
+    };
 
     // show the dialog immediately, so that the user completes all necessary configuration
     this.openAutomatedMappingDialog(newEntityType);
