@@ -591,26 +591,15 @@
               ]
             },
             {
-              "name": "School Info",
-              "columns": [
-                "projectNumber",
-                "name",
-                "age",
-                "schoolClass",
-                "schoolId",
-                "schoolAttendance",
-                "coachingAttendance",
-                "motherTongue"
-              ]
-            },
-            {
               "name": "Status",
               "columns": [
                 "projectNumber",
                 "name",
                 "center",
                 "status",
-                "admissionDate"
+                "admissionDate",
+                "dropoutDate",
+                "dropoutType"
               ]
             },
             {
@@ -668,16 +657,16 @@
                     {
                       "fields": [
                         "email",
-                        "address",
-                        "phone"
+                        "phone",
+                        "address"
                       ],
                       "header": "Contact Details"
                     },
                     {
                       "fields": [
+                        "gender",
                         "dateOfBirth",
                         "birth_certificate",
-                        "gender",
                         "motherTongue"
                       ],
                       "header": "Demographics"
@@ -1214,7 +1203,7 @@
         },
         "phone": {
           "dataType": "string",
-          "label": "Contact"
+          "label": "Contact Number"
         }
       }
     },
