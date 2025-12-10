@@ -9,7 +9,11 @@
     </span>
   }
   @if (iterableValue.length > 3) {
-    <span class="colored-bubble extra-items" [title]="extraLabels">
+    <span
+      class="colored-bubble"
+      style="background: #eee; color: #333"
+      [title]="extraLabels"
+    >
       +{{ iterableValue.length - 3 }} more
     </span>
   }
