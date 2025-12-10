@@ -63,6 +63,11 @@
                   "label": "Public Registration Form",
                   "icon": "file-circle-check",
                   "link": "/public-form/form/test"
+                },
+                {
+                  "label": "Import from file",
+                  "icon": "file-upload",
+                  "link": "/import"
                 }
               ]
             }
@@ -655,9 +660,18 @@
                         "name",
                         "projectNumber",
                         "admissionDate",
-                        "email"
+                        "center",
+                        "status"
                       ],
                       "header": "Personal Information"
+                    },
+                    {
+                      "fields": [
+                        "email",
+                        "address",
+                        "phone"
+                      ],
+                      "header": "Contact Details"
                     },
                     {
                       "fields": [
@@ -666,16 +680,7 @@
                         "gender",
                         "motherTongue"
                       ],
-                      "header": "Additional"
-                    },
-                    {
-                      "fields": [
-                        "center",
-                        "status",
-                        "address",
-                        "phone"
-                      ],
-                      "header": "Scholar activities"
+                      "header": "Demographics"
                     }
                   ]
                 }
