@@ -14,10 +14,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
+  max-width: 280px;
+}
 
-  // max width to get more consistent, clean look
-  // disable for now as it cuts too many important details
-  //max-width: 120px;
+.more-items {
+  background: #eee;
+  color: #333;
 }
 
 .bubble-list {
