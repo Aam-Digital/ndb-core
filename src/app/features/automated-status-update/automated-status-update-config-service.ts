@@ -12,7 +12,7 @@ import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 import { ConfigService } from "app/core/config/config.service";
-import { DefaultValueConfigUpdatedFromReferencingEntity } from "./default-value-config-updated-from-referencing-entity";
+import { DefaultValueConfigInheritedField } from "../inherited-field/inherited-field-config";
 
 /**
  * Service to automatically update related entities based on configured rules.
@@ -59,7 +59,7 @@ export class AutomatedStatusUpdateConfigService {
       targetEntityType: EntityConstructor;
       targetFieldId: string;
       relatedReferenceField: string;
-      rule: DefaultValueConfigUpdatedFromReferencingEntity;
+      rule: DefaultValueConfigInheritedField;
     }[]
   >();
 
@@ -93,7 +93,7 @@ export class AutomatedStatusUpdateConfigService {
   ) {
     const rule = fieldConfig.defaultValue?.config;
     if (
-      fieldConfig.defaultValue?.mode === "updated-from-referencing-entity" &&
+      fieldConfig.defaultValue?.mode === "inherited-field" &&
       rule
     ) {
       this.processAutomatedRule(targetType, fieldKey, rule);
@@ -109,13 +109,13 @@ export class AutomatedStatusUpdateConfigService {
   private processAutomatedRule(
     targetEntityType: EntityConstructor,
     targetFieldId: string,
-    rule: DefaultValueConfigUpdatedFromReferencingEntity,
+    rule: DefaultValueConfigInheritedField,
   ) {
-    const key = `${rule.relatedEntityType}|${rule.relatedTriggerField}`;
+    const key = `${rule.sourceEntityType}|${rule.sourceValueField}`;
     const entry = {
       targetEntityType: targetEntityType,
       targetFieldId: targetFieldId,
-      relatedReferenceField: rule.relatedReferenceField,
+      relatedReferenceField: rule.sourceReferenceField,
       rule: rule,
     };
 
@@ -203,7 +203,7 @@ export class AutomatedStatusUpdateConfigService {
         changedField,
       );
       for (const affected of affectedRecords) {
-        if (changedField == affected.rule.relatedTriggerField) {
+        if (changedField == affected.rule.sourceValueField) {
           await this.applyMappingToAffectedRecord(
             entity,
             affected,
@@ -233,7 +233,7 @@ export class AutomatedStatusUpdateConfigService {
       .getSchema()
       .get(affected.relatedReferenceField);
     if (!entity) return;
-    const newValue = affected.rule.automatedMapping[changedValue.id];
+    const newValue = affected.rule.valueMapping[changedValue.id];
     const loadedEntities = await this.loadRelatedEntities(
       entity,
       affected.targetEntityType,

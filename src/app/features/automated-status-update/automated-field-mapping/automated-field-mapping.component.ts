@@ -22,8 +22,8 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 
 /**
- * Dialog to configure additional details for the "updated-from-referencing-entity"
- * default value strategy, working in combination with the `AdminDefaultValueUpdatedComponent`.
+ * Dialog to configure additional details for the "inherited-field"
+ * default value strategy, working in combination with the admin components.
  */
 @Component({
   selector: "app-automated-field-mapping",
@@ -70,7 +70,7 @@ export class AutomatedFieldMappingComponent implements OnInit {
   mappingForms: {
     [triggerfieldValue: string]: EntityForm<Entity>;
   } = {};
-  /** The automatedMapping rules for the selectedTriggerField
+  /** The valueMapping rules for the selectedTriggerField
    * The mapping is a dictionary where the key is the triggerFieldValue and the value is the currentField value.
    */
   selectedMappings: { [key: string]: any } = {};
@@ -94,10 +94,10 @@ export class AutomatedFieldMappingComponent implements OnInit {
     const defaultValueConfig =
       this.targetFieldConfig.defaultValue?.config || {};
     this.selectedReferenceField =
-      defaultValueConfig.relatedReferenceField ||
+      defaultValueConfig.sourceReferenceField ||
       (this.availableReferenceFields ? this.availableReferenceFields[0] : null);
-    this.selectedMappings = defaultValueConfig.automatedMapping || {};
-    this.selectedTriggerField = defaultValueConfig.relatedTriggerField;
+    this.selectedMappings = defaultValueConfig.valueMapping || {};
+    this.selectedTriggerField = defaultValueConfig.sourceValueField;
   }
 
   ngOnInit(): void {
@@ -185,9 +185,9 @@ export class AutomatedFieldMappingComponent implements OnInit {
     });
 
     this.dialogRef.close({
-      relatedTriggerField: this.selectedTriggerField,
-      relatedReferenceField: this.selectedReferenceField,
-      automatedMapping: this.selectedMappings,
+      sourceValueField: this.selectedTriggerField,
+      sourceReferenceField: this.selectedReferenceField,
+      valueMapping: this.selectedMappings,
     });
   }
 }
