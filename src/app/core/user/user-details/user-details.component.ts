@@ -114,26 +114,40 @@ export class UserDetailsComponent {
   });
 
   currentUserAccount = computed(() => {
-    // If userAccount is provided directly, use it
+    // Use the directly provided user account
     const directUser = this.userAccount() ?? this._dialogData?.userAccount;
-    if (directUser) {
+    if (directUser && !this.isProfileMode()) {
       return directUser;
     }
 
     if (this.sessionInfo?.value) {
       const sessionRoles = this.sessionInfo.value.roles || [];
-      const mappedRoles = sessionRoles
-        .map((roleName) =>
-          this.availableRoles().find(
-            (r) => r.id === roleName || r.name === roleName,
-          ),
-        )
-        .filter((role): role is Role => role !== undefined);
+      const availableRoles = this.availableRoles();
+
+      let mappedRoles: Role[] = [];
+      if (availableRoles.length > 0) {
+        // Map roles only if available roles are loaded
+        mappedRoles = sessionRoles
+          .map((roleName) =>
+            availableRoles.find(
+              (r) => r.id === roleName || r.name === roleName,
+            ),
+          )
+          .filter((role): role is Role => role !== undefined);
+      } else {
+        // Fallback: create role objects from session role names when available roles not yet loaded
+        mappedRoles = sessionRoles.map((roleName) => ({
+          id: roleName,
+          name: roleName,
+          description: roleName,
+        }));
+      }
 
       return {
         email: this.sessionInfo.value.email,
         enabled: true,
         roles: mappedRoles,
+        userEntityId: this.sessionInfo.value.entityId,
       } as UserAccount;
     }
 
@@ -213,7 +227,7 @@ export class UserDetailsComponent {
     effect(() => {
       const user = this.currentUserAccount();
       const roles = this.availableRoles();
-      if (user && roles.length > 0) {
+      if (user) {
         this.updateFormFromUser(user);
       }
     });
@@ -226,6 +240,13 @@ export class UserDetailsComponent {
         this.form.enable();
       }
     });
+  }
+
+  getSessionRolesDisplayText(): string {
+    if (!this.isProfileMode() || !this.sessionInfo?.value?.roles) {
+      return "";
+    }
+    return this.sessionInfo.value.roles.join(", ");
   }
 
   private updateFormFromUser(user: UserAccount) {
