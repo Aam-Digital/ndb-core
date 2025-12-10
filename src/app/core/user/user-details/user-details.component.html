@@ -137,7 +137,7 @@
 
         <mat-form-field class="full-width">
           <mat-label i18n="label of roles input">Roles</mat-label>
-          @if (isProfileMode() && !userIsPermitted) {
+          @if (isProfileMode()) {
             <input
               matInput
               type="text"
