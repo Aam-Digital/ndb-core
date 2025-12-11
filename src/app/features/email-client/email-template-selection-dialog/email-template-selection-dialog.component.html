@@ -50,11 +50,19 @@
       <mat-checkbox [formControl]="sendAsBCC">
         <span i18n>Send as BCC</span>
         &nbsp;
-        <fa-icon
-          icon="question-circle"
-          matTooltip="If you send an email to multiple people they can see each others email IDs. Unless they know each other you should avoid this. Therefore, you can instead send the email to yourself and add all recipients as 'blind copy' (BCC)."
-          i18n-matTooltip
-        ></fa-icon>
+        <app-help-button
+          text="If you send an email to multiple people they can see each others email IDs. Unless they know each other you should avoid this. Therefore, you can instead send the email to yourself and add all recipients as 'blind copy' (BCC)."
+          i18n-text
+        ></app-help-button>
+      </mat-checkbox>
+
+      <mat-checkbox [formControl]="sendSemicolonSeparated">
+        <span i18n>Microsoft Outlook compatibility</span>
+        &nbsp;
+        <app-help-button
+          text="Check this if email ids are not separated correctly. If you use Microsoft Outlook, you may need to separate email addresses with semicolons instead of commas for compatibility."
+          i18n-text
+        ></app-help-button>
       </mat-checkbox>
     }
   </div>
