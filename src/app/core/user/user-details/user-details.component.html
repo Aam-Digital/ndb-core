@@ -1,211 +1,200 @@
-@if (!userIsPermittedComputed()) {
-  <em i18n="Placeholder text when permissions are missing">
-    Your account does not have the required permissions to see this page.
-  </em>
-} @else {
-  @if (isInDialog()) {
-    <div>
-      <h2 mat-dialog-title i18n>Edit User Account</h2>
-      <app-dialog-close (click)="onCloseDialog()"></app-dialog-close>
+@if (isInDialog()) {
+  <div>
+    <h2 mat-dialog-title i18n>Edit User Account</h2>
+    <app-dialog-close (click)="onCloseDialog()"></app-dialog-close>
+  </div>
+}
+
+<div class="flex-column padding-right-regular padding-left-regular">
+  @if (!currentUserAccount()) {
+    <div class="buttons-wrapper align-self-start">
+      <p
+        i18n="notice about user without account"
+        class="field-hint field-warning"
+      >
+        There is no user account set up for this user yet. Enable this user to
+        log into the app by filling the details below.
+      </p>
+      @if ((editing() || dialogData?.editing) && !currentUserAccount()) {
+        <button
+          mat-raised-button
+          type="submit"
+          (click)="onSubmit()"
+          class="invite-button"
+          color="accent"
+          [class.invite-button-animate]="true"
+          i18n="button to invite a new user"
+        >
+          Create account & send invitation
+        </button>
+      }
     </div>
   }
 
-  <div class="flex-column padding-right-regular padding-left-regular">
-    @if (!currentUserAccount()) {
-      <div class="buttons-wrapper align-self-start">
-        <p
-          i18n="notice about user without account"
-          class="field-hint field-warning"
+  @if (currentUserAccount() && !isProfileMode()) {
+    <div
+      class="padding-bottom-small flex-row gap-small align-self-end flex-wrap padding-top-small"
+    >
+      @if (
+        (editing() || dialogData?.editing) && currentUserAccount()?.enabled
+      ) {
+        <button
+          mat-stroked-button
+          color="warn"
+          (click)="onToggleAccount(false)"
+          matTooltip="User will not be able to login again, no information will be lost"
+          i18n="button to update disable a user"
         >
-          There is no user account set up for this user yet. Enable this user to
-          log into the app by filling the details below.
-        </p>
-        @if ((editing() || dialogData?.editing) && !currentUserAccount()) {
-          <button
-            mat-raised-button
-            type="submit"
-            (click)="onSubmit()"
-            class="invite-button"
-            color="accent"
-            [class.invite-button-animate]="true"
-            i18n="button to invite a new user"
-          >
-            Create account & send invitation
-          </button>
-        }
-      </div>
-    }
-
-    @if (currentUserAccount() && !isProfileMode()) {
-      <div
-        class="padding-bottom-small flex-row gap-small align-self-end flex-wrap padding-top-small"
-      >
-        @if (
-          (editing() || dialogData?.editing) && currentUserAccount()?.enabled
-        ) {
-          <button
-            mat-stroked-button
-            color="warn"
-            (click)="onToggleAccount(false)"
-            matTooltip="User will not be able to login again, no information will be lost"
-            i18n="button to update disable a user"
-          >
-            Deactivate user
-          </button>
-        }
-        @if (
-          (editing() || dialogData?.editing) && !currentUserAccount()?.enabled
-        ) {
-          <button
-            mat-raised-button
-            color="accent"
-            (click)="onToggleAccount(true)"
-            matTooltip="User can login again with the previously used credentials"
-            i18n="button to enable a user"
-          >
-            Activate user
-          </button>
-        }
-        @if (
-          (editing() || dialogData?.editing) &&
-          (isInDialog() || currentUserAccount()?.enabled)
-        ) {
-          <button
-            mat-raised-button
-            color="accent"
-            class="action-button"
-            [disabled]="!form.valid || !form.dirty"
-            (click)="onSubmit()"
-            i18n="Save button for forms"
-          >
-            Save
-          </button>
-        }
-        @if (editing() || dialogData?.editing) {
-          <button
-            mat-stroked-button
-            class="action-button"
-            (click)="onCancel()"
-            i18n="Cancel button for forms"
-          >
-            Cancel
-          </button>
-        }
-        @if (!(editing() || dialogData?.editing)) {
-          <button
-            mat-raised-button
-            class="action-button"
-            (click)="onEdit()"
-            i18n="Edit button for forms"
-          >
-            Edit
-          </button>
-        }
-      </div>
-    }
-
-    @if (currentUserAccount() && !currentUserAccount()?.enabled) {
-      <p i18n="Hint in user account page" class="field-hint field-warning">
-        User is currently disabled and will not be able to login to the app
-      </p>
-    }
-
-    <div class="user-details-form">
-      <form [formGroup]="form">
-        <mat-form-field class="full-width">
-          <mat-label i18n="label of email input">Email</mat-label>
-          <input matInput type="text" formControlName="email" />
-          @if (getFormError("email", "email")) {
-            <mat-error i18n> Please enter a valid email </mat-error>
-          }
-          @if (getFormError("email", "required")) {
-            <mat-error i18n> This field is required </mat-error>
-          }
-          @if (isInDialog() && currentUserAccount()?.userEntityId) {
-            <mat-hint i18n="hint showing username/entity ID in dialog">
-              Username: {{ currentUserAccount()?.userEntityId }}
-            </mat-hint>
-          }
-          @if (isProfileMode()) {
-            <mat-hint i18n>
-              Changing your email is temporarily only possible for
-              administrators. Please contact your project coordinator or the
-              support team.
-            </mat-hint>
-          }
-        </mat-form-field>
-
-        <mat-form-field class="full-width">
-          <mat-label i18n="label of roles input">Roles</mat-label>
-          @if (isProfileMode()) {
-            <input
-              matInput
-              type="text"
-              [value]="getSessionRolesDisplayText()"
-              readonly
-              disabled
-            />
-          } @else {
-            <mat-select formControlName="roles" multiple>
-              <mat-select-trigger>
-                @for (role of form.get("roles")?.value; track role) {
-                  <span>{{ role.name }} </span>
-                }
-              </mat-select-trigger>
-              @for (role of availableRoles(); track role) {
-                <mat-option [value]="role" [matTooltip]="role.description">
-                  {{ role.description }}
-                  <em class="role-name">{{ role.name }}</em>
-                </mat-option>
-              }
-            </mat-select>
-            @if (!isInDialog()) {
-              <mat-hint
-                i18n="hint about assigning user roles"
-                class="field-hint"
-              >
-                You should select at least one user role. Otherwise this user
-                will not even be able to access the basic app layout like the
-                menu.
-              </mat-hint>
-            }
-            @if (getFormError("roles", "required")) {
-              <mat-error i18n> This field is required </mat-error>
-            }
-          }
-        </mat-form-field>
-
-        @if (showPasswordChange()) {
-          <div class="field-row">
-            <button
-              mat-stroked-button
-              type="button"
-              color="primary"
-              (click)="onChangePassword()"
-              angulartics2On="click"
-              angularticsCategory="User"
-              angularticsAction="password_update"
-              [disabled]="passwordChangeDisabled()"
-              i18n="button to change password"
-            >
-              Change Password
-            </button>
-          </div>
-        }
-
-        <mat-form-field class="full-width">
-          <mat-label i18n>Profile</mat-label>
-          <app-edit-entity formControlName="userEntityId"></app-edit-entity>
-          <mat-hint i18n>
-            Editing linked profile record is not possible here. Please contact
-            user support.
-          </mat-hint>
-        </mat-form-field>
-
-        @if (getGlobalError()) {
-          <mat-error class="global-error">{{ getGlobalError() }}</mat-error>
-        }
-      </form>
+          Deactivate user
+        </button>
+      }
+      @if (
+        (editing() || dialogData?.editing) && !currentUserAccount()?.enabled
+      ) {
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="onToggleAccount(true)"
+          matTooltip="User can login again with the previously used credentials"
+          i18n="button to enable a user"
+        >
+          Activate user
+        </button>
+      }
+      @if (
+        (editing() || dialogData?.editing) &&
+        (isInDialog() || currentUserAccount()?.enabled)
+      ) {
+        <button
+          mat-raised-button
+          color="accent"
+          class="action-button"
+          [disabled]="!form.valid || !form.dirty"
+          (click)="onSubmit()"
+          i18n="Save button for forms"
+        >
+          Save
+        </button>
+      }
+      @if (editing() || dialogData?.editing) {
+        <button
+          mat-stroked-button
+          class="action-button"
+          (click)="onCancel()"
+          i18n="Cancel button for forms"
+        >
+          Cancel
+        </button>
+      }
+      @if (!(editing() || dialogData?.editing)) {
+        <button
+          mat-raised-button
+          class="action-button"
+          (click)="onEdit()"
+          i18n="Edit button for forms"
+        >
+          Edit
+        </button>
+      }
     </div>
+  }
+
+  @if (currentUserAccount() && !currentUserAccount()?.enabled) {
+    <p i18n="Hint in user account page" class="field-hint field-warning">
+      User is currently disabled and will not be able to login to the app
+    </p>
+  }
+
+  <div class="user-details-form">
+    <form [formGroup]="form">
+      <mat-form-field class="full-width">
+        <mat-label i18n="label of email input">Email</mat-label>
+        <input matInput type="text" formControlName="email" />
+        @if (getFormError("email", "email")) {
+          <mat-error i18n> Please enter a valid email</mat-error>
+        }
+        @if (getFormError("email", "required")) {
+          <mat-error i18n> This field is required</mat-error>
+        }
+        @if (isInDialog() && currentUserAccount()?.userEntityId) {
+          <mat-hint i18n="hint showing username/entity ID in dialog">
+            Username: {{ currentUserAccount()?.userEntityId }}
+          </mat-hint>
+        }
+        @if (isProfileMode()) {
+          <mat-hint i18n>
+            Changing your email is temporarily only possible for administrators.
+            Please contact your project coordinator or the support team.
+          </mat-hint>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label i18n="label of roles input">Roles</mat-label>
+        @if (isProfileMode()) {
+          <input
+            matInput
+            type="text"
+            [value]="getSessionRolesDisplayText()"
+            readonly
+            disabled
+          />
+        } @else {
+          <mat-select formControlName="roles" multiple>
+            <mat-select-trigger>
+              @for (role of form.get("roles")?.value; track role) {
+                <span>{{ role.name }} </span>
+              }
+            </mat-select-trigger>
+            @for (role of availableRoles(); track role) {
+              <mat-option [value]="role" [matTooltip]="role.description">
+                {{ role.description }}
+                <em class="role-name">{{ role.name }}</em>
+              </mat-option>
+            }
+          </mat-select>
+          @if (!isInDialog()) {
+            <mat-hint i18n="hint about assigning user roles" class="field-hint">
+              You should select at least one user role. Otherwise this user will
+              not even be able to access the basic app layout like the menu.
+            </mat-hint>
+          }
+          @if (getFormError("roles", "required")) {
+            <mat-error i18n> This field is required</mat-error>
+          }
+        }
+      </mat-form-field>
+
+      @if (showPasswordChange()) {
+        <div class="field-row">
+          <button
+            mat-stroked-button
+            type="button"
+            color="primary"
+            (click)="onChangePassword()"
+            angulartics2On="click"
+            angularticsCategory="User"
+            angularticsAction="password_update"
+            [disabled]="passwordChangeDisabled()"
+            i18n="button to change password"
+          >
+            Change Password
+          </button>
+        </div>
+      }
+
+      <mat-form-field class="full-width">
+        <mat-label i18n>Profile</mat-label>
+        <app-edit-entity formControlName="userEntityId"></app-edit-entity>
+        <mat-hint i18n>
+          Editing linked profile record is not possible here. Please contact
+          user support.
+        </mat-hint>
+      </mat-form-field>
+
+      @if (getGlobalError()) {
+        <mat-error class="global-error">{{ getGlobalError() }}</mat-error>
+      }
+    </form>
   </div>
-}
+</div>

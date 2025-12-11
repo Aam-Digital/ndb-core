@@ -27,6 +27,10 @@ export class UserListComponent implements OnInit {
   private readonly sessionInfo = inject(SessionSubject);
   private readonly alertService = inject(AlertService);
 
+  hasUserManagementRole = this.sessionInfo.value?.roles.includes(
+    UserAdminService.ACCOUNT_MANAGER_ROLE,
+  );
+
   users = signal<UserAccount[]>([]);
   displayedColumns: string[] = [
     "email",
@@ -37,23 +41,13 @@ export class UserListComponent implements OnInit {
   ];
 
   ngOnInit() {
-    // Check permissions before attempting to load users to avoid errors
-    // for users without access or when device is offline
-    const hasPermission = this.sessionInfo.value?.roles.includes(
-      UserAdminService.ACCOUNT_MANAGER_ROLE,
-    );
-
     const isOnline = typeof navigator !== "undefined" ? navigator.onLine : true;
 
-    if (hasPermission && isOnline) {
+    if (this.hasUserManagementRole && isOnline) {
       this.loadUsers();
-    } else if (!hasPermission) {
-      this.alertService.addInfo(
-        "You don't have permission to view user accounts.",
-      );
     } else if (!isOnline) {
       this.alertService.addInfo(
-        "User accounts cannot be loaded while offline.",
+        $localize`User accounts cannot be loaded while offline.`,
       );
     }
   }
@@ -66,7 +60,7 @@ export class UserListComponent implements OnInit {
       error: (err) => {
         Logging.error("Failed to load users:", err);
         this.alertService.addWarning(
-          "Failed to load users.Please contact user support.",
+          $localize`Failed to load users. Please try again later or contact your server administrator.`,
         );
       },
     });
@@ -77,15 +71,9 @@ export class UserListComponent implements OnInit {
   }
 
   openUserDetails(user: UserAccount) {
-    const userIsPermitted =
-      this.sessionInfo.value?.roles.includes(
-        UserAdminService.ACCOUNT_MANAGER_ROLE,
-      ) ?? false;
-
     const dialogData: UserDetailsDialogData = {
       userAccount: user,
       editing: true,
-      userIsPermitted,
       isInDialog: true,
     };
 

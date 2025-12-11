@@ -1,6 +1,11 @@
-<app-user-details
-  [userAccount]="getUserAccountForDetails()"
-  [editing]="editing()"
-  [userIsPermitted]="userIsPermitted()"
-  (action)="onUserDetailsAction($event)"
-></app-user-details>
+@if (userIsPermitted()) {
+  <app-user-details
+    [userAccount]="getUserAccountForDetails()"
+    [editing]="editing()"
+    (action)="onUserDetailsAction($event)"
+  ></app-user-details>
+} @else {
+  <div class="permissions-warning" i18n>
+    Your account does not have the required permissions to manage user accounts.
+  </div>
+}

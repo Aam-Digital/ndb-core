@@ -42,7 +42,6 @@ import { filter } from "rxjs";
 export interface UserDetailsDialogData {
   userAccount: UserAccount | null;
   editing: boolean;
-  userIsPermitted: boolean;
   isInDialog?: boolean;
 }
 
@@ -94,20 +93,12 @@ export class UserDetailsComponent {
 
   userAccount = input<UserAccount | null>();
   editing = input<boolean>(false);
-  userIsPermitted = input<boolean>(false);
   isInDialog = input<boolean>(this._dialogData?.isInDialog || false);
   isProfileMode = input<boolean>(false);
 
   disabled = computed(() => {
     return !this.editing() && !this._dialogData?.editing;
   });
-
-  userIsPermittedComputed = computed(
-    () =>
-      this.userIsPermitted() ||
-      this._dialogData?.userIsPermitted ||
-      this.isProfileMode(),
-  );
 
   showPasswordChange = computed(() => this.isProfileMode());
 
