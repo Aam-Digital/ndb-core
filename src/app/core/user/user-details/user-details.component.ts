@@ -115,11 +115,19 @@ export class UserDetailsComponent {
     return false;
   });
 
+  /**
+   * Gets the current user account for UI display
+   * Returns null for new accounts (without ID) to trigger send invitation/ user creation flow.
+   * Returns session info only in profile mode.
+   */
   currentUserAccount = computed(() => {
     // Use the directly provided user account
     const directUser = this.userAccount() ?? this._dialogData?.userAccount;
     if (directUser && !this.isProfileMode()) {
-      return directUser;
+      if (directUser.id) {
+        return directUser;
+      }
+      return null;
     }
 
     if (this.sessionInfo?.value) {
@@ -154,6 +162,18 @@ export class UserDetailsComponent {
     }
 
     return null;
+  });
+
+  /**
+   * Gets user account data for form field population.
+   * Unlike currentUserAccount, this includes placeholder accounts to populate userEntityId.
+   */
+  private userAccountForFormData = computed(() => {
+    const directUser = this.userAccount() ?? this._dialogData?.userAccount;
+    if (directUser && !this.isProfileMode()) {
+      return directUser;
+    }
+    return this.currentUserAccount();
   });
 
   availableRoles = signal<Role[]>([]);
@@ -227,7 +247,7 @@ export class UserDetailsComponent {
     });
 
     effect(() => {
-      const user = this.currentUserAccount();
+      const user = this.userAccountForFormData();
       if (user) {
         this.updateFormFromUser(user);
       }

@@ -135,7 +135,6 @@ export class EntityUserComponent implements OnInit {
       });
   }
 
-
   /**
    * Reset server DB sync state to ensure previously hidden docs are re-synced
    * after an account has gained more access permissions.
