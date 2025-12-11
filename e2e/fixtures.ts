@@ -47,13 +47,23 @@ export const test = base.extend<{ forEachTest: void }>({
       // as the original test, allowing Argos CI to compare them to the same baseline.
       const originalOutputDir = testInfo.outputDir;
       const normalizedOutputDir = originalOutputDir.replace(/-retry\d+$/, "");
+
       if (originalOutputDir !== normalizedOutputDir) {
-        // Override the output directory to remove retry suffix
+        // Override both outputDir property and outputPath method
         Object.defineProperty(testInfo, "outputDir", {
           value: normalizedOutputDir,
           writable: false,
           configurable: true,
         });
+
+        // Also override outputPath to use normalized directory
+        const originalOutputPath = testInfo.outputPath.bind(testInfo) as (
+          ...args: string[]
+        ) => string;
+        testInfo.outputPath = (...args: string[]) => {
+          const path = originalOutputPath(...args);
+          return path.replace(/-retry\d+/, "");
+        };
       }
 
       await page.clock.install();
