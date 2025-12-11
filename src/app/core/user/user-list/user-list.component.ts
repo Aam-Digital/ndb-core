@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
 import { MatDialog } from "@angular/material/dialog";
 import { SessionSubject } from "../../session/auth/session-info";
@@ -94,28 +94,24 @@ export class UserListComponent implements OnInit {
       width: "99%",
     });
 
-    dialogRef.componentInstance.action.subscribe(
-      (action: UserDetailsAction) => {
-        switch (action.type) {
-          case "accountUpdated": {
-            const updatedUsers = this.users().map((u) =>
-              u.id === action.data.user.id ? action.data.user : u,
-            );
-            this.users.set(updatedUsers);
-            dialogRef.close();
-            break;
-          }
-          case "editRequested":
-            break;
-          case "formCancel":
-            dialogRef.close();
-            break;
-        }
-      },
-    );
+    dialogRef.afterClosed().subscribe((action: UserDetailsAction) => {
+      if (!action) {
+        // Dialog was closed without an action (e.g., clicked outside or ESC)
+        return;
+      }
 
-    dialogRef.afterClosed().subscribe(() => {
-      this.loadUsers();
+      switch (action.type) {
+        case "accountUpdated": {
+          const updatedUsers = this.users().map((u) =>
+            u.id === action.data.user.id ? action.data.user : u,
+          );
+          this.users.set(updatedUsers);
+          break;
+        }
+        case "accountCreated":
+          this.loadUsers();
+          break;
+      }
     });
   }
 }

@@ -20,7 +20,11 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
-import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { Role, UserAccount } from "../user-admin-service/user-account";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -74,6 +78,10 @@ export class UserDetailsComponent {
   private readonly userAdminService = inject(UserAdminService);
   private readonly alertService = inject(AlertService);
   private readonly _dialogData = inject(MAT_DIALOG_DATA, { optional: true });
+  private readonly dialogRef = inject(
+    MatDialogRef<UserDetailsComponent, UserDetailsAction>,
+    { optional: true },
+  );
   private readonly authService = inject(KeycloakAuthService, {
     optional: true,
   });
@@ -270,6 +278,19 @@ export class UserDetailsComponent {
     return this.sessionInfo.value.roles.join(", ");
   }
 
+  /**
+   * Helper method to emit action or close dialog depending on the context.
+   * If component is used in a dialog, closes the dialog with the action.
+   * Otherwise, emits the action through the output.
+   */
+  private emitOrCloseWithAction(action: UserDetailsAction): void {
+    if (this.dialogRef) {
+      this.dialogRef.close(action);
+    } else {
+      this.action.emit(action);
+    }
+  }
+
   private updateFormFromUser(user: UserAccount) {
     this.form.patchValue(
       {
@@ -325,7 +346,7 @@ export class UserDetailsComponent {
           this.alertService.addInfo(
             $localize`:Snackbar message:Account created. An email has been sent to ${formData.email}`,
           );
-          this.action.emit({
+          this.emitOrCloseWithAction({
             type: "accountCreated",
             data: {
               ...formData,
@@ -359,7 +380,7 @@ export class UserDetailsComponent {
     }
 
     if (Object.keys(update).length === 0) {
-      this.action.emit({ type: "formCancel" });
+      this.emitOrCloseWithAction({ type: "formCancel" });
       return;
     }
 
@@ -379,7 +400,7 @@ export class UserDetailsComponent {
       next: () => {
         this.alertService.addInfo(message);
         const updatedUser = { ...currentUser, ...update };
-        this.action.emit({
+        this.emitOrCloseWithAction({
           type: "accountUpdated",
           data: {
             user: updatedUser,
@@ -406,7 +427,7 @@ export class UserDetailsComponent {
   }
 
   onCancel() {
-    this.action.emit({ type: "formCancel" });
+    this.emitOrCloseWithAction({ type: "formCancel" });
   }
 
   getFormError(field: string, errorType: string): boolean {
@@ -418,11 +439,11 @@ export class UserDetailsComponent {
   }
 
   onEdit() {
-    this.action.emit({ type: "editRequested" });
+    this.emitOrCloseWithAction({ type: "editRequested" });
   }
 
   onCloseDialog() {
-    this.action.emit({ type: "formCancel" });
+    this.emitOrCloseWithAction({ type: "formCancel" });
   }
 
   onChangePassword() {
