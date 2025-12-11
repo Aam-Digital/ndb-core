@@ -163,7 +163,7 @@ export class MapComponent implements AfterViewInit {
     this.map.on("zoomend", () => {
       const allMarkers = this.markerClusterGroup.getLayers() as L.Marker[];
       allMarkers.forEach((marker: any) => {
-        if (marker["hasDivIcon"]) {
+        if (marker["entity"]) {
           this.addMarkerStyle(marker, marker["highlighted"]);
         }
       });
@@ -335,18 +335,15 @@ export class MapComponent implements AfterViewInit {
           .map((prop) => entity[prop]?.geoLookup)
           .filter((loc: GeoResult) => !!loc)
           .forEach((loc: GeoResult) => {
-            const entityColor = entity.getColor();
-            const marker = entityColor
-              ? L.marker([loc.lat, loc.lon], {
-                  icon: createColoredDivIcon(entityColor),
-                })
-              : L.marker([loc.lat, loc.lon]);
+            const entityColor = entity.getColor() || "#808080"; // Default grey for entities without color
+            const marker = L.marker([loc.lat, loc.lon], {
+              icon: createColoredDivIcon(entityColor),
+            });
 
             marker.bindTooltip(entity.toString());
             marker.on("click", () => this.entityClick.emit(entity));
             marker["entity"] = entity;
             marker["highlighted"] = highlighted;
-            marker["hasDivIcon"] = !!entityColor;
 
             marker.on("add", () => {
               this.addMarkerStyle(marker, highlighted);
@@ -363,12 +360,9 @@ export class MapComponent implements AfterViewInit {
   }
 
   /**
-   * Applies opacity styling to colored markers based on highlight status.
+   * Applies opacity styling to markers based on highlight status.
    */
   private addMarkerStyle(marker: L.Marker, highlighted: boolean) {
-    // Only apply styling to markers with custom DivIcon (colored entities)
-    if (!marker["hasDivIcon"]) return;
-
     const icon = marker["_icon"] as HTMLElement;
     const innerSpan = icon?.querySelector("span") as HTMLElement;
 
