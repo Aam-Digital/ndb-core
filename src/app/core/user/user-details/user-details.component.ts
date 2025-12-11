@@ -90,7 +90,9 @@ export class UserDetailsComponent {
   isInDialog = input<boolean>(this._dialogData?.isInDialog || false);
   isProfileMode = input<boolean>(false);
 
-  disabled = computed(() => !this.editing() && !this._dialogData?.editing);
+  disabled = computed(() => {
+    return !this.editing() && !this._dialogData?.editing;
+  });
 
   userIsPermittedComputed = computed(
     () =>
@@ -366,7 +368,6 @@ export class UserDetailsComponent {
         });
       },
       error: (error) => {
-        console.log(error);
         this.alertService.addDanger(
           error?.error?.message ||
             error?.message ||

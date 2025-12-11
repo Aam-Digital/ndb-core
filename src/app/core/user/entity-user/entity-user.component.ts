@@ -44,27 +44,24 @@ export class EntityUserComponent implements OnInit {
 
   @Input() entity?: Entity;
   user = signal<UserAccount | null>(null);
-  editing = computed(
-    () => this.formMode() === "edit" || this.formMode() === "create",
-  );
   userIsPermitted = signal<boolean>(false);
-  formMode = signal<"create" | "edit" | "view">("create");
+  editing = signal<boolean>(false);
 
   onUserDetailsAction(action: UserDetailsAction) {
     switch (action.type) {
       case "formCancel":
-        this.onFormCancel();
+        this.editing.set(false);
         break;
       case "editRequested":
-        this.editForm();
+        this.editing.set(true);
         break;
       case "accountCreated":
         this.user.set(action.data);
-        this.disableForm();
+        this.editing.set(false);
         break;
       case "accountUpdated":
         this.user.set(action.data.user);
-        this.disableForm();
+        this.editing.set(false);
         if (action.data.triggerSyncReset) {
           this.triggerSyncReset();
         }
@@ -86,7 +83,7 @@ export class EntityUserComponent implements OnInit {
     return this.entity;
   }
 
-  getUserAccountForDetails(): UserAccount | null {
+  getUserAccountForDetails = computed<UserAccount | null>(() => {
     if (this.user()) {
       return this.user();
     }
@@ -101,7 +98,7 @@ export class EntityUserComponent implements OnInit {
     }
 
     return null;
-  }
+  });
 
   ngOnInit() {
     if (!this.userIsPermitted()) {
@@ -126,11 +123,7 @@ export class EntityUserComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.user.set(res);
-          if (res) {
-            this.formMode.set("view");
-          } else {
-            this.formMode.set("create");
-          }
+          this.editing.set(!res);
         },
         error: (err) => {
           this.alertService.addDanger(
@@ -142,17 +135,6 @@ export class EntityUserComponent implements OnInit {
       });
   }
 
-  editForm() {
-    this.formMode.set("edit");
-  }
-
-  disableForm() {
-    this.formMode.set("view");
-  }
-
-  onFormCancel() {
-    this.disableForm();
-  }
 
   /**
    * Reset server DB sync state to ensure previously hidden docs are re-synced
