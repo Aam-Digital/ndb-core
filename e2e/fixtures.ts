@@ -45,7 +45,7 @@ export const test = base.extend<{ forEachTest: void }>({
       // Normalize the test output directory to remove retry suffixes.
       // This ensures that screenshots from retries are saved to the same directory
       // as the original test, allowing Argos CI to compare them to the same baseline.
-      const originalOutputDir = testInfo.outputDir;
+      const originalOutputDir: string = testInfo.outputDir;
       const normalizedOutputDir = originalOutputDir.replace(/-retry\d+$/, "");
       if (originalOutputDir !== normalizedOutputDir) {
         // Override the output directory to remove retry suffix
