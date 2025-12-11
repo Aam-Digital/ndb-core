@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -10,7 +18,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
  * (showing some additional explanation in the UI).
  */
 @Component({
-  selector: "app-admin-icon-input",
+  selector: "app-icon-input",
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -19,10 +27,10 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
     MatTooltipModule,
     FaIconComponent,
   ],
-  templateUrl: "./admin-icon-input.component.html",
-  styleUrl: "./admin-icon-input.component.scss",
+  templateUrl: "./icon-input.component.html",
+  styleUrl: "./icon-input.component.scss",
 })
-export class AdminIconComponent implements OnInit {
+export class IconComponent implements OnInit, OnChanges {
   @Input() icon: string;
   @Output() iconChange = new EventEmitter<string>();
 
@@ -33,5 +41,11 @@ export class AdminIconComponent implements OnInit {
     this.iconControl.valueChanges.subscribe((value) =>
       this.iconChange.emit(value),
     );
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes["icon"] && this.iconControl) {
+      this.iconControl.setValue(this.icon || "", { emitEvent: false });
+    }
   }
 }

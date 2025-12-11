@@ -35,10 +35,9 @@ import { AnonymizeOptionsComponent } from "../../admin-entity-details/admin-enti
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.datatype";
-import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.component";
+import { IconComponent } from "#src/app/core/common-components/icon-input/icon-input.component";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { PhotoDatatype } from "app/features/file/photo.datatype";
-import { ColorInputComponent } from "#src/app/color-input/color-input.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
@@ -64,7 +63,7 @@ import { ConditionalColorConfigComponent } from "./conditional-color-config/cond
     HelpButtonComponent,
     AnonymizeOptionsComponent,
     FaIconComponent,
-    AdminIconComponent,
+    IconComponent,
     ConditionalColorConfigComponent,
     HintBoxComponent,
     EntityFieldSelectComponent,
@@ -189,6 +188,10 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     } else {
       imageControl?.disable();
     }
+  }
+
+  clearToBlockAttributes() {
+    this.basicSettingsForm.get("toBlockDetailsAttributes").reset();
   }
 
   changeFieldAnonymization(

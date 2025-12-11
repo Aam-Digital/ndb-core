@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { AdminIconComponent } from "./admin-icon-input.component";
+import { IconComponent } from "./icon-input.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
-describe("AdminIconInputComponent", () => {
-  let component: AdminIconComponent;
-  let fixture: ComponentFixture<AdminIconComponent>;
+describe("IconInputComponent", () => {
+  let component: IconComponent;
+  let fixture: ComponentFixture<IconComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminIconComponent, FontAwesomeTestingModule],
+      imports: [IconComponent, FontAwesomeTestingModule],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AdminIconComponent);
+    fixture = TestBed.createComponent(IconComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

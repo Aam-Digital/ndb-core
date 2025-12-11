@@ -32,10 +32,10 @@
             />
           </mat-form-field>
 
-          <app-admin-icon-input
+          <app-icon-input
             [icon]="basicSettingsForm.get('icon').value"
             (iconChange)="basicSettingsForm.get('icon').setValue($event)"
-          ></app-admin-icon-input>
+          ></app-icon-input>
 
           <app-conditional-color-config
             formControlName="color"
@@ -92,6 +92,7 @@
                 ></fa-icon>
               </mat-panel-title>
             </mat-expansion-panel-header>
+
             <mat-form-field
               formGroupName="toBlockDetailsAttributes"
               floatLabel="always"
@@ -155,6 +156,7 @@
                 [entityType]="entityConstructor"
                 [hideOption]="showOnlyImageFields"
                 [disabled]="!hasImageFields"
+                placeholder=""
               ></app-entity-field-select>
               @if (!hasImageFields) {
                 <mat-hint i18n>
@@ -163,6 +165,15 @@
                 </mat-hint>
               }
             </mat-form-field>
+
+            <button
+              mat-stroked-button
+              class="margin-top-regular"
+              (click)="clearToBlockAttributes()"
+              i18n
+            >
+              Reset tooltip settings
+            </button>
           </mat-expansion-panel>
         </div>
       </div>

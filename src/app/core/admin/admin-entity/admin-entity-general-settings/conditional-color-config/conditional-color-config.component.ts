@@ -8,7 +8,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { ColorMapping, EntityConstructor } from "app/core/entity/model/entity";
-import { ColorInputComponent } from "app/color-input/color-input.component";
+import { ColorInputComponent } from "#src/app/core/common-components/color-input/color-input.component";
 import { ConditionalColorSectionComponent } from "./conditional-color-section/conditional-color-section.component";
 
 /**

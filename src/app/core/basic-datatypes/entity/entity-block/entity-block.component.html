@@ -31,10 +31,14 @@
     <div>
       <!-- Font-weight is applied as style to override the default -->
       <h3 style="font-weight: bold">
-        <app-entity-field-view
-          [entity]="entity"
-          [field]="entityBlockConfig?.title"
-        ></app-entity-field-view>
+        @if (entityBlockConfig?.title) {
+          <app-entity-field-view
+            [entity]="entity"
+            [field]="entityBlockConfig?.title"
+          ></app-entity-field-view>
+        } @else {
+          {{ entity?.toString() }}
+        }
       </h3>
 
       @for (field of entityBlockConfig?.fields; track field) {

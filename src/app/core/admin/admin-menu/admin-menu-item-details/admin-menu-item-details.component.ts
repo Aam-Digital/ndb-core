@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -11,7 +11,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { EntityTypeSelectComponent } from "../../../entity/entity-type-select/entity-type-select.component";
-import { MenuItemFormComponent } from "#src/app/menu-item-form/menu-item-form.component";
+import { MenuItemFormComponent } from "#src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component";
 import {
   PREFIX_VIEW_CONFIG,
   ViewConfig,
