@@ -9,12 +9,10 @@ import {
 } from "@angular/core";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../alerts/alert.service";
-import { HttpClient } from "@angular/common/http";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { SessionSubject } from "../../session/auth/session-info";
 import { Entity } from "../../entity/model/entity";
 import { switchMap } from "rxjs/operators";
-import { environment } from "../../../../environments/environment";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
 import { UserAccount } from "../user-admin-service/user-account";
 import { of } from "rxjs";
@@ -39,35 +37,11 @@ import {
 export class EntityUserComponent implements OnInit {
   private readonly userAdminService = inject(UserAdminService);
   private readonly alertService = inject(AlertService);
-  private readonly http = inject(HttpClient);
   private readonly sessionInfo = inject(SessionSubject);
 
   @Input() entity?: Entity;
   user = signal<UserAccount | null>(null);
   userIsPermitted = signal<boolean>(false);
-  editing = signal<boolean>(false);
-
-  onUserDetailsAction(action: UserDetailsAction) {
-    switch (action.type) {
-      case "formCancel":
-        this.editing.set(false);
-        break;
-      case "editRequested":
-        this.editing.set(true);
-        break;
-      case "accountCreated":
-        this.user.set(action.data);
-        this.editing.set(false);
-        break;
-      case "accountUpdated":
-        this.user.set(action.data.user);
-        this.editing.set(false);
-        if (action.data.triggerSyncReset) {
-          this.triggerSyncReset();
-        }
-        break;
-    }
-  }
 
   constructor() {
     if (
@@ -89,6 +63,7 @@ export class EntityUserComponent implements OnInit {
     }
     const entity = this.getEntity();
     if (entity) {
+      // stub account object for creating a new account
       return {
         userEntityId: entity.getId(),
         email: "",
@@ -123,7 +98,6 @@ export class EntityUserComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.user.set(res);
-          this.editing.set(!res);
         },
         error: (err) => {
           this.alertService.addDanger(
@@ -132,26 +106,6 @@ export class EntityUserComponent implements OnInit {
               "Failed to load user account",
           );
         },
-      });
-  }
-
-  /**
-   * Reset server DB sync state to ensure previously hidden docs are re-synced
-   * after an account has gained more access permissions.
-   *
-   * see https://github.com/Aam-Digital/replication-backend/blob/master/src/admin/admin.controller.ts
-   * @private
-   */
-  private triggerSyncReset() {
-    this.http
-      .post(
-        `${environment.DB_PROXY_PREFIX}/admin/clear_local/${Entity.DATABASE}`,
-        undefined,
-      )
-      .subscribe({
-        next: () => undefined,
-        // request fails if no permission backend is used - this is fine
-        error: () => undefined,
       });
   }
 }

@@ -4,6 +4,7 @@ import { Role, UserAccount } from "../user-admin-service/user-account";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
 import { AlertService } from "../../alerts/alert.service";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
@@ -16,6 +17,7 @@ describe("UserDetailsComponent", () => {
   let mockUserAdminService: jasmine.SpyObj<UserAdminService>;
   let mockAlertService: jasmine.SpyObj<AlertService>;
   let mockKeycloakService: jasmine.SpyObj<KeycloakAuthService>;
+  let mockHttpClient: jasmine.SpyObj<HttpClient>;
   let mockSessionSubject: BehaviorSubject<any>;
   let mockCurrentUserSubject: BehaviorSubject<any>;
 
@@ -50,6 +52,8 @@ describe("UserDetailsComponent", () => {
     mockKeycloakService = jasmine.createSpyObj("KeycloakAuthService", [
       "changePassword",
     ]);
+    mockHttpClient = jasmine.createSpyObj("HttpClient", ["post"]);
+    mockHttpClient.post.and.returnValue(of({}));
 
     mockSessionSubject = new BehaviorSubject({
       name: "test-user",
@@ -64,6 +68,7 @@ describe("UserDetailsComponent", () => {
       providers: [
         { provide: UserAdminService, useValue: mockUserAdminService },
         { provide: AlertService, useValue: mockAlertService },
+        { provide: HttpClient, useValue: mockHttpClient },
         { provide: MAT_DIALOG_DATA, useValue: null },
         { provide: MatDialogRef, useValue: jasmine.createSpyObj(["close"]) },
         { provide: KeycloakAuthService, useValue: mockKeycloakService },
@@ -189,5 +194,48 @@ describe("UserDetailsComponent", () => {
 
     component.form.setErrors(null);
     expect(component.getGlobalError()).toBeNull();
+  });
+
+  it("should trigger sync reset when roles are updated", () => {
+    fixture.componentRef.setInput("userAccount", mockUserAccount);
+    fixture.componentRef.setInput("editing", true);
+    fixture.detectChanges();
+
+    component.availableRoles.set([mockRole]);
+
+    const newRole: Role = {
+      id: "new-role",
+      name: "admin",
+      description: "Admin role",
+    };
+    component.availableRoles.set([mockRole, newRole]);
+
+    component.form.patchValue({
+      roles: [mockRole, newRole],
+    });
+
+    component.onSubmit();
+
+    expect(mockHttpClient.post).toHaveBeenCalledWith(
+      jasmine.stringContaining("/admin/clear_local/"),
+      undefined,
+    );
+  });
+
+  it("should not trigger sync reset when only email is updated", () => {
+    fixture.componentRef.setInput("userAccount", mockUserAccount);
+    fixture.componentRef.setInput("editing", true);
+    fixture.detectChanges();
+
+    component.availableRoles.set([mockRole]);
+
+    component.form.patchValue({
+      email: "newemail@example.com",
+      roles: [mockRole], // Same roles
+    });
+
+    component.onSubmit();
+
+    expect(mockHttpClient.post).not.toHaveBeenCalled();
   });
 });

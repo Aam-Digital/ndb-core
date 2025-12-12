@@ -8,6 +8,7 @@ import {
   output,
   signal,
 } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
 import {
   FormBuilder,
   FormControl,
@@ -38,6 +39,7 @@ import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
 import { EditEntityComponent } from "../../basic-datatypes/entity/edit-entity/edit-entity.component";
 import { filter } from "rxjs";
+import { Entity } from "../../entity/model/entity";
 
 export interface UserDetailsDialogData {
   userAccount: UserAccount | null;
@@ -76,6 +78,7 @@ export class UserDetailsComponent {
   private fb = inject(FormBuilder);
   private readonly userAdminService = inject(UserAdminService);
   private readonly alertService = inject(AlertService);
+  private readonly http = inject(HttpClient);
   private readonly _dialogData = inject(MAT_DIALOG_DATA, { optional: true });
   private readonly dialogRef = inject(
     MatDialogRef<UserDetailsComponent, UserDetailsAction>,
@@ -390,11 +393,13 @@ export class UserDetailsComponent {
       next: () => {
         this.alertService.addInfo(message);
         const updatedUser = { ...currentUser, ...update };
+        if (update.roles?.length > 0) {
+          this.triggerSyncReset();
+        }
         this.emitOrCloseWithAction({
           type: "accountUpdated",
           data: {
             user: updatedUser,
-            triggerSyncReset: update.roles?.length > 0,
           },
         });
       },
@@ -440,5 +445,25 @@ export class UserDetailsComponent {
     if (this.authService) {
       this.authService.changePassword();
     }
+  }
+
+  /**
+   * Reset server DB sync state to ensure previously hidden docs are re-synced
+   * after an account has gained more access permissions.
+   *
+   * see https://github.com/Aam-Digital/replication-backend/blob/master/src/admin/admin.controller.ts
+   * @private
+   */
+  private triggerSyncReset() {
+    this.http
+      .post(
+        `${environment.DB_PROXY_PREFIX}/admin/clear_local/${Entity.DATABASE}`,
+        undefined,
+      )
+      .subscribe({
+        next: () => undefined,
+        // request fails if no permission backend is used - this is fine
+        error: () => undefined,
+      });
   }
 }

@@ -1,8 +1,6 @@
 @if (userIsPermitted()) {
   <app-user-details
     [userAccount]="getUserAccountForDetails()"
-    [editing]="editing()"
-    (action)="onUserDetailsAction($event)"
   ></app-user-details>
 } @else {
   <div class="permissions-warning" i18n>
