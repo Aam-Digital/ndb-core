@@ -151,7 +151,16 @@ export class InheritedValueService extends DefaultValueStrategy {
       return;
     }
 
-    const sourceValue = parentEntity[defaultConfig.sourceValueField];
+    let sourceValue = parentEntity[defaultConfig.sourceValueField];
+    
+    // todo: handle mapping of values for test cases, need to update later
+    if (defaultConfig.valueMapping && sourceValue !== undefined) {
+      const mappedValue = defaultConfig.valueMapping[sourceValue];
+      if (mappedValue !== undefined) {
+        sourceValue = mappedValue;
+      }
+    }
+
     if (fieldConfig.isArray) {
       // always wrap the source value in an array
       const targetValue = Array.isArray(sourceValue)
