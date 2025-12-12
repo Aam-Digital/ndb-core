@@ -5,6 +5,7 @@ import {
   argosScreenshot as argosScreenshotBase,
   ArgosScreenshotOptions,
 } from "@argos-ci/playwright";
+import { getNormalizedScreenshotName } from "./normalize-screenshot-name";
 import { Injector } from "@angular/core";
 import { EventAttendanceMapDatatype } from "#src/app/child-dev-project/attendance/model/event-attendance.datatype.js";
 import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype.js";
@@ -64,7 +65,9 @@ export async function argosScreenshot(
   options?: ArgosScreenshotOptions,
 ): Promise<void> {
   if (process.env.CI || process.env.SCREENSHOT) {
-    await argosScreenshotBase(page, name, {
+    // Normalize screenshot name to remove retry suffixes
+    const normalizedName = getNormalizedScreenshotName(name);
+    await argosScreenshotBase(page, normalizedName, {
       fullPage: true,
       ...(options || {}),
     });
