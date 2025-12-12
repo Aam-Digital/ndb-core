@@ -5,7 +5,6 @@ import {
   argosScreenshot as argosScreenshotBase,
   ArgosScreenshotOptions,
 } from "@argos-ci/playwright";
-import { getNormalizedScreenshotName } from "./normalize-screenshot-name";
 import { Injector } from "@angular/core";
 import { EventAttendanceMapDatatype } from "#src/app/child-dev-project/attendance/model/event-attendance.datatype.js";
 import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype.js";
