@@ -275,10 +275,9 @@ export class UserDetailsComponent {
    * Otherwise, emits the action through the output.
    */
   private emitOrCloseWithAction(action: UserDetailsAction): void {
+    this.action.emit(action);
     if (this.dialogRef) {
       this.dialogRef.close(action);
-    } else {
-      this.action.emit(action);
     }
   }
 

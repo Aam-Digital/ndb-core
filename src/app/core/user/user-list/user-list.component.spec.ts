@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import { UserListComponent } from "./user-list.component";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
@@ -136,10 +141,18 @@ describe("UserListComponent", () => {
     expect(roleNames).toBe("user_app");
   });
 
-  it("should reload users after dialog is closed with result", () => {
+  it("should reload users after dialog is closed with 'created' result", () => {
     mockUserAdminService.getAllUsers.calls.reset();
     mockUserAdminService.getAllUsers.and.returnValue(of(updatedMockUsers));
-    mockDialogRef.afterClosed.and.returnValue(of(true));
+    mockDialogRef.afterClosed.and.returnValue(
+      of({
+        type: "accountCreated",
+        data: {
+          userEntityId: "xyz",
+          enabled: true,
+        } as UserAccount,
+      }),
+    );
 
     const user = mockUsers[0];
     component.openUserDetails(user);
@@ -149,9 +162,15 @@ describe("UserListComponent", () => {
   });
 
   it("should reflect updated roles in the table after dialog closes", () => {
+    component.users.set(mockUsers);
     mockUserAdminService.getAllUsers.calls.reset();
     mockUserAdminService.getAllUsers.and.returnValue(of(updatedMockUsers));
-    mockDialogRef.afterClosed.and.returnValue(of(true));
+    mockDialogRef.afterClosed.and.returnValue(
+      of({
+        type: "accountUpdated",
+        data: { user: updatedMockUsers[0] },
+      }),
+    );
 
     const user = mockUsers[0];
     component.openUserDetails(user);
@@ -163,17 +182,24 @@ describe("UserListComponent", () => {
     );
   });
 
-  it("should reflect updated email in the table after dialog closes", () => {
+  it("should reflect updated email in the table after dialog closes", fakeAsync(() => {
+    component.users.set(mockUsers);
     mockUserAdminService.getAllUsers.calls.reset();
     mockUserAdminService.getAllUsers.and.returnValue(of(updatedMockUsers));
-    mockDialogRef.afterClosed.and.returnValue(of(true));
+    mockDialogRef.afterClosed.and.returnValue(
+      of({
+        type: "accountUpdated",
+        data: { user: updatedMockUsers[0] },
+      }),
+    );
 
     const user = mockUsers[0];
     const originalEmail = user.email;
     component.openUserDetails(user);
+    tick();
 
     const updatedUser = component.users()[0];
     expect(updatedUser.email).not.toBe(originalEmail);
     expect(updatedUser.email).toBe("updated@example.com");
-  });
+  }));
 });

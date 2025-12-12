@@ -3,11 +3,12 @@ import { UserDetailsComponent } from "./user-details.component";
 import { Role, UserAccount } from "../user-admin-service/user-account";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
 import { AlertService } from "../../alerts/alert.service";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { of, BehaviorSubject } from "rxjs";
+import { BehaviorSubject, of } from "rxjs";
+import { CoreTestingModule } from "#src/app/utils/core-testing.module";
 
 describe("UserDetailsComponent", () => {
   let component: UserDetailsComponent;
@@ -59,11 +60,12 @@ describe("UserDetailsComponent", () => {
     mockCurrentUserSubject = new BehaviorSubject(null);
 
     await TestBed.configureTestingModule({
-      imports: [UserDetailsComponent],
+      imports: [UserDetailsComponent, CoreTestingModule],
       providers: [
         { provide: UserAdminService, useValue: mockUserAdminService },
         { provide: AlertService, useValue: mockAlertService },
         { provide: MAT_DIALOG_DATA, useValue: null },
+        { provide: MatDialogRef, useValue: jasmine.createSpyObj(["close"]) },
         { provide: KeycloakAuthService, useValue: mockKeycloakService },
         { provide: SessionSubject, useValue: mockSessionSubject },
         { provide: CurrentUserSubject, useValue: mockCurrentUserSubject },
