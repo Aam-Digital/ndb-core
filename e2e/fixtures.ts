@@ -64,9 +64,7 @@ export async function argosScreenshot(
   options?: ArgosScreenshotOptions,
 ): Promise<void> {
   if (process.env.CI || process.env.SCREENSHOT) {
-    // Normalize screenshot name to remove retry suffixes
-    const normalizedName = getNormalizedScreenshotName(name);
-    await argosScreenshotBase(page, normalizedName, {
+    await argosScreenshotBase(page, name, {
       fullPage: true,
       ...(options || {}),
     });
