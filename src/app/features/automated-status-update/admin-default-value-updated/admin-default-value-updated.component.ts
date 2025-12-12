@@ -24,7 +24,7 @@ import {
   AutomatedFieldMappingComponent,
   AutomatedFieldMappingDialogData,
 } from "../automated-field-mapping/automated-field-mapping.component";
-import { DefaultValueConfigUpdatedFromReferencingEntity } from "../default-value-config-updated-from-referencing-entity";
+import { DefaultValueConfigInheritedField } from "../../inherited-field/inherited-field-config";
 
 @Component({
   selector: "app-admin-default-value-updated",
@@ -47,7 +47,7 @@ import { DefaultValueConfigUpdatedFromReferencingEntity } from "../default-value
   ],
 })
 export class AdminDefaultValueUpdatedComponent
-  extends CustomFormControlDirective<DefaultValueConfigUpdatedFromReferencingEntity>
+  extends CustomFormControlDirective<DefaultValueConfigInheritedField>
   implements OnInit, OnChanges
 {
   @Input() entityType: EntityConstructor;
@@ -58,8 +58,6 @@ export class AdminDefaultValueUpdatedComponent
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly matDialog = inject(MatDialog);
 
-  relatedEntityType: any;
-
   availableRelatedEntities: {
     label: string;
     entityType: string;
@@ -67,7 +65,12 @@ export class AdminDefaultValueUpdatedComponent
   }[];
 
   ngOnInit() {
-    this.relatedEntityType = this.value?.relatedEntityType;
+    if (!this.value) {
+      this.value = {
+        sourceReferenceField: "",
+        sourceValueField: "",
+      };
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -80,7 +83,10 @@ export class AdminDefaultValueUpdatedComponent
   }
 
   onEntityTypeSelected(newEntityType: any) {
-    this.relatedEntityType = newEntityType;
+    this.value = {
+      ...this.value,
+      sourceEntityType: newEntityType,
+    };
 
     // show the dialog immediately, so that the user completes all necessary configuration
     this.openAutomatedMappingDialog(newEntityType);
@@ -104,10 +110,10 @@ export class AdminDefaultValueUpdatedComponent
     const result = await lastValueFrom(dialogRef.afterClosed());
     if (result) {
       this.value = {
-        relatedReferenceField: result.relatedReferenceField,
-        relatedEntityType: selectedEntity,
-        relatedTriggerField: result.relatedTriggerField,
-        automatedMapping: result.automatedMapping,
+        sourceReferenceField: result.sourceReferenceField,
+        sourceEntityType: selectedEntity,
+        sourceValueField: result.sourceValueField,
+        valueMapping: result.valueMapping,
       };
     }
   }

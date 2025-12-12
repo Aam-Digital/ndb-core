@@ -15,13 +15,8 @@
             formControlName="config"
           ></app-admin-default-value-dynamic>
         }
-        @case ("inherited-from-referenced-entity") {
-          <app-admin-default-value-inherited
-            formControlName="config"
-            [entityType]="entityType"
-          ></app-admin-default-value-inherited>
-        }
-        @case ("updated-from-referencing-entity") {
+        @case ("inherited-field") {
+          <!-- todo: implement inherited field default value component -->
           <app-admin-default-value-updated
             formControlName="config"
             [entityType]="entityType"

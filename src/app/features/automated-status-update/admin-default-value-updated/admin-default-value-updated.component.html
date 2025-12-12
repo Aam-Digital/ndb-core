@@ -1,8 +1,8 @@
 <div class="flex-row align-center gap-small">
   @if (availableRelatedEntities?.length > 0) {
     <mat-select
-      [(ngModel)]="relatedEntityType"
-      (ngModelChange)="onEntityTypeSelected($event)"
+      [value]="value?.sourceEntityType"
+      (valueChange)="onEntityTypeSelected($event)"
     >
       <div
         class="select-dropdown-header"
@@ -26,9 +26,9 @@
       mat-raised-button
       class="configure-button"
       (click)="
-        $event.stopPropagation(); openAutomatedMappingDialog(relatedEntityType)
+        $event.stopPropagation(); openAutomatedMappingDialog(value?.sourceEntityType)
       "
-      [disabled]="!relatedEntityType"
+      [disabled]="!value?.sourceEntityType"
       i18n
     >
       Configure Automation
