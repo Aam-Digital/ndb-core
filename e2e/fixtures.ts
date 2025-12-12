@@ -41,31 +41,7 @@ faker.setDefaultRefDate(E2E_REF_DATE);
 
 export const test = base.extend<{ forEachTest: void }>({
   forEachTest: [
-    async ({ page }, use, testInfo) => {
-      // Normalize the test output directory to remove retry suffixes.
-      // This ensures that screenshots from retries are saved to the same directory
-      // as the original test, allowing Argos CI to compare them to the same baseline.
-      const originalOutputDir = testInfo.outputDir;
-      const normalizedOutputDir = originalOutputDir.replace(/-retry\d+$/, "");
-
-      if (originalOutputDir !== normalizedOutputDir) {
-        // Override both outputDir property and outputPath method
-        Object.defineProperty(testInfo, "outputDir", {
-          value: normalizedOutputDir,
-          writable: false,
-          configurable: true,
-        });
-
-        // Also override outputPath to use normalized directory
-        const originalOutputPath = testInfo.outputPath.bind(testInfo) as (
-          ...args: string[]
-        ) => string;
-        testInfo.outputPath = (...args: string[]) => {
-          const path = originalOutputPath(...args);
-          return path.replace(/-retry\d+/, "");
-        };
-      }
-
+    async ({ page }, use) => {
       await page.clock.install();
       await page.clock.setFixedTime(E2E_REF_DATE);
       await page.addInitScript((E2E_REF_DATE) => {
