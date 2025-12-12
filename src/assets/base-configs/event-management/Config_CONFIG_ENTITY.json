@@ -1,0 +1,1224 @@
+{
+  "_id": "Config:CONFIG_ENTITY",
+  "data": {
+    "appConfig:usage-analytics": {
+      "url": "https://matomo.aam-digital.org",
+      "site_id": "8"
+    },
+    "appConfig:map": {
+      "start": [
+        1.3,
+        36.76
+      ]
+    },
+    "navigationMenu": {
+      "items": [
+        {
+          "label": "Dashboard",
+          "icon": "home",
+          "link": "/"
+        },
+        {
+          "entityType": "Individual"
+        },
+        {
+          "entityType": "Event"
+        },
+        {
+          "entityType": "outcomeSurvey"
+        },
+        {
+          "entityType": "Project"
+        },
+        {
+          "entityType": "User"
+        }
+      ]
+    },
+    "view:": {
+      "component": "Dashboard",
+      "config": {
+        "widgets": [
+          {
+            "component": "ShortcutDashboard",
+            "config": {
+              "shortcuts": [
+                {
+                  "label": "Register Participant",
+                  "icon": "person",
+                  "link": "/individual/new"
+                },
+                {
+                  "label": "Add Event",
+                  "icon": "calendar",
+                  "link": "/event/new"
+                }
+              ]
+            }
+          },
+          {
+            "component": "EntityCountDashboard",
+            "config": {
+              "entityType": "Individual",
+              "groupBy": [
+                "gender"
+              ]
+            }
+          },
+          {
+            "component": "EntityCountDashboard",
+            "config": {
+              "entityType": "Event",
+              "groupBy": [
+                "type",
+                "topicArea",
+                "status"
+              ]
+            }
+          },
+          {
+            "component": "EntityCountDashboard",
+            "config": {
+              "entityType": "User",
+              "groupBy": [
+                "type",
+                "qualification"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "view:import": {
+      "component": "Import",
+      "config": {},
+      "_id": "view:import"
+    },
+    "view:report": {
+      "component": "Reporting",
+      "config": {},
+      "_id": "view:report"
+    },
+    "entity:Individual": {
+      "toStringAttributes": [
+        "firstName",
+        "lastName"
+      ],
+      "attributes": {
+        "firstName": {
+          "label": "First Name",
+          "dataType": "string",
+          "id": "firstName",
+          "displayFullLengthLabel": false,
+          "validators": {
+            "required": true
+          }
+        },
+        "lastName": {
+          "label": "Last Name",
+          "dataType": "string",
+          "id": "lastName",
+          "displayFullLengthLabel": false,
+          "validators": {
+            "required": true
+          }
+        },
+        "gender": {
+          "label": "Gender",
+          "dataType": "configurable-enum",
+          "additional": "genders",
+          "anonymize": "retain",
+          "id": "gender"
+        },
+        "dateOfBirth": {
+          "label": "Date of Birth",
+          "dataType": "date-with-age",
+          "anonymize": "retain-anonymized",
+          "id": "dateOfBirth"
+        },
+        "qualifications": {
+          "label": "Qualifications",
+          "dataType": "string",
+          "viewComponent": "EditLongText",
+          "additional": "qualifications",
+          "id": "qualifications"
+        },
+        "projectProgramm": {
+          "label": "Responsible Implementer(s)",
+          "dataType": "entity",
+          "additional": "Project",
+          "isArray": true,
+          "anonymize": "retain",
+          "id": "projectProgramm",
+          "displayFullLengthLabel": false
+        },
+        "phoneNumber": {
+          "label": "Phone Number",
+          "labelShort": "Phone Number",
+          "dataType": "string",
+          "id": "phoneNumber"
+        },
+        "email": {
+          "label": "Email Address",
+          "dataType": "string",
+          "id": "email",
+          "displayFullLengthLabel": false
+        },
+        "registrationDate": {
+          "label": "Registration Date",
+          "dataType": "date-only",
+          "defaultValue": {
+            "mode": "dynamic",
+            "config": {
+              "value": "$now"
+            }
+          },
+          "anonymize": "retain",
+          "id": "registrationDate"
+        },
+        "region": {
+          "label": "Region",
+          "dataType": "configurable-enum",
+          "additional": "region",
+          "anonymize": "retain",
+          "id": "region"
+        },
+        "comments": {
+          "id": "comments",
+          "displayFullLengthLabel": false,
+          "label": "Comments",
+          "dataType": "long-text"
+        }
+      },
+      "label": "Participant",
+      "labelPlural": "Participants",
+      "hasPII": true,
+      "icon": "person",
+      "_id": "entity:Individual"
+    },
+    "view:individual/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "panels": [
+          {
+            "title": "Basic Information",
+            "components": [
+              {
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "firstName",
+                        "lastName",
+                        "dateOfBirth",
+                        "gender"
+                      ],
+                      "header": "Basic Info"
+                    },
+                    {
+                      "fields": [
+                        "region"
+                      ],
+                      "header": "Further Characteristics"
+                    },
+                    {
+                      "fields": [
+                        "phoneNumber",
+                        "email"
+                      ],
+                      "header": "Contact Details"
+                    },
+                    {
+                      "fields": [
+                        "projectProgramm",
+                        "registrationDate"
+                      ],
+                      "header": "Registration Details"
+                    },
+                    {
+                      "fields": [
+                        "comments"
+                      ],
+                      "header": "Comments"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "Event Participation",
+            "components": [
+              {
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "Participant2Event",
+                  "property": "participant",
+                  "columns": [
+                    "event",
+                    "status"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "Participant Surveys",
+            "components": [
+              {
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "outcomeSurvey",
+                  "property": "individual",
+                  "columns": [
+                    {
+                      "id": "date"
+                    },
+                    {
+                      "id": "event"
+                    },
+                    {
+                      "id": "overallSatisfactionIWasSatisfiedWithTheEvent"
+                    },
+                    {
+                      "id": "theEventWasWellPrepared"
+                    },
+                    {
+                      "id": "theContentWasUseful"
+                    },
+                    {
+                      "id": "iLearnedRelevantThings"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "entityType": "Individual"
+      },
+      "_id": "view:individual/:id"
+    },
+    "view:individual": {
+      "component": "EntityList",
+      "config": {
+        "filters": [
+          {
+            "id": "gender"
+          },
+          {
+            "id": "registrationDate"
+          },
+          {
+            "id": "region"
+          }
+        ],
+        "columnGroups": {
+          "groups": [
+            {
+              "name": "Overview",
+              "columns": [
+                "firstName",
+                "lastName",
+                "gender",
+                "registrationDate",
+                "region"
+              ]
+            },
+            {
+              "name": "Contact Details",
+              "columns": [
+                "firstName",
+                "lastName",
+                "dateOfBirth",
+                "age",
+                "phoneNumber",
+                "email"
+              ]
+            }
+          ]
+        },
+        "columns": [
+          {
+            "viewComponent": "DisplayAge",
+            "label": "Age",
+            "id": "age",
+            "additional": "dateOfBirth"
+          }
+        ],
+        "entityType": "Individual"
+      },
+      "_id": "view:individual"
+    },
+    "entity:Participant2Event": {
+      "attributes": {
+        "participant": {
+          "label": "Participant",
+          "dataType": "entity",
+          "additional": "Individual",
+          "id": "participant"
+        },
+        "event": {
+          "label": "Event",
+          "dataType": "entity",
+          "additional": "Event",
+          "id": "event"
+        },
+        "status": {
+          "label": "Status",
+          "dataType": "configurable-enum",
+          "additional": "participantStatus",
+          "id": "status"
+        },
+        "nominatedOn": {
+          "label": "Nominated on",
+          "dataType": "date-only",
+          "defaultValue": {
+            "mode": "dynamic",
+            "config": {
+              "value": "$now"
+            }
+          },
+          "id": "nominatedOn"
+        }
+      },
+      "_id": "entity:Participant2Event"
+    },
+    "entity:Event": {
+      "label": "Event",
+      "labelPlural": "Events",
+      "toStringAttributes": [
+        "eventTitle",
+        "dateStart"
+      ],
+      "route": "event",
+      "attributes": {
+        "eventTitle": {
+          "label": "Event Title",
+          "dataType": "string",
+          "id": "eventTitle",
+          "displayFullLengthLabel": false,
+          "validators": {
+            "required": true
+          }
+        },
+        "type": {
+          "label": "Type",
+          "dataType": "configurable-enum",
+          "additional": "eventType",
+          "id": "type"
+        },
+        "topicArea": {
+          "label": "Topic Area(s)",
+          "dataType": "configurable-enum",
+          "additional": "focalArea",
+          "id": "topicArea",
+          "displayFullLengthLabel": false,
+          "isArray": true
+        },
+        "implementedBy": {
+          "label": "Implementer(s)",
+          "dataType": "entity",
+          "additional": "Project",
+          "id": "implementedBy",
+          "displayFullLengthLabel": false,
+          "isArray": true
+        },
+        "parent": {
+          "label": "Parent Event",
+          "description": "You can define hierarchies of related event records by selecting the \"parent\" event this belongs to",
+          "dataType": "entity",
+          "additional": "Event",
+          "id": "parent"
+        },
+        "modeOfDelivery": {
+          "label": "Mode of Delivery",
+          "dataType": "configurable-enum",
+          "additional": "modeOfDelivery",
+          "id": "modeOfDelivery"
+        },
+        "dateStart": {
+          "label": "Start Date",
+          "dataType": "date-only",
+          "validations": {
+            "required": true
+          },
+          "id": "dateStart"
+        },
+        "dateEnd": {
+          "label": "End Date",
+          "dataType": "date-only",
+          "id": "dateEnd"
+        },
+        "status": {
+          "label": "Status",
+          "dataType": "configurable-enum",
+          "additional": "eventStatus",
+          "id": "status"
+        },
+        "trainers": {
+          "label": "Facilitator(s)",
+          "dataType": "entity",
+          "isArray": true,
+          "additional": "User",
+          "id": "trainers",
+          "displayFullLengthLabel": false
+        },
+        "remarks": {
+          "id": "remarks",
+          "displayFullLengthLabel": false,
+          "label": "Comments",
+          "dataType": "long-text"
+        }
+      },
+      "icon": "calendar",
+      "hasPII": false,
+      "_id": "entity:Event",
+      "toBlockDetailsAttributes": {
+        "title": null,
+        "image": null,
+        "fields": []
+      }
+    },
+    "view:event/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "panels": [
+          {
+            "title": "General Information",
+            "components": [
+              {
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "eventTitle",
+                        "dateStart",
+                        "dateEnd",
+                        "status"
+                      ],
+                      "header": "What and When"
+                    },
+                    {
+                      "fields": [
+                        "type",
+                        "modeOfDelivery",
+                        "topicArea"
+                      ],
+                      "header": "Characteristics"
+                    },
+                    {
+                      "fields": [
+                        "implementedBy",
+                        "trainers"
+                      ],
+                      "header": "Implemented By"
+                    },
+                    {
+                      "fields": [
+                        "remarks"
+                      ],
+                      "header": "Comments"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "Participants",
+            "components": [
+              {
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "Participant2Event",
+                  "property": "event",
+                  "columns": [
+                    "participant",
+                    "status"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "Surveys",
+            "components": [
+              {
+                "title": "",
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "outcomeSurvey",
+                  "columns": [
+                    {
+                      "id": "date"
+                    },
+                    {
+                      "id": "individual"
+                    },
+                    {
+                      "id": "overallSatisfactionIWasSatisfiedWithTheEvent"
+                    },
+                    {
+                      "id": "theEventWasWellPrepared"
+                    },
+                    {
+                      "id": "theContentWasUseful"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "entityType": "Event"
+      },
+      "_id": "view:event/:id"
+    },
+    "view:event": {
+      "component": "EntityList",
+      "config": {
+        "filters": [
+          {
+            "id": "dateStart"
+          },
+          {
+            "id": "type"
+          },
+          {
+            "id": "topicArea"
+          },
+          {
+            "id": "trainers"
+          },
+          {
+            "id": "implementedBy"
+          },
+          {
+            "id": "status"
+          }
+        ],
+        "columnGroups": {
+          "groups": [
+            {
+              "name": "",
+              "columns": [
+                "dateStart",
+                "dateEnd",
+                "eventTitle",
+                "type",
+                "topicArea",
+                "trainers",
+                "implementedBy",
+                "status"
+              ]
+            }
+          ]
+        },
+        "entityType": "Event"
+      },
+      "_id": "view:event"
+    },
+    "entity:User": {
+      "label": "Facilitator",
+      "labelPlural": "Facilitators",
+      "toStringAttributes": [
+        "name",
+        "lastname"
+      ],
+      "icon": "users",
+      "attributes": {
+        "name": {
+          "dataType": "string",
+          "label": "First Name",
+          "id": "name",
+          "displayFullLengthLabel": false,
+          "validators": {
+            "required": true
+          }
+        },
+        "phone": {
+          "label": "Phone Number",
+          "dataType": "string",
+          "id": "phone"
+        },
+        "lastname": {
+          "label": "Last Name",
+          "dataType": "string",
+          "id": "lastname",
+          "displayFullLengthLabel": false,
+          "validators": {
+            "required": true
+          }
+        },
+        "remarks": {
+          "label": "Remarks",
+          "dataType": "string",
+          "id": "remarks"
+        },
+        "email": {
+          "label": "Email Address",
+          "dataType": "string",
+          "id": "email"
+        },
+        "type": {
+          "label": "Role(s)",
+          "dataType": "configurable-enum",
+          "additional": "userType",
+          "id": "type",
+          "displayFullLengthLabel": false,
+          "isArray": true
+        },
+        "address": {
+          "label": "Address",
+          "dataType": "location",
+          "id": "address"
+        },
+        "qualifications": {
+          "label": "Qualification Notes",
+          "dataType": "long-text",
+          "description": "Add additional details regarding special qualifications here",
+          "id": "qualifications"
+        },
+        "qualification": {
+          "label": "Qualification",
+          "dataType": "configurable-enum",
+          "additional": "qualification",
+          "isArray": true,
+          "id": "qualification",
+          "displayFullLengthLabel": false
+        },
+        "gender": {
+          "label": "Gender",
+          "dataType": "configurable-enum",
+          "additional": "genders",
+          "id": "gender"
+        },
+        "cv": {
+          "label": "CV",
+          "dataType": "file",
+          "id": "cv"
+        },
+        "projects": {
+          "label": "Affiliated with Implementer(s)",
+          "dataType": "entity",
+          "additional": "Project",
+          "id": "projects",
+          "displayFullLengthLabel": false,
+          "isArray": true
+        },
+        "comments": {
+          "id": "comments",
+          "displayFullLengthLabel": false,
+          "label": "Comments",
+          "dataType": "long-text"
+        }
+      },
+      "hasPII": true,
+      "enableUserAccounts": true,
+      "_id": "entity:User"
+    },
+    "view:user/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "panels": [
+          {
+            "title": "Basic Information",
+            "components": [
+              {
+                "title": "",
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "name",
+                        "lastname",
+                        "gender",
+                        "type",
+                        "projects"
+                      ],
+                      "header": "Basic Info"
+                    },
+                    {
+                      "fields": [
+                        "phone",
+                        "email",
+                        "address"
+                      ],
+                      "header": "Contact Details"
+                    },
+                    {
+                      "fields": [
+                        "cv",
+                        "qualification",
+                        "qualifications"
+                      ],
+                      "header": "Qualifications"
+                    },
+                    {
+                      "fields": [
+                        "comments"
+                      ],
+                      "header": "Comments"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "Events Facilitated",
+            "components": [
+              {
+                "title": "",
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "Event",
+                  "columns": [
+                    {
+                      "id": "eventTitle"
+                    },
+                    {
+                      "id": "dateStart"
+                    },
+                    {
+                      "id": "dateEnd"
+                    },
+                    {
+                      "id": "implementedBy"
+                    },
+                    {
+                      "id": "status"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "entityType": "User"
+      },
+      "_id": "view:user/:id"
+    },
+    "view:user": {
+      "component": "EntityList",
+      "config": {
+        "columns": [
+          "name",
+          "lastname",
+          "phone",
+          "email",
+          "remarks"
+        ],
+        "filters": [
+          {
+            "id": "qualification"
+          },
+          {
+            "id": "type"
+          },
+          {
+            "id": "projects"
+          }
+        ],
+        "columnGroups": {
+          "groups": [
+            {
+              "name": "",
+              "columns": [
+                "name",
+                "lastname",
+                "qualification",
+                "type",
+                "projects"
+              ]
+            }
+          ]
+        },
+        "entityType": "User"
+      },
+      "_id": "view:user"
+    },
+    "entity:Project": {
+      "label": "Implementer",
+      "labelPlural": "Implementers",
+      "icon": "university",
+      "toStringAttributes": [
+        "name"
+      ],
+      "attributes": {
+        "name": {
+          "dataType": "string",
+          "label": "Organisation Name",
+          "id": "name",
+          "displayFullLengthLabel": false,
+          "validators": {
+            "required": true
+          }
+        },
+        "sector": {
+          "label": "Topic Area(s)",
+          "dataType": "configurable-enum",
+          "additional": "focalArea",
+          "isArray": true,
+          "id": "sector",
+          "displayFullLengthLabel": false
+        },
+        "address": {
+          "label": "Address",
+          "dataType": "location",
+          "id": "address"
+        },
+        "primaryContact": {
+          "label": "Primary Contact",
+          "dataType": "entity",
+          "additional": "User",
+          "id": "primaryContact"
+        },
+        "status": {
+          "label": "Status",
+          "dataType": "configurable-enum",
+          "additional": "partnerStatus",
+          "id": "status"
+        },
+        "website": {
+          "label": "Website",
+          "dataType": "string",
+          "id": "website"
+        },
+        "remarks": {
+          "id": "remarks",
+          "label": "Comments",
+          "dataType": "long-text",
+          "displayFullLengthLabel": false
+        },
+        "documents": {
+          "id": "documents",
+          "label": "Documents",
+          "dataType": "file"
+        },
+        "emailAddress": {
+          "id": "emailAddress",
+          "displayFullLengthLabel": false,
+          "label": "Email Address",
+          "dataType": "email"
+        },
+        "logo": {
+          "id": "logo",
+          "displayFullLengthLabel": false,
+          "label": "Logo",
+          "dataType": "photo"
+        }
+      },
+      "hasPII": false,
+      "_id": "entity:Project",
+      "color": [
+        {
+          "condition": {},
+          "color": ""
+        }
+      ],
+      "toBlockDetailsAttributes": {
+        "title": null,
+        "image": null,
+        "fields": []
+      }
+    },
+    "view:project/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "panels": [
+          {
+            "title": "Basic Information",
+            "components": [
+              {
+                "title": "",
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "name",
+                        "logo",
+                        "address",
+                        "website",
+                        "emailAddress",
+                        "primaryContact"
+                      ],
+                      "header": "Name and Contact Details"
+                    },
+                    {
+                      "fields": [
+                        "sector"
+                      ],
+                      "header": "Characteristics"
+                    },
+                    {
+                      "fields": [
+                        "status",
+                        "documents"
+                      ],
+                      "header": "Partnership Info"
+                    },
+                    {
+                      "fields": [
+                        "remarks"
+                      ],
+                      "header": "Comments"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "Affiliated Facilitators",
+            "components": [
+              {
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "User",
+                  "property": "projects",
+                  "columns": [
+                    {
+                      "id": "name"
+                    },
+                    {
+                      "id": "lastname"
+                    },
+                    {
+                      "id": "phone"
+                    },
+                    {
+                      "id": "email"
+                    },
+                    {
+                      "id": "type"
+                    },
+                    {
+                      "id": "qualification"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "Events Organised",
+            "components": [
+              {
+                "title": "",
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "Event",
+                  "columns": [
+                    {
+                      "id": "eventTitle"
+                    },
+                    {
+                      "id": "dateStart"
+                    },
+                    {
+                      "id": "dateEnd"
+                    },
+                    {
+                      "id": "type"
+                    },
+                    {
+                      "id": "topicArea"
+                    },
+                    {
+                      "id": "trainers"
+                    },
+                    {
+                      "id": "status"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "entityType": "Project"
+      },
+      "_id": "view:project/:id"
+    },
+    "view:project": {
+      "component": "EntityList",
+      "config": {
+        "columns": [
+          "name"
+        ],
+        "filters": [
+          {
+            "id": "sector"
+          },
+          {
+            "id": "status"
+          }
+        ],
+        "columnGroups": {
+          "groups": [
+            {
+              "name": "",
+              "columns": [
+                "name",
+                "primaryContact",
+                "sector",
+                "status"
+              ]
+            }
+          ]
+        },
+        "entityType": "Project"
+      },
+      "_id": "view:project"
+    },
+    "entity:outcomeSurvey": {
+      "label": "Participant Survey",
+      "route": "outcomeSurvey",
+      "attributes": {
+        "date": {
+          "label": "Date of Survey Submission",
+          "dataType": "date-only",
+          "id": "date",
+          "displayFullLengthLabel": false,
+          "defaultValue": {
+            "mode": "dynamic",
+            "config": {
+              "value": "$now"
+            }
+          }
+        },
+        "individual": {
+          "label": "Participant Responding",
+          "dataType": "entity",
+          "additional": "Individual",
+          "id": "individual",
+          "displayFullLengthLabel": false
+        },
+        "currentHouseholdIncome": {
+          "label": "current household income",
+          "dataType": "string",
+          "id": "currentHouseholdIncome"
+        },
+        "overallSatisfactionIWasSatisfiedWithTheEvent": {
+          "id": "overallSatisfactionIWasSatisfiedWithTheEvent",
+          "displayFullLengthLabel": false,
+          "label": "I was satisfied with the event",
+          "dataType": "configurable-enum",
+          "additional": "likert1_5"
+        },
+        "theEventWasWellPrepared": {
+          "id": "theEventWasWellPrepared",
+          "displayFullLengthLabel": false,
+          "label": "The event was well prepared",
+          "dataType": "configurable-enum",
+          "additional": "likert1_5"
+        },
+        "theContentWasUseful": {
+          "id": "theContentWasUseful",
+          "displayFullLengthLabel": false,
+          "label": "The content was useful",
+          "dataType": "configurable-enum",
+          "additional": "likert1_5"
+        },
+        "iLearnedRelevantThings": {
+          "id": "iLearnedRelevantThings",
+          "displayFullLengthLabel": false,
+          "label": "I learned relevant things",
+          "dataType": "configurable-enum",
+          "additional": "likert1_5"
+        },
+        "event": {
+          "id": "event",
+          "displayFullLengthLabel": false,
+          "label": "Relates to Event",
+          "dataType": "entity",
+          "additional": "Event"
+        },
+        "furtherComments": {
+          "id": "furtherComments",
+          "displayFullLengthLabel": false,
+          "dataType": "long-text",
+          "label": "Further comments"
+        }
+      },
+      "labelPlural": "Participant Surveys",
+      "toStringAttributes": [
+        "date"
+      ],
+      "hasPII": false,
+      "_id": "entity:outcomeSurvey",
+      "icon": "clipboard-question"
+    },
+    "view:outcomeSurvey/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "entityType": "outcomeSurvey",
+        "panels": [
+          {
+            "title": "Survey Form",
+            "components": [
+              {
+                "title": "",
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "date",
+                        "individual",
+                        "event"
+                      ],
+                      "header": "Basic Data"
+                    },
+                    {
+                      "fields": [
+                        "overallSatisfactionIWasSatisfiedWithTheEvent",
+                        "theEventWasWellPrepared",
+                        "theContentWasUseful",
+                        "furtherComments"
+                      ],
+                      "header": "Responses"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "_id": "view:outcomeSurvey/:id"
+    },
+    "view:outcomeSurvey": {
+      "component": "EntityList",
+      "config": {
+        "entityType": "outcomeSurvey",
+        "columnGroups": {
+          "default": "Overview",
+          "mobile": "Overview",
+          "groups": [
+            {
+              "name": "Overview",
+              "columns": [
+                "date",
+                "individual",
+                "event"
+              ]
+            }
+          ]
+        },
+        "filters": [
+          {
+            "id": "event"
+          }
+        ]
+      },
+      "_id": "view:outcomeSurvey"
+    }
+  }
+}
