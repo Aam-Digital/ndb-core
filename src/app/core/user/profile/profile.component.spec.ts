@@ -17,17 +17,17 @@
 
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
-import { UserAccountComponent } from "./user-account.component";
+import { ProfileComponent } from "./profile.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 
-describe("UserAccountComponent", () => {
-  let component: UserAccountComponent;
-  let fixture: ComponentFixture<UserAccountComponent>;
+describe("ProfileComponent", () => {
+  let component: ProfileComponent;
+  let fixture: ComponentFixture<ProfileComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [UserAccountComponent, MockedTestingModule.withState()],
+      imports: [ProfileComponent, MockedTestingModule.withState()],
       providers: [
         {
           provide: KeycloakAuthService,
@@ -41,7 +41,7 @@ describe("UserAccountComponent", () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(UserAccountComponent);
+    fixture = TestBed.createComponent(ProfileComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
