@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { DemoDataService } from "./demo-data.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { MatDialog } from "@angular/material/dialog";
@@ -51,7 +51,7 @@ export class DemoDataInitializerService {
     this.localAuthService.saveUser(this.normalUser);
     this.localAuthService.saveUser(this.adminUser);
 
-    await this.sessionManager.offlineLogin(this.normalUser);
+    await this.sessionManager.offlineLogin(this.adminUser);
 
     this.syncDatabaseOnUserChange();
   }

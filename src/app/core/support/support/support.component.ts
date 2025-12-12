@@ -2,7 +2,6 @@ import { Component, inject, OnInit } from "@angular/core";
 import { WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
-import * as Sentry from "@sentry/angular";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
 import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
@@ -21,6 +20,7 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 import { PouchDatabase } from "../../database/pouchdb/pouch-database";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 import { AssistantService } from "#src/app/core/setup/assistant.service";
+import { Clipboard } from "@angular/cdk/clipboard";
 
 @Component({
   selector: "app-support",
@@ -44,6 +44,7 @@ export class SupportComponent implements OnInit {
   private downloadService = inject(DownloadService);
   private window = inject<Window>(WINDOW_TOKEN);
   protected readonly assistantService = inject(AssistantService);
+  private readonly clipboard = inject(Clipboard);
 
   sessionInfo: SessionInfo;
   currentUser: Entity;
@@ -136,9 +137,9 @@ export class SupportComponent implements OnInit {
       );
   }
 
-  sendReport() {
+  copyDetails() {
     // This is sent even without submitting the crash report.
-    Sentry.captureMessage("report information", {
+    const debugInfo = {
       user: {
         id: this.sessionInfo?.id,
         email: this.sessionInfo?.email,
@@ -157,16 +158,9 @@ export class SupportComponent implements OnInit {
         dbInfo: this.dbInfo,
         timestamp: new Date().toISOString(),
       },
-    });
-    Sentry.showReportDialog({
-      user: {
-        name: this.sessionInfo?.name,
-        email: this.sessionInfo?.email,
-      },
-      title: $localize`:Title user feedback dialog:Support request`,
-      subtitle: $localize`:Subtitle user feedback dialog:Please describe the problem you are facing.`,
-      subtitle2: "",
-    });
+    };
+
+    this.clipboard.copy(JSON.stringify(debugInfo, null, 2));
   }
 
   async resetApplication() {
