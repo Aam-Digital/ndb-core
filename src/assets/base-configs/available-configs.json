@@ -73,5 +73,23 @@
       "education/fr/EmailTemplate_birthday.json"
     ],
     "locale": "fr"
+  },
+  {
+    "id": "event-management",
+    "name": "Event & Training Management",
+    "description": "TODO",
+    "entitiesToImport": [
+      "event-management/Config_CONFIG_ENTITY.json",
+      "event-management/other-configs.json",
+      "event-management/configurable-enums.json",
+      "event-management/ConfigurableEnum_likert1_5.json",
+      "basic/ConfigurableEnum_warning-levels.json",
+      "basic/ConfigurableEnum_genders.json",
+      "basic/Config_SetupWizard.json",
+      "basic/Config_Permissions.json",
+      "basic/SiteSettings_global.json",
+      "education/EmailTemplate_birthday.json"
+    ],
+    "locale": "en-US"
   }
 ]

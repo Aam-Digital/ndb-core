@@ -1,0 +1,94 @@
+[
+  {
+    "_id": "ProgressDashboardConfig:1",
+    "title": "Progress of Partner Outreach",
+    "parts": [
+      {
+        "label": "New Partners Contacted",
+        "currentValue": 14,
+        "targetValue": 20
+      },
+      {
+        "label": "Partnership Agreements",
+        "currentValue": 4,
+        "targetValue": 10
+      }
+    ]
+  },
+  {
+    "_id": "PublicFormConfig:event-feedback",
+    "title": "Event feedback form",
+    "route": "event-feedback",
+    "description": "Thank you for participating in our event. Please fill in the short questionnaire below.",
+    "entity": "outcomeSurvey",
+    "columns": [
+      {
+        "fields": [
+          {
+            "id": "48aeb7df-20b1-463a-acc4-18faec5599c5",
+            "viewComponent": "DisplayDescriptionOnly",
+            "label": "Please indicate whether you agree or disagree with the following statements:"
+          },
+          {
+            "id": "overallSatisfactionIWasSatisfiedWithTheEvent",
+            "displayFullLengthLabel": false,
+            "label": "I was satisfied with the event",
+            "dataType": "configurable-enum",
+            "additional": "likert1_5",
+            "validators": {
+              "required": true
+            }
+          },
+          {
+            "id": "theEventWasWellPrepared",
+            "displayFullLengthLabel": false,
+            "label": "The event was well prepared",
+            "dataType": "configurable-enum",
+            "additional": "likert1_5",
+            "validators": {
+              "required": true
+            }
+          },
+          {
+            "id": "theContentWasUseful",
+            "displayFullLengthLabel": false,
+            "label": "The content was useful",
+            "dataType": "configurable-enum",
+            "additional": "likert1_5",
+            "validators": {
+              "required": true
+            }
+          },
+          {
+            "id": "72d666d3-ed7b-4600-957a-1fad5573231e",
+            "viewComponent": "DisplayDescriptionOnly",
+            "label": "Is there anything else that you would like to share with us?"
+          },
+          "furtherComments"
+        ],
+        "header": null
+      }
+    ],
+    "prefilled": {
+      "date": {
+        "mode": "dynamic",
+        "config": {
+          "value": "$now"
+        }
+      }
+    },
+    "linkedEntities": [
+      {
+        "id": "individual",
+        "hideFromForm": true,
+        "additional": "Individual"
+      },
+      {
+        "id": "event",
+        "hideFromForm": true,
+        "additional": "Event"
+      }
+    ],
+    "showSubmitAnotherButton": false
+  }
+]

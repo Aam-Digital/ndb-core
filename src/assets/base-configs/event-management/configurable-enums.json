@@ -1,0 +1,188 @@
+[
+  {
+    "_id": "ConfigurableEnum:eventStatus",
+    "values": [
+      {
+        "id": "Planned",
+        "label": "Planned"
+      },
+      {
+        "id": "Ongoing",
+        "label": "Ongoing",
+        "color": "#eef070"
+      },
+      {
+        "id": "Implemented",
+        "label": "Implemented",
+        "color": "#c7f6c7"
+      },
+      {
+        "id": "Cancelled",
+        "label": "Cancelled",
+        "color": "#feb8b8"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:eventType",
+    "values": [
+      {
+        "id": "Coaching",
+        "label": "Coaching Session"
+      },
+      {
+        "id": "Conference",
+        "label": "Conference"
+      },
+      {
+        "id": "Training",
+        "label": "Training"
+      },
+      {
+        "id": "Workshop",
+        "label": "Workshop"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:focalArea",
+    "values": [
+      {
+        "id": "TOPIC A",
+        "label": "Topic A"
+      },
+      {
+        "id": "TOPIC B",
+        "label": "Topic B"
+      },
+      {
+        "id": "TOPIC C",
+        "label": "Topic C"
+      },
+      {
+        "id": "TOPIC D",
+        "label": "Topic D"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:modeOfDelivery",
+    "values": [
+      {
+        "id": "Face-to-face",
+        "label": "Face-to-face"
+      },
+      {
+        "id": "Online",
+        "label": "Online"
+      },
+      {
+        "id": "Blended",
+        "label": "Blended/Hybrid"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:participantStatus",
+    "values": [
+      {
+        "id": "Nominated",
+        "label": "Nominated"
+      },
+      {
+        "id": "APPROVED",
+        "label": "Approved"
+      },
+      {
+        "id": "Completed",
+        "label": "Participated",
+        "color": "#c7f6c7"
+      },
+      {
+        "id": "Absent",
+        "label": "Absent",
+        "color": "#feb8b8"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:partnerStatus",
+    "values": [
+      {
+        "id": "Partnership proposed",
+        "label": "Partnership proposed"
+      },
+      {
+        "id": "Ongoing partnership",
+        "label": "Ongoing partnership"
+      },
+      {
+        "id": "Partnership ended",
+        "label": "Partnership ended"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:qualification",
+    "values": [
+      {
+        "id": "QUALIFICATION A",
+        "label": "Qualification A"
+      },
+      {
+        "id": "QUALIFICATION B",
+        "label": "Qualification B"
+      },
+      {
+        "id": "QUALIFICATION C",
+        "label": "Qualification C"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:region",
+    "values": [
+      {
+        "id": "REGION 1",
+        "label": "Region 1"
+      },
+      {
+        "id": "REGION 2",
+        "label": "Region 2"
+      },
+      {
+        "id": "REGION 3",
+        "label": "Region 3"
+      },
+      {
+        "id": "REGION 4",
+        "label": "Region 4"
+      },
+      {
+        "id": "REGION 5",
+        "label": "Region 5"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:userType",
+    "values": [
+      {
+        "id": "CONSULTANT",
+        "label": "Consultant"
+      },
+      {
+        "id": "Coordinator",
+        "label": "Coordinator"
+      },
+      {
+        "id": "DIRECTOR",
+        "label": "Director"
+      },
+      {
+        "id": "Trainer",
+        "label": "Trainer"
+      }
+    ]
+  }
+]
