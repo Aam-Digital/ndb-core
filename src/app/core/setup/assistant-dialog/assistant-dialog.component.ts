@@ -13,12 +13,14 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { filter } from "rxjs/operators";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { SetupWizardComponent } from "../../admin/setup-wizard/setup-wizard.component";
-import { MatDialogRef } from "@angular/material/dialog";
+import { MatDialogClose, MatDialogRef } from "@angular/material/dialog";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatIconButton } from "@angular/material/button";
 import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { Angulartics2OnModule } from "angulartics2";
 import { AssistantService } from "#src/app/core/setup/assistant.service";
+import { RouterLink } from "@angular/router";
+import { MatTooltip } from "@angular/material/tooltip";
 
 /**
  * The Assistant Panel shown by the AssistantButton,
@@ -39,6 +41,9 @@ import { AssistantService } from "#src/app/core/setup/assistant.service";
     Angulartics2OnModule,
     MatMenu,
     MatMenuItem,
+    RouterLink,
+    MatTooltip,
+    MatDialogClose,
   ],
   templateUrl: "./assistant-dialog.component.html",
   styleUrl: "./assistant-dialog.component.scss",
