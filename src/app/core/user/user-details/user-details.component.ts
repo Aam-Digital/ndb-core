@@ -38,8 +38,9 @@ import { Angulartics2Module } from "angulartics2";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
 import { EditEntityComponent } from "../../basic-datatypes/entity/edit-entity/edit-entity.component";
-import { filter, lastValueFrom } from "rxjs";
+import { lastValueFrom } from "rxjs";
 import { Entity } from "../../entity/model/entity";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 /**
  * Options as input to the UserDetailsComponent when it is opened in a dialog.
@@ -103,9 +104,24 @@ export class UserDetailsComponent {
 
   /**
    * Signal tracking whether the form is disabled (view mode) or enabled (edit mode).
-   * This is mirroring form.disabled to allow reactive updates in the template.
+   * This is automatically updating the `form.disabled` also.
    */
   formDisabled = signal(true);
+  private readonly formDisabledEffect = effect(() => {
+    // special form rules:
+    if (this.isProfileMode() && !this.formDisabled()) {
+      this.formDisabled.set(true);
+    }
+
+    if (this.formDisabled()) {
+      this.form.disable();
+    } else {
+      this.form.enable();
+
+      // profile entity is currently always readonly. Updates not supported yet
+      this.form.get("userEntityId").disable();
+    }
+  });
 
   showPasswordChange = computed(() => this.isProfileMode());
   passwordChangeDisabled = computed(() => {
@@ -120,72 +136,21 @@ export class UserDetailsComponent {
     return false;
   });
 
-  /**
-   * Gets the current user account for UI display
-   * Returns null for new accounts (without ID) to trigger send invitation/ user creation flow.
-   * Returns session info only in profile mode.
-   */
-  currentUserAccount = computed(() => {
-    // Use the directly provided user account
-    const directUser = this.userAccount();
-    if (directUser && !this.isProfileMode()) {
-      if (directUser.id) {
-        return directUser;
-      }
-      return null;
-    }
-
-    if (this.sessionInfo?.value) {
-      const sessionRoles = this.sessionInfo.value.roles || [];
-
-      let mappedRoles: Role[] = [];
-      if (this.availableRoles.value().length > 0) {
-        // Map roles only if available roles are loaded
-        mappedRoles = sessionRoles
-          .map((roleName) =>
-            this.availableRoles
-              .value()
-              .find((r) => r.id === roleName || r.name === roleName),
-          )
-          .filter((role): role is Role => role !== undefined);
-      } else {
-        // Fallback: create role objects from session role names when available roles not yet loaded
-        mappedRoles = sessionRoles.map((roleName) => ({
-          id: roleName,
-          name: roleName,
-          description: roleName,
-        }));
-      }
-
-      return {
-        email: this.sessionInfo.value.email,
-        enabled: true,
-        roles: mappedRoles,
-        userEntityId: this.sessionInfo.value.entityId,
-      } as UserAccount;
-    }
-
-    return null;
-  });
-
-  /**
-   * Gets user account data for form field population.
-   * Unlike currentUserAccount, this includes placeholder accounts to populate userEntityId.
-   */
-  private userAccountForFormData = computed(() => {
-    const directUser = this.userAccount();
-    if (directUser && !this.isProfileMode()) {
-      return directUser;
-    }
-    return this.currentUserAccount();
+  creatingNewAccount = computed(() => {
+    return !this.userAccount()?.id && !this.isProfileMode();
   });
 
   availableRoles = resource<Role[], unknown>({
     loader: async () => {
+      if (this.isProfileMode()) {
+        return [];
+      }
+
       try {
         return await lastValueFrom(this.userAdminService.getAllRoles());
       } catch (err) {
-        console.error("Failed to load available roles:", err);
+        // in profile view, this may be expected
+        Logging.debug("Failed to load available roles:", err);
         return [];
       }
     },
@@ -221,7 +186,7 @@ export class UserDetailsComponent {
     });
 
     effect(() => {
-      const user = this.userAccountForFormData();
+      const user = this.userAccount();
       if (user) {
         this.updateFormFromUser(user);
       }
@@ -236,16 +201,11 @@ export class UserDetailsComponent {
     });
 
     // Initialize form as disabled
-    this.form.disable();
-
-    // keep userEntityId disabled always
-    this.form
-      .get("userEntityId")
-      .statusChanges.pipe(
-        untilDestroyed(this),
-        filter(() => this.form.get("userEntityId").enabled),
-      )
-      .subscribe(() => this.form.get("userEntityId").disable());
+    if (!this.creatingNewAccount()) {
+      this.formDisabled.set(true);
+    } else {
+      this.formDisabled.set(false);
+    }
 
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.form.markAllAsTouched();
@@ -288,7 +248,7 @@ export class UserDetailsComponent {
     }
 
     const formValue = this.form.getRawValue();
-    const currentUser = this.currentUserAccount();
+    const currentUser = this.userAccount();
 
     if (currentUser) {
       this.updateAccount(formValue);
@@ -337,7 +297,7 @@ export class UserDetailsComponent {
   }
 
   private updateAccount(formData: Partial<UserAccount>) {
-    const currentUser = this.currentUserAccount();
+    const currentUser = this.userAccount();
     if (!currentUser) {
       return;
     }
@@ -362,7 +322,7 @@ export class UserDetailsComponent {
   }
 
   private updateUserAccount(update: Partial<UserAccount>, message: string) {
-    const currentUser = this.currentUserAccount();
+    const currentUser = this.userAccount();
     if (!currentUser) {
       return;
     }
@@ -400,15 +360,12 @@ export class UserDetailsComponent {
   }
 
   editMode() {
-    this.form.enable();
-    // Keep userEntityId disabled
-    this.form.get("userEntityId")?.disable();
     this.formDisabled.set(false);
   }
 
   cancel() {
     this.form.reset();
-    const user = this.userAccountForFormData();
+    const user = this.userAccount();
     if (user) {
       this.updateFormFromUser(user);
     }
@@ -417,7 +374,6 @@ export class UserDetailsComponent {
   }
 
   private exitEditMode(result: UserDetailsAction) {
-    this.form.disable();
     this.formDisabled.set(true);
 
     if (this.dialogRef) {

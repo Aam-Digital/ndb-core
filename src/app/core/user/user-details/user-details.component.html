@@ -6,92 +6,92 @@
 }
 
 <div class="flex-column padding-right-regular padding-left-regular">
-  <!-- Creating a new account -->
-  @if (!currentUserAccount()) {
-    <div class="buttons-wrapper align-self-start">
-      <p
-        i18n="notice about user without account"
-        class="field-hint field-warning"
-      >
-        There is no user account set up for this user yet. Enable this user to
-        log into the app by filling the details below.
-      </p>
-      @if (!formDisabled()) {
-        <button
-          mat-raised-button
-          type="submit"
-          (click)="save()"
-          class="invite-button"
-          color="accent"
-          [class.invite-button-animate]="true"
-          i18n="button to invite a new user"
+  @if (!isProfileMode()) {
+    <!-- Creating a new account -->
+    @if (creatingNewAccount()) {
+      <div class="buttons-wrapper align-self-start">
+        <p
+          i18n="notice about user without account"
+          class="field-hint field-warning"
         >
-          Create account & send invitation
-        </button>
-      }
-    </div>
-  }
-
-  <!-- Actions editing existing account -->
-  @if (currentUserAccount() && !isProfileMode()) {
-    <div
-      class="padding-bottom-small flex-row gap-small align-self-end flex-wrap padding-top-small"
-    >
-      @if (formDisabled()) {
-        <button
-          mat-raised-button
-          class="action-button"
-          (click)="editMode()"
-          i18n="Edit button for forms"
-        >
-          Edit
-        </button>
-      } @else {
-        @if (currentUserAccount()?.enabled) {
+          There is no user account set up for this user yet. Enable this user to
+          log into the app by filling the details below.
+        </p>
+        @if (!formDisabled()) {
           <button
-            mat-stroked-button
-            color="warn"
-            (click)="enableAccount(false)"
-            matTooltip="User will not be able to login again, no information will be lost"
-            i18n="button to update disable a user"
+            mat-raised-button
+            type="submit"
+            (click)="save()"
+            class="invite-button"
+            color="accent"
+            [class.invite-button-animate]="true"
+            i18n="button to invite a new user"
           >
-            Deactivate user
+            Create account & send invitation
+          </button>
+        }
+      </div>
+    } @else {
+      <!-- Actions editing existing account -->
+      <div
+        class="padding-bottom-small flex-row gap-small align-self-end flex-wrap padding-top-small"
+      >
+        @if (formDisabled()) {
+          <button
+            mat-raised-button
+            class="action-button"
+            (click)="editMode()"
+            i18n="Edit button for forms"
+          >
+            Edit
           </button>
         } @else {
+          @if (userAccount()?.enabled) {
+            <button
+              mat-stroked-button
+              color="warn"
+              (click)="enableAccount(false)"
+              matTooltip="User will not be able to login again, no information will be lost"
+              i18n="button to update disable a user"
+            >
+              Deactivate user
+            </button>
+          } @else {
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="enableAccount(true)"
+              matTooltip="User can login again with the previously used credentials"
+              i18n="button to enable a user"
+            >
+              Activate user
+            </button>
+          }
+
           <button
             mat-raised-button
             color="accent"
-            (click)="enableAccount(true)"
-            matTooltip="User can login again with the previously used credentials"
-            i18n="button to enable a user"
+            class="action-button"
+            [disabled]="!form.valid || !form.dirty"
+            (click)="save()"
+            i18n="Save button for forms"
           >
-            Activate user
+            Save
+          </button>
+          <button
+            mat-stroked-button
+            class="action-button"
+            (click)="cancel()"
+            i18n="Cancel button for forms"
+          >
+            Cancel
           </button>
         }
-
-        <button
-          mat-raised-button
-          color="accent"
-          class="action-button"
-          [disabled]="!form.valid || !form.dirty"
-          (click)="save()"
-          i18n="Save button for forms"
-        >
-          Save
-        </button>
-        <button
-          mat-stroked-button
-          class="action-button"
-          (click)="cancel()"
-          i18n="Cancel button for forms"
-        >
-          Cancel
-        </button>
-      }
-    </div>
+      </div>
+    }
   }
 
-  @if (currentUserAccount() && !currentUserAccount()?.enabled) {
+  @if (userAccount() && !userAccount()?.enabled) {
     <p i18n="Hint in user account page" class="field-hint field-warning">
       User is currently disabled and will not be able to login to the app
     </p>
@@ -108,9 +108,9 @@
         @if (getFormError("email", "required")) {
           <mat-error i18n> This field is required</mat-error>
         }
-        @if (isInDialog() && currentUserAccount()?.userEntityId) {
+        @if (isInDialog() && userAccount()?.userEntityId) {
           <mat-hint i18n="hint showing username/entity ID in dialog">
-            Username: {{ currentUserAccount()?.userEntityId }}
+            Username: {{ userAccount()?.userEntityId }}
           </mat-hint>
         }
         @if (isProfileMode()) {
