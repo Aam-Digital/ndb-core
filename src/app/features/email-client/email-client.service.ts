@@ -7,7 +7,8 @@ import { MatDialog } from "@angular/material/dialog";
 import {
   EmailTemplateSelectionDialogComponent,
   EmailTemplateSelectionDialogData,
-} from "../email-template-selection-dialog/email-template-selection-dialog.component";
+  EmailTemplateSelectionResult,
+} from "./email-template-selection-dialog/email-template-selection-dialog.component";
 import { lastValueFrom } from "rxjs";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
@@ -17,6 +18,7 @@ import {
   ConfirmationDialogConfig,
 } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { asArray } from "#src/app/utils/asArray";
+import { WINDOW_TOKEN } from "#src/app/utils/di-tokens";
 
 @Injectable({
   providedIn: "root",
@@ -29,6 +31,7 @@ export class EmailClientService {
   private readonly alertService = inject(AlertService);
   private readonly dialog = inject(MatDialog);
   private readonly formDialog = inject(FormDialogService);
+  private readonly window = inject(WINDOW_TOKEN);
 
   /**
    * Build a mailto link from an entity's email fields and open the local mail client.
@@ -73,15 +76,17 @@ export class EmailClientService {
     );
     if (!result) return false;
 
-    const { template, createNote, sendAsBCC } = result;
+    const { template, createNote, sendAsBCC, sendSemicolonSeparated } = result;
     const mailto = this.buildMailtoLink(
-      isBulk ? recipients : recipients[0],
+      isBulk
+        ? asArray(recipients).join(sendSemicolonSeparated ? ";" : ",")
+        : recipients[0],
       template.subject,
       template.body,
       sendAsBCC,
     );
 
-    window.location.href = mailto;
+    this.window.location.href = mailto;
 
     this.showConfirmationAndOpenNote(filteredEntities, template, createNote);
     return true;
@@ -91,10 +96,7 @@ export class EmailClientService {
     entity: Entity,
     excludedEntitiesCount: number,
     isBulk: boolean,
-  ): Promise<
-    | { template: EmailTemplate; createNote: boolean; sendAsBCC: boolean }
-    | undefined
-  > {
+  ): Promise<EmailTemplateSelectionResult | undefined> {
     const dialogRef = this.dialog.open(EmailTemplateSelectionDialogComponent, {
       data: {
         entity,
@@ -106,12 +108,12 @@ export class EmailClientService {
   }
 
   public buildMailtoLink(
-    recipients: string | string[],
+    recipients: string,
     subject: string,
     body: string,
     sendAsBCC = false,
   ): string {
-    let recipientsString = encodeURIComponent(asArray(recipients).join(","));
+    let recipientsString = encodeURIComponent(recipients);
 
     const params: string[] = [];
     params.push(`subject=${encodeURIComponent(subject.trim())}`);
