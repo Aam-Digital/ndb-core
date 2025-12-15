@@ -5,7 +5,6 @@ import {
   effect,
   inject,
   input,
-  output,
   resource,
   signal,
 } from "@angular/core";
@@ -192,8 +191,6 @@ export class UserDetailsComponent {
     },
     defaultValue: [],
   });
-
-  action = output<UserDetailsAction>();
 
   form: FormGroup;
 

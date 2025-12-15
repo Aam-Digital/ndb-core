@@ -20,6 +20,7 @@ describe("UserDetailsComponent", () => {
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
   let mockSessionSubject: BehaviorSubject<any>;
   let mockCurrentUserSubject: BehaviorSubject<any>;
+  let mockDialogRef: jasmine.SpyObj<MatDialogRef<UserDetailsComponent>>;
 
   const mockRole: Role = {
     id: "test-role",
@@ -63,6 +64,8 @@ describe("UserDetailsComponent", () => {
 
     mockCurrentUserSubject = new BehaviorSubject(null);
 
+    mockDialogRef = jasmine.createSpyObj("MatDialogRef", ["close"]);
+
     await TestBed.configureTestingModule({
       imports: [UserDetailsComponent, CoreTestingModule],
       providers: [
@@ -70,7 +73,7 @@ describe("UserDetailsComponent", () => {
         { provide: AlertService, useValue: mockAlertService },
         { provide: HttpClient, useValue: mockHttpClient },
         { provide: MAT_DIALOG_DATA, useValue: null },
-        { provide: MatDialogRef, useValue: jasmine.createSpyObj(["close"]) },
+        { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: KeycloakAuthService, useValue: mockKeycloakService },
         { provide: SessionSubject, useValue: mockSessionSubject },
         { provide: CurrentUserSubject, useValue: mockCurrentUserSubject },
@@ -86,8 +89,12 @@ describe("UserDetailsComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should populate form when userAccount input is set", () => {
+  it("should populate form when userAccount input is set", async () => {
     fixture.componentRef.setInput("userAccount", mockUserAccount);
+    fixture.detectChanges();
+
+    // Wait for availableRoles resource to load
+    await fixture.whenStable();
     fixture.detectChanges();
 
     expect(component.form.get("email")?.value).toBe(mockUserAccount.email);
@@ -156,16 +163,13 @@ describe("UserDetailsComponent", () => {
     expect(component.form.get("email")?.hasError("email")).toBe(false);
   });
 
-  it("should emit formSubmit when form is valid", () => {
+  it("should close dialog with accountUpdated result when form is valid", () => {
     fixture.componentRef.setInput("isInDialog", false);
     fixture.componentRef.setInput("userAccount", mockUserAccount);
     fixture.detectChanges();
 
     component.editMode();
     fixture.detectChanges();
-
-    const submitSpy = jasmine.createSpy("action");
-    component.action.subscribe(submitSpy);
 
     component.form.patchValue({
       email: "updated@example.com",
@@ -174,7 +178,7 @@ describe("UserDetailsComponent", () => {
 
     component.save();
 
-    expect(submitSpy).toHaveBeenCalledWith(
+    expect(mockDialogRef.close).toHaveBeenCalledWith(
       jasmine.objectContaining({
         type: "accountUpdated",
         data: jasmine.anything(),
@@ -182,29 +186,23 @@ describe("UserDetailsComponent", () => {
     );
   });
 
-  it("should not emit formSubmit when form is invalid", () => {
+  it("should not close dialog when form is invalid", () => {
     fixture.componentRef.setInput("isInDialog", false);
     fixture.detectChanges();
 
     component.editMode();
     fixture.detectChanges();
 
-    const submitSpy = jasmine.createSpy("action");
-    component.action.subscribe(submitSpy);
-
     component.form.patchValue({ email: "" });
     component.save();
 
-    expect(submitSpy).not.toHaveBeenCalled();
+    expect(mockDialogRef.close).not.toHaveBeenCalled();
   });
 
-  it("should emit formCancel action when cancel is called", () => {
-    const cancelSpy = jasmine.createSpy("action");
-    component.action.subscribe(cancelSpy);
-
+  it("should close dialog with formCancel result when cancel is called", () => {
     component.cancel();
 
-    expect(cancelSpy).toHaveBeenCalledWith({ type: "formCancel" });
+    expect(mockDialogRef.close).toHaveBeenCalledWith({ type: "formCancel" });
   });
 
   it("should set and clear global errors", () => {
