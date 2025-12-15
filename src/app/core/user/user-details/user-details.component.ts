@@ -32,7 +32,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { AlertService } from "../../alerts/alert.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
-import { SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { Angulartics2Module } from "angulartics2";
 import { environment } from "../../../../environments/environment";
@@ -95,7 +94,6 @@ export class UserDetailsComponent {
   private readonly authService = inject(KeycloakAuthService, {
     optional: true,
   });
-  protected sessionInfo = inject(SessionSubject, { optional: true });
   protected currentUser = inject(CurrentUserSubject, { optional: true });
 
   userAccount = input<UserAccount | null>(this._dialogData?.userAccount);
@@ -143,7 +141,7 @@ export class UserDetailsComponent {
   availableRoles = resource<Role[], unknown>({
     loader: async () => {
       if (this.isProfileMode()) {
-        return [];
+        return this.userAccount().roles ?? [];
       }
 
       try {
@@ -211,13 +209,6 @@ export class UserDetailsComponent {
       this.form.markAllAsTouched();
       this.form.markAsDirty();
     });
-  }
-
-  getSessionRolesDisplayText(): string {
-    if (!this.isProfileMode() || !this.sessionInfo?.value?.roles) {
-      return "";
-    }
-    return this.sessionInfo.value.roles.join(", ");
   }
 
   private updateFormFromUser(user: UserAccount) {

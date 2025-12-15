@@ -9,11 +9,8 @@
   @if (!isProfileMode()) {
     <!-- Creating a new account -->
     @if (creatingNewAccount()) {
-      <div class="buttons-wrapper align-self-start">
-        <p
-          i18n="notice about user without account"
-          class="field-hint field-warning"
-        >
+      <div class="align-self-start padding-bottom-small">
+        <p i18n class="field-hint field-warning">
           There is no user account set up for this user yet. Enable this user to
           log into the app by filling the details below.
         </p>
@@ -25,7 +22,7 @@
             class="invite-button"
             color="accent"
             [class.invite-button-animate]="true"
-            i18n="button to invite a new user"
+            i18n
           >
             Create account & send invitation
           </button>
@@ -123,37 +120,27 @@
 
       <mat-form-field class="full-width">
         <mat-label i18n="label of roles input">Roles</mat-label>
-        @if (isProfileMode()) {
-          <input
-            matInput
-            type="text"
-            [value]="getSessionRolesDisplayText()"
-            readonly
-            disabled
-          />
-        } @else {
-          <mat-select formControlName="roles" multiple>
-            <mat-select-trigger>
-              @for (role of form.get("roles")?.value; track role) {
-                <span>{{ role.name }} </span>
-              }
-            </mat-select-trigger>
-            @for (role of availableRoles.value(); track role) {
-              <mat-option [value]="role" [matTooltip]="role.description">
-                {{ role.description }}
-                <em class="role-name">{{ role.name }}</em>
-              </mat-option>
+        <mat-select formControlName="roles" multiple>
+          <mat-select-trigger>
+            @for (role of form.get("roles")?.value; track role) {
+              <span>{{ role.name }} </span>
             }
-          </mat-select>
-          @if (!isInDialog()) {
-            <mat-hint i18n="hint about assigning user roles" class="field-hint">
-              You should select at least one user role. Otherwise this user will
-              not even be able to access the basic app layout like the menu.
-            </mat-hint>
+          </mat-select-trigger>
+          @for (role of availableRoles.value(); track role) {
+            <mat-option [value]="role" [matTooltip]="role.description">
+              {{ role.description }}
+              <em class="role-name">{{ role.name }}</em>
+            </mat-option>
           }
-          @if (getFormError("roles", "required")) {
-            <mat-error i18n> This field is required</mat-error>
-          }
+        </mat-select>
+        @if (getFormError("roles", "required")) {
+          <mat-error i18n> This field is required</mat-error>
+        }
+        @if (!isInDialog()) {
+          <mat-hint i18n>
+            You should select at least one user role. Otherwise this user will
+            not even be able to access the basic app layout like the menu.
+          </mat-hint>
         }
       </mat-form-field>
 
