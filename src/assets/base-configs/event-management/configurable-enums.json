@@ -3,21 +3,21 @@
     "_id": "ConfigurableEnum:eventStatus",
     "values": [
       {
-        "id": "Planned",
+        "id": "PLANNED",
         "label": "Planned"
       },
       {
-        "id": "Ongoing",
+        "id": "ONGOING",
         "label": "Ongoing",
         "color": "#eef070"
       },
       {
-        "id": "Implemented",
+        "id": "IMPLEMENTED",
         "label": "Implemented",
         "color": "#c7f6c7"
       },
       {
-        "id": "Cancelled",
+        "id": "CANCELLED",
         "label": "Cancelled",
         "color": "#feb8b8"
       }
@@ -27,19 +27,19 @@
     "_id": "ConfigurableEnum:eventType",
     "values": [
       {
-        "id": "Coaching",
+        "id": "COACHING SESSION",
         "label": "Coaching Session"
       },
       {
-        "id": "Conference",
+        "id": "CONFERENCE",
         "label": "Conference"
       },
       {
-        "id": "Training",
+        "id": "TRAINING",
         "label": "Training"
       },
       {
-        "id": "Workshop",
+        "id": "WORKSHOP",
         "label": "Workshop"
       }
     ]
@@ -69,15 +69,15 @@
     "_id": "ConfigurableEnum:modeOfDelivery",
     "values": [
       {
-        "id": "Face-to-face",
+        "id": "FACE-TO-FACE",
         "label": "Face-to-face"
       },
       {
-        "id": "Online",
+        "id": "ONLINE",
         "label": "Online"
       },
       {
-        "id": "Blended",
+        "id": "BLENDED",
         "label": "Blended/Hybrid"
       }
     ]
@@ -86,7 +86,7 @@
     "_id": "ConfigurableEnum:participantStatus",
     "values": [
       {
-        "id": "Nominated",
+        "id": "NOMINATED",
         "label": "Nominated"
       },
       {
@@ -94,12 +94,12 @@
         "label": "Approved"
       },
       {
-        "id": "Completed",
+        "id": "PARTICIPATED",
         "label": "Participated",
         "color": "#c7f6c7"
       },
       {
-        "id": "Absent",
+        "id": "ABSENT",
         "label": "Absent",
         "color": "#feb8b8"
       }
@@ -109,15 +109,15 @@
     "_id": "ConfigurableEnum:partnerStatus",
     "values": [
       {
-        "id": "Partnership proposed",
+        "id": "PARTNERSHIP PROPOSED",
         "label": "Partnership proposed"
       },
       {
-        "id": "Ongoing partnership",
+        "id": "ONGOING PARTNERSHIP",
         "label": "Ongoing partnership"
       },
       {
-        "id": "Partnership ended",
+        "id": "PARTNERSHIP ENDED",
         "label": "Partnership ended"
       }
     ]
@@ -172,7 +172,7 @@
         "label": "Consultant"
       },
       {
-        "id": "Coordinator",
+        "id": "COORDINATOR",
         "label": "Coordinator"
       },
       {
@@ -180,7 +180,7 @@
         "label": "Director"
       },
       {
-        "id": "Trainer",
+        "id": "TRAINER",
         "label": "Trainer"
       }
     ]

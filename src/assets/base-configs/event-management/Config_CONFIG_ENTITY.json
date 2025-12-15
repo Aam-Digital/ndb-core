@@ -81,7 +81,7 @@
             "config": {
               "entityType": "User",
               "groupBy": [
-                "type",
+                "roles",
                 "qualification"
               ]
             }
@@ -136,20 +136,13 @@
           "anonymize": "retain-anonymized",
           "id": "dateOfBirth"
         },
-        "qualifications": {
-          "label": "Qualifications",
-          "dataType": "string",
-          "viewComponent": "EditLongText",
-          "additional": "qualifications",
-          "id": "qualifications"
-        },
-        "projectProgramm": {
+        "implementers": {
           "label": "Responsible Implementer(s)",
           "dataType": "entity",
           "additional": "Project",
           "isArray": true,
           "anonymize": "retain",
-          "id": "projectProgramm",
+          "id": "implementers",
           "displayFullLengthLabel": false
         },
         "phoneNumber": {
@@ -231,7 +224,7 @@
                     },
                     {
                       "fields": [
-                        "projectProgramm",
+                        "implementers",
                         "registrationDate"
                       ],
                       "header": "Registration Details"
@@ -370,17 +363,6 @@
           "dataType": "configurable-enum",
           "additional": "participantStatus",
           "id": "status"
-        },
-        "nominatedOn": {
-          "label": "Nominated on",
-          "dataType": "date-only",
-          "defaultValue": {
-            "mode": "dynamic",
-            "config": {
-              "value": "$now"
-            }
-          },
-          "id": "nominatedOn"
         }
       },
       "_id": "entity:Participant2Event"
@@ -425,13 +407,6 @@
           "displayFullLengthLabel": false,
           "isArray": true
         },
-        "parent": {
-          "label": "Parent Event",
-          "description": "You can define hierarchies of related event records by selecting the \"parent\" event this belongs to",
-          "dataType": "entity",
-          "additional": "Event",
-          "id": "parent"
-        },
         "modeOfDelivery": {
           "label": "Mode of Delivery",
           "dataType": "configurable-enum",
@@ -441,7 +416,7 @@
         "dateStart": {
           "label": "Start Date",
           "dataType": "date-only",
-          "validations": {
+          "validators": {
             "required": true
           },
           "id": "dateStart"
@@ -457,12 +432,12 @@
           "additional": "eventStatus",
           "id": "status"
         },
-        "trainers": {
+        "facilitators": {
           "label": "Facilitator(s)",
           "dataType": "entity",
           "isArray": true,
           "additional": "User",
-          "id": "trainers",
+          "id": "facilitators",
           "displayFullLengthLabel": false
         },
         "remarks": {
@@ -512,7 +487,7 @@
                     {
                       "fields": [
                         "implementedBy",
-                        "trainers"
+                        "facilitators"
                       ],
                       "header": "Implemented By"
                     },
@@ -591,7 +566,7 @@
             "id": "topicArea"
           },
           {
-            "id": "trainers"
+            "id": "facilitators"
           },
           {
             "id": "implementedBy"
@@ -610,7 +585,7 @@
                 "eventTitle",
                 "type",
                 "topicArea",
-                "trainers",
+                "facilitators",
                 "implementedBy",
                 "status"
               ]
@@ -625,24 +600,19 @@
       "label": "Facilitator",
       "labelPlural": "Facilitators",
       "toStringAttributes": [
-        "name",
+        "firstname",
         "lastname"
       ],
       "icon": "users",
       "attributes": {
-        "name": {
+        "firstname": {
           "dataType": "string",
           "label": "First Name",
-          "id": "name",
+          "id": "firstname",
           "displayFullLengthLabel": false,
           "validators": {
             "required": true
           }
-        },
-        "phone": {
-          "label": "Phone Number",
-          "dataType": "string",
-          "id": "phone"
         },
         "lastname": {
           "label": "Last Name",
@@ -653,21 +623,26 @@
             "required": true
           }
         },
-        "remarks": {
-          "label": "Remarks",
+        "phone": {
+          "label": "Phone Number",
           "dataType": "string",
-          "id": "remarks"
+          "id": "phone"
         },
         "email": {
           "label": "Email Address",
           "dataType": "string",
           "id": "email"
         },
-        "type": {
+        "remarks": {
+          "label": "Remarks",
+          "dataType": "string",
+          "id": "remarks"
+        },
+        "roles": {
           "label": "Role(s)",
           "dataType": "configurable-enum",
           "additional": "userType",
-          "id": "type",
+          "id": "roles",
           "displayFullLengthLabel": false,
           "isArray": true
         },
@@ -676,11 +651,11 @@
           "dataType": "location",
           "id": "address"
         },
-        "qualifications": {
+        "qualificationNotes": {
           "label": "Qualification Notes",
           "dataType": "long-text",
           "description": "Add additional details regarding special qualifications here",
-          "id": "qualifications"
+          "id": "qualificationNotes"
         },
         "qualification": {
           "label": "Qualification",
@@ -734,10 +709,10 @@
                   "fieldGroups": [
                     {
                       "fields": [
-                        "name",
+                        "firstname",
                         "lastname",
                         "gender",
-                        "type",
+                        "roles",
                         "projects"
                       ],
                       "header": "Basic Info"
@@ -754,7 +729,7 @@
                       "fields": [
                         "cv",
                         "qualification",
-                        "qualifications"
+                        "qualificationNotes"
                       ],
                       "header": "Qualifications"
                     },
@@ -807,7 +782,7 @@
       "component": "EntityList",
       "config": {
         "columns": [
-          "name",
+          "firstname",
           "lastname",
           "phone",
           "email",
@@ -818,7 +793,7 @@
             "id": "qualification"
           },
           {
-            "id": "type"
+            "id": "roles"
           },
           {
             "id": "projects"
@@ -829,10 +804,10 @@
             {
               "name": "",
               "columns": [
-                "name",
+                "firstname",
                 "lastname",
                 "qualification",
-                "type",
+                "roles",
                 "projects"
               ]
             }
@@ -859,12 +834,12 @@
             "required": true
           }
         },
-        "sector": {
+        "topicAreas": {
           "label": "Topic Area(s)",
           "dataType": "configurable-enum",
           "additional": "focalArea",
           "isArray": true,
-          "id": "sector",
+          "id": "topicAreas",
           "displayFullLengthLabel": false
         },
         "address": {
@@ -952,7 +927,7 @@
                     },
                     {
                       "fields": [
-                        "sector"
+                        "topicAreas"
                       ],
                       "header": "Characteristics"
                     },
@@ -984,7 +959,7 @@
                   "property": "projects",
                   "columns": [
                     {
-                      "id": "name"
+                      "id": "firstname"
                     },
                     {
                       "id": "lastname"
@@ -996,7 +971,7 @@
                       "id": "email"
                     },
                     {
-                      "id": "type"
+                      "id": "roles"
                     },
                     {
                       "id": "qualification"
@@ -1031,7 +1006,7 @@
                       "id": "topicArea"
                     },
                     {
-                      "id": "trainers"
+                      "id": "facilitators"
                     },
                     {
                       "id": "status"
@@ -1054,7 +1029,7 @@
         ],
         "filters": [
           {
-            "id": "sector"
+            "id": "topicAreas"
           },
           {
             "id": "status"
@@ -1067,7 +1042,7 @@
               "columns": [
                 "name",
                 "primaryContact",
-                "sector",
+                "topicAreas",
                 "status"
               ]
             }
@@ -1099,11 +1074,6 @@
           "additional": "Individual",
           "id": "individual",
           "displayFullLengthLabel": false
-        },
-        "currentHouseholdIncome": {
-          "label": "current household income",
-          "dataType": "string",
-          "id": "currentHouseholdIncome"
         },
         "overallSatisfactionIWasSatisfiedWithTheEvent": {
           "id": "overallSatisfactionIWasSatisfiedWithTheEvent",
