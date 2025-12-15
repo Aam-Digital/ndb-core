@@ -12,7 +12,6 @@ import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatOption, MatSelect } from "@angular/material/select";
 import { MatTooltip } from "@angular/material/tooltip";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 import { lastValueFrom } from "rxjs";
 import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
@@ -20,7 +19,6 @@ import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EntityFieldLabelComponent } from "../../../core/entity/entity-field-label/entity-field-label.component";
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
 import {
   AutomatedFieldMappingComponent,
@@ -48,7 +46,6 @@ interface InheritanceOption {
     MatOption,
     EntityFieldLabelComponent,
     FormsModule,
-    FaIconComponent,
   ],
   templateUrl: "./admin-inherited-field.component.html",
   styleUrl: "./admin-inherited-field.component.scss",
@@ -146,19 +143,22 @@ export class AdminInheritedFieldComponent
     }
 
     // Find matching option based on current config
-    if (this.value.sourceReferenceField) {
-      this.selectedOption =
-        this.availableOptions.find(
-          (opt) =>
-            opt.type === "inherit" &&
-            opt.sourceReferenceField === this.value.sourceReferenceField,
-        ) || null;
-    } else if (this.value.sourceEntityType) {
+    // Automation has BOTH sourceEntityType AND sourceReferenceField
+    if (this.value.sourceEntityType && this.value.sourceReferenceField) {
       this.selectedOption =
         this.availableOptions.find(
           (opt) =>
             opt.type === "automated" &&
             opt.sourceEntityType === this.value.sourceEntityType,
+        ) || null;
+    }
+    // Inheritance has sourceReferenceField but NO sourceEntityType
+    else if (this.value.sourceReferenceField && !this.value.sourceEntityType) {
+      this.selectedOption =
+        this.availableOptions.find(
+          (opt) =>
+            opt.type === "inherit" &&
+            opt.sourceReferenceField === this.value.sourceReferenceField,
         ) || null;
     } else {
       this.selectedOption = null;

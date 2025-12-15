@@ -42,6 +42,13 @@ export class InheritedValueButtonComponent implements OnChanges {
   defaultValueHint: DefaultValueHint | undefined;
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (
+      this.field.defaultValue.mode == "inherited-field" &&
+      !this.field.defaultValue.config?.sourceReferenceField
+    ) {
+      this.defaultValueHint = undefined;
+      return;
+    }
     this.defaultValueHint = this.defaultValueService.getDefaultValueUiHint(
       this.form,
       this.field?.id,

@@ -30,15 +30,15 @@ export class InheritedValueService extends DefaultValueStrategy {
 
   override async getAdminUI(): Promise<AdminDefaultValueContext> {
     const component =
-      await import("./admin-default-value-inherited/admin-default-value-inherited.component").then(
-        (c) => c.AdminDefaultValueInheritedComponent,
+      await import("../inherited-field/admin-inherited-field/admin-inherited-field.component").then(
+        (c) => c.AdminInheritedFieldComponent,
       );
 
     return {
       mode: this.mode,
       component,
       icon: "circle-nodes",
-      description: $localize`value inherited from the value of another, linked record (requires another field in this record type to be a link to a record)`,
+      description: $localize`value inherited or auto-updated from related records`,
     };
   }
 
@@ -61,6 +61,12 @@ export class InheritedValueService extends DefaultValueStrategy {
     const config: DefaultValueConfigInheritedField =
       fieldConfig.defaultValue?.config;
     if (!config) {
+      return;
+    }
+
+    // Only handle inheritance configs (not automation configs)
+    // Inheritance has sourceReferenceField but NO sourceEntityType
+    if (!config.sourceReferenceField || config.sourceEntityType) {
       return;
     }
 
@@ -195,6 +201,12 @@ export class InheritedValueService extends DefaultValueStrategy {
     const defaultConfig: DefaultValueConfigInheritedField =
       field?.defaultValue?.config;
     if (!defaultConfig) {
+      return;
+    }
+
+    // Only show the inheritance UI hint for actual inheritance configs (not automation)
+    // Inheritance has sourceReferenceField but NO sourceEntityType
+    if (!defaultConfig.sourceReferenceField || defaultConfig.sourceEntityType) {
       return;
     }
 
