@@ -122,11 +122,11 @@
         <mat-label i18n="label of roles input">Roles</mat-label>
         <mat-select formControlName="roles" multiple>
           <mat-select-trigger>
-            @for (role of form.get("roles")?.value; track role) {
+            @for (role of form.get("roles")?.value; track role.id) {
               <span>{{ role.name }} </span>
             }
           </mat-select-trigger>
-          @for (role of availableRoles.value(); track role) {
+          @for (role of availableRoles.value(); track role.id) {
             <mat-option [value]="role" [matTooltip]="role.description">
               {{ role.description }}
               <em class="role-name">{{ role.name }}</em>

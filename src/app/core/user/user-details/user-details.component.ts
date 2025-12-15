@@ -108,6 +108,8 @@ export class UserDetailsComponent {
    */
   formDisabled = signal(true);
   private readonly formDisabledEffect = effect(() => {
+    if (!this.form) return;
+
     // special form rules:
     if (this.isProfileMode() && !this.formDisabled()) {
       this.formDisabled.set(true);
@@ -143,7 +145,7 @@ export class UserDetailsComponent {
   availableRoles = resource<Role[], unknown>({
     loader: async () => {
       if (this.isProfileMode()) {
-        return this.userAccount().roles ?? [];
+        return this.userAccount()?.roles ?? [];
       }
 
       try {
@@ -187,6 +189,7 @@ export class UserDetailsComponent {
 
     effect(() => {
       const user = this.userAccount();
+      const roleOptions = this.availableRoles.value(); // make effect dependent on roles also (which are used in updateFormFromUser)
       if (user) {
         this.updateFormFromUser(user);
       }
