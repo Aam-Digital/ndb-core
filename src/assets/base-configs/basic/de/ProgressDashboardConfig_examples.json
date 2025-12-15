@@ -1,0 +1,24 @@
+[
+  {
+    "_id": "ProgressDashboardConfig:1",
+    "title": "Jährliche Umfrage",
+    "parts": [
+      {
+        "label": "Besuchte Vereine",
+        "currentValue": 12,
+        "targetValue": 25
+      },
+      {
+        "label": "Überprüfte Schulen",
+        "currentValue": 18,
+        "targetValue": 30
+      },
+      {
+        "label": "Getroffene Beamte",
+        "currentValue": 8,
+        "targetValue": 15
+      }
+    ]
+  }
+]
+

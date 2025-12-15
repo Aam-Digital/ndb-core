@@ -14,7 +14,8 @@
       "basic/Config_SetupWizard.json",
       "basic/MarkdownContent_help.json",
       "basic/SiteSettings_global.json",
-      "basic/PublicFormConfig_example.json"
+      "basic/PublicFormConfig_example.json",
+      "basic/ProgressDashboardConfig_examples.json"
     ],
     "locale": "en-US"
   },
@@ -34,6 +35,7 @@
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json",
       "basic/PublicFormConfig_example.json",
+      "basic/ProgressDashboardConfig_examples.json",
       "education/ReportConfig.json",
       "education/EmailTemplate_birthday.json"
     ],
@@ -55,6 +57,7 @@
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json",
       "basic/PublicFormConfig_example.json",
+      "basic/de/ProgressDashboardConfig_examples.json",
       "education/de/ReportConfig.json",
       "education/de/EmailTemplate_birthday.json"
     ],
@@ -76,6 +79,7 @@
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json",
       "basic/PublicFormConfig_example.json",
+      "basic/fr/ProgressDashboardConfig_examples.json",
       "education/fr/ReportConfig.json",
       "education/fr/EmailTemplate_birthday.json"
     ],
