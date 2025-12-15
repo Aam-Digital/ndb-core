@@ -133,7 +133,7 @@
         },
         "subQueries": [
           {
-            "label": "Anzahl",
+            "label": "Anzahl der Verteilungen",
             "query": ".materialAmount:count"
           },
           {
