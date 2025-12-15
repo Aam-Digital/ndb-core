@@ -247,6 +247,47 @@ describe("AbilityService", () => {
     testPlaceholderCondition("${user.entityId}");
   }));
 
+  it("should handle undefined user entityId in permission rules without error", fakeAsync(() => {
+    // Create a session with undefined entityId (user account without linked entity)
+    TestBed.inject(SessionSubject).next({
+      name: "user-without-entity",
+      id: "1",
+      roles: ["user_app"],
+      entityId: undefined, // User account exists but has no linked entity
+    });
+    TestBed.inject(CurrentUserSubject).next(null); // No linked user entity
+
+    service.initializeRules();
+    tick();
+
+    const debugSpy = spyOn(Logging, "debug");
+
+    // Create rules that reference the user's entityId
+    const config = new Config<DatabaseRules>(Config.PERMISSION_KEY, {
+      user_app: [
+        {
+          subject: "TestEntity",
+          action: "manage",
+          conditions: { _id: "${user.entityId}" }, // This will be undefined
+        },
+      ],
+    });
+
+    entityUpdates.next({ entity: config, type: "update" });
+    tick();
+
+    // Verify that undefined variables are logged
+    expect(debugSpy).toHaveBeenCalledWith(
+      "[AbilityService] Variable not defined:",
+      "user.entityId",
+    );
+
+    // Verify that permission checks work gracefully (undefined becomes static placeholder in condition)
+    const testEntity = new TestEntity(TEST_USER);
+    // When entityId is undefined, the condition "_id: <PLACEHOLDER>" won't match any entity
+    expect(ability.cannot("manage", testEntity)).toBeTrue();
+  }));
+
   it("should allow to check conditions with complex data types", fakeAsync(() => {
     service.initializeRules();
     tick();
