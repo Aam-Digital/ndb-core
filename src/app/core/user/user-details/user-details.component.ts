@@ -248,12 +248,11 @@ export class UserDetailsComponent {
     }
 
     const formValue = this.form.getRawValue();
-    const currentUser = this.userAccount();
 
-    if (currentUser) {
-      this.updateAccount(formValue);
-    } else {
+    if (this.creatingNewAccount()) {
       this.createAccount(formValue);
+    } else {
+      this.updateAccount(formValue);
     }
   }
 
@@ -283,6 +282,7 @@ export class UserDetailsComponent {
               ...formData,
               userEntityId: userEntityId,
               enabled: true,
+              id: createdUser.id,
             } as UserAccount,
           });
         },
