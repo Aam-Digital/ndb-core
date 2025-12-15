@@ -34,7 +34,6 @@ import { DemoProgressDashboardWidgetGeneratorService } from "../../features/dash
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { DemoHistoricalDataGenerator } from "../../child-dev-project/children/demo-data-generators/observations/demo-historical-data-generator";
 import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-generator.service";
-import { DemoReportConfigGeneratorService } from "../../features/reporting/demo-report-config-generator.service";
 
 const demoDataGeneratorProviders = [
   ...DemoUserGeneratorService.provider(),
@@ -60,7 +59,6 @@ const demoDataGeneratorProviders = [
     maxCountAttributes: 5,
   }),
   ...DemoTodoGeneratorService.provider(),
-  ...DemoReportConfigGeneratorService.provider(),
 ];
 
 /**

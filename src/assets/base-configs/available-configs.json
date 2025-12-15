@@ -34,6 +34,7 @@
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json",
       "basic/PublicFormConfig_example.json",
+      "education/ReportConfig.json",
       "education/EmailTemplate_birthday.json"
     ],
     "locale": "en-US"
@@ -54,6 +55,7 @@
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json",
       "basic/PublicFormConfig_example.json",
+      "education/de/ReportConfig.json",
       "education/de/EmailTemplate_birthday.json"
     ],
     "locale": "de"
@@ -74,6 +76,7 @@
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json",
       "basic/PublicFormConfig_example.json",
+      "education/fr/ReportConfig.json",
       "education/fr/EmailTemplate_birthday.json"
     ],
     "locale": "fr"
