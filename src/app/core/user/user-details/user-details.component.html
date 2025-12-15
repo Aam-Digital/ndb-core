@@ -6,6 +6,7 @@
 }
 
 <div class="flex-column padding-right-regular padding-left-regular">
+  <!-- Creating a new account -->
   @if (!currentUserAccount()) {
     <div class="buttons-wrapper align-self-start">
       <p
@@ -15,7 +16,7 @@
         There is no user account set up for this user yet. Enable this user to
         log into the app by filling the details below.
       </p>
-      @if (editing() && !currentUserAccount()) {
+      @if (!formDisabled()) {
         <button
           mat-raised-button
           type="submit"
@@ -31,33 +32,43 @@
     </div>
   }
 
+  <!-- Actions editing existing account -->
   @if (currentUserAccount() && !isProfileMode()) {
     <div
       class="padding-bottom-small flex-row gap-small align-self-end flex-wrap padding-top-small"
     >
-      @if (editing() && currentUserAccount()?.enabled) {
-        <button
-          mat-stroked-button
-          color="warn"
-          (click)="onToggleAccount(false)"
-          matTooltip="User will not be able to login again, no information will be lost"
-          i18n="button to update disable a user"
-        >
-          Deactivate user
-        </button>
-      }
-      @if (editing() && !currentUserAccount()?.enabled) {
+      @if (formDisabled()) {
         <button
           mat-raised-button
-          color="accent"
-          (click)="onToggleAccount(true)"
-          matTooltip="User can login again with the previously used credentials"
-          i18n="button to enable a user"
+          class="action-button"
+          (click)="onEdit()"
+          i18n="Edit button for forms"
         >
-          Activate user
+          Edit
         </button>
-      }
-      @if (editing() && (isInDialog() || currentUserAccount()?.enabled)) {
+      } @else {
+        @if (currentUserAccount()?.enabled) {
+          <button
+            mat-stroked-button
+            color="warn"
+            (click)="onToggleAccount(false)"
+            matTooltip="User will not be able to login again, no information will be lost"
+            i18n="button to update disable a user"
+          >
+            Deactivate user
+          </button>
+        } @else {
+          <button
+            mat-raised-button
+            color="accent"
+            (click)="onToggleAccount(true)"
+            matTooltip="User can login again with the previously used credentials"
+            i18n="button to enable a user"
+          >
+            Activate user
+          </button>
+        }
+
         <button
           mat-raised-button
           color="accent"
@@ -68,8 +79,6 @@
         >
           Save
         </button>
-      }
-      @if (editing()) {
         <button
           mat-stroked-button
           class="action-button"
@@ -77,16 +86,6 @@
           i18n="Cancel button for forms"
         >
           Cancel
-        </button>
-      }
-      @if (!editing()) {
-        <button
-          mat-raised-button
-          class="action-button"
-          (click)="onEdit()"
-          i18n="Edit button for forms"
-        >
-          Edit
         </button>
       }
     </div>

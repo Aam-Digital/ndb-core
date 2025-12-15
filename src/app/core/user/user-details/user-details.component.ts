@@ -98,16 +98,16 @@ export class UserDetailsComponent {
   protected currentUser = inject(CurrentUserSubject, { optional: true });
 
   userAccount = input<UserAccount | null>();
-  editing = input<boolean>(false);
   isInDialog = input<boolean>(!!this._dialogData || false);
   isProfileMode = input<boolean>(false);
 
-  disabled = computed(() => {
-    return !this.editing();
-  });
+  /**
+   * Signal tracking whether the form is disabled (view mode) or enabled (edit mode).
+   * This is mirroring form.disabled to allow reactive updates in the template.
+   */
+  formDisabled = signal(true);
 
   showPasswordChange = computed(() => this.isProfileMode());
-
   passwordChangeDisabled = computed(() => {
     if (!this.isProfileMode()) return false;
 
@@ -239,15 +239,6 @@ export class UserDetailsComponent {
         this.updateFormFromUser(user);
       }
     });
-
-    effect(() => {
-      const isDisabled = this.disabled() || false;
-      if (isDisabled) {
-        this.form.disable();
-      } else {
-        this.form.enable();
-      }
-    });
   }
 
   private initForm() {
@@ -256,6 +247,9 @@ export class UserDetailsComponent {
       roles: new FormControl<Role[]>([]),
       userEntityId: new FormControl<string | null>(null),
     });
+
+    // Initialize form as disabled
+    this.form.disable();
 
     // keep userEntityId disabled always
     this.form
@@ -288,6 +282,20 @@ export class UserDetailsComponent {
     this.action.emit(action);
     if (this.dialogRef) {
       this.dialogRef.close(action);
+    }
+  }
+
+  /**
+   * Helper method to cancel edit mode and reset form to original values.
+   * Used by both Cancel button and Close dialog.
+   */
+  private cancelEdit(): void {
+    this.form.disable();
+    this.formDisabled.set(true);
+    this.form.reset();
+    const user = this.userAccountForFormData();
+    if (user) {
+      this.updateFormFromUser(user);
     }
   }
 
@@ -429,6 +437,7 @@ export class UserDetailsComponent {
   }
 
   onCancel() {
+    this.cancelEdit();
     this.emitOrCloseWithAction({ type: "formCancel" });
   }
 
@@ -441,10 +450,15 @@ export class UserDetailsComponent {
   }
 
   onEdit() {
+    this.form.enable();
+    // Keep userEntityId disabled
+    this.form.get("userEntityId")?.disable();
+    this.formDisabled.set(false);
     this.emitOrCloseWithAction({ type: "editRequested" });
   }
 
   onCloseDialog() {
+    this.cancelEdit();
     this.emitOrCloseWithAction({ type: "formCancel" });
   }
 

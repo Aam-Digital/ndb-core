@@ -94,18 +94,35 @@ describe("UserDetailsComponent", () => {
     expect(component.form.get("roles")?.value).toEqual(mockUserAccount.roles);
   });
 
-  it("should disable form in view mode", () => {
-    fixture.componentRef.setInput("editing", false);
+  it("should initialize form as disabled", () => {
     fixture.detectChanges();
 
-    expect(!component.editing()).toBe(true);
+    expect(component.form.disabled).toBe(true);
+    expect(component.formDisabled()).toBe(true);
   });
 
-  it("should enable form in edit mode", () => {
-    fixture.componentRef.setInput("editing", true);
+  it("should enable form when onEdit is called", () => {
     fixture.detectChanges();
 
-    expect(!component.editing()).toBe(false);
+    component.onEdit();
+    fixture.detectChanges();
+
+    expect(component.form.disabled).toBe(false);
+    expect(component.formDisabled()).toBe(false);
+  });
+
+  it("should disable form when onCancel is called", () => {
+    fixture.detectChanges();
+    component.onEdit();
+    fixture.detectChanges();
+    expect(component.form.disabled).toBe(false);
+    expect(component.formDisabled()).toBe(false);
+
+    component.onCancel();
+    fixture.detectChanges();
+
+    expect(component.form.disabled).toBe(true);
+    expect(component.formDisabled()).toBe(true);
   });
 
   it("should trim whitespace from email", () => {
@@ -119,7 +136,8 @@ describe("UserDetailsComponent", () => {
 
   it("should validate required email", () => {
     fixture.componentRef.setInput("isInDialog", false);
-    fixture.componentRef.setInput("editing", true);
+    fixture.detectChanges();
+    component.onEdit();
     fixture.detectChanges();
 
     component.form.get("email")?.setValue("");
@@ -127,8 +145,8 @@ describe("UserDetailsComponent", () => {
   });
 
   it("should validate email format", () => {
-    fixture.componentRef.setInput("isInDialog", false);
-    fixture.componentRef.setInput("editing", true);
+    fixture.detectChanges();
+    component.onEdit();
     fixture.detectChanges();
 
     component.form.get("email")?.setValue("invalid-email");
@@ -140,12 +158,14 @@ describe("UserDetailsComponent", () => {
 
   it("should emit formSubmit when form is valid", () => {
     fixture.componentRef.setInput("isInDialog", false);
-    fixture.componentRef.setInput("editing", true);
     fixture.componentRef.setInput("userAccount", mockUserAccount);
     fixture.detectChanges();
 
     // Set the available roles manually since it's auto-populated from service
     component.availableRoles.set([mockRole]);
+
+    component.onEdit();
+    fixture.detectChanges();
 
     const submitSpy = jasmine.createSpy("action");
     component.action.subscribe(submitSpy);
@@ -167,7 +187,9 @@ describe("UserDetailsComponent", () => {
 
   it("should not emit formSubmit when form is invalid", () => {
     fixture.componentRef.setInput("isInDialog", false);
-    fixture.componentRef.setInput("editing", true);
+    fixture.detectChanges();
+
+    component.onEdit();
     fixture.detectChanges();
 
     const submitSpy = jasmine.createSpy("action");
@@ -198,7 +220,9 @@ describe("UserDetailsComponent", () => {
 
   it("should trigger sync reset when roles are updated", () => {
     fixture.componentRef.setInput("userAccount", mockUserAccount);
-    fixture.componentRef.setInput("editing", true);
+    fixture.detectChanges();
+
+    component.onEdit();
     fixture.detectChanges();
 
     component.availableRoles.set([mockRole]);
@@ -224,7 +248,9 @@ describe("UserDetailsComponent", () => {
 
   it("should not trigger sync reset when only email is updated", () => {
     fixture.componentRef.setInput("userAccount", mockUserAccount);
-    fixture.componentRef.setInput("editing", true);
+    fixture.detectChanges();
+
+    component.onEdit();
     fixture.detectChanges();
 
     component.availableRoles.set([mockRole]);
