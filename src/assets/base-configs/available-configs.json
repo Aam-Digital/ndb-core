@@ -13,7 +13,8 @@
       "basic/Config_Permissions.json",
       "basic/Config_SetupWizard.json",
       "basic/MarkdownContent_help.json",
-      "basic/SiteSettings_global.json"
+      "basic/SiteSettings_global.json",
+      "basic/PublicFormConfig_example.json"
     ],
     "locale": "en-US"
   },
@@ -32,6 +33,7 @@
       "basic/MarkdownContent_help.json",
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json",
+      "basic/PublicFormConfig_example.json",
       "education/EmailTemplate_birthday.json"
     ],
     "locale": "en-US"
@@ -51,6 +53,7 @@
       "basic/de/MarkdownContent_help.json",
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json",
+      "basic/PublicFormConfig_example.json",
       "education/de/EmailTemplate_birthday.json"
     ],
     "locale": "de"
@@ -70,6 +73,7 @@
       "basic/fr/MarkdownContent_help.json",
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json",
+      "basic/PublicFormConfig_example.json",
       "education/fr/EmailTemplate_birthday.json"
     ],
     "locale": "fr"
