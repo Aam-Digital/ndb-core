@@ -16,12 +16,11 @@
           ></app-admin-default-value-dynamic>
         }
         @case ("inherited-field") {
-          <!-- todo: implement inherited field default value component -->
-          <app-admin-default-value-updated
+          <app-admin-inherited-field
             formControlName="config"
             [entityType]="entityType"
             [entitySchemaField]="entitySchemaField"
-          ></app-admin-default-value-updated>
+          ></app-admin-inherited-field>
         }
       }
     </div>

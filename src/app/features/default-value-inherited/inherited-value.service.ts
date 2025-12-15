@@ -147,12 +147,15 @@ export class InheritedValueService extends DefaultValueStrategy {
       change,
     );
 
-    if (!parentEntity || parentEntity[defaultConfig.sourceValueField] === undefined) {
+    if (
+      !parentEntity ||
+      parentEntity[defaultConfig.sourceValueField] === undefined
+    ) {
       return;
     }
 
     let sourceValue = parentEntity[defaultConfig.sourceValueField];
-    
+
     // todo: handle mapping of values for test cases, need to update later
     if (defaultConfig.valueMapping && sourceValue !== undefined) {
       const mappedValue = defaultConfig.valueMapping[sourceValue];

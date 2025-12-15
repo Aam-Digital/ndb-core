@@ -26,7 +26,8 @@
       mat-raised-button
       class="configure-button"
       (click)="
-        $event.stopPropagation(); openAutomatedMappingDialog(value?.sourceEntityType)
+        $event.stopPropagation();
+        openAutomatedMappingDialog(value?.sourceEntityType)
       "
       [disabled]="!value?.sourceEntityType"
       i18n

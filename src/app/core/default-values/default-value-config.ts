@@ -24,7 +24,4 @@ export interface DefaultValueConfig {
   config?: any;
 }
 
-export type DefaultValueMode =
-  | "static"
-  | "dynamic"
-  | "inherited-field";
+export type DefaultValueMode = "static" | "dynamic" | "inherited-field";

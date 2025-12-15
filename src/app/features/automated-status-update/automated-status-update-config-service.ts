@@ -92,10 +92,7 @@ export class AutomatedStatusUpdateConfigService {
     fieldConfig: EntitySchemaField,
   ) {
     const rule = fieldConfig.defaultValue?.config;
-    if (
-      fieldConfig.defaultValue?.mode === "inherited-field" &&
-      rule
-    ) {
+    if (fieldConfig.defaultValue?.mode === "inherited-field" && rule) {
       this.processAutomatedRule(targetType, fieldKey, rule);
     }
   }

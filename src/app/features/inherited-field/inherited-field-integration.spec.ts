@@ -24,7 +24,7 @@ fdescribe("Inherited Field Integration Tests", () => {
   beforeEach(() => {
     mockEntityMapperService = jasmine.createSpyObj(["load", "receiveUpdates"]);
     mockEntityMapperService.receiveUpdates.and.returnValue(EMPTY);
-    
+
     TestBed.configureTestingModule({
       providers: [
         InheritedValueService,
@@ -32,164 +32,179 @@ fdescribe("Inherited Field Integration Tests", () => {
         { provide: EntityMapperService, useValue: mockEntityMapperService },
         { provide: EntityRegistry, useValue: new Map() },
         { provide: MatDialog, useValue: jasmine.createSpyObj(["open"]) },
-        { provide: UnsavedChangesService, useValue: jasmine.createSpyObj(["pending"]) },
-        { provide: EntitySchemaService, useValue: jasmine.createSpyObj(["valueToEntityFormat"]) },
-        { provide: ConfigService, useValue: jasmine.createSpyObj(["configUpdates"], { configUpdates: EMPTY }) },
+        {
+          provide: UnsavedChangesService,
+          useValue: jasmine.createSpyObj(["pending"]),
+        },
+        {
+          provide: EntitySchemaService,
+          useValue: jasmine.createSpyObj(["valueToEntityFormat"]),
+        },
+        {
+          provide: ConfigService,
+          useValue: jasmine.createSpyObj(["configUpdates"], {
+            configUpdates: EMPTY,
+          }),
+        },
         { provide: EntityAbility, useValue: jasmine.createSpyObj(["can"]) },
-        { provide: DefaultValueStrategy, useExisting: InheritedValueService, multi: true },
+        {
+          provide: DefaultValueStrategy,
+          useExisting: InheritedValueService,
+          multi: true,
+        },
       ],
     });
     inheritedValueService = TestBed.inject(InheritedValueService);
     automatedStatusService = TestBed.inject(AutomatedStatusUpdateConfigService);
   });
 
-    it("should inherit value from same entity reference field", async () => {
-      // given
-      const sourceEntity = new Entity("source:1");
-      sourceEntity["status"] = "active";
-      mockEntityMapperService.load.and.returnValue(Promise.resolve(sourceEntity));
+  it("should inherit value from same entity reference field", async () => {
+    // given
+    const sourceEntity = new Entity("source:1");
+    sourceEntity["status"] = "active";
+    mockEntityMapperService.load.and.returnValue(Promise.resolve(sourceEntity));
 
-      const config: DefaultValueConfigInheritedField = {
-        sourceReferenceField: "parentRef",
-        sourceValueField: "status",
-      };
+    const config: DefaultValueConfigInheritedField = {
+      sourceReferenceField: "parentRef",
+      sourceValueField: "status",
+    };
 
-      const entity = new Entity();
-      const form: EntityForm<any> = {
-        formGroup: new FormGroup<any>({
-          childStatus: new FormControl(null),
-          parentRef: new FormControl(("source:1")),
-        }),
-        onFormStateChange: new EventEmitter(),
-        entity: entity,
-        fieldConfigs: [],
-        watcher: new Map(),
-        inheritedParentValues: new Map(),
-      };
+    const entity = new Entity();
+    const form: EntityForm<any> = {
+      formGroup: new FormGroup<any>({
+        childStatus: new FormControl(null),
+        parentRef: new FormControl("source:1"),
+      }),
+      onFormStateChange: new EventEmitter(),
+      entity: entity,
+      fieldConfigs: [],
+      watcher: new Map(),
+      inheritedParentValues: new Map(),
+    };
 
-      const targetFormControl = form.formGroup.get("childStatus");
+    const targetFormControl = form.formGroup.get("childStatus");
 
-      // when
-      await inheritedValueService.setDefaultValue(
-        targetFormControl,
-        {
-          defaultValue: {
-            mode: "inherited-field",
-            config: config,
-          },
+    // when
+    await inheritedValueService.setDefaultValue(
+      targetFormControl,
+      {
+        defaultValue: {
+          mode: "inherited-field",
+          config: config,
         },
-        form,
-      );
+      },
+      form,
+    );
 
-      // then
-      expect(targetFormControl.value).toBe("active");
-      expect(mockEntityMapperService.load).toHaveBeenCalledWith(
-        "source",
-        ("source:1"),
-      );
+    // then
+    expect(targetFormControl.value).toBe("active");
+    expect(mockEntityMapperService.load).toHaveBeenCalledWith(
+      "source",
+      "source:1",
+    );
+  });
+
+  it("should apply value mapping when configured", async () => {
+    // given
+    const sourceEntity = new Entity("source:1");
+    sourceEntity["status"] = "ACTIVE";
+    mockEntityMapperService.load.and.returnValue(Promise.resolve(sourceEntity));
+
+    const config: DefaultValueConfigInheritedField = {
+      sourceReferenceField: "parentRef",
+      sourceValueField: "status",
+      valueMapping: {
+        ACTIVE: "in-progress",
+        COMPLETED: "done",
+      },
+    };
+
+    const entity = new Entity();
+    const form: EntityForm<any> = {
+      formGroup: new FormGroup<any>({
+        childStatus: new FormControl(null),
+        parentRef: new FormControl("source:1"),
+      }),
+      onFormStateChange: new EventEmitter(),
+      entity: entity,
+      fieldConfigs: [],
+      watcher: new Map(),
+      inheritedParentValues: new Map(),
+    };
+
+    const targetFormControl = form.formGroup.get("childStatus");
+
+    // when
+    await inheritedValueService.setDefaultValue(
+      targetFormControl,
+      {
+        defaultValue: {
+          mode: "inherited-field",
+          config: config,
+        },
+      },
+      form,
+    );
+
+    // then
+    expect(targetFormControl.value).toBe("in-progress");
+  });
+
+  it("should react to changes in source reference field", async () => {
+    // given
+    const sourceEntity1 = new Entity("source:1");
+    sourceEntity1["status"] = "active";
+
+    const sourceEntity2 = new Entity("source:2");
+    sourceEntity2["status"] = "completed";
+
+    mockEntityMapperService.load.and.callFake((entityConstructor, id) => {
+      if (id === "source:1") return Promise.resolve(sourceEntity1);
+      if (id === "source:2") return Promise.resolve(sourceEntity2);
+      return Promise.resolve(null);
     });
 
-    it("should apply value mapping when configured", async () => {
-      // given
-      const sourceEntity = new Entity("source:1");
-      sourceEntity["status"] = "ACTIVE";
-      mockEntityMapperService.load.and.returnValue(Promise.resolve(sourceEntity));
+    const config: DefaultValueConfigInheritedField = {
+      sourceReferenceField: "parentRef",
+      sourceValueField: "status",
+    };
 
-      const config: DefaultValueConfigInheritedField = {
-        sourceReferenceField: "parentRef",
-        sourceValueField: "status",
-        valueMapping: {
-          ACTIVE: "in-progress",
-          COMPLETED: "done",
+    const entity = new Entity();
+    const form: EntityForm<any> = {
+      formGroup: new FormGroup<any>({
+        childStatus: new FormControl(null),
+        parentRef: new FormControl("source:1"),
+      }),
+      onFormStateChange: new EventEmitter(),
+      entity: entity,
+      fieldConfigs: [],
+      watcher: new Map(),
+      inheritedParentValues: new Map(),
+    };
+
+    const targetFormControl = form.formGroup.get("childStatus");
+    const sourceRefControl = form.formGroup.get("parentRef");
+
+    // when - initial setup
+    await inheritedValueService.setDefaultValue(
+      targetFormControl,
+      {
+        defaultValue: {
+          mode: "inherited-field",
+          config: config,
         },
-      };
+      },
+      form,
+    );
 
-      const entity = new Entity();
-      const form: EntityForm<any> = {
-        formGroup: new FormGroup<any>({
-          childStatus: new FormControl(null),
-          parentRef: new FormControl(("source:1")),
-        }),
-        onFormStateChange: new EventEmitter(),
-        entity: entity,
-        fieldConfigs: [],
-        watcher: new Map(),
-        inheritedParentValues: new Map(),
-      };
+    // then - initial value
+    expect(targetFormControl.value).toBe("active");
 
-      const targetFormControl = form.formGroup.get("childStatus");
+    // when - change source reference
+    sourceRefControl.setValue("source:2");
+    await new Promise((resolve) => setTimeout(resolve, 0));
 
-      // when
-      await inheritedValueService.setDefaultValue(
-        targetFormControl,
-        {
-          defaultValue: {
-            mode: "inherited-field",
-            config: config,
-          },
-        },
-        form,
-      );
-
-      // then
-      expect(targetFormControl.value).toBe("in-progress");
-    });
-
-    it("should react to changes in source reference field", async () => {
-      // given
-      const sourceEntity1 = new Entity("source:1");
-      sourceEntity1["status"] = "active";
-
-      const sourceEntity2 = new Entity("source:2");
-      sourceEntity2["status"] = "completed";
-
-      mockEntityMapperService.load.and.callFake((entityConstructor, id) => {
-        if (id === ("source:1")) return Promise.resolve(sourceEntity1);
-        if (id === ("source:2")) return Promise.resolve(sourceEntity2);
-        return Promise.resolve(null);
-      });
-
-      const config: DefaultValueConfigInheritedField = {
-        sourceReferenceField: "parentRef",
-        sourceValueField: "status",
-      };
-
-      const entity = new Entity();
-      const form: EntityForm<any> = {
-        formGroup: new FormGroup<any>({
-          childStatus: new FormControl(null),
-          parentRef: new FormControl(("source:1")),
-        }),
-        onFormStateChange: new EventEmitter(),
-        entity: entity,
-        fieldConfigs: [],
-        watcher: new Map(),
-        inheritedParentValues: new Map(),
-      };
-
-      const targetFormControl = form.formGroup.get("childStatus");
-      const sourceRefControl = form.formGroup.get("parentRef");
-
-      // when - initial setup
-      await inheritedValueService.setDefaultValue(
-        targetFormControl,
-        {
-          defaultValue: {
-            mode: "inherited-field",
-            config: config,
-          },
-        },
-        form,
-      );
-
-      // then - initial value
-      expect(targetFormControl.value).toBe("active");
-
-      // when - change source reference
-      sourceRefControl.setValue("source:2");
-      await new Promise(resolve => setTimeout(resolve, 0));
-
-      // then - value should update
-      expect(targetFormControl.value).toBe("completed");
-    });
+    // then - value should update
+    expect(targetFormControl.value).toBe("completed");
+  });
 });
