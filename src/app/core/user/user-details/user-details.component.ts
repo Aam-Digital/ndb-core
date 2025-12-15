@@ -5,6 +5,7 @@ import {
   effect,
   inject,
   input,
+  model,
   resource,
   signal,
 } from "@angular/core";
@@ -37,9 +38,10 @@ import { Angulartics2Module } from "angulartics2";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
 import { EditEntityComponent } from "../../basic-datatypes/entity/edit-entity/edit-entity.component";
-import { lastValueFrom } from "rxjs";
+import { lastValueFrom, of } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { catchError, map } from "rxjs/operators";
 
 /**
  * Options as input to the UserDetailsComponent when it is opened in a dialog.
@@ -96,7 +98,7 @@ export class UserDetailsComponent {
   });
   protected currentUser = inject(CurrentUserSubject, { optional: true });
 
-  userAccount = input<UserAccount | null>(this._dialogData?.userAccount);
+  userAccount = model<UserAccount | null>(this._dialogData?.userAccount);
   isInDialog = input<boolean>(!!this._dialogData || false);
   isProfileMode = input<boolean>(false);
 
@@ -232,7 +234,7 @@ export class UserDetailsComponent {
     this.form.markAsPristine();
   }
 
-  save() {
+  async save() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -241,13 +243,13 @@ export class UserDetailsComponent {
     const formValue = this.form.getRawValue();
 
     if (this.creatingNewAccount()) {
-      this.createAccount(formValue);
+      await this.createAccount(formValue);
     } else {
-      this.updateAccount(formValue);
+      await this.updateAccount(formValue);
     }
   }
 
-  private createAccount(formData: Partial<UserAccount>) {
+  private async createAccount(formData: Partial<UserAccount>) {
     const userEntityId = formData.userEntityId;
     if (!userEntityId) {
       this.alertService.addDanger(
@@ -267,7 +269,8 @@ export class UserDetailsComponent {
           this.alertService.addInfo(
             $localize`:Snackbar message:Account created. An email has been sent to ${formData.email}`,
           );
-          this.exitEditMode({
+          this.formDisabled.set(true);
+          this.closeDialog({
             type: "accountCreated",
             data: {
               ...formData,
@@ -287,7 +290,7 @@ export class UserDetailsComponent {
       });
   }
 
-  private updateAccount(formData: Partial<UserAccount>) {
+  private async updateAccount(formData: Partial<UserAccount>) {
     const currentUser = this.userAccount();
     if (!currentUser) {
       return;
@@ -302,52 +305,69 @@ export class UserDetailsComponent {
     }
 
     if (Object.keys(update).length === 0) {
-      this.exitEditMode({ type: "formCancel" });
+      this.closeDialog({ type: "formCancel" });
       return;
     }
 
-    this.updateUserAccount(
+    const result = await this.updateUserAccount(
       update,
       $localize`:Snackbar message:Successfully updated user`,
     );
-  }
-
-  private updateUserAccount(update: Partial<UserAccount>, message: string) {
-    const currentUser = this.userAccount();
-    if (!currentUser) {
-      return;
-    }
-
-    this.userAdminService.updateUser(currentUser.id, update).subscribe({
-      next: () => {
-        this.alertService.addInfo(message);
-        const updatedUser = { ...currentUser, ...update };
-        if (update.roles?.length > 0) {
-          this.triggerSyncReset();
-        }
-        this.exitEditMode({
-          type: "accountUpdated",
-          data: {
-            user: updatedUser,
-          },
-        });
-      },
-      error: (error) => {
-        this.alertService.addDanger(
-          error?.error?.message ||
-            error?.message ||
-            $localize`:Error message:Failed to update user account`,
-        );
+    this.formDisabled.set(true);
+    this.closeDialog({
+      type: "accountUpdated",
+      data: {
+        user: result,
       },
     });
   }
 
-  enableAccount(enabled: boolean) {
+  private async updateUserAccount(
+    update: Partial<UserAccount>,
+    message: string,
+  ): Promise<UserAccount | null> {
+    const currentUser = this.userAccount();
+    if (!currentUser) {
+      return null;
+    }
+
+    return lastValueFrom(
+      this.userAdminService.updateUser(currentUser.id, update).pipe(
+        map((result) => {
+          if (!result.userUpdated) {
+            Logging.warn("User account not updated");
+            return null;
+          }
+
+          this.alertService.addInfo(message);
+          const updatedUser = { ...currentUser, ...update };
+          this.userAccount.set(updatedUser);
+
+          if (update.roles?.length > 0) {
+            this.triggerSyncReset();
+          }
+
+          return updatedUser;
+        }),
+        catchError((error) => {
+          this.alertService.addDanger(
+            error?.error?.message ||
+              error?.message ||
+              $localize`:Error message:Failed to update user account`,
+          );
+          Logging.error("Failed to update user account", error);
+          return of(null);
+        }),
+      ),
+    );
+  }
+
+  async enableAccount(enabled: boolean) {
     const message = enabled
       ? $localize`:Snackbar message:Account has been activated, user can login again.`
       : $localize`:Snackbar message:Account has been disabled, user will not be able to login anymore.`;
 
-    this.updateUserAccount({ enabled }, message);
+    await this.updateUserAccount({ enabled }, message);
   }
 
   editMode() {
@@ -361,12 +381,11 @@ export class UserDetailsComponent {
       this.updateFormFromUser(user);
     }
 
-    this.exitEditMode({ type: "formCancel" });
+    this.formDisabled.set(true);
+    this.closeDialog({ type: "formCancel" });
   }
 
-  private exitEditMode(result: UserDetailsAction) {
-    this.formDisabled.set(true);
-
+  private closeDialog(result: UserDetailsAction) {
     if (this.dialogRef) {
       this.dialogRef.close(result);
     }

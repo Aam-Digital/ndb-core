@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 import { UserDetailsComponent } from "./user-details.component";
 import { Role, UserAccount } from "../user-admin-service/user-account";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
@@ -156,7 +161,7 @@ describe("UserDetailsComponent", () => {
     expect(component.form.get("email")?.hasError("email")).toBe(false);
   });
 
-  it("should close dialog with accountUpdated result when form is valid", () => {
+  it("should close dialog with accountUpdated result when form is valid", fakeAsync(() => {
     fixture.componentRef.setInput("isInDialog", false);
     fixture.componentRef.setInput("userAccount", mockUserAccount);
     fixture.detectChanges();
@@ -170,6 +175,7 @@ describe("UserDetailsComponent", () => {
     });
 
     component.save();
+    tick();
 
     expect(mockDialogRef.close).toHaveBeenCalledWith(
       jasmine.objectContaining({
@@ -177,7 +183,7 @@ describe("UserDetailsComponent", () => {
         data: jasmine.anything(),
       }),
     );
-  });
+  }));
 
   it("should not close dialog when form is invalid", () => {
     fixture.componentRef.setInput("isInDialog", false);
