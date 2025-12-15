@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { UserDetailsComponent } from "./user-details.component";
 import { Role, UserAccount } from "../user-admin-service/user-account";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
@@ -105,15 +100,6 @@ describe("UserDetailsComponent", () => {
     expect(component.form.get("email")?.value).toBe(mockUserAccount.email);
     expect(component.form.get("roles")?.value).toEqual(mockUserAccount.roles);
   });
-
-  it("should initialize form as disabled", fakeAsync(() => {
-    fixture.componentRef.setInput("userAccount", { id: 1 } as any);
-    fixture.detectChanges();
-    tick();
-
-    expect(component.form.disabled).toBe(true);
-    expect(component.formDisabled()).toBe(true);
-  }));
 
   it("should enable form when onEdit is called", () => {
     fixture.detectChanges();

@@ -52,7 +52,7 @@ import { SessionSubject } from "#src/app/core/session/auth/session-info";
 export class ProfileComponent {
   private readonly sessionInfo = inject(SessionSubject);
 
-  userAccount = computed<UserAccount>(() => {
+  userAccount = computed<UserAccount | null>(() => {
     if (!this.sessionInfo?.value) return null;
 
     const sessionRoles = this.sessionInfo.value.roles || [];
@@ -66,6 +66,7 @@ export class ProfileComponent {
     }));
 
     return {
+      id: null,
       email: this.sessionInfo.value.email,
       enabled: true,
       roles: mappedRoles,
