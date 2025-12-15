@@ -16,10 +16,7 @@ import { switchMap } from "rxjs/operators";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
 import { UserAccount } from "../user-admin-service/user-account";
 import { of } from "rxjs";
-import {
-  UserDetailsComponent,
-  UserDetailsAction,
-} from "../user-details/user-details.component";
+import { UserDetailsComponent } from "../user-details/user-details.component";
 
 /**
  * Display User Account details and configuration related to a given profile Entity.

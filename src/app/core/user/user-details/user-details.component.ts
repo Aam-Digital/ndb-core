@@ -41,12 +41,18 @@ import { EditEntityComponent } from "../../basic-datatypes/entity/edit-entity/ed
 import { filter } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 
+/**
+ * Options as input to the UserDetailsComponent when it is opened in a dialog.
+ */
 export interface UserDetailsDialogData {
   userAccount: UserAccount | null;
   editing: boolean;
   isInDialog?: boolean;
 }
 
+/**
+ * Return value of the UserDetailsComponent after a user interacts with it.
+ */
 export interface UserDetailsAction {
   type: "formCancel" | "editRequested" | "accountCreated" | "accountUpdated";
   data?: any;
