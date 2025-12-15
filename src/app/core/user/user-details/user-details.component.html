@@ -15,7 +15,7 @@
         There is no user account set up for this user yet. Enable this user to
         log into the app by filling the details below.
       </p>
-      @if ((editing() || dialogData?.editing) && !currentUserAccount()) {
+      @if (editing() && !currentUserAccount()) {
         <button
           mat-raised-button
           type="submit"
@@ -35,9 +35,7 @@
     <div
       class="padding-bottom-small flex-row gap-small align-self-end flex-wrap padding-top-small"
     >
-      @if (
-        (editing() || dialogData?.editing) && currentUserAccount()?.enabled
-      ) {
+      @if (editing() && currentUserAccount()?.enabled) {
         <button
           mat-stroked-button
           color="warn"
@@ -48,9 +46,7 @@
           Deactivate user
         </button>
       }
-      @if (
-        (editing() || dialogData?.editing) && !currentUserAccount()?.enabled
-      ) {
+      @if (editing() && !currentUserAccount()?.enabled) {
         <button
           mat-raised-button
           color="accent"
@@ -61,10 +57,7 @@
           Activate user
         </button>
       }
-      @if (
-        (editing() || dialogData?.editing) &&
-        (isInDialog() || currentUserAccount()?.enabled)
-      ) {
+      @if (editing() && (isInDialog() || currentUserAccount()?.enabled)) {
         <button
           mat-raised-button
           color="accent"
@@ -76,7 +69,7 @@
           Save
         </button>
       }
-      @if (editing() || dialogData?.editing) {
+      @if (editing()) {
         <button
           mat-stroked-button
           class="action-button"
@@ -86,7 +79,7 @@
           Cancel
         </button>
       }
-      @if (!(editing() || dialogData?.editing)) {
+      @if (!editing()) {
         <button
           mat-raised-button
           class="action-button"

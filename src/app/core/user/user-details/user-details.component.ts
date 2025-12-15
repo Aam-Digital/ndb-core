@@ -46,8 +46,6 @@ import { Entity } from "../../entity/model/entity";
  */
 export interface UserDetailsDialogData {
   userAccount: UserAccount | null;
-  editing: boolean;
-  isInDialog?: boolean;
 }
 
 /**
@@ -85,7 +83,10 @@ export class UserDetailsComponent {
   private readonly userAdminService = inject(UserAdminService);
   private readonly alertService = inject(AlertService);
   private readonly http = inject(HttpClient);
-  private readonly _dialogData = inject(MAT_DIALOG_DATA, { optional: true });
+  private readonly _dialogData: UserDetailsDialogData = inject(
+    MAT_DIALOG_DATA,
+    { optional: true },
+  );
   private readonly dialogRef = inject(
     MatDialogRef<UserDetailsComponent, UserDetailsAction>,
     { optional: true },
@@ -96,17 +97,13 @@ export class UserDetailsComponent {
   protected sessionInfo = inject(SessionSubject, { optional: true });
   protected currentUser = inject(CurrentUserSubject, { optional: true });
 
-  get dialogData() {
-    return this._dialogData;
-  }
-
   userAccount = input<UserAccount | null>();
   editing = input<boolean>(false);
-  isInDialog = input<boolean>(this._dialogData?.isInDialog || false);
+  isInDialog = input<boolean>(!!this._dialogData || false);
   isProfileMode = input<boolean>(false);
 
   disabled = computed(() => {
-    return !this.editing() && !this._dialogData?.editing;
+    return !this.editing();
   });
 
   showPasswordChange = computed(() => this.isProfileMode());
@@ -191,25 +188,7 @@ export class UserDetailsComponent {
   form: FormGroup;
 
   constructor() {
-    this.form = this.fb.group({
-      email: ["", [Validators.required, Validators.email]],
-      roles: new FormControl<Role[]>([]),
-      userEntityId: new FormControl<string | null>(null),
-    });
-
-    // keep userEntityId disabled always
-    this.form
-      .get("userEntityId")
-      .statusChanges.pipe(
-        untilDestroyed(this),
-        filter(() => this.form.get("userEntityId").enabled),
-      )
-      .subscribe(() => this.form.get("userEntityId").disable());
-
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      this.form.markAllAsTouched();
-      this.form.markAsDirty();
-    });
+    this.initForm();
 
     // update mode if in Dialog
     effect(() => {
@@ -262,12 +241,34 @@ export class UserDetailsComponent {
     });
 
     effect(() => {
-      const isDisabled = this.disabled() || this._dialogData?.disabled || false;
+      const isDisabled = this.disabled() || false;
       if (isDisabled) {
         this.form.disable();
       } else {
         this.form.enable();
       }
+    });
+  }
+
+  private initForm() {
+    this.form = this.fb.group({
+      email: ["", [Validators.required, Validators.email]],
+      roles: new FormControl<Role[]>([]),
+      userEntityId: new FormControl<string | null>(null),
+    });
+
+    // keep userEntityId disabled always
+    this.form
+      .get("userEntityId")
+      .statusChanges.pipe(
+        untilDestroyed(this),
+        filter(() => this.form.get("userEntityId").enabled),
+      )
+      .subscribe(() => this.form.get("userEntityId").disable());
+
+    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.form.markAllAsTouched();
+      this.form.markAsDirty();
     });
   }
 

@@ -98,14 +98,14 @@ describe("UserDetailsComponent", () => {
     fixture.componentRef.setInput("editing", false);
     fixture.detectChanges();
 
-    expect(component.disabled()).toBe(true);
+    expect(!component.editing()).toBe(true);
   });
 
   it("should enable form in edit mode", () => {
     fixture.componentRef.setInput("editing", true);
     fixture.detectChanges();
 
-    expect(component.disabled()).toBe(false);
+    expect(!component.editing()).toBe(false);
   });
 
   it("should trim whitespace from email", () => {

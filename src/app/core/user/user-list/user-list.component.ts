@@ -73,8 +73,6 @@ export class UserListComponent implements OnInit {
   openUserDetails(user: UserAccount) {
     const dialogData: UserDetailsDialogData = {
       userAccount: user,
-      editing: true,
-      isInDialog: true,
     };
 
     const dialogRef = this.dialog.open(UserDetailsComponent, {
