@@ -6,6 +6,7 @@ import {
   inject,
   input,
   output,
+  resource,
   signal,
 } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
@@ -38,7 +39,7 @@ import { Angulartics2Module } from "angulartics2";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
 import { EditEntityComponent } from "../../basic-datatypes/entity/edit-entity/edit-entity.component";
-import { filter } from "rxjs";
+import { filter, lastValueFrom } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 
 /**
@@ -137,16 +138,15 @@ export class UserDetailsComponent {
 
     if (this.sessionInfo?.value) {
       const sessionRoles = this.sessionInfo.value.roles || [];
-      const availableRoles = this.availableRoles();
 
       let mappedRoles: Role[] = [];
-      if (availableRoles.length > 0) {
+      if (this.availableRoles.value().length > 0) {
         // Map roles only if available roles are loaded
         mappedRoles = sessionRoles
           .map((roleName) =>
-            availableRoles.find(
-              (r) => r.id === roleName || r.name === roleName,
-            ),
+            this.availableRoles
+              .value()
+              .find((r) => r.id === roleName || r.name === roleName),
           )
           .filter((role): role is Role => role !== undefined);
       } else {
@@ -181,7 +181,17 @@ export class UserDetailsComponent {
     return this.currentUserAccount();
   });
 
-  availableRoles = signal<Role[]>([]);
+  availableRoles = resource<Role[], unknown>({
+    loader: async () => {
+      try {
+        return await lastValueFrom(this.userAdminService.getAllRoles());
+      } catch (err) {
+        console.error("Failed to load available roles:", err);
+        return [];
+      }
+    },
+    defaultValue: [],
+  });
 
   action = output<UserDetailsAction>();
 
@@ -189,13 +199,6 @@ export class UserDetailsComponent {
 
   constructor() {
     this.initForm();
-
-    // update mode if in Dialog
-    effect(() => {
-      if (this.isInDialog()) {
-        return "dialog";
-      }
-    });
 
     // Add roles validation only when not in profile mode
     effect(() => {
@@ -210,19 +213,6 @@ export class UserDetailsComponent {
         rolesControl.updateValueAndValidity();
       }
     });
-
-    this.userAdminService
-      .getAllRoles()
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (roles) => {
-          this.availableRoles.set(roles);
-        },
-        error: (err) => {
-          console.error("Failed to load available roles:", err);
-          this.availableRoles.set([]);
-        },
-      });
 
     // Auto-trim whitespace from email
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((next) => {
@@ -278,7 +268,9 @@ export class UserDetailsComponent {
       {
         email: user.email,
         roles: (user.roles ?? [])
-          .map((role) => this.availableRoles().find((r) => r.id === role.id))
+          .map((role) =>
+            this.availableRoles.value()?.find((r) => r.id === role.id),
+          )
           .filter((role): role is Role => role !== undefined), // Filter out undefined roles
         userEntityId: !user.userEntityId
           ? null

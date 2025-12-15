@@ -161,9 +161,6 @@ describe("UserDetailsComponent", () => {
     fixture.componentRef.setInput("userAccount", mockUserAccount);
     fixture.detectChanges();
 
-    // Set the available roles manually since it's auto-populated from service
-    component.availableRoles.set([mockRole]);
-
     component.editMode();
     fixture.detectChanges();
 
@@ -225,14 +222,12 @@ describe("UserDetailsComponent", () => {
     component.editMode();
     fixture.detectChanges();
 
-    component.availableRoles.set([mockRole]);
-
     const newRole: Role = {
       id: "new-role",
       name: "admin",
       description: "Admin role",
     };
-    component.availableRoles.set([mockRole, newRole]);
+    mockUserAdminService.getAllRoles.and.returnValue(of([mockRole, newRole]));
 
     component.form.patchValue({
       roles: [mockRole, newRole],
@@ -252,8 +247,6 @@ describe("UserDetailsComponent", () => {
 
     component.editMode();
     fixture.detectChanges();
-
-    component.availableRoles.set([mockRole]);
 
     component.form.patchValue({
       email: "newemail@example.com",

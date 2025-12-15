@@ -138,7 +138,7 @@
                 <span>{{ role.name }} </span>
               }
             </mat-select-trigger>
-            @for (role of availableRoles(); track role) {
+            @for (role of availableRoles.value(); track role) {
               <mat-option [value]="role" [matTooltip]="role.description">
                 {{ role.description }}
                 <em class="role-name">{{ role.name }}</em>
