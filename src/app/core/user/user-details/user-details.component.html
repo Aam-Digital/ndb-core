@@ -1,7 +1,7 @@
 @if (isInDialog()) {
   <div>
     <h2 mat-dialog-title i18n>Edit User Account</h2>
-    <app-dialog-close (click)="onCloseDialog()"></app-dialog-close>
+    <app-dialog-close></app-dialog-close>
   </div>
 }
 
@@ -20,7 +20,7 @@
         <button
           mat-raised-button
           type="submit"
-          (click)="onSubmit()"
+          (click)="save()"
           class="invite-button"
           color="accent"
           [class.invite-button-animate]="true"
@@ -41,7 +41,7 @@
         <button
           mat-raised-button
           class="action-button"
-          (click)="onEdit()"
+          (click)="editMode()"
           i18n="Edit button for forms"
         >
           Edit
@@ -51,7 +51,7 @@
           <button
             mat-stroked-button
             color="warn"
-            (click)="onToggleAccount(false)"
+            (click)="enableAccount(false)"
             matTooltip="User will not be able to login again, no information will be lost"
             i18n="button to update disable a user"
           >
@@ -61,7 +61,7 @@
           <button
             mat-raised-button
             color="accent"
-            (click)="onToggleAccount(true)"
+            (click)="enableAccount(true)"
             matTooltip="User can login again with the previously used credentials"
             i18n="button to enable a user"
           >
@@ -74,7 +74,7 @@
           color="accent"
           class="action-button"
           [disabled]="!form.valid || !form.dirty"
-          (click)="onSubmit()"
+          (click)="save()"
           i18n="Save button for forms"
         >
           Save
@@ -82,7 +82,7 @@
         <button
           mat-stroked-button
           class="action-button"
-          (click)="onCancel()"
+          (click)="cancel()"
           i18n="Cancel button for forms"
         >
           Cancel
@@ -163,7 +163,7 @@
             mat-stroked-button
             type="button"
             color="primary"
-            (click)="onChangePassword()"
+            (click)="changePassword()"
             angulartics2On="click"
             angularticsCategory="User"
             angularticsAction="password_update"

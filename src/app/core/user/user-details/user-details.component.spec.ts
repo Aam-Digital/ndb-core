@@ -104,7 +104,7 @@ describe("UserDetailsComponent", () => {
   it("should enable form when onEdit is called", () => {
     fixture.detectChanges();
 
-    component.onEdit();
+    component.editMode();
     fixture.detectChanges();
 
     expect(component.form.disabled).toBe(false);
@@ -113,12 +113,12 @@ describe("UserDetailsComponent", () => {
 
   it("should disable form when onCancel is called", () => {
     fixture.detectChanges();
-    component.onEdit();
+    component.editMode();
     fixture.detectChanges();
     expect(component.form.disabled).toBe(false);
     expect(component.formDisabled()).toBe(false);
 
-    component.onCancel();
+    component.cancel();
     fixture.detectChanges();
 
     expect(component.form.disabled).toBe(true);
@@ -137,7 +137,7 @@ describe("UserDetailsComponent", () => {
   it("should validate required email", () => {
     fixture.componentRef.setInput("isInDialog", false);
     fixture.detectChanges();
-    component.onEdit();
+    component.editMode();
     fixture.detectChanges();
 
     component.form.get("email")?.setValue("");
@@ -146,7 +146,7 @@ describe("UserDetailsComponent", () => {
 
   it("should validate email format", () => {
     fixture.detectChanges();
-    component.onEdit();
+    component.editMode();
     fixture.detectChanges();
 
     component.form.get("email")?.setValue("invalid-email");
@@ -164,7 +164,7 @@ describe("UserDetailsComponent", () => {
     // Set the available roles manually since it's auto-populated from service
     component.availableRoles.set([mockRole]);
 
-    component.onEdit();
+    component.editMode();
     fixture.detectChanges();
 
     const submitSpy = jasmine.createSpy("action");
@@ -175,7 +175,7 @@ describe("UserDetailsComponent", () => {
       roles: [mockRole],
     });
 
-    component.onSubmit();
+    component.save();
 
     expect(submitSpy).toHaveBeenCalledWith(
       jasmine.objectContaining({
@@ -189,14 +189,14 @@ describe("UserDetailsComponent", () => {
     fixture.componentRef.setInput("isInDialog", false);
     fixture.detectChanges();
 
-    component.onEdit();
+    component.editMode();
     fixture.detectChanges();
 
     const submitSpy = jasmine.createSpy("action");
     component.action.subscribe(submitSpy);
 
     component.form.patchValue({ email: "" });
-    component.onSubmit();
+    component.save();
 
     expect(submitSpy).not.toHaveBeenCalled();
   });
@@ -205,7 +205,7 @@ describe("UserDetailsComponent", () => {
     const cancelSpy = jasmine.createSpy("action");
     component.action.subscribe(cancelSpy);
 
-    component.onCancel();
+    component.cancel();
 
     expect(cancelSpy).toHaveBeenCalledWith({ type: "formCancel" });
   });
@@ -222,7 +222,7 @@ describe("UserDetailsComponent", () => {
     fixture.componentRef.setInput("userAccount", mockUserAccount);
     fixture.detectChanges();
 
-    component.onEdit();
+    component.editMode();
     fixture.detectChanges();
 
     component.availableRoles.set([mockRole]);
@@ -238,7 +238,7 @@ describe("UserDetailsComponent", () => {
       roles: [mockRole, newRole],
     });
 
-    component.onSubmit();
+    component.save();
 
     expect(mockHttpClient.post).toHaveBeenCalledWith(
       jasmine.stringContaining("/admin/clear_local/"),
@@ -250,7 +250,7 @@ describe("UserDetailsComponent", () => {
     fixture.componentRef.setInput("userAccount", mockUserAccount);
     fixture.detectChanges();
 
-    component.onEdit();
+    component.editMode();
     fixture.detectChanges();
 
     component.availableRoles.set([mockRole]);
@@ -260,7 +260,7 @@ describe("UserDetailsComponent", () => {
       roles: [mockRole], // Same roles
     });
 
-    component.onSubmit();
+    component.save();
 
     expect(mockHttpClient.post).not.toHaveBeenCalled();
   });

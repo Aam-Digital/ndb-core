@@ -97,7 +97,7 @@ export class UserDetailsComponent {
   protected sessionInfo = inject(SessionSubject, { optional: true });
   protected currentUser = inject(CurrentUserSubject, { optional: true });
 
-  userAccount = input<UserAccount | null>();
+  userAccount = input<UserAccount | null>(this._dialogData?.userAccount);
   isInDialog = input<boolean>(!!this._dialogData || false);
   isProfileMode = input<boolean>(false);
 
@@ -127,7 +127,7 @@ export class UserDetailsComponent {
    */
   currentUserAccount = computed(() => {
     // Use the directly provided user account
-    const directUser = this.userAccount() ?? this._dialogData?.userAccount;
+    const directUser = this.userAccount();
     if (directUser && !this.isProfileMode()) {
       if (directUser.id) {
         return directUser;
@@ -174,7 +174,7 @@ export class UserDetailsComponent {
    * Unlike currentUserAccount, this includes placeholder accounts to populate userEntityId.
    */
   private userAccountForFormData = computed(() => {
-    const directUser = this.userAccount() ?? this._dialogData?.userAccount;
+    const directUser = this.userAccount();
     if (directUser && !this.isProfileMode()) {
       return directUser;
     }
@@ -273,32 +273,6 @@ export class UserDetailsComponent {
     return this.sessionInfo.value.roles.join(", ");
   }
 
-  /**
-   * Helper method to emit action or close dialog depending on the context.
-   * If component is used in a dialog, closes the dialog with the action.
-   * Otherwise, emits the action through the output.
-   */
-  private emitOrCloseWithAction(action: UserDetailsAction): void {
-    this.action.emit(action);
-    if (this.dialogRef) {
-      this.dialogRef.close(action);
-    }
-  }
-
-  /**
-   * Helper method to cancel edit mode and reset form to original values.
-   * Used by both Cancel button and Close dialog.
-   */
-  private cancelEdit(): void {
-    this.form.disable();
-    this.formDisabled.set(true);
-    this.form.reset();
-    const user = this.userAccountForFormData();
-    if (user) {
-      this.updateFormFromUser(user);
-    }
-  }
-
   private updateFormFromUser(user: UserAccount) {
     this.form.patchValue(
       {
@@ -318,7 +292,7 @@ export class UserDetailsComponent {
     this.form.markAsPristine();
   }
 
-  onSubmit() {
+  save() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -354,7 +328,7 @@ export class UserDetailsComponent {
           this.alertService.addInfo(
             $localize`:Snackbar message:Account created. An email has been sent to ${formData.email}`,
           );
-          this.emitOrCloseWithAction({
+          this.exitEditMode({
             type: "accountCreated",
             data: {
               ...formData,
@@ -388,7 +362,7 @@ export class UserDetailsComponent {
     }
 
     if (Object.keys(update).length === 0) {
-      this.emitOrCloseWithAction({ type: "formCancel" });
+      this.exitEditMode({ type: "formCancel" });
       return;
     }
 
@@ -411,7 +385,7 @@ export class UserDetailsComponent {
         if (update.roles?.length > 0) {
           this.triggerSyncReset();
         }
-        this.emitOrCloseWithAction({
+        this.exitEditMode({
           type: "accountUpdated",
           data: {
             user: updatedUser,
@@ -428,7 +402,7 @@ export class UserDetailsComponent {
     });
   }
 
-  onToggleAccount(enabled: boolean) {
+  enableAccount(enabled: boolean) {
     const message = enabled
       ? $localize`:Snackbar message:Account has been activated, user can login again.`
       : $localize`:Snackbar message:Account has been disabled, user will not be able to login anymore.`;
@@ -436,9 +410,30 @@ export class UserDetailsComponent {
     this.updateUserAccount({ enabled }, message);
   }
 
-  onCancel() {
-    this.cancelEdit();
-    this.emitOrCloseWithAction({ type: "formCancel" });
+  editMode() {
+    this.form.enable();
+    // Keep userEntityId disabled
+    this.form.get("userEntityId")?.disable();
+    this.formDisabled.set(false);
+  }
+
+  cancel() {
+    this.form.reset();
+    const user = this.userAccountForFormData();
+    if (user) {
+      this.updateFormFromUser(user);
+    }
+
+    this.exitEditMode({ type: "formCancel" });
+  }
+
+  private exitEditMode(result: UserDetailsAction) {
+    this.form.disable();
+    this.formDisabled.set(true);
+
+    if (this.dialogRef) {
+      this.dialogRef.close(result);
+    }
   }
 
   getFormError(field: string, errorType: string): boolean {
@@ -449,20 +444,7 @@ export class UserDetailsComponent {
     return this.form.getError("failed");
   }
 
-  onEdit() {
-    this.form.enable();
-    // Keep userEntityId disabled
-    this.form.get("userEntityId")?.disable();
-    this.formDisabled.set(false);
-    this.emitOrCloseWithAction({ type: "editRequested" });
-  }
-
-  onCloseDialog() {
-    this.cancelEdit();
-    this.emitOrCloseWithAction({ type: "formCancel" });
-  }
-
-  onChangePassword() {
+  changePassword() {
     if (this.authService) {
       this.authService.changePassword();
     }
