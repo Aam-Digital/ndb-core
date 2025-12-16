@@ -26,8 +26,8 @@ export default defineConfig({
     [
       "@argos-ci/playwright/reporter",
       {
-        // Upload in a separate step in CI
-        uploadToArgos: false,
+        // Let Argos reporter handle uploads (it handles retries automatically)
+        uploadToArgos: !!process.env.CI,
       },
     ],
     [process.env.CI ? "github" : "null"],
