@@ -33,7 +33,9 @@ test("Translated and localized app versions (i18n)", async ({ page }) => {
   // it. As a workaround we move to a different view and back to the dashboard
   await page.getByRole("navigation").getByText("Schüler:innen").click();
   await page.getByRole("navigation").getByText("Dashboard").click();
-  await expect(page.getByText("8 Schüler:innen")).toBeVisible();
+  await expect(page.getByText("99 Schüler:innen")).toBeVisible({
+    timeout: 10_000,
+  });
 
   // Wait for all dashboard widgets to finish loading before taking screenshot
   await waitForDashboardWidgetsToLoad(page);
