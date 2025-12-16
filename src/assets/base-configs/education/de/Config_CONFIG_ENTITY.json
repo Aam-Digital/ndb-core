@@ -66,7 +66,7 @@
                   "link": "/child/new"
                 },
                 {
-                  "label": "Öffentliches Regstrierungsformular",
+                  "label": "Öffentliches Anmelde-Formular",
                   "icon": "file-circle-check",
                   "link": "/public-form/form/example"
                 },
@@ -1029,7 +1029,7 @@
         "contactPerson": {
           "dataType": "entity",
           "additional": "User",
-          "label": "Contact Person"
+          "label": "Kontaktperson"
         }
       }
     },
@@ -1051,6 +1051,9 @@
         "filters": [
           {
             "id": "privateSchool"
+          },
+          {
+            "id": "contactPerson"
           }
         ]
       },

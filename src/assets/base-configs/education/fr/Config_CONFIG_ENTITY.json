@@ -39,7 +39,7 @@
               "entityType": "User"
             },
             {
-              "label": "Reports",
+              "label": "Rapports",
               "icon": "line-chart",
               "link": "/report"
             }
@@ -441,7 +441,7 @@
         ],
         "columnGroups": {
           "default": "Informations de base",
-          "mobile": "Short Overview (mobile)",
+          "mobile": "Aperçu rapide (mobile)",
           "groups": [
             {
               "name": "Informations de base",
@@ -936,7 +936,7 @@
         },
         "riskStatus": {
           "dataType": "configurable-enum",
-          "label": "Risk Status",
+          "label": "Statut de risque",
           "additional": "riskStatus"
         },
         "dropoutDate": {
