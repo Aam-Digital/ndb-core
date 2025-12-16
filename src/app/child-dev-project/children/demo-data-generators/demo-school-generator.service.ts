@@ -1,5 +1,5 @@
 import { faker } from "../../../core/demo-data/faker";
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Entity } from "../../../core/entity/model/entity";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
@@ -10,6 +10,8 @@ export class DemoSchoolConfig {
 
 @Injectable()
 export class DemoSchoolGenerator extends DemoDataGenerator<Entity> {
+  override requiredEntityTypes = ["School"];
+
   config = inject(DemoSchoolConfig);
 
   /**

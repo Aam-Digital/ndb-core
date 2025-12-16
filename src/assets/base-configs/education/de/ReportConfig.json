@@ -1,0 +1,148 @@
+[
+  {
+    "_id": "ReportConfig:basic-report",
+    "title": "Basis-Bericht",
+    "aggregationDefinitions": [
+      {
+        "query": "Child:toArray[*isActive=true]",
+        "label": "Alle Kinder",
+        "groupBy": [
+          "gender"
+        ]
+      },
+      {
+        "query": "School:toArray",
+        "label": "Alle Schulen",
+        "aggregations": [
+          {
+            "label": "Kinder, die eine Schule besuchen",
+            "query": ":getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId:unique"
+          },
+          {
+            "label": "Staatliche Schulen",
+            "query": "[*privateSchool!=true]"
+          },
+          {
+            "query": "[*privateSchool!=true]:getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId::unique:toEntities(Child)",
+            "label": "Kinder, die eine staatliche Schule besuchen",
+            "groupBy": [
+              "gender"
+            ]
+          },
+          {
+            "label": "Private Schulen",
+            "query": "[*privateSchool=true]"
+          },
+          {
+            "query": "[*privateSchool=true]:getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId::unique:toEntities(Child)",
+            "label": "Kinder, die eine private Schule besuchen",
+            "groupBy": [
+              "gender"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ReportConfig:event-report",
+    "title": "Veranstaltungsbericht",
+    "aggregationDefinitions": [
+      {
+        "query": "EventNote:toArray[*date >= ? & date <= ?]",
+        "groupBy": [
+          "category"
+        ],
+        "label": "Veranstaltungen",
+        "aggregations": [
+          {
+            "query": ":getParticipantsWithAttendance(PRESENT):unique:toEntities(Child)",
+            "groupBy": [
+              "gender"
+            ],
+            "label": "Teilnehmer"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ReportConfig:attendance-report",
+    "title": "Anwesenheitsbericht",
+    "mode": "exporting",
+    "aggregationDefinitions": [
+      {
+        "query": "EventNote:toArray[* date >= ? & date <= ?]",
+        "groupBy": {
+          "label": "Typ",
+          "property": "category"
+        },
+        "subQueries": [
+          {
+            "query": ":getAttendanceArray:getAttendanceReport",
+            "subQueries": [
+              {
+                "label": "Name",
+                "query": ".participant:toEntities(Child).name"
+              },
+              {
+                "query": ".participant:toEntities(Child):getRelated(ChildSchoolRelation, childId)[*isActive=true]",
+                "subQueries": [
+                  {
+                    "label": "Klasse",
+                    "query": ".schoolClass"
+                  },
+                  {
+                    "label": "Schule",
+                    "query": ".schoolId:toEntities(School).name"
+                  }
+                ]
+              },
+              {
+                "label": "Gesamt",
+                "query": "total"
+              },
+              {
+                "label": "Anwesend",
+                "query": "present"
+              },
+              {
+                "label": "in Prozent",
+                "query": "percentage"
+              },
+              {
+                "label": "Zu spät",
+                "query": "detailedStatus.LATE"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ReportConfig:materials-distributed",
+    "title": "Ausgegebene Materialien",
+    "mode": "exporting",
+    "aggregationDefinitions": [
+      {
+        "query": "EducationalMaterial:toArray[*date >= ? & date <= ?]",
+        "groupBy": {
+          "label": "Typ",
+          "property": "materialType"
+        },
+        "subQueries": [
+          {
+            "label": "Anzahl der Verteilungen",
+            "query": ".materialAmount:count"
+          },
+          {
+            "label": "Gesamtanzahl",
+            "query": ".materialAmount:sum"
+          }
+        ]
+      }
+    ]
+  }
+]
+
