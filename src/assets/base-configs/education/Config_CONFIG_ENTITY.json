@@ -16,7 +16,7 @@
           "entityType": "Child"
         },
         {
-          "entityType": "School"
+          "entityType": "RecurringActivity"
         },
         {
           "label": "Attendance",
@@ -30,14 +30,22 @@
           "entityType": "Todo"
         },
         {
-          "label": "Reports",
-          "icon": "line-chart",
-          "link": "/report"
-        },
-        {
-          "label": "Users",
-          "icon": "users",
-          "link": "/user"
+          "label": "More ...",
+          "subMenu": [
+            {
+              "entityType": "School"
+            },
+            {
+              "label": "Users",
+              "icon": "users",
+              "link": "/user"
+            },
+            {
+              "label": "Reports",
+              "icon": "line-chart",
+              "link": "/report"
+            }
+          ]
         }
       ]
     },
@@ -738,8 +746,9 @@
       "toStringAttributes": [
         "title"
       ],
-      "label": "Recurring Activity",
-      "labelPlural": "Recurring Activities",
+      "label": "Activity",
+      "labelPlural": "Activities",
+      "icon": "calendar-days",
       "color": "#00838F",
       "route": "attendance/recurring-activity",
       "attributes": {
@@ -883,8 +892,8 @@
       "_id": "view:report"
     },
     "entity:Child": {
-      "label": "Child",
-      "labelPlural": "Children",
+      "label": "Student",
+      "labelPlural": "Students",
       "toStringAttributes": [
         "name"
       ],
@@ -991,8 +1000,8 @@
         "name"
       ],
       "icon": "university",
-      "label": "School",
-      "labelPlural": "Schools",
+      "label": "Partner",
+      "labelPlural": "Partners",
       "color": "#9E9D24",
       "attributes": {
         "name": {
