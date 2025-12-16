@@ -1,0 +1,30 @@
+[
+  {
+    "_id": "PublicFormConfig:example",
+    "title": "Formulaire d'exemple",
+    "description": "Il s'agit d'un formulaire qui peut être partagé sous forme de lien ou intégré dans un site Web. Il peut être rempli par des utilisateurs sans avoir de compte. Par exemple, vous pouvez permettre aux participants de s'inscrire eux-mêmes et simplement examiner les enregistrements dans Aam Digital.",
+    "entity": "Child",
+    "route": "example",
+    "columns": [
+      {
+        "fields": [
+          "name",
+          "phone",
+          "gender",
+          "dateOfBirth",
+          "center",
+          {
+            "id": "admissionDate",
+            "defaultValue": {
+              "mode": "dynamic",
+              "config": {
+                "value": "$now"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
+

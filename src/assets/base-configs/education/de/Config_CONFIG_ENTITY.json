@@ -67,7 +67,7 @@
                 {
                   "label": "Öffentliches Regstrierungsformular",
                   "icon": "file-circle-check",
-                  "link": "/public-form/form/test"
+                  "link": "/public-form/form/example"
                 }
               ]
             }

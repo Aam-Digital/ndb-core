@@ -15,6 +15,8 @@ export class DemoUserGeneratorService extends DemoDataGenerator<Entity> {
   static DEFAULT_USERNAME = TEST_USER;
   static ADMIN_USERNAME = "demo-admin";
 
+  override requiredEntityTypes = ["User"];
+
   /**
    * This function returns a provider object to be used in an Angular Module configuration
    *
