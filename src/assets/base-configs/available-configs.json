@@ -90,6 +90,7 @@
     "entitiesToImport": [
       "all-features/Config_CONFIG_ENTITY.json",
       "education/configurable-enums.json",
+      "all-features/configurable-enums.json",
       "basic/ConfigurableEnum_attendance-status.json",
       "basic/ConfigurableEnum_warning-levels.json",
       "basic/ConfigurableEnum_genders.json",

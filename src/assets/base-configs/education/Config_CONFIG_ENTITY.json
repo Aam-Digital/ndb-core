@@ -592,8 +592,7 @@
                 "age",
                 "gender",
                 "schoolClass",
-                "schoolId",
-                "center"
+                "schoolId"
               ]
             },
             {
@@ -601,7 +600,6 @@
               "columns": [
                 "projectNumber",
                 "name",
-                "center",
                 "riskStatus",
                 "admissionDate",
                 "dropoutDate",
@@ -655,7 +653,6 @@
                         "name",
                         "projectNumber",
                         "admissionDate",
-                        "center",
                         "riskStatus"
                       ],
                       "header": "Personal Information"
@@ -1065,12 +1062,6 @@
           "label": "Date of birth",
           "labelShort": "DoB",
           "anonymize": "retain-anonymized"
-        },
-        "center": {
-          "dataType": "configurable-enum",
-          "additional": "center",
-          "label": "Center",
-          "anonymize": "retain"
         },
         "gender": {
           "dataType": "configurable-enum",
