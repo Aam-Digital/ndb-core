@@ -1,5 +1,5 @@
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
-import enums from "../../../../../assets/base-configs/education/configurable-enums.json";
+import enums from "../../../../../assets/base-configs/all-features/configurable-enums.json";
 
 export const centersUnique: ConfigurableEnumValue[] = enums.find(
   (e) => e._id === "ConfigurableEnum:center",
