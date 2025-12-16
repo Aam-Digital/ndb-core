@@ -1,4 +1,4 @@
-import { NgModule, inject } from "@angular/core";
+import { inject, NgModule } from "@angular/core";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { DashboardWidgetRegistryService } from "#src/app/core/dashboard/dashboard-widget-registry.service";
 
@@ -12,23 +12,7 @@ export class ShortcutDashboardWidgetModule {
       label: $localize`Shortcuts`,
       settingsComponent: "ShortcutDashboardSettings",
       defaultConfig: {
-        shortcuts: [
-          {
-            label: $localize`Record Attendance`,
-            icon: "calendar-check",
-            link: "/attendance/add-day",
-          },
-          {
-            label: $localize`Add Child`,
-            icon: "plus",
-            link: "/child/new",
-          },
-          {
-            label: $localize`Public Registration Form`,
-            icon: "file-circle-check",
-            link: "/public-form/form/test",
-          },
-        ],
+        shortcuts: [],
       },
     });
 
