@@ -393,60 +393,6 @@
       "component": "Import",
       "_id": "view:import"
     },
-    "view:user": {
-      "component": "EntityList",
-      "config": {
-        "entityType": "User",
-        "columns": [
-          "name",
-          "phone"
-        ]
-      },
-      "permittedUserRoles": [
-        "admin_app"
-      ],
-      "_id": "view:user"
-    },
-    "view:user/:id": {
-      "component": "EntityDetails",
-      "config": {
-        "entityType": "User",
-        "panels": [
-          {
-            "title": "User Information",
-            "components": [
-              {
-                "title": "",
-                "component": "Form",
-                "config": {
-                  "fieldGroups": [
-                    {
-                      "fields": [
-                        "name"
-                      ]
-                    },
-                    {
-                      "fields": [
-                        "phone"
-                      ]
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "title": "Security",
-            "components": [
-              {
-                "component": "UserSecurity"
-              }
-            ]
-          }
-        ]
-      },
-      "_id": "view:user/:id"
-    },
     "view:attendance": {
       "component": "AttendanceManager",
       "_id": "view:attendance"
@@ -454,93 +400,6 @@
     "view:attendance/add-day": {
       "component": "AddDayAttendance",
       "_id": "view:attendance/add-day"
-    },
-    "view:school": {
-      "component": "EntityList",
-      "config": {
-        "entityType": "School",
-        "columns": [
-          "name",
-          {
-            "id": "DisplayParticipantsCount",
-            "viewComponent": "DisplayParticipantsCount",
-            "label": "Children"
-          },
-          "privateSchool",
-          "language",
-          "website"
-        ],
-        "filters": [
-          {
-            "id": "privateSchool"
-          }
-        ]
-      },
-      "_id": "view:school"
-    },
-    "view:school/:id": {
-      "component": "EntityDetails",
-      "config": {
-        "entityType": "School",
-        "panels": [
-          {
-            "title": "Basic Information",
-            "components": [
-              {
-                "title": "",
-                "component": "Form",
-                "config": {
-                  "fieldGroups": [
-                    {
-                      "fields": [
-                        "name",
-                        "privateSchool"
-                      ]
-                    },
-                    {
-                      "fields": [
-                        "address",
-                        "phone",
-                        "website"
-                      ]
-                    },
-                    {
-                      "fields": [
-                        "language",
-                        "timing"
-                      ]
-                    },
-                    {
-                      "fields": [
-                        "remarks"
-                      ]
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "title": "Students",
-            "components": [
-              {
-                "title": "",
-                "component": "ChildSchoolOverview"
-              }
-            ]
-          },
-          {
-            "title": "Activities",
-            "components": [
-              {
-                "title": "",
-                "component": "ActivitiesOverview"
-              }
-            ]
-          }
-        ]
-      },
-      "_id": "view:school/:id"
     },
     "view:child": {
       "component": "EntityList",
@@ -1170,27 +1029,238 @@
         "website": {
           "dataType": "url",
           "label": "Website"
+        },
+        "contactPerson": {
+          "dataType": "entity",
+          "additional": "User",
+          "label": "Contact Person"
         }
       }
     },
+    "view:school": {
+      "component": "EntityList",
+      "config": {
+        "entityType": "School",
+        "columns": [
+          "name",
+          {
+            "id": "DisplayParticipantsCount",
+            "viewComponent": "DisplayParticipantsCount",
+            "label": "Children"
+          },
+          "privateSchool",
+          "language",
+          "website"
+        ],
+        "filters": [
+          {
+            "id": "privateSchool"
+          },
+          {
+            "id": "contactPerson"
+          }
+        ]
+      },
+      "_id": "view:school"
+    },
+    "view:school/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "entityType": "School",
+        "panels": [
+          {
+            "title": "Basic Information",
+            "components": [
+              {
+                "title": "",
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "name",
+                        "privateSchool"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "address",
+                        "phone",
+                        "website"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "language",
+                        "timing"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "contactPerson",
+                        "remarks"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "Students",
+            "components": [
+              {
+                "title": "",
+                "component": "ChildSchoolOverview"
+              }
+            ]
+          },
+          {
+            "title": "Activities",
+            "components": [
+              {
+                "title": "",
+                "component": "ActivitiesOverview"
+              }
+            ]
+          }
+        ]
+      },
+      "_id": "view:school/:id"
+    },
     "entity:User": {
       "toStringAttributes": [
-        "name"
+        "firstname",
+        "lastname"
       ],
       "icon": "user",
       "label": "User",
       "labelPlural": "Users",
       "hasPII": true,
       "attributes": {
-        "name": {
+        "firstname": {
           "dataType": "string",
-          "label": "Name"
+          "label": "First Name"
+        },
+        "lastname": {
+          "dataType": "string",
+          "label": "Last Name"
         },
         "phone": {
           "dataType": "string",
           "label": "Contact Number"
+        },
+        "role": {
+          "dataType": "string",
+          "label": "Role",
+          "description": "Current role in the organisation"
+        },
+        "dateOfJoining": {
+          "dataType": "date-only",
+          "label": "Date of Joining"
         }
       }
+    },
+    "view:user": {
+      "component": "EntityList",
+      "config": {
+        "entityType": "User",
+        "columns": [
+          "firstname",
+          "lastname",
+          "phone",
+          "role"
+        ],
+        "filters": [
+          {
+            "id": "role"
+          }
+        ]
+      },
+      "permittedUserRoles": [
+        "admin_app"
+      ],
+      "_id": "view:user"
+    },
+    "view:user/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "entityType": "User",
+        "panels": [
+          {
+            "title": "User Information",
+            "components": [
+              {
+                "title": "",
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "firstname",
+                        "lastname"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "phone"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "role",
+                        "dateOfJoining"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "Responsible for",
+            "components": [
+              {
+                "title": "Contact Person for Partners",
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "School",
+                  "columns": [
+                    {
+                      "id": "name"
+                    },
+                    {
+                      "id": "remarks"
+                    },
+                    {
+                      "id": "website"
+                    }
+                  ]
+                }
+              },
+              {
+                "title": "Managing Activities ",
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "RecurringActivity",
+                  "columns": [
+                    {
+                      "id": "title"
+                    },
+                    {
+                      "id": "type"
+                    },
+                    {
+                      "id": "status"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "_id": "view:user/:id"
     },
     "entity:Aser": {
       "label": "Literacy Test",
