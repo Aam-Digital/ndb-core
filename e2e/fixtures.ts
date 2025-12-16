@@ -4,6 +4,7 @@ import { Page, test as base } from "@playwright/test";
 import {
   argosScreenshot as argosScreenshotBase,
   ArgosScreenshotOptions,
+  DO_NOT_USE_setMetadataConfig,
 } from "@argos-ci/playwright";
 import { Injector } from "@angular/core";
 import { EventAttendanceMapDatatype } from "#src/app/child-dev-project/attendance/model/event-attendance.datatype.js";
@@ -74,18 +75,42 @@ export async function argosScreenshot(
       }
     })();
 
-    // Normalize the screenshot name by removing retry suffix from the output directory
-    // Playwright adds "-retry1", "-retry2" to the outputDir, which causes Argos
+    // Normalize the test metadata by removing retry suffix from titlePath
+    // Playwright adds "-retry1", "-retry2" to test titles, which causes Argos
     // to treat retries as separate screenshots instead of comparing to the same baseline
-    let normalizedOptions = { fullPage: true, ...options };
+    if (testInfo) {
+      const normalizedTitlePath = testInfo.titlePath.map((title) =>
+        title.replace(/-retry\d+$/, ""),
+      );
 
-    if (testInfo && testInfo.outputDir.match(/-retry\d+$/)) {
-      // If we're in a retry, use a custom root directory without the retry suffix
-      const normalizedRoot = testInfo.outputDir.replace(/-retry\d+$/, "");
-      normalizedOptions = { ...normalizedOptions, root: normalizedRoot };
+      DO_NOT_USE_setMetadataConfig({
+        sdk: { name: "@argos-ci/playwright", version: "unknown" },
+        playwrightLibraries: [],
+        test: {
+          id: testInfo.testId,
+          title: testInfo.title.replace(/-retry\d+$/, ""),
+          titlePath: normalizedTitlePath,
+          retry: testInfo.retry,
+          retries: testInfo.project.retries,
+          repeat: testInfo.repeatEachIndex,
+          location: {
+            file: testInfo.file,
+            line: testInfo.line,
+            column: testInfo.column,
+          },
+        },
+      });
     }
 
-    await argosScreenshotBase(page, name, normalizedOptions);
+    await argosScreenshotBase(page, name, {
+      fullPage: true,
+      ...(options || {}),
+    });
+
+    // Reset metadata config after screenshot
+    if (testInfo) {
+      DO_NOT_USE_setMetadataConfig(null);
+    }
   }
 }
 
