@@ -142,41 +142,89 @@ export class AutomatedStatusUpdateConfigService {
     entity: Entity,
     entityBeforeChanges: Entity,
   ): Promise<void> {
-    // skip if already processed this specific entity revision
-    // Note views can otherwise open multiple overlapping dialogs (because the note-details component contains three components, all sharing the same form instance)
-    const entityKey = `${entity.getId()}-${entity._rev}`;
-    if (this.processedRevisions.has(entityKey)) {
-      return;
-    }
-    this.processedRevisions.add(entityKey);
+    if(this.checkRefAlreadyProcessed(entity)) return;
 
-    const affectedEntities: AffectedEntity[] = [];
+    // (1) get array of changed fields (we later need to compare if these are used as a sourceValueField) 
     const changedFields = this.getChangedFields(entity, entityBeforeChanges);
-    await this.applyFieldMappings(changedFields, entity, affectedEntities);
+    const changedFieldIds = changedFields.map(f => f.fieldId);
+    
+    // (2.1) check schema fields of the entity if any automation rule uses the field as a sourceValueField
+      // [NEW] (2.2) check schema fields of all other entity types, if any automation rule uses this sourceEntityType (= entity.getType()) and sourceValueField
+    const relevantDirectRules: DefaultValueConfigInheritedField[] = this.getInheritanceRulesFromDirectEntity(entity.getConstructor())
+      .filter(r => changedFieldIds.includes(r.sourceValueField));
+    const relevantIndirectRules: DefaultValueConfigInheritedField[] = this.getInheritanceRulesReferencingThisEntity(entity.getConstructor())
+      .filter(r => changedFieldIds.includes(r.sourceValueField));
+    
+    // (3) load affected entities based on the rules from step 2
+    // FOR EACH AFFECTED SCHEMA FIELD OF TARGET/CHILD ENTITY TYPE (i.e. from step 2)
+    // (3.1) load affected entities where the sourceReferenceField is on this entity [current status automation] 
+      // [NEW] (3.2) load all entities of the affected type that could have a reference field in their own entity (e.g. a Child linking to this School currently getting saved)
 
+    const affectedEntities: AffectedEntity[] = [
+      ...this.loadAffectedDirectEntities(relevantDirectRules),
+      // TODO ...this.loadAffectedIndirectEntities(relevantIndirectRules),
+    ];
+
+    // (4) confirmAndSave all affectedEntities
     if (affectedEntities.length > 0) {
       await this.confirmAndSaveAffectedEntities(affectedEntities);
     }
   }
 
   /**
+   * skip if already processed this specific entity revision
+   * Note views can otherwise open multiple overlapping dialogs (because the note-details component contains three components, all sharing the same form instance)
+   */
+  private checkRefAlreadyProcessed(entity: Entity): boolean {
+    const entityKey = `${entity.getId()}-${entity._rev}`;
+    const alreadyProcessed = this.processedRevisions.has(entityKey);
+    this.processedRevisions.add(entityKey);
+    return alreadyProcessed;
+  }
+
+  /**
+   * current status automation (ref field on `entity`)
+   */
+  private getInheritanceRulesFromDirectEntity(sourceEntityType: EntityConstructor): DefaultValueConfigInheritedField[] {
+    // TODO  
+    return []
+  }
+
+  /**
+   * current inheritance (now new): ref field on another entity type)
+   */
+  private getInheritanceRulesReferencingThisEntity(sourceEntityType: EntityConstructor): DefaultValueConfigInheritedField[] {
+    // TODO: later, after refactoring done  
+    return []
+  }
+
+  private loadAffectedDirectEntities(rules: DefaultValueConfigInheritedField[]): AffectedEntity[] {
+// somewhat the same as 
+// await this.applyFieldMappings(changedFields, entity, affectedEntities);
+
+    return [];
+  }
+
+
+  /**
    * Analyze which fields changed during the current editing.
    * @param newEntity Updated entity after saving
    * @param originalEntity Entity before changes were applied
-   * @return List of key-value pairs of all changed fields (field ID and new value in that field)
+   * @return List of key-value pairs of all changed fields
+   *         (field ID and new value in that field)
    * @private
    */
   private getChangedFields(
     newEntity: Entity,
     originalEntity: Entity,
-  ): [string, any][] {
-    const changedFields: [string, any][] = [];
+  ): { fieldId: string, value: any }[] {
+    const changedFields = [];
 
     for (const [key] of originalEntity.getSchema().entries()) {
       if (
         JSON.stringify(originalEntity[key]) !== JSON.stringify(newEntity[key])
       ) {
-        changedFields.push([key, newEntity[key]]);
+        changedFields.push({fieldId: key, value: newEntity[key]});
       }
     }
 
