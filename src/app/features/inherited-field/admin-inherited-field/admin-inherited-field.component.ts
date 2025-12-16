@@ -29,6 +29,7 @@ import { DefaultValueConfigInheritedField } from "../inherited-field-config";
 interface InheritanceOption {
   type: "inherit" | "automated";
   label: string;
+  labelParts: { entityName: string; fieldName: string; isInheritance: boolean };
   tooltip: string;
   sourceReferenceField?: string;
   sourceEntityType?: string;
@@ -109,6 +110,11 @@ export class AdminInheritedFieldComponent
           const option = {
             type: "inherit" as const,
             label: `${this.getFieldLabel(attr)} > ${this.getEntityLabel(referencedEntityType)}`,
+            labelParts: {
+              entityName: this.getEntityLabel(referencedEntityType),
+              fieldName: this.getFieldLabel(attr),
+              isInheritance: true,
+            },
             tooltip: `Inherit value from any "${this.getEntityLabel(referencedEntityType)}" that is linked to in this record's "${this.getFieldLabel(attr)}" field`,
             sourceReferenceField: attr,
             referencedEntityType,
@@ -126,6 +132,11 @@ export class AdminInheritedFieldComponent
       const automatedOption = {
         type: "automated" as const,
         label: `${option.label} > ${this.getFieldLabel(option.relatedReferenceFields[0])}`,
+        labelParts: {
+          entityName: option.label,
+          fieldName: this.getFieldLabel(option.relatedReferenceFields[0]),
+          isInheritance: false,
+        },
         tooltip: `Inherit value from any "${option.label}" that links to this record in its "${option.relatedReferenceFields[0]}" field`,
         sourceEntityType: option.entityType,
       };
@@ -181,7 +192,6 @@ export class AdminInheritedFieldComponent
         sourceEntityType: undefined,
       };
     } else if (option.type === "automated") {
-      // Open automated mapping dialog
       this.openAutomatedMappingDialog(option.sourceEntityType!);
     }
   }
