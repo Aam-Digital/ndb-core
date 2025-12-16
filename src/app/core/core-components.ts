@@ -201,8 +201,8 @@ export const coreComponents: ComponentTuple[] = [
   [
     "UserSecurity",
     () =>
-      import("./user/user-security/user-security.component").then(
-        (c) => c.UserSecurityComponent,
+      import("./user/entity-user/entity-user.component").then(
+        (c) => c.EntityUserComponent,
       ),
   ],
   [
