@@ -451,18 +451,6 @@
                 "age",
                 "gender",
                 "schoolClass",
-                "schoolId",
-                "center",
-                "status"
-              ]
-            },
-            {
-              "name": "Schule",
-              "columns": [
-                "projectNumber",
-                "name",
-                "age",
-                "schoolClass",
                 "schoolId"
               ]
             },
@@ -1139,8 +1127,8 @@
         "lastname"
       ],
       "icon": "user",
-      "label": "Nutzer:in",
-      "labelPlural": "Nutzer:innen",
+      "label": "Mitarbeiter:in",
+      "labelPlural": "Mitarbeiter:innen",
       "hasPII": true,
       "attributes": {
         "firstname": {

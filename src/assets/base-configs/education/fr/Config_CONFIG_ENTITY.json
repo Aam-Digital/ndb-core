@@ -1127,8 +1127,8 @@
         "lastname"
       ],
       "icon": "user",
-      "label": "Utilisateur",
-      "labelPlural": "Utilisateurs",
+      "label": "Personnel",
+      "labelPlural": "Personnel",
       "hasPII": true,
       "attributes": {
         "firstname": {

@@ -1141,8 +1141,8 @@
         "lastname"
       ],
       "icon": "user",
-      "label": "User",
-      "labelPlural": "Users",
+      "label": "Staff Member",
+      "labelPlural": "Staff Members",
       "hasPII": true,
       "attributes": {
         "firstname": {
