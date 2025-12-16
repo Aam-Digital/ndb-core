@@ -36,9 +36,7 @@
               "entityType": "School"
             },
             {
-              "label": "Users",
-              "icon": "users",
-              "link": "/user"
+              "entityType": "User"
             },
             {
               "label": "Reports",
