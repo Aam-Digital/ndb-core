@@ -81,7 +81,10 @@ export class AutomatedStatusUpdateComponent implements OnInit {
         entityConstructor,
       );
 
-      entity.affectedEntity = new entityConstructor();
+      // todo: check if we reallly need this? also not sure why we create a new entity here
+      if (!entity.affectedEntity) {
+        entity.affectedEntity = new entityConstructor();
+      }
       const entityForm = await this.entityFormService.createEntityForm(
         [fieldId],
         entity.affectedEntity,
