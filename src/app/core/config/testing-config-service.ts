@@ -1,7 +1,7 @@
 import { mockEntityMapperProvider } from "../entity/entity-mapper/mock-entity-mapper-service";
 import { Config } from "./config";
 import { ConfigService } from "./config.service";
-import defaultJsonConfig from "../../../assets/base-configs/education/Config_CONFIG_ENTITY.json";
+import defaultJsonConfig from "../../../assets/base-configs/all-features/Config_CONFIG_ENTITY.json";
 
 export function provideTestingConfigService(
   configsObject: any = defaultJsonConfig,
