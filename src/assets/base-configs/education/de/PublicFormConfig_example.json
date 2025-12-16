@@ -1,0 +1,30 @@
+[
+  {
+    "_id": "PublicFormConfig:example",
+    "title": "Beispielformular",
+    "description": "Dies ist ein Formular, das als Link geteilt oder in eine Website eingebettet werden kann. Es kann von Benutzern ohne Konto ausgefüllt werden. Sie können beispielsweise Teilnehmern ermöglichen, ihre Daten selbst zu registrieren und die Datensätze einfach in Aam Digital zu überprüfen.",
+    "entity": "Child",
+    "route": "example",
+    "columns": [
+      {
+        "fields": [
+          "name",
+          "phone",
+          "gender",
+          "dateOfBirth",
+          "center",
+          {
+            "id": "admissionDate",
+            "defaultValue": {
+              "mode": "dynamic",
+              "config": {
+                "value": "$now"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
+
