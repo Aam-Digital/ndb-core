@@ -976,6 +976,10 @@
           "additional": {
             "acceptedFileTypes": ".pdf"
           }
+        },
+        "email": {
+          "dataType": "email",
+          "label": "Email"
         }
       }
     },
