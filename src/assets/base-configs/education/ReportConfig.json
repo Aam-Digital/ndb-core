@@ -1,0 +1,148 @@
+[
+  {
+    "_id": "ReportConfig:basic-report",
+    "title": "Basic Report",
+    "aggregationDefinitions": [
+      {
+        "query": "Child:toArray[*isActive=true]",
+        "label": "All children",
+        "groupBy": [
+          "gender"
+        ]
+      },
+      {
+        "query": "School:toArray",
+        "label": "All schools",
+        "aggregations": [
+          {
+            "label": "Children attending a school",
+            "query": ":getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId:unique"
+          },
+          {
+            "label": "Governmental schools",
+            "query": "[*privateSchool!=true]"
+          },
+          {
+            "query": "[*privateSchool!=true]:getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId::unique:toEntities(Child)",
+            "label": "Children attending a governmental school",
+            "groupBy": [
+              "gender"
+            ]
+          },
+          {
+            "label": "Private schools",
+            "query": "[*privateSchool=true]"
+          },
+          {
+            "query": "[*privateSchool=true]:getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId::unique:toEntities(Child)",
+            "label": "Children attending a private school",
+            "groupBy": [
+              "gender"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ReportConfig:event-report",
+    "title": "Event Report",
+    "aggregationDefinitions": [
+      {
+        "query": "EventNote:toArray[*date >= ? & date <= ?]",
+        "groupBy": [
+          "category"
+        ],
+        "label": "Events",
+        "aggregations": [
+          {
+            "query": ":getParticipantsWithAttendance(PRESENT):unique:toEntities(Child)",
+            "groupBy": [
+              "gender"
+            ],
+            "label": "Participants"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ReportConfig:attendance-report",
+    "title": "Attendance Report",
+    "mode": "exporting",
+    "aggregationDefinitions": [
+      {
+        "query": "EventNote:toArray[* date >= ? & date <= ?]",
+        "groupBy": {
+          "label": "Type",
+          "property": "category"
+        },
+        "subQueries": [
+          {
+            "query": ":getAttendanceArray:getAttendanceReport",
+            "subQueries": [
+              {
+                "label": "Name",
+                "query": ".participant:toEntities(Child).name"
+              },
+              {
+                "query": ".participant:toEntities(Child):getRelated(ChildSchoolRelation, childId)[*isActive=true]",
+                "subQueries": [
+                  {
+                    "label": "Class",
+                    "query": ".schoolClass"
+                  },
+                  {
+                    "label": "School",
+                    "query": ".schoolId:toEntities(School).name"
+                  }
+                ]
+              },
+              {
+                "label": "Total",
+                "query": "total"
+              },
+              {
+                "label": "Present",
+                "query": "present"
+              },
+              {
+                "label": "Rate",
+                "query": "percentage"
+              },
+              {
+                "label": "Late",
+                "query": "detailedStatus.LATE"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ReportConfig:materials-distributed",
+    "title": "Materials Distributed",
+    "mode": "exporting",
+    "aggregationDefinitions": [
+      {
+        "query": "EducationalMaterial:toArray[*date >= ? & date <= ?]",
+        "groupBy": {
+          "label": "Type",
+          "property": "materialType"
+        },
+        "subQueries": [
+          {
+            "label": "Number of events of handing out",
+            "query": ".materialAmount:count"
+          },
+          {
+            "label": "Total Items",
+            "query": ".materialAmount:sum"
+          }
+        ]
+      }
+    ]
+  }
+]
+

@@ -1,6 +1,6 @@
 import { DemoChildGenerator } from "../../children/demo-data-generators/demo-child-generator.service";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { faker } from "../../../core/demo-data/faker";
 import { RecurringActivity } from "../model/recurring-activity";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
@@ -13,6 +13,8 @@ import { Entity } from "../../../core/entity/model/entity";
  */
 @Injectable()
 export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringActivity> {
+  override requiredEntityTypes = ["RecurringActivity"];
+
   private demoChildren = inject(DemoChildGenerator);
   private demoUser = inject(DemoUserGeneratorService);
 

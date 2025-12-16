@@ -1,7 +1,7 @@
 import { DemoChildGenerator } from "./demo-child-generator.service";
 import { DemoSchoolGenerator } from "./demo-school-generator.service";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
 import { faker } from "../../../core/demo-data/faker";
 import { Entity } from "../../../core/entity/model/entity";
@@ -13,6 +13,8 @@ import { Entity } from "../../../core/entity/model/entity";
  */
 @Injectable()
 export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSchoolRelation> {
+  override requiredEntityTypes = ["ChildSchoolRelation"];
+
   private demoChildren = inject(DemoChildGenerator);
   private demoSchools = inject(DemoSchoolGenerator);
 

@@ -1,0 +1,24 @@
+[
+  {
+    "_id": "ProgressDashboardConfig:1",
+    "title": "Enquête annuelle",
+    "parts": [
+      {
+        "label": "Clubs visités",
+        "currentValue": 12,
+        "targetValue": 25
+      },
+      {
+        "label": "Écoles vérifiées",
+        "currentValue": 18,
+        "targetValue": 30
+      },
+      {
+        "label": "Fonctionnaires rencontrés",
+        "currentValue": 8,
+        "targetValue": 15
+      }
+    ]
+  }
+]
+

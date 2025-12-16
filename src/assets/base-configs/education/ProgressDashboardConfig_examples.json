@@ -1,0 +1,24 @@
+[
+  {
+    "_id": "ProgressDashboardConfig:1",
+    "title": "Annual Survey",
+    "parts": [
+      {
+        "label": "Clubs visited",
+        "currentValue": 12,
+        "targetValue": 25
+      },
+      {
+        "label": "Schools checked",
+        "currentValue": 18,
+        "targetValue": 30
+      },
+      {
+        "label": "Government Officials met",
+        "currentValue": 8,
+        "targetValue": 15
+      }
+    ]
+  }
+]
+
