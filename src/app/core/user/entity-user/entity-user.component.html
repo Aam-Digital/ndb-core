@@ -1,0 +1,9 @@
+@if (userIsPermitted()) {
+  <app-user-details
+    [userAccount]="getUserAccountForDetails()"
+  ></app-user-details>
+} @else {
+  <div class="permissions-warning" i18n>
+    Your account does not have the required permissions to manage user accounts.
+  </div>
+}
