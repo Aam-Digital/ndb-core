@@ -41,13 +41,7 @@ faker.setDefaultRefDate(E2E_REF_DATE);
 
 export const test = base.extend<{ forEachTest: void }>({
   forEachTest: [
-    async ({ page }, use, testInfo) => {
-      // Normalize output directory to remove retry suffix for consistent Argos screenshot paths
-      // Playwright appends "-retry1", "-retry2", etc. to output dirs which causes Argos
-      // to treat retries as separate screenshots instead of comparing to the same baseline
-      const originalOutputDir = testInfo.outputDir;
-      testInfo.outputDir = originalOutputDir.replace(/-retry\d+$/g, "");
-
+    async ({ page }, use) => {
       await page.clock.install();
       await page.clock.setFixedTime(E2E_REF_DATE);
       await page.addInitScript((E2E_REF_DATE) => {
@@ -59,9 +53,6 @@ export const test = base.extend<{ forEachTest: void }>({
       }, E2E_REF_DATE);
 
       await use();
-
-      // Restore original output directory after test completion
-      testInfo.outputDir = originalOutputDir;
     },
     { auto: true },
   ],
@@ -73,10 +64,28 @@ export async function argosScreenshot(
   options?: ArgosScreenshotOptions,
 ): Promise<void> {
   if (process.env.CI || process.env.SCREENSHOT) {
-    await argosScreenshotBase(page, name, {
-      fullPage: true,
-      ...(options || {}),
-    });
+    // Get test info to check for retries
+    const testInfo = await (async () => {
+      try {
+        const { test } = await import("@playwright/test");
+        return test.info();
+      } catch {
+        return null;
+      }
+    })();
+
+    // Normalize the screenshot name by removing retry suffix from the output directory
+    // Playwright adds "-retry1", "-retry2" to the outputDir, which causes Argos
+    // to treat retries as separate screenshots instead of comparing to the same baseline
+    let normalizedOptions = { fullPage: true, ...options };
+
+    if (testInfo && testInfo.outputDir.match(/-retry\d+$/)) {
+      // If we're in a retry, use a custom root directory without the retry suffix
+      const normalizedRoot = testInfo.outputDir.replace(/-retry\d+$/, "");
+      normalizedOptions = { ...normalizedOptions, root: normalizedRoot };
+    }
+
+    await argosScreenshotBase(page, name, normalizedOptions);
   }
 }
 
