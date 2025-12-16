@@ -30,15 +30,11 @@ import { DemoNoteGeneratorService } from "../../child-dev-project/notes/demo-dat
 import { DemoAserGeneratorService } from "../../child-dev-project/children/demo-data-generators/aser/demo-aser-generator.service";
 import { DemoEducationalMaterialGeneratorService } from "../../child-dev-project/children/demo-data-generators/educational-material/demo-educational-material-generator.service";
 import { DemoHealthCheckGeneratorService } from "../../child-dev-project/children/demo-data-generators/health-check/demo-health-check-generator.service";
-import { DemoProgressDashboardWidgetGeneratorService } from "../../features/dashboard-widgets/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { DemoHistoricalDataGenerator } from "../../child-dev-project/children/demo-data-generators/observations/demo-historical-data-generator";
 import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-generator.service";
-import { DemoPublicFormGeneratorService } from "../../features/public-form/demo-public-form-generator.service";
-import { DemoReportConfigGeneratorService } from "../../features/reporting/demo-report-config-generator.service";
 
 const demoDataGeneratorProviders = [
-  ...DemoPublicFormGeneratorService.provider(),
   ...DemoUserGeneratorService.provider(),
   ...DemoChildGenerator.provider({ count: 120 }),
   ...DemoSchoolGenerator.provider({ count: 8 }),
@@ -56,13 +52,11 @@ const demoDataGeneratorProviders = [
     maxCount: 8,
   }),
   ...DemoHealthCheckGeneratorService.provider(),
-  ...DemoProgressDashboardWidgetGeneratorService.provider(),
   ...DemoHistoricalDataGenerator.provider({
     minCountAttributes: 2,
     maxCountAttributes: 5,
   }),
   ...DemoTodoGeneratorService.provider(),
-  ...DemoReportConfigGeneratorService.provider(),
 ];
 
 /**

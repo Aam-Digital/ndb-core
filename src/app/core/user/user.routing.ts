@@ -16,10 +16,10 @@
  */
 
 import { RouterModule, Routes } from "@angular/router";
-import { UserAccountComponent } from "./user-account/user-account.component";
+import { ProfileComponent } from "./profile/profile.component";
 import { ModuleWithProviders } from "@angular/core";
 
-const routes: Routes = [{ path: "", component: UserAccountComponent }];
+const routes: Routes = [{ path: "", component: ProfileComponent }];
 
 /**
  * RoutingModule for UserModule related routes.
