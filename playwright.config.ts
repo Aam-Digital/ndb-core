@@ -23,13 +23,6 @@ export default defineConfig({
 
   reporter: [
     ["list"],
-    [
-      "@argos-ci/playwright/reporter",
-      {
-        // Upload in a separate step in CI
-        uploadToArgos: false,
-      },
-    ],
     [process.env.CI ? "github" : "null"],
   ],
   retries: process.env.CI ? 2 : undefined,

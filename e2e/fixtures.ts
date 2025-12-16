@@ -4,7 +4,6 @@ import { Page, test as base } from "@playwright/test";
 import {
   argosScreenshot as argosScreenshotBase,
   ArgosScreenshotOptions,
-  DO_NOT_USE_setMetadataConfig,
 } from "@argos-ci/playwright";
 import { Injector } from "@angular/core";
 import { EventAttendanceMapDatatype } from "#src/app/child-dev-project/attendance/model/event-attendance.datatype.js";
@@ -65,7 +64,7 @@ export async function argosScreenshot(
   options?: ArgosScreenshotOptions,
 ): Promise<void> {
   if (process.env.CI || process.env.SCREENSHOT) {
-    // Get test info to check for retries
+    // Get test info to create normalized paths for retries
     const testInfo = await (async () => {
       try {
         const { test } = await import("@playwright/test");
@@ -75,42 +74,20 @@ export async function argosScreenshot(
       }
     })();
 
-    // Normalize the test metadata by removing retry suffix from titlePath
-    // Playwright adds "-retry1", "-retry2" to test titles, which causes Argos
-    // to treat retries as separate screenshots instead of comparing to the same baseline
+    // Create a custom root path by normalizing retry suffixes
+    // This ensures retries use the same screenshot paths as the original test
+    let customRoot: string | undefined;
     if (testInfo) {
-      const normalizedTitlePath = testInfo.titlePath.map((title) =>
-        title.replace(/-retry\d+$/, ""),
-      );
-
-      DO_NOT_USE_setMetadataConfig({
-        sdk: { name: "@argos-ci/playwright", version: "unknown" },
-        playwrightLibraries: [],
-        test: {
-          id: testInfo.testId,
-          title: testInfo.title.replace(/-retry\d+$/, ""),
-          titlePath: normalizedTitlePath,
-          retry: testInfo.retry,
-          retries: testInfo.project.retries,
-          repeat: testInfo.repeatEachIndex,
-          location: {
-            file: testInfo.file,
-            line: testInfo.line,
-            column: testInfo.column,
-          },
-        },
-      });
+      // Get the output directory and remove retry suffix from the path
+      const outputDir = testInfo.outputDir.replace(/-retry\d+/g, "");
+      customRoot = `${outputDir}/argos`;
     }
 
     await argosScreenshotBase(page, name, {
       fullPage: true,
+      root: customRoot,
       ...(options || {}),
     });
-
-    // Reset metadata config after screenshot
-    if (testInfo) {
-      DO_NOT_USE_setMetadataConfig(null);
-    }
   }
 }
 
