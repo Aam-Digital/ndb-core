@@ -42,10 +42,11 @@ faker.setDefaultRefDate(E2E_REF_DATE);
 export const test = base.extend<{ forEachTest: void }>({
   forEachTest: [
     async ({ page }, use, testInfo) => {
-      // Normalize test title to remove retry suffix for consistent Argos screenshot paths
-      // Playwright adds "-retry1", "-retry2", etc. which causes Argos to treat retries as new tests
-      const originalTitle = testInfo.title;
-      testInfo.title = originalTitle.replace(/-retry\d+$/g, "");
+      // Normalize output directory to remove retry suffix for consistent Argos screenshot paths
+      // Playwright appends "-retry1", "-retry2", etc. to output dirs which causes Argos
+      // to treat retries as separate screenshots instead of comparing to the same baseline
+      const originalOutputDir = testInfo.outputDir;
+      testInfo.outputDir = originalOutputDir.replace(/-retry\d+$/g, "");
 
       await page.clock.install();
       await page.clock.setFixedTime(E2E_REF_DATE);
@@ -59,8 +60,8 @@ export const test = base.extend<{ forEachTest: void }>({
 
       await use();
 
-      // Restore original title after test completion
-      testInfo.title = originalTitle;
+      // Restore original output directory after test completion
+      testInfo.outputDir = originalOutputDir;
     },
     { auto: true },
   ],
