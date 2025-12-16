@@ -41,7 +41,12 @@ faker.setDefaultRefDate(E2E_REF_DATE);
 
 export const test = base.extend<{ forEachTest: void }>({
   forEachTest: [
-    async ({ page }, use) => {
+    async ({ page }, use, testInfo) => {
+      // Normalize test title to remove retry suffix for consistent Argos screenshot paths
+      // Playwright adds "-retry1", "-retry2", etc. which causes Argos to treat retries as new tests
+      const originalTitle = testInfo.title;
+      testInfo.title = originalTitle.replace(/-retry\d+$/g, "");
+
       await page.clock.install();
       await page.clock.setFixedTime(E2E_REF_DATE);
       await page.addInitScript((E2E_REF_DATE) => {
@@ -53,6 +58,9 @@ export const test = base.extend<{ forEachTest: void }>({
       }, E2E_REF_DATE);
 
       await use();
+
+      // Restore original title after test completion
+      testInfo.title = originalTitle;
     },
     { auto: true },
   ],
