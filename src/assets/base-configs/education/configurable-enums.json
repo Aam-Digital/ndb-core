@@ -185,5 +185,18 @@
         "label": "Completed"
       }
     ]
+  },
+  {
+    "_id": "ConfigurableEnum:riskStatus",
+    "values": [
+      {
+        "id": "DROPOUT RISK",
+        "label": "Dropout Risk"
+      },
+      {
+        "id": "LEARNING CHALLENGES",
+        "label": "Learning Challenges"
+      }
+    ]
   }
 ]

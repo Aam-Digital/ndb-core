@@ -73,7 +73,14 @@
             }
           },
           {
-            "component": "EntityCountDashboard"
+            "component": "EntityCountDashboard",
+            "config": {
+              "entityType": "Child",
+              "groupBy": [
+                "riskStatus",
+                "gender"
+              ]
+            }
           },
           {
             "component": "TodosDashboard"
@@ -586,8 +593,7 @@
                 "gender",
                 "schoolClass",
                 "schoolId",
-                "center",
-                "status"
+                "center"
               ]
             },
             {
@@ -596,7 +602,7 @@
                 "projectNumber",
                 "name",
                 "center",
-                "status",
+                "riskStatus",
                 "admissionDate",
                 "dropoutDate",
                 "dropoutType"
@@ -614,7 +620,7 @@
         },
         "filters": [
           {
-            "id": "center"
+            "id": "riskStatus"
           },
           {
             "id": "schoolId",
@@ -650,7 +656,7 @@
                         "projectNumber",
                         "admissionDate",
                         "center",
-                        "status"
+                        "riskStatus"
                       ],
                       "header": "Personal Information"
                     },
@@ -1077,22 +1083,10 @@
           "label": "Admission",
           "anonymize": "retain-anonymized"
         },
-        "status": {
-          "dataType": "string",
-          "label": "Status",
-          "defaultValue": {
-            "mode": "updated-from-referencing-entity",
-            "config": {
-              "relatedReferenceField": "participants",
-              "relatedEntityType": "RecurringActivity",
-              "relatedTriggerField": "status",
-              "automatedMapping": {
-                "PLANNED": "coaching requested",
-                "ONGOING": "in coaching",
-                "COMPLETED": "coaching completed"
-              }
-            }
-          }
+        "riskStatus": {
+          "dataType": "configurable-enum",
+          "label": "Risk Status",
+          "additional": "riskStatus"
         },
         "dropoutDate": {
           "dataType": "date-only",
