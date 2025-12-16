@@ -19,7 +19,7 @@ test("Translated and localized app versions (i18n)", async ({ page }) => {
 
   await page.getByRole("combobox", { name: "Anwendungsfall" }).click();
   await page.getByRole("option", { name: "Bildungsprojekt" }).click();
-  await page.getByRole("button", { name: "init" }).click();
+  await page.getByRole("button", { name: "Create System" }).click();
 
   await page
     .getByRole("button", { name: "System erkunden" })

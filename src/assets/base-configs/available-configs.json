@@ -88,7 +88,7 @@
     "name": "[All Features]",
     "description": "A setup with all available features enabled to preview any advanced functionality or special testing.",
     "entitiesToImport": [
-      "education/fr/ProgressDashboardConfig_examples.json",
+      "education/ProgressDashboardConfig_examples.json",
       "all-features/Config_CONFIG_ENTITY.json",
       "education/configurable-enums.json",
       "all-features/configurable-enums.json",
@@ -100,8 +100,8 @@
       "basic/MarkdownContent_help.json",
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json",
-      "education/fr/PublicFormConfig_example.json",
-      "education/fr/ReportConfig.json",
+      "education/PublicFormConfig_example.json",
+      "education/ReportConfig.json",
       "education/EmailTemplate_birthday.json"
     ],
     "locale": "en-US"

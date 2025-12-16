@@ -111,7 +111,7 @@ export async function loadApp(page: Page, entities?: Entity[]) {
     }, serializeEntities(entities));
   }
 
-  await page.goto("/?useCase=education");
+  await page.goto("/?useCase=all-features");
 
   await page.getByText("Start Exploring").click({ timeout: 10_000 });
 }
