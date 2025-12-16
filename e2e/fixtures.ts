@@ -64,28 +64,8 @@ export async function argosScreenshot(
   options?: ArgosScreenshotOptions,
 ): Promise<void> {
   if (process.env.CI || process.env.SCREENSHOT) {
-    // Get test info to create normalized paths for retries
-    const testInfo = await (async () => {
-      try {
-        const { test } = await import("@playwright/test");
-        return test.info();
-      } catch {
-        return null;
-      }
-    })();
-
-    // Create a custom root path by normalizing retry suffixes
-    // This ensures retries use the same screenshot paths as the original test
-    let customRoot: string | undefined;
-    if (testInfo) {
-      // Get the output directory and remove retry suffix from the path
-      const outputDir = testInfo.outputDir.replace(/-retry\d+/g, "");
-      customRoot = `${outputDir}/argos`;
-    }
-
     await argosScreenshotBase(page, name, {
       fullPage: true,
-      root: customRoot,
       ...(options || {}),
     });
   }
