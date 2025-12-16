@@ -43,8 +43,8 @@ export class InheritedValueButtonComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
-      this.field.defaultValue.mode == "inherited-field" &&
-      !this.field.defaultValue.config?.sourceReferenceField
+      this.field.defaultValue?.mode == "inherited-field" &&
+      !this.field.defaultValue?.config?.sourceReferenceField
     ) {
       this.defaultValueHint = undefined;
       return;
