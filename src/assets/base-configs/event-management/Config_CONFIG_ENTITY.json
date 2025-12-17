@@ -46,7 +46,7 @@
                 {
                   "label": "Register Participant",
                   "icon": "person",
-                  "link": "/individual/new"
+                  "link": "/participant/new"
                 },
                 {
                   "label": "Add Event",
@@ -189,7 +189,7 @@
       "icon": "person",
       "_id": "entity:Participant"
     },
-    "view:individual/:id": {
+    "view:participant/:id": {
       "component": "EntityDetails",
       "config": {
         "panels": [
@@ -262,7 +262,7 @@
               {
                 "component": "RelatedEntities",
                 "config": {
-                  "entityType": "outcomeSurvey",
+                  "entityType": "participantSurvey",
                   "property": "participant",
                   "columns": [
                     {
@@ -525,7 +525,7 @@
                 "title": "",
                 "component": "RelatedEntities",
                 "config": {
-                  "entityType": "outcomeSurvey",
+                  "entityType": "participantSurvey",
                   "columns": [
                     {
                       "id": "date"

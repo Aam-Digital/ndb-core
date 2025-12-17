@@ -20,7 +20,7 @@
     "title": "Event feedback form",
     "route": "event-feedback",
     "description": "Thank you for participating in our event. Please fill in the short questionnaire below.",
-    "entity": "outcomeSurvey",
+    "entity": "participantSurvey",
     "columns": [
       {
         "fields": [
@@ -79,9 +79,9 @@
     },
     "linkedEntities": [
       {
-        "id": "individual",
+        "id": "participant",
         "hideFromForm": true,
-        "additional": "Individual"
+        "additional": "Participant"
       },
       {
         "id": "event",
