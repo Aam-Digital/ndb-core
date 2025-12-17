@@ -64,7 +64,7 @@ describe("DiscreteImportConfigComponent", () => {
   });
 
   it("should init with entity format of provided mappings in 'additional'", () => {
-    data.col.additional = { male: "M" };
+    data.col.additional = { male: "M", female: "F" };
     spyOn(
       TestBed.inject(ConfigurableEnumService),
       "getEnumValues",
