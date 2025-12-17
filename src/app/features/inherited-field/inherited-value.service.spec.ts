@@ -193,7 +193,7 @@ describe("InheritedValueService", () => {
           mode: "inherited-field",
           config: {
             sourceValueField: "foo",
-            sourceReferenceField: "newField2",
+            sourceReferenceField: "reference-1",
           },
         },
       },
