@@ -126,9 +126,13 @@ export class AutomatedStatusUpdateConfigService {
   }
 
   /**
-   * current inheritance (now new): ref field on another entity type)
-   * Find all inheritance rules where sourceEntityType is undefined (inheritance rules)
-   * and the sourceReferenceField could potentially reference this entity type
+   * Find all Inheritance Rules where the sourceReferenceField's entity type (in "additional") matches the given sourceEntityType.
+   *
+   * For example:
+   * Given the method parameter sourceEntityType = School
+   * Return any Rule in Child entity type, which has an undefined sourceEntityType
+   *      and the sourceReferenceField (on the Child entity) has an "additional" = School dataType
+   * (as well as any other such rule in any entity type)
    */
   private getInheritanceRulesReferencingThisEntity(
     sourceEntityType: EntityConstructor,
