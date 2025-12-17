@@ -96,7 +96,7 @@ class Mentorship extends Entity {
   otherField: string;
 }
 
-fdescribe("AutomatedStatusUpdateConfigService", () => {
+describe("AutomatedStatusUpdateConfigService", () => {
   let entityMapper: MockEntityMapperService;
   let service: AutomatedStatusUpdateConfigService;
   let enumService: jasmine.SpyObj<ConfigurableEnumService>;

@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
 import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import { EntityForm } from "../../core/common-components/entity-form/entity-form";
 import { Entity } from "../../core/entity/model/entity";
 import {
   AdminDefaultValueContext,
@@ -12,7 +12,7 @@ import { DefaultValueMode } from "../../core/default-values/default-value-config
 import { DefaultValueHint } from "../../core/default-values/default-value-service/default-value.service";
 import { asArray } from "../../utils/asArray";
 import { FormFieldConfig } from "../../core/common-components/entity-form/FormConfig";
-import { DefaultValueConfigInheritedField } from "../inherited-field/inherited-field-config";
+import { DefaultValueConfigInheritedField } from "./inherited-field-config";
 
 /**
  * An advanced default-value strategy that sets values based on the value in a referenced related entity.
@@ -30,7 +30,7 @@ export class InheritedValueService extends DefaultValueStrategy {
 
   override async getAdminUI(): Promise<AdminDefaultValueContext> {
     const component =
-      await import("../inherited-field/admin-inherited-field/admin-inherited-field.component").then(
+      await import("./admin-inherited-field/admin-inherited-field.component").then(
         (c) => c.AdminInheritedFieldComponent,
       );
 

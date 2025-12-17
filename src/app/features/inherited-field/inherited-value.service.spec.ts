@@ -8,7 +8,7 @@ import {
   getDefaultInheritedForm,
 } from "../../core/default-values/default-value-service/default-value.service.spec";
 import { FormControl, FormGroup } from "@angular/forms";
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import { EntityForm } from "../../core/common-components/entity-form/entity-form";
 import { DefaultValueService } from "../../core/default-values/default-value-service/default-value.service";
 import { EventEmitter } from "@angular/core";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
@@ -75,8 +75,8 @@ describe("InheritedValueService", () => {
         defaultValue: {
           mode: "inherited-field",
           config: {
-            field: "invalid-field",
-            localAttribute: "reference-1",
+            sourceValueField: "invalid-field",
+            sourceReferenceField: "reference-1",
           },
         },
       },
@@ -92,7 +92,7 @@ describe("InheritedValueService", () => {
 
   it("should set default value on FormControl, if target field empty", fakeAsync(() => {
     // given
-    let entity = new Entity();
+    let entity = new Entity("Entity:0");
     entity["foo"] = "bar";
     mockEntityMapperService.load.and.returnValue(Promise.resolve(entity));
 
@@ -118,8 +118,8 @@ describe("InheritedValueService", () => {
         defaultValue: {
           mode: "inherited-field",
           config: {
-            field: "foo",
-            localAttribute: "field2",
+            sourceValueField: "foo",
+            sourceReferenceField: "field2",
           },
         },
       },
@@ -138,7 +138,7 @@ describe("InheritedValueService", () => {
 
   it("should set default array value on FormControl, if target field empty", fakeAsync(() => {
     // given
-    let entity = new Entity();
+    let entity = new Entity("Entity:0");
     entity["foo"] = ["bar", "doo"];
     mockEntityMapperService.load.and.returnValue(Promise.resolve(entity));
 
@@ -164,8 +164,8 @@ describe("InheritedValueService", () => {
         defaultValue: {
           mode: "inherited-field",
           config: {
-            field: "foo",
-            localAttribute: "newField2",
+            sourceValueField: "foo",
+            sourceReferenceField: "newField2",
           },
         },
       },
@@ -192,14 +192,14 @@ describe("InheritedValueService", () => {
         defaultValue: {
           mode: "inherited-field",
           config: {
-            field: "foo",
-            localAttribute: "reference-1",
+            sourceValueField: "foo",
+            sourceReferenceField: "newField2",
           },
         },
       },
     });
 
-    let entity0 = new Entity();
+    let entity0 = new Entity("Entity:0");
     entity0["foo"] = ["bar"];
     mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
 
@@ -221,8 +221,8 @@ describe("InheritedValueService", () => {
         defaultValue: {
           mode: "inherited-field",
           config: {
-            field: "foo",
-            localAttribute: "reference-1",
+            sourceValueField: "foo",
+            sourceReferenceField: "reference-1",
           },
         },
       },
@@ -250,8 +250,8 @@ describe("InheritedValueService", () => {
         defaultValue: {
           mode: "inherited-field",
           config: {
-            field: "foo",
-            localAttribute: "reference-1",
+            sourceValueField: "foo",
+            sourceReferenceField: "reference-1",
           },
         },
       },
@@ -291,8 +291,8 @@ describe("InheritedValueService", () => {
         defaultValue: {
           mode: "inherited-field",
           config: {
-            field: "foo",
-            localAttribute: "reference-1",
+            sourceValueField: "foo",
+            sourceReferenceField: "reference-1",
           },
         },
       },
@@ -332,8 +332,8 @@ describe("InheritedValueService", () => {
         defaultValue: {
           mode: "inherited-field",
           config: {
-            field: "foo",
-            localAttribute: "reference-1",
+            sourceValueField: "foo",
+            sourceReferenceField: "reference-1",
           },
         },
       },
@@ -359,8 +359,8 @@ describe("InheritedValueService", () => {
         defaultValue: {
           mode: "inherited-field",
           config: {
-            field: "foo",
-            localAttribute: "reference-1",
+            sourceValueField: "foo",
+            sourceReferenceField: "reference-1",
           },
         },
       },
@@ -388,8 +388,8 @@ describe("InheritedValueService", () => {
         defaultValue: {
           mode: "inherited-field",
           config: {
-            field: "foo",
-            localAttribute: "reference-1",
+            sourceValueField: "foo",
+            sourceReferenceField: "reference-1",
           },
         },
       },
@@ -410,7 +410,7 @@ describe("InheritedValueService", () => {
   }));
 
   it("should handle copying single value to array field", fakeAsync(() => {
-    let entity = new Entity();
+    let entity = new Entity("User:Test");
     entity["status"] = "ongoing";
     mockEntityMapperService.load.and.returnValue(Promise.resolve(entity));
 
@@ -436,8 +436,8 @@ describe("InheritedValueService", () => {
         defaultValue: {
           mode: "inherited-field",
           config: {
-            field: "status",
-            localAttribute: "field2",
+            sourceValueField: "status",
+            sourceReferenceField: "field2",
           },
         },
       },
@@ -463,8 +463,8 @@ describe("InheritedValueService", () => {
         defaultValue: {
           mode: "inherited-field",
           config: {
-            field: "status",
-            localAttribute: "field2",
+            sourceValueField: "status",
+            sourceReferenceField: "field2",
           },
         },
       },

@@ -28,6 +28,7 @@ export type DefaultValueMode =
   | "static"
   | "dynamic"
   | "inherited-field"
+  /** @deprecated Use "inherited-field" instead. This mode is kept for migration purposes only. */
   | "inherited-from-referenced-entity"
+  /** @deprecated Use "inherited-field" instead. This mode is kept for migration purposes only. */
   | "updated-from-referencing-entity";
-// todo remove "inherited-from-referenced-entity" and "updated-from-referencing-entity" in future versions

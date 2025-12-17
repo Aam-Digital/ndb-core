@@ -1,5 +1,5 @@
 import { TestBed } from "@angular/core/testing";
-import { InheritedValueService } from "../default-value-inherited/inherited-value.service";
+import { InheritedValueService } from "./inherited-value.service";
 import { AutomatedStatusUpdateConfigService } from "../automated-status-update/automated-status-update-config-service";
 import { Entity } from "../../core/entity/model/entity";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";

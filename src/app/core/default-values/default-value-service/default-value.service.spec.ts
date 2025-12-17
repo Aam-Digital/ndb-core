@@ -6,7 +6,7 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "./default-value.service";
 import { DynamicPlaceholderValueService } from "../x-dynamic-placeholder/dynamic-placeholder-value.service";
-import { InheritedValueService } from "../../../features/default-value-inherited/inherited-value.service";
+import { InheritedValueService } from "../../../features/inherited-field/inherited-value.service";
 import { EventEmitter } from "@angular/core";
 import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
@@ -97,7 +97,7 @@ describe("DefaultValueService", () => {
       "onFormValueChanges",
     ]);
     // @ts-ignore
-    mockInheritedValueService["mode"] = "inherited-from-referenced-entity";
+    mockInheritedValueService["mode"] = "inherited-field";
 
     TestBed.configureTestingModule({
       providers: [
@@ -331,8 +331,8 @@ describe("DefaultValueService", () => {
         defaultValue: {
           mode: "inherited-field",
           config: {
-            field: "foo",
-            localAttribute: "reference-1",
+            sourceValueField: "foo",
+            sourceReferenceField: "reference-1",
           },
         },
       },
