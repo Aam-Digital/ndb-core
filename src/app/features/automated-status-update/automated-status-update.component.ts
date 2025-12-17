@@ -23,8 +23,8 @@ export interface AffectedEntity {
   /** entityId of the affected entity */
   id: string;
 
-  /** New status value to be applied to the target field */
-  newStatus: string;
+  /** New value to be applied to the target field */
+  newValue: string;
 
   /** Field Id that will receive the status update */
   targetFieldId: string;
@@ -91,7 +91,7 @@ export class AutomatedStatusUpdateComponent implements OnInit {
       );
 
       entity.form = entityForm;
-      entity.form.formGroup.controls[fieldId].setValue(entity.newStatus);
+      entity.form.formGroup.controls[fieldId].setValue(entity.newValue);
     }
   }
 
@@ -100,7 +100,7 @@ export class AutomatedStatusUpdateComponent implements OnInit {
       const fieldId = entity.targetFieldId;
       const formControl = entity.form?.formGroup.controls[fieldId];
       if (formControl) {
-        entity.newStatus = formControl.value;
+        entity.newValue = formControl.value;
       }
     }
     this.dialogRef.close(this.data.entities);

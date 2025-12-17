@@ -262,7 +262,7 @@ export class AutomatedStatusUpdateConfigService {
 
         affectedEntities.push({
           id: targetEntity.getId(),
-          newStatus: formattedValue,
+          newValue: formattedValue,
           targetFieldId,
           targetEntityType,
           selectedField: { ...fieldConfig, id: targetFieldId },
@@ -366,7 +366,7 @@ export class AutomatedStatusUpdateConfigService {
       const entity = updates[0].affectedEntity;
       if (entity) {
         updates.forEach((update) => {
-          entity[update.targetFieldId] = update.newStatus;
+          entity[update.targetFieldId] = update.newValue;
         });
         savePromises.push(this.entityMapper.save(entity));
       }
