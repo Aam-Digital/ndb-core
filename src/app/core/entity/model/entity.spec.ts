@@ -138,7 +138,7 @@ describe("Entity", () => {
 
     const testEntity = new TestconfigurableenumToString();
     expect(testEntity.toString()).toBe(
-      "male 25 " + new Date("2025-01-31").toLocaleDateString(),
+      "Male 25 " + new Date("2025-01-31").toLocaleDateString(),
     );
   });
 });

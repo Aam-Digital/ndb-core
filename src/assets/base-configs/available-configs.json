@@ -22,6 +22,7 @@
     "name": "Education Project",
     "description": "Manage students, attendance, personal development and counselling activities.\n\nThis example was designed for school or after-school support programs.",
     "entitiesToImport": [
+      "education/ProgressDashboardConfig_examples.json",
       "education/Config_CONFIG_ENTITY.json",
       "education/configurable-enums.json",
       "basic/ConfigurableEnum_attendance-status.json",
@@ -33,7 +34,6 @@
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json",
       "education/PublicFormConfig_example.json",
-      "education/ProgressDashboardConfig_examples.json",
       "education/ReportConfig.json",
       "education/EmailTemplate_birthday.json"
     ],
@@ -44,6 +44,7 @@
     "name": "Bildungsprojekt",
     "description": "Verwalten Sie Schüler:innen, Anwesenheit, persönliche Entwicklung und Beratungsaktivitäten.\n\nDieses Beispiel wurde für schulische oder außerschulische Förderprogramme entworfen.",
     "entitiesToImport": [
+      "education/de/ProgressDashboardConfig_examples.json",
       "education/de/Config_CONFIG_ENTITY.json",
       "education/de/configurable-enums.json",
       "basic/de/ConfigurableEnum_attendance-status.json",
@@ -55,7 +56,6 @@
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json",
       "education/de/PublicFormConfig_example.json",
-      "education/de/ProgressDashboardConfig_examples.json",
       "education/de/ReportConfig.json",
       "education/de/EmailTemplate_birthday.json"
     ],
@@ -66,6 +66,7 @@
     "name": "Projet d'éducation",
     "description": "Gestion des élèves, de l'assiduité, du développement personnel et des activités de conseil.\n\nCet exemple a été conçu pour les programmes de soutien scolaire ou périscolaire.",
     "entitiesToImport": [
+      "education/fr/ProgressDashboardConfig_examples.json",
       "education/fr/Config_CONFIG_ENTITY.json",
       "education/fr/configurable-enums.json",
       "basic/fr/ConfigurableEnum_attendance-status.json",
@@ -77,10 +78,50 @@
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json",
       "education/fr/PublicFormConfig_example.json",
-      "education/fr/ProgressDashboardConfig_examples.json",
       "education/fr/ReportConfig.json",
       "education/fr/EmailTemplate_birthday.json"
     ],
     "locale": "fr"
+  },
+  {
+    "id": "event-management",
+    "name": "Event & Training Management",
+    "description": "Manage events (e.g. trainings or workshops) or one-off activities (e.g. conferences), including tracking the attendance of participants and gathering feedback via surveys. It also allows to track which different events participants participated in over time. This example was designed for training programs, but you can configure it for your needs.\n\nIf you want to track participants attendance in a highly granular way (e.g. specifically for each day of a long-term training program/course), the education use-case may be more suitable for you.",
+    "entitiesToImport": [
+      "event-management/Config_CONFIG_ENTITY.json",
+      "event-management/other-configs.json",
+      "event-management/configurable-enums.json",
+      "event-management/ConfigurableEnum_likert1_5.json",
+      "basic/ConfigurableEnum_warning-levels.json",
+      "basic/ConfigurableEnum_genders.json",
+      "basic/Config_SetupWizard.json",
+      "basic/Config_Permissions.json",
+      "basic/SiteSettings_global.json",
+      "education/EmailTemplate_birthday.json"
+    ],
+    "locale": "en-US"
+  },
+  {
+    "id": "all-features",
+    "name": "[All Features]",
+    "description": "A setup with all available features enabled to preview any advanced functionality or special testing.",
+    "entitiesToImport": [
+      "education/ProgressDashboardConfig_examples.json",
+      "all-features/Config_CONFIG_ENTITY.json",
+      "education/configurable-enums.json",
+      "all-features/configurable-enums.json",
+      "basic/ConfigurableEnum_attendance-status.json",
+      "basic/ConfigurableEnum_warning-levels.json",
+      "basic/ConfigurableEnum_genders.json",
+      "basic/ConfigurableEnum_rating-answer.json",
+      "basic/Config_SetupWizard.json",
+      "basic/MarkdownContent_help.json",
+      "basic/Config_Permissions.json",
+      "basic/SiteSettings_global.json",
+      "education/PublicFormConfig_example.json",
+      "education/ReportConfig.json",
+      "education/EmailTemplate_birthday.json"
+    ],
+    "locale": "en-US"
   }
 ]

@@ -16,7 +16,7 @@ import { faker } from "#src/app/core/demo-data/faker.js";
 
 test("Dashboard widgets and actions", async ({ page }) => {
   const users = generateUsers();
-  const demoUser = users[0];
+  const demoUser = users[1];
   const children = range(8).map(() => generateChild());
   const notes = range(3).map(() =>
     generateNote({
