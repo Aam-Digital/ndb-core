@@ -97,8 +97,12 @@ export class AutomatedStatusUpdateConfigService {
   }
 
   /**
-   * current status automation (ref field on `entity`)
-   * Find all rules where sourceEntityType matches the current entity type (automation rules)
+   * Find all Inheritance Rules on other entity types that list the given sourceEntityType.
+   *
+   * For example:
+   * Given the method parameter sourceEntityType = School
+   * Return any Rule in Child entity type, which refers to sourceEntityType = School
+   * (as well as any other such rule in any entity type)
    */
   private getInheritanceRulesFromDirectEntity(
     sourceEntityType: EntityConstructor,
