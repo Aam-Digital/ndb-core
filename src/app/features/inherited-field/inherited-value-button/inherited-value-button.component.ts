@@ -33,7 +33,7 @@ import { Entity } from "../../../core/entity/model/entity";
   styleUrl: "./inherited-value-button.component.scss",
 })
 export class InheritedValueButtonComponent implements OnChanges {
-  private defaultValueService = inject(DefaultValueService);
+  private readonly defaultValueService = inject(DefaultValueService);
 
   @Input() form: EntityForm<any>;
   @Input() field: FormFieldConfig;
@@ -54,7 +54,7 @@ export class InheritedValueButtonComponent implements OnChanges {
       this.field?.id,
     );
 
-    if (changes.form && changes.form.firstChange) {
+    if (changes.form?.firstChange) {
       this.form?.formGroup.valueChanges.subscribe((value) =>
         // ensure this is only called after the other changes handler
         setTimeout(

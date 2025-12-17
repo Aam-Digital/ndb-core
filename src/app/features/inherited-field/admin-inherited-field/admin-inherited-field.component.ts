@@ -176,9 +176,9 @@ export class AdminInheritedFieldComponent
 
       if (this.selectedOption) {
         this.currentInheritanceFields = {
-          sourceReferenceField: this.selectedOption.sourceReferenceField!,
-          referencedEntityType: this.selectedOption.referencedEntityType!,
-          availableFields: this.selectedOption.availableFields!,
+          sourceReferenceField: this.selectedOption.sourceReferenceField,
+          referencedEntityType: this.selectedOption.referencedEntityType,
+          availableFields: this.selectedOption.availableFields,
         };
       } else {
         this.currentInheritanceFields = null;
@@ -194,18 +194,18 @@ export class AdminInheritedFieldComponent
 
     if (option.type === "inherit") {
       this.currentInheritanceFields = {
-        sourceReferenceField: option.sourceReferenceField!,
-        referencedEntityType: option.referencedEntityType!,
-        availableFields: option.availableFields!,
+        sourceReferenceField: option.sourceReferenceField,
+        referencedEntityType: option.referencedEntityType,
+        availableFields: option.availableFields,
       };
 
       this.value = {
         ...this.value,
-        sourceReferenceField: option.sourceReferenceField!,
+        sourceReferenceField: option.sourceReferenceField,
         sourceEntityType: undefined,
       };
     } else if (option.type === "automated") {
-      this.openAutomatedMappingDialog(option.sourceEntityType!);
+      this.openAutomatedMappingDialog(option.sourceEntityType);
     }
   }
 

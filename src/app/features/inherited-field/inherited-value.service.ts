@@ -26,7 +26,7 @@ import { DefaultValueConfigInheritedField } from "./inherited-field-config";
 export class InheritedValueService extends DefaultValueStrategy {
   override readonly mode = "inherited-field";
 
-  private entityMapper = inject(EntityMapperService);
+  private readonly entityMapper = inject(EntityMapperService);
 
   override async getAdminUI(): Promise<AdminDefaultValueContext> {
     const component =
@@ -161,14 +161,6 @@ export class InheritedValueService extends DefaultValueStrategy {
     }
 
     let sourceValue = parentEntity[defaultConfig.sourceValueField];
-
-    // todo: handle mapping of values for test cases, need to update later
-    if (defaultConfig.valueMapping && sourceValue !== undefined) {
-      const mappedValue = defaultConfig.valueMapping[sourceValue];
-      if (mappedValue !== undefined) {
-        sourceValue = mappedValue;
-      }
-    }
 
     if (fieldConfig.isArray) {
       // always wrap the source value in an array
