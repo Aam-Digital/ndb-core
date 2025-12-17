@@ -57,12 +57,9 @@ export class AutomatedStatusUpdateConfigService {
   ): Promise<void> {
     if (this.checkRefAlreadyProcessed(entity)) return;
 
-    // (1) get array of changed fields (we later need to compare if these are used as a sourceValueField)
     const changedFields = this.getChangedFields(entity, entityBeforeChanges);
     const changedFieldIds = changedFields.map((f) => f.fieldId);
 
-    // (2.1) check schema fields of the entity if any automation rule uses the field as a sourceValueField
-    // [NEW] (2.2) check schema fields of all other entity types, if any automation rule uses this sourceEntityType (= entity.getType()) and sourceValueField
     const relevantDirectRules: AffectedRule[] =
       this.getInheritanceRulesFromDirectEntity(entity.getConstructor()).filter(
         (r) => changedFieldIds.includes(r.rule.sourceValueField),
@@ -71,11 +68,6 @@ export class AutomatedStatusUpdateConfigService {
       this.getInheritanceRulesReferencingThisEntity(
         entity.getConstructor(),
       ).filter((r) => changedFieldIds.includes(r.rule.sourceValueField));
-
-    // (3) load affected entities based on the rules from step 2
-    // FOR EACH AFFECTED SCHEMA FIELD OF TARGET/CHILD ENTITY TYPE (i.e. from step 2)
-    // (3.1) load affected entities where the sourceReferenceField is on this entity [current status automation]
-    // [NEW] (3.2) load all entities of the affected type that could have a reference field in their own entity (e.g. a Child linking to this School currently getting saved)
 
     const affectedEntities: AffectedEntity[] = [
       ...(
@@ -94,7 +86,6 @@ export class AutomatedStatusUpdateConfigService {
       ).flat(),
     ];
 
-    // (4) confirmAndSave all affectedEntities
     if (affectedEntities.length > 0) {
       await this.confirmAndSaveAffectedEntities(affectedEntities);
     }
