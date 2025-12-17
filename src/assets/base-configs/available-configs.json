@@ -86,7 +86,7 @@
   {
     "id": "event-management",
     "name": "Event & Training Management",
-    "description": "TODO",
+    "description": "Manage events (e.g. trainings or workshops) or one-off activities (e.g. conferences), including tracking the attendance of participants and gathering feedback via surveys. It also allows to track which different events participants participated in over time. This example was designed for training programs, but you can configure it for your needs.\n\nIf you want to track participants attendance in a highly granular way (e.g. specifically for each day of a long-term training program/course), the education use-case may be more suitable for you.",
     "entitiesToImport": [
       "event-management/Config_CONFIG_ENTITY.json",
       "event-management/other-configs.json",
