@@ -16,10 +16,7 @@ import { DatabaseField } from "app/core/entity/database-field.decorator";
 import { Entity } from "app/core/entity/model/entity";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { of } from "rxjs";
-import {
-  ConfigurableEnumConfig,
-  ConfigurableEnumValue,
-} from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { DefaultValueMode } from "../../core/default-values/default-value-config";
 
 const mockAutomationConfig = {

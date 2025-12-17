@@ -15,6 +15,15 @@ import { DefaultValueConfigInheritedField } from "../inherited-field/inherited-f
 import { Logging } from "#src/app/core/logging/logging.service";
 
 /**
+ * Represents a rule with its associated entity type and field information
+ */
+interface AffectedRule {
+  rule: DefaultValueConfigInheritedField;
+  entityType: EntityConstructor;
+  fieldId: string;
+}
+
+/**
  * Service to automatically update related entities based on configured rules.
  * It finds dependent entities and updates their fields based on changes in the source entity.
  */
@@ -54,17 +63,14 @@ export class AutomatedStatusUpdateConfigService {
 
     // (2.1) check schema fields of the entity if any automation rule uses the field as a sourceValueField
     // [NEW] (2.2) check schema fields of all other entity types, if any automation rule uses this sourceEntityType (= entity.getType()) and sourceValueField
-    const relevantDirectRules: DefaultValueConfigInheritedField[] =
+    const relevantDirectRules: AffectedRule[] =
       this.getInheritanceRulesFromDirectEntity(entity.getConstructor()).filter(
-        (r) => changedFieldIds.includes(r.sourceValueField),
+        (r) => changedFieldIds.includes(r.rule.sourceValueField),
       );
-    const relevantIndirectRules: Array<{
-      rule: DefaultValueConfigInheritedField;
-      targetEntityType: EntityConstructor;
-      targetFieldId: string;
-    }> = this.getInheritanceRulesReferencingThisEntity(
-      entity.getConstructor(),
-    ).filter((r) => changedFieldIds.includes(r.rule.sourceValueField));
+    const relevantIndirectRules: AffectedRule[] =
+      this.getInheritanceRulesReferencingThisEntity(
+        entity.getConstructor(),
+      ).filter((r) => changedFieldIds.includes(r.rule.sourceValueField));
 
     // (3) load affected entities based on the rules from step 2
     // FOR EACH AFFECTED SCHEMA FIELD OF TARGET/CHILD ENTITY TYPE (i.e. from step 2)
@@ -72,11 +78,20 @@ export class AutomatedStatusUpdateConfigService {
     // [NEW] (3.2) load all entities of the affected type that could have a reference field in their own entity (e.g. a Child linking to this School currently getting saved)
 
     const affectedEntities: AffectedEntity[] = [
-      ...(await this.loadAffectedDirectEntities(relevantDirectRules, entity)),
-      ...(await this.loadAffectedIndirectEntities(
-        relevantIndirectRules,
-        entity,
-      )),
+      ...(
+        await Promise.all(
+          relevantDirectRules.map((rule) =>
+            this.loadAffectedEntitiesForRule(rule, entity),
+          ),
+        )
+      ).flat(),
+      ...(
+        await Promise.all(
+          relevantIndirectRules.map((rule) =>
+            this.loadAffectedEntitiesForInheritanceRule(rule, entity),
+          ),
+        )
+      ).flat(),
     ];
 
     // (4) confirmAndSave all affectedEntities
@@ -106,8 +121,8 @@ export class AutomatedStatusUpdateConfigService {
    */
   private getInheritanceRulesFromDirectEntity(
     sourceEntityType: EntityConstructor,
-  ): DefaultValueConfigInheritedField[] {
-    const rules: DefaultValueConfigInheritedField[] = [];
+  ): AffectedRule[] {
+    const rules: AffectedRule[] = [];
 
     for (const targetEntityType of this.entityRegistry.values()) {
       for (const [fieldId, fieldConfig] of targetEntityType.schema.entries()) {
@@ -116,7 +131,11 @@ export class AutomatedStatusUpdateConfigService {
             .config as DefaultValueConfigInheritedField;
 
           if (rule?.sourceEntityType === sourceEntityType.ENTITY_TYPE) {
-            rules.push(rule);
+            rules.push({
+              rule,
+              entityType: targetEntityType,
+              fieldId,
+            });
           }
         }
       }
@@ -136,16 +155,8 @@ export class AutomatedStatusUpdateConfigService {
    */
   private getInheritanceRulesReferencingThisEntity(
     sourceEntityType: EntityConstructor,
-  ): Array<{
-    rule: DefaultValueConfigInheritedField;
-    targetEntityType: EntityConstructor;
-    targetFieldId: string;
-  }> {
-    const rules: Array<{
-      rule: DefaultValueConfigInheritedField;
-      targetEntityType: EntityConstructor;
-      targetFieldId: string;
-    }> = [];
+  ): AffectedRule[] {
+    const rules: AffectedRule[] = [];
 
     for (const targetEntityType of this.entityRegistry.values()) {
       for (const [fieldId, fieldConfig] of targetEntityType.schema.entries()) {
@@ -167,8 +178,8 @@ export class AutomatedStatusUpdateConfigService {
             ) {
               rules.push({
                 rule,
-                targetEntityType,
-                targetFieldId: fieldId,
+                entityType: targetEntityType,
+                fieldId,
               });
             }
           }
@@ -180,79 +191,57 @@ export class AutomatedStatusUpdateConfigService {
   }
 
   /**
-   * Load affected entities for automation rules
+   * Load affected entities for a single automation rule (direct references)
+   * Source entity has reference field pointing TO target entities
    */
-  private async loadAffectedDirectEntities(
-    rules: DefaultValueConfigInheritedField[],
+  private async loadAffectedEntitiesForRule(
+    affectedRule: AffectedRule,
     sourceEntity: Entity,
   ): Promise<AffectedEntity[]> {
-    const affectedEntities: AffectedEntity[] = [];
+    const { rule, entityType, fieldId } = affectedRule;
 
-    for (const rule of rules) {
-      const targetEntityType = this.findEntityTypeWithRule(rule);
-      if (!targetEntityType) continue;
+    const referencedEntityIds = sourceEntity[rule.sourceReferenceField];
+    if (!referencedEntityIds) return [];
 
-      const targetFieldId = this.findFieldIdWithRule(targetEntityType, rule);
-      if (!targetFieldId) continue;
+    const targetEntities = await this.loadEntitiesByIds(
+      entityType,
+      Array.isArray(referencedEntityIds)
+        ? referencedEntityIds
+        : [referencedEntityIds],
+    );
 
-      // Get entities referenced by the source entity
-      const referencedEntityIds = sourceEntity[rule.sourceReferenceField];
-      if (!referencedEntityIds) continue;
-
-      const targetEntities = await this.loadEntitiesByIds(
-        targetEntityType,
-        Array.isArray(referencedEntityIds)
-          ? referencedEntityIds
-          : [referencedEntityIds],
-      );
-
-      const processedEntities = this.processTargetEntities(
-        targetEntities,
-        rule,
-        sourceEntity,
-        targetEntityType,
-        targetFieldId,
-      );
-
-      affectedEntities.push(...processedEntities);
-    }
-
-    return affectedEntities;
+    return this.processTargetEntities(
+      targetEntities,
+      rule,
+      sourceEntity,
+      entityType,
+      fieldId,
+    );
   }
 
   /**
-   * Load affected entities for inheritance rules (indirect references)
+   * Load affected entities for a single inheritance rule (indirect references)
+   * Target entities have reference field pointing TO source entity
    */
-  private async loadAffectedIndirectEntities(
-    ruleEntries: Array<{
-      rule: DefaultValueConfigInheritedField;
-      targetEntityType: EntityConstructor;
-      targetFieldId: string;
-    }>,
+  private async loadAffectedEntitiesForInheritanceRule(
+    affectedRule: AffectedRule,
     sourceEntity: Entity,
   ): Promise<AffectedEntity[]> {
-    const affectedEntities: AffectedEntity[] = [];
+    const { rule, entityType, fieldId } = affectedRule;
 
-    for (const { rule, targetEntityType, targetFieldId } of ruleEntries) {
-      // Load all entities of target type and filter for those referencing source entity
-      const allTargetEntities =
-        await this.entityMapper.loadType(targetEntityType);
-      const targetEntities = allTargetEntities.filter(
-        (entity) => entity[rule.sourceReferenceField] === sourceEntity.getId(),
-      );
+    // Load all entities of target type and filter for those referencing source entity
+    const allTargetEntities = await this.entityMapper.loadType(entityType);
+    const targetEntities = allTargetEntities.filter(
+      (entity) => entity[rule.sourceReferenceField] === sourceEntity.getId(),
+    );
 
-      const processedEntities = this.processTargetEntities(
-        targetEntities,
-        rule,
-        sourceEntity,
-        targetEntityType,
-        targetFieldId,
-      );
-
-      affectedEntities.push(...processedEntities);
-    }
-
-    return affectedEntities;
+    return this.processTargetEntities(
+      targetEntities,
+      rule,
+      sourceEntity,
+      entityType,
+      fieldId,
+    );
   }
 
   /**
@@ -311,43 +300,6 @@ export class AutomatedStatusUpdateConfigService {
     }
 
     return newValue;
-  }
-
-  /**
-   * Find which entity type has a field configured with the given rule
-   */
-  private findEntityTypeWithRule(
-    rule: DefaultValueConfigInheritedField,
-  ): EntityConstructor | null {
-    for (const entityType of this.entityRegistry.values()) {
-      for (const [, fieldConfig] of entityType.schema.entries()) {
-        if (
-          fieldConfig.defaultValue?.mode === "inherited-field" &&
-          fieldConfig.defaultValue.config === rule
-        ) {
-          return entityType;
-        }
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Find which field ID in the given entity type has the specified rule configured
-   */
-  private findFieldIdWithRule(
-    entityType: EntityConstructor,
-    rule: DefaultValueConfigInheritedField,
-  ): string | null {
-    for (const [fieldId, fieldConfig] of entityType.schema.entries()) {
-      if (
-        fieldConfig.defaultValue?.mode === "inherited-field" &&
-        fieldConfig.defaultValue.config === rule
-      ) {
-        return fieldId;
-      }
-    }
-    return null;
   }
 
   /**
@@ -419,7 +371,7 @@ export class AutomatedStatusUpdateConfigService {
     });
 
     const savePromises: Promise<any>[] = [];
-    updatesByEntityId.forEach((updates, entityId) => {
+    updatesByEntityId.forEach((updates) => {
       const entity = updates[0].affectedEntity;
       if (entity) {
         updates.forEach((update) => {
