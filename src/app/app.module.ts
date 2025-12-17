@@ -17,7 +17,7 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { LOCALE_ID, NgModule, inject } from "@angular/core";
+import { inject, LOCALE_ID, NgModule } from "@angular/core";
 import {
   provideHttpClient,
   withInterceptorsFromDi,
@@ -144,10 +144,10 @@ import { EmailClientServiceModule } from "./features/email-client/email-client.m
     TodosModule,
     AdminModule,
     TemplateExportModule,
-    PublicFormModule,
     SkillModule,
     DemoDataModule,
     EmailClientServiceModule,
+    PublicFormModule,
     // top level component
     UiComponent,
     // Global Angular Material modules
