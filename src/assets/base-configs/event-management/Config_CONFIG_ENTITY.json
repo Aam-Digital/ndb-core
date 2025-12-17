@@ -19,13 +19,13 @@
           "link": "/"
         },
         {
-          "entityType": "Individual"
+          "entityType": "Participant"
         },
         {
           "entityType": "Event"
         },
         {
-          "entityType": "outcomeSurvey"
+          "entityType": "participantSurvey"
         },
         {
           "entityType": "Project"
@@ -59,7 +59,7 @@
           {
             "component": "EntityCountDashboard",
             "config": {
-              "entityType": "Individual",
+              "entityType": "Participant",
               "groupBy": [
                 "gender"
               ]
@@ -99,7 +99,7 @@
       "config": {},
       "_id": "view:report"
     },
-    "entity:Individual": {
+    "entity:Participant": {
       "toStringAttributes": [
         "firstName",
         "lastName"
@@ -187,7 +187,7 @@
       "labelPlural": "Participants",
       "hasPII": true,
       "icon": "person",
-      "_id": "entity:Individual"
+      "_id": "entity:Participant"
     },
     "view:individual/:id": {
       "component": "EntityDetails",
@@ -263,7 +263,7 @@
                 "component": "RelatedEntities",
                 "config": {
                   "entityType": "outcomeSurvey",
-                  "property": "individual",
+                  "property": "participant",
                   "columns": [
                     {
                       "id": "date"
@@ -289,11 +289,11 @@
             ]
           }
         ],
-        "entityType": "Individual"
+        "entityType": "Participant"
       },
-      "_id": "view:individual/:id"
+      "_id": "view:participant/:id"
     },
-    "view:individual": {
+    "view:participant": {
       "component": "EntityList",
       "config": {
         "filters": [
@@ -340,16 +340,16 @@
             "additional": "dateOfBirth"
           }
         ],
-        "entityType": "Individual"
+        "entityType": "Participant"
       },
-      "_id": "view:individual"
+      "_id": "view:participant"
     },
     "entity:Participant2Event": {
       "attributes": {
         "participant": {
           "label": "Participant",
           "dataType": "entity",
-          "additional": "Individual",
+          "additional": "Participant",
           "id": "participant"
         },
         "event": {
@@ -531,7 +531,7 @@
                       "id": "date"
                     },
                     {
-                      "id": "individual"
+                      "id": "participant"
                     },
                     {
                       "id": "overallSatisfactionIWasSatisfiedWithTheEvent"
@@ -1052,9 +1052,8 @@
       },
       "_id": "view:project"
     },
-    "entity:outcomeSurvey": {
+    "entity:participantSurvey": {
       "label": "Participant Survey",
-      "route": "outcomeSurvey",
       "attributes": {
         "date": {
           "label": "Date of Survey Submission",
@@ -1068,11 +1067,11 @@
             }
           }
         },
-        "individual": {
+        "participant": {
           "label": "Participant Responding",
           "dataType": "entity",
-          "additional": "Individual",
-          "id": "individual",
+          "additional": "Participant",
+          "id": "participant",
           "displayFullLengthLabel": false
         },
         "overallSatisfactionIWasSatisfiedWithTheEvent": {
@@ -1122,13 +1121,13 @@
         "date"
       ],
       "hasPII": false,
-      "_id": "entity:outcomeSurvey",
+      "_id": "entity:participantSurvey",
       "icon": "clipboard-question"
     },
-    "view:outcomeSurvey/:id": {
+    "view:participantsurvey/:id": {
       "component": "EntityDetails",
       "config": {
-        "entityType": "outcomeSurvey",
+        "entityType": "participantSurvey",
         "panels": [
           {
             "title": "Survey Form",
@@ -1141,7 +1140,7 @@
                     {
                       "fields": [
                         "date",
-                        "individual",
+                        "participant",
                         "event"
                       ],
                       "header": "Basic Data"
@@ -1162,12 +1161,12 @@
           }
         ]
       },
-      "_id": "view:outcomeSurvey/:id"
+      "_id": "view:participantSurvey/:id"
     },
-    "view:outcomeSurvey": {
+    "view:participantsurvey": {
       "component": "EntityList",
       "config": {
-        "entityType": "outcomeSurvey",
+        "entityType": "participantSurvey",
         "columnGroups": {
           "default": "Overview",
           "mobile": "Overview",
@@ -1176,7 +1175,7 @@
               "name": "Overview",
               "columns": [
                 "date",
-                "individual",
+                "participant",
                 "event"
               ]
             }
@@ -1188,7 +1187,7 @@
           }
         ]
       },
-      "_id": "view:outcomeSurvey"
+      "_id": "view:participantSurvey"
     }
   }
 }
