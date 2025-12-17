@@ -150,6 +150,7 @@ export class AdminInheritedFieldComponent
   private updateSelectedOption() {
     if (!this.value) {
       this.selectedOption = null;
+      this.currentInheritanceFields = null;
       return;
     }
 
@@ -162,6 +163,7 @@ export class AdminInheritedFieldComponent
             opt.type === "automated" &&
             opt.sourceEntityType === this.value.sourceEntityType,
         ) || null;
+      this.currentInheritanceFields = null;
     }
     // Inheritance has sourceReferenceField but NO sourceEntityType
     else if (this.value.sourceReferenceField && !this.value.sourceEntityType) {
@@ -171,8 +173,19 @@ export class AdminInheritedFieldComponent
             opt.type === "inherit" &&
             opt.sourceReferenceField === this.value.sourceReferenceField,
         ) || null;
+      
+      if (this.selectedOption) {
+        this.currentInheritanceFields = {
+          sourceReferenceField: this.selectedOption.sourceReferenceField!,
+          referencedEntityType: this.selectedOption.referencedEntityType!,
+          availableFields: this.selectedOption.availableFields!,
+        };
+      } else {
+        this.currentInheritanceFields = null;
+      }
     } else {
       this.selectedOption = null;
+      this.currentInheritanceFields = null;
     }
   }
 
