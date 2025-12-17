@@ -173,7 +173,7 @@ export class AdminInheritedFieldComponent
             opt.type === "inherit" &&
             opt.sourceReferenceField === this.value.sourceReferenceField,
         ) || null;
-      
+
       if (this.selectedOption) {
         this.currentInheritanceFields = {
           sourceReferenceField: this.selectedOption.sourceReferenceField!,

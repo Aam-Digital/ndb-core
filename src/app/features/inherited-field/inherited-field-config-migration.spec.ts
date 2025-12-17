@@ -1,7 +1,7 @@
 import { migrateInheritedFieldConfig } from "./inherited-field-config-migration";
 import { DefaultValueConfigInheritedField } from "./inherited-field-config";
 
-fdescribe("migrateInheritedFieldConfig", () => {
+describe("migrateInheritedFieldConfig", () => {
   it("should migrate inherited-from-referenced-entity mode correctly", () => {
     const defaultValue = {
       mode: "inherited-from-referenced-entity",

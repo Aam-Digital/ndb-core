@@ -24,4 +24,10 @@ export interface DefaultValueConfig {
   config?: any;
 }
 
-export type DefaultValueMode = "static" | "dynamic" | "inherited-field";
+export type DefaultValueMode =
+  | "static"
+  | "dynamic"
+  | "inherited-field"
+  | "inherited-from-referenced-entity"
+  | "updated-from-referencing-entity";
+// todo remove "inherited-from-referenced-entity" and "updated-from-referencing-entity" in future versions

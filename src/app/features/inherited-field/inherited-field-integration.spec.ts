@@ -16,7 +16,7 @@ import { EntityAbility } from "../../core/permissions/ability/entity-ability";
 import { DefaultValueStrategy } from "../../core/default-values/default-value-strategy.interface";
 import { EMPTY } from "rxjs";
 
-fdescribe("Inherited Field Integration Tests", () => {
+describe("Inherited Field Integration Tests", () => {
   let inheritedValueService: InheritedValueService;
   let automatedStatusService: AutomatedStatusUpdateConfigService;
   let mockEntityMapperService: jasmine.SpyObj<EntityMapperService>;
