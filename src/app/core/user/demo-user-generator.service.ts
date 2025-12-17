@@ -38,12 +38,14 @@ export function generateUsers(): Array<Entity & { name: string }> {
     DemoUserGeneratorService.DEFAULT_USERNAME,
   );
   demoUser.name = DemoUserGeneratorService.DEFAULT_USERNAME;
+  demoUser.firstname = DemoUserGeneratorService.DEFAULT_USERNAME;
 
   const demoAdmin = createEntityOfType(
     "User",
     DemoUserGeneratorService.ADMIN_USERNAME,
   );
   demoAdmin.name = DemoUserGeneratorService.ADMIN_USERNAME;
+  demoAdmin.firstname = DemoUserGeneratorService.ADMIN_USERNAME;
 
   users.push(demoUser, demoAdmin);
 
@@ -54,6 +56,8 @@ export function generateUsers(): Array<Entity & { name: string }> {
   for (const name of userNames) {
     const user = createEntityOfType("User", name);
     user.name = name;
+    user.firstname = name;
+    user.lastname = faker.person.lastName();
     user.phone = faker.phone.number();
     users.push(user);
   }
