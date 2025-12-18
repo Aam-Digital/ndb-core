@@ -9,7 +9,6 @@ import {
 } from "./automated-status-update.component";
 import { lastValueFrom } from "rxjs";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 import { DefaultValueConfigInheritedField } from "../inherited-field/inherited-field-config";
 import { Logging } from "#src/app/core/logging/logging.service";
@@ -33,7 +32,6 @@ export class AutomatedStatusUpdateConfigService {
   private entityMapper = inject(EntityMapperService);
   private dialog = inject(MatDialog);
   private unsavedChangesService = inject(UnsavedChangesService);
-  private entitySchemaService = inject(EntitySchemaService);
 
   /**
    * Track processed entity revisions to prevent duplicate automated status updates within the same save operation
@@ -252,17 +250,11 @@ export class AutomatedStatusUpdateConfigService {
 
       if (targetEntity[targetFieldId] !== newValue) {
         const fieldConfig = targetEntityType.schema.get(targetFieldId);
-
         targetEntity[targetFieldId] = newValue;
-
-        const formattedValue = this.entitySchemaService.valueToEntityFormat(
-          newValue,
-          fieldConfig,
-        );
 
         affectedEntities.push({
           id: targetEntity.getId(),
-          newValue: formattedValue,
+          newValue: newValue,
           targetFieldId,
           targetEntityType,
           selectedField: { ...fieldConfig, id: targetFieldId },

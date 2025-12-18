@@ -1,5 +1,6 @@
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { Component, inject, OnInit } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import {
@@ -68,6 +69,7 @@ export class AutomatedStatusUpdateComponent implements OnInit {
   private dialogRef =
     inject<MatDialogRef<AutomatedStatusUpdateComponent>>(MatDialogRef);
   private entityFormService = inject(EntityFormService);
+  private entitySchemaService = inject(EntitySchemaService);
 
   entityConstructor: EntityConstructor;
 
@@ -81,17 +83,18 @@ export class AutomatedStatusUpdateComponent implements OnInit {
         entityConstructor,
       );
 
-      // todo: check if we reallly need this? also not sure why we create a new entity here
-      if (!entity.affectedEntity) {
-        entity.affectedEntity = new entityConstructor();
-      }
       const entityForm = await this.entityFormService.createEntityForm(
         [fieldId],
         entity.affectedEntity,
       );
 
       entity.form = entityForm;
-      entity.form.formGroup.controls[fieldId].setValue(entity.newValue);
+
+      const formattedValue = this.entitySchemaService.valueToEntityFormat(
+        entity.newValue,
+        entity.selectedField,
+      );
+      entity.form.formGroup.controls[fieldId].setValue(formattedValue);
     }
   }
 
