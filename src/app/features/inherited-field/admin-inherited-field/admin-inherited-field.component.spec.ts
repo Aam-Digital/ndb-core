@@ -20,7 +20,7 @@ describe("AdminInheritedFieldComponent", () => {
       ],
       providers: [
         { provide: MatDialog, useValue: jasmine.createSpyObj(["open"]) },
-        { provide: EntityRegistry, useValue:entityRegistry },
+        { provide: EntityRegistry, useValue: entityRegistry },
         {
           provide: EntityRelationsService,
           useValue: jasmine.createSpyObj(["getEntityTypesReferencingType"]),
