@@ -1,11 +1,10 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MatDialog } from "@angular/material/dialog";
-import { entityRegistry, EntityRegistry } from "../../../core/entity/database-entity.decorator";
-import { EntityRelationsService } from "../../../core/entity/entity-mapper/entity-relations.service";
 import {
   entityRegistry,
   EntityRegistry,
 } from "../../../core/entity/database-entity.decorator";
+import { EntityRelationsService } from "../../../core/entity/entity-mapper/entity-relations.service";
 import { AdminInheritedFieldComponent } from "./admin-inherited-field.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -27,10 +26,6 @@ describe("AdminInheritedFieldComponent", () => {
         {
           provide: EntityRelationsService,
           useValue: jasmine.createSpyObj(["getEntityTypesReferencingType"]),
-        },
-        {
-          provide: EntitySchemaService,
-          useValue: jasmine.createSpyObj(["valueToEntityFormat"]),
         },
       ],
     }).compileComponents();

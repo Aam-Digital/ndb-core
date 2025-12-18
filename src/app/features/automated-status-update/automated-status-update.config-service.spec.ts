@@ -174,7 +174,6 @@ describe("AutomatedStatusUpdateConfigService", () => {
     entityMapper.addAll([mentee, mentorship]);
 
     const originalMentorship = mentorship.copy();
-    originalMentorship.status = undefined;
 
     mentorship.status = TEST_MENTORSHIP_ENUM[1];
     await service.applyRulesToDependentEntities(mentorship, originalMentorship);
