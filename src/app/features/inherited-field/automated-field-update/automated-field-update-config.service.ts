@@ -1,16 +1,16 @@
 import { inject, Injectable } from "@angular/core";
-import { Entity, EntityConstructor } from "app/core/entity/model/entity";
-import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
 import {
   AffectedEntity,
-  AutomatedStatusUpdateComponent,
-} from "./automated-status-update.component";
+  AutomatedFieldUpdateComponent,
+} from "./automated-field-update.component";
 import { lastValueFrom } from "rxjs";
-import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
-import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
-import { DefaultValueConfigInheritedField } from "../inherited-field/inherited-field-config";
+import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
+import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
+import { DefaultValueConfigInheritedField } from "../inherited-field-config";
 import { Logging } from "#src/app/core/logging/logging.service";
 
 /**
@@ -27,7 +27,7 @@ interface AffectedRule {
  * It finds dependent entities and updates their fields based on changes in the source entity.
  */
 @Injectable({ providedIn: "root" })
-export class AutomatedStatusUpdateConfigService {
+export class AutomatedFieldUpdateConfigService {
   private entityRegistry = inject(EntityRegistry);
   private entityMapper = inject(EntityMapperService);
   private dialog = inject(MatDialog);
@@ -375,7 +375,7 @@ export class AutomatedStatusUpdateConfigService {
   private async showConfirmationDialog(
     entitiesToUpdate: AffectedEntity[],
   ): Promise<AffectedEntity[] | null> {
-    const dialogRef = this.dialog.open(AutomatedStatusUpdateComponent, {
+    const dialogRef = this.dialog.open(AutomatedFieldUpdateComponent, {
       maxHeight: "90vh",
       data: { entities: entitiesToUpdate },
     });

@@ -23,7 +23,7 @@ import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.data
 import {
   AutomatedFieldMappingComponent,
   AutomatedFieldMappingDialogData,
-} from "../../automated-status-update/automated-field-mapping/automated-field-mapping.component";
+} from "#src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component";
 import { DefaultValueConfigInheritedField } from "../inherited-field-config";
 
 interface InheritanceOption {

@@ -1,23 +1,23 @@
 import { TestBed } from "@angular/core/testing";
-import { AutomatedStatusUpdateConfigService } from "./automated-status-update-config-service";
+import { AutomatedFieldUpdateConfigService } from "./automated-field-update-config.service";
 import { MatDialog } from "@angular/material/dialog";
-import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import {
   mockEntityMapperProvider,
   MockEntityMapperService,
-} from "app/core/entity/entity-mapper/mock-entity-mapper-service";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+} from "#src/app/core/entity/entity-mapper/mock-entity-mapper-service";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import {
   DatabaseEntity,
   entityRegistry,
   EntityRegistry,
-} from "app/core/entity/database-entity.decorator";
-import { DatabaseField } from "app/core/entity/database-field.decorator";
-import { Entity } from "app/core/entity/model/entity";
-import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
+} from "#src/app/core/entity/database-entity.decorator";
+import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
+import { Entity } from "#src/app/core/entity/model/entity";
+import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { of } from "rxjs";
-import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
-import { DefaultValueMode } from "../../core/default-values/default-value-config";
+import { ConfigurableEnumValue } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { DefaultValueMode } from "../../../core/default-values/default-value-config";
 
 const mockAutomationConfig = {
   mode: "inherited-field" as DefaultValueMode,
@@ -96,9 +96,9 @@ class Mentorship extends Entity {
   otherField: string;
 }
 
-describe("AutomatedStatusUpdateConfigService", () => {
+describe("AutomatedFieldUpdateConfigService", () => {
   let entityMapper: MockEntityMapperService;
-  let service: AutomatedStatusUpdateConfigService;
+  let service: AutomatedFieldUpdateConfigService;
   let enumService: jasmine.SpyObj<ConfigurableEnumService>;
 
   const TEST_MENTORSHIP_ENUM: ConfigurableEnumValue[] = [
@@ -149,7 +149,7 @@ describe("AutomatedStatusUpdateConfigService", () => {
         { provide: ConfigurableEnumService, useValue: enumService },
       ],
     });
-    service = TestBed.inject(AutomatedStatusUpdateConfigService);
+    service = TestBed.inject(AutomatedFieldUpdateConfigService);
 
     entityMapper = TestBed.inject(
       EntityMapperService,

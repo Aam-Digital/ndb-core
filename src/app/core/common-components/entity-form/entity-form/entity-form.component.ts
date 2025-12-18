@@ -2,7 +2,7 @@ import {
   EntityForm,
   EntityFormSavedEvent,
 } from "#src/app/core/common-components/entity-form/entity-form";
-import { AutomatedStatusUpdateConfigService } from "#src/app/features/automated-status-update/automated-status-update-config-service";
+import { AutomatedFieldUpdateConfigService } from "#src/app/features/inherited-field/automated-field-update/automated-field-update-config.service";
 import { NgClass } from "@angular/common";
 import {
   Component,
@@ -54,7 +54,7 @@ export class EntityFormComponent<
   private confirmationDialog = inject(ConfirmationDialogService);
   private ability = inject(EntityAbility);
   private automatedStatusUpdateConfigService = inject(
-    AutomatedStatusUpdateConfigService,
+    AutomatedFieldUpdateConfigService,
   );
 
   /**

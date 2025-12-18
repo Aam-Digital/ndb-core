@@ -8,11 +8,11 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { EntityBlockComponent } from "app/core/basic-datatypes/entity/entity-block/entity-block.component";
-import { DialogCloseComponent } from "app/core/common-components/dialog-close/dialog-close.component";
-import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
-import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
-import { Entity, EntityConstructor } from "app/core/entity/model/entity";
+import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
+import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
+import { EntityFormService } from "#src/app/core/common-components/entity-form/entity-form.service";
+import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 
 /**
  * Represents an entity that will be affected by a status update.
@@ -48,10 +48,10 @@ export interface AffectedEntity {
  * the automated updates of fields in related entities,
  * after a triggering entity has been updated.
  *
- * (also see AutomatedStatusUpdateConfigService)
+ * (also see AutomatedFieldUpdateConfigService)
  */
 @Component({
-  selector: "app-automated-status-update",
+  selector: "app-automated-field-update",
   imports: [
     DialogCloseComponent,
     EntityFieldEditComponent,
@@ -59,15 +59,15 @@ export interface AffectedEntity {
     MatButton,
     MatDialogModule,
   ],
-  templateUrl: "./automated-status-update.component.html",
-  styleUrl: "./automated-status-update.component.scss",
+  templateUrl: "./automated-field-update.component.html",
+  styleUrl: "./automated-field-update.component.scss",
 })
-export class AutomatedStatusUpdateComponent implements OnInit {
+export class AutomatedFieldUpdateComponent implements OnInit {
   data = inject<{
     entities: AffectedEntity[];
   }>(MAT_DIALOG_DATA);
   private dialogRef =
-    inject<MatDialogRef<AutomatedStatusUpdateComponent>>(MatDialogRef);
+    inject<MatDialogRef<AutomatedFieldUpdateComponent>>(MatDialogRef);
   private entityFormService = inject(EntityFormService);
   private readonly entitySchemaService = inject(EntitySchemaService);
 

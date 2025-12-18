@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AutomatedFieldMappingComponent } from "./automated-field-mapping.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
-import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { EntityFormService } from "#src/app/core/common-components/entity-form/entity-form.service";
+import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
+import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { SyncStateSubject } from "#src/app/core/session/session-type";
 import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";

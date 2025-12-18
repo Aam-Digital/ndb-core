@@ -13,13 +13,13 @@ import {
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatOption, MatSelect } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
-import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
-import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
-import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
-import { Entity, EntityConstructor } from "app/core/entity/model/entity";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
-import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
+import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { ConfigurableEnumValue } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+import { DialogCloseComponent } from "../../../../core/common-components/dialog-close/dialog-close.component";
 
 /**
  * Dialog to configure additional details for the "inherited-field"
