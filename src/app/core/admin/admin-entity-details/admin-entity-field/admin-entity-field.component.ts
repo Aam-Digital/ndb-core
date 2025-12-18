@@ -314,6 +314,9 @@ export class AdminEntityFieldComponent implements OnInit {
     for (const key of Object.keys(formValues)) {
       if (formValues[key] !== null) {
         updatedEntitySchema[key] = formValues[key];
+      } else if (key === "defaultValue") {
+        // When defaultValue is cleared, delete the property
+        delete this.data.entitySchemaField.defaultValue;
       }
     }
     return updatedEntitySchema;

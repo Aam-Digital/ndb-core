@@ -66,6 +66,7 @@ export class AdminDefaultValueStaticComponent
         this.formControl.setValue(this.getInternalValue(newValue), {
           emitEvent: false,
         });
+        this.formControl.updateValueAndValidity();
       },
     );
   }
