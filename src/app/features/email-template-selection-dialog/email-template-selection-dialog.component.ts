@@ -2,8 +2,8 @@ import { EditEntityComponent } from "#src/app/core/basic-datatypes/entity/edit-e
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
-import { Component, inject, OnInit } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { Component, inject, OnInit, signal } from "@angular/core";
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatCheckbox } from "@angular/material/checkbox";
 import {
@@ -14,9 +14,9 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouterLink } from "@angular/router";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EmailTemplate } from "../email-client/email-template.entity";
 
 export interface EmailTemplateSelectionDialogData {
@@ -39,12 +39,17 @@ export interface EmailTemplateSelectionDialogData {
     ReactiveFormsModule,
     MatTooltipModule,
     MatFormFieldModule,
+    MatInputModule,
   ],
   templateUrl: "./email-template-selection-dialog.component.html",
   styleUrl: "./email-template-selection-dialog.component.scss",
 })
 export class EmailTemplateSelectionDialogComponent implements OnInit {
   emailTemplateSelectionForm: FormControl = new FormControl();
+  emailContentForm = new FormGroup({
+    subject: new FormControl<string>("Subject"),
+    body: new FormControl<string>(""),
+  });
   createNoteControl = new FormControl<boolean>(true);
   sendAsBCC = new FormControl<boolean>(true);
   EmailTemplate = EmailTemplate;
@@ -62,11 +67,12 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
     return this.dialogData.entity;
   }
 
+  selectedTemplate = signal<EmailTemplate | null>(null);
+
   async ngOnInit() {
     this.excludedEntitiesCount = this.dialogData.excludedEntitiesCount ?? 0;
     this.isBulkEmail = this.dialogData.isBulk;
   }
-
   /**
    * Filter email templates to show based on current entity type.
    * Shows only templates explicitly matching the entity type if any exist,
@@ -77,15 +83,28 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
     e.availableForEntityTypes.length === 0 ||
     e.availableForEntityTypes.includes(this.entity.getType());
 
-  async confirmSelectedTemplate(templateId: string) {
-    const selectedTemplate = await this.entityMapper.load(
-      EmailTemplate,
-      templateId,
-    );
-    if (!selectedTemplate) return;
+  async confirmSelectedTemplate(templateId: string | null) {
+    let template: EmailTemplate;
+
+    if (templateId) {
+      const loadedTemplate = await this.entityMapper.load(
+        EmailTemplate,
+        templateId,
+      );
+      if (!loadedTemplate) return;
+      template = loadedTemplate;
+    } else {
+      if (this.emailContentForm.invalid) {
+        return;
+      }
+
+      template = new EmailTemplate();
+      template.subject = this.emailContentForm.value.subject || "";
+      template.body = this.emailContentForm.value.body || "";
+    }
 
     this.dialogRef.close({
-      template: selectedTemplate,
+      template,
       createNote: !!this.createNoteControl.value,
       sendAsBCC: this.isBulkEmail ? !!this.sendAsBCC.value : false,
     } as {

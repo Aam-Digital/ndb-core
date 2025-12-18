@@ -41,6 +41,29 @@
     ></app-edit-entity>
   </mat-form-field>
 
+  @if (!emailTemplateSelectionForm.value && !selectedTemplate()) {
+    <h3 i18n>Email Content</h3>
+    <mat-form-field class="full-width">
+      <mat-label i18n>Subject</mat-label>
+      <input
+        matInput
+        [formControl]="emailContentForm.controls.subject"
+        placeholder="Enter email subject"
+        i18n-placeholder
+      />
+    </mat-form-field>
+    <mat-form-field class="full-width">
+      <mat-label i18n>Body</mat-label>
+      <textarea
+        matInput
+        [formControl]="emailContentForm.controls.body"
+        placeholder="Enter email body"
+        i18n-placeholder
+        rows="5"
+      ></textarea>
+    </mat-form-field>
+  }
+
   <div class="flex-column">
     <mat-checkbox [formControl]="createNoteControl" i18n>
       Create a note to document message
@@ -64,7 +87,6 @@
   <button
     mat-raised-button
     color="accent"
-    [disabled]="!emailTemplateSelectionForm.value"
     (click)="confirmSelectedTemplate(emailTemplateSelectionForm.value)"
   >
     <span i18n>Send Email</span>
