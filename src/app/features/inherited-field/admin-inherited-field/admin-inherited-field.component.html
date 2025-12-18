@@ -2,7 +2,8 @@
   <mat-select
     [value]="selectedOption"
     (valueChange)="onOptionSelected($event)"
-    [placeholder]="getSelectedOptionLabel() || 'Select inheritance option'"
+    placeholder="Select inheritance option"
+    i18n-placeholder
   >
     @for (option of availableOptions; track option) {
       <mat-option [value]="option" [matTooltip]="option.tooltip">

@@ -304,27 +304,4 @@ export class AdminInheritedFieldComponent
   private getEntityLabel(entityType: EntityConstructor): string {
     return entityType.label || entityType.ENTITY_TYPE;
   }
-
-  getSelectedOptionLabel(): string {
-    if (!this.value) return "";
-
-    if (this.value.sourceEntityType) {
-      // automated rule
-      const entityType = this.entityRegistry.get(this.value.sourceEntityType);
-      return `${this.getEntityLabel(entityType)} > ${this.getFieldLabel(this.entitySchemaField?.id)}`;
-    } else if (this.value.sourceReferenceField) {
-      // inheritance
-      const fieldConfig = this.entityType.schema.get(
-        this.value.sourceReferenceField,
-      );
-      if (fieldConfig?.additional) {
-        const referencedEntityType = this.entityRegistry.get(
-          fieldConfig.additional,
-        );
-        return `Inherit from ${this.getFieldLabel(this.value.sourceReferenceField)} > ${this.getEntityLabel(referencedEntityType)}`;
-      }
-    }
-
-    return "";
-  }
 }
