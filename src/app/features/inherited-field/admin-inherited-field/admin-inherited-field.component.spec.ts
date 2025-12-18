@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MatDialog } from "@angular/material/dialog";
-import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { entityRegistry, EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EntityRelationsService } from "../../../core/entity/entity-mapper/entity-relations.service";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { AdminInheritedFieldComponent } from "./admin-inherited-field.component";
@@ -20,7 +20,7 @@ describe("AdminInheritedFieldComponent", () => {
       ],
       providers: [
         { provide: MatDialog, useValue: jasmine.createSpyObj(["open"]) },
-        { provide: EntityRegistry, useValue: new Map() },
+        { provide: EntityRegistry, useValue:entityRegistry },
         {
           provide: EntityRelationsService,
           useValue: jasmine.createSpyObj(["getEntityTypesReferencingType"]),
