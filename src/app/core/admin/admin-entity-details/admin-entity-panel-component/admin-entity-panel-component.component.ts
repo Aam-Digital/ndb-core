@@ -3,7 +3,7 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
 import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { RelatedEntitiesComponentConfig } from "#src/app/core/entity-details/related-entity-config";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
-import { CommonModule } from "@angular/common";
+
 import {
   Component,
   Input,
@@ -38,7 +38,6 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 @Component({
   selector: "app-admin-entity-panel-component",
   imports: [
-    CommonModule,
     AdminListManagerComponent,
     MatFormFieldModule,
     FormsModule,
@@ -47,8 +46,8 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
     MatButtonModule,
     MatTooltipModule,
     FaIconComponent,
-    MatDialogModule,
-  ],
+    MatDialogModule
+],
   templateUrl: "./admin-entity-panel-component.component.html",
   styleUrl: "./admin-entity-panel-component.component.scss",
 })

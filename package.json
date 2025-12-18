@@ -27,20 +27,20 @@
     "#e2e/*": "./e2e/*"
   },
   "dependencies": {
-    "@angular/animations": "^20.3.15",
-    "@angular/cdk": "^20.2.14",
-    "@angular/common": "^20.3.15",
-    "@angular/compiler": "^20.3.15",
-    "@angular/core": "^20.3.15",
+    "@angular/animations": "^21.0.5",
+    "@angular/cdk": "^21.0.3",
+    "@angular/common": "^21.0.5",
+    "@angular/compiler": "^21.0.5",
+    "@angular/core": "^21.0.5",
     "@angular/fire": "^20.0.1",
-    "@angular/forms": "^20.3.15",
-    "@angular/localize": "^20.3.15",
-    "@angular/material": "^20.2.14",
-    "@angular/material-moment-adapter": "^20.2.14",
-    "@angular/platform-browser": "^20.3.15",
-    "@angular/platform-browser-dynamic": "^20.3.15",
-    "@angular/router": "^20.3.15",
-    "@angular/service-worker": "^20.3.15",
+    "@angular/forms": "^21.0.5",
+    "@angular/localize": "^21.0.5",
+    "@angular/material": "^21.0.3",
+    "@angular/material-moment-adapter": "^21.0.3",
+    "@angular/platform-browser": "^21.0.5",
+    "@angular/platform-browser-dynamic": "^21.0.5",
+    "@angular/router": "^21.0.5",
+    "@angular/service-worker": "^21.0.5",
     "@aytek/material-color-picker": "^1.0.4",
     "@casl/ability": "^6.7.3",
     "@casl/angular": "^9.0.4",
@@ -53,6 +53,7 @@
     "@sentry/angular": "^10.31.0",
     "angulartics2": "^14.1.0",
     "assert": "^2.1.0",
+    "buffer": "^6.0.3",
     "deep-object-diff": "^1.1.9",
     "firebase": "^12.7.0",
     "hammerjs": "^2.0.8",
@@ -81,10 +82,11 @@
     "zone.js": "^0.15.1"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^20.3.13",
-    "@angular-eslint/schematics": "^20.7.0",
-    "@angular/cli": "^20.3.13",
-    "@angular/compiler-cli": "^20.3.15",
+    "@angular-devkit/build-angular": "^21.0.3",
+    "@angular-eslint/schematics": "^21.1.0",
+    "@angular/build": "^21.0.3",
+    "@angular/cli": "^21.0.3",
+    "@angular/compiler-cli": "^21.0.5",
     "@argos-ci/cli": "^3.2.1",
     "@argos-ci/playwright": "^6.3.8",
     "@babel/core": "^7.28.5",
@@ -107,7 +109,7 @@
     "@types/uuid": "^11.0.0",
     "@typescript-eslint/eslint-plugin": "^8.50.0",
     "@typescript-eslint/parser": "^8.50.0",
-    "angular-eslint": "^20.7.0",
+    "angular-eslint": "^21.1.0",
     "babel-loader": "^10.0.0",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
@@ -137,6 +139,7 @@
     },
     "@compodoc/compodoc": {
       "chokidar": "^4.0.3"
-    }
+    },
+    "readable-stream": "^4.0.0"
   }
 }
