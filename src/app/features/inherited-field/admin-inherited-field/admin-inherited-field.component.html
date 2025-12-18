@@ -4,29 +4,27 @@
     (valueChange)="onOptionSelected($event)"
     [placeholder]="getSelectedOptionLabel() || 'Select inheritance option'"
   >
-    @if (availableOptions.length > 0) {
-      @for (option of availableOptions; track option) {
-        <mat-option [value]="option" [matTooltip]="option.tooltip">
-          <div class="flex-row gap-small align-items-center">
-            @if (option.labelParts.isInheritance) {
-              <!-- inheritance: field > entity -->
-              <span>{{ option.labelParts.fieldName }}</span>
-              <span> > </span>
-              <span style="font-weight: bold" class="text-primary">{{
-                option.labelParts.entityName
-              }}</span>
-            } @else {
-              <!-- automation: entity > field -->
-              <span style="font-weight: bold" class="text-primary">{{
-                option.labelParts.entityName
-              }}</span>
-              <span> > </span>
-              <span>{{ option.labelParts.fieldName }}</span>
-            }
-          </div>
-        </mat-option>
-      }
-    } @else {
+    @for (option of availableOptions; track option) {
+      <mat-option [value]="option" [matTooltip]="option.tooltip">
+        <div class="flex-row gap-small align-items-center">
+          @if (option.labelParts.isInheritance) {
+            <!-- inheritance: field > entity -->
+            <span>{{ option.labelParts.fieldName }}</span>
+            <span> > </span>
+            <span style="font-weight: bold" class="text-primary">{{
+              option.labelParts.entityName
+            }}</span>
+          } @else {
+            <!-- automation: entity > field -->
+            <span style="font-weight: bold" class="text-primary">{{
+              option.labelParts.entityName
+            }}</span>
+            <span> > </span>
+            <span>{{ option.labelParts.fieldName }}</span>
+          }
+        </div>
+      </mat-option>
+    } @empty {
       <mat-option disabled>
         <em i18n>No inheritance options available</em>
       </mat-option>

@@ -24,11 +24,4 @@ export interface DefaultValueConfig {
   config?: any;
 }
 
-export type DefaultValueMode =
-  | "static"
-  | "dynamic"
-  | "inherited-field"
-  /** @deprecated Use "inherited-field" instead. This mode is kept for migration purposes only. */
-  | "inherited-from-referenced-entity"
-  /** @deprecated Use "inherited-field" instead. This mode is kept for migration purposes only. */
-  | "updated-from-referencing-entity";
+export type DefaultValueMode = "static" | "dynamic" | "inherited-field";
