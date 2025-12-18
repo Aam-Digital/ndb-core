@@ -53,7 +53,7 @@ export class EntityFormComponent<
   private entityMapper = inject(EntityMapperService);
   private confirmationDialog = inject(ConfirmationDialogService);
   private ability = inject(EntityAbility);
-  private automatedStatusUpdateConfigService = inject(
+  private automatedFieldUpdateConfigService = inject(
     AutomatedFieldUpdateConfigService,
   );
 
@@ -118,7 +118,7 @@ export class EntityFormComponent<
         filter((event) => event instanceof EntityFormSavedEvent),
       )
       .subscribe(async (event: EntityFormSavedEvent) => {
-        await this.automatedStatusUpdateConfigService.applyRulesToDependentEntities(
+        await this.automatedFieldUpdateConfigService.applyRulesToDependentEntities(
           event.newEntity,
           event.previousEntity,
         );

@@ -8,7 +8,6 @@ import {
   AutomatedFieldUpdateComponent,
 } from "./automated-field-update.component";
 import { lastValueFrom } from "rxjs";
-import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
 import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
 import { DefaultValueConfigInheritedField } from "../inherited-field-config";
 import { Logging } from "#src/app/core/logging/logging.service";
@@ -28,20 +27,15 @@ interface AffectedRule {
  */
 @Injectable({ providedIn: "root" })
 export class AutomatedFieldUpdateConfigService {
-  private entityRegistry = inject(EntityRegistry);
-  private entityMapper = inject(EntityMapperService);
-  private dialog = inject(MatDialog);
-  private unsavedChangesService = inject(UnsavedChangesService);
+  private readonly entityRegistry = inject(EntityRegistry);
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly dialog = inject(MatDialog);
+  private readonly unsavedChangesService = inject(UnsavedChangesService);
 
   /**
    * Track processed entity revisions to prevent duplicate automated status updates within the same save operation
    */
   private readonly processedRevisions = new Set<string>();
-
-  /**
-   * The relatedReferenceField configuration, which is used to show the label of related reference field in dialog.
-   */
-  relatedReferenceFieldConfig: EntitySchemaField;
 
   /**
    * Applies rules to dependent entities based on changes in the provided entity.
@@ -299,7 +293,7 @@ export class AutomatedFieldUpdateConfigService {
           return entity;
         } catch (error) {
           Logging.warn(
-            `AutomatedStatusUpdateConfigService: Failed to load entity of type ${entityType.ENTITY_TYPE} with ID ${id}: ${error}`,
+            `AutomatedFieldUpdateConfigService: Failed to load entity of type ${entityType.ENTITY_TYPE} with ID ${id}: ${error}`,
           );
           return null;
         }

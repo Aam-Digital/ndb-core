@@ -18,7 +18,7 @@ import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
  * Represents an entity that will be affected by a status update.
  * This interface is used to define the structure of the data
  * that will be passed to the
- * AutomatedStatusUpdateComponent for processing.
+ * AutomatedFieldUpdateComponent for processing.
  */
 export interface AffectedEntity {
   /** entityId of the affected entity */
