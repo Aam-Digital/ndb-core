@@ -69,7 +69,7 @@ export class AutomatedStatusUpdateComponent implements OnInit {
   private dialogRef =
     inject<MatDialogRef<AutomatedStatusUpdateComponent>>(MatDialogRef);
   private entityFormService = inject(EntityFormService);
-  private entitySchemaService = inject(EntitySchemaService);
+  private readonly entitySchemaService = inject(EntitySchemaService);
 
   entityConstructor: EntityConstructor;
 
