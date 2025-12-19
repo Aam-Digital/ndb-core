@@ -17,12 +17,11 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouterLink } from "@angular/router";
-<<<<<<< HEAD:src/app/features/email-template-selection-dialog/email-template-selection-dialog.component.ts
-import { EmailTemplate } from "../email-client/email-template.entity";
-=======
 import { EmailTemplate } from "../email-template.entity";
 import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
->>>>>>> upstream/master:src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.ts
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { switchMap, tap, distinctUntilChanged, filter } from "rxjs/operators";
+import { from, of } from "rxjs";
 
 /**
  * Input to prefill the email template selection dialog
@@ -45,6 +44,7 @@ export interface EmailTemplateSelectionResult {
   sendSemicolonSeparated: boolean;
 }
 
+@UntilDestroy()
 @Component({
   selector: "app-email-template-selection-dialog",
   imports: [
@@ -53,6 +53,7 @@ export interface EmailTemplateSelectionResult {
     MatButton,
     EditEntityComponent,
     MatDialogClose,
+    MatInputModule,
     RouterLink,
     DisableEntityOperationDirective,
     MatCheckbox,
@@ -88,41 +89,55 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
     return this.dialogData.entity;
   }
 
-  selectedTemplate = signal<EmailTemplate | null>(null);
-
   async ngOnInit() {
     this.excludedEntitiesCount = this.dialogData.excludedEntitiesCount ?? 0;
     this.isBulkEmail = this.dialogData.isBulk;
+
+    // Listen to template selection changes and prefill subject/body
+
+    this.emailTemplateSelectionForm.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        switchMap((templateId: string) => {
+          if (!templateId) {
+            return of(null);
+          }
+          return from(this.entityMapper.load(EmailTemplate, templateId));
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe((template: EmailTemplate | null) => {
+        if (template) {
+          this.emailContentForm.patchValue({
+            subject: template.subject,
+            body: template.body,
+          });
+        } else {
+          this.emailContentForm.patchValue({
+            subject: "Subject",
+            body: "",
+          });
+        }
+      });
   }
+
   /**
    * Filter email templates to show based on current entity type.
    * Shows only templates explicitly matching the entity type if any exist,
    * otherwise shows templates with no restrictions (null or empty availableForEntityTypes).
    */
-  filteredTemplate = (e: EmailTemplate): boolean =>
-    !e.availableForEntityTypes ||
-    e.availableForEntityTypes.length === 0 ||
-    e.availableForEntityTypes.includes(this.entity.getType());
+  filteredTemplate = (e: EmailTemplate): boolean => {
+    return (
+      !e.availableForEntityTypes ||
+      e.availableForEntityTypes.length === 0 ||
+      e.availableForEntityTypes.includes(this.entity.getType())
+    );
+  };
 
-  async confirmSelectedTemplate(templateId: string | null) {
-    let template: EmailTemplate;
-
-    if (templateId) {
-      const loadedTemplate = await this.entityMapper.load(
-        EmailTemplate,
-        templateId,
-      );
-      if (!loadedTemplate) return;
-      template = loadedTemplate;
-    } else {
-      if (this.emailContentForm.invalid) {
-        return;
-      }
-
-      template = new EmailTemplate();
-      template.subject = this.emailContentForm.value.subject || "";
-      template.body = this.emailContentForm.value.body || "";
-    }
+  async confirmSelectedTemplate() {
+    const template = new EmailTemplate();
+    template.subject = this.emailContentForm.value.subject;
+    template.body = this.emailContentForm.value.body;
 
     this.dialogRef.close({
       template,
