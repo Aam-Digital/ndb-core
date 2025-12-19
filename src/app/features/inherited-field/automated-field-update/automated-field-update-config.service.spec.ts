@@ -22,7 +22,7 @@ import { DefaultValueMode } from "../../../core/default-values/default-value-con
 const mockAutomationConfig = {
   mode: "inherited-field" as DefaultValueMode,
   config: {
-    sourceEntityType: "Mentorship",
+    sourceReferenceEntity: "Mentorship",
     sourceValueField: "status",
     sourceReferenceField: "mentee",
     valueMapping: {

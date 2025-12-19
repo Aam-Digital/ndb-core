@@ -41,7 +41,7 @@ describe("migrateInheritedFieldConfig", () => {
     expect(result).toEqual({
       mode: "inherited-field",
       config: {
-        sourceEntityType: "School",
+        sourceReferenceEntity: "School",
         sourceReferenceField: "students",
         sourceValueField: "status",
         valueMapping: {
@@ -67,7 +67,7 @@ describe("migrateInheritedFieldConfig", () => {
     expect(result).toEqual({
       mode: "inherited-field",
       config: {
-        sourceEntityType: "School",
+        sourceReferenceEntity: "School",
         sourceReferenceField: "children",
         sourceValueField: "name",
         valueMapping: undefined,
@@ -138,7 +138,7 @@ describe("migrateInheritedFieldConfig", () => {
     ).toEqual({
       mode: "inherited-field",
       config: {
-        sourceEntityType: "School",
+        sourceReferenceEntity: "School",
         sourceReferenceField: "students",
         sourceValueField: "status",
         valueMapping: {

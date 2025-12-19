@@ -58,11 +58,11 @@
     </mat-select>
   }
 
-  @if (selectedOption?.type === "automated" && value?.sourceEntityType) {
+  @if (selectedOption?.type === "automated" && value?.sourceReferenceEntity) {
     <button
       mat-stroked-button
       class="configure-button"
-      (click)="openAutomatedMappingDialog(value.sourceEntityType)"
+      (click)="openAutomatedMappingDialog(value.sourceReferenceEntity)"
       matTooltip="Optionally configure a value mapping, defining how the source value should be transformed."
       i18n-matTooltip
       i18n

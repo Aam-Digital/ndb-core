@@ -65,8 +65,8 @@ export class InheritedValueService extends DefaultValueStrategy {
     }
 
     // Only handle inheritance configs (not automation configs)
-    // Inheritance has sourceReferenceField but NO sourceEntityType
-    if (!config.sourceReferenceField || config.sourceEntityType) {
+    // Inheritance has sourceReferenceField but NO sourceReferenceEntity
+    if (!config.sourceReferenceField || config.sourceReferenceEntity) {
       return;
     }
 
@@ -197,8 +197,11 @@ export class InheritedValueService extends DefaultValueStrategy {
     }
 
     // Only show the inheritance UI hint for actual inheritance configs (not automation)
-    // Inheritance has sourceReferenceField but NO sourceEntityType
-    if (!defaultConfig.sourceReferenceField || defaultConfig.sourceEntityType) {
+    // Inheritance has sourceReferenceField but NO sourceReferenceEntity
+    if (
+      !defaultConfig.sourceReferenceField ||
+      defaultConfig.sourceReferenceEntity
+    ) {
       return;
     }
 

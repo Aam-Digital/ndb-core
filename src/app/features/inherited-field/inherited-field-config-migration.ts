@@ -30,7 +30,7 @@ export const migrateInheritedFieldConfig: ConfigMigration = (
 
   if (configPart.mode === "updated-from-referencing-entity") {
     const newConfig: DefaultValueConfigInheritedField = {
-      sourceEntityType: config.relatedEntityType,
+      sourceReferenceEntity: config.relatedEntityType,
       sourceReferenceField: config.relatedReferenceField,
       sourceValueField: config.relatedTriggerField,
       valueMapping: config.automatedMapping,

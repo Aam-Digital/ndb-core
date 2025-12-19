@@ -8,16 +8,16 @@ export interface DefaultValueConfigInheritedField {
    *
    * If not defined, the source entity is identified by a field on this (target) entity.
    */
-  sourceEntityType?: string;
+  sourceReferenceEntity?: string;
 
   /**
    * field ID that holds the reference to the source (parent) entity's ID.
-   * This field is either on the current (target) entity (if sourceEntityType is undefined)
-   * or on the related entity defined by sourceEntityType.
+   * This field is either on the current (target) entity (if sourceReferenceEntity is undefined)
+   * or on the related entity defined by sourceReferenceEntity.
    *
    * e.g. if a child's field should be updated based on a school's value then
    * this is the field on the school entity of type "entity", holding the child's entity for the relevant relation
-   * and the sourceEntityType is "school".
+   * and the sourceReferenceEntity is "school".
    */
   sourceReferenceField: string;
 

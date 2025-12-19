@@ -32,7 +32,7 @@ interface InheritanceOption {
   labelParts: { entityName: string; fieldName: string; isInheritance: boolean };
   tooltip: string;
   sourceReferenceField?: string;
-  sourceEntityType?: string;
+  sourceReferenceEntity?: string;
   referencedEntityType?: EntityConstructor;
   availableFields?: string[];
 }
@@ -138,7 +138,7 @@ export class AdminInheritedFieldComponent
           isInheritance: false,
         },
         tooltip: `Inherit value from any "${option.label}" that links to this record in its "${option.relatedReferenceFields[0]}" field`,
-        sourceEntityType: option.entityType,
+        sourceReferenceEntity: option.entityType,
       };
 
       this.availableOptions.push(automatedOption);
@@ -155,18 +155,21 @@ export class AdminInheritedFieldComponent
     }
 
     // Find matching option based on current config
-    // Automation has BOTH sourceEntityType AND sourceReferenceField
-    if (this.value.sourceEntityType && this.value.sourceReferenceField) {
+    // Automation has BOTH sourceReferenceEntity AND sourceReferenceField
+    if (this.value.sourceReferenceEntity && this.value.sourceReferenceField) {
       this.selectedOption =
         this.availableOptions.find(
           (opt) =>
             opt.type === "automated" &&
-            opt.sourceEntityType === this.value.sourceEntityType,
+            opt.sourceReferenceEntity === this.value.sourceReferenceEntity,
         ) || null;
       this.currentInheritanceFields = null;
     }
-    // Inheritance has sourceReferenceField but NO sourceEntityType
-    else if (this.value.sourceReferenceField && !this.value.sourceEntityType) {
+    // Inheritance has sourceReferenceField but NO sourceReferenceEntity
+    else if (
+      this.value.sourceReferenceField &&
+      !this.value.sourceReferenceEntity
+    ) {
       this.selectedOption =
         this.availableOptions.find(
           (opt) =>
@@ -202,10 +205,10 @@ export class AdminInheritedFieldComponent
       this.value = {
         ...this.value,
         sourceReferenceField: option.sourceReferenceField,
-        sourceEntityType: undefined,
+        sourceReferenceEntity: undefined,
       };
     } else if (option.type === "automated") {
-      this.openAutomatedMappingDialog(option.sourceEntityType);
+      this.openAutomatedMappingDialog(option.sourceReferenceEntity);
     }
   }
 
@@ -221,7 +224,8 @@ export class AdminInheritedFieldComponent
   async openAutomatedMappingDialog(selectedEntity: string) {
     const automatedOption = this.availableOptions.find(
       (opt) =>
-        opt.type === "automated" && opt.sourceEntityType === selectedEntity,
+        opt.type === "automated" &&
+        opt.sourceReferenceEntity === selectedEntity,
     );
 
     if (!automatedOption) return;
@@ -243,7 +247,7 @@ export class AdminInheritedFieldComponent
     if (result) {
       this.value = {
         sourceReferenceField: result.sourceReferenceField,
-        sourceEntityType: selectedEntity,
+        sourceReferenceEntity: selectedEntity,
         sourceValueField: result.sourceValueField,
         valueMapping: result.valueMapping,
       };

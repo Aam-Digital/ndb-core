@@ -95,15 +95,15 @@ export class AutomatedFieldUpdateConfigService {
   }
 
   /**
-   * Find all Inheritance Rules on other entity types that list the given sourceEntityType.
+   * Find all Inheritance Rules on other entity types that list the given sourceReferenceEntity.
    *
    * For example:
-   * Given the method parameter sourceEntityType = School
-   * Return any Rule in Child entity type, which refers to sourceEntityType = School
+   * Given the method parameter sourceReferenceEntity = School
+   * Return any Rule in Child entity type, which refers to sourceReferenceEntity = School
    * (as well as any other such rule in any entity type)
    */
   private getInheritanceRulesFromDirectEntity(
-    sourceEntityType: EntityConstructor,
+    sourceReferenceEntity: EntityConstructor,
   ): AffectedRule[] {
     const rules: AffectedRule[] = [];
 
@@ -113,7 +113,9 @@ export class AutomatedFieldUpdateConfigService {
           const rule = fieldConfig.defaultValue
             .config as DefaultValueConfigInheritedField;
 
-          if (rule?.sourceEntityType === sourceEntityType.ENTITY_TYPE) {
+          if (
+            rule?.sourceReferenceEntity === sourceReferenceEntity.ENTITY_TYPE
+          ) {
             rules.push({
               rule,
               entityType: targetEntityType,
@@ -128,16 +130,16 @@ export class AutomatedFieldUpdateConfigService {
   }
 
   /**
-   * Find all Inheritance Rules where the sourceReferenceField's entity type (in "additional") matches the given sourceEntityType.
+   * Find all Inheritance Rules where the sourceReferenceField's entity type (in "additional") matches the given sourceReferenceEntity.
    *
    * For example:
-   * Given the method parameter sourceEntityType = School
-   * Return any Rule in Child entity type, which has an undefined sourceEntityType
+   * Given the method parameter sourceReferenceEntity = School
+   * Return any Rule in Child entity type, which has an undefined sourceReferenceEntity
    *      and the sourceReferenceField (on the Child entity) has an "additional" = School dataType
    * (as well as any other such rule in any entity type)
    */
   private getInheritanceRulesReferencingThisEntity(
-    sourceEntityType: EntityConstructor,
+    sourceReferenceEntity: EntityConstructor,
   ): AffectedRule[] {
     const rules: AffectedRule[] = [];
 
@@ -147,8 +149,8 @@ export class AutomatedFieldUpdateConfigService {
           const rule = fieldConfig.defaultValue
             .config as DefaultValueConfigInheritedField;
 
-          // For inheritance rules: sourceEntityType is undefined
-          if (!rule?.sourceEntityType && rule?.sourceReferenceField) {
+          // For inheritance rules: sourceReferenceEntity is undefined
+          if (!rule?.sourceReferenceEntity && rule?.sourceReferenceField) {
             // Check if the sourceReferenceField could reference our entity type
             const referenceFieldConfig = targetEntityType.schema.get(
               rule.sourceReferenceField,
@@ -157,7 +159,8 @@ export class AutomatedFieldUpdateConfigService {
             // If the reference field is configured to reference our entity type
             if (
               referenceFieldConfig?.dataType === "entity" &&
-              referenceFieldConfig?.additional === sourceEntityType.ENTITY_TYPE
+              referenceFieldConfig?.additional ===
+                sourceReferenceEntity.ENTITY_TYPE
             ) {
               rules.push({
                 rule,
