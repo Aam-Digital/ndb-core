@@ -247,7 +247,6 @@ export class AutomatedFieldUpdateConfigService {
 
       if (targetEntity[targetFieldId] !== newValue) {
         const fieldConfig = targetEntityType.schema.get(targetFieldId);
-        targetEntity[targetFieldId] = newValue;
 
         affectedEntities.push({
           id: targetEntity.getId(),

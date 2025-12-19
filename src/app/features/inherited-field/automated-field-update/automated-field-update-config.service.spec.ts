@@ -111,11 +111,16 @@ describe("AutomatedFieldUpdateConfigService", () => {
     { id: "secondary", label: "Secondary" },
   ];
 
+  let mockDialogAfterClosed = () => of([]);
   const mockDialogRef = {
-    afterClosed: () => of(null),
-  };
+    afterClosed: () => mockDialogAfterClosed(),
+  } as any;
+
   const mockDialog = jasmine.createSpyObj<MatDialog>("MatDialog", ["open"]);
-  mockDialog.open.and.returnValue(mockDialogRef as any);
+  mockDialog.open.and.callFake((component, config) => {
+    mockDialogAfterClosed = () => of(config?.data?.entities || []);
+    return mockDialogRef;
+  });
 
   beforeEach(() => {
     enumService = jasmine.createSpyObj<ConfigurableEnumService>([
