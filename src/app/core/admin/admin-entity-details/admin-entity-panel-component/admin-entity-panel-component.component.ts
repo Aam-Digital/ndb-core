@@ -46,8 +46,8 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
     MatButtonModule,
     MatTooltipModule,
     FaIconComponent,
-    MatDialogModule
-],
+    MatDialogModule,
+  ],
   templateUrl: "./admin-entity-panel-component.component.html",
   styleUrl: "./admin-entity-panel-component.component.scss",
 })

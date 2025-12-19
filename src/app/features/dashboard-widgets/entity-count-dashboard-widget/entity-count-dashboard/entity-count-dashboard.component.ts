@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, inject } from "@angular/core";
 import { Router } from "@angular/router";
 
-
 import { MatIconButton } from "@angular/material/button";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -71,8 +70,8 @@ interface GroupCountRow {
     MatTooltipModule,
     MatIconButton,
     EntityFieldLabelComponent,
-    EntityFieldViewComponent
-],
+    EntityFieldViewComponent,
+  ],
 })
 export class EntityCountDashboardComponent
   extends DashboardWidget

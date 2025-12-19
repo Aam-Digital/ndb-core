@@ -36,8 +36,8 @@ import { Subscription } from "rxjs";
     EntityFieldLabelComponent,
     FontAwesomeModule,
     MatFormFieldModule,
-    MatSelectModule
-],
+    MatSelectModule,
+  ],
   templateUrl: "./admin-list-manager.component.html",
   styleUrl: "./admin-list-manager.component.scss",
 })

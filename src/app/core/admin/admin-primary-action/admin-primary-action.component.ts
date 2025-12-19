@@ -30,8 +30,8 @@ import { HintBoxComponent } from "../../common-components/hint-box/hint-box.comp
     FormsModule,
     ViewTitleComponent,
     ViewActionsComponent,
-    HintBoxComponent
-],
+    HintBoxComponent,
+  ],
   templateUrl: "./admin-primary-action.component.html",
   styleUrls: ["./admin-primary-action.component.scss"],
 })

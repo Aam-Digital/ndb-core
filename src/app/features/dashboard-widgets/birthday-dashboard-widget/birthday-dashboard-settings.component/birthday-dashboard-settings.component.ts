@@ -44,8 +44,8 @@ interface EntityPropertyPair {
     MatTooltipModule,
     FontAwesomeModule,
     EntityTypeSelectComponent,
-    EntityFieldSelectComponent
-],
+    EntityFieldSelectComponent,
+  ],
   templateUrl: "./birthday-dashboard-settings.component.html",
   styleUrls: ["./birthday-dashboard-settings.component.scss"],
 })

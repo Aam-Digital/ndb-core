@@ -1,4 +1,3 @@
-
 import { Component, Input, OnInit, inject } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -21,8 +20,8 @@ export interface ImportantNotesDashboardSettingsConfig {
     ReactiveFormsModule,
     MatFormFieldModule,
     EditConfigurableEnumComponent,
-    ErrorHintComponent
-],
+    ErrorHintComponent,
+  ],
   templateUrl: "./important-notes-dashboard-settings.component.html",
   styleUrls: ["./important-notes-dashboard-settings.component.scss"],
 })

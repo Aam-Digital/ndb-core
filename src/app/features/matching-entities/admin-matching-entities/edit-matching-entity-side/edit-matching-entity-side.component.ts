@@ -31,8 +31,8 @@ import { EntityTypeSelectComponent } from "#src/app/core/entity/entity-type-sele
     MatButtonModule,
     FontAwesomeModule,
     AdminListManagerComponent,
-    EntityTypeSelectComponent
-],
+    EntityTypeSelectComponent,
+  ],
   templateUrl: "./edit-matching-entity-side.component.html",
   styleUrls: ["./edit-matching-entity-side.component.scss"],
 })
