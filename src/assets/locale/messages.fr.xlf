@@ -61,10 +61,6 @@
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
           <context context-type="linenumber">72</context>
         </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">70</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="1669277742108379782" datatype="html">
         <source>Attended</source>
@@ -184,10 +180,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/add-day-attendance.component.ts</context>
           <context context-type="linenumber">64</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard-widget.module.ts</context>
-          <context context-type="linenumber">17</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5045200874122539692" datatype="html">
@@ -644,10 +636,6 @@
         <target>Fin de scolarité</target>
         <note priority="1" from="description">Child status</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.ts</context>
-          <context context-type="linenumber">84</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/dropout-types.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
@@ -658,7 +646,7 @@
         <note priority="1" from="description">School demo name that is connected with a school name</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/demo-school-generator.service.ts</context>
-          <context context-type="linenumber">27</context>
+          <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5560057304612443507" datatype="html">
@@ -667,7 +655,7 @@
         <note priority="1" from="description">School demo name that is connected with a school name</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/demo-school-generator.service.ts</context>
-          <context context-type="linenumber">28</context>
+          <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7941090461604249190" datatype="html">
@@ -676,7 +664,7 @@
         <note priority="1" from="description">Language of a school</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/demo-school-generator.service.ts</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">38</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5866254605255506989" datatype="html">
@@ -685,7 +673,7 @@
         <note priority="1" from="description">Language of a school</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/demo-school-generator.service.ts</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="linenumber">39</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8836042473971054084" datatype="html">
@@ -694,7 +682,7 @@
         <note priority="1" from="description">Language of a school</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/demo-school-generator.service.ts</context>
-          <context context-type="linenumber">38</context>
+          <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3036695099328175425" datatype="html">
@@ -704,7 +692,7 @@
         <note priority="1" from="meaning">School demo name order for connecting the school name and (High) School</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/demo-school-generator.service.ts</context>
-          <context context-type="linenumber">40,42</context>
+          <context context-type="linenumber">42,44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4215782904249172398" datatype="html">
@@ -712,7 +700,7 @@
         <target>Ecole <x id="PH" equiv-text="faker.person.firstName()"/><x id="PH_1" equiv-text="school[&quot;language&quot;]"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/demo-school-generator.service.ts</context>
-          <context context-type="linenumber">43,45</context>
+          <context context-type="linenumber">45,47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3975709744412444339" datatype="html">
@@ -721,7 +709,7 @@
         <note priority="1" from="description">School demo timing</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/demo-school-generator.service.ts</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="136600465023711201" datatype="html">
@@ -730,7 +718,7 @@
         <note priority="1" from="description">School demo timing</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/demo-school-generator.service.ts</context>
-          <context context-type="linenumber">54</context>
+          <context context-type="linenumber">56</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2368928035270884916" datatype="html">
@@ -739,7 +727,7 @@
         <note priority="1" from="description">School demo timing</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/demo-school-generator.service.ts</context>
-          <context context-type="linenumber">55</context>
+          <context context-type="linenumber">57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8056881763442606556" datatype="html">
@@ -1366,6 +1354,10 @@
           <context context-type="linenumber">16</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-primary-action/admin-primary-action.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-widget-dialog/admin-widget-dialog.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
@@ -1418,8 +1410,8 @@
           <context context-type="linenumber">34</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="sourcefile">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
+          <context context-type="linenumber">81</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.html</context>
@@ -1479,7 +1471,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
-          <context context-type="linenumber">3</context>
+          <context context-type="linenumber">4</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
@@ -1910,7 +1902,7 @@
         <target>Configurer l&apos;anonymisation</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">175</context>
+          <context context-type="linenumber">186</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7782904061382038164" datatype="html">
@@ -1918,7 +1910,7 @@
         <target>Contient des informations personnelles (RGPD)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">185</context>
+          <context context-type="linenumber">196</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4379176514372959023" datatype="html">
@@ -1926,7 +1918,7 @@
         <target>Si les champs de ce type d&apos;enregistrement contiennent des informations personnelles et sensibles, vous pouvez le marquer ici. Cochez cette case pour activer la fonction d&apos;«anonymisation». Cela permet aux utilisateurs d&apos;anonymiser les enregistrements de ce type au lieu de simplement les archiver ou de les supprimer.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">188</context>
+          <context context-type="linenumber">199</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5591054546376436766" datatype="html">
@@ -1934,7 +1926,7 @@
         <target> Configurez la manière dont les enregistrements de ce type peuvent être anonymisés. Les utilisateurs peuvent «anonymiser» un enregistrement au lieu de simplement l&apos;archiver (en conservant toutes les données personnelles) ou de le supprimer (en perdant toute trace de l&apos;enregistrement, même dans les rapports). Sélectionnez ci-dessous les champs qui peuvent être «conservés» pour conserver certaines données limitées pour les rapports statistiques et les champs qui doivent être supprimés car ils contiennent des données personnelles. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">195,203</context>
+          <context context-type="linenumber">206,214</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3620188369327429839" datatype="html">
@@ -1949,6 +1941,10 @@
           <context context-type="linenumber">13,15</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-primary-action/admin-primary-action.component.html</context>
+          <context context-type="linenumber">13,15</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component.html</context>
           <context context-type="linenumber">17,19</context>
         </context-group>
@@ -1957,8 +1953,8 @@
           <context context-type="linenumber">10,12</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">65,67</context>
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">75,77</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
@@ -2019,11 +2015,11 @@
         <note priority="1" from="description">admin menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">36</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin.routing.ts</context>
-          <context context-type="linenumber">114</context>
+          <context context-type="linenumber">128</context>
         </context-group>
       </trans-unit>
       <trans-unit id="657496228690855434" datatype="html">
@@ -2045,7 +2041,7 @@
         <note priority="1" from="description">admin menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
-          <context context-type="linenumber">44</context>
+          <context context-type="linenumber">40</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-button/setup-wizard-button.component.html</context>
@@ -2607,7 +2603,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/email-client/email-client.service.ts</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">56</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2807800733729323332" datatype="html">
@@ -2626,6 +2622,14 @@
           <context context-type="sourcefile">src/app/core/filter/filters/booleanFilter.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-list/user-list.component.html</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-list/user-list.component.html</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="3542042671420335679" datatype="html">
         <source>No</source>
@@ -2642,6 +2646,14 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/filter/filters/booleanFilter.ts</context>
           <context context-type="linenumber">19</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-list/user-list.component.html</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-list/user-list.component.html</context>
+          <context context-type="linenumber">46</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2588764351566366820" datatype="html">
@@ -2981,10 +2993,6 @@
         <target>Nom</target>
         <note priority="1" from="description">Column title for ChildBlockComponents</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">93</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/sql-v2-table/sql-v2-table.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
@@ -3043,10 +3051,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
           <context context-type="linenumber">80</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6012224301120514394" datatype="html">
@@ -3224,8 +3228,8 @@
           <context context-type="linenumber">147,149</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">75,77</context>
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">83,85</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/recurring-interval/custom-interval/custom-interval.component.html</context>
@@ -3241,8 +3245,8 @@
           <context context-type="linenumber">32,34</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">85,87</context>
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">42,44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7349530031233006058" datatype="html">
@@ -4253,25 +4257,6 @@
           <context context-type="linenumber">45,47</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5208762166158567179" datatype="html">
-        <source> Change Password
-</source>
-        <target> Modifier le mot de passe </target>
-        <note priority="1" from="description">Button which opens password reset page</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/account-page/account-page.component.html</context>
-          <context context-type="linenumber">9,11</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4616894645263562158" datatype="html">
-        <source>Your email address</source>
-        <target>Votre adresse e-mail</target>
-        <note priority="1" from="description">Email address input field</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/account-page/account-page.component.html</context>
-          <context context-type="linenumber">19</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="5004902687162041164" datatype="html">
         <source> Welcome </source>
         <target> Bienvenue </target>
@@ -4443,14 +4428,6 @@
           <context context-type="linenumber">25,28</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1100758037504712410" datatype="html">
-        <source>Send Details</source>
-        <target>Envoyer les détails</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/support/support/support.component.html</context>
-          <context context-type="linenumber">101</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="2485527736019954552" datatype="html">
         <source>Download a backup of all data in your local database.</source>
         <target>Téléchargez une sauvegarde de toutes les données de votre base de données locale.</target>
@@ -4476,24 +4453,6 @@
           <context context-type="linenumber">111,113</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1883557110661036774" datatype="html">
-        <source>Support request</source>
-        <target>Demande d&apos;assistance</target>
-        <note priority="1" from="description">Title user feedback dialog</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/support/support/support.component.ts</context>
-          <context context-type="linenumber">166</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7476504920536064818" datatype="html">
-        <source>Please describe the problem you are facing.</source>
-        <target>Veuillez décrire le problème auquel vous êtes confronté.</target>
-        <note priority="1" from="description">Subtitle user feedback dialog</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/support/support/support.component.ts</context>
-          <context context-type="linenumber">167</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="7471826153403325742" datatype="html">
         <source> More Information </source>
         <target> Plus d&apos;informations </target>
@@ -4517,7 +4476,7 @@
         <note priority="1" from="description">Generic close button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/latest-changes/changelog/changelog.component.html</context>
-          <context context-type="linenumber">57,59</context>
+          <context context-type="linenumber">62,64</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2566001175328025157" datatype="html">
@@ -4525,7 +4484,7 @@
         <target>Aucun historique des modifications disponible</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/latest-changes/changelog/changelog.component.ts</context>
-          <context context-type="linenumber">77</context>
+          <context context-type="linenumber">79</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7795087408392131030" datatype="html">
@@ -4661,62 +4620,8 @@
           <context context-type="linenumber">102</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
+          <context context-type="sourcefile">src/app/core/user/profile/profile.component.html</context>
           <context context-type="linenumber">2</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5248717555542428023" datatype="html">
-        <source>Username</source>
-        <target>Nom d&apos;utilisateur</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">8</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">12</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3369236792755378350" datatype="html">
-        <source>Your profile:</source>
-        <target>Votre profil:</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">30</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="849579647161243974" datatype="html">
-        <source> Couldn&apos;t find the record that your user account is linked to (<x id="INTERPOLATION" equiv-text="{{           (sessionInfo | async)?.entityId         }}"/>). </source>
-        <target> Impossible de trouver l&apos;enregistrement auquel votre compte utilisateur est lié (<x id="INTERPOLATION" equiv-text="{{           (sessionInfo | async)?.entityId         }}"/>). </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">37,41</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6917462194163863371" datatype="html">
-        <source>Your user account is not linked to any record.</source>
-        <target>Votre compte utilisateur n&apos;est lié à aucun enregistrement.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">43</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2219067079229278684" datatype="html">
-        <source>Password change is not allowed in demo mode.</source>
-        <target> Le changement de mot de passe n&apos;est pas autorisé en mode démonstration. </target>
-        <note priority="1" from="description">Password reset disabled tooltip</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.ts</context>
-          <context context-type="linenumber">69</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4363136589112981005" datatype="html">
-        <source>Password change is not possible while being offline.</source>
-        <target> Le changement de mot de passe n&apos;est pas possible hors connexion. </target>
-        <note priority="1" from="description">Password reset disabled tooltip</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.ts</context>
-          <context context-type="linenumber">71</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5095842228134444330" datatype="html">
@@ -4724,8 +4629,8 @@
         <target> Il n&apos;existe pas encore de compte utilisateur configuré pour cet utilisateur. Permettez à cet utilisateur de se connecter à l&apos;application en remplissant les informations ci-dessous. </target>
         <note priority="1" from="description">notice about user without account</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">12,15</context>
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">13,16</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5235487344663583207" datatype="html">
@@ -4733,7 +4638,7 @@
         <target> Créer un compte et envoyer une invitation </target>
         <note priority="1" from="description">button to invite a new user</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
           <context context-type="linenumber">26,28</context>
         </context-group>
       </trans-unit>
@@ -4742,8 +4647,8 @@
         <target> Désactiver l&apos;utilisateur </target>
         <note priority="1" from="description">button to update disable a user</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">43,45</context>
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">53,55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2849554464951616544" datatype="html">
@@ -4751,8 +4656,8 @@
         <target> Activer l&apos;utilisateur </target>
         <note priority="1" from="description">button to enable a user</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">54,56</context>
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">63,65</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5933971051993268789" datatype="html">
@@ -4760,7 +4665,7 @@
         <target> L&apos;utilisateur est actuellement désactivé et ne pourra pas se connecter à l&apos;application </target>
         <note priority="1" from="description">Hint in user account page</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
           <context context-type="linenumber">92,94</context>
         </context-group>
       </trans-unit>
@@ -4773,8 +4678,12 @@
           <context context-type="linenumber">10</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">99</context>
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">100</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-list/user-list.component.html</context>
+          <context context-type="linenumber">14</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
@@ -4789,25 +4698,9 @@
           <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2841397183376590473" datatype="html">
-        <source> Please enter a valid email </source>
-        <target> Entrez une adresse électronique valide </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">102</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="3498970204767096106" datatype="html">
         <source> This field is required </source>
         <target> Ce champ doit être rempli </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">105</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">130</context>
-        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
           <context context-type="linenumber">13</context>
@@ -4830,8 +4723,12 @@
         <target>Roles</target>
         <note priority="1" from="description">label of roles input</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">111</context>
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">122</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-list/user-list.component.html</context>
+          <context context-type="linenumber">52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8065563249224969366" datatype="html">
@@ -4839,8 +4736,8 @@
         <target> Vous devez sélectionner au moins un rôle d&apos;utilisateur. Sinon, cet utilisateur ne pourra même pas accéder à la présentation de base de l&apos;application, comme le menu. </target>
         <note priority="1" from="description">hint about assigning user roles</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">125,128</context>
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">140,143</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3506248175295374215" datatype="html">
@@ -4848,8 +4745,8 @@
         <target>Le compte a été désactivé, l&apos;utilisateur ne pourra plus se connecter.</target>
         <note priority="1" from="description">Snackbar message</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.ts</context>
-          <context context-type="linenumber">138</context>
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.ts</context>
+          <context context-type="linenumber">371</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1879173756828666065" datatype="html">
@@ -4857,17 +4754,17 @@
         <target>Le compte a été activé, l&apos;utilisateur peut se connecter à nouveau.</target>
         <note priority="1" from="description">Snackbar message</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.ts</context>
-          <context context-type="linenumber">140</context>
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.ts</context>
+          <context context-type="linenumber">370</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3263679890047861885" datatype="html">
-        <source>Account created. An email has been sent to <x id="PH" equiv-text="this.form.get(&quot;email&quot;).value"/></source>
+        <source>Account created. An email has been sent to <x id="PH" equiv-text="formData.email"/></source>
         <target>Compte créé. Un email a été envoyé à <x id="PH" equiv-text="this.form.get(&quot;email&quot;).value"/></target>
         <note priority="1" from="description">Snackbar message</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.ts</context>
-          <context context-type="linenumber">171,173</context>
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.ts</context>
+          <context context-type="linenumber">273</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8057515795040006849" datatype="html">
@@ -4875,8 +4772,8 @@
         <target>Utilisateur mis à jour avec succès</target>
         <note priority="1" from="description">Snackbar message</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.ts</context>
-          <context context-type="linenumber">192</context>
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.ts</context>
+          <context context-type="linenumber">317</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1010230655185601893" datatype="html">
@@ -5111,78 +5008,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
           <context context-type="linenumber">107</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6680431077518392028" datatype="html">
-        <source>Clubs visited</source>
-        <target>Clubs visités</target>
-        <note priority="1" from="description">Example for demo task in the progress widget</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
-          <context context-type="linenumber">22</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5068770072034604941" datatype="html">
-        <source>Schools checked</source>
-        <target>Écoles inspectées</target>
-        <note priority="1" from="description">Example for demo task in the progress widget</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
-          <context context-type="linenumber">23</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6255187912631729238" datatype="html">
-        <source>Government Officials met</source>
-        <target>Fonctionnaires et responsables rencontrés</target>
-        <note priority="1" from="description">Example for demo task in the progress widget</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
-          <context context-type="linenumber">24</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3524232675257470877" datatype="html">
-        <source>Annual Survey</source>
-        <target>Questionnaire annuel</target>
-        <note priority="1" from="description">Widget title</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
-          <context context-type="linenumber">42</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3199366444284225288" datatype="html">
-        <source>Evaluation targets reached</source>
-        <target>Objectifs d&apos;évaluation atteints</target>
-        <note priority="1" from="description">Dashboard widget demo tile</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
-          <context context-type="linenumber">57</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3709730044825814951" datatype="html">
-        <source>Students graduating</source>
-        <target>Élèves obtenant leur diplômes</target>
-        <note priority="1" from="description">Dashboard widget demo entry</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
-          <context context-type="linenumber">59</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="163711824937173568" datatype="html">
-        <source>Students enrolled in training</source>
-        <target>Élèves inscrits à la formation</target>
-        <note priority="1" from="description">Dashboard widget demo entry</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
-          <context context-type="linenumber">60</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5287898150892986947" datatype="html">
-        <source>Students found job</source>
-        <target>Élèves ayant trouvé un travail</target>
-        <note priority="1" from="description">Dashboard widget demo entry</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
-          <context context-type="linenumber">61</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6635507938917056225" datatype="html">
@@ -5628,22 +5453,6 @@
           <context context-type="linenumber">405</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2468578017924444574" datatype="html">
-        <source>Example form</source>
-        <target>Exemple de formulaire</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/public-form/demo-public-form-generator.service.ts</context>
-          <context context-type="linenumber">19</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5065162821808701761" datatype="html">
-        <source>This is a form that can be shared as a link or embedded in a website. It can be filled by users without having an account. For example you can let participants self-register their details and just review the records within Aam Digital.</source>
-        <target>Vous pouvez partager cette formulaire sous forme de lien ou intégré à un site web. Il peut être rempli par les utilisateurs sans avoir de compte. Par exemple, vous pouvez permettre aux participants d&apos;enregistrer eux-mêmes leurs coordonnées et de simplement consulter les enregistrements dans Aam Digital.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/public-form/demo-public-form-generator.service.ts</context>
-          <context context-type="linenumber">20</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="9219817993698356392" datatype="html">
         <source> Submit Form </source>
         <target> Soumettre le formulaire </target>
@@ -5668,141 +5477,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
           <context context-type="linenumber">84</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4310513583397103775" datatype="html">
-        <source>Basic Report</source>
-        <target>Rapport de base</target>
-        <note priority="1" from="description">Name of a report</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">27</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3930255838623626363" datatype="html">
-        <source>All children</source>
-        <target>Tous les enfants</target>
-        <note priority="1" from="description">Label of report query</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">31</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6949266734896136969" datatype="html">
-        <source>All schools</source>
-        <target>Toutes les écoles</target>
-        <note priority="1" from="description">Label for report query</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">36</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="619224002419753333" datatype="html">
-        <source>Children attending a school</source>
-        <target>Enfants fréquentant une école</target>
-        <note priority="1" from="description">Label for report query</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">39</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="9152633939608005299" datatype="html">
-        <source>Governmental schools</source>
-        <target>Écoles publiques</target>
-        <note priority="1" from="description">Label for report query</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">43</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5107681519279730939" datatype="html">
-        <source>Children attending a governmental school</source>
-        <target>Enfants fréquentant une école publique</target>
-        <note priority="1" from="description">Label for report query</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">48</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1157409611503106802" datatype="html">
-        <source>Private schools</source>
-        <target>Écoles privées</target>
-        <note priority="1" from="description">Label for report query</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">52</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6819111098994891506" datatype="html">
-        <source>Children attending a private school</source>
-        <target>Enfants fréquentant une école privée</target>
-        <note priority="1" from="description">Label for report query</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">57</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7965975699466463064" datatype="html">
-        <source>Event Report</source>
-        <target>Rapport d&apos;évènement</target>
-        <note priority="1" from="description">Name of a report</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">65</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="691530937011261622" datatype="html">
-        <source>Attendance Report</source>
-        <target>Rapport de présence</target>
-        <note priority="1" from="description">Name of a report</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">82</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3448462145758383019" datatype="html">
-        <source>Total</source>
-        <target>Total</target>
-        <note priority="1" from="description">Name of a column of a report</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">111</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6522877977962061564" datatype="html">
-        <source>Present</source>
-        <target>Présent</target>
-        <note priority="1" from="description">Name of a column of a report</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">115</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5639297788212274461" datatype="html">
-        <source>Rate</source>
-        <target>Taux</target>
-        <note priority="1" from="description">Name of a column of a report</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">119</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3973270758175692787" datatype="html">
-        <source>Late</source>
-        <target>En retard</target>
-        <note priority="1" from="description">Name of a column of a report</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">123</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8602350443715766874" datatype="html">
-        <source>Materials Distributed</source>
-        <target>Matériel distribué</target>
-        <note priority="1" from="description">Name of a report</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
-          <context context-type="linenumber">133</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1906738132039774080" datatype="html">
@@ -7085,6 +6759,14 @@
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
           <context context-type="linenumber">119</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">166</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-list/user-list.component.html</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="2949848596707725099" datatype="html">
         <source>Sign out</source>
@@ -7623,8 +7305,8 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Paramètres de notification</target>
         <note priority="1" from="description">User Profile - tab title</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="sourcefile">src/app/core/user/profile/profile.component.html</context>
+          <context context-type="linenumber">11</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7708270344948043036" datatype="html">
@@ -8257,21 +7939,13 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
           <context context-type="linenumber">5</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1080568556892591354" datatype="html">
-        <source>Changing your email is temporarily only possible for administrators. Please contact your project coordinator or the support team. </source>
-        <target>La modification de votre adresse électronique n&apos;est temporairement possible que pour les administrateurs. Veuillez contacter votre coordinateur de projet ou l&apos;équipe d&apos;assistance. </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/account-page/account-page.component.html</context>
-          <context context-type="linenumber">24,26</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="108805775460398830" datatype="html">
         <source>Could not connect to the server. Please check your network connection, try again later or reach out to your technical support team.</source>
         <target>Impossible de se connecter au serveur. Veuillez vérifier votre connexion réseau, réessayer plus tard ou contacter votre équipe de support technique.</target>
         <note priority="1" from="description">User API error</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-admin-service/keycloak-admin.service.ts</context>
-          <context context-type="linenumber">303</context>
+          <context context-type="linenumber">345</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5234982986829654425" datatype="html">
@@ -8280,7 +7954,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <note priority="1" from="description">User API error</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-admin-service/user-admin.service.ts</context>
-          <context context-type="linenumber">83</context>
+          <context context-type="linenumber">89</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7169942898229829348" datatype="html">
@@ -8289,7 +7963,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <note priority="1" from="description">User API error</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-admin-service/user-admin.service.ts</context>
-          <context context-type="linenumber">85</context>
+          <context context-type="linenumber">91</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3764866960445085674" datatype="html">
@@ -8298,7 +7972,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <note priority="1" from="description">User API error</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-admin-service/user-admin.service.ts</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">93</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4176168554520872982" datatype="html">
@@ -8644,14 +8318,6 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
           <context context-type="linenumber">12</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8058999931472022110" datatype="html">
-        <source>Initialize System</source>
-        <target>Initialiser le système</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/setup/assistant-dialog/assistant-dialog.component.html</context>
-          <context context-type="linenumber">6</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="3798070165070620146" datatype="html">
         <source>Guide</source>
         <target>Guide</target>
@@ -8665,7 +8331,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Redémarrer la démo avec un cas d&apos;utilisation différent </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/setup/context-aware-assistant/context-aware-assistant.component.html</context>
-          <context context-type="linenumber">57,59</context>
+          <context context-type="linenumber">61,63</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7103269766322238091" datatype="html">
@@ -8706,14 +8372,6 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/setup/system-init-assistant/system-init-assistant.component.html</context>
           <context context-type="linenumber">30,35</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3560092550883419213" datatype="html">
-        <source> Initialize System </source>
-        <target>Initialiser le système </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/setup/system-init-assistant/system-init-assistant.component.html</context>
-          <context context-type="linenumber">45,47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7997034429446626053" datatype="html">
@@ -9079,15 +8737,6 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
           <context context-type="linenumber">71</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8534841204302492735" datatype="html">
-        <source> You account does not have the required permissions to see this page. </source>
-        <target>Votre compte ne dispose pas des autorisations requises pour voir cette page. </target>
-        <note priority="1" from="description">Placeholder text when permissions are missing</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">2,4</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="7494361412465596264" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="nceLastNote | number: &quot;1.0-0&quot; }}"/> days</source>
         <target><x id="INTERPOLATION" equiv-text="nceLastNote | number: &quot;1.0-0&quot; }}"/> jours</target>
@@ -9329,8 +8978,8 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
           <context context-type="linenumber">30</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="sourcefile">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
+          <context context-type="linenumber">78</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9021253623105740127" datatype="html">
@@ -9540,7 +9189,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Modifier le tableau de bord</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/dashboard/dashboard/dashboard.component.html</context>
-          <context context-type="linenumber">16</context>
+          <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6630621306505876359" datatype="html">
@@ -9639,22 +9288,6 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
           <context context-type="linenumber">12</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="192340254091027151" datatype="html">
-        <source>Add Child</source>
-        <target>Ajouter un enfant</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard-widget.module.ts</context>
-          <context context-type="linenumber">22</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3011216506114760849" datatype="html">
-        <source>Public Registration Form</source>
-        <target>Formulaire d&apos;inscription publique</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard-widget.module.ts</context>
-          <context context-type="linenumber">27</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="1630943542943952138" datatype="html">
         <source>Currently, the widget will always show your due tasks.</source>
         <target>Actuellement, le widget affichera toujours vos tâches à accomplir.</target>
@@ -9706,7 +9339,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <source>Select Email Template</source>
         <target>Sélectionnez un modèle d&apos;e-mail</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
+          <context context-type="sourcefile">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
@@ -9714,7 +9347,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <source> Select the template to use for sending an email to this record. If you want to create a new template, you can do so from - </source>
         <target>Sélectionnez le modèle à utiliser pour envoyer un e-mail à cet enregistrement. Pour créer un nouveau modèle, cliquez sur : </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
+          <context context-type="sourcefile">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
           <context context-type="linenumber">10,13</context>
         </context-group>
       </trans-unit>
@@ -9722,7 +9355,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <source>configure available Email templates</source>
         <target>configurer les modèles d&apos;e-mails disponibles</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
+          <context context-type="sourcefile">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
       </trans-unit>
@@ -9730,7 +9363,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <source> Note: &quot;Sending&quot; mail will open the email application on your device. If nothing happens you may have to set up a default email client. </source>
         <target>Remarque : « L&apos;envoi » d&apos;un e-mail ouvrira l&apos;application de messagerie sur votre appareil. Si rien ne se passe, vous devrez peut-être configurer un client de messagerie par défaut. </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
+          <context context-type="sourcefile">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
           <context context-type="linenumber">26,29</context>
         </context-group>
       </trans-unit>
@@ -9738,7 +9371,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <source>Message Template</source>
         <target>Modèle de message</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
+          <context context-type="sourcefile">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
       </trans-unit>
@@ -9746,7 +9379,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <source>Select a template to use and adapt</source>
         <target>Sélectionnez un modèle à utiliser et à adapter</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
+          <context context-type="sourcefile">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
       </trans-unit>
@@ -9755,7 +9388,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Ouverture d&apos;un e-mail sur votre appareil...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/email-client/email-client.service.ts</context>
-          <context context-type="linenumber">134</context>
+          <context context-type="linenumber">136</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8315356615516008222" datatype="html">
@@ -9763,7 +9396,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Si rien ne se passe, veuillez v&amp;eacute;rifier votre client de messagerie par d&amp;eacute;faut. &lt;a href=&quot;https://chatwoot.help/hc/aam-digital/articles/1756720692-send-e_mail-and-use-mail-templates&quot; target=&quot;_blank&quot;&gt;lien vers le guide de l&apos;utilisateur&lt;/a&gt;</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/email-client/email-client.service.ts</context>
-          <context context-type="linenumber">135</context>
+          <context context-type="linenumber">137</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6962699013778688473" datatype="html">
@@ -9771,7 +9404,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Continuer</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/email-client/email-client.service.ts</context>
-          <context context-type="linenumber">137</context>
+          <context context-type="linenumber">139</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5423834450222507844" datatype="html">
@@ -9796,7 +9429,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <source> Create a note to document message </source>
         <target>Créer une note pour documenter le message </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
+          <context context-type="sourcefile">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
           <context context-type="linenumber">45,47</context>
         </context-group>
       </trans-unit>
@@ -9805,14 +9438,14 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Veuillez renseigner une adresse e-mail pour cet enregistrement afin d&apos;utiliser cette fonctionnalité.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/email-client/email-client.service.ts</context>
-          <context context-type="linenumber">50</context>
+          <context context-type="linenumber">53</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8636139247047909965" datatype="html">
         <source> <x id="INTERPOLATION" equiv-text="{{ excludedEntitiesCount }}"/> records were excluded due to missing email address. </source>
         <target><x id="INTERPOLATION" equiv-text="{{ excludedEntitiesCount }}"/> les enregistrements ont été exclus en raison d&apos;une adresse e-mail manquante. </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
+          <context context-type="sourcefile">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
           <context context-type="linenumber">4,7</context>
         </context-group>
       </trans-unit>
@@ -9820,7 +9453,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <source>Send as BCC</source>
         <target>Envoyer en Cci</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
+          <context context-type="sourcefile">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
           <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
@@ -9828,8 +9461,8 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <source>If you send an email to multiple people they can see each others email IDs. Unless they know each other you should avoid this. Therefore, you can instead send the email to yourself and add all recipients as &apos;blind copy&apos; (BCC).</source>
         <target>Si vous envoyez un e-mail à plusieurs personnes, elles peuvent voir leurs adresses e-mail respectives. À moins qu&apos;elles ne se connaissent, évitez cette pratique. Vous pouvez donc vous envoyer l&apos;e-mail à vous-même et ajouter tous les destinataires en copie cachée (Cci).</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
-          <context context-type="linenumber">55</context>
+          <context context-type="sourcefile">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
+          <context context-type="linenumber">54</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7236259182204783809" datatype="html">
@@ -9950,7 +9583,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Passer au mode de sélection</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8718527404606333767" datatype="html">
@@ -9958,7 +9591,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Passer au mode lien personnalisé</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
-          <context context-type="linenumber">50</context>
+          <context context-type="linenumber">54</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4639606720451442052" datatype="html">
@@ -10145,11 +9778,11 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         </context-group>
       </trans-unit>
       <trans-unit id="9105135821349698354" datatype="html">
-        <source> Find help and user guides in our <x id="START_LINK" ctype="x-a" equiv-text="&lt;a href=&quot;https://chatwoot.help/hc/aam-digital/en&quot; target=&quot;_blank&quot;       &gt;"/>Support Center<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a     &gt;"/>. </source>
+        <source> Find help and user guides in our <x id="START_LINK" ctype="x-a" equiv-text="&lt;a       href=&quot;https://chatwoot.help/hc/aam-digital/en&quot;       target=&quot;_blank&quot;       rel=&quot;noopener noreferrer&quot;       &gt;"/>Support Center<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a     &gt;"/>. </source>
         <target>Trouvez de l&apos;aide et des guides d&apos;utilisation dans notre <x id="START_LINK" ctype="x-a" equiv-text="&lt;a href=&quot;https://chatwoot.help/hc/aam-digital/en&quot; target=&quot;_blank&quot; &gt;"/>Centre de support<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a &gt;"/>. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/setup/context-aware-assistant/context-aware-assistant.component.html</context>
-          <context context-type="linenumber">13,18</context>
+          <context context-type="linenumber">13,21</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1482232617554547243" datatype="html">
@@ -10157,7 +9790,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Pour toute question ou problème technique, n&apos;hésitez pas à nous contacter à l&apos;adresse <x id="START_LINK" ctype="x-a" equiv-text="&lt;a href=&quot;mailto:support@aam-digital.app&quot;&gt;"/>support@aam-digital.app<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a &gt;"/>. Notre équipe d&apos;assistance se fera un plaisir de vous aider ! </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/setup/context-aware-assistant/context-aware-assistant.component.html</context>
-          <context context-type="linenumber">22,27</context>
+          <context context-type="linenumber">25,30</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2896729218728875476" datatype="html">
@@ -10165,15 +9798,15 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Votre abonnement actuel n&apos;inclut pas l&apos;assistance personnalisée aux utilisateurs. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/setup/context-aware-assistant/context-aware-assistant.component.html</context>
-          <context context-type="linenumber">29,31</context>
+          <context context-type="linenumber">32,34</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3937112996167894799" datatype="html">
-        <source> You can also discuss your questions and ideas with Aam Digital&apos;s <x id="START_LINK" ctype="x-a" equiv-text="&lt;a       href=&quot;https://github.com/Aam-Digital/ndb-core/discussions&quot;       target=&quot;_blank&quot;       &gt;"/>open source Community<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a     &gt;"/>. </source>
+        <source> You can also discuss your questions and ideas with Aam Digital&apos;s <x id="START_LINK" ctype="x-a" equiv-text="&lt;a       href=&quot;https://github.com/Aam-Digital/ndb-core/discussions&quot;       target=&quot;_blank&quot;       rel=&quot;noopener noreferrer&quot;       &gt;"/>open source Community<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a     &gt;"/>. </source>
         <target>Vous pouvez également discuter de vos questions et idées avec la communauté open source d&apos;Aam Digital <x id="START_LINK" ctype="x-a" equiv-text="&lt;a href=&quot;https://github.com/Aam-Digital/ndb-core/discussions&quot; target=&quot;_blank&quot; &gt;"/>. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/setup/context-aware-assistant/context-aware-assistant.component.html</context>
-          <context context-type="linenumber">35,42</context>
+          <context context-type="linenumber">38,46</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8511921168959474611" datatype="html">
@@ -10181,7 +9814,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Vous utilisez actuellement le « mode démo » temporaire. Toutes les modifications seront annulées après la fermeture ou le rechargement de la page. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/setup/context-aware-assistant/context-aware-assistant.component.html</context>
-          <context context-type="linenumber">49,52</context>
+          <context context-type="linenumber">53,56</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7323987696177730785" datatype="html">
@@ -10214,14 +9847,6 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/support/support/support.component.html</context>
           <context context-type="linenumber">15,17</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6188332030259010320" datatype="html">
-        <source>show technical support details</source>
-        <target>afficher les détails du support technique</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
-          <context context-type="linenumber">136</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4001308903727090607" datatype="html">
@@ -10307,7 +9932,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Erreur de courriel</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/email-client/email-client.service.ts</context>
-          <context context-type="linenumber">49</context>
+          <context context-type="linenumber">52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1864217342097269476" datatype="html">
@@ -10367,6 +9992,10 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu-item-details/admin-menu-item-details.component.html</context>
           <context context-type="linenumber">20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-primary-action/admin-primary-action.component.html</context>
+          <context context-type="linenumber">40</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.html</context>
@@ -10691,7 +10320,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <target>Vous pouvez définir un lien manuellement. Pour créer un nouveau lien, ouvrez Aam Digital dans un nouvel onglet, accédez au type d&apos;enregistrement souhaité, copiez tout ce qui suit « https://&lt;votre-système&gt;.aam-digital.app/ » et collez-le ici comme cible du lien. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component.html</context>
-          <context context-type="linenumber">26,31</context>
+          <context context-type="linenumber">30,35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1532367822363849958" datatype="html">
@@ -10751,10 +10380,6 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-menu/admin-menu.component.html</context>
           <context context-type="linenumber">3</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
-          <context context-type="linenumber">36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7830707034534607415" datatype="html">
@@ -10847,6 +10472,10 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
           <context context-type="linenumber">86</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-list/user-list.component.html</context>
+          <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2029626246030525073" datatype="html">
@@ -11330,7 +10959,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <target>Champ de titre</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">100</context>
+          <context context-type="linenumber">101</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4836160543012752684" datatype="html">
@@ -11338,7 +10967,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <target>Sélectionnez le champ principal à afficher comme en-tête de l&apos;infobulle. Il doit s&apos;agir d&apos;un champ descriptif comme « nom » ou « titre ».</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">104</context>
+          <context context-type="linenumber">105</context>
         </context-group>
       </trans-unit>
       <trans-unit id="882021939455352545" datatype="html">
@@ -11346,7 +10975,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <target>Champs de détails supplémentaires</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">120</context>
+          <context context-type="linenumber">121</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3484013218111844551" datatype="html">
@@ -11354,7 +10983,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <target>Sélectionnez les champs supplémentaires à afficher dans l&apos;infobulle. Ils apparaîtront sous le titre et fourniront des informations complémentaires sur l&apos;enregistrement.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">124</context>
+          <context context-type="linenumber">125</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2851683403336555512" datatype="html">
@@ -11362,7 +10991,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <target>Champ image (facultatif)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">141</context>
+          <context context-type="linenumber">142</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7447116526599213357" datatype="html">
@@ -11370,7 +10999,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <target>Ce type d&apos;enregistrement ne comporte pas de champs image. Ajoutez des champs de type « fichier » ou « photo » pour activer cette option. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">160,163</context>
+          <context context-type="linenumber">162,165</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4370251734130472356" datatype="html">
@@ -11427,6 +11056,302 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/conditions-editor/conditions-editor.component.html</context>
           <context context-type="linenumber">65</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4314635307270261414" datatype="html">
+        <source>Main Menu</source>
+        <target>Menu principal</target>
+        <note priority="1" from="description">admin menu item</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7397760241381561901" datatype="html">
+        <source>Primary Action</source>
+        <target>Action principale</target>
+        <note priority="1" from="description">admin menu item</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7516248228796395188" datatype="html">
+        <source>Primary Action Configuration</source>
+        <target>Configuration de l&apos;action principale</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-primary-action/admin-primary-action.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8727456316434085595" datatype="html">
+        <source> The &quot;primary action&quot; is a button at the bottom right of the screen that helps you do one common action, like creating a new note, from anywhere in the app with a single click.
+</source>
+        <target>L’« action principale » est un bouton situé en bas à droite de l’écran qui vous permet d’effectuer une action courante, comme la création d’une nouvelle note, depuis n’importe quel endroit de l’application en un seul clic.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-primary-action/admin-primary-action.component.html</context>
+          <context context-type="linenumber">20,24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8126851433597626019" datatype="html">
+        <source>Action Type</source>
+        <target>Type d&apos;action</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-primary-action/admin-primary-action.component.html</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5558184510558719295" datatype="html">
+        <source>Create Record</source>
+        <target>Créer un enregistrement</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-primary-action/admin-primary-action.component.html</context>
+          <context context-type="linenumber">29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8602230900747891574" datatype="html">
+        <source>Navigate</source>
+        <target>Naviguer</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-primary-action/admin-primary-action.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2880452347884155882" datatype="html">
+        <source> &quot;Create Entity&quot; opens a dialog to quickly create a new record and &quot;Navigate&quot; takes you to a dedicated page. </source>
+        <target>« Créer une entité » ouvre une boîte de dialogue permettant de créer rapidement un nouvel enregistrement, et « Naviguer » vous dirige vers une page dédiée. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-primary-action/admin-primary-action.component.html</context>
+          <context context-type="linenumber">32,35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8735645499686633410" datatype="html">
+        <source> Reset tooltip settings </source>
+        <target>Réinitialiser les paramètres des infobulles </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">174,176</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6275152056542142633" datatype="html">
+        <source>Microsoft Outlook compatibility</source>
+        <target>Compatibilité avec Microsoft Outlook</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
+          <context context-type="linenumber">60</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5964570370682284921" datatype="html">
+        <source>Check this if email ids are not separated correctly. If you use Microsoft Outlook, you may need to separate email addresses with semicolons instead of commas for compatibility.</source>
+        <target>Vérifiez ce point si les adresses e-mail ne sont pas correctement séparées. Si vous utilisez Microsoft Outlook, vous devrez peut-être les séparer par des points-virgules plutôt que par des virgules pour des raisons de compatibilité.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
+          <context context-type="linenumber">63</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8381732006440018926" datatype="html">
+        <source>View detailed technical information for troubleshooting</source>
+        <target>Consultez les informations techniques détaillées pour le dépannage.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/setup/assistant-dialog/assistant-dialog.component.html</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3652829704615974947" datatype="html">
+        <source> Technical Information </source>
+        <target>Informations techniques </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/setup/assistant-dialog/assistant-dialog.component.html</context>
+          <context context-type="linenumber">53,55</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2126272020247662599" datatype="html">
+        <source>Copy Details</source>
+        <target>Détails de la copie</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/support/support/support.component.html</context>
+          <context context-type="linenumber">101</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6178189593858784107" datatype="html">
+        <source> Technical Troubleshooting Info </source>
+        <target>Informations de dépannage technique </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/ui/latest-changes/changelog/changelog.component.html</context>
+          <context context-type="linenumber">53,55</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7132337714969988380" datatype="html">
+        <source> Your account does not have the required permissions to manage user accounts. </source>
+        <target>Votre compte ne dispose pas des autorisations requises pour gérer les comptes utilisateurs. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/entity-user/entity-user.component.html</context>
+          <context context-type="linenumber">6,8</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-list/user-list.component.html</context>
+          <context context-type="linenumber">4,6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4612812292301951332" datatype="html">
+        <source>Edit User Account</source>
+        <target>Modifier le compte utilisateur</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2136958288868637474" datatype="html">
+        <source> Please enter a valid email</source>
+        <target>Veuillez saisir une adresse e-mail valide</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">103</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3865745525499654588" datatype="html">
+        <source> This field is required</source>
+        <target> Ce champ est obligatoire</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">106</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">137</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8640491660010681609" datatype="html">
+        <source> Username: <x id="INTERPOLATION" equiv-text="{{ userAccount()?.userEntityId }}"/> </source>
+        <target>Nom d&apos;utilisateur : <x id="INTERPOLATION" equiv-text="{{ userAccount()?.userEntityId }}"/> </target>
+        <note priority="1" from="description">hint showing username/entity ID in dialog</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">109,111</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7488018751215318196" datatype="html">
+        <source> Changing your email is temporarily only possible for administrators. Please contact your project coordinator or the support team. </source>
+        <target>La modification de votre adresse e-mail est temporairement réservée aux administrateurs. Veuillez contacter votre coordinateur de projet ou l&apos;équipe d&apos;assistance. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">114,117</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1481645236299803925" datatype="html">
+        <source> Change Password </source>
+        <target> Changer le mot de passe </target>
+        <note priority="1" from="description">button to change password</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">159,161</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6752676861724307957" datatype="html">
+        <source> Editing linked profile record is not possible here. Please contact user support. </source>
+        <target>La modification de l&apos;enregistrement du profil lié n&apos;est pas possible ici. Veuillez contacter l&apos;assistance utilisateur. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
+          <context context-type="linenumber">168,171</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4790924700106590922" datatype="html">
+        <source>No profile ID available for user creation</source>
+        <target>Aucun identifiant de profil disponible pour la création d&apos;un utilisateur</target>
+        <note priority="1" from="description">Error message</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.ts</context>
+          <context context-type="linenumber">259</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4761234520219298052" datatype="html">
+        <source>Failed to create account</source>
+        <target>Impossible de créer le compte</target>
+        <note priority="1" from="description">Error message</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.ts</context>
+          <context context-type="linenumber">290</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5937037087605449384" datatype="html">
+        <source>Failed to update user account</source>
+        <target>Échec de la mise à jour du compte utilisateur</target>
+        <note priority="1" from="description">Error message</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.ts</context>
+          <context context-type="linenumber">359</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8280004650306134021" datatype="html">
+        <source> This page displays all user accounts registered for your system. </source>
+        <target>Cette page affiche tous les comptes utilisateurs enregistrés sur votre système. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-list/user-list.component.html</context>
+          <context context-type="linenumber">8,10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4816216590591222133" datatype="html">
+        <source>Enabled</source>
+        <target>Activé</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-list/user-list.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7056192090407062309" datatype="html">
+        <source>Email Verified</source>
+        <target>Adresse e-mail vérifiée</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-list/user-list.component.html</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7954480882300146695" datatype="html">
+        <source>User accounts cannot be loaded while offline.</source>
+        <target>Les comptes utilisateurs ne peuvent pas être chargés hors ligne.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-list/user-list.component.ts</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5256560471189551343" datatype="html">
+        <source>Failed to load users. Please try again later or contact your server administrator.</source>
+        <target>Impossible de charger les utilisateurs. Veuillez réessayer plus tard ou contacter votre administrateur serveur.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-list/user-list.component.ts</context>
+          <context context-type="linenumber">63</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="505526317295616877" datatype="html">
+        <source>Configure the dashboard</source>
+        <target>Configurer le tableau de bord</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/dashboard/dashboard/dashboard.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2534943433938453037" datatype="html">
+        <source>Configure, add and remove dashboard widgets</source>
+        <target>Configurer, ajouter et supprimer des widgets de tableau de bord</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/dashboard/dashboard/dashboard.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3783179258586099536" datatype="html">
+        <source>Create System</source>
+        <target>Créer un système</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/setup/assistant-dialog/assistant-dialog.component.html</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4769149290834761042" datatype="html">
+        <source> Create System </source>
+        <target>Créer un système </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/setup/system-init-assistant/system-init-assistant.component.html</context>
+          <context context-type="linenumber">45,47</context>
         </context-group>
       </trans-unit>
     </body>
