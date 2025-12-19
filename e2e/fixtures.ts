@@ -14,7 +14,7 @@ import { DateWithAgeDatatype } from "#src/app/core/basic-datatypes/date-with-age
 import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype.js";
 import { LongTextDatatype } from "#src/app/core/basic-datatypes/string/long-text.datatype.js";
 import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype.js";
-import defaultJsonConfig from "#src/assets/base-configs/education/Config_CONFIG_ENTITY.json";
+import defaultJsonConfig from "#src/assets/base-configs/all-features/Config_CONFIG_ENTITY.json";
 import { faker } from "#src/app/core/demo-data/faker.js";
 import {
   EntityRegistry,
@@ -111,7 +111,7 @@ export async function loadApp(page: Page, entities?: Entity[]) {
     }, serializeEntities(entities));
   }
 
-  await page.goto("/?useCase=education");
+  await page.goto("/?useCase=all-features");
 
   await page.getByText("Start Exploring").click({ timeout: 10_000 });
 }

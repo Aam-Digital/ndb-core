@@ -1,0 +1,35 @@
+@use "variables/colors";
+
+.user-details-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+.field-label {
+  font-weight: 500;
+  color: colors.$muted;
+}
+
+.field-value {
+  color: colors.$primary;
+}
+
+.role-name {
+  font-size: 0.75rem;
+  margin-left: 0.5rem;
+}
+
+.global-error {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background-color: rgba(244, 67, 54, 0.1);
+  border-radius: 4px;
+}

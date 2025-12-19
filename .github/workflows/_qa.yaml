@@ -95,12 +95,8 @@ jobs:
       - run: npx ng build --configuration=development
 
       # See playwright.config.ts for more CI-specific configuration
+      # The Argos reporter will automatically upload screenshots if uploadToArgos is enabled
       - run: npx playwright test
-
-      - run: npx argos upload test-results --files '**/argos/*.png'
-        if: ${{ inputs.upload-e2e-screenshots }}
-        # We may run into quotas
-        continue-on-error: true
         env:
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
 

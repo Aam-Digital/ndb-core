@@ -1,22 +1,5 @@
 [
   {
-    "_id": "ConfigurableEnum:center",
-    "values": [
-      {
-        "id": "C1",
-        "label": "Neukölln"
-      },
-      {
-        "id": "C2",
-        "label": "Kreuzberg"
-      },
-      {
-        "id": "C3",
-        "label": "Marzahn"
-      }
-    ]
-  },
-  {
     "_id": "ConfigurableEnum:interaction-type",
     "values": [
       {
@@ -180,6 +163,19 @@
       {
         "id": "COMPLETED",
         "label": "abgeschlossen"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:riskStatus",
+    "values": [
+      {
+        "id": "DROPOUT RISK",
+        "label": "Schulabbruch-Risiko"
+      },
+      {
+        "id": "LEARNING CHALLENGES",
+        "label": "Lernschwierigkeiten"
       }
     ]
   }

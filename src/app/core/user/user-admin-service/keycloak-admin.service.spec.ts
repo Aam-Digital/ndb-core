@@ -211,4 +211,49 @@ describe("KeycloakAdminService", () => {
     expect(req.request.method).toEqual("GET");
     req.flush(mockRoles);
   }));
+
+  it("should handle network error when server is unreachable", fakeAsync(() => {
+    service.getAllUsers().subscribe({
+      next: () => fail("Should have failed"),
+      error: (error) => {
+        expect(error).toBeDefined();
+      },
+    });
+
+    const userReq = httpTestingController.expectOne(`${BASE_URL}/users`);
+    expect(userReq.request.method).toEqual("GET");
+    userReq.error(new ErrorEvent("Network error"));
+  }));
+
+  it("should handle permission error (403)", fakeAsync(() => {
+    service.getAllUsers().subscribe({
+      next: () => fail("Should have failed"),
+      error: (error) => {
+        expect(error.status).toBe(403);
+        expect(error.statusText).toBe("Forbidden");
+      },
+    });
+
+    const userReq = httpTestingController.expectOne(`${BASE_URL}/users`);
+    expect(userReq.request.method).toEqual("GET");
+    userReq.flush("Access denied", { status: 403, statusText: "Forbidden" });
+  }));
+
+  it("should handle offline scenario", fakeAsync(() => {
+    // Simulate being offline by mocking a network connectivity error
+    service.getAllUsers().subscribe({
+      next: () => fail("Should have failed"),
+      error: (error) => {
+        expect(error).toBeDefined();
+      },
+    });
+
+    const userReq = httpTestingController.expectOne(`${BASE_URL}/users`);
+    expect(userReq.request.method).toEqual("GET");
+    userReq.error(
+      new ErrorEvent("Network error", {
+        message: "No internet connection",
+      }),
+    );
+  }));
 });

@@ -17,12 +17,32 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouterLink } from "@angular/router";
+<<<<<<< HEAD:src/app/features/email-template-selection-dialog/email-template-selection-dialog.component.ts
 import { EmailTemplate } from "../email-client/email-template.entity";
+=======
+import { EmailTemplate } from "../email-template.entity";
+import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
+>>>>>>> upstream/master:src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.ts
 
+/**
+ * Input to prefill the email template selection dialog
+ * with the relevant context.
+ */
 export interface EmailTemplateSelectionDialogData {
   entity: Entity;
   excludedEntitiesCount: number;
   isBulk: boolean;
+}
+
+/**
+ * Output of the email template selection dialog
+ * when the user selects and confirms.
+ */
+export interface EmailTemplateSelectionResult {
+  template: EmailTemplate;
+  createNote: boolean;
+  sendAsBCC: boolean;
+  sendSemicolonSeparated: boolean;
 }
 
 @Component({
@@ -39,7 +59,7 @@ export interface EmailTemplateSelectionDialogData {
     ReactiveFormsModule,
     MatTooltipModule,
     MatFormFieldModule,
-    MatInputModule,
+    HelpButtonComponent,
   ],
   templateUrl: "./email-template-selection-dialog.component.html",
   styleUrl: "./email-template-selection-dialog.component.scss",
@@ -52,6 +72,7 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
   });
   createNoteControl = new FormControl<boolean>(true);
   sendAsBCC = new FormControl<boolean>(true);
+  sendSemicolonSeparated = new FormControl<boolean>(false);
   EmailTemplate = EmailTemplate;
   excludedEntitiesCount: number = 0;
   isBulkEmail: boolean = false;
@@ -107,10 +128,7 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
       template,
       createNote: !!this.createNoteControl.value,
       sendAsBCC: this.isBulkEmail ? !!this.sendAsBCC.value : false,
-    } as {
-      template: EmailTemplate;
-      createNote: boolean;
-      sendAsBCC: boolean;
-    });
+      sendSemicolonSeparated: !!this.sendSemicolonSeparated.value,
+    } as EmailTemplateSelectionResult);
   }
 }
