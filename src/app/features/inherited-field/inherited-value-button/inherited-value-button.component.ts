@@ -16,6 +16,7 @@ import {
 } from "../../../core/default-values/default-value-service/default-value.service";
 import { EntityFieldLabelComponent } from "../../../core/entity/entity-field-label/entity-field-label.component";
 import { Entity } from "../../../core/entity/model/entity";
+import { debounceTime } from "rxjs/operators";
 
 /**
  * Display an indicator for form fields explaining the status of the inherited-value config of that field
@@ -55,17 +56,19 @@ export class InheritedValueButtonComponent implements OnChanges {
     );
 
     if (changes.form?.firstChange) {
-      this.form?.formGroup.valueChanges.subscribe((value) =>
-        // ensure this is only called after the other changes handler
-        setTimeout(
-          () =>
-            (this.defaultValueHint =
-              this.defaultValueService.getDefaultValueUiHint(
-                this.form,
-                this.field?.id,
-              )),
-        ),
-      );
+      this.form?.formGroup.valueChanges
+        .pipe(debounceTime(50))
+        .subscribe((value) =>
+          // ensure this is only called after the other changes handler
+          setTimeout(
+            () =>
+              (this.defaultValueHint =
+                this.defaultValueService.getDefaultValueUiHint(
+                  this.form,
+                  this.field?.id,
+                )),
+          ),
+        );
     }
   }
 }
