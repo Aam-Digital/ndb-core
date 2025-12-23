@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { AutomatedStatusUpdateComponent } from "./automated-status-update.component";
+import { AutomatedFieldUpdateComponent } from "./automated-field-update.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
-import { toFormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { EntityFormService } from "#src/app/core/common-components/entity-form/entity-form.service";
+import { toFormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
-describe("AutomatedStatusUpdateComponent", () => {
-  let component: AutomatedStatusUpdateComponent;
-  let fixture: ComponentFixture<AutomatedStatusUpdateComponent>;
+describe("AutomatedFieldUpdateComponent", () => {
+  let component: AutomatedFieldUpdateComponent;
+  let fixture: ComponentFixture<AutomatedFieldUpdateComponent>;
   let mockFormService: jasmine.SpyObj<EntityFormService>;
 
   beforeEach(async () => {
@@ -16,7 +16,7 @@ describe("AutomatedStatusUpdateComponent", () => {
       toFormFieldConfig(c),
     );
     await TestBed.configureTestingModule({
-      imports: [AutomatedStatusUpdateComponent, FontAwesomeTestingModule],
+      imports: [AutomatedFieldUpdateComponent, FontAwesomeTestingModule],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: { entities: [] } },
         {
@@ -27,7 +27,7 @@ describe("AutomatedStatusUpdateComponent", () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AutomatedStatusUpdateComponent);
+    fixture = TestBed.createComponent(AutomatedFieldUpdateComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

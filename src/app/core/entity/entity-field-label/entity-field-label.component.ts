@@ -1,4 +1,4 @@
-import { Component, Signal, computed, inject, input } from "@angular/core";
+import { Component, computed, inject, input, Signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { AdminEntityService } from "../../admin/admin-entity.service";
@@ -35,7 +35,7 @@ export class EntityFieldLabelComponent {
   /**
    * field id or full config
    */
-  field: Signal<ColumnConfig> = input.required();
+  field = input.required<ColumnConfig>();
 
   /**
    * entity type to look up the schema details for the given field

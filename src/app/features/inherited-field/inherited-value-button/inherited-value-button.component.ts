@@ -1,4 +1,4 @@
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import { EntityForm } from "../../../core/common-components/entity-form/entity-form";
 import {
   Component,
   inject,
@@ -16,6 +16,7 @@ import {
 } from "../../../core/default-values/default-value-service/default-value.service";
 import { EntityFieldLabelComponent } from "../../../core/entity/entity-field-label/entity-field-label.component";
 import { Entity } from "../../../core/entity/model/entity";
+import { debounceTime } from "rxjs/operators";
 
 /**
  * Display an indicator for form fields explaining the status of the inherited-value config of that field
@@ -33,7 +34,7 @@ import { Entity } from "../../../core/entity/model/entity";
   styleUrl: "./inherited-value-button.component.scss",
 })
 export class InheritedValueButtonComponent implements OnChanges {
-  private defaultValueService = inject(DefaultValueService);
+  private readonly defaultValueService = inject(DefaultValueService);
 
   @Input() form: EntityForm<any>;
   @Input() field: FormFieldConfig;
@@ -42,23 +43,32 @@ export class InheritedValueButtonComponent implements OnChanges {
   defaultValueHint: DefaultValueHint | undefined;
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (
+      this.field.defaultValue?.mode == "inherited-field" &&
+      !this.field.defaultValue?.config?.sourceReferenceField
+    ) {
+      this.defaultValueHint = undefined;
+      return;
+    }
     this.defaultValueHint = this.defaultValueService.getDefaultValueUiHint(
       this.form,
       this.field?.id,
     );
 
-    if (changes.form && changes.form.firstChange) {
-      this.form?.formGroup.valueChanges.subscribe((value) =>
-        // ensure this is only called after the other changes handler
-        setTimeout(
-          () =>
-            (this.defaultValueHint =
-              this.defaultValueService.getDefaultValueUiHint(
-                this.form,
-                this.field?.id,
-              )),
-        ),
-      );
+    if (changes.form?.firstChange) {
+      this.form?.formGroup.valueChanges
+        .pipe(debounceTime(50))
+        .subscribe((value) =>
+          // ensure this is only called after the other changes handler
+          setTimeout(
+            () =>
+              (this.defaultValueHint =
+                this.defaultValueService.getDefaultValueUiHint(
+                  this.form,
+                  this.field?.id,
+                )),
+          ),
+        );
     }
   }
 }
