@@ -1,5 +1,6 @@
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { Component, inject, OnInit } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import {
@@ -7,24 +8,24 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { EntityBlockComponent } from "app/core/basic-datatypes/entity/entity-block/entity-block.component";
-import { DialogCloseComponent } from "app/core/common-components/dialog-close/dialog-close.component";
-import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
-import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
-import { Entity, EntityConstructor } from "app/core/entity/model/entity";
+import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
+import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
+import { EntityFormService } from "#src/app/core/common-components/entity-form/entity-form.service";
+import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 
 /**
  * Represents an entity that will be affected by a status update.
  * This interface is used to define the structure of the data
  * that will be passed to the
- * AutomatedStatusUpdateComponent for processing.
+ * AutomatedFieldUpdateComponent for processing.
  */
 export interface AffectedEntity {
   /** entityId of the affected entity */
   id: string;
 
-  /** New status value to be applied to the target field */
-  newStatus: string;
+  /** New value to be applied to the target field */
+  newValue: string;
 
   /** Field Id that will receive the status update */
   targetFieldId: string;
@@ -47,10 +48,10 @@ export interface AffectedEntity {
  * the automated updates of fields in related entities,
  * after a triggering entity has been updated.
  *
- * (also see AutomatedStatusUpdateConfigService)
+ * (also see AutomatedFieldUpdateConfigService)
  */
 @Component({
-  selector: "app-automated-status-update",
+  selector: "app-automated-field-update",
   imports: [
     DialogCloseComponent,
     EntityFieldEditComponent,
@@ -58,16 +59,17 @@ export interface AffectedEntity {
     MatButton,
     MatDialogModule,
   ],
-  templateUrl: "./automated-status-update.component.html",
-  styleUrl: "./automated-status-update.component.scss",
+  templateUrl: "./automated-field-update.component.html",
+  styleUrl: "./automated-field-update.component.scss",
 })
-export class AutomatedStatusUpdateComponent implements OnInit {
+export class AutomatedFieldUpdateComponent implements OnInit {
   data = inject<{
     entities: AffectedEntity[];
   }>(MAT_DIALOG_DATA);
   private dialogRef =
-    inject<MatDialogRef<AutomatedStatusUpdateComponent>>(MatDialogRef);
+    inject<MatDialogRef<AutomatedFieldUpdateComponent>>(MatDialogRef);
   private entityFormService = inject(EntityFormService);
+  private readonly entitySchemaService = inject(EntitySchemaService);
 
   entityConstructor: EntityConstructor;
 
@@ -81,14 +83,18 @@ export class AutomatedStatusUpdateComponent implements OnInit {
         entityConstructor,
       );
 
-      entity.affectedEntity = new entityConstructor();
       const entityForm = await this.entityFormService.createEntityForm(
         [fieldId],
         entity.affectedEntity,
       );
 
       entity.form = entityForm;
-      entity.form.formGroup.controls[fieldId].setValue(entity.newStatus);
+
+      const formattedValue = this.entitySchemaService.valueToEntityFormat(
+        entity.newValue,
+        entity.selectedField,
+      );
+      entity.form.formGroup.controls[fieldId].setValue(formattedValue);
     }
   }
 
@@ -97,7 +103,7 @@ export class AutomatedStatusUpdateComponent implements OnInit {
       const fieldId = entity.targetFieldId;
       const formControl = entity.form?.formGroup.controls[fieldId];
       if (formControl) {
-        entity.newStatus = formControl.value;
+        entity.newValue = formControl.value;
       }
     }
     this.dialogRef.close(this.data.entities);

@@ -1,8 +1,7 @@
 import { DefaultValueStrategy } from "./default-value-strategy.interface";
 import { StaticDefaultValueService } from "./x-static/static-default-value.service";
 import { DynamicPlaceholderValueService } from "./x-dynamic-placeholder/dynamic-placeholder-value.service";
-import { UpdatedFromReferencingEntityDefaultValueService } from "../../features/automated-status-update/updated-from-referencing-entity-default-value.service";
-import { InheritedValueService } from "../../features/default-value-inherited/inherited-value.service";
+import { InheritedValueService } from "../../features/inherited-field/inherited-value.service";
 
 /**
  * Standard default-value strategies that are used in the application.
@@ -22,11 +21,6 @@ export const defaultValueStrategyProviders = [
   {
     provide: DefaultValueStrategy,
     useClass: InheritedValueService,
-    multi: true,
-  },
-  {
-    provide: DefaultValueStrategy,
-    useClass: UpdatedFromReferencingEntityDefaultValueService,
     multi: true,
   },
 ];
