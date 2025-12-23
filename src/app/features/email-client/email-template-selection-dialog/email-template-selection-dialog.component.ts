@@ -68,7 +68,7 @@ export interface EmailTemplateSelectionResult {
 export class EmailTemplateSelectionDialogComponent implements OnInit {
   emailTemplateSelectionForm: FormControl = new FormControl();
   emailContentForm = new FormGroup({
-    subject: new FormControl<string>("Subject"),
+    subject: new FormControl<string>(""),
     body: new FormControl<string>(""),
   });
   createNoteControl = new FormControl<boolean>(true);
@@ -92,9 +92,14 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
   async ngOnInit() {
     this.excludedEntitiesCount = this.dialogData.excludedEntitiesCount ?? 0;
     this.isBulkEmail = this.dialogData.isBulk;
+    const pluralLabel =
+      this.entity.getConstructor().labelPlural ?? `${this.entity.getType()}s`;
+    const subject = this.isBulkEmail
+      ? `Email regarding ${pluralLabel}`
+      : `Email regarding ${this.entity.toString()}`;
+    this.emailContentForm.controls.subject.setValue(subject);
 
     // Listen to template selection changes and prefill subject/body
-
     this.emailTemplateSelectionForm.valueChanges
       .pipe(
         distinctUntilChanged(),
@@ -114,7 +119,7 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
           });
         } else {
           this.emailContentForm.patchValue({
-            subject: "Subject",
+            subject,
             body: "",
           });
         }
