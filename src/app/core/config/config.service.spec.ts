@@ -357,7 +357,7 @@ describe("ConfigService", () => {
     testConfigMigration(otherConfig, otherConfig);
   }));
 
-  it("should migrate defaultValue mode 'inherited' to 'inherited-from-referenced-entity'", fakeAsync(() => {
+  it("should migrate defaultValue mode 'inherited' to 'inherited-field'", fakeAsync(() => {
     const previousDefaultValueConfig = {
       mode: "inherited",
       localAttribute: "localAttribute",
@@ -365,10 +365,10 @@ describe("ConfigService", () => {
     };
 
     const expectedDefaultValueConfig: DefaultValueConfig = {
-      mode: "inherited-from-referenced-entity",
+      mode: "inherited-field",
       config: {
-        localAttribute: "localAttribute",
-        field: "field",
+        sourceReferenceField: "localAttribute",
+        sourceValueField: "field",
       },
     };
 
