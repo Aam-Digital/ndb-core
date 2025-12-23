@@ -7,7 +7,7 @@ import {
   CdkDropList,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
-import { CommonModule } from "@angular/common";
+
 import {
   Component,
   EventEmitter,
@@ -30,7 +30,6 @@ import { Subscription } from "rxjs";
 @Component({
   selector: "app-admin-list-manager",
   imports: [
-    CommonModule,
     CdkDropList,
     CdkDrag,
     EntityFieldsMenuComponent,

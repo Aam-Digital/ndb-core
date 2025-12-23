@@ -12,7 +12,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatOptionModule } from "@angular/material/core";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
-import { CommonModule } from "@angular/common";
+
 import { AdminListManagerComponent } from "../../../../core/admin/admin-list-manager/admin-list-manager.component";
 import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { MatchingSideConfig } from "#src/app/features/matching-entities/matching-entities/matching-entities-config";
@@ -25,7 +25,6 @@ import { EntityTypeSelectComponent } from "#src/app/core/entity/entity-type-sele
   selector: "app-edit-matching-entity-side",
   standalone: true,
   imports: [
-    CommonModule,
     MatFormFieldModule,
     MatSelectModule,
     MatOptionModule,

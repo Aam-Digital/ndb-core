@@ -1,7 +1,6 @@
 import { Component, inject } from "@angular/core";
 import {
   DateRange,
-  MAT_RANGE_DATE_SELECTION_MODEL_PROVIDER,
   MatDatepickerModule,
   MatDateSelectionModel,
   MatRangeDateSelectionModel,
@@ -49,7 +48,6 @@ export const defaultDateFilters: DateRangeFilterConfigOption[] = [
   styleUrls: ["./date-range-filter-panel.component.scss"],
   providers: [
     { provide: MatDateSelectionModel, useClass: MatRangeDateSelectionModel },
-    MAT_RANGE_DATE_SELECTION_MODEL_PROVIDER,
   ],
   imports: [MatDialogModule, MatButtonModule, MatDatepickerModule, FormsModule],
 })
