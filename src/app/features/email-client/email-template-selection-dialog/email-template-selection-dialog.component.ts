@@ -2,7 +2,7 @@ import { EditEntityComponent } from "#src/app/core/basic-datatypes/entity/edit-e
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
-import { Component, inject, OnInit, signal } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatCheckbox } from "@angular/material/checkbox";
@@ -20,7 +20,7 @@ import { RouterLink } from "@angular/router";
 import { EmailTemplate } from "../email-template.entity";
 import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { switchMap, tap, distinctUntilChanged, filter } from "rxjs/operators";
+import { switchMap, distinctUntilChanged } from "rxjs/operators";
 import { from, of } from "rxjs";
 
 /**
@@ -94,10 +94,10 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
     this.isBulkEmail = this.dialogData.isBulk;
     const pluralLabel =
       this.entity.getConstructor().labelPlural ?? `${this.entity.getType()}s`;
-    const subject = this.isBulkEmail
+    const defaultSubject = this.isBulkEmail
       ? `Email regarding ${pluralLabel}`
       : `Email regarding ${this.entity.toString()}`;
-    this.emailContentForm.controls.subject.setValue(subject);
+    this.emailContentForm.controls.subject.setValue(defaultSubject);
 
     // Listen to template selection changes and prefill subject/body
     this.emailTemplateSelectionForm.valueChanges
@@ -119,7 +119,7 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
           });
         } else {
           this.emailContentForm.patchValue({
-            subject,
+            subject: defaultSubject,
             body: "",
           });
         }
