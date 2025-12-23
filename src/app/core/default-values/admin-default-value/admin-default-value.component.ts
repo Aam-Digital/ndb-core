@@ -30,8 +30,7 @@ import { CustomFormControlDirective } from "../../common-components/basic-autoco
 import { AdminDefaultValueDynamicComponent } from "../x-dynamic-placeholder/admin-default-value-dynamic/admin-default-value-dynamic.component";
 import { AdminDefaultValueStaticComponent } from "../x-static/admin-default-value-static/admin-default-value-static.component";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
-import { AdminDefaultValueUpdatedComponent } from "../../../features/automated-status-update/admin-default-value-updated/admin-default-value-updated.component";
-import { AdminDefaultValueInheritedComponent } from "../../../features/default-value-inherited/admin-default-value-inherited/admin-default-value-inherited.component";
+import { AdminInheritedFieldComponent } from "../../../features/inherited-field/admin-inherited-field/admin-inherited-field.component";
 
 /**
  * Admin UI component used in AdminEntityFieldComponent dialog
@@ -53,8 +52,7 @@ import { AdminDefaultValueInheritedComponent } from "../../../features/default-v
     MatIconButton,
     AdminDefaultValueDynamicComponent,
     AdminDefaultValueStaticComponent,
-    AdminDefaultValueInheritedComponent,
-    AdminDefaultValueUpdatedComponent,
+    AdminInheritedFieldComponent,
   ],
   templateUrl: "./admin-default-value.component.html",
   styleUrl: "./admin-default-value.component.scss",

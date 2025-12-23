@@ -15,18 +15,12 @@
             formControlName="config"
           ></app-admin-default-value-dynamic>
         }
-        @case ("inherited-from-referenced-entity") {
-          <app-admin-default-value-inherited
-            formControlName="config"
-            [entityType]="entityType"
-          ></app-admin-default-value-inherited>
-        }
-        @case ("updated-from-referencing-entity") {
-          <app-admin-default-value-updated
+        @case ("inherited-field") {
+          <app-admin-inherited-field
             formControlName="config"
             [entityType]="entityType"
             [entitySchemaField]="entitySchemaField"
-          ></app-admin-default-value-updated>
+          ></app-admin-inherited-field>
         }
       }
     </div>
