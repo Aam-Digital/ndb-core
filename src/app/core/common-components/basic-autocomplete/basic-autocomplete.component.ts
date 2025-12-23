@@ -246,7 +246,6 @@ export class BasicAutocompleteComponent<O, V = O>
     });
 
     this.calculateVisibleItemsForHeight();
-    this.updatePanelWidth();
   }
 
   private calculateVisibleItemsForHeight() {
@@ -315,6 +314,9 @@ export class BasicAutocompleteComponent<O, V = O>
       // cannot setValue to "" here because the current selection would be lost
       this.autocompleteForm.setValue(this.displayText, { emitEvent: false });
     }
+
+    // Update panel width when autocomplete is actually shown (when form field is rendered)
+    this.updatePanelWidth();
 
     setTimeout(() => {
       this.inputElement.focus();
