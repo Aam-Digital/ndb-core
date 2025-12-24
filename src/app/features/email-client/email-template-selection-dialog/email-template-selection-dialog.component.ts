@@ -95,8 +95,8 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
     const pluralLabel =
       this.entity.getConstructor().labelPlural ?? `${this.entity.getType()}s`;
     const defaultSubject = this.isBulkEmail
-      ? `Email regarding ${pluralLabel}`
-      : `Email regarding ${this.entity.toString()}`;
+      ? $localize`Email regarding ${pluralLabel}`
+      : $localize`Email regarding ${this.entity.toString()}`;
     this.emailContentForm.controls.subject.setValue(defaultSubject);
 
     // Listen to template selection changes and prefill subject/body
