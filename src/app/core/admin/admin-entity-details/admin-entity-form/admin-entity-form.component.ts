@@ -7,17 +7,23 @@ import {
 } from "@angular/cdk/drag-drop";
 import {
   Component,
+  computed,
   EventEmitter,
   inject,
   Input,
   OnChanges,
   Output,
+  signal,
   SimpleChanges,
 } from "@angular/core";
-import { FormControl } from "@angular/forms";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatDialog } from "@angular/material/dialog";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -57,6 +63,10 @@ import {
     MatButtonModule,
     MatTooltipModule,
     MatCardModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    ReactiveFormsModule,
     EntityFieldLabelComponent,
     EntityFieldEditComponent,
     AdminSectionHeaderComponent,
@@ -131,6 +141,40 @@ export class AdminEntityFormComponent implements OnChanges {
     label: $localize`:Label drag and drop item:Create Text Block`,
   };
 
+  searchFilter = new FormControl("");
+  private searchTermSignal = toSignal(this.searchFilter.valueChanges, {
+    initialValue: "",
+  });
+  private availableFieldsSignal = signal<ColumnConfig[]>([]);
+  filteredFields = computed(() => {
+    const searchTerm = this.searchTermSignal()?.toLowerCase().trim() || "";
+    const fields = this.availableFieldsSignal();
+
+    if (!searchTerm) {
+      return fields;
+    }
+
+    return fields.filter((field) => {
+      // always show the create new field and create new text placeholders
+      if (
+        field === this.createNewFieldPlaceholder ||
+        field === this.createNewTextPlaceholder
+      ) {
+        return true;
+      }
+
+      // Get field config to access both id and label
+      const fieldConfig =
+        this.entityFormService?.extendFormFieldConfig(field, this.entityType) ||
+        toFormFieldConfig(field);
+
+      const fieldId = fieldConfig.id?.toLowerCase() || "";
+      const fieldLabel = fieldConfig.label?.toLowerCase() || "";
+
+      return fieldId.includes(searchTerm) || fieldLabel.includes(searchTerm);
+    });
+  });
+
   constructor() {
     const adminEntityService = inject(AdminEntityService);
 
@@ -196,6 +240,8 @@ export class AdminEntityFormComponent implements OnChanges {
       this.createNewTextPlaceholder,
       ...unusedFields,
     ];
+
+    this.availableFieldsSignal.set(this.availableFields);
   }
 
   protected emitUpdatedConfig() {
@@ -215,6 +261,16 @@ export class AdminEntityFormComponent implements OnChanges {
     if (field instanceof Object) {
       Object.assign(entitySchemaField, field);
     }
+
+    // prefill with search filter text when creating new field
+    if (
+      (field === this.createNewFieldPlaceholder ||
+        (typeof field === "object" && field.id === null)) &&
+      this.searchFilter.value?.trim()
+    ) {
+      entitySchemaField.label = this.searchFilter.value.trim();
+    }
+
     const dialogRef = this.matDialog.open(AdminEntityFieldComponent, {
       width: "99%",
       maxHeight: "90vh",
