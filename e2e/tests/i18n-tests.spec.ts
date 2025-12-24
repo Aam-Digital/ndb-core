@@ -15,10 +15,16 @@ test("Translated and localized app versions (i18n)", async ({ page }) => {
     page.getByRole("heading", { name: "Willkommen bei Aam Digital!" }),
   ).toBeVisible();
 
-  await argosScreenshot(page, "i18n-de_init");
-
   await page.getByRole("combobox", { name: "Anwendungsfall" }).click();
   await page.getByRole("option", { name: "Bildungsprojekt" }).click();
+
+  // we're in a using mat-dialog, we need to scroll within the dialog container
+  await page
+    .getByRole("button", { name: "System erstellen" })
+    .scrollIntoViewIfNeeded();
+
+  await argosScreenshot(page, "i18n-de_init");
+
   await page.getByRole("button", { name: "System erstellen" }).click();
 
   await page
