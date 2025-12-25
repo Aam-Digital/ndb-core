@@ -278,6 +278,7 @@ export class AdminEntityFormComponent implements OnChanges {
         entitySchemaField: entitySchemaField,
         entityType: this.entityType,
         overwriteLocally: !this.updateEntitySchema,
+        prefillIdFromLabel: true,
       } as AdminEntityFieldData,
     });
 
