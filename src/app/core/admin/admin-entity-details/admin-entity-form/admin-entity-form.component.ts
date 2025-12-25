@@ -142,38 +142,13 @@ export class AdminEntityFormComponent implements OnChanges {
   };
 
   searchFilter = new FormControl("");
-  private searchTermSignal = toSignal(this.searchFilter.valueChanges, {
-    initialValue: "",
-  });
-  private availableFieldsSignal = signal<ColumnConfig[]>([]);
-  filteredFields = computed(() => {
-    const searchTerm = this.searchTermSignal()?.toLowerCase().trim() || "";
-    const fields = this.availableFieldsSignal();
 
-    if (!searchTerm) {
-      return fields;
-    }
-
-    return fields.filter((field) => {
-      // always show the create new field and create new text placeholders
-      if (
-        field === this.createNewFieldPlaceholder ||
-        field === this.createNewTextPlaceholder
-      ) {
-        return true;
-      }
-
-      // Get field config to access both id and label
-      const fieldConfig =
-        this.entityFormService?.extendFormFieldConfig(field, this.entityType) ||
-        toFormFieldConfig(field);
-
-      const fieldId = fieldConfig.id?.toLowerCase() || "";
-      const fieldLabel = fieldConfig.label?.toLowerCase() || "";
-
-      return fieldId.includes(searchTerm) || fieldLabel.includes(searchTerm);
-    });
-  });
+  private readonly searchFieldSignal = toSignal(
+    this.searchFilter.valueChanges,
+    {
+      initialValue: "",
+    },
+  );
 
   constructor() {
     const adminEntityService = inject(AdminEntityService);
@@ -507,4 +482,33 @@ export class AdminEntityFormComponent implements OnChanges {
 
     this.emitUpdatedConfig();
   }
+
+  private availableFieldsSignal = signal<ColumnConfig[]>([]);
+  filteredFields = computed(() => {
+    const searchTerm = this.searchFieldSignal()?.toLowerCase().trim() || "";
+    const fields = this.availableFieldsSignal();
+
+    if (!searchTerm) {
+      return fields;
+    }
+
+    return fields.filter((field) => {
+      // always show the create new field and create new text placeholders
+      if (
+        field === this.createNewFieldPlaceholder ||
+        field === this.createNewTextPlaceholder
+      ) {
+        return true;
+      }
+
+      const fieldConfig =
+        this.entityFormService?.extendFormFieldConfig(field, this.entityType) ||
+        toFormFieldConfig(field);
+
+      const fieldId = fieldConfig.id?.toLowerCase() || "";
+      const fieldLabel = fieldConfig.label?.toLowerCase() || "";
+
+      return fieldId.includes(searchTerm) || fieldLabel.includes(searchTerm);
+    });
+  });
 }
