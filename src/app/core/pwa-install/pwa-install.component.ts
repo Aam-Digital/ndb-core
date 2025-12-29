@@ -12,12 +12,18 @@ import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { IconButtonComponent } from "../common-components/icon-button/icon-button.component";
 
 @Component({
   selector: "app-pwa-install",
   templateUrl: "./pwa-install.component.html",
   styleUrls: ["./pwa-install.component.scss"],
-  imports: [MatButtonModule, Angulartics2Module, FontAwesomeModule],
+  imports: [
+    MatButtonModule,
+    Angulartics2Module,
+    IconButtonComponent,
+    FontAwesomeModule,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PwaInstallComponent implements OnInit {

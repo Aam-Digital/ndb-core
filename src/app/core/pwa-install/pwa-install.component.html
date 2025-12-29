@@ -1,19 +1,17 @@
 @if (_showPWAInstallButton) {
-  <button
-    mat-flat-button
-    class="pwa-install-button"
+  <app-icon-button
+    icon="cloud-download-alt"
+    buttonType="mat-flat-button"
     color="primary"
-    angulartics2On="click"
-    angularticsCategory="UserAction"
-    angularticsAction="install_app"
-    (click)="pwaInstallButtonClicked()"
+    cssClass="pwa-install-button"
+    [angulartics2On]="'click'"
+    [angularticsCategory]="'UserAction'"
+    [angularticsAction]="'install_app'"
+    (buttonClick)="pwaInstallButtonClicked()"
+    i18n="PWA Install Button Label"
   >
-    <fa-icon
-      icon="cloud-download-alt"
-      class="standard-icon-with-text"
-    ></fa-icon>
-    <span i18n="PWA Install Button Label">Install App</span>
-  </button>
+    Install App
+  </app-icon-button>
 }
 
 <ng-template #iOSInstallInstructions>
