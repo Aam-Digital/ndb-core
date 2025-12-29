@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, inject } from "@angular/core";
 import { FormControl, FormsModule } from "@angular/forms";
-import { CommonModule } from "@angular/common";
+
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
@@ -37,7 +37,6 @@ interface EntityPropertyPair {
   selector: "app-birthday-dashboard-settings",
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,

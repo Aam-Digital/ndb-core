@@ -15,12 +15,10 @@
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": false,
-    "downlevelIteration": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "moduleResolution": "bundler",
     "importHelpers": true,
-    "allowSyntheticDefaultImports": true,
     "useDefineForClassFields": false,
     // we ensure browser compatibility through babel and .browserslistrc
     "target": "ESNext",
