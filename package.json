@@ -32,7 +32,7 @@
     "@angular/common": "^21.0.5",
     "@angular/compiler": "^21.0.5",
     "@angular/core": "^21.0.5",
-    "@angular/fire": "^20.0.1",
+    "@angular/fire": "^21.0.0-rc.0",
     "@angular/forms": "^21.0.5",
     "@angular/localize": "^21.0.5",
     "@angular/material": "^21.0.3",
@@ -45,7 +45,7 @@
     "@casl/ability": "^6.7.5",
     "@casl/angular": "^9.0.4",
     "@faker-js/faker": "^10.1.0",
-    "@fortawesome/angular-fontawesome": "^3.0.0",
+    "@fortawesome/angular-fontawesome": "^4.0.0",
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
     "@fortawesome/free-regular-svg-icons": "^7.1.0",
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
@@ -65,7 +65,7 @@
     "lodash-es": "^4.17.22",
     "md5": "^2.3.0",
     "moment": "2.29.4",
-    "ngx-markdown": "^20.1.0",
+    "ngx-markdown": "^21.0.1",
     "ngx-papaparse": "^8.0.0",
     "pouchdb-adapter-memory": "^9.0.0",
     "pouchdb-browser": "^9.0.0",
@@ -106,7 +106,6 @@
     "@types/lodash-es": "^4.17.12",
     "@types/md5": "^2.3.6",
     "@types/pouchdb": "^6.4.2",
-    "@types/uuid": "^11.0.0",
     "@typescript-eslint/eslint-plugin": "^8.50.0",
     "@typescript-eslint/parser": "^8.50.0",
     "angular-eslint": "^21.1.0",
@@ -137,8 +136,10 @@
     "@casl/angular": {
       "@angular/core": "$@angular/core"
     },
-    "@compodoc/compodoc": {
-      "chokidar": "^4.0.3"
+    "keycloak-angular": {
+      "@angular/common": "$@angular/common",
+      "@angular/core": "$@angular/core",
+      "@angular/router": "$@angular/router"
     },
     "readable-stream": "^4.0.0"
   }
