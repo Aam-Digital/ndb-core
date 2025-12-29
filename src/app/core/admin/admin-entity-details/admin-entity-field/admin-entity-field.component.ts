@@ -123,7 +123,7 @@ export class AdminEntityFieldComponent implements OnInit {
       this.lockGlobalFields();
     }
 
-    // Auto-generate ID from label for new fields for eg when in admin form we searched and that field f
+    // Auto-generate ID from label for new fields (e.g., when creating a field from search text in admin form)
     if (this.data.prefillIdFromLabel && !this.data.entitySchemaField.id) {
       this.autoGenerateId();
     }
