@@ -137,11 +137,19 @@ test("Recurring activities list", async ({ page }) => {
 
 test("Edit participants of a recurring activity", async ({ page }) => {
   const [user] = generateUsers();
+
+  // Create specific children with known names to ensure test determinism
+  // This prevents test failures when running in parallel where random demo data
+  // would cause different children to be selected across test runs
   const childToAdd = generateChild({
     name: "AAAA", // FIXME: This ensure that the child is listed first
   });
-  const childToKeep = generateChild();
-  const childToRemove = generateChild();
+  const childToKeep = generateChild({
+    name: "Abhisyanta Sharma",
+  });
+  const childToRemove = generateChild({
+    name: "Prayag Talwar",
+  });
   const allChildren = [
     childToAdd,
     childToKeep,
@@ -186,7 +194,7 @@ test("Edit participants of a recurring activity", async ({ page }) => {
 
   // And I click on the "Participants" field
   //TODO: fix the locator to something more reliable
-  await page.getByText("Prayag Talwar").click();
+  await page.getByText(childToRemove.name).click();
 
   // Then I see "Abhisyanta Sharma" selected.
   await expect(

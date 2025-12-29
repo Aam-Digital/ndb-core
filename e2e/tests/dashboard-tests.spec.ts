@@ -47,6 +47,16 @@ test("Dashboard widgets and actions", async ({ page }) => {
     ...todos,
   ]);
 
+  // Navigate to Record Attendance first to ensure the app initializes properly
+  // This step forces the data synchronization before checking dashboard counts
+  await page.getByText("Record attendance").click();
+  await expect(
+    page.getByRole("heading", { name: "Record Attendance" }),
+  ).toBeVisible();
+
+  // This approach avoids race conditions where dashboard widgets load before demo data sync
+  await page.getByRole("navigation").getByText("Dashboard").click();
+
   await expect(page.getByText("Quick Actions")).toBeVisible();
   await expect(page.getByText("8 Children")).toBeVisible();
   await expect(page.getByText("1 Notes needing follow-up")).toBeVisible();
@@ -60,9 +70,4 @@ test("Dashboard widgets and actions", async ({ page }) => {
   await waitForDashboardWidgetsToLoad(page);
 
   await argosScreenshot(page, "dashboard");
-
-  await page.getByText("Record attendance").click();
-  await expect(
-    page.getByRole("heading", { name: "Record Attendance" }),
-  ).toBeVisible();
 });
