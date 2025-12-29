@@ -136,6 +136,11 @@ export class BasicAutocompleteComponent<O, V = O>
    * We need a calculation to avoid multiple scrollbars, couldn't get this working just with css.
    */
   maxPanelHeight: number;
+  /**
+   * Dynamic width of the autocomplete dropdown panel.
+   * Set to match the full width of the Material form field container (including icons/padding).
+   */
+  panelWidth: string;
 
   get displayText() {
     const values: V[] = Array.isArray(this.value) ? this.value : [this.value];
@@ -241,6 +246,7 @@ export class BasicAutocompleteComponent<O, V = O>
     });
 
     this.calculateVisibleItemsForHeight();
+    this.updatePanelWidth();
   }
 
   private calculateVisibleItemsForHeight() {
@@ -258,6 +264,24 @@ export class BasicAutocompleteComponent<O, V = O>
       this.maxPanelHeight = Math.min(maxVisibleItems * 48, availableSpaceBelow);
       this.virtualScrollViewport.checkViewportSize();
     }, 0);
+  }
+
+  /**
+   * Set the width of the dropdown panel programmatically to match the parent form field.
+   * (this is not possible with pure CSS)
+   *
+   * Note: If the field is close to the viewport edge, Angular Material's overlay system may shift the dropdown horizontally
+   * to keep it visible, causing minor misalignment. This is expected and ensures accessibility.
+   */
+  public updatePanelWidth() {
+    // Use closest .mat-mdc-form-field or .mat-form-field from input element
+    const fieldEl = this.inputElement?._elementRef?.nativeElement.closest(
+      ".mat-mdc-form-field, .mat-form-field",
+    ) as HTMLElement;
+    const fieldWidth = fieldEl ? fieldEl.getBoundingClientRect().width : 200;
+    setTimeout(() => {
+      this.panelWidth = `${fieldWidth}px`;
+    });
   }
 
   drop(event: CdkDragDrop<any[]>) {

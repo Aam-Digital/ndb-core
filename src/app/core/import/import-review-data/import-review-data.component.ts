@@ -32,6 +32,7 @@ import {
 import { AdditionalImportAction } from "../additional-actions/additional-import-action";
 import { MatTooltip } from "@angular/material/tooltip";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
+import { HintBoxComponent } from "../../common-components/hint-box/hint-box.component";
 
 @Component({
   selector: "app-import-review-data",
@@ -49,6 +50,7 @@ import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/
     MatHeaderCellDef,
     MatTooltip,
     EntityBlockComponent,
+    HintBoxComponent,
   ],
 })
 export class ImportReviewDataComponent implements OnChanges {

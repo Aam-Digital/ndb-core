@@ -3,15 +3,15 @@
   "values": [
     {
       "id": "M",
-      "label": "male"
+      "label": "Male"
     },
     {
       "id": "F",
-      "label": "female"
+      "label": "Female"
     },
     {
       "id": "X",
-      "label": "Non-binary/third gender"
+      "label": "Non-binary / third gender"
     }
   ]
 }

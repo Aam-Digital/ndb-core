@@ -4,7 +4,6 @@ import { Entity } from "../entity/model/entity";
 import {
   allInterpreters,
   allParsingInstructions,
-  compare,
   createFactory,
   Filter,
 } from "@ucast/mongo2js";
@@ -12,6 +11,7 @@ import moment from "moment";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import { DataFilter, Filter as EntityFilter } from "./filters/filters";
 import { MongoQuery } from "@casl/ability";
+import { extendedCompare } from "../../utils/filter-compare-utils";
 
 /**
  * Utility service to help handling and aligning filters with entities.
@@ -25,7 +25,7 @@ export class FilterService {
   private filterFactory = createFactory(
     allParsingInstructions,
     allInterpreters,
-    { compare: this.extendedCompare.bind(this) },
+    { compare: extendedCompare },
   ) as Filter;
 
   combineFilters<T extends Entity>(
@@ -115,24 +115,5 @@ export class FilterService {
   private parseConfigurableEnumValue(property: EntitySchemaField, value) {
     const enumValues = this.enumService.getEnumValues(property.additional);
     return enumValues.find(({ id }) => id === value["id"]);
-  }
-
-  private extendedCompare<T>(a: T, b: T): 1 | -1 | 0 {
-    if (a instanceof Date && typeof b === "string") {
-      return this.compareDates(a, b);
-    } else {
-      return compare(a, b);
-    }
-  }
-
-  private compareDates(a: Date, b: string) {
-    const [momentA, momentB] = [moment(a), moment(b)];
-    if (momentA.isSame(momentB, "days")) {
-      return 0;
-    } else if (momentA.isBefore(momentB, "days")) {
-      return -1;
-    } else {
-      return 1;
-    }
   }
 }

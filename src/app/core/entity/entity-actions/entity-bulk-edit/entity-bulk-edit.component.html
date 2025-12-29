@@ -16,16 +16,13 @@
     <div class="entity-form-cell">
       <mat-form-field appearance="fill">
         <mat-label i18n>Property to update</mat-label>
-        <mat-select
+        <app-entity-field-select
           [formControl]="selectedFieldFormControl"
-          (selectionChange)="onChangeProperty($event.value)"
+          (valueChange)="onChangeProperty($event)"
+          [multi]="false"
+          [entityType]="entityConstructor"
         >
-          @for (field of entityFields; track field) {
-            <mat-option [value]="field.key">
-              {{ field.label }}
-            </mat-option>
-          }
-        </mat-select>
+        </app-entity-field-select>
       </mat-form-field>
     </div>
 

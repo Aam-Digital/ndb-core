@@ -1,4 +1,4 @@
-import { Component, inject, Input } from "@angular/core";
+import { Component, inject, Input, Output, EventEmitter } from "@angular/core";
 import {
   EntityDetailsConfig,
   Panel,
@@ -54,6 +54,12 @@ export class AdminEntityDetailsComponent {
 
   @Input() entityConstructor: EntityConstructor;
   @Input() config: EntityDetailsConfig;
+
+  /**
+   * Event emitted when a related entity's schema has been modified,
+   * to ensure changes are saved centrally by parent component.
+   */
+  @Output() relatedEntityModified = new EventEmitter<EntityConstructor>();
 
   newPanelFactory(): Panel {
     return { title: "New Tab", components: [] };

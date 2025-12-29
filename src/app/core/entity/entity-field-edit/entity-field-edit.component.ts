@@ -13,7 +13,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
-import { InheritedValueButtonComponent } from "../../../features/default-value-inherited/inherited-value-button/inherited-value-button.component";
+import { InheritedValueButtonComponent } from "../../../features/inherited-field/inherited-value-button/inherited-value-button.component";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import {
   ColumnConfig,
@@ -52,9 +52,9 @@ import { DynamicEditComponent } from "./dynamic-edit/dynamic-edit.component";
     ErrorHintComponent,
   ],
 })
-export class EntityFieldEditComponent<T extends Entity = Entity>
-  implements OnChanges
-{
+export class EntityFieldEditComponent<
+  T extends Entity = Entity,
+> implements OnChanges {
   private entityFormService = inject(EntityFormService);
   private entitySchemaService = inject(EntitySchemaService);
 

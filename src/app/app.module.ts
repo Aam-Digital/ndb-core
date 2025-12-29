@@ -117,7 +117,7 @@ import { EmailClientServiceModule } from "./features/email-client/email-client.m
     }),
     BrowserModule,
     BrowserAnimationsModule,
-    RouterModule.forRoot(allRoutes),
+    RouterModule.forRoot(allRoutes, { scrollPositionRestoration: "enabled" }), //to automatically restore scroll position when navigating back to a page.
     // Core modules
     CoreModule,
     ConfigurableEnumModule,

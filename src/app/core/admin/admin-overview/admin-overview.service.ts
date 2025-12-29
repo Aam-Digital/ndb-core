@@ -10,26 +10,43 @@ import { MenuItem } from "../../ui/navigation/menu-item";
   providedIn: "root",
 })
 export class AdminOverviewService {
-  menuItems: MenuItem[] = [
+  private readonly _templates: MenuItem[] = [];
+
+  get templates(): MenuItem[] {
+    return this._templates;
+  }
+
+  /**
+   * Register a menu entry for the "Templates" section of the Admin Overview.
+   * Use this from feature modules to extend the Admin UI.
+   */
+  addTemplateItems(items: MenuItem | MenuItem[]): void {
+    const itemsArray = Array.isArray(items) ? items : [items];
+    this._templates.push(...itemsArray);
+  }
+  /**
+   * Configuration section menu items for Admin Overview.
+   */
+  configurationMenuItems: MenuItem[] = [
+    {
+      label: $localize`:admin menu item:Record Types & Data Structures`,
+      link: "/admin/entity",
+    },
     {
       label: $localize`:admin menu item:Site Settings`,
       link: "/admin/site-settings",
-    },
-    {
-      label: $localize`:admin menu item:Database Conflicts`,
-      link: "/admin/conflicts",
-    },
-    {
-      label: $localize`:admin menu item:Configure Record Types`,
-      link: "/admin/entity",
     },
     {
       label: $localize`:admin menu item:Setup Wizard`,
       link: "/admin/setup-wizard",
     },
     {
-      label: $localize`:admin menu item:Configure Main Menu`,
+      label: $localize`:admin menu item:Main Menu`,
       link: "/admin/menu",
+    },
+    {
+      label: $localize`:admin menu item:Primary Action`,
+      link: "/admin/primary-action",
     },
   ];
 }

@@ -1,0 +1,32 @@
+[
+  {
+    "_id": "ConfigurableEnum:likert1_5",
+    "values": [
+      {
+        "id": "1",
+        "label": "Strongly disagree",
+        "color": "#fb8383"
+      },
+      {
+        "id": "2",
+        "label": "Disagree",
+        "color": "#f9cdcd"
+      },
+      {
+        "id": "3",
+        "label": "Neither disagree nor agree",
+        "color": "#e1e1e1"
+      },
+      {
+        "id": "4",
+        "label": "Agree",
+        "color": "#c7f6c7"
+      },
+      {
+        "id": "5",
+        "label": "Strongly agree",
+        "color": "#0fdb00"
+      }
+    ]
+  }
+]

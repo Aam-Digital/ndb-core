@@ -14,10 +14,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
-
-  // max width to get more consistent, clean look
-  // disable for now as it cuts too many important details
-  //max-width: 120px;
+  max-width: 230px;
 }
 
 .bubble-list {

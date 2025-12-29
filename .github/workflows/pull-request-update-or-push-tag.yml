@@ -40,6 +40,7 @@ jobs:
           node-version: lts/*
           cache: npm
 
+      - run: npm install -g npm@11
       - run: echo "building app for BUILD_NAME ${{ env.BUILD_NAME }}"
       - run: npm install --ci
       - run: |

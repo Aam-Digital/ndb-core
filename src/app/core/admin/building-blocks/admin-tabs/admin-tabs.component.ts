@@ -56,9 +56,9 @@ import {
   templateUrl: "./admin-tabs.component.html",
   styleUrl: "./admin-tabs.component.scss",
 })
-export class AdminTabsComponent<E extends { title: string } | { name: string }>
-  implements OnChanges
-{
+export class AdminTabsComponent<
+  E extends { title: string } | { name: string },
+> implements OnChanges {
   @Input() tabs: E[];
   @Input() newTabFactory: () => E = () =>
     ({ [this.tabTitleProperty]: "" }) as E;

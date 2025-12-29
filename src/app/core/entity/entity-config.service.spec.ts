@@ -137,6 +137,25 @@ describe("EntityConfigService", () => {
     expect(Test.color).toBe("red");
   });
 
+  it("should allow to configure color as an array of ColorMappings for entity", () => {
+    mockConfigService.getAllConfigs.and.returnValue([
+      {
+        _id: "entity:Test",
+        color: [
+          { condition: { status: "active" }, color: "#00FF00" },
+          { condition: { status: "inactive" }, color: "#FF0000" },
+        ],
+      },
+    ]);
+    service.setupEntitiesFromConfig();
+
+    expect(Test.color).toBeDefined();
+    expect(Array.isArray(Test.color)).toBeTrue();
+    expect((Test.color as any).length).toBe(2);
+    expect((Test.color as any)[0].color).toBe("#00FF00");
+    expect((Test.color as any)[1].color).toBe("#FF0000");
+  });
+
   it("should create a new subclass with the schema of the extended", () => {
     const schema: EntitySchemaField = {
       dataType: "string",

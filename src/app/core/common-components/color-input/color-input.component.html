@@ -1,0 +1,49 @@
+<!-- Color Picker Button -->
+<ng-template #colorPicker>
+  <button
+    mat-icon-button
+    type="button"
+    [style.color]="color"
+    (click)="colorInput.click()"
+    tabindex="-1"
+    matTooltip="Pick color"
+  >
+    <fa-icon icon="palette"></fa-icon>
+  </button>
+  <input
+    #colorInput
+    type="color"
+    class="color-input-overlay"
+    [value]="color"
+    (input)="onColorChange($event.target.value)"
+    (click)="$event.stopPropagation()"
+  />
+</ng-template>
+
+@if (compact) {
+  <!-- only color picker button -->
+  <ng-container *ngTemplateOutlet="colorPicker"></ng-container>
+} @else {
+  <!-- full form field with picker -->
+  <mat-form-field class="full-width" floatLabel="always">
+    <mat-label>
+      <span>{{ label }}</span>
+      &nbsp;
+      <fa-icon
+        icon="question-circle"
+        matTooltip="Pick a color or enter a color code (e.g. #ff0000)."
+        i18n-matTooltip
+      ></fa-icon>
+    </mat-label>
+    <input
+      matInput
+      [formControl]="colorControl"
+      (input)="onColorChange(colorControl.value)"
+      style="width: 100px"
+      placeholder="#RRGGBB"
+    />
+    <span matSuffix>
+      <ng-container *ngTemplateOutlet="colorPicker"></ng-container>
+    </span>
+  </mat-form-field>
+}

@@ -11,8 +11,8 @@ export const matchingEntitiesComponents: ComponentTuple[] = [
   [
     "AdminMatchingEntities",
     () =>
-      import(
-        "./admin-matching-entities/admin-matching-entities.component"
-      ).then((c) => c.AdminMatchingEntitiesComponent),
+      import("./admin-matching-entities/admin-matching-entities.component").then(
+        (c) => c.AdminMatchingEntitiesComponent,
+      ),
   ],
 ];

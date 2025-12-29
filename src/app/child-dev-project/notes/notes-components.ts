@@ -11,31 +11,31 @@ export const notesComponents: ComponentTuple[] = [
   [
     "NoteAttendanceCountBlock",
     () =>
-      import(
-        "./note-attendance-block/note-attendance-count-block.component"
-      ).then((c) => c.NoteAttendanceCountBlockComponent),
+      import("./note-attendance-block/note-attendance-count-block.component").then(
+        (c) => c.NoteAttendanceCountBlockComponent,
+      ),
   ],
   [
     "NotesDashboard",
     () =>
-      import(
-        "./dashboard-widgets/notes-dashboard/notes-dashboard.component"
-      ).then((c) => c.NotesDashboardComponent),
+      import("./dashboard-widgets/notes-dashboard/notes-dashboard.component").then(
+        (c) => c.NotesDashboardComponent,
+      ),
   ],
 
   [
     "NotesRelatedToEntity",
     () =>
-      import(
-        "./notes-related-to-entity/notes-related-to-entity.component"
-      ).then((c) => c.NotesRelatedToEntityComponent),
+      import("./notes-related-to-entity/notes-related-to-entity.component").then(
+        (c) => c.NotesRelatedToEntityComponent,
+      ),
   ],
   [
     "ImportantNotesDashboard",
     () =>
-      import(
-        "./dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component"
-      ).then((c) => c.ImportantNotesDashboardComponent),
+      import("./dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component").then(
+        (c) => c.ImportantNotesDashboardComponent,
+      ),
   ],
   [
     "NoteDetails",
@@ -47,15 +47,15 @@ export const notesComponents: ComponentTuple[] = [
   [
     "ImportantNotesDashboardSettings",
     () =>
-      import(
-        "./dashboard-widgets/important-notes-dashboard-settings.component/important-notes-dashboard-settings.component"
-      ).then((c) => c.ImportantNotesDashboardSettingsComponent),
+      import("./dashboard-widgets/important-notes-dashboard-settings.component/important-notes-dashboard-settings.component").then(
+        (c) => c.ImportantNotesDashboardSettingsComponent,
+      ),
   ],
   [
     "NotesDashboardSettings",
     () =>
-      import(
-        "./dashboard-widgets/notes-dashboard-settings.component/notes-dashboard-settings.component"
-      ).then((c) => c.NotesDashboardSettingsComponent),
+      import("./dashboard-widgets/notes-dashboard-settings.component/notes-dashboard-settings.component").then(
+        (c) => c.NotesDashboardSettingsComponent,
+      ),
   ],
 ];

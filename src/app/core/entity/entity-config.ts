@@ -1,5 +1,6 @@
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { EntityBlockConfig } from "../basic-datatypes/entity/entity-block/entity-block-config";
+import { ColorMapping } from "./model/entity";
 
 /**
  * Dynamic configuration for a entity.
@@ -40,9 +41,9 @@ export interface EntityConfig {
   icon?: string;
 
   /**
-   * color used for to highlight this entity type across the app
+   * color used for to highlight this entity type across the app.
    */
-  color?: string;
+  color?: string | ColorMapping[];
 
   /**
    * base route of views for this entity type

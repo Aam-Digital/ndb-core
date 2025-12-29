@@ -2,7 +2,7 @@ import {
   EntityForm,
   EntityFormSavedEvent,
 } from "#src/app/core/common-components/entity-form/entity-form";
-import { AutomatedStatusUpdateConfigService } from "#src/app/features/automated-status-update/automated-status-update-config-service";
+import { AutomatedFieldUpdateConfigService } from "#src/app/features/inherited-field/automated-field-update/automated-field-update-config.service";
 import { NgClass } from "@angular/common";
 import {
   Component,
@@ -47,14 +47,14 @@ import { ConfirmationDialogService } from "../../confirmation-dialog/confirmatio
     EntityFieldEditComponent,
   ],
 })
-export class EntityFormComponent<T extends Entity = Entity>
-  implements OnChanges
-{
+export class EntityFormComponent<
+  T extends Entity = Entity,
+> implements OnChanges {
   private entityMapper = inject(EntityMapperService);
   private confirmationDialog = inject(ConfirmationDialogService);
   private ability = inject(EntityAbility);
-  private automatedStatusUpdateConfigService = inject(
-    AutomatedStatusUpdateConfigService,
+  private automatedFieldUpdateConfigService = inject(
+    AutomatedFieldUpdateConfigService,
   );
 
   /**
@@ -118,7 +118,7 @@ export class EntityFormComponent<T extends Entity = Entity>
         filter((event) => event instanceof EntityFormSavedEvent),
       )
       .subscribe(async (event: EntityFormSavedEvent) => {
-        await this.automatedStatusUpdateConfigService.applyRulesToDependentEntities(
+        await this.automatedFieldUpdateConfigService.applyRulesToDependentEntities(
           event.newEntity,
           event.previousEntity,
         );

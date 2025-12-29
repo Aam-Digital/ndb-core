@@ -1,7 +1,6 @@
-import { Entity, EntityConstructor } from "../../core/entity/model/entity";
+import { EntityConstructor } from "../../core/entity/model/entity";
 import * as L from "leaflet";
 import { Coordinates } from "./coordinates";
-import { getHue } from "../../utils/style-utils";
 import { LocationDatatype } from "./location.datatype";
 
 const iconRetinaUrl = "assets/marker-icon-2x.png";
@@ -20,25 +19,51 @@ const iconDefault = L.icon({
 L.Marker.prototype.options.icon = iconDefault;
 
 /**
- * Translates the color of an entity to the necessary hue-rotate filter
- * @param entity to get color from
- * @param offset hue offset which should be added on top.
- *  default 145 (rough guess of the default leaflet marker icon)
+ * Creates a custom colored marker icon using Leaflet's DivIcon.
+ * This approach ensures accurate color representation for all colors,
+ * overcoming the limitations of the hue-rotate filter which cannot
+ * properly handle achromatic colors or accurately represent all RGB values.
  *
+ * Based on: https://stackoverflow.com/a/40870439/1473411
+ *
+ * @param color Hex or RGB color string for the marker
+ * @returns Leaflet DivIcon with the specified color
  */
-export function getHueForEntity(entity: Entity, offset = 145): string {
-  // Grab the hex representation and convert to decimal (base 10).
-  const color = entity.getConstructor().color;
-  if (!color) {
-    return "0";
+export function createColoredDivIcon(color: string): L.DivIcon {
+  // Ensure the color has full opacity (strip any alpha channel)
+  // Some colors might come as rgba or with alpha, we need solid colors for proper opacity control
+  let solidColor = color;
+  if (color.startsWith("rgba")) {
+    // Convert rgba to rgb
+    solidColor = color.replace(
+      /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d.]+)?\)/,
+      "rgb($1, $2, $3)",
+    );
+  } else if (color.length === 9 && color.startsWith("#")) {
+    // Strip alpha channel from 8-digit hex (#RRGGBBAA)
+    solidColor = color.substring(0, 7);
   }
-  const r = parseInt(color.substring(1, 3), 16) / 255;
-  const g = parseInt(color.substring(3, 5), 16) / 255;
-  const b = parseInt(color.substring(5, 7), 16) / 255;
-  const hue = getHue(r, g, b);
-  const offsetHue = (hue * 360 + offset) % 360;
 
-  return offsetHue.toFixed(0);
+  const markerHtmlStyles = `
+    background-color: ${solidColor};
+    width: 2rem;
+    height: 2rem;
+    display: block;
+    left: -0.5rem;
+    top: -2rem;
+    position: relative;
+    border-radius: 2rem 2rem 0;
+    transform: rotate(45deg);
+    border: 2px solid #fff;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4)`;
+
+  return L.divIcon({
+    className: "",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [0, -36],
+    html: `<span style="${markerHtmlStyles}" />`,
+  });
 }
 
 /**

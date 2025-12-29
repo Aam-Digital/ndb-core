@@ -8,11 +8,21 @@ import {
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+  OnDestroy,
+} from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ColumnConfig } from "app/core/common-components/entity-form/FormConfig";
+import { AdminEntityService } from "../admin-entity.service";
+import { Subscription } from "rxjs";
 
 /**
  * Component for Admin UI to edit table columns or fields in other contexts like filters.
@@ -32,7 +42,9 @@ import { ColumnConfig } from "app/core/common-components/entity-form/FormConfig"
   templateUrl: "./admin-list-manager.component.html",
   styleUrl: "./admin-list-manager.component.scss",
 })
-export class AdminListManagerComponent implements OnInit {
+export class AdminListManagerComponent implements OnInit, OnDestroy {
+  private readonly adminEntityService = inject(AdminEntityService);
+  private schemaUpdateSubscription: Subscription;
   @Input() items: ColumnConfig[] = [];
   @Input() entityType: EntityConstructor;
   @Input() fieldLabel: string;
@@ -50,6 +62,20 @@ export class AdminListManagerComponent implements OnInit {
   availableItems: ColumnConfig[] = [];
 
   ngOnInit(): void {
+    this.loadAvailableItems();
+
+    // Subscribe to schema updates to refresh available items when fields are added/modified
+    this.schemaUpdateSubscription =
+      this.adminEntityService.entitySchemaUpdated.subscribe(() => {
+        this.loadAvailableItems();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.schemaUpdateSubscription?.unsubscribe();
+  }
+
+  private loadAvailableItems(): void {
     if (!this.entityType) return;
     const targetEntitySchemaFields = Array.from(this.entityType.schema.keys());
     this.availableItems = Array.from(

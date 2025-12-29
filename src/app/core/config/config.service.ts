@@ -4,6 +4,7 @@ import { shareReplay } from "rxjs/operators";
 import { addDefaultRecurringActivityDetailsConfig } from "../../child-dev-project/attendance/add-default-recurring-activity-views";
 import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
 import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
+import { migrateInheritedFieldConfig } from "../../features/inherited-field/inherited-field-config-migration";
 import { addDefaultImportViewConfig } from "../import/add-default-import-view";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { DefaultValueConfig } from "../default-values/default-value-config";
@@ -106,6 +107,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEntityBlock,
       migrateGroupByConfig,
       migrateDefaultValue,
+      migrateInheritedFieldConfig,
       migrateUserEntityAndPanels,
       migrateComponentEntityTypeDefaults,
       migrateActivitiesOverviewComponent,
@@ -510,7 +512,9 @@ const migrateChildSchoolOverviewComponent: ConfigMigration = (
 
   // determine if this is part of EntityDetails for Child or for School
   if (typeof configPart === "object" && Array.isArray(configPart?.panels)) {
-    const isChildDetails = configPart?.entityType?.toLowerCase() === "child";
+    const entityType = configPart?.entityType;
+    const isChildDetails =
+      typeof entityType === "string" && entityType.toLowerCase() === "child";
 
     configPart.panels.forEach((panel) => {
       panel.components?.forEach((component, index) => {

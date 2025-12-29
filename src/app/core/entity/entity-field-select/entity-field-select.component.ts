@@ -9,6 +9,10 @@ import { EntityRegistry } from "../database-entity.decorator";
 import { EntitySchema } from "../schema/entity-schema";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 
+/**
+ * Dropdown field offering all fields of a given entity type
+ * (for admin and action screens).
+ */
 @Component({
   selector: "app-entity-field-select",
   imports: BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
@@ -51,7 +55,10 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
 
   private getAllFieldProps(schema: EntitySchema): FormFieldConfig[] {
     return [...schema.entries()]
-      .filter(([_, fieldSchema]) => fieldSchema.label)
+      .filter(
+        ([_, fieldSchema]) =>
+          !fieldSchema.isInternalField && !!fieldSchema.label,
+      )
       .map(([name, fieldSchema]) => ({ ...fieldSchema, id: name }));
   }
 }

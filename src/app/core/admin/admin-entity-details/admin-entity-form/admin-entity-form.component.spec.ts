@@ -104,7 +104,7 @@ describe("AdminEntityFormComponent", () => {
     await component.ngOnChanges({ config: true as any });
 
     const noteUserFacingFields = Array.from(TestEntity.schema.entries())
-      .filter(([key, value]) => value.label)
+      .filter(([key, value]) => !value.isInternalField)
       .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
       .map(([key]) => key);
     expect(component.availableFields).toEqual([

@@ -31,9 +31,9 @@ export class ProgressDashboardWidgetModule {
       [
         "ProgressDashboardSettings",
         () =>
-          import(
-            "./progress-dashboard-settings/progress-dashboard-settings.component"
-          ).then((c) => c.ProgressDashboardSettingsComponent),
+          import("./progress-dashboard-settings/progress-dashboard-settings.component").then(
+            (c) => c.ProgressDashboardSettingsComponent,
+          ),
       ],
     ]);
   }

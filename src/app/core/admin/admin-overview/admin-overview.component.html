@@ -1,93 +1,171 @@
-<h1>Administration & Configuration</h1>
+<h1>System Settings</h1>
 
-<p style="font-weight: bold; font-style: italic">
-  Warning: This section is intended for system administrators only. Make sure
-  you know what you are doing.
-</p>
-
-<hr />
-
-<h2>Shortcuts</h2>
-<mat-nav-list>
-  @for (item of adminOverviewService.menuItems; track item) {
-    <mat-list-item [routerLink]="[item.link]">{{ item.label }}</mat-list-item>
+<mat-accordion class="admin-sections margin-top-large" multi>
+  <!-- Subscription Section -->
+  @if (isSaasEnvironment) {
+    <mat-expansion-panel
+      [expanded]="isExpanded('subscription')"
+      (opened)="setExpanded('subscription')"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title i18n>Subscription</mat-panel-title>
+        <mat-panel-description i18n
+          >Manage your subscription details, privacy settings, and access to
+          advanced features.</mat-panel-description
+        >
+      </mat-expansion-panel-header>
+      <mat-nav-list class="section-nav-list">
+        <mat-list-item [routerLink]="['/admin/subscription-info']">
+          <span matListItemTitle i18n>Subscription Info</span>
+        </mat-list-item>
+        <mat-list-item [routerLink]="['/admin/advanced-features']">
+          <span matListItemTitle i18n>Advanced Features</span>
+        </mat-list-item>
+        <mat-list-item [routerLink]="['/admin/data-privacy']">
+          <span matListItemTitle i18n>Data Privacy</span>
+        </mat-list-item>
+      </mat-nav-list>
+    </mat-expansion-panel>
   }
-</mat-nav-list>
 
-<hr />
+  <!-- Configuration and Site Wide Settings Section -->
+  <mat-expansion-panel
+    [expanded]="isExpanded('config')"
+    (opened)="setExpanded('config')"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title i18n
+        >Configuration and Site Wide Settings</mat-panel-title
+      >
+      <mat-panel-description i18n
+        >Set up the essential elements that shape your site's structure and
+        system behaviour.</mat-panel-description
+      >
+    </mat-expansion-panel-header>
+    <mat-nav-list class="section-nav-list">
+      @for (item of configurationMenuItems; track item.label) {
+        @if (item.link) {
+          <mat-list-item [routerLink]="[item.link]">
+            <span matListItemTitle>{{ item.label }}</span>
+          </mat-list-item>
+        }
+      }
+    </mat-nav-list>
+  </mat-expansion-panel>
 
-<h2>Backup</h2>
-<p>
-  <button (click)="saveBackup()" mat-stroked-button>
-    Download Backup (.json)
-  </button>
-  &nbsp;
-  <button (click)="backupImport.click()" mat-stroked-button>
-    Restore Backup (.json)
-  </button>
-  <input #backupImport type="file" hidden (change)="loadBackup($event)" />
-</p>
-
-<br />
-<hr />
-<h2>Export</h2>
-<p>
-  <button (click)="saveCsvExport()" mat-stroked-button>
-    Download whole database (.csv)
-  </button>
-</p>
-<br />
-<hr />
-<h2>Application Configuration</h2>
-<p class="flex-row flex-wrap gap-regular">
-  <button (click)="editConfig()" mat-stroked-button>Edit configuration</button>
-
-  <button (click)="editPermissions()" mat-stroked-button>
-    Edit permissions config
-  </button>
-
-  <button (click)="downloadConfigClick()" mat-stroked-button>
-    Download configuration
-  </button>
-
-  <button (click)="configImport.click()" mat-stroked-button>
-    Upload new configuration
-  </button>
-  <input #configImport type="file" hidden (change)="uploadConfigFile($event)" />
-
-  <button routerLink="config-import" mat-stroked-button>
-    Generate configuration from spreadsheet
-  </button>
-</p>
-
-<br />
-<hr />
-<h2>Debug the PouchDB</h2>
-<p>
-  <button (click)="debugDatabase()" mat-stroked-button>
-    Send to console.log()
-  </button>
-</p>
-<p>
-  <button (click)="clearDatabase()" mat-stroked-button>Empty Database</button>
-</p>
-
-<br />
-<hr />
-<h2 id="alert-log-heading">Alert Log</h2>
-<table aria-describedby="alert-log-heading" class="admin-table">
-  <thead>
-    <th class="shrink-width">Timestamp</th>
-    <th class="shrink-width">Type</th>
-    <th>Message</th>
-  </thead>
-  <tbody>
-    @for (alert of alerts.reverse(); track alert) {
-      <tr>
-        <td>{{ alert.timestamp | date: "medium" }}</td>
-        <td>{{ alert.type }}</td>
-        <td>{{ alert.message }}</td>
-      </tr>
+  <!-- Templates and Forms Section (items dynamic) -->
+  <mat-expansion-panel
+    [expanded]="isExpanded('templates')"
+    (opened)="setExpanded('templates')"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title i18n>Templates and Forms</mat-panel-title>
+      <mat-panel-description i18n
+        >Customise your templates and forms.</mat-panel-description
+      >
+    </mat-expansion-panel-header>
+    @if (templates.length > 0) {
+      <mat-nav-list class="section-nav-list">
+        @for (item of templates; track item.label) {
+          @if (item.link) {
+            <mat-list-item [routerLink]="[item.link]">
+              <span matListItemTitle>{{ item.label }}</span>
+            </mat-list-item>
+          }
+        }
+      </mat-nav-list>
     }
-  </tbody>
-</table>
+  </mat-expansion-panel>
+
+  <!-- User Management Section -->
+  <mat-expansion-panel
+    [expanded]="isExpanded('user-management')"
+    (opened)="setExpanded('user-management')"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title i18n>User Management</mat-panel-title>
+      <mat-panel-description i18n
+        >Set up and manage user accounts, roles, and
+        permissions.</mat-panel-description
+      >
+    </mat-expansion-panel-header>
+    <mat-nav-list class="section-nav-list">
+      <mat-list-item [routerLink]="['/admin/user-list']">
+        <span matListItemTitle i18n>User Accounts</span>
+      </mat-list-item>
+      <mat-list-item [routerLink]="['/admin/user-roles']">
+        <span matListItemTitle i18n>User Roles & Permissions</span>
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-expansion-panel>
+
+  <!-- Export and Backups Section (special content) -->
+  <mat-expansion-panel
+    [expanded]="isExpanded('export')"
+    (opened)="setExpanded('export')"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title i18n>Export and Backups</mat-panel-title>
+      <mat-panel-description i18n
+        >Define how your system keeps data protected and
+        accessible.</mat-panel-description
+      >
+    </mat-expansion-panel-header>
+    <mat-nav-list class="section-nav-list">
+      <mat-list-item (click)="saveBackup()" button>
+        <span matListItemTitle i18n>Download Backup (.json)</span>
+      </mat-list-item>
+      <mat-list-item (click)="backupImport.click()" button>
+        <span matListItemTitle i18n>Restore Backup (.json)</span>
+      </mat-list-item>
+      <mat-list-item (click)="saveCsvExport()" button>
+        <span matListItemTitle i18n>Full Database Export (.csv)</span>
+      </mat-list-item>
+    </mat-nav-list>
+    <input #backupImport type="file" hidden (change)="loadBackup($event)" />
+  </mat-expansion-panel>
+
+  <!-- Technical Administration Section (special content) -->
+  <mat-expansion-panel
+    [expanded]="isExpanded('technical')"
+    (opened)="setExpanded('technical')"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title i18n>Technical Administration</mat-panel-title>
+      <mat-panel-description i18n
+        >Manage advanced technical options for maintaining and troubleshooting
+        your system.</mat-panel-description
+      >
+    </mat-expansion-panel-header>
+    <mat-nav-list class="section-nav-list">
+      <mat-list-item (click)="editConfig()" button>
+        <span matListItemTitle i18n>Edit Application Configuration (JSON)</span>
+      </mat-list-item>
+      <mat-list-item (click)="downloadConfigClick()" button>
+        <span matListItemTitle i18n
+          >Download Application Configuration (JSON)</span
+        >
+      </mat-list-item>
+      <mat-list-item (click)="configImport.click()" button>
+        <span matListItemTitle i18n
+          >Upload Application Configuration (JSON)</span
+        >
+      </mat-list-item>
+      <mat-list-item (click)="debugDatabase()" button>
+        <span matListItemTitle i18n>PouchDB Debug: Send to console.log()</span>
+      </mat-list-item>
+      <mat-list-item (click)="clearDatabase()" button>
+        <span matListItemTitle i18n>Empty Database</span>
+      </mat-list-item>
+      <mat-list-item [routerLink]="['/admin/conflicts']">
+        <span matListItemTitle i18n>Database Conflicts</span>
+      </mat-list-item>
+    </mat-nav-list>
+    <input
+      #configImport
+      type="file"
+      hidden
+      (change)="uploadConfigFile($event)"
+    />
+  </mat-expansion-panel>
+</mat-accordion>

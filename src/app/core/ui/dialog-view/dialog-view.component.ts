@@ -59,13 +59,10 @@ export class DialogViewComponent<T = any> extends AbstractViewComponent {
           ?.config ?? {};
     }
 
-    if (dialogData.entity) {
-      viewConfig["entity"] = dialogData.entity;
-    }
-
     this.config = {
       ...viewConfig,
       ...dialogData.config,
+      ...(dialogData.entity ? { entity: dialogData.entity } : {}),
     };
   }
 

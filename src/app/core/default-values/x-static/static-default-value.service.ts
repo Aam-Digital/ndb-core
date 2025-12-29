@@ -20,9 +20,10 @@ export class StaticDefaultValueService extends DefaultValueStrategy {
   private entitySchemaService = inject(EntitySchemaService);
 
   override async getAdminUI(): Promise<AdminDefaultValueContext> {
-    const component = await import(
-      "./admin-default-value-static/admin-default-value-static.component"
-    ).then((c) => c.AdminDefaultValueStaticComponent);
+    const component =
+      await import("./admin-default-value-static/admin-default-value-static.component").then(
+        (c) => c.AdminDefaultValueStaticComponent,
+      );
 
     return {
       mode: this.mode,

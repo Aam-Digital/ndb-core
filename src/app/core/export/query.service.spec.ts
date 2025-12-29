@@ -90,7 +90,7 @@ describe("QueryService", () => {
     await createSchool([maleChildNormal, femaleChildNormal]);
 
     const maleChildrenOnPrivateSchoolsQuery = `
-      School:toArray[*privateSchool=true]
+      School:toArray[*checkboxField=true]
       :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
       [*isActive=true].childId:unique:toEntities(Child)
       :filterByObjectAttribute(gender, id, M)`;
@@ -217,7 +217,7 @@ describe("QueryService", () => {
     );
 
     const femaleParticipantsPrivateSchoolQuery = `
-      School:toArray[*privateSchool=true]
+      School:toArray[*checkboxField=true]
       :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
       :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
       :getParticipantsWithAttendance(PRESENT):unique
@@ -230,7 +230,7 @@ describe("QueryService", () => {
     ]);
 
     const participantsNotPrivateSchoolQuery = `
-      School:toArray[*privateSchool!=true]
+      School:toArray[*checkboxField!=true]
       :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
       :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
       :getParticipantsWithAttendance(PRESENT):unique
@@ -641,10 +641,9 @@ describe("QueryService", () => {
     expect(res).toBe("0");
   });
 
-  function queryData(query: string, from?: Date, to?: Date, data?: any) {
-    return service
-      .cacheRequiredData(query, from, to)
-      .then(() => service.queryData(query, from, to, data));
+  async function queryData(query: string, from?: Date, to?: Date, data?: any) {
+    await service.cacheRequiredData(query, from, to);
+    return service.queryData(query, from, to, data);
   }
 
   async function createChild(
@@ -663,7 +662,7 @@ describe("QueryService", () => {
     privateSchool?: boolean,
   ): Promise<Entity> {
     const school = new (entityRegistry.get("School"))();
-    school["privateSchool"] = privateSchool;
+    school["checkboxField"] = privateSchool;
     await entityMapper.save(school);
     for (const child of children) {
       const relation = new ChildSchoolRelation();

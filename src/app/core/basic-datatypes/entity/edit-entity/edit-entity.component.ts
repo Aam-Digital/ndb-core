@@ -68,9 +68,9 @@ import { EntityBlockComponent } from "../entity-block/entity-block.component";
   ],
 })
 export class EditEntityComponent<
-    T extends string[] | string = string[],
-    E extends Entity = Entity,
-  >
+  T extends string[] | string = string[],
+  E extends Entity = Entity,
+>
   extends CustomFormControlDirective<T>
   implements OnInit, EditComponent
 {

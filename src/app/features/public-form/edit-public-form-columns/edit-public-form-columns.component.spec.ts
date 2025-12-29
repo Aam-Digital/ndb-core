@@ -2,23 +2,20 @@ import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormControl, FormGroup } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
-import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
-import { MockEntityMapperService } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
-import { Entity } from "app/core/entity/model/entity";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
 import { FieldGroup } from "../../../core/entity-details/form/field-group";
 import { EditPublicFormColumnsComponent } from "./edit-public-form-columns.component";
+import { PublicFormsService } from "../public-forms.service";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { PublicFormConfig } from "../public-form-config";
 
 describe("EditPublicFormColumnsComponent", () => {
   let component: EditPublicFormColumnsComponent;
   let fixture: ComponentFixture<EditPublicFormColumnsComponent>;
   let formGroup: FormGroup;
-  let mockEntityRegistry: Partial<EntityRegistry>;
   let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
-  let entityMapper: MockEntityMapperService;
+  let mockPublicFormsService: jasmine.SpyObj<PublicFormsService>;
 
   const testColumns = [
     {
@@ -37,21 +34,20 @@ describe("EditPublicFormColumnsComponent", () => {
       "createEntityForm",
       "extendFormFieldConfig",
     ]);
-    mockEntityRegistry = {
-      get: jasmine.createSpy("get").and.returnValue(Entity),
-    };
+    mockPublicFormsService = jasmine.createSpyObj("PublicFormsService", [
+      "initCustomFormActions",
+    ]);
 
     TestBed.configureTestingModule({
       declarations: [],
       imports: [
         EditPublicFormColumnsComponent,
-        FontAwesomeTestingModule,
         NoopAnimationsModule,
+        MockedTestingModule.withState(),
       ],
       providers: [
-        { provide: EntityRegistry, useValue: mockEntityRegistry },
         { provide: EntityFormService, useValue: mockEntityFormService },
-        { provide: EntityMapperService, useValue: entityMapper },
+        { provide: PublicFormsService, useValue: mockPublicFormsService },
       ],
     }).compileComponents();
   });
@@ -59,8 +55,12 @@ describe("EditPublicFormColumnsComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditPublicFormColumnsComponent);
     component = fixture.componentInstance;
-    component.entity = new TestEntity();
-    component.entity["columns"] = testColumns;
+
+    const publicFormConfig = new PublicFormConfig();
+    publicFormConfig.entity = TestEntity.ENTITY_TYPE;
+    publicFormConfig.columns = testColumns;
+
+    component.entity = publicFormConfig;
     formGroup = setupCustomFormControlEditComponent(component);
     fixture.detectChanges();
   });

@@ -19,10 +19,12 @@ import { MarkdownComponent } from "ngx-markdown";
 import { MatTooltip } from "@angular/material/tooltip";
 import { Logging } from "../../logging/logging.service";
 import { MatDialogRef } from "@angular/material/dialog";
+import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 
 @Component({
   selector: "app-setup-wizard",
   imports: [
+    ViewTitleComponent,
     MatStepper,
     MatStep,
     MatActionList,

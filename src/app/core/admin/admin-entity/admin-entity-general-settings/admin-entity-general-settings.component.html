@@ -32,15 +32,16 @@
             />
           </mat-form-field>
 
-          <app-admin-icon-input
+          <app-icon-input
             [icon]="basicSettingsForm.get('icon').value"
             (iconChange)="basicSettingsForm.get('icon').setValue($event)"
-          ></app-admin-icon-input>
+          ></app-icon-input>
 
-          <app-color-input
-            [color]="basicSettingsForm.get('color').value"
-            (colorChange)="basicSettingsForm.get('color').setValue($event)"
-          ></app-color-input>
+          <app-conditional-color-config
+            formControlName="color"
+            [entityConstructor]="entityConstructor"
+            [(isConditionalMode)]="isConditionalColor"
+          ></app-conditional-color-config>
 
           <mat-checkbox formControlName="enableUserAccounts">
             <span i18n>Enable User Accounts</span>
@@ -74,6 +75,106 @@
               [reorder]="true"
             ></app-basic-autocomplete>
           </mat-form-field>
+
+          <!-- Entity Block Tooltip Configuration Section -->
+          <mat-expansion-panel
+            [(expanded)]="showTooltipDetails"
+            style="margin: 0.5em"
+          >
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <span i18n>Tooltip Configuration</span>
+                <fa-icon
+                  icon="question-circle"
+                  class="margin-left-small"
+                  matTooltip="Customise the details shown when hovering over record type in lists and forms."
+                  i18n-matTooltip
+                ></fa-icon>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <mat-form-field
+              formGroupName="toBlockDetailsAttributes"
+              floatLabel="always"
+            >
+              <mat-label>
+                <span i18n>Title Field</span>
+                &nbsp;
+                <fa-icon
+                  icon="question-circle"
+                  matTooltip="Select the main field to display as the tooltip header. This should be a descriptive field like 'name' or 'title'."
+                  i18n-matTooltip
+                ></fa-icon>
+              </mat-label>
+              <app-entity-field-select
+                formControlName="title"
+                [entityType]="entityConstructor"
+                [hideOption]="hideNonTextFields"
+              ></app-entity-field-select>
+            </mat-form-field>
+
+            <mat-form-field
+              formGroupName="toBlockDetailsAttributes"
+              floatLabel="always"
+            >
+              <mat-label>
+                <span i18n>Additional Detail Fields</span>
+                &nbsp;
+                <fa-icon
+                  icon="question-circle"
+                  matTooltip="Select additional fields to display in the tooltip. These will be shown below the title and provide extra context about the record."
+                  i18n-matTooltip
+                ></fa-icon>
+              </mat-label>
+              <app-entity-field-select
+                formControlName="fields"
+                [entityType]="entityConstructor"
+                [multi]="true"
+                [hideOption]="hideNonTextFields"
+              ></app-entity-field-select>
+            </mat-form-field>
+
+            <mat-form-field
+              formGroupName="toBlockDetailsAttributes"
+              floatLabel="always"
+            >
+              <mat-label>
+                <span i18n>Image Field (Optional)</span>
+                &nbsp;
+                <fa-icon
+                  icon="question-circle"
+                  [matTooltip]="
+                    hasImageFields
+                      ? 'Optional: Select an image field to display a photo in the tooltip. Only fields that contain images (like profile photos) can be selected here.'
+                      : 'No image fields are available for this record type.'
+                  "
+                  i18n-matTooltip
+                ></fa-icon>
+              </mat-label>
+              <app-entity-field-select
+                formControlName="image"
+                [entityType]="entityConstructor"
+                [hideOption]="showOnlyImageFields"
+                [disabled]="!hasImageFields"
+                placeholder=""
+              ></app-entity-field-select>
+              @if (!hasImageFields) {
+                <mat-hint i18n>
+                  This record type has no image fields. Add fields with dataType
+                  'file' or 'photo' to enable this option.
+                </mat-hint>
+              }
+            </mat-form-field>
+
+            <button
+              mat-stroked-button
+              class="margin-top-regular"
+              (click)="clearToBlockAttributes()"
+              i18n
+            >
+              Reset tooltip settings
+            </button>
+          </mat-expansion-panel>
         </div>
       </div>
     </mat-tab>

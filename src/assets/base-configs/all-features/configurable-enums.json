@@ -1,0 +1,22 @@
+[
+  {
+    "_id": "ConfigurableEnum:center",
+    "values": [
+      {
+        "id": "C1",
+        "label": "Alipore",
+        "color": "#CCEFFF"
+      },
+      {
+        "id": "C2",
+        "label": "Tollygunge",
+        "color": "#B3E5FC"
+      },
+      {
+        "id": "C3",
+        "label": "Barabazar",
+        "color": "#94DDFF"
+      }
+    ]
+  }
+]

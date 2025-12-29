@@ -1,0 +1,26 @@
+<div class="conditional-section flex-column border-regular">
+  <div class="section-header flex-row">
+    <app-color-input
+      [color]="section.color"
+      label="Conditional Color"
+      i18n-label
+      (colorChange)="colorChange.emit($event)"
+    ></app-color-input>
+    <button
+      mat-icon-button
+      type="button"
+      color="warn"
+      (click)="deleteSection.emit()"
+      matTooltip="Delete conditional color section"
+      i18n-matTooltip
+    >
+      <fa-icon icon="trash"></fa-icon>
+    </button>
+  </div>
+
+  <app-conditions-editor
+    [conditions]="section.condition"
+    [entityConstructor]="entityConstructor"
+    (conditionsChange)="onConditionsChange($event)"
+  ></app-conditions-editor>
+</div>

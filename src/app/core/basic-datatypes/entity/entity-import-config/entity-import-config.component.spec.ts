@@ -51,7 +51,7 @@ describe("EntityImportConfigComponent", () => {
 
   it("should show all properties of the provided entity that have a label", () => {
     const childPropertiesWithLabel = [...TestEntity.schema.entries()]
-      .filter(([_, schema]) => !!schema.label)
+      .filter(([_, schema]) => !!schema.label && !schema.isInternalField)
       .map(([property, schema]) => ({ property, label: schema.label }));
     expect(component.availableProperties).toEqual(childPropertiesWithLabel);
   });

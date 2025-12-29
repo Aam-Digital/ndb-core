@@ -27,9 +27,9 @@ import { Entity } from "../model/entity";
   styleUrls: ["./entity-field-view.component.scss"],
   imports: [DynamicComponentDirective],
 })
-export class EntityFieldViewComponent<E extends Entity = Entity>
-  implements OnChanges
-{
+export class EntityFieldViewComponent<
+  E extends Entity = Entity,
+> implements OnChanges {
   private entityFormService = inject(EntityFormService);
 
   @Input() entity: E;

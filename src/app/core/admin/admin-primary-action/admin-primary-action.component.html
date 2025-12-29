@@ -1,0 +1,55 @@
+<div class="flex-row flex-wrap justify-space-between">
+  <app-view-title i18n [displayInPlace]="true"
+    >Primary Action Configuration</app-view-title
+  >
+
+  <app-view-actions class="flex-row gap-small">
+    <button
+      mat-raised-button
+      color="accent"
+      [disabled]="!hasChanges"
+      (click)="save()"
+      i18n
+    >
+      Save
+    </button>
+    <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+  </app-view-actions>
+</div>
+
+<app-hint-box i18n>
+  The "primary action" is a button at the bottom right of the screen that helps
+  you do one common action, like creating a new note, from anywhere in the app
+  with a single click.
+</app-hint-box>
+
+<mat-form-field appearance="fill" class="full-width">
+  <mat-label i18n>Action Type</mat-label>
+  <mat-select [(ngModel)]="actionType">
+    <mat-option value="createEntity" i18n>Create Record</mat-option>
+    <mat-option value="navigate" i18n>Navigate</mat-option>
+  </mat-select>
+  <mat-hint align="start" i18n>
+    "Create Entity" opens a dialog to quickly create a new record and "Navigate"
+    takes you to a dedicated page.
+  </mat-hint>
+</mat-form-field>
+
+@if (showEntityType) {
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label i18n>Record Type</mat-label>
+    <app-entity-type-select
+      [value]="entityType"
+      (valueChange)="onEntityTypeChange($event)"
+      [multi]="false"
+    ></app-entity-type-select>
+  </mat-form-field>
+}
+
+<app-menu-item-form
+  [item]="menuItem"
+  [linkOptions]="routeOptions"
+  (itemChange)="menuItem = $event"
+  [hideLabel]="true"
+  [hideLink]="actionType !== 'navigate'"
+></app-menu-item-form>

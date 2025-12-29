@@ -4,16 +4,16 @@ export const coreComponents: ComponentTuple[] = [
   [
     "DisplayConfigurableEnum",
     () =>
-      import(
-        "./basic-datatypes/configurable-enum/display-configurable-enum/display-configurable-enum.component"
-      ).then((c) => c.DisplayConfigurableEnumComponent),
+      import("./basic-datatypes/configurable-enum/display-configurable-enum/display-configurable-enum.component").then(
+        (c) => c.DisplayConfigurableEnumComponent,
+      ),
   ],
   [
     "EditConfigurableEnum",
     () =>
-      import(
-        "./basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component"
-      ).then((c) => c.EditConfigurableEnumComponent),
+      import("./basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component").then(
+        (c) => c.EditConfigurableEnumComponent,
+      ),
   ],
   [
     "Form",
@@ -32,30 +32,30 @@ export const coreComponents: ComponentTuple[] = [
   [
     "DisplayEntity",
     () =>
-      import(
-        "./basic-datatypes/entity/display-entity/display-entity.component"
-      ).then((c) => c.DisplayEntityComponent),
+      import("./basic-datatypes/entity/display-entity/display-entity.component").then(
+        (c) => c.DisplayEntityComponent,
+      ),
   ],
   [
     "EntityBlock",
     () =>
-      import(
-        "./basic-datatypes/entity/entity-block/entity-block.component"
-      ).then((c) => c.EntityBlockComponent),
+      import("./basic-datatypes/entity/entity-block/entity-block.component").then(
+        (c) => c.EntityBlockComponent,
+      ),
   ],
   [
     "EditTextWithAutocomplete",
     () =>
-      import(
-        "./common-components/edit-text-with-autocomplete/edit-text-with-autocomplete.component"
-      ).then((c) => c.EditTextWithAutocompleteComponent),
+      import("./common-components/edit-text-with-autocomplete/edit-text-with-autocomplete.component").then(
+        (c) => c.EditTextWithAutocompleteComponent,
+      ),
   ],
   [
     "EditAge",
     () =>
-      import(
-        "./basic-datatypes/date-with-age/edit-age/edit-age.component"
-      ).then((c) => c.EditAgeComponent),
+      import("./basic-datatypes/date-with-age/edit-age/edit-age.component").then(
+        (c) => c.EditAgeComponent,
+      ),
   ],
   [
     "EditText",
@@ -67,9 +67,9 @@ export const coreComponents: ComponentTuple[] = [
   [
     "EditBoolean",
     () =>
-      import(
-        "./basic-datatypes/boolean/edit-boolean/edit-boolean.component"
-      ).then((c) => c.EditBooleanComponent),
+      import("./basic-datatypes/boolean/edit-boolean/edit-boolean.component").then(
+        (c) => c.EditBooleanComponent,
+      ),
   ],
   [
     "EditDate",
@@ -88,9 +88,9 @@ export const coreComponents: ComponentTuple[] = [
   [
     "EditLongText",
     () =>
-      import(
-        "./basic-datatypes/string/edit-long-text/edit-long-text.component"
-      ).then((c) => c.EditLongTextComponent),
+      import("./basic-datatypes/string/edit-long-text/edit-long-text.component").then(
+        (c) => c.EditLongTextComponent,
+      ),
   ],
   [
     "EditPhoto",
@@ -109,30 +109,30 @@ export const coreComponents: ComponentTuple[] = [
   [
     "DisplayDescriptionOnly",
     () =>
-      import(
-        "./common-components/description-only/display-description-only/display-description-only.component"
-      ).then((c) => c.DisplayDescriptionOnlyComponent),
+      import("./common-components/description-only/display-description-only/display-description-only.component").then(
+        (c) => c.DisplayDescriptionOnlyComponent,
+      ),
   ],
   [
     "DisplayCheckmark",
     () =>
-      import(
-        "./basic-datatypes/boolean/display-checkmark/display-checkmark.component"
-      ).then((c) => c.DisplayCheckmarkComponent),
+      import("./basic-datatypes/boolean/display-checkmark/display-checkmark.component").then(
+        (c) => c.DisplayCheckmarkComponent,
+      ),
   ],
   [
     "DisplayText",
     () =>
-      import(
-        "./basic-datatypes/string/display-text/display-text.component"
-      ).then((c) => c.DisplayTextComponent),
+      import("./basic-datatypes/string/display-text/display-text.component").then(
+        (c) => c.DisplayTextComponent,
+      ),
   ],
   [
     "DisplayLongText",
     () =>
-      import(
-        "./basic-datatypes/string/display-long-text/display-long-text.component"
-      ).then((c) => c.DisplayLongTextComponent),
+      import("./basic-datatypes/string/display-long-text/display-long-text.component").then(
+        (c) => c.DisplayLongTextComponent,
+      ),
   ],
 
   [
@@ -152,57 +152,57 @@ export const coreComponents: ComponentTuple[] = [
   [
     "DisplayMonth",
     () =>
-      import(
-        "./basic-datatypes/month/display-month/display-month.component"
-      ).then((c) => c.DisplayMonthComponent),
+      import("./basic-datatypes/month/display-month/display-month.component").then(
+        (c) => c.DisplayMonthComponent,
+      ),
   ],
   [
     "ReadonlyFunction",
     () =>
-      import(
-        "./common-components/display-readonly-function/readonly-function.component"
-      ).then((c) => c.ReadonlyFunctionComponent),
+      import("./common-components/display-readonly-function/readonly-function.component").then(
+        (c) => c.ReadonlyFunctionComponent,
+      ),
   ],
   [
     "DisplayPercentage",
     () =>
-      import(
-        "./basic-datatypes/number/display-percentage/display-percentage.component"
-      ).then((c) => c.DisplayPercentageComponent),
+      import("./basic-datatypes/number/display-percentage/display-percentage.component").then(
+        (c) => c.DisplayPercentageComponent,
+      ),
   ],
   [
     "DisplayDynamicPercentage",
     () =>
-      import(
-        "./basic-datatypes/number/display-dynamic-percentage/display-calculated-value.component"
-      ).then((c) => c.DisplayCalculatedValueComponent),
+      import("./basic-datatypes/number/display-dynamic-percentage/display-calculated-value.component").then(
+        (c) => c.DisplayCalculatedValueComponent,
+      ),
   ],
   [
     "DisplayCalculatedValue",
     () =>
-      import(
-        "./basic-datatypes/number/display-dynamic-percentage/display-calculated-value.component"
-      ).then((c) => c.DisplayCalculatedValueComponent),
+      import("./basic-datatypes/number/display-dynamic-percentage/display-calculated-value.component").then(
+        (c) => c.DisplayCalculatedValueComponent,
+      ),
   ],
   [
     "DisplayUnit",
     () =>
-      import(
-        "./basic-datatypes/number/display-unit/display-unit.component"
-      ).then((c) => c.DisplayUnitComponent),
+      import("./basic-datatypes/number/display-unit/display-unit.component").then(
+        (c) => c.DisplayUnitComponent,
+      ),
   ],
   [
     "DisplayAge",
     () =>
-      import(
-        "./basic-datatypes/date-with-age/display-age/display-age.component"
-      ).then((c) => c.DisplayAgeComponent),
+      import("./basic-datatypes/date-with-age/display-age/display-age.component").then(
+        (c) => c.DisplayAgeComponent,
+      ),
   ],
   [
     "UserSecurity",
     () =>
-      import("./user/user-security/user-security.component").then(
-        (c) => c.UserSecurityComponent,
+      import("./user/entity-user/entity-user.component").then(
+        (c) => c.EntityUserComponent,
       ),
   ],
   [
@@ -229,23 +229,23 @@ export const coreComponents: ComponentTuple[] = [
   [
     "RelatedEntities",
     () =>
-      import(
-        "./entity-details/related-entities/related-entities.component"
-      ).then((c) => c.RelatedEntitiesComponent),
+      import("./entity-details/related-entities/related-entities.component").then(
+        (c) => c.RelatedEntitiesComponent,
+      ),
   ],
   [
     "RelatedTimePeriodEntities",
     () =>
-      import(
-        "./entity-details/related-time-period-entities/related-time-period-entities.component"
-      ).then((c) => c.RelatedTimePeriodEntitiesComponent),
+      import("./entity-details/related-time-period-entities/related-time-period-entities.component").then(
+        (c) => c.RelatedTimePeriodEntitiesComponent,
+      ),
   ],
   [
     "RelatedEntitiesWithSummary",
     () =>
-      import(
-        "./entity-details/related-entities-with-summary/related-entities-with-summary.component"
-      ).then((c) => c.RelatedEntitiesWithSummaryComponent),
+      import("./entity-details/related-entities-with-summary/related-entities-with-summary.component").then(
+        (c) => c.RelatedEntitiesWithSummaryComponent,
+      ),
   ],
   [
     "EditEntityType",
@@ -279,8 +279,8 @@ export const coreComponents: ComponentTuple[] = [
   [
     "DisplayEmail",
     () =>
-      import(
-        "./basic-datatypes/string/display-email/display-email.component"
-      ).then((c) => c.DisplayEmailComponent),
+      import("./basic-datatypes/string/display-email/display-email.component").then(
+        (c) => c.DisplayEmailComponent,
+      ),
   ],
 ];

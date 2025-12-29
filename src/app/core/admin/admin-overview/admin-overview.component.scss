@@ -1,28 +1,43 @@
-@use "../../../../styles/variables/colors";
+@use "../../../../styles/variables/sizes";
 
-.admin-table {
-  border-collapse: collapse;
-  width: 100%;
-
-  > thead > th {
-    padding: 10px 12px;
-    text-align: left;
-    vertical-align: bottom;
-    font-weight: 400;
-    color: colors.$muted-background;
-    text-transform: uppercase;
-  }
-
-  > tbody > tr > td {
-    padding: 10px 12px;
-    vertical-align: top;
-  }
-
-  > tbody > tr {
-    border-top: 1px solid colors.$disabled;
-  }
+mat-panel-title {
+  font-size: 1.3em;
 }
 
-.shrink-width {
-  width: 15%;
+.admin-sections {
+  .section-nav-list {
+    margin: 0;
+    padding: 0;
+  }
+
+  // Clean expansion panel styling - seamless look
+  ::ng-deep .mat-expansion-panel {
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 0;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
+  }
+
+  // Stack title and description vertically in expansion panel headers
+  ::ng-deep .mat-expansion-panel-header {
+    padding: sizes.$regular sizes.$large;
+
+    .mat-content {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: sizes.$x-small;
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+
+  ::ng-deep .mat-expansion-panel-content .mat-expansion-panel-body {
+    padding: 0 sizes.$large sizes.$regular sizes.$large;
+  }
 }

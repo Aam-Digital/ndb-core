@@ -19,23 +19,23 @@ export class EntityCountDashboardWidgetModule {
       [
         "EntityCountDashboard",
         () =>
-          import(
-            "./entity-count-dashboard/entity-count-dashboard.component"
-          ).then((c) => c.EntityCountDashboardComponent),
+          import("./entity-count-dashboard/entity-count-dashboard.component").then(
+            (c) => c.EntityCountDashboardComponent,
+          ),
       ],
       [
         "ChildrenCountDashboard",
         () =>
-          import(
-            "./entity-count-dashboard/entity-count-dashboard.component"
-          ).then((c) => c.EntityCountDashboardComponent),
+          import("./entity-count-dashboard/entity-count-dashboard.component").then(
+            (c) => c.EntityCountDashboardComponent,
+          ),
       ],
       [
         "EntityCountDashboardSettings",
         () =>
-          import(
-            "./entity-count-dashboard-settings.component/entity-count-dashboard-settings.component"
-          ).then((c) => c.EntityCountDashboardSettingsComponent),
+          import("./entity-count-dashboard-settings.component/entity-count-dashboard-settings.component").then(
+            (c) => c.EntityCountDashboardSettingsComponent,
+          ),
       ],
     ]);
   }

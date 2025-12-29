@@ -116,7 +116,7 @@ test("Children list displays monthly attendance percentage", async ({
   await loadApp(page);
   await page.getByRole("navigation").getByText("Children").click();
   await page.getByRole("tab", { name: "School Info" }).click();
-  await expect(page.getByRole("cell", { name: /\d+%/ })).toHaveCount(8);
+  await expect(page.getByRole("cell", { name: /\d+%/ })).toHaveCount(10);
   await argosScreenshot(page, "children-school-info");
 });
 
@@ -131,17 +131,25 @@ test("Recurring activities list", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "Recurring Activities" }),
   ).toBeVisible();
-  await expect(page.getByRole("row")).toHaveCount(3);
+  await expect(page.getByRole("row")).toHaveCount(6 + 1);
   await argosScreenshot(page, "recurring-activities-list");
 });
 
 test("Edit participants of a recurring activity", async ({ page }) => {
   const [user] = generateUsers();
+
+  // Create specific children with known names to ensure test determinism
+  // This prevents test failures when running in parallel where random demo data
+  // would cause different children to be selected across test runs
   const childToAdd = generateChild({
     name: "AAAA", // FIXME: This ensure that the child is listed first
   });
-  const childToKeep = generateChild();
-  const childToRemove = generateChild();
+  const childToKeep = generateChild({
+    name: "Abhisyanta Sharma",
+  });
+  const childToRemove = generateChild({
+    name: "Prayag Talwar",
+  });
   const allChildren = [
     childToAdd,
     childToKeep,
@@ -186,7 +194,7 @@ test("Edit participants of a recurring activity", async ({ page }) => {
 
   // And I click on the "Participants" field
   //TODO: fix the locator to something more reliable
-  await page.getByText("Guru Kocchar Ujjwal Achari").click();
+  await page.getByText(childToRemove.name).click();
 
   // Then I see "Abhisyanta Sharma" selected.
   await expect(
@@ -227,7 +235,7 @@ test("Edit participants of a recurring activity", async ({ page }) => {
 
 test("Assign a recurring activity to a user", async ({ page }) => {
   const users = generateUsers();
-  const [currentUser, otherUser] = users;
+  const [otherUser, currentUser] = users;
   const children = times(6, () => generateChild());
 
   const activityToAssign = generateActivity({
@@ -269,7 +277,7 @@ test("Assign a recurring activity to a user", async ({ page }) => {
   await page.getByRole("button", { name: "Edit" }).click();
 
   //TODO: fix the locator to something more reliable
-  await page.getByText("demo-admin").click();
+  await page.getByText(otherUser.name).click();
 
   await page
     .getByRole("option", { name: currentUser.name, exact: true })

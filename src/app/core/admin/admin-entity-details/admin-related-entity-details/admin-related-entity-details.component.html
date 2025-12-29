@@ -1,0 +1,28 @@
+<h2 mat-dialog-title i18n>
+  Edit data structure:
+  {{ entityConstructor?.label || entityConstructor?.ENTITY_TYPE }}
+</h2>
+<app-dialog-close mat-dialog-close></app-dialog-close>
+
+<mat-dialog-content>
+  <app-hint-box i18n>
+    Configure which fields are displayed when editing records of this type
+    through a related entity form. You can select from existing fields or add
+    new fields directly from here! Drag and drop fields to reorder and group
+    them as needed. We recommend to keep things simple: Only add fields that you
+    really need for your work.
+  </app-hint-box>
+
+  <app-admin-entity-form
+    [entityType]="entityConstructor"
+    [config]="formConfig"
+    [uniqueAreaId]="'related-entity-details-' + entityConstructor?.ENTITY_TYPE"
+    [fieldsOnlyMode]="true"
+    (configChange)="onConfigChange($event)"
+  ></app-admin-entity-form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-raised-button (click)="applyChanges()" i18n>Apply</button>
+  <button mat-button (click)="cancelChanges()" i18n>Cancel</button>
+</mat-dialog-actions>

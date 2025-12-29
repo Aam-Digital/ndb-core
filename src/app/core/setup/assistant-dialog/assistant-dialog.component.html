@@ -3,7 +3,7 @@
   class="assistant-panel-container dialog-header-bar"
 >
   @if (assistants.initDemo) {
-    <mat-tab id="initDemo" label="Initialize System" i18n-label>
+    <mat-tab id="initDemo" label="Create System" i18n-label>
       <app-system-init-assistant></app-system-init-assistant>
     </mat-tab>
   }
@@ -41,5 +41,16 @@
       class="standard-icon-with-text"
     ></fa-icon>
     <span i18n>Setup Wizard</span>
+  </button>
+
+  <button
+    mat-menu-item
+    routerLink="/support"
+    matDialogClose
+    matTooltip="View detailed technical information for troubleshooting"
+    i18n-matTooltip
+    i18n
+  >
+    Technical Information
   </button>
 </mat-menu>

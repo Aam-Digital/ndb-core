@@ -4,7 +4,7 @@ import { Entity } from "../../../core/entity/model/entity";
 import { religions } from "./fixtures/religions";
 import { languages } from "./fixtures/languages";
 import { dropoutTypes } from "./fixtures/dropout-types";
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { faker } from "../../../core/demo-data/faker";
 import { centersWithProbability } from "./fixtures/centers";
@@ -12,6 +12,7 @@ import { genders } from "../model/genders";
 import { calculateAge } from "../../../utils/utils";
 import { DateWithAge } from "../../../core/basic-datatypes/date-with-age/dateWithAge";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
+import configurableEnums from "../../../../assets/base-configs/education/configurable-enums.json";
 
 export class DemoChildConfig {
   count: number;
@@ -19,6 +20,8 @@ export class DemoChildConfig {
 
 @Injectable()
 export class DemoChildGenerator extends DemoDataGenerator<Entity> {
+  override requiredEntityTypes = ["Child"];
+
   config = inject(DemoChildConfig);
 
   static count: number;
@@ -37,7 +40,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Entity> {
 
   generateEntities(): Entity[] {
     return times(this.config.count, (i) => {
-      const inactive = faker.number.int(100) <= 90;
+      const inactive = faker.datatype.boolean({ probability: 0.2 });
       return generateChild({ id: String(i + 1), inactive });
     });
   }
@@ -71,6 +74,12 @@ export function generateChild(
   child.admissionDate = faker.date.past({
     years: calculateAge(child.dateOfBirth) - 4,
   });
+  child.riskStatus = faker.datatype.boolean({ probability: 0.25 })
+    ? faker.helpers.arrayElement(
+        configurableEnums.find((x) => x._id === "ConfigurableEnum:riskStatus")
+          ?.values,
+      )
+    : undefined;
 
   child["address"] = faker.geoAddress();
 
@@ -81,7 +90,6 @@ export function generateChild(
     });
     child.dropoutRemarks = faker.lorem.sentence();
     child.dropoutType = faker.helpers.arrayElement(dropoutTypes);
-    child.status = $localize`:Child status:Dropout`;
     child.inactive = true;
   }
   return child;

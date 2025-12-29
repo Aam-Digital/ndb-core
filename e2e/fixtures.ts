@@ -14,7 +14,7 @@ import { DateWithAgeDatatype } from "#src/app/core/basic-datatypes/date-with-age
 import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype.js";
 import { LongTextDatatype } from "#src/app/core/basic-datatypes/string/long-text.datatype.js";
 import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype.js";
-import defaultJsonConfig from "#src/assets/base-configs/education/Config_CONFIG_ENTITY.json";
+import defaultJsonConfig from "#src/assets/base-configs/all-features/Config_CONFIG_ENTITY.json";
 import { faker } from "#src/app/core/demo-data/faker.js";
 import {
   EntityRegistry,
@@ -72,6 +72,33 @@ export async function argosScreenshot(
 }
 
 /**
+ * Wait for all dashboard widgets to finish loading by ensuring no loading indicators are visible.
+ * This should be called before taking screenshots of the dashboard to avoid capturing loading states.
+ */
+export async function waitForDashboardWidgetsToLoad(page: Page): Promise<void> {
+  // Wait for all "Loading..." text and spinners to disappear
+  await page.waitForFunction(
+    () => {
+      // Check for "Loading..." text
+      const loadingTexts = Array.from(
+        document.querySelectorAll(".widget-content .headline"),
+      );
+      const hasLoadingText = loadingTexts.some((el) =>
+        el.textContent?.includes("Loading..."),
+      );
+
+      // Check for spinners
+      const spinners = document.querySelectorAll(
+        ".widget-title mat-spinner, .widget-header mat-spinner",
+      );
+
+      return !hasLoadingText && spinners.length === 0;
+    },
+    { timeout: 10_000 },
+  );
+}
+
+/**
  * Load the app into `page` and send `entities` to the app to be loaded into the
  * database.
  *
@@ -84,7 +111,7 @@ export async function loadApp(page: Page, entities?: Entity[]) {
     }, serializeEntities(entities));
   }
 
-  await page.goto("/?useCase=education");
+  await page.goto("/?useCase=all-features");
 
   await page.getByText("Start Exploring").click({ timeout: 10_000 });
 }

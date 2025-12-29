@@ -18,16 +18,16 @@ export const attendanceComponents: ComponentTuple[] = [
   [
     "ActivityAttendanceSection",
     () =>
-      import(
-        "./activity-attendance-section/activity-attendance-section.component"
-      ).then((c) => c.ActivityAttendanceSectionComponent),
+      import("./activity-attendance-section/activity-attendance-section.component").then(
+        (c) => c.ActivityAttendanceSectionComponent,
+      ),
   ],
   [
     "AttendanceWeekDashboard",
     () =>
-      import(
-        "./dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component"
-      ).then((c) => c.AttendanceWeekDashboardComponent),
+      import("./dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component").then(
+        (c) => c.AttendanceWeekDashboardComponent,
+      ),
   ],
   [
     "EditAttendance",
@@ -39,8 +39,8 @@ export const attendanceComponents: ComponentTuple[] = [
   [
     "AttendanceWeekDashboardSettings",
     () =>
-      import(
-        "./dashboard-widgets/attendance-week-dashboard-settings.component/attendance-week-dashboard-settings.component"
-      ).then((c) => c.AttendanceWeekDashboardSettingsComponent),
+      import("./dashboard-widgets/attendance-week-dashboard-settings.component/attendance-week-dashboard-settings.component").then(
+        (c) => c.AttendanceWeekDashboardSettingsComponent,
+      ),
   ],
 ];

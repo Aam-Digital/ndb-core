@@ -51,7 +51,7 @@ import { LoginStateSubject } from "../../session/session-type";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { ConfigService } from "../../config/config.service";
-import { MatTooltip } from "@angular/material/tooltip";
+import { SessionSubject } from "../../session/auth/session-info";
 
 /**
  * The main user interface component as root element for the app structure
@@ -82,7 +82,6 @@ import { MatTooltip } from "@angular/material/tooltip";
     GotoThirdPartySystemComponent,
     AssistantButtonComponent,
     AsyncPipe,
-    MatTooltip,
   ],
 })
 export class UiComponent {
@@ -93,6 +92,7 @@ export class UiComponent {
   private router = inject(Router);
   private loginState = inject(LoginStateSubject);
   private configService = inject(ConfigService);
+  private readonly sessionSubject = inject(SessionSubject);
 
   /** display mode for the menu to make it responsive and usable on smaller screens */
   sideNavMode: MatDrawerMode;
@@ -167,4 +167,11 @@ export class UiComponent {
       this.sideNav.close();
     }
   }
+
+  isAdminUser = toSignal(
+    this.sessionSubject.pipe(
+      map((session) => session?.roles?.includes("admin_app") ?? false),
+    ),
+    { initialValue: false },
+  );
 }

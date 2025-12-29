@@ -31,7 +31,19 @@ export abstract class DiscreteDatatype<
     schemaField: EntitySchemaField,
     additional: { [key: string]: any },
   ) {
-    return super.importMapFunction(additional?.[val], schemaField);
+    // If mapping dialog was skipped entirely,
+    // treat as raw string value and let transformToObjectFormat handle it
+    if (!additional) {
+      return super.importMapFunction(val, schemaField);
+    }
+
+    // If mapping dialog was opened but this specific value was not mapped,
+    // skip the property by returning undefined
+    if (additional[val] === undefined) {
+      return undefined;
+    }
+
+    return super.importMapFunction(additional[val], schemaField);
   }
 
   override importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {

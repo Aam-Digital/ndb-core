@@ -23,6 +23,19 @@ describe("ImportService", () => {
 
   let entityMapper: EntityMapperService;
 
+  class ImportTestTarget extends Entity {
+    @DatabaseField() name: string;
+    @DatabaseField() counter: number;
+    @DatabaseField() date: Date;
+    @DatabaseField() text: string;
+    @DatabaseField({
+      dataType: EntityDatatype.dataType,
+      isArray: true,
+      additional: "Child",
+    })
+    entityRefs: string[];
+  }
+
   beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
@@ -55,26 +68,10 @@ describe("ImportService", () => {
   });
 
   it("should transform raw data to mapped entities", async () => {
-    class ImportTestTarget extends Entity {
-      @DatabaseField() name: string;
-      @DatabaseField() counter: number;
-      @DatabaseField() date: Date;
-      @DatabaseField() text: string;
-      @DatabaseField({
-        dataType: EntityDatatype.dataType,
-        isArray: true,
-        additional: "Child",
-      })
-      entityRefs: string[];
-    }
-
     spyOn(TestBed.inject(EntityRegistry), "get").and.callFake(
       (entityType: string) =>
         entityType === "ImportTestTarget" ? ImportTestTarget : TestEntity,
     );
-
-    const child = TestEntity.create("Child Name");
-    await entityMapper.save(child);
 
     const rawData: any[] = [
       { rawName: "John", rawCounter: "111" },
@@ -84,7 +81,6 @@ describe("ImportService", () => {
       { rawName: "", onlyUnmappedColumn: "1" }, // only empty or unmapped columns => row skipped
       { rawName: "with zero", rawCounter: "0" }, // 0 value mapped
       { rawName: "custom mapping fn", rawDate: "30.01.2023" },
-      { rawName: "entity array", rawRefName: child.name },
       {
         rawName: "no null",
         rawCounter: null,
@@ -103,7 +99,6 @@ describe("ImportService", () => {
       { column: "rawCounter", propertyName: "counter" },
       { column: "rawDate", propertyName: "date", additional: "DD.MM.YYYY" },
       { column: "brokenMapping", propertyName: "brokenMapping" },
-      { column: "rawRefName", propertyName: "entityRefs", additional: "name" },
       { column: "rawText", propertyName: "text" },
     ];
 
@@ -119,9 +114,51 @@ describe("ImportService", () => {
       { name: "with broken mapping column" },
       { name: "with zero", counter: 0 },
       { name: "custom mapping fn", date: moment("2023-01-30").toDate() },
-      { name: "entity array", entityRefs: [child.getId()] },
       { name: "no null" },
       { name: "no undefined" },
+    ];
+
+    expectEntitiesToMatch(
+      parsedEntities,
+      expectedEntities.map((e) => Object.assign(new ImportTestTarget(), e)),
+      true,
+    );
+  });
+
+  it("should map entity reference field with multiple columns mapped as identifiers", async () => {
+    spyOn(TestBed.inject(EntityRegistry), "get").and.callFake(
+      (entityType: string) =>
+        entityType === "ImportTestTarget" ? ImportTestTarget : TestEntity,
+    );
+
+    const ref = TestEntity.create({ name: "John", other: "match" });
+    const ref2 = TestEntity.create({ name: "Jane", other: "match" });
+    await entityMapper.saveAll([ref, ref2]);
+
+    const rawData: any[] = [
+      { text: "match 1", rawName: "John", rawOther: "match" },
+      { text: "match 2", rawName: "Jane", rawOther: "match" },
+      { text: "mismatching", rawName: "John", rawOther: "non-match" },
+      { text: "incomplete matching", rawName: "John" }, // only match if all mapped identifiers match
+    ];
+    const columnMapping: ColumnMapping[] = [
+      { column: "rawName", propertyName: "entityRefs", additional: "name" },
+      { column: "rawOther", propertyName: "entityRefs", additional: "other" },
+      { column: "text", propertyName: "text" },
+    ];
+
+    // Run
+    const parsedEntities = await service.transformRawDataToEntities(rawData, {
+      entityType: "ImportTestTarget",
+      columnMapping,
+    });
+
+    // Verify
+    let expectedEntities: any[] = [
+      { text: "match 1", entityRefs: [ref.getId()] },
+      { text: "match 2", entityRefs: [ref2.getId()] },
+      { text: "mismatching" },
+      { text: "incomplete matching" },
     ];
 
     expectEntitiesToMatch(
