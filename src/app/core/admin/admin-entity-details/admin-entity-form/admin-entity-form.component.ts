@@ -303,12 +303,26 @@ export class AdminEntityFormComponent implements OnChanges {
     if (event.previousContainer === event.container) {
       moveItemInArray(newFieldsArray, event.previousIndex, event.currentIndex);
     } else {
-      transferArrayItem(
-        prevFieldsArray,
-        newFieldsArray,
-        event.previousIndex,
-        event.currentIndex,
-      );
+      // if transferring from filtered available fields, find the actual field in availableFields and remove it from there
+      if (prevFieldsArray === this.filteredFields()) {
+        const transferredField = prevFieldsArray[event.previousIndex];
+        const actualIndex = this.availableFields.findIndex(
+          (field) => field === transferredField,
+        );
+        if (actualIndex !== -1) {
+          // remove from actual availableFields array
+          this.availableFields.splice(actualIndex, 1);
+          newFieldsArray.splice(event.currentIndex, 0, transferredField);
+          this.availableFieldsSignal.set([...this.availableFields]);
+        }
+      } else {
+        transferArrayItem(
+          prevFieldsArray,
+          newFieldsArray,
+          event.previousIndex,
+          event.currentIndex,
+        );
+      }
     }
 
     if (newFieldsArray === this.availableFields) {
@@ -511,4 +525,8 @@ export class AdminEntityFormComponent implements OnChanges {
       return fieldId.includes(searchTerm) || fieldLabel.includes(searchTerm);
     });
   });
+
+  clearSearch() {
+    this.searchFilter.setValue("");
+  }
 }

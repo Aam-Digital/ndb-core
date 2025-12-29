@@ -113,7 +113,7 @@
       <div
         cdkDropList
         (cdkDropListDropped)="drop($event)"
-        [cdkDropListData]="availableFields"
+        [cdkDropListData]="filteredFields()"
         [cdkDropListConnectedTo]="getConnectedGroups()"
         class="drop-list"
       >
@@ -138,11 +138,17 @@
               i18n-placeholder="Search placeholder"
             />
 
-            <fa-icon
+            <button
               matIconSuffix
-              class="padding-right-small"
-              icon="search"
-            ></fa-icon>
+              mat-icon-button
+              (click)="clearSearch()"
+              matTooltip="Clear search"
+              i18n-matTooltip="Clear search tooltip"
+              aria-label="Clear search"
+              i18n-aria-label="Clear search aria label"
+            >
+              <fa-icon icon="times"></fa-icon>
+            </button>
           </mat-form-field>
         </div>
 
