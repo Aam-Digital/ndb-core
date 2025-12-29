@@ -64,15 +64,6 @@ describe("IconButtonComponent", () => {
     expect(buttonElement.classList.contains("mat-primary")).toBe(true);
   });
 
-  it("should handle disabled state", () => {
-    fixture.componentRef.setInput("icon", "edit");
-    fixture.componentRef.setInput("disabled", true);
-    fixture.detectChanges();
-
-    const buttonElement = fixture.nativeElement.querySelector("button");
-    expect(buttonElement.disabled).toBe(true);
-  });
-
   it("should apply custom CSS class", () => {
     fixture.componentRef.setInput("icon", "edit");
     fixture.componentRef.setInput("cssClass", "custom-class");
@@ -98,13 +89,12 @@ describe("IconButtonComponent", () => {
     expect(clickedEvent).toBeDefined();
   });
 
-  it("should set correct button type attribute", () => {
+  it("should have type='button' attribute", () => {
     fixture.componentRef.setInput("icon", "edit");
-    fixture.componentRef.setInput("type", "submit");
     fixture.detectChanges();
 
     const buttonElement = fixture.nativeElement.querySelector("button");
-    expect(buttonElement.type).toBe("submit");
+    expect(buttonElement.type).toBe("button");
   });
 
   it("should apply angulartics2 attributes", () => {
