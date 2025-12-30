@@ -14,6 +14,7 @@ import { MatListModule } from "@angular/material/list";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
+import { DateDatatype } from "../date.datatype";
 
 /**
  * Configuration dialog for parsing date value of data imported from a file.
@@ -51,18 +52,23 @@ export class DateImportConfigComponent {
     this.format.setValue(this.data.col.additional);
   }
 
-  checkDateValues() {
+  async checkDateValues() {
     this.format.setErrors(undefined);
-    this.values.forEach((val) => {
+    const dateType = new DateDatatype();
+    for (const val of this.values) {
       // TODO: check and improve the date parsing. Tests fail with moment.js > 2.29
-      const date = moment(val.value, this.format.value?.toUpperCase(), true);
-      if (date.isValid()) {
-        val.parsed = date.toDate();
+      const date = await dateType.importMapFunction(
+        val.value,
+        undefined,
+        this.format.value?.toUpperCase(),
+      );
+      if (date instanceof Date && !isNaN(date.getTime())) {
+        val.parsed = date;
       } else {
         delete val.parsed;
         this.format.setErrors({ parsingError: true });
       }
-    });
+    }
     // Sort unparsed dates to front
     this.values.sort((v1, v2) =>
       v1.parsed && !v2.parsed ? 1 : !v1.parsed && v2.parsed ? -1 : 0,
