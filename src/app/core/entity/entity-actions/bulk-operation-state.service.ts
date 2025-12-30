@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 
 /**
@@ -7,10 +7,10 @@ import { BehaviorSubject } from "rxjs";
 @Injectable({
   providedIn: "root",
 })
-export class BulkOperationStateService {
+export class BulkOperationStateService implements OnDestroy {
   private readonly bulkOperationState = new BehaviorSubject<boolean>(false);
   private progressDialogRef: any = null;
-  private debounceTimer: any = null;
+  private debounceTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly DEBOUNCE_DELAY = 2000;
 
   isBulkOperationInProgress$ = this.bulkOperationState.asObservable();
@@ -62,5 +62,12 @@ export class BulkOperationStateService {
    */
   isBulkOperationInProgress(): boolean {
     return this.bulkOperationState.value;
+  }
+
+  ngOnDestroy(): void {
+    if (this.debounceTimer) {
+      clearTimeout(this.debounceTimer);
+      this.debounceTimer = null;
+    }
   }
 }
