@@ -22,4 +22,11 @@ export const locationComponents: ComponentTuple[] = [
         (c) => c.ViewDistanceComponent,
       ),
   ],
+  [
+    "LocationImportConfig",
+    () =>
+      import("./location-import-config/location-import-config.component").then(
+        (c) => c.LocationImportConfigComponent,
+      ),
+  ],
 ];
