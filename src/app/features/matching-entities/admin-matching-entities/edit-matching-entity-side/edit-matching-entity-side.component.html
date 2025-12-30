@@ -37,9 +37,13 @@
       Configure filters to only show certain records for matching, that fulfill
       the required criteria (e.g. having a required status).
     </p>
-    <button mat-stroked-button (click)="openPrefilterEditor()">
-      <fa-icon icon="tools" class="standard-icon-with-text"></fa-icon>
-      <span i18n>Edit Prefilters</span>
-    </button>
+    <app-icon-button
+      buttonType="mat-stroked-button"
+      icon="tools"
+      (buttonClick)="openPrefilterEditor()"
+      i18n
+    >
+      Edit Prefilters
+    </app-icon-button>
   </div>
 </div>
