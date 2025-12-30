@@ -8,7 +8,7 @@ import { BehaviorSubject } from "rxjs";
   providedIn: "root",
 })
 export class BulkOperationStateService {
-  private bulkOperationState = new BehaviorSubject<boolean>(false);
+  private readonly bulkOperationState = new BehaviorSubject<boolean>(false);
   private progressDialogRef: any = null;
   private debounceTimer: any = null;
   private readonly DEBOUNCE_DELAY = 2000;

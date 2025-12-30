@@ -23,8 +23,8 @@ export class EntityEditService extends CascadingEntityAction {
   private matDialog = inject(MatDialog);
   private entityActionsService = inject(EntityActionsService);
   private unsavedChanges = inject(UnsavedChangesService);
-  private confirmationDialog = inject(ConfirmationDialogService);
-  private bulkOperationState = inject(BulkOperationStateService);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
+  private readonly bulkOperationState = inject(BulkOperationStateService);
 
   /**
    * Shows a confirmation dialog to the user

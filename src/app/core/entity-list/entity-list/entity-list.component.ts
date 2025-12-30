@@ -119,7 +119,8 @@ export class EntityListComponent<T extends Entity>
 
   private readonly publicFormsService = inject(PublicFormsService);
   public publicFormConfigs: PublicFormConfig[] = [];
-  private bulkOperationState = inject(BulkOperationStateService);
+
+  private readonly bulkOperationState = inject(BulkOperationStateService);
 
   @Input() allEntities: T[];
 
