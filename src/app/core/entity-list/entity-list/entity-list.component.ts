@@ -58,6 +58,7 @@ import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.
 import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
+import { BulkOperationStateService } from "../../entity/entity-actions/bulk-operation-state.service";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -118,6 +119,7 @@ export class EntityListComponent<T extends Entity>
 
   private readonly publicFormsService = inject(PublicFormsService);
   public publicFormConfigs: PublicFormConfig[] = [];
+  private bulkOperationState = inject(BulkOperationStateService);
 
   @Input() allEntities: T[];
 
@@ -142,6 +144,8 @@ export class EntityListComponent<T extends Entity>
   selectedRows: T[];
 
   isDesktop: boolean;
+
+  isBulkOperationInProgress: boolean = false;
 
   @Input() title = "";
   @Input() columns: (FormFieldConfig | string)[] = [];
@@ -207,6 +211,12 @@ export class EntityListComponent<T extends Entity>
 
   async ngOnInit() {
     await this.loadPublicFormConfig();
+
+    this.bulkOperationState.isBulkOperationInProgress$.subscribe(
+      (isInProgress) => {
+        this.isBulkOperationInProgress = isInProgress;
+      },
+    );
   }
 
   private async loadPublicFormConfig() {
@@ -372,5 +382,9 @@ export class EntityListComponent<T extends Entity>
 
   onRowClick(row: T) {
     this.elementClick.emit(row);
+  }
+
+  onBulkOperationComplete() {
+    this.bulkOperationState.onTableRenderingComplete();
   }
 }
