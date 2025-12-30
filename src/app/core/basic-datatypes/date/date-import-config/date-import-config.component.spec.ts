@@ -43,7 +43,7 @@ describe("DateImportConfigComponent", () => {
   });
 
   it("should parse dates with entered format", fakeAsync(() => {
-    component.format.setValue("d/m/yyyy");
+    component.format.setValue("D/M/YYYY");
     tick();
 
     //Tests may fail with moment.js > 2.29v
@@ -55,7 +55,7 @@ describe("DateImportConfigComponent", () => {
   }));
 
   it("should sort dates that could not be parsed to top", fakeAsync(() => {
-    component.format.setValue("dd/mm/yyyy");
+    component.format.setValue("DD/MM/YYYY");
     tick();
 
     expect(component.values[0].value).toBe("5/4/2023");
@@ -69,7 +69,7 @@ describe("DateImportConfigComponent", () => {
       TestBed.inject(ConfirmationDialogService),
       "getConfirmation",
     );
-    component.format.setValue("dd/mm/yyyy");
+    component.format.setValue("DD/MM/YYYY");
     tick();
 
     component.save();
@@ -79,7 +79,7 @@ describe("DateImportConfigComponent", () => {
 
   it("should set the format as additional on save", async () => {
     expect(data.col.additional).toBeUndefined();
-    component.format.setValue("d/m/yyyy");
+    component.format.setValue("D/M/YYYY");
     const closeSpy = spyOn(TestBed.inject(MatDialogRef), "close");
 
     await component.save();

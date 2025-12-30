@@ -44,6 +44,12 @@ export class DateImportConfigComponent {
   valid = false;
   values: { value: string; parsed?: Date }[] = [];
 
+  /**
+   * The date formatting interprets lowercase "mm" as minutes instead of months,
+   * this may lead to misunderstandings, so we check for it and show a warning if detected.
+   */
+  hasLowercaseMM: boolean;
+
   constructor() {
     this.values = this.data.values
       .filter((val) => !!val)
@@ -54,13 +60,14 @@ export class DateImportConfigComponent {
 
   async checkDateValues() {
     this.format.setErrors(undefined);
+    this.hasLowercaseMM = /mm/.test(this.format.value || "");
     const dateType = new DateDatatype();
     for (const val of this.values) {
       // TODO: check and improve the date parsing. Tests fail with moment.js > 2.29
       const date = await dateType.importMapFunction(
         val.value,
         undefined,
-        this.format.value?.toUpperCase(),
+        this.format.value,
       );
       if (date instanceof Date && !isNaN(date.getTime())) {
         val.parsed = date;
@@ -84,7 +91,7 @@ export class DateImportConfigComponent {
       ));
 
     if (confirmed) {
-      this.data.col.additional = this.format.value?.toUpperCase();
+      this.data.col.additional = this.format.value;
       this.dialog.close();
     }
   }
