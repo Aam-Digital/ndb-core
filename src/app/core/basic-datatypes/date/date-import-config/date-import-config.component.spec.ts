@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import { DateImportConfigComponent } from "./date-import-config.component";
 import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
@@ -37,8 +42,9 @@ describe("DateImportConfigComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should parse dates with entered format", () => {
-    component.format.setValue("d/m/yyyy");
+  it("should parse dates with entered format", fakeAsync(() => {
+    component.format.setValue("D/M/YYYY");
+    tick();
 
     //Tests may fail with moment.js > 2.29v
     expect(component.values.map(({ parsed }) => parsed)).toEqual([
@@ -46,32 +52,34 @@ describe("DateImportConfigComponent", () => {
       moment("2023-04-14").toDate(),
       moment("2023-04-05").toDate(),
     ]);
-  });
+  }));
 
-  it("should sort dates that could not be parsed to top", () => {
-    component.format.setValue("dd/mm/yyyy");
+  it("should sort dates that could not be parsed to top", fakeAsync(() => {
+    component.format.setValue("DD/MM/YYYY");
+    tick();
 
     expect(component.values[0].value).toBe("5/4/2023");
     expect(component.values[0].parsed).toBeUndefined();
     expect(component.values[1].parsed).toBeDate("2023-02-01");
     expect(component.values[2].parsed).toBeDate("2023-04-14");
-  });
+  }));
 
-  it("should ask for confirmation on save if some dates could not be parsed", () => {
+  it("should ask for confirmation on save if some dates could not be parsed", fakeAsync(() => {
     const confirmationSpy = spyOn(
       TestBed.inject(ConfirmationDialogService),
       "getConfirmation",
     );
-    component.format.setValue("dd/mm/yyyy");
+    component.format.setValue("DD/MM/YYYY");
+    tick();
 
     component.save();
 
     expect(confirmationSpy).toHaveBeenCalled();
-  });
+  }));
 
   it("should set the format as additional on save", async () => {
     expect(data.col.additional).toBeUndefined();
-    component.format.setValue("d/m/yyyy");
+    component.format.setValue("D/M/YYYY");
     const closeSpy = spyOn(TestBed.inject(MatDialogRef), "close");
 
     await component.save();
