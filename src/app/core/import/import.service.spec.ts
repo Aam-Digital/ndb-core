@@ -17,6 +17,7 @@ import { DatabaseField } from "../entity/database-field.decorator";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../demo-data/create-entity-of-type";
+import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 
 describe("ImportService", () => {
   let service: ImportService;
@@ -206,5 +207,49 @@ describe("ImportService", () => {
     await service.undoImport(importMeta);
 
     await expectEntitiesToBeInDatabase([children[2]], false, true);
+  });
+
+  it("should parse array fields from comma-separated values", async () => {
+    class ArrayImportTestEntity extends Entity {
+      @DatabaseField() name: string;
+      @DatabaseField({ isArray: true }) items: string[];
+    }
+
+    spyOn(TestBed.inject(EntityRegistry), "get").and.returnValue(
+      ArrayImportTestEntity,
+    );
+
+    const schemaService = TestBed.inject(EntitySchemaService);
+    const mockDatatype = schemaService.getDatatypeOrDefault("string");
+    const importMapFunctionSpy = spyOn(
+      mockDatatype,
+      "importMapFunction",
+    ).and.callThrough();
+
+    const rawData: any[] = [
+      { name: "json array", items: '["one", "two"]' },
+      { name: "comma-separated values", items: "two, three" },
+      { name: "single value", items: "two" },
+      { name: "empty string", items: "" },
+      { name: "invalid json", items: '["broken"' },
+    ];
+    const columnMapping: ColumnMapping[] = [
+      { column: "name", propertyName: "name" },
+      { column: "items", propertyName: "items" },
+    ];
+
+    const parsedEntities = (await service.transformRawDataToEntities(rawData, {
+      entityType: "ArrayImportTestEntity",
+      columnMapping,
+    })) as ArrayImportTestEntity[];
+
+    expect(importMapFunctionSpy).toHaveBeenCalled();
+
+    expect(parsedEntities.length).toBe(5);
+    expect(parsedEntities[0].items).toEqual(["one", "two"]);
+    expect(parsedEntities[1].items).toEqual(["two", "three"]);
+    expect(parsedEntities[2].items).toEqual(["two"]);
+    expect(parsedEntities[3].items).toBeUndefined();
+    expect(parsedEntities[4].items).toEqual(['["broken"']); // invalid JSON treated as single string value
   });
 });
