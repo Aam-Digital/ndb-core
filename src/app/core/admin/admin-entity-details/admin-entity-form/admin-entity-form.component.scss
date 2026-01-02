@@ -158,3 +158,8 @@ $toolbar-width: 300px;
     flex: 0 1 auto;
   }
 }
+
+/* make the clear search button a bit different from the "delete section" x buttons */
+.muted-button {
+  color: colors.$muted;
+}

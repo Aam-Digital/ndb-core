@@ -225,4 +225,54 @@ describe("AdminEntityFormComponent", () => {
       field,
     );
   }));
+
+  it("should filter fields by field ID and label when searching", async () => {
+    component.config = {
+      fieldGroups: [{ fields: ["other"] }],
+    };
+    await component.ngOnChanges({ config: true as any });
+
+    //filtering by field ID
+    component.searchFilter.setValue("nam");
+    fixture.detectChanges();
+
+    let filteredFields = component.filteredFields();
+    let nonPlaceholderFields = filteredFields.filter(
+      (f) =>
+        f !== component.createNewFieldPlaceholder &&
+        f !== component.createNewTextPlaceholder,
+    );
+
+    expect(nonPlaceholderFields).toContain("name");
+    expect(nonPlaceholderFields).not.toContain("category");
+
+    //filtering by label
+    component.searchFilter.setValue("Date");
+    fixture.detectChanges();
+
+    filteredFields = component.filteredFields();
+    nonPlaceholderFields = filteredFields.filter(
+      (f) =>
+        f !== component.createNewFieldPlaceholder &&
+        f !== component.createNewTextPlaceholder,
+    );
+
+    expect(nonPlaceholderFields).toContain("dateOfBirth");
+    expect(nonPlaceholderFields).not.toContain("name");
+    expect(nonPlaceholderFields).not.toContain("category");
+  });
+
+  it("should prefill label when creating new field with search text", fakeAsync(() => {
+    component.searchFilter.setValue("testField");
+    mockDialog.open.and.returnValue({
+      afterClosed: () => of({ id: "testField" }),
+    } as any);
+
+    component.openFieldConfig(component.createNewFieldPlaceholder);
+    tick();
+
+    const dialogData = mockDialog.open.calls.mostRecent().args[1].data as any;
+    expect(dialogData.entitySchemaField.label).toBe("testField");
+    expect(dialogData.entitySchemaField.id).toBeNull();
+  }));
 });

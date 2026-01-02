@@ -109,57 +109,87 @@
 
   <!-- TOOLBAR -->
   <mat-card class="toolbar">
-    <mat-card-content
-      cdkDropList
-      (cdkDropListDropped)="drop($event)"
-      [cdkDropListData]="availableFields"
-      [cdkDropListConnectedTo]="getConnectedGroups()"
-      class="drop-list"
-    >
-      <div class="drop-area-hint">
-        <em i18n="title for drag and drop section">hidden fields</em><br />
-        <span i18n="subtitle for drag and drop section">
-          drag & drop to / from here
-        </span>
-        <fa-icon
-          icon="question-circle"
-          matTooltip="You can remove fields from this form without deleting them completely. The fields here will not be visible or editable for users but you can display them in other views or keep them archived to not lose previously collected data. Drag a field back into the form preview to display it."
-          i18n-matTooltip
-        ></fa-icon>
-      </div>
-
-      @for (field of availableFields; track field) {
-        <div
-          class="admin-form-field flex-row align-center"
-          [class.admin-form-field-new]="
-            field === createNewFieldPlaceholder ||
-            field === createNewTextPlaceholder
-          "
-          cdkDrag
-          cdkDragBoundary="mat-drawer-container"
-        >
-          <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
-          <div>
-            <app-entity-field-label
-              [field]="field"
-              [entityType]="entityType"
-            ></app-entity-field-label>
-            @if (
-              field !== createNewFieldPlaceholder &&
-              field !== createNewTextPlaceholder
-            ) {
-              <button
-                mat-stroked-button
-                color="accent"
-                class="field-hover-buttons field-edit-button"
-                (click)="openConfigDetails(field)"
-              >
-                Edit
-              </button>
-            }
-          </div>
+    <mat-card-content>
+      <div
+        cdkDropList
+        (cdkDropListDropped)="drop($event)"
+        [cdkDropListData]="filteredFields()"
+        [cdkDropListConnectedTo]="getConnectedGroups()"
+        class="drop-list"
+      >
+        <div class="drop-area-hint">
+          <em i18n="title for drag and drop section">hidden fields</em><br />
+          <span i18n="subtitle for drag and drop section">
+            drag & drop to / from here
+          </span>
+          <fa-icon
+            icon="question-circle"
+            matTooltip="You can remove fields from this form without deleting them completely. The fields here will not be visible or editable for users but you can display them in other views or keep them archived to not lose previously collected data. Drag a field back into the form preview to display it."
+            i18n-matTooltip
+          ></fa-icon>
         </div>
-      }
+
+        <div class="margin-top-regular">
+          <mat-form-field appearance="fill" class="full-width">
+            <input
+              matInput
+              [formControl]="searchFilter"
+              placeholder="Search fields"
+              i18n-placeholder
+            />
+
+            <button
+              matIconSuffix
+              mat-icon-button
+              class="muted-button"
+              (click)="clearSearch()"
+              matTooltip="Clear search"
+              i18n-matTooltip="Clear search tooltip"
+              aria-label="Clear search"
+              i18n-aria-label="Clear search aria label"
+            >
+              <fa-icon icon="times"></fa-icon>
+            </button>
+          </mat-form-field>
+        </div>
+
+        @for (field of filteredFields(); track field) {
+          <div
+            class="admin-form-field flex-row align-center"
+            [class.admin-form-field-new]="
+              field === createNewFieldPlaceholder ||
+              field === createNewTextPlaceholder
+            "
+            cdkDrag
+            cdkDragBoundary="mat-drawer-container"
+          >
+            <fa-icon
+              icon="grip-vertical"
+              size="xl"
+              class="drag-handle"
+            ></fa-icon>
+            <div>
+              <app-entity-field-label
+                [field]="field"
+                [entityType]="entityType"
+              ></app-entity-field-label>
+              @if (
+                field !== createNewFieldPlaceholder &&
+                field !== createNewTextPlaceholder
+              ) {
+                <button
+                  mat-stroked-button
+                  color="accent"
+                  class="field-hover-buttons field-edit-button"
+                  (click)="openConfigDetails(field)"
+                >
+                  Edit
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
     </mat-card-content>
   </mat-card>
 </div>
