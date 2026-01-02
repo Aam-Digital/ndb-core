@@ -84,14 +84,15 @@
       </div>
 
       <div class="flex-row gap-regular flex-wrap align-center">
-        <button
-          mat-stroked-button
+        <app-icon-button
+          buttonType="mat-stroked-button"
           color="warn"
-          (click)="removeNotificationRule.emit()"
+          icon="trash"
+          (buttonClick)="removeNotificationRule.emit()"
+          i18n
         >
-          <fa-icon icon="trash" class="standard-icon-with-text"></fa-icon>
-          <span i18n>Delete</span>
-        </button>
+          Delete
+        </app-icon-button>
 
         <button
           mat-icon-button

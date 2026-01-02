@@ -1,6 +1,4 @@
 import { Component, OnInit, inject } from "@angular/core";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { MatButton } from "@angular/material/button";
 import { Router } from "@angular/router";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { Config } from "../../../config/config";
@@ -12,6 +10,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { filter } from "rxjs/operators";
 import { Logging } from "../../../logging/logging.service";
 import { environment } from "../../../../../environments/environment";
+import { IconButtonComponent } from "#src/app/core/common-components/icon-button/icon-button.component";
 
 /**
  * @deprecated Will be replaced by AssistantDialog panel
@@ -19,7 +18,7 @@ import { environment } from "../../../../../environments/environment";
 @UntilDestroy()
 @Component({
   selector: "app-setup-wizard-button",
-  imports: [FaIconComponent, MatButton],
+  imports: [IconButtonComponent],
   templateUrl: "./setup-wizard-button.component.html",
   styleUrls: ["./setup-wizard-button.component.scss"],
 })

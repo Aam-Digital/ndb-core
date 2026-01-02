@@ -20,6 +20,7 @@ import { DynamicEditComponent } from "app/core/entity/entity-field-edit/dynamic-
 import { MatDialog } from "@angular/material/dialog";
 import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
+import { IconButtonComponent } from "../icon-button/icon-button.component";
 
 /**
  * Reusable component for editing conditions (field-value pairs) with JSON support
@@ -32,6 +33,7 @@ import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/
     MatButtonModule,
     MatFormFieldModule,
     MatTooltipModule,
+    IconButtonComponent,
     FontAwesomeModule,
     DynamicEditComponent,
     ReactiveFormsModule,

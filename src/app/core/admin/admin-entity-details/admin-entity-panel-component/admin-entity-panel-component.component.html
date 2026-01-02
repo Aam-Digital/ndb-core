@@ -19,18 +19,16 @@
       </mat-form-field>
 
       @if (showEditStructureButton()) {
-        <button
-          mat-stroked-button
-          (click)="openRelatedEntityDetailsConfig()"
+        <app-icon-button
+          icon="edit"
+          (buttonClick)="openRelatedEntityDetailsConfig()"
           matTooltip="If you need additional fields, edit the related record type here."
           i18n-matTooltip
+          i18n
         >
-          <fa-icon icon="edit" class="standard-icon-with-text"></fa-icon>
-          <span i18n
-            >Edit data structure of
-            {{ entityConstructor.label || entityConstructor.ENTITY_TYPE }}</span
-          >
-        </button>
+          Edit data structure of
+          {{ entityConstructor.label || entityConstructor.ENTITY_TYPE }}
+        </app-icon-button>
       }
     </div>
 

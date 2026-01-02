@@ -33,7 +33,7 @@ import {
 } from "../admin-related-entity-details/admin-related-entity-details.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { IconButtonComponent } from "#src/app/core/common-components/icon-button/icon-button.component";
 
 @Component({
   selector: "app-admin-entity-panel-component",
@@ -46,7 +46,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
     MatSelectModule,
     MatButtonModule,
     MatTooltipModule,
-    FaIconComponent,
+    IconButtonComponent,
     MatDialogModule,
   ],
   templateUrl: "./admin-entity-panel-component.component.html",

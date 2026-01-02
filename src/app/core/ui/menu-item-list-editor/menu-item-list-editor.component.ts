@@ -1,12 +1,10 @@
 import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
-import { MatButton } from "@angular/material/button";
 import {
   CdkDragDrop,
   DragDropModule,
   moveItemInArray,
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { v4 as uuid } from "uuid";
 import { MatDialog } from "@angular/material/dialog";
 import { Logging } from "../../logging/logging.service";
@@ -17,6 +15,7 @@ import {
   MenuItemForAdminUiNew,
 } from "../../admin/admin-menu/menu-item-for-admin-ui";
 import { AdminMenuItemDetailsComponent } from "../../admin/admin-menu/admin-menu-item-details/admin-menu-item-details.component";
+import { IconButtonComponent } from "../../common-components/icon-button/icon-button.component";
 
 /**
  * A reusable component for editing lists of menu items with drag & drop,
@@ -26,7 +25,7 @@ import { AdminMenuItemDetailsComponent } from "../../admin/admin-menu/admin-menu
 @Component({
   selector: "app-menu-item-list-editor",
   standalone: true,
-  imports: [AdminMenuItemComponent, MatButton, DragDropModule, FaIconComponent],
+  imports: [AdminMenuItemComponent, DragDropModule, IconButtonComponent],
   templateUrl: "./menu-item-list-editor.component.html",
   styleUrl: "./menu-item-list-editor.component.scss",
 })

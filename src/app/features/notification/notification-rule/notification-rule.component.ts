@@ -31,6 +31,7 @@ import {
   MatExpansionPanelHeader,
 } from "@angular/material/expansion";
 import { MatDialog } from "@angular/material/dialog";
+import { IconButtonComponent } from "../../../core/common-components/icon-button/icon-button.component";
 
 /**
  * Configure a single notification rule.
@@ -53,6 +54,7 @@ import { MatDialog } from "@angular/material/dialog";
     MatSelect,
     MatExpansionPanel,
     MatExpansionPanelHeader,
+    IconButtonComponent,
   ],
   templateUrl: "./notification-rule.component.html",
   styleUrl: "./notification-rule.component.scss",
