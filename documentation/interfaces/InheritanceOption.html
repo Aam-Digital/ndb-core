@@ -1,0 +1,905 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  InheritanceOption</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts</code>
+        </p>
+
+
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#availableFields" 
+>
+                                            availableFields
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#label" 
+>
+                                            label
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#labelParts" 
+>
+                                            labelParts
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#referencedEntityType" 
+>
+                                            referencedEntityType
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#sourceReferenceEntity" 
+>
+                                            sourceReferenceEntity
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#sourceReferenceField" 
+>
+                                            sourceReferenceField
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#tooltip" 
+>
+                                            tooltip
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#type" 
+>
+                                            type
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="availableFields"></a>
+                                        <span class="name "><b>availableFields</b>
+                                            <a href="#availableFields">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>availableFields:     <code>string[]</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>string[]</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="label"></a>
+                                        <span class="name "><b>label</b>
+                                            <a href="#label">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>label:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="labelParts"></a>
+                                        <span class="name "><b>labelParts</b>
+                                            <a href="#labelParts">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>labelParts:     <code>literal type</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>literal type</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="referencedEntityType"></a>
+                                        <span class="name "><b>referencedEntityType</b>
+                                            <a href="#referencedEntityType">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>referencedEntityType:         <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="sourceReferenceEntity"></a>
+                                        <span class="name "><b>sourceReferenceEntity</b>
+                                            <a href="#sourceReferenceEntity">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>sourceReferenceEntity:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="sourceReferenceField"></a>
+                                        <span class="name "><b>sourceReferenceField</b>
+                                            <a href="#sourceReferenceField">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>sourceReferenceField:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="tooltip"></a>
+                                        <span class="name "><b>tooltip</b>
+                                            <a href="#tooltip">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>tooltip:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="type"></a>
+                                        <span class="name "><b>type</b>
+                                            <a href="#type">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>type:     <code>&quot;inherit&quot; | &quot;automated&quot;</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>&quot;inherit&quot; | &quot;automated&quot;</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from &quot;@angular/core&quot;;
+import { FormsModule, ReactiveFormsModule } from &quot;@angular/forms&quot;;
+import { MatButton } from &quot;@angular/material/button&quot;;
+import { MatDialog } from &quot;@angular/material/dialog&quot;;
+import { MatFormFieldControl } from &quot;@angular/material/form-field&quot;;
+import { MatOption, MatSelect } from &quot;@angular/material/select&quot;;
+import { MatTooltip } from &quot;@angular/material/tooltip&quot;;
+import { EntityRelationsService } from &quot;app/core/entity/entity-mapper/entity-relations.service&quot;;
+import { lastValueFrom } from &quot;rxjs&quot;;
+import { CustomFormControlDirective } from &quot;../../../core/common-components/basic-autocomplete/custom-form-control.directive&quot;;
+import { EntityRegistry } from &quot;../../../core/entity/database-entity.decorator&quot;;
+import { EntityFieldLabelComponent } from &quot;../../../core/entity/entity-field-label/entity-field-label.component&quot;;
+import { EntityConstructor } from &quot;../../../core/entity/model/entity&quot;;
+import { EntitySchemaField } from &quot;../../../core/entity/schema/entity-schema-field&quot;;
+import { EntityDatatype } from &quot;../../../core/basic-datatypes/entity/entity.datatype&quot;;
+import {
+  AutomatedFieldMappingComponent,
+  AutomatedFieldMappingDialogData,
+} from &quot;#src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component&quot;;
+import { DefaultValueConfigInheritedField } from &quot;../inherited-field-config&quot;;
+
+interface InheritanceOption {
+  type: &quot;inherit&quot; | &quot;automated&quot;;
+  label: string;
+  labelParts: { entityName: string; fieldName: string; isInheritance: boolean };
+  tooltip: string;
+  sourceReferenceField?: string;
+  sourceReferenceEntity?: string;
+  referencedEntityType?: EntityConstructor;
+  availableFields?: string[];
+}
+
+@Component({
+  selector: &quot;app-admin-inherited-field&quot;,
+  imports: [
+    MatSelect,
+    MatButton,
+    ReactiveFormsModule,
+    MatTooltip,
+    MatOption,
+    EntityFieldLabelComponent,
+    FormsModule,
+  ],
+  templateUrl: &quot;./admin-inherited-field.component.html&quot;,
+  styleUrl: &quot;./admin-inherited-field.component.scss&quot;,
+  providers: [
+    {
+      provide: MatFormFieldControl,
+      useExisting: AdminInheritedFieldComponent,
+    },
+  ],
+})
+export class AdminInheritedFieldComponent
+  extends CustomFormControlDirective&lt;DefaultValueConfigInheritedField&gt;
+  implements OnInit, OnChanges
+{
+  @Input() entityType: EntityConstructor;
+  @Input() entitySchemaField: EntitySchemaField;
+
+  private readonly entityRelationsService &#x3D; inject(EntityRelationsService);
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
+  private readonly matDialog &#x3D; inject(MatDialog);
+
+  availableOptions: InheritanceOption[] &#x3D; [];
+  selectedOption: InheritanceOption | null &#x3D; null;
+  currentInheritanceFields: {
+    sourceReferenceField: string;
+    referencedEntityType: EntityConstructor;
+    availableFields: string[];
+  } | null &#x3D; null;
+
+  ngOnInit() {
+    if (!this.value) {
+      this.value &#x3D; {
+        sourceReferenceField: &quot;&quot;,
+        sourceValueField: &quot;&quot;,
+      };
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.entityType) {
+      this.updateAvailableOptions();
+    }
+  }
+
+  updateAvailableOptions() {
+    if (!this.entityType) return;
+
+    this.availableOptions &#x3D; [];
+
+    const inheritanceAttributes &#x3D; this.getInheritanceAttributes();
+
+    inheritanceAttributes.forEach((attr) &#x3D;&gt; {
+      const fieldConfig &#x3D; this.entityType.schema.get(attr);
+
+      if (fieldConfig?.additional) {
+        const referencedEntityType &#x3D; this.entityRegistry.get(
+          fieldConfig.additional,
+        );
+
+        if (referencedEntityType) {
+          const option &#x3D; {
+            type: &quot;inherit&quot; as const,
+            label: &#x60;${this.getFieldLabel(attr)} &gt; ${this.getEntityLabel(referencedEntityType)}&#x60;,
+            labelParts: {
+              entityName: this.getEntityLabel(referencedEntityType),
+              fieldName: this.getFieldLabel(attr),
+              isInheritance: true,
+            },
+            tooltip: &#x60;Inherit value from any &quot;${this.getEntityLabel(referencedEntityType)}&quot; that is linked to in this record&#x27;s &quot;${this.getFieldLabel(attr)}&quot; field&#x60;,
+            sourceReferenceField: attr,
+            referencedEntityType,
+            availableFields: this.getAvailableFields(referencedEntityType),
+          };
+
+          this.availableOptions.push(option);
+        }
+      }
+    });
+
+    const automatedOptions &#x3D; this.getAutomatedOptions();
+
+    automatedOptions.forEach((option) &#x3D;&gt; {
+      const automatedOption &#x3D; {
+        type: &quot;automated&quot; as const,
+        label: &#x60;${option.label} &gt; ${this.getFieldLabel(option.relatedReferenceFields[0])}&#x60;,
+        labelParts: {
+          entityName: option.label,
+          fieldName: this.getFieldLabel(option.relatedReferenceFields[0]),
+          isInheritance: false,
+        },
+        tooltip: &#x60;Inherit value from any &quot;${option.label}&quot; that links to this record in its &quot;${option.relatedReferenceFields[0]}&quot; field&#x60;,
+        sourceReferenceEntity: option.entityType,
+      };
+
+      this.availableOptions.push(automatedOption);
+    });
+
+    this.updateSelectedOption();
+  }
+
+  private updateSelectedOption() {
+    if (!this.value) {
+      this.selectedOption &#x3D; null;
+      this.currentInheritanceFields &#x3D; null;
+      return;
+    }
+
+    // Find matching option based on current config
+    // Automation has BOTH sourceReferenceEntity AND sourceReferenceField
+    if (this.value.sourceReferenceEntity &amp;&amp; this.value.sourceReferenceField) {
+      this.selectedOption &#x3D;
+        this.availableOptions.find(
+          (opt) &#x3D;&gt;
+            opt.type &#x3D;&#x3D;&#x3D; &quot;automated&quot; &amp;&amp;
+            opt.sourceReferenceEntity &#x3D;&#x3D;&#x3D; this.value.sourceReferenceEntity,
+        ) || null;
+      this.currentInheritanceFields &#x3D; null;
+    }
+    // Inheritance has sourceReferenceField but NO sourceReferenceEntity
+    else if (
+      this.value.sourceReferenceField &amp;&amp;
+      !this.value.sourceReferenceEntity
+    ) {
+      this.selectedOption &#x3D;
+        this.availableOptions.find(
+          (opt) &#x3D;&gt;
+            opt.type &#x3D;&#x3D;&#x3D; &quot;inherit&quot; &amp;&amp;
+            opt.sourceReferenceField &#x3D;&#x3D;&#x3D; this.value.sourceReferenceField,
+        ) || null;
+
+      if (this.selectedOption) {
+        this.currentInheritanceFields &#x3D; {
+          sourceReferenceField: this.selectedOption.sourceReferenceField,
+          referencedEntityType: this.selectedOption.referencedEntityType,
+          availableFields: this.selectedOption.availableFields,
+        };
+      } else {
+        this.currentInheritanceFields &#x3D; null;
+      }
+    } else {
+      this.selectedOption &#x3D; null;
+      this.currentInheritanceFields &#x3D; null;
+    }
+  }
+
+  onOptionSelected(option: InheritanceOption) {
+    this.selectedOption &#x3D; option;
+
+    if (option.type &#x3D;&#x3D;&#x3D; &quot;inherit&quot;) {
+      this.currentInheritanceFields &#x3D; {
+        sourceReferenceField: option.sourceReferenceField,
+        referencedEntityType: option.referencedEntityType,
+        availableFields: option.availableFields,
+      };
+
+      this.value &#x3D; {
+        ...this.value,
+        sourceReferenceField: option.sourceReferenceField,
+        sourceReferenceEntity: undefined,
+      };
+    } else if (option.type &#x3D;&#x3D;&#x3D; &quot;automated&quot;) {
+      this.openAutomatedMappingDialog(option.sourceReferenceEntity);
+    }
+  }
+
+  onInheritedFieldSelected(fieldId: string) {
+    if (this.selectedOption?.type &#x3D;&#x3D;&#x3D; &quot;inherit&quot;) {
+      this.value &#x3D; {
+        ...this.value,
+        sourceValueField: fieldId,
+      };
+    }
+  }
+
+  async openAutomatedMappingDialog(selectedEntity: string) {
+    const automatedOption &#x3D; this.availableOptions.find(
+      (opt) &#x3D;&gt;
+        opt.type &#x3D;&#x3D;&#x3D; &quot;automated&quot; &amp;&amp;
+        opt.sourceReferenceEntity &#x3D;&#x3D;&#x3D; selectedEntity,
+    );
+
+    if (!automatedOption) return;
+
+    const refEntity &#x3D; this.entityRegistry.get(selectedEntity);
+    const dialogRef &#x3D; this.matDialog.open(AutomatedFieldMappingComponent, {
+      data: {
+        currentEntityType: this.entityType,
+        relatedEntityType: refEntity,
+        currentField: this.entitySchemaField,
+        relatedReferenceFields:
+          this.getAutomatedOptions().find(
+            (opt) &#x3D;&gt; opt.entityType &#x3D;&#x3D;&#x3D; selectedEntity,
+          )?.relatedReferenceFields || [],
+      } as AutomatedFieldMappingDialogData,
+    });
+
+    const result &#x3D; await lastValueFrom(dialogRef.afterClosed());
+    if (result) {
+      this.value &#x3D; {
+        sourceReferenceField: result.sourceReferenceField,
+        sourceReferenceEntity: selectedEntity,
+        sourceValueField: result.sourceValueField,
+        valueMapping: result.valueMapping,
+      };
+
+      // Update selected option to show it&#x27;s configured
+      this.selectedOption &#x3D; automatedOption;
+    }
+  }
+
+  private getInheritanceAttributes(): string[] {
+    if (!this.entityType?.schema) return [];
+
+    const inheritanceAttrs &#x3D; Array.from(this.entityType.schema.entries())
+      .filter(
+        ([, fieldConfig]) &#x3D;&gt; fieldConfig.dataType &#x3D;&#x3D;&#x3D; EntityDatatype.dataType,
+      )
+      .map(([fieldId]) &#x3D;&gt; fieldId);
+
+    return inheritanceAttrs;
+  }
+
+  private getAutomatedOptions(): {
+    label: string;
+    entityType: string;
+    relatedReferenceFields: string[];
+  }[] {
+    const relatedEntities &#x3D;
+      this.entityRelationsService.getEntityTypesReferencingType(
+        this.entityType.ENTITY_TYPE,
+      );
+
+    return relatedEntities
+      .filter(
+        (refType) &#x3D;&gt;
+          !refType.entityType.isInternalEntity &amp;&amp; !!refType.entityType.label,
+      )
+      .map((refType) &#x3D;&gt; ({
+        label: refType.entityType.label,
+        entityType: refType.entityType.ENTITY_TYPE,
+        relatedReferenceFields: refType.referencingProperties.map((p) &#x3D;&gt; p.id),
+      }));
+  }
+
+  private getAvailableFields(entityType: EntityConstructor): string[] {
+    if (!entityType?.schema) return [];
+
+    return Array.from(entityType.schema.entries())
+      .filter(([, fieldConfig]) &#x3D;&gt; fieldConfig.label)
+      .map(([fieldId]) &#x3D;&gt; fieldId);
+  }
+
+  private getFieldLabel(fieldId: string): string {
+    if (!fieldId || !this.entityType?.schema) return fieldId;
+    const fieldConfig &#x3D; this.entityType.schema.get(fieldId);
+    return fieldConfig?.label || fieldId;
+  }
+
+  private getEntityLabel(entityType: EntityConstructor): string {
+    return entityType.label || entityType.ENTITY_TYPE;
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'InheritanceOption.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

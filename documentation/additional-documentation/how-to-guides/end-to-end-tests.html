@@ -1,0 +1,266 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	   <link rel="stylesheet" href="../../styles/style.css">
+        <link rel="stylesheet" href="../../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content additional-page">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>End-to-end tests</h1>
+<p>End-to-end tests run the app in the browser using browser-local database. We use
+<a href="https://playwright.dev/">Playwright</a> as the testing framework.</p>
+<p>Before you run the tests you need to start a local development server with <code>npm start</code>. You can use the <code>playwright</code> CLI to run the tests from the terminal or
+start the <a href="https://playwright.dev/docs/test-ui-mode">Playwright UI</a>.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">npx playwright test
+npx playwright test --ui</code></pre></div><p>To debug test runs you can use Playwright’s <a href="https://playwright.dev/docs/trace-viewer">Trace Viewer</a>. On CI traces for
+all test runs are uploaded as artifacts. On the page of a workflow run you can
+find them in “Artifacts” section.</p>
+<h2>Accessibility</h2>
+<p>The tests benefit from an <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility">accessible</a> application. An accesible app make
+tests easier to write, easier to understand, and less flaky.</p>
+<p>When implementing custom components, ensure they are accessible. The simplest
+approach is to use Angular Material components and standard HTML elements, which
+provide good accessibility by default. For custom needs, incorporate <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA">ARIA</a>
+markup.</p>
+<h2>Writing tests</h2>
+<ul>
+<li><p>Review <a href="https://playwright.dev/docs/best-practices">Best Practices</a> from the
+Playwright documentation.</p>
+</li>
+<li><p>Import <code>test</code> and <code>expect</code>, <code>#e2e/fixtures.ts</code> instead of <code>@playwright/test</code>:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">import { expect, test } from &quot;#e2e/fixtures.ts&quot;;</code></pre></div><p>This prepare the application properly and loads it in the browser.</p>
+</li>
+<li><p>Prefer actions over expectations. Instead of the following</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">const someButton = page.getByLabel(&quot;...&quot;)
+await expect(someButton).toBeVisible();
+await someButton.click();</code></pre></div><p>write</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">await page.getByLabel(&quot;...&quot;).click();</code></pre></div></li>
+<li><p>Use accesibility-based locator, in descending preference</p>
+<ul>
+<li><a href="https://playwright.dev/docs/locators#locate-by-label"><code>getByLabel()</code></a></li>
+<li><a href="https://playwright.dev/docs/locators#locate-by-title"><code>getByTitle()</code></a></li>
+<li><a href="https://playwright.dev/docs/locators#locate-by-placeholder"><code>getByPlaceholder()</code></a></li>
+<li><a href="https://playwright.dev/docs/locators#locate-by-role"><code>getByRole()</code></a></li>
+<li><a href="https://playwright.dev/docs/locators#locate-by-text"><code>getByText()</code></a></li>
+</ul>
+<p>Avoid CSS-based locators. If necessary, adjust the accessibility properties in
+HTML templates so that the desired elements can be located.</p>
+</li>
+<li><p>Avoid navigation with <code>page.goto()</code>. Instead, click on the links that lead you
+to the desired page. This avoid reloading the app which is slow.</p>
+</li>
+</ul>
+<h2>Visual regression screenshots</h2>
+<p>Screenshots are captured only when either the CI or SCREENSHOT environment
+variables are set.</p>
+<p>Take screenshots after completing actions and verifying expectations:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">await someButton.click()
+await expect(page.getByText(&quot;Content created&quot;)).toBeVisible()
+await argosScreenshot(page, &quot;content-created&quot;)</code></pre></div><p>This approach captures the app in a stable state rather than during transitions.</p>
+<p>The <code>argosScreenshot()</code> function waits for page stabilization before capturing.
+Use <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-busy"><code>aria-busy=true</code></a> on loading elements to help ensure screenshots
+are taken only when the UI is ready.</p>
+<p>Visual differences between test runs may occur even when no actual changes
+exist. Adjust sensitivity to minor variations using the <a href="https://argos-ci.com/docs/playwright#argosscreenshotpage-name-options"><code>threshold</code>
+option</a>
+in <code>argosScreenshot()</code>. Set a default threshold with <code>argos upload --threshold=...</code></p>
+<h2>AI-Assisted Test Development</h2>
+<p>You can use <a href="https://docs.anthropic.com/en/docs/claude-code/common-workflows#create-custom-slash-commands">Claude Code</a> to write tests based on Gherkin-style scenario steps.
+This requires a Claude account (the &quot;Free&quot; plan may be sufficient for occasional use).</p>
+<p>Start by adding the steps to a test file, e.g. <code>e2e/tests/attendance-tests.spec.ts</code>:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">/*
+TODO: Add a child
+When I navigate to &quot;Children&quot;
+And I click on &quot;Add New&quot;
+Then the heading &quot;Adding new child&quot; is displayed
+When I fill in &quot;&lt;NAME&gt;&quot; in the field &quot;Name&quot;
+And then I click on &quot;Save&quot;.
+Then the heading changes to &quot;&lt;NAME&gt;&quot;
+*/</code></pre></div><p>Then, start <code>claude</code> and run the command <code>/write-e2e-tests e2e/tests/attendance-test.spec.ts</code>. This will create a new test case &quot;Add a
+child&quot;. You can then work with the initial draft and fix it until it passes.</p>
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 2;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
+            var COMPODOC_CURRENT_PAGE_URL = 'end-to-end-tests.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../../js/libs/custom-elements.min.js"></script>
+       <script src="../../js/libs/lit-html.js"></script>
+
+       <script src="../../js/menu-wc.js" defer></script>
+       <script nomodule src="../../js/menu-wc_es5.js" defer></script>
+
+       <script src="../../js/libs/bootstrap-native.js"></script>
+
+       <script src="../../js/libs/es6-shim.min.js"></script>
+       <script src="../../js/libs/EventDispatcher.js"></script>
+       <script src="../../js/libs/promise.min.js"></script>
+
+       <script src="../../js/compodoc.js"></script>
+
+       <script src="../../js/tabs.js"></script>
+       <script src="../../js/menu.js"></script>
+       <script src="../../js/libs/clipboard.min.js"></script>
+       <script src="../../js/libs/prism.js"></script>
+       <script src="../../js/sourceCode.js"></script>
+          <script src="../../js/search/search.js"></script>
+          <script src="../../js/search/lunr.min.js"></script>
+          <script src="../../js/search/search-lunr.js"></script>
+          <script src="../../js/search/search_index.js"></script>
+       <script src="../../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
