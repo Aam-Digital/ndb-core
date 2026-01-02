@@ -10,6 +10,8 @@ import {
 import { MatDialog } from "@angular/material/dialog";
 import { EntityActionsService } from "./entity-actions.service";
 import { asArray } from "app/utils/asArray";
+import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { BulkOperationStateService } from "./bulk-operation-state.service";
 
 /**
  * Bulk edit fields of multiple entities at once.
@@ -21,6 +23,8 @@ export class EntityEditService extends CascadingEntityAction {
   private matDialog = inject(MatDialog);
   private entityActionsService = inject(EntityActionsService);
   private unsavedChanges = inject(UnsavedChangesService);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
+  private bulkOperationState = inject(BulkOperationStateService);
 
   /**
    * Shows a confirmation dialog to the user
@@ -70,14 +74,34 @@ export class EntityEditService extends CascadingEntityAction {
 
     for (const e of newEntities) {
       e[action.selectedField] = action.value;
-      await this.entityMapper.save(e);
     }
 
-    this.unsavedChanges.pending = false;
-    return {
-      success: true,
-      originalEntities,
-      newEntities,
-    };
+    const totalCount = newEntities.length;
+    const progressDialog = this.confirmationDialog.showProgressDialog(
+      $localize`:Bulk edit progress message:Updating 0 of ${totalCount}:count: records...`,
+    );
+
+    // Start bulk operation coordination with expected count
+    this.bulkOperationState.startBulkOperation(progressDialog, totalCount);
+
+    try {
+      // Use bulk save for performance - progress tracking happens in entity-list component
+      await this.entityMapper.saveAll(newEntities);
+
+      // Note: Dialog will be closed when all entity updates are processed in entity-list
+
+      this.unsavedChanges.pending = false;
+      // Don't close dialog here - let BulkOperationStateService handle it when table rendering completes
+
+      return {
+        success: true,
+        originalEntities,
+        newEntities,
+      };
+    } catch (error) {
+      // On error, complete bulk operation immediately
+      this.bulkOperationState.onTableRenderingComplete();
+      throw error;
+    }
   }
 }
