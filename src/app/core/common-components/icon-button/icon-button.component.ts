@@ -27,10 +27,6 @@ export class IconButtonComponent {
   >("mat-stroked-button");
   color = input<"primary" | "accent" | "warn" | undefined>(undefined);
   cssClass = input<string>("");
-  angulartics2On = input<string | undefined>(undefined);
-  angularticsCategory = input<string | undefined>(undefined);
-  angularticsAction = input<string | undefined>(undefined);
-
   buttonClick = output<Event>();
 
   onClick(event: Event): void {

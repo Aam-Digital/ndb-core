@@ -96,19 +96,4 @@ describe("IconButtonComponent", () => {
     const buttonElement = fixture.nativeElement.querySelector("button");
     expect(buttonElement.type).toBe("button");
   });
-
-  it("should apply angulartics2 attributes", () => {
-    fixture.componentRef.setInput("icon", "edit");
-    fixture.componentRef.setInput("angulartics2On", "click");
-    fixture.componentRef.setInput("angularticsCategory", "UserAction");
-    fixture.componentRef.setInput("angularticsAction", "test_action");
-    fixture.detectChanges();
-
-    const buttonElement = fixture.nativeElement.querySelector("button");
-    expect(buttonElement.getAttribute("angulartics2On")).toBe("click");
-    expect(buttonElement.getAttribute("angularticsCategory")).toBe(
-      "UserAction",
-    );
-    expect(buttonElement.getAttribute("angularticsAction")).toBe("test_action");
-  });
 });
