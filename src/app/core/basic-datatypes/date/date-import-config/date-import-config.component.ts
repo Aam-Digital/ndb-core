@@ -66,7 +66,7 @@ export class DateImportConfigComponent {
       // TODO: check and improve the date parsing. Tests fail with moment.js > 2.29
       const date = await dateType.importMapFunction(
         val.value,
-        undefined,
+        undefined, // the schema is not needed here, we can skip loading it
         this.format.value,
       );
       if (date instanceof Date && !isNaN(date.getTime())) {
