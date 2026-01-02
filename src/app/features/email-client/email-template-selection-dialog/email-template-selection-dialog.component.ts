@@ -3,7 +3,12 @@ import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-m
 import { Entity } from "#src/app/core/entity/model/entity";
 import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
 import { Component, inject, OnInit } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatCheckbox } from "@angular/material/checkbox";
 import {
@@ -68,7 +73,7 @@ export interface EmailTemplateSelectionResult {
 export class EmailTemplateSelectionDialogComponent implements OnInit {
   emailTemplateSelectionForm: FormControl = new FormControl();
   emailContentForm = new FormGroup({
-    subject: new FormControl<string>(""),
+    subject: new FormControl<string>("", { validators: [Validators.required] }),
     body: new FormControl<string>(""),
   });
   createNoteControl = new FormControl<boolean>(true);
@@ -92,12 +97,6 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
   async ngOnInit() {
     this.excludedEntitiesCount = this.dialogData.excludedEntitiesCount ?? 0;
     this.isBulkEmail = this.dialogData.isBulk;
-    const pluralLabel =
-      this.entity.getConstructor().labelPlural ?? `${this.entity.getType()}s`;
-    const defaultSubject = this.isBulkEmail
-      ? $localize`Email regarding ${pluralLabel}`
-      : $localize`Email regarding ${this.entity.toString()}`;
-    this.emailContentForm.controls.subject.setValue(defaultSubject);
 
     // Listen to template selection changes and prefill subject/body
     this.emailTemplateSelectionForm.valueChanges
@@ -119,7 +118,7 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
           });
         } else {
           this.emailContentForm.patchValue({
-            subject: defaultSubject,
+            subject: "",
             body: "",
           });
         }
