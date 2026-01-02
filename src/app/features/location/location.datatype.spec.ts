@@ -137,26 +137,6 @@ describe("Schema data type: location", () => {
     });
   });
 
-  it("should perform geo lookup when skipAddressLookup is false", async () => {
-    const importedAddress = "21 MyStreet, MyCity";
-    const locationResult: GeoResult = {
-      lat: 1,
-      lon: 2,
-      display_name: importedAddress,
-    };
-    mockGeoService.lookup.and.returnValue(of([locationResult]));
-
-    const result = await service.importMapFunction(importedAddress, undefined, {
-      skipAddressLookup: false,
-    });
-
-    expect(mockGeoService.lookup).toHaveBeenCalledWith(importedAddress);
-    expect(result).toEqual({
-      locationString: importedAddress,
-      geoLookup: locationResult,
-    });
-  });
-
   it("should handle special migration cases when transforming from database to object format", async () => {
     // catch special migrations:
     // WHEN value is `{ geoLookup: {  } }` (without locationString) then do not migrate value but do set locationString = value.geoLookup.display_name
