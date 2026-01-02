@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -23,6 +23,7 @@ export interface LocationImportConfig {
 @Component({
   selector: "app-location-import-config",
   templateUrl: "./location-import-config.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogModule,
     MatCheckboxModule,
