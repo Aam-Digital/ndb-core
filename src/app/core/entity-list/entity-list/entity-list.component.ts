@@ -43,8 +43,9 @@ import { Sort } from "@angular/material/sort";
 import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
 import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
-import { applyUpdate } from "../../entity/model/entity-update";
+import { applyUpdate, UpdatedEntity } from "../../entity/model/entity-update";
 import { Subscription } from "rxjs";
+import { bufferTime, filter } from "rxjs/operators";
 import { DataFilter } from "../../filter/filters/filters";
 import { EntityCreateButtonComponent } from "../../common-components/entity-create-button/entity-create-button.component";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
@@ -287,17 +288,28 @@ export class EntityListComponent<T extends Entity>
 
     this.updateSubscription = this.entityMapperService
       .receiveUpdates(this.entityConstructor)
-      .pipe(untilDestroyed(this))
-      .subscribe(async (updatedEntity) => {
-        // get specially enhanced entity if necessary
-        if (this.loaderMethod && this.entitySpecialLoader) {
-          updatedEntity = await this.entitySpecialLoader.extendUpdatedEntity(
-            this.loaderMethod,
-            updatedEntity,
-          );
+      .pipe(
+        untilDestroyed(this),
+        // combine all events within 1s into an array to avoid too many updates
+        bufferTime(1000),
+        filter((updates) => updates.length > 0),
+      )
+      .subscribe(async (updatedEntities: UpdatedEntity<T>[]) => {
+        let records = this.allEntities;
+
+        for (let updatedEntity of updatedEntities) {
+          //get specially enhanced entity if necessary
+          if (this.loaderMethod && this.entitySpecialLoader) {
+            updatedEntity = await this.entitySpecialLoader.extendUpdatedEntity(
+              this.loaderMethod,
+              updatedEntity,
+            );
+          }
+
+          records = applyUpdate(records, updatedEntity);
         }
 
-        this.allEntities = applyUpdate(this.allEntities, updatedEntity);
+        this.allEntities = records;
       });
   }
 
