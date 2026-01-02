@@ -33,7 +33,7 @@ export interface LocationImportConfig {
 })
 export class LocationImportConfigComponent {
   data = inject<MappingDialogData>(MAT_DIALOG_DATA);
-  private dialog = inject<MatDialogRef<any>>(MatDialogRef);
+  private readonly dialog = inject<MatDialogRef<any>>(MatDialogRef);
 
   skipAddressLookup = new FormControl(false);
 
