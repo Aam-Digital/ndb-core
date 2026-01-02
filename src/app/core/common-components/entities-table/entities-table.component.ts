@@ -258,12 +258,6 @@ export class EntitiesTableComponent<
   /** output the currently displayed records, whenever filters for the user change */
   @Output() filteredRecordsChange = new EventEmitter<T[]>(true);
 
-  /** Indicate if table is being updated after bulk operation */
-  @Input() isBulkOperation: boolean = false;
-
-  /** emitted when bulk operation table rendering is complete */
-  @Output() bulkOperationRenderingComplete = new EventEmitter<void>();
-
   private updateFilteredData() {
     this.addActiveInactiveFilter(this._filter);
     const filterPredicate = this.filterService.getFilterPredicate(this._filter);
@@ -271,15 +265,6 @@ export class EntitiesTableComponent<
     this.recordsDataSource.data = filteredData.map((record) => ({ record }));
 
     this.filteredRecordsChange.emit(filteredData);
-
-    if (this.isBulkOperation) {
-      // Use setTimeout and requestAnimationFrame to detect when UI rendering is complete
-      setTimeout(() => {
-        requestAnimationFrame(() => {
-          this.bulkOperationRenderingComplete.emit();
-        });
-      });
-    }
   }
 
   @Input() set filterFreetext(value: string) {

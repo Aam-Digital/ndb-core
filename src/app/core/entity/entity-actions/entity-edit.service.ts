@@ -24,7 +24,7 @@ export class EntityEditService extends CascadingEntityAction {
   private entityActionsService = inject(EntityActionsService);
   private unsavedChanges = inject(UnsavedChangesService);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
-  private readonly bulkOperationState = inject(BulkOperationStateService);
+  private bulkOperationState = inject(BulkOperationStateService);
 
   /**
    * Shows a confirmation dialog to the user
@@ -76,18 +76,32 @@ export class EntityEditService extends CascadingEntityAction {
       e[action.selectedField] = action.value;
     }
 
+    const totalCount = newEntities.length;
     const progressDialog = this.confirmationDialog.showProgressDialog(
-      $localize`:Bulk edit progress message:Updating ${newEntities.length}:count: records...`,
+      $localize`:Bulk edit progress message:Updating 0 of ${totalCount}:count: records...`,
     );
-    this.bulkOperationState.startBulkOperation(progressDialog);
-    await this.entityMapper.saveAll(newEntities);
 
-    this.unsavedChanges.pending = false;
+    // Start bulk operation coordination with expected count
+    this.bulkOperationState.startBulkOperation(progressDialog, totalCount);
 
-    return {
-      success: true,
-      originalEntities,
-      newEntities,
-    };
+    try {
+      // Use bulk save for performance - progress tracking happens in entity-list component
+      await this.entityMapper.saveAll(newEntities);
+
+      // Note: Dialog will be closed when all entity updates are processed in entity-list
+
+      this.unsavedChanges.pending = false;
+      // Don't close dialog here - let BulkOperationStateService handle it when table rendering completes
+
+      return {
+        success: true,
+        originalEntities,
+        newEntities,
+      };
+    } catch (error) {
+      // On error, complete bulk operation immediately
+      this.bulkOperationState.onTableRenderingComplete();
+      throw error;
+    }
   }
 }

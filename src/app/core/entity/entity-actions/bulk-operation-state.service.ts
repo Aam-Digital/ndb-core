@@ -1,26 +1,53 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 
+interface ProgressDialogRef {
+  close(): void;
+  componentInstance?: {
+    updateMessage?(message: string): void;
+  };
+}
+
 /**
- * Service to get bulk operation status between bulk action services and entity-list component
+ * Service to communicate bulk operation status between edit service and list components
  */
 @Injectable({
   providedIn: "root",
 })
 export class BulkOperationStateService implements OnDestroy {
-  private readonly bulkOperationState = new BehaviorSubject<boolean>(false);
-  private progressDialogRef: any = null;
-  private debounceTimer: ReturnType<typeof setTimeout> | null = null;
-  private readonly DEBOUNCE_DELAY = 2000;
+  private bulkOperationState = new BehaviorSubject<boolean>(false);
+  private progressDialogRef: ProgressDialogRef | null = null;
+  private expectedUpdateCount = 0;
 
   isBulkOperationInProgress$ = this.bulkOperationState.asObservable();
 
   /**
    * Start a bulk operation
    */
-  startBulkOperation(progressDialogRef?: any) {
-    this.progressDialogRef = progressDialogRef;
+  startBulkOperation(
+    progressDialogRef?: ProgressDialogRef,
+    expectedCount?: number,
+  ) {
+    this.progressDialogRef = progressDialogRef || null;
+    this.expectedUpdateCount = expectedCount || 0;
     this.bulkOperationState.next(true);
+  }
+
+  /**
+   * Get expected update count
+   */
+  getExpectedUpdateCount(): number {
+    return this.expectedUpdateCount;
+  }
+
+  /**
+   * Update progress dialog with current progress
+   */
+  updateProgress(current: number, total: number) {
+    if (this.progressDialogRef?.componentInstance?.updateMessage) {
+      const message = `Updated ${current} of ${total} records...`;
+      this.progressDialogRef.componentInstance.updateMessage(message);
+    }
   }
 
   /**
@@ -31,14 +58,7 @@ export class BulkOperationStateService implements OnDestroy {
       return;
     }
 
-    if (this.debounceTimer) {
-      clearTimeout(this.debounceTimer);
-    }
-
-    // Set new timer - only complete operation if no more updates for DEBOUNCE_DELAY
-    this.debounceTimer = setTimeout(() => {
-      this.completeBulkOperation();
-    }, this.DEBOUNCE_DELAY);
+    this.completeBulkOperation();
   }
 
   /**
@@ -50,11 +70,6 @@ export class BulkOperationStateService implements OnDestroy {
       this.progressDialogRef.close();
       this.progressDialogRef = null;
     }
-
-    if (this.debounceTimer) {
-      clearTimeout(this.debounceTimer);
-      this.debounceTimer = null;
-    }
   }
 
   /**
@@ -64,10 +79,11 @@ export class BulkOperationStateService implements OnDestroy {
     return this.bulkOperationState.value;
   }
 
-  ngOnDestroy(): void {
-    if (this.debounceTimer) {
-      clearTimeout(this.debounceTimer);
-      this.debounceTimer = null;
+  ngOnDestroy() {
+    if (this.bulkOperationState.value) {
+      this.completeBulkOperation();
     }
+
+    this.bulkOperationState.complete();
   }
 }

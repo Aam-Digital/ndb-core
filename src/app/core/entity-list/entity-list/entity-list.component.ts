@@ -120,8 +120,7 @@ export class EntityListComponent<T extends Entity>
 
   private readonly publicFormsService = inject(PublicFormsService);
   public publicFormConfigs: PublicFormConfig[] = [];
-
-  private readonly bulkOperationState = inject(BulkOperationStateService);
+  private bulkOperationState = inject(BulkOperationStateService);
 
   @Input() allEntities: T[];
 
@@ -147,6 +146,7 @@ export class EntityListComponent<T extends Entity>
 
   isDesktop: boolean;
 
+  // Bulk operation tracking
   isBulkOperationInProgress: boolean = false;
 
   @Input() title = "";
@@ -217,8 +217,36 @@ export class EntityListComponent<T extends Entity>
     this.bulkOperationState.isBulkOperationInProgress$.subscribe(
       (isInProgress) => {
         this.isBulkOperationInProgress = isInProgress;
+
+        // Reset progress tracking when bulk operation starts
+        if (isInProgress) {
+          this.bulkUpdateCount = 0;
+          // Get expected count from the bulk operation state service
+          this.expectedBulkUpdateCount =
+            this.bulkOperationState.getExpectedUpdateCount();
+        }
       },
     );
+  }
+
+  private updateBulkOperationProgress() {
+    // Update progress dialog through the bulk operation state service
+    if (this.bulkUpdateCount > 0 && this.expectedBulkUpdateCount > 0) {
+      this.bulkOperationState.updateProgress(
+        this.bulkUpdateCount,
+        this.expectedBulkUpdateCount,
+      );
+
+      // Complete bulk operation when all updates are processed
+      if (this.bulkUpdateCount >= this.expectedBulkUpdateCount) {
+        // Use setTimeout and requestAnimationFrame to detect when UI rendering is complete
+        setTimeout(() => {
+          requestAnimationFrame(() => {
+            this.bulkOperationState.onTableRenderingComplete();
+          });
+        }, 0);
+      }
+    }
   }
 
   private async loadPublicFormConfig() {
@@ -281,6 +309,10 @@ export class EntityListComponent<T extends Entity>
 
   private updateSubscription: Subscription;
 
+  // Track bulk operation progress
+  private bulkUpdateCount = 0;
+  private expectedBulkUpdateCount = 0;
+
   private listenToEntityUpdates() {
     if (this.updateSubscription || !this.entityConstructor) {
       return;
@@ -307,6 +339,14 @@ export class EntityListComponent<T extends Entity>
           }
 
           records = applyUpdate(records, updatedEntity);
+
+          // Track bulk operation progress
+          if (this.isBulkOperationInProgress) {
+            this.bulkUpdateCount++;
+
+            // Update progress dialog if available
+            this.updateBulkOperationProgress();
+          }
         }
 
         this.allEntities = records;
@@ -395,9 +435,5 @@ export class EntityListComponent<T extends Entity>
 
   onRowClick(row: T) {
     this.elementClick.emit(row);
-  }
-
-  onBulkOperationComplete() {
-    this.bulkOperationState.onTableRenderingComplete();
   }
 }
