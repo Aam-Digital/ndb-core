@@ -128,19 +128,20 @@
             i18n-matTooltip
           ></fa-icon>
         </div>
+
         <div class="margin-top-regular">
-          <em i18n="Search filter label">Filter the fields</em>
           <mat-form-field appearance="fill" class="full-width">
             <input
               matInput
               [formControl]="searchFilter"
-              placeholder="Search fields..."
-              i18n-placeholder="Search placeholder"
+              placeholder="Search fields"
+              i18n-placeholder
             />
 
             <button
               matIconSuffix
               mat-icon-button
+              class="muted-button"
               (click)="clearSearch()"
               matTooltip="Clear search"
               i18n-matTooltip="Clear search tooltip"
