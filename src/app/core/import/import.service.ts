@@ -259,5 +259,8 @@ export function splitArrayValue(val: any, separator: string = ","): string[] {
   }
 
   // Split by separator and trim whitespace
-  return val.split(separator).map((e) => e.trim()).filter(e => e?.length > 0);
+  return val
+    .split(separator)
+    .map((e) => e.trim())
+    .filter((e) => e?.length > 0);
 }
