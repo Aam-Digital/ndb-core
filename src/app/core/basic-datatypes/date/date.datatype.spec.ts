@@ -29,4 +29,29 @@ describe("Schema data type: date", () => {
     expect(result).toBeUndefined();
     expect(Logging.debug).toHaveBeenCalled();
   });
+
+  it("should parse dates with importMapFunction", async () => {
+    const datatype = new DateDatatype();
+
+    const validDate = await datatype.importMapFunction(
+      "2020-12-31",
+      null,
+      "YYYY-MM-DD",
+    );
+    expect(validDate).toEqual(new Date(2020, 11, 31));
+
+    const invalidDate = await datatype.importMapFunction(
+      "broken date",
+      null,
+      "YYYY-MM-DD",
+    );
+    expect(invalidDate).toBeUndefined();
+
+    const dateTime = await datatype.importMapFunction(
+      "01.01.2025 15:06",
+      null,
+      "DD.MM.YYYY HH:mm",
+    );
+    expect(dateTime).toEqual(new Date(2025, 0, 1, 15, 6));
+  });
 });

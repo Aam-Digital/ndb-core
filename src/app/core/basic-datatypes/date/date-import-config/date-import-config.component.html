@@ -2,18 +2,28 @@
   <mat-form-field>
     <mat-label i18n>Date format</mat-label>
     <input [formControl]="format" matInput />
-    <mat-hint i18n>
-      e.g. YYYY-MM-DD
-      <a
-        href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_time_string_format"
-        target="_blank"
-        rel="noopener"
-        >(help)</a
-      >
+
+    <mat-hint>
+      <div i18n>
+        e.g. YYYY-MM-DD
+        <a
+          href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_time_string_format"
+          target="_blank"
+          rel="noopener"
+          >(help)</a
+        >
+      </div>
+
+      @if (hasLowercaseMM) {
+        <div i18n>
+          Warning: "mm" is used for minutes, for months use "MM" instead.
+        </div>
+      }
+
+      @if (format.errors) {
+        <div class="warning" i18n>This format cannot parse all dates.</div>
+      }
     </mat-hint>
-    @if (format.errors) {
-      <mat-error i18n> Format cannot parse all dates </mat-error>
-    }
   </mat-form-field>
 
   <app-help-button
