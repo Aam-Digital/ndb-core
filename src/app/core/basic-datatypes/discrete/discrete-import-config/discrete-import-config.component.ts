@@ -21,6 +21,7 @@ import { HelpButtonComponent } from "../../../common-components/help-button/help
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { ConfigurableEnumService } from "../../configurable-enum/configurable-enum.service";
 import { DynamicEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/dynamic-edit.component";
+import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 
 /**
  * UI to configure import value mappings for discrete datatypes like boolean or enum.
@@ -38,7 +39,8 @@ import { DynamicEditComponent } from "../../../entity/entity-field-edit/dynamic-
     HelpButtonComponent,
     ReactiveFormsModule,
     DynamicEditComponent,
-  ],
+    HintBoxComponent
+],
 })
 export class DiscreteImportConfigComponent implements OnInit {
   data = inject<MappingDialogData>(MAT_DIALOG_DATA);

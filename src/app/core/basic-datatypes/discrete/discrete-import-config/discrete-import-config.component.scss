@@ -1,13 +1,17 @@
 .mapping-table {
   width: 100%;
-  max-width: 800px;
 }
 
 .mapping-table th {
   text-align: left;
 }
 
+.first-column {
+  width: 40%;
+  max-width: 400px;
+  padding-right: 20px
+}
+
 :host ::ng-deep mat-form-field {
   width: 100%;
-  max-width: 400px;
 }
