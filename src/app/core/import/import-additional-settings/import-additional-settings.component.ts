@@ -1,8 +1,8 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    input,
-    model,
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  model,
 } from "@angular/core";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatFormFieldModule } from "@angular/material/form-field";
