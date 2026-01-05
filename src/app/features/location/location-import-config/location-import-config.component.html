@@ -1,0 +1,20 @@
+<mat-dialog-content>
+  <div class="flex-row gap-regular align-center">
+    <mat-checkbox [formControl]="skipAddressLookup" i18n>
+      Skip address lookup
+    </mat-checkbox>
+    <app-hint-box i18n
+      >Enable this option to import addresses as plain text without attempting
+      to look up geographic coordinates. This is useful when importing large
+      amounts of data to avoid rate limits, or when the addresses don't need map
+      coordinates.</app-hint-box
+    >
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-raised-button color="accent" (click)="save()" i18n>
+    Save & Close
+  </button>
+  <button mat-stroked-button matDialogClose i18n>Cancel</button>
+</mat-dialog-actions>
