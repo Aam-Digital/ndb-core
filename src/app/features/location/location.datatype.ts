@@ -3,6 +3,7 @@ import { lastValueFrom } from "rxjs";
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
 import { GeoLocation } from "./geo-location";
 import { GeoResult, GeoService } from "./geo.service";
+import { LocationImportConfig } from "./location-import-config/location-import-config.component";
 
 @Injectable()
 export class LocationDatatype extends DefaultDatatype<
@@ -16,6 +17,7 @@ export class LocationDatatype extends DefaultDatatype<
 
   override editComponent = "EditLocation";
   override viewComponent = "ViewLocation";
+  override importConfigComponent = "LocationImportConfig";
 
   override transformToObjectFormat(value: GeoLocation): GeoLocation {
     if (typeof value !== "object") {
@@ -45,12 +47,23 @@ export class LocationDatatype extends DefaultDatatype<
     return value;
   }
 
-  override async importMapFunction(val: any): Promise<GeoLocation> {
+  override async importMapFunction(
+    val: any,
+    schemaField?: any,
+    additional?: LocationImportConfig,
+  ): Promise<GeoLocation> {
     if (!val) {
       return undefined;
     }
 
-    const geoResults = await lastValueFrom(this.geoService.lookup(val));
-    return { locationString: val, geoLookup: geoResults[0] };
+    let geoResults: GeoResult[];
+    if (!additional?.skipAddressLookup) {
+      geoResults = await lastValueFrom(this.geoService.lookup(val));
+    }
+
+    return {
+      locationString: val,
+      geoLookup: geoResults ? geoResults[0] : undefined,
+    };
   }
 }
