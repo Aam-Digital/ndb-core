@@ -19,6 +19,7 @@ import { DataFilter, Filter } from "../filters/filters";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltip } from "@angular/material/tooltip";
+import { IconButtonComponent } from "../../common-components/icon-button/icon-button.component";
 
 /**
  * This component can be used to display filters, for example above tables.
@@ -26,7 +27,7 @@ import { MatTooltip } from "@angular/material/tooltip";
 @Component({
   selector: "app-filter",
   templateUrl: "./filter.component.html",
-  imports: [NgComponentOutlet, FontAwesomeModule, MatButtonModule, MatTooltip],
+  imports: [NgComponentOutlet, FontAwesomeModule, MatButtonModule, MatTooltip, IconButtonComponent],
 })
 export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   private filterGenerator = inject(FilterGeneratorService);

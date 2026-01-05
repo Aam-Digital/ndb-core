@@ -5,17 +5,14 @@
 }
 @if (hasActiveFilters || filterString) {
   <div class="align-center flex-row gap-regular">
-    <button
-      mat-stroked-button
-      (click)="clearAllFilters()"
-      matTooltip="Clear all filters"
-      i18n-matTooltip
+    <app-icon-button
+      [icon]="'times-circle'"
+      [buttonType]="'mat-stroked-button'"
+      [cssClass]="'mr-1'"
+      [matTooltip]="'Clear all filters'"
+      (buttonClick)="clearAllFilters()"
     >
-      <fa-icon
-        icon="times-circle"
-        class="mr-1 standard-icon-with-text"
-      ></fa-icon>
       <span i18n>Clear</span>
-    </button>
+    </app-icon-button>
   </div>
 }
