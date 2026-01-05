@@ -112,7 +112,7 @@ describe("AdminEntityFormComponent", () => {
       .filter(([key, value]) => !value.isInternalField)
       .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
       .map(([key]) => key);
-    expect(component.availableFields).toEqual([
+    expect(component.availableFields()).toEqual([
       component.createNewFieldPlaceholder,
       component.createNewTextPlaceholder,
       ...noteUserFacingFields.filter((x) => !fieldsInView.includes(x)),
@@ -124,7 +124,7 @@ describe("AdminEntityFormComponent", () => {
     previousContainer?: ColumnConfig[],
     previousIndex?: number,
   ) {
-    previousContainer = previousContainer ?? component.availableFields;
+    previousContainer = previousContainer ?? component.availableFields();
     previousIndex = previousIndex ?? 0; // "new field" placeholder is always first
 
     return {
@@ -153,7 +153,7 @@ describe("AdminEntityFormComponent", () => {
 
     expect(mockDialog.open).toHaveBeenCalled();
     expect(targetContainer).toEqual(["name", newField.id, "other"]);
-    expect(component.availableFields).toContain(
+    expect(component.availableFields()).toContain(
       component.createNewFieldPlaceholder,
     );
   }));
@@ -167,13 +167,13 @@ describe("AdminEntityFormComponent", () => {
 
     expect(targetContainer).toEqual(["name", "other"]);
     expect(mockDialog.open).toHaveBeenCalled();
-    expect(component.availableFields).toContain(
+    expect(component.availableFields()).toContain(
       component.createNewFieldPlaceholder,
     );
   }));
 
   it("should not create field (show dialog) if new field is dropped on toolbar (available fields)", fakeAsync(() => {
-    component.drop(mockDropNewFieldEvent(component.availableFields));
+    component.drop(mockDropNewFieldEvent(component.availableFields()));
     tick();
 
     expect(mockDialog.open).not.toHaveBeenCalled();
@@ -195,14 +195,14 @@ describe("AdminEntityFormComponent", () => {
   it("should move all fields from removed group to availableFields toolbar", fakeAsync(() => {
     const removedFields = component.config.fieldGroups[0].fields;
     expect(
-      removedFields.some((x) => component.availableFields.includes(x)),
+      removedFields.some((x) => component.availableFields().includes(x)),
     ).not.toBeTrue();
 
     component.removeGroup(0);
     tick();
 
     expect(component.config.fieldGroups).toEqual([{ fields: ["category"] }]);
-    expect(component.availableFields).toEqual(
+    expect(component.availableFields()).toEqual(
       jasmine.arrayContaining(removedFields),
     );
   }));
