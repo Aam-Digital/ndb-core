@@ -233,8 +233,16 @@ export class ImportService {
  * @returns Array of individual string values
  */
 export function splitArrayValue(val: any, separator: string = ","): string[] {
+  if (val === null || val === undefined) {
+    return [];
+  }
+
+  if (Array.isArray(val)) {
+    return val;
+  }
+
   if (typeof val !== "string") {
-    return [val];
+    return [String(val)];
   }
 
   val = val.trim();
