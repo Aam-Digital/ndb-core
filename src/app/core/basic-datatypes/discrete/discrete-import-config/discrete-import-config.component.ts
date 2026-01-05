@@ -75,11 +75,9 @@ export class DiscreteImportConfigComponent implements OnInit {
         continue;
       }
 
-      const parts = splitArrayValue(value, separator);
+      const parts: string[] = splitArrayValue(value, separator);
       parts.forEach((part) => {
-        if (part != null && part !== "") {
-          uniqueValues.add(String(part));
-        }
+        uniqueValues.add(part);
       });
     }
 
