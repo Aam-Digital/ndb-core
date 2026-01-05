@@ -51,9 +51,14 @@ describe("AdminEntityFormComponent", () => {
         formGroup: new FormGroup({}),
       } as EntityForm<any>),
     );
-    mockFormService.extendFormFieldConfig.and.callFake((field) =>
-      toFormFieldConfig(field),
-    );
+    mockFormService.extendFormFieldConfig.and.callFake((field, entityType) => {
+      const fieldConfig = toFormFieldConfig(field);
+      const schemaField = entityType.schema.get(fieldConfig.id);
+      if (schemaField) {
+        return { ...schemaField, ...fieldConfig };
+      }
+      return fieldConfig;
+    });
     mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
 
     TestBed.configureTestingModule({
@@ -107,7 +112,7 @@ describe("AdminEntityFormComponent", () => {
       .filter(([key, value]) => !value.isInternalField)
       .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
       .map(([key]) => key);
-    expect(component.availableFields).toEqual([
+    expect(component.availableFields()).toEqual([
       component.createNewFieldPlaceholder,
       component.createNewTextPlaceholder,
       ...noteUserFacingFields.filter((x) => !fieldsInView.includes(x)),
@@ -119,7 +124,7 @@ describe("AdminEntityFormComponent", () => {
     previousContainer?: ColumnConfig[],
     previousIndex?: number,
   ) {
-    previousContainer = previousContainer ?? component.availableFields;
+    previousContainer = previousContainer ?? component.availableFields();
     previousIndex = previousIndex ?? 0; // "new field" placeholder is always first
 
     return {
@@ -148,7 +153,7 @@ describe("AdminEntityFormComponent", () => {
 
     expect(mockDialog.open).toHaveBeenCalled();
     expect(targetContainer).toEqual(["name", newField.id, "other"]);
-    expect(component.availableFields).toContain(
+    expect(component.availableFields()).toContain(
       component.createNewFieldPlaceholder,
     );
   }));
@@ -162,13 +167,13 @@ describe("AdminEntityFormComponent", () => {
 
     expect(targetContainer).toEqual(["name", "other"]);
     expect(mockDialog.open).toHaveBeenCalled();
-    expect(component.availableFields).toContain(
+    expect(component.availableFields()).toContain(
       component.createNewFieldPlaceholder,
     );
   }));
 
   it("should not create field (show dialog) if new field is dropped on toolbar (available fields)", fakeAsync(() => {
-    component.drop(mockDropNewFieldEvent(component.availableFields));
+    component.drop(mockDropNewFieldEvent(component.availableFields()));
     tick();
 
     expect(mockDialog.open).not.toHaveBeenCalled();
@@ -190,14 +195,14 @@ describe("AdminEntityFormComponent", () => {
   it("should move all fields from removed group to availableFields toolbar", fakeAsync(() => {
     const removedFields = component.config.fieldGroups[0].fields;
     expect(
-      removedFields.some((x) => component.availableFields.includes(x)),
+      removedFields.some((x) => component.availableFields().includes(x)),
     ).not.toBeTrue();
 
     component.removeGroup(0);
     tick();
 
     expect(component.config.fieldGroups).toEqual([{ fields: ["category"] }]);
-    expect(component.availableFields).toEqual(
+    expect(component.availableFields()).toEqual(
       jasmine.arrayContaining(removedFields),
     );
   }));
@@ -224,5 +229,73 @@ describe("AdminEntityFormComponent", () => {
       "test",
       field,
     );
+  }));
+
+  it("should filter fields by field ID and label when searching", async () => {
+    TestEntity.schema.set("uniqueTestFieldId", {
+      label: "Special Label",
+      dataType: "text",
+    });
+    TestEntity.schema.set("anotherFieldForTest", {
+      label: "Another Label",
+      dataType: "text",
+    });
+
+    try {
+      component.config = {
+        fieldGroups: [{ fields: ["other"] }],
+      };
+
+      await component.ngOnChanges({ config: true as any });
+
+      // Test filtering by field ID
+      component.searchFilter.setValue("uniqueTest");
+      fixture.detectChanges();
+
+      let filteredFields = component.filteredFields();
+      let nonPlaceholderFields = filteredFields.filter(
+        (f) =>
+          f !== component.createNewFieldPlaceholder &&
+          f !== component.createNewTextPlaceholder,
+      );
+
+      expect(nonPlaceholderFields).toContain("uniqueTestFieldId");
+      expect(nonPlaceholderFields).not.toContain("name");
+      expect(nonPlaceholderFields).not.toContain("category");
+      expect(nonPlaceholderFields).not.toContain("anotherFieldForTest");
+
+      // Test filtering by label
+      component.searchFilter.setValue("Special Label");
+      fixture.detectChanges();
+
+      filteredFields = component.filteredFields();
+      nonPlaceholderFields = filteredFields.filter(
+        (f) =>
+          f !== component.createNewFieldPlaceholder &&
+          f !== component.createNewTextPlaceholder,
+      );
+
+      expect(nonPlaceholderFields).toContain("uniqueTestFieldId");
+      expect(nonPlaceholderFields).not.toContain("name");
+      expect(nonPlaceholderFields).not.toContain("category");
+      expect(nonPlaceholderFields).not.toContain("anotherFieldForTest");
+    } finally {
+      TestEntity.schema.delete("uniqueTestFieldId");
+      TestEntity.schema.delete("anotherFieldForTest");
+    }
+  });
+
+  it("should prefill label when creating new field with search text", fakeAsync(() => {
+    component.searchFilter.setValue("testField");
+    mockDialog.open.and.returnValue({
+      afterClosed: () => of({ id: "testField" }),
+    } as any);
+
+    component.openFieldConfig(component.createNewFieldPlaceholder);
+    tick();
+
+    const dialogData = mockDialog.open.calls.mostRecent().args[1].data as any;
+    expect(dialogData.entitySchemaField.label).toBe("testField");
+    expect(dialogData.entitySchemaField.id).toBeNull();
   }));
 });
