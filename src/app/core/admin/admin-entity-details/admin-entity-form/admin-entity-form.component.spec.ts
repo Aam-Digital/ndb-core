@@ -51,9 +51,14 @@ describe("AdminEntityFormComponent", () => {
         formGroup: new FormGroup({}),
       } as EntityForm<any>),
     );
-    mockFormService.extendFormFieldConfig.and.callFake((field) =>
-      toFormFieldConfig(field),
-    );
+    mockFormService.extendFormFieldConfig.and.callFake((field, entityType) => {
+      const fieldConfig = toFormFieldConfig(field);
+      const schemaField = entityType.schema.get(fieldConfig.id);
+      if (schemaField) {
+        return { ...schemaField, ...fieldConfig };
+      }
+      return fieldConfig;
+    });
     mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
 
     TestBed.configureTestingModule({
@@ -227,39 +232,57 @@ describe("AdminEntityFormComponent", () => {
   }));
 
   it("should filter fields by field ID and label when searching", async () => {
-    component.config = {
-      fieldGroups: [{ fields: ["other"] }],
-    };
-    await component.ngOnChanges({ config: true as any });
+    TestEntity.schema.set("uniqueTestFieldId", {
+      label: "Special Label",
+      dataType: "text",
+    });
+    TestEntity.schema.set("anotherFieldForTest", {
+      label: "Another Label",
+      dataType: "text",
+    });
 
-    //filtering by field ID
-    component.searchFilter.setValue("nam");
-    fixture.detectChanges();
+    try {
+      component.config = {
+        fieldGroups: [{ fields: ["other"] }],
+      };
 
-    let filteredFields = component.filteredFields();
-    let nonPlaceholderFields = filteredFields.filter(
-      (f) =>
-        f !== component.createNewFieldPlaceholder &&
-        f !== component.createNewTextPlaceholder,
-    );
+      await component.ngOnChanges({ config: true as any });
 
-    expect(nonPlaceholderFields).toContain("name");
-    expect(nonPlaceholderFields).not.toContain("category");
+      // Test filtering by field ID
+      component.searchFilter.setValue("uniqueTest");
+      fixture.detectChanges();
 
-    //filtering by label
-    component.searchFilter.setValue("Date");
-    fixture.detectChanges();
+      let filteredFields = component.filteredFields();
+      let nonPlaceholderFields = filteredFields.filter(
+        (f) =>
+          f !== component.createNewFieldPlaceholder &&
+          f !== component.createNewTextPlaceholder,
+      );
 
-    filteredFields = component.filteredFields();
-    nonPlaceholderFields = filteredFields.filter(
-      (f) =>
-        f !== component.createNewFieldPlaceholder &&
-        f !== component.createNewTextPlaceholder,
-    );
+      expect(nonPlaceholderFields).toContain("uniqueTestFieldId");
+      expect(nonPlaceholderFields).not.toContain("name");
+      expect(nonPlaceholderFields).not.toContain("category");
+      expect(nonPlaceholderFields).not.toContain("anotherFieldForTest");
 
-    expect(nonPlaceholderFields).toContain("dateOfBirth");
-    expect(nonPlaceholderFields).not.toContain("name");
-    expect(nonPlaceholderFields).not.toContain("category");
+      // Test filtering by label
+      component.searchFilter.setValue("Special Label");
+      fixture.detectChanges();
+
+      filteredFields = component.filteredFields();
+      nonPlaceholderFields = filteredFields.filter(
+        (f) =>
+          f !== component.createNewFieldPlaceholder &&
+          f !== component.createNewTextPlaceholder,
+      );
+
+      expect(nonPlaceholderFields).toContain("uniqueTestFieldId");
+      expect(nonPlaceholderFields).not.toContain("name");
+      expect(nonPlaceholderFields).not.toContain("category");
+      expect(nonPlaceholderFields).not.toContain("anotherFieldForTest");
+    } finally {
+      TestEntity.schema.delete("uniqueTestFieldId");
+      TestEntity.schema.delete("anotherFieldForTest");
+    }
   });
 
   it("should prefill label when creating new field with search text", fakeAsync(() => {
