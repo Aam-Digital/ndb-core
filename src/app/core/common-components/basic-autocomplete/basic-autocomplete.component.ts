@@ -278,9 +278,7 @@ export class BasicAutocompleteComponent<O, V = O>
       ".mat-mdc-form-field, .mat-form-field",
     ) as HTMLElement;
     const fieldWidth = fieldEl ? fieldEl.getBoundingClientRect().width : 200;
-    setTimeout(() => {
-      this.panelWidth = `${fieldWidth}px`;
-    });
+    this.panelWidth = `${fieldWidth}px`;
   }
 
   drop(event: CdkDragDrop<any[]>) {
