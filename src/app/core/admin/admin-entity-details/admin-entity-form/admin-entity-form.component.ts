@@ -14,6 +14,7 @@ import {
   OnChanges,
   Output,
   signal,
+  WritableSignal,
   SimpleChanges,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -253,7 +254,6 @@ export class AdminEntityFormComponent implements OnChanges {
         entitySchemaField: entitySchemaField,
         entityType: this.entityType,
         overwriteLocally: !this.updateEntitySchema,
-        prefillIdFromLabel: true,
       } as AdminEntityFieldData,
     });
 
@@ -306,15 +306,12 @@ export class AdminEntityFormComponent implements OnChanges {
       // if transferring from filtered available fields, find the actual field in availableFields and remove it from there
       if (prevFieldsArray === this.filteredFields()) {
         const transferredField = prevFieldsArray[event.previousIndex];
-        const actualIndex = this.availableFields.findIndex(
-          (field) => field === transferredField,
+        this.transferArraySignalItem(
+          this.availableFieldsSignal,
+          newFieldsArray,
+          transferredField,
+          event.currentIndex,
         );
-        if (actualIndex !== -1) {
-          // remove from actual availableFields array
-          this.availableFields.splice(actualIndex, 1);
-          newFieldsArray.splice(event.currentIndex, 0, transferredField);
-          this.availableFieldsSignal.set([...this.availableFields]);
-        }
       } else {
         transferArrayItem(
           prevFieldsArray,
@@ -337,6 +334,26 @@ export class AdminEntityFormComponent implements OnChanges {
     moveItemInArray(fieldGroupsArray, event.previousIndex, event.currentIndex);
 
     this.emitUpdatedConfig();
+  }
+
+  /**
+   * Helper method to transfer an item from a source signal array to a target array
+   */
+  private transferArraySignalItem(
+    sourceSignal: WritableSignal<ColumnConfig[]>,
+    targetArray: ColumnConfig[],
+    transferredField: ColumnConfig,
+    targetIndex: number,
+  ): void {
+    const actualIndex = sourceSignal().findIndex(
+      (field) => field === transferredField,
+    );
+    if (actualIndex !== -1) {
+      sourceSignal.update((fields) =>
+        fields.filter((_, index) => index !== actualIndex),
+      );
+      targetArray.splice(targetIndex, 0, transferredField);
+    }
   }
 
   /**

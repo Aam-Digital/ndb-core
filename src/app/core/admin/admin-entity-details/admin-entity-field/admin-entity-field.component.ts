@@ -61,9 +61,6 @@ export interface AdminEntityFieldData {
    * Use to prevent changes to config that are required to be consistent across all uses of the field.
    */
   overwriteLocally: boolean;
-
-  /** Whether to prefill the field ID from the label on new fields */
-  prefillIdFromLabel?: boolean;
 }
 
 /**
@@ -123,8 +120,8 @@ export class AdminEntityFieldComponent implements OnInit {
       this.lockGlobalFields();
     }
 
-    // Auto-generate ID from label for new fields (e.g., when creating a field from search text in admin form)
-    if (this.data.prefillIdFromLabel && !this.data.entitySchemaField.id) {
+    // Auto-generate ID if not yet set
+    if (!this.data.entitySchemaField.id) {
       this.autoGenerateId();
     }
     this.initAvailableDatatypes(
