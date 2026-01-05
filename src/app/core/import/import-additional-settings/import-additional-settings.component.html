@@ -1,0 +1,30 @@
+<mat-expansion-panel [disabled]="!entityType()">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <span i18n>Additional Settings [optional]</span>
+      <app-help-button
+        style="float: right"
+        text="Configure additional settings for the import process.
+              First select an import type above to enable this section."
+        i18n-text="import - additional settings - help text"
+      >
+      </app-help-button>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <div class="settings-content">
+    <mat-form-field>
+      <mat-label i18n>Multi-value separator</mat-label>
+      <app-basic-autocomplete
+        [(ngModel)]="multiValueSeparator"
+        [options]="separatorOptions"
+        [createOption]="createCustomSeparator"
+      ></app-basic-autocomplete>
+      <app-help-button
+        text="Which character is used in columns that include values of multi-select options."
+        i18n
+      >
+      </app-help-button>
+    </mat-form-field>
+  </div>
+</mat-expansion-panel>

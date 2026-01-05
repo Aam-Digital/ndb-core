@@ -3,6 +3,7 @@ import { Entity } from "../entity/model/entity";
 import { DatabaseField } from "../entity/database-field.decorator";
 import { ColumnMapping } from "./column-mapping";
 import { AdditionalImportAction } from "./additional-actions/additional-import-action";
+import { ImportAdditionalSettings } from "./import-additional-settings/import-additional-settings.component";
 
 /**
  * Details of a previously executed import of data saved to the database to keep a history.
@@ -72,5 +73,9 @@ export interface ImportSettings {
 
   /** IDs of fields used to match imported data to an existing record */
   matchExistingByFields?: string[];
+
+  /** additional settings for parsing import data */
+  additionalSettings?: ImportAdditionalSettings;
+
   filename?: string;
 }

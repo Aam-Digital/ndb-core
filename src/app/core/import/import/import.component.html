@@ -77,6 +77,11 @@
         [(entityType)]="importSettings.entityType"
       ></app-import-entity-type>
 
+      <app-import-additional-settings
+        [entityType]="importSettings.entityType"
+        [(settings)]="importSettings.additionalSettings"
+      ></app-import-additional-settings>
+
       <app-import-additional-actions
         [entityType]="importSettings.entityType"
         [(importActions)]="importSettings.additionalActions"
@@ -124,6 +129,7 @@
         [columnMapping]="importSettings.columnMapping"
         (columnMappingChange)="onColumnMappingUpdate($event)"
         [rawData]="rawData"
+        [additionalSettings]="importSettings.additionalSettings"
       ></app-import-column-mapping>
     </ng-template>
   </mat-step>
@@ -153,6 +159,7 @@
         [rawData]="rawData"
         [entityType]="importSettings.entityType"
         [columnMapping]="importSettings.columnMapping"
+        [additionalSettings]="importSettings.additionalSettings"
         [additionalActions]="importSettings.additionalActions"
         [matchExistingByFields]="importSettings.matchExistingByFields"
         [filename]="importSettings.filename"

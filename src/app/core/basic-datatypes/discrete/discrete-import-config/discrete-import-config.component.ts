@@ -14,10 +14,10 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
+import { splitArrayValue } from "app/core/import/import.service";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { KeyValuePipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
-import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { ConfigurableEnumService } from "../../configurable-enum/configurable-enum.service";
 import { DynamicEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/dynamic-edit.component";
@@ -36,11 +36,10 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
     MatFormFieldModule,
     KeyValuePipe,
     MatButtonModule,
-    HelpButtonComponent,
     ReactiveFormsModule,
     DynamicEditComponent,
-    HintBoxComponent
-],
+    HintBoxComponent,
+  ],
 })
 export class DiscreteImportConfigComponent implements OnInit {
   data = inject<MappingDialogData>(MAT_DIALOG_DATA);
@@ -58,10 +57,36 @@ export class DiscreteImportConfigComponent implements OnInit {
     this.schema = this.data.entityType.schema.get(this.data.col.propertyName);
     this.component = this.schemaService.getComponent(this.schema, "edit");
 
-    this.form = this.fb.group(this.getFormValues(this.data.col.additional));
+    const splitValues = this.splitAndFlattenValues(this.data.values);
+    this.form = this.fb.group(
+      this.getFormValues(this.data.col.additional, splitValues),
+    );
   }
 
-  private getFormValues(additional: any) {
+  /**
+   * Split raw values using the configured separator and return unique individual values.
+   */
+  private splitAndFlattenValues(values: any[]): string[] {
+    const separator = this.data.additionalSettings?.multiValueSeparator ?? ",";
+    const uniqueValues = new Set<string>();
+
+    for (const value of values) {
+      if (value == null || value === "") {
+        continue;
+      }
+
+      const parts = splitArrayValue(value, separator);
+      parts.forEach((part) => {
+        if (part != null && part !== "") {
+          uniqueValues.add(String(part).trim());
+        }
+      });
+    }
+
+    return [...uniqueValues];
+  }
+
+  private getFormValues(additional: any, values: string[]) {
     additional = additional || {};
 
     let enumOptions = [];
@@ -73,7 +98,7 @@ export class DiscreteImportConfigComponent implements OnInit {
     }
 
     const formObj = {};
-    for (const value of this.data.values.filter(Boolean)) {
+    for (const value of values) {
       let initialValue: string;
 
       if (value in additional) {

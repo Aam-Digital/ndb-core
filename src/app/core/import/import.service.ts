@@ -167,7 +167,7 @@ export class ImportService {
     val: any,
     mapping: ColumnMapping,
     entity: Entity,
-    importProcessingContext: any,
+    importProcessingContext: ImportProcessingContext,
   ) {
     if (val === undefined || val === null) {
       return undefined;
@@ -189,7 +189,10 @@ export class ImportService {
       );
     } else {
       // For array fields, split the value and map each item individually
-      const rawValues = splitArrayValue(val);
+      const separator =
+        importProcessingContext.importSettings.additionalSettings
+          ?.multiValueSeparator ?? ",";
+      const rawValues = splitArrayValue(val, separator);
       value = [];
       for (const rawValue of rawValues) {
         const mapped = await datatype.importMapFunction(
@@ -205,6 +208,8 @@ export class ImportService {
           value.push(mapped);
         }
       }
+      // Filter duplicate values
+      value = [...new Set(value)];
     }
 
     // ignore empty or invalid values for import
@@ -222,11 +227,12 @@ export class ImportService {
 
 /**
  * Split a raw value into an array of individual values.
- * Supports JSON arrays and comma-separated strings.
+ * Supports JSON arrays and separator-delimited strings.
  * @param val The raw value to split
+ * @param separator The separator character to use for splitting (default: ",")
  * @returns Array of individual string values
  */
-function splitArrayValue(val: any): string[] {
+export function splitArrayValue(val: any, separator: string = ","): string[] {
   if (typeof val !== "string") {
     return [val];
   }
@@ -239,10 +245,10 @@ function splitArrayValue(val: any): string[] {
         return parsed;
       }
     } catch {
-      // Invalid JSON, fall through to comma-separated parsing
+      // Invalid JSON, fall through to separator-based parsing
     }
   }
 
-  // Split by comma and trim whitespace
-  return val.split(",").map((item) => item.trim());
+  // Split by separator and trim whitespace
+  return val.split(separator).map((item) => item.trim());
 }

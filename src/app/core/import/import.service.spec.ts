@@ -252,4 +252,78 @@ describe("ImportService", () => {
     expect(parsedEntities[3].items).toBeUndefined();
     expect(parsedEntities[4].items).toEqual(['["broken"']); // invalid JSON treated as single string value
   });
+
+  it("should parse array fields using configured separator", async () => {
+    class ArrayImportTestEntity extends Entity {
+      @DatabaseField() name: string;
+      @DatabaseField({ isArray: true }) items: string[];
+    }
+
+    spyOn(TestBed.inject(EntityRegistry), "get").and.returnValue(
+      ArrayImportTestEntity,
+    );
+
+    const rawData: any[] = [
+      { name: "semicolon-separated", items: "one; two; three" },
+      { name: "mixed separators", items: "one, with comma; two" },
+    ];
+    const columnMapping: ColumnMapping[] = [
+      { column: "name", propertyName: "name" },
+      { column: "items", propertyName: "items" },
+    ];
+
+    // Test with semicolon separator
+    const parsedEntities = (await service.transformRawDataToEntities(rawData, {
+      entityType: "ArrayImportTestEntity",
+      columnMapping,
+      additionalSettings: { multiValueSeparator: ";" },
+    })) as ArrayImportTestEntity[];
+
+    expect(parsedEntities.length).toBe(2);
+    expect(parsedEntities[0].items).toEqual(["one", "two", "three"]);
+    expect(parsedEntities[1].items).toEqual(["one, with comma", "two"]);
+
+    // Test with comma separator (same raw data, different expectations)
+    const parsedEntitiesComma = (await service.transformRawDataToEntities(
+      rawData,
+      {
+        entityType: "ArrayImportTestEntity",
+        columnMapping,
+        additionalSettings: { multiValueSeparator: "," },
+      },
+    )) as ArrayImportTestEntity[];
+
+    expect(parsedEntitiesComma.length).toBe(2);
+    expect(parsedEntitiesComma[0].items).toEqual(["one; two; three"]);
+    expect(parsedEntitiesComma[1].items).toEqual(["one", "with comma; two"]);
+  });
+
+  it("should filter duplicate values in array fields", async () => {
+    class ArrayImportTestEntity extends Entity {
+      @DatabaseField() name: string;
+      @DatabaseField({ isArray: true }) items: string[];
+    }
+
+    spyOn(TestBed.inject(EntityRegistry), "get").and.returnValue(
+      ArrayImportTestEntity,
+    );
+
+    const rawData: any[] = [
+      { name: "with duplicates", items: "a, b, a, c, b" },
+      { name: "json with duplicates", items: '["x", "y", "x"]' },
+    ];
+    const columnMapping: ColumnMapping[] = [
+      { column: "name", propertyName: "name" },
+      { column: "items", propertyName: "items" },
+    ];
+
+    const parsedEntities = (await service.transformRawDataToEntities(rawData, {
+      entityType: "ArrayImportTestEntity",
+      columnMapping,
+    })) as ArrayImportTestEntity[];
+
+    expect(parsedEntities.length).toBe(2);
+    expect(parsedEntities[0].items).toEqual(["a", "b", "c"]);
+    expect(parsedEntities[1].items).toEqual(["x", "y"]);
+  });
 });
