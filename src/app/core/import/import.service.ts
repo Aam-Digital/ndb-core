@@ -237,6 +237,7 @@ export function splitArrayValue(val: any, separator: string = ","): string[] {
     return [val];
   }
 
+  val = val.trim();
   // Try parsing as JSON array first
   if (val.startsWith("[")) {
     try {
