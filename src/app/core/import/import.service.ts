@@ -167,7 +167,7 @@ export class ImportService {
     val: any,
     mapping: ColumnMapping,
     entity: Entity,
-    importProcessingContext: any,
+    importProcessingContext: ImportProcessingContext,
   ) {
     if (val === undefined || val === null) {
       return undefined;
@@ -178,24 +178,89 @@ export class ImportService {
       return undefined;
     }
 
-    let value = await this.schemaService
-      .getDatatypeOrDefault(schema.dataType)
-      .importMapFunction(
+    const datatype = this.schemaService.getDatatypeOrDefault(schema.dataType);
+    let value;
+    if (!schema.isArray) {
+      value = await datatype.importMapFunction(
         val,
         schema,
         mapping.additional,
         importProcessingContext,
       );
+    } else {
+      // For array fields, split the value and map each item individually
+      const separator =
+        importProcessingContext.importSettings.additionalSettings
+          ?.multiValueSeparator ?? ",";
+      const rawValues = splitArrayValue(val, separator);
+      value = [];
+      for (const rawValue of rawValues) {
+        const mapped = await datatype.importMapFunction(
+          rawValue,
+          {
+            ...schema,
+            isArray: false, // transform here only for single values, array mapping is handled here separately
+          },
+          mapping.additional,
+          importProcessingContext,
+        );
+        if (mapped !== undefined && mapped !== null && mapped !== "") {
+          value.push(mapped);
+        }
+      }
+      // Filter duplicate values
+      value = [...new Set(value)];
+    }
 
     // ignore empty or invalid values for import
-    if (!value && value !== 0 && value !== false) {
+    if (
+      (!value && value !== 0 && value !== false) ||
+      (Array.isArray(value) && value.length === 0)
+    ) {
       // falsy values except 0 (=> null, undefined, empty string, NaN, ...)
       return undefined;
     }
 
-    // enforcing array values to be correctly assigned
-    value = schema.isArray && !Array.isArray(value) ? [value] : value;
-
     return value;
   }
+}
+
+/**
+ * Split a raw value into an array of individual values.
+ * Supports JSON arrays and separator-delimited strings.
+ * @param val The raw value to split
+ * @param separator The separator character to use for splitting (default: ",")
+ * @returns Array of individual string values
+ */
+export function splitArrayValue(val: any, separator: string = ","): string[] {
+  if (val === null || val === undefined) {
+    return [];
+  }
+
+  if (Array.isArray(val)) {
+    return val;
+  }
+
+  if (typeof val !== "string") {
+    return [String(val)];
+  }
+
+  val = val.trim();
+  // Try parsing as JSON array first
+  if (val.startsWith("[")) {
+    try {
+      const parsed = JSON.parse(val);
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    } catch {
+      // Invalid JSON, fall through to separator-based parsing
+    }
+  }
+
+  // Split by separator and trim whitespace
+  return val
+    .split(separator)
+    .map((e) => e.trim())
+    .filter((e) => e?.length > 0);
 }

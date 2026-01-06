@@ -63,6 +63,7 @@ describe("EditImportColumnMappingComponent", () => {
     component.rawData = rawData;
     component.entityCtor = TestEntity;
     component.columnMapping = { column: "gender" };
+    component.additionalSettings = { multiValueSeparator: ";" };
     dialogSpy.open.and.returnValue({ afterClosed: () => of(undefined) } as any);
 
     const genderColumn = component.columnMapping;
@@ -79,6 +80,7 @@ describe("EditImportColumnMappingComponent", () => {
           col: genderColumn,
           values: ["male", "female"],
           entityType: TestEntity,
+          additionalSettings: { multiValueSeparator: ";" },
         },
       }),
     );

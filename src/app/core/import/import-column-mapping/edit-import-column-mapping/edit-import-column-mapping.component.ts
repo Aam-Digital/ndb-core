@@ -22,6 +22,7 @@ import { MatBadgeModule } from "@angular/material/badge";
 import { MappingDialogData } from "../mapping-dialog-data";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltip } from "@angular/material/tooltip";
+import { ImportAdditionalSettings } from "../../import-additional-settings/import-additional-settings.component";
 
 /**
  * Component to edit a single imported column's mapping to an entity field
@@ -76,6 +77,11 @@ export class EditImportColumnMappingComponent implements OnChanges {
    */
   @Input() rawData: any[];
 
+  /**
+   * Additional settings for import processing
+   */
+  @Input() additionalSettings: ImportAdditionalSettings;
+
   @Output() columnMappingChange = new EventEmitter<ColumnMapping>();
 
   currentlyMappedDatatype: DefaultDatatype;
@@ -124,6 +130,7 @@ export class EditImportColumnMappingComponent implements OnChanges {
           col: this.columnMapping,
           values: [...uniqueValues],
           entityType: this.entityCtor,
+          additionalSettings: this.additionalSettings,
         },
         width: "80vw",
         disableClose: true,
