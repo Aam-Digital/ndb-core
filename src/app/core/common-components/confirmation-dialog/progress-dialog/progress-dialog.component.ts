@@ -18,11 +18,6 @@ export class ProgressDialogComponent {
   // Use signal for reactive message updates
   message = signal(this.initialData.message);
 
-  // Keep data property for backward compatibility
-  get data() {
-    return { message: this.message() };
-  }
-
   updateMessage(newMessage: string) {
     this.message.set(newMessage);
   }
