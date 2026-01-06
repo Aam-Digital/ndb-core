@@ -1,4 +1,4 @@
-import { inject, Injectable, Injector } from "@angular/core";
+import { inject, Injectable, Injector, signal } from "@angular/core";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { Entity } from "../model/entity";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -149,7 +149,9 @@ export class EntityActionsService {
     // Undo Action
     snackBarRef.onAction().subscribe(async () => {
       const undoProgressRef = this.confirmationDialog.showProgressDialog(
-        $localize`:Undo record action progress dialog: Reverting changes ...`,
+        signal(
+          $localize`:Undo record action progress dialog: Reverting changes ...`,
+        ),
       );
       await this.entityMapper.saveAll(previousEntitiesForUndo, true);
       undoProgressRef.close();
@@ -205,7 +207,7 @@ export class EntityActionsService {
     }
 
     const progressDialogRef = this.confirmationDialog.showProgressDialog(
-      $localize`:Record action progress dialog:Processing ...`,
+      signal($localize`:Record action progress dialog:Processing ...`),
     );
     let result = new CascadingActionResult();
 
@@ -286,7 +288,7 @@ export class EntityActionsService {
     }
 
     const progressDialogRef = this.confirmationDialog.showProgressDialog(
-      $localize`:Record action progress dialog:Processing ...`,
+      signal($localize`:Record action progress dialog:Processing ...`),
     );
     let result = new CascadingActionResult();
     for (let entity of entities) {

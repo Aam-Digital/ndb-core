@@ -45,7 +45,6 @@ import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { applyUpdate, UpdatedEntity } from "../../entity/model/entity-update";
 import { Subscription } from "rxjs";
-import { bufferTime, filter } from "rxjs/operators";
 import { DataFilter } from "../../filter/filters/filters";
 import { EntityCreateButtonComponent } from "../../common-components/entity-create-button/entity-create-button.component";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
@@ -146,9 +145,6 @@ export class EntityListComponent<T extends Entity>
 
   isDesktop: boolean;
 
-  // Bulk operation tracking
-  isBulkOperationInProgress: boolean = false;
-
   @Input() title = "";
   @Input() columns: (FormFieldConfig | string)[] = [];
   @Input() columnGroups: ColumnGroupsConfig;
@@ -213,40 +209,6 @@ export class EntityListComponent<T extends Entity>
 
   async ngOnInit() {
     await this.loadPublicFormConfig();
-
-    this.bulkOperationState.isBulkOperationInProgress$.subscribe(
-      (isInProgress) => {
-        this.isBulkOperationInProgress = isInProgress;
-
-        // Reset progress tracking when bulk operation starts
-        if (isInProgress) {
-          this.bulkUpdateCount = 0;
-          // Get expected count from the bulk operation state service
-          this.expectedBulkUpdateCount =
-            this.bulkOperationState.getExpectedUpdateCount();
-        }
-      },
-    );
-  }
-
-  private updateBulkOperationProgress() {
-    // Update progress dialog through the bulk operation state service
-    if (this.bulkUpdateCount > 0 && this.expectedBulkUpdateCount > 0) {
-      this.bulkOperationState.updateProgress(
-        this.bulkUpdateCount,
-        this.expectedBulkUpdateCount,
-      );
-
-      // Complete bulk operation when all updates are processed
-      if (this.bulkUpdateCount >= this.expectedBulkUpdateCount) {
-        // Use setTimeout and requestAnimationFrame to detect when UI rendering is complete
-        setTimeout(() => {
-          requestAnimationFrame(() => {
-            this.bulkOperationState.onTableRenderingComplete();
-          });
-        }, 0);
-      }
-    }
   }
 
   private async loadPublicFormConfig() {
@@ -309,10 +271,6 @@ export class EntityListComponent<T extends Entity>
 
   private updateSubscription: Subscription;
 
-  // Track bulk operation progress
-  private bulkUpdateCount = 0;
-  private expectedBulkUpdateCount = 0;
-
   private listenToEntityUpdates() {
     if (this.updateSubscription || !this.entityConstructor) {
       return;
@@ -320,36 +278,33 @@ export class EntityListComponent<T extends Entity>
 
     this.updateSubscription = this.entityMapperService
       .receiveUpdates(this.entityConstructor)
-      .pipe(
-        untilDestroyed(this),
-        // combine all events within 1s into an array to avoid too many updates
-        bufferTime(1000),
-        filter((updates) => updates.length > 0),
-      )
-      .subscribe(async (updatedEntities: UpdatedEntity<T>[]) => {
-        let records = this.allEntities;
-
-        for (let updatedEntity of updatedEntities) {
-          //get specially enhanced entity if necessary
-          if (this.loaderMethod && this.entitySpecialLoader) {
-            updatedEntity = await this.entitySpecialLoader.extendUpdatedEntity(
-              this.loaderMethod,
-              updatedEntity,
-            );
+      .pipe(untilDestroyed(this))
+      .subscribe(async (updatedEntity: UpdatedEntity<T>) => {
+        if (this.bulkOperationState.isBulkOperationInProgress()) {
+          //buffer updates during bulk operations to avoid UI performance issues
+          const inProgress =
+            this.bulkOperationState.updateBulkOperationProgress(1, false);
+          if (!inProgress) {
+            // reload the list once
+            this.allEntities = await this.getEntities();
+            // Use setTimeout and requestAnimationFrame to detect when UI rendering is complete and inform the bulk action update
+            setTimeout(() => {
+              requestAnimationFrame(() => {
+                this.bulkOperationState.completeBulkOperation();
+              });
+            });
           }
-
-          records = applyUpdate(records, updatedEntity);
-
-          // Track bulk operation progress
-          if (this.isBulkOperationInProgress) {
-            this.bulkUpdateCount++;
-
-            // Update progress dialog if available
-            this.updateBulkOperationProgress();
-          }
+          return;
         }
 
-        this.allEntities = records;
+        //get specially enhanced entity if necessary
+        if (this.loaderMethod && this.entitySpecialLoader) {
+          updatedEntity = await this.entitySpecialLoader.extendUpdatedEntity(
+            this.loaderMethod,
+            updatedEntity,
+          );
+        }
+        this.allEntities = applyUpdate(this.allEntities, updatedEntity);
       });
   }
 
