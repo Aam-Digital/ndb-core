@@ -119,6 +119,11 @@ export class AdminEntityFieldComponent implements OnInit {
     if (this.data.overwriteLocally) {
       this.lockGlobalFields();
     }
+
+    // Auto-generate ID if not yet set
+    if (!this.data.entitySchemaField.id) {
+      this.autoGenerateId();
+    }
     this.initAvailableDatatypes(
       this.allDataTypes as unknown as DefaultDatatype<any, any>[],
     );
