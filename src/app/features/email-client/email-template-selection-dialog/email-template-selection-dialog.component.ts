@@ -3,7 +3,12 @@ import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-m
 import { Entity } from "#src/app/core/entity/model/entity";
 import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
 import { Component, inject, OnInit } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatCheckbox } from "@angular/material/checkbox";
 import {
@@ -14,10 +19,14 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouterLink } from "@angular/router";
 import { EmailTemplate } from "../email-template.entity";
 import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { switchMap, distinctUntilChanged } from "rxjs/operators";
+import { from, of } from "rxjs";
 
 /**
  * Input to prefill the email template selection dialog
@@ -40,6 +49,7 @@ export interface EmailTemplateSelectionResult {
   sendSemicolonSeparated: boolean;
 }
 
+@UntilDestroy()
 @Component({
   selector: "app-email-template-selection-dialog",
   imports: [
@@ -48,6 +58,7 @@ export interface EmailTemplateSelectionResult {
     MatButton,
     EditEntityComponent,
     MatDialogClose,
+    MatInputModule,
     RouterLink,
     DisableEntityOperationDirective,
     MatCheckbox,
@@ -61,6 +72,10 @@ export interface EmailTemplateSelectionResult {
 })
 export class EmailTemplateSelectionDialogComponent implements OnInit {
   emailTemplateSelectionForm: FormControl = new FormControl();
+  emailContentForm = new FormGroup({
+    subject: new FormControl<string>("", { validators: [Validators.required] }),
+    body: new FormControl<string>(""),
+  });
   createNoteControl = new FormControl<boolean>(true);
   sendAsBCC = new FormControl<boolean>(true);
   sendSemicolonSeparated = new FormControl<boolean>(false);
@@ -82,6 +97,32 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
   async ngOnInit() {
     this.excludedEntitiesCount = this.dialogData.excludedEntitiesCount ?? 0;
     this.isBulkEmail = this.dialogData.isBulk;
+
+    // Listen to template selection changes and prefill subject/body
+    this.emailTemplateSelectionForm.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        switchMap((templateId: string) => {
+          if (!templateId) {
+            return of(null);
+          }
+          return from(this.entityMapper.load(EmailTemplate, templateId));
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe((template: EmailTemplate | null) => {
+        if (template) {
+          this.emailContentForm.patchValue({
+            subject: template.subject,
+            body: template.body,
+          });
+        } else {
+          this.emailContentForm.patchValue({
+            subject: "",
+            body: "",
+          });
+        }
+      });
   }
 
   /**
@@ -89,20 +130,21 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
    * Shows only templates explicitly matching the entity type if any exist,
    * otherwise shows templates with no restrictions (null or empty availableForEntityTypes).
    */
-  filteredTemplate = (e: EmailTemplate): boolean =>
-    !e.availableForEntityTypes ||
-    e.availableForEntityTypes.length === 0 ||
-    e.availableForEntityTypes.includes(this.entity.getType());
-
-  async confirmSelectedTemplate(templateId: string) {
-    const selectedTemplate = await this.entityMapper.load(
-      EmailTemplate,
-      templateId,
+  filteredTemplate = (e: EmailTemplate): boolean => {
+    return (
+      !e.availableForEntityTypes ||
+      e.availableForEntityTypes.length === 0 ||
+      e.availableForEntityTypes.includes(this.entity.getType())
     );
-    if (!selectedTemplate) return;
+  };
+
+  async confirmSelectedTemplate() {
+    const template = new EmailTemplate();
+    template.subject = this.emailContentForm.value.subject;
+    template.body = this.emailContentForm.value.body;
 
     this.dialogRef.close({
-      template: selectedTemplate,
+      template,
       createNote: !!this.createNoteControl.value,
       sendAsBCC: this.isBulkEmail ? !!this.sendAsBCC.value : false,
       sendSemicolonSeparated: !!this.sendSemicolonSeparated.value,
