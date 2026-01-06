@@ -18,7 +18,7 @@ import { MatDialogRef } from "@angular/material/dialog";
 export class BulkOperationStateService implements OnDestroy {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
 
-  private operationInProgress = new BehaviorSubject<boolean>(false);
+  private readonly operationInProgress = new BehaviorSubject<boolean>(false);
   private progressDialogRef: MatDialogRef<any> | null = null;
   private progressDialogMessage: WritableSignal<string> = signal(
     $localize`:Bulk edit progress message:Preparing bulk action ...`,

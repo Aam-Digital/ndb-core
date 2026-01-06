@@ -10,7 +10,6 @@ import {
 import { MatDialog } from "@angular/material/dialog";
 import { EntityActionsService } from "./entity-actions.service";
 import { asArray } from "app/utils/asArray";
-import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { BulkOperationStateService } from "./bulk-operation-state.service";
 
 /**
@@ -23,7 +22,7 @@ export class EntityEditService extends CascadingEntityAction {
   private matDialog = inject(MatDialog);
   private entityActionsService = inject(EntityActionsService);
   private unsavedChanges = inject(UnsavedChangesService);
-  private bulkOperationState = inject(BulkOperationStateService);
+  private readonly bulkOperationState = inject(BulkOperationStateService);
 
   /**
    * Shows a confirmation dialog to the user

@@ -116,10 +116,10 @@ export class EntityListComponent<T extends Entity>
     optional: true,
   });
   private readonly formDialog = inject(FormDialogService);
+  private readonly bulkOperationState = inject(BulkOperationStateService);
 
   private readonly publicFormsService = inject(PublicFormsService);
   public publicFormConfigs: PublicFormConfig[] = [];
-  private bulkOperationState = inject(BulkOperationStateService);
 
   @Input() allEntities: T[];
 

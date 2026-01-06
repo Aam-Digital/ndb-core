@@ -11,10 +11,9 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
   imports: [MatProgressBarModule, MatDialogModule],
 })
 export class ProgressDialogComponent {
-  private initialData = inject<{
+  private readonly initialData = inject<{
     message: Signal<string>;
   }>(MAT_DIALOG_DATA);
 
-  // Use signal for reactive message updates
-  message: Signal<string> = this.initialData.message;
+  message = this.initialData.message;
 }
