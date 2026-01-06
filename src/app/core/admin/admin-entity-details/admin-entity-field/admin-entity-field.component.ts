@@ -179,6 +179,16 @@ export class AdminEntityFieldComponent implements OnInit {
       if (JSON.stringify(v) === JSON.stringify(this.data.entitySchemaField))
         return;
       Object.assign(this.data.entitySchemaField, this.getUpdatedSchemaField(v));
+
+      // When field is cleared, delete the property
+      for (const key of Object.keys(v)) {
+        if (
+          v[key] === null &&
+          this.data.entitySchemaField.hasOwnProperty(key)
+        ) {
+          delete this.data.entitySchemaField[key];
+        }
+      }
     });
 
     this.schemaFieldsForm
@@ -314,9 +324,6 @@ export class AdminEntityFieldComponent implements OnInit {
     for (const key of Object.keys(formValues)) {
       if (formValues[key] !== null) {
         updatedEntitySchema[key] = formValues[key];
-      } else if (key === "defaultValue") {
-        // When defaultValue is cleared, delete the property
-        delete this.data.entitySchemaField.defaultValue;
       }
     }
     return updatedEntitySchema;
