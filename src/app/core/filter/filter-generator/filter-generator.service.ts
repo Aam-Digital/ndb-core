@@ -115,6 +115,7 @@ export class FilterGeneratorService {
                   $or: [
                     { [filterConfig.id]: undefined },
                     { [filterConfig.id]: null },
+                    { [filterConfig.id]: [] },
                     { [filterConfig.id + ".id"]: undefined },
                     { [filterConfig.id + ".id"]: null },
                     { [filterConfig.id + ".id"]: "" },
