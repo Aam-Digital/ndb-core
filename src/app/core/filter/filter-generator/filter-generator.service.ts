@@ -62,10 +62,20 @@ export class FilterGeneratorService {
           this.enumService.getEnumValues(schema.additional) || [];
         const validIds = new Set(enumValues.map((ev) => ev.id));
         // Get all unique values from data for this field (by id if object, or value)
+        // Handle both single values and arrays (for isArray / multi-select fields)
         const dataValues = [
           ...new Set(
-            (data ?? []).map((e) => {
+            (data ?? []).flatMap((e) => {
               const v = e?.[filterConfig.id];
+              // Handle array values (multi-select fields)
+              if (Array.isArray(v)) {
+                return v.map((item) =>
+                  item && typeof item === "object" && "id" in item
+                    ? item.id
+                    : item,
+                );
+              }
+              // Handle single object value
               if (v && typeof v === "object" && "id" in v) return v.id;
               return v;
             }),
