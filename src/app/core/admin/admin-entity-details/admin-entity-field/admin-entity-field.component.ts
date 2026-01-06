@@ -180,21 +180,9 @@ export class AdminEntityFieldComponent implements OnInit {
       schemaFields: this.schemaFieldsForm,
     });
 
-    this.schemaFieldsForm.valueChanges.subscribe((v) => {
-      if (JSON.stringify(v) === JSON.stringify(this.data.entitySchemaField))
-        return;
-      Object.assign(this.data.entitySchemaField, this.getUpdatedSchemaField(v));
-
-      // When field is cleared, delete the property
-      for (const key of Object.keys(v)) {
-        if (
-          v[key] === null &&
-          this.data.entitySchemaField.hasOwnProperty(key)
-        ) {
-          delete this.data.entitySchemaField[key];
-        }
-      }
-    });
+    this.schemaFieldsForm.valueChanges.subscribe((formValues) =>
+      this.updateSchemaFieldFromForm(formValues),
+    );
 
     this.schemaFieldsForm
       .get("labelShort")
@@ -208,6 +196,22 @@ export class AdminEntityFieldComponent implements OnInit {
       .get("dataType")
       .valueChanges.subscribe((v) => this.updateDataTypeAdditional(v));
     this.updateForNewOrExistingField();
+  }
+
+  private updateSchemaFieldFromForm(formValues) {
+    if (
+      JSON.stringify(formValues) === JSON.stringify(this.data.entitySchemaField)
+    )
+      return;
+
+    for (const key of Object.keys(formValues)) {
+      if (formValues[key] !== null) {
+        this.data.entitySchemaField[key] = formValues[key];
+      } else if (this.data.entitySchemaField.hasOwnProperty(key)) {
+        // When field is cleared, delete the property
+        delete this.data.entitySchemaField[key];
+      }
+    }
   }
 
   private updateForNewOrExistingField() {
@@ -322,16 +326,6 @@ export class AdminEntityFieldComponent implements OnInit {
     if (this.form.invalid) return;
     this.data.entitySchemaField.id = this.fieldIdForm.getRawValue();
     this.dialogRef.close(this.data.entitySchemaField);
-  }
-
-  private getUpdatedSchemaField(formValues): EntitySchemaField {
-    const updatedEntitySchema = {};
-    for (const key of Object.keys(formValues)) {
-      if (formValues[key] !== null) {
-        updatedEntitySchema[key] = formValues[key];
-      }
-    }
-    return updatedEntitySchema;
   }
 
   openEnumOptions(event: Event) {
