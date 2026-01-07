@@ -55,7 +55,7 @@ export class BulkOperationStateService implements OnDestroy {
     autoCompleteBulkOperation?: boolean,
   ): boolean {
     if (!this.operationInProgress.value) {
-      return;
+      return false;
     }
 
     this.processedUpdateCount += count;
@@ -89,9 +89,6 @@ export class BulkOperationStateService implements OnDestroy {
    * Update progress dialog with current progress
    */
   private updateProgressDialog() {
-    console.log(
-      `BulkOperationStateService: processed ${this.processedUpdateCount} of ${this.expectedUpdateCount} records`,
-    );
     this.progressDialogMessage.set(
       $localize`:Bulk edit progress message:Updated ${this.processedUpdateCount} of ${this.expectedUpdateCount} records...`,
     );
