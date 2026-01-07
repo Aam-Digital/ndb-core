@@ -26,7 +26,6 @@ export class IconButtonComponent {
     | "mat-stroked-button"
   >("mat-stroked-button");
   color = input<"primary" | "accent" | "warn" | undefined>(undefined);
-  cssClass = input<string>("");
   buttonClick = output<Event>();
 
   onClick(event: Event): void {

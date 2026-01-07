@@ -6,13 +6,14 @@
 @if (hasActiveFilters || filterString) {
   <div class="align-center flex-row gap-regular">
     <app-icon-button
-      [icon]="'times-circle'"
-      [buttonType]="'mat-stroked-button'"
-      [cssClass]="'mr-1'"
-      [matTooltip]="'Clear all filters'"
+      icon="times-circle"
+      buttonType="mat-stroked-button"
+      matTooltip="Clear all filters"
+      i18n-matTooltip
       (buttonClick)="clearAllFilters()"
+      i18n
     >
-      <span i18n>Clear</span>
+      Clear
     </app-icon-button>
   </div>
 }

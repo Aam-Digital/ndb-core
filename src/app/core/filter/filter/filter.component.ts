@@ -10,7 +10,7 @@ import {
 import { FilterConfig } from "../../entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FilterGeneratorService } from "../filter-generator/filter-generator.service";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Router } from "@angular/router";
 import { TableStateUrlService } from "../../common-components/entities-table/table-state-url.service";
 import { NgComponentOutlet } from "@angular/common";
 import { getUrlWithoutParams } from "../../../utils/utils";
@@ -27,7 +27,13 @@ import { IconButtonComponent } from "../../common-components/icon-button/icon-bu
 @Component({
   selector: "app-filter",
   templateUrl: "./filter.component.html",
-  imports: [NgComponentOutlet, FontAwesomeModule, MatButtonModule, MatTooltip, IconButtonComponent],
+  imports: [
+    NgComponentOutlet,
+    FontAwesomeModule,
+    MatButtonModule,
+    MatTooltip,
+    IconButtonComponent,
+  ],
 })
 export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   private filterGenerator = inject(FilterGeneratorService);

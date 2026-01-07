@@ -64,15 +64,6 @@ describe("IconButtonComponent", () => {
     expect(buttonElement.classList.contains("mat-primary")).toBe(true);
   });
 
-  it("should apply custom CSS class", () => {
-    fixture.componentRef.setInput("icon", "edit");
-    fixture.componentRef.setInput("cssClass", "custom-class");
-    fixture.detectChanges();
-
-    const buttonElement = fixture.nativeElement.querySelector("button");
-    expect(buttonElement.classList.contains("custom-class")).toBe(true);
-  });
-
   it("should emit click events", () => {
     fixture.componentRef.setInput("icon", "edit");
 

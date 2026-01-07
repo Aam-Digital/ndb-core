@@ -45,21 +45,11 @@
     }
 
     <div class="button-row flex-row gap-small">
-      <app-icon-button
-        icon="plus"
-        (buttonClick)="addCondition()"
-        cssClass="add-condition-button"
-        i18n
-      >
+      <app-icon-button icon="plus" (buttonClick)="addCondition()" i18n>
         Add Condition
       </app-icon-button>
 
-      <app-icon-button
-        icon="code"
-        (buttonClick)="openJsonEditor()"
-        cssClass="edit-json-button"
-        i18n
-      >
+      <app-icon-button icon="code" (buttonClick)="openJsonEditor()" i18n>
         Edit JSON
       </app-icon-button>
     </div>
