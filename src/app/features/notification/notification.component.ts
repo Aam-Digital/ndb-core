@@ -53,6 +53,35 @@ export class NotificationComponent implements OnInit {
   /** whether an initial notification config exists for the user */
   hasNotificationConfig = false;
 
+  /** Number of notifications to show initially and per "Load more" click */
+  private readonly PAGE_SIZE = 10;
+
+  /** Current display limit for "All" tab */
+  displayLimitAll = this.PAGE_SIZE;
+
+  /** Current display limit for "Unread" tab */
+  displayLimitUnread = this.PAGE_SIZE;
+
+  /** Get notifications to display in "All" tab (limited) */
+  get visibleAllNotifications(): NotificationEvent[] {
+    return this.allNotifications.slice(0, this.displayLimitAll);
+  }
+
+  /** Get notifications to display in "Unread" tab (limited) */
+  get visibleUnreadNotifications(): NotificationEvent[] {
+    return this.unreadNotifications.slice(0, this.displayLimitUnread);
+  }
+
+  /** Check if there are more notifications to load in "All" tab */
+  get hasMoreAllNotifications(): boolean {
+    return this.allNotifications.length > this.displayLimitAll;
+  }
+
+  /** Check if there are more notifications to load in "Unread" tab */
+  get hasMoreUnreadNotifications(): boolean {
+    return this.unreadNotifications.length > this.displayLimitUnread;
+  }
+
   private readonly entityMapper = inject(EntityMapperService);
   private readonly sessionInfo = inject(SessionSubject);
   private readonly router = inject(Router);
@@ -64,10 +93,74 @@ export class NotificationComponent implements OnInit {
       this.filterUserNotifications(notifications);
     });
 
+    // REPRODUCE BUG #3548: Skip loading real notifications, use fake ones instead
     this.loadAndProcessNotifications();
     this.listenToEntityUpdates();
 
     this.checkNotificationConfigStatus();
+
+    // Generate fake notifications WITH entity refs to test realistic scenario
+    this.reproduceSlownessWithEntityRefs(800);
+  }
+
+  private async reproduceSlownessWithEntityRefs(count: number) {
+    console.log(`Loading real entities for ${count} fake notifications...`);
+
+    // Try multiple entity types to find one that exists
+    let realEntities = [];
+    const entityTypes = ["Note", "Todo", "RecurringActivity"];
+
+    for (const entityType of entityTypes) {
+      const EntityClass = this.entityRegistry.get(entityType);
+      if (EntityClass) {
+        try {
+          realEntities = await this.entityMapper.loadType(EntityClass);
+          if (realEntities.length > 0) {
+            console.log(
+              `Found ${realEntities.length} real ${entityType} entities to reference`,
+            );
+            break;
+          }
+        } catch (err) {
+          console.warn(`Could not load ${entityType} entities`, err);
+        }
+      }
+    }
+
+    const fakeNotifications: NotificationEvent[] = [];
+
+    for (let i = 1; i <= count; i++) {
+      const notification = new NotificationEvent();
+      notification.title = `New Update #${i}`;
+
+      // NO body text - force entity-block component to load entities
+      notification.body = undefined;
+      const entity = realEntities[i % realEntities.length];
+      notification.context = {
+        entityId: "Child:1",
+        entityType: "Child",
+      };
+
+      notification.notificationType = "entity_change";
+      notification.readStatus = i % 3 === 0;
+      notification.created = {
+        at: new Date(Date.now() - i * 1000 * 60),
+        by: this.userId || "test-user",
+      };
+
+      fakeNotifications.push(notification);
+    }
+
+    this.notificationsSubject.next(fakeNotifications);
+    console.log(`Generated ${count} notifications.`);
+    if (realEntities.length > 0) {
+      console.log(
+        `Each notification will trigger <app-entity-block> to load and display entity!`,
+      );
+      console.log(
+        `This means ${count} entity lookups = HEAVY PERFORMANCE HIT!`,
+      );
+    }
   }
 
   private async checkNotificationConfigStatus() {
@@ -136,6 +229,17 @@ export class NotificationComponent implements OnInit {
     this.unreadNotifications = notifications.filter(
       (notification) => !notification.readStatus,
     );
+  }
+
+  /**
+   * Load more notifications for the current tab.
+   */
+  loadMore(): void {
+    if (this.selectedTab === 0) {
+      this.displayLimitAll += this.PAGE_SIZE;
+    } else {
+      this.displayLimitUnread += this.PAGE_SIZE;
+    }
   }
 
   /**
