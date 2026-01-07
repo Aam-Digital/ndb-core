@@ -1,4 +1,11 @@
-import { Component, inject, OnInit } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from "@angular/core";
 import { Subject, Subscription } from "rxjs";
 import { MatBadgeModule } from "@angular/material/badge";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -44,8 +51,6 @@ import { DatabaseResolverService } from "../../core/database/database-resolver.s
   styleUrl: "./notification.component.scss",
 })
 export class NotificationComponent implements OnInit {
-  public allNotifications: NotificationEvent[] = [];
-  public unreadNotifications: NotificationEvent[] = [];
   private readonly notificationsSubject = new Subject<NotificationEvent[]>();
   public selectedTab = 0;
   protected readonly closeOnlySubmenu = closeOnlySubmenu;
@@ -56,31 +61,37 @@ export class NotificationComponent implements OnInit {
   /** Number of notifications to show initially and per "Load more" click */
   private readonly PAGE_SIZE = 10;
 
+  /** All notifications for the user */
+  readonly allNotifications = signal<NotificationEvent[]>([]);
+
+  /** Unread notifications for the user */
+  readonly unreadNotifications = signal<NotificationEvent[]>([]);
+
   /** Current display limit for "All" tab */
-  displayLimitAll = this.PAGE_SIZE;
+  readonly displayLimitAll = signal(this.PAGE_SIZE);
 
   /** Current display limit for "Unread" tab */
-  displayLimitUnread = this.PAGE_SIZE;
+  readonly displayLimitUnread = signal(this.PAGE_SIZE);
 
   /** Get notifications to display in "All" tab (limited) */
-  get visibleAllNotifications(): NotificationEvent[] {
-    return this.allNotifications.slice(0, this.displayLimitAll);
-  }
+  readonly visibleAllNotifications = computed(() =>
+    this.allNotifications().slice(0, this.displayLimitAll()),
+  );
 
   /** Get notifications to display in "Unread" tab (limited) */
-  get visibleUnreadNotifications(): NotificationEvent[] {
-    return this.unreadNotifications.slice(0, this.displayLimitUnread);
-  }
+  readonly visibleUnreadNotifications = computed(() =>
+    this.unreadNotifications().slice(0, this.displayLimitUnread()),
+  );
 
   /** Check if there are more notifications to load in "All" tab */
-  get hasMoreAllNotifications(): boolean {
-    return this.allNotifications.length > this.displayLimitAll;
-  }
+  readonly hasMoreAllNotifications = computed(
+    () => this.allNotifications().length > this.displayLimitAll(),
+  );
 
   /** Check if there are more notifications to load in "Unread" tab */
-  get hasMoreUnreadNotifications(): boolean {
-    return this.unreadNotifications.length > this.displayLimitUnread;
-  }
+  readonly hasMoreUnreadNotifications = computed(
+    () => this.unreadNotifications().length > this.displayLimitUnread(),
+  );
 
   private readonly entityMapper = inject(EntityMapperService);
   private readonly sessionInfo = inject(SessionSubject);
@@ -100,7 +111,7 @@ export class NotificationComponent implements OnInit {
     this.checkNotificationConfigStatus();
 
     // Generate fake notifications WITH entity refs to test realistic scenario
-    this.reproduceSlownessWithEntityRefs(800);
+    this.reproduceSlownessWithEntityRefs(100);
   }
 
   private async reproduceSlownessWithEntityRefs(count: number) {
@@ -212,7 +223,7 @@ export class NotificationComponent implements OnInit {
         .pipe(untilDestroyed(this))
         .subscribe((next) => {
           this.notificationsSubject.next(
-            applyUpdate(this.allNotifications, next),
+            applyUpdate(this.allNotifications(), next),
           );
         });
     }
@@ -222,12 +233,15 @@ export class NotificationComponent implements OnInit {
    * Filters notifications based on the sender and read status.
    */
   private filterUserNotifications(notifications: NotificationEvent[]) {
-    this.allNotifications = notifications.sort(
-      (notificationA, notificationB) =>
-        notificationB.created.at.getTime() - notificationA.created.at.getTime(),
+    this.allNotifications.set(
+      notifications.sort(
+        (notificationA, notificationB) =>
+          notificationB.created.at.getTime() -
+          notificationA.created.at.getTime(),
+      ),
     );
-    this.unreadNotifications = notifications.filter(
-      (notification) => !notification.readStatus,
+    this.unreadNotifications.set(
+      notifications.filter((notification) => !notification.readStatus),
     );
   }
 
@@ -236,9 +250,9 @@ export class NotificationComponent implements OnInit {
    */
   loadMore(): void {
     if (this.selectedTab === 0) {
-      this.displayLimitAll += this.PAGE_SIZE;
+      this.displayLimitAll.update((limit) => limit + this.PAGE_SIZE);
     } else {
-      this.displayLimitUnread += this.PAGE_SIZE;
+      this.displayLimitUnread.update((limit) => limit + this.PAGE_SIZE);
     }
   }
 
@@ -246,7 +260,7 @@ export class NotificationComponent implements OnInit {
    * Marks all notifications as read.
    */
   async markAllRead(): Promise<void> {
-    const unreadNotifications = this.allNotifications.filter(
+    const unreadNotifications = this.allNotifications().filter(
       (notification) => !notification.readStatus,
     );
     await this.updateReadStatus(unreadNotifications, true);
@@ -263,7 +277,7 @@ export class NotificationComponent implements OnInit {
       notification.readStatus = newStatus;
       await this.entityMapper.save(notification);
     }
-    this.filterUserNotifications(this.allNotifications);
+    this.filterUserNotifications(this.allNotifications());
   }
 
   /**

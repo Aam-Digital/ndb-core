@@ -7,7 +7,7 @@
 >
   <span
     [matBadge]="
-      unreadNotifications?.length > 0 ? unreadNotifications?.length : null
+      unreadNotifications()?.length > 0 ? unreadNotifications()?.length : null
     "
     matBadgeColor="accent"
   >
@@ -60,8 +60,8 @@
     <div class="flex-grow flex-column gap-small notification-list-body">
       @for (
         notification of selectedTab === 0
-          ? visibleAllNotifications
-          : visibleUnreadNotifications;
+          ? visibleAllNotifications()
+          : visibleUnreadNotifications();
         track notification
       ) {
         <app-notification-item
@@ -86,7 +86,9 @@
 
       <!-- Load More Button -->
       @if (
-        selectedTab === 0 ? hasMoreAllNotifications : hasMoreUnreadNotifications
+        selectedTab === 0
+          ? hasMoreAllNotifications()
+          : hasMoreUnreadNotifications()
       ) {
         <button
           mat-raised-button
