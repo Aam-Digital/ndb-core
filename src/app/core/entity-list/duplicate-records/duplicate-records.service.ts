@@ -5,6 +5,7 @@ import { Entity } from "../../entity/model/entity";
 import { AlertService } from "app/core/alerts/alert.service";
 import { getUrlWithoutParams } from "app/utils/utils";
 import { Router } from "@angular/router";
+import { BulkOperationStateService } from "../../entity/entity-actions/bulk-operation-state.service";
 
 @Injectable({
   providedIn: "root",
@@ -14,6 +15,7 @@ export class DuplicateRecordService {
   private readonly entityService = inject(EntitySchemaService);
   private readonly alertService = inject(AlertService);
   private readonly router = inject(Router);
+  private readonly bulkOperationState = inject(BulkOperationStateService);
 
   async duplicateRecord(
     sourceData: Entity | Entity[],
@@ -22,7 +24,15 @@ export class DuplicateRecordService {
     const entities = Array.isArray(sourceData) ? sourceData : [sourceData];
     const duplicateData = this.clone(entities);
 
-    await this.entityMapperService.saveAll(duplicateData);
+    this.bulkOperationState.startBulkOperation(duplicateData.length);
+
+    try {
+      await this.entityMapperService.saveAll(duplicateData);
+    } catch (error) {
+      this.bulkOperationState.completeBulkOperation();
+      throw error;
+    }
+
     this.alertService.addInfo(this.generateSuccessMessage(entities));
 
     if (navigate) {
