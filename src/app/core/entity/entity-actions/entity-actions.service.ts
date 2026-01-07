@@ -333,7 +333,6 @@ export class EntityActionsService {
       e.inactive = true;
     });
 
-    // Use bulk operation for multiple entities
     if (newEntities.length > 1) {
       this.bulkOperationState.startBulkOperation(newEntities.length);
 
@@ -344,7 +343,6 @@ export class EntityActionsService {
         throw error;
       }
     } else {
-      // Single entity - save directly
       await this.entityMapper.save(newEntities[0]);
     }
 

@@ -24,17 +24,13 @@ export class DuplicateRecordService {
     const entities = Array.isArray(sourceData) ? sourceData : [sourceData];
     const duplicateData = this.clone(entities);
 
-    if (duplicateData.length > 1) {
-      this.bulkOperationState.startBulkOperation(duplicateData.length);
+    this.bulkOperationState.startBulkOperation(duplicateData.length);
 
-      try {
-        await this.entityMapperService.saveAll(duplicateData);
-      } catch (error) {
-        this.bulkOperationState.completeBulkOperation();
-        throw error;
-      }
-    } else {
+    try {
       await this.entityMapperService.saveAll(duplicateData);
+    } catch (error) {
+      this.bulkOperationState.completeBulkOperation();
+      throw error;
     }
 
     this.alertService.addInfo(this.generateSuccessMessage(entities));
