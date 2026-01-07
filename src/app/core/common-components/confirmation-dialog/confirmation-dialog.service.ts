@@ -1,4 +1,4 @@
-import { Injectable, NgZone, inject } from "@angular/core";
+import { Injectable, NgZone, inject, Signal } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import {
   ConfirmationDialogButton,
@@ -68,7 +68,7 @@ export class ConfirmationDialogService {
    * Use the returned dialogRef to close the dialog once your processing is completed.
    * @param message
    */
-  showProgressDialog(message: string) {
+  showProgressDialog(message: Signal<string>) {
     return this.dialog.open(ProgressDialogComponent, {
       data: { message },
       minWidth: "50vh",
