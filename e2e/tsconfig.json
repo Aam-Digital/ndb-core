@@ -5,7 +5,8 @@
     "noEmit": true,
     "rootDir": "..",
     "types": [
-      "node"
+      "node",
+      "@angular/localize"
     ]
   }
 }
