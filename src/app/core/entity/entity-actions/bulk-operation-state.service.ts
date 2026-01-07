@@ -20,7 +20,7 @@ export class BulkOperationStateService implements OnDestroy {
 
   private readonly operationInProgress = new BehaviorSubject<boolean>(false);
   private progressDialogRef: MatDialogRef<any> | null = null;
-  private progressDialogMessage: WritableSignal<string> = signal(
+  private readonly progressDialogMessage: WritableSignal<string> = signal(
     $localize`:Bulk edit progress message:Preparing bulk action ...`,
   );
   private expectedUpdateCount = 0;

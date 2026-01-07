@@ -36,7 +36,7 @@ export class EntityActionsService {
   private duplicateRecordService = inject(DuplicateRecordService);
   private publicFormsService = inject(PublicFormsService);
   private readonly bulkMergeService = inject(BulkMergeService);
-  private bulkOperationState = inject(BulkOperationStateService);
+  private readonly bulkOperationState = inject(BulkOperationStateService);
 
   constructor() {
     const entityActionsMenuService = inject(EntityActionsMenuService);

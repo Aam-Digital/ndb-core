@@ -15,7 +15,7 @@ export class DuplicateRecordService {
   private readonly entityService = inject(EntitySchemaService);
   private readonly alertService = inject(AlertService);
   private readonly router = inject(Router);
-  private bulkOperationState = inject(BulkOperationStateService);
+  private readonly bulkOperationState = inject(BulkOperationStateService);
 
   async duplicateRecord(
     sourceData: Entity | Entity[],
