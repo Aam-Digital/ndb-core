@@ -136,6 +136,8 @@ export class AdminDefaultValueComponent
   }
 
   clearDefaultValue() {
+    // TODO: this causes the config to keep a defaultValue with `config: { value: null }` instead of returning just `null` and deleting the property
+    // Need to fix so that the parent form control gets reset to null (without causing errors in the component here internally)
     this.form.setValue({ mode: null, config: null });
   }
 }

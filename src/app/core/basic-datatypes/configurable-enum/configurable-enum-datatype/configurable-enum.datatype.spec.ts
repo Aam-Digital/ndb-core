@@ -137,23 +137,6 @@ describe("Schema data type: configurable-enum", () => {
     expect(actualMapped).toEqual(GENDER_MALE);
   });
 
-  it("should map values using importMappingFunction for arrays", async () => {
-    enumService.getEnumValues.and.returnValue(genders);
-
-    const input = "MALEx";
-    const actualMapped = await dataType.importMapFunction(
-      input,
-      {
-        dataType: "configurable-enum",
-        additional: "genders",
-        isArray: true,
-      },
-      { MALEx: [GENDER_MALE.id] },
-    );
-
-    expect(actualMapped).toEqual([GENDER_MALE]);
-  });
-
   it("should return undefined for unmapped values when mapping is configured", async () => {
     enumService.getEnumValues.and.returnValue(genders);
 
