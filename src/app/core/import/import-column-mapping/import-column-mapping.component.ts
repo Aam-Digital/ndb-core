@@ -17,6 +17,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
 import { ImportColumnMappingService } from "./import-column-mapping.service";
 import { EditImportColumnMappingComponent } from "./edit-import-column-mapping/edit-import-column-mapping.component";
+import { ImportAdditionalSettings } from "../import-additional-settings/import-additional-settings.component";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
@@ -41,6 +42,7 @@ export class ImportColumnMappingComponent implements OnChanges {
 
   @Input() rawData: any[] = [];
   @Input() columnMapping: ColumnMapping[] = [];
+  @Input() additionalSettings: ImportAdditionalSettings;
   @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
 
   entityCtor: EntityConstructor;

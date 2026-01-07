@@ -7,17 +7,24 @@ import {
 } from "@angular/cdk/drag-drop";
 import {
   Component,
+  computed,
   EventEmitter,
   inject,
   Input,
   OnChanges,
   Output,
+  signal,
+  WritableSignal,
   SimpleChanges,
 } from "@angular/core";
-import { FormControl } from "@angular/forms";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatDialog } from "@angular/material/dialog";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -57,6 +64,10 @@ import {
     MatButtonModule,
     MatTooltipModule,
     MatCardModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    ReactiveFormsModule,
     EntityFieldLabelComponent,
     EntityFieldEditComponent,
     AdminSectionHeaderComponent,
@@ -120,7 +131,7 @@ export class AdminEntityFormComponent implements OnChanges {
   dummyEntity: Entity;
   dummyForm: EntityForm<any>;
 
-  availableFields: ColumnConfig[] = [];
+  availableFields = signal<ColumnConfig[]>([]);
   readonly createNewFieldPlaceholder: FormFieldConfig = {
     id: null,
     label: $localize`:Label drag and drop item:Create New Field`,
@@ -131,13 +142,22 @@ export class AdminEntityFormComponent implements OnChanges {
     label: $localize`:Label drag and drop item:Create Text Block`,
   };
 
+  searchFilter = new FormControl("");
+
+  private readonly searchFieldSignal = toSignal(
+    this.searchFilter.valueChanges,
+    {
+      initialValue: "",
+    },
+  );
+
   constructor() {
     const adminEntityService = inject(AdminEntityService);
 
     adminEntityService.entitySchemaUpdated
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.availableFields = []; // force re-init of the label components that otherwise do not detect the change
+        this.availableFields.set([]); // force re-init of the label components that otherwise do not detect the change
         setTimeout(() => this.initForm());
       });
   }
@@ -153,7 +173,7 @@ export class AdminEntityFormComponent implements OnChanges {
 
     this.dummyEntity = new this.entityType();
     this.dummyForm = await this.entityFormService.createEntityForm(
-      [...this.getUsedFields(this.config), ...this.availableFields],
+      [...this.getUsedFields(this.config), ...this.availableFields()],
       this.dummyEntity,
     );
     this.dummyForm.formGroup.disable();
@@ -191,11 +211,11 @@ export class AdminEntityFormComponent implements OnChanges {
       .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
       .map(([key]) => key);
 
-    this.availableFields = [
+    this.availableFields.set([
       this.createNewFieldPlaceholder,
       this.createNewTextPlaceholder,
       ...unusedFields,
-    ];
+    ]);
   }
 
   protected emitUpdatedConfig() {
@@ -215,6 +235,16 @@ export class AdminEntityFormComponent implements OnChanges {
     if (field instanceof Object) {
       Object.assign(entitySchemaField, field);
     }
+
+    // prefill with search filter text when creating new field
+    if (
+      (field === this.createNewFieldPlaceholder ||
+        (typeof field === "object" && field.id === null)) &&
+      this.searchFilter.value?.trim()
+    ) {
+      entitySchemaField.label = this.searchFilter.value.trim();
+    }
+
     const dialogRef = this.matDialog.open(AdminEntityFieldComponent, {
       width: "99%",
       maxHeight: "90vh",
@@ -271,15 +301,26 @@ export class AdminEntityFormComponent implements OnChanges {
     if (event.previousContainer === event.container) {
       moveItemInArray(newFieldsArray, event.previousIndex, event.currentIndex);
     } else {
-      transferArrayItem(
-        prevFieldsArray,
-        newFieldsArray,
-        event.previousIndex,
-        event.currentIndex,
-      );
+      // if transferring from filtered available fields, find the actual field in availableFields and remove it from there
+      if (prevFieldsArray === this.filteredFields()) {
+        const transferredField = prevFieldsArray[event.previousIndex];
+        this.transferArraySignalItem(
+          this.availableFields,
+          newFieldsArray,
+          transferredField,
+          event.currentIndex,
+        );
+      } else {
+        transferArrayItem(
+          prevFieldsArray,
+          newFieldsArray,
+          event.previousIndex,
+          event.currentIndex,
+        );
+      }
     }
 
-    if (newFieldsArray === this.availableFields) {
+    if (newFieldsArray === this.availableFields()) {
       // ensure available fields have consistent order
       this.initAvailableFields();
     }
@@ -291,6 +332,26 @@ export class AdminEntityFormComponent implements OnChanges {
     moveItemInArray(fieldGroupsArray, event.previousIndex, event.currentIndex);
 
     this.emitUpdatedConfig();
+  }
+
+  /**
+   * Helper method to transfer an item from a source signal array to a target array
+   */
+  private transferArraySignalItem(
+    sourceSignal: WritableSignal<ColumnConfig[]>,
+    targetArray: ColumnConfig[],
+    transferredField: ColumnConfig,
+    targetIndex: number,
+  ): void {
+    const actualIndex = sourceSignal().findIndex(
+      (field) => field === transferredField,
+    );
+    if (actualIndex !== -1) {
+      sourceSignal.update((fields) =>
+        fields.filter((_, index) => index !== actualIndex),
+      );
+      targetArray.splice(targetIndex, 0, transferredField);
+    }
   }
 
   /**
@@ -365,7 +426,7 @@ export class AdminEntityFormComponent implements OnChanges {
   private async dropNewField(
     event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>,
   ) {
-    if (event.container.data === this.availableFields) {
+    if (event.container.data === this.availableFields()) {
       // don't add new field to the available fields that are not in the form yet
       return;
     }
@@ -384,13 +445,17 @@ export class AdminEntityFormComponent implements OnChanges {
         newField,
       );
       // the schema update has added the new field to the available fields already, remove it from there
-      this.availableFields.splice(this.availableFields.indexOf(newFieldId), 1);
+      const updatedFields = [...this.availableFields()];
+      updatedFields.splice(updatedFields.indexOf(newFieldId), 1);
+      this.availableFields.set(updatedFields);
     } else {
       // For local-only updates (e.g., public forms), manually update schema
       this.entityType.schema.set(newField.id, newField);
-      const fieldIndex = this.availableFields.indexOf(newFieldId);
+      const updatedFields = [...this.availableFields()];
+      const fieldIndex = updatedFields.indexOf(newFieldId);
       if (fieldIndex !== -1) {
-        this.availableFields.splice(fieldIndex, 1);
+        updatedFields.splice(fieldIndex, 1);
+        this.availableFields.set(updatedFields);
       }
     }
 
@@ -409,7 +474,7 @@ export class AdminEntityFormComponent implements OnChanges {
   private async dropNewText(
     event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>,
   ) {
-    if (event.container.data === this.availableFields) {
+    if (event.container.data === this.availableFields()) {
       // don't add new Text field to the available fields that are not in the form yet
       return;
     }
@@ -424,7 +489,9 @@ export class AdminEntityFormComponent implements OnChanges {
     event.container.data.splice(event.currentIndex, 0, newTextField);
 
     // the schema update has added the new Text field to the available fields already, remove it from there
-    this.availableFields.splice(this.availableFields.indexOf(newTextField), 1);
+    const updatedFields = [...this.availableFields()];
+    updatedFields.splice(updatedFields.indexOf(newTextField), 1);
+    this.availableFields.set(updatedFields);
 
     this.emitUpdatedConfig();
   }
@@ -449,5 +516,37 @@ export class AdminEntityFormComponent implements OnChanges {
     this.initAvailableFields();
 
     this.emitUpdatedConfig();
+  }
+
+  filteredFields = computed(() => {
+    const searchTerm = this.searchFieldSignal()?.toLowerCase().trim() || "";
+    const fields = this.availableFields();
+
+    if (!searchTerm) {
+      return fields;
+    }
+
+    return fields.filter((field) => {
+      // always show the create new field and create new text placeholders
+      if (
+        field === this.createNewFieldPlaceholder ||
+        field === this.createNewTextPlaceholder
+      ) {
+        return true;
+      }
+
+      const fieldConfig =
+        this.entityFormService?.extendFormFieldConfig(field, this.entityType) ||
+        toFormFieldConfig(field);
+
+      const fieldId = fieldConfig.id?.toLowerCase() || "";
+      const fieldLabel = fieldConfig.label?.toLowerCase() || "";
+
+      return fieldId.includes(searchTerm) || fieldLabel.includes(searchTerm);
+    });
+  });
+
+  clearSearch() {
+    this.searchFilter.setValue("");
   }
 }
