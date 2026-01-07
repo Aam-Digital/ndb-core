@@ -114,14 +114,8 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
     schemaField: EntitySchemaField,
     additional?: any,
     importProcessingContext?: any,
-  ): Promise<EntityType | EntityType[]> {
-    if (schemaField.isArray) {
-      return asArray(val).map((v) =>
-        this.transformToObjectFormat(v, schemaField),
-      );
-    } else {
-      return this.transformToObjectFormat(val, schemaField);
-    }
+  ): Promise<EntityType> {
+    return this.transformToObjectFormat(val, schemaField);
   }
 
   /**
