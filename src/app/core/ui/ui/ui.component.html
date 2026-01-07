@@ -109,22 +109,22 @@
           }
 
           <div class="flex-row">
-            <button
-              (click)="closeSidenavOnMobile()"
-              mat-button
-              routerLink="user-account"
+            <app-icon-button
               class="footer-cell width-1-2"
+              icon="user"
+              (buttonClick)="navigateToProfile()"
+              i18n
             >
-              <fa-icon icon="user" class="standard-icon-with-text"></fa-icon>
-              <span i18n="Navigate to user profile page">Profile</span>
-            </button>
-            <button mat-button (click)="logout()" class="footer-cell width-1-2">
-              <fa-icon
-                icon="sign-out-alt"
-                class="standard-icon-with-text"
-              ></fa-icon>
-              <span i18n="Sign out of the app">Sign out</span>
-            </button>
+              Profile
+            </app-icon-button>
+            <app-icon-button
+              class="footer-cell width-1-2"
+              icon="sign-out-alt"
+              (buttonClick)="logout()"
+              i18n
+            >
+              Sign out
+            </app-icon-button>
           </div>
 
           <div class="flex-row">
