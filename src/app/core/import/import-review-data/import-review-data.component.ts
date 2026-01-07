@@ -17,6 +17,7 @@ import {
 } from "../import-confirm-summary/import-confirm-summary.component";
 import { lastValueFrom } from "rxjs";
 import { ImportMetadata } from "../import-metadata";
+import { ImportAdditionalSettings } from "../import-additional-settings/import-additional-settings.component";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
@@ -66,6 +67,7 @@ export class ImportReviewDataComponent implements OnChanges {
   @Input() columnMapping: ColumnMapping[];
   @Input() additionalActions: AdditionalImportAction[];
   @Input() matchExistingByFields: string[];
+  @Input() additionalSettings: ImportAdditionalSettings;
   @Input() filename: string;
 
   entityConstructor: EntityConstructor;
@@ -96,6 +98,7 @@ export class ImportReviewDataComponent implements OnChanges {
         columnMapping: this.columnMapping,
         additionalActions: this.additionalActions,
         matchExistingByFields: this.matchExistingByFields,
+        additionalSettings: this.additionalSettings,
       })
     ).sort((a, b) => {
       // sort _rev (existing records being updated) first, then new records
