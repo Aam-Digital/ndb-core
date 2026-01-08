@@ -134,7 +134,7 @@ export class AutomatedFieldMappingComponent {
    */
   mappingEnabled = signal(false);
   enableIfMappingsExist = effect(() => {
-    if (this.valueMappingOptions() && this.value.valueMapping) {
+    if (this.valueMappingOptions() && this.value?.valueMapping) {
       this.mappingEnabled.set(true);
     }
   });

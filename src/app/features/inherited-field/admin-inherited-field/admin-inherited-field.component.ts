@@ -150,8 +150,7 @@ export class AdminInheritedFieldComponent
     this.selectedOption = this.availableOptions.find(
       (o) =>
         o.sourceReferenceField === this.value.sourceReferenceField &&
-        (o.sourceReferenceEntity === this.value.sourceReferenceEntity ||
-          o.sourceReferenceEntity === this.entityType.ENTITY_TYPE),
+        o.sourceReferenceEntity === this.value.sourceReferenceEntity,
     );
   }
 

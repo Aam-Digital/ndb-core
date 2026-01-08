@@ -8,7 +8,7 @@ import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 
-fdescribe("AutomatedFieldMappingComponent", () => {
+describe("AutomatedFieldMappingComponent", () => {
   let component: AutomatedFieldMappingComponent;
   let fixture: ComponentFixture<AutomatedFieldMappingComponent>;
 
@@ -18,7 +18,7 @@ fdescribe("AutomatedFieldMappingComponent", () => {
     currentField: TestEntity.schema.get("other") as FormFieldConfig,
     value: {
       sourceReferenceField: "ref",
-      sourceValueField: undefined,
+      sourceValueField: "category",
     },
   };
 
