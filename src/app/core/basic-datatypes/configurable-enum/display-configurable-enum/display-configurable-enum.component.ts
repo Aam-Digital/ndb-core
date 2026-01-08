@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnChanges, SimpleChanges } from "@angular/core";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 
@@ -17,11 +17,12 @@ import { ConfigurableEnumValue } from "../configurable-enum.types";
 })
 export class DisplayConfigurableEnumComponent
   extends ViewDirective<ConfigurableEnumValue | ConfigurableEnumValue[]>
-  implements OnInit
+  implements OnChanges
 {
   iterableValue: ConfigurableEnumValue[] = [];
 
-  ngOnInit() {
+  override ngOnChanges(changes?: SimpleChanges) {
+    super.ngOnChanges(changes);
     this.initValue();
   }
 
