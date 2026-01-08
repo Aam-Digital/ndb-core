@@ -113,8 +113,6 @@ export class AutomatedFieldMappingComponent {
 
       const formControl = new FormControl(selectedMappedValue);
 
-      // simulate a full entity-form to use the entity-field-edit component including validation, etc.
-      this.targetFieldConfig.id = "targetValue";
       const formGroup = new FormGroup({
         [this.targetFieldConfig.id]: formControl,
       });
@@ -144,7 +142,11 @@ export class AutomatedFieldMappingComponent {
   constructor() {
     const data = inject<AutomatedFieldMappingDialogData>(MAT_DIALOG_DATA);
 
-    this.targetFieldConfig = data.currentField;
+    this.targetFieldConfig = {
+      ...data.currentField,
+      id: "targetValue", // simulate a faked full entity-form to use as basis for value mapping edit components
+    } as FormFieldConfig;
+
     this.value = data.value;
     this.sourceValueEntityType = data.sourceValueEntityType;
 
@@ -191,7 +193,7 @@ export class AutomatedFieldMappingComponent {
  */
 export interface AutomatedFieldMappingDialogData {
   currentEntityType: EntityConstructor;
-  currentField: FormFieldConfig;
+  currentField: EntitySchemaField;
   sourceValueEntityType: EntityConstructor;
   value: DefaultValueConfigInheritedField;
 }

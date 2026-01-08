@@ -24,7 +24,6 @@ import {
   AutomatedFieldMappingDialogData,
 } from "#src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component";
 import { DefaultValueConfigInheritedField } from "../inherited-field-config";
-import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 
 interface InheritanceOption {
   type: "inherit" | "automated";
@@ -176,7 +175,7 @@ export class AdminInheritedFieldComponent
     >(AutomatedFieldMappingComponent, {
       data: {
         currentEntityType: this.entityType,
-        currentField: this.entitySchemaField as FormFieldConfig,
+        currentField: this.entitySchemaField,
         sourceValueEntityType: this.selectedOption.referencedEntityType,
         value: { ...this.value },
       },
