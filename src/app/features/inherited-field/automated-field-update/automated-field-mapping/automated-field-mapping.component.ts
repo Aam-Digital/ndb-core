@@ -4,7 +4,6 @@ import { EntityFieldLabelComponent } from "#src/app/core/entity/entity-field-lab
 import {
   Component,
   computed,
-  effect,
   inject,
   Signal,
   signal,
@@ -69,11 +68,13 @@ export class AutomatedFieldMappingComponent {
   /** The currently selected "sourceValueField" on the related entity */
   selectedSourceValueField: WritableSignal<string | null>;
 
-  sourceValueFieldSchema: Signal<EntitySchemaField> = computed(() => {
-    const fieldId = this.selectedSourceValueField();
-    if (!fieldId) return;
-    return this.sourceValueEntityType.schema.get(fieldId);
-  });
+  sourceValueFieldSchema: Signal<EntitySchemaField | undefined> = computed(
+    () => {
+      const fieldId = this.selectedSourceValueField();
+      if (!fieldId) return;
+      return this.sourceValueEntityType.schema.get(fieldId);
+    },
+  );
 
   /**
    * The possible values of the selected sourceValueField that can be mapped to custom target values.
