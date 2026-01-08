@@ -3,87 +3,70 @@
 
 <mat-dialog-content>
   <p i18n>
-    You can create an automation rule for this field. The system will then
-    suggest to automatically update this field whenever the related record's
-    field changes. This helps you ensure data consistency and reduces manual
-    work.
-  </p>
-  <p i18n>
-    Please select the field and configure the mapping carefully to avoid
-    unintended updates. You will see a confirmation dialog to check and manually
-    adjust the value whenever you change records that trigger this automation.
+    You are linking this field to the value of a related
+    {{ sourceValueEntityType.label }} record. he system will show a dialog to
+    automatically update this field whenever the related record's field changes.
+    You can still manually adjust the value if needed. This helps you ensure
+    data consistency and reduces manual work.
   </p>
 
-  <mat-form-field appearance="fill">
-    <mat-label i18n
-      >Related reference field (of {{ relatedEntityType.label }})
-    </mat-label>
-    <mat-select
-      [(value)]="selectedReferenceField"
-      matTooltip="Select the field in the related record that links it to this record. For example, if a child's field is updated based on a school's value, this is the field in the school record that references the child."
-      i18n-matTooltip
-    >
-      @for (field of availableReferenceFields; track field) {
-        <mat-option [value]="field">
-          <app-entity-field-label
-            [field]="field"
-            [entityType]="relatedEntityType"
-          ></app-entity-field-label>
-        </mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+  <p>
+    (<span i18n>Field defining the related source record:</span>
+    <app-entity-field-label
+      [field]="value?.sourceReferenceField"
+      [entityType]="sourceValueEntityType"
+    ></app-entity-field-label
+    >)
+  </p>
 
-  <mat-form-field appearance="fill">
+  <mat-form-field
+    appearance="fill"
+    matTooltip="Choose the field in the related record that will trigger updates to this field when it is changed."
+    i18n-matTooltip
+  >
     <mat-label i18n
-      >Automation trigger field (of {{ relatedEntityType.label }})
+      >Source value field (of {{ sourceValueEntityType.label }})
     </mat-label>
 
-    <mat-select
-      [(value)]="selectedTriggerField"
-      (selectionChange)="loadtriggerFieldValues($event.value)"
-      matTooltip="Choose the field in the related record that will trigger updates to this field when it is changed."
-      i18n-matTooltip
-    >
-      @for (field of availableTriggerFields; track field.id) {
-        <mat-option [value]="field.id">{{ field.label }}</mat-option>
-      } @empty {
-        <mat-option
-          class="no-options-message"
-          matTooltip='The trigger field on the other, related record must be of type "dropdown". It seems there are no such field on that record type.'
-          i18n-matTooltip
-          i18n
-          >No suitable fields available in
-          {{ relatedEntityType.labelPlural }}
-        </mat-option>
-      }
-    </mat-select>
-
-    <mat-hint i18n
-      >Currently only fields of type "dropdown" can be used as trigger field.
-    </mat-hint>
+    <app-entity-field-select
+      [entityType]="sourceValueEntityType"
+      [value]="selectedSourceValueField()"
+      (valueChange)="
+        selectedSourceValueField.set(
+          typeof $event === 'object' ? $event[0] : $event
+        )
+      "
+    ></app-entity-field-select>
   </mat-form-field>
 
   <!--
     Detailed trigger value -> target value mapping
   -->
-  @if (selectedTriggerField) {
+  <mat-slide-toggle
+    [disabled]="valueMappingOptions().length === 0"
+    matTooltip="If the source is a dropdown field, you can optionally also define a custom mapping for specific values."
+    i18n-matTooltip
+    [checked]="mappingEnabled()"
+    (change)="mappingEnabled.set($event.checked)"
+    i18n
+  >
+    Transform value with custom mapping
+  </mat-slide-toggle>
+
+  @if (valueMappingOptions().length > 0 && mappingEnabled()) {
     <div class="mapping-grid">
       <div class="header-row">
         <h3 class="mapping-header" i18n>When "trigger field" changes to</h3>
         <h3 class="mapping-header" i18n>then this field is updated to</h3>
       </div>
 
-      @for (
-        triggerFieldValue of triggerFieldValues;
-        track triggerFieldValue.id
-      ) {
-        <div class="option-label">{{ triggerFieldValue.label }}</div>
+      @for (v of valueMappingOptions(); track v.sourceValue.id) {
+        <div class="option-label">{{ v.sourceValue.label }}</div>
         <div class="dropdown-select">
-          @if (mappingForms[triggerFieldValue.id]) {
+          @if (v.form) {
             <app-entity-field-edit
               [field]="targetFieldConfig"
-              [form]="mappingForms[triggerFieldValue.id]"
+              [form]="v.form"
             ></app-entity-field-edit>
           }
         </div>
@@ -96,13 +79,15 @@
   <button
     mat-button
     (click)="save()"
-    [disabled]="!selectedReferenceField || !selectedTriggerField"
+    [disabled]="!selectedSourceValueField()"
     i18n
   >
     Save
   </button>
+
   <button mat-button mat-dialog-close i18n>Cancel</button>
-  @if (isInvalid) {
+
+  @if (isInvalidMapping) {
     <mat-error i18n>
       The data is invalid, please check the fields in the "Configure mapping"
     </mat-error>

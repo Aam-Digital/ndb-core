@@ -1,7 +1,15 @@
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
 import { EntityFieldLabelComponent } from "#src/app/core/entity/entity-field-label/entity-field-label.component";
-import { Component, inject, OnInit } from "@angular/core";
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  Signal,
+  signal,
+  WritableSignal,
+} from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatOptionModule } from "@angular/material/core";
@@ -11,15 +19,18 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatOption, MatSelect } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { ConfigurableEnumValue } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.types";
-import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { DialogCloseComponent } from "../../../../core/common-components/dialog-close/dialog-close.component";
+import { DefaultValueConfigInheritedField } from "../../inherited-field-config";
+import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
+import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
+import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 
 /**
  * Dialog to configure additional details for the "inherited-field"
@@ -29,166 +40,149 @@ import { DialogCloseComponent } from "../../../../core/common-components/dialog-
   selector: "app-automated-field-mapping",
   imports: [
     MatOptionModule,
-    MatSelect,
     MatFormFieldModule,
-    MatOption,
     MatDialogModule,
     MatButtonModule,
     MatTooltipModule,
     EntityFieldEditComponent,
     EntityFieldLabelComponent,
     DialogCloseComponent,
+    EntityFieldSelectComponent,
+    MatSlideToggle,
   ],
   templateUrl: "./automated-field-mapping.component.html",
   styleUrl: "./automated-field-mapping.component.scss",
 })
-export class AutomatedFieldMappingComponent implements OnInit {
-  private dialogRef = inject<MatDialogRef<any>>(MatDialogRef);
-  private configurableEnumService = inject(ConfigurableEnumService);
-  private schemaService = inject(EntitySchemaService);
-
-  /** The currently selected relatedReferenceField on the related entity */
-  selectedReferenceField: string;
-  /** all fields for selection as selectedReferenceField */
-  availableReferenceFields: string[];
-
-  /** The currently selected "relatedTriggerField" on the related entity */
-  selectedTriggerField: string | null = null;
-  /** all fields for selection as selectedTriggerField */
-  availableTriggerFields: { id: string; label: string; additional: string }[] =
-    [];
-
-  /**
-   * A mapping of triggerfieldValues to their corresponding EntityForm instances.
-   * Each EntityForm represents the form configuration for a specific trigger field value.
-   * For example:
-   * {
-   *   "male ": { formGroup },
-   *   "female": { formGroup },
-   * }
-   */
-  mappingForms: {
-    [triggerfieldValue: string]: EntityForm<Entity>;
-  } = {};
-  /** The valueMapping rules for the selectedTriggerField
-   * The mapping is a dictionary where the key is the triggerFieldValue and the value is the currentField value.
-   */
-  selectedMappings: { [key: string]: any } = {};
-  /** The available values for the selectedTriggerField */
-  triggerFieldValues: ConfigurableEnumValue[] = [];
+export class AutomatedFieldMappingComponent {
+  private readonly dialogRef = inject<MatDialogRef<any>>(MatDialogRef);
+  private readonly configurableEnumService = inject(ConfigurableEnumService);
+  private readonly schemaService = inject(EntitySchemaService);
 
   /** The full schema of the field for which this default value is configured */
   targetFieldConfig: FormFieldConfig;
-  /** The entity type of the related entity that triggers the updates */
-  relatedEntityType: EntityConstructor;
 
-  isInvalid: boolean = false;
+  /** The entity type of the related entity that triggers the updates */
+  sourceValueEntityType: EntityConstructor;
+
+  value: DefaultValueConfigInheritedField;
+
+  /** The currently selected "sourceValueField" on the related entity */
+  selectedSourceValueField: WritableSignal<string | null>;
+
+  sourceValueFieldSchema: Signal<EntitySchemaField> = computed(() => {
+    const fieldId = this.selectedSourceValueField();
+    if (!fieldId) return;
+    return this.sourceValueEntityType.schema.get(fieldId);
+  });
+
+  /**
+   * The possible values of the selected sourceValueField that can be mapped to custom target values.
+   * Currently mapping only supported for ConfigurableEnum fields.
+   */
+  valueMappingOptions: Signal<
+    {
+      sourceValue: ConfigurableEnumValue;
+      sourceValueRaw: string;
+      form: EntityForm<Entity>;
+    }[]
+  > = computed(() => {
+    if (
+      this.sourceValueFieldSchema()?.dataType !==
+      ConfigurableEnumDatatype.dataType
+    ) {
+      // only configurable-enum fields supported currently
+      return [];
+    }
+
+    const enumEntity = this.configurableEnumService.getEnum(
+      this.sourceValueFieldSchema().additional,
+    );
+
+    const values = enumEntity?.values ?? [];
+    return values.map((sourceValue) => {
+      const sourceValueRaw = sourceValue.id; // database format of the source value
+
+      // select existing mapping value if available
+      let selectedMappedValue: any = this.value.valueMapping?.[sourceValueRaw];
+      if (selectedMappedValue) {
+        selectedMappedValue = this.schemaService.valueToEntityFormat(
+          selectedMappedValue,
+          this.targetFieldConfig,
+        );
+      }
+
+      const formControl = new FormControl(selectedMappedValue);
+
+      // simulate a full entity-form to use the entity-field-edit component including validation, etc.
+      this.targetFieldConfig.id = "targetValue";
+      const formGroup = new FormGroup({
+        [this.targetFieldConfig.id]: formControl,
+      });
+
+      return {
+        sourceValue,
+        sourceValueRaw,
+        form: {
+          formGroup,
+        } as unknown as EntityForm<Entity>,
+      };
+    });
+  });
+
+  /**
+   * If the user explicitly enabled the optional value mapping functionality
+   */
+  mappingEnabled = signal(false);
+  enableIfMappingsExist = effect(() => {
+    if (this.valueMappingOptions() && this.value.valueMapping) {
+      this.mappingEnabled.set(true);
+    }
+  });
+
+  isInvalidMapping: boolean = false;
 
   constructor() {
     const data = inject<AutomatedFieldMappingDialogData>(MAT_DIALOG_DATA);
 
     this.targetFieldConfig = data.currentField;
-    this.relatedEntityType = data.relatedEntityType;
-    this.availableReferenceFields = data.relatedReferenceFields;
+    this.value = data.value;
+    this.sourceValueEntityType = data.sourceValueEntityType;
 
-    const defaultValueConfig =
-      this.targetFieldConfig.defaultValue?.config || {};
-    this.selectedReferenceField =
-      defaultValueConfig.sourceReferenceField ||
-      (this.availableReferenceFields ? this.availableReferenceFields[0] : null);
-    this.selectedMappings = defaultValueConfig.valueMapping || {};
-    this.selectedTriggerField = defaultValueConfig.sourceValueField;
-  }
-
-  ngOnInit(): void {
-    this.initAvailableTriggerFields();
-
-    this.initSelectedField();
-  }
-
-  private initAvailableTriggerFields() {
-    this.availableTriggerFields = Array.from(
-      this.relatedEntityType.schema?.entries() ?? [],
-    )
-      .filter(
-        ([_, schema]) => schema.dataType === ConfigurableEnumDatatype.dataType,
-      )
-      .map(([id, schema]) => ({
-        id,
-        label: schema.label,
-        additional: schema.additional,
-      }));
-  }
-
-  private initSelectedField() {
-    if (
-      this.selectedTriggerField &&
-      this.availableTriggerFields.some(
-        (f) => f.id === this.selectedTriggerField,
-      )
-    ) {
-      this.loadtriggerFieldValues(this.selectedTriggerField);
-    }
-  }
-
-  loadtriggerFieldValues(fieldId: string) {
-    const selectedField = this.availableTriggerFields.find(
-      (f) => f.id === fieldId,
+    this.selectedSourceValueField = signal(
+      this.value?.sourceValueField ?? null,
     );
-    if (!selectedField) return;
-
-    this.selectedTriggerField = fieldId;
-    const enumEntity = this.configurableEnumService.getEnum(
-      selectedField.additional,
-    );
-    this.triggerFieldValues = enumEntity?.values ?? [];
-    this.mappingForms = {};
-
-    for (const triggerFieldValue of this.triggerFieldValues) {
-      let selectedValue: any = this.selectedMappings[triggerFieldValue.id];
-
-      if (selectedValue) {
-        selectedValue = this.schemaService.valueToEntityFormat(
-          selectedValue,
-          this.targetFieldConfig,
-        );
-      }
-
-      const formField = new FormControl(selectedValue);
-      // Track form value changes
-      formField.valueChanges.subscribe((value) => {
-        this.selectedMappings[triggerFieldValue.id] = value;
-      });
-      this.targetFieldConfig.id = "targetValue";
-      const formGroup = new FormGroup({
-        [this.targetFieldConfig.id]: formField,
-      });
-      this.mappingForms[triggerFieldValue.id] = {
-        formGroup,
-      } as unknown as EntityForm<Entity>;
-    }
   }
 
   save() {
-    this.isInvalid = Object.values(this.mappingForms).some((mappingForm) => {
-      mappingForm.formGroup.markAllAsTouched();
-      return mappingForm.formGroup.invalid;
-    });
-    if (this.isInvalid) return;
+    const selectedMappings = {};
+    if (this.mappingEnabled()) {
+      this.isInvalidMapping = this.valueMappingOptions().some((v) => {
+        v.form.formGroup.markAllAsTouched();
+        return v.form.formGroup.invalid;
+      });
+      if (this.isInvalidMapping) return;
 
-    Object.entries(this.mappingForms).forEach(([key, mappingForm]) => {
-      const value = mappingForm.formGroup.get(this.targetFieldConfig.id)?.value;
-      this.selectedMappings[key] = this.schemaService.valueToDatabaseFormat(
-        value,
-        this.targetFieldConfig,
-      );
-    });
+      this.valueMappingOptions().forEach(({ sourceValueRaw, form }) => {
+        const value = form.formGroup.get(this.targetFieldConfig.id)?.value;
+        selectedMappings[sourceValueRaw] =
+          this.schemaService.valueToDatabaseFormat(
+            value,
+            this.targetFieldConfig,
+          );
+      });
+    }
 
-    this.dialogRef.close({
-      sourceValueField: this.selectedTriggerField,
-      sourceReferenceField: this.selectedReferenceField,
-      valueMapping: this.selectedMappings,
-    });
+    const newValue: DefaultValueConfigInheritedField = {
+      ...this.value,
+      sourceValueField: this.selectedSourceValueField(),
+      valueMapping: selectedMappings,
+    };
+    if (Object.keys(selectedMappings).length === 0) {
+      // do not store empty mappings and delete any potentially existing mappings
+      delete newValue.valueMapping;
+    }
+
+    this.dialogRef.close(newValue);
   }
 }
 
@@ -197,7 +191,7 @@ export class AutomatedFieldMappingComponent implements OnInit {
  */
 export interface AutomatedFieldMappingDialogData {
   currentEntityType: EntityConstructor;
-  relatedEntityType: EntityConstructor;
   currentField: FormFieldConfig;
-  relatedReferenceFields: string[];
+  sourceValueEntityType: EntityConstructor;
+  value: DefaultValueConfigInheritedField;
 }
