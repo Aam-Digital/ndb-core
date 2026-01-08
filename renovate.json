@@ -26,13 +26,6 @@
     "zone.js",
     "moment"
   ],
-  "lockFileMaintenance": {
-    "enabled": true,
-    "automerge": false,
-    "schedule": [
-      "after 00:00 and before 04:00 on Wednesday"
-    ]
-  },
   "constraints": {
     "npm": ">=11.0.0"
   },
