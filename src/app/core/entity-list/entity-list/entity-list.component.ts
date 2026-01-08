@@ -43,7 +43,7 @@ import { Sort } from "@angular/material/sort";
 import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
 import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
-import { applyUpdate } from "../../entity/model/entity-update";
+import { applyUpdate, UpdatedEntity } from "../../entity/model/entity-update";
 import { Subscription } from "rxjs";
 import { DataFilter } from "../../filter/filters/filters";
 import { EntityCreateButtonComponent } from "../../common-components/entity-create-button/entity-create-button.component";
@@ -58,6 +58,7 @@ import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.
 import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
+import { BulkOperationStateService } from "../../entity/entity-actions/bulk-operation-state.service";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -115,6 +116,7 @@ export class EntityListComponent<T extends Entity>
     optional: true,
   });
   private readonly formDialog = inject(FormDialogService);
+  private readonly bulkOperationState = inject(BulkOperationStateService);
 
   private readonly publicFormsService = inject(PublicFormsService);
   public publicFormConfigs: PublicFormConfig[] = [];
@@ -277,15 +279,31 @@ export class EntityListComponent<T extends Entity>
     this.updateSubscription = this.entityMapperService
       .receiveUpdates(this.entityConstructor)
       .pipe(untilDestroyed(this))
-      .subscribe(async (updatedEntity) => {
-        // get specially enhanced entity if necessary
+      .subscribe(async (updatedEntity: UpdatedEntity<T>) => {
+        if (this.bulkOperationState.isBulkOperationInProgress()) {
+          //buffer updates during bulk operations to avoid UI performance issues
+          const inProgress =
+            this.bulkOperationState.updateBulkOperationProgress(1, false);
+          if (!inProgress) {
+            // reload the list once
+            this.allEntities = await this.getEntities();
+            // Use setTimeout and requestAnimationFrame to detect when UI rendering is complete and inform the bulk action update
+            setTimeout(() => {
+              requestAnimationFrame(() => {
+                this.bulkOperationState.completeBulkOperation();
+              });
+            });
+          }
+          return;
+        }
+
+        //get specially enhanced entity if necessary
         if (this.loaderMethod && this.entitySpecialLoader) {
           updatedEntity = await this.entitySpecialLoader.extendUpdatedEntity(
             this.loaderMethod,
             updatedEntity,
           );
         }
-
         this.allEntities = applyUpdate(this.allEntities, updatedEntity);
       });
   }

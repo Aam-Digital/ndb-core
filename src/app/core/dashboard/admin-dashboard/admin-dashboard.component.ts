@@ -27,6 +27,7 @@ import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.int
 import { DashboardConfig } from "../../dashboard/dashboard/dashboard.component";
 import { DashboardWidgetRegistryService } from "../dashboard-widget-registry.service";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { IconButtonComponent } from "#src/app/core/common-components/icon-button/icon-button.component";
 
 @Component({
   selector: "app-admin-dashboard",
@@ -42,6 +43,7 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
     MatIconModule,
     ViewTitleComponent,
     HintBoxComponent,
+    IconButtonComponent,
   ],
   templateUrl: "./admin-dashboard.component.html",
   styleUrls: [

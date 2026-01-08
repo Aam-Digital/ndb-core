@@ -15,6 +15,7 @@ import { EntityDeleteService } from "./entity-delete.service";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { CascadingActionResult } from "./cascading-entity-action";
 import { PublicFormsService } from "app/features/public-form/public-forms.service";
+import { BulkOperationStateService } from "./bulk-operation-state.service";
 
 describe("EntityActionsService", () => {
   let service: EntityActionsService;
@@ -25,6 +26,7 @@ describe("EntityActionsService", () => {
   let mockRouter;
   let mockedEntityDeleteService: jasmine.SpyObj<EntityDeleteService>;
   let mockedEntityAnonymizeService: jasmine.SpyObj<EntityAnonymizeService>;
+  let mockedBulkOperationState: jasmine.SpyObj<BulkOperationStateService>;
 
   let singleTestEntity: Entity;
   let severalTestEntities: Entity[] = [];
@@ -43,6 +45,10 @@ describe("EntityActionsService", () => {
     mockedEntityAnonymizeService.anonymizeEntity.and.resolveTo(
       new CascadingActionResult([singleTestEntity]),
     );
+    mockedBulkOperationState = jasmine.createSpyObj([
+      "startBulkOperation",
+      "completeBulkOperation",
+    ]);
     mockedEntityMapper = jasmine.createSpyObj([
       "save",
       "saveAll",
@@ -84,6 +90,10 @@ describe("EntityActionsService", () => {
         {
           provide: PublicFormsService,
           useValue: jasmine.createSpyObj(["initCustomFormActions"]),
+        },
+        {
+          provide: BulkOperationStateService,
+          useValue: mockedBulkOperationState,
         },
       ],
     });
@@ -292,15 +302,9 @@ describe("EntityActionsService", () => {
 
     const result = await service.archive(severalTestEntities);
     expect(result).toBe(true);
-    expect(mockedEntityMapper.save).toHaveBeenCalledTimes(3);
-    expect(mockedEntityMapper.save).toHaveBeenCalledWith(
-      expectedSavedEntities[0],
-    );
-    expect(mockedEntityMapper.save).toHaveBeenCalledWith(
-      expectedSavedEntities[1],
-    );
-    expect(mockedEntityMapper.save).toHaveBeenCalledWith(
-      expectedSavedEntities[2],
+    expect(mockedEntityMapper.saveAll).toHaveBeenCalledTimes(1);
+    expect(mockedEntityMapper.saveAll).toHaveBeenCalledWith(
+      expectedSavedEntities,
     );
     expect(snackBarSpy.open).toHaveBeenCalled();
   });
@@ -322,17 +326,11 @@ describe("EntityActionsService", () => {
     expectedSavedEntities.forEach((e) => (e.inactive = true));
 
     await service.archive(severalTestEntities);
-    expect(mockedEntityMapper.save).toHaveBeenCalledTimes(3);
-    expect(mockedEntityMapper.save).toHaveBeenCalledWith(
-      expectedSavedEntities[0],
+    expect(mockedEntityMapper.saveAll).toHaveBeenCalledTimes(1);
+    expect(mockedEntityMapper.saveAll).toHaveBeenCalledWith(
+      expectedSavedEntities,
     );
-    expect(mockedEntityMapper.save).toHaveBeenCalledWith(
-      expectedSavedEntities[1],
-    );
-    expect(mockedEntityMapper.save).toHaveBeenCalledWith(
-      expectedSavedEntities[2],
-    );
-    mockedEntityMapper.save.calls.reset();
+    mockedEntityMapper.saveAll.calls.reset();
 
     await service.undoArchive(severalTestEntities);
     expect(mockedEntityMapper.save).toHaveBeenCalledWith(
