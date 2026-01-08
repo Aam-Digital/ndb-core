@@ -1,12 +1,11 @@
 @if (showSetupWizard) {
-  <button
-    mat-flat-button
-    (click)="navigateToWizard()"
-    class="button"
+  <app-icon-button
+    icon="person-digging"
+    buttonType="mat-flat-button"
     color="accent"
-    style="border-radius: 0"
+    (buttonClick)="navigateToWizard()"
+    i18n
   >
-    <fa-icon icon="person-digging" class="standard-icon-with-text"></fa-icon>
-    <span i18n>Setup Wizard</span>
-  </button>
+    Setup Wizard
+  </app-icon-button>
 }

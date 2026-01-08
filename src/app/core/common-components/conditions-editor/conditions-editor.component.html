@@ -45,25 +45,13 @@
     }
 
     <div class="button-row flex-row gap-small">
-      <button
-        mat-stroked-button
-        type="button"
-        (click)="addCondition()"
-        class="add-condition-button"
-      >
-        <fa-icon icon="plus" class="standard-icon-with-text"></fa-icon>
-        <span i18n>Add Condition</span>
-      </button>
+      <app-icon-button icon="plus" (buttonClick)="addCondition()" i18n>
+        Add Condition
+      </app-icon-button>
 
-      <button
-        mat-stroked-button
-        type="button"
-        (click)="openJsonEditor()"
-        class="edit-json-button"
-      >
-        <fa-icon icon="code" class="standard-icon-with-text"></fa-icon>
-        <span i18n>Edit JSON</span>
-      </button>
+      <app-icon-button icon="code" (buttonClick)="openJsonEditor()" i18n>
+        Edit JSON
+      </app-icon-button>
     </div>
   </div>
 </div>

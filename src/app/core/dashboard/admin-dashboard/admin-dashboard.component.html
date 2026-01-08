@@ -76,19 +76,14 @@
   <!-- DROP AREA: ADD NEW WIDGET -->
   <mat-card class="widget-preview-card drop-area-hint">
     <mat-card-content class="add-widget-content">
-      <button
-        mat-stroked-button
+      <app-icon-button
+        icon="plus-circle"
+        buttonType="mat-stroked-button"
         color="accent"
-        class="add-widget-button field-edit-button"
-        (click)="addNewWidget()"
+        (buttonClick)="addNewWidget()"
       >
-        <fa-icon
-          aria-label="add widget"
-          icon="plus-circle"
-          class="standard-icon-with-text"
-        ></fa-icon>
         <span i18n>Add Widget</span>
-      </button>
+      </app-icon-button>
     </mat-card-content>
   </mat-card>
 </div>
