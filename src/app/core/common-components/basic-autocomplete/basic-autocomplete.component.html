@@ -88,99 +88,54 @@ Autocomplete
     cdkDropListGroup
     [cdkDropListDisabled]="!reorder"
   >
-    <!-- Use virtual scrolling for single select, regular ngFor for multi-select to avoid index state issues -->
-    @if (!multi) {
-      <cdk-virtual-scroll-viewport
-        [style.height.px]="(autocompleteOptions?.length ?? 0) * 48"
-        [itemSize]="48"
-        minBufferPx="200"
+    <cdk-virtual-scroll-viewport
+      [style.height.px]="(autocompleteOptions?.length ?? 0) * 48"
+      [itemSize]="48"
+      minBufferPx="200"
+    >
+      <mat-option
+        [value]="item"
+        cdkDrag
+        *cdkVirtualFor="
+          let item of autocompleteOptions;
+          trackBy: trackByOptionValueFn
+        "
       >
-        <mat-option
-          [value]="item"
-          cdkDrag
-          *cdkVirtualFor="
-            let item of autocompleteOptions;
-            trackBy: trackByOptionValueFn
-          "
-        >
-          <div class="flex-row disable-autocomplete-active-color align-center">
-            @if (reorder) {
-              <div>
-                <fa-icon
-                  icon="grip-vertical"
-                  size="sm"
-                  class="drag-handle"
-                ></fa-icon>
-              </div>
-            }
-            @if (!templateRef) {
-              <span
-                class="text-truncate"
-                [matTooltip]="item.asString"
-                matTooltipPosition="above"
-                [ngClass]="{
-                  'not-defined-label': item.isEmpty,
-                  'invalid-label': item.isInvalid,
-                }"
-              >
-                {{ item.asString }}
-              </span>
-            } @else {
-              <ng-template
-                class="item-option"
-                [ngTemplateOutlet]="templateRef"
-                [ngTemplateOutletContext]="{ $implicit: item.initial }"
-              ></ng-template>
-            }
-          </div>
-        </mat-option>
-      </cdk-virtual-scroll-viewport>
-    } @else {
-      <div [style.max-height.px]="maxPanelHeight" style="overflow-y: auto">
-        @for (
-          item of autocompleteOptions;
-          track trackByOptionValueFn($index, item)
-        ) {
-          <mat-option [value]="item" cdkDrag>
-            <div
-              class="flex-row disable-autocomplete-active-color align-center"
-            >
-              @if (reorder) {
-                <div>
-                  <fa-icon
-                    icon="grip-vertical"
-                    size="sm"
-                    class="drag-handle"
-                  ></fa-icon>
-                </div>
-              }
-              @if (multi) {
-                <mat-checkbox [checked]="item.selected"></mat-checkbox>
-              }
-              @if (!templateRef) {
-                <span
-                  class="text-truncate"
-                  [matTooltip]="item.asString"
-                  matTooltipPosition="above"
-                  [ngClass]="{
-                    'not-defined-label': item.isEmpty,
-                    'invalid-label': item.isInvalid,
-                  }"
-                >
-                  {{ item.asString }}
-                </span>
-              } @else {
-                <ng-template
-                  class="item-option"
-                  [ngTemplateOutlet]="templateRef"
-                  [ngTemplateOutletContext]="{ $implicit: item.initial }"
-                ></ng-template>
-              }
+        <div class="flex-row disable-autocomplete-active-color align-center">
+          @if (reorder) {
+            <div>
+              <fa-icon
+                icon="grip-vertical"
+                size="sm"
+                class="drag-handle"
+              ></fa-icon>
             </div>
-          </mat-option>
-        }
-      </div>
-    }
+          }
+          @if (multi) {
+            <mat-checkbox [checked]="item.selected"></mat-checkbox>
+          }
+          @if (!templateRef) {
+            <span
+              class="text-truncate"
+              [matTooltip]="item.asString"
+              matTooltipPosition="above"
+              [ngClass]="{
+                'not-defined-label': item.isEmpty,
+                'invalid-label': item.isInvalid,
+              }"
+            >
+              {{ item.asString }}
+            </span>
+          } @else {
+            <ng-template
+              class="item-option"
+              [ngTemplateOutlet]="templateRef"
+              [ngTemplateOutletContext]="{ $implicit: item.initial }"
+            ></ng-template>
+          }
+        </div>
+      </mat-option>
+    </cdk-virtual-scroll-viewport>
   </div>
 
   <!-- Create new option -->
