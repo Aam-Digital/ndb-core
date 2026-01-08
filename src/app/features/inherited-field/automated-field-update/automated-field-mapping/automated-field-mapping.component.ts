@@ -131,11 +131,6 @@ export class AutomatedFieldMappingComponent {
    * If the user explicitly enabled the optional value mapping functionality
    */
   mappingEnabled = signal(false);
-  enableIfMappingsExist = effect(() => {
-    if (this.valueMappingOptions() && this.value?.valueMapping) {
-      this.mappingEnabled.set(true);
-    }
-  });
 
   isInvalidMapping: boolean = false;
 
@@ -153,6 +148,10 @@ export class AutomatedFieldMappingComponent {
     this.selectedSourceValueField = signal(
       this.value?.sourceValueField ?? null,
     );
+
+    if (this.value?.valueMapping) {
+      this.mappingEnabled.set(true);
+    }
   }
 
   save() {
