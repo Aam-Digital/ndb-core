@@ -23,6 +23,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { AsyncPipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { IconButtonComponent } from "../../common-components/icon-button/icon-button.component";
 import {
   NavigationEnd,
   Router,
@@ -78,6 +79,7 @@ import { SessionSubject } from "../../session/auth/session-info";
     PrimaryActionComponent,
     DisplayImgComponent,
     SetupWizardButtonComponent,
+    IconButtonComponent,
     NotificationComponent,
     GotoThirdPartySystemComponent,
     AssistantButtonComponent,
@@ -174,4 +176,9 @@ export class UiComponent {
     ),
     { initialValue: false },
   );
+
+  navigateToProfile(): void {
+    this.closeSidenavOnMobile();
+    this.router.navigate(["user-account"]);
+  }
 }

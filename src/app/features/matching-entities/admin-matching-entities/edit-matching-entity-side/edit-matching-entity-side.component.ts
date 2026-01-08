@@ -20,6 +20,7 @@ import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
 import { JsonEditorDialogComponent } from "../../../../core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import { EntityTypeSelectComponent } from "#src/app/core/entity/entity-type-select/entity-type-select.component";
+import { IconButtonComponent } from "../../../../core/common-components/icon-button/icon-button.component";
 
 @Component({
   selector: "app-edit-matching-entity-side",
@@ -32,6 +33,7 @@ import { EntityTypeSelectComponent } from "#src/app/core/entity/entity-type-sele
     FontAwesomeModule,
     AdminListManagerComponent,
     EntityTypeSelectComponent,
+    IconButtonComponent,
   ],
   templateUrl: "./edit-matching-entity-side.component.html",
   styleUrls: ["./edit-matching-entity-side.component.scss"],
