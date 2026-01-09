@@ -35,10 +35,8 @@ import "@angular/localize/init";
 import "hammerjs";
 import * as buffer from "buffer";
 import * as process from "process";
-import * as streamBrowser from "stream-browserify";
 
 // WARNING: workaround to allow PouchDB with Angular v6: https://github.com/pouchdb/pouchdb/issues/7263
 (window as any).global = window;
 (window as any).Buffer = buffer.Buffer;
 (window as any).process = process;
-(window as any).Stream = streamBrowser.Stream || streamBrowser;
