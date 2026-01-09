@@ -147,7 +147,15 @@ describe("AutomatedFieldUpdateConfigService", () => {
           useValue: {
             valueToEntityFormat: jasmine
               .createSpy("valueToEntityFormat")
-              .and.callFake((_field, value) => value),
+              .and.callFake((value, _field) => value),
+            valueToDatabaseFormat: jasmine
+              .createSpy("valueToDatabaseFormat")
+              .and.callFake((value, _field) => {
+                if (value && typeof value === "object" && value.id) {
+                  return value.id;
+                }
+                return value;
+              }),
           },
         },
         { provide: EntityRegistry, useValue: entityRegistry },

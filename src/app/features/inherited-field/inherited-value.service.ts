@@ -13,6 +13,7 @@ import { DefaultValueHint } from "../../core/default-values/default-value-servic
 import { asArray } from "../../utils/asArray";
 import { FormFieldConfig } from "../../core/common-components/entity-form/FormConfig";
 import { DefaultValueConfigInheritedField } from "./inherited-field-config";
+import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 
 /**
  * An advanced default-value strategy that sets values based on the value in a referenced related entity.
@@ -27,6 +28,7 @@ export class InheritedValueService extends DefaultValueStrategy {
   override readonly mode = "inherited-field";
 
   private readonly entityMapper = inject(EntityMapperService);
+  private readonly entitySchemaService = inject(EntitySchemaService);
 
   override async getAdminUI(): Promise<AdminDefaultValueContext> {
     const component =
@@ -253,11 +255,30 @@ export class InheritedValueService extends DefaultValueStrategy {
         );
       }
 
-      // if value empty -> set inherited values to undefined
-      form.inheritedParentValues.set(
-        fieldId,
-        parentEntity?.[inheritedConfigs.get(fieldId).sourceValueField],
-      );
+      let inheritedValue =
+        parentEntity?.[inheritedConfigs.get(fieldId).sourceValueField];
+
+      // transform to database format for consistent handling
+      if (
+        inheritedValue !== null &&
+        inheritedValue !== undefined &&
+        parentEntity
+      ) {
+        const sourceFieldId = inheritedConfigs.get(fieldId).sourceValueField;
+        const sourceFieldSchema = parentEntity
+          .getConstructor()
+          .schema.get(sourceFieldId);
+
+        if (sourceFieldSchema) {
+          inheritedValue = this.entitySchemaService.valueToDatabaseFormat(
+            inheritedValue,
+            sourceFieldSchema,
+            parentEntity,
+          );
+        }
+      }
+
+      form.inheritedParentValues.set(fieldId, inheritedValue);
     }
   }
 

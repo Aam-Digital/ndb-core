@@ -16,6 +16,7 @@ import { UpdatedEntity } from "../../core/entity/model/entity-update";
 import { Config } from "../../core/config/config";
 import { Subject } from "rxjs";
 import { DefaultValueStrategy } from "../../core/default-values/default-value-strategy.interface";
+import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 
 describe("InheritedValueService", () => {
   let service: InheritedValueService;
@@ -36,6 +37,19 @@ describe("InheritedValueService", () => {
         },
         { provide: EntityMapperService, useValue: mockEntityMapperService },
         { provide: EntityAbility, useValue: mockAbility },
+        {
+          provide: EntitySchemaService,
+          useValue: {
+            valueToDatabaseFormat: jasmine
+              .createSpy("valueToDatabaseFormat")
+              .and.callFake((value) => {
+                if (value && typeof value === "object" && value.id) {
+                  return value.id;
+                }
+                return value;
+              }),
+          },
+        },
       ],
     });
     // @ts-ignore

@@ -11,6 +11,7 @@ import { lastValueFrom } from "rxjs";
 import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
 import { DefaultValueConfigInheritedField } from "../inherited-field-config";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 
 /**
  * Represents a rule with its associated entity type and field information
@@ -31,6 +32,7 @@ export class AutomatedFieldUpdateConfigService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly dialog = inject(MatDialog);
   private readonly unsavedChangesService = inject(UnsavedChangesService);
+  private readonly entitySchemaService = inject(EntitySchemaService);
 
   /**
    * Track processed entity revisions to prevent duplicate automated status updates within the same save operation
@@ -264,7 +266,8 @@ export class AutomatedFieldUpdateConfigService {
   }
 
   /**
-   * Calculate the new value from source entity with value mapping applied
+   * Calculate the new value from source entity with value mapping applied.
+   * Transforms to database format for consistent handling of all datatypes.
    */
   private calculateNewValue(
     sourceEntity: Entity,
@@ -276,6 +279,18 @@ export class AutomatedFieldUpdateConfigService {
     if (rule.valueMapping && sourceValue) {
       const mappingKey = sourceValue.id;
       newValue = rule.valueMapping[mappingKey] || sourceValue;
+    }
+
+    const sourceFieldConfig = sourceEntity
+      .getConstructor()
+      .schema.get(rule.sourceValueField);
+
+    if (sourceFieldConfig && newValue !== null && newValue !== undefined) {
+      newValue = this.entitySchemaService.valueToDatabaseFormat(
+        newValue,
+        sourceFieldConfig,
+        sourceEntity,
+      );
     }
 
     return newValue;

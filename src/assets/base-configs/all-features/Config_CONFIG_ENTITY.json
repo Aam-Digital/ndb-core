@@ -659,7 +659,8 @@
                   "fieldGroups": [
                     {
                       "fields": [
-                        "photo"
+                        "photo",
+                        "schoolId"
                       ]
                     },
                     {
@@ -1181,10 +1182,23 @@
           "labelShort": "DoB",
           "anonymize": "retain-anonymized"
         },
+        "schoolId": {
+          "dataType": "entity",
+          "additional": "School",
+          "label": "Linked School",
+          "anonymize": "retain"
+        },
         "center": {
           "dataType": "configurable-enum",
           "additional": "center",
           "label": "Center",
+          "defaultValue": {
+            "mode": "inherited-field",
+            "config": {
+              "sourceReferenceField": "schoolId",
+              "sourceValueField": "enumDropdown"
+            }
+          },
           "anonymize": "retain"
         },
         "gender": {
