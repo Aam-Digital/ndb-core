@@ -1,4 +1,4 @@
-import { TestBed, waitForAsync } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
 import {
   AttendanceInfo,
@@ -400,19 +400,23 @@ describe("QueryService", () => {
     expectEntitiesToMatch(allNotesLastWeek, [today, threeDaysAgo]);
   });
 
-  it("should used updated entities if a new version has been saved", async () => {
+  it("should use updated entities if a new version has been saved", fakeAsync(async () => {
     const child = await createChild("M");
     const query = "Child:toArray.gender.id";
 
     await expectAsync(queryData(query)).toBeResolvedTo(["M"]);
+    tick();
 
     child["gender"] = genders.find(({ id }) => id === "F");
     await entityMapper.save(child);
+    tick();
+    // wait more to ensure the `entityMapper.receiveUpdates` has also been processed
+    tick();
 
     await expectAsync(queryData(query)).toBeResolvedTo(["F"]);
-  });
+  }));
 
-  it("should not count a deleted entity anymore", async () => {
+  it("should not count a deleted entity anymore", fakeAsync(async () => {
     const child = await createChild("M");
     await createChild("F");
     const query = "Child:toArray.gender.id";
@@ -420,13 +424,15 @@ describe("QueryService", () => {
     await expectAsync(queryData(query)).toBeResolvedTo(
       jasmine.arrayWithExactContents(["M", "F"]),
     );
+    tick();
 
     await entityMapper.remove(child);
-    // waiting for delete-update to be processed
-    await new Promise((res) => setTimeout(res));
+    tick();
+    // wait more to ensure the `entityMapper.receiveUpdates` has also been processed
+    tick();
 
     await expectAsync(queryData(query)).toBeResolvedTo(["F"]);
-  });
+  }));
 
   it("should add notes to an array of event notes", async () => {
     const note1 = new Note();
