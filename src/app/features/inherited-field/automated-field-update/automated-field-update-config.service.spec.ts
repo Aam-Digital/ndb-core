@@ -372,4 +372,22 @@ describe("AutomatedFieldUpdateConfigService", () => {
     expect(updatedChild1.category).toBe("secondary-student");
     expect(updatedChild2.category).toBe("secondary-student");
   });
+
+  it("should transform ConfigurableEnum value to database format (ID string)", () => {
+    const school = new School("school1");
+    const enumValue = TEST_SCHOOL_ENUM[0];
+    school.category = enumValue;
+
+    const mockSchemaService = TestBed.inject(EntitySchemaService);
+
+    const result =
+      service.transformValueToDatabaseFormat(
+        enumValue,
+        school,
+        "category",
+        mockSchemaService,
+      );
+
+    expect(result).toBe("primary");
+  });
 });

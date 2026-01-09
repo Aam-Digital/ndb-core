@@ -14,6 +14,7 @@ import { asArray } from "../../utils/asArray";
 import { FormFieldConfig } from "../../core/common-components/entity-form/FormConfig";
 import { DefaultValueConfigInheritedField } from "./inherited-field-config";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
+import { AutomatedFieldUpdateConfigService } from "./automated-field-update/automated-field-update-config.service";
 
 /**
  * An advanced default-value strategy that sets values based on the value in a referenced related entity.
@@ -29,6 +30,9 @@ export class InheritedValueService extends DefaultValueStrategy {
 
   private readonly entityMapper = inject(EntityMapperService);
   private readonly entitySchemaService = inject(EntitySchemaService);
+  private readonly automatedFieldUpdateConfigService = inject(
+    AutomatedFieldUpdateConfigService,
+  );
 
   override async getAdminUI(): Promise<AdminDefaultValueContext> {
     const component =
@@ -258,25 +262,12 @@ export class InheritedValueService extends DefaultValueStrategy {
       let inheritedValue =
         parentEntity?.[inheritedConfigs.get(fieldId).sourceValueField];
 
-      // transform to database format for consistent handling
-      if (
-        inheritedValue !== null &&
-        inheritedValue !== undefined &&
-        parentEntity
-      ) {
-        const sourceFieldId = inheritedConfigs.get(fieldId).sourceValueField;
-        const sourceFieldSchema = parentEntity
-          .getConstructor()
-          .schema.get(sourceFieldId);
-
-        if (sourceFieldSchema) {
-          inheritedValue = this.entitySchemaService.valueToDatabaseFormat(
-            inheritedValue,
-            sourceFieldSchema,
-            parentEntity,
-          );
-        }
-      }
+      inheritedValue = this.automatedFieldUpdateConfigService.transformValueToDatabaseFormat(
+        inheritedValue,
+        parentEntity,
+        inheritedConfigs.get(fieldId).sourceValueField,
+        this.entitySchemaService,
+      );
 
       form.inheritedParentValues.set(fieldId, inheritedValue);
     }
