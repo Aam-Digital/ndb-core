@@ -224,13 +224,29 @@ export class InheritedValueService extends DefaultValueStrategy {
       inheritedFromType: parentRefValue
         ? Entity.extractTypeFromId(parentRefValue)
         : undefined,
-      isInSync:
-        JSON.stringify(form.inheritedParentValues.get(field.id)) ===
-        JSON.stringify(form.formGroup.get(field.id)?.value),
+      isInSync: (() => {
+        const databaseValue = form.inheritedParentValues.get(field.id);
+        const currentValue = form.formGroup.get(field.id)?.value;
+        // convert current value to database format for comparison
+        const currentDatabaseValue =
+          this.automatedFieldUpdateConfigService.transformValueToDatabaseFormat(
+            currentValue,
+            form.entity,
+            field.id,
+            this.entitySchemaService,
+          );
+        return (
+          JSON.stringify(databaseValue) === JSON.stringify(currentDatabaseValue)
+        );
+      })(),
       syncFromParentField: () => {
-        form.formGroup
-          .get(field.id)
-          .setValue(form.inheritedParentValues.get(field.id));
+        const databaseValue = form.inheritedParentValues.get(field.id);
+        // convert database format back to entity format for the form control
+        const entityValue = this.entitySchemaService.valueToEntityFormat(
+          databaseValue,
+          field,
+        );
+        form.formGroup.get(field.id).setValue(entityValue);
       },
     };
   }
@@ -262,12 +278,13 @@ export class InheritedValueService extends DefaultValueStrategy {
       let inheritedValue =
         parentEntity?.[inheritedConfigs.get(fieldId).sourceValueField];
 
-      inheritedValue = this.automatedFieldUpdateConfigService.transformValueToDatabaseFormat(
-        inheritedValue,
-        parentEntity,
-        inheritedConfigs.get(fieldId).sourceValueField,
-        this.entitySchemaService,
-      );
+      inheritedValue =
+        this.automatedFieldUpdateConfigService.transformValueToDatabaseFormat(
+          inheritedValue,
+          parentEntity,
+          inheritedConfigs.get(fieldId).sourceValueField,
+          this.entitySchemaService,
+        );
 
       form.inheritedParentValues.set(fieldId, inheritedValue);
     }

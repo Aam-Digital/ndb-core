@@ -380,13 +380,12 @@ describe("AutomatedFieldUpdateConfigService", () => {
 
     const mockSchemaService = TestBed.inject(EntitySchemaService);
 
-    const result =
-      service.transformValueToDatabaseFormat(
-        enumValue,
-        school,
-        "category",
-        mockSchemaService,
-      );
+    const result = service.transformValueToDatabaseFormat(
+      enumValue,
+      school,
+      "category",
+      mockSchemaService,
+    );
 
     expect(result).toBe("primary");
   });

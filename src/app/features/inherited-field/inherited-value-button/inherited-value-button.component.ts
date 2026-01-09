@@ -39,6 +39,7 @@ export class InheritedValueButtonComponent implements OnChanges {
   @Input() form: EntityForm<any>;
   @Input() field: FormFieldConfig;
   @Input() entity: Entity;
+  @Input() hideInheritButton: boolean = false;
 
   defaultValueHint: DefaultValueHint | undefined;
 

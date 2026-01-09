@@ -17,6 +17,7 @@ import { Config } from "../../core/config/config";
 import { Subject } from "rxjs";
 import { DefaultValueStrategy } from "../../core/default-values/default-value-strategy.interface";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
+import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 
 describe("InheritedValueService", () => {
   let service: InheritedValueService;
@@ -50,6 +51,7 @@ describe("InheritedValueService", () => {
               }),
           },
         },
+        EntityRegistry,
       ],
     });
     // @ts-ignore
