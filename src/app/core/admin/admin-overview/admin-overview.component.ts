@@ -1,4 +1,4 @@
-import { Component, inject, computed } from "@angular/core";
+import { Component, inject, computed, signal } from "@angular/core";
 import { AdminSectionStateService } from "./admin-section-state.service";
 import { BackupService } from "../backup/backup.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -142,7 +142,7 @@ export class AdminOverviewComponent {
 
     snackBarRef.onAction().subscribe(async () => {
       const progressRef = this.confirmationDialog.showProgressDialog(
-        $localize`Reverting configuration changes ...`,
+        signal($localize`Reverting configuration changes ...`),
       );
       await undoAction();
       progressRef.close();

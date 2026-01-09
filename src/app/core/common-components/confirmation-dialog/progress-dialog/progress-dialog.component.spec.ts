@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ProgressDialogComponent } from "./progress-dialog.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { signal } from "@angular/core";
 
 describe("ProgressDialogComponent", () => {
   let component: ProgressDialogComponent;
@@ -14,7 +15,7 @@ describe("ProgressDialogComponent", () => {
         { provide: MatDialogRef, useValue: {} },
         {
           provide: MAT_DIALOG_DATA,
-          useValue: { message: "test title" },
+          useValue: { message: signal("test title") },
         },
       ],
     }).compileComponents();
