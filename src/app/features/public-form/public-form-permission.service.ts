@@ -21,6 +21,26 @@ export class PublicFormPermissionService {
   private readonly entityMapper = inject(EntityMapperService);
 
   /**
+   * Helper method to check if a permission rule subject matches an entity type.
+   * Handles both single subject strings and grouped/array subjects.
+   * @param ruleSubject The subject field from a permission rule (string or string[])
+   * @param entityType The entity type to check
+   * @returns boolean true if the subject matches the entity type
+   */
+  private subjectMatches(
+    ruleSubject: string | string[] | undefined,
+    entityType: string,
+  ): boolean {
+    if (!ruleSubject) {
+      return false;
+    }
+    if (Array.isArray(ruleSubject)) {
+      return ruleSubject.includes(entityType);
+    }
+    return ruleSubject === entityType;
+  }
+
+  /**
    * Checks if public users (not logged in) have create permissions for a specific entity type.
    * @param entityType The entity type to check (e.g., "Child", "School")
    * @returns Promise<boolean> true if public users can create entities of this type
@@ -34,7 +54,7 @@ export class PublicFormPermissionService {
       const publicRules = permissionsConfig.data.public || [];
       return publicRules.some(
         (rule) =>
-          rule.subject === entityType &&
+          this.subjectMatches(rule.subject, entityType) &&
           (rule.action === "create" || rule.action === "manage"),
       );
     } catch {
@@ -168,17 +188,18 @@ export class PublicFormPermissionService {
     }
 
     // basic read permissions on config elements is required for public forms to work:
-    const formReadExists =
-      permissionsConfig.data.public.some(
-        (rule) =>
-          rule.subject?.includes("PublicFormConfig") &&
-          (rule.action === "read" || rule.action === "manage"),
-      ) &&
-      permissionsConfig.data.public.some(
-        (rule) =>
-          rule.subject?.includes("Config") &&
-          (rule.action === "read" || rule.action === "manage"),
-      );
+    const hasPublicFormConfigRead = permissionsConfig.data.public.some(
+      (rule) =>
+        this.subjectMatches(rule.subject, "PublicFormConfig") &&
+        (rule.action === "read" || rule.action === "manage"),
+    );
+    const hasConfigRead = permissionsConfig.data.public.some(
+      (rule) =>
+        this.subjectMatches(rule.subject, "Config") &&
+        (rule.action === "read" || rule.action === "manage"),
+    );
+    const formReadExists = hasPublicFormConfigRead && hasConfigRead;
+
     if (!formReadExists) {
       permissionsConfig.data.public.push({
         subject: [
@@ -194,7 +215,7 @@ export class PublicFormPermissionService {
     // Check if public create permission already exists to avoid duplicates
     const createExists = permissionsConfig.data.public.some(
       (rule) =>
-        rule.subject === entityType &&
+        this.subjectMatches(rule.subject, entityType) &&
         (rule.action === "create" || rule.action === "manage"),
     );
     if (!createExists) {
