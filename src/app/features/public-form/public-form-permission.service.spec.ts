@@ -70,6 +70,39 @@ describe("PublicFormPermissionService", () => {
     expect(result).toBeTrue();
   });
 
+  it("should allow access when public role has create permission with grouped/array subjects", async () => {
+    const permissionsConfig = new Config(Config.PERMISSION_KEY, {
+      public: [{ subject: ["Child", "School"], action: "create" }],
+    });
+    mockEntityMapper.load.and.resolveTo(permissionsConfig);
+
+    const result = await service.hasPublicCreatePermission("Child");
+
+    expect(result).toBeTrue();
+  });
+
+  it("should allow access when public role has manage permission with grouped/array subjects", async () => {
+    const permissionsConfig = new Config(Config.PERMISSION_KEY, {
+      public: [{ subject: ["Child", "School"], action: "manage" }],
+    });
+    mockEntityMapper.load.and.resolveTo(permissionsConfig);
+
+    const result = await service.hasPublicCreatePermission("School");
+
+    expect(result).toBeTrue();
+  });
+
+  it("should deny access when entity type is not in the grouped subjects array", async () => {
+    const permissionsConfig = new Config(Config.PERMISSION_KEY, {
+      public: [{ subject: ["Child", "School"], action: "create" }],
+    });
+    mockEntityMapper.load.and.resolveTo(permissionsConfig);
+
+    const result = await service.hasPublicCreatePermission("Teacher");
+
+    expect(result).toBeFalse();
+  });
+
   it("should deny access when public role has no permission for the entity type", async () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: "School", action: "create" }],
@@ -193,6 +226,28 @@ describe("PublicFormPermissionService", () => {
     const existingConfig = new Config(Config.PERMISSION_KEY, {
       public: [
         { subject: "Child", action: "create" },
+        {
+          subject: [
+            "Config",
+            "SiteSettings",
+            "PublicFormConfig",
+            "ConfigurableEnum",
+          ],
+          action: "read",
+        },
+      ],
+    });
+    mockEntityMapper.load.and.resolveTo(existingConfig);
+
+    await service.addPublicCreatePermission("Child");
+
+    expect(mockEntityMapper.save).not.toHaveBeenCalled();
+  });
+
+  it("should skip adding permission when it exists in a grouped/array subject", async () => {
+    const existingConfig = new Config(Config.PERMISSION_KEY, {
+      public: [
+        { subject: ["Child", "School"], action: "create" },
         {
           subject: [
             "Config",
