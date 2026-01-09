@@ -63,6 +63,11 @@ export class FilterGeneratorService {
         const validIds = new Set(enumValues.map((ev) => ev.id));
         // Get all unique values from data for this field (by id if object, or value)
         // Handle both single values and arrays (for isArray / multi-select fields)
+        const extractId = (value: any) =>
+          value && typeof value === "object" && "id" in value
+            ? value.id
+            : value;
+
         let hasEmptyArray = false;
         const dataValues = [
           ...new Set(
@@ -75,15 +80,10 @@ export class FilterGeneratorService {
                   hasEmptyArray = true;
                   return [];
                 }
-                return v.map((item) =>
-                  item && typeof item === "object" && "id" in item
-                    ? item.id
-                    : item,
-                );
+                return v.map(extractId);
               }
               // Handle single object value
-              if (v && typeof v === "object" && "id" in v) return v.id;
-              return v;
+              return extractId(v);
             }),
           ),
         ];
@@ -115,7 +115,6 @@ export class FilterGeneratorService {
                   $or: [
                     { [filterConfig.id]: undefined },
                     { [filterConfig.id]: null },
-                    { [filterConfig.id]: [] },
                     { [filterConfig.id + ".id"]: undefined },
                     { [filterConfig.id + ".id"]: null },
                     { [filterConfig.id + ".id"]: "" },
