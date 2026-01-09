@@ -312,6 +312,8 @@ export class AutomatedFieldUpdateConfigService {
     if (rule.valueMapping && sourceValue) {
       const mappingKey = sourceValue.id;
       newValue = rule.valueMapping[mappingKey] || sourceValue;
+
+      return newValue;
     }
 
     return this.transformValueToDatabaseFormat(
