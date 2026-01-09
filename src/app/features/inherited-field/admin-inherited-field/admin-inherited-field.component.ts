@@ -119,21 +119,22 @@ export class AdminInheritedFieldComponent
 
     const automatedOptions = this.getAutomatedOptions();
     automatedOptions.forEach((option) => {
-      const automatedOption: InheritanceOption = {
-        type: "automated" as const,
-        label: `${option.label} > ${this.getFieldLabel(option.relatedReferenceFields[0])}`,
-        labelParts: {
-          entityName: option.label,
-          fieldName: this.getFieldLabel(option.relatedReferenceFields[0]),
-        },
-        tooltip: `Inherit value from any "${option.label}" that links to this record in its "${option.relatedReferenceFields[0]}" field`,
-        sourceReferenceEntity: option.entityType,
-        // TODO: what about the other items in the `option.relatedReferenceFields`?
-        sourceReferenceField: option.relatedReferenceFields[0],
-        referencedEntityType: this.entityRegistry.get(option.entityType),
-      };
+      option.relatedReferenceFields.forEach((refField) => {
+        const automatedOption: InheritanceOption = {
+          type: "automated" as const,
+          label: `${option.label} > ${this.getFieldLabel(refField)}`,
+          labelParts: {
+            entityName: option.label,
+            fieldName: this.getFieldLabel(refField),
+          },
+          tooltip: `Inherit value from any "${option.label}" that links to this record in its "${refField}" field`,
+          sourceReferenceEntity: option.entityType,
+          sourceReferenceField: refField,
+          referencedEntityType: this.entityRegistry.get(option.entityType),
+        };
 
-      this.availableOptions.push(automatedOption);
+        this.availableOptions.push(automatedOption);
+      });
     });
   }
 
