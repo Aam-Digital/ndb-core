@@ -149,7 +149,6 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityMapper = TestBed.inject(
       EntityMapperService,
     ) as MockEntityMapperService;
-    entitySchemaService = TestBed.inject(EntitySchemaService);
   });
 
   it("should update mentee status when status of linked mentorship changes", async () => {
