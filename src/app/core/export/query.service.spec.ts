@@ -1,10 +1,4 @@
-import {
-  fakeAsync,
-  flush,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import {
   AttendanceInfo,
@@ -406,23 +400,20 @@ describe("QueryService", () => {
     expectEntitiesToMatch(allNotesLastWeek, [today, threeDaysAgo]);
   });
 
-  it("should use updated entities if a new version has been saved", fakeAsync(async () => {
+  it("should use updated entities if a new version has been saved", async () => {
     const child = await createChild("M");
     const query = "Child:toArray.gender.id";
 
     await expectAsync(queryData(query)).toBeResolvedTo(["M"]);
-    tick();
 
     child["gender"] = genders.find(({ id }) => id === "F");
     await entityMapper.save(child);
-    tick();
-    // wait more to ensure the `entityMapper.receiveUpdates` has also been processed
-    flush();
+    // TODO: need some way to await until receiveUpdates is processed and cache updated
 
     await expectAsync(queryData(query)).toBeResolvedTo(["F"]);
-  }));
+  });
 
-  it("should not count a deleted entity anymore", fakeAsync(async () => {
+  it("should not count a deleted entity anymore", async () => {
     const child = await createChild("M");
     await createChild("F");
     const query = "Child:toArray.gender.id";
@@ -430,15 +421,12 @@ describe("QueryService", () => {
     await expectAsync(queryData(query)).toBeResolvedTo(
       jasmine.arrayWithExactContents(["M", "F"]),
     );
-    tick();
 
     await entityMapper.remove(child);
-    tick();
-    // wait more to ensure the `entityMapper.receiveUpdates` has also been processed
-    tick();
+    // TODO: need some way to await until receiveUpdates is processed and cache updated
 
     await expectAsync(queryData(query)).toBeResolvedTo(["F"]);
-  }));
+  });
 
   it("should add notes to an array of event notes", async () => {
     const note1 = new Note();
@@ -584,9 +572,6 @@ describe("QueryService", () => {
       { child: femaleChild, status: presentAttendanceStatus },
     ]);
     await entityMapper.remove(femaleChild);
-    tick();
-    // wait more to ensure the `entityMapper.receiveUpdates` has also been processed
-    flush();
 
     const result = await queryData(
       `${EventNote.ENTITY_TYPE}:toArray:getIds(children):toEntities(Child).gender`,
