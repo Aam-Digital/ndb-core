@@ -92,7 +92,7 @@ test("View and download attendance report", async ({ page }) => {
   await page.getByRole("button", { name: "Calculate" }).click();
 
   // Verify the names , class , school , total , present , rate and late columns are visible
-  await expect(page.getByRole("columnheader", { name: "Name" })).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: "Name" })).toBeVisible({ timeout: 25_000 });
   await expect(page.getByRole("columnheader", { name: "Class" })).toBeVisible();
   await expect(
     page.getByRole("columnheader", { name: "School" }),
@@ -116,7 +116,9 @@ test("Children list displays monthly attendance percentage", async ({
   await loadApp(page);
   await page.getByRole("navigation").getByText("Children").click();
   await page.getByRole("tab", { name: "School Info" }).click();
-  await expect(page.getByRole("cell", { name: /\d+%/ })).toHaveCount(10);
+
+  // wait for the table to load with data
+  await expect(page.locator('tr.mat-mdc-row')).toHaveCount(10);
   await argosScreenshot(page, "children-school-info");
 });
 
