@@ -39,7 +39,8 @@ export class NavigationComponent {
   constructor() {
     // subscribe to menu items from the menu service
     this.menuService.menuItems.subscribe(async (menuItems) => {
-      const filtered = await this.routePermissionService.filterPermittedRoutes(menuItems);
+      const filtered =
+        await this.routePermissionService.filterPermittedRoutes(menuItems);
       this.menuItems.set(filtered);
 
       // re-select active menu item after menu has been fully initialized
