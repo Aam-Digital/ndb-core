@@ -397,6 +397,75 @@ describe("QueryService", () => {
       });
     });
 
+    describe(":addEntities", () => {
+      it("should concatenate cached entities of specified type to input array", async () => {
+        const entity1 = TestEntity.create({ name: "Entity 1" });
+        const entity2 = TestEntity.create({ name: "Entity 2" });
+        const entity3 = TestEntity.create({ name: "Entity 3" });
+        mockEntityMapper.addAll([entity1, entity2]);
+
+        await service.cacheRequiredData(
+          "TestEntity:toArray",
+          new Date(0),
+          new Date(),
+        );
+
+        const result = service.queryData(
+          ":addEntities(TestEntity)",
+          null,
+          null,
+          [entity3],
+        );
+
+        expect(result.length).toBe(3);
+        expect(result[0].getId()).toBe(entity3.getId());
+        expect(result[1].getId()).toBe(entity1.getId());
+        expect(result[2].getId()).toBe(entity2.getId());
+      });
+
+      it("should work with empty input array", async () => {
+        const entity1 = TestEntity.create({ name: "Entity 1" });
+        mockEntityMapper.add(entity1);
+
+        await service.cacheRequiredData(
+          "TestEntity:toArray",
+          new Date(0),
+          new Date(),
+        );
+
+        const result = service.queryData(
+          ":addEntities(TestEntity)",
+          null,
+          null,
+          [],
+        );
+
+        expect(result.length).toBe(1);
+        expect(result[0].getId()).toBe(entity1.getId());
+      });
+
+      it("should return input array when no cached entities exist", async () => {
+        const entity1 = TestEntity.create({ name: "Entity 1" });
+
+        // Cache the entity type but with no entities
+        await service.cacheRequiredData(
+          "TestEntity:toArray",
+          new Date(0),
+          new Date(),
+        );
+
+        const result = service.queryData(
+          ":addEntities(TestEntity)",
+          null,
+          null,
+          [entity1],
+        );
+
+        expect(result.length).toBe(1);
+        expect(result[0].getId()).toBe(entity1.getId());
+      });
+    });
+
     describe(":getParticipantsWithAttendance", () => {
       it("should return participants with specified attendance status", () => {
         const event1 = createNote(new Date(), [
