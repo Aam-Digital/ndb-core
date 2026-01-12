@@ -39,3 +39,15 @@ em {
 .chip {
   border-radius: 4px;
 }
+
+// Fix for double scrollbars when field/option labels are long
+// ensure all options have consistent 48px height for virtual scroll calculations
+::ng-deep .mat-mdc-autocomplete-panel .mat-mdc-option {
+  max-height: 48px;
+
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
