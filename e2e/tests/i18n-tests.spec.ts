@@ -1,9 +1,4 @@
-import {
-  argosScreenshot,
-  expect,
-  test,
-  waitForDashboardWidgetsToLoad,
-} from "#e2e/fixtures.js";
+import { argosScreenshot, expect, test } from "#e2e/fixtures.js";
 
 test("Translated and localized app versions (i18n)", async ({ page }) => {
   await page.goto("/");
