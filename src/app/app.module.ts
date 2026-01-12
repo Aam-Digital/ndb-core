@@ -17,7 +17,12 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { LOCALE_ID, NgModule, inject } from "@angular/core";
+import {
+  LOCALE_ID,
+  NgModule,
+  inject,
+  provideZoneChangeDetection,
+} from "@angular/core";
 import {
   provideHttpClient,
   withInterceptorsFromDi,
@@ -160,6 +165,7 @@ import { EmailClientServiceModule } from "./features/email-client/email-client.m
   ],
   providers: [
     ...Logging.getAngularTracingProviders(),
+    provideZoneChangeDetection({ eventCoalescing: true }),
     { provide: ComponentRegistry, useValue: componentRegistry },
     { provide: EntityRegistry, useValue: entityRegistry },
     { provide: UserAdminService, useClass: KeycloakAdminService },
