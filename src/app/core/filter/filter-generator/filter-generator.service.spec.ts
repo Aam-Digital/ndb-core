@@ -316,6 +316,59 @@ describe("FilterGeneratorService", () => {
     expect(data.filter(filtered)).toEqual([e1, e2, e3, e4, e5, e6]);
   });
 
+  it("should handle array values (multi-select fields) and show invalid options correctly", async () => {
+    const schema = {
+      id: "tags",
+      dataType: "configurable-enum",
+      additional: "TestEnum",
+      label: "Tags",
+      isArray: true,
+    };
+    TestEntity.schema.set("tags", schema);
+
+    spyOn(
+      TestBed.inject(FilterGeneratorService)["enumService"],
+      "getEnumValues",
+    ).and.returnValue([
+      { id: "VALID_A", label: "Valid A" },
+      { id: "VALID_B", label: "Valid B" },
+    ]);
+
+    // Create entities with array values containing invalid enum IDs
+    const e1 = new TestEntity();
+    e1["tags"] = [
+      { id: "VALID_A", label: "Valid A" },
+      { id: "INVALID_X", label: "Invalid X" },
+    ];
+    const e2 = new TestEntity();
+    e2["tags"] = [{ id: "INVALID_Y", label: "Invalid Y" }];
+
+    const data = [e1, e2];
+
+    const filter = (
+      await service.generate([{ id: "tags" }], TestEntity, data)
+    )[0] as ConfigurableEnumFilter<TestEntity>;
+
+    // Main assertion: invalid options should show the actual ID, not [object Object]
+    const invalidOptionX = filter.options.find(
+      (opt) => opt.key === "invalid:INVALID_X",
+    );
+    expect(invalidOptionX).toBeTruthy();
+    expect(invalidOptionX.label).toBe("[Invalid: INVALID_X]");
+
+    const invalidOptionY = filter.options.find(
+      (opt) => opt.key === "invalid:INVALID_Y",
+    );
+    expect(invalidOptionY).toBeTruthy();
+    expect(invalidOptionY.label).toBe("[Invalid: INVALID_Y]");
+
+    // Verify filtering by invalid option works correctly
+    const filteredByInvalidX = filterService.getFilterPredicate(
+      invalidOptionX.filter,
+    );
+    expect(data.filter(filteredByInvalidX)).toEqual([e1]);
+  });
+
   function filter<T extends Entity>(
     data: T[],
     option: FilterSelectionOption<T>,

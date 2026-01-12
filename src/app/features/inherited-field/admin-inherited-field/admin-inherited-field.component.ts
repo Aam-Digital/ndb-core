@@ -99,14 +99,16 @@ export class AdminInheritedFieldComponent
         );
 
         if (referencedEntityType) {
+          const refFieldLabel = this.getFieldLabel(attr, this.entityType);
+
           const option: InheritanceOption = {
             type: "inherit" as const,
-            label: `${this.getFieldLabel(attr)} > ${this.getEntityLabel(referencedEntityType)}`,
+            label: `${refFieldLabel} > ${this.getEntityLabel(referencedEntityType)}`,
             labelParts: {
               entityName: this.getEntityLabel(referencedEntityType),
-              fieldName: this.getFieldLabel(attr),
+              fieldName: refFieldLabel,
             },
-            tooltip: `Inherit value from any "${this.getEntityLabel(referencedEntityType)}" that is linked to in this record's "${this.getFieldLabel(attr)}" field`,
+            tooltip: `Inherit value from any "${this.getEntityLabel(referencedEntityType)}" that is linked to in this record's "${refFieldLabel}" field`,
             sourceReferenceField: attr,
             sourceReferenceEntity: undefined,
             referencedEntityType,
@@ -120,17 +122,20 @@ export class AdminInheritedFieldComponent
     const automatedOptions = this.getAutomatedOptions();
     automatedOptions.forEach((option) => {
       option.relatedReferenceFields.forEach((refField) => {
+        const refFieldLabel = this.getFieldLabel(refField, option.entityType);
+        const refEntityType = this.entityRegistry.get(option.entityType);
+
         const automatedOption: InheritanceOption = {
           type: "automated" as const,
-          label: `${option.label} > ${this.getFieldLabel(refField)}`,
+          label: `${option.label} > ${refFieldLabel}`,
           labelParts: {
             entityName: option.label,
-            fieldName: this.getFieldLabel(refField),
+            fieldName: refFieldLabel,
           },
-          tooltip: `Inherit value from any "${option.label}" that links to this record in its "${refField}" field`,
+          tooltip: `Inherit value from any "${this.getEntityLabel(refEntityType)}" that links to this record in its "${refFieldLabel}" field`,
           sourceReferenceEntity: option.entityType,
           sourceReferenceField: refField,
-          referencedEntityType: this.entityRegistry.get(option.entityType),
+          referencedEntityType: refEntityType,
         };
 
         this.availableOptions.push(automatedOption);
@@ -167,7 +172,7 @@ export class AdminInheritedFieldComponent
   }
 
   async openConfigDetailsDialog() {
-    if (!this.value?.sourceReferenceField) return;
+    if (!this.value?.sourceReferenceField || !this.selectedOption) return;
 
     const dialogRef = this.matDialog.open<
       AutomatedFieldMappingComponent,
@@ -222,9 +227,16 @@ export class AdminInheritedFieldComponent
       }));
   }
 
-  private getFieldLabel(fieldId: string): string {
-    if (!fieldId || !this.entityType?.schema) return fieldId;
-    const fieldConfig = this.entityType.schema.get(fieldId);
+  private getFieldLabel(
+    fieldId: string,
+    entityType: EntityConstructor | string,
+  ): string {
+    if (typeof entityType === "string") {
+      entityType = this.entityRegistry.get(entityType);
+    }
+
+    if (!fieldId || !entityType?.schema) return fieldId;
+    const fieldConfig = entityType.schema.get(fieldId);
     return fieldConfig?.label || fieldId;
   }
 
