@@ -165,7 +165,7 @@ import { EmailClientServiceModule } from "./features/email-client/email-client.m
   ],
   providers: [
     ...Logging.getAngularTracingProviders(),
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideZoneChangeDetection(),
     { provide: ComponentRegistry, useValue: componentRegistry },
     { provide: EntityRegistry, useValue: entityRegistry },
     { provide: UserAdminService, useClass: KeycloakAdminService },

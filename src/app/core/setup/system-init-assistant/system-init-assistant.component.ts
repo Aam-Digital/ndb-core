@@ -51,7 +51,9 @@ export class SystemInitAssistantComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.adjustAssistantDialogPanel();
 
-    this.availableUseCases.set(await this.setupService.getAvailableBaseConfig());
+    this.availableUseCases.set(
+      await this.setupService.getAvailableBaseConfig(),
+    );
     this.availableLocales.set(this.getAvailableLocalesForUseCases());
 
     await this.initFromQueryParamAutomatically();
@@ -67,7 +69,9 @@ export class SystemInitAssistantComponent implements OnInit {
 
   private getAvailableLocalesForUseCases() {
     const availableDemoLocale = new Set(
-      this.availableUseCases().map((useCase) => useCase.locale).filter(Boolean),
+      this.availableUseCases()
+        .map((useCase) => useCase.locale)
+        .filter(Boolean),
     );
 
     return availableLocales.values.filter((locale) =>
@@ -85,18 +89,19 @@ export class SystemInitAssistantComponent implements OnInit {
       return;
     }
 
-    const useCase = this.availableUseCases().find(
-      (config) =>
-        // Using lowercase comparison to avoid mismatches due to URL parameter casing or caching issues
-        config.id.toLowerCase() === preSelectedUseCase.toLowerCase(),
-    ) || null;
-    
+    const useCase =
+      this.availableUseCases().find(
+        (config) =>
+          // Using lowercase comparison to avoid mismatches due to URL parameter casing or caching issues
+          config.id.toLowerCase() === preSelectedUseCase.toLowerCase(),
+      ) || null;
+
     this.selectedUseCase.set(useCase);
 
     await this.initializeSystem();
   }
 
- async initializeSystem() {
+  async initializeSystem() {
     if (!this.selectedUseCase()) {
       return;
     }
