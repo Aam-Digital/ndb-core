@@ -190,29 +190,26 @@ describe("EntityMapperService", () => {
     const testId = "TestEntity:test-update-event";
     const testEntity = new TestEntity(testId);
 
+    let updatePromise = firstValueFrom(entityMapper.receiveUpdates(TestEntity));
     await entityMapper.save(testEntity);
-    expect(
-      await firstValueFrom(entityMapper.receiveUpdates(TestEntity)),
-    ).toEqual({
+    expect(await updatePromise).toEqual({
       type: "new",
       entity: jasmine.objectContaining({ _id: testId }),
     });
 
     let existing = await entityMapper.load<TestEntity>(TestEntity, testId);
     existing.name = "updated name";
+    updatePromise = firstValueFrom(entityMapper.receiveUpdates(TestEntity));
     await entityMapper.save(existing);
-    expect(
-      await firstValueFrom(entityMapper.receiveUpdates(TestEntity)),
-    ).toEqual({
+    expect(await updatePromise).toEqual({
       type: "update",
       entity: jasmine.objectContaining({ _id: testId }),
     });
 
     existing = await entityMapper.load<TestEntity>(TestEntity, testId);
+    updatePromise = firstValueFrom(entityMapper.receiveUpdates(TestEntity));
     await entityMapper.remove(existing);
-    expect(
-      await firstValueFrom(entityMapper.receiveUpdates(TestEntity)),
-    ).toEqual({
+    expect(await updatePromise).toEqual({
       type: "remove",
       entity: jasmine.objectContaining({ _id: testId }),
     });
