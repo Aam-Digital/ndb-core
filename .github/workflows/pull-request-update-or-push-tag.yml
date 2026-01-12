@@ -27,7 +27,7 @@ jobs:
       skip-e2e: >-
         ${{
           github.event_name != 'pull_request' ||
-          !github.event.pull_request.draft
+          github.event.pull_request.draft
         }}
   build-webapp:
     runs-on: ubuntu-latest
