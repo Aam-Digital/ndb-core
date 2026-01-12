@@ -1,3 +1,9 @@
 mat-form-field {
-  width: 30%;
+  width: calc(100% - 240px);
+  max-width: 500px;
+  min-width: min(240px, 100vw);
+}
+
+.config-button {
+  max-width: 240px;
 }
