@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
+import { fakeAsync, flush, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
 import {
   AttendanceInfo,
@@ -411,7 +411,7 @@ describe("QueryService", () => {
     await entityMapper.save(child);
     tick();
     // wait more to ensure the `entityMapper.receiveUpdates` has also been processed
-    tick();
+    flush();
 
     await expectAsync(queryData(query)).toBeResolvedTo(["F"]);
   }));
@@ -578,6 +578,9 @@ describe("QueryService", () => {
       { child: femaleChild, status: presentAttendanceStatus },
     ]);
     await entityMapper.remove(femaleChild);
+    tick();
+    // wait more to ensure the `entityMapper.receiveUpdates` has also been processed
+    flush();
 
     const result = await queryData(
       `${EventNote.ENTITY_TYPE}:toArray:getIds(children):toEntities(Child).gender`,
