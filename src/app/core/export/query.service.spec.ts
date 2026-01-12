@@ -1,4 +1,10 @@
-import { fakeAsync, flush, TestBed, tick, waitForAsync } from "@angular/core/testing";
+import {
+  fakeAsync,
+  flush,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import {
   AttendanceInfo,
