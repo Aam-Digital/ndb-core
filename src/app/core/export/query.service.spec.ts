@@ -397,6 +397,73 @@ describe("QueryService", () => {
       });
     });
 
+    describe(":getParticipantsWithAttendance", () => {
+      it("should return participants with specified attendance status", () => {
+        const event1 = createNote(new Date(), [
+          { child: "child1", status: presentAttendanceStatus },
+          { child: "child2", status: absentAttendanceStatus },
+          { child: "child3", status: presentAttendanceStatus },
+        ]);
+        const event2 = createNote(new Date(), [
+          { child: "child1", status: absentAttendanceStatus },
+          { child: "child4", status: presentAttendanceStatus },
+        ]);
+
+        const result: string[] = service.queryData(
+          ":getParticipantsWithAttendance(PRESENT)",
+          null,
+          null,
+          [event1, event2],
+        );
+
+        expect(result).toEqual(["child1", "child3", "child4"]);
+      });
+
+      it("should filter by ABSENT status", () => {
+        const event = createNote(new Date(), [
+          { child: "child1", status: presentAttendanceStatus },
+          { child: "child2", status: absentAttendanceStatus },
+          { child: "child3", status: absentAttendanceStatus },
+        ]);
+
+        const result: string[] = service.queryData(
+          ":getParticipantsWithAttendance(ABSENT)",
+          null,
+          null,
+          [event],
+        );
+
+        expect(result).toEqual(["child2", "child3"]);
+      });
+
+      it("should return empty array when no participants match status", () => {
+        const event = createNote(new Date(), [
+          { child: "child1", status: presentAttendanceStatus },
+          { child: "child2", status: presentAttendanceStatus },
+        ]);
+
+        const result: string[] = service.queryData(
+          ":getParticipantsWithAttendance(ABSENT)",
+          null,
+          null,
+          [event],
+        );
+
+        expect(result).toEqual([]);
+      });
+
+      it("should handle empty event list", () => {
+        const result: string[] = service.queryData(
+          ":getParticipantsWithAttendance(PRESENT)",
+          null,
+          null,
+          [],
+        );
+
+        expect(result).toEqual([]);
+      });
+    });
+
     describe(":getAttendanceReport", () => {
       it("should aggregate attendance by participant", () => {
         const attendances: AttendanceInfo[] = [
