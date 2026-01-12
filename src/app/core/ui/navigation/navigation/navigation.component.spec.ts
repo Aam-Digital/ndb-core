@@ -141,7 +141,9 @@ describe("NavigationComponent", () => {
       .toBe("/child");
 
     routerEvents.next(new NavigationEnd(42, "/", "/"));
-    expect(component.activeLink()).withContext("root url should match").toBe("/");
+    expect(component.activeLink())
+      .withContext("root url should match")
+      .toBe("/");
 
     routerEvents.next(new NavigationEnd(42, "/other", "/other"));
     expect(component.activeLink())
