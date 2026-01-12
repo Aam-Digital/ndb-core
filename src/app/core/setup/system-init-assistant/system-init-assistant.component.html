@@ -23,7 +23,10 @@
     >
     </app-choose-use-case>
 
-    <mat-checkbox [(ngModel)]="generateDemoData" i18n
+    <mat-checkbox
+      [checked]="generateDemoData()"
+      (change)="generateDemoData.set($event.checked)"
+      i18n
       >Generate demo data</mat-checkbox
     >
 
