@@ -1,9 +1,13 @@
 @if (showAddButton) {
   <div class="margin-bottom-regular">
-    <button mat-stroked-button color="accent" (click)="addNewMenuItem()">
-      <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
-      <span i18n>Add New</span>
-    </button>
+    <app-icon-button
+      icon="plus-circle"
+      color="accent"
+      (buttonClick)="addNewMenuItem()"
+      i18n
+    >
+      Add New
+    </app-icon-button>
   </div>
 }
 

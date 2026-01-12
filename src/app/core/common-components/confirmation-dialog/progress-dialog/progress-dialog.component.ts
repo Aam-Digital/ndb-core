@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, Signal } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 
@@ -11,7 +11,9 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
   imports: [MatProgressBarModule, MatDialogModule],
 })
 export class ProgressDialogComponent {
-  data = inject<{
-    message: string;
+  private readonly initialData = inject<{
+    message: Signal<string>;
   }>(MAT_DIALOG_DATA);
+
+  message = this.initialData.message;
 }

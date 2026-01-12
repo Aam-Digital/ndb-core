@@ -1,5 +1,5 @@
 <mat-dialog-content>
-  <h2 i18n>Select Email Template</h2>
+  <h2 i18n>Prepare Email</h2>
   @if (excludedEntitiesCount > 0) {
     <p class="warning-message" i18n>
       {{ excludedEntitiesCount }} records were excluded due to missing email
@@ -8,37 +8,58 @@
   }
   <p>
     <span i18n>
-      Select the template to use for sending an email to this record. If you
-      want to create a new template, you can do so from -
-    </span>
-    <a
-      [routerLink]="EmailTemplate.route"
-      *appDisabledEntityOperation="{
-        entity: EmailTemplate,
-        operation: 'update',
-      }"
-      matDialogClose
-      i18n
-      >configure available Email templates</a
-    >
-  </p>
-  <p>
-    <span i18n>
       Note: "Sending" mail will open the email application on your device. If
       nothing happens you may have to set up a default email client.
     </span>
   </p>
 
-  <mat-form-field class="full-width">
+  <mat-form-field class="full-width" floatLabel="always">
     <mat-label i18n>Message Template</mat-label>
     <app-edit-entity
       [formControl]="emailTemplateSelectionForm"
       [entityType]="EmailTemplate.ENTITY_TYPE"
       [additionalFilter]="filteredTemplate"
       [disableCreateNew]="true"
-      placeholder="Select a template to use and adapt"
+      placeholder="Select a template to prefill email content"
       i18n-placeholder
     ></app-edit-entity>
+    <mat-hint>
+      <span i18n>
+        Select the template to prefill email content to this record. If you want
+        to create a new template, you can do so from -
+      </span>
+      <a
+        [routerLink]="EmailTemplate.route"
+        *appDisabledEntityOperation="{
+          entity: EmailTemplate,
+          operation: 'update',
+        }"
+        matDialogClose
+        i18n
+        >configure available Email templates</a
+      ></mat-hint
+    >
+  </mat-form-field>
+
+  <h3 i18n>Email Content</h3>
+  <mat-form-field class="full-width">
+    <mat-label i18n>Subject</mat-label>
+    <input
+      matInput
+      [formControl]="emailContentForm.controls.subject"
+      placeholder="Enter email subject"
+      i18n-placeholder
+    />
+  </mat-form-field>
+  <mat-form-field class="full-width">
+    <mat-label i18n>Body</mat-label>
+    <textarea
+      matInput
+      [formControl]="emailContentForm.controls.body"
+      placeholder="Enter email body"
+      i18n-placeholder
+      rows="5"
+    ></textarea>
   </mat-form-field>
 
   <div class="flex-column">
@@ -69,12 +90,7 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button
-    mat-raised-button
-    color="accent"
-    [disabled]="!emailTemplateSelectionForm.value"
-    (click)="confirmSelectedTemplate(emailTemplateSelectionForm.value)"
-  >
+  <button mat-raised-button color="accent" (click)="confirmSelectedTemplate()">
     <span i18n>Send Email</span>
   </button>
 

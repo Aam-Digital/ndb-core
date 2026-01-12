@@ -66,7 +66,7 @@ export class DateDatatype<DBFormat = string> extends DefaultDatatype<
 
   override async importMapFunction(
     val: any,
-    schemaField: EntitySchemaField,
+    schemaField?: EntitySchemaField | undefined,
     additional?: any,
   ) {
     const date = moment(val, additional, true);

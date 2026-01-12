@@ -62,12 +62,28 @@ export class FilterGeneratorService {
           this.enumService.getEnumValues(schema.additional) || [];
         const validIds = new Set(enumValues.map((ev) => ev.id));
         // Get all unique values from data for this field (by id if object, or value)
+        // Handle both single values and arrays (for isArray / multi-select fields)
+        const extractId = (value: any) =>
+          value && typeof value === "object" && "id" in value
+            ? value.id
+            : value;
+
+        let hasEmptyArray = false;
         const dataValues = [
           ...new Set(
-            (data ?? []).map((e) => {
+            (data ?? []).flatMap((e) => {
               const v = e?.[filterConfig.id];
-              if (v && typeof v === "object" && "id" in v) return v.id;
-              return v;
+              // Handle array values (multi-select fields)
+              if (Array.isArray(v)) {
+                // Empty arrays should be treated as "not defined"
+                if (v.length === 0) {
+                  hasEmptyArray = true;
+                  return [];
+                }
+                return v.map(extractId);
+              }
+              // Handle single object value
+              return extractId(v);
             }),
           ),
         ];
@@ -85,10 +101,10 @@ export class FilterGeneratorService {
             filter: { [filterConfig.id + ".id"]: invalidId } as DataFilter<T>,
           }));
 
-        // Add "empty" option if there are empty/undefined values
-        const hasEmpty = dataValues.some(
-          (v) => v === undefined || v === null || v === "",
-        );
+        // Add "empty" option if there are empty/undefined values or empty arrays
+        const hasEmpty =
+          hasEmptyArray ||
+          dataValues.some((v) => v === undefined || v === null || v === "");
         const emptyOption = hasEmpty
           ? [
               {

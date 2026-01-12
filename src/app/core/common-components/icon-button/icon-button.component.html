@@ -1,0 +1,46 @@
+@switch (buttonType()) {
+  @case ("mat-button") {
+    <button
+      mat-button
+      type="button"
+      [color]="color()"
+      (click)="onClick($event)"
+    >
+      <fa-icon [icon]="icon()" class="standard-icon-with-text"></fa-icon>
+      <ng-content></ng-content>
+    </button>
+  }
+  @case ("mat-raised-button") {
+    <button
+      mat-raised-button
+      type="button"
+      [color]="color()"
+      (click)="onClick($event)"
+    >
+      <fa-icon [icon]="icon()" class="standard-icon-with-text"></fa-icon>
+      <ng-content></ng-content>
+    </button>
+  }
+  @case ("mat-flat-button") {
+    <button
+      mat-flat-button
+      type="button"
+      [color]="color()"
+      (click)="onClick($event)"
+    >
+      <fa-icon [icon]="icon()" class="standard-icon-with-text"></fa-icon>
+      <ng-content></ng-content>
+    </button>
+  }
+  @default {
+    <button
+      mat-stroked-button
+      type="button"
+      [color]="color()"
+      (click)="onClick($event)"
+    >
+      <fa-icon [icon]="icon()" class="standard-icon-with-text"></fa-icon>
+      <ng-content></ng-content>
+    </button>
+  }
+}

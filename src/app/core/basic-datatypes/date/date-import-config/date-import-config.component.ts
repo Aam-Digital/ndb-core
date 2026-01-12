@@ -14,6 +14,7 @@ import { MatListModule } from "@angular/material/list";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
+import { DateDatatype } from "../date.datatype";
 
 /**
  * Configuration dialog for parsing date value of data imported from a file.
@@ -43,6 +44,12 @@ export class DateImportConfigComponent {
   valid = false;
   values: { value: string; parsed?: Date }[] = [];
 
+  /**
+   * The date formatting interprets lowercase "mm" as minutes instead of months,
+   * this may lead to misunderstandings, so we check for it and show a warning if detected.
+   */
+  hasLowercaseMM: boolean;
+
   constructor() {
     this.values = this.data.values
       .filter((val) => !!val)
@@ -51,18 +58,24 @@ export class DateImportConfigComponent {
     this.format.setValue(this.data.col.additional);
   }
 
-  checkDateValues() {
+  async checkDateValues() {
     this.format.setErrors(undefined);
-    this.values.forEach((val) => {
+    this.hasLowercaseMM = /mm/.test(this.format.value || "");
+    const dateType = new DateDatatype();
+    for (const val of this.values) {
       // TODO: check and improve the date parsing. Tests fail with moment.js > 2.29
-      const date = moment(val.value, this.format.value?.toUpperCase(), true);
-      if (date.isValid()) {
-        val.parsed = date.toDate();
+      const date = await dateType.importMapFunction(
+        val.value,
+        undefined, // the schema is not needed here, we can skip loading it
+        this.format.value,
+      );
+      if (date instanceof Date && !isNaN(date.getTime())) {
+        val.parsed = date;
       } else {
         delete val.parsed;
         this.format.setErrors({ parsingError: true });
       }
-    });
+    }
     // Sort unparsed dates to front
     this.values.sort((v1, v2) =>
       v1.parsed && !v2.parsed ? 1 : !v1.parsed && v2.parsed ? -1 : 0,
@@ -78,7 +91,7 @@ export class DateImportConfigComponent {
       ));
 
     if (confirmed) {
-      this.data.col.additional = this.format.value?.toUpperCase();
+      this.data.col.additional = this.format.value;
       this.dialog.close();
     }
   }

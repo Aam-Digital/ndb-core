@@ -1,4 +1,4 @@
-import { inject, Injectable, Injector } from "@angular/core";
+import { inject, Injectable, Injector, signal } from "@angular/core";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { Entity } from "../model/entity";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -11,6 +11,7 @@ import { OkButton } from "../../common-components/confirmation-dialog/confirmati
 import { CascadingActionResult } from "./cascading-entity-action";
 import { EntityActionsMenuService } from "../../entity-details/entity-actions-menu/entity-actions-menu.service";
 import { DuplicateRecordService } from "app/core/entity-list/duplicate-records/duplicate-records.service";
+import { BulkOperationStateService } from "./bulk-operation-state.service";
 import { PublicFormsService } from "app/features/public-form/public-forms.service";
 import { PublicFormConfig } from "app/features/public-form/public-form-config";
 import { EntityEditService } from "./entity-edit.service";
@@ -35,6 +36,7 @@ export class EntityActionsService {
   private duplicateRecordService = inject(DuplicateRecordService);
   private publicFormsService = inject(PublicFormsService);
   private readonly bulkMergeService = inject(BulkMergeService);
+  private readonly bulkOperationState = inject(BulkOperationStateService);
 
   constructor() {
     const entityActionsMenuService = inject(EntityActionsMenuService);
@@ -149,7 +151,9 @@ export class EntityActionsService {
     // Undo Action
     snackBarRef.onAction().subscribe(async () => {
       const undoProgressRef = this.confirmationDialog.showProgressDialog(
-        $localize`:Undo record action progress dialog: Reverting changes ...`,
+        signal(
+          $localize`:Undo record action progress dialog: Reverting changes ...`,
+        ),
       );
       await this.entityMapper.saveAll(previousEntitiesForUndo, true);
       undoProgressRef.close();
@@ -205,7 +209,7 @@ export class EntityActionsService {
     }
 
     const progressDialogRef = this.confirmationDialog.showProgressDialog(
-      $localize`:Record action progress dialog:Processing ...`,
+      signal($localize`:Record action progress dialog:Processing ...`),
     );
     let result = new CascadingActionResult();
 
@@ -286,7 +290,7 @@ export class EntityActionsService {
     }
 
     const progressDialogRef = this.confirmationDialog.showProgressDialog(
-      $localize`:Record action progress dialog:Processing ...`,
+      signal($localize`:Record action progress dialog:Processing ...`),
     );
     let result = new CascadingActionResult();
     for (let entity of entities) {
@@ -324,10 +328,23 @@ export class EntityActionsService {
       ? entityParam
       : [entityParam];
     const newEntities: E[] = originalEntities.map((e) => e.copy());
-    newEntities.forEach(async (e) => {
+
+    newEntities.forEach((e) => {
       e.inactive = true;
-      await this.entityMapper.save(e);
     });
+
+    if (newEntities.length > 1) {
+      this.bulkOperationState.startBulkOperation(newEntities.length);
+
+      try {
+        await this.entityMapper.saveAll(newEntities);
+      } catch (error) {
+        this.bulkOperationState.completeBulkOperation();
+        throw error;
+      }
+    } else {
+      await this.entityMapper.save(newEntities[0]);
+    }
 
     this.showSnackbarConfirmationWithUndo(
       this.generateMessageForConfirmationWithUndo(

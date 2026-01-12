@@ -134,7 +134,7 @@ test("Configure automated status update and verify UI", async ({ page }) => {
   // Click the automated rule option (
   const automatedRuleToggle = automatedModeSection
     .locator("mat-button-toggle")
-    .nth(3);
+    .nth(2);
   await expect(automatedRuleToggle).toBeVisible();
   await automatedRuleToggle.click();
 

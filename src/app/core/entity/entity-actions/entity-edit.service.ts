@@ -10,6 +10,7 @@ import {
 import { MatDialog } from "@angular/material/dialog";
 import { EntityActionsService } from "./entity-actions.service";
 import { asArray } from "app/utils/asArray";
+import { BulkOperationStateService } from "./bulk-operation-state.service";
 
 /**
  * Bulk edit fields of multiple entities at once.
@@ -21,6 +22,7 @@ export class EntityEditService extends CascadingEntityAction {
   private matDialog = inject(MatDialog);
   private entityActionsService = inject(EntityActionsService);
   private unsavedChanges = inject(UnsavedChangesService);
+  private readonly bulkOperationState = inject(BulkOperationStateService);
 
   /**
    * Shows a confirmation dialog to the user
@@ -70,14 +72,24 @@ export class EntityEditService extends CascadingEntityAction {
 
     for (const e of newEntities) {
       e[action.selectedField] = action.value;
-      await this.entityMapper.save(e);
     }
 
-    this.unsavedChanges.pending = false;
-    return {
-      success: true,
-      originalEntities,
-      newEntities,
-    };
+    this.bulkOperationState.startBulkOperation(newEntities.length);
+
+    try {
+      // Use bulk save for performance - progress tracking happens in bulk-operation-state service
+      await this.entityMapper.saveAll(newEntities);
+
+      this.unsavedChanges.pending = false;
+      return {
+        success: true,
+        originalEntities,
+        newEntities,
+      };
+    } catch (error) {
+      // On error, complete bulk operation immediately
+      this.bulkOperationState.completeBulkOperation();
+      throw error;
+    }
   }
 }
