@@ -47,6 +47,9 @@
         @if (item.link) {
           <mat-list-item [routerLink]="[item.link]">
             <span matListItemTitle>{{ item.label }}</span>
+            @if (item.subtitle) {
+              <span matListItemLine>{{ item.subtitle }}</span>
+            }
           </mat-list-item>
         }
       }
@@ -70,6 +73,9 @@
           @if (item.link) {
             <mat-list-item [routerLink]="[item.link]">
               <span matListItemTitle>{{ item.label }}</span>
+              @if (item.subtitle) {
+                <span matListItemLine>{{ item.subtitle }}</span>
+              }
             </mat-list-item>
           }
         }
@@ -92,9 +98,13 @@
     <mat-nav-list class="section-nav-list">
       <mat-list-item [routerLink]="['/admin/user-list']">
         <span matListItemTitle i18n>User Accounts</span>
+        <span matListItemLine i18n>Create, edit and manage user accounts.</span>
       </mat-list-item>
       <mat-list-item [routerLink]="['/admin/user-roles']">
         <span matListItemTitle i18n>User Roles & Permissions</span>
+        <span matListItemLine i18n
+          >Set roles and manage role based access.</span
+        >
       </mat-list-item>
     </mat-nav-list>
   </mat-expansion-panel>
@@ -114,12 +124,20 @@
     <mat-nav-list class="section-nav-list">
       <mat-list-item (click)="saveBackup()" button>
         <span matListItemTitle i18n>Download Backup (.json)</span>
+        <span matListItemLine i18n>Download all data of the database.</span>
       </mat-list-item>
       <mat-list-item (click)="backupImport.click()" button>
         <span matListItemTitle i18n>Restore Backup (.json)</span>
+        <span matListItemLine i18n
+          >Upload a previous backup to restore the database to that state.</span
+        >
       </mat-list-item>
       <mat-list-item (click)="saveCsvExport()" button>
         <span matListItemTitle i18n>Full Database Export (.csv)</span>
+        <span matListItemLine i18n
+          >Download all data of the database in a format that can be opened as a
+          spreadsheet.</span
+        >
       </mat-list-item>
     </mat-nav-list>
     <input #backupImport type="file" hidden (change)="loadBackup($event)" />
@@ -140,25 +158,43 @@
     <mat-nav-list class="section-nav-list">
       <mat-list-item (click)="editConfig()" button>
         <span matListItemTitle i18n>Edit Application Configuration (JSON)</span>
+        <span matListItemLine i18n
+          >Open the raw configuration file to make advanced technical
+          adjustments.</span
+        >
       </mat-list-item>
       <mat-list-item (click)="downloadConfigClick()" button>
         <span matListItemTitle i18n
           >Download Application Configuration (JSON)</span
         >
+        <span matListItemLine i18n>Download the raw configuration file.</span>
       </mat-list-item>
       <mat-list-item (click)="configImport.click()" button>
         <span matListItemTitle i18n
           >Upload Application Configuration (JSON)</span
         >
+        <span matListItemLine i18n
+          >Upload a raw configuration file and overwrite the current system
+          configuration.</span
+        >
       </mat-list-item>
       <mat-list-item (click)="debugDatabase()" button>
         <span matListItemTitle i18n>PouchDB Debug: Send to console.log()</span>
+        <span matListItemLine i18n
+          >Make the database service available in the browser's developer
+          console for advanced administrative tasks.</span
+        >
       </mat-list-item>
       <mat-list-item (click)="clearDatabase()" button>
         <span matListItemTitle i18n>Empty Database</span>
+        <span matListItemLine i18n>Delete all data in the database.</span>
       </mat-list-item>
       <mat-list-item [routerLink]="['/admin/conflicts']">
         <span matListItemTitle i18n>Database Conflicts</span>
+        <span matListItemLine i18n
+          >View any database records that could not be synced because multiple
+          users edited the record at the same time while offline.</span
+        >
       </mat-list-item>
     </mat-nav-list>
     <input

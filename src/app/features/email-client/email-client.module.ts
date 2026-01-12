@@ -53,6 +53,7 @@ export class EmailClientServiceModule {
     adminOverviewService.addTemplateItems({
       label: $localize`:admin menu item:Email Templates`,
       link: EmailTemplate.route,
+      subtitle: $localize`:admin menu item subtitle:Configure templates for sending emails, populated with the template's subject and body text.`,
     });
   }
 }
