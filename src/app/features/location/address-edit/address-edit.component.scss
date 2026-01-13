@@ -1,6 +1,4 @@
-.full-width {
-  width: 100%;
-}
+@use "variables/breakpoints";
 
 .address-edit-container {
   display: flex;
@@ -8,7 +6,7 @@
   align-items: center;
   flex-wrap: wrap;
 
-  @media (max-width: 768px) {
+  @media (max-width: breakpoints.$md) {
     gap: 8px;
   }
 }
@@ -17,7 +15,7 @@
   flex: 1 1 250px;
   min-width: 0; // Allow flex items to shrink below content size
 
-  @media (max-width: 768px) {
+  @media (max-width: breakpoints.$md) {
     flex: 1 1 100%;
   }
 }
@@ -26,7 +24,7 @@
   flex: 1 1 250px;
   min-width: 0; // Allow flex items to shrink below content size
 
-  @media (max-width: 768px) {
+  @media (max-width: breakpoints.$md) {
     flex: 1 1 100%;
   }
 }
