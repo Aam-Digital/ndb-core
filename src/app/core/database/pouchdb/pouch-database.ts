@@ -287,16 +287,8 @@ export class PouchDatabase extends Database {
     fun: string | ((doc: any, emit: any) => void),
     options: QueryOptions,
   ): Promise<any> {
-    const functionCalled = performance.now();
-    const queryName = typeof fun === "string" ? fun : "[function]";
-    
     return this.getPouchDBOnceReady()
       .then((pouchDB) => pouchDB.query(fun, options))
-      .then((result) => {
-        const duration = (performance.now() - functionCalled).toFixed(0);
-        console.log(`pouchDB query "${queryName}" took ${duration}ms (${result.rows?.length } record)`);
-        return result;
-      })
       .catch((err) => {
         throw new DatabaseException(
           err,

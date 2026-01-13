@@ -105,7 +105,6 @@ export class ChildrenService {
    * @param entityId ID (with prefix!) of the related record
    */
   async getNotesRelatedTo(entityId: string): Promise<Note[]> {
-    const functionStarted = performance.now();
     let legacyLinkedNotes = [];
     if (this.inferNoteLinkPropertyFromEntityType(entityId)) {
       legacyLinkedNotes = await this.dbIndexing.queryIndexDocs(
@@ -122,15 +121,11 @@ export class ChildrenService {
       [entityId],
     );
 
-    const result = [...legacyLinkedNotes, ...explicitlyLinkedNotes].filter(
+    return [...legacyLinkedNotes, ...explicitlyLinkedNotes].filter(
       // remove duplicates
       (element, index, array) =>
         array.findIndex((e) => e._id === element._id) === index,
     );
-
-    const totalDuration = (performance.now() - functionStarted).toFixed(0);
-    console.log(`getNotesRelatedTo total completed in ${totalDuration}ms (${result.length} notes)`);
-    return result;
   }
 
   private inferNoteLinkPropertyFromEntityType(entityId: string): string {
