@@ -84,7 +84,7 @@ describe("SystemInitAssistantComponent", () => {
 
     await component.ngOnInit();
 
-    expect(component.selectedUseCase).toEqual(mockConfigs[0]);
+    expect(component.selectedUseCase()).toEqual(mockConfigs[0]);
     expect((component as any).initializeSystem).toHaveBeenCalled();
   });
 });

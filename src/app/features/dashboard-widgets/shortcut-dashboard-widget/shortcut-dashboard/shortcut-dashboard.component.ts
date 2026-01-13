@@ -1,4 +1,4 @@
-import { Component, Input, inject } from "@angular/core";
+import { Component, Input, inject, signal } from "@angular/core";
 import { MenuItem } from "../../../../core/ui/navigation/menu-item";
 import { MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -41,12 +41,12 @@ export class ShortcutDashboardComponent {
   @Input() set shortcuts(items: MenuItem[]) {
     this.routePermissionsService
       .filterPermittedRoutes(items)
-      .then((res) => (this._shortcuts = res));
+      .then((res) => this._shortcuts.set(res));
   }
   get shortcuts(): MenuItem[] {
-    return this._shortcuts;
+    return this._shortcuts();
   }
-  _shortcuts: MenuItem[] = [];
+  _shortcuts = signal<MenuItem[]>([]);
 
   @Input() subtitle: string =
     $localize`:dashboard widget subtitle:Quick Actions`;

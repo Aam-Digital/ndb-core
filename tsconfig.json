@@ -4,32 +4,20 @@
     "outDir": "./dist/out-tsc",
     "baseUrl": "src",
     "strict": false,
-    // we are working towards enabling this soon
     "noImplicitOverride": true,
-    // TODO: enable more strict rules (these are included in latest angular default projects)
-    //    "noPropertyAccessFromIndexSignature": true,
-    //    "noImplicitReturns": true,
-    //    "noFallthroughCasesInSwitch": true,
-    //    "isolatedModules": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": false,
-    "downlevelIteration": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "moduleResolution": "bundler",
     "importHelpers": true,
-    "allowSyntheticDefaultImports": true,
     "useDefineForClassFields": false,
-    // we ensure browser compatibility through babel and .browserslistrc
     "target": "ESNext",
     "module": "ESNext",
     "resolveJsonModule": true,
     "lib": [
-      // NOTE: If you change this you must use caniuse.com to ensure that the
-      // targeted browsers (as defined in `.browserlistsrc`) support all
-      // language features. No polyfills are used.
       "ES2023",
       "dom"
     ],
@@ -38,7 +26,9 @@
       "node"
     ],
     "paths": {
-      "#src/*": ["./*"],
+      "#src/*": [
+        "./*"
+      ],
       "stream": [
         "./node_modules/stream-browserify"
       ],

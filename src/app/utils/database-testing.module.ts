@@ -11,6 +11,7 @@ import { DatabaseResolverService } from "../core/database/database-resolver.serv
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { getDefaultConfigEntity } from "../core/config/testing-config-service";
 import { getDefaultEnumEntities } from "app/core/basic-datatypes/configurable-enum/configurable-enum-testing";
+import { firstValueFrom } from "rxjs";
 
 /**
  * Utility module that creates a simple environment where a correctly configured database and session is set up.
@@ -33,6 +34,7 @@ import { getDefaultEnumEntities } from "app/core/basic-datatypes/configurable-en
       const components = inject(ComponentRegistry);
       const entityConfigService = inject(EntityConfigService);
       const entityMapper = inject(EntityMapperService);
+      const configService = inject(ConfigService);
 
       environment.session_type = SessionType.mock;
       databaseResolver.getDatabase().init("test-db");
@@ -41,8 +43,9 @@ import { getDefaultEnumEntities } from "app/core/basic-datatypes/configurable-en
       await entityMapper.save(getDefaultConfigEntity());
       entityMapper.saveAll(getDefaultEnumEntities());
 
-      // WARNING: unit tests don't await this AppInitializer (https://github.com/angular/angular/issues/32441)
-      // so the expected EntityTypes may not be available yet in the beforeEach of tests
+      // Wait for ConfigService to load config before setting up entities
+      // Unit tests don't await AppInitializer (https://github.com/angular/angular/issues/32441)
+      await firstValueFrom(configService.configUpdates);
       entityConfigService.setupEntitiesFromConfig();
     }),
   ],
