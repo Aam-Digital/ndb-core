@@ -26,7 +26,7 @@ export class DatabaseFactoryService {
   private authService = inject(KeycloakAuthService, { optional: true });
   private navigator = inject<Navigator>(NAVIGATOR_TOKEN, { optional: true });
   private loginStateSubject = inject(LoginStateSubject, { optional: true });
-  private ngZone = inject(NgZone);
+  private readonly ngZone = inject(NgZone);
 
   createDatabase(dbName: string): Database {
     // only the "primary" (app) database should manage the global login state
