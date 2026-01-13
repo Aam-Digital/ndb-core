@@ -48,7 +48,7 @@ mat-panel-title {
   }
   ::ng-deep .mat-expansion-panel-header.mat-expanded {
     /* add a slight background to visually connect the related sub-items */
-    background-color: #00000014;    
+    background-color: #00000014;
     border-top-left-radius: var(--mat-expansion-container-shape, 12px);
   }
 }
