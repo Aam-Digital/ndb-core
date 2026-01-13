@@ -301,11 +301,17 @@ export class AutomatedFieldUpdateConfigService {
   /**
    * Calculate the new value from source entity with value mapping applied.
    * Transforms to database format for consistent handling of all datatypes.
+   * @param sourceEntity The entity containing the source value
+   * @param rule The inheritance rule configuration
    */
-  private calculateNewValue(
+  public calculateNewValue(
     sourceEntity: Entity,
     rule: DefaultValueConfigInheritedField,
   ): any {
+    if (!sourceEntity) {
+      return undefined;
+    }
+
     const sourceValue = sourceEntity[rule.sourceValueField];
     let newValue = sourceValue;
 

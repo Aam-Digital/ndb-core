@@ -275,15 +275,11 @@ export class InheritedValueService extends DefaultValueStrategy {
         );
       }
 
-      let inheritedValue =
-        parentEntity?.[inheritedConfigs.get(fieldId).sourceValueField];
-
-      inheritedValue =
-        this.automatedFieldUpdateConfigService.transformValueToDatabaseFormat(
-          inheritedValue,
+      const config = inheritedConfigs.get(fieldId);
+      const inheritedValue =
+        this.automatedFieldUpdateConfigService.calculateNewValue(
           parentEntity,
-          inheritedConfigs.get(fieldId).sourceValueField,
-          this.entitySchemaService,
+          config,
         );
 
       form.inheritedParentValues.set(fieldId, inheritedValue);
