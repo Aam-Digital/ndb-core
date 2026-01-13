@@ -1,3 +1,32 @@
 .full-width {
   width: 100%;
 }
+
+.address-edit-container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    gap: 8px;
+  }
+}
+
+.search-section {
+  flex: 1 1 250px;
+  min-width: 0; // Allow flex items to shrink below content size
+  
+  @media (max-width: 768px) {
+    flex: 1 1 100%;
+  }
+}
+
+.location-display-section {
+  flex: 1 1 250px;
+  min-width: 0; // Allow flex items to shrink below content size
+  
+  @media (max-width: 768px) {
+    flex: 1 1 100%;
+  }
+}

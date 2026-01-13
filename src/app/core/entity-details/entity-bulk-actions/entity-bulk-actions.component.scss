@@ -4,6 +4,12 @@
   @include mat-elevation.elevation(3);
   padding: 1em;
   margin: 1em;
+  
+  @media (max-width: 768px) {
+    padding: 0.75em;
+    margin: 0.5em;
+    flex-wrap: wrap;
+  }
 }
 
 .bulk-action-select-wrapper {
@@ -12,6 +18,13 @@
   min-width: 320px;
   max-width: 700px;
   width: 400px; /* Fixed width for stability */
+  
+  @media (max-width: 768px) {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    flex: 1 1 100%;
+  }
 }
 
 .bulk-action-autocomplete {
@@ -23,4 +36,15 @@
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
+  
+  // Ensure hint text wraps properly on small screens
+  ::ng-deep .mat-mdc-form-field-hint {
+    white-space: normal;
+    word-wrap: break-word;
+    
+    @media (max-width: 768px) {
+      font-size: 0.75rem;
+      line-height: 1.2;
+    }
+  }
 }
