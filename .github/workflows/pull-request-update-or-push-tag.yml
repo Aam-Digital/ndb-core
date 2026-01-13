@@ -24,12 +24,11 @@ jobs:
     uses: ./.github/workflows/_qa.yaml
     secrets: inherit
     with:
-      upload-e2e-screenshots: >-
+      skip-e2e: >-
         ${{
-          github.event_name == 'pull_request' &&
-          !github.event.pull_request.draft
+          github.event_name != 'pull_request' ||
+          github.event.pull_request.draft
         }}
-
   build-webapp:
     runs-on: ubuntu-latest
     timeout-minutes: 10
