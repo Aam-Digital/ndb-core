@@ -13,6 +13,7 @@ import { DownloadService } from "../../export/download-service/download.service"
 import { MatListModule } from "@angular/material/list";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatIconModule } from "@angular/material/icon";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouteTarget } from "../../../route-target";
 import { MenuItem } from "../../ui/navigation/menu-item";
 import { JsonEditorService } from "#src/app/core/admin/json-editor/json-editor.service";
@@ -37,6 +38,7 @@ import { AdminOverviewService } from "./admin-overview.service";
     MatListModule,
     MatExpansionModule,
     MatIconModule,
+    MatTooltipModule,
   ],
 })
 export class AdminOverviewComponent {

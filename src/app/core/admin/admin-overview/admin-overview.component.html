@@ -45,11 +45,13 @@
     <mat-nav-list class="section-nav-list">
       @for (item of configurationMenuItems; track item.label) {
         @if (item.link) {
-          <mat-list-item [routerLink]="[item.link]">
+          <mat-list-item
+            [routerLink]="[item.link]"
+            [matTooltip]="item.subtitle ?? ''"
+            [matTooltipDisabled]="!item.subtitle"
+            matTooltipPositionAtOrigin
+          >
             <span matListItemTitle>{{ item.label }}</span>
-            @if (item.subtitle) {
-              <span matListItemLine>{{ item.subtitle }}</span>
-            }
           </mat-list-item>
         }
       }
@@ -71,11 +73,13 @@
       <mat-nav-list class="section-nav-list">
         @for (item of templates; track item.label) {
           @if (item.link) {
-            <mat-list-item [routerLink]="[item.link]">
+            <mat-list-item
+              [routerLink]="[item.link]"
+              [matTooltip]="item.subtitle ?? ''"
+              [matTooltipDisabled]="!item.subtitle"
+              matTooltipPosition="before"
+            >
               <span matListItemTitle>{{ item.label }}</span>
-              @if (item.subtitle) {
-                <span matListItemLine>{{ item.subtitle }}</span>
-              }
             </mat-list-item>
           }
         }
