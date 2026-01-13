@@ -134,15 +134,5 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.52.0",
     "xliff": "^6.2.2"
-  },
-  "overrides": {
-    "@casl/angular": {
-      "@angular/core": "$@angular/core"
-    },
-    "keycloak-angular": {
-      "@angular/common": "$@angular/common",
-      "@angular/core": "$@angular/core",
-      "@angular/router": "$@angular/router"
-    }
   }
 }
