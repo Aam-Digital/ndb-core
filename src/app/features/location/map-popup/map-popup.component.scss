@@ -6,7 +6,7 @@ mat-dialog-actions {
 
 .help-text {
   margin: auto 20px;
-  
+
   @media (max-width: 768px) {
     margin: 0 0 8px 0;
     flex-basis: 100%;
@@ -21,7 +21,7 @@ app-address-edit {
 
 .map-dialog-content {
   max-height: 90vh;
-  
+
   @media (max-width: 768px) {
     max-height: none;
     padding: 12px;
