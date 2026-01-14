@@ -160,19 +160,21 @@ export class AdminInheritedFieldComponent
   }
 
   onOptionSelected(option: InheritanceOption) {
+    const previousOption = this.selectedOption;
     this.selectedOption = option;
 
-    this.value = {
-      ...this.value,
-      sourceReferenceField: option.sourceReferenceField,
-      sourceReferenceEntity: option.sourceReferenceEntity,
-    };
-
-    this.openConfigDetailsDialog();
+    this.openConfigDetailsDialog().then((confirmed) => {
+      if (!confirmed) {
+        // revert selection
+        this.selectedOption = previousOption;
+      }
+    });
   }
 
-  async openConfigDetailsDialog() {
-    if (!this.value?.sourceReferenceField || !this.selectedOption) return;
+  async openConfigDetailsDialog(
+    option: InheritanceOption = this.selectedOption,
+  ): Promise<boolean> {
+    if (!option?.sourceReferenceField) return false;
 
     const dialogRef = this.matDialog.open<
       AutomatedFieldMappingComponent,
@@ -182,14 +184,23 @@ export class AdminInheritedFieldComponent
       data: {
         currentEntityType: this.entityType,
         currentField: this.entitySchemaField,
-        sourceValueEntityType: this.selectedOption.referencedEntityType,
-        value: { ...this.value },
+        sourceValueEntityType: option.referencedEntityType,
+        value: {
+          ...this.value,
+          sourceReferenceField: option.sourceReferenceField,
+          sourceReferenceEntity: option.sourceReferenceEntity,
+        },
       },
     });
 
     const result = await lastValueFrom(dialogRef.afterClosed());
-    if (result) {
+    if (result?.sourceValueField) {
+      // successfully confirmed the dialog
       this.value = result;
+      return true;
+    } else {
+      // dialog was cancelled
+      return false;
     }
   }
 
