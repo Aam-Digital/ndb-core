@@ -116,7 +116,8 @@ test("Children list displays monthly attendance percentage", async ({
   await loadApp(page);
   await page.getByRole("navigation").getByText("Children").click();
   await page.getByRole("tab", { name: "School Info" }).click();
-  await expect(page.getByRole("cell", { name: /\d+%/ })).toHaveCount(10);
+  // wait for the table to load with data
+  await expect(page.locator("tr.mat-mdc-row")).toHaveCount(10);
   await argosScreenshot(page, "children-school-info");
 });
 

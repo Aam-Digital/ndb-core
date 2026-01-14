@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { SetupService } from "../setup.service";
 import { BaseConfig } from "../base-config";
 import { MatButtonModule } from "@angular/material/button";
@@ -40,19 +40,21 @@ export class SystemInitAssistantComponent implements OnInit {
   private readonly demoDataInitializer = inject(DemoDataInitializerService);
   private readonly setupService = inject(SetupService);
 
-  availableUseCases: BaseConfig[] = [];
-  selectedUseCase: BaseConfig | null = null;
-  generateDemoData: boolean = environment.demo_mode;
+  availableUseCases = signal<BaseConfig[]>([]);
+  selectedUseCase = signal<BaseConfig | null>(null);
+  generateDemoData = signal<boolean>(environment.demo_mode);
 
-  demoInitialized: boolean = false;
-  generatingData: boolean = false;
-  availableLocales: ConfigurableEnumValue[];
+  demoInitialized = signal<boolean>(false);
+  generatingData = signal<boolean>(false);
+  availableLocales = signal<ConfigurableEnumValue[]>([]);
 
   async ngOnInit(): Promise<void> {
     this.adjustAssistantDialogPanel();
 
-    this.availableUseCases = await this.setupService.getAvailableBaseConfig();
-    this.availableLocales = this.getAvailableLocalesForUseCases();
+    this.availableUseCases.set(
+      await this.setupService.getAvailableBaseConfig(),
+    );
+    this.availableLocales.set(this.getAvailableLocalesForUseCases());
 
     await this.initFromQueryParamAutomatically();
   }
@@ -67,7 +69,9 @@ export class SystemInitAssistantComponent implements OnInit {
 
   private getAvailableLocalesForUseCases() {
     const availableDemoLocale = new Set(
-      this.availableUseCases.map((useCase) => useCase.locale).filter(Boolean),
+      this.availableUseCases()
+        .map((useCase) => useCase.locale)
+        .filter(Boolean),
     );
 
     return availableLocales.values.filter((locale) =>
@@ -85,40 +89,42 @@ export class SystemInitAssistantComponent implements OnInit {
       return;
     }
 
-    this.selectedUseCase =
-      this.availableUseCases.find(
+    const useCase =
+      this.availableUseCases().find(
         (config) =>
           // Using lowercase comparison to avoid mismatches due to URL parameter casing or caching issues
           config.id.toLowerCase() === preSelectedUseCase.toLowerCase(),
       ) || null;
 
+    this.selectedUseCase.set(useCase);
+
     await this.initializeSystem();
   }
 
   async initializeSystem() {
-    if (!this.selectedUseCase) {
+    if (!this.selectedUseCase()) {
       return;
     }
 
-    this.generatingData = true;
+    this.generatingData.set(true);
 
     try {
-      await this.setupService.initSystemWithBaseConfig(this.selectedUseCase);
+      await this.setupService.initSystemWithBaseConfig(this.selectedUseCase()!);
 
-      if (this.generateDemoData) {
+      if (this.generateDemoData()) {
         await this.demoDataInitializer.generateDemoData();
       }
 
-      this.demoInitialized = true;
+      this.demoInitialized.set(true);
     } catch (error) {
       Logging.error("Error initializing demo data:", error);
     } finally {
-      this.generatingData = false;
+      this.generatingData.set(false);
     }
   }
 
   onUseCaseSelected(selected: BaseConfig) {
-    this.selectedUseCase = selected;
+    this.selectedUseCase.set(selected);
   }
 
   startExploring() {

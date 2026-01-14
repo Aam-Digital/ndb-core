@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { AdminEntityFormComponent } from "../../../core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component";
 import { NoteDetailsConfig } from "../note-details/note-details-config.interface";
@@ -14,7 +14,7 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
  */
 @Component({
   selector: "app-admin-note-details",
-  imports: [CommonModule, AdminEntityFormComponent, HintBoxComponent],
+  imports: [AdminEntityFormComponent, HintBoxComponent],
   templateUrl: "./admin-note-details.component.html",
 })
 export class AdminNoteDetailsComponent implements OnInit {

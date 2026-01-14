@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { MenuItem } from "../menu-item";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { NavigationEnd, Router } from "@angular/router";
@@ -31,19 +31,20 @@ export class NavigationComponent {
   private routePermissionService = inject(RoutePermissionsService);
 
   /** The menu-item link (not the actual router link) that is currently active */
-  activeLink: string;
+  activeLink = signal<string>("");
 
   /** all menu items to be displayed */
-  public menuItems: MenuItem[] = [];
+  public menuItems = signal<MenuItem[]>([]);
 
   constructor() {
     // subscribe to menu items from the menu service
     this.menuService.menuItems.subscribe(async (menuItems) => {
-      this.menuItems =
+      const filtered =
         await this.routePermissionService.filterPermittedRoutes(menuItems);
+      this.menuItems.set(filtered);
 
       // re-select active menu item after menu has been fully initialized
-      this.activeLink = this.computeActiveLink(location.pathname);
+      this.activeLink.set(this.computeActiveLink(location.pathname));
     });
 
     this.router.events
@@ -52,7 +53,7 @@ export class NavigationComponent {
         filter((event) => event instanceof NavigationEnd),
       )
       .subscribe((event: NavigationEnd) => {
-        this.activeLink = this.computeActiveLink(event.url);
+        this.activeLink.set(this.computeActiveLink(event.url));
       });
   }
 
@@ -67,7 +68,7 @@ export class NavigationComponent {
   private computeActiveLink(newUrl: string): string {
     // conservative filter matching all items that could fit to the given url
     // flatten nested submenu items to parse all
-    const items: MenuItem[] = this.menuItems
+    const items: MenuItem[] = this.menuItems()
       .reduce((acc, item) => acc.concat(item, item.subMenu || []), [])
       .filter((item) => newUrl.startsWith(item.link));
     switch (items.length) {

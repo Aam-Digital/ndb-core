@@ -254,12 +254,10 @@ When developing new functionality:
 ## Common Commands
 
 - `npm run start` - Development server
-- `npm run test` - Unit tests
+- `npm run test -- --watch=false` - Unit tests
 - `npm run e2e` - End-to-end tests
 - `npm run build` - Production build
-- `npx eslint` - Linting
-
-to run tests in Agent Mode, use the `#runTests` tool/context instead of a terminal command
+- `npm run lint:fix` - Linting (including automatic fixes)
 
 ## Key Dependencies to Leverage
 
