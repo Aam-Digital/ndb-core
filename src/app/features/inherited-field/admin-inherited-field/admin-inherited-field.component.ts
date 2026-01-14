@@ -16,7 +16,6 @@ import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-rel
 import { lastValueFrom } from "rxjs";
 import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
-import { EntityFieldLabelComponent } from "../../../core/entity/entity-field-label/entity-field-label.component";
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
@@ -29,12 +28,11 @@ import { DefaultValueConfigInheritedField } from "../inherited-field-config";
 interface InheritanceOption {
   type: "inherit" | "automated";
   label: string;
-  labelParts: { entityName: string; fieldName: string; isInheritance: boolean };
+  labelParts: { entityName: string; fieldName: string };
   tooltip: string;
   sourceReferenceField?: string;
   sourceReferenceEntity?: string;
   referencedEntityType?: EntityConstructor;
-  availableFields?: string[];
 }
 
 @Component({
@@ -45,7 +43,6 @@ interface InheritanceOption {
     ReactiveFormsModule,
     MatTooltip,
     MatOption,
-    EntityFieldLabelComponent,
     FormsModule,
   ],
   templateUrl: "./admin-inherited-field.component.html",
@@ -70,11 +67,6 @@ export class AdminInheritedFieldComponent
 
   availableOptions: InheritanceOption[] = [];
   selectedOption: InheritanceOption | null = null;
-  currentInheritanceFields: {
-    sourceReferenceField: string;
-    referencedEntityType: EntityConstructor;
-    availableFields: string[];
-  } | null = null;
 
   ngOnInit() {
     if (!this.value) {
@@ -88,6 +80,7 @@ export class AdminInheritedFieldComponent
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.entityType) {
       this.updateAvailableOptions();
+      this.initSelectedOption();
     }
   }
 
@@ -97,7 +90,6 @@ export class AdminInheritedFieldComponent
     this.availableOptions = [];
 
     const inheritanceAttributes = this.getInheritanceAttributes();
-
     inheritanceAttributes.forEach((attr) => {
       const fieldConfig = this.entityType.schema.get(attr);
 
@@ -107,18 +99,19 @@ export class AdminInheritedFieldComponent
         );
 
         if (referencedEntityType) {
-          const option = {
+          const refFieldLabel = this.getFieldLabel(attr, this.entityType);
+
+          const option: InheritanceOption = {
             type: "inherit" as const,
-            label: `${this.getFieldLabel(attr)} > ${this.getEntityLabel(referencedEntityType)}`,
+            label: `${refFieldLabel} > ${this.getEntityLabel(referencedEntityType)}`,
             labelParts: {
               entityName: this.getEntityLabel(referencedEntityType),
-              fieldName: this.getFieldLabel(attr),
-              isInheritance: true,
+              fieldName: refFieldLabel,
             },
-            tooltip: `Inherit value from any "${this.getEntityLabel(referencedEntityType)}" that is linked to in this record's "${this.getFieldLabel(attr)}" field`,
+            tooltip: $localize`Inherit value from any "${this.getEntityLabel(referencedEntityType)}" that is linked to in this record's "${refFieldLabel}" field`,
             sourceReferenceField: attr,
+            sourceReferenceEntity: undefined,
             referencedEntityType,
-            availableFields: this.getAvailableFields(referencedEntityType),
           };
 
           this.availableOptions.push(option);
@@ -127,133 +120,87 @@ export class AdminInheritedFieldComponent
     });
 
     const automatedOptions = this.getAutomatedOptions();
-
     automatedOptions.forEach((option) => {
-      const automatedOption = {
-        type: "automated" as const,
-        label: `${option.label} > ${this.getFieldLabel(option.relatedReferenceFields[0])}`,
-        labelParts: {
-          entityName: option.label,
-          fieldName: this.getFieldLabel(option.relatedReferenceFields[0]),
-          isInheritance: false,
-        },
-        tooltip: `Inherit value from any "${option.label}" that links to this record in its "${option.relatedReferenceFields[0]}" field`,
-        sourceReferenceEntity: option.entityType,
-      };
+      option.relatedReferenceFields.forEach((refField) => {
+        const refFieldLabel = this.getFieldLabel(refField, option.entityType);
+        const refEntityType = this.entityRegistry.get(option.entityType);
 
-      this.availableOptions.push(automatedOption);
+        const automatedOption: InheritanceOption = {
+          type: "automated" as const,
+          label: `${option.label} > ${refFieldLabel}`,
+          labelParts: {
+            entityName: option.label,
+            fieldName: refFieldLabel,
+          },
+          tooltip: $localize`Inherit value from any "${this.getEntityLabel(refEntityType)}" that links to this record in its "${refFieldLabel}" field`,
+          sourceReferenceEntity: option.entityType,
+          sourceReferenceField: refField,
+          referencedEntityType: refEntityType,
+        };
+
+        this.availableOptions.push(automatedOption);
+      });
     });
-
-    this.updateSelectedOption();
   }
 
-  private updateSelectedOption() {
+  /**
+   * Update the selectedOption to the matching object from availableOptions based on the `value`
+   */
+  private initSelectedOption(): void {
     if (!this.value) {
       this.selectedOption = null;
-      this.currentInheritanceFields = null;
       return;
     }
 
-    // Find matching option based on current config
-    // Automation has BOTH sourceReferenceEntity AND sourceReferenceField
-    if (this.value.sourceReferenceEntity && this.value.sourceReferenceField) {
-      this.selectedOption =
-        this.availableOptions.find(
-          (opt) =>
-            opt.type === "automated" &&
-            opt.sourceReferenceEntity === this.value.sourceReferenceEntity,
-        ) || null;
-      this.currentInheritanceFields = null;
-    }
-    // Inheritance has sourceReferenceField but NO sourceReferenceEntity
-    else if (
-      this.value.sourceReferenceField &&
-      !this.value.sourceReferenceEntity
-    ) {
-      this.selectedOption =
-        this.availableOptions.find(
-          (opt) =>
-            opt.type === "inherit" &&
-            opt.sourceReferenceField === this.value.sourceReferenceField,
-        ) || null;
-
-      if (this.selectedOption) {
-        this.currentInheritanceFields = {
-          sourceReferenceField: this.selectedOption.sourceReferenceField,
-          referencedEntityType: this.selectedOption.referencedEntityType,
-          availableFields: this.selectedOption.availableFields,
-        };
-      } else {
-        this.currentInheritanceFields = null;
-      }
-    } else {
-      this.selectedOption = null;
-      this.currentInheritanceFields = null;
-    }
+    this.selectedOption = this.availableOptions.find(
+      (o) =>
+        o.sourceReferenceField === this.value.sourceReferenceField &&
+        o.sourceReferenceEntity === this.value.sourceReferenceEntity,
+    );
   }
 
   onOptionSelected(option: InheritanceOption) {
+    const previousOption = this.selectedOption;
     this.selectedOption = option;
 
-    if (option.type === "inherit") {
-      this.currentInheritanceFields = {
-        sourceReferenceField: option.sourceReferenceField,
-        referencedEntityType: option.referencedEntityType,
-        availableFields: option.availableFields,
-      };
-
-      this.value = {
-        ...this.value,
-        sourceReferenceField: option.sourceReferenceField,
-        sourceReferenceEntity: undefined,
-      };
-    } else if (option.type === "automated") {
-      this.openAutomatedMappingDialog(option.sourceReferenceEntity);
-    }
+    this.openConfigDetailsDialog().then((confirmed) => {
+      if (!confirmed) {
+        // revert selection
+        this.selectedOption = previousOption;
+      }
+    });
   }
 
-  onInheritedFieldSelected(fieldId: string) {
-    if (this.selectedOption?.type === "inherit") {
-      this.value = {
-        ...this.value,
-        sourceValueField: fieldId,
-      };
-    }
-  }
+  async openConfigDetailsDialog(
+    option: InheritanceOption = this.selectedOption,
+  ): Promise<boolean> {
+    if (!option?.sourceReferenceField) return false;
 
-  async openAutomatedMappingDialog(selectedEntity: string) {
-    const automatedOption = this.availableOptions.find(
-      (opt) =>
-        opt.type === "automated" &&
-        opt.sourceReferenceEntity === selectedEntity,
-    );
-
-    if (!automatedOption) return;
-
-    const refEntity = this.entityRegistry.get(selectedEntity);
-    const dialogRef = this.matDialog.open(AutomatedFieldMappingComponent, {
+    const dialogRef = this.matDialog.open<
+      AutomatedFieldMappingComponent,
+      AutomatedFieldMappingDialogData,
+      DefaultValueConfigInheritedField
+    >(AutomatedFieldMappingComponent, {
       data: {
         currentEntityType: this.entityType,
-        relatedEntityType: refEntity,
         currentField: this.entitySchemaField,
-        relatedReferenceFields:
-          this.getAutomatedOptions().find(
-            (opt) => opt.entityType === selectedEntity,
-          )?.relatedReferenceFields || [],
-      } as AutomatedFieldMappingDialogData,
+        sourceValueEntityType: option.referencedEntityType,
+        value: {
+          ...this.value,
+          sourceReferenceField: option.sourceReferenceField,
+          sourceReferenceEntity: option.sourceReferenceEntity,
+        },
+      },
     });
 
     const result = await lastValueFrom(dialogRef.afterClosed());
-    if (result) {
-      this.value = {
-        sourceReferenceField: result.sourceReferenceField,
-        sourceReferenceEntity: selectedEntity,
-        sourceValueField: result.sourceValueField,
-        valueMapping: result.valueMapping,
-      };
-
-      // Update selected option to show it's configured
-      this.selectedOption = automatedOption;
+    if (result?.sourceValueField) {
+      // successfully confirmed the dialog
+      this.value = result;
+      return true;
+    } else {
+      // dialog was cancelled
+      return false;
     }
   }
 
@@ -291,17 +238,16 @@ export class AdminInheritedFieldComponent
       }));
   }
 
-  private getAvailableFields(entityType: EntityConstructor): string[] {
-    if (!entityType?.schema) return [];
+  private getFieldLabel(
+    fieldId: string,
+    entityType: EntityConstructor | string,
+  ): string {
+    if (typeof entityType === "string") {
+      entityType = this.entityRegistry.get(entityType);
+    }
 
-    return Array.from(entityType.schema.entries())
-      .filter(([, fieldConfig]) => fieldConfig.label)
-      .map(([fieldId]) => fieldId);
-  }
-
-  private getFieldLabel(fieldId: string): string {
-    if (!fieldId || !this.entityType?.schema) return fieldId;
-    const fieldConfig = this.entityType.schema.get(fieldId);
+    if (!fieldId || !entityType?.schema) return fieldId;
+    const fieldConfig = entityType.schema.get(fieldId);
     return fieldConfig?.label || fieldId;
   }
 

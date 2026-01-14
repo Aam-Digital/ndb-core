@@ -146,23 +146,26 @@ test("Configure automated status update and verify UI", async ({ page }) => {
   await entityDropdown.click();
   await argosScreenshot(page, "entity-dropdown-options");
 
-  // Select Note entity from the dropdown
+  // Select Note > field option from the dropdown
   const noteOption = page
     .locator("mat-option")
-    .getByText("Note", { exact: false });
+    .filter({ hasText: /Note/i })
+    .first();
   await expect(noteOption).toBeVisible();
   await noteOption.click();
 
   // Check if automation configuration dialog appears
   const automationDialog = page.locator("mat-dialog-container").nth(1);
 
-  // Look for automation trigger field dropdown (should be the second dropdown)
-  const triggerFieldDropdown = automationDialog.locator("mat-select").nth(1);
+  // Look for the source value field selector
+  const sourceValueFieldDropdown =
+    automationDialog.getByText(/Source value field/);
+  await expect(sourceValueFieldDropdown).toBeVisible();
 
-  // Click the trigger field dropdown (2nd dropdown)
-  await triggerFieldDropdown.click();
+  // Click the field select to open dropdown
+  await sourceValueFieldDropdown.click();
 
-  // Look for "status" option with different variations
+  // Look for "status" option in the source value field
   const statusOption = page
     .locator("mat-option")
     .filter({
@@ -171,6 +174,10 @@ test("Configure automated status update and verify UI", async ({ page }) => {
     .first();
 
   await statusOption.click();
+
+  // enable the value mapping toggle
+  const mappingToggle = automationDialog.locator("mat-slide-toggle");
+  await mappingToggle.click();
 
   // Fill in the name mappings for each status value
   const mappingSection = automationDialog.locator(".mapping-grid");
