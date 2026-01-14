@@ -1,13 +1,13 @@
 <div class="flex-column gap-regular">
-  @if (!demoInitialized && !generatingData) {
+  @if (!demoInitialized() && !generatingData()) {
     <app-language-select
-      [availableLocales]="availableLocales"
+      [availableLocales]="availableLocales()"
     ></app-language-select>
   }
 
   <h1 i18n>Welcome to Aam Digital!</h1>
 
-  @if (!demoInitialized && !generatingData) {
+  @if (!demoInitialized() && !generatingData()) {
     <p i18n>
       We have built this platform to help you digitize information and case
       files of your project, make it easy to collaborate with your team, track
@@ -17,13 +17,16 @@
     </p>
 
     <app-choose-use-case
-      [useCases]="availableUseCases"
+      [useCases]="availableUseCases()"
       (selectionChanged)="onUseCaseSelected($event)"
       class="margin-top-large margin-bottom-large"
     >
     </app-choose-use-case>
 
-    <mat-checkbox [(ngModel)]="generateDemoData" i18n
+    <mat-checkbox
+      [checked]="generateDemoData()"
+      (change)="generateDemoData.set($event.checked)"
+      i18n
       >Generate demo data</mat-checkbox
     >
 
@@ -40,13 +43,13 @@
         class="full-width"
         color="accent"
         (click)="initializeSystem()"
-        [disabled]="!selectedUseCase"
+        [disabled]="!selectedUseCase()"
         i18n
       >
         Create System
       </button>
     </div>
-  } @else if (generatingData) {
+  } @else if (generatingData()) {
     <p i18n>Generating sample data for this demo ...</p>
   } @else {
     <p i18n>
@@ -67,7 +70,7 @@
         class="full-width"
         color="accent"
         (click)="startExploring()"
-        [disabled]="generatingData"
+        [disabled]="generatingData()"
         i18n
       >
         Start Exploring

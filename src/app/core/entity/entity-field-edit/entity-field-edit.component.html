@@ -10,7 +10,11 @@
     }"
   >
     <div class="flex-grow">
-      <mat-form-field floatLabel="always" class="allow-full-width">
+      <mat-form-field
+        floatLabel="always"
+        class="allow-full-width"
+        id="entity-field__{{ _field.id }}"
+      >
         @if (!hideLabel && _field.displayFullLengthLabel) {
           <div
             class="full-label"

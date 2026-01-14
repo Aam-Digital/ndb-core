@@ -6,7 +6,7 @@ import { DisplayDateComponent } from "../../date/display-date/display-date.compo
   selector: "app-display-month",
   template: `<app-display-date
     [value]="value"
-    [config]="'YYYY-MM'"
+    [config]="'yyyy-MM'"
     [displayAsAnonymized]="isPartiallyAnonymized"
   ></app-display-date>`,
   imports: [DisplayDateComponent],

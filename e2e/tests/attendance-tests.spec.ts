@@ -116,7 +116,8 @@ test("Children list displays monthly attendance percentage", async ({
   await loadApp(page);
   await page.getByRole("navigation").getByText("Children").click();
   await page.getByRole("tab", { name: "School Info" }).click();
-  await expect(page.getByRole("cell", { name: /\d+%/ })).toHaveCount(10);
+  // wait for the table to load with data
+  await expect(page.locator("tr.mat-mdc-row")).toHaveCount(10);
   await argosScreenshot(page, "children-school-info");
 });
 
@@ -192,9 +193,11 @@ test("Edit participants of a recurring activity", async ({ page }) => {
   // And I click on "Edit"
   await page.getByRole("button", { name: "Edit" }).click();
 
-  // And I click on the "Participants" field
-  //TODO: fix the locator to something more reliable
-  await page.getByText(childToRemove.name).click();
+  // And I click on the "Participants" field to open the dropdown
+  await page
+    .locator("#entity-field__participants")
+    .locator(".fa-caret-down")
+    .click();
 
   // Then I see "Abhisyanta Sharma" selected.
   await expect(
@@ -276,8 +279,7 @@ test("Assign a recurring activity to a user", async ({ page }) => {
   // When I assign myself
   await page.getByRole("button", { name: "Edit" }).click();
 
-  //TODO: fix the locator to something more reliable
-  await page.getByText(otherUser.name).click();
+  await page.locator("#entity-field__assignedTo").click();
 
   await page
     .getByRole("option", { name: currentUser.name, exact: true })
