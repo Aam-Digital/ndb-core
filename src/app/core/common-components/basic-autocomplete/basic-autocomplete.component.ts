@@ -462,14 +462,19 @@ export class BasicAutocompleteComponent<O, V = O>
       this.retainSearchValue = "";
     }
   }
-
   override onContainerClick(event: MouseEvent) {
+    const target = event.target;
+    const clickedOption =
+      target instanceof Element
+        ? target.closest(".mat-mdc-option, .mat-option")
+        : null;
     if (
       !this._disabled &&
-      !((event.target as Element).className ?? "").includes("mat-mdc-option")
+      !clickedOption
     ) {
       this.showAutocomplete();
     }
+  }
   }
 
   override writeValue(val: V[] | V, notifyFormControl = false): void {
