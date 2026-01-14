@@ -466,7 +466,7 @@ export class BasicAutocompleteComponent<O, V = O>
   override onContainerClick(event: MouseEvent) {
     if (
       !this._disabled &&
-      !(event.target as Element).className.includes("mat-mdc-option")
+      !((event.target as Element).className ?? "").includes("mat-mdc-option")
     ) {
       this.showAutocomplete();
     }
