@@ -7,6 +7,10 @@ export interface MenuItem {
    */
   label: string;
   /**
+   * Optional subtitle or description
+   */
+  subtitle?: string;
+  /**
    * The icon to be displayed left of the label.
    */
   icon?: string;
