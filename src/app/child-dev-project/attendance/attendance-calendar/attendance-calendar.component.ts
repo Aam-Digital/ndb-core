@@ -28,23 +28,25 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { AttendanceService } from "../attendance.service";
 import { AnalyticsService } from "../../../core/analytics/analytics.service";
 import { DatePipe, PercentPipe } from "@angular/common";
-import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { AttendanceStatusSelectComponent } from "../attendance-status-select/attendance-status-select.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: "app-attendance-calendar",
   templateUrl: "./attendance-calendar.component.html",
-  styleUrls: ["./attendance-calendar.component.scss"],
+  styleUrls: [
+    "./attendance-calendar.component.scss",
+    "../../../core/common-components/dialog-close/dialog-close.component.scss",
+  ],
   encapsulation: ViewEncapsulation.None,
   imports: [
     MatDatepickerModule,
     DatePipe,
-    DialogCloseComponent,
     AttendanceStatusSelectComponent,
     MatFormFieldModule,
     MatInputModule,
@@ -52,6 +54,7 @@ import { Angulartics2Module } from "angulartics2";
     PercentPipe,
     MatButtonModule,
     Angulartics2Module,
+    FontAwesomeModule,
   ],
 })
 @UntilDestroy()
