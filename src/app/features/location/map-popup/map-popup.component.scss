@@ -1,37 +1,12 @@
-@use "variables/breakpoints";
-
 mat-dialog-actions {
   justify-content: end;
-  flex-wrap: wrap;
-  gap: 8px;
 }
 
 .help-text {
   margin: auto 20px;
-
-  @media (max-width: breakpoints.$md) {
-    margin: 0 0 8px 0;
-    flex-basis: 100%;
-    font-size: 0.875rem;
-  }
 }
 
 app-address-edit {
   width: 100%;
   display: block;
-}
-
-.map-dialog-content {
-  max-height: 90vh;
-
-  @media (max-width: breakpoints.$md) {
-    max-height: none;
-    padding: 12px;
-  }
-}
-
-.location-map {
-  @media (max-width: breakpoints.$md) {
-    height: 50vh !important;
-  }
 }

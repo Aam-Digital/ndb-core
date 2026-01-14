@@ -1,4 +1,4 @@
-<mat-dialog-content class="map-dialog-content">
+<mat-dialog-content style="max-height: 90vh">
   @if (!data.showMapOnly) {
     <app-address-edit
       [disabled]="data.disabled"
@@ -8,7 +8,6 @@
   }
 
   <app-map
-    class="location-map"
     height="65vh"
     [marked]="markedLocations | async"
     [(displayedProperties)]="data.displayedProperties"
