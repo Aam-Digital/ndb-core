@@ -5,9 +5,10 @@ import prettier from "eslint-plugin-prettier/recommended";
 import storybook from "eslint-plugin-storybook";
 import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
+import jsonc from "eslint-plugin-jsonc";
 
 export default defineConfig([
-  { ignores: [".angular", "dist", "doc/compodoc"] },
+  { ignores: [".angular", "dist", "doc/compodoc", "test-results/**"] },
   prettier,
   {
     files: ["src/**/*.ts"],
@@ -69,6 +70,18 @@ export default defineConfig([
 
     rules: {
       "storybook/story-exports": "off",
+    },
+  },
+  // JSON files linting
+  ...jsonc.configs["flat/recommended-with-json"],
+  // JSONC files (JSON with comments - tsconfig, VS Code config, etc.)
+  ...jsonc.configs["flat/recommended-with-jsonc"],
+  // VS Code config files allow comments and trailing commas
+  {
+    files: [".vscode/*.json"],
+    rules: {
+      "jsonc/no-comments": "off",
+      "jsonc/comma-dangle": "off",
     },
   },
 ]);

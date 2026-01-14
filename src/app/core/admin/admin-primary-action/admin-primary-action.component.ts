@@ -8,7 +8,7 @@ import { MenuItemFormComponent } from "../admin-menu/menu-item-form/menu-item-fo
 import { ConfigService } from "../../config/config.service";
 import { PrimaryActionConfig } from "./primary-action-config";
 import { PrimaryActionService } from "./primary-action.service";
-import { CommonModule } from "@angular/common";
+
 import { EntityTypeSelectComponent } from "../../entity/entity-type-select/entity-type-select.component";
 import { EntityConstructor } from "../../entity/model/entity";
 import { MenuItem } from "../../ui/navigation/menu-item";
@@ -21,7 +21,6 @@ import { HintBoxComponent } from "../../common-components/hint-box/hint-box.comp
   selector: "app-admin-primary-action",
   standalone: true,
   imports: [
-    CommonModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,

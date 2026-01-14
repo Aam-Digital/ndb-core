@@ -1,6 +1,7 @@
 import { PouchDatabase } from "./pouch-database";
 import { Logging } from "../../logging/logging.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
+import { NgZone } from "@angular/core";
 import { RemotePouchDatabase } from "./remote-pouch-database";
 import {
   debounceTime,
@@ -47,10 +48,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
     globalSyncState: SyncStateSubject,
     private navigator: Navigator,
     private loginStateSubject: LoginStateSubject,
+    ngZone?: NgZone,
   ) {
-    super(dbName, globalSyncState);
+    super(dbName, globalSyncState, ngZone);
 
-    this.remoteDatabase = new RemotePouchDatabase(dbName, authService);
+    this.remoteDatabase = new RemotePouchDatabase(
+      dbName,
+      authService,
+      undefined,
+      ngZone,
+    );
 
     this.logSyncContext();
     this.syncState

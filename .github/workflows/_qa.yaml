@@ -8,6 +8,11 @@ on:
         required: false
         default: false
         description: If true, upload screenshots to Argos CI for comparison
+      skip-e2e:
+        type: boolean
+        required: false
+        default: false
+        description: If true, skip e2e tests
 
 permissions:
   contents: read
@@ -62,6 +67,7 @@ jobs:
           files: coverage/lcov.info
 
   test-e2e:
+    if: ${{ !inputs.skip-e2e }}
     runs-on: ubuntu-latest
     env:
       TZ: Europe/Berlin

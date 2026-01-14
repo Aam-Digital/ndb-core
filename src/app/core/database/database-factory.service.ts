@@ -1,4 +1,4 @@
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable, NgZone } from "@angular/core";
 import { Database } from "./database";
 import { PouchDatabase } from "./pouchdb/pouch-database";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
@@ -26,6 +26,7 @@ export class DatabaseFactoryService {
   private authService = inject(KeycloakAuthService, { optional: true });
   private navigator = inject<Navigator>(NAVIGATOR_TOKEN, { optional: true });
   private loginStateSubject = inject(LoginStateSubject, { optional: true });
+  private readonly ngZone = inject(NgZone);
 
   createDatabase(dbName: string): Database {
     // only the "primary" (app) database should manage the global login state
@@ -39,11 +40,12 @@ export class DatabaseFactoryService {
         syncState,
         this.navigator,
         this.loginStateSubject,
+        this.ngZone,
       );
     } else if (environment.session_type === SessionType.local) {
-      return new PouchDatabase(dbName, syncState);
+      return new PouchDatabase(dbName, syncState, this.ngZone);
     } else {
-      return new MemoryPouchDatabase(dbName, syncState);
+      return new MemoryPouchDatabase(dbName, syncState, this.ngZone);
     }
   }
 
@@ -52,7 +54,12 @@ export class DatabaseFactoryService {
     const syncState =
       dbName === Entity.DATABASE ? this.syncState : new SyncStateSubject();
 
-    const db = new RemotePouchDatabase(dbName, this.authService, syncState);
+    const db = new RemotePouchDatabase(
+      dbName,
+      this.authService,
+      syncState,
+      this.ngZone,
+    );
     db.init(dbName);
     return db;
   }

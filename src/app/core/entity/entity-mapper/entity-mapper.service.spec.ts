@@ -27,6 +27,8 @@ import { MemoryPouchDatabase } from "../../database/pouchdb/memory-pouch-databas
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { DatabaseFactoryService } from "../../database/database-factory.service";
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
+import { firstValueFrom } from "rxjs";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -183,38 +185,34 @@ describe("EntityMapperService", () => {
     expect(loadedByFullId._rev).toBe(loadedByShortId._rev);
   });
 
-  it("publishes updates to any listeners", () => {
-    const testId = "Entity:t1";
-    const testEntity = new Entity(testId);
-    entityMapper
-      .save(testEntity, true)
-      .then(() => entityMapper.remove(testEntity));
+  it("publishes when an existing entity is created, updated and deleted", async () => {
+    // use TestEntity to avoid catching updates of the existing Entity entities from beforeEach
+    const testId = "TestEntity:test-update-event";
+    const testEntity = new TestEntity(testId);
 
-    return receiveUpdatesAndTestTypeAndId(undefined, testId);
-  });
+    let updatePromise = firstValueFrom(entityMapper.receiveUpdates(TestEntity));
+    await entityMapper.save(testEntity);
+    expect(await updatePromise).toEqual({
+      type: "new",
+      entity: jasmine.objectContaining({ _id: testId }),
+    });
 
-  it("publishes when an existing entity is updated", () => {
-    entityMapper
-      .load(Entity, existingEntity._id)
-      .then((loadedEntity) => entityMapper.save(loadedEntity));
+    let existing = await entityMapper.load<TestEntity>(TestEntity, testId);
+    existing.name = "updated name";
+    updatePromise = firstValueFrom(entityMapper.receiveUpdates(TestEntity));
+    await entityMapper.save(existing);
+    expect(await updatePromise).toEqual({
+      type: "update",
+      entity: jasmine.objectContaining({ _id: testId }),
+    });
 
-    return receiveUpdatesAndTestTypeAndId("update", existingEntity._id);
-  });
-
-  it("publishes when an existing entity is deleted", () => {
-    entityMapper
-      .load(Entity, existingEntity._id)
-      .then((loadedEntity) => entityMapper.remove(loadedEntity));
-
-    return receiveUpdatesAndTestTypeAndId("remove", existingEntity._id);
-  });
-
-  it("publishes when a new entity is being saved", () => {
-    const testId = "Entity:t1";
-    const testEntity = new Entity(testId);
-    entityMapper.save(testEntity, true);
-
-    return receiveUpdatesAndTestTypeAndId("new", testId);
+    existing = await entityMapper.load<TestEntity>(TestEntity, testId);
+    updatePromise = firstValueFrom(entityMapper.receiveUpdates(TestEntity));
+    await entityMapper.remove(existing);
+    expect(await updatePromise).toEqual({
+      type: "remove",
+      entity: jasmine.objectContaining({ _id: testId }),
+    });
   });
 
   it("correctly behaves when en empty array is given to the saveAll function", async () => {
@@ -293,22 +291,6 @@ describe("EntityMapperService", () => {
 
     jasmine.clock().uninstall();
   });
-
-  function receiveUpdatesAndTestTypeAndId(type?: string, entityId?: string) {
-    return new Promise<void>((resolve) => {
-      entityMapper.receiveUpdates(Entity).subscribe((e) => {
-        if (e) {
-          if (type) {
-            expect(e.type).toBe(type);
-          }
-          if (entityId) {
-            expect(e.entity.getId()).toBe(entityId);
-          }
-          resolve();
-        }
-      });
-    });
-  }
 
   @DatabaseEntity("EntityA")
   class MockEntityA extends Entity {}
