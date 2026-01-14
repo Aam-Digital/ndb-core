@@ -31,22 +31,27 @@ export class AdminOverviewService {
     {
       label: $localize`:admin menu item:Record Types & Data Structures`,
       link: "/admin/entity",
+      subtitle: $localize`:admin menu item subtitle:Define what data you can manage by configuring the fields of lists and profiles.`,
     },
     {
       label: $localize`:admin menu item:Site Settings`,
       link: "/admin/site-settings",
+      subtitle: $localize`:admin menu item subtitle:Manage the overall site configuration, including language, colors and fonts.`,
     },
     {
       label: $localize`:admin menu item:Setup Wizard`,
       link: "/admin/setup-wizard",
+      subtitle: $localize`:admin menu item subtitle:A quick guide to help with essential setup steps and configuration.`,
     },
     {
       label: $localize`:admin menu item:Main Menu`,
       link: "/admin/menu",
+      subtitle: $localize`:admin menu item subtitle:Organize the menu items listed on the left.`,
     },
     {
       label: $localize`:admin menu item:Primary Action`,
       link: "/admin/primary-action",
+      subtitle: $localize`:admin menu item subtitle:Set the main action or workflow users should focus on in the system.`,
     },
   ];
 }

@@ -149,10 +149,10 @@ import { EmailClientServiceModule } from "./features/email-client/email-client.m
     TodosModule,
     AdminModule,
     TemplateExportModule,
-    PublicFormModule,
     SkillModule,
     DemoDataModule,
     EmailClientServiceModule,
+    PublicFormModule,
     // top level component
     UiComponent,
     // Global Angular Material modules

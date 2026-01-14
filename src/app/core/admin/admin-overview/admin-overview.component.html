@@ -45,7 +45,12 @@
     <mat-nav-list class="section-nav-list">
       @for (item of configurationMenuItems; track item.label) {
         @if (item.link) {
-          <mat-list-item [routerLink]="[item.link]">
+          <mat-list-item
+            [routerLink]="[item.link]"
+            [matTooltip]="item.subtitle ?? ''"
+            [matTooltipDisabled]="!item.subtitle"
+            matTooltipPosition="before"
+          >
             <span matListItemTitle>{{ item.label }}</span>
           </mat-list-item>
         }
@@ -68,7 +73,12 @@
       <mat-nav-list class="section-nav-list">
         @for (item of templates; track item.label) {
           @if (item.link) {
-            <mat-list-item [routerLink]="[item.link]">
+            <mat-list-item
+              [routerLink]="[item.link]"
+              [matTooltip]="item.subtitle ?? ''"
+              [matTooltipDisabled]="!item.subtitle"
+              matTooltipPosition="before"
+            >
               <span matListItemTitle>{{ item.label }}</span>
             </mat-list-item>
           }
@@ -90,10 +100,20 @@
       >
     </mat-expansion-panel-header>
     <mat-nav-list class="section-nav-list">
-      <mat-list-item [routerLink]="['/admin/user-list']">
+      <mat-list-item
+        [routerLink]="['/admin/user-list']"
+        matTooltip="Create, edit and manage user accounts."
+        i18n-matTooltip
+        matTooltipPosition="before"
+      >
         <span matListItemTitle i18n>User Accounts</span>
       </mat-list-item>
-      <mat-list-item [routerLink]="['/admin/user-roles']">
+      <mat-list-item
+        [routerLink]="['/admin/user-roles']"
+        matTooltip="Set roles and manage role-based access."
+        i18n-matTooltip
+        matTooltipPosition="before"
+      >
         <span matListItemTitle i18n>User Roles & Permissions</span>
       </mat-list-item>
     </mat-nav-list>
@@ -112,13 +132,31 @@
       >
     </mat-expansion-panel-header>
     <mat-nav-list class="section-nav-list">
-      <mat-list-item (click)="saveBackup()" button>
+      <mat-list-item
+        (click)="saveBackup()"
+        button
+        matTooltip="Download all data of the database."
+        i18n-matTooltip
+        matTooltipPosition="before"
+      >
         <span matListItemTitle i18n>Download Backup (.json)</span>
       </mat-list-item>
-      <mat-list-item (click)="backupImport.click()" button>
+      <mat-list-item
+        (click)="backupImport.click()"
+        button
+        matTooltip="Upload a previous backup to restore the database to that state."
+        i18n-matTooltip
+        matTooltipPosition="before"
+      >
         <span matListItemTitle i18n>Restore Backup (.json)</span>
       </mat-list-item>
-      <mat-list-item (click)="saveCsvExport()" button>
+      <mat-list-item
+        (click)="saveCsvExport()"
+        button
+        matTooltip="Download all data of the database in a format that can be opened as a spreadsheet."
+        i18n-matTooltip
+        matTooltipPosition="before"
+      >
         <span matListItemTitle i18n>Full Database Export (.csv)</span>
       </mat-list-item>
     </mat-nav-list>
@@ -138,26 +176,61 @@
       >
     </mat-expansion-panel-header>
     <mat-nav-list class="section-nav-list">
-      <mat-list-item (click)="editConfig()" button>
+      <mat-list-item
+        (click)="editConfig()"
+        button
+        matTooltip="Open the raw configuration file to make advanced technical adjustments."
+        i18n-matTooltip
+        matTooltipPosition="before"
+      >
         <span matListItemTitle i18n>Edit Application Configuration (JSON)</span>
       </mat-list-item>
-      <mat-list-item (click)="downloadConfigClick()" button>
+      <mat-list-item
+        (click)="downloadConfigClick()"
+        button
+        matTooltip="Download the raw configuration file."
+        i18n-matTooltip
+        matTooltipPosition="before"
+      >
         <span matListItemTitle i18n
           >Download Application Configuration (JSON)</span
         >
       </mat-list-item>
-      <mat-list-item (click)="configImport.click()" button>
+      <mat-list-item
+        (click)="configImport.click()"
+        button
+        matTooltip="Upload a raw configuration file and overwrite the current system configuration."
+        i18n-matTooltip
+        matTooltipPosition="before"
+      >
         <span matListItemTitle i18n
           >Upload Application Configuration (JSON)</span
         >
       </mat-list-item>
-      <mat-list-item (click)="debugDatabase()" button>
+      <mat-list-item
+        (click)="debugDatabase()"
+        button
+        matTooltip="Make the database service available in the browser's developer console for advanced administrative tasks."
+        i18n-matTooltip
+        matTooltipPosition="before"
+      >
         <span matListItemTitle i18n>PouchDB Debug: Send to console.log()</span>
       </mat-list-item>
-      <mat-list-item (click)="clearDatabase()" button>
+      <mat-list-item
+        (click)="clearDatabase()"
+        button
+        matTooltip="Delete all data in the database."
+        i18n-matTooltip
+        matTooltipPosition="before"
+      >
         <span matListItemTitle i18n>Empty Database</span>
       </mat-list-item>
-      <mat-list-item [routerLink]="['/admin/conflicts']">
+      <mat-list-item
+        [routerLink]="['/admin/conflicts']"
+        matTooltip="View any database records that could not be synced because multiple users edited the record at the same time while offline."
+        i18n-matTooltip
+        matTooltipPosition="before"
+      >
         <span matListItemTitle i18n>Database Conflicts</span>
       </mat-list-item>
     </mat-nav-list>

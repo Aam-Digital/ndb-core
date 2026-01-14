@@ -32,6 +32,7 @@ export class PublicFormModule {
     adminOverviewService.addTemplateItems({
       label: $localize`:admin menu item:Public Forms`,
       link: PublicFormConfig.route,
+      subtitle: $localize`:admin menu item subtitle:Configure public forms shareable via link or website, to collect data even without a user account.`,
     });
     publicFormsService.initCustomFormActions();
   }
