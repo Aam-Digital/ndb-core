@@ -26,7 +26,7 @@
 }
 
 <div class="widgets-container">
-  @for (widgetConfig of _widgets; track widgetConfig) {
+  @for (widgetConfig of _widgets(); track widgetConfig) {
     <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
   }
 </div>

@@ -1427,7 +1427,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="linenumber">93</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.html</context>
@@ -1813,7 +1813,7 @@
         <target> L&apos;édition de sous-sections avancées n&apos;est pas encore prise en charge dans cet aperçu. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.html</context>
-          <context context-type="linenumber">55,57</context>
+          <context context-type="linenumber">53,55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2118667939256192500" datatype="html">
@@ -2022,10 +2022,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
           <context context-type="linenumber">40</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-button/setup-wizard-button.component.html</context>
-          <context context-type="linenumber">10</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard.component.html</context>
@@ -2708,10 +2704,6 @@
           <context context-type="sourcefile">src/app/core/common-components/entity-create-button/entity-create-button.component.html</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/ui/menu-item-list-editor/menu-item-list-editor.component.html</context>
-          <context context-type="linenumber">5</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="3813876381901859208" datatype="html">
         <source>Must be greater than <x id="PH" equiv-text="validationValue.min"/></source>
@@ -3345,6 +3337,10 @@
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">166,168</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/ui/menu-item-list-editor/menu-item-list-editor.component.html</context>
+          <context context-type="linenumber">8,10</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="2623334410136043738" datatype="html">
         <source> Filter options </source>
@@ -3443,10 +3439,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-actions.service.ts</context>
           <context context-type="linenumber">79</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
-          <context context-type="linenumber">93</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6730892457505921539" datatype="html">
@@ -3743,6 +3735,10 @@
       <trans-unit id="1238583382012712938" datatype="html">
         <source> Clear </source>
         <target> Effacer </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/filter/filter/filter.component.html</context>
+          <context context-type="linenumber">15,17</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/filter/list-filter/list-filter.component.html</context>
           <context context-type="linenumber">28,30</context>
@@ -6737,7 +6733,7 @@
         <note priority="1" from="description">Navigate to user profile page</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
-          <context context-type="linenumber">119</context>
+          <context context-type="linenumber">118</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-details/user-details.component.html</context>
@@ -6754,7 +6750,7 @@
         <note priority="1" from="description">Sign out of the app</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
-          <context context-type="linenumber">126</context>
+          <context context-type="linenumber">125</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8874875360289253570" datatype="html">
@@ -7422,7 +7418,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Mettre à jour la condition de notification via l&apos;éditeur JSON</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
-          <context context-type="linenumber">98</context>
+          <context context-type="linenumber">99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2335219158796507825" datatype="html">
@@ -7961,14 +7957,6 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/filter/filter/filter.component.html</context>
           <context context-type="linenumber">11</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8700121026680200191" datatype="html">
-        <source>Clear</source>
-        <target>Effacer</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/filter/filter/filter.component.html</context>
-          <context context-type="linenumber">18</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7157791362826198470" datatype="html">
@@ -8563,7 +8551,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Sélectionnez les champs à afficher dans ce panneau. Vous pouvez également les réorganiser pour contrôler leur ordre d&apos;affichage. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.html</context>
-          <context context-type="linenumber">38,41</context>
+          <context context-type="linenumber">36,39</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5650184231889504762" datatype="html">
@@ -8571,7 +8559,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Colonnes affichées :</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.html</context>
-          <context context-type="linenumber">48</context>
+          <context context-type="linenumber">46</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4651008079244358967" datatype="html">
@@ -8795,21 +8783,13 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
           <context context-type="linenumber">36,39</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="3502754134202383537" datatype="html">
-        <source>Edit Prefilters</source>
-        <target>Modifier les préfiltres</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-matching-entity-side/edit-matching-entity-side.component.html</context>
-          <context context-type="linenumber">42</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="7050295264408581820" datatype="html">
         <source>Name (record preview)</source>
         <target>Nom (aperçu de l&apos;enregistrement)</target>
         <note priority="1" from="description">label for field represented as DisplayEntity block to select in Admin UI</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-matching-entity-side/edit-matching-entity-side.component.ts</context>
-          <context context-type="linenumber">69</context>
+          <context context-type="linenumber">71</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5556518443552910962" datatype="html">
@@ -8898,7 +8878,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <note priority="1" from="description">filter option</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/filter/filter-generator/filter-generator.service.ts</context>
-          <context context-type="linenumber">96</context>
+          <context context-type="linenumber">112</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
@@ -9116,7 +9096,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Ajouter un widget</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/dashboard/admin-dashboard/admin-dashboard.component.html</context>
-          <context context-type="linenumber">90</context>
+          <context context-type="linenumber">85</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1739102880113535576" datatype="html">
@@ -9125,7 +9105,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <note priority="1" from="description">Save config confirmation message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/dashboard/admin-dashboard/admin-dashboard.component.ts</context>
-          <context context-type="linenumber">155</context>
+          <context context-type="linenumber">157</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3318265793240205329" datatype="html">
@@ -9416,7 +9396,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <note priority="1" from="description">filter option</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/filter/filter-generator/filter-generator.service.ts</context>
-          <context context-type="linenumber">83</context>
+          <context context-type="linenumber">99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2074381744111873107" datatype="html">
@@ -10239,14 +10219,6 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
           <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1483788781057952096" datatype="html">
-        <source>Edit data structure of <x id="INTERPOLATION" equiv-text="{{ entityConstructor.label || entityConstructor.ENTITY_TYPE }}"/></source>
-        <target>Modifier la structure de données de <x id="INTERPOLATION" equiv-text="{{ entityConstructor.label || entityConstructor.ENTITY_TYPE }}"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.html</context>
-          <context context-type="linenumber">30,32</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="8150213210303584067" datatype="html">
         <source> Edit data structure: <x id="INTERPOLATION" equiv-text="{{ entityConstructor?.label || entityConstructor?.ENTITY_TYPE }}"/>
 </source>
@@ -10759,7 +10731,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <target>Mettre à jour les autorisations et enregistrer le formulaire</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">76</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7254372044150496363" datatype="html">
@@ -10767,7 +10739,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <target>Enregistrer le formulaire uniquement</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
-          <context context-type="linenumber">61</context>
+          <context context-type="linenumber">81</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7570620550808005362" datatype="html">
@@ -10775,7 +10747,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <target>Enregistrer le formulaire quand même</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
-          <context context-type="linenumber">68</context>
+          <context context-type="linenumber">88</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6924444017190786407" datatype="html">
@@ -10787,7 +10759,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
 </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
-          <context context-type="linenumber">80</context>
+          <context context-type="linenumber">100</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6682396402659725802" datatype="html">
@@ -10795,7 +10767,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <target>Souhaitez-vous ajouter automatiquement l&apos;autorisation requise ?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
-          <context context-type="linenumber">82</context>
+          <context context-type="linenumber">102</context>
         </context-group>
       </trans-unit>
       <trans-unit id="331191096996827580" datatype="html">
@@ -10803,7 +10775,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <target>Vous devez être administrateur pour ajouter les autorisations requises. Voulez-vous tout de même enregistrer ce formulaire ?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
-          <context context-type="linenumber">83</context>
+          <context context-type="linenumber">103</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7922636663503470564" datatype="html">
@@ -10811,7 +10783,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <target>Autorisation publique manquante</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
-          <context context-type="linenumber">86</context>
+          <context context-type="linenumber">106</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6095432458023282870" datatype="html">
@@ -10819,7 +10791,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <target>Autorisation ajoutée avec succès ! Les utilisateurs publics peuvent désormais créer des enregistrements <x id="PH" equiv-text="entityType"/>.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
-          <context context-type="linenumber">96</context>
+          <context context-type="linenumber">116</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6877055378348105917" datatype="html">
@@ -10827,7 +10799,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <target>Échec de l&apos;ajout de l&apos;autorisation : <x id="PH" equiv-text="error.message"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
-          <context context-type="linenumber">101</context>
+          <context context-type="linenumber">121</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7776181507119320644" datatype="html">
@@ -10835,7 +10807,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <target>Ce formulaire ne fonctionnera pas tant qu&apos;un administrateur n&apos;aura pas ajouté les autorisations de création pour les enregistrements <x id="PH" equiv-text="entityType"/>.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-permission.service.ts</context>
-          <context context-type="linenumber">111</context>
+          <context context-type="linenumber">131</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3543251350251737454" datatype="html">
@@ -10940,22 +10912,6 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/conditions-editor/conditions-editor.component.html</context>
           <context context-type="linenumber">39</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="321733818761457680" datatype="html">
-        <source>Add Condition</source>
-        <target>Ajouter une condition</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/common-components/conditions-editor/conditions-editor.component.html</context>
-          <context context-type="linenumber">55</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5786452744215028715" datatype="html">
-        <source>Edit JSON</source>
-        <target>Modifier le JSON</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/common-components/conditions-editor/conditions-editor.component.html</context>
-          <context context-type="linenumber">65</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4314635307270261414" datatype="html">
@@ -11392,7 +11348,7 @@ Les fichiers modèles peuvent être au format de document Office (odt, docx, ods
       </trans-unit>
       <trans-unit id="3643866539136239218" datatype="html">
         <source>Clear search</source>
-        <target>Recherche propre</target>
+        <target>Effacer la recherche</target>
         <note priority="1" from="description">Clear search tooltip</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
@@ -11464,6 +11420,54 @@ Sélectionnez d&apos;abord un type d&apos;importation ci-dessus pour activer cet
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/bulk-operation-state.service.ts</context>
           <context context-type="linenumber">93</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5166594163472366556" datatype="html">
+        <source> Edit data structure of <x id="INTERPOLATION" equiv-text="{{ entityConstructor.label || entityConstructor.ENTITY_TYPE }}"/> </source>
+        <target>Modifier la structure de données de <x id="INTERPOLATION" equiv-text="{{ entityConstructor.label || entityConstructor.ENTITY_TYPE }}"/> </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.html</context>
+          <context context-type="linenumber">28,31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3959838149758691977" datatype="html">
+        <source> Setup Wizard </source>
+        <target>Assistant d&apos;installation </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-button/setup-wizard-button.component.html</context>
+          <context context-type="linenumber">8,10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1226898115807762115" datatype="html">
+        <source> Add Condition </source>
+        <target>Ajouter une condition </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/conditions-editor/conditions-editor.component.html</context>
+          <context context-type="linenumber">48,50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4899395008228656440" datatype="html">
+        <source> Edit JSON </source>
+        <target>Modifier le JSON </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/conditions-editor/conditions-editor.component.html</context>
+          <context context-type="linenumber">52,54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3584575017861290748" datatype="html">
+        <source> Edit Prefilters </source>
+        <target>Modifier les préfiltres </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-matching-entity-side/edit-matching-entity-side.component.html</context>
+          <context context-type="linenumber">45,47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6660925946511264619" datatype="html">
+        <source> Delete </source>
+        <target> Supprimer </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
+          <context context-type="linenumber">93,95</context>
         </context-group>
       </trans-unit>
     </body>

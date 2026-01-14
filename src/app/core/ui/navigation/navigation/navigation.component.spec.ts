@@ -96,7 +96,7 @@ describe("NavigationComponent", () => {
     mockConfigUpdated.next(null);
     tick();
 
-    expect(component.menuItems).toEqual([
+    expect(component.menuItems()).toEqual([
       { label: "Children", icon: "child", link: "/child" },
     ]);
   }));
@@ -123,37 +123,39 @@ describe("NavigationComponent", () => {
     mockConfigUpdated.next(null);
     tick();
 
-    expect(component.menuItems).toEqual([
+    expect(component.menuItems()).toEqual([
       { label: "Children", icon: "child", link: "/child" },
     ]);
   }));
 
   it("should highlight active menu item", () => {
     const routerEvents = TestBed.inject(Router).events as Subject<Event>;
-    component.menuItems = [
+    component.menuItems.set([
       { label: "Home", icon: "home", link: "/" },
       { label: "Children", icon: "child", link: "/child" },
-    ];
+    ]);
 
     routerEvents.next(new NavigationEnd(42, "/child/1", "/child/1"));
-    expect(component.activeLink)
+    expect(component.activeLink())
       .withContext("url should match parent menu")
       .toBe("/child");
 
     routerEvents.next(new NavigationEnd(42, "/", "/"));
-    expect(component.activeLink).withContext("root url should match").toBe("/");
+    expect(component.activeLink())
+      .withContext("root url should match")
+      .toBe("/");
 
     routerEvents.next(new NavigationEnd(42, "/other", "/other"));
-    expect(component.activeLink)
+    expect(component.activeLink())
       .withContext("unknown url should not match")
       .toBe("");
   });
 
   it("should correctly highlight nested menu items", () => {
     const routerEvents = TestBed.inject(Router).events as Subject<Event>;
-    component.menuItems = [{ label: "Children", icon: "", link: "/child" }];
+    component.menuItems.set([{ label: "Children", icon: "", link: "/child" }]);
 
     routerEvents.next(new NavigationEnd(42, "/child/1", "/child/1"));
-    expect(component.activeLink).toBe("/child");
+    expect(component.activeLink()).toBe("/child");
   });
 });

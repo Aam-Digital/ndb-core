@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Input, inject } from "@angular/core";
+import { Component, Input, inject, signal } from "@angular/core";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { RouteTarget } from "../../../route-target";
@@ -54,12 +54,12 @@ export class DashboardComponent implements DashboardConfig {
   private readonly activeRoute = inject(ActivatedRoute);
 
   @Input() set widgets(widgets: DynamicComponentConfig[]) {
-    this.filterPermittedWidgets(widgets).then((res) => (this._widgets = res));
+    this.filterPermittedWidgets(widgets).then((res) => this._widgets.set(res));
   }
   get widgets(): DynamicComponentConfig[] {
-    return this._widgets;
+    return this._widgets();
   }
-  _widgets: DynamicComponentConfig[] = [];
+  _widgets = signal<DynamicComponentConfig[]>([]);
 
   dashboardViewId: string = this.activeRoute.snapshot.url.join("/");
 

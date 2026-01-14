@@ -1,5 +1,5 @@
 <mat-nav-list>
-  @for (item of menuItems; track item) {
-    <app-menu-item [item]="item" [activeLink]="activeLink"></app-menu-item>
+  @for (item of menuItems(); track item) {
+    <app-menu-item [item]="item" [activeLink]="activeLink()"></app-menu-item>
   }
 </mat-nav-list>

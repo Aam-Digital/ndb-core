@@ -33,7 +33,7 @@
           "label": "Reports",
           "icon": "line-chart",
           "link": "/report"
-        },
+        }
       ]
     },
     "view:": {

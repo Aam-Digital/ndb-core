@@ -3,6 +3,7 @@ import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { SyncState } from "app/core/session/session-states/sync-state.enum";
+import { NgZone } from "@angular/core";
 
 /**
  * An alternative implementation of PouchDatabase that uses the in-memory adapter
@@ -12,8 +13,9 @@ export class MemoryPouchDatabase extends PouchDatabase {
   constructor(
     dbName: string = "in-memory-db",
     globalSyncState: SyncStateSubject,
+    ngZone?: NgZone,
   ) {
-    super(dbName, globalSyncState);
+    super(dbName, globalSyncState, ngZone);
   }
 
   /**
