@@ -7,7 +7,7 @@ export interface MenuItem {
    */
   label: string;
   /**
-   * Optional subtitle or description text displayed below the label.
+   * Optional subtitle or description
    */
   subtitle?: string;
   /**
