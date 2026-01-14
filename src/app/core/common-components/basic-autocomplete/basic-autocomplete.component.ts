@@ -468,13 +468,9 @@ export class BasicAutocompleteComponent<O, V = O>
       target instanceof Element
         ? target.closest(".mat-mdc-option, .mat-option")
         : null;
-    if (
-      !this._disabled &&
-      !clickedOption
-    ) {
+    if (!this._disabled && !clickedOption) {
       this.showAutocomplete();
     }
-  }
   }
 
   override writeValue(val: V[] | V, notifyFormControl = false): void {
