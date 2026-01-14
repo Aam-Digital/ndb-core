@@ -266,39 +266,6 @@ export class AutomatedFieldUpdateConfigService {
   }
 
   /**
-   * Transform a value from an entity field to database format for inherited field operations.
-   *
-   * @param value The value to transform
-   * @param sourceEntity The entity containing the value
-   * @param sourceFieldId The field ID where the value comes from
-   * @param entitySchemaService The schema service for transformations
-   */
-  public transformValueToDatabaseFormat(
-    value: any,
-    sourceEntity: Entity,
-    sourceFieldId: string,
-    entitySchemaService: EntitySchemaService,
-  ): any {
-    if (value === null || value === undefined) {
-      return value;
-    }
-
-    const sourceFieldConfig = sourceEntity
-      .getConstructor()
-      .schema.get(sourceFieldId);
-
-    if (!sourceFieldConfig) {
-      return value;
-    }
-
-    return entitySchemaService.valueToDatabaseFormat(
-      value,
-      sourceFieldConfig,
-      sourceEntity,
-    );
-  }
-
-  /**
    * Calculate the new value from source entity with value mapping applied.
    * Transforms to database format for consistent handling of all datatypes.
    * @param sourceEntity The entity containing the source value
@@ -322,11 +289,45 @@ export class AutomatedFieldUpdateConfigService {
       return newValue;
     }
 
-    return this.transformValueToDatabaseFormat(
+    return this.transformSourceValueToDatabaseFormat(
       newValue,
       sourceEntity,
       rule.sourceValueField,
       this.entitySchemaService,
+    );
+  }
+
+  /**
+   * Transform a source field value to database format for inherited field operations.
+   * This finds the field schema from the source entity and applies the transformation.
+   *
+   * @param value The value to transform
+   * @param sourceEntity The entity containing the value
+   * @param sourceFieldId The field ID where the value comes from
+   * @param entitySchemaService The schema service for transformations
+   */
+  public transformSourceValueToDatabaseFormat(
+    value: any,
+    sourceEntity: Entity,
+    sourceFieldId: string,
+    entitySchemaService: EntitySchemaService,
+  ): any {
+    if (value === null || value === undefined) {
+      return value;
+    }
+
+    const sourceFieldConfig = sourceEntity
+      .getConstructor()
+      .schema.get(sourceFieldId);
+
+    if (!sourceFieldConfig) {
+      return value;
+    }
+
+    return entitySchemaService.valueToDatabaseFormat(
+      value,
+      sourceFieldConfig,
+      sourceEntity,
     );
   }
 

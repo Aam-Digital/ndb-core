@@ -229,7 +229,7 @@ export class InheritedValueService extends DefaultValueStrategy {
         const currentValue = form.formGroup.get(field.id)?.value;
         // convert current value to database format for comparison
         const currentDatabaseValue =
-          this.automatedFieldUpdateConfigService.transformValueToDatabaseFormat(
+          this.automatedFieldUpdateConfigService.transformSourceValueToDatabaseFormat(
             currentValue,
             form.entity,
             field.id,

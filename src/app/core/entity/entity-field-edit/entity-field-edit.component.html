@@ -70,12 +70,13 @@
       <app-help-button [text]="_field.description"></app-help-button>
     }
 
-    <app-inherited-value-button
-      [form]="form"
-      [field]="_field"
-      [entity]="entity"
-      [hideInheritButton]="hideInheritButton"
-    ></app-inherited-value-button>
+    @if (!hideInheritButton) {
+      <app-inherited-value-button
+        [form]="form"
+        [field]="_field"
+        [entity]="entity"
+      ></app-inherited-value-button>
+    }
   </div>
 } @else {
   <app-entity-field-view

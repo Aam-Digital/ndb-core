@@ -160,7 +160,6 @@ describe("AutomatedFieldUpdateConfigService", () => {
     const mentorship = new Mentorship();
     mentorship.status = TEST_MENTORSHIP_ENUM[0];
     mentorship.mentee = mentee.getId();
-    mentorship.getSchema();
 
     entityMapper.addAll([mentee, mentorship]);
 
@@ -358,7 +357,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
 
     const mockSchemaService = TestBed.inject(EntitySchemaService);
 
-    const result = service.transformValueToDatabaseFormat(
+    const result = service.transformSourceValueToDatabaseFormat(
       enumValue,
       school,
       "category",
