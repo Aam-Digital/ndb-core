@@ -1,4 +1,10 @@
-import { Component, inject, OnInit } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  signal,
+} from "@angular/core";
 import {
   MatSlideToggle,
   MatSlideToggleChange,
@@ -32,6 +38,7 @@ import { FeatureDisabledInfoComponent } from "../../../core/common-components/fe
 @Component({
   selector: "app-notification-settings",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatSlideToggle,
     FontAwesomeModule,
@@ -48,10 +55,10 @@ import { FeatureDisabledInfoComponent } from "../../../core/common-components/fe
   styleUrl: "./notification-settings.component.scss",
 })
 export class NotificationSettingsComponent implements OnInit {
-  notificationConfig: NotificationConfig = null;
-  isFeatureEnabled: boolean;
-  isBrowserSupported: boolean;
-  isPushNotificationEnabled = false;
+  notificationConfig = signal<NotificationConfig>(null);
+  isFeatureEnabled = signal<boolean>(false);
+  isBrowserSupported = signal<boolean>(false);
+  isPushNotificationEnabled = signal<boolean>(false);
 
   private readonly entityMapper = inject(EntityMapperService);
   private readonly sessionInfo = inject(SessionSubject);
@@ -68,17 +75,20 @@ export class NotificationSettingsComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.isFeatureEnabled =
-      await this.notificationService.isNotificationServerEnabled();
+    this.isFeatureEnabled.set(
+      await this.notificationService.isNotificationServerEnabled(),
+    );
 
-    this.isBrowserSupported =
-      this.notificationService.isPushNotificationSupported();
+    this.isBrowserSupported.set(
+      this.notificationService.isPushNotificationSupported(),
+    );
 
-    this.notificationConfig = await this.loadNotificationConfig();
+    this.notificationConfig.set(await this.loadNotificationConfig());
 
-    this.isPushNotificationEnabled =
+    this.isPushNotificationEnabled.set(
       this.notificationService.hasNotificationPermissionGranted() &&
-      (await this.notificationService.isDeviceRegistered());
+        (await this.notificationService.isDeviceRegistered()),
+    );
   }
 
   private async loadNotificationConfig() {
@@ -98,7 +108,7 @@ export class NotificationSettingsComponent implements OnInit {
   }
 
   private async createNewNotificationConfig(): Promise<NotificationConfig> {
-    if (!this.isFeatureEnabled) {
+    if (!this.isFeatureEnabled()) {
       // do not create a new config if the API is not enabled
       return;
     }
@@ -148,7 +158,7 @@ export class NotificationSettingsComponent implements OnInit {
     } else {
       this.notificationService.unregisterDevice();
     }
-    this.isPushNotificationEnabled = enabled;
+    this.isPushNotificationEnabled.set(enabled);
 
     // we do not add "push" channel to this.notificationConfig.channels
   }
@@ -165,15 +175,16 @@ export class NotificationSettingsComponent implements OnInit {
     const newRule: NotificationRule = {
       notificationType: "entity_change",
       entityType: undefined,
-      channels: this.notificationConfig.channels, // by default, use the global channels
+      channels: this.notificationConfig().channels, // by default, use the global channels
       conditions: {},
       enabled: true,
     };
 
-    if (!this.notificationConfig.notificationRules) {
-      this.notificationConfig.notificationRules = [];
+    if (!this.notificationConfig().notificationRules) {
+      this.notificationConfig().notificationRules = [];
     }
-    this.notificationConfig.notificationRules.push(newRule);
+    this.notificationConfig().notificationRules.push(newRule);
+    this.notificationConfig.set(this.notificationConfig());
 
     // saving this only once the fields are actually edited by the user
   }
@@ -183,7 +194,7 @@ export class NotificationSettingsComponent implements OnInit {
     updatedRule: NotificationRule,
   ) {
     Object.assign(notificationRule, updatedRule);
-    await this.saveNotificationConfig(this.notificationConfig);
+    await this.saveNotificationConfig(this.notificationConfig());
   }
 
   async confirmRemoveNotificationRule(index: number) {
@@ -192,8 +203,9 @@ export class NotificationSettingsComponent implements OnInit {
       $localize`Are you sure you want to remove this notification rule?`,
     );
     if (confirmed) {
-      this.notificationConfig.notificationRules.splice(index, 1);
-      await this.saveNotificationConfig(this.notificationConfig);
+      this.notificationConfig().notificationRules.splice(index, 1);
+      this.notificationConfig.set(this.notificationConfig());
+      await this.saveNotificationConfig(this.notificationConfig());
       return true;
     }
     return false;
