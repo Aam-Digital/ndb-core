@@ -177,10 +177,6 @@ test("Configure automated status update and verify UI", async ({ page }) => {
 
   // enable the value mapping toggle
   const mappingToggle = automationDialog.locator("mat-slide-toggle");
-
-  //click outside to close dropdown first not so far from field selector
-  // todo: improve basicautocomplete to avoid this step
-  await automationDialog.click();
   await mappingToggle.click();
 
   // Fill in the name mappings for each status value
