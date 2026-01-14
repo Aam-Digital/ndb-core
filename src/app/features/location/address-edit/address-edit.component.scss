@@ -22,8 +22,8 @@
 
 .location-display-section {
   flex: 1 1 250px;
-  min-width: 0; // Allow flex items to shrink below content size
-
+  min-width: 0;
+  
   @media (max-width: breakpoints.$md) {
     flex: 1 1 100%;
   }
