@@ -30,6 +30,7 @@ jobs:
     needs:
       - build
     env:
+      BUILD_NAME: ${{ github.ref_name }}
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_TOKEN }}
       SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
       SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
@@ -45,7 +46,7 @@ jobs:
         if: ${{ !contains(github.ref_name, '-') }}
         run: |
           npm install -g @sentry/cli
-          sentry-cli sourcemaps upload --release="ndb-core@${{ github.ref_name }}" ./dist
+          sentry-cli sourcemaps upload --release="ndb-core@$BUILD_NAME" ./dist
 
   sentry-release:
     runs-on: ubuntu-latest
@@ -53,6 +54,7 @@ jobs:
       - build
       - sentry-upload-sourcemaps
     env:
+      BUILD_NAME: ${{ github.ref_name }}
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_TOKEN }}
       SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
       SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
@@ -66,4 +68,4 @@ jobs:
         if: ${{ !contains(github.ref_name, '-') }}
         run: |
           npm install -g @sentry/cli
-          sentry-cli releases new "ndb-core@${{ github.ref_name }}"
+          sentry-cli releases new "ndb-core@$BUILD_NAME"
