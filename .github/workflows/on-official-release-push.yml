@@ -18,6 +18,9 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
+    outputs:
+      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
+      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
@@ -28,6 +31,7 @@ jobs:
         uses: actions/setup-node@v4
 
       - name: Semantic Release
+        id: semantic
         uses: cycjimmy/semantic-release-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -40,3 +44,31 @@ jobs:
             @semantic-release/git
             @semantic-release/github
             semantic-release-slack-bot
+
+  # Re-tag the existing master image with the new stable version
+  # (instead of rebuilding, since master image is the same code)
+  retag-docker-image:
+    needs:
+      - release
+    if: needs.release.outputs.new_release_published == 'true'
+    runs-on: ubuntu-latest
+    env:
+      REGISTRY_IMAGE: aamdigital/ndb-server
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Re-tag master image with version and stable tags
+        run: |
+          VERSION="${{ needs.release.outputs.new_release_version }}"
+          echo "Re-tagging ${REGISTRY_IMAGE}:master as ${REGISTRY_IMAGE}:${VERSION} and ${REGISTRY_IMAGE}:stable"
+          
+          # Use docker buildx imagetools to re-tag multi-arch images without pulling
+          docker buildx imagetools create -t ${REGISTRY_IMAGE}:${VERSION} ${REGISTRY_IMAGE}:master
+          docker buildx imagetools create -t ${REGISTRY_IMAGE}:stable ${REGISTRY_IMAGE}:master
