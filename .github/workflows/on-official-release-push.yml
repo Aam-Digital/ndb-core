@@ -70,5 +70,5 @@ jobs:
           echo "Re-tagging ${REGISTRY_IMAGE}:master as ${REGISTRY_IMAGE}:${VERSION} and ${REGISTRY_IMAGE}:stable"
           
           # Use docker buildx imagetools to re-tag multi-arch images without pulling
-          docker buildx imagetools create -t ${REGISTRY_IMAGE}:${VERSION} ${REGISTRY_IMAGE}:master
-          docker buildx imagetools create -t ${REGISTRY_IMAGE}:stable ${REGISTRY_IMAGE}:master
+          docker buildx imagetools create -t "${REGISTRY_IMAGE}:${VERSION}" "${REGISTRY_IMAGE}:master"
+          docker buildx imagetools create -t "${REGISTRY_IMAGE}:stable" "${REGISTRY_IMAGE}:master"
