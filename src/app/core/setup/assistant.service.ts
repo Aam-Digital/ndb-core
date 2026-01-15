@@ -44,7 +44,7 @@ export class AssistantService {
         maxHeight: "100%",
         position: { top: "0px", right: "0px" },
         backdropClass: "backdrop-below-toolbar",
-        minWidth: "300px",
+        minWidth: "350px",
         width: "40vw",
       },
     );
