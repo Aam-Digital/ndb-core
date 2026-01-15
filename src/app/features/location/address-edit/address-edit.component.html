@@ -1,12 +1,9 @@
-<div class="flex-row align-center full-width" style="gap: 16px">
+<div class="address-edit-container full-width">
   @if (!disabled) {
-    <div
-      class="flex-row gap-regular align-center full-width"
-      style="flex: 1 1 0"
-    >
+    <div class="flex-row gap-small align-center search-row">
       <app-address-search
         (locationSelected)="updateFromAddressSearch($event)"
-        class="full-width"
+        class="address-input"
       ></app-address-search>
       <app-address-gps-location
         (locationSelected)="onGpsLocationSelected($event)"
@@ -14,71 +11,69 @@
     </div>
   }
 
-  <div class="flex-row align-center full-width" style="gap: 4px; flex: 1 1 0">
-    <mat-form-field
-      floatLabel="always"
-      class="full-width"
-      style="margin-bottom: 0"
-    >
-      <mat-label i18n>Selected Location</mat-label>
-      <textarea
-        #manualAddressInput
-        matInput
-        placeholder="no location selected"
-        i18n-placeholder
-        [value]="
-          selectedLocation?.locationString ??
-          selectedLocation?.geoLookup?.display_name
-        "
-        (change)="updateLocationString(manualAddressInput.value)"
-        [disabled]="disabled || !manualAddressEnabled"
-        rows="2"
-      ></textarea>
+  <mat-form-field floatLabel="always" class="full-width">
+    <mat-label i18n>Selected Location</mat-label>
+    <textarea
+      #manualAddressInput
+      matInput
+      placeholder="no location selected"
+      i18n-placeholder
+      [value]="
+        selectedLocation?.locationString ??
+        selectedLocation?.geoLookup?.display_name
+      "
+      (change)="updateLocationString(manualAddressInput.value)"
+      [disabled]="disabled || !manualAddressEnabled"
+      rows="2"
+    ></textarea>
 
+    <mat-hint>
       @if (
         selectedLocation?.geoLookup?.display_name !==
         selectedLocation?.locationString
       ) {
-        <mat-hint>
-          @if (selectedLocation?.geoLookup) {
-            <span
-              matTooltip="You have manually edited the address above. This is the actual mapped location. To change the location on the map, use the address search field or click on the map."
-              i18n-matTooltip
-            >
-              {{ selectedLocation.geoLookup.display_name }}
-            </span>
-          } @else {
-            <span
-              matTooltip="You have manually entered the address above without locating it on the map. To change the location on the map, use the address search field or click on the map."
-              i18n-matTooltip
-              i18n
-            >
-              No location marked on map
-            </span>
-          }
-        </mat-hint>
+        @if (selectedLocation?.geoLookup) {
+          <span
+            matTooltip="You have manually edited the address above. This is the actual mapped location. To change the location on the map, use the address search field or click on the map."
+            i18n-matTooltip
+          >
+            {{ selectedLocation.geoLookup.display_name }}
+          </span>
+        } @else {
+          <span
+            matTooltip="You have manually entered the address above without locating it on the map. To change the location on the map, use the address search field or click on the map."
+            i18n-matTooltip
+            i18n
+          >
+            No location marked on map
+          </span>
+        }
+        <br />
       }
-    </mat-form-field>
 
-    @if (!disabled && selectedLocation) {
-      @if (!manualAddressEnabled) {
-        <button
-          mat-icon-button
-          (click)="manualAddressEnabled = true"
-          matTooltip="Manually overwrite the address text (e.g. to add details that are not available from the automatic address lookup). The mapped location will be unaffected by this."
-          i18n-matTooltip
+      @if (!disabled && selectedLocation) {
+        <span>
+          <a
+            href=""
+            (click)="enableManualAddressEditing(); $event.preventDefault()"
+            matTooltip="Manually overwrite the address text (e.g. to add details that are not available from the automatic address lookup). The mapped location will be unaffected by this."
+            i18n-matTooltip
+            i18n
+            >Edit address text</a
+          >
+        </span>
+        &nbsp;|&nbsp;
+        <span
+          ><a
+            href=""
+            (click)="clearLocation(); $event.preventDefault()"
+            matTooltip="Delete the selected location."
+            i18n-matTooltip
+            i18n
+            >Clear</a
+          ></span
         >
-          <fa-icon icon="edit"></fa-icon>
-        </button>
       }
-      <button
-        mat-icon-button
-        (click)="clearLocation()"
-        matTooltip="Delete the selected location."
-        i18n-matTooltip
-      >
-        <fa-icon icon="trash"></fa-icon>
-      </button>
-    }
-  </div>
+    </mat-hint>
+  </mat-form-field>
 </div>

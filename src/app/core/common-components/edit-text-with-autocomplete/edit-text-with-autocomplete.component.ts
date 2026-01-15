@@ -195,6 +195,10 @@ export class EditTextWithAutocompleteComponent
       this.additional.relevantValue ??
       this.additional?.relatedEntitiesParent?.getId();
 
+    if (!selected[this.additional.relevantProperty]) {
+      selected[this.additional.relevantProperty] = [];
+    }
+
     if (
       this.additional.relevantProperty &&
       relevantValue &&

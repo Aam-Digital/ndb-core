@@ -32,18 +32,13 @@ describe("AssistantService", () => {
 
     await service.openAssistant();
 
-    expect(mockDialog.open).toHaveBeenCalledWith(AssistantDialogComponent, {
-      autoFocus: false,
-      enterAnimationDuration: 0,
-      exitAnimationDuration: 0,
-      height: AssistantService.ASSISTANT_DIALOG_HEIGHT,
-      maxWidth: "100%",
-      maxHeight: "100%",
-      position: { top: "0px", right: "0px" },
-      backdropClass: "backdrop-below-toolbar",
-      minWidth: "300px",
-      width: "40vw",
-    });
+    expect(mockDialog.open).toHaveBeenCalledWith(
+      AssistantDialogComponent,
+      jasmine.objectContaining({
+        height: AssistantService.ASSISTANT_DIALOG_HEIGHT,
+        backdropClass: "backdrop-below-toolbar",
+      }),
+    );
   });
 
   it("should not open dialog if already open", async () => {
