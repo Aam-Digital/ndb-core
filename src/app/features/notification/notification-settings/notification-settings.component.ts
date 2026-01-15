@@ -172,19 +172,20 @@ export class NotificationSettingsComponent implements OnInit {
   }
 
   async addNewNotificationRule() {
+    const config = this.notificationConfig();
     const newRule: NotificationRule = {
       notificationType: "entity_change",
       entityType: undefined,
-      channels: this.notificationConfig().channels, // by default, use the global channels
+      channels: config.channels, // by default, use the global channels
       conditions: {},
       enabled: true,
     };
 
-    if (!this.notificationConfig().notificationRules) {
-      this.notificationConfig().notificationRules = [];
+    if (!config.notificationRules) {
+      config.notificationRules = [];
     }
-    this.notificationConfig().notificationRules.push(newRule);
-    this.notificationConfig.set(this.notificationConfig());
+    config.notificationRules = [...config.notificationRules, newRule];
+    this.notificationConfig.set(config);
 
     // saving this only once the fields are actually edited by the user
   }
@@ -203,9 +204,12 @@ export class NotificationSettingsComponent implements OnInit {
       $localize`Are you sure you want to remove this notification rule?`,
     );
     if (confirmed) {
-      this.notificationConfig().notificationRules.splice(index, 1);
-      this.notificationConfig.set(this.notificationConfig());
-      await this.saveNotificationConfig(this.notificationConfig());
+      const config = this.notificationConfig();
+      config.notificationRules = config.notificationRules.filter(
+        (_, i) => i !== index,
+      );
+      this.notificationConfig.set(config);
+      await this.saveNotificationConfig(config);
       return true;
     }
     return false;
