@@ -11,7 +11,14 @@
     <h3 class="remove-margin-top">
       {{ selectedDate.toDate() | date }}
     </h3>
-    <app-dialog-close (click)="selectDay()"></app-dialog-close>
+    <button
+      mat-icon-button
+      class="overlay-close-button"
+      (click)="selectDay()"
+      type="button"
+    >
+      <fa-icon icon="times"></fa-icon>
+    </button>
     @if (selectedEvent && highlightForChild) {
       <div>
         <div>

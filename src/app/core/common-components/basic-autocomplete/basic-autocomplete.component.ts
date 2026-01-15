@@ -462,12 +462,13 @@ export class BasicAutocompleteComponent<O, V = O>
       this.retainSearchValue = "";
     }
   }
-
   override onContainerClick(event: MouseEvent) {
-    if (
-      !this._disabled &&
-      (event.target as Element).tagName.toLowerCase() != "input"
-    ) {
+    const target = event.target;
+    const clickedOption =
+      target instanceof Element
+        ? target.closest(".mat-mdc-option, .mat-option")
+        : null;
+    if (!this._disabled && !clickedOption) {
       this.showAutocomplete();
     }
   }

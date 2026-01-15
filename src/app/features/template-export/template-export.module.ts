@@ -66,6 +66,7 @@ export class TemplateExportModule {
     adminOverviewService.addTemplateItems({
       label: $localize`:admin menu item:Export Templates`,
       link: TemplateExport.route,
+      subtitle: $localize`:admin menu item subtitle:Configure templates (as .docx files) to generate PDF documents populated with dynamic data from your records.`,
     });
   }
 }
