@@ -19,12 +19,3 @@
     flex: 1 1 100%;
   }
 }
-
-.location-display-section {
-  flex: 1 1 250px;
-  min-width: 0;
-
-  @media (max-width: breakpoints.$md) {
-    flex: 1 1 100%;
-  }
-}
