@@ -4,6 +4,7 @@ on:
 
 permissions:
   contents: write  # needed for semantic-release to create tags/releases
+  packages: write  # needed for pushing to ghcr.io
 
 jobs:
   pre-releases-cleanup:
@@ -56,7 +57,8 @@ jobs:
     if: needs.release.outputs.new_release_published == 'true'
     runs-on: ubuntu-latest
     env:
-      REGISTRY_IMAGE: aamdigital/ndb-server
+      DOCKERHUB_IMAGE: aamdigital/ndb-server
+      GHCR_IMAGE: ghcr.io/${{ github.repository }}
     steps:
       - name: Login to DockerHub
         uses: docker/login-action@v3
@@ -64,14 +66,26 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Re-tag master image with version and stable tags
         run: |
           VERSION="${{ needs.release.outputs.new_release_version }}"
-          echo "Re-tagging ${REGISTRY_IMAGE}:master as ${REGISTRY_IMAGE}:${VERSION} and ${REGISTRY_IMAGE}:stable"
           
-          # Use docker buildx imagetools to re-tag multi-arch images without pulling
-          docker buildx imagetools create -t "${REGISTRY_IMAGE}:${VERSION}" "${REGISTRY_IMAGE}:master"
-          docker buildx imagetools create -t "${REGISTRY_IMAGE}:stable" "${REGISTRY_IMAGE}:master"
+          # Re-tag DockerHub images
+          echo "Re-tagging ${DOCKERHUB_IMAGE}:master as ${DOCKERHUB_IMAGE}:${VERSION} and ${DOCKERHUB_IMAGE}:stable"
+          docker buildx imagetools create -t "${DOCKERHUB_IMAGE}:${VERSION}" "${DOCKERHUB_IMAGE}:master"
+          docker buildx imagetools create -t "${DOCKERHUB_IMAGE}:stable" "${DOCKERHUB_IMAGE}:master"
+          
+          # Re-tag GHCR images
+          echo "Re-tagging ${GHCR_IMAGE}:master as ${GHCR_IMAGE}:${VERSION} and ${GHCR_IMAGE}:stable"
+          docker buildx imagetools create -t "${GHCR_IMAGE}:${VERSION}" "${GHCR_IMAGE}:master"
+          docker buildx imagetools create -t "${GHCR_IMAGE}:stable" "${GHCR_IMAGE}:master"

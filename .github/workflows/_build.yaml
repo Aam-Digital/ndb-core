@@ -14,9 +14,11 @@ on:
 
 permissions:
   contents: read
+  packages: write  # needed for pushing to ghcr.io
 
 env:
-  REGISTRY_IMAGE: aamdigital/ndb-server
+  DOCKERHUB_IMAGE: aamdigital/ndb-server
+  GHCR_IMAGE: ghcr.io/${{ github.repository }}
 
 jobs:
   build-webapp:
@@ -77,7 +79,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY_IMAGE }}
+          images: |
+            ${{ env.DOCKERHUB_IMAGE }}
+            ${{ env.GHCR_IMAGE }}
           tags: ${{ inputs.docker_tags }}
 
       - name: Set up QEMU
@@ -91,6 +95,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push multi-platform image
         uses: docker/build-push-action@v6

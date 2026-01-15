@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  packages: write  # required for pushing to ghcr.io
 
 env:
   BUILD_NAME: ${{ github.ref_name }}

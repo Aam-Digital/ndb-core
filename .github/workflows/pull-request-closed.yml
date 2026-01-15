@@ -7,6 +7,7 @@ on:
 permissions:
   contents: read
   actions: write  # required for deleting GitHub Actions caches
+  packages: write  # required for deleting GHCR images
 
 env:
   GH_TOKEN: ${{ github.token }}
@@ -31,13 +32,35 @@ jobs:
             cd ..
             rm -r pr-${{ github.event.number }}
 
-      - name: Delete Docker tag
+      - name: Delete Docker Hub tag
         continue-on-error: true
         run: |
           token=$(curl -s -L 'https://hub.docker.com/v2/users/login' -H 'Content-Type: application/json' -d '{ "username": "${{ secrets.DOCKER_USERNAME }}", "password": "${{ secrets.DOCKER_PASSWORD }}"}')
           token=${token#*\"token\":\"}
           token=${token%%\"*}
           curl -s -L -X DELETE "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags/pr-${{ github.event.number }}" -H "Authorization: Bearer $token"
+
+      - name: Delete GHCR image
+        continue-on-error: true
+        run: |
+          PACKAGE_NAME="${{ github.event.repository.name }}"
+          TAG="pr-${{ github.event.number }}"
+          
+          # Get the version ID for the specific tag
+          VERSION_ID=$(gh api \
+            -H "Accept: application/vnd.github+json" \
+            "/orgs/${{ github.repository_owner }}/packages/container/${PACKAGE_NAME}/versions" \
+            --jq ".[] | select(.metadata.container.tags[] == \"${TAG}\") | .id")
+          
+          if [ -n "$VERSION_ID" ]; then
+            echo "Deleting GHCR image version $VERSION_ID with tag $TAG"
+            gh api \
+              --method DELETE \
+              -H "Accept: application/vnd.github+json" \
+              "/orgs/${{ github.repository_owner }}/packages/container/${PACKAGE_NAME}/versions/${VERSION_ID}"
+          else
+            echo "No GHCR image found with tag $TAG"
+          fi
 
       - name: Delete github caches for current branch
         run: |
