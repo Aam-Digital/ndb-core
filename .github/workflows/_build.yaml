@@ -12,6 +12,9 @@ on:
         required: true
         description: Docker tags configuration for docker/metadata-action (multiline string)
 
+permissions:
+  contents: read
+
 env:
   REGISTRY_IMAGE: aamdigital/ndb-server
 

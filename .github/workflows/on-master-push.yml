@@ -5,6 +5,9 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write  # needed for semantic-release and gh-pages
+
 jobs:
   qa:
     uses: ./.github/workflows/_qa.yaml

@@ -2,6 +2,9 @@ name: Semantic Release
 on:
   workflow_dispatch
 
+permissions:
+  contents: write  # needed for semantic-release to create tags/releases
+
 jobs:
   pre-releases-cleanup:
     runs-on: ubuntu-latest

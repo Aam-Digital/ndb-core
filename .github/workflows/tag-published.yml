@@ -6,6 +6,9 @@ on:
     tags:
       - "*"
 
+permissions:
+  contents: read
+
 env:
   BUILD_NAME: ${{ github.ref_name }}
 

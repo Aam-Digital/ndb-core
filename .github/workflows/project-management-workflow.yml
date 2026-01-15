@@ -1,6 +1,10 @@
 name: Project Board Automation
 on: [issues]
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   github-actions-automate-projects:
     runs-on: ubuntu-latest

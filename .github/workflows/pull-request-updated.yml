@@ -9,6 +9,9 @@ on:
       - synchronize
       - ready_for_review
 
+permissions:
+  contents: read
+
 env:
   BUILD_NAME: pr-${{ github.event.number }}
 
