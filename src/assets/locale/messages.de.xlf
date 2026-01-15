@@ -84,15 +84,15 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">51,54</context>
+          <context context-type="linenumber">58,61</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">63,67</context>
+          <context context-type="linenumber">70,74</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">76,79</context>
+          <context context-type="linenumber">83,86</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3428613289989595847" datatype="html">
@@ -329,7 +329,7 @@
         <note priority="1" from="meaning">Remarks</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">32</context>
+          <context context-type="linenumber">39</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4942664025620181200" datatype="html">
@@ -340,7 +340,7 @@
         <note priority="1" from="meaning">Event participants</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">48,56</context>
+          <context context-type="linenumber">55,63</context>
         </context-group>
       </trans-unit>
       <trans-unit id="678258264214451087" datatype="html">
@@ -348,7 +348,7 @@
         <target><x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }"/> haben teilgenommen (von <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/>)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">59,68</context>
+          <context context-type="linenumber">66,75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6998523433750901307" datatype="html">
@@ -358,7 +358,7 @@
         <note priority="1" from="meaning">Unknown status</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">74,81</context>
+          <context context-type="linenumber">81,88</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2261332142688946159" datatype="html">
@@ -369,7 +369,7 @@
         <note priority="1" from="meaning">Show Details Button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">94,96</context>
+          <context context-type="linenumber">101,103</context>
         </context-group>
       </trans-unit>
       <trans-unit id="552369028311447917" datatype="html">
@@ -379,7 +379,7 @@
         <note priority="1" from="meaning">No Events</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">104,106</context>
+          <context context-type="linenumber">111,113</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4769456747178481829" datatype="html">
@@ -390,7 +390,7 @@
         <note priority="1" from="meaning">Add New Event Button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">118,120</context>
+          <context context-type="linenumber">125,127</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3580318546691057460" datatype="html">
@@ -1416,7 +1416,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
-          <context context-type="linenumber">104</context>
+          <context context-type="linenumber">88</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/location-import-config/location-import-config.component.html</context>
@@ -1700,22 +1700,6 @@
           <context context-type="linenumber">12</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="9092645085005527863" datatype="html">
-        <source>The field of the linked record from which the value is copied into this field.</source>
-        <target>Das Feld des verknüpften Datensatzes, dessen Wert in diesen Datensatz kopiert wird.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.html</context>
-          <context context-type="linenumber">44</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8666441867249277193" datatype="html">
-        <source> Inherited field of linked record: </source>
-        <target> Vererbtes Feld des verknüpften Datensatzes: </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.html</context>
-          <context context-type="linenumber">47,49</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="325266169130845418" datatype="html">
         <source>simple, fixed default value</source>
         <target>einfacher, fester Standard-Wert</target>
@@ -1944,7 +1928,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
-          <context context-type="linenumber">101,103</context>
+          <context context-type="linenumber">84,86</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7419147523940160933" datatype="html">
@@ -1992,7 +1976,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
-          <context context-type="linenumber">138</context>
+          <context context-type="linenumber">140</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6236690165266443105" datatype="html">
@@ -2001,7 +1985,7 @@
         <note priority="1" from="description">admin menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">37</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin.routing.ts</context>
@@ -2014,7 +1998,7 @@
         <note priority="1" from="description">admin menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">161</context>
+          <context context-type="linenumber">234</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/conflict-resolution/conflict-resolution-list/conflict-resolution-list.component.html</context>
@@ -2027,7 +2011,7 @@
         <note priority="1" from="description">admin menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">42</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard.component.html</context>
@@ -2351,7 +2335,7 @@
         <note priority="1" from="description">Filter label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component.ts</context>
-          <context context-type="linenumber">23</context>
+          <context context-type="linenumber">22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5073473933031004097" datatype="html">
@@ -2360,7 +2344,7 @@
         <note priority="1" from="description">Filter label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component.ts</context>
-          <context context-type="linenumber">28</context>
+          <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5620341587367646638" datatype="html">
@@ -2369,7 +2353,7 @@
         <note priority="1" from="description">Filter label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component.ts</context>
-          <context context-type="linenumber">32</context>
+          <context context-type="linenumber">31</context>
         </context-group>
       </trans-unit>
       <trans-unit id="842657237693374355" datatype="html">
@@ -2378,7 +2362,7 @@
         <note priority="1" from="description">Filter label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component.ts</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="linenumber">36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4463380307954693363" datatype="html">
@@ -2387,7 +2371,7 @@
         <note priority="1" from="description">Filter label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component.ts</context>
-          <context context-type="linenumber">42</context>
+          <context context-type="linenumber">41</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8003166511689827517" datatype="html">
@@ -2399,7 +2383,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-field-edit/entity-field-edit.component.html</context>
-          <context context-type="linenumber">41</context>
+          <context context-type="linenumber">45</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1854059228407793522" datatype="html">
@@ -3462,7 +3446,7 @@
         <note priority="1" from="description">Undo an entity action</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
-          <context context-type="linenumber">139</context>
+          <context context-type="linenumber">141</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-actions.service.ts</context>
@@ -6112,7 +6096,7 @@
         <note priority="1" from="description">dashboard widget explanation</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts</context>
-          <context context-type="linenumber">137</context>
+          <context context-type="linenumber">135</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8899174649685550045" datatype="html">
@@ -6277,7 +6261,7 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
         <note priority="1" from="description">PublicFormConfig admin form panel</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">98</context>
+          <context context-type="linenumber">99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7429211262318065236" datatype="html">
@@ -6286,7 +6270,7 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
         <note priority="1" from="description">PublicFormConfig admin form panel</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">130</context>
+          <context context-type="linenumber">131</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1155564940038634158" datatype="html">
@@ -6298,7 +6282,7 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/setup/system-init-assistant/system-init-assistant.component.html</context>
-          <context context-type="linenumber">50</context>
+          <context context-type="linenumber">53</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8563473768585948959" datatype="html">
@@ -6851,7 +6835,7 @@ Falls Sie Probleme beim Absenden des Formulars feststellen, kontaktieren Sie bit
         <note priority="1" from="description">PublicFormConfig admin form</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">112,113</context>
+          <context context-type="linenumber">113,114</context>
         </context-group>
       </trans-unit>
       <trans-unit id="892832265477968679" datatype="html">
@@ -6960,7 +6944,7 @@ Falls Sie Probleme beim Absenden des Formulars feststellen, kontaktieren Sie bit
         <note priority="1" from="description">PublicFormConfig admin form panel</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">145</context>
+          <context context-type="linenumber">146</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7201028907562937044" datatype="html">
@@ -6968,7 +6952,7 @@ Falls Sie Probleme beim Absenden des Formulars feststellen, kontaktieren Sie bit
         <target>Dieses Feld kann nur beim ersten Erstellen eines Datensatzes festgelegt und danach nicht mehr geändert werden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-field-edit/entity-field-edit.component.html</context>
-          <context context-type="linenumber">62</context>
+          <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2286125960560188437" datatype="html">
@@ -8011,60 +7995,12 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7710820937988011657" datatype="html">
-        <source> You can create an automation rule for this field. The system will then suggest to automatically update this field whenever the related record&apos;s field changes. This helps you ensure data consistency and reduces manual work. </source>
-        <target> Sie können eine Automatisierungsregel für dieses Feld erstellen. Das System wird dann vorschlagen, dieses Feld automatisch zu aktualisieren, wenn sich das Feld des Bezugsdatensatzes ändert. Auf diese Weise können Sie die Datenkonsistenz sicherstellen und die manuelle Arbeit reduzieren. </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
-          <context context-type="linenumber">5,10</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5991141320458034244" datatype="html">
-        <source> Please select the field and configure the mapping carefully to avoid unintended updates. You will see a confirmation dialog to check and manually adjust the value whenever you change records that trigger this automation. </source>
-        <target> Bitte wählen Sie das Feld aus und konfigurieren Sie die Zuordnung sorgfältig, um unbeabsichtigte Aktualisierungen zu vermeiden. Es wird ein Bestätigungsdialog angezeigt, um den Wert zu überprüfen und manuell anzupassen, wenn Sie Datensätze ändern, die diese Automatisierung auslösen. </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
-          <context context-type="linenumber">11,15</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7675631140179017104" datatype="html">
-        <source>Related reference field (of <x id="INTERPOLATION" equiv-text="{{ relatedEntityType.label }}"/>) </source>
-        <target>Verknüpfungs-Feld (von <x id="INTERPOLATION" equiv-text="{{ relatedEntityType.label }}"/>) </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
-          <context context-type="linenumber">19,20</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1326423602241014365" datatype="html">
-        <source>Automation trigger field (of <x id="INTERPOLATION" equiv-text="{{ relatedEntityType.label }}"/>) </source>
-        <target>Automatisierungstrigger-Feld (von <x id="INTERPOLATION" equiv-text="{{ relatedEntityType.label }}"/>) </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
-          <context context-type="linenumber">39,40</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5578909251741792919" datatype="html">
-        <source>No suitable fields available in <x id="INTERPOLATION" equiv-text="{{ relatedEntityType.labelPlural }}"/> </source>
-        <target>Keine passenden Felder verfügbar in <x id="INTERPOLATION" equiv-text="{{ relatedEntityType.labelPlural }}"/> </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
-          <context context-type="linenumber">56,58</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1871735250314999945" datatype="html">
-        <source>Currently only fields of type &quot;dropdown&quot; can be used as trigger field. </source>
-        <target>Derzeit können nur Felder vom Typ &quot;Dropdown&quot; als Triggerfeld verwendet werden. </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
-          <context context-type="linenumber">63,64</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="7202538312399759639" datatype="html">
         <source>When &quot;trigger field&quot; changes to</source>
         <target>Wenn &quot;Auslöserfeld&quot; sich ändert in</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="linenumber">59</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3301756976043125639" datatype="html">
@@ -8072,7 +8008,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>dann wird dieses Feld aktualisiert zu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">60</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3438339975662660773" datatype="html">
@@ -8080,7 +8016,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target> Die Daten sind ungültig, bitte überprüfen Sie die Felder in der &quot;Configure mapping&quot;. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
-          <context context-type="linenumber">106,108</context>
+          <context context-type="linenumber">91,93</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6664392235203810397" datatype="html">
@@ -8104,7 +8040,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Bezugsdatensätze aktualisieren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-update.component.html</context>
-          <context context-type="linenumber">32</context>
+          <context context-type="linenumber">33</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3959146184075429040" datatype="html">
@@ -8112,7 +8048,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Nicht aktualisieren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-update.component.html</context>
-          <context context-type="linenumber">33</context>
+          <context context-type="linenumber">34</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8619278871301655803" datatype="html">
@@ -8322,7 +8258,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Aam Digital ist sehr flexibel und lässt sich schnell an Ihre Bedürfnisse und Datenstrukturen anpassen. Es ist nicht auf die oben genannten Szenarien beschränkt. Nach der Initialisierung Ihres Systems können Sie es weiter anpassen, um Ihr Projekt zu verfolgen, zu messen und zu verwalten. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/setup/system-init-assistant/system-init-assistant.component.html</context>
-          <context context-type="linenumber">30,35</context>
+          <context context-type="linenumber">33,38</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7997034429446626053" datatype="html">
@@ -8330,7 +8266,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Wir haben einige Beispieldaten in dieses Demosystem geladen. Probieren Sie es aus – Sie können nichts kaputt machen! <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Änderungen, die Sie in dieser Demo vornehmen, werden <x id="START_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;em&gt;"/>nicht<x id="CLOSE_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;/em&gt;"/> gespeichert. Das System wird zurückgesetzt, nachdem Sie die Seite geschlossen oder neu geladen haben. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/setup/system-init-assistant/system-init-assistant.component.html</context>
-          <context context-type="linenumber">52,57</context>
+          <context context-type="linenumber">55,60</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1843295351996593681" datatype="html">
@@ -8338,7 +8274,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Hilfe erhalten Sie über den Button „Assistent“ oben rechts in der Symbolleiste. Von dort aus können Sie auch zu weiteren Demo-Szenarien wechseln. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/setup/system-init-assistant/system-init-assistant.component.html</context>
-          <context context-type="linenumber">59,62</context>
+          <context context-type="linenumber">62,65</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5133096532155335173" datatype="html">
@@ -8346,7 +8282,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target> System erkunden </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/setup/system-init-assistant/system-init-assistant.component.html</context>
-          <context context-type="linenumber">72,74</context>
+          <context context-type="linenumber">75,77</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7150030161347526810" datatype="html">
@@ -8587,7 +8523,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Entitätstyp ändern</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.ts</context>
-          <context context-type="linenumber">141</context>
+          <context context-type="linenumber">140</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6472567986999223209" datatype="html">
@@ -8595,7 +8531,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Durch das Ändern des Typs werden alle ausgewählten Felder verworfen. Fortfahren?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.ts</context>
-          <context context-type="linenumber">142</context>
+          <context context-type="linenumber">141</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4815129362025568896" datatype="html">
@@ -8668,7 +8604,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Konfiguration wird zurückgesetzt ...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
-          <context context-type="linenumber">145</context>
+          <context context-type="linenumber">147</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1457221223987054747" datatype="html">
@@ -8809,7 +8745,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <note priority="1" from="description">label for field represented as DisplayEntity block to select in Admin UI</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-matching-entity-side/edit-matching-entity-side.component.ts</context>
-          <context context-type="linenumber">71</context>
+          <context context-type="linenumber">70</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5556518443552910962" datatype="html">
@@ -8979,7 +8915,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Warnstufen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard-settings.component/important-notes-dashboard-settings.component.ts</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">38</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7781324061191622012" datatype="html">
@@ -9600,7 +9536,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <note priority="1" from="description">PublicFormConfig admin form</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">156</context>
+          <context context-type="linenumber">157</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5763258212323881741" datatype="html">
@@ -9609,7 +9545,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <note priority="1" from="description">PublicFormConfig admin form</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">162</context>
+          <context context-type="linenumber">163</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7028415224590522432" datatype="html">
@@ -9747,7 +9683,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Demodaten generieren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/setup/system-init-assistant/system-init-assistant.component.html</context>
-          <context context-type="linenumber">27</context>
+          <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4270097927743748144" datatype="html">
@@ -10057,28 +9993,12 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
           <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7354760959723542574" datatype="html">
-        <source>Select the field in the related record that links it to this record. For example, if a child&apos;s field is updated based on a school&apos;s value, this is the field in the school record that references the child.</source>
-        <target>Wählen Sie das Feld im zugehörigen Datensatz aus, das mit diesem Datensatz verknüpft ist. Wenn beispielsweise ein Feld eines Kindes basierend auf dem Wert einer Schule aktualisiert wird, ist dies das Feld im Schuldatensatz, das auf das Kind verweist.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
-          <context context-type="linenumber">23</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="4596142614789578498" datatype="html">
         <source>Choose the field in the related record that will trigger updates to this field when it is changed.</source>
         <target>Wählen Sie das Feld im zugehörigen Datensatz aus, das Aktualisierungen dieses Feldes auslösen soll, wenn es geändert wird.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
-          <context context-type="linenumber">45</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5848704208725894524" datatype="html">
-        <source>The trigger field on the other, related record must be of type &quot;dropdown&quot;. It seems there are no such field on that record type.</source>
-        <target>Das Auslösefeld im anderen, zugehörigen Datensatz muss vom Typ „Dropdown“ sein. Anscheinend gibt es in diesem Datensatztyp kein solches Feld.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
       <trans-unit id="422199201963406757" datatype="html">
@@ -10216,7 +10136,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <note priority="1" from="description">TemplateExport</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export.module.ts</context>
-          <context context-type="linenumber">120,128</context>
+          <context context-type="linenumber">121,129</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3953200480979433077" datatype="html">
@@ -10351,7 +10271,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Vorlagen und Formulare</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">62</context>
+          <context context-type="linenumber">67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3557340680423304308" datatype="html">
@@ -10359,7 +10279,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Passen Sie Ihre Vorlagen und Formulare individuell an.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">64</context>
+          <context context-type="linenumber">69</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2550377588620126747" datatype="html">
@@ -10367,7 +10287,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Benutzerverwaltung</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">86</context>
+          <context context-type="linenumber">96</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-list/user-list.component.html</context>
@@ -10379,7 +10299,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Benutzerkonten, Rollen und Berechtigungen einrichten und verwalten.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">88,89</context>
+          <context context-type="linenumber">98,99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2804900504095272066" datatype="html">
@@ -10387,7 +10307,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Benutzerkonten</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">94</context>
+          <context context-type="linenumber">109</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7339572341549652441" datatype="html">
@@ -10395,7 +10315,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Benutzerrollen &amp; Berechtigungen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">97</context>
+          <context context-type="linenumber">117</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/advanced-features/advanced-features.component.ts</context>
@@ -10407,7 +10327,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Export und Backups</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">108</context>
+          <context context-type="linenumber">128</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5954113826650862646" datatype="html">
@@ -10415,7 +10335,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Definieren Sie, wie Ihr System Daten schützt und zugänglich hält.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">110,111</context>
+          <context context-type="linenumber">130,131</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4347616266426103167" datatype="html">
@@ -10423,7 +10343,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Backup herunterladen (.json)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">116</context>
+          <context context-type="linenumber">142</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6606967390697286397" datatype="html">
@@ -10431,7 +10351,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Backup wiederherstellen (.json)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">119</context>
+          <context context-type="linenumber">151</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2040881881182678941" datatype="html">
@@ -10439,7 +10359,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Vollständiger Datenbankexport (.csv)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">122</context>
+          <context context-type="linenumber">160</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3514317525562069691" datatype="html">
@@ -10447,7 +10367,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Technische Administration</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">134</context>
+          <context context-type="linenumber">172</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2175509936387719972" datatype="html">
@@ -10455,7 +10375,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Verwalten Sie erweiterte technische Optionen zur Wartung und Fehlerbehebung Ihres Systems.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">136,137</context>
+          <context context-type="linenumber">174,175</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5175865316017005772" datatype="html">
@@ -10463,7 +10383,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Anwendungskonfiguration bearbeiten (JSON)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">142</context>
+          <context context-type="linenumber">186</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8162757748489667702" datatype="html">
@@ -10471,7 +10391,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Anwendungskonfiguration herunterladen (JSON)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">146</context>
+          <context context-type="linenumber">196</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1393034033076929263" datatype="html">
@@ -10479,7 +10399,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Anwendungskonfiguration hochladen (JSON)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">151</context>
+          <context context-type="linenumber">207</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2723546963441188718" datatype="html">
@@ -10487,7 +10407,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>PouchDB-Debug: Senden an console.log()</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">155</context>
+          <context context-type="linenumber">217</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3017100262262011992" datatype="html">
@@ -10495,7 +10415,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Datenbank leeren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
-          <context context-type="linenumber">158</context>
+          <context context-type="linenumber">226</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5880257648610696148" datatype="html">
@@ -10946,7 +10866,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <note priority="1" from="description">admin menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
-          <context context-type="linenumber">44</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7397760241381561901" datatype="html">
@@ -10955,7 +10875,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <note priority="1" from="description">admin menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
-          <context context-type="linenumber">48</context>
+          <context context-type="linenumber">52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7516248228796395188" datatype="html">
@@ -11233,7 +11153,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>System erstellen </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/setup/system-init-assistant/system-init-assistant.component.html</context>
-          <context context-type="linenumber">45,47</context>
+          <context context-type="linenumber">48,50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2539090410028944287" datatype="html">
@@ -11241,7 +11161,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Vererbungsoption auswählen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.html</context>
-          <context context-type="linenumber">5</context>
+          <context context-type="linenumber">6</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8606736975723073019" datatype="html">
@@ -11249,31 +11169,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Keine Vererbungsoptionen verfügbar</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.html</context>
-          <context context-type="linenumber">30</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4258684308645273602" datatype="html">
-        <source>Select field to inherit from</source>
-        <target>Wählen Sie das Feld aus, von dem die Daten übernommen werden sollen</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.html</context>
-          <context context-type="linenumber">39</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3966140104254612355" datatype="html">
-        <source>Optionally configure a value mapping, defining how the source value should be transformed.</source>
-        <target>Optional kann eine Wertzuordnung konfiguriert werden, die definiert, wie der Quellwert transformiert werden soll.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.html</context>
-          <context context-type="linenumber">66</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8729060532793199129" datatype="html">
-        <source> Configure Mapping </source>
-        <target>Zuordnung konfigurieren </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.html</context>
-          <context context-type="linenumber">69,71</context>
+          <context context-type="linenumber">33</context>
         </context-group>
       </trans-unit>
       <trans-unit id="438829165222750711" datatype="html">
@@ -11281,7 +11177,7 @@ Vorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, 
         <target>Wert geerbt oder automatisch aktualisiert von zugehörigen Datensätzen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/inherited-field/inherited-value.service.ts</context>
-          <context context-type="linenumber">41</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2117450513611595691" datatype="html">
@@ -11493,6 +11389,298 @@ Wählen Sie zunächst oben einen Importtyp aus, um diesen Abschnitt zu aktiviere
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
           <context context-type="linenumber">93,95</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1991432124565542842" datatype="html">
+        <source>Hindu</source>
+        <target>Hinduistisch</target>
+        <note priority="1" from="description">religion</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5048451843330274151" datatype="html">
+        <source>Muslim</source>
+        <target>Muslimisch</target>
+        <note priority="1" from="description">religion</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8023565994008055166" datatype="html">
+        <source>Christian</source>
+        <target>Christlich</target>
+        <note priority="1" from="description">religion</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1948629758839313078" datatype="html">
+        <source>Sikh</source>
+        <target>Sikh</target>
+        <note priority="1" from="description">religion</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8167904999979308163" datatype="html">
+        <source>field</source>
+        <target>Feld</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.html</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.html</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3149562532673354747" datatype="html">
+        <source>Configure the value from the other record that should be inherited (and any transformation, if necessary).</source>
+        <target>Konfigurieren Sie den Wert aus dem anderen Datensatz, der übernommen werden soll (und gegebenenfalls eine Daten-Transformation).</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.html</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6013345175862135505" datatype="html">
+        <source> Configure </source>
+        <target> Konfigurieren </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.html</context>
+          <context context-type="linenumber">46,48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1533855976276457936" datatype="html">
+        <source>Inherit value from any &quot;<x id="PH" equiv-text="this.getEntityLabel(referencedEntityType)"/>&quot; that is linked to in this record&apos;s &quot;<x id="PH_1" equiv-text="refFieldLabel"/>&quot; field</source>
+        <target>Übernehme den Wert von jedem &quot;<x id="PH" equiv-text="this.getEntityLabel(referencedEntityType)"/>&quot;-Feld, das mit dem Feld &quot;<x id="PH_1" equiv-text="refFieldLabel"/>&quot; dieses Datensatzes verknüpft ist.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts</context>
+          <context context-type="linenumber">111</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3126140063710948565" datatype="html">
+        <source>Inherit value from any &quot;<x id="PH" equiv-text="this.getEntityLabel(refEntityType)"/>&quot; that links to this record in its &quot;<x id="PH_1" equiv-text="refFieldLabel"/>&quot; field</source>
+        <target>Übernehme den Wert von jedem &quot;<x id="PH" equiv-text="this.getEntityLabel(refEntityType)"/>&quot;, das in seinem Feld &quot;<x id="PH_1" equiv-text="refFieldLabel"/>&quot; auf diesen Datensatz verweist.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/inherited-field/admin-inherited-field/admin-inherited-field.component.ts</context>
+          <context context-type="linenumber">135</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1365915180457960257" datatype="html">
+        <source> You are linking this field to the value of a related <x id="INTERPOLATION" equiv-text="{{ sourceValueEntityType.label }}"/> record. The system will show a dialog to automatically update this field whenever the related record&apos;s field changes. You can still manually adjust the value if needed. This helps you ensure data consistency and reduces manual work. </source>
+        <target>Sie verknüpfen dieses Feld mit dem Wert eines zugehörigen Datensatzes vom Typ <x id="INTERPOLATION" equiv-text="{{ sourceValueEntityType.label }}"/>. Das System zeigt einen Dialog an, um dieses Feld automatisch zu aktualisieren, sobald sich der Wert des zugehörigen Datensatzes ändert. Sie können den Wert bei Bedarf weiterhin manuell anpassen. Dies trägt zur Datenkonsistenz bei und reduziert den manuellen Aufwand. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">5,11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2172074071229320055" datatype="html">
+        <source>Field defining the related source record:</source>
+        <target>Feld, das den zugehörigen Quelldatensatz definiert:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6869005708059233863" datatype="html">
+        <source>Source value field (of <x id="INTERPOLATION" equiv-text="{{ sourceValueEntityType.label }}"/>) </source>
+        <target>Quellwertfeld (von <x id="INTERPOLATION" equiv-text="{{ sourceValueEntityType.label }}"/>) </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">28,29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="132286558427996167" datatype="html">
+        <source>If the source is a dropdown field, you can optionally also define a custom mapping for specific values.</source>
+        <target>Wenn es sich bei der Datenquelle um ein Dropdown-Feld handelt, können Sie optional auch eine benutzerdefinierte Zuordnung für bestimmte Werte definieren.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8275277079853689710" datatype="html">
+        <source> Transform value with custom mapping </source>
+        <target>Werte individuell transformieren</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">52,54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8608240088790196952" datatype="html">
+        <source>Create, edit and manage user accounts.</source>
+        <target>Benutzerkonten erstellen, bearbeiten und verwalten.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">105</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="558603128794773189" datatype="html">
+        <source>Set roles and manage role-based access.</source>
+        <target>Rollen festlegen und rollenbasierte Zugriffsrechte verwalten.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">113</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8873406339208513286" datatype="html">
+        <source>Download all data of the database.</source>
+        <target>Laden Sie alle Daten der Datenbank herunter.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">138</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3944952122039170038" datatype="html">
+        <source>Upload a previous backup to restore the database to that state.</source>
+        <target>Laden Sie eine frühere Sicherung hoch, um die Datenbank in diesen Zustand zurückzuversetzen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">147</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5821736857580772724" datatype="html">
+        <source>Download all data of the database in a format that can be opened as a spreadsheet.</source>
+        <target>Laden Sie alle Daten der Datenbank in einem Format herunter, das als Tabellenkalkulation geöffnet werden kann.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">156</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9039488683057466276" datatype="html">
+        <source>Open the raw configuration file to make advanced technical adjustments.</source>
+        <target>Öffnen Sie die Rohkonfigurationsdatei, um erweiterte technische Anpassungen vorzunehmen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">182</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6059382317623645673" datatype="html">
+        <source>Download the raw configuration file.</source>
+        <target>Laden Sie die Konfigurationsdatei im technischen Datenformat herunter.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">191</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5151681129139869812" datatype="html">
+        <source>Upload a raw configuration file and overwrite the current system configuration.</source>
+        <target>Laden Sie eine Konfigurationsdatei hoch und überschreiben Sie die aktuelle Systemkonfiguration.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">202</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5725222777133529835" datatype="html">
+        <source>Make the database service available in the browser&apos;s developer console for advanced administrative tasks.</source>
+        <target>Stellen Sie den Datenbankdienst in der Entwicklerkonsole des Browsers für erweiterte administrative Aufgaben zur Verfügung.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">213</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5297521822102947331" datatype="html">
+        <source>Delete all data in the database.</source>
+        <target>Löschen Sie alle Daten in der Datenbank.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">222</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="765619416137395805" datatype="html">
+        <source>View any database records that could not be synced because multiple users edited the record at the same time while offline.</source>
+        <target>Alle Datenbankeinträge anzeigen, die nicht synchronisiert werden konnten, weil mehrere Benutzer den Eintrag gleichzeitig im Offline-Modus bearbeitet haben.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.html</context>
+          <context context-type="linenumber">230</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1413165968720173791" datatype="html">
+        <source>Define what data you can manage by configuring the fields of lists and profiles.</source>
+        <target>Definieren Sie, welche Daten Sie verwalten können, indem Sie die Felder von Listen und Profilen konfigurieren.</target>
+        <note priority="1" from="description">admin menu item subtitle</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5615117852035055650" datatype="html">
+        <source>Manage the overall site configuration, including language, colors and fonts.</source>
+        <target>Verwalten Sie die gesamte Website-Konfiguration, einschließlich Sprache, Farben und Schriftarten.</target>
+        <note priority="1" from="description">admin menu item subtitle</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
+          <context context-type="linenumber">39</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2745619801170600689" datatype="html">
+        <source>A quick guide to help with essential setup steps and configuration.</source>
+        <target>Eine Kurzanleitung, die Ihnen bei den wichtigsten Einrichtungsschritten und der Konfiguration hilft.</target>
+        <note priority="1" from="description">admin menu item subtitle</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1573675884586669078" datatype="html">
+        <source>Organize the menu items listed on the left.</source>
+        <target>Ordnen Sie die Menüpunkte auf der linken Seite.</target>
+        <note priority="1" from="description">admin menu item subtitle</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
+          <context context-type="linenumber">49</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1181958210447232659" datatype="html">
+        <source>Set the main action or workflow users should focus on in the system.</source>
+        <target>Legen Sie die Hauptaktion oder den Hauptarbeitsablauf fest, auf den sich die Benutzer im System konzentrieren sollen.</target>
+        <note priority="1" from="description">admin menu item subtitle</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.service.ts</context>
+          <context context-type="linenumber">54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2564540349694021990" datatype="html">
+        <source>Configure templates for sending emails, populated with the template&apos;s subject and body text.</source>
+        <target>Konfigurieren Sie Vorlagen zum Versenden von E-Mails, die mit dem Betreff und dem Text der Vorlage ausgefüllt sind.</target>
+        <note priority="1" from="description">admin menu item subtitle</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/email-client/email-client.module.ts</context>
+          <context context-type="linenumber">56</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="59030432813083393" datatype="html">
+        <source>Configure public forms shareable via link or website, to collect data even without a user account.</source>
+        <target>Konfigurieren Sie öffentliche Formulare, die über einen Link oder eine Website geteilt werden können, um auch ohne Benutzerkonto Daten zu erfassen.</target>
+        <note priority="1" from="description">admin menu item subtitle</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4152813447463272962" datatype="html">
+        <source>Configure templates (as .docx files) to generate PDF documents populated with dynamic data from your records.</source>
+        <target>Konfigurieren Sie Vorlagen (als .docx-Dateien), um PDF-Dokumente zu generieren, die mit dynamischen Daten aus Ihren Datensätzen gefüllt werden.</target>
+        <note priority="1" from="description">admin menu item subtitle</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.module.ts</context>
+          <context context-type="linenumber">69</context>
         </context-group>
       </trans-unit>
     </body>
