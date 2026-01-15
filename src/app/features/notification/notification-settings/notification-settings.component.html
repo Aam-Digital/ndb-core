@@ -8,10 +8,10 @@
 
   <app-feature-disabled-info
     featureName="Notification API"
-    [featureEnabled]="isFeatureEnabled"
+    [featureEnabled]="isFeatureEnabled()"
   ></app-feature-disabled-info>
 
-  @if (notificationConfig) {
+  @if (notificationConfig()) {
     <!--
       Notification Rules
     -->
@@ -27,7 +27,7 @@
 
       <mat-accordion>
         @for (
-          notificationRule of notificationConfig?.notificationRules;
+          notificationRule of notificationConfig()?.notificationRules;
           track notificationRule;
           let index = $index
         ) {
@@ -65,7 +65,7 @@
       <div>
         <h3 class="no-margin flex-row align-center">
           <strong i18n>Where you receive notifications</strong>
-          @if (isPushNotificationEnabled) {
+          @if (isPushNotificationEnabled()) {
             <div
               class="enabled-text"
               matTooltip="Push notifications are enabled. You’ll receive real-time updates for important activities."
@@ -92,7 +92,7 @@
         </div>
       </div>
 
-      @if (!isBrowserSupported) {
+      @if (!isBrowserSupported()) {
         <div class="margin-top-large feature-disabled-box">
           <h2 i18n>
             Push notifications are currently not supported by your Browser.
@@ -133,9 +133,9 @@
           <div class="flex-row gap-regular align-center">
             <mat-slide-toggle
               (change)="togglePushNotifications($event)"
-              [checked]="isPushNotificationEnabled"
+              [checked]="isPushNotificationEnabled()"
               class="indented-item"
-              [disabled]="!isBrowserSupported"
+              [disabled]="!isBrowserSupported()"
             />
             <span i18n>Push notifications</span>
             <app-help-button
@@ -147,7 +147,7 @@
               mat-stroked-button
               color="accent"
               (click)="testNotification()"
-              [disabled]="!isPushNotificationEnabled"
+              [disabled]="!isPushNotificationEnabled()"
               matTooltip="Show a sample notification (only available if push notifications are enabled)"
               i18n-matTooltip
             >
