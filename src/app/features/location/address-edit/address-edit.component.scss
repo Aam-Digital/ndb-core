@@ -1,3 +1,26 @@
-.full-width {
-  width: 100%;
+@use "variables/breakpoints";
+
+.address-edit-container {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  flex-wrap: wrap;
+
+  @media (max-width: breakpoints.$md) {
+    gap: 8px;
+  }
+}
+
+.search-row {
+  flex: 1 1 250px;
+  min-width: 0; // Allow flex items to shrink below content size
+
+  @media (max-width: breakpoints.$md) {
+    flex: 1 1 100%;
+  }
+}
+
+.address-input {
+  flex: 1;
+  min-width: 0;
 }

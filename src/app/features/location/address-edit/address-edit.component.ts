@@ -1,14 +1,18 @@
-import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
-import { MatIconButton } from "@angular/material/button";
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  viewChild,
+} from "@angular/core";
 import { AddressSearchComponent } from "../address-search/address-search.component";
 import { GeoResult } from "../geo.service";
 import { GeoLocation } from "../geo-location";
 import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { AddressGpsLocationComponent } from "../address-gps-location/address-gps-location.component";
-import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 /**
  * Edit a GeoLocation / Address, including options to search via API and customize the string location being saved.
@@ -22,15 +26,14 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
     MatInput,
     MatHint,
     MatTooltip,
-    MatIconButton,
-    FaIconComponent,
     AddressGpsLocationComponent,
   ],
   templateUrl: "./address-edit.component.html",
   styleUrl: "./address-edit.component.scss",
 })
 export class AddressEditComponent {
-  private confirmationDialog = inject(ConfirmationDialogService);
+  private readonly manualAddressInput =
+    viewChild<ElementRef<HTMLTextAreaElement>>("manualAddressInput");
 
   /**
    * Whenever the user selects an actual looked up location, it is emitted here.
@@ -47,6 +50,12 @@ export class AddressEditComponent {
   @Input() disabled: boolean;
 
   manualAddressEnabled: boolean;
+
+  enableManualAddressEditing() {
+    this.manualAddressEnabled = true;
+    // switch focus only after input has been enabled
+    setTimeout(() => this.manualAddressInput()?.nativeElement.focus(), 0);
+  }
 
   updateLocation(selected: GeoLocation | undefined) {
     this.selectedLocation = selected;
