@@ -145,6 +145,24 @@ describe("EditTextWithAutocompleteComponent", () => {
     );
   });
 
+  it("should initialize undefined relevantProperty field and add the relevant value", async () => {
+    const parentEntity = new TestEntity();
+
+    const rA1 = RecurringActivity.create("First Recurring Activity");
+    rA1.linkedGroups = undefined;
+    loadTypeSpy.and.resolveTo([rA1]);
+    component.additional.relevantProperty = "linkedGroups";
+    component.additional.relatedEntitiesParent = parentEntity;
+    await component.ngOnInit();
+
+    await component.selectEntity(rA1);
+
+    expect(rA1.linkedGroups).toEqual([parentEntity.getId()]);
+    expect(component.parent.get("linkedGroups").value).toEqual([
+      parentEntity.getId(),
+    ]);
+  });
+
   it("should show name of the selected entity", async () => {
     const rA1 = RecurringActivity.create("First Recurring Activity");
     const rA2 = RecurringActivity.create("Second Recurring Activity");
