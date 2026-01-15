@@ -149,7 +149,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     const parentEntity = new TestEntity();
 
     const rA1 = RecurringActivity.create("First Recurring Activity");
-    rA1.linkedGroups = undefined;
+    delete rA1.linkedGroups;
     loadTypeSpy.and.resolveTo([rA1]);
     component.additional.relevantProperty = "linkedGroups";
     component.additional.relatedEntitiesParent = parentEntity;
