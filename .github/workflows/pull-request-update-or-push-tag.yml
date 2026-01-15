@@ -89,12 +89,12 @@ jobs:
           images: ${{ env.REGISTRY_IMAGE }}
           # - tag with git tag name on tag builds
           # - tag with `:pr-XXX` on PR builds
-          # - tag with `:master` on pre-release builds (version contains "-master")
+          # - tag with `:master` on pre-release tag builds (tag contains "-master")
           # stable and official releases are handled in on-official-release-push.yml
           tags: |
             type=ref,event=tag
             type=ref,event=pr
-            type=raw,value=master,enabled=${{ contains(github.ref_name, '-master') }}
+            type=raw,value=master,enabled=${{ github.event_name == 'push' && contains(github.ref_name, '-master') }}
 
 
       - name: Set up QEMU
