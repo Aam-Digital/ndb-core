@@ -13,7 +13,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           keep_latest: 0
-          delete_tag_pattern: master
+          delete_tag_pattern: "-master"
           delete_tags: true
 
   release:

@@ -54,5 +54,3 @@ jobs:
           extra_plugins: |
             semantic-release-replace-plugin@1.2.6
             @semantic-release/git
-            @semantic-release/github
-            semantic-release-slack-bot
