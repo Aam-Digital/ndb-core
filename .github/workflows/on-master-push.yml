@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write  # needed for semantic-release and gh-pages
+  id-token: write  # required for _qa.yaml (QLTY code coverage)
+
 jobs:
   qa:
     uses: ./.github/workflows/_qa.yaml
@@ -54,5 +58,3 @@ jobs:
           extra_plugins: |
             semantic-release-replace-plugin@1.2.6
             @semantic-release/git
-            @semantic-release/github
-            semantic-release-slack-bot

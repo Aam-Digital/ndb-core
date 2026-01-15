@@ -1,0 +1,47 @@
+name: Pull Request - Update
+# CI flow for pull requests: QA, build, and deploy preview
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+
+permissions:
+  contents: read
+  id-token: write  # required for _qa.yaml (QLTY code coverage)
+
+env:
+  BUILD_NAME: pr-${{ github.event.number }}
+
+jobs:
+  qa:
+    uses: ./.github/workflows/_qa.yaml
+    secrets: inherit
+    with:
+      skip-e2e: ${{ github.event.pull_request.draft }}
+
+  build:
+    uses: ./.github/workflows/_build.yaml
+    secrets: inherit
+    with:
+      build_name: pr-${{ github.event.number }}
+      docker_tags: type=ref,event=pr
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - name: Deploy updated image
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /var/docker/pr-${{ github.event.number }}
+            docker compose pull
+            docker compose up -d
