@@ -22,6 +22,8 @@ jobs:
   build-webapp:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      BUILD_NAME: ${{ inputs.build_name }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -30,10 +32,10 @@ jobs:
           cache: npm
 
       - run: npm install -g npm@11
-      - run: echo "building app for BUILD_NAME ${{ inputs.build_name }}"
-      - run: npm install --ci
+      - run: echo "building app for BUILD_NAME $BUILD_NAME"
+      - run: npm ci
       - run: |
-          sed -i 's/appVersion: ".*"/appVersion: "${{ inputs.build_name }}"/g' \
+          sed -i "s/appVersion: \".*\"/appVersion: \"$BUILD_NAME\"/g" \
             src/environments/environment*.ts
 
       - name: Cache angular
