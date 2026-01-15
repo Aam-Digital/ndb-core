@@ -17,8 +17,6 @@ import {
 } from "../../../core/session/auth/session-info";
 import { BehaviorSubject } from "rxjs";
 import { TEST_USER } from "../../../core/user/demo-user-generator.service";
-import { HttpClient } from "@angular/common/http";
-import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
 import { NotificationService } from "../notification.service";
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 import { NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
@@ -27,21 +25,16 @@ import {
   NotificationRule,
 } from "../model/notification-config";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
-import { MatSlideToggleChange } from "@angular/material/slide-toggle";
 
 describe("NotificationSettingComponent", () => {
   let component: NotificationSettingsComponent;
   let fixture: ComponentFixture<NotificationSettingsComponent>;
   let entityMapper: MockEntityMapperService;
-  let mockHttp: jasmine.SpyObj<HttpClient>;
   const testUser: SessionInfo = { name: TEST_USER, id: TEST_USER, roles: [] };
-  let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
   let mockNotificationService: jasmine.SpyObj<NotificationService>;
   let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
 
   beforeEach(async () => {
-    mockHttp = jasmine.createSpyObj(["get", "post"]);
-    mockAuthService = jasmine.createSpyObj(["login", "logout"]);
     mockNotificationService = jasmine.createSpyObj([
       "isNotificationServerEnabled",
       "isPushNotificationSupported",
@@ -67,7 +60,6 @@ describe("NotificationSettingComponent", () => {
 
     const testConfig = new NotificationConfig(TEST_USER);
     testConfig.notificationRules = [];
-    testConfig.channels = {};
     mockNotificationService.loadNotificationConfig.and.returnValue(
       Promise.resolve(testConfig),
     );
@@ -89,8 +81,6 @@ describe("NotificationSettingComponent", () => {
           provide: CurrentUserSubject,
           useValue: new BehaviorSubject(undefined),
         },
-        { provide: HttpClient, useValue: mockHttp },
-        { provide: KeycloakAuthService, useValue: mockAuthService },
         { provide: NotificationService, useValue: mockNotificationService },
         {
           provide: ConfirmationDialogService,
