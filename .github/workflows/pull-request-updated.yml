@@ -12,6 +12,7 @@ on:
 permissions:
   contents: read
   id-token: write  # required for _qa.yaml (QLTY code coverage)
+  packages: write  # required for pushing to ghcr.io
 
 env:
   BUILD_NAME: pr-${{ github.event.number }}
