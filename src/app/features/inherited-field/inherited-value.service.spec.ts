@@ -16,6 +16,8 @@ import { UpdatedEntity } from "../../core/entity/model/entity-update";
 import { Config } from "../../core/config/config";
 import { Subject } from "rxjs";
 import { DefaultValueStrategy } from "../../core/default-values/default-value-strategy.interface";
+import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
+import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 
 describe("InheritedValueService", () => {
   let service: InheritedValueService;
@@ -36,6 +38,14 @@ describe("InheritedValueService", () => {
         },
         { provide: EntityMapperService, useValue: mockEntityMapperService },
         { provide: EntityAbility, useValue: mockAbility },
+        {
+          provide: EntitySchemaService,
+          useValue: {
+            valueToEntityFormat: (v) => v,
+            valueToDatabaseFormat: (v) => v,
+          },
+        },
+        EntityRegistry,
       ],
     });
     // @ts-ignore
@@ -477,5 +487,175 @@ describe("InheritedValueService", () => {
     tick();
 
     expect(targetFormControl.value).toEqual(["status_1", "status_2"]);
+  }));
+
+  it("should detect when field is in sync with parent value", fakeAsync(() => {
+    const parentEntity = new Entity("Parent:1");
+    parentEntity["category"] = "primary";
+    mockEntityMapperService.load.and.returnValue(Promise.resolve(parentEntity));
+
+    const form = getDefaultInheritedForm({
+      field: {
+        defaultValue: {
+          mode: "inherited-field",
+          config: {
+            sourceValueField: "category",
+            sourceReferenceField: "parent",
+          },
+        },
+      },
+    });
+
+    form.entity["parent"] = parentEntity.getId();
+    form.formGroup.get("field").setValue("primary");
+
+    defaultValueService.handleEntityForm(form, form.entity);
+    tick();
+
+    const hint = defaultValueService.getDefaultValueUiHint(form, "field");
+
+    expect(hint.isInSync).toBe(true);
+  }));
+
+  it("should detect when field is not in sync with parent value", fakeAsync(() => {
+    const parentEntity = new Entity("Parent:1");
+    parentEntity["category"] = "primary";
+    mockEntityMapperService.load.and.returnValue(Promise.resolve(parentEntity));
+
+    const form = getDefaultInheritedForm({
+      field: {
+        defaultValue: {
+          mode: "inherited-field",
+          config: {
+            sourceValueField: "category",
+            sourceReferenceField: "parent",
+          },
+        },
+      },
+    });
+
+    form.entity["parent"] = parentEntity.getId();
+    form.formGroup.get("field").setValue("secondary");
+
+    defaultValueService.handleEntityForm(form, form.entity);
+    tick();
+
+    const hint = defaultValueService.getDefaultValueUiHint(form, "field");
+
+    expect(hint.isInSync).toBe(false);
+  }));
+
+  it("should sync field value from parent when syncFromParentField is called", fakeAsync(() => {
+    const parentEntity = new Entity("Parent:1");
+    parentEntity["category"] = "primary";
+    mockEntityMapperService.load.and.returnValue(Promise.resolve(parentEntity));
+
+    const form = getDefaultInheritedForm({
+      field: {
+        defaultValue: {
+          mode: "inherited-field",
+          config: {
+            sourceValueField: "category",
+            sourceReferenceField: "parent",
+          },
+        },
+      },
+    });
+
+    form.entity["parent"] = parentEntity.getId();
+    form.formGroup.get("field").setValue("secondary");
+
+    defaultValueService.handleEntityForm(form, form.entity);
+    tick();
+
+    const hint = defaultValueService.getDefaultValueUiHint(form, "field");
+
+    expect(form.formGroup.get("field").value).toBe("secondary");
+    expect(hint.isInSync).toBe(false);
+
+    hint.syncFromParentField();
+
+    expect(form.formGroup.get("field").value).toBe("primary");
+
+    const updatedHint = defaultValueService.getDefaultValueUiHint(
+      form,
+      "field",
+    );
+    expect(updatedHint.isInSync).toBe(true);
+  }));
+
+  it("should handle enum values with valueMapping in isInSync check", fakeAsync(() => {
+    const parentEntity = new Entity("Parent:1");
+    parentEntity["status"] = { id: "active", label: "Active" };
+    mockEntityMapperService.load.and.returnValue(Promise.resolve(parentEntity));
+
+    const form = getDefaultInheritedForm({
+      field: {
+        defaultValue: {
+          mode: "inherited-field",
+          config: {
+            sourceValueField: "status",
+            sourceReferenceField: "parent",
+            valueMapping: {
+              active: "in-progress",
+              finished: "completed",
+            },
+          },
+        },
+      },
+    });
+
+    form.entity["parent"] = parentEntity.getId();
+    form.formGroup.get("field").setValue("in-progress");
+
+    defaultValueService.handleEntityForm(form, form.entity);
+    tick();
+
+    const hint = defaultValueService.getDefaultValueUiHint(form, "field");
+
+    expect(hint.isInSync).toBe(true);
+  }));
+
+  it("should sync enum values with valueMapping when syncFromParentField is called", fakeAsync(() => {
+    const parentEntity = new Entity("Parent:1");
+    parentEntity["status"] = { id: "active", label: "Active" };
+    mockEntityMapperService.load.and.returnValue(Promise.resolve(parentEntity));
+
+    const form = getDefaultInheritedForm({
+      field: {
+        defaultValue: {
+          mode: "inherited-field",
+          config: {
+            sourceValueField: "status",
+            sourceReferenceField: "parent",
+            valueMapping: {
+              active: "in-progress",
+              finished: "completed",
+            },
+          },
+        },
+      },
+    });
+
+    form.entity["parent"] = parentEntity.getId();
+    form.formGroup.get("field").setValue("wrong-value");
+
+    defaultValueService.handleEntityForm(form, form.entity);
+    tick();
+
+    const hint = defaultValueService.getDefaultValueUiHint(form, "field");
+
+    expect(form.formGroup.get("field").value).toBe("wrong-value");
+    expect(hint.isInSync).toBe(false);
+
+    hint.syncFromParentField();
+
+    expect(form.formGroup.get("field").value).toBe("in-progress");
+
+    const updatedHint = defaultValueService.getDefaultValueUiHint(
+      form,
+      "field",
+    );
+    expect(updatedHint.isInSync).toBe(true);
   }));
 });
