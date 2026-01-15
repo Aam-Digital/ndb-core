@@ -43,6 +43,20 @@
               ></textarea>
             </mat-form-field>
           </div>
+          <button
+            class="margin-top-regular"
+            i18n="
+              Show Details Button|Allows the user to see details of an event
+              that took place at a particular day
+            "
+            mat-stroked-button
+            (click)="showEventDetails(selectedEvent)"
+            angulartics2On="click"
+            angularticsCategory="Attendance"
+            angularticsAction="calendar_show_event_details"
+          >
+            Details
+          </button>
         </div>
       } @else {
         <div>
