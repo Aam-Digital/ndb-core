@@ -659,7 +659,8 @@
                   "fieldGroups": [
                     {
                       "fields": [
-                        "photo"
+                        "photo",
+                        "schoolId"
                       ]
                     },
                     {
@@ -1173,7 +1174,19 @@
           "label": "Project Number",
           "labelShort": "PN",
           "searchable": true,
-          "anonymize": "retain"
+          "anonymize": "retain",
+          "defaultValue": {
+            "mode": "inherited-field",
+            "config": {
+              "sourceReferenceField": "schoolId",
+              "sourceValueField": "enumDropdown",
+              "valueMapping": {
+                "C1": "1",
+                "C2": "2",
+                "C3": "3"
+              }
+            }
+          }
         },
         "dateOfBirth": {
           "dataType": "date-with-age",
@@ -1181,10 +1194,23 @@
           "labelShort": "DoB",
           "anonymize": "retain-anonymized"
         },
+        "schoolId": {
+          "dataType": "entity",
+          "additional": "School",
+          "label": "Linked School",
+          "anonymize": "retain"
+        },
         "center": {
           "dataType": "configurable-enum",
           "additional": "center",
           "label": "Center",
+          "defaultValue": {
+            "mode": "inherited-field",
+            "config": {
+              "sourceReferenceField": "schoolId",
+              "sourceValueField": "enumDropdown"
+            }
+          },
           "anonymize": "retain"
         },
         "gender": {

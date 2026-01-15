@@ -11,6 +11,7 @@ import { lastValueFrom } from "rxjs";
 import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
 import { DefaultValueConfigInheritedField } from "../inherited-field-config";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 
 /**
  * Represents a rule with its associated entity type and field information
@@ -31,6 +32,7 @@ export class AutomatedFieldUpdateConfigService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly dialog = inject(MatDialog);
   private readonly unsavedChangesService = inject(UnsavedChangesService);
+  private readonly entitySchemaService = inject(EntitySchemaService);
 
   /**
    * Track processed entity revisions to prevent duplicate automated status updates within the same save operation
@@ -264,21 +266,69 @@ export class AutomatedFieldUpdateConfigService {
   }
 
   /**
-   * Calculate the new value from source entity with value mapping applied
+   * Calculate the new value from source entity with value mapping applied.
+   * Transforms to database format for consistent handling of all datatypes.
+   * @param sourceEntity The entity containing the source value
+   * @param rule The inheritance rule configuration
    */
-  private calculateNewValue(
+  public calculateNewValue(
     sourceEntity: Entity,
     rule: DefaultValueConfigInheritedField,
   ): any {
+    if (!sourceEntity) {
+      return undefined;
+    }
+
     const sourceValue = sourceEntity[rule.sourceValueField];
     let newValue = sourceValue;
 
     if (rule.valueMapping && sourceValue) {
       const mappingKey = sourceValue.id;
       newValue = rule.valueMapping[mappingKey] || sourceValue;
+
+      return newValue;
     }
 
-    return newValue;
+    return this.transformSourceValueToDatabaseFormat(
+      newValue,
+      sourceEntity,
+      rule.sourceValueField,
+      this.entitySchemaService,
+    );
+  }
+
+  /**
+   * Transform a source field value to database format for inherited field operations.
+   * This finds the field schema from the source entity and applies the transformation.
+   *
+   * @param value The value to transform
+   * @param sourceEntity The entity containing the value
+   * @param sourceFieldId The field ID where the value comes from
+   * @param entitySchemaService The schema service for transformations
+   */
+  public transformSourceValueToDatabaseFormat(
+    value: any,
+    sourceEntity: Entity,
+    sourceFieldId: string,
+    entitySchemaService: EntitySchemaService,
+  ): any {
+    if (value === null || value === undefined) {
+      return value;
+    }
+
+    const sourceFieldConfig = sourceEntity
+      .getConstructor()
+      .schema.get(sourceFieldId);
+
+    if (!sourceFieldConfig) {
+      return value;
+    }
+
+    return entitySchemaService.valueToDatabaseFormat(
+      value,
+      sourceFieldConfig,
+      sourceEntity,
+    );
   }
 
   /**
