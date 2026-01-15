@@ -11,11 +11,16 @@
   }
 }
 
-.search-section {
+.search-row {
   flex: 1 1 250px;
   min-width: 0; // Allow flex items to shrink below content size
 
   @media (max-width: breakpoints.$md) {
     flex: 1 1 100%;
   }
+}
+
+.address-input {
+  flex: 1;
+  min-width: 0;
 }

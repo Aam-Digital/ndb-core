@@ -1,9 +1,9 @@
 <div class="address-edit-container full-width">
   @if (!disabled) {
-    <div class="flex-row gap-regular align-center full-width search-section">
+    <div class="flex-row gap-small align-center search-row">
       <app-address-search
         (locationSelected)="updateFromAddressSearch($event)"
-        class="full-width"
+        class="address-input"
       ></app-address-search>
       <app-address-gps-location
         (locationSelected)="onGpsLocationSelected($event)"
@@ -59,7 +59,7 @@
             matTooltip="Manually overwrite the address text (e.g. to add details that are not available from the automatic address lookup). The mapped location will be unaffected by this."
             i18n-matTooltip
             i18n
-            >Manually edit address text</a
+            >Edit address text</a
           >
         </span>
         &nbsp;|&nbsp;
