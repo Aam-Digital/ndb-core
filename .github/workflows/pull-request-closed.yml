@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+  actions: write  # required for deleting GitHub Actions caches
 
 env:
   GH_TOKEN: ${{ github.token }}
