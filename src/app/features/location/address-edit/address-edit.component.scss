@@ -3,7 +3,7 @@
 .address-edit-container {
   display: flex;
   gap: 16px;
-  align-items: center;
+  align-items: baseline;
   flex-wrap: wrap;
 
   @media (max-width: breakpoints.$md) {
