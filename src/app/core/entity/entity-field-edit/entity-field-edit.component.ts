@@ -81,6 +81,11 @@ export class EntityFieldEditComponent<
    */
   @Input() hideLabel: boolean;
 
+  /**
+   * Whether to hide the inherit value button for inherited-field default values.
+   */
+  @Input() hideInheritButton: boolean = false;
+
   isPartiallyAnonymized: boolean;
 
   ngOnChanges(changes: SimpleChanges): void {

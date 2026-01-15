@@ -13,6 +13,8 @@ import { DefaultValueHint } from "../../core/default-values/default-value-servic
 import { asArray } from "../../utils/asArray";
 import { FormFieldConfig } from "../../core/common-components/entity-form/FormConfig";
 import { DefaultValueConfigInheritedField } from "./inherited-field-config";
+import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
+import { AutomatedFieldUpdateConfigService } from "./automated-field-update/automated-field-update-config.service";
 
 /**
  * An advanced default-value strategy that sets values based on the value in a referenced related entity.
@@ -27,6 +29,10 @@ export class InheritedValueService extends DefaultValueStrategy {
   override readonly mode = "inherited-field";
 
   private readonly entityMapper = inject(EntityMapperService);
+  private readonly entitySchemaService = inject(EntitySchemaService);
+  private readonly automatedFieldUpdateConfigService = inject(
+    AutomatedFieldUpdateConfigService,
+  );
 
   override async getAdminUI(): Promise<AdminDefaultValueContext> {
     const component =
@@ -218,13 +224,29 @@ export class InheritedValueService extends DefaultValueStrategy {
       inheritedFromType: parentRefValue
         ? Entity.extractTypeFromId(parentRefValue)
         : undefined,
-      isInSync:
-        JSON.stringify(form.inheritedParentValues.get(field.id)) ===
-        JSON.stringify(form.formGroup.get(field.id)?.value),
+      isInSync: (() => {
+        const databaseValue = form.inheritedParentValues.get(field.id);
+        const currentValue = form.formGroup.get(field.id)?.value;
+        // convert current value to database format for comparison
+        const currentDatabaseValue =
+          this.automatedFieldUpdateConfigService.transformSourceValueToDatabaseFormat(
+            currentValue,
+            form.entity,
+            field.id,
+            this.entitySchemaService,
+          );
+        return (
+          JSON.stringify(databaseValue) === JSON.stringify(currentDatabaseValue)
+        );
+      })(),
       syncFromParentField: () => {
-        form.formGroup
-          .get(field.id)
-          .setValue(form.inheritedParentValues.get(field.id));
+        const databaseValue = form.inheritedParentValues.get(field.id);
+        // convert database format back to entity format for the form control
+        const entityValue = this.entitySchemaService.valueToEntityFormat(
+          databaseValue,
+          field,
+        );
+        form.formGroup.get(field.id).setValue(entityValue);
       },
     };
   }
@@ -253,11 +275,14 @@ export class InheritedValueService extends DefaultValueStrategy {
         );
       }
 
-      // if value empty -> set inherited values to undefined
-      form.inheritedParentValues.set(
-        fieldId,
-        parentEntity?.[inheritedConfigs.get(fieldId).sourceValueField],
-      );
+      const config = inheritedConfigs.get(fieldId);
+      const inheritedValue =
+        this.automatedFieldUpdateConfigService.calculateNewValue(
+          parentEntity,
+          config,
+        );
+
+      form.inheritedParentValues.set(fieldId, inheritedValue);
     }
   }
 
