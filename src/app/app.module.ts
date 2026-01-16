@@ -27,6 +27,7 @@ import {
   provideHttpClient,
   withInterceptorsFromDi,
 } from "@angular/common/http";
+import { DATE_PIPE_DEFAULT_OPTIONS } from "@angular/common";
 
 import { AppComponent } from "./app.component";
 import { allRoutes } from "./app.routing";
@@ -183,6 +184,10 @@ import { EmailClientServiceModule } from "./features/email-client/email-client.m
     {
       provide: MAT_DATE_FORMATS,
       useValue: DATE_FORMATS,
+    },
+    {
+      provide: DATE_PIPE_DEFAULT_OPTIONS,
+      useValue: { dateFormat: "dd.MM.yyyy" },
     },
     {
       provide: SwRegistrationOptions,
