@@ -41,6 +41,8 @@ app-menu-item {
   flex-grow: 1;
   display: flex;
   align-items: center;
+  min-width: 0; /* Allow flex items to shrink below content size */
+  overflow: hidden; /* Prevent overflow from child elements */
 }
 
 /* Submenu indentation: only indent the visible content, not the actions */
