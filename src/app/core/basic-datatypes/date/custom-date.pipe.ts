@@ -10,8 +10,8 @@ import { DatePipe } from "@angular/common";
   standalone: true,
 })
 export class CustomDatePipe implements PipeTransform {
-  private locale = inject(LOCALE_ID);
-  private datePipe = new DatePipe(this.locale);
+  private readonly locale = inject(LOCALE_ID);
+  private readonly datePipe = new DatePipe(this.locale);
 
   transform(
     value: Date | string | number | null | undefined,
