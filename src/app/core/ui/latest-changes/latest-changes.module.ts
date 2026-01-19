@@ -41,8 +41,6 @@ import { MatButtonModule } from "@angular/material/button";
     FontAwesomeModule,
     CustomDatePipe,
     MatButtonModule,
-    NgForOf,
-    NgIf,
   ],
 })
 export class LatestChangesModule {

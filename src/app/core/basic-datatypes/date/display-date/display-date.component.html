@@ -1,7 +1,7 @@
 @if (!(displayAsAnonymized || isPartiallyAnonymized)) {
   {{ value | customDate: config || "shortDate" }}
 } @else {
-  {{ value | customDate: config || "shortDate" }}
+  {{ value | date: "yyyy" }}
   <fa-icon
     icon="warning"
     matTooltip="This data has been partially anonymized."
