@@ -11,11 +11,8 @@ import { getLocaleFirstDayOfWeek } from "@angular/common";
  * Extend MAT_NATIVE_DATE_FORMATS to also support parsing.
  */
 export const DATE_FORMATS: MatDateFormats = {
-  parse: { dateInput: "DD.MM.YYYY" },
-  display: {
-    ...MAT_NATIVE_DATE_FORMATS.display,
-    dateInput: "DD.MM.YYYY",
-  },
+  parse: { dateInput: "l" },
+  display: MAT_NATIVE_DATE_FORMATS.display,
 };
 
 @Injectable()
@@ -34,12 +31,5 @@ export class DateAdapterWithFormatting extends NativeDateAdapter {
 
   override getFirstDayOfWeek(): number {
     return getLocaleFirstDayOfWeek(this.locale);
-  }
-
-  override format(date: Date, displayFormat: any): string {
-    if (typeof displayFormat === "string") {
-      return moment(date).locale(this.locale).format(displayFormat);
-    }
-    return super.format(date, displayFormat);
   }
 }

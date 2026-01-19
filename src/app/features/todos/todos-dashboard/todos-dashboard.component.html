@@ -22,12 +22,10 @@
       <td
         *matCellDef="let todo"
         class="deadline"
-        matTooltip="{{ startDateLabel }}: {{
-          todo.startDate | date: 'dd MMM, yyyy'
-        }}"
+        matTooltip="{{ startDateLabel }}: {{ todo.startDate | date }}"
         [matTooltipDisabled]="!todo.startDate"
       >
-        {{ todo.deadline | date: "dd MMM, yyyy" }}
+        {{ todo.deadline | date }}
       </td>
     </ng-container>
 

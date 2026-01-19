@@ -37,16 +37,13 @@ export class EntityFieldViewComponent<
   /** field id or full config */
   @Input() field: ColumnConfig;
 
-  /** whether this field is rendered in a table view */
-  @Input() forTable = false;
-
   /** full field config extended from schema (used internally and for template) */
   _field: FormFieldConfig;
 
   @Input() showLabel: "inline" | "above" | "none" = "none";
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.field || changes.entity || changes.forTable) {
+    if (changes.field || changes.entity) {
       this.updateField();
     }
   }
@@ -60,7 +57,6 @@ export class EntityFieldViewComponent<
     this._field = this.entityFormService.extendFormFieldConfig(
       this.field,
       this.entity.getConstructor(),
-      this.forTable,
     );
   }
 }

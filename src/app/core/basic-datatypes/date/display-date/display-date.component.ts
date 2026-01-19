@@ -1,4 +1,4 @@
-import { Component, computed, Input } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { DatePipe } from "@angular/common";
@@ -22,14 +22,4 @@ export class DisplayDateComponent extends ViewDirective<Date, string> {
 
   /** formatting string for date pipe */
   @Input() declare config: string;
-
-  dateFormat = computed<string | undefined>(() => {
-    if (this.config) {
-      return this.config;
-    }
-    if (this.formFieldConfig?.forTable) {
-      return "dd MMM, yyyy";
-    }
-    return undefined;
-  });
 }

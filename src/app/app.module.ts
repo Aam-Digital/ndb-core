@@ -187,7 +187,7 @@ import { EmailClientServiceModule } from "./features/email-client/email-client.m
     },
     {
       provide: DATE_PIPE_DEFAULT_OPTIONS,
-      useValue: { dateFormat: "mediumDate" },
+      useValue: { dateFormat: "shortDate" },
     },
     {
       provide: SwRegistrationOptions,
