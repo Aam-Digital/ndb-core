@@ -16,8 +16,8 @@
 <ng-template #tooltip>
   <div class="attendance-tooltip-container">
     <strong>
-      {{ attendanceData.periodFrom | date }} -
-      {{ attendanceData.periodTo | date }}
+      {{ attendanceData.periodFrom | customDate: "shortDate" }} -
+      {{ attendanceData.periodTo | customDate: "shortDate" }}
       {{ attendanceData.activity.title }}
     </strong>
 

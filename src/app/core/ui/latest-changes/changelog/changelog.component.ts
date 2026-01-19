@@ -29,7 +29,7 @@ import { LatestChangesService } from "../latest-changes.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MarkdownModule, MarkdownService } from "ngx-markdown";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DatePipe } from "@angular/common";
+import { CustomDatePipe } from "../../../basic-datatypes/date/custom-date.pipe";
 import { MatButtonModule } from "@angular/material/button";
 import { MarkedRendererCustom } from "./MarkedRendererCustom";
 import { RouterLink } from "@angular/router";
@@ -47,7 +47,7 @@ import { RouterLink } from "@angular/router";
     MarkdownModule,
     MatDialogModule,
     FontAwesomeModule,
-    DatePipe,
+    CustomDatePipe,
     MatButtonModule,
     RouterLink,
   ],

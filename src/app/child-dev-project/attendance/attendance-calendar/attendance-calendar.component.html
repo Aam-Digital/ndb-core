@@ -9,7 +9,7 @@
 @if (selectedDate) {
   <div class="attendance-calendar-details-form">
     <h3 class="remove-margin-top">
-      {{ selectedDate.toDate() | date }}
+      {{ selectedDate.toDate() | customDate: "shortDate" }}
     </h3>
     <button
       mat-icon-button

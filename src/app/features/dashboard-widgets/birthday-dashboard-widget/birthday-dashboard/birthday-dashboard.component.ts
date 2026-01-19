@@ -3,7 +3,7 @@ import { EntityMapperService } from "../../../../core/entity/entity-mapper/entit
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { MatTableModule } from "@angular/material/table";
 import { Entity } from "../../../../core/entity/model/entity";
-import { DatePipe } from "@angular/common";
+import { CustomDatePipe } from "../../../../core/basic-datatypes/date/custom-date.pipe";
 import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
@@ -22,7 +22,7 @@ interface BirthdayDashboardConfig {
   imports: [
     MatTableModule,
     EntityBlockComponent,
-    DatePipe,
+    CustomDatePipe,
     DashboardListWidgetComponent,
   ],
 })

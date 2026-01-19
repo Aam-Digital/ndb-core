@@ -83,7 +83,7 @@
 @if (reportCalculation) {
   <div style="color: gray; padding: 10px">
     <span i18n>This report was calculated at:</span>
-    {{ localTime | date }} <br />
+    {{ localTime | customDate: "shortDate" }} <br />
     <span i18n
       >Click again on "Calculate" to re-calculate the report including any
       changes of records since then.</span

@@ -20,7 +20,8 @@ import { UpdateManagerService } from "./update-manager.service";
 import { MarkdownModule } from "ngx-markdown";
 import { MatDialogModule } from "@angular/material/dialog";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DatePipe, NgForOf, NgIf } from "@angular/common";
+import { NgForOf, NgIf } from "@angular/common";
+import { CustomDatePipe } from "../../basic-datatypes/date/custom-date.pipe";
 import { MatButtonModule } from "@angular/material/button";
 
 /**
@@ -38,7 +39,7 @@ import { MatButtonModule } from "@angular/material/button";
     MarkdownModule,
     MatDialogModule,
     FontAwesomeModule,
-    DatePipe,
+    CustomDatePipe,
     MatButtonModule,
     NgForOf,
     NgIf,

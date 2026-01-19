@@ -13,7 +13,7 @@
     @if (!recurring) {
       <span class="sep">/</span>
       <fa-icon icon="calendar"></fa-icon>
-      {{ event.date | date }}
+      {{ event.date | customDate: "shortDate" }}
     }
     <span class="sep">/</span>{{ event.category?.label }}
   </mat-card-content>

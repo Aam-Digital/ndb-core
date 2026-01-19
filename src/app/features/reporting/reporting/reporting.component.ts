@@ -5,7 +5,8 @@ import {
   GroupByDescription,
 } from "../report-row";
 import moment from "moment";
-import { DatePipe, JsonPipe } from "@angular/common";
+import { JsonPipe } from "@angular/common";
+import { CustomDatePipe } from "../../../core/basic-datatypes/date/custom-date.pipe";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 import { SelectReportComponent } from "./select-report/select-report.component";
 import { ReportRowComponent } from "./report-row/report-row.component";
@@ -45,7 +46,7 @@ import { MatTooltip } from "@angular/material/tooltip";
     SelectReportComponent,
     ReportRowComponent,
     ObjectTableComponent,
-    DatePipe,
+    CustomDatePipe,
     JsonPipe,
     SqlV2TableComponent,
     FaIconComponent,
