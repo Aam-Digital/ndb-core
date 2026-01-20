@@ -7,6 +7,18 @@ import { FormFieldConfig } from "app/core/common-components/entity-form/FormConf
 import { DefaultValueConfig } from "#src/app/core/default-values/default-value-config";
 
 /**
+ * Configuration for a single entity form within a public form.
+ * Supports multiple entity types in one public form submission.
+ */
+export interface PublicFormEntityFormConfig {
+  entity: string;
+  columns: FieldGroup[];
+  prefilled?: { [key: string]: DefaultValueConfig };
+  prefilledFields?: FormFieldConfig[];
+  linkedEntities?: FormFieldConfig[];
+}
+
+/**
  * Each entity of this type defines a new publicly accessible form
  * that can be reached through the given route even by users without being logged in.
  */
@@ -81,6 +93,12 @@ export class PublicFormConfig extends Entity {
     isArray: true,
   })
   linkedEntities: FormFieldConfig[];
+
+  @DatabaseField({
+    label: $localize`:PublicFormConfig:Multiple Forms`,
+    isArray: true,
+  })
+  forms: PublicFormEntityFormConfig[];
 
   @DatabaseField({
     label: $localize`:PublicFormConfig:Show "Submit Another Form" Button`,

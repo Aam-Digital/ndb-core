@@ -2,10 +2,12 @@ import { Component, inject, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
-import { PublicFormConfig } from "./public-form-config";
+import {
+  PublicFormConfig,
+  PublicFormEntityFormConfig,
+} from "./public-form-config";
 import { Entity, EntityConstructor } from "../../core/entity/model/entity";
 import { EntityFormService } from "../../core/common-components/entity-form/entity-form.service";
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFormComponent } from "../../core/common-components/entity-form/entity-form/entity-form.component";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfigService } from "../../core/config/config.service";
@@ -24,6 +26,10 @@ import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MarkdownPageModule } from "../markdown-page/markdown-page.module";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
+import {
+  PublicFormEntry,
+  PublicFormLinkingService,
+} from "./public-form-linking.service";
 
 @UntilDestroy()
 @Component({
@@ -47,17 +53,21 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   private entityFormService = inject(EntityFormService);
   private configService = inject(ConfigService);
   private snackbar = inject(MatSnackBar);
+  private publicFormLinkingService = inject(PublicFormLinkingService);
 
   // Track if the last submit attempt failed due to validation
   validationError = false;
   private ability = inject(EntityAbility);
   private router = inject(Router);
 
-  private entityType: EntityConstructor<E>;
   formConfig: PublicFormConfig;
-  entity: E;
-  fieldGroups: FieldGroup[];
-  form: EntityForm<E>;
+  entityFormEntries: Array<
+    PublicFormEntry & {
+      config: PublicFormEntityFormConfig;
+      entityType: EntityConstructor<Entity>;
+      fieldGroups: FieldGroup[];
+    }
+  > = [];
   error: "not_found" | "no_permissions";
 
   ngOnInit() {
@@ -71,8 +81,25 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
   async submit() {
     this.validationError = false;
+    this.publicFormLinkingService.applyLinkedEntitiesFromForms(
+      this.entityFormEntries,
+    );
+    if (
+      this.entityFormEntries.some(
+        (entry) => entry.form?.formGroup?.invalid ?? true,
+      )
+    ) {
+      this.validationError = true;
+      return;
+    }
     try {
-      await this.entityFormService.saveChanges(this.form, this.entity);
+      for (const entry of this.entityFormEntries) {
+        if (!entry.form || !entry.entity) {
+          this.validationError = true;
+          return;
+        }
+        await this.entityFormService.saveChanges(entry.form, entry.entity);
+      }
       this.router.navigate(["/public-form/submission-success"], {
         queryParams: {
           showSubmitAnotherButton:
@@ -90,7 +117,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
   async reset() {
     this.validationError = false;
-    await this.initForm();
+    await this.initForms();
   }
 
   private async loadFormConfig() {
@@ -108,33 +135,58 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       return;
     }
 
-    this.entityType = this.entities.get(
-      this.formConfig.entity,
-    ) as EntityConstructor<E>;
-    if (this.ability.cannot("create", this.entityType)) {
+    this.entityFormEntries = this.getentityFormEntriesConfig().map((config) => {
+      const entityType = this.entities.get(
+        config.entity,
+      ) as EntityConstructor<Entity>;
+      return {
+        config,
+        entityType,
+        entity: null,
+        fieldGroups: config.columns,
+        form: null,
+      };
+    });
+
+    if (
+      this.entityFormEntries.some((entry) =>
+        this.ability.cannot("create", entry.entityType),
+      )
+    ) {
       this.error = "no_permissions";
       return;
     }
-    this.fieldGroups = this.formConfig.columns;
-    this.handlePrefilledFields();
-    this.handleRelatedEntityFields();
 
-    await this.initForm();
+    this.entityFormEntries.forEach((entry) => {
+      this.handlePrefilledFields(entry.config, entry.fieldGroups);
+    });
+    this.publicFormLinkingService.handleUrlParameterLinking(
+      this.entityFormEntries,
+      this.route.snapshot?.queryParams || {},
+      this.applyPrefill.bind(this),
+    );
+
+    await this.initForms();
   }
 
-  private handlePrefilledFields() {
-    if (
-      this.formConfig.prefilled &&
-      typeof this.formConfig.prefilled === "object"
-    ) {
+  private handlePrefilledFields(
+    formConfig: PublicFormEntityFormConfig,
+    fieldGroups: FieldGroup[],
+  ) {
+    if (formConfig.prefilled && typeof formConfig.prefilled === "object") {
       for (const [fieldId, defaultValue] of Object.entries(
-        this.formConfig.prefilled,
+        formConfig.prefilled,
       )) {
-        this.applyPrefill(fieldId, defaultValue as DefaultValueConfig);
-      }
-    } else if (Array.isArray(this.formConfig.prefilledFields)) {
-      this.formConfig.prefilledFields.forEach((item) => {
         this.applyPrefill(
+          fieldGroups,
+          fieldId,
+          defaultValue as DefaultValueConfig,
+        );
+      }
+    } else if (Array.isArray(formConfig.prefilledFields)) {
+      formConfig.prefilledFields.forEach((item) => {
+        this.applyPrefill(
+          fieldGroups,
           item.id,
           item.defaultValue ?? null,
           item.hideFromForm ?? true,
@@ -148,6 +200,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
    * - If field not found in any existing column then  add to last column hidden by default.
    */
   private applyPrefill(
+    fieldGroups: FieldGroup[],
     fieldId: string,
     defaultValue: DefaultValueConfig,
     hideFromForm?: boolean,
@@ -155,7 +208,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     if (!fieldId) return;
     const findField = (field) =>
       field === fieldId || (typeof field === "object" && field.id === fieldId);
-    const fieldGroup = this.fieldGroups.find((group) =>
+    const fieldGroup = fieldGroups.find((group) =>
       group.fields.some(findField),
     );
 
@@ -167,7 +220,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       existingField.defaultValue = defaultValue;
       fieldGroup.fields[fieldIndex] = existingField;
     } else {
-      const lastColumn = this.formConfig.columns.at(-1);
+      const lastColumn = fieldGroups.at(-1);
       lastColumn?.fields.push({
         id: fieldId,
         defaultValue,
@@ -176,87 +229,63 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     }
   }
 
-  /**
-   * Processes URL parameters to create prefilled fields for entity linking.
-   * Only processes URL parameters that match configured linkedEntities
-   */
-  private handleRelatedEntityFields() {
-    const urlParams = this.route.snapshot?.queryParams || {};
-
-    if (Object.keys(urlParams).length === 0) {
-      return;
-    }
-
-    const linkedEntities = this.getLinkedEntities();
-
-    if (linkedEntities.length === 0) {
-      return;
-    }
-
-    // Only process configured linked entities for security
-    const configuredParams = new Set(linkedEntities.map((entity) => entity.id));
-    const ignoredParams: string[] = [];
-
-    // Process configured parameters
-    linkedEntities.forEach((linkedEntity) => {
-      const paramValue = urlParams[linkedEntity.id];
-      if (linkedEntity.id && paramValue) {
-        this.applyPrefill(
-          linkedEntity.id,
-          { mode: "static", config: { value: paramValue } },
-          linkedEntity.hideFromForm ?? true,
-        );
-      }
-    });
-
-    // Track ignored parameters for security warning
-    Object.keys(urlParams).forEach((paramKey) => {
-      if (!configuredParams.has(paramKey)) {
-        ignoredParams.push(paramKey);
-      }
-    });
-
-    if (ignoredParams.length > 0) {
-      this.snackbar.open(
-        $localize`Some URL parameters were ignored for security: ${ignoredParams.join(", ")}`,
-        undefined,
-        { duration: 5000 },
+  private async initForms() {
+    for (const entry of this.entityFormEntries) {
+      entry.entity = new entry.entityType();
+      entry.form = await this.entityFormService.createEntityForm(
+        [].concat(...entry.fieldGroups.map((group) => group.fields)),
+        entry.entity,
       );
+      // Subscribe to form changes and clear validation error when form is valid
+      entry.form.formGroup.valueChanges
+        .pipe(untilDestroyed(this))
+        .subscribe(() => {
+          if (this.validationError && entry.form.formGroup.valid) {
+            this.validationError = false;
+          }
+        });
     }
   }
 
-  private getLinkedEntities(): FormFieldConfig[] {
-    return this.formConfig.linkedEntities?.filter((entity) => entity?.id) || [];
-  }
+  private getentityFormEntriesConfig(): PublicFormEntityFormConfig[] {
+    if (Array.isArray(this.formConfig.forms) && this.formConfig.forms.length) {
+      return this.formConfig.forms;
+    }
 
-  private async initForm() {
-    this.entity = new this.entityType();
-    this.form = await this.entityFormService.createEntityForm(
-      [].concat(...this.fieldGroups.map((group) => group.fields)),
-      this.entity,
-    );
-    // Subscribe to form changes and clear validation error when form is valid
-    this.form.formGroup.valueChanges
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        if (this.validationError && this.form.formGroup.valid) {
-          this.validationError = false;
-        }
-      });
+    return [
+      {
+        entity: this.formConfig.entity,
+        columns: this.formConfig.columns,
+        prefilled: this.formConfig.prefilled,
+        prefilledFields: this.formConfig.prefilledFields,
+        linkedEntities: this.formConfig.linkedEntities,
+      },
+    ];
   }
 }
 
 export function migratePublicFormConfig(
   formConfig: PublicFormConfig,
 ): PublicFormConfig {
-  if (formConfig.columns) {
-    formConfig.columns = formConfig.columns.map(
-      (column: FieldGroup | string[]) => {
-        return Array.isArray(column)
-          ? { fields: column, header: null }
-          : { fields: column.fields || [], header: column?.header || null };
-      },
-    );
+  const migrateColumns = (columns?: Array<FieldGroup | string[]>) => {
+    if (!columns) return columns as FieldGroup[];
+    return columns.map((column) => {
+      return Array.isArray(column)
+        ? { fields: column, header: null }
+        : { fields: column.fields || [], header: column?.header || null };
+    });
+  };
+
+  formConfig.columns = migrateColumns(
+    formConfig.columns as Array<FieldGroup | string[]>,
+  ) as FieldGroup[];
+  if (Array.isArray(formConfig.forms)) {
+    formConfig.forms = formConfig.forms.map((form) => ({
+      ...form,
+      columns: migrateColumns(
+        form.columns as Array<FieldGroup | string[]>,
+      ) as FieldGroup[],
+    }));
   }
   return formConfig;
 }

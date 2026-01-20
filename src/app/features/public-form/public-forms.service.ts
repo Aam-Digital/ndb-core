@@ -75,10 +75,15 @@ export class PublicFormsService {
     let url = `${window.location.origin}/public-form/form/${config.route}`;
     let hasMatchingParameters = false;
 
-    if (entity && config.linkedEntities?.length) {
+    const linkedEntities =
+      config.forms?.flatMap((form) => form.linkedEntities || []) ||
+      config.linkedEntities ||
+      [];
+
+    if (entity && linkedEntities.length) {
       const params = new URLSearchParams();
 
-      config.linkedEntities.forEach((entityConfig) => {
+      linkedEntities.forEach((entityConfig) => {
         if (
           entityConfig.id &&
           entityConfig.additional?.toLowerCase() ===
@@ -122,7 +127,10 @@ export class PublicFormsService {
     }
 
     const entityType = entity.getConstructor().ENTITY_TYPE.toLowerCase();
-    const linkedEntities = config.linkedEntities || [];
+    const linkedEntities =
+      config.forms?.flatMap((form) => form.linkedEntities || []) ||
+      config.linkedEntities ||
+      [];
 
     return linkedEntities.some(
       (entityConfig) => entityConfig.additional?.toLowerCase() === entityType,

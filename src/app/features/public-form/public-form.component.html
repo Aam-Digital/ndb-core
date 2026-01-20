@@ -47,14 +47,16 @@
       </div>
     </mat-card-header>
 
-    @if (formConfig && form) {
+    @if (formConfig && entityFormEntries.length) {
       <mat-card-content>
-        <app-entity-form
-          [entity]="entity"
-          [fieldGroups]="fieldGroups"
-          [form]="form"
-          [gridLayout]="false"
-        ></app-entity-form>
+        @for (entry of entityFormEntries; track $index) {
+          <app-entity-form
+            [entity]="entry.entity"
+            [fieldGroups]="entry.fieldGroups"
+            [form]="entry.form"
+            [gridLayout]="false"
+          ></app-entity-form>
+        }
       </mat-card-content>
 
       <mat-card-footer>
