@@ -6,6 +6,8 @@ import { HttpStatusCode } from "@angular/common/http";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { NgZone } from "@angular/core";
+import { interval, Subject } from "rxjs";
+import { switchMap, takeUntil } from "rxjs/operators";
 
 /**
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
@@ -16,6 +18,19 @@ export class RemotePouchDatabase extends PouchDatabase {
    * @private
    */
   private unauthenticatedSession?: boolean;
+
+  /**
+   * Polling interval for changes in milliseconds (for remote-only databases).
+   * Avoids long-polling connection issues by using periodic polling instead.
+   * @private
+   */
+  private readonly CHANGES_POLLING_INTERVAL = 10000; // 10 seconds
+
+  /**
+   * Subject to control the lifecycle of the periodic changes polling.
+   * @private
+   */
+  private changesPolling$ = new Subject<void>();
 
   constructor(
     dbName: string,
@@ -109,4 +124,71 @@ export class RemotePouchDatabase extends PouchDatabase {
 
     return result;
   };
+
+  /**
+   * Poll the _changes endpoint periodically to detect document changes.
+   * Emits individual documents that have changed since the last poll.
+   *
+   * Overriden to use periodic polling instead of live long-polling.
+   * This avoids connection stability issues with remote-only (anonymous) sessions.
+   * Changes are fetched at regular intervals rather than maintaining a persistent connection.
+   *
+   * @private
+   */
+  protected override async subscribeChanges() {
+    const db = await this.getPouchDBOnceReady();
+    let lastSequence: string | number = "now";
+
+    interval(this.CHANGES_POLLING_INTERVAL)
+      .pipe(
+        switchMap(async () => {
+          try {
+            const result = await db.changes({
+              since: lastSequence,
+              include_docs: true,
+            });
+
+            if (result?.results) {
+              result.results.forEach((change: any) => {
+                if (this.ngZone) {
+                  this.ngZone.run(() => this.changesFeed.next(change.doc));
+                } else {
+                  this.changesFeed.next(change.doc);
+                }
+              });
+              lastSequence = result.last_seq;
+            }
+
+            return result;
+          } catch (err) {
+            Logging.debug("Error polling changes from remote database", err);
+            // Continue polling despite errors
+            return null;
+          }
+        }),
+        takeUntil(this.changesPolling$),
+      )
+      .subscribe();
+
+    Logging.debug(
+      `Started periodic changes polling for ${this.dbName} (interval: ${this.CHANGES_POLLING_INTERVAL}ms)`,
+    );
+  }
+
+  /**
+   * Stop the periodic changes polling when the database is destroyed.
+   */
+  override async destroy(): Promise<any> {
+    this.changesPolling$.next();
+    this.changesPolling$.complete();
+    return super.destroy();
+  }
+
+  /**
+   * Stop the periodic changes polling when the database is reset.
+   */
+  override async reset(): Promise<void> {
+    this.changesPolling$.next();
+    return super.reset();
+  }
 }

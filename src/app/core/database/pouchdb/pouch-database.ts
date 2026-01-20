@@ -228,41 +228,42 @@ export class PouchDatabase extends Database {
   changes(): Observable<any> {
     if (!this.changesFeed) {
       this.changesFeed = new Subject();
-      this.subscribeChanges();
+
+      // trigger subscription only once DB ready, to go to the right instance (e.g. remote only)
+      this.getPouchDBOnceReady().then(() => this.subscribeChanges());
     }
     return this.changesFeed;
   }
 
-  private async subscribeChanges() {
-    const runSubscription = () => {
-      this.getPouchDBOnceReady().then((db) => {
-        db.changes({
-          live: true,
-          since: "now",
-          include_docs: true,
+  protected async subscribeChanges() {
+    const runSubscription = async () => {
+      const db = await this.getPouchDBOnceReady();
+      db.changes({
+        live: true,
+        since: "now",
+        include_docs: true,
+      })
+        .addListener("change", (change) => {
+          // Emit changes inside Angular zone to trigger change detection
+          if (this.ngZone) {
+            this.ngZone.run(() => this.changesFeed.next(change.doc));
+          } else {
+            this.changesFeed.next(change.doc);
+          }
         })
-          .addListener("change", (change) => {
-            // Emit changes inside Angular zone to trigger change detection
-            if (this.ngZone) {
-              this.ngZone.run(() => this.changesFeed.next(change.doc));
-            } else {
-              this.changesFeed.next(change.doc);
-            }
-          })
-          .catch((err) => {
-            if (
-              err.statusCode === HttpStatusCode.Unauthorized ||
-              err.statusCode === HttpStatusCode.GatewayTimeout
-            ) {
-              Logging.warn(err);
-            } else {
-              Logging.error(err);
-            }
+        .catch((err) => {
+          if (
+            err.statusCode === HttpStatusCode.Unauthorized ||
+            err.statusCode === HttpStatusCode.GatewayTimeout
+          ) {
+            Logging.warn(err);
+          } else {
+            Logging.error(err);
+          }
 
-            // retry
-            setTimeout(() => this.subscribeChanges(), 10000);
-          });
-      });
+          // retry
+          setTimeout(() => this.subscribeChanges(), 10000);
+        });
     };
 
     // run PouchDB change listener outside Angular zone to avoid excessive change detection

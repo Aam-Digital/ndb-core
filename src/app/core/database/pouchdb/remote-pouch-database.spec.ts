@@ -14,6 +14,11 @@ describe("RemotePouchDatabase tests", () => {
   beforeEach(() => {
     syncStateSubject = new SyncStateSubject();
     mockAuthService = jasmine.createSpyObj(["login", "addAuthHeader"]);
+    mockAuthService.addAuthHeader.and.callFake(() => {});
+    // Prevent real HTTP requests from PouchDB during tests
+    spyOn(PouchDB, "fetch").and.returnValue(
+      Promise.resolve(new Response("{}", { status: HttpStatusCode.Ok })),
+    );
     database = new RemotePouchDatabase(
       "unit-test-db",
       mockAuthService,
@@ -51,5 +56,120 @@ describe("RemotePouchDatabase tests", () => {
     expect(PouchDB.fetch).toHaveBeenCalledTimes(2);
     expect(mockAuthService.login).toHaveBeenCalled();
     expect(mockAuthService.addAuthHeader).toHaveBeenCalledTimes(2);
+  }));
+
+  it("should use periodic polling for changes feed instead of live long-polling", fakeAsync(() => {
+    database.init("");
+
+    const mockChangesResult = {
+      results: [
+        { doc: { _id: "Entity:1", name: "Test Doc 1" }, seq: 1 },
+        { doc: { _id: "Entity:2", name: "Test Doc 2" }, seq: 2 },
+      ],
+      last_seq: 2,
+    };
+
+    const pouchDB = (database as any).pouchDB;
+    spyOn(pouchDB, "changes").and.returnValue(
+      Promise.resolve(mockChangesResult),
+    );
+
+    const receivedDocs: any[] = [];
+    const subscription = database.changes().subscribe((doc) => {
+      receivedDocs.push(doc);
+    });
+
+    // Should not call changes immediately (waits for interval)
+    expect(pouchDB.changes).not.toHaveBeenCalled();
+
+    // Advance time by polling interval (10 seconds)
+    tick(10000);
+
+    // Now changes should have been polled
+    expect(pouchDB.changes).toHaveBeenCalledWith({
+      since: "now",
+      include_docs: true,
+    });
+    expect(receivedDocs.length).toBe(2);
+    expect(receivedDocs[0]._id).toBe("Entity:1");
+    expect(receivedDocs[1]._id).toBe("Entity:2");
+
+    // Advance time for second poll
+    (pouchDB.changes as jasmine.Spy).calls.reset();
+    mockChangesResult.results = [
+      { doc: { _id: "Entity:3", name: "Test Doc 3" }, seq: 3 },
+    ];
+    mockChangesResult.last_seq = 3;
+
+    tick(10000);
+
+    // Should poll again with last_seq from previous result
+    expect(pouchDB.changes).toHaveBeenCalledWith({
+      since: 2,
+      include_docs: true,
+    });
+    expect(receivedDocs.length).toBe(3);
+    expect(receivedDocs[2]._id).toBe("Entity:3");
+
+    subscription.unsubscribe();
+  }));
+
+  it("should handle errors in periodic changes polling gracefully", fakeAsync(() => {
+    database.init("");
+
+    const pouchDB = (database as any).pouchDB;
+    let callCount = 0;
+    spyOn(pouchDB, "changes").and.callFake(() => {
+      callCount++;
+      if (callCount === 1) {
+        return Promise.reject(new Error("Network error"));
+      }
+      return Promise.resolve({
+        results: [{ doc: { _id: "Entity:1" }, seq: 1 }],
+        last_seq: 1,
+      });
+    });
+
+    const receivedDocs: any[] = [];
+    const subscription = database.changes().subscribe((doc) => {
+      receivedDocs.push(doc);
+    });
+
+    // First poll fails
+    tick(10000);
+    expect(pouchDB.changes).toHaveBeenCalledTimes(1);
+    expect(receivedDocs.length).toBe(0);
+
+    // Second poll succeeds
+    tick(10000);
+    expect(pouchDB.changes).toHaveBeenCalledTimes(2);
+    expect(receivedDocs.length).toBe(1);
+    expect(receivedDocs[0]._id).toBe("Entity:1");
+
+    subscription.unsubscribe();
+  }));
+
+  it("should stop polling when database is destroyed", fakeAsync(() => {
+    database.init("");
+
+    const pouchDB = (database as any).pouchDB;
+    spyOn(pouchDB, "changes").and.returnValue(
+      Promise.resolve({ results: [], last_seq: 0 }),
+    );
+    spyOn(pouchDB, "destroy").and.returnValue(Promise.resolve());
+
+    database.changes().subscribe();
+
+    tick(10000);
+    expect(pouchDB.changes).toHaveBeenCalledTimes(1);
+
+    // Destroy the database
+    database.destroy();
+    tick();
+
+    // Advance time - should not poll anymore
+    (pouchDB.changes as jasmine.Spy).calls.reset();
+    tick(10000);
+    expect(pouchDB.changes).not.toHaveBeenCalled();
   }));
 });

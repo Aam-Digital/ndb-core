@@ -111,6 +111,17 @@ export class SyncedPouchDatabase extends PouchDatabase {
     });
   }
 
+  protected override async subscribeChanges() {
+    // if in remote-only mode, forward remote database changes to this changes feed
+    if (this.pouchDB === this.remoteDatabase.getPouchDB()) {
+      this.remoteDatabase
+        .changes()
+        .subscribe((change) => this.changesFeed.next(change));
+    } else {
+      super.subscribeChanges();
+    }
+  }
+
   /**
    * Execute a (one-time) sync between the local and server database.
    */
