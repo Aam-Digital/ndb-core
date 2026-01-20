@@ -4,6 +4,10 @@ mat-panel-title {
   font-size: 1.3em;
 }
 
+mat-panel-description {
+  white-space: normal;
+}
+
 .admin-sections {
   .section-nav-list {
     margin: 0;
@@ -25,11 +29,14 @@ mat-panel-title {
   // Stack title and description vertically in expansion panel headers
   ::ng-deep .mat-expansion-panel-header {
     padding: sizes.$regular sizes.$large;
+    height: auto !important; // Allow header to grow with content
 
     .mat-content {
       flex-direction: column;
       align-items: flex-start;
       gap: sizes.$x-small;
+      overflow: visible;
+      padding-right: sizes.$large;
     }
 
     &:hover {
