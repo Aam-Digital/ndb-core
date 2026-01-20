@@ -36,7 +36,6 @@ export class EntityFieldViewComponent<
 
   /** field id or full config */
   @Input() field: ColumnConfig;
-
   /** full field config extended from schema (used internally and for template) */
   _field: FormFieldConfig;
 

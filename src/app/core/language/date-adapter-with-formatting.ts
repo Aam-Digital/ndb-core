@@ -11,6 +11,9 @@ import { getLocaleFirstDayOfWeek } from "@angular/common";
  * Extend MAT_NATIVE_DATE_FORMATS to also support parsing.
  */
 export const DATE_FORMATS: MatDateFormats = {
+  // in addition to the customDate pipe
+  // we need to add dateInput and override the method because we are not using DatePipe here, we are using moment.js
+  // and all date picker inputs are using moment.js, and this will ensure that dates are always displayed in our default format.
   parse: { dateInput: "DD.MM.YYYY" },
   display: {
     ...MAT_NATIVE_DATE_FORMATS.display,
