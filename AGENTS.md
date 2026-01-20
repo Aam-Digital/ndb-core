@@ -77,7 +77,8 @@ export class ExampleComponent {
 
 - Keep templates simple, avoid complex logic
 - Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
-- Use async pipe for observables
+- Use `async` pipe for observables
+- Use `customDate` pipe for date formating with "shortDate" or "mediumDate" format
 
 ### Service Patterns
 
