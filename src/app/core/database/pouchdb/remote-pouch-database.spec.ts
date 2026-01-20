@@ -83,7 +83,7 @@ describe("RemotePouchDatabase tests", () => {
     expect(pouchDB.changes).not.toHaveBeenCalled();
 
     // Advance time by polling interval (10 seconds)
-    tick(10000);
+    tick();
 
     // Now changes should have been polled
     expect(pouchDB.changes).toHaveBeenCalledWith({
@@ -101,7 +101,7 @@ describe("RemotePouchDatabase tests", () => {
     ];
     mockChangesResult.last_seq = 3;
 
-    tick(10000);
+    tick(10_000);
 
     // Should poll again with last_seq from previous result
     expect(pouchDB.changes).toHaveBeenCalledWith({
@@ -136,12 +136,12 @@ describe("RemotePouchDatabase tests", () => {
     });
 
     // First poll fails
-    tick(10000);
+    tick(500);
     expect(pouchDB.changes).toHaveBeenCalledTimes(1);
     expect(receivedDocs.length).toBe(0);
 
     // Second poll succeeds
-    tick(10000);
+    tick(10_000);
     expect(pouchDB.changes).toHaveBeenCalledTimes(2);
     expect(receivedDocs.length).toBe(1);
     expect(receivedDocs[0]._id).toBe("Entity:1");
@@ -160,7 +160,7 @@ describe("RemotePouchDatabase tests", () => {
 
     database.changes().subscribe();
 
-    tick(10000);
+    tick();
     expect(pouchDB.changes).toHaveBeenCalledTimes(1);
 
     // Destroy the database
