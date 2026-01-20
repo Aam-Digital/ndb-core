@@ -6,8 +6,8 @@ import { HttpStatusCode } from "@angular/common/http";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { NgZone } from "@angular/core";
-import { interval } from "rxjs";
-import { switchMap, takeUntil } from "rxjs/operators";
+import { timer } from "rxjs";
+import { exhaustMap, takeUntil } from "rxjs/operators";
 
 /**
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
@@ -133,9 +133,9 @@ export class RemotePouchDatabase extends PouchDatabase {
     const db = await this.getPouchDBOnceReady();
     let lastSequence: string | number = "now";
 
-    interval(this.CHANGES_POLLING_INTERVAL)
+    timer(0, this.CHANGES_POLLING_INTERVAL)
       .pipe(
-        switchMap(async () => {
+        exhaustMap(async () => {
           try {
             const result = await db.changes({
               since: lastSequence,
