@@ -39,6 +39,9 @@ export class PouchDatabase extends Database {
 
   protected databaseInitialized = new Subject<void>();
 
+  /** trigger to unsubscribe any internal subscriptions */
+  protected readonly destroy$ = new Subject<void>();
+
   constructor(
     dbName: string,
     protected globalSyncState?: SyncStateSubject,
@@ -278,6 +281,8 @@ export class PouchDatabase extends Database {
    * Destroy the database and all saved data
    */
   async destroy(): Promise<any> {
+    this.destroy$.next();
+
     await Promise.all(this.indexPromises);
     if (this.pouchDB) {
       return this.pouchDB.destroy();
@@ -288,6 +293,8 @@ export class PouchDatabase extends Database {
    * Reset the database state so a new one can be opened.
    */
   async reset() {
+    this.destroy$.next();
+
     this.pouchDB = undefined;
     // keep this.changesFeed because some services are already subscribed to this reference
     this.databaseInitialized = new Subject();

@@ -37,7 +37,7 @@ describe("RemotePouchDatabase tests", () => {
     mockAuthService.addAuthHeader.and.callFake((headers) => {
       headers.Authorization = calls % 2 === 1 ? "valid" : "invalid";
     });
-    spyOn(PouchDB, "fetch").and.callFake(async (url, opts) => {
+    (PouchDB.fetch as jasmine.Spy).and.callFake(async (url, opts) => {
       calls++;
       if (opts.headers["Authorization"] === "valid") {
         return new Response('{ "_id": "foo" }', { status: HttpStatusCode.Ok });
