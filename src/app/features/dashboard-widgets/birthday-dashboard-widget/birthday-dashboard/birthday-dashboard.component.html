@@ -19,7 +19,7 @@
       </ng-container>
       <ng-container matColumnDef="dateOfBirth">
         <td *matCellDef="let entity">
-          {{ entity.birthday | customDate: "shortDate" }}
+          {{ entity.birthday | customDate: "mediumDate" }}
         </td>
       </ng-container>
       <ng-container matColumnDef="newAge">
