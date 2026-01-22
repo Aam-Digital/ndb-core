@@ -16,7 +16,7 @@ import {
   LoginStateSubject,
   SyncStateSubject,
 } from "../../session/session-type";
-import { from, interval, merge, of, Subject } from "rxjs";
+import { from, interval, merge, of } from "rxjs";
 import { LoginState } from "../../session/session-states/login-state.enum";
 
 /**
@@ -38,9 +38,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   private remoteDatabase: RemotePouchDatabase;
   private syncState: SyncStateSubject = new SyncStateSubject();
-
-  /** trigger to unsubscribe any internal subscriptions */
-  private destroy$ = new Subject<void>();
 
   constructor(
     dbName: string,
@@ -111,6 +108,18 @@ export class SyncedPouchDatabase extends PouchDatabase {
     });
   }
 
+  protected override async subscribeChanges() {
+    // if in remote-only mode, forward remote database changes to this changes feed
+    if (this.pouchDB === this.remoteDatabase.getPouchDB()) {
+      this.remoteDatabase
+        .changes()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((change) => this.changesFeed.next(change));
+    } else {
+      super.subscribeChanges();
+    }
+  }
+
   /**
    * Execute a (one-time) sync between the local and server database.
    */
@@ -179,16 +188,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
         takeWhile(() => this.liveSyncEnabled),
       )
       .subscribe();
-  }
-
-  override async reset(): Promise<void> {
-    this.destroy$.next();
-    await super.reset();
-  }
-
-  override async destroy(): Promise<void> {
-    this.destroy$.next();
-    await super.destroy();
   }
 }
 
