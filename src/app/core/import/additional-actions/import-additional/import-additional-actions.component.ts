@@ -19,13 +19,15 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatListModule } from "@angular/material/list";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatSelectModule } from "@angular/material/select";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityBlockComponent } from "../../../basic-datatypes/entity/entity-block/entity-block.component";
-import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { EntityTypeLabelPipe } from "../../../common-components/entity-type-label/entity-type-label.pipe";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
-import { AdditionalImportAction } from "../additional-import-action";
+import { AdditionalImportAction, AdditionalPrefilledFieldAction } from "../additional-import-action";
+import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { ImportAdditionalService } from "../import-additional.service";
+import { EntityReferenceFieldSelectorComponent } from "#src/app/entity-reference-field-selector/entity-reference-field-selector.component";
 
 /**
  * Import sub-step: Let user select additional import actions like adding entities to a group entity.
@@ -43,69 +45,85 @@ import { ImportAdditionalService } from "../import-additional.service";
     EntityBlockComponent,
     ReactiveFormsModule,
     MatFormFieldModule,
-    BasicAutocompleteComponent,
     MatButtonModule,
     EditEntityComponent,
     HelpButtonComponent,
     MatExpansionModule,
+    MatSelectModule,
+    EntityReferenceFieldSelectorComponent
   ],
   providers: [EntityTypeLabelPipe],
 })
+
 export class ImportAdditionalActionsComponent implements OnChanges {
   private importAdditionalService = inject(ImportAdditionalService);
+  private entityRegistry = inject(EntityRegistry);
 
   @Input() entityType: string;
-
   @Input() importActions: AdditionalImportAction[] = [];
   @Output() importActionsChange = new EventEmitter<AdditionalImportAction[]>();
 
-  availableImportActions: AdditionalImportAction[] = [];
+  // For the unified selector
+  entityTypeCtor: any = null;
+  selectedTargetEntityType: string = "";
 
-  // TODO: may need more distinction --> like in ImportModule?
-  actionToString = (a: AdditionalImportAction) =>
-    this.importAdditionalService.createActionLabel(a);
-
-  linkEntityForm = new FormGroup({
-    action: new FormControl({ value: "", disabled: true }, Validators.required),
-    targetId: new FormControl(
-      { value: "", disabled: true },
-      Validators.required,
-    ),
+  unifiedActionForm = new FormGroup({
+    fieldOption: new FormControl({ value: null, disabled: true }, Validators.required),
+    targetId: new FormControl({ value: null, disabled: true }, Validators.required),
   });
 
-  constructor() {
-    this.linkEntityForm
-      .get("action")
-      .valueChanges.subscribe((val) =>
-        !!val
-          ? this.linkEntityForm.get("targetId").enable()
-          : this.linkEntityForm.get("targetId").disable(),
-      );
-  }
-
   ngOnChanges(changes: SimpleChanges) {
+    console.log('entityType:', this.entityType, 'entityTypeCtor:', this.entityTypeCtor);
     if (changes.hasOwnProperty("entityType")) {
-      this.availableImportActions = this.importAdditionalService
-        .getActionsLinkingFor(this.entityType)
-        .sort(sortExportOnlyLast);
-
-      this.linkEntityForm.reset();
-      if (this.entityType) {
-        this.linkEntityForm.get("action").enable();
+      this.entityTypeCtor = this.entityType ? this.entityRegistry.get(this.entityType) : null;
+      this.unifiedActionForm.reset();
+      if (this.entityTypeCtor) {
+        this.unifiedActionForm.get("fieldOption").enable();
+      } else {
+        this.unifiedActionForm.get("fieldOption").disable();
+        this.unifiedActionForm.get("targetId").disable();
       }
+      this.selectedTargetEntityType = "";
     }
   }
 
-  addAction() {
-    const newAction = this.linkEntityForm.get("action").getRawValue();
-    this.importActions = [
-      ...(this.importActions ?? []),
-      {
-        ...newAction,
-        targetId: this.linkEntityForm.get("targetId").value,
-      },
-    ];
-    this.linkEntityForm.reset();
+  onFieldOptionSelected(option: any) {
+    this.unifiedActionForm.get("fieldOption").setValue(option);
+    // Enable/disable targetId field
+    if (option) {
+      this.selectedTargetEntityType = option.referencedEntityType?.ENTITY_TYPE || option.targetType || "";
+      this.unifiedActionForm.get("targetId").enable();
+    } else {
+      this.selectedTargetEntityType = "";
+      this.unifiedActionForm.get("targetId").disable();
+    }
+    this.unifiedActionForm.get("targetId").setValue(null);
+  }
+
+  addUnifiedAction() {
+    const option = this.unifiedActionForm.get("fieldOption").value;
+    const targetId = this.unifiedActionForm.get("targetId").value;
+    if (!option || !targetId) return;
+
+    let newAction: AdditionalImportAction;
+    if (option.type === "inherit" || option.type === "automated") {
+      // Prefill action
+      newAction = {
+        mode: "prefill",
+        sourceType: this.entityType,
+        fieldId: option.sourceReferenceField,
+        targetType: this.selectedTargetEntityType,
+        targetId,
+      };
+    } else {
+      // Fallback for future extension
+      newAction = {
+        ...option,
+        targetId,
+      };
+    }
+    this.importActions = [...(this.importActions ?? []), newAction];
+    this.unifiedActionForm.reset();
     this.importActionsChange.emit(this.importActions);
   }
 
@@ -113,14 +131,11 @@ export class ImportAdditionalActionsComponent implements OnChanges {
     this.importActions = this.importActions.filter((a) => a !== actionToRemove);
     this.importActionsChange.emit(this.importActions);
   }
-}
 
-function sortExportOnlyLast(
-  a: AdditionalImportAction,
-  b: AdditionalImportAction,
-) {
-  // show "non-expert" actions first
-  if (a.expertOnly === b.expertOnly) return 0;
-  else if (a.expertOnly) return 1;
-  else return -1;
+  getFieldLabel(fieldId: string): string {
+    if (!this.entityType || !fieldId) return fieldId;
+    const entityCtor = this.entityRegistry.get(this.entityType);
+    const fieldConfig = entityCtor?.schema.get(fieldId);
+    return fieldConfig?.label || fieldId;
+  }
 }

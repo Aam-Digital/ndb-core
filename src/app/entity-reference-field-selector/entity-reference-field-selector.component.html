@@ -1,0 +1,31 @@
+<div class="flex-row gap-small">
+	<mat-select
+		[value]="selectedOption"
+		(selectionChange)="onOptionSelected($event)"
+		class="select-box"
+		placeholder="Select inheritance option"
+		i18n-placeholder
+	>
+		@for (option of availableOptions; track option) {
+			<mat-option [value]="option" [matTooltip]="option.tooltip">
+				<div class="flex-row gap-small align-items-center">
+					@if (option.type === 'inherit') {
+						<span i18n>field</span>
+						<span> "{{ option.labelParts.fieldName }}"</span>
+						<span>></span>
+						<span style="font-weight: bold" class="text-primary">{{ option.labelParts.entityName }}</span>
+					} @else {
+						<span style="font-weight: bold" class="text-primary">{{ option.labelParts.entityName }}</span>
+						<span> > </span>
+						<span i18n>field</span>
+						<span> "{{ option.labelParts.fieldName }}"</span>
+					}
+				</div>
+			</mat-option>
+		} @empty {
+			<mat-option disabled>
+				<em i18n>No reference options available</em>
+			</mat-option>
+		}
+	</mat-select>
+</div>

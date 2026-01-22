@@ -7,6 +7,7 @@ import {
   AdditionalImportAction,
   AdditionalIndirectLinkAction,
   AdditonalDirectLinkAction,
+  AdditionalPrefilledFieldAction,
 } from "./additional-import-action";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
@@ -172,12 +173,31 @@ export class ImportAdditionalService {
         case "indirect":
           action = this.linkIndirectly(entities, additionalImport);
           break;
+        case "prefill":
+          action = this.prefillField(entities, additionalImport);
+          break;
       }
 
       if (action) actionFuncs.push(action);
     }
 
     return Promise.all(actionFuncs);
+  }
+
+  /**
+   * Prefill a field on each imported entity with a fixed value.
+   * @param entities Imported entities
+   * @param action Prefill action details
+   */
+  private prefillField(
+    entities: Entity[],
+    action: AdditionalPrefilledFieldAction,
+  ) {
+    for (const entity of entities) {
+      entity[action.fieldId] = action.targetId;
+    }
+    // No async operation needed, but return a resolved promise for consistency
+    return Promise.resolve();
   }
 
   public async undoImport(importMeta: ImportMetadata): Promise<void> {
@@ -301,6 +321,15 @@ export class ImportAdditionalService {
     importAction: AdditionalImportAction,
     forTargetType: boolean = false,
   ): string {
+    // Handle prefill mode separately
+    if (importAction.mode === "prefill") {
+      const prefillAction = importAction as AdditionalPrefilledFieldAction;
+      const sourceType = this.entityRegistry.get(prefillAction.sourceType);
+      const targetType = this.entityRegistry.get(prefillAction.targetType);
+      const fieldLabel = sourceType.schema.get(prefillAction.fieldId)?.label || prefillAction.fieldId;
+      return $localize`Pre-fill "${fieldLabel}" (${targetType.toString()})`;
+    }
+
     const sourceType = this.entityRegistry.get(importAction.sourceType);
     const targetTypes = importAction["targetType"]
       ? asArray(importAction["targetType"]).map((type) =>
@@ -322,7 +351,7 @@ export class ImportAdditionalService {
     }
 
     label += this.getAdditionalContextDetailsForActionLabel(
-      importAction,
+      importAction as AdditonalDirectLinkAction | AdditionalIndirectLinkAction,
       targetTypes,
       relationshipType,
     );

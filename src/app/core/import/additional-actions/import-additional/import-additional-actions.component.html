@@ -1,24 +1,17 @@
-<mat-expansion-panel
-  [expanded]="importActions?.length > 0"
-  [disabled]="!entityType"
->
+
+<mat-expansion-panel [expanded]="importActions?.length > 0" [disabled]="!entityType">
   <mat-expansion-panel-header>
     <mat-panel-title>
       <span i18n>Advanced Import Actions [optional]</span>
       <app-help-button
         style="float: right"
-        text="In addition to creating new records directly for the imported data you can also define additional actions
-                    (e.g. to make all imported records members of an existing activity or group).
-                    This is an advanced functionality you do not have to use.
-                    First select an import type above to enable this section.
-                    If uncertain, please refer to the user guides, videos or support contact."
+        text="In addition to creating new records directly for the imported data you can also define additional actions (e.g. to make all imported records members of an existing activity or group, or to pre-fill entity reference fields). This is an advanced functionality you do not have to use. First select an import type above to enable this section. If uncertain, please refer to the user guides, videos or support contact."
         i18n-text="import - additional actions - help text"
-      >
-      </app-help-button>
+      ></app-help-button>
     </mat-panel-title>
   </mat-expansion-panel-header>
 
-  <!-- Existing additional actions -->
+  <!-- Existing actions (link or prefill) -->
   <div>
     <mat-list>
       @for (action of importActions; track action) {
@@ -31,9 +24,15 @@
             i18n-matTooltip
             class="existing-action-remove"
           ></fa-icon>
-          <div matListItemTitle i18n>
-            Link all imported records to
-            {{ action.targetType | entityTypeLabel }}
+          <div matListItemTitle>
+            @if (action.mode === 'prefill') {
+              <span i18n>Pre-fill field</span>
+              <strong>"{{ getFieldLabel(action.fieldId) }}"</strong>
+              <span i18n>for all records</span>
+            } @else {
+              <span i18n>Link all imported records to</span>
+              <strong>{{ action.targetType | entityTypeLabel }}</strong>
+            }
           </div>
           <div matListItemLine>
             <app-entity-block
@@ -46,69 +45,53 @@
     </mat-list>
 
     @if (!(importActions?.length > 0)) {
-      <div
-        class="no-actions margin-bottom-large"
-        i18n="import additional actions"
-      >
+      <div class="no-actions margin-bottom-large" i18n="import additional actions">
         no additional actions selected
       </div>
     }
   </div>
 
-  <!-- Create new additional action -->
-  @if (availableImportActions?.length > 0) {
-    <form [formGroup]="linkEntityForm">
+  <!-- Unified action/prefill selector -->
+  <form [formGroup]="unifiedActionForm">
+    <div>
+      @if (unifiedActionForm.disabled) {
+        <mat-error i18n>
+          Select an Import Target Type before defining additional actions.
+        </mat-error>
+      }
+    </div>
+
+    <div class="flex-row gap-regular">
+      <div class="full-width">
+        <label i18n="Label for linked entity type input">Field to set for all imported records:</label>
+        <app-entity-reference-field-selector
+          [entityType]="entityTypeCtor"
+          [value]="unifiedActionForm.get('fieldOption').value"
+          (optionSelected)="onFieldOptionSelected($event)"
+        ></app-entity-reference-field-selector>
+      </div>
+
       <div>
-        @if (linkEntityForm.disabled) {
-          <mat-error i18n>
-            Select an Import Target Type before defining additional actions.
-          </mat-error>
-        }
+        <label i18n>with value</label>
+        <app-edit-entity
+          formControlName="targetId"
+          [entityType]="selectedTargetEntityType"
+          [multi]="false"
+          label="with value"
+          i18n-label
+        ></app-edit-entity>
       </div>
 
-      <div class="flex-row gap-regular">
-        <mat-form-field class="full-width">
-          <mat-label i18n="Label for linked entity type input"
-            >Link all imported records to:
-          </mat-label>
-          <app-basic-autocomplete
-            formControlName="action"
-            [multi]="false"
-            [options]="availableImportActions"
-            [optionToString]="actionToString"
-          ></app-basic-autocomplete>
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-label i18n>for record</mat-label>
-          <app-edit-entity
-            formControlName="targetId"
-            [entityType]="
-              linkEntityForm.controls['action'].value?.['targetType']
-            "
-            [multi]="false"
-            label="for record"
-            i18n-label
-          >
-          </app-edit-entity>
-        </mat-form-field>
-
-        <button
-          (click)="addAction()"
-          [disabled]="!linkEntityForm.valid"
-          mat-stroked-button
-          color="accent"
-          class="action-add-button"
-          i18n
-        >
-          Add Action
-        </button>
-      </div>
-    </form>
-  } @else if (entityType) {
-    <p i18n>
-      No special import actions are available for importing
-      {{ entityType | entityTypeLabel: true }} records.
-    </p>
-  }
+      <button
+        (click)="addUnifiedAction()"
+        [disabled]="!unifiedActionForm.valid"
+        mat-stroked-button
+        color="accent"
+        class="action-add-button"
+        i18n
+      >
+        Add
+      </button>
+    </div>
+  </form>
 </mat-expansion-panel>
