@@ -11,10 +11,32 @@ import { DefaultValueConfig } from "#src/app/core/default-values/default-value-c
  * Supports multiple entity types in one public form submission.
  */
 export interface PublicFormEntityFormConfig {
+  /**
+   * The type of record that is created when someone submits the form.
+   * (e.g. if you select "Note" here, the form will create new entries in your "Notes List"
+   * and you can select only fields of your "Note" data structure for this form)
+   */
   entity: string;
+
+  /**
+   * Fields to display in the form, organized into field groups/columns.
+   */
   columns: FieldGroup[];
+
+  /**
+   * Fields with default/prefilled values.
+   * Key is the field ID, value is the default value configuration.
+   */
   prefilled?: { [key: string]: DefaultValueConfig };
+
+  /** @deprecated old format - use `prefilled` instead */
   prefilledFields?: FormFieldConfig[];
+
+  /**
+   * Field IDs that link to other entities in the same form submission.
+   * These fields will be automatically populated with IDs of entities created
+   * by other forms in the same submission and hidden from the user.
+   */
   linkedEntities?: string[];
 }
 
@@ -58,6 +80,7 @@ export class PublicFormConfig extends Entity {
   })
   description: string;
 
+  /** @deprecated Use `forms` array instead for multi-form support */
   @DatabaseField({
     label: $localize`:PublicFormConfig:Record`,
     description: $localize`:PublicFormConfig:The type of record that is created when a someone submits the form (e.g. if you select "Note" here, the form will create new entries in your "Notes List" and you can select only fields of your "Note" data structure for this form)`,
@@ -70,6 +93,7 @@ export class PublicFormConfig extends Entity {
   })
   entity: string;
 
+  /** @deprecated Use `forms` array instead for multi-form support */
   @DatabaseField({
     label: $localize`:PublicFormConfig:Fields`,
     editComponent: "EditPublicFormColumns",
@@ -77,16 +101,18 @@ export class PublicFormConfig extends Entity {
   })
   columns: FieldGroup[];
 
+  /** @deprecated Use `forms` array instead for multi-form support */
   @DatabaseField({
     label: $localize`:PublicFormConfig:Prefilled Fields`,
     editComponent: "EditPrefilledValuesComponent",
   })
   prefilled: { [key: string]: DefaultValueConfig };
 
-  /** @deprecated old format */
+  /** @deprecated old format - use `prefilled` in `forms` array instead */
   @DatabaseField()
   prefilledFields: FormFieldConfig[];
 
+  /** @deprecated Use `forms` array instead for multi-form support */
   @DatabaseField({
     label: $localize`:PublicFormConfig:Linked Entities`,
     editComponent: "EditPublicFormRelatedEntitiesComponent",
