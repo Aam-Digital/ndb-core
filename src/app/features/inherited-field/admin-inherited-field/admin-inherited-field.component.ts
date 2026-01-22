@@ -45,7 +45,10 @@ interface InheritanceOption {
     },
   ],
 })
-export class AdminInheritedFieldComponent extends CustomFormControlDirective<DefaultValueConfigInheritedField> implements OnInit {
+export class AdminInheritedFieldComponent
+  extends CustomFormControlDirective<DefaultValueConfigInheritedField>
+  implements OnInit
+{
   @Input() entityType: EntityConstructor;
   @Input() entitySchemaField: EntitySchemaField;
 
@@ -59,7 +62,6 @@ export class AdminInheritedFieldComponent extends CustomFormControlDirective<Def
       };
     }
   }
-
 
   onOptionSelected(option: any) {
     // Update value and open dialog as before
