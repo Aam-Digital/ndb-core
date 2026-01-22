@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EntityReferenceFieldSelectorComponent } from './entity-reference-field-selector.component';
 import { MockedTestingModule } from '../utils/mocked-testing.module';
 
-describe('EntityReferenceFieldSelectorComponent', () => {
+describe("EntityReferenceFieldSelectorComponent", () => {
   let component: EntityReferenceFieldSelectorComponent;
   let fixture: ComponentFixture<EntityReferenceFieldSelectorComponent>;
 
@@ -18,7 +18,7 @@ describe('EntityReferenceFieldSelectorComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

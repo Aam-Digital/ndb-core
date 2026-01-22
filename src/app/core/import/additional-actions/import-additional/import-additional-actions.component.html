@@ -1,5 +1,7 @@
-
-<mat-expansion-panel [expanded]="importActions?.length > 0" [disabled]="!entityType">
+<mat-expansion-panel
+  [expanded]="importActions?.length > 0"
+  [disabled]="!entityType"
+>
   <mat-expansion-panel-header>
     <mat-panel-title>
       <span i18n>Advanced Import Actions [optional]</span>
@@ -25,7 +27,7 @@
             class="existing-action-remove"
           ></fa-icon>
           <div matListItemTitle>
-            @if (action.mode === 'prefill') {
+            @if (action.mode === "prefill") {
               <span i18n>Pre-fill field</span>
               <strong>"{{ getFieldLabel(action.fieldId) }}"</strong>
               <span i18n>for all records</span>
@@ -45,7 +47,10 @@
     </mat-list>
 
     @if (!(importActions?.length > 0)) {
-      <div class="no-actions margin-bottom-large" i18n="import additional actions">
+      <div
+        class="no-actions margin-bottom-large"
+        i18n="import additional actions"
+      >
         no additional actions selected
       </div>
     }
@@ -63,7 +68,9 @@
 
     <div class="flex-row gap-regular">
       <div class="full-width">
-        <label i18n="Label for linked entity type input">Field to set for all imported records:</label>
+        <label i18n="Label for linked entity type input"
+          >Field to set for all imported records:</label
+        >
         <app-entity-reference-field-selector
           [entityType]="entityTypeCtor"
           [value]="unifiedActionForm.get('fieldOption').value"

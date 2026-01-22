@@ -84,8 +84,7 @@ export interface AdditionalIndirectLinkAction extends AdditionalImportBaseAction
  * Details of an import action that pre-fills an entity reference field with a fixed value for all imported records.
  * This allows linking imported data to an existing entity by setting the reference field directly on the imported entities.
  */
-export interface AdditionalPrefilledFieldAction
-  extends AdditionalImportBaseAction {
+export interface AdditionalPrefilledFieldAction extends AdditionalImportBaseAction {
   mode: "prefill";
 
   /**
