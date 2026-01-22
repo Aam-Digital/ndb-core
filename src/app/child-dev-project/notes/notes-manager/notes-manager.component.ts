@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import { Component, Input, OnInit, inject, signal } from "@angular/core";
 import { Note } from "../model/note";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -15,6 +15,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 import { Angulartics2Module } from "angulartics2";
 import { MatMenuModule } from "@angular/material/menu";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { RouteTarget } from "../../../route-target";
 import { Sort } from "@angular/material/sort";
@@ -42,6 +43,7 @@ export interface NotesManagerConfig {
     FormsModule,
     Angulartics2Module,
     MatMenuModule,
+    MatProgressBarModule,
     FaDynamicIconComponent,
   ],
 })
@@ -68,18 +70,55 @@ export class NotesManagerComponent implements OnInit {
   entityConstructor = Note;
   notes: Note[];
 
+  private inactiveLoaded = false;
+  loadingInactive = signal(false);
+
   async ngOnInit() {
     this.notes = await this.loadEntities();
     this.subscribeEntityUpdates();
   }
 
   private async loadEntities(): Promise<Note[]> {
-    let notes = await this.entityMapperService.loadType(Note);
+    let notes = await this.entityMapperService.loadType(Note, "active");
     if (this.includeEventNotes) {
-      const eventNotes = await this.entityMapperService.loadType(EventNote);
+      const eventNotes = await this.entityMapperService.loadType(
+        EventNote,
+        "active",
+      );
       notes = notes.concat(eventNotes);
     }
+    if (this.showInactive) {
+      await this.loadInactiveEntities();
+    }
     return notes;
+  }
+
+  private async loadInactiveEntities() {
+    if (this.inactiveLoaded) {
+      return;
+    }
+    this.loadingInactive.set(true);
+    let inactiveNotes = await this.entityMapperService.loadType(
+      Note,
+      "inactive",
+    );
+    if (this.includeEventNotes) {
+      const inactiveEventNotes = await this.entityMapperService.loadType(
+        EventNote,
+        "inactive",
+      );
+      inactiveNotes = inactiveNotes.concat(inactiveEventNotes);
+    }
+    this.notes = [...this.notes, ...inactiveNotes];
+    this.inactiveLoaded = true;
+    this.loadingInactive.set(false);
+  }
+
+  async onShowInactiveChange(showInactive: boolean) {
+    this.showInactive = showInactive;
+    if (showInactive && !this.inactiveLoaded) {
+      await this.loadInactiveEntities();
+    }
   }
 
   private subscribeEntityUpdates() {
@@ -102,6 +141,7 @@ export class NotesManagerComponent implements OnInit {
 
   async updateIncludeEvents() {
     this.includeEventNotes = !this.includeEventNotes;
+    this.inactiveLoaded = false; // Reset so inactive records reload with new includeEventNotes setting
     this.notes = await this.loadEntities();
   }
 

@@ -145,6 +145,7 @@ export class EntityListComponent<T extends Entity>
 
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
+  @Output() showInactiveChange = new EventEmitter<boolean>();
   selectedRows: T[];
 
   isDesktop: boolean;
@@ -284,6 +285,7 @@ export class EntityListComponent<T extends Entity>
 
   async onShowInactiveChange(showInactive: boolean) {
     this.showInactive = showInactive;
+    this.showInactiveChange.emit(showInactive);
     if (showInactive && !this.inactiveLoaded) {
       await this.loadInactiveEntities();
     }
