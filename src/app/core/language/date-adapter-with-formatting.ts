@@ -6,13 +6,20 @@ import {
 import moment from "moment";
 import { Injectable } from "@angular/core";
 import { getLocaleFirstDayOfWeek } from "@angular/common";
+import { DATEPICKER_FORMAT } from "../basic-datatypes/date/date.static";
 
 /**
  * Extend MAT_NATIVE_DATE_FORMATS to also support parsing.
  */
 export const DATE_FORMATS: MatDateFormats = {
-  parse: { dateInput: "l" },
-  display: MAT_NATIVE_DATE_FORMATS.display,
+  // in addition to the customDate pipe
+  // we need to add dateInput and override the method because we are not using DatePipe here, we are using moment.js
+  // and all date picker inputs are using moment.js, and this will ensure that dates are always displayed in our default format.
+  parse: { dateInput: DATEPICKER_FORMAT },
+  display: {
+    ...MAT_NATIVE_DATE_FORMATS.display,
+    dateInput: DATEPICKER_FORMAT,
+  },
 };
 
 @Injectable()
@@ -31,5 +38,12 @@ export class DateAdapterWithFormatting extends NativeDateAdapter {
 
   override getFirstDayOfWeek(): number {
     return getLocaleFirstDayOfWeek(this.locale);
+  }
+
+  override format(date: Date, displayFormat: any): string {
+    if (typeof displayFormat === "string") {
+      return moment(date).locale(this.locale).format(displayFormat);
+    }
+    return super.format(date, displayFormat);
   }
 }

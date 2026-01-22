@@ -27,7 +27,8 @@ import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { AttendanceService } from "../attendance.service";
 import { AnalyticsService } from "../../../core/analytics/analytics.service";
-import { DatePipe, PercentPipe } from "@angular/common";
+import { PercentPipe } from "@angular/common";
+import { CustomDatePipe } from "../../../core/basic-datatypes/date/custom-date.pipe";
 import { AttendanceStatusSelectComponent } from "../attendance-status-select/attendance-status-select.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -46,7 +47,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   encapsulation: ViewEncapsulation.None,
   imports: [
     MatDatepickerModule,
-    DatePipe,
+    CustomDatePipe,
     AttendanceStatusSelectComponent,
     MatFormFieldModule,
     MatInputModule,

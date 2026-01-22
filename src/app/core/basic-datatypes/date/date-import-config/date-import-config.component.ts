@@ -4,12 +4,12 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
-import moment from "moment/moment";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
 import { MatInputModule } from "@angular/material/input";
-import { DatePipe, NgClass } from "@angular/common";
+import { NgClass } from "@angular/common";
+import { CustomDatePipe } from "../custom-date.pipe";
 import { MatListModule } from "@angular/material/list";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
@@ -30,7 +30,7 @@ import { DateDatatype } from "../date.datatype";
     ReactiveFormsModule,
     MatListModule,
     NgClass,
-    DatePipe,
+    CustomDatePipe,
     MatButtonModule,
     HelpButtonComponent,
   ],

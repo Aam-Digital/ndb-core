@@ -1,7 +1,8 @@
 <h1 mat-dialog-title>
   <app-dialog-close mat-dialog-close></app-dialog-close>
-  {{ entity?.activity?.title }}: {{ entity.periodFrom | date: "shortDate" }} -
-  {{ entity.periodTo | date: "shortDate" }}
+  {{ entity?.activity?.title }}:
+  {{ entity.periodFrom | customDate: "shortDate" }} -
+  {{ entity.periodTo | customDate: "shortDate" }}
 </h1>
 
 <div mat-dialog-content>

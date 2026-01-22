@@ -24,7 +24,7 @@
       <div class="padding-bottom-regular">
         <span
           ><fa-icon icon="calendar-alt"></fa-icon>
-          {{ changelog?.published_at | date }}</span
+          {{ changelog?.published_at | customDate: "shortDate" }}</span
         >
         <span class="padding-left-small"
           ><fa-icon icon="tag"></fa-icon> {{ changelog?.tag_name }}</span

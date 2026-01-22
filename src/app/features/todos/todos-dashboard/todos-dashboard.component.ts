@@ -4,7 +4,8 @@ import { Todo } from "../model/todo";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import moment from "moment";
 import { DashboardListWidgetComponent } from "../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
-import { DatePipe, NgStyle } from "@angular/common";
+import { NgStyle } from "@angular/common";
+import { CustomDatePipe } from "../../../core/basic-datatypes/date/custom-date.pipe";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
@@ -20,7 +21,7 @@ import { DashboardWidget } from "../../../core/dashboard/dashboard-widget/dashbo
     NgStyle,
     MatTableModule,
     MatTooltipModule,
-    DatePipe,
+    CustomDatePipe,
   ],
 })
 export class TodosDashboardComponent extends DashboardWidget {

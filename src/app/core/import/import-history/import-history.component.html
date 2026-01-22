@@ -23,7 +23,7 @@
           [entityId]="item.user"
           [linkDisabled]="true"
         ></app-entity-block>
-        at {{ item.date | date: "medium" }}
+        at {{ item.date | customDate: "shortDate" }}
       </div>
 
       @if (item.config.additionalActions?.length > 0) {
