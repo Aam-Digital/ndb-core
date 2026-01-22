@@ -10,7 +10,6 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 
-
 describe("ImportAdditionalActionsComponent", () => {
   let component: ImportAdditionalActionsComponent;
   let fixture: ComponentFixture<ImportAdditionalActionsComponent>;
