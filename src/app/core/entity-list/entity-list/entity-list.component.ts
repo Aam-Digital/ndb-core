@@ -266,7 +266,6 @@ export class EntityListComponent<T extends Entity>
    * Template method that can be overwritten to change the loading logic.
    * @protected
    */
-  @PerformanceAnalysisLogging
   protected async getEntities(): Promise<T[]> {
     if (this.loaderMethod && this.entitySpecialLoader) {
       return this.entitySpecialLoader.loadData(this.loaderMethod);
@@ -291,7 +290,6 @@ export class EntityListComponent<T extends Entity>
     }
   }
 
-  @PerformanceAnalysisLogging
   private async loadInactiveEntities() {
     this.loadingInactive.set(true);
     const inactiveEntities = await this.entityMapperService.loadType(
