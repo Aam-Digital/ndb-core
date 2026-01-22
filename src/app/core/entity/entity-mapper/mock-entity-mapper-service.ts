@@ -6,6 +6,7 @@ import { UpdatedEntity } from "../model/entity-update";
 import { Provider } from "@angular/core";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import { DatabaseIndexingService } from "../database-indexing/database-indexing.service";
 
 export function createEntityMapperSpyObj() {
   const mock = jasmine.createSpyObj(["receiveUpdates"]);
@@ -25,6 +26,18 @@ export function mockEntityMapperProvider(
         const ems = new MockEntityMapperService();
         ems.addAll(withData);
         return ems;
+      },
+    },
+    {
+      provide: DatabaseIndexingService,
+      useValue: {
+        createIndex: () => {},
+        queryIndexDocsRange: () => {
+          throw new Error("Not implemented - please mock this");
+        },
+        queryIndexDocs: () => {
+          throw new Error("Not implemented - please mock this");
+        },
       },
     },
     {

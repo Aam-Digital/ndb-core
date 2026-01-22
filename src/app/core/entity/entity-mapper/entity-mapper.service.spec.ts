@@ -29,6 +29,7 @@ import { SyncStateSubject } from "app/core/session/session-type";
 import { DatabaseFactoryService } from "../../database/database-factory.service";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { firstValueFrom } from "rxjs";
+import { DatabaseIndexingService } from "../database-indexing/database-indexing.service";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -60,6 +61,7 @@ describe("EntityMapperService", () => {
         { provide: DatabaseFactoryService, useValue: dbFactory },
         CurrentUserSubject,
         EntityMapperService,
+        DatabaseIndexingService,
       ],
     });
     entityMapper = TestBed.inject(EntityMapperService);
@@ -114,7 +116,7 @@ describe("EntityMapperService", () => {
     }
 
     const result = await entityMapper.loadType<TempTestEntity>(TempTestEntity);
-    expect(result).toBeEmpty();
+    expect(result).toEqual([]);
   });
 
   it("saves new entity and loads it", async () => {
@@ -290,6 +292,53 @@ describe("EntityMapperService", () => {
     expect(updatedEntity.updated?.at.getTime()).toEqual(mockTime2);
 
     jasmine.clock().uninstall();
+  });
+
+  describe("loadType with active/inactive filtering", () => {
+    let activeEntity: TestEntity;
+    let inactiveEntity: TestEntity;
+
+    beforeEach(async () => {
+      activeEntity = new TestEntity("active-1");
+      activeEntity.inactive = false;
+
+      inactiveEntity = new TestEntity("inactive-1");
+      inactiveEntity.inactive = true;
+
+      await entityMapper.save(activeEntity);
+      await entityMapper.save(inactiveEntity);
+    });
+
+    it("loads only active entities when loadInactive is 'active'", async () => {
+      const result = await entityMapper.loadType(TestEntity, "active");
+
+      expect(result.length).toBe(1);
+      expect(result[0].getId()).toBe(activeEntity.getId());
+      expect(result[0].inactive).toBeFalsy();
+    });
+
+    it("loads only inactive entities when loadInactive is 'inactive'", async () => {
+      const result = await entityMapper.loadType(TestEntity, "inactive");
+
+      expect(result.length).toBe(1);
+      expect(result[0].getId()).toBe(inactiveEntity.getId());
+      expect(result[0].inactive).toBeTrue();
+    });
+
+    it("loads all entities when loadInactive is 'all'", async () => {
+      const result = await entityMapper.loadType(TestEntity, "all");
+
+      expect(result.length).toBe(2);
+      const ids = result.map((e) => e.getId());
+      expect(ids).toContain(activeEntity.getId());
+      expect(ids).toContain(inactiveEntity.getId());
+    });
+
+    it("defaults to loading all entities when no parameter is provided", async () => {
+      const result = await entityMapper.loadType(TestEntity);
+
+      expect(result.length).toBe(2);
+    });
   });
 
   @DatabaseEntity("EntityA")

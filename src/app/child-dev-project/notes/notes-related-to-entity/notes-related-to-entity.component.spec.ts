@@ -8,6 +8,7 @@ import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 
 describe("NotesRelatedToEntityComponent", () => {
   let component: NotesRelatedToEntityComponent;
@@ -22,6 +23,16 @@ describe("NotesRelatedToEntityComponent", () => {
 
     TestBed.configureTestingModule({
       imports: [NotesRelatedToEntityComponent, MockedTestingModule.withState()],
+      providers: [
+        {
+          provide: DatabaseIndexingService,
+          useValue: {
+            createIndex: () => {},
+            queryIndexDocsRange: () => Promise.resolve([]),
+            queryIndexDocs: () => Promise.resolve([]),
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(NotesRelatedToEntityComponent);
