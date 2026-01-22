@@ -33,9 +33,9 @@ test("Record attendance for one activity", async ({ page }) => {
   await page.getByRole("button", { name: "Record" }).click();
 
   const dateField = page.getByLabel("Date");
-  await expect(dateField).toHaveValue("1/23/2025");
+  await expect(dateField).toHaveValue("23.01.2025");
 
-  await dateField.fill("12/25/2024");
+  await dateField.fill("25.12.2024");
   await dateField.blur();
 
   // FIXME: A simple .click() does not trigger the action and we don’t know why.

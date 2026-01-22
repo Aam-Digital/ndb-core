@@ -13,7 +13,7 @@
       class="nav-icon"
       [icon]="item.icon"
     ></app-fa-dynamic-icon>
-    <div>{{ item.label }}</div>
+    <div class="menu-label" [title]="item.label">{{ item.label }}</div>
 
     @if (hasSubMenu(item)) {
       <fa-icon [icon]="isExpanded ? 'chevron-down' : 'chevron-right'"></fa-icon>

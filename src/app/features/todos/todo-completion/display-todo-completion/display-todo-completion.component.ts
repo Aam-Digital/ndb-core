@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from "@angular/core";
 import { TodoCompletion } from "../../model/todo-completion";
-import { DatePipe } from "@angular/common";
+import { CustomDatePipe } from "../../../../core/basic-datatypes/date/custom-date.pipe";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../../core/entity/model/entity";
@@ -12,7 +12,7 @@ import { DynamicComponent } from "../../../../core/config/dynamic-components/dyn
   selector: "app-display-todo-completion",
   templateUrl: "./display-todo-completion.component.html",
   styleUrls: ["./display-todo-completion.component.scss"],
-  imports: [FontAwesomeModule, DatePipe],
+  imports: [FontAwesomeModule, CustomDatePipe],
 })
 export class DisplayTodoCompletionComponent
   extends ViewDirective<TodoCompletion>

@@ -149,4 +149,28 @@ describe("SyncedPouchDatabase", () => {
     service.liveSyncEnabled = false;
     tick(LONG_SYNC_TIME);
   }));
+
+  it("should emit changes from the remoteDatabase changes feed if in remote-only mode", fakeAsync(() => {
+    // Initialize service in remote-only mode by passing null as dbName
+    service.init(null);
+    tick();
+
+    // Create a spy on the remoteDatabase to simulate changes
+    const remoteChanges = new Subject();
+    const remoteDatabase = service["remoteDatabase"];
+    spyOn(remoteDatabase, "changes").and.returnValue(remoteChanges);
+
+    // Set up a spy to capture emitted changes
+    const changesSpy = jasmine.createSpy("changesSpy");
+    service.changes().subscribe(changesSpy);
+    tick();
+
+    // Emit a change from the remote database
+    const mockChange = { id: "test-doc", seq: 1 };
+    remoteChanges.next(mockChange);
+    tick();
+
+    // Verify the change was forwarded to the service's changes feed
+    expect(changesSpy).toHaveBeenCalledWith(mockChange);
+  }));
 });

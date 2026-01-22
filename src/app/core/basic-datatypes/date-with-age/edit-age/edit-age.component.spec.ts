@@ -2,7 +2,11 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
-import { DateAdapter, MAT_DATE_FORMATS } from "@angular/material/core";
+import {
+  DateAdapter,
+  MAT_DATE_FORMATS,
+  MatDateFormats,
+} from "@angular/material/core";
 import { MatDatepickerInputHarness } from "@angular/material/datepicker/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -19,6 +23,8 @@ describe("EditAgeComponent", () => {
   let component: EditAgeComponent;
   let fixture: ComponentFixture<EditAgeComponent>;
   let loader: HarnessLoader;
+  let dateAdapter: DateAdapter<Date>;
+  let dateFormats: MatDateFormats;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -36,6 +42,8 @@ describe("EditAgeComponent", () => {
     fixture = TestBed.createComponent(EditAgeComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
+    dateAdapter = TestBed.inject(DateAdapter);
+    dateFormats = TestBed.inject(MAT_DATE_FORMATS);
 
     setupCustomFormControlEditComponent(component);
     fixture.detectChanges();
@@ -60,9 +68,11 @@ describe("EditAgeComponent", () => {
   it("should update age when date is changed", async () => {
     const datepicker = await loader.getHarness(MatDatepickerInputHarness);
 
-    await datepicker.setValue(
-      moment().subtract(20, "years").toDate().toLocaleDateString(),
+    const formattedDate = dateAdapter.format(
+      moment().subtract(20, "years").toDate(),
+      dateFormats.display.dateInput,
     );
+    await datepicker.setValue(formattedDate);
 
     expect(component.age()).toEqual(20);
   });
