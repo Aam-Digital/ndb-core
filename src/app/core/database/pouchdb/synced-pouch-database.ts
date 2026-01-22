@@ -108,9 +108,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
     });
   }
 
+  /**
+   * Whether the database is currently in remote-only mode without syncing to a local PouchDB.
+   */
+  public get isInRemoteOnlyMode(): boolean {
+    return this.pouchDB === this.remoteDatabase.getPouchDB();
+  }
+
   protected override async subscribeChanges() {
     // if in remote-only mode, forward remote database changes to this changes feed
-    if (this.pouchDB === this.remoteDatabase.getPouchDB()) {
+    if (this.isInRemoteOnlyMode) {
       this.remoteDatabase
         .changes()
         .pipe(takeUntil(this.destroy$))

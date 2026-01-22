@@ -77,6 +77,12 @@ export class CouchdbFileService extends FileService {
    */
   private ensureDocIsSynced(): Observable<SyncState> {
     const mainDb = this.databaseResolver.getDatabase();
+
+    // if in online-only mode (e.g. unauthenticated public forms use), no need to sync
+    if ((mainDb as SyncedPouchDatabase)?.isInRemoteOnlyMode) {
+      return of(SyncState.COMPLETED);
+    }
+
     let sync: () => Promise<any> = (mainDb as SyncedPouchDatabase).sync
       ? () => (mainDb as SyncedPouchDatabase).sync()
       : () => Promise.resolve();
