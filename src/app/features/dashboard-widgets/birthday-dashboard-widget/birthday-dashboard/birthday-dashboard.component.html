@@ -19,7 +19,7 @@
       </ng-container>
       <ng-container matColumnDef="dateOfBirth">
         <td *matCellDef="let entity">
-          {{ entity.birthday | date: "E dd.MM" }}
+          {{ entity.birthday | date: "E, dd. MMM" }}
         </td>
       </ng-container>
       <ng-container matColumnDef="newAge">

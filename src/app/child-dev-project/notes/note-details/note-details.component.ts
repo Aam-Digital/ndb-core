@@ -10,7 +10,7 @@ import { Note } from "../model/note";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { ConfigService } from "../../../core/config/config.service";
 import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
-import { DatePipe } from "@angular/common";
+import { CustomDatePipe } from "../../../core/basic-datatypes/date/custom-date.pipe";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
 import { ExportDataDirective } from "../../../core/export/export-data-directive/export-data.directive";
@@ -42,7 +42,7 @@ import { getDefaultNoteDetailsConfig } from "../add-default-note-views";
   styleUrls: ["./note-details.component.scss"],
   imports: [
     MatDialogModule,
-    DatePipe,
+    CustomDatePipe,
     FontAwesomeModule,
     ExportDataDirective,
     Angulartics2Module,

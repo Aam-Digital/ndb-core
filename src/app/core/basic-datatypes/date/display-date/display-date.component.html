@@ -1,5 +1,5 @@
 @if (!(displayAsAnonymized || isPartiallyAnonymized)) {
-  {{ value | date: config }}
+  {{ value | customDate: config || "shortDate" }}
 } @else {
   {{ value | date: "yyyy" }}
   <fa-icon

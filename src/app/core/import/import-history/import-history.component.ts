@@ -13,7 +13,7 @@ import { ConfirmationDialogService } from "../../common-components/confirmation-
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../entity/model/entity-update";
 import { MatExpansionModule } from "@angular/material/expansion";
-import { DatePipe } from "@angular/common";
+import { CustomDatePipe } from "../../basic-datatypes/date/custom-date.pipe";
 import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { MatButtonModule } from "@angular/material/button";
@@ -27,7 +27,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
   styleUrls: ["./import-history.component.scss"],
   imports: [
     MatExpansionModule,
-    DatePipe,
+    CustomDatePipe,
     EntityTypeLabelPipe,
     EntityBlockComponent,
     MatButtonModule,

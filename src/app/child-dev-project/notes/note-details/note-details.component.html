@@ -4,7 +4,7 @@
   </div>
 } @else {
   <app-view-title>
-    {{ tmpEntity.date | date }}: {{ tmpEntity.subject }}
+    {{ tmpEntity.date | customDate: "shortDate" }}: {{ tmpEntity.subject }}
   </app-view-title>
 
   <div class="flex-column gap-regular">
@@ -44,7 +44,7 @@
           'event_' +
           entity.toString()?.replace(' ', '-') +
           '_' +
-          (entity.date | date: 'yyyy-MM-dd')
+          (entity.date | customDate: 'shortDate')
         "
       >
         <fa-icon

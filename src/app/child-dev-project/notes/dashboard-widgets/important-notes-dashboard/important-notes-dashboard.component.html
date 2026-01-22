@@ -14,7 +14,7 @@
     </tr>
     <ng-container matColumnDef="date">
       <td *matCellDef="let note" class="date-cell row-indicator">
-        {{ note.date | date }}
+        {{ note.date | customDate: "shortDate" }}
       </td>
     </ng-container>
 
