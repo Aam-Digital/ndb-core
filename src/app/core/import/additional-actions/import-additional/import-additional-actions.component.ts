@@ -24,10 +24,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityBlockComponent } from "../../../basic-datatypes/entity/entity-block/entity-block.component";
 import { EntityTypeLabelPipe } from "../../../common-components/entity-type-label/entity-type-label.pipe";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
-import {
-  AdditionalImportAction,
-  AdditionalPrefilledFieldAction,
-} from "../additional-import-action";
+import { AdditionalImportAction } from "../additional-import-action";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { EntityReferenceFieldSelectorComponent } from "#src/app/entity-reference-field-selector/entity-reference-field-selector.component";
 

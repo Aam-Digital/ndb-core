@@ -10,7 +10,6 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 
-class MockEntityAbility {}
 
 describe("ImportAdditionalActionsComponent", () => {
   let component: ImportAdditionalActionsComponent;
@@ -28,7 +27,7 @@ describe("ImportAdditionalActionsComponent", () => {
         { provide: MatDialog, useValue: null },
         ...mockEntityMapperProvider(),
         EntityRegistry,
-        { provide: EntityAbility, useClass: MockEntityAbility },
+        { provide: EntityAbility, useClass: EntityAbility },
       ],
     }).compileComponents();
 
