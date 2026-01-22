@@ -24,7 +24,10 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityBlockComponent } from "../../../basic-datatypes/entity/entity-block/entity-block.component";
 import { EntityTypeLabelPipe } from "../../../common-components/entity-type-label/entity-type-label.pipe";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
-import { AdditionalImportAction, AdditionalPrefilledFieldAction } from "../additional-import-action";
+import {
+  AdditionalImportAction,
+  AdditionalPrefilledFieldAction,
+} from "../additional-import-action";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { ImportAdditionalService } from "../import-additional.service";
 import { EntityReferenceFieldSelectorComponent } from "#src/app/entity-reference-field-selector/entity-reference-field-selector.component";
@@ -50,11 +53,10 @@ import { EntityReferenceFieldSelectorComponent } from "#src/app/entity-reference
     HelpButtonComponent,
     MatExpansionModule,
     MatSelectModule,
-    EntityReferenceFieldSelectorComponent
+    EntityReferenceFieldSelectorComponent,
   ],
   providers: [EntityTypeLabelPipe],
 })
-
 export class ImportAdditionalActionsComponent implements OnChanges {
   private importAdditionalService = inject(ImportAdditionalService);
   private entityRegistry = inject(EntityRegistry);
@@ -68,14 +70,27 @@ export class ImportAdditionalActionsComponent implements OnChanges {
   selectedTargetEntityType: string = "";
 
   unifiedActionForm = new FormGroup({
-    fieldOption: new FormControl({ value: null, disabled: true }, Validators.required),
-    targetId: new FormControl({ value: null, disabled: true }, Validators.required),
+    fieldOption: new FormControl(
+      { value: null, disabled: true },
+      Validators.required,
+    ),
+    targetId: new FormControl(
+      { value: null, disabled: true },
+      Validators.required,
+    ),
   });
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('entityType:', this.entityType, 'entityTypeCtor:', this.entityTypeCtor);
+    console.log(
+      "entityType:",
+      this.entityType,
+      "entityTypeCtor:",
+      this.entityTypeCtor,
+    );
     if (changes.hasOwnProperty("entityType")) {
-      this.entityTypeCtor = this.entityType ? this.entityRegistry.get(this.entityType) : null;
+      this.entityTypeCtor = this.entityType
+        ? this.entityRegistry.get(this.entityType)
+        : null;
       this.unifiedActionForm.reset();
       if (this.entityTypeCtor) {
         this.unifiedActionForm.get("fieldOption").enable();
@@ -91,7 +106,8 @@ export class ImportAdditionalActionsComponent implements OnChanges {
     this.unifiedActionForm.get("fieldOption").setValue(option);
     // Enable/disable targetId field
     if (option) {
-      this.selectedTargetEntityType = option.referencedEntityType?.ENTITY_TYPE || option.targetType || "";
+      this.selectedTargetEntityType =
+        option.referencedEntityType?.ENTITY_TYPE || option.targetType || "";
       this.unifiedActionForm.get("targetId").enable();
     } else {
       this.selectedTargetEntityType = "";

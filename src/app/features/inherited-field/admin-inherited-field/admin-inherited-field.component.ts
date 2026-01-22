@@ -1,10 +1,4 @@
-import {
-  Component,
-  inject,
-  Input,
-  OnChanges,
-  OnInit,
-} from "@angular/core";
+import { Component, inject, Input, OnChanges, OnInit } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
@@ -51,7 +45,10 @@ interface InheritanceOption {
     },
   ],
 })
-export class AdminInheritedFieldComponent extends CustomFormControlDirective<DefaultValueConfigInheritedField> implements OnInit, OnChanges {
+export class AdminInheritedFieldComponent
+  extends CustomFormControlDirective<DefaultValueConfigInheritedField>
+  implements OnInit, OnChanges
+{
   @Input() entityType: EntityConstructor;
   @Input() entitySchemaField: EntitySchemaField;
 

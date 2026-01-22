@@ -1,16 +1,23 @@
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
+import { MatSelect } from "@angular/material/select";
+import { MatOption } from "@angular/material/core";
+import { MatTooltip } from "@angular/material/tooltip";
 
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, inject } from '@angular/core';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
-import { MatTooltip } from '@angular/material/tooltip';
-
-import { EntityConstructor } from '../core/entity/model/entity';
-import { EntitySchemaField } from '../core/entity/schema/entity-schema-field';
-import { EntityRegistry } from '../core/entity/database-entity.decorator';
-import { EntityRelationsService } from '../core/entity/entity-mapper/entity-relations.service';
+import { EntityConstructor } from "../core/entity/model/entity";
+import { EntitySchemaField } from "../core/entity/schema/entity-schema-field";
+import { EntityRegistry } from "../core/entity/database-entity.decorator";
+import { EntityRelationsService } from "../core/entity/entity-mapper/entity-relations.service";
 
 export interface InheritanceOption {
-  type: 'inherit' | 'automated';
+  type: "inherit" | "automated";
   label: string;
   labelParts: { entityName: string; fieldName: string };
   tooltip: string;
@@ -20,10 +27,10 @@ export interface InheritanceOption {
 }
 
 @Component({
-  selector: 'app-entity-reference-field-selector',
-  imports: [MatSelect, MatOption, MatTooltip,],
-  templateUrl: './entity-reference-field-selector.component.html',
-  styleUrl: './entity-reference-field-selector.component.scss',
+  selector: "app-entity-reference-field-selector",
+  imports: [MatSelect, MatOption, MatTooltip],
+  templateUrl: "./entity-reference-field-selector.component.html",
+  styleUrl: "./entity-reference-field-selector.component.scss",
 })
 export class EntityReferenceFieldSelectorComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
@@ -51,11 +58,13 @@ export class EntityReferenceFieldSelectorComponent implements OnChanges {
     inheritanceAttributes.forEach((attr) => {
       const fieldConfig = this.entityType.schema.get(attr);
       if (fieldConfig?.additional) {
-        const referencedEntityType = this.entityRegistry.get(fieldConfig.additional);
+        const referencedEntityType = this.entityRegistry.get(
+          fieldConfig.additional,
+        );
         if (referencedEntityType) {
           const refFieldLabel = this.getFieldLabel(attr, this.entityType);
           const option: InheritanceOption = {
-            type: 'inherit',
+            type: "inherit",
             label: `${refFieldLabel} > ${this.getEntityLabel(referencedEntityType)}`,
             labelParts: {
               entityName: this.getEntityLabel(referencedEntityType),
@@ -76,7 +85,7 @@ export class EntityReferenceFieldSelectorComponent implements OnChanges {
         const refFieldLabel = this.getFieldLabel(refField, option.entityType);
         const refEntityType = this.entityRegistry.get(option.entityType);
         const automatedOption: InheritanceOption = {
-          type: 'automated',
+          type: "automated",
           label: `${option.label} > ${refFieldLabel}`,
           labelParts: {
             entityName: option.label,
@@ -113,7 +122,7 @@ export class EntityReferenceFieldSelectorComponent implements OnChanges {
   private getInheritanceAttributes(): string[] {
     if (!this.entityType?.schema) return [];
     const inheritanceAttrs = Array.from(this.entityType.schema.entries())
-      .filter(([, fieldConfig]) => fieldConfig.dataType === 'entity')
+      .filter(([, fieldConfig]) => fieldConfig.dataType === "entity")
       .map(([fieldId]) => fieldId);
     return inheritanceAttrs;
   }
@@ -123,11 +132,15 @@ export class EntityReferenceFieldSelectorComponent implements OnChanges {
     entityType: string;
     relatedReferenceFields: string[];
   }[] {
-    const relatedEntities = this.entityRelationsService.getEntityTypesReferencingType(
-      this.entityType.ENTITY_TYPE,
-    );
+    const relatedEntities =
+      this.entityRelationsService.getEntityTypesReferencingType(
+        this.entityType.ENTITY_TYPE,
+      );
     return relatedEntities
-      .filter((refType) => !refType.entityType.isInternalEntity && !!refType.entityType.label)
+      .filter(
+        (refType) =>
+          !refType.entityType.isInternalEntity && !!refType.entityType.label,
+      )
       .map((refType) => ({
         label: refType.entityType.label,
         entityType: refType.entityType.ENTITY_TYPE,
@@ -135,8 +148,11 @@ export class EntityReferenceFieldSelectorComponent implements OnChanges {
       }));
   }
 
-  private getFieldLabel(fieldId: string, entityType: EntityConstructor | string): string {
-    if (typeof entityType === 'string') {
+  private getFieldLabel(
+    fieldId: string,
+    entityType: EntityConstructor | string,
+  ): string {
+    if (typeof entityType === "string") {
       entityType = this.entityRegistry.get(entityType);
     }
     if (!fieldId || !entityType?.schema) return fieldId;

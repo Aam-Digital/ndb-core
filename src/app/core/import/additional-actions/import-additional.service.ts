@@ -326,7 +326,9 @@ export class ImportAdditionalService {
       const prefillAction = importAction as AdditionalPrefilledFieldAction;
       const sourceType = this.entityRegistry.get(prefillAction.sourceType);
       const targetType = this.entityRegistry.get(prefillAction.targetType);
-      const fieldLabel = sourceType.schema.get(prefillAction.fieldId)?.label || prefillAction.fieldId;
+      const fieldLabel =
+        sourceType.schema.get(prefillAction.fieldId)?.label ||
+        prefillAction.fieldId;
       return $localize`Pre-fill "${fieldLabel}" (${targetType.toString()})`;
     }
 
