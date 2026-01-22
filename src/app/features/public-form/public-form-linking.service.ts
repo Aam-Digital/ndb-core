@@ -1,21 +1,17 @@
 import { inject, Injectable } from "@angular/core";
 import { EntityForm } from "../../core/common-components/entity-form/entity-form";
-import { Entity } from "../../core/entity/model/entity";
-import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { Entity, EntityConstructor } from "../../core/entity/model/entity";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { DefaultValueConfig } from "../../core/default-values/default-value-config";
 import { FieldGroup } from "../../core/entity-details/form/field-group";
 import { Params } from "@angular/router";
 
 export interface PublicFormEntry {
-  /**
-   * Linked entity field configuration for the current entry.
-   * Uses `additional` to denote the target entity type.
-   */
   config: {
-    linkedEntities?: FormFieldConfig[];
+    linkedEntities?: string[];
     columns?: FieldGroup[];
   };
+  entityType: EntityConstructor;
   entity: Entity | null;
   form: EntityForm<Entity> | null;
 }
@@ -48,34 +44,33 @@ export class PublicFormLinkingService {
       return;
     }
 
-    const linkedEntities = this.getLinkedEntitiesFromEntries(entries);
+    const linkedFieldIds = this.getAllLinkedFieldIds(entries);
 
-    if (linkedEntities.length === 0) {
+    if (linkedFieldIds.size === 0) {
       return;
     }
 
-    // Only process configured linked entities for security
-    const configuredParams = new Set(
-      linkedEntities.map(({ linkedEntity }) => linkedEntity.id),
-    );
     const ignoredParams: string[] = [];
 
     // Process configured parameters
-    linkedEntities.forEach(({ columns, linkedEntity }) => {
-      const paramValue = urlParams[linkedEntity.id];
-      if (linkedEntity.id && paramValue && columns) {
-        applyPrefillFn(
-          columns,
-          linkedEntity.id,
-          { mode: "static", config: { value: paramValue } },
-          linkedEntity.hideFromForm ?? true,
-        );
-      }
+    entries.forEach((entry) => {
+      const linkedEntities = entry.config.linkedEntities || [];
+      linkedEntities.forEach((fieldId) => {
+        const paramValue = urlParams[fieldId];
+        if (fieldId && paramValue && entry.config.columns) {
+          applyPrefillFn(
+            entry.config.columns,
+            fieldId,
+            { mode: "static", config: { value: paramValue } },
+            true,
+          );
+        }
+      });
     });
 
     // Track ignored parameters for security warning
     Object.keys(urlParams).forEach((paramKey) => {
-      if (!configuredParams.has(paramKey)) {
+      if (!linkedFieldIds.has(paramKey)) {
         ignoredParams.push(paramKey);
       }
     });
@@ -90,26 +85,24 @@ export class PublicFormLinkingService {
   }
 
   /**
-   * Extracts all linked entities from form entries.
+   * Extracts all linked entity field IDs from form entries.
    */
-  private getLinkedEntitiesFromEntries(entries: PublicFormEntry[]): {
-    columns: FieldGroup[];
-    linkedEntity: FormFieldConfig;
-  }[] {
-    return entries.flatMap((entry) =>
-      (entry.config.linkedEntities || [])
-        .filter((entity) => entity?.id)
-        .map((linkedEntity) => ({
-          columns: entry.config.columns || [],
-          linkedEntity,
-        })),
-    );
+  private getAllLinkedFieldIds(entries: PublicFormEntry[]): Set<string> {
+    const fieldIds = new Set<string>();
+    entries.forEach((entry) => {
+      (entry.config.linkedEntities || []).forEach((fieldId) => {
+        if (fieldId) {
+          fieldIds.add(fieldId);
+        }
+      });
+    });
+    return fieldIds;
   }
 
   /**
    * Prefills linked entity fields across multiple form entries.
    *
-   * - Matches by `linkedEntity.additional` (target entity type).
+   * - Derives target entity type from field schema.
    * - Sets the field to the target entity ID only if it is empty.
    * - Updates both the entity model and the reactive form control.
    */
@@ -132,22 +125,26 @@ export class PublicFormLinkingService {
     entries.forEach((entry) => {
       if (!entry.entity || !entry.form) return;
       const linkedEntities = entry.config.linkedEntities || [];
-      linkedEntities.forEach((linkedEntity) => {
-        if (!linkedEntity.id || !linkedEntity.additional) return;
+      linkedEntities.forEach((fieldId) => {
+        if (!fieldId) return;
+
+        // Get the target entity type from the field schema
+        const fieldSchema = entry.entityType.schema.get(fieldId);
+        if (!fieldSchema?.additional) return;
 
         const targetEntity = entitiesByType.get(
-          linkedEntity.additional.toLowerCase(),
+          fieldSchema.additional.toLowerCase(),
         );
         if (!targetEntity) return;
 
         const targetId = targetEntity.getId();
-        const control = entry.form.formGroup.get(linkedEntity.id);
+        const control = entry.form.formGroup.get(fieldId);
         if (control && !control.value) {
           control.setValue(targetId);
           control.markAsDirty();
         }
-        if (!entry.entity[linkedEntity.id]) {
-          entry.entity[linkedEntity.id] = targetId;
+        if (!entry.entity[fieldId]) {
+          entry.entity[fieldId] = targetId;
         }
       });
     });

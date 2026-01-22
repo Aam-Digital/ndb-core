@@ -267,7 +267,7 @@ describe("PublicFormComponent", () => {
   }));
 
   it("should add hidden prefilled field for related entity when query param exists", fakeAsync(() => {
-    testFormConfig.linkedEntities = [{ id: "childId", hideFromForm: true }];
+    testFormConfig.linkedEntities = ["childId"];
 
     initComponent();
     tick();
@@ -285,10 +285,10 @@ describe("PublicFormComponent", () => {
   it("should process configured URL parameters and create prefilled fields for multi-entity magic links", fakeAsync(() => {
     // Configure which entities are allowed to be linked (security feature)
     testFormConfig.linkedEntities = [
-      { id: "childId" },
-      { id: "schoolId" },
-      { id: "eventId" },
-      { id: "teacherId" },
+      "childId",
+      "schoolId",
+      "eventId",
+      "teacherId",
     ];
 
     // Create a mock ActivatedRoute with multiple URL parameters
@@ -340,7 +340,7 @@ describe("PublicFormComponent", () => {
 
   it("should ignore unconfigured URL parameters for security", fakeAsync(() => {
     // Configure only specific entities
-    testFormConfig.linkedEntities = [{ id: "childId" }, { id: "schoolId" }];
+    testFormConfig.linkedEntities = ["childId", "schoolId"];
 
     const securityTestRoute = {
       snapshot: {
@@ -407,6 +407,31 @@ describe("PublicFormComponent", () => {
       component.entityFormEntries[0].form.formGroup.get("other"),
     ).toHaveValue("prefilled default");
   }));
+
+  it("should migrate linkedEntities from old FormFieldConfig[] format to string[] format", () => {
+    const { migratePublicFormConfig } = require("./public-form.component");
+
+    const oldFormatConfig = new PublicFormConfig();
+    oldFormatConfig.linkedEntities = [
+      { id: "participant", hideFromForm: true, additional: "Participant" },
+      { id: "event", hideFromFrom: true, additional: "Event" },
+    ] as any;
+
+    const migrated = migratePublicFormConfig(oldFormatConfig);
+
+    expect(migrated.linkedEntities).toEqual(["participant", "event"]);
+  });
+
+  it("should keep linkedEntities if already in string[] format", () => {
+    const { migratePublicFormConfig } = require("./public-form.component");
+
+    const newFormatConfig = new PublicFormConfig();
+    newFormatConfig.linkedEntities = ["participant", "event"];
+
+    const migrated = migratePublicFormConfig(newFormatConfig);
+
+    expect(migrated.linkedEntities).toEqual(["participant", "event"]);
+  });
 
   async function initComponent(config: PublicFormConfig = testFormConfig) {
     config.route = config.route ?? FORM_ID;

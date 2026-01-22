@@ -276,15 +276,39 @@ export function migratePublicFormConfig(
     });
   };
 
+  const migrateLinkedEntities = (linkedEntities: any): string[] | undefined => {
+    if (!linkedEntities) return undefined;
+    if (Array.isArray(linkedEntities) && linkedEntities.length === 0) {
+      return undefined;
+    }
+    if (
+      Array.isArray(linkedEntities) &&
+      linkedEntities.every((item) => typeof item === "string")
+    ) {
+      return linkedEntities;
+    }
+    // migrate old format (FormFieldConfig[]) to new format (string[])
+    if (
+      Array.isArray(linkedEntities) &&
+      linkedEntities.some((item) => typeof item === "object" && item?.id)
+    ) {
+      return linkedEntities.map((item) => item.id).filter((id) => id);
+    }
+    return undefined;
+  };
+
   formConfig.columns = migrateColumns(
     formConfig.columns as Array<FieldGroup | string[]>,
   ) as FieldGroup[];
+  formConfig.linkedEntities = migrateLinkedEntities(formConfig.linkedEntities);
+
   if (Array.isArray(formConfig.forms)) {
     formConfig.forms = formConfig.forms.map((form) => ({
       ...form,
       columns: migrateColumns(
         form.columns as Array<FieldGroup | string[]>,
       ) as FieldGroup[],
+      linkedEntities: migrateLinkedEntities(form.linkedEntities),
     }));
   }
   return formConfig;

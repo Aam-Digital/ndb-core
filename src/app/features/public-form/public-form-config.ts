@@ -15,7 +15,7 @@ export interface PublicFormEntityFormConfig {
   columns: FieldGroup[];
   prefilled?: { [key: string]: DefaultValueConfig };
   prefilledFields?: FormFieldConfig[];
-  linkedEntities?: FormFieldConfig[];
+  linkedEntities?: string[];
 }
 
 /**
@@ -92,7 +92,7 @@ export class PublicFormConfig extends Entity {
     editComponent: "EditPublicFormRelatedEntitiesComponent",
     isArray: true,
   })
-  linkedEntities: FormFieldConfig[];
+  linkedEntities: string[];
 
   @DatabaseField({
     label: $localize`:PublicFormConfig:Multiple Forms`,
