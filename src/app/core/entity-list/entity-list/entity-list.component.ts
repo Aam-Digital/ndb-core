@@ -62,7 +62,6 @@ import { PublicFormsService } from "#src/app/features/public-form/public-forms.s
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
 import { BulkOperationStateService } from "../../entity/entity-actions/bulk-operation-state.service";
 import { PerformanceAnalysisLogging } from "#src/app/utils/performance-analysis-logging";
-import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -213,7 +212,6 @@ export class EntityListComponent<T extends Entity>
   }
 
   async ngOnInit() {
-    await this.createIndex();
     await this.loadPublicFormConfig();
   }
 
@@ -268,40 +266,17 @@ export class EntityListComponent<T extends Entity>
    * @protected
    */
   @PerformanceAnalysisLogging
-  protected getEntities(): Promise<T[]> {
+  protected async getEntities(): Promise<T[]> {
     if (this.loaderMethod && this.entitySpecialLoader) {
       return this.entitySpecialLoader.loadData(this.loaderMethod);
     }
 
-    const activeRecords = this.getFromIndex();
+    const activeRecords = await this.entityMapperService.loadType(
+      this.entityConstructor,
+      "active",
+    );
     if (this.showInactive) this.loadInactiveEntities();
     return activeRecords;
-  }
-
-  private dbIndexing = inject(DatabaseIndexingService);
-  private async createIndex(): Promise<any> {
-    const designDoc = {
-      _id: "_design/all_entities_index",
-      views: {
-        active: {
-          map: `(doc) => {
-              emit([doc._id.split(":")[0], !doc.inactive]);
-            }`,
-        },
-      },
-    };
-
-    await this.dbIndexing.createIndex(designDoc);
-  }
-  private async getFromIndex(activeRecords = true): Promise<T[]> {
-    return this.dbIndexing.queryIndexDocs(
-      this.entityConstructor,
-      "all_entities_index/active",
-      {
-        startkey: [this.entityType, activeRecords],
-        endkey: [this.entityType, activeRecords, {}],
-      },
-    ) as any;
   }
 
   private inactiveLoaded = false;
@@ -317,7 +292,10 @@ export class EntityListComponent<T extends Entity>
   @PerformanceAnalysisLogging
   private async loadInactiveEntities() {
     this.loadingInactive.set(true);
-    const inactiveEntities = await this.getFromIndex(false);
+    const inactiveEntities = await this.entityMapperService.loadType(
+      this.entityConstructor,
+      "inactive",
+    );
     this.allEntities = [...this.allEntities, ...inactiveEntities];
     this.inactiveLoaded = true;
     this.loadingInactive.set(false);
