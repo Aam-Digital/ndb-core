@@ -26,7 +26,6 @@ import { EntityTypeLabelPipe } from "../../../common-components/entity-type-labe
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { AdditionalImportAction, AdditionalPrefilledFieldAction } from "../additional-import-action";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
-import { ImportAdditionalService } from "../import-additional.service";
 import { EntityReferenceFieldSelectorComponent } from "#src/app/entity-reference-field-selector/entity-reference-field-selector.component";
 
 /**
@@ -56,8 +55,7 @@ import { EntityReferenceFieldSelectorComponent } from "#src/app/entity-reference
 })
 
 export class ImportAdditionalActionsComponent implements OnChanges {
-  private importAdditionalService = inject(ImportAdditionalService);
-  private entityRegistry = inject(EntityRegistry);
+  private readonly entityRegistry = inject(EntityRegistry);
 
   @Input() entityType: string;
   @Input() importActions: AdditionalImportAction[] = [];

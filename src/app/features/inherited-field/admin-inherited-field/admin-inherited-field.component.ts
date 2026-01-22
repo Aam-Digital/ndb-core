@@ -51,7 +51,7 @@ interface InheritanceOption {
     },
   ],
 })
-export class AdminInheritedFieldComponent extends CustomFormControlDirective<DefaultValueConfigInheritedField> implements OnInit, OnChanges {
+export class AdminInheritedFieldComponent extends CustomFormControlDirective<DefaultValueConfigInheritedField> implements OnInit {
   @Input() entityType: EntityConstructor;
   @Input() entitySchemaField: EntitySchemaField;
 
@@ -66,9 +66,6 @@ export class AdminInheritedFieldComponent extends CustomFormControlDirective<Def
     }
   }
 
-  ngOnChanges(): void {
-    // Required for OnChanges interface, but logic is now handled by child selector component
-  }
 
   onOptionSelected(option: any) {
     // Update value and open dialog as before

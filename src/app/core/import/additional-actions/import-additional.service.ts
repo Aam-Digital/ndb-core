@@ -323,7 +323,7 @@ export class ImportAdditionalService {
   ): string {
     // Handle prefill mode separately
     if (importAction.mode === "prefill") {
-      const prefillAction = importAction as AdditionalPrefilledFieldAction;
+      const prefillAction = importAction;
       const sourceType = this.entityRegistry.get(prefillAction.sourceType);
       const targetType = this.entityRegistry.get(prefillAction.targetType);
       const fieldLabel = sourceType.schema.get(prefillAction.fieldId)?.label || prefillAction.fieldId;
@@ -351,7 +351,7 @@ export class ImportAdditionalService {
     }
 
     label += this.getAdditionalContextDetailsForActionLabel(
-      importAction as AdditonalDirectLinkAction | AdditionalIndirectLinkAction,
+      importAction,
       targetTypes,
       relationshipType,
     );

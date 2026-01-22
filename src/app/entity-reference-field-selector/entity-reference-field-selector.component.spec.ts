@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EntityReferenceFieldSelectorComponent } from './entity-reference-field-selector.component';
+import { MockedTestingModule } from '../utils/mocked-testing.module';
 
 describe('EntityReferenceFieldSelectorComponent', () => {
   let component: EntityReferenceFieldSelectorComponent;
@@ -8,7 +9,7 @@ describe('EntityReferenceFieldSelectorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EntityReferenceFieldSelectorComponent]
+      imports: [EntityReferenceFieldSelectorComponent, MockedTestingModule.withState()],
     })
     .compileComponents();
 

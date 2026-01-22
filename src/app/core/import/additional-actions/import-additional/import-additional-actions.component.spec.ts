@@ -8,6 +8,10 @@ import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
+import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
+
+class MockEntityAbility {}
+
 describe("ImportAdditionalActionsComponent", () => {
   let component: ImportAdditionalActionsComponent;
   let fixture: ComponentFixture<ImportAdditionalActionsComponent>;
@@ -24,6 +28,7 @@ describe("ImportAdditionalActionsComponent", () => {
         { provide: MatDialog, useValue: null },
         ...mockEntityMapperProvider(),
         EntityRegistry,
+        { provide: EntityAbility, useClass: MockEntityAbility },
       ],
     }).compileComponents();
 
