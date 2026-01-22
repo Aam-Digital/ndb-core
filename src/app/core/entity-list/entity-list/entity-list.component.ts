@@ -6,6 +6,7 @@ import {
   OnChanges,
   OnInit,
   Output,
+  signal,
   SimpleChanges,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
@@ -39,6 +40,7 @@ import { ExportDataDirective } from "../../export/export-data-directive/export-d
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { DuplicateRecordService } from "../duplicate-records/duplicate-records.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { Sort } from "@angular/material/sort";
 import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
 import { RouteTarget } from "../../../route-target";
@@ -59,6 +61,8 @@ import { PublicFormConfig } from "#src/app/features/public-form/public-form-conf
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
 import { BulkOperationStateService } from "../../entity/entity-actions/bulk-operation-state.service";
+import { PerformanceAnalysisLogging } from "#src/app/utils/performance-analysis-logging";
+import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -94,6 +98,7 @@ import { BulkOperationStateService } from "../../entity/entity-actions/bulk-oper
     DisableEntityOperationDirective,
     RouterLink,
     MatTooltipModule,
+    MatProgressBarModule,
     EntityCreateButtonComponent,
     AsyncPipe,
     AblePurePipe,
@@ -208,6 +213,7 @@ export class EntityListComponent<T extends Entity>
   }
 
   async ngOnInit() {
+    await this.createIndex();
     await this.loadPublicFormConfig();
   }
 
@@ -261,12 +267,60 @@ export class EntityListComponent<T extends Entity>
    * Template method that can be overwritten to change the loading logic.
    * @protected
    */
+  @PerformanceAnalysisLogging
   protected getEntities(): Promise<T[]> {
     if (this.loaderMethod && this.entitySpecialLoader) {
       return this.entitySpecialLoader.loadData(this.loaderMethod);
     }
 
-    return this.entityMapperService.loadType(this.entityConstructor);
+    const activeRecords = this.getFromIndex();
+    if (this.showInactive) this.loadInactiveEntities();
+    return activeRecords;
+  }
+
+  private dbIndexing = inject(DatabaseIndexingService);
+  private async createIndex(): Promise<any> {
+    const designDoc = {
+      _id: "_design/all_entities_index",
+      views: {
+        active: {
+          map: `(doc) => {
+              emit([doc._id.split(":")[0], !doc.inactive]);
+            }`,
+        },
+      },
+    };
+
+    await this.dbIndexing.createIndex(designDoc);
+  }
+  private async getFromIndex(activeRecords = true): Promise<T[]> {
+    return this.dbIndexing.queryIndexDocs(
+      this.entityConstructor,
+      "all_entities_index/active",
+      {
+        startkey: [this.entityType, activeRecords],
+        endkey: [this.entityType, activeRecords, {}],
+      },
+    ) as any;
+  }
+
+  private inactiveLoaded = false;
+  loadingInactive = signal(false);
+
+  async onShowInactiveChange(showInactive: boolean) {
+    this.showInactive = showInactive;
+    if (showInactive && !this.inactiveLoaded) {
+      await this.loadInactiveEntities();
+    }
+  }
+
+  @PerformanceAnalysisLogging
+  private async loadInactiveEntities() {
+    this.loadingInactive.set(true);
+    const inactiveEntities = await this.getFromIndex(false);
+    this.allEntities = [...this.allEntities, ...inactiveEntities];
+    this.inactiveLoaded = true;
+    this.loadingInactive.set(false);
   }
 
   private updateSubscription: Subscription;
