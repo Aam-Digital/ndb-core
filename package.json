@@ -33,7 +33,7 @@
     "@angular/common": "^21.1.1",
     "@angular/compiler": "^21.1.1",
     "@angular/core": "^21.1.1",
-    "@angular/fire": "^21.0.0-rc.0-canary.ac3dd7c",
+    "@angular/fire": "^21.0.0-rc.0",
     "@angular/forms": "^21.1.1",
     "@angular/localize": "^21.1.1",
     "@angular/material": "^21.1.1",
