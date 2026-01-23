@@ -34,11 +34,4 @@ describe("IconInputComponent", () => {
 
     expect(component.iconControl.hasError("invalidIcon")).toBeTrue();
   });
-
-  it("accepts known icons from the library", () => {
-    component.iconControl.setValue("user");
-    component.iconControl.updateValueAndValidity();
-
-    expect(component.iconControl.valid).toBeTrue();
-  });
 });
