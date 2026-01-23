@@ -11,6 +11,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import {
   FormBuilder,
+  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -90,6 +91,9 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   hasImageFields: boolean = false;
   showTooltipDetails: boolean = false;
   isConditionalColor: boolean = false;
+  get iconControl(): FormControl<string | null> {
+    return this.basicSettingsForm.get("icon") as FormControl<string | null>;
+  }
 
   ngOnInit(): void {
     this.init();

@@ -9,6 +9,9 @@
     ></fa-icon>
   </mat-label>
   <input matInput [formControl]="iconControl" placeholder="Enter icon name" />
+  @if (iconControl?.hasError("invalidIcon")) {
+    <mat-error i18n>Unknown icon name. Use a valid Font Awesome icon.</mat-error>
+  }
   <mat-hint align="start" i18n>
     Find available icon names at
     <a
