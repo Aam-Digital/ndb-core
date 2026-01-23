@@ -37,7 +37,7 @@ jobs:
       - build
     steps:
       - name: Deploy updated image
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@823bd89e131d8d508129f9443cad5855e9ba96f0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
