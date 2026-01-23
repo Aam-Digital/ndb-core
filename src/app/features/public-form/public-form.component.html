@@ -47,7 +47,7 @@
       </div>
     </mat-card-header>
 
-    @if (formConfig && entityFormEntries.length) {
+    @if (formConfig) {
       <mat-card-content>
         @for (entry of entityFormEntries; track $index) {
           <app-entity-form
