@@ -11,7 +11,6 @@ import { EntityFormService } from "../../core/common-components/entity-form/enti
 import { EntityFormComponent } from "../../core/common-components/entity-form/entity-form/entity-form.component";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfigService } from "../../core/config/config.service";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatCardModule } from "@angular/material/card";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FieldGroup } from "../../core/entity-details/form/field-group";
@@ -52,8 +51,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   private entityMapper = inject(EntityMapperService);
   private entityFormService = inject(EntityFormService);
   private configService = inject(ConfigService);
-  private snackbar = inject(MatSnackBar);
-  private publicFormLinkingService = inject(PublicFormLinkingService);
+  private readonly publicFormLinkingService = inject(PublicFormLinkingService);
 
   // Track if the last submit attempt failed due to validation
   validationError = false;
