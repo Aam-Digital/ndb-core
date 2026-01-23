@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Stop container and remove folder
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@823bd89e131d8d508129f9443cad5855e9ba96f0 # v1.2.4
         continue-on-error: true
         with:
           host: ${{ secrets.SSH_HOST }}
