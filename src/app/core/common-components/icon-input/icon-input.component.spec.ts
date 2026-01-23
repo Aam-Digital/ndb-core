@@ -1,22 +1,26 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { IconComponent } from "./icon-input.component";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  FaIconLibrary,
+  FontAwesomeModule,
+} from "@fortawesome/angular-fontawesome";
+import { faUser, faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 
 describe("IconInputComponent", () => {
   let component: IconComponent;
   let fixture: ComponentFixture<IconComponent>;
+  let iconLibrary: FaIconLibrary;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [IconComponent, FontAwesomeTestingModule],
+      imports: [IconComponent, FontAwesomeModule],
     }).compileComponents();
+
+    iconLibrary = TestBed.inject(FaIconLibrary);
+    iconLibrary.addIcons(faUser, faQuestionCircle);
 
     fixture = TestBed.createComponent(IconComponent);
     component = fixture.componentInstance;
-    const iconLibrary = TestBed.inject(FaIconLibrary);
-    iconLibrary.addIcons(faUser);
     fixture.detectChanges();
   });
 
