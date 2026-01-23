@@ -53,9 +53,9 @@ export class PublicFormLinkingService {
     const ignoredParams: string[] = [];
 
     // Process configured parameters
-    entries.forEach((entry) => {
+    for (const entry of entries) {
       const linkedEntities = entry.config.linkedEntities || [];
-      linkedEntities.forEach((fieldId) => {
+      for (const fieldId of linkedEntities) {
         const paramValue = urlParams[fieldId];
         if (fieldId && paramValue && entry.config.columns) {
           applyPrefillFn(
@@ -65,8 +65,8 @@ export class PublicFormLinkingService {
             true,
           );
         }
-      });
-    });
+      }
+    }
 
     // Track ignored parameters for security warning
     Object.keys(urlParams).forEach((paramKey) => {
@@ -89,13 +89,13 @@ export class PublicFormLinkingService {
    */
   private getAllLinkedFieldIds(entries: PublicFormEntry[]): Set<string> {
     const fieldIds = new Set<string>();
-    entries.forEach((entry) => {
-      (entry.config.linkedEntities || []).forEach((fieldId) => {
+    for (const entry of entries) {
+      for (const fieldId of entry.config.linkedEntities || []) {
         if (fieldId) {
           fieldIds.add(fieldId);
         }
-      });
-    });
+      }
+    }
     return fieldIds;
   }
 
@@ -114,28 +114,28 @@ export class PublicFormLinkingService {
       return;
 
     const entitiesByType = new Map<string, Entity>();
-    entries.forEach((entry) => {
-      if (!entry.entity) return;
+    for (const entry of entries) {
+      if (!entry.entity) continue;
       entitiesByType.set(
         entry.entity.getConstructor().ENTITY_TYPE.toLowerCase(),
         entry.entity,
       );
-    });
+    }
 
-    entries.forEach((entry) => {
-      if (!entry.entity || !entry.form) return;
+    for (const entry of entries) {
+      if (!entry.entity || !entry.form) continue;
       const linkedEntities = entry.config.linkedEntities || [];
-      linkedEntities.forEach((fieldId) => {
-        if (!fieldId) return;
+      for (const fieldId of linkedEntities) {
+        if (!fieldId) continue;
 
         // Get the target entity type from the field schema
         const fieldSchema = entry.entityType.schema.get(fieldId);
-        if (!fieldSchema?.additional) return;
+        if (!fieldSchema?.additional) continue;
 
         const targetEntity = entitiesByType.get(
           fieldSchema.additional.toLowerCase(),
         );
-        if (!targetEntity) return;
+        if (!targetEntity) continue;
 
         const targetId = targetEntity.getId();
         const control = entry.form.formGroup.get(fieldId);
@@ -146,7 +146,7 @@ export class PublicFormLinkingService {
         if (!entry.entity[fieldId]) {
           entry.entity[fieldId] = targetId;
         }
-      });
-    });
+      }
+    }
   }
 }

@@ -183,15 +183,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
           defaultValue as DefaultValueConfig,
         );
       }
-    } else if (Array.isArray(formConfig.prefilledFields)) {
-      formConfig.prefilledFields.forEach((item) => {
-        this.applyPrefill(
-          fieldGroups,
-          item.id,
-          item.defaultValue ?? null,
-          item.hideFromForm ?? true,
-        );
-      });
     }
   }
 
@@ -257,7 +248,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
         entity: this.formConfig.entity,
         columns: this.formConfig.columns,
         prefilled: this.formConfig.prefilled,
-        prefilledFields: this.formConfig.prefilledFields,
         linkedEntities: this.formConfig.linkedEntities,
       },
     ];

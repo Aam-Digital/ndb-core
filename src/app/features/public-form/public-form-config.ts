@@ -3,7 +3,6 @@ import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../core/entity/database-field.decorator";
 import { LongTextDatatype } from "app/core/basic-datatypes/string/long-text.datatype";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
-import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { DefaultValueConfig } from "#src/app/core/default-values/default-value-config";
 
 /**
@@ -28,9 +27,6 @@ export interface PublicFormEntityFormConfig {
    * Key is the field ID, value is the default value configuration.
    */
   prefilled?: { [key: string]: DefaultValueConfig };
-
-  /** @deprecated old format - use `prefilled` instead */
-  prefilledFields?: FormFieldConfig[];
 
   /**
    * Field IDs that link to other entities in the same form submission.
@@ -107,10 +103,6 @@ export class PublicFormConfig extends Entity {
     editComponent: "EditPrefilledValuesComponent",
   })
   prefilled: { [key: string]: DefaultValueConfig };
-
-  /** @deprecated old format - use `prefilled` in `forms` array instead */
-  @DatabaseField()
-  prefilledFields: FormFieldConfig[];
 
   /** @deprecated Use `forms` array instead for multi-form support */
   @DatabaseField({
