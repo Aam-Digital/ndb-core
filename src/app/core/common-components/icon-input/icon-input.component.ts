@@ -42,7 +42,7 @@ import { resolveIconDefinition } from "../fa-dynamic-icon/fa-icon-utils";
   styleUrl: "./icon-input.component.scss",
 })
 export class IconComponent implements OnInit, OnChanges {
-  private iconLibrary = inject(FaIconLibrary);
+  private readonly iconLibrary = inject(FaIconLibrary);
 
   @Input() icon: string;
   @Input() control?: FormControl<string | null>;
