@@ -414,7 +414,7 @@ describe("PublicFormComponent", () => {
     const oldFormatConfig = new PublicFormConfig();
     oldFormatConfig.linkedEntities = [
       { id: "participant", hideFromForm: true, additional: "Participant" },
-      { id: "event", hideFromFrom: true, additional: "Event" },
+      { id: "event", hideFromForm: true, additional: "Event" },
     ] as any;
 
     const migrated = migratePublicFormConfig(oldFormatConfig);
