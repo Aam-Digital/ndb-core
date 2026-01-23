@@ -35,7 +35,7 @@ export interface PublicFormEntityFormConfig {
   /**
    * Field IDs that link to other entities in the same form submission.
    * These fields will be automatically populated with IDs of entities created
-   * by other forms in the same submission and hidden from the user.
+   * by other forms in the same submission or passed as URL parameters.
    */
   linkedEntities?: string[];
 }
