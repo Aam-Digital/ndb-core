@@ -317,7 +317,7 @@ describe("ConfigService", () => {
           label: "ChildX",
           toBlockDetailsAttributes: {
             title: "name",
-            photo: "photo",
+            image: "photo",
             fields: ["phone", "schoolId", "schoolClass"],
           },
         },
