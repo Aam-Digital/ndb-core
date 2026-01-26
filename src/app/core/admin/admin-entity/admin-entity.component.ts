@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   TemplateRef,
+  ViewChild,
   inject,
 } from "@angular/core";
 import { MatButton } from "@angular/material/button";
@@ -70,6 +71,9 @@ export class AdminEntityComponent implements OnInit {
   configEntitySettings: EntityConfig;
 
   protected mode: "details" | "list" | "general" | "publicForm" = "details";
+
+  @ViewChild(AdminEntityGeneralSettingsComponent)
+  generalSettingsComponent?: AdminEntityGeneralSettingsComponent;
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
 
@@ -166,6 +170,13 @@ export class AdminEntityComponent implements OnInit {
   }
 
   async save() {
+    if (
+      this.generalSettingsComponent &&
+      !this.generalSettingsComponent.isFormValid()
+    ) {
+      return;
+    }
+
     // Save the main entity configuration along with all related entities in a single transaction
     const result = await this.adminEntityService.setAndSaveEntityConfig(
       this.entityConstructor,
