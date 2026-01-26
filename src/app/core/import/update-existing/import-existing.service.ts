@@ -192,7 +192,10 @@ export class ImportExistingService {
     return existingValue === importValue ? "match" : "no-match";
   }
 
-  getImportHistoryForUpdatedEntities(savedEntities: Entity[]) {
+  getImportHistoryForUpdatedEntities(
+    savedEntities: Entity[],
+    settings: ImportSettings,
+  ) {
     return savedEntities
       .filter((e) => e["_importUndo"])
       .map((e) => ({ id: e.getId(), importDataChanges: e["_importUndo"] }));
