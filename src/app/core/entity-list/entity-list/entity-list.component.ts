@@ -141,6 +141,8 @@ export class EntityListComponent<T extends Entity>
 
   /** initial / default state whether to include archived records in the list */
   @Input() showInactive: boolean;
+  /** allow parent to manage inactive loading (e.g. when combining multiple entity types) */
+  @Input() disableInactiveAutoLoad: boolean = false;
 
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
@@ -274,7 +276,9 @@ export class EntityListComponent<T extends Entity>
       this.entityConstructor,
       "active",
     );
-    if (this.showInactive) await this.loadInactiveEntities();
+    if (this.showInactive && !this.disableInactiveAutoLoad) {
+      await this.loadInactiveEntities();
+    }
     return activeRecords;
   }
 
@@ -284,6 +288,9 @@ export class EntityListComponent<T extends Entity>
   async onShowInactiveChange(showInactive: boolean) {
     this.showInactive = showInactive;
     this.showInactiveChange.emit(showInactive);
+    if (this.disableInactiveAutoLoad) {
+      return;
+    }
     if (showInactive && !this.inactiveLoaded) {
       await this.loadInactiveEntities();
     }
