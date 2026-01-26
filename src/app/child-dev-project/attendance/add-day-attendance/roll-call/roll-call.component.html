@@ -89,7 +89,7 @@
                   role="button"
                   class="group-select-option"
                   (click)="markAttendance(option)"
-                  [ngClass]="
+                  [class]="
                     eventEntity.getAttendance(child).status.id === option.id
                       ? option.style
                       : ''
