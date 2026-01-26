@@ -44,7 +44,7 @@ export class EntityMapperService {
   private entitySchemaService = inject(EntitySchemaService);
   private currentUser = inject(CurrentUserSubject);
   private registry = inject(EntityRegistry);
-  private dbIndexing = inject(DatabaseIndexingService);
+  private readonly dbIndexing = inject(DatabaseIndexingService);
 
   private static readonly ACTIVE_ENTITIES_INDEX = {
     _id: "_design/all_entities_index",

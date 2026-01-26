@@ -61,7 +61,6 @@ import { PublicFormConfig } from "#src/app/features/public-form/public-form-conf
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
 import { BulkOperationStateService } from "../../entity/entity-actions/bulk-operation-state.service";
-import { PerformanceAnalysisLogging } from "#src/app/utils/performance-analysis-logging";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
