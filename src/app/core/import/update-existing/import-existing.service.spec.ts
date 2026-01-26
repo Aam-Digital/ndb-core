@@ -9,6 +9,7 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { expectEntitiesToBeInDatabase } from "../../../utils/expect-entity-data.spec";
 import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
 import { genders } from "../../../child-dev-project/children/model/genders";
+import { ImportExistingService } from "./import-existing.service";
 
 describe("ImportExistingService", () => {
   let service: ImportService;
@@ -346,5 +347,67 @@ describe("ImportExistingService", () => {
     expect(parsedEntities.length).toBe(1);
     expect(parsedEntities[0].getId()).not.toBe(existingRecords[0].getId());
     expect(parsedEntities[0]._rev).toBeUndefined();
+  });
+
+  it("should not return match if multiple existing entities match", async () => {
+    // Setup: Create multiple existing records that would match the same import row
+    const existingRecords: Entity[] = [
+      TestEntity.create({
+        name: "Duplicate",
+        other: "M1",
+      }),
+      TestEntity.create({
+        name: "Duplicate",
+        other: "M2",
+      }),
+      TestEntity.create({
+        name: "Unique",
+        other: "M3",
+      }),
+    ];
+    await entityMapper.saveAll(existingRecords);
+
+    const rawData: any[] = [
+      {
+        // Should NOT match: multiple existing entities have same name
+        rawName: "Duplicate",
+      },
+      {
+        // Should match: only one existing entity matches
+        rawName: "Unique",
+      },
+    ];
+
+    const importSettings: ImportSettings = {
+      entityType: TestEntity.ENTITY_TYPE,
+      columnMapping: [
+        { column: "rawName", propertyName: "name" },
+        { column: "other", propertyName: "other" },
+      ],
+      matchExistingByFields: ["name"],
+    };
+
+    const parsedEntities = await service.transformRawDataToEntities(
+      rawData,
+      importSettings,
+    );
+
+    expect(parsedEntities.length).toBe(2);
+
+    // First entity should be new (no match due to duplicates)
+    const duplicateResult = parsedEntities.find(
+      (e) => e["name"] === "Duplicate",
+    );
+    expect(duplicateResult._rev).toBeUndefined();
+    expect(duplicateResult.getId()).not.toBe(existingRecords[0].getId());
+    expect(duplicateResult.getId()).not.toBe(existingRecords[1].getId());
+    expect(
+      duplicateResult[ImportExistingService.MULTIPLE_MATCHING_ENTITIES_KEY],
+    ).toEqual([existingRecords[0].getId(), existingRecords[1].getId()]);
+
+    // Second entity should match the unique existing record
+    const uniqueResult = parsedEntities.find((e) => e["name"] === "Unique");
+    expect(uniqueResult._rev).toBe(existingRecords[2]["_rev"]);
+    expect(uniqueResult.getId()).toBe(existingRecords[2].getId());
   });
 });

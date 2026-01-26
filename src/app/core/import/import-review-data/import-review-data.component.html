@@ -58,6 +58,13 @@
             i18n
             >Creating</em
           >
+          @if (row.record[MULTIPLE_MATCHING_ENTITIES_KEY]) {
+            <fa-icon
+              icon="warning"
+              matTooltip="Warning: Multiple existing records were found that match this imported data based on the ID fields you selected in the previous step. Therefore, a new record will be created instead of updating an existing one."
+              i18n-matTooltip
+            ></fa-icon>
+          }
         }
       </td>
     </ng-container>
