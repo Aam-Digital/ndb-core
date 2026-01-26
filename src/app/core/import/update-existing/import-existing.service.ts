@@ -147,9 +147,7 @@ export class ImportExistingService {
     rawImportEntity: any,
     matchFields: string[],
   ): boolean {
-    let hasAtLeastOneNonEmptyMatch = false;
-
-    const allFieldsMatch = matchFields.every((field) => {
+    return matchFields.every((field) => {
       const schemaField = existingEntity.getSchema().get(field);
       const rawExistingValue = this.schemaService.valueToDatabaseFormat(
         existingEntity[field],
@@ -157,34 +155,21 @@ export class ImportExistingService {
       );
       const rawImportValue = rawImportEntity[field];
 
-      const comparison = this.compareFieldValues(
-        rawExistingValue,
-        rawImportValue,
+      return (
+        this.compareFieldValues(rawExistingValue, rawImportValue) === "match"
       );
-
-      if (comparison === "match") {
-        hasAtLeastOneNonEmptyMatch = true;
-      }
-      return comparison !== "no-match";
     });
-
-    return allFieldsMatch && hasAtLeastOneNonEmptyMatch;
   }
 
   private compareFieldValues(
     existingValue: any,
     importValue: any,
-  ): "match" | "no-match" | "skip" {
-    const existingIsEmpty = this.isEmptyImportValue(existingValue);
-    const importIsEmpty = this.isEmptyImportValue(importValue);
-
-    // If both values are empty, ignore this field for matching
-    if (existingIsEmpty && importIsEmpty) {
-      return "skip";
-    }
-
-    // If only one value is empty, don't match
-    if (existingIsEmpty || importIsEmpty) {
+  ): "match" | "no-match" {
+    // If either value is empty, don't match - identifier must have a value
+    if (
+      this.isEmptyImportValue(existingValue) ||
+      this.isEmptyImportValue(importValue)
+    ) {
       return "no-match";
     }
 
