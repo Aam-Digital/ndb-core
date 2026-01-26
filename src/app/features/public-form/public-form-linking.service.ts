@@ -20,7 +20,7 @@ export interface PublicFormEntry {
   providedIn: "root",
 })
 export class PublicFormLinkingService {
-  private snackbar = inject(MatSnackBar);
+  private readonly snackbar = inject(MatSnackBar);
 
   /**
    * Processes URL parameters to prefill linked entity fields from query params.

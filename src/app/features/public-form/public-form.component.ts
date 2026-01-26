@@ -285,17 +285,13 @@ export function migratePublicFormConfig(
     return undefined;
   };
 
-  formConfig.columns = migrateColumns(
-    formConfig.columns as Array<FieldGroup | string[]>,
-  ) as FieldGroup[];
+  formConfig.columns = migrateColumns(formConfig.columns) as FieldGroup[];
   formConfig.linkedEntities = migrateLinkedEntities(formConfig.linkedEntities);
 
   if (Array.isArray(formConfig.forms)) {
     formConfig.forms = formConfig.forms.map((form) => ({
       ...form,
-      columns: migrateColumns(
-        form.columns as Array<FieldGroup | string[]>,
-      ) as FieldGroup[],
+      columns: migrateColumns(form.columns) as FieldGroup[],
       linkedEntities: migrateLinkedEntities(form.linkedEntities),
     }));
   }
