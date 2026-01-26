@@ -16,7 +16,7 @@ import {
   ImportDialogData,
 } from "../import-confirm-summary/import-confirm-summary.component";
 import { lastValueFrom } from "rxjs";
-import { ImportMetadata } from "../import-metadata";
+import { ImportExistingSettings, ImportMetadata } from "../import-metadata";
 import { ImportAdditionalSettings } from "../import-additional-settings/import-additional-settings.component";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
@@ -69,7 +69,7 @@ export class ImportReviewDataComponent implements OnChanges {
   @Input() entityType: string;
   @Input() columnMapping: ColumnMapping[];
   @Input() additionalActions: AdditionalImportAction[];
-  @Input() matchExistingByFields: string[];
+  @Input() importExisting: ImportExistingSettings;
   @Input() additionalSettings: ImportAdditionalSettings;
   @Input() filename: string;
 
@@ -102,7 +102,7 @@ export class ImportReviewDataComponent implements OnChanges {
         entityType: this.entityType,
         columnMapping: this.columnMapping,
         additionalActions: this.additionalActions,
-        matchExistingByFields: this.matchExistingByFields,
+        importExisting: this.importExisting,
         additionalSettings: this.additionalSettings,
       })
     ).sort((a, b) => {
@@ -140,7 +140,7 @@ export class ImportReviewDataComponent implements OnChanges {
               entityType: this.entityType,
               columnMapping: this.columnMapping,
               additionalActions: this.additionalActions,
-              matchExistingByFields: this.matchExistingByFields,
+              importExisting: this.importExisting,
               filename: this.filename,
             },
           } as ImportDialogData,

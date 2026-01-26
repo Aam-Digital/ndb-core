@@ -2,6 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import {
   ImportDataChange,
+  ImportExistingSettings,
   ImportMetadata,
   ImportSettings,
 } from "../import-metadata";
@@ -49,6 +50,7 @@ export class ImportExistingService {
         existingEntities,
         mappedFields,
         matchFields,
+        importSettings.importExisting ?? {},
       ),
     );
   }
@@ -65,11 +67,14 @@ export class ImportExistingService {
     importSettings: ImportSettings,
     mappedFields: string[],
   ): string[] {
-    if (!importSettings.matchExistingByFields || mappedFields.length === 0) {
+    if (
+      !importSettings.importExisting?.matchExistingByFields ||
+      mappedFields.length === 0
+    ) {
       return [];
     }
 
-    return importSettings.matchExistingByFields.filter((field) =>
+    return importSettings.importExisting.matchExistingByFields.filter((field) =>
       mappedFields.includes(field),
     );
   }
@@ -79,11 +84,13 @@ export class ImportExistingService {
     existingEntities: Entity[],
     mappedFields: string[],
     matchFields: string[],
+    importExisting: ImportExistingSettings,
   ): Entity {
     const matchingEntities = this.findMatchingExistingEntities(
       importEntity,
       existingEntities,
       matchFields,
+      importExisting,
     );
 
     if (matchingEntities.length === 0) {
@@ -148,12 +155,13 @@ export class ImportExistingService {
     importEntity: Entity,
     existingEntities: Entity[],
     matchFields: string[],
+    importExisting: ImportExistingSettings,
   ): Entity[] {
     const rawImportEntity =
       this.schemaService.transformEntityToDatabaseFormat(importEntity);
 
     return existingEntities.filter((e) =>
-      this.entityMatchesImport(e, rawImportEntity, matchFields),
+      this.entityMatchesImport(e, rawImportEntity, matchFields, importExisting),
     );
   }
 
@@ -161,6 +169,7 @@ export class ImportExistingService {
     existingEntity: Entity,
     rawImportEntity: any,
     matchFields: string[],
+    importExisting: ImportExistingSettings,
   ): boolean {
     let hasAtLeastOneNonEmptyMatch = false;
 
@@ -176,6 +185,7 @@ export class ImportExistingService {
       const comparison = this.compareFieldValues(
         rawExistingValue,
         rawImportValue,
+        importExisting,
       );
 
       if (comparison === "match") {
@@ -190,6 +200,7 @@ export class ImportExistingService {
   private compareFieldValues(
     existingValue: any,
     importValue: any,
+    importExisting: ImportExistingSettings,
   ): "match" | "no-match" | "skip" {
     const existingIsEmpty = this.isEmptyImportValue(existingValue);
     const importIsEmpty = this.isEmptyImportValue(importValue);
@@ -199,11 +210,17 @@ export class ImportExistingService {
       return "skip";
     }
 
-    // For strings, use case-insensitive comparison
-    if (typeof existingValue === "string" && typeof importValue === "string") {
-      return existingValue.toLowerCase() === importValue.toLowerCase()
-        ? "match"
-        : "no-match";
+    if (!importExisting.strictMatching) {
+      // For strings, use case-insensitive comparison
+      if (
+        !importExisting.strictMatching &&
+        typeof existingValue === "string" &&
+        typeof importValue === "string"
+      ) {
+        return existingValue.toLowerCase() === importValue.toLowerCase()
+          ? "match"
+          : "no-match";
+      }
     }
 
     return existingValue === importValue ? "match" : "no-match";

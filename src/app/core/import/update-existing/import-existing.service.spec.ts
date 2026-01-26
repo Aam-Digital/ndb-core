@@ -79,7 +79,7 @@ describe("ImportExistingService", () => {
         },
         { column: "other", propertyName: "other" },
       ],
-      matchExistingByFields: ["name", "category"],
+      importExisting: { matchExistingByFields: ["name", "category"] },
     };
 
     const parsedEntities = await service.transformRawDataToEntities(
@@ -160,7 +160,7 @@ describe("ImportExistingService", () => {
         },
         { column: "dateOfBirth", propertyName: "dateOfBirth" },
       ],
-      matchExistingByFields: ["name"],
+      importExisting: { matchExistingByFields: ["name"] },
     };
 
     const entitiesToImport = await service.transformRawDataToEntities(
@@ -259,7 +259,7 @@ describe("ImportExistingService", () => {
         },
         { column: "other", propertyName: "other" },
       ],
-      matchExistingByFields: ["name", "category", "other"],
+      importExisting: { matchExistingByFields: ["name", "category", "other"] },
     };
 
     const parsedEntities = await service.transformRawDataToEntities(
@@ -335,7 +335,7 @@ describe("ImportExistingService", () => {
         { column: "category", propertyName: "category" },
         { column: "other", propertyName: "other" },
       ],
-      matchExistingByFields: ["other", "category"], // only empty fields
+      importExisting: { matchExistingByFields: ["other", "category"] }, // only empty fields
     };
 
     const parsedEntities = await service.transformRawDataToEntities(
@@ -384,7 +384,7 @@ describe("ImportExistingService", () => {
         { column: "rawName", propertyName: "name" },
         { column: "other", propertyName: "other" },
       ],
-      matchExistingByFields: ["name"],
+      importExisting: { matchExistingByFields: ["name"] },
     };
 
     const parsedEntities = await service.transformRawDataToEntities(
@@ -441,7 +441,7 @@ describe("ImportExistingService", () => {
     const importSettings: ImportSettings = {
       entityType: TestEntity.ENTITY_TYPE,
       columnMapping: [{ column: "rawName", propertyName: "name" }],
-      matchExistingByFields: ["name"],
+      importExisting: { matchExistingByFields: ["name"] },
     };
 
     const parsedEntities = await service.transformRawDataToEntities(

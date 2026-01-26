@@ -1,8 +1,11 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, input, model } from "@angular/core";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
 import { EntityFieldSelectComponent } from "../../../entity/entity-field-select/entity-field-select.component";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
+import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { FormsModule } from "@angular/forms";
+import { ImportExistingSettings } from "../../import-metadata";
 
 /**
  * Allow the user to configure entity fields that are used to match imported data to existing entities in the DB.
@@ -17,24 +20,33 @@ import { HelpButtonComponent } from "../../../common-components/help-button/help
     MatHint,
     EntityFieldSelectComponent,
     HelpButtonComponent,
+    MatSlideToggle,
+    FormsModule,
   ],
   templateUrl: "./import-match-existing.component.html",
   styleUrl: "./import-match-existing.component.scss",
 })
 export class ImportMatchExistingComponent {
-  /**
-   * The existing value, currently selected "ID fields".
-   */
-  @Input() matchExistingByFields: string[];
+  entityType = input<string>();
+  settings = model<ImportExistingSettings | undefined>();
 
-  /**
-   * New values selected by the user for the "ID fields".
-   */
-  @Output() matchExistingByFieldsChange = new EventEmitter<string[]>();
+  updateMatchFields(newValue: string[] | string) {
+    const fields = newValue as string[];
+    if (!fields?.length) {
+      this.settings.set(undefined);
+      return;
+    }
 
-  @Input() entityType: string;
+    this.settings.update((s) => ({
+      ...(s ?? {}),
+      matchExistingByFields: fields,
+    }));
+  }
 
-  updateValue(newValue: string[] | string) {
-    this.matchExistingByFieldsChange.emit(newValue as string[]);
+  updateStrictMatching(value: boolean) {
+    this.settings.update((s) => ({
+      ...(s ?? {}),
+      strictMatching: value,
+    }));
   }
 }
