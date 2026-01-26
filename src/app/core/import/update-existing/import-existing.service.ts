@@ -105,8 +105,10 @@ export class ImportExistingService {
     const rawImportEntity =
       this.schemaService.transformEntityToDatabaseFormat(importEntity);
 
-    return this.existingEntitiesCache.find((e) =>
-      mappedMatchFields.every((idField) => {
+    return this.existingEntitiesCache.find((e) => {
+      let hasAtLeastOneNonEmptyMatch = false;
+
+      const allFieldsMatch = mappedMatchFields.every((idField) => {
         const schemaField = e.getSchema().get(idField);
         const rawExistingValue = this.schemaService.valueToDatabaseFormat(
           e[idField],
@@ -114,18 +116,30 @@ export class ImportExistingService {
         );
         const rawImportValue = rawImportEntity[idField];
 
-        // If either value is null/undefined, don't match - identifier must have a value
-        if (
-          this.isEmptyImportValue(rawExistingValue) ||
-          this.isEmptyImportValue(rawImportValue)
-        ) {
+        const existingIsEmpty = this.isEmptyImportValue(rawExistingValue);
+        const importIsEmpty = this.isEmptyImportValue(rawImportValue);
+
+        // If both values are empty, ignore this field for matching
+        if (existingIsEmpty && importIsEmpty) {
+          return true;
+        }
+
+        // If only one value is empty, don't match
+        if (existingIsEmpty || importIsEmpty) {
           return false;
         }
 
         // Compare the "database formats" (to match complex values like dates)
-        return rawExistingValue === rawImportValue;
-      }),
-    );
+        const valuesMatch = rawExistingValue === rawImportValue;
+        if (valuesMatch) {
+          hasAtLeastOneNonEmptyMatch = true;
+        }
+        return valuesMatch;
+      });
+
+      // Require at least one non-empty field to actually match
+      return allFieldsMatch && hasAtLeastOneNonEmptyMatch;
+    });
   }
 
   private generateUndoInfoForField(
