@@ -147,7 +147,9 @@ export class ImportExistingService {
     rawImportEntity: any,
     matchFields: string[],
   ): boolean {
-    return matchFields.every((field) => {
+    let hasAtLeastOneNonEmptyMatch = false;
+
+    const allFieldsMatch = matchFields.every((field) => {
       const schemaField = existingEntity.getSchema().get(field);
       const rawExistingValue = this.schemaService.valueToDatabaseFormat(
         existingEntity[field],
@@ -155,22 +157,30 @@ export class ImportExistingService {
       );
       const rawImportValue = rawImportEntity[field];
 
-      return (
-        this.compareFieldValues(rawExistingValue, rawImportValue) === "match"
+      const comparison = this.compareFieldValues(
+        rawExistingValue,
+        rawImportValue,
       );
+
+      if (comparison === "match") {
+        hasAtLeastOneNonEmptyMatch = true;
+      }
+      return comparison === "match" || comparison === "skip";
     });
+
+    return allFieldsMatch && hasAtLeastOneNonEmptyMatch;
   }
 
   private compareFieldValues(
     existingValue: any,
     importValue: any,
-  ): "match" | "no-match" {
-    // If either value is empty, don't match - identifier must have a value
-    if (
-      this.isEmptyImportValue(existingValue) ||
-      this.isEmptyImportValue(importValue)
-    ) {
-      return "no-match";
+  ): "match" | "no-match" | "skip" {
+    const existingIsEmpty = this.isEmptyImportValue(existingValue);
+    const importIsEmpty = this.isEmptyImportValue(importValue);
+
+    // If both values are empty, ignore this field for matching
+    if (existingIsEmpty && importIsEmpty) {
+      return "skip";
     }
 
     // Compare the "database formats" (to match complex values like dates)
