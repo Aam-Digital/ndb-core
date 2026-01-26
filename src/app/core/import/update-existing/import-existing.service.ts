@@ -90,42 +90,92 @@ export class ImportExistingService {
   private findExistingEntity(
     importSettings: ImportSettings,
     importEntity: Entity,
-  ) {
-    // Determine which of the selected identifier fields are actually mapped, in the column mapping
-    const mappedFields = (importSettings.columnMapping ?? [])
-      .filter((m) => !!m.propertyName)
-      .map((m) => m.propertyName);
-
-    const mappedMatchFields = (
-      importSettings.matchExistingByFields ?? []
-    ).filter((f) => mappedFields.includes(f));
-
-    if (mappedMatchFields.length === 0) return undefined;
+  ): Entity | undefined {
+    const mappedMatchFields = this.getMappedMatchFields(importSettings);
+    if (mappedMatchFields.length === 0) {
+      return undefined;
+    }
 
     const rawImportEntity =
       this.schemaService.transformEntityToDatabaseFormat(importEntity);
 
-    return this.existingEntitiesCache.find((e) =>
-      mappedMatchFields.every((idField) => {
-        const schemaField = e.getSchema().get(idField);
-        const rawExistingValue = this.schemaService.valueToDatabaseFormat(
-          e[idField],
-          schemaField,
-        );
-        const rawImportValue = rawImportEntity[idField];
-
-        // If either value is null/undefined, don't match - identifier must have a value
-        if (
-          this.isEmptyImportValue(rawExistingValue) ||
-          this.isEmptyImportValue(rawImportValue)
-        ) {
-          return false;
-        }
-
-        // Compare the "database formats" (to match complex values like dates)
-        return rawExistingValue === rawImportValue;
-      }),
+    return this.existingEntitiesCache.find((existingEntity) =>
+      this.doesEntityMatch(existingEntity, rawImportEntity, mappedMatchFields),
     );
+  }
+
+  /**
+   * Determines which of the selected identifier fields are actually mapped in the column mapping.
+   */
+  private getMappedMatchFields(importSettings: ImportSettings): string[] {
+    const mappedFields = (importSettings.columnMapping ?? [])
+      .filter((m) => !!m.propertyName)
+      .map((m) => m.propertyName);
+
+    return (importSettings.matchExistingByFields ?? []).filter((f) =>
+      mappedFields.includes(f),
+    );
+  }
+
+  /**
+   * Checks if an existing entity matches the imported entity based on the specified match fields.
+   * Requires at least one non-empty field to actually match.
+   */
+  private doesEntityMatch(
+    existingEntity: Entity,
+    rawImportEntity: any,
+    matchFields: string[],
+  ): boolean {
+    let hasAtLeastOneNonEmptyMatch = false;
+
+    const allFieldsMatch = matchFields.every((field) => {
+      const result = this.compareFieldValues(
+        existingEntity,
+        rawImportEntity,
+        field,
+      );
+
+      if (result.isNonEmptyMatch) {
+        hasAtLeastOneNonEmptyMatch = true;
+      }
+      return result.matches;
+    });
+
+    return allFieldsMatch && hasAtLeastOneNonEmptyMatch;
+  }
+
+  /**
+   * Compares a single field value between an existing entity and imported data.
+   * Returns whether the values match and whether it's a non-empty match.
+   */
+  private compareFieldValues(
+    existingEntity: Entity,
+    rawImportEntity: any,
+    field: string,
+  ): { matches: boolean; isNonEmptyMatch: boolean } {
+    const schemaField = existingEntity.getSchema().get(field);
+    const rawExistingValue = this.schemaService.valueToDatabaseFormat(
+      existingEntity[field],
+      schemaField,
+    );
+    const rawImportValue = rawImportEntity[field];
+
+    const existingIsEmpty = this.isEmptyImportValue(rawExistingValue);
+    const importIsEmpty = this.isEmptyImportValue(rawImportValue);
+
+    // If both values are empty, ignore this field for matching
+    if (existingIsEmpty && importIsEmpty) {
+      return { matches: true, isNonEmptyMatch: false };
+    }
+
+    // If only one value is empty, don't match
+    if (existingIsEmpty || importIsEmpty) {
+      return { matches: false, isNonEmptyMatch: false };
+    }
+
+    // Compare the "database formats" (to match complex values like dates)
+    const valuesMatch = rawExistingValue === rawImportValue;
+    return { matches: valuesMatch, isNonEmptyMatch: valuesMatch };
   }
 
   private generateUndoInfoForField(
