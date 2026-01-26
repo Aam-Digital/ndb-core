@@ -165,6 +165,7 @@ export class ImportExistingService {
     let hasAtLeastOneNonEmptyMatch = false;
 
     const allFieldsMatch = matchFields.every((field) => {
+      // Compare the "database formats" (to match complex values like dates)
       const schemaField = existingEntity.getSchema().get(field);
       const rawExistingValue = this.schemaService.valueToDatabaseFormat(
         existingEntity[field],
@@ -198,7 +199,13 @@ export class ImportExistingService {
       return "skip";
     }
 
-    // Compare the "database formats" (to match complex values like dates)
+    // For strings, use case-insensitive comparison
+    if (typeof existingValue === "string" && typeof importValue === "string") {
+      return existingValue.toLowerCase() === importValue.toLowerCase()
+        ? "match"
+        : "no-match";
+    }
+
     return existingValue === importValue ? "match" : "no-match";
   }
 

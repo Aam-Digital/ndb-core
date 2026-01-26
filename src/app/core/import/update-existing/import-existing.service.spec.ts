@@ -410,4 +410,55 @@ describe("ImportExistingService", () => {
     expect(uniqueResult._rev).toBe(existingRecords[2]["_rev"]);
     expect(uniqueResult.getId()).toBe(existingRecords[2].getId());
   });
+
+  it("should match existing records case-insensitively by name field", async () => {
+    // Setup: Create existing records with specific names
+    const existingRecords: Entity[] = [
+      TestEntity.create({
+        name: "John Doe",
+        _rev: "A1",
+      }),
+      TestEntity.create({
+        name: "jane smith",
+        _rev: "B1",
+      }),
+    ];
+    await entityMapper.saveAll(existingRecords);
+
+    // Import data with different case variations
+    const rawData: any[] = [
+      {
+        rawName: "john doe", // lowercase
+      },
+      {
+        rawName: "JANE SMITH", // uppercase
+      },
+      {
+        rawName: "JoHn DoE", // mixed case
+      },
+    ];
+
+    const importSettings: ImportSettings = {
+      entityType: TestEntity.ENTITY_TYPE,
+      columnMapping: [{ column: "rawName", propertyName: "name" }],
+      matchExistingByFields: ["name"],
+    };
+
+    const parsedEntities = await service.transformRawDataToEntities(
+      rawData,
+      importSettings,
+    );
+
+    expect(parsedEntities.length).toBe(3);
+
+    // All three should match existing records (case-insensitive)
+    expect(parsedEntities[0]._rev).toBe(existingRecords[0]["_rev"]);
+    expect(parsedEntities[0].getId()).toBe(existingRecords[0].getId());
+
+    expect(parsedEntities[1]._rev).toBe(existingRecords[1]["_rev"]);
+    expect(parsedEntities[1].getId()).toBe(existingRecords[1].getId());
+
+    expect(parsedEntities[2]._rev).toBe(existingRecords[0]["_rev"]);
+    expect(parsedEntities[2].getId()).toBe(existingRecords[0].getId());
+  });
 });
