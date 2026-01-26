@@ -274,7 +274,7 @@ export class EntityListComponent<T extends Entity>
       this.entityConstructor,
       "active",
     );
-    if (this.showInactive) this.loadInactiveEntities();
+    if (this.showInactive) await this.loadInactiveEntities();
     return activeRecords;
   }
 
@@ -290,6 +290,9 @@ export class EntityListComponent<T extends Entity>
   }
 
   private async loadInactiveEntities() {
+    if (this.inactiveLoaded || this.loadingInactive()) {
+      return;
+    }
     this.loadingInactive.set(true);
     const inactiveEntities = await this.entityMapperService.loadType(
       this.entityConstructor,

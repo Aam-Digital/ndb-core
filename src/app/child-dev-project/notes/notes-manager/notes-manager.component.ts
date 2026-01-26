@@ -94,7 +94,7 @@ export class NotesManagerComponent implements OnInit {
   }
 
   private async loadInactiveEntities() {
-    if (this.inactiveLoaded) {
+    if (this.inactiveLoaded || this.loadingInactive()) {
       return;
     }
     this.loadingInactive.set(true);
