@@ -320,7 +320,7 @@ const migrateEntityBlock: ConfigMigration = (key, configPart) => {
     delete configPart["blockComponent"];
     configPart["toBlockDetailsAttributes"] = {
       title: "name",
-      photo: "photo",
+      image: "photo",
       fields: ["phone", "schoolId", "schoolClass"],
     };
 

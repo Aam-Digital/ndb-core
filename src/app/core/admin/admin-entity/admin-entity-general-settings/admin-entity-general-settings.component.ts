@@ -11,6 +11,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import {
   FormBuilder,
+  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -90,6 +91,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   hasImageFields: boolean = false;
   showTooltipDetails: boolean = false;
   isConditionalColor: boolean = false;
+  iconControl: FormControl<string | null>;
 
   ngOnInit(): void {
     this.init();
@@ -121,6 +123,10 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
         fields: [this.generalSettings.toBlockDetailsAttributes?.fields || []],
       }),
     });
+
+    this.iconControl = this.basicSettingsForm.get("icon") as FormControl<
+      string | null
+    >;
 
     this.showPIIDetails = this.basicSettingsForm.get("hasPII").value;
     this.fetchAnonymizationTableData();
@@ -252,6 +258,14 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.value;
+
+  isFormValid(): boolean {
+    if (!this.basicSettingsForm.valid) {
+      this.basicSettingsForm.markAllAsTouched();
+      return false;
+    }
+    return true;
+  }
 
   /**
    * Initialize color mode from existing configuration
