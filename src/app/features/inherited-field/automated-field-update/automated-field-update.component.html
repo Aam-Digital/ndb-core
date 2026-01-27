@@ -5,9 +5,15 @@
   <p i18n>
     You have made changes to a field that is linked to other records and can
     automatically update them. The following records are linked through the
-    <b>"{{ data.entities[0]?.relatedReferenceFieldLabel }}"</b> field. Please
-    review these affected records below. You can manually change the new value
-    if the automatically suggested value is not matching what you need.
+    <b>
+      "{{
+        data.entities[0]?.relatedReferenceField
+          | entityFieldLabel: data.entities[0]?.relatedReferenceFieldEntityType
+      }}"
+    </b>
+    field. Please review these affected records below. You can manually change
+    the new value if the automatically suggested value is not matching what you
+    need.
   </p>
 
   <table class="full-width">

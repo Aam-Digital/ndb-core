@@ -243,12 +243,12 @@ export class AutomatedFieldUpdateConfigService {
     targetFieldId: string,
   ): AffectedEntity[] {
     const affectedEntities: AffectedEntity[] = [];
-
-    const relatedFieldConfig = sourceEntity
-      .getConstructor()
-      .schema.get(rule.sourceReferenceField);
-    const relatedReferenceFieldLabel =
-      relatedFieldConfig?.label ?? relatedFieldConfig?.labelShort;
+    const sourceEntityType = sourceEntity.getConstructor();
+    const relatedReferenceFieldEntityType = sourceEntityType.schema.has(
+      rule.sourceReferenceField,
+    )
+      ? sourceEntityType
+      : targetEntityType;
 
     for (const targetEntity of targetEntities) {
       const newValue = this.calculateNewValue(sourceEntity, rule);
@@ -264,7 +264,7 @@ export class AutomatedFieldUpdateConfigService {
           selectedField: { ...fieldConfig, id: targetFieldId },
           affectedEntity: targetEntity,
           relatedReferenceField: rule.sourceReferenceField,
-          relatedReferenceFieldLabel,
+          relatedReferenceFieldEntityType,
         });
       }
     }

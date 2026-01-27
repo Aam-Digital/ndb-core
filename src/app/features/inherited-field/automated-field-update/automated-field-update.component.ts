@@ -12,6 +12,7 @@ import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entit
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
 import { EntityFormService } from "#src/app/core/common-components/entity-form/entity-form.service";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { EntityFieldLabelPipe } from "#src/app/core/entity/entity-field-label/entity-field-label.pipe";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 
 /**
@@ -39,9 +40,11 @@ export interface AffectedEntity {
   /** Reference field name that triggered the status update */
   relatedReferenceField: string;
 
+  /** Entity type where the related reference field is defined */
+  relatedReferenceFieldEntityType?: EntityConstructor;
+
   form?: EntityForm<Entity>;
   selectedField?: FormFieldConfig;
-  relatedReferenceFieldLabel?: string;
 }
 
 /**
@@ -57,6 +60,7 @@ export interface AffectedEntity {
     DialogCloseComponent,
     EntityFieldEditComponent,
     EntityBlockComponent,
+    EntityFieldLabelPipe,
     MatButton,
     MatDialogModule,
   ],
