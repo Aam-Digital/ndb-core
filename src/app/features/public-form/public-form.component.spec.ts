@@ -17,6 +17,8 @@ import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { getDefaultConfigEntity } from "../../core/config/testing-config-service";
+import { Entity } from "../../core/entity/model/entity";
+import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
@@ -406,6 +408,56 @@ describe("PublicFormComponent", () => {
     expect(
       component.entityFormEntries[0].form.formGroup.get("other"),
     ).toHaveValue("prefilled default");
+  }));
+
+  it("should link entities from linkedFromForm when submitting multi-form config", fakeAsync(() => {
+    class SchoolEntity extends Entity {
+      static override ENTITY_TYPE = "School";
+      static override schema = new Map([["name", {}]]);
+    }
+    class ChildEntity extends Entity {
+      static override ENTITY_TYPE = "Child";
+      static override schema = new Map([["school", { additional: "School" }]]);
+    }
+
+    const entityRegistry = TestBed.inject(EntityRegistry);
+    entityRegistry.add(SchoolEntity.ENTITY_TYPE, SchoolEntity);
+    entityRegistry.add(ChildEntity.ENTITY_TYPE, ChildEntity);
+
+    const config = new PublicFormConfig();
+    config.route = FORM_ID;
+    config.entity = "Child";
+    config.forms = [
+      {
+        entity: "School",
+        columns: [{ fields: ["name"] }],
+      },
+      {
+        entity: "Child",
+        columns: [{ fields: ["school"] }],
+        linkedFromForm: ["school"],
+      },
+    ];
+
+    initComponent(config);
+    tick();
+
+    const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
+    saveSpy.and.resolveTo();
+
+    const schoolEntry = component.entityFormEntries.find(
+      (entry) => entry.entityType === SchoolEntity,
+    );
+    const childEntry = component.entityFormEntries.find(
+      (entry) => entry.entityType === ChildEntity,
+    );
+
+    component.submit();
+
+    expect(childEntry.entity["school"]).toBe(schoolEntry.entity.getId());
+    expect(childEntry.form.formGroup.get("school")).toHaveValue(
+      schoolEntry.entity.getId(),
+    );
   }));
 
   it("should migrate linkedEntities from old FormFieldConfig[] format to string[] format", () => {
