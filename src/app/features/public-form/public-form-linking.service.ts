@@ -9,6 +9,7 @@ import { Params } from "@angular/router";
 export interface PublicFormEntry {
   config: {
     linkedEntities?: string[];
+    linkedFromForm?: string[];
     columns?: FieldGroup[];
   };
   entityType: EntityConstructor;
@@ -100,13 +101,13 @@ export class PublicFormLinkingService {
   }
 
   /**
-   * Prefills linked entity fields across multiple form entries.
+   * Prefills fields from other forms within the same submission.
    *
    * - Derives target entity type from field schema.
    * - Sets the field to the target entity ID only if it is empty.
    * - Updates both the entity model and the reactive form control.
    */
-  applyLinkedEntitiesFromForms(entries: PublicFormEntry[]): void {
+  applyLinkedFromForm(entries: PublicFormEntry[]): void {
     if (
       !entries.length ||
       entries.some((entry) => !entry.entity || !entry.form)
@@ -124,7 +125,7 @@ export class PublicFormLinkingService {
 
     for (const entry of entries) {
       if (!entry.entity || !entry.form) continue;
-      const linkedEntities = entry.config.linkedEntities || [];
+      const linkedEntities = entry.config.linkedFromForm || [];
       for (const fieldId of linkedEntities) {
         if (!fieldId) continue;
 

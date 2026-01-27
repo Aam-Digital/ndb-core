@@ -79,9 +79,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
   async submit() {
     this.validationError = false;
-    this.publicFormLinkingService.applyLinkedEntitiesFromForms(
-      this.entityFormEntries,
-    );
+    this.publicFormLinkingService.applyLinkedFromForm(this.entityFormEntries);
     if (
       this.entityFormEntries.some(
         (entry) => entry.form?.formGroup?.invalid ?? true,

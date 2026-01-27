@@ -34,11 +34,18 @@ export interface PublicFormEntityFormConfig {
    * by other forms in the same submission or passed as URL parameters.
    */
   linkedEntities?: string[];
+
+  /**
+   * Field IDs that should be linked from other forms in the same submission.
+   * Uses schema metadata to decide which form's entity ID to apply.
+   */
+  linkedFromForm?: string[];
 }
 
 /**
  * Each entity of this type defines a new publicly accessible form
- * that can be reached through the given route even by users without being logged in.
+ * that can be reached through the given route even by users without being logged in
+ * used in the public forms where we wanted to linked multiple entities in one form.
  */
 @DatabaseEntity("PublicFormConfig")
 export class PublicFormConfig extends Entity {
