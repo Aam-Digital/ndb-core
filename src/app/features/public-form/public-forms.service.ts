@@ -75,19 +75,37 @@ export class PublicFormsService {
     let url = `${window.location.origin}/public-form/form/${config.route}`;
     let hasMatchingParameters = false;
 
-    if (entity && config.linkedEntities?.length) {
-      const params = new URLSearchParams();
+    const linkedFieldIds =
+      config.forms?.flatMap((form) => form.linkedEntities || []) ||
+      config.linkedEntities ||
+      [];
 
-      config.linkedEntities.forEach((entityConfig) => {
-        if (
-          entityConfig.id &&
-          entityConfig.additional?.toLowerCase() ===
-            entity.getConstructor?.()?.ENTITY_TYPE?.toLowerCase()
-        ) {
-          params.set(entityConfig.id, entity.getId());
-          hasMatchingParameters = true;
-        }
-      });
+    if (entity && linkedFieldIds.length) {
+      const params = new URLSearchParams();
+      const entityType = entity.getConstructor?.()?.ENTITY_TYPE?.toLowerCase();
+
+      // For each form in the config, check if any linked fields match the entity type
+      const forms = config.forms || [
+        {
+          entity: config.entity,
+          linkedEntities: config.linkedEntities,
+        },
+      ];
+
+      for (const form of forms) {
+        if (!form.entity || !form.linkedEntities) continue;
+
+        const entityConstructor = this.entities.get(form.entity);
+        if (!entityConstructor) continue;
+
+        (form.linkedEntities || []).forEach((fieldId) => {
+          const fieldSchema = entityConstructor.schema.get(fieldId);
+          if (fieldSchema?.additional?.toLowerCase() === entityType) {
+            params.set(fieldId, entity.getId());
+            hasMatchingParameters = true;
+          }
+        });
+      }
 
       if (hasMatchingParameters) {
         url += `?${params.toString()}`;
@@ -122,11 +140,33 @@ export class PublicFormsService {
     }
 
     const entityType = entity.getConstructor().ENTITY_TYPE.toLowerCase();
-    const linkedEntities = config.linkedEntities || [];
 
-    return linkedEntities.some(
-      (entityConfig) => entityConfig.additional?.toLowerCase() === entityType,
-    );
+    const forms = config.forms || [
+      {
+        entity: config.entity,
+        linkedEntities: config.linkedEntities,
+      },
+    ];
+
+    // Check each form's linked fields
+    for (const form of forms) {
+      if (!form.entity || !form.linkedEntities) continue;
+
+      const entityConstructor = this.entities.get(form.entity);
+      if (!entityConstructor) continue;
+
+      // Check if any linked field has matching entity type in its schema
+      const hasMatch = form.linkedEntities.some((fieldId) => {
+        const fieldSchema = entityConstructor.schema.get(fieldId);
+        return fieldSchema?.additional?.toLowerCase() === entityType;
+      });
+
+      if (hasMatch) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**

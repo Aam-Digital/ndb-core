@@ -42,7 +42,7 @@ import { Entity, EntityConstructor } from "app/core/entity/model/entity";
   ],
 })
 export class EditPublicFormRelatedEntitiesComponent
-  extends CustomFormControlDirective<FormFieldConfig[]>
+  extends CustomFormControlDirective<string[]>
   implements OnInit, EditComponent
 {
   @Input() formFieldConfig?: FormFieldConfig;
@@ -52,13 +52,12 @@ export class EditPublicFormRelatedEntitiesComponent
 
   private entities = inject(EntityRegistry);
 
-  get formControl(): FormControl<FormFieldConfig[]> {
-    return this.ngControl.control as FormControl<FormFieldConfig[]>;
+  get formControl(): FormControl<string[]> {
+    return this.ngControl.control as FormControl<string[]>;
   }
 
   get selectedFieldIds(): string[] {
-    const currentValue = this.formControl.value || [];
-    return currentValue.map((field) => field.id).filter((id) => id);
+    return this.formControl.value || [];
   }
 
   ngOnInit(): void {
@@ -76,15 +75,7 @@ export class EditPublicFormRelatedEntitiesComponent
   }
 
   onSelectionChange(selectedIds: string[]): void {
-    const newLinkedEntities: FormFieldConfig[] = selectedIds.map((id) => {
-      const match = this.relatedRefFields.find((f) => f.id === id);
-      return {
-        id,
-        hideFromForm: true,
-        additional: match?.additional,
-      };
-    });
-    this.formControl.patchValue(newLinkedEntities);
+    this.formControl.patchValue(selectedIds);
     this.formControl.markAsDirty();
   }
 
