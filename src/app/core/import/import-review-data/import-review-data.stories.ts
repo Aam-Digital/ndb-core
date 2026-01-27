@@ -29,7 +29,7 @@ export const Preview: StoryObj<ImportReviewDataComponent> = {
     rawData: IMPORT_SAMPLE_RAW_DATA,
     entityType: "Child",
     columnMapping: IMPORT_SAMPLE_COLUMN_MAPPING,
-    matchExistingByFields: ["name"],
+    importExisting: { matchExistingByFields: ["name"] },
   },
 };
 

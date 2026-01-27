@@ -89,7 +89,7 @@
 
       <app-import-match-existing
         [entityType]="importSettings.entityType"
-        [(matchExistingByFields)]="importSettings.matchExistingByFields"
+        [(settings)]="importSettings.importExisting"
       ></app-import-match-existing>
     </ng-template>
   </mat-step>
@@ -161,7 +161,7 @@
         [columnMapping]="importSettings.columnMapping"
         [additionalSettings]="importSettings.additionalSettings"
         [additionalActions]="importSettings.additionalActions"
-        [matchExistingByFields]="importSettings.matchExistingByFields"
+        [importExisting]="importSettings.importExisting"
         [filename]="importSettings.filename"
         (importComplete)="onImportCompleted()"
       ></app-import-review-data>
