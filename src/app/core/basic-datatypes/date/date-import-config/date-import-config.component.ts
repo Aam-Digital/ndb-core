@@ -8,7 +8,6 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
 import { MatInputModule } from "@angular/material/input";
-import { NgClass } from "@angular/common";
 import { CustomDatePipe } from "../custom-date.pipe";
 import { MatListModule } from "@angular/material/list";
 import { MatButtonModule } from "@angular/material/button";
@@ -29,7 +28,6 @@ import { DateDatatype } from "../date.datatype";
     MatInputModule,
     ReactiveFormsModule,
     MatListModule,
-    NgClass,
     CustomDatePipe,
     MatButtonModule,
     HelpButtonComponent,

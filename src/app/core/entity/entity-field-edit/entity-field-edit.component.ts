@@ -1,5 +1,4 @@
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
-import { NgClass } from "@angular/common";
 import {
   Component,
   inject,
@@ -42,7 +41,6 @@ import { DynamicEditComponent } from "./dynamic-edit/dynamic-edit.component";
     HelpButtonComponent,
     EntityFieldViewComponent,
     InheritedValueButtonComponent,
-    NgClass,
     FontAwesomeModule,
     MatButtonModule,
     MatTooltipModule,
