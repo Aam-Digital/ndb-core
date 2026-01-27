@@ -7,6 +7,7 @@ import {
 } from "../import-metadata";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Import data to update existing records
@@ -16,6 +17,8 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
   providedIn: "root",
 })
 export class ImportExistingService {
+  static readonly MULTIPLE_MATCHING_ENTITIES_KEY = "_multipleMatchingEntities";
+
   private readonly entityMapper = inject(EntityMapperService);
   private readonly schemaService = inject(EntitySchemaService);
 
@@ -77,24 +80,36 @@ export class ImportExistingService {
     mappedFields: string[],
     matchFields: string[],
   ): Entity {
-    const existingEntity = this.findExistingEntity(
+    const matchingEntities = this.findMatchingExistingEntities(
       importEntity,
       existingEntities,
       matchFields,
     );
 
-    if (!existingEntity) {
+    if (matchingEntities.length === 0) {
       return importEntity;
     }
+    if (matchingEntities.length > 1) {
+      // multiple matches found - cannot decide which one to update
+      importEntity[ImportExistingService.MULTIPLE_MATCHING_ENTITIES_KEY] =
+        matchingEntities.map((e) => e.getId());
+      Logging.debug(
+        "ImportExistingService: Multiple matching entities found",
+        importEntity,
+        matchingEntities,
+      );
+      return importEntity;
+    }
+    const matchingEntity = matchingEntities[0];
 
     const importUndo = this.buildImportUndo(
-      existingEntity,
+      matchingEntity,
       importEntity,
       mappedFields,
     );
-    this.applyImportedValues(existingEntity, importEntity, mappedFields);
-    existingEntity["_importUndo"] = importUndo;
-    return existingEntity;
+    this.applyImportedValues(matchingEntity, importEntity, mappedFields);
+    matchingEntity["_importUndo"] = importUndo;
+    return matchingEntity;
   }
 
   private buildImportUndo(
@@ -129,15 +144,15 @@ export class ImportExistingService {
     }
   }
 
-  private findExistingEntity(
+  private findMatchingExistingEntities(
     importEntity: Entity,
     existingEntities: Entity[],
     matchFields: string[],
-  ): Entity | undefined {
+  ): Entity[] {
     const rawImportEntity =
       this.schemaService.transformEntityToDatabaseFormat(importEntity);
 
-    return existingEntities.find((e) =>
+    return existingEntities.filter((e) =>
       this.entityMatchesImport(e, rawImportEntity, matchFields),
     );
   }
@@ -147,7 +162,9 @@ export class ImportExistingService {
     rawImportEntity: any,
     matchFields: string[],
   ): boolean {
-    return matchFields.every((field) => {
+    let hasAtLeastOneNonEmptyMatch = false;
+
+    const allFieldsMatch = matchFields.every((field) => {
       const schemaField = existingEntity.getSchema().get(field);
       const rawExistingValue = this.schemaService.valueToDatabaseFormat(
         existingEntity[field],
@@ -155,22 +172,30 @@ export class ImportExistingService {
       );
       const rawImportValue = rawImportEntity[field];
 
-      return (
-        this.compareFieldValues(rawExistingValue, rawImportValue) === "match"
+      const comparison = this.compareFieldValues(
+        rawExistingValue,
+        rawImportValue,
       );
+
+      if (comparison === "match") {
+        hasAtLeastOneNonEmptyMatch = true;
+      }
+      return comparison === "match" || comparison === "skip";
     });
+
+    return allFieldsMatch && hasAtLeastOneNonEmptyMatch;
   }
 
   private compareFieldValues(
     existingValue: any,
     importValue: any,
-  ): "match" | "no-match" {
-    // If either value is empty, don't match - identifier must have a value
-    if (
-      this.isEmptyImportValue(existingValue) ||
-      this.isEmptyImportValue(importValue)
-    ) {
-      return "no-match";
+  ): "match" | "no-match" | "skip" {
+    const existingIsEmpty = this.isEmptyImportValue(existingValue);
+    const importIsEmpty = this.isEmptyImportValue(importValue);
+
+    // If both values are empty, ignore this field for matching
+    if (existingIsEmpty && importIsEmpty) {
+      return "skip";
     }
 
     // Compare the "database formats" (to match complex values like dates)
