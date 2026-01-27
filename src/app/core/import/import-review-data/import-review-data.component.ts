@@ -34,6 +34,8 @@ import { AdditionalImportAction } from "../additional-actions/additional-import-
 import { MatTooltip } from "@angular/material/tooltip";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { HintBoxComponent } from "../../common-components/hint-box/hint-box.component";
+import { ImportExistingService } from "../update-existing/import-existing.service";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: "app-import-review-data",
@@ -52,6 +54,7 @@ import { HintBoxComponent } from "../../common-components/hint-box/hint-box.comp
     MatTooltip,
     EntityBlockComponent,
     HintBoxComponent,
+    FaIconComponent,
   ],
 })
 export class ImportReviewDataComponent implements OnChanges {
@@ -77,6 +80,8 @@ export class ImportReviewDataComponent implements OnChanges {
   isLoading: boolean;
   mappedEntities: Entity[] = [];
   displayColumns: string[] = [];
+  MULTIPLE_MATCHING_ENTITIES_KEY =
+    ImportExistingService.MULTIPLE_MATCHING_ENTITIES_KEY;
 
   ngOnChanges(changes: SimpleChanges) {
     this.entityConstructor = this.entityRegistry.get(this.entityType);

@@ -7,6 +7,7 @@ import {
 } from "../import-metadata";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Import data to update existing records
@@ -16,10 +17,10 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
   providedIn: "root",
 })
 export class ImportExistingService {
+  static readonly MULTIPLE_MATCHING_ENTITIES_KEY = "_multipleMatchingEntities";
+
   private readonly entityMapper = inject(EntityMapperService);
   private readonly schemaService = inject(EntitySchemaService);
-
-  private existingEntitiesCache: Entity[];
 
   /**
    * If a matching existing entity is found, return that with the imported data applied to it.
@@ -30,121 +31,175 @@ export class ImportExistingService {
     importEntities: Entity[],
     importSettings: ImportSettings,
   ): Promise<Entity[]> {
-    const updatedEntities = [];
-    for (const entity of importEntities) {
-      const updatedEntity = await this.applyToExistingEntityIfApplicable(
-        entity,
-        importSettings,
-      );
-      updatedEntities.push(updatedEntity);
+    const mappedFields = this.getMappedPropertyNames(
+      importSettings.columnMapping,
+    );
+    const matchFields = this.getMatchingFields(importSettings, mappedFields);
+    if (matchFields.length === 0) {
+      return importEntities;
     }
 
-    delete this.existingEntitiesCache;
-    return updatedEntities;
-  }
-
-  private async applyToExistingEntityIfApplicable(
-    importEntity: Entity,
-    importSettings: ImportSettings,
-  ) {
-    if (
-      !importSettings.matchExistingByFields ||
-      importSettings.matchExistingByFields.length === 0
-    )
-      return importEntity;
-
-    if (!this.existingEntitiesCache) {
-      this.existingEntitiesCache = await this.entityMapper.loadType(
-        importSettings.entityType,
-      );
-    }
-
-    const existingEntity = this.findExistingEntity(
-      importSettings,
-      importEntity,
+    const existingEntities = await this.entityMapper.loadType(
+      importSettings.entityType,
     );
 
-    if (existingEntity) {
-      const importUndo: ImportDataChange = {};
-
-      const importedFields = importSettings.columnMapping
-        .filter((m) => !!m.propertyName)
-        .map((m) => m.propertyName);
-      for (const key of importedFields) {
-        importUndo[key] = this.generateUndoInfoForField(
-          existingEntity,
-          key,
-          importEntity,
-        );
-
-        // apply only properties from the import
-        existingEntity[key] = importEntity[key];
-      }
-
-      existingEntity["_importUndo"] = importUndo;
-    }
-
-    return existingEntity ?? importEntity;
+    return importEntities.map((entity) =>
+      this.applyToExistingEntityIfApplicable(
+        entity,
+        existingEntities,
+        mappedFields,
+        matchFields,
+      ),
+    );
   }
 
-  private findExistingEntity(
-    importSettings: ImportSettings,
-    importEntity: Entity,
-  ) {
-    // Determine which of the selected identifier fields are actually mapped, in the column mapping
-    const mappedFields = (importSettings.columnMapping ?? [])
+  private getMappedPropertyNames(
+    columnMapping: ImportSettings["columnMapping"],
+  ): string[] {
+    return (columnMapping ?? [])
       .filter((m) => !!m.propertyName)
       .map((m) => m.propertyName);
+  }
 
-    const mappedMatchFields = (
-      importSettings.matchExistingByFields ?? []
-    ).filter((f) => mappedFields.includes(f));
+  private getMatchingFields(
+    importSettings: ImportSettings,
+    mappedFields: string[],
+  ): string[] {
+    if (!importSettings.matchExistingByFields || mappedFields.length === 0) {
+      return [];
+    }
 
-    if (mappedMatchFields.length === 0) return undefined;
+    return importSettings.matchExistingByFields.filter((field) =>
+      mappedFields.includes(field),
+    );
+  }
 
+  private applyToExistingEntityIfApplicable(
+    importEntity: Entity,
+    existingEntities: Entity[],
+    mappedFields: string[],
+    matchFields: string[],
+  ): Entity {
+    const matchingEntities = this.findMatchingExistingEntities(
+      importEntity,
+      existingEntities,
+      matchFields,
+    );
+
+    if (matchingEntities.length === 0) {
+      return importEntity;
+    }
+    if (matchingEntities.length > 1) {
+      // multiple matches found - cannot decide which one to update
+      importEntity[ImportExistingService.MULTIPLE_MATCHING_ENTITIES_KEY] =
+        matchingEntities.map((e) => e.getId());
+      Logging.debug(
+        "ImportExistingService: Multiple matching entities found",
+        importEntity,
+        matchingEntities,
+      );
+      return importEntity;
+    }
+    const matchingEntity = matchingEntities[0];
+
+    const importUndo = this.buildImportUndo(
+      matchingEntity,
+      importEntity,
+      mappedFields,
+    );
+    this.applyImportedValues(matchingEntity, importEntity, mappedFields);
+    matchingEntity["_importUndo"] = importUndo;
+    return matchingEntity;
+  }
+
+  private buildImportUndo(
+    existingEntity: Entity,
+    importEntity: Entity,
+    mappedFields: string[],
+  ): ImportDataChange {
+    const undo: ImportDataChange = {};
+    for (const key of mappedFields) {
+      const schemaField = existingEntity.getSchema().get(key);
+      undo[key] = {
+        previousValue: this.schemaService.valueToDatabaseFormat(
+          existingEntity[key],
+          schemaField,
+        ),
+        importedValue: this.schemaService.valueToDatabaseFormat(
+          importEntity[key],
+          schemaField,
+        ),
+      };
+    }
+    return undo;
+  }
+
+  private applyImportedValues(
+    existingEntity: Entity,
+    importEntity: Entity,
+    mappedFields: string[],
+  ): void {
+    for (const key of mappedFields) {
+      existingEntity[key] = importEntity[key];
+    }
+  }
+
+  private findMatchingExistingEntities(
+    importEntity: Entity,
+    existingEntities: Entity[],
+    matchFields: string[],
+  ): Entity[] {
     const rawImportEntity =
       this.schemaService.transformEntityToDatabaseFormat(importEntity);
 
-    return this.existingEntitiesCache.find((e) =>
-      mappedMatchFields.every((idField) => {
-        const schemaField = e.getSchema().get(idField);
-        const rawExistingValue = this.schemaService.valueToDatabaseFormat(
-          e[idField],
-          schemaField,
-        );
-        const rawImportValue = rawImportEntity[idField];
-
-        // If either value is null/undefined, don't match - identifier must have a value
-        if (
-          this.isEmptyImportValue(rawExistingValue) ||
-          this.isEmptyImportValue(rawImportValue)
-        ) {
-          return false;
-        }
-
-        // Compare the "database formats" (to match complex values like dates)
-        return rawExistingValue === rawImportValue;
-      }),
+    return existingEntities.filter((e) =>
+      this.entityMatchesImport(e, rawImportEntity, matchFields),
     );
   }
 
-  private generateUndoInfoForField(
+  private entityMatchesImport(
     existingEntity: Entity,
-    key: string,
-    importEntity: Entity,
-  ) {
-    const schemaField = existingEntity.getSchema().get(key);
+    rawImportEntity: any,
+    matchFields: string[],
+  ): boolean {
+    let hasAtLeastOneNonEmptyMatch = false;
 
-    return {
-      previousValue: this.schemaService.valueToDatabaseFormat(
-        existingEntity[key],
+    const allFieldsMatch = matchFields.every((field) => {
+      const schemaField = existingEntity.getSchema().get(field);
+      const rawExistingValue = this.schemaService.valueToDatabaseFormat(
+        existingEntity[field],
         schemaField,
-      ),
-      importedValue: this.schemaService.valueToDatabaseFormat(
-        importEntity[key],
-        schemaField,
-      ),
-    };
+      );
+      const rawImportValue = rawImportEntity[field];
+
+      const comparison = this.compareFieldValues(
+        rawExistingValue,
+        rawImportValue,
+      );
+
+      if (comparison === "match") {
+        hasAtLeastOneNonEmptyMatch = true;
+      }
+      return comparison === "match" || comparison === "skip";
+    });
+
+    return allFieldsMatch && hasAtLeastOneNonEmptyMatch;
+  }
+
+  private compareFieldValues(
+    existingValue: any,
+    importValue: any,
+  ): "match" | "no-match" | "skip" {
+    const existingIsEmpty = this.isEmptyImportValue(existingValue);
+    const importIsEmpty = this.isEmptyImportValue(importValue);
+
+    // If both values are empty, ignore this field for matching
+    if (existingIsEmpty && importIsEmpty) {
+      return "skip";
+    }
+
+    // Compare the "database formats" (to match complex values like dates)
+    return existingValue === importValue ? "match" : "no-match";
   }
 
   getImportHistoryForUpdatedEntities(
@@ -185,7 +240,7 @@ export class ImportExistingService {
     await Promise.all(reverts);
   }
 
-  isEmptyImportValue(value: any): boolean {
+  private isEmptyImportValue(value: any): boolean {
     return value === null || value === undefined || value === "";
   }
 }
