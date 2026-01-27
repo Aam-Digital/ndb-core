@@ -41,6 +41,7 @@ export interface AffectedEntity {
 
   form?: EntityForm<Entity>;
   selectedField?: FormFieldConfig;
+  relatedReferenceFieldLabel?: string;
 }
 
 /**

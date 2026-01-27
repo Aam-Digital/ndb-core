@@ -244,6 +244,12 @@ export class AutomatedFieldUpdateConfigService {
   ): AffectedEntity[] {
     const affectedEntities: AffectedEntity[] = [];
 
+    const relatedFieldConfig = sourceEntity
+      .getConstructor()
+      .schema.get(rule.sourceReferenceField);
+    const relatedReferenceFieldLabel =
+      relatedFieldConfig?.label ?? relatedFieldConfig?.labelShort;
+
     for (const targetEntity of targetEntities) {
       const newValue = this.calculateNewValue(sourceEntity, rule);
 
@@ -258,6 +264,7 @@ export class AutomatedFieldUpdateConfigService {
           selectedField: { ...fieldConfig, id: targetFieldId },
           affectedEntity: targetEntity,
           relatedReferenceField: rule.sourceReferenceField,
+          relatedReferenceFieldLabel,
         });
       }
     }
