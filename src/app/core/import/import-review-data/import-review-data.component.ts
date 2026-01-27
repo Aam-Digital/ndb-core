@@ -69,7 +69,7 @@ export class ImportReviewDataComponent implements OnChanges {
   @Input() entityType: string;
   @Input() columnMapping: ColumnMapping[];
   @Input() additionalActions: AdditionalImportAction[];
-  @Input() importExisting: ImportExistingSettings;
+  @Input() importExisting: ImportExistingSettings | undefined;
   @Input() additionalSettings: ImportAdditionalSettings;
   @Input() filename: string;
 

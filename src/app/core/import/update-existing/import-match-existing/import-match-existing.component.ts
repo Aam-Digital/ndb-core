@@ -31,7 +31,7 @@ export class ImportMatchExistingComponent {
   settings = model<ImportExistingSettings | undefined>();
 
   updateMatchFields(newValue: string[] | string) {
-    const fields = newValue as string[];
+    const fields = newValue as string[]; // component is set to multi=true, so this is always an array
     if (!fields?.length) {
       this.settings.set(undefined);
       return;

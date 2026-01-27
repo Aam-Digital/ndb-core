@@ -213,7 +213,6 @@ export class ImportExistingService {
     if (!importExisting.strictMatching) {
       // For strings, use case-insensitive comparison
       if (
-        !importExisting.strictMatching &&
         typeof existingValue === "string" &&
         typeof importValue === "string"
       ) {
