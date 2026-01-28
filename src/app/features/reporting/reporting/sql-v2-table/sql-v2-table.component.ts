@@ -1,6 +1,6 @@
 import { Component, inject, Input, OnInit } from "@angular/core";
 import { SqlReport } from "../../report-config";
-import { JsonPipe, NgClass } from "@angular/common";
+import { JsonPipe } from "@angular/common";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
 import {
@@ -11,7 +11,7 @@ import { Logging } from "../../../../core/logging/logging.service";
 
 @Component({
   selector: "app-sql-v2-table",
-  imports: [MatTableModule, MatSortModule, NgClass],
+  imports: [MatTableModule, MatSortModule],
   templateUrl: "./sql-v2-table.component.html",
   styleUrl: "./sql-v2-table.component.scss",
 })

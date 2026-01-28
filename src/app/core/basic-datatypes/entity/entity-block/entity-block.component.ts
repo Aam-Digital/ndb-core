@@ -1,4 +1,3 @@
-import { NgClass } from "@angular/common";
 import { Component, Input, OnInit, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { DisplayImgComponent } from "../../../../features/file/display-img/display-img.component";
@@ -20,7 +19,6 @@ import { EntityBlockConfig } from "./entity-block-config";
   templateUrl: "./entity-block.component.html",
   styleUrls: ["./entity-block.component.scss"],
   imports: [
-    NgClass,
     FaDynamicIconComponent,
     TemplateTooltipDirective,
     DisplayImgComponent,
