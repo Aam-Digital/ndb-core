@@ -41,7 +41,7 @@ import { RouteTarget } from "../../../route-target";
 import { FlattenArrayPipe } from "../../../utils/flatten-array/flatten-array.pipe";
 import { addAlphaToHexColor } from "../../../utils/style-utils";
 import { Coordinates } from "../../location/coordinates";
-import { getLocationProperties } from "../../location/map-utils";
+import { getKmDistance, getLocationProperties } from "../../location/map-utils";
 import { LocationProperties } from "../../location/map/map-properties-popup/map-properties-popup.component";
 import { MapComponent } from "../../location/map/map.component";
 import {
@@ -70,6 +70,11 @@ export interface MatchingSide extends MatchingSideConfig {
     coordinatesProperties: string[];
     compareCoordinates: BehaviorSubject<Coordinates[]>;
   };
+
+  sortValueAccessor?: (
+    record: Entity,
+    sortKey: string,
+  ) => number | string | Symbol | null | undefined;
 }
 
 @RouteTarget("MatchingEntities")
@@ -387,6 +392,7 @@ export class MatchingEntitiesComponent implements OnInit {
       const columnConfig = this.getDistanceColumnConfig(side);
       side.columns[sideIndex] = columnConfig;
       side.distanceColumn = columnConfig.additional;
+      side.sortValueAccessor = this.createSortValueAccessor(side);
       const colIndex = this.columns.findIndex((row) => {
         const col = row[index];
         return typeof col === "string"
@@ -399,17 +405,69 @@ export class MatchingEntitiesComponent implements OnInit {
     }
   }
 
+  /**
+   * Build the display-only distance column configuration for matching tables.
+   */
   private getDistanceColumnConfig(side: MatchingSide): FormFieldConfig {
     return {
       id: "distance",
       label: $localize`:Matching View column name:Distance`,
       viewComponent: "DisplayDistance",
+      dataType: "number",
       additional: {
         coordinatesProperties:
           this.displayedLocationProperties[side.entityType],
         compareCoordinates: new BehaviorSubject<Coordinates[]>([]),
       },
     };
+  }
+
+  /**
+   * Build a sort accessor that overrides sorting for the computed distance column.
+   */
+  private createSortValueAccessor(side: MatchingSide) {
+    return (record: Entity, sortKey: string) => {
+      // Only override sorting for the computed distance column.
+      if (sortKey !== "distance") {
+        return undefined;
+      }
+      return this.getDistanceSortValue(record, side);
+    };
+  }
+
+  /**
+   * Compute the numeric distance (km) used for sorting the "distance" column.
+   * Returns null when coordinates are missing so those rows sort last.
+   */
+  private getDistanceSortValue(
+    entity: Entity,
+    side: MatchingSide,
+  ): number | null {
+    const distanceColumn = side.distanceColumn;
+    if (!distanceColumn) {
+      return null;
+    }
+
+    const coordinatesProperties = distanceColumn.coordinatesProperties ?? [];
+    const compareCoordinates = distanceColumn.compareCoordinates?.value ?? [];
+    if (!coordinatesProperties.length || !compareCoordinates.length) {
+      return null;
+    }
+
+    const distances: number[] = [];
+    for (const prop of coordinatesProperties) {
+      const geoLookup = (entity[prop] as GeoLocation | undefined)?.geoLookup;
+      if (!geoLookup) {
+        continue;
+      }
+      for (const compareCoord of compareCoordinates) {
+        if (compareCoord) {
+          distances.push(getKmDistance(geoLookup, compareCoord));
+        }
+      }
+    }
+
+    return distances.length ? Math.min(...distances) : null;
   }
 
   updateMarkersAndDistances() {
