@@ -1,0 +1,260 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+	   <link rel="stylesheet" href="./styles/style.css">
+        <link rel="stylesheet" href="./styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="./" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content readme">
+                   <div class="content-data">
+
+
+<p><a href="https://github.com/Aam-Digital/ndb-core/releases"><img src="https://img.shields.io/github/release/Aam-Digital/ndb-core.svg" alt="Release Version" class="img-responsive"></a>
+<a href="https://digitalpublicgoods.net/r/aam-digital"><img src="https://img.shields.io/badge/Verified-DPG-3333AB?logo=data:image/svg%2bxml;base64,PHN2ZyB3aWR0aD0iMzEiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMSAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0LjIwMDggMjEuMzY3OEwxMC4xNzM2IDE4LjAxMjRMMTEuNTIxOSAxNi40MDAzTDEzLjk5MjggMTguNDU5TDE5LjYyNjkgMTIuMjExMUwyMS4xOTA5IDEzLjYxNkwxNC4yMDA4IDIxLjM2NzhaTTI0LjYyNDEgOS4zNTEyN0wyNC44MDcxIDMuMDcyOTdMMTguODgxIDUuMTg2NjJMMTUuMzMxNCAtMi4zMzA4MmUtMDVMMTEuNzgyMSA1LjE4NjYyTDUuODU2MDEgMy4wNzI5N0w2LjAzOTA2IDkuMzUxMjdMMCAxMS4xMTc3TDMuODQ1MjEgMTYuMDg5NUwwIDIxLjA2MTJMNi4wMzkwNiAyMi44Mjc3TDUuODU2MDEgMjkuMTA2TDExLjc4MjEgMjYuOTkyM0wxNS4zMzE0IDMyLjE3OUwxOC44ODEgMjYuOTkyM0wyNC44MDcxIDI5LjEwNkwyNC42MjQxIDIyLjgyNzdMMzAuNjYzMSAyMS4wNjEyTDI2LjgxNzYgMTYuMDg5NUwzMC42NjMxIDExLjExNzdMMjQuNjI0MSA5LjM1MTI3WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==" alt="DPG Badge" class="img-responsive"></a>
+<a href="https://chatwoot.help/hc/aam-digital/en"><img src="https://img.shields.io/badge/User%20Support%20Center-available-blue" alt="User Support Center" class="img-responsive"></a></p>
+<p><img src="https://img.shields.io/poeditor/progress/740876/en?token=56acaf6808f07eb52c5b39a3abea19a7" alt="English" class="img-responsive">
+<img src="https://img.shields.io/poeditor/progress/740876/fr?token=56acaf6808f07eb52c5b39a3abea19a7" alt="French" class="img-responsive">
+<img src="https://img.shields.io/poeditor/progress/740876/it?token=56acaf6808f07eb52c5b39a3abea19a7" alt="Italian" class="img-responsive">
+<img src="https://img.shields.io/poeditor/progress/740876/de?token=56acaf6808f07eb52c5b39a3abea19a7" alt="German" class="img-responsive"></p>
+<p><a href="https://codeclimate.com/github/Aam-Digital/ndb-core"><img src="https://codeclimate.com/github/Aam-Digital/ndb-core/badges/gpa.svg" alt="Code Climate" class="img-responsive"></a>
+<a href="https://codeclimate.com/github/Aam-Digital/ndb-core/test_coverage"><img src="https://api.codeclimate.com/v1/badges/4e4a7a6301064019b2c9/test_coverage" alt="Test Coverage" class="img-responsive"></a>
+<a href="https://snyk.io/test/github/Aam-Digital/ndb-core"><img src="https://snyk.io/test/github/Aam-Digital/ndb-core/badge.svg" alt="Known Vulnerabilities" class="img-responsive"></a>
+<a href="https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html"><img src="https://img.shields.io/badge/Tutorial%20%26%20Guides-available-blue" alt="Developer Guides" class="img-responsive"></a></p>
+<h1>Aam Digital</h1>
+<p><em>Enabling social organizations digitally to transform lives.</em></p>
+<p>Aam Digital is an easy-to-use case management software for the social sector that improves the effectiveness and transparency of work with beneficiaries in the field.</p>
+<div align="center"><img src="https://github.com/Aam-Digital/ndb-core/assets/1682541/2b125750-5c03-4dc7-873f-22d8278accde"  width="30%"></div>
+
+<blockquote>
+<p>For more information about the software and an open demo system visit <strong><a href="https://www.aam-digital.com">www.aam-digital.com</a></strong>.</p>
+</blockquote>
+<blockquote>
+<p>For more information about the code including guides see the separate <strong><a href="https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html">Developer Documentation</a></strong></p>
+</blockquote>
+<hr>
+<h1>Installation, Use &amp; Deployment</h1>
+<p>You can directly run the system using Docker.
+More information in our <a href="https://github.com/Aam-Digital/ndb-setup/">Aam-Digital/ndb-setup repository</a>.
+In that case you do not have to clone this repository and install all the dependencies as everything is packaged into the docker image already.</p>
+<p>The Aam Digital platform can be customized for different use cases through a flexible configuration file. This doesn&#39;t require changes to the generic platform code base in this repository:
+<img src="https://github.com/Aam-Digital/ndb-core/assets/1682541/c9b08c0b-bb60-464d-b39f-703ae2995213" alt="image" class="img-responsive"></p>
+<p>The overall architecture and tech stack including backend services looks like this:
+<img src="https://github.com/Aam-Digital/ndb-core/assets/1682541/557adb8a-df93-4c83-b547-8a5e28650324" alt="image" class="img-responsive"></p>
+<h1>Development</h1>
+<h2>Setup</h2>
+<ol>
+<li>This project depends on <a href="https://www.npmjs.org/">npm (NodeJS)</a> to setup its dependencies. Please make sure you have npm installed.</li>
+<li><code>git clone</code> this repository to get all the code with its configuration and requirements.</li>
+<li><code>npm install</code> the dependencies (external libraries and packages)</li>
+<li><code>npm run start</code> to run your local dev server and get started.</li>
+</ol>
+<p>By default, the app is started with a &quot;mock&quot; session, generating demo data into an in-memory database.
+You can change this mode by editing the environment.ts
+(or create a file assets/config.json to overwrite settings; that file is on the .gitignore list).</p>
+<p>If you need to develop in an advanced environment including local backend services,
+please refer to the instructions at <a href="https://github.com/Aam-Digital/aam-services/tree/main/docs/developer">Aam-Digital/aam-services/docs/developer</a>.</p>
+<h2>Documentation</h2>
+<p>Our detailed <a href="https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html">Developer Documentation</a>
+provides tutorials, guides, concepts and an API reference.</p>
+<h2>Translations (internationalization; i18n)</h2>
+<p>Aam Digital is available in multiple languages.
+We translate the terms using POEditor: <a href="https://poeditor.com/join/project/CGn4IA7Ilz">Join the translation team</a></p>
+<p>To commit latest translations to the codebase, trigger the manual GitHub Action in the repository.</p>
+<h2>Code Style</h2>
+<p>We use <em>prettier</em> to enforce a consistent formatting of code to make the project easier to read.
+The project is set up with a git pre-commit hook to automatically format your commits according to these rules.</p>
+<h2>Using Angular CLI</h2>
+<p>This project is built upon <a href="https://angular.io/">Angular</a>.
+If you are unfamiliar with the framework and Angular CLI go check out the <a href="https://github.com/angular/angular-cli/blob/master/README.md">Angular CLI README</a> or use <code>ng help</code>.</p>
+<h2>Build a docker image locally</h2>
+<p>Deployment on a server can be done through a docker image, our <a href="https://github.com/Aam-Digital/ndb-setup">ndb-setup project</a> provides tools and a starting point to run the system using docker.
+For more information about Docker, please refer to <a href="https://docs.docker.com/get-started/">their official documentation</a>.</p>
+<p>To learn more about the build process, see <a href="./build/README.md">/build</a>.</p>
+<hr>
+<h1>Contribute</h1>
+<p>Our project is completely run by volunteers. Contributions welcome!</p>
+<p>We are trying hard to make it easy for you to join in.
+As a starting point, please refer to our <strong><a href="./CONTRIBUTING.md">CONTRIBUTING</a></strong> page.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 0;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'readme';
+            var COMPODOC_CURRENT_PAGE_URL = 'index.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="./js/libs/custom-elements.min.js"></script>
+       <script src="./js/libs/lit-html.js"></script>
+
+       <script src="./js/menu-wc.js" defer></script>
+       <script nomodule src="./js/menu-wc_es5.js" defer></script>
+
+       <script src="./js/libs/bootstrap-native.js"></script>
+
+       <script src="./js/libs/es6-shim.min.js"></script>
+       <script src="./js/libs/EventDispatcher.js"></script>
+       <script src="./js/libs/promise.min.js"></script>
+
+       <script src="./js/compodoc.js"></script>
+
+       <script src="./js/tabs.js"></script>
+       <script src="./js/menu.js"></script>
+       <script src="./js/libs/clipboard.min.js"></script>
+       <script src="./js/libs/prism.js"></script>
+       <script src="./js/sourceCode.js"></script>
+          <script src="./js/search/search.js"></script>
+          <script src="./js/search/lunr.min.js"></script>
+          <script src="./js/search/search-lunr.js"></script>
+          <script src="./js/search/search_index.js"></script>
+       <script src="./js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
