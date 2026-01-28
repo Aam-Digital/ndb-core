@@ -240,6 +240,51 @@ describe("EntityListComponent", () => {
     expect(component.mobileColumnGroup).toEqual("Basic Info");
   }));
 
+  it("should load inactive entities when showInactive is toggled and combine with active records", fakeAsync(() => {
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const activeEntity = new TestEntity("active-1");
+    const inactiveEntity = new TestEntity("inactive-1");
+    inactiveEntity.inactive = true;
+
+    const loadTypeSpy = spyOn(entityMapper, "loadType").and.callFake(
+      (entityType, loadInactive) => {
+        if (loadInactive === "active") {
+          return Promise.resolve([activeEntity]);
+        } else if (loadInactive === "inactive") {
+          return Promise.resolve([inactiveEntity]);
+        }
+        return Promise.resolve([]);
+      },
+    );
+
+    createComponent();
+    initComponentInputs();
+    tick();
+
+    // Initially only active records are loaded
+    expect(loadTypeSpy).toHaveBeenCalledWith(TestEntity, "active");
+    expect(component.allEntities).toEqual([activeEntity]);
+
+    // Toggle showInactive
+    component.onShowInactiveChange(true);
+    tick();
+
+    // Inactive records should be loaded and combined
+    expect(loadTypeSpy).toHaveBeenCalledWith(TestEntity, "inactive");
+    expect(component.allEntities).toContain(activeEntity);
+    expect(component.allEntities).toContain(inactiveEntity);
+    expect(component.allEntities.length).toBe(2);
+
+    // Toggling again should not trigger another load
+    loadTypeSpy.calls.reset();
+    component.onShowInactiveChange(false);
+    tick();
+    component.onShowInactiveChange(true);
+    tick();
+
+    expect(loadTypeSpy).not.toHaveBeenCalledWith(TestEntity, "inactive");
+  }));
+
   function createComponent() {
     fixture = TestBed.createComponent(EntityListComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
