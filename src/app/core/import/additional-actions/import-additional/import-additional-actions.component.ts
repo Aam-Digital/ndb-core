@@ -76,12 +76,6 @@ export class ImportAdditionalActionsComponent implements OnChanges {
   });
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(
-      "entityType:",
-      this.entityType,
-      "entityTypeCtor:",
-      this.entityTypeCtor,
-    );
     if (changes.hasOwnProperty("entityType")) {
       this.entityTypeCtor = this.entityType
         ? this.entityRegistry.get(this.entityType)
