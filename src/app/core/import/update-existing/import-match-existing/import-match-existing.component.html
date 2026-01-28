@@ -1,4 +1,4 @@
-<mat-expansion-panel [disabled]="!entityType">
+<mat-expansion-panel [disabled]="!entityType()">
   <mat-expansion-panel-header>
     <mat-panel-title>
       <span i18n>Check/Update existing instead of creating new records</span>
@@ -16,13 +16,26 @@
     <mat-label i18n>Fields that identify a unique record</mat-label>
     <app-entity-field-select
       [multi]="true"
-      [entityType]="entityType"
-      [value]="matchExistingByFields"
-      (valueChange)="updateValue($event)"
+      [entityType]="entityType()"
+      [value]="settings()?.matchExistingByFields"
+      (valueChange)="updateMatchFields($event)"
     ></app-entity-field-select>
     <mat-hint i18n
       >All selected fields have to be equal in an existing record and your
       imported column to match.
     </mat-hint>
   </mat-form-field>
+
+  <div class="flex-row gap-regular align-center">
+    <mat-slide-toggle
+      [ngModel]="settings()?.strictMatching"
+      (ngModelChange)="updateStrictMatching($event)"
+      i18n
+      >Strict matching</mat-slide-toggle
+    >
+    <app-help-button
+      text="enable this to use case-sensitive, exact comparisons only"
+      i18n-text="import - strict matching - help text"
+    ></app-help-button>
+  </div>
 </mat-expansion-panel>

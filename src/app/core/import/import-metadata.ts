@@ -62,6 +62,17 @@ export interface ImportDataChange {
 }
 
 /**
+ * Settings for matching imported data to existing records.
+ */
+export interface ImportExistingSettings {
+  /** IDs of fields used to match imported data to an existing record */
+  matchExistingByFields?: string[];
+
+  /** Use strict (case-sensitive) matching for existing records */
+  strictMatching?: boolean;
+}
+
+/**
  * Settings required to execute an import including type and mappings.
  */
 export interface ImportSettings {
@@ -71,8 +82,8 @@ export interface ImportSettings {
   /** configured actions to run in addition to the import to link data */
   additionalActions?: AdditionalImportAction[];
 
-  /** IDs of fields used to match imported data to an existing record */
-  matchExistingByFields?: string[];
+  /** settings for matching imported data to existing records */
+  importExisting?: ImportExistingSettings;
 
   /** additional settings for parsing import data */
   additionalSettings?: ImportAdditionalSettings;

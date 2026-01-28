@@ -4,33 +4,14 @@ import {
   Input,
   inject,
 } from "@angular/core";
-import { IconName, IconPrefix } from "@fortawesome/fontawesome-svg-core";
-import {
-  faCalendarAlt,
-  faCalendarCheck,
-  faChartLine,
-  faFileAlt,
-  faQuestionCircle,
-  faUsers,
-} from "@fortawesome/free-solid-svg-icons";
+import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 import {
   FaIconLibrary,
   FontAwesomeModule,
   IconDefinition,
 } from "@fortawesome/angular-fontawesome";
 import { Logging } from "../../logging/logging.service";
-
-/**
- * A map to prevent old configs to be broken
- */
-const iconAliases = new Map<string, IconDefinition>([
-  ["calendar-check-o", faCalendarCheck],
-  ["file-text", faFileAlt],
-  ["question", faQuestionCircle],
-  ["line-chart", faChartLine],
-  ["calendar", faCalendarAlt],
-  ["users", faUsers],
-]);
+import { resolveIconDefinition } from "./fa-icon-utils";
 
 /**
  * This component can be used to display dynamic Font-Awesome icons.
@@ -76,22 +57,7 @@ export class FaDynamicIconComponent {
       this._icon = undefined;
       return;
     }
-    let definition = iconAliases.get(icon);
-    if (!definition && icon) {
-      const iconAndDef = icon.split(" ");
-      if (iconAndDef.length === 1) {
-        definition = this.iconLibrary.getIconDefinition(
-          "fas",
-          icon as IconName,
-        );
-      } else {
-        definition = this.iconLibrary.getIconDefinition(
-          iconAndDef[0] as IconPrefix,
-          iconAndDef[1] as IconName,
-        );
-      }
-      // Fallback if the icon is not available: search through the icon definitions
-    }
+    let definition = resolveIconDefinition(icon, this.iconLibrary);
     if (!definition) {
       // Fallback if the icon is neither in the map nor a registered icon
       definition = FaDynamicIconComponent.fallbackIcon;
