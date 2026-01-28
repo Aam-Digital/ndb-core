@@ -3,7 +3,6 @@ import {
   EntityFormSavedEvent,
 } from "#src/app/core/common-components/entity-form/entity-form";
 import { AutomatedFieldUpdateConfigService } from "#src/app/features/inherited-field/automated-field-update/automated-field-update-config.service";
-import { NgClass } from "@angular/common";
 import {
   Component,
   inject,
@@ -43,7 +42,6 @@ import { ConfirmationDialogService } from "../../confirmation-dialog/confirmatio
   encapsulation: ViewEncapsulation.None,
   imports: [
     FormsModule, // importing FormsModule ensures that buttons anywhere inside do not trigger form submission / page reload
-    NgClass,
     EntityFieldEditComponent,
   ],
 })

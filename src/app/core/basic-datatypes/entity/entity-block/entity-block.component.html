@@ -1,9 +1,7 @@
 <span
   class="block-height truncate-text"
-  [ngClass]="{
-    clickable: !linkDisabled,
-    '.inactive': !entity?.isActive,
-  }"
+  [class.clickable]="!linkDisabled"
+  [class.inactive]="!entity?.isActive"
   (click)="showDetailsPage()"
   [appTemplateTooltip]="tooltip"
   [tooltipDisabled]="!entityBlockConfig"
