@@ -130,7 +130,6 @@ export class NotesManagerComponent implements OnInit {
     }
   }
   }
-
   private subscribeEntityUpdates() {
     merge(
       this.entityMapperService.receiveUpdates(Note),
