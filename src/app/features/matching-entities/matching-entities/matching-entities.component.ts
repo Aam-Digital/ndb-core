@@ -456,7 +456,7 @@ export class MatchingEntitiesComponent implements OnInit {
 
     const distances: number[] = [];
     for (const prop of coordinatesProperties) {
-      const geoLookup = (entity[prop] as GeoLocation | undefined)?.geoLookup;
+      const geoLookup = entity[prop]?.geoLookup;
       if (!geoLookup) {
         continue;
       }

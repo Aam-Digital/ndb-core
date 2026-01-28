@@ -3,6 +3,9 @@ import { Entity } from "../../../entity/model/entity";
 import { Ordering } from "../../../basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { TableRow } from "../table-row";
 
+// Defines the types that can be compared for sorting
+type SortComparable = number | string | Symbol;
+
 /**
  * Custom sort implementation for a MatTableDataSource<TableRow<T>>
  * @param data The data of the data source
@@ -19,7 +22,7 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
   getSortValue?: (
     record: OBJECT,
     sortKey: PROPERTY,
-  ) => number | string | Symbol | null | undefined,
+  ) => SortComparable | null | undefined,
 ): TableRow<OBJECT>[] {
   if (direction === "" || !active) {
     return data;
@@ -64,11 +67,11 @@ function getComparableValueWithOverride<OBJECT, PROPERTY extends keyof OBJECT>(
     record: OBJECT,
     sortKey: PROPERTY,
   ) => number | string | Symbol | null | undefined,
-): number | string | Symbol {
+): SortComparable {
   if (getSortValue) {
     const overrideValue = getSortValue(obj, key);
     if (overrideValue !== undefined) {
-      return overrideValue as number | string | Symbol;
+      return overrideValue;
     }
   }
   return getComparableValue(obj, key);
@@ -77,7 +80,7 @@ function getComparableValueWithOverride<OBJECT, PROPERTY extends keyof OBJECT>(
 function getComparableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   obj: OBJECT,
   key: PROPERTY,
-): number | string | Symbol {
+): SortComparable {
   let value = obj[key];
 
   // Special handling for Age columns
