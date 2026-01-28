@@ -122,9 +122,13 @@ export class NotesManagerComponent implements OnInit {
 
   async onShowInactiveChange(showInactive: boolean) {
     this.showInactive = showInactive;
+    if (!this.notes) {
+      return;
+    }
     if (showInactive && !this.inactiveLoaded) {
       await this.loadInactiveEntities();
     }
+  }
   }
 
   private subscribeEntityUpdates() {
