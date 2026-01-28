@@ -129,7 +129,7 @@ export class NotesManagerComponent implements OnInit {
       await this.loadInactiveEntities();
     }
   }
-  }
+
   private subscribeEntityUpdates() {
     merge(
       this.entityMapperService.receiveUpdates(Note),
