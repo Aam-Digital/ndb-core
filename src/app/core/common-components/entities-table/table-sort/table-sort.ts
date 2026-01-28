@@ -16,13 +16,25 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
     direction,
     active,
   }: { direction: "asc" | "desc" | ""; active: PROPERTY | "" },
+  getSortValue?: (
+    record: OBJECT,
+    sortKey: PROPERTY,
+  ) => number | string | Symbol | null | undefined,
 ): TableRow<OBJECT>[] {
   if (direction === "" || !active) {
     return data;
   }
   data.sort((objA, objB) => {
-    const valueA = getComparableValue(objA.record, active);
-    const valueB = getComparableValue(objB.record, active);
+    const valueA = getComparableValueWithOverride(
+      objA.record,
+      active,
+      getSortValue,
+    );
+    const valueB = getComparableValueWithOverride(
+      objB.record,
+      active,
+      getSortValue,
+    );
     const primaryComparison = compareValues(valueA, valueB);
 
     // If the primary values are equal, sort by the created at
@@ -39,6 +51,27 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
     data.reverse();
   }
   return data;
+}
+
+/**
+ * Allows a custom sort value to override the default comparable value.
+ * Return undefined to fall back to the standard value accessor.
+ */
+function getComparableValueWithOverride<OBJECT, PROPERTY extends keyof OBJECT>(
+  obj: OBJECT,
+  key: PROPERTY,
+  getSortValue?: (
+    record: OBJECT,
+    sortKey: PROPERTY,
+  ) => number | string | Symbol | null | undefined,
+): number | string | Symbol {
+  if (getSortValue) {
+    const overrideValue = getSortValue(obj, key);
+    if (overrideValue !== undefined) {
+      return overrideValue as number | string | Symbol;
+    }
+  }
+  return getComparableValue(obj, key);
 }
 
 function getComparableValue<OBJECT, PROPERTY extends keyof OBJECT>(
