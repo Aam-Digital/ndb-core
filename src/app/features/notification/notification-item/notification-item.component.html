@@ -1,6 +1,6 @@
 <div
   class="flex-row justify-space-between align-center notification-item-wrapper"
-  [ngClass]="{ 'read-notification': notification.readStatus }"
+  [class.read-notification]="notification.readStatus"
 >
   <div class="notification-details" (click)="onNotificationClick(notification)">
     <div class="notification-title">{{ notification.title }}</div>
