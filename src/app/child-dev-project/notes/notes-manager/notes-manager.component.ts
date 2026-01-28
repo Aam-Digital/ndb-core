@@ -88,7 +88,9 @@ export class NotesManagerComponent implements OnInit {
       notes = notes.concat(eventNotes);
     }
     if (this.showInactive) {
+      this.notes = notes;
       await this.loadInactiveEntities();
+      return this.notes;
     }
     return notes;
   }
@@ -109,7 +111,11 @@ export class NotesManagerComponent implements OnInit {
       );
       inactiveNotes = inactiveNotes.concat(inactiveEventNotes);
     }
-    this.notes = [...this.notes, ...inactiveNotes];
+    const noteMap = new Map(this.notes.map((n) => [n.getId(), n]));
+    for (const note of inactiveNotes) {
+      noteMap.set(note.getId(), note);
+    }
+    this.notes = Array.from(noteMap.values());
     this.inactiveLoaded = true;
     this.loadingInactive.set(false);
   }
