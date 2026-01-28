@@ -1,13 +1,12 @@
 @if (_field && form && _field.editComponent) {
   <div
     class="flex-row"
-    [ngClass]="{
-      hidden: _field?.hideFromForm,
-      readonlyAfterSet:
-        _field?.validators?.readonlyAfterSet &&
-        form?.formGroup?.enabled &&
-        formControl?.disabled,
-    }"
+    [class.hidden]="_field?.hideFromForm"
+    [class.readonlyAfterSet]="
+      _field?.validators?.readonlyAfterSet &&
+      form?.formGroup?.enabled &&
+      formControl?.disabled
+    "
   >
     <div class="flex-grow">
       <mat-form-field
@@ -18,7 +17,7 @@
         @if (!hideLabel && _field.displayFullLengthLabel) {
           <div
             class="full-label"
-            [ngClass]="{ 'full-label-disabled': formControl?.disabled }"
+            [class.full-label-disabled]="formControl?.disabled"
           >
             {{ _field.label }}
             @if (_field?.validators?.required) {
