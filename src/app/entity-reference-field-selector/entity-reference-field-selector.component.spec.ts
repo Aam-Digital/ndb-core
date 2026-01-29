@@ -34,7 +34,7 @@ describe("EntityReferenceFieldSelectorComponent", () => {
     };
 
     spyOn(component.optionSelected, "emit");
-    
+
     component.onOptionSelected({ value: option });
 
     expect(component.selectedOption).toBe(option);

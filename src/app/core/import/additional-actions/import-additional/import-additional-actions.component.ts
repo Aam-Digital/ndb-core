@@ -95,7 +95,9 @@ export class ImportAdditionalActionsComponent implements OnChanges {
     // Enable/disable targetId field
     if (option) {
       this.selectedTargetEntityType =
-        option.referencedEntityType?.ENTITY_TYPE || option.sourceReferenceEntity || "";
+        option.referencedEntityType?.ENTITY_TYPE ||
+        option.sourceReferenceEntity ||
+        "";
       this.unifiedActionForm.get("targetId").enable();
     } else {
       this.selectedTargetEntityType = "";

@@ -9,10 +9,16 @@
     @for (option of availableOptions; track option) {
       <mat-option [value]="option">
         <span>
-          {{ option.referencedEntityType?.ENTITY_TYPE || option.sourceReferenceEntity | entityTypeLabel }}
+          {{
+            option.referencedEntityType?.ENTITY_TYPE ||
+              option.sourceReferenceEntity | entityTypeLabel
+          }}
           via
           <app-entity-field-label
-            [entityType]="option.referencedEntityType?.ENTITY_TYPE || option.sourceReferenceEntity"
+            [entityType]="
+              option.referencedEntityType?.ENTITY_TYPE ||
+              option.sourceReferenceEntity
+            "
             [field]="option.sourceReferenceField"
           ></app-entity-field-label>
         </span>

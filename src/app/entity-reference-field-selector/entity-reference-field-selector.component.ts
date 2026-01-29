@@ -28,11 +28,15 @@ export interface InheritanceOption {
 
 @Component({
   selector: "app-entity-reference-field-selector",
-  imports: [MatSelect, MatOption, EntityTypeLabelPipe, EntityFieldLabelComponent],
+  imports: [
+    MatSelect,
+    MatOption,
+    EntityTypeLabelPipe,
+    EntityFieldLabelComponent,
+  ],
   templateUrl: "./entity-reference-field-selector.component.html",
   styleUrl: "./entity-reference-field-selector.component.scss",
 })
-
 export class EntityReferenceFieldSelectorComponent implements OnChanges {
   private readonly entityRelationsService = inject(EntityRelationsService);
   private readonly entityRegistry = inject(EntityRegistry);
@@ -88,7 +92,9 @@ export class EntityReferenceFieldSelectorComponent implements OnChanges {
   private buildInheritanceOption(attr: string): InheritanceOption | null {
     const fieldConfig = this.entityType.schema.get(attr);
     if (!fieldConfig?.additional) return null;
-    const referencedEntityType = this.entityRegistry.get(fieldConfig.additional);
+    const referencedEntityType = this.entityRegistry.get(
+      fieldConfig.additional,
+    );
     if (!referencedEntityType) return null;
     const refFieldLabel = this.getFieldLabel(attr, this.entityType);
     return {
@@ -113,11 +119,13 @@ export class EntityReferenceFieldSelectorComponent implements OnChanges {
    */
   private buildAutomatedOptions(): InheritanceOption[] {
     const automatedOptions = this.getAutomatedOptions();
-    return automatedOptions.flatMap((option) =>
-      option.relatedReferenceFields.map((refField) =>
-        this.buildAutomatedOption(option, refField)
+    return automatedOptions
+      .flatMap((option) =>
+        option.relatedReferenceFields.map((refField) =>
+          this.buildAutomatedOption(option, refField),
+        ),
       )
-    ).filter((opt): opt is InheritanceOption => !!opt);
+      .filter((opt): opt is InheritanceOption => !!opt);
   }
 
   /**
@@ -128,8 +136,12 @@ export class EntityReferenceFieldSelectorComponent implements OnChanges {
    * @returns An InheritanceOption if the related entity exists, null otherwise
    */
   private buildAutomatedOption(
-    option: { label: string; entityType: string; relatedReferenceFields: string[] },
-    refField: string
+    option: {
+      label: string;
+      entityType: string;
+      relatedReferenceFields: string[];
+    },
+    refField: string,
   ): InheritanceOption | null {
     const refFieldLabel = this.getFieldLabel(refField, option.entityType);
     const refEntityType = this.entityRegistry.get(option.entityType);

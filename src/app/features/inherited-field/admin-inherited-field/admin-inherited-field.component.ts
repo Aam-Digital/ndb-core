@@ -82,7 +82,9 @@ export class AdminInheritedFieldComponent
    * @param option The inheritance option selected by the user.
    * @returns Promise resolving to true if the dialog was confirmed, false otherwise.
    */
-  async openConfigDetailsDialog(option: InheritanceOption | null = null): Promise<boolean> {
+  async openConfigDetailsDialog(
+    option: InheritanceOption | null = null,
+  ): Promise<boolean> {
     if (!option?.sourceReferenceField) return false;
     const dialogRef = this.matDialog.open<
       AutomatedFieldMappingComponent,
