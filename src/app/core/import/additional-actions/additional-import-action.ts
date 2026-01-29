@@ -34,7 +34,11 @@ export interface AdditonalDirectLinkAction extends AdditionalImportBaseAction {
   /**
    * EntityType of the target entity (into which the entities should be linked)
    */
-  targetType: string;
+
+  /**
+   * EntityType of the entity being referenced (the type of entity selected for prefill)
+   */
+  targetEntityType: string;
 
   /**
    * Attribute of the target entity to which the linked entities should be added
@@ -100,5 +104,5 @@ export interface AdditionalPrefilledFieldAction extends AdditionalImportBaseActi
   /**
    * ID of the entity to use as the prefilled value
    */
-  targetId?: string;
+  targetEntityId?: string;
 }

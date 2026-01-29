@@ -107,6 +107,7 @@ export class BasicAutocompleteComponent<O, V = O>
     option?.["_label"] ?? option?.toString();
   @Input() createOption: (input: string) => Promise<O>;
   @Input() hideOption: (option: O) => boolean = () => false;
+  @Input() optionDisabled: (option: O) => boolean = () => false;
 
   /**
    * Whether the user should be able to select multiple values.

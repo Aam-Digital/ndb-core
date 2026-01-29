@@ -64,6 +64,22 @@ export class ImportComponent {
   /** calculated for validation on columnMapping changes */
   mappedColumnsCount: number;
 
+  /**
+   * Get the list of field IDs that are set as prefilled in additional actions.
+   * These fields should be disabled in the column mapping dropdown.
+   */
+  get prefilledFieldIds(): string[] {
+    return (this.importSettings.additionalActions ?? []).reduce(
+      (acc: string[], action) => {
+        if (action.mode === "prefill") {
+          acc.push(action.fieldId);
+        }
+        return acc;
+      },
+      [],
+    );
+  }
+
   constructor() {
     this.route.queryParamMap.subscribe((params) => {
       if (params.has("entityType")) {

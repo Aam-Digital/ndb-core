@@ -95,6 +95,7 @@ Autocomplete
     >
       <mat-option
         [value]="item"
+        [disabled]="optionDisabled(item.initial)"
         cdkDrag
         *cdkVirtualFor="
           let item of autocompleteOptions;
@@ -132,6 +133,16 @@ Autocomplete
               [ngTemplateOutlet]="templateRef"
               [ngTemplateOutletContext]="{ $implicit: item.initial }"
             ></ng-template>
+          }
+          @if (optionDisabled(item.initial)) {
+            <fa-icon
+              icon="circle-info"
+              size="sm"
+              class="disabled-option-info"
+              matTooltip="This field is already pre-filled and cannot be selected again."
+              i18n-matTooltip
+              matTooltipPosition="before"
+            ></fa-icon>
           }
         </div>
       </mat-option>

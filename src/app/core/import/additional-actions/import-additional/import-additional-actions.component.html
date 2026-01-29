@@ -32,8 +32,7 @@
               <strong>"{{ getFieldLabel(action.fieldId) }}"</strong>
               <span i18n>for all records</span>
             } @else {
-              <span i18n>Link all imported records to</span>
-              <strong>{{ action.targetType | entityTypeLabel }}</strong>
+              <span i18n>Additional import action</span>
             }
           </div>
           <div matListItemLine>
@@ -57,28 +56,26 @@
   </div>
 
   <!-- Unified action/prefill selector -->
-  <form [formGroup]="unifiedActionForm">
-    <div>
-      @if (unifiedActionForm.disabled) {
-        <mat-error i18n>
-          Select an Import Target Type before defining additional actions.
-        </mat-error>
-      }
+  <form [formGroup]="unifiedActionForm" class="margin-top-regular">
+    @if (unifiedActionForm.disabled) {
+      <mat-error i18n>
+        Select an Import Target Type before defining additional actions.
+      </mat-error>
+    }
+
+    <div class="margin-bottom-regular">
+      <label class="form-label" i18n>Field to set for all imported records:</label>
     </div>
 
-    <div class="flex-row gap-regular">
-      <div class="full-width">
-        <label i18n="Label for linked entity type input"
-          >Field to set for all imported records:</label
-        >
-        <app-entity-reference-field-selector
-          [entityType]="entityTypeCtor"
-          [value]="unifiedActionForm.get('fieldOption').value"
-          (optionSelected)="onFieldOptionSelected($event)"
-        ></app-entity-reference-field-selector>
-      </div>
+    <div class="flex-row gap-regular align-center">
+      <app-entity-reference-field-selector
+        [entityType]="entityTypeCtor"
+        [value]="unifiedActionForm.get('fieldOption').value"
+        (optionSelected)="onFieldOptionSelected($event)"
+        class="flex-2"
+      ></app-entity-reference-field-selector>
 
-      <div>
+      <div class="flex-1">
         <label i18n>with value</label>
         <app-edit-entity
           formControlName="targetId"
@@ -99,6 +96,10 @@
       >
         Add
       </button>
+    </div>
+
+    <div class="explanation margin-top-small" i18n>
+      You can link the imported records to a related record as part of the import process.
     </div>
   </form>
 </mat-expansion-panel>

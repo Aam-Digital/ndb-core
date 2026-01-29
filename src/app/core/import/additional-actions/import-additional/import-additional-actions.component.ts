@@ -22,11 +22,11 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatSelectModule } from "@angular/material/select";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityBlockComponent } from "../../../basic-datatypes/entity/entity-block/entity-block.component";
-import { EntityTypeLabelPipe } from "../../../common-components/entity-type-label/entity-type-label.pipe";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { AdditionalImportAction } from "../additional-import-action";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { EntityReferenceFieldSelectorComponent } from "#src/app/entity-reference-field-selector/entity-reference-field-selector.component";
+import { InheritanceOption } from "#src/app/entity-reference-field-selector/entity-reference-field-selector.component";
 
 /**
  * Import sub-step: Let user select additional import actions like adding entities to a group entity.
@@ -40,7 +40,6 @@ import { EntityReferenceFieldSelectorComponent } from "#src/app/entity-reference
     MatListModule,
     FontAwesomeModule,
     MatTooltipModule,
-    EntityTypeLabelPipe,
     EntityBlockComponent,
     ReactiveFormsModule,
     MatFormFieldModule,
@@ -51,7 +50,7 @@ import { EntityReferenceFieldSelectorComponent } from "#src/app/entity-reference
     MatSelectModule,
     EntityReferenceFieldSelectorComponent,
   ],
-  providers: [EntityTypeLabelPipe],
+  providers: [],
 })
 export class ImportAdditionalActionsComponent implements OnChanges {
   private readonly entityRegistry = inject(EntityRegistry);
@@ -76,12 +75,6 @@ export class ImportAdditionalActionsComponent implements OnChanges {
   });
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(
-      "entityType:",
-      this.entityType,
-      "entityTypeCtor:",
-      this.entityTypeCtor,
-    );
     if (changes.hasOwnProperty("entityType")) {
       this.entityTypeCtor = this.entityType
         ? this.entityRegistry.get(this.entityType)
@@ -97,12 +90,12 @@ export class ImportAdditionalActionsComponent implements OnChanges {
     }
   }
 
-  onFieldOptionSelected(option: any) {
+  onFieldOptionSelected(option: InheritanceOption) {
     this.unifiedActionForm.get("fieldOption").setValue(option);
     // Enable/disable targetId field
     if (option) {
       this.selectedTargetEntityType =
-        option.referencedEntityType?.ENTITY_TYPE || option.targetType || "";
+        option.referencedEntityType?.ENTITY_TYPE || option.sourceReferenceEntity || "";
       this.unifiedActionForm.get("targetId").enable();
     } else {
       this.selectedTargetEntityType = "";
@@ -116,25 +109,17 @@ export class ImportAdditionalActionsComponent implements OnChanges {
     const targetId = this.unifiedActionForm.get("targetId").value;
     if (!option || !targetId) return;
 
-    let newAction: AdditionalImportAction;
-    if (option.type === "inherit" || option.type === "automated") {
-      // Prefill action
-      newAction = {
-        mode: "prefill",
-        sourceType: this.entityType,
-        fieldId: option.sourceReferenceField,
-        targetType: this.selectedTargetEntityType,
-        targetId,
-      };
-    } else {
-      // Fallback for future extension
-      newAction = {
-        ...option,
-        targetId,
-      };
-    }
+    const newAction: AdditionalImportAction = {
+      mode: "prefill",
+      sourceType: this.entityType,
+      fieldId: option.sourceReferenceField,
+      targetType: this.selectedTargetEntityType,
+      targetId,
+    };
+
     this.importActions = [...(this.importActions ?? []), newAction];
     this.unifiedActionForm.reset();
+    this.selectedTargetEntityType = "";
     this.importActionsChange.emit(this.importActions);
   }
 

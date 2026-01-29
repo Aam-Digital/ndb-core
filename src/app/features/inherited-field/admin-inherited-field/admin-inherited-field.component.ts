@@ -4,10 +4,8 @@ import { MatButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatTooltip } from "@angular/material/tooltip";
-import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 import { lastValueFrom } from "rxjs";
 import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
-import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 import {
@@ -63,7 +61,7 @@ export class AdminInheritedFieldComponent
     }
   }
 
-  onOptionSelected(option: any) {
+  onOptionSelected(option: InheritanceOption) {
     // Update value and open dialog as before
     const previousValue = this.value;
     this.value = {
@@ -79,7 +77,12 @@ export class AdminInheritedFieldComponent
     });
   }
 
-  async openConfigDetailsDialog(option: any = null): Promise<boolean> {
+  /**
+   * Opens the configuration details dialog for the selected inheritance option.
+   * @param option The inheritance option selected by the user.
+   * @returns Promise resolving to true if the dialog was confirmed, false otherwise.
+   */
+  async openConfigDetailsDialog(option: InheritanceOption | null = null): Promise<boolean> {
     if (!option?.sourceReferenceField) return false;
     const dialogRef = this.matDialog.open<
       AutomatedFieldMappingComponent,

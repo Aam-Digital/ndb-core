@@ -1,21 +1,28 @@
-<div class="flex-row gap-small">
-  <app-entity-reference-field-selector
-    [entityType]="entityType"
-    [entitySchemaField]="entitySchemaField"
-    [value]="value"
-    (optionSelected)="onOptionSelected($event)"
-  ></app-entity-reference-field-selector>
+<div class="inherited-field-container">
+  <div class="flex-row gap-small align-center">
+    <app-entity-reference-field-selector
+      [entityType]="entityType"
+      [entitySchemaField]="entitySchemaField"
+      [value]="value"
+      (optionSelected)="onOptionSelected($event)"
+      class="flex-1"
+    ></app-entity-reference-field-selector>
 
-  @if (value?.sourceReferenceField) {
-    <button
-      mat-stroked-button
-      class="configure-button"
-      (click)="openConfigDetailsDialog()"
-      matTooltip="Configure the value from the other record that should be inherited (and any transformation, if necessary)."
-      i18n-matTooltip
-      i18n
-    >
-      Configure
-    </button>
-  }
+    @if (value?.sourceReferenceField) {
+      <button
+        mat-stroked-button
+        class="configure-button"
+        (click)="openConfigDetailsDialog()"
+        matTooltip="Configure the value from the other record that should be inherited (and any transformation, if necessary)."
+        i18n-matTooltip
+        i18n
+      >
+        Configure
+      </button>
+    }
+  </div>
+
+  <div class="hint-text" i18n>
+    You can inherit the value for this field from a related record.
+  </div>
 </div>

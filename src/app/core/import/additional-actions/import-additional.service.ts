@@ -79,7 +79,7 @@ export class ImportAdditionalService {
             directActions.push({
               sourceType,
               mode: "direct",
-              targetType: ref.entityType.ENTITY_TYPE,
+              targetEntityType: ref.entityType.ENTITY_TYPE,
               targetProperty: field.id,
             });
           }
@@ -147,7 +147,18 @@ export class ImportAdditionalService {
     for (const entityType of this.linkableEntities.keys()) {
       const matchingActions = (
         this.linkableEntities.get(entityType) ?? []
-      ).filter((a) => a.targetType === targetEntityType);
+      ).filter((a) => {
+        // Different action types use different property names for target entity type
+        switch (a.mode) {
+          case "direct":
+            return a.targetEntityType === targetEntityType;
+          case "indirect":
+          case "prefill":
+            return a.targetType === targetEntityType;
+          default:
+            return false;
+        }
+      });
       linkingTypes.push(...matchingActions);
     }
 

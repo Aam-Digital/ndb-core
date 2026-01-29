@@ -75,7 +75,7 @@ describe("ImportAdditionalService", () => {
       {
         sourceType: ImportedEntity.ENTITY_TYPE,
         mode: "direct",
-        targetType: DirectlyLinkingEntity.ENTITY_TYPE,
+        targetEntityType: DirectlyLinkingEntity.ENTITY_TYPE,
         targetProperty: "participant",
       },
       // the following should be hidden because it's also an indirect/relationship entity
@@ -105,7 +105,7 @@ describe("ImportAdditionalService", () => {
       jasmine.objectContaining({
         sourceType: ImportedEntity.ENTITY_TYPE,
         targetProperty: "participant",
-        targetType: DirectlyLinkingEntity.ENTITY_TYPE,
+        targetEntityType: DirectlyLinkingEntity.ENTITY_TYPE,
       }),
     ]);
   });
@@ -131,7 +131,7 @@ describe("ImportAdditionalService", () => {
       additionalActions: [
         {
           mode: "direct",
-          targetType: "RecurringActivity",
+          targetEntityType: "RecurringActivity",
           targetProperty: "participants",
           targetId: testActivity.getId(),
           sourceType: "Child",
@@ -155,7 +155,7 @@ describe("ImportAdditionalService", () => {
       additionalActions: [
         {
           mode: "direct",
-          targetType: "RecurringActivity",
+          targetEntityType: "RecurringActivity",
           targetProperty: "participants",
           targetId: testActivity.getId(),
           sourceType: "Child",
