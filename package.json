@@ -93,7 +93,7 @@
     "@babel/core": "^7.28.6",
     "@compodoc/compodoc": "^1.2.1",
     "@eslint/js": "^9.39.2",
-    "@playwright/test": "^1.58.0",
+    "@playwright/test": "^1.57.0",
     "@schematics/angular": "^21.1.2",
     "@sentry/cli": "^3.1.0",
     "@standard-schema/spec": "^1.1.0",
