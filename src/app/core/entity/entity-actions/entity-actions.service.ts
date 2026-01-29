@@ -334,7 +334,10 @@ export class EntityActionsService {
     });
 
     if (newEntities.length > 1) {
-      this.bulkOperationState.startBulkOperation(newEntities.length);
+      this.bulkOperationState.startBulkOperation(
+        newEntities.length,
+        newEntities.map((entity) => entity.getId()),
+      );
 
       try {
         await this.entityMapper.saveAll(newEntities);
@@ -342,6 +345,7 @@ export class EntityActionsService {
         this.bulkOperationState.completeBulkOperation();
         throw error;
       }
+      await this.bulkOperationState.waitForBulkOperationToFinish();
     } else {
       await this.entityMapper.save(newEntities[0]);
     }
