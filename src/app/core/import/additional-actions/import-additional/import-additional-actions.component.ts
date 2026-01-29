@@ -25,9 +25,10 @@ import { EntityBlockComponent } from "../../../basic-datatypes/entity/entity-blo
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { AdditionalImportAction } from "../additional-import-action";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
-import { EntityReferenceFieldSelectorComponent } from "#src/app/entity-reference-field-selector/entity-reference-field-selector.component";
-import { InheritanceOption } from "#src/app/entity-reference-field-selector/entity-reference-field-selector.component";
-
+import {
+  EntityReferenceFieldSelectorComponent,
+  InheritanceOption,
+} from "#src/app/entity-reference-field-selector/entity-reference-field-selector.component";
 /**
  * Import sub-step: Let user select additional import actions like adding entities to a group entity.
  */
