@@ -28,6 +28,6 @@
     mat-row
     class="row"
     *matRowDef="let row; columns: columns; index as i"
-    [ngClass]="{ 'bg-even': i % 2 === 0 }"
+    [class.bg-even]="i % 2 === 0"
   ></tr>
 </table>

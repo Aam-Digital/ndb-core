@@ -16,7 +16,7 @@ import {
   ImportDialogData,
 } from "../import-confirm-summary/import-confirm-summary.component";
 import { lastValueFrom } from "rxjs";
-import { ImportMetadata } from "../import-metadata";
+import { ImportExistingSettings, ImportMetadata } from "../import-metadata";
 import { ImportAdditionalSettings } from "../import-additional-settings/import-additional-settings.component";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
@@ -34,6 +34,8 @@ import { AdditionalImportAction } from "../additional-actions/additional-import-
 import { MatTooltip } from "@angular/material/tooltip";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { HintBoxComponent } from "../../common-components/hint-box/hint-box.component";
+import { ImportExistingService } from "../update-existing/import-existing.service";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: "app-import-review-data",
@@ -52,6 +54,7 @@ import { HintBoxComponent } from "../../common-components/hint-box/hint-box.comp
     MatTooltip,
     EntityBlockComponent,
     HintBoxComponent,
+    FaIconComponent,
   ],
 })
 export class ImportReviewDataComponent implements OnChanges {
@@ -66,7 +69,7 @@ export class ImportReviewDataComponent implements OnChanges {
   @Input() entityType: string;
   @Input() columnMapping: ColumnMapping[];
   @Input() additionalActions: AdditionalImportAction[];
-  @Input() matchExistingByFields: string[];
+  @Input() importExisting: ImportExistingSettings | undefined;
   @Input() additionalSettings: ImportAdditionalSettings;
   @Input() filename: string;
 
@@ -77,6 +80,8 @@ export class ImportReviewDataComponent implements OnChanges {
   isLoading: boolean;
   mappedEntities: Entity[] = [];
   displayColumns: string[] = [];
+  MULTIPLE_MATCHING_ENTITIES_KEY =
+    ImportExistingService.MULTIPLE_MATCHING_ENTITIES_KEY;
 
   ngOnChanges(changes: SimpleChanges) {
     this.entityConstructor = this.entityRegistry.get(this.entityType);
@@ -97,7 +102,7 @@ export class ImportReviewDataComponent implements OnChanges {
         entityType: this.entityType,
         columnMapping: this.columnMapping,
         additionalActions: this.additionalActions,
-        matchExistingByFields: this.matchExistingByFields,
+        importExisting: this.importExisting,
         additionalSettings: this.additionalSettings,
       })
     ).sort((a, b) => {
@@ -135,7 +140,7 @@ export class ImportReviewDataComponent implements OnChanges {
               entityType: this.entityType,
               columnMapping: this.columnMapping,
               additionalActions: this.additionalActions,
-              matchExistingByFields: this.matchExistingByFields,
+              importExisting: this.importExisting,
               filename: this.filename,
             },
           } as ImportDialogData,

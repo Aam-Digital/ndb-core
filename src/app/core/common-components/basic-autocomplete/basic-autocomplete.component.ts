@@ -14,7 +14,7 @@ import {
   ViewChild,
   WritableSignal,
 } from "@angular/core";
-import { NgClass, NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
+import { NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatInput, MatInputModule } from "@angular/material/input";
@@ -73,7 +73,6 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
   CdkVirtualScrollViewport,
   CdkVirtualForOf,
   CdkFixedSizeVirtualScroll,
-  NgClass,
 ];
 
 /**

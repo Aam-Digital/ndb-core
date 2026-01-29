@@ -120,10 +120,8 @@ Autocomplete
               class="text-truncate"
               [matTooltip]="item.asString"
               matTooltipPosition="above"
-              [ngClass]="{
-                'not-defined-label': item.isEmpty,
-                'invalid-label': item.isInvalid,
-              }"
+              [class.not-defined-label]="item.isEmpty"
+              [class.invalid-label]="item.isInvalid"
             >
               {{ item.asString }}
             </span>

@@ -36,10 +36,16 @@ export class StringDatatype extends DefaultDatatype<string, string> {
   static override label: string = $localize`:datatype-label:text`;
 
   override transformToDatabaseFormat(value) {
+    if (value === null || value === undefined) {
+      return value;
+    }
     return String(value);
   }
 
   override transformToObjectFormat(value) {
+    if (value === null || value === undefined) {
+      return value;
+    }
     return String(value);
   }
 }
