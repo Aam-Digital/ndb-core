@@ -291,7 +291,7 @@ export class ImportAdditionalService {
     action: AdditonalDirectLinkAction,
   ) {
     const targetEntity = await this.entityMapper.load(
-      action.targetType,
+      action.targetEntityType,
       action.targetId,
     );
     const ids = entitiesToBeLinked.map((e) => e.getId());
@@ -314,7 +314,7 @@ export class ImportAdditionalService {
     action: AdditonalDirectLinkAction,
   ) {
     const targetEntity = await this.entityMapper.load(
-      action.targetType,
+      action.targetEntityType,
       action.targetId,
     );
     targetEntity[action.targetProperty] = targetEntity[
