@@ -244,9 +244,7 @@ export class AutomatedFieldUpdateConfigService {
   ): AffectedEntity[] {
     const affectedEntities: AffectedEntity[] = [];
     const sourceEntityType = sourceEntity.getConstructor();
-    const relatedReferenceFieldEntityType = sourceEntityType.schema.has(
-      rule.sourceReferenceField,
-    )
+    const relatedReferenceFieldEntityType = rule.sourceReferenceEntity
       ? sourceEntityType
       : targetEntityType;
 

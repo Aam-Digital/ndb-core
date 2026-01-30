@@ -19,7 +19,7 @@ export class EntityFieldLabelPipe implements PipeTransform {
   ): string {
     const fieldConfig = this.entityFormService.extendFormFieldConfig(
       field,
-      entityTypeOrEntity,
+      entityType,
     );
 
     return fieldConfig?.label ?? fieldConfig?.id;
