@@ -6,6 +6,10 @@ import { DefaultValueConfig } from "../../core/default-values/default-value-conf
 import { FieldGroup } from "../../core/entity-details/form/field-group";
 import { Params } from "@angular/router";
 
+/**
+ * Represents a single form entry in a public form submission.
+ * Each entry corresponds to one entity type being created.
+ */
 export interface PublicFormEntry {
   config: {
     linkedEntities?: string[];
@@ -17,75 +21,121 @@ export interface PublicFormEntry {
   form: EntityForm<Entity> | null;
 }
 
-@Injectable({
-  providedIn: "root",
-})
+/** Callback type for applying prefill values to form fields */
+type ApplyPrefillFn = (
+  fieldGroups: FieldGroup[],
+  fieldId: string,
+  defaultValue: DefaultValueConfig,
+  hideFromForm?: boolean,
+) => void;
+
 /**
  * Handles public-form linking mechanics.
  *
- * - `PublicFormsService` deals with discovery and URL generation for public forms.
- * - This service focuses on applying link values to form data
- *   (URL params and cross-form links during submission).
+ * Responsibilities:
+ * - Prefilling form fields from URL query parameters
+ * - Linking fields across multiple forms in a single submission
+ *
+ * Note: `PublicFormsService` handles discovery and URL generation for public forms,
+ * while this service focuses on applying link values to form data.
  */
+@Injectable({
+  providedIn: "root",
+})
 export class PublicFormLinkingService {
   private readonly snackbar = inject(MatSnackBar);
 
   /**
-   * Processes URL parameters to prefill linked entity fields from query params.
-   * Only processes URL parameters that match configured linkedEntities for security.
+   * Processes URL parameters to prefill linked entity fields.
+   * Only processes parameters that match configured `linkedEntities` for security.
    *
    * @param entries - Array of form entries with their configurations
    * @param urlParams - URL query parameters from the route
-   * @param applyPrefillFn - Callback function to apply prefill values to field groups
+   * @param applyPrefillFn - Callback to apply prefill values to field groups
    */
   handleUrlParameterLinking(
     entries: PublicFormEntry[],
     urlParams: Params,
-    applyPrefillFn: (
-      fieldGroups: FieldGroup[],
-      fieldId: string,
-      defaultValue: DefaultValueConfig,
-      hideFromForm?: boolean,
-    ) => void,
+    applyPrefillFn: ApplyPrefillFn,
   ): void {
-    if (Object.keys(urlParams).length === 0) {
+    if (!Object.keys(urlParams).length) return;
+
+    const linkedFieldIds = this.getLinkedFieldIds(entries);
+    if (!linkedFieldIds.size) return;
+
+    this.applyUrlParamPrefills(entries, urlParams, applyPrefillFn);
+    this.warnIgnoredParams(urlParams, linkedFieldIds);
+  }
+
+  /**
+   * Links fields from other forms within the same submission.
+   * Uses field schema to determine target entity type and sets the field
+   * to the matching entity's ID (only if currently empty).
+   *
+   * @param entries - Array of form entries with initialized entities and forms
+   */
+  applyLinkedFromForm(entries: PublicFormEntry[]): void {
+    if (
+      !entries.length ||
+      entries.some((entry) => !entry.entity || !entry.form)
+    )
       return;
-    }
 
-    const ignoredParams: string[] = [];
-    const linkedFieldIds = new Set<string>();
+    const entitiesByType = this.buildEntityTypeMap(entries);
 
-    // Process configured parameters
     for (const entry of entries) {
-      const linkedEntities = entry.config.linkedEntities || [];
-      for (const fieldId of linkedEntities) {
-        if (fieldId) {
-          linkedFieldIds.add(fieldId);
-        }
+      this.linkFieldsFromOtherForms(entry, entitiesByType);
+    }
+  }
+
+  /**
+   * Collects all configured linked field IDs from all form entries.
+   */
+  private getLinkedFieldIds(entries: PublicFormEntry[]): Set<string> {
+    return new Set(
+      entries
+        .flatMap((entry) => entry.config.linkedEntities ?? [])
+        .filter(Boolean),
+    );
+  }
+
+  /**
+   * Applies URL parameter values as prefills to matching linked fields.
+   */
+  private applyUrlParamPrefills(
+    entries: PublicFormEntry[],
+    urlParams: Params,
+    applyPrefillFn: ApplyPrefillFn,
+  ): void {
+    for (const entry of entries) {
+      if (!entry.config.columns) continue;
+
+      for (const fieldId of entry.config.linkedEntities ?? []) {
         const paramValue = urlParams[fieldId];
-        if (fieldId && paramValue && entry.config.columns) {
-          applyPrefillFn(
-            entry.config.columns,
-            fieldId,
-            { mode: "static", config: { value: paramValue } },
-            true,
-          );
-        }
+        if (!fieldId || !paramValue) continue;
+
+        applyPrefillFn(
+          entry.config.columns,
+          fieldId,
+          { mode: "static", config: { value: paramValue } },
+          true,
+        );
       }
     }
+  }
 
-    // Track ignored parameters for security warning
-    if (linkedFieldIds.size === 0) {
-      return;
-    }
+  /**
+   * Shows a snackbar warning for URL parameters that were not applied.
+   */
+  private warnIgnoredParams(
+    urlParams: Params,
+    linkedFieldIds: Set<string>,
+  ): void {
+    const ignoredParams = Object.keys(urlParams).filter(
+      (key) => !linkedFieldIds.has(key),
+    );
 
-    Object.keys(urlParams).forEach((paramKey) => {
-      if (!linkedFieldIds.has(paramKey)) {
-        ignoredParams.push(paramKey);
-      }
-    });
-
-    if (ignoredParams.length > 0) {
+    if (ignoredParams.length) {
       this.snackbar.open(
         $localize`Some URL parameters were ignored for security: ${ignoredParams.join(", ")}`,
         undefined,
@@ -95,53 +145,76 @@ export class PublicFormLinkingService {
   }
 
   /**
-   * Prefills fields from other forms within the same submission.
-   *
-   * - Derives target entity type from field schema.
-   * - Sets the field to the target entity ID only if it is empty.
-   * - Updates both the entity model and the reactive form control.
+   * Builds a map of entity type (lowercase) to entity instance.
    */
-  applyLinkedFromForm(entries: PublicFormEntry[]): void {
-    if (
-      !entries.length ||
-      entries.some((entry) => !entry.entity || !entry.form)
-    )
-      return;
+  private buildEntityTypeMap(entries: PublicFormEntry[]): Map<string, Entity> {
+    const map = new Map<string, Entity>();
 
-    const entitiesByType = new Map<string, Entity>();
     for (const entry of entries) {
       if (!entry.entity) continue;
-      entitiesByType.set(
-        entry.entity.getConstructor().ENTITY_TYPE.toLowerCase(),
-        entry.entity,
-      );
+      const entityType = entry.entity
+        .getConstructor()
+        .ENTITY_TYPE.toLowerCase();
+      map.set(entityType, entry.entity);
     }
 
-    for (const entry of entries) {
-      if (!entry.entity || !entry.form) continue;
-      const linkedEntities = entry.config.linkedFromForm || [];
-      for (const fieldId of linkedEntities) {
-        if (!fieldId) continue;
+    return map;
+  }
 
-        // Get the target entity type from the field schema
-        const fieldSchema = entry.entityType.schema.get(fieldId);
-        if (!fieldSchema?.additional) continue;
+  /**
+   * Links fields in a single entry to entities from other forms.
+   */
+  private linkFieldsFromOtherForms(
+    entry: PublicFormEntry,
+    entitiesByType: Map<string, Entity>,
+  ): void {
+    if (!entry.entity || !entry.form) return;
 
-        const targetEntity = entitiesByType.get(
-          fieldSchema.additional.toLowerCase(),
-        );
-        if (!targetEntity) continue;
+    for (const fieldId of entry.config.linkedFromForm ?? []) {
+      if (!fieldId) continue;
 
-        const targetId = targetEntity.getId();
-        const control = entry.form.formGroup.get(fieldId);
-        if (control && !control.value) {
-          control.setValue(targetId);
-          control.markAsDirty();
-        }
-        if (!entry.entity[fieldId]) {
-          entry.entity[fieldId] = targetId;
-        }
-      }
+      const targetEntity = this.findTargetEntityForField(
+        entry.entityType,
+        fieldId,
+        entitiesByType,
+      );
+      if (!targetEntity) continue;
+
+      this.setFieldValue(entry, fieldId, targetEntity.getId());
+    }
+  }
+
+  /**
+   * Finds the target entity for a linked field based on its schema.
+   */
+  private findTargetEntityForField(
+    entityType: EntityConstructor,
+    fieldId: string,
+    entitiesByType: Map<string, Entity>,
+  ): Entity | undefined {
+    const fieldSchema = entityType.schema.get(fieldId);
+    if (!fieldSchema?.additional) return undefined;
+
+    return entitiesByType.get(fieldSchema.additional.toLowerCase());
+  }
+
+  /**
+   * Sets a field value on both the form control and entity model (if empty).
+   */
+  private setFieldValue(
+    entry: PublicFormEntry,
+    fieldId: string,
+    value: string,
+  ): void {
+    const control = entry.form?.formGroup.get(fieldId);
+
+    if (control && !control.value) {
+      control.setValue(value);
+      control.markAsDirty();
+    }
+
+    if (entry.entity && !entry.entity[fieldId]) {
+      entry.entity[fieldId] = value;
     }
   }
 }
