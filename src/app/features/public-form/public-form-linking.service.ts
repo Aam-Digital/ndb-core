@@ -20,6 +20,13 @@ export interface PublicFormEntry {
 @Injectable({
   providedIn: "root",
 })
+/**
+ * Handles public-form linking mechanics.
+ *
+ * - `PublicFormsService` deals with discovery and URL generation for public forms.
+ * - This service focuses on applying link values to form data
+ *   (URL params and cross-form links during submission).
+ */
 export class PublicFormLinkingService {
   private readonly snackbar = inject(MatSnackBar);
 
@@ -45,18 +52,16 @@ export class PublicFormLinkingService {
       return;
     }
 
-    const linkedFieldIds = this.getAllLinkedFieldIds(entries);
-
-    if (linkedFieldIds.size === 0) {
-      return;
-    }
-
     const ignoredParams: string[] = [];
+    const linkedFieldIds = new Set<string>();
 
     // Process configured parameters
     for (const entry of entries) {
       const linkedEntities = entry.config.linkedEntities || [];
       for (const fieldId of linkedEntities) {
+        if (fieldId) {
+          linkedFieldIds.add(fieldId);
+        }
         const paramValue = urlParams[fieldId];
         if (fieldId && paramValue && entry.config.columns) {
           applyPrefillFn(
@@ -70,6 +75,10 @@ export class PublicFormLinkingService {
     }
 
     // Track ignored parameters for security warning
+    if (linkedFieldIds.size === 0) {
+      return;
+    }
+
     Object.keys(urlParams).forEach((paramKey) => {
       if (!linkedFieldIds.has(paramKey)) {
         ignoredParams.push(paramKey);
@@ -83,21 +92,6 @@ export class PublicFormLinkingService {
         { duration: 5000 },
       );
     }
-  }
-
-  /**
-   * Extracts all linked entity field IDs from form entries.
-   */
-  private getAllLinkedFieldIds(entries: PublicFormEntry[]): Set<string> {
-    const fieldIds = new Set<string>();
-    for (const entry of entries) {
-      for (const fieldId of entry.config.linkedEntities || []) {
-        if (fieldId) {
-          fieldIds.add(fieldId);
-        }
-      }
-    }
-    return fieldIds;
   }
 
   /**

@@ -131,7 +131,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       return;
     }
 
-    this.entityFormEntries = this.getentityFormEntriesConfig().map((config) => {
+    this.entityFormEntries = this.getEntityFormEntriesConfig().map((config) => {
       const entityType = this.entities.get(
         config.entity,
       ) as EntityConstructor<Entity>;
@@ -234,7 +234,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     }
   }
 
-  private getentityFormEntriesConfig(): PublicFormEntityFormConfig[] {
+  private getEntityFormEntriesConfig(): PublicFormEntityFormConfig[] {
     if (Array.isArray(this.formConfig.forms) && this.formConfig.forms.length) {
       return this.formConfig.forms;
     }
