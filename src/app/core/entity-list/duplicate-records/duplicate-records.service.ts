@@ -24,7 +24,10 @@ export class DuplicateRecordService {
     const entities = Array.isArray(sourceData) ? sourceData : [sourceData];
     const duplicateData = this.clone(entities);
 
-    this.bulkOperationState.startBulkOperation(duplicateData.length);
+    this.bulkOperationState.startBulkOperation(
+      duplicateData.length,
+      duplicateData.map((entity) => entity.getId()),
+    );
 
     try {
       await this.entityMapperService.saveAll(duplicateData);
@@ -33,6 +36,7 @@ export class DuplicateRecordService {
       throw error;
     }
 
+    await this.bulkOperationState.waitForBulkOperationToFinish();
     this.alertService.addInfo(this.generateSuccessMessage(entities));
 
     if (navigate) {

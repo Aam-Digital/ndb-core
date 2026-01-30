@@ -283,7 +283,10 @@ export class EntityListComponent<T extends Entity>
         if (this.bulkOperationState.isBulkOperationInProgress()) {
           //buffer updates during bulk operations to avoid UI performance issues
           const inProgress =
-            this.bulkOperationState.updateBulkOperationProgress(1, false);
+            this.bulkOperationState.updateBulkOperationProgress(
+              updatedEntity,
+              false,
+            );
           if (!inProgress) {
             // reload the list once
             this.allEntities = await this.getEntities();
