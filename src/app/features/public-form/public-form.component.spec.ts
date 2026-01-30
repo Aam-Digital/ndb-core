@@ -17,6 +17,8 @@ import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { getDefaultConfigEntity } from "../../core/config/testing-config-service";
+import { Entity } from "../../core/entity/model/entity";
+import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
@@ -76,14 +78,16 @@ describe("PublicFormComponent", () => {
   });
 
   it("should initialize component with values from PublicFormConfig once config is ready", fakeAsync(() => {
-    expect(component.entity).toBeUndefined();
+    expect(component.entityFormEntries.length).toBe(0);
     testFormConfig.title = "Some test title";
     testFormConfig.entity = "TestEntity";
 
     initComponent();
     tick();
 
-    expect(component.entity.getConstructor()).toBe(TestEntity);
+    expect(component.entityFormEntries[0].entity.getConstructor()).toBe(
+      TestEntity,
+    );
     expect(component.formConfig.title).toBe("Some test title");
   }));
 
@@ -94,11 +98,16 @@ describe("PublicFormComponent", () => {
     const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
     const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
     saveSpy.and.resolveTo();
-    component.form.formGroup.get("name").setValue("some name");
+    (component.entityFormEntries[0].form.formGroup.get("name") as any).setValue(
+      "some name",
+    );
 
     component.submit();
 
-    expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
+    expect(saveSpy).toHaveBeenCalledWith(
+      component.entityFormEntries[0].form,
+      component.entityFormEntries[0].entity,
+    );
     tick();
     expect(navigateSpy).toHaveBeenCalledWith(
       ["/public-form/submission-success"],
@@ -113,11 +122,16 @@ describe("PublicFormComponent", () => {
     const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
     const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
     saveSpy.and.resolveTo();
-    component.form.formGroup.get("name").setValue("some name");
+    (component.entityFormEntries[0].form.formGroup.get("name") as any).setValue(
+      "some name",
+    );
 
     component.submit();
 
-    expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
+    expect(saveSpy).toHaveBeenCalledWith(
+      component.entityFormEntries[0].form,
+      component.entityFormEntries[0].entity,
+    );
     tick();
     expect(navigateSpy).toHaveBeenCalledWith(
       ["/public-form/submission-success"],
@@ -130,21 +144,32 @@ describe("PublicFormComponent", () => {
     tick();
     const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
     saveSpy.and.throwError(new InvalidFormFieldError());
-    component.form.formGroup.get("name").setValue("some name");
+    (component.entityFormEntries[0].form.formGroup.get("name") as any).setValue(
+      "some name",
+    );
 
     component.submit();
 
-    expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
+    expect(saveSpy).toHaveBeenCalledWith(
+      component.entityFormEntries[0].form,
+      component.entityFormEntries[0].entity,
+    );
     tick();
     expect(component.validationError).toBeTrue();
-    expect(component.form.formGroup.get("name")).toHaveValue("some name");
+    expect(
+      component.entityFormEntries[0].form.formGroup.get("name"),
+    ).toHaveValue("some name");
   }));
 
   it("should reset the form when clicking reset", fakeAsync(() => {
     initComponent();
     tick();
-    component.form.formGroup.get("name").setValue("some name");
-    expect(component.form.formGroup.get("name")).toHaveValue("some name");
+    (component.entityFormEntries[0].form.formGroup.get("name") as any).setValue(
+      "some name",
+    );
+    expect(
+      component.entityFormEntries[0].form.formGroup.get("name"),
+    ).toHaveValue("some name");
 
     component.reset();
     tick();
@@ -168,7 +193,9 @@ describe("PublicFormComponent", () => {
     initComponent();
     tick();
 
-    expect(component.form.formGroup.get("name")).toHaveValue("default name");
+    expect(
+      component.entityFormEntries[0].form.formGroup.get("name"),
+    ).toHaveValue("default name");
   }));
 
   it("should migrate old PublicFormConfig format to be backwards compatible", fakeAsync(() => {
@@ -186,7 +213,9 @@ describe("PublicFormComponent", () => {
     initComponent();
     tick();
 
-    expect(component.form.formGroup.get("name")).toHaveValue("default name");
+    expect(
+      component.entityFormEntries[0].form.formGroup.get("name"),
+    ).toHaveValue("default name");
   }));
 
   it("should throw an error when do not have permissions to submit the form", fakeAsync(() => {
@@ -239,12 +268,11 @@ describe("PublicFormComponent", () => {
     );
   }));
 
-  it("should add hidden prefilled field for related entity when query param exists", () => {
-    testFormConfig.linkedEntities = [{ id: "childId", hideFromForm: true }];
-    component.formConfig = testFormConfig;
-    component.fieldGroups = testFormConfig.columns;
+  it("should add hidden prefilled field for related entity when query param exists", fakeAsync(() => {
+    testFormConfig.linkedEntities = ["childId"];
 
-    component["handleRelatedEntityFields"]();
+    initComponent();
+    tick();
 
     const lastColumn = component.formConfig.columns.at(-1);
     expect(lastColumn?.fields).toContain(
@@ -254,20 +282,27 @@ describe("PublicFormComponent", () => {
         hideFromForm: true,
       }),
     );
-  });
+  }));
 
-  it("should process configured URL parameters and create prefilled fields for multi-entity magic links", () => {
+  it("should process configured URL parameters and create prefilled fields for multi-entity magic links", fakeAsync(() => {
     // Configure which entities are allowed to be linked (security feature)
     testFormConfig.linkedEntities = [
-      { id: "childId" },
-      { id: "schoolId" },
-      { id: "eventId" },
-      { id: "teacherId" },
+      "childId",
+      "schoolId",
+      "eventId",
+      "teacherId",
     ];
 
     // Create a mock ActivatedRoute with multiple URL parameters
     const multiParamRoute = {
       snapshot: {
+        paramMap: new Map([["id", FORM_ID]]),
+        queryParamMap: new Map([
+          ["childId", "Child:123"],
+          ["schoolId", "School:456"],
+          ["eventId", "Event:789"],
+          ["teacherId", "Teacher:101"],
+        ]),
         queryParams: {
           childId: "Child:123",
           schoolId: "School:456",
@@ -279,10 +314,9 @@ describe("PublicFormComponent", () => {
 
     // Replace the route in the component
     component["route"] = multiParamRoute as any;
-    component.formConfig = testFormConfig;
-    component.fieldGroups = testFormConfig.columns;
 
-    component["handleRelatedEntityFields"]();
+    initComponent();
+    tick();
 
     const lastColumn = component.formConfig.columns.at(-1);
 
@@ -304,14 +338,21 @@ describe("PublicFormComponent", () => {
         }),
       );
     });
-  });
+  }));
 
-  it("should ignore unconfigured URL parameters for security", () => {
+  it("should ignore unconfigured URL parameters for security", fakeAsync(() => {
     // Configure only specific entities
-    testFormConfig.linkedEntities = [{ id: "childId" }, { id: "schoolId" }];
+    testFormConfig.linkedEntities = ["childId", "schoolId"];
 
     const securityTestRoute = {
       snapshot: {
+        paramMap: new Map([["id", FORM_ID]]),
+        queryParamMap: new Map([
+          ["childId", "Child:123"],
+          ["schoolId", "School:456"],
+          ["hackerId", "Hacker:malicious"],
+          ["adminId", "Admin:dangerous"],
+        ]),
         queryParams: {
           childId: "Child:123", // Allowed
           schoolId: "School:456", // Allowed
@@ -322,10 +363,9 @@ describe("PublicFormComponent", () => {
     };
 
     component["route"] = securityTestRoute as any;
-    component.formConfig = testFormConfig;
-    component.fieldGroups = testFormConfig.columns;
 
-    component["handleRelatedEntityFields"]();
+    initComponent();
+    tick();
 
     const lastColumn = component.formConfig.columns.at(-1);
 
@@ -344,7 +384,7 @@ describe("PublicFormComponent", () => {
       return fieldId === "hackerId" || fieldId === "adminId";
     });
     expect(unauthorizedFields.length).toBe(0);
-  });
+  }));
 
   it("should update defaultValue for a field in prefilled that is already visible", fakeAsync(() => {
     const config = new PublicFormConfig();
@@ -365,10 +405,85 @@ describe("PublicFormComponent", () => {
     initComponent(config);
     tick();
 
-    expect(component.form.formGroup.get("other")).toHaveValue(
-      "prefilled default",
+    expect(
+      component.entityFormEntries[0].form.formGroup.get("other"),
+    ).toHaveValue("prefilled default");
+  }));
+
+  it("should link entities from linkedFromForm when submitting multi-form config", fakeAsync(() => {
+    class SchoolEntity extends Entity {
+      static override ENTITY_TYPE = "School";
+      static override schema = new Map([["name", {}]]);
+    }
+    class ChildEntity extends Entity {
+      static override ENTITY_TYPE = "Child";
+      static override schema = new Map([["school", { additional: "School" }]]);
+    }
+
+    const entityRegistry = TestBed.inject(EntityRegistry);
+    entityRegistry.add(SchoolEntity.ENTITY_TYPE, SchoolEntity);
+    entityRegistry.add(ChildEntity.ENTITY_TYPE, ChildEntity);
+
+    const config = new PublicFormConfig();
+    config.route = FORM_ID;
+    config.entity = "Child";
+    config.forms = [
+      {
+        entity: "School",
+        columns: [{ fields: ["name"] }],
+      },
+      {
+        entity: "Child",
+        columns: [{ fields: ["school"] }],
+        linkedFromForm: ["school"],
+      },
+    ];
+
+    initComponent(config);
+    tick();
+
+    const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
+    saveSpy.and.resolveTo();
+
+    const schoolEntry = component.entityFormEntries.find(
+      (entry) => entry.entityType === SchoolEntity,
+    );
+    const childEntry = component.entityFormEntries.find(
+      (entry) => entry.entityType === ChildEntity,
+    );
+
+    component.submit();
+
+    expect(childEntry.entity["school"]).toBe(schoolEntry.entity.getId());
+    expect(childEntry.form.formGroup.get("school")).toHaveValue(
+      schoolEntry.entity.getId(),
     );
   }));
+
+  it("should migrate linkedEntities from old FormFieldConfig[] format to string[] format", () => {
+    const { migratePublicFormConfig } = require("./public-form.component");
+
+    const oldFormatConfig = new PublicFormConfig();
+    oldFormatConfig.linkedEntities = [
+      { id: "participant", hideFromForm: true, additional: "Participant" },
+      { id: "event", hideFromForm: true, additional: "Event" },
+    ] as any;
+
+    const migrated = migratePublicFormConfig(oldFormatConfig);
+
+    expect(migrated.linkedEntities).toEqual(["participant", "event"]);
+  });
+
+  it("should keep linkedEntities if already in string[] format", () => {
+    const { migratePublicFormConfig } = require("./public-form.component");
+
+    const newFormatConfig = new PublicFormConfig();
+    newFormatConfig.linkedEntities = ["participant", "event"];
+
+    const migrated = migratePublicFormConfig(newFormatConfig);
+
+    expect(migrated.linkedEntities).toEqual(["participant", "event"]);
+  });
 
   async function initComponent(config: PublicFormConfig = testFormConfig) {
     config.route = config.route ?? FORM_ID;

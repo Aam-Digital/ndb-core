@@ -266,7 +266,20 @@ export class EntityListComponent<T extends Entity>
       return this.entitySpecialLoader.loadData(this.loaderMethod);
     }
 
-    return this.entityMapperService.loadType(this.entityConstructor);
+    return this.entityMapperService
+      .loadType(this.entityConstructor)
+      .then((entities) => {
+        if (this.entityConstructor?.ENTITY_TYPE !== "PublicFormConfig") {
+          return entities;
+        }
+
+        // TODO: Add admin UI support for multi-form PublicFormConfig.
+        // For now we hide those configs from the list to avoid broken ui and console errors.
+        return entities.filter((entity) => {
+          const forms = (entity as unknown as PublicFormConfig).forms;
+          return !Array.isArray(forms);
+        });
+      });
   }
 
   private updateSubscription: Subscription;

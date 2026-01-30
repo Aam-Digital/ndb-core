@@ -36,8 +36,8 @@ export class CustomFormLinkButtonComponent implements OnInit {
     if (!this.linkedEntity || !this.formEntityType) return;
 
     const allForms = await this.entityMapper.loadType(PublicFormConfig);
-    const matchingForms = allForms.filter(
-      (config) => config.linkedEntities?.length > 0,
+    const matchingForms = allForms.filter((config) =>
+      this.publicFormsService.hasLinkedEntities(config),
     );
 
     this.matchingCustomForms = [];
@@ -48,8 +48,7 @@ export class CustomFormLinkButtonComponent implements OnInit {
           config,
           this.linkedEntity,
         );
-      const matchesEntityType =
-        config.entity === this.formEntityType.ENTITY_TYPE;
+      const matchesEntityType = this.isMatchingFormEntityType(config);
 
       if (matchesCustomForm && matchesEntityType) {
         this.matchingCustomForms.push(config);
@@ -63,5 +62,15 @@ export class CustomFormLinkButtonComponent implements OnInit {
       matchingCustomForm,
       this.linkedEntity,
     );
+  }
+
+  private isMatchingFormEntityType(config: PublicFormConfig): boolean {
+    if (config.forms?.length) {
+      return config.forms.some(
+        (form) => form.entity === this.formEntityType.ENTITY_TYPE,
+      );
+    }
+
+    return config.entity === this.formEntityType.ENTITY_TYPE;
   }
 }
