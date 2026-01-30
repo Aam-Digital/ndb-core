@@ -3,9 +3,6 @@ import { Entity } from "../../../entity/model/entity";
 import { Ordering } from "../../../basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { TableRow } from "../table-row";
 
-// Defines the types that can be compared for sorting
-type SortComparable = number | string | Symbol;
-
 /**
  * Custom sort implementation for a MatTableDataSource<TableRow<T>>
  * @param data The data of the data source
@@ -19,25 +16,13 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
     direction,
     active,
   }: { direction: "asc" | "desc" | ""; active: PROPERTY | "" },
-  getSortValue?: (
-    record: OBJECT,
-    sortKey: PROPERTY,
-  ) => SortComparable | null | undefined,
 ): TableRow<OBJECT>[] {
   if (direction === "" || !active) {
     return data;
   }
   data.sort((objA, objB) => {
-    const valueA = getComparableValueWithOverride(
-      objA.record,
-      active,
-      getSortValue,
-    );
-    const valueB = getComparableValueWithOverride(
-      objB.record,
-      active,
-      getSortValue,
-    );
+    const valueA = getComparableValue(objA.record, active);
+    const valueB = getComparableValue(objB.record, active);
     const primaryComparison = compareValues(valueA, valueB);
 
     // If the primary values are equal, sort by the created at
@@ -56,31 +41,10 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
   return data;
 }
 
-/**
- * Allows a custom sort value to override the default comparable value.
- * Return undefined to fall back to the standard value accessor.
- */
-function getComparableValueWithOverride<OBJECT, PROPERTY extends keyof OBJECT>(
-  obj: OBJECT,
-  key: PROPERTY,
-  getSortValue?: (
-    record: OBJECT,
-    sortKey: PROPERTY,
-  ) => number | string | Symbol | null | undefined,
-): SortComparable {
-  if (getSortValue) {
-    const overrideValue = getSortValue(obj, key);
-    if (overrideValue !== undefined) {
-      return overrideValue;
-    }
-  }
-  return getComparableValue(obj, key);
-}
-
 function getComparableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   obj: OBJECT,
   key: PROPERTY,
-): SortComparable {
+): number | string | Symbol {
   let value = obj[key];
 
   // Special handling for Age columns

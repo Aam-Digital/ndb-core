@@ -41,7 +41,10 @@ import { RouteTarget } from "../../../route-target";
 import { FlattenArrayPipe } from "../../../utils/flatten-array/flatten-array.pipe";
 import { addAlphaToHexColor } from "../../../utils/style-utils";
 import { Coordinates } from "../../location/coordinates";
-import { getKmDistance, getLocationProperties } from "../../location/map-utils";
+import {
+  getLocationProperties,
+  getMinDistanceKm,
+} from "../../location/map-utils";
 import { LocationProperties } from "../../location/map/map-properties-popup/map-properties-popup.component";
 import { MapComponent } from "../../location/map/map.component";
 import {
@@ -70,11 +73,6 @@ export interface MatchingSide extends MatchingSideConfig {
     coordinatesProperties: string[];
     compareCoordinates: BehaviorSubject<Coordinates[]>;
   };
-
-  sortValueAccessor?: (
-    record: Entity,
-    sortKey: string,
-  ) => number | string | Symbol | null | undefined;
 }
 
 @RouteTarget("MatchingEntities")
@@ -392,7 +390,7 @@ export class MatchingEntitiesComponent implements OnInit {
       const columnConfig = this.getDistanceColumnConfig(side);
       side.columns[sideIndex] = columnConfig;
       side.distanceColumn = columnConfig.additional;
-      side.sortValueAccessor = this.createSortValueAccessor(side);
+      this.attachDistanceGetter(side);
       const colIndex = this.columns.findIndex((row) => {
         const col = row[index];
         return typeof col === "string"
@@ -423,51 +421,39 @@ export class MatchingEntitiesComponent implements OnInit {
   }
 
   /**
-   * Build a sort accessor that overrides sorting for the computed distance column.
+   * Attach a non-persistent "distance" getter so the table can sort without
+   * passing custom sort functions.
    */
-  private createSortValueAccessor(side: MatchingSide) {
-    return (record: Entity, sortKey: string) => {
-      // Only override sorting for the computed distance column.
-      if (sortKey !== "distance") {
-        return undefined;
-      }
-      return this.getDistanceSortValue(record, side);
-    };
+  private attachDistanceGetter(side: MatchingSide) {
+    if (!side.availableEntities?.length || !side.distanceColumn) {
+      return;
+    }
+
+    side.availableEntities.forEach((entity) => this.getDistance(entity, side));
   }
 
   /**
-   * Compute the numeric distance (km) used for sorting the "distance" column.
-   * Returns null when coordinates are missing so those rows sort last.
+   * Define a non-enumerable distance on the entity for table sorting.
    */
-  private getDistanceSortValue(
-    entity: Entity,
-    side: MatchingSide,
-  ): number | null {
-    const distanceColumn = side.distanceColumn;
-    if (!distanceColumn) {
-      return null;
+  private getDistance(entity: Entity, side: MatchingSide) {
+    const existingDescriptor = Object.getOwnPropertyDescriptor(
+      entity,
+      "distance",
+    );
+    if (existingDescriptor && existingDescriptor.configurable === false) {
+      return;
     }
 
-    const coordinatesProperties = distanceColumn.coordinatesProperties ?? [];
-    const compareCoordinates = distanceColumn.compareCoordinates?.value ?? [];
-    if (!coordinatesProperties.length || !compareCoordinates.length) {
-      return null;
-    }
-
-    const distances: number[] = [];
-    for (const prop of coordinatesProperties) {
-      const geoLookup = entity[prop]?.geoLookup;
-      if (!geoLookup) {
-        continue;
-      }
-      for (const compareCoord of compareCoordinates) {
-        if (compareCoord) {
-          distances.push(getKmDistance(geoLookup, compareCoord));
-        }
-      }
-    }
-
-    return distances.length ? Math.min(...distances) : null;
+    Object.defineProperty(entity, "distance", {
+      configurable: true,
+      enumerable: false,
+      get: () =>
+        getMinDistanceKm(
+          entity,
+          side.distanceColumn?.coordinatesProperties ?? [],
+          side.distanceColumn?.compareCoordinates?.value ?? [],
+        ),
+    });
   }
 
   updateMarkersAndDistances() {

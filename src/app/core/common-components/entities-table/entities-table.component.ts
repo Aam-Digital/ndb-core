@@ -258,16 +258,6 @@ export class EntitiesTableComponent<
   /** output the currently displayed records, whenever filters for the user change */
   @Output() filteredRecordsChange = new EventEmitter<T[]>(true);
 
-  /**
-   * Optional hook to provide custom sort values for specific columns.
-   * Return undefined to fall back to default entity value handling.
-   * Use this for computed/display-only columns (e.g. distance).
-   */
-  @Input() sortValueAccessor?: (
-    record: T,
-    sortKey: string,
-  ) => number | string | Symbol | null | undefined;
-
   private updateFilteredData() {
     this.addActiveInactiveFilter(this._filter);
     const filterPredicate = this.filterService.getFilterPredicate(this._filter);
@@ -481,17 +471,10 @@ export class EntitiesTableComponent<
   private createDataSource() {
     const dataSource = new MatTableDataSource<TableRow<T>>();
     dataSource.sortData = (data, sort) =>
-      tableSort<T, keyof T>(
-        data,
-        {
-          active: (sort.active as keyof T) ?? "",
-          direction: sort.direction,
-        },
-        this.sortValueAccessor as (
-          record: T,
-          sortKey: keyof T,
-        ) => number | string | Symbol | null | undefined,
-      );
+      tableSort<T, keyof T>(data, {
+        active: (sort.active as keyof T) ?? "",
+        direction: sort.direction,
+      });
     dataSource.filterPredicate = (data, filter) =>
       entityFilterPredicate(data.record, filter);
     return dataSource;
