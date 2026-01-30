@@ -26,6 +26,8 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
   FormFieldConfig,
   string
 > {
+  @Input() disabledFields: string[] = [];
+
   @Input() override placeholder: string =
     $localize`:EntityFieldSelect placeholder:Select Record Field`;
 
@@ -35,6 +37,13 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
   @Input() override multi?: boolean;
 
   @Input() override hideOption: (option: FormFieldConfig) => boolean;
+
+  /**
+   * Disable fields that are already prefilled in additional actions.
+   * Returns true if the option should be disabled in the dropdown.
+   */
+  override optionDisabled = (option: FormFieldConfig) =>
+    this.disabledFields?.includes(option.id) ?? false;
 
   @Input() set entityType(entity: string | EntityConstructor) {
     if (!entity) {

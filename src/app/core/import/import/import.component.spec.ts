@@ -51,7 +51,7 @@ describe("ImportComponent", () => {
       columnMapping: [{ column: "test", propertyName: "name" }],
       additionalActions: [
         {
-          targetType: "x",
+          targetEntityType: "x",
           targetProperty: "xx",
           targetId: "y",
           sourceType: "Child",

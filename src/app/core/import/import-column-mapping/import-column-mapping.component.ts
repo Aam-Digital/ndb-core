@@ -43,6 +43,7 @@ export class ImportColumnMappingComponent implements OnChanges {
   @Input() rawData: any[] = [];
   @Input() columnMapping: ColumnMapping[] = [];
   @Input() additionalSettings: ImportAdditionalSettings;
+  @Input() prefilledFieldIds: string[] = [];
   @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
 
   entityCtor: EntityConstructor;

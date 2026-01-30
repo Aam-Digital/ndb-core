@@ -9,3 +9,18 @@
 .no-actions {
   font-style: italic;
 }
+
+.flex-1 {
+  flex: 1;
+  min-width: 200px;
+}
+
+.flex-2 {
+  flex: 2;
+  min-width: 200px;
+}
+
+.form-label {
+  font-weight: 500;
+  display: block;
+}

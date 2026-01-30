@@ -4,6 +4,13 @@
   padding-bottom: 0.5rem;
 }
 
-.select-box {
-  align-content: center;
+.inherited-field-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.hint-text {
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.6);
+  margin-top: 0.25rem;
 }

@@ -7,6 +7,7 @@ import {
   AdditionalImportAction,
   AdditionalIndirectLinkAction,
   AdditonalDirectLinkAction,
+  AdditionalPrefilledFieldAction,
 } from "./additional-import-action";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
@@ -78,7 +79,7 @@ export class ImportAdditionalService {
             directActions.push({
               sourceType,
               mode: "direct",
-              targetType: ref.entityType.ENTITY_TYPE,
+              targetEntityType: ref.entityType.ENTITY_TYPE,
               targetProperty: field.id,
             });
           }
@@ -146,7 +147,18 @@ export class ImportAdditionalService {
     for (const entityType of this.linkableEntities.keys()) {
       const matchingActions = (
         this.linkableEntities.get(entityType) ?? []
-      ).filter((a) => a.targetType === targetEntityType);
+      ).filter((a) => {
+        // Different action types use different property names for target entity type
+        switch (a.mode) {
+          case "direct":
+            return a.targetEntityType === targetEntityType;
+          case "indirect":
+          case "prefill":
+            return a.targetType === targetEntityType;
+          default:
+            return false;
+        }
+      });
       linkingTypes.push(...matchingActions);
     }
 
@@ -172,12 +184,31 @@ export class ImportAdditionalService {
         case "indirect":
           action = this.linkIndirectly(entities, additionalImport);
           break;
+        case "prefill":
+          action = this.prefillField(entities, additionalImport);
+          break;
       }
 
       if (action) actionFuncs.push(action);
     }
 
     return Promise.all(actionFuncs);
+  }
+
+  /**
+   * Prefill a field on each imported entity with a fixed value.
+   * @param entities Imported entities
+   * @param action Prefill action details
+   */
+  private prefillField(
+    entities: Entity[],
+    action: AdditionalPrefilledFieldAction,
+  ) {
+    for (const entity of entities) {
+      entity[action.fieldId] = action.targetId;
+    }
+    // No async operation needed, but return a resolved promise for consistency
+    return Promise.resolve();
   }
 
   public async undoImport(importMeta: ImportMetadata): Promise<void> {
@@ -260,7 +291,7 @@ export class ImportAdditionalService {
     action: AdditonalDirectLinkAction,
   ) {
     const targetEntity = await this.entityMapper.load(
-      action.targetType,
+      action.targetEntityType,
       action.targetId,
     );
     const ids = entitiesToBeLinked.map((e) => e.getId());
@@ -283,7 +314,7 @@ export class ImportAdditionalService {
     action: AdditonalDirectLinkAction,
   ) {
     const targetEntity = await this.entityMapper.load(
-      action.targetType,
+      action.targetEntityType,
       action.targetId,
     );
     targetEntity[action.targetProperty] = targetEntity[
@@ -301,6 +332,17 @@ export class ImportAdditionalService {
     importAction: AdditionalImportAction,
     forTargetType: boolean = false,
   ): string {
+    // Handle prefill mode separately
+    if (importAction.mode === "prefill") {
+      const prefillAction = importAction;
+      const sourceType = this.entityRegistry.get(prefillAction.sourceType);
+      const targetType = this.entityRegistry.get(prefillAction.targetType);
+      const fieldLabel =
+        sourceType.schema.get(prefillAction.fieldId)?.label ||
+        prefillAction.fieldId;
+      return $localize`Pre-fill "${fieldLabel}" (${targetType.toString()})`;
+    }
+
     const sourceType = this.entityRegistry.get(importAction.sourceType);
     const targetTypes = importAction["targetType"]
       ? asArray(importAction["targetType"]).map((type) =>
