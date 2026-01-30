@@ -345,4 +345,38 @@ describe("PublicFormsService", () => {
       mockAdminEntityService.setAndSaveEntityConfig,
     ).not.toHaveBeenCalled();
   });
+
+  it("should copy URL with parameters for multiple matching entity types", async () => {
+    const config = new PublicFormConfig();
+    config.route = "test-act2";
+    config.forms = [
+      {
+        entity: "RecurringActivity",
+        columns: [
+          {
+            fields: ["title", "assignedTo"],
+          },
+        ],
+        linkedEntities: ["assignedTo"],
+      },
+    ];
+
+    mockEntityRegistry.get.and.returnValue(
+      createMockEntityConstructor([
+        ["assignedTo", { dataType: "entity", additional: "Child" }],
+      ]),
+    );
+
+    const entity = new Entity();
+    entity.getConstructor = jasmine.createSpy().and.returnValue({
+      ENTITY_TYPE: "Child",
+    });
+    entity.getId = jasmine.createSpy().and.returnValue("Child:123");
+
+    const result = await service.copyPublicFormLinkFromConfig(config, entity);
+    expect(result).toBe(true);
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      `${window.location.origin}/public-form/form/test-act2?assignedTo=Child%3A123`,
+    );
+  });
 });
