@@ -13,10 +13,7 @@ import { EntityConstructor } from "#src/app/core/entity/model/entity";
 export class EntityFieldLabelPipe implements PipeTransform {
   private readonly entityFormService = inject(EntityFormService);
 
-  transform(
-    field: ColumnConfig,
-    entityType?: EntityConstructor,
-  ): string {
+  transform(field: ColumnConfig, entityType?: EntityConstructor): string {
     const fieldConfig = this.entityFormService.extendFormFieldConfig(
       field,
       entityType,
