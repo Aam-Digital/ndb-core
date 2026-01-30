@@ -22,6 +22,6 @@ export class EntityFieldLabelPipe implements PipeTransform {
       entityTypeOrEntity,
     );
 
-    return fieldConfig?.label ?? fieldConfig?.labelShort;
+    return fieldConfig?.label ?? fieldConfig?.id;
   }
 }
