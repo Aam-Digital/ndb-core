@@ -1,0 +1,1495 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >KeycloakAdminService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/user/user-admin-service/keycloak-admin.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Admin functionalities to manage users in Keycloak server.</p>
+<p>Requires Keycloak Server with:</p>
+<ul>
+<li>Client &quot;app&quot; &gt; Client Scopes &gt; &quot;app-dedicated&quot; &gt; Mappers: &quot;client roles&quot; (to add <code>&quot;realm-management&quot;: { &quot;roles&quot;: [] }</code>) to token</li>
+<li>User &gt; Role:<ul>
+<li>&quot;(realm-management) manage-users&quot;</li>
+<li>&quot;(realm-management) view-realm&quot; (to access roles)</li>
+<li>... these can be added as &quot;Associated Roles&quot; to the &quot;account_manager&quot; role so that they do not have to be assigned individually</li>
+</ul>
+</li>
+</ul>
+
+            </p>
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                            <code><a href="../classes/UserAdminService.html" target="_self" >UserAdminService</a></code>
+            </p>
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Static</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#ACCOUNT_MANAGER_ROLE" >ACCOUNT_MANAGER_ROLE</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#assignRoles" >assignRoles</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#createUser" >createUser</a>
+                            </li>
+                            <li>
+                                <a href="#deleteRoles" >deleteRoles</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#deleteUser" >deleteUser</a>
+                            </li>
+                            <li>
+                                <a href="#getAllRoles" >getAllRoles</a>
+                            </li>
+                            <li>
+                                <a href="#getAllUsers" >getAllUsers</a>
+                            </li>
+                            <li>
+                                <a href="#getRolesOfUser" >getRolesOfUser</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#getUser" >getUser</a>
+                            </li>
+                            <li>
+                                <a href="#getUserByAccountId" >getUserByAccountId</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#updateUser" >updateUser</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:39</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="assignRoles"></a>
+                    <span class="name">
+                        <span ><b>assignRoles</b></span>
+                        <a href="#assignRoles"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>assignRoles(userAccountId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, roles: any[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="312"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:312</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Assigns a list of roles to a user.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userAccountId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>roles</td>
+                                            <td>
+                                                        <code>any[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>should be objects equal to the ones provided by <code>getRoles()</code></p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createUser"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>createUser</b></span>
+                        <a href="#createUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createUser(userEntityId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, roles: <a href="../interfaces/Role.html" target="_self">Role[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/UserAdminService.html" target="_self" >UserAdminService</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:53</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userEntityId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>email</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>roles</td>
+                                            <td>
+                                                            <code><a href="../interfaces/Role.html" target="_self" >Role[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/UserAccount.html" target="_self" >Observable&lt;UserAccount&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteRoles"></a>
+                    <span class="name">
+                        <span ><b>deleteRoles</b></span>
+                        <a href="#deleteRoles"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>deleteRoles(userAccountId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, roles: any[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="325"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:325</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Delete a list of roles from a user.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userAccountId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>roles</td>
+                                            <td>
+                                                        <code>any[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>should be objects equal to the ones provided by <code>getRoles()</code></p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteUser"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>deleteUser</b></span>
+                        <a href="#deleteUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteUser(userEntityId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/UserAdminService.html" target="_self" >UserAdminService</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:83</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userEntityId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Observable&lt;literal type&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllRoles"></a>
+                    <span class="name">
+                        <span ><b>getAllRoles</b></span>
+                        <a href="#getAllRoles"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getAllRoles()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/UserAdminService.html" target="_self" >UserAdminService</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:244</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Role.html" target="_self" >Observable&lt;Role[]&gt;</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllUsers"></a>
+                    <span class="name">
+                        <span ><b>getAllUsers</b></span>
+                        <a href="#getAllUsers"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getAllUsers()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/UserAdminService.html" target="_self" >UserAdminService</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:253</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Fetches all users with their roles.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/UserAccount.html" target="_self" >Observable&lt;UserAccount[]&gt;</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getRolesOfUser"></a>
+                    <span class="name">
+                        <span ><b>getRolesOfUser</b></span>
+                        <a href="#getRolesOfUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getRolesOfUser(userAccountId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="299"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:299</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userAccountId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUser"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>getUser</b></span>
+                        <a href="#getUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUser(userEntityId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/UserAdminService.html" target="_self" >UserAdminService</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:158</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userEntityId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/UserAccount.html" target="_self" >Observable&lt;UserAccount&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUserByAccountId"></a>
+                    <span class="name">
+                        <span ><b>getUserByAccountId</b></span>
+                        <a href="#getUserByAccountId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getUserByAccountId(userAccountId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="190"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:190</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userAccountId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateUser"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>updateUser</b></span>
+                        <a href="#updateUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateUser(userAccountId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, updatedUser: <a href="../interfaces/UserAccount.html" target="_self">Partial&lt;UserAccount&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/UserAdminService.html" target="_self" >UserAdminService</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:105</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userAccountId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>updatedUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/UserAccount.html" target="_self" >Partial&lt;UserAccount&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Observable&lt;literal type&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ACCOUNT_MANAGER_ROLE"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>ACCOUNT_MANAGER_ROLE</b></span>
+                        <a href="#ACCOUNT_MANAGER_ROLE"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;account_manager&quot;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/UserAdminService.html" target="_self" >UserAdminService</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:11</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Users with this role can create and update other accounts.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, LOCALE_ID, inject } from &quot;@angular/core&quot;;
+import { HttpClient } from &quot;@angular/common/http&quot;;
+import {
+  catchError,
+  concatMap,
+  concatWith,
+  map,
+  switchMap,
+} from &quot;rxjs/operators&quot;;
+import { forkJoin, Observable, of, throwError } from &quot;rxjs&quot;;
+import { UserAdminApiError, UserAdminService } from &quot;./user-admin.service&quot;;
+import { KeycloakUserDto } from &quot;./keycloak-user-dto&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
+import { Role, UserAccount } from &quot;./user-account&quot;;
+import { environment } from &quot;../../../../environments/environment&quot;;
+
+/**
+ * Admin functionalities to manage users in Keycloak server.
+ *
+ * Requires Keycloak Server with:
+ * - Client &quot;app&quot; &gt; Client Scopes &gt; &quot;app-dedicated&quot; &gt; Mappers: &quot;client roles&quot; (to add &#x60;&quot;realm-management&quot;: { &quot;roles&quot;: [] }&#x60;) to token
+ * - User &gt; Role:
+ *     - &quot;(realm-management) manage-users&quot;
+ *     - &quot;(realm-management) view-realm&quot; (to access roles)
+ *     - ... these can be added as &quot;Associated Roles&quot; to the &quot;account_manager&quot; role so that they do not have to be assigned individually
+ */
+@Injectable({ providedIn: &quot;root&quot; })
+export class KeycloakAdminService extends UserAdminService {
+  private http &#x3D; inject(HttpClient);
+  private baseLocale &#x3D; inject(LOCALE_ID);
+
+  // These roles are created by Keycloak automatically and should not be added or removed from users.
+  private static readonly KEYCLOAK_DEFAULT_ROLES &#x3D; [
+    &quot;default-roles&quot;,
+    &quot;offline_access&quot;,
+    &quot;uma_authorization&quot;,
+  ];
+
+  private readonly keycloakUrl: string;
+
+  constructor() {
+    super();
+
+    // trim any trailing slashes from the userAdminApi URL
+    environment.userAdminApi &#x3D; environment.userAdminApi?.replace(/\/$/, &quot;&quot;);
+
+    this.keycloakUrl &#x3D; &#x60;${environment.userAdminApi}/admin/realms/${environment.realm}&#x60;;
+
+    // TODO: Keycloak somehow cannot configure CORS (Access-Control-Allow-Origin) headers for the &quot;realm-management&quot; client
+    //   to test locally, run in insecure browser: e.g. &#x60;chromium --disable-web-security --user-data-dir&#x3D;/tmp http://aam.localhost/user&#x60;
+  }
+
+  override createUser(
+    userEntityId: string,
+    email: string,
+    roles: Role[],
+  ): Observable&lt;UserAccount&gt; {
+    const newKeycloakUser &#x3D; new KeycloakUserDto(email, userEntityId);
+
+    return this.http.post(&#x60;${this.keycloakUrl}/users&#x60;, newKeycloakUser).pipe(
+      concatMap(() &#x3D;&gt; this.findUserBy({ username: newKeycloakUser.username })),
+      concatMap((userAccount) &#x3D;&gt; {
+        return this.assignRoles(userAccount.id, roles).pipe(
+          map((roles) &#x3D;&gt; ({ ...userAccount, roles }) as UserAccount),
+        );
+      }),
+      concatMap((userAccount) &#x3D;&gt; {
+        return this.sendEmail(userAccount.id, &quot;VERIFY_EMAIL&quot;).pipe(
+          map(() &#x3D;&gt; userAccount),
+        );
+      }),
+      catchError((originalError) &#x3D;&gt;
+        throwError(() &#x3D;&gt; {
+          if (originalError?.status &#x3D;&#x3D;&#x3D; 409) {
+            return new UserAdminApiError(409);
+          }
+          return this.transformStandardError(originalError);
+        }),
+      ),
+    );
+  }
+
+  override deleteUser(
+    userEntityId: string,
+  ): Observable&lt;{ userDeleted: boolean }&gt; {
+    return this.getUser(userEntityId).pipe(
+      switchMap((userAccount) &#x3D;&gt; {
+        if (!userAccount) {
+          Logging.debug(&quot;User not found in Keycloak&quot;, { userEntityId });
+          return of(undefined);
+        }
+        return this.http.delete(&#x60;${this.keycloakUrl}/users/${userAccount.id}&#x60;);
+      }),
+      switchMap(() &#x3D;&gt; {
+        return of({ userDeleted: true });
+      }),
+      catchError((err) &#x3D;&gt; {
+        const error &#x3D; this.transformStandardError(err);
+        Logging.warn(&quot;failed to delete user account&quot;, error, err);
+        return of({ userDeleted: false });
+      }),
+    );
+  }
+
+  override updateUser(
+    userAccountId: string,
+    updatedUser: Partial&lt;UserAccount&gt;,
+  ): Observable&lt;{ userUpdated: boolean }&gt; {
+    return this.getUserByAccountId(userAccountId).pipe(
+      switchMap((userAccount) &#x3D;&gt;
+        this.updateKeycloakUser(
+          userAccount,
+          KeycloakUserDto.fromUserAccount(updatedUser),
+          updatedUser.roles,
+        ),
+      ),
+      map(() &#x3D;&gt; ({ userUpdated: true })),
+      catchError((err) &#x3D;&gt; {
+        const error &#x3D; this.transformStandardError(err);
+        Logging.warn(&quot;Failed to update user on server&quot;, error, err);
+        return of({ userUpdated: false });
+      }),
+    );
+  }
+
+  private updateKeycloakUser(
+    currentUser: KeycloakUserDto,
+    updatedUser: Partial&lt;KeycloakUserDto&gt;,
+    newRoles?: Role[],
+  ) {
+    const actions: Observable&lt;any&gt;[] &#x3D; [];
+
+    if (newRoles) {
+      // delete existing roles and assign new ones
+      actions.push(
+        this.getRolesOfUser(currentUser.id).pipe(
+          concatMap((currentRoles) &#x3D;&gt;
+            this.deleteRoles(currentUser.id, currentRoles),
+          ),
+          concatMap(() &#x3D;&gt; this.assignRoles(currentUser.id, newRoles)),
+        ),
+      );
+    }
+
+    if (updatedUser.email) {
+      // send verification email if email changed
+      updatedUser.requiredActions &#x3D; [&quot;VERIFY_EMAIL&quot;];
+      actions.push(this.sendEmail(currentUser.id, &quot;VERIFY_EMAIL&quot;));
+    }
+
+    // first update the user object, then run other actions
+    const newUser &#x3D; { ...currentUser, ...updatedUser }; // make sure we don&#x27;t lose unchanged properties
+    return this.http
+      .put(&#x60;${this.keycloakUrl}/users/${currentUser.id}&#x60;, newUser)
+      .pipe(concatWith(...actions));
+  }
+
+  override getUser(userEntityId: string): Observable&lt;UserAccount&gt; {
+    return this.findUserBy({
+      q: &#x60;exact_username:${userEntityId}&#x60;,
+    }).pipe(
+      map(
+        (keycloakUser) &#x3D;&gt;
+          ({
+            id: keycloakUser.id,
+            email: keycloakUser.email,
+            emailVerified: keycloakUser.emailVerified,
+            enabled: keycloakUser.enabled,
+            userEntityId: keycloakUser.attributes?.exact_username?.[0], // the ID is coming in as an array
+          }) as UserAccount,
+      ),
+      switchMap((account) &#x3D;&gt;
+        this.getRolesOfUser(account.id).pipe(
+          map((roles) &#x3D;&gt; ({ ...account, roles })),
+        ),
+      ),
+      catchError((originalError) &#x3D;&gt; {
+        if (
+          originalError instanceof UserAdminApiError &amp;&amp;
+          originalError.status &#x3D;&#x3D;&#x3D; 404
+        ) {
+          // user not found is a valid use case and not throwing an error
+          return of(null);
+        }
+        return throwError(() &#x3D;&gt; this.transformStandardError(originalError));
+      }),
+    );
+  }
+
+  getUserByAccountId(userAccountId: string) {
+    return this.http.get&lt;KeycloakUserDto&gt;(
+      &#x60;${this.keycloakUrl}/users/${userAccountId}&#x60;,
+    );
+  }
+
+  /**
+   * Looks for a single user that matches the criteria in params.
+   * The user is only returned if only a single user is matching the criteria exactly.
+   * If none or more than one user are matching throws a &#x60;NotFoundException&#x60;
+   * @param params see {@link https://www.keycloak.org/docs-api/19.0.2/rest-api/index.html#_getusers}
+   */
+  private findUserBy(params: { [key in string]: string | boolean }) {
+    params.exact &#x3D; true;
+    return this.findUsersBy(params).pipe(
+      map((res) &#x3D;&gt; {
+        if (res.length !&#x3D;&#x3D; 1) {
+          throw new UserAdminApiError(404, &#x60;Could not find user&#x60;);
+        } else {
+          return res[0];
+        }
+      }),
+    );
+  }
+
+  /**
+   * Allows to find users by the given criteria.
+   * The keys in the &#x60;params&#x60; object have to be valid Keycloak user properties.
+   * Users where all values are matching are returned.
+   * @param params
+   */
+  private findUsersBy(params: { [key in string]: string | boolean }) {
+    return this.http.get&lt;KeycloakUserDto[]&gt;(&#x60;${this.keycloakUrl}/users&#x60;, {
+      params,
+    });
+  }
+
+  /**
+   * Sends an email to the user with the given id, asking to perform the specified action.
+   * @param userAccountId
+   * @param action e.g. &quot;UPDATE_PASSWORD&quot;, &quot;VERIFY_EMAIL&quot;
+   */
+  private sendEmail(userAccountId: string, action: string) {
+    return this.http.put(
+      &#x60;${this.keycloakUrl}/users/${userAccountId}/execute-actions-email&#x60;,
+      [action],
+      {
+        headers: {
+          &quot;Accept-Language&quot;: this.baseLocale,
+        },
+      },
+    );
+  }
+
+  getAllRoles(): Observable&lt;Role[]&gt; {
+    return this.http
+      .get&lt;Role[]&gt;(&#x60;${this.keycloakUrl}/roles&#x60;)
+      .pipe(map((roles) &#x3D;&gt; this.filterNonTechnicalRoles(roles)));
+  }
+
+  /**
+   * Fetches all users with their roles.
+   */
+  getAllUsers(): Observable&lt;UserAccount[]&gt; {
+    return this.findUsersBy({}).pipe(
+      switchMap((users) &#x3D;&gt; {
+        if (users.length &#x3D;&#x3D;&#x3D; 0) {
+          return of([]);
+        }
+
+        // For each user, fetch their roles with individual error handling
+        const usersWithRoles$ &#x3D; users.map((user) &#x3D;&gt;
+          this.getRolesOfUser(user.id).pipe(
+            map((roles) &#x3D;&gt; ({
+              id: user.id,
+              email: user.email,
+              userEntityId: user.attributes?.exact_username?.[0],
+              enabled: user.enabled,
+              emailVerified: user.emailVerified,
+              roles,
+            })),
+            catchError((error) &#x3D;&gt; {
+              // Log the error but don&#x27;t fail the entire operation
+              Logging.warn(&#x60;Failed to fetch roles for user ${user.id}&#x60;, error);
+              // Return user without roles
+              return of({
+                id: user.id,
+                email: user.email,
+                userEntityId: user.attributes?.exact_username?.[0],
+                enabled: user.enabled,
+                emailVerified: user.emailVerified,
+                roles: [],
+              } as UserAccount);
+            }),
+          ),
+        );
+
+        return forkJoin(usersWithRoles$);
+      }),
+    );
+  }
+
+  private filterNonTechnicalRoles(roles: Role[]) {
+    return roles.filter(
+      (role) &#x3D;&gt;
+        !KeycloakAdminService.KEYCLOAK_DEFAULT_ROLES.includes(role.name),
+    );
+  }
+
+  getRolesOfUser(userAccountId: string) {
+    return this.http
+      .get&lt;
+        Role[]
+      &gt;(&#x60;${this.keycloakUrl}/users/${userAccountId}/role-mappings/realm&#x60;)
+      .pipe(map((roles) &#x3D;&gt; this.filterNonTechnicalRoles(roles)));
+  }
+
+  /**
+   * Assigns a list of roles to a user.
+   * @param userAccountId
+   * @param roles should be objects equal to the ones provided by &#x60;getRoles()&#x60;
+   */
+  assignRoles(userAccountId: string, roles: any[]) {
+    const appRoles &#x3D; this.filterNonTechnicalRoles(roles);
+    return this.http.post(
+      &#x60;${this.keycloakUrl}/users/${userAccountId}/role-mappings/realm&#x60;,
+      appRoles,
+    );
+  }
+
+  /**
+   * Delete a list of roles from a user.
+   * @param userAccountId
+   * @param roles should be objects equal to the ones provided by &#x60;getRoles()&#x60;
+   */
+  deleteRoles(userAccountId: string, roles: any[]) {
+    const appRoles &#x3D; this.filterNonTechnicalRoles(roles);
+    return this.http.delete(
+      &#x60;${this.keycloakUrl}/users/${userAccountId}/role-mappings/realm&#x60;,
+      { body: appRoles },
+    );
+  }
+
+  /**
+   * Map common API errors to well-defined UserAdminApiErrors
+   * @param originalError
+   * @private
+   */
+  private transformStandardError(originalError: any) {
+    if (
+      originalError?.name &#x3D;&#x3D;&#x3D; &quot;HttpErrorResponse&quot; &amp;&amp;
+      originalError?.status &#x3D;&#x3D;&#x3D; 0
+    ) {
+      return new UserAdminApiError(
+        500,
+        $localize&#x60;:User API error:Could not connect to the server. Please check your network connection, try again later or reach out to your technical support team.&#x60;,
+      );
+    }
+
+    return originalError;
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'KeycloakAdminService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

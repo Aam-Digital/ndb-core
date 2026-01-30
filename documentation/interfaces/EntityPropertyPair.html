@@ -1,0 +1,648 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  EntityPropertyPair</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts</code>
+        </p>
+
+
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#entityType" 
+>
+                                            entityType
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#property" 
+>
+                                            property
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="entityType"></a>
+                                        <span class="name "><b>entityType</b>
+                                            <a href="#entityType">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>entityType:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="property"></a>
+                                        <span class="name "><b>property</b>
+                                            <a href="#property">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>property:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input, OnInit, inject } from &quot;@angular/core&quot;;
+import { FormControl, FormsModule } from &quot;@angular/forms&quot;;
+
+import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
+import { MatInputModule } from &quot;@angular/material/input&quot;;
+import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
+import { EntityTypeSelectComponent } from &quot;#src/app/core/entity/entity-type-select/entity-type-select.component&quot;;
+import { EntityFieldSelectComponent } from &quot;#src/app/core/entity/entity-field-select/entity-field-select.component&quot;;
+import { EntityRegistry } from &quot;#src/app/core/entity/database-entity.decorator&quot;;
+import { getEntitySchema } from &quot;#src/app/core/entity/database-field.decorator&quot;;
+import { EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
+import { FormFieldConfig } from &quot;#src/app/core/common-components/entity-form/FormConfig&quot;;
+
+export interface BirthdayDashboardSettingsConfig {
+  /**
+   * How many days in advance an upcoming birthday/anniversary should be displayed.
+   */
+  threshold?: number;
+
+  /**
+   * Map of entity type(s) and the &quot;date-with-age&quot; field(s) within the type
+   * that should be scanned for upcoming anniversaries.
+   * Can be a string for single field or array for multiple fields.
+   * e.g. &#x60;{ &quot;Child&quot;: &quot;dateOfBirth&quot;, &quot;School&quot;: [&quot;foundingDate&quot;, &quot;establishedDate&quot;] }&#x60;
+   */
+  entities?: { [entityType: string]: string | string[] };
+}
+
+interface EntityPropertyPair {
+  entityType: string;
+  property: string;
+}
+
+@Component({
+  selector: &quot;app-birthday-dashboard-settings&quot;,
+  standalone: true,
+  imports: [
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatTooltipModule,
+    FontAwesomeModule,
+    EntityTypeSelectComponent,
+    EntityFieldSelectComponent,
+  ],
+  templateUrl: &quot;./birthday-dashboard-settings.component.html&quot;,
+  styleUrls: [&quot;./birthday-dashboard-settings.component.scss&quot;],
+})
+export class BirthdayDashboardSettingsComponent implements OnInit {
+  @Input() formControl: FormControl&lt;BirthdayDashboardSettingsConfig&gt;;
+
+  availableEntityTypes: EntityConstructor[] &#x3D; [];
+  /** Map of entity types to their available date-with-age fields */
+  dateFieldsByEntityType: { [entityType: string]: string[] } &#x3D; {};
+  /** Available entity type options for each row, filtered to prevent duplicates */
+  entityTypeOptionsPerRow: EntityConstructor[][] &#x3D; [];
+
+  entityPropertyPairs: EntityPropertyPair[] &#x3D; [];
+
+  localConfig: BirthdayDashboardSettingsConfig &#x3D; {
+    threshold: 32,
+    entities: { Child: &quot;dateOfBirth&quot; },
+  };
+
+  private entityRegistry &#x3D; inject(EntityRegistry);
+
+  ngOnInit() {
+    // Get all entity types and filter for those with a date-with-age field
+    const allEntityTypes &#x3D; this.entityRegistry
+      .getEntityTypes(true)
+      .map(({ value }) &#x3D;&gt; value);
+
+    this.availableEntityTypes &#x3D; allEntityTypes.filter(
+      (ctor: EntityConstructor) &#x3D;&gt; {
+        const schema &#x3D; getEntitySchema(ctor);
+        return Array.from(schema.values()).some(
+          (field: any) &#x3D;&gt; field.dataType &#x3D;&#x3D;&#x3D; &quot;date-with-age&quot;,
+        );
+      },
+    );
+
+    this.buildAvailablePropertiesMap();
+
+    // Initialize pairs from config or create a single default pair
+    const entities &#x3D; this.formControl.value?.entities;
+
+    if (entities &amp;&amp; Object.keys(entities).length &gt; 0) {
+      // Use existing valid entities, filtering out invalid ones
+      this.entityPropertyPairs &#x3D; [];
+
+      Object.entries(entities).forEach(([entityType, properties]) &#x3D;&gt; {
+        const isValidEntityType &#x3D; this.availableEntityTypes.some(
+          (ctor) &#x3D;&gt; ctor.ENTITY_TYPE &#x3D;&#x3D;&#x3D; entityType,
+        );
+
+        if (!isValidEntityType) return;
+
+        // Handle both string and array properties
+        const propertyList &#x3D; Array.isArray(properties)
+          ? properties
+          : [properties];
+
+        propertyList.forEach((property) &#x3D;&gt; {
+          const isValidProperty &#x3D;
+            this.dateFieldsByEntityType[entityType]?.includes(property);
+          if (isValidProperty) {
+            this.entityPropertyPairs.push({
+              entityType,
+              property,
+            });
+          }
+        });
+      });
+    } else {
+      this.entityPropertyPairs &#x3D; [];
+    }
+
+    // If no valid pairs exist, create one default pair
+    if (this.entityPropertyPairs.length &#x3D;&#x3D;&#x3D; 0) {
+      const defaultEntityType &#x3D; this.availableEntityTypes[0]?.ENTITY_TYPE;
+      const defaultProperty &#x3D; defaultEntityType
+        ? this.dateFieldsByEntityType[defaultEntityType]?.[0]
+        : &quot;&quot;;
+
+      if (defaultEntityType &amp;&amp; defaultProperty) {
+        this.entityPropertyPairs &#x3D; [
+          {
+            entityType: defaultEntityType,
+            property: defaultProperty,
+          },
+        ];
+      }
+      // If no valid entity types available, leave array empty
+      // The form validation will handle this case
+    }
+
+    this.localConfig.threshold &#x3D; this.formControl.value?.threshold ?? 32;
+    this.updateLocalConfig();
+    this.updateEntityTypeOptionsPerRow();
+  }
+
+  private buildAvailablePropertiesMap() {
+    for (const ctor of this.availableEntityTypes) {
+      const schema &#x3D; getEntitySchema(ctor);
+      this.dateFieldsByEntityType[ctor.ENTITY_TYPE] &#x3D; Array.from(
+        schema.entries(),
+      )
+        .filter(([_, field]: any) &#x3D;&gt; field.dataType &#x3D;&#x3D;&#x3D; &quot;date-with-age&quot;)
+        .map(([key]) &#x3D;&gt; key);
+    }
+  }
+
+  availablePropertiesFor(entityType: string): string[] {
+    return this.dateFieldsByEntityType[entityType] ?? [];
+  }
+
+  private getUsedCombinations(excludeIndex?: number): Set&lt;string&gt; {
+    return new Set(
+      this.entityPropertyPairs
+        .filter((_, i) &#x3D;&gt; i !&#x3D;&#x3D; excludeIndex)
+        .map((p) &#x3D;&gt; &#x60;${p.entityType}:${p.property}&#x60;),
+    );
+  }
+
+  updateEntityTypeOptionsPerRow() {
+    this.entityTypeOptionsPerRow &#x3D; this.entityPropertyPairs.map(
+      (pair, index) &#x3D;&gt; {
+        const usedCombinations &#x3D; this.getUsedCombinations(index);
+
+        return this.availableEntityTypes.filter((ctor) &#x3D;&gt; {
+          const entityType &#x3D; ctor.ENTITY_TYPE;
+          const availableFields &#x3D; this.availablePropertiesFor(entityType);
+
+          return availableFields.some(
+            (field) &#x3D;&gt;
+              !usedCombinations.has(&#x60;${entityType}:${field}&#x60;) ||
+              (entityType &#x3D;&#x3D;&#x3D; pair.entityType &amp;&amp; field &#x3D;&#x3D;&#x3D; pair.property),
+          );
+        });
+      },
+    );
+  }
+
+  get canAddMorePairs(): boolean {
+    const usedCombinations &#x3D; this.getUsedCombinations();
+
+    return this.availableEntityTypes.some((ctor) &#x3D;&gt; {
+      const entityType &#x3D; ctor.ENTITY_TYPE;
+      const availableFields &#x3D; this.availablePropertiesFor(entityType);
+      return availableFields.some(
+        (field) &#x3D;&gt; !usedCombinations.has(&#x60;${entityType}:${field}&#x60;),
+      );
+    });
+  }
+
+  get isFormValid(): boolean {
+    return this.entityPropertyPairs.every(
+      (pair) &#x3D;&gt; pair.entityType &amp;&amp; pair.property,
+    );
+  }
+
+  onEntityTypeChange(entityType: string, index: number) {
+    this.entityPropertyPairs[index].entityType &#x3D; entityType;
+
+    // Auto-select first available property that&#x27;s not already used
+    const usedCombinations &#x3D; this.getUsedCombinations(index);
+    const availableProperties &#x3D; this.availablePropertiesFor(entityType);
+    const unusedProperty &#x3D; availableProperties.find(
+      (prop) &#x3D;&gt; !usedCombinations.has(&#x60;${entityType}:${prop}&#x60;),
+    );
+
+    this.entityPropertyPairs[index].property &#x3D; unusedProperty ?? &quot;&quot;;
+    this.updateEntityTypeOptionsPerRow();
+    this.updateAndEmitConfig();
+  }
+
+  onPropertyChange(property: string, index: number) {
+    this.entityPropertyPairs[index].property &#x3D; property;
+    this.updateAndEmitConfig();
+  }
+
+  onThresholdChange() {
+    this.updateAndEmitConfig();
+  }
+
+  addPair() {
+    const usedCombinations &#x3D; this.getUsedCombinations();
+
+    for (const ctor of this.availableEntityTypes) {
+      const entityType &#x3D; ctor.ENTITY_TYPE;
+      const availableFields &#x3D; this.availablePropertiesFor(entityType);
+      const unusedField &#x3D; availableFields.find(
+        (field) &#x3D;&gt; !usedCombinations.has(&#x60;${entityType}:${field}&#x60;),
+      );
+
+      if (unusedField) {
+        this.entityPropertyPairs.push({ entityType, property: unusedField });
+        this.updateEntityTypeOptionsPerRow();
+        this.updateAndEmitConfig();
+        return;
+      }
+    }
+  }
+
+  removePair(index: number) {
+    this.entityPropertyPairs.splice(index, 1);
+    this.updateEntityTypeOptionsPerRow();
+    this.updateAndEmitConfig();
+  }
+
+  private updateAndEmitConfig() {
+    this.updateLocalConfig();
+    this.emitConfigChange();
+  }
+
+  updateLocalConfig() {
+    const entities: { [entityType: string]: string | string[] } &#x3D; {};
+
+    for (const pair of this.entityPropertyPairs) {
+      if (pair.entityType &amp;&amp; pair.property) {
+        const entityType &#x3D; pair.entityType;
+        const property &#x3D; pair.property;
+
+        if (entities[entityType]) {
+          // If entity already exists, convert to array or add to existing array
+          if (Array.isArray(entities[entityType])) {
+            (entities[entityType] as string[]).push(property);
+          } else {
+            entities[entityType] &#x3D; [entities[entityType] as string, property];
+          }
+        } else {
+          entities[entityType] &#x3D; property;
+        }
+      }
+    }
+
+    this.localConfig &#x3D; {
+      threshold: this.localConfig.threshold,
+      entities,
+    };
+  }
+
+  hideNonBirthdayFieldsForRow(currentIndex: number) {
+    return (option: FormFieldConfig): boolean &#x3D;&gt; {
+      if (option.dataType !&#x3D;&#x3D; &quot;date-with-age&quot;) {
+        return true;
+      }
+
+      const currentEntityType &#x3D;
+        this.entityPropertyPairs[currentIndex]?.entityType;
+      if (currentEntityType &amp;&amp; option.id) {
+        const usedCombinations &#x3D; this.getUsedCombinations(currentIndex);
+        return usedCombinations.has(&#x60;${currentEntityType}:${option.id}&#x60;);
+      }
+
+      return false;
+    };
+  }
+
+  emitConfigChange() {
+    // Set form control validity based on whether all pairs are complete
+    if (this.isFormValid) {
+      this.formControl.setValue({ ...this.localConfig });
+      this.formControl.setErrors(null);
+    } else {
+      this.formControl.setErrors({ invalidPairs: true });
+    }
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'EntityPropertyPair.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
