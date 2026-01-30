@@ -257,7 +257,7 @@
             ]
           },
           {
-            "title": "Participant Surveys",
+            "title": "Surveys",
             "components": [
               {
                 "component": "RelatedEntities",
@@ -1053,7 +1053,7 @@
       "_id": "view:project"
     },
     "entity:participantSurvey": {
-      "label": "Participant Survey",
+      "label": "Survey",
       "attributes": {
         "date": {
           "label": "Date of Survey Submission",
@@ -1116,7 +1116,7 @@
           "label": "Further comments"
         }
       },
-      "labelPlural": "Participant Surveys",
+      "labelPlural": "Surveys",
       "toStringAttributes": [
         "date"
       ],
