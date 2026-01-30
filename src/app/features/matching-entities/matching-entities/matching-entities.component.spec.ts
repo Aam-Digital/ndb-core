@@ -306,6 +306,7 @@ describe("MatchingEntitiesComponent", () => {
       id: "distance",
       label: "Distance",
       viewComponent: "DisplayDistance",
+      dataType: "number",
       additional: {
         coordinatesProperties: ["address"],
         compareCoordinates: jasmine.any(BehaviorSubject),

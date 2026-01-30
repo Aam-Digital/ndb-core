@@ -1,6 +1,7 @@
-import { EntityConstructor } from "../../core/entity/model/entity";
+import { Entity, EntityConstructor } from "../../core/entity/model/entity";
 import * as L from "leaflet";
 import { Coordinates } from "./coordinates";
+import { GeoLocation } from "./geo-location";
 import { LocationDatatype } from "./location.datatype";
 
 const iconRetinaUrl = "assets/marker-icon-2x.png";
@@ -87,6 +88,43 @@ export function getKmDistance(x: Coordinates, y: Coordinates) {
       Math.sin(deltaLambda / 2);
   const d = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * R;
   return d / 1000;
+}
+
+/**
+ * Calculate the minimum distance (km) between an entity's location fields
+ * and a list of comparison coordinates. Returns null if no distance can be
+ * computed.
+ */
+export function getMinDistanceKm(
+  entity: Entity,
+  coordinatesProperties: string[],
+  compareCoordinates: Coordinates[],
+): number | null {
+  if (!coordinatesProperties?.length || !compareCoordinates?.length) {
+    return null;
+  }
+
+  let results: number | null = null;
+  const entityLocations = entity as unknown as Record<
+    string,
+    GeoLocation | undefined
+  >;
+
+  for (const prop of coordinatesProperties) {
+    const geoLookup = entityLocations[prop]?.geoLookup;
+    if (!geoLookup) {
+      continue;
+    }
+    for (const compareCoord of compareCoordinates) {
+      if (!compareCoord) {
+        continue;
+      }
+      const distance = getKmDistance(geoLookup, compareCoord);
+      results = results === null ? distance : Math.min(distance, results);
+    }
+  }
+
+  return results;
 }
 
 /**
