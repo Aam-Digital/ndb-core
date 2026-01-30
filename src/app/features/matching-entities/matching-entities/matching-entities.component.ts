@@ -390,7 +390,7 @@ export class MatchingEntitiesComponent implements OnInit {
       const columnConfig = this.getDistanceColumnConfig(side);
       side.columns[sideIndex] = columnConfig;
       side.distanceColumn = columnConfig.additional;
-      this.attachDistanceGetter(side);
+      this.attachDistanceLogic(side);
       const colIndex = this.columns.findIndex((row) => {
         const col = row[index];
         return typeof col === "string"
@@ -421,10 +421,10 @@ export class MatchingEntitiesComponent implements OnInit {
   }
 
   /**
-   * Attach a non-persistent "distance" getter so the table can sort without
+   * Attach a non-persistent "distance" so the table can sort without
    * passing custom sort functions.
    */
-  private attachDistanceGetter(side: MatchingSide) {
+  private attachDistanceLogic(side: MatchingSide) {
     if (!side.availableEntities?.length || !side.distanceColumn) {
       return;
     }
