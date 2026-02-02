@@ -390,7 +390,7 @@ export class MatchingEntitiesComponent implements OnInit {
       const columnConfig = this.getDistanceColumnConfig(side);
       side.columns[sideIndex] = columnConfig;
       side.distanceColumn = columnConfig.additional;
-      this.attachDistanceLogic(side);
+      this.setDistanceValuesForSide(side);
       const colIndex = this.columns.findIndex((row) => {
         const col = row[index];
         return typeof col === "string"
@@ -421,21 +421,23 @@ export class MatchingEntitiesComponent implements OnInit {
   }
 
   /**
-   * Attach a non-persistent "distance" so the table can sort without
-   * passing custom sort functions.
+   * Pre-calculate and attach a non-enumerable "distance" value on each entity
+   * so the table can sort without custom sort functions.
    */
-  private attachDistanceLogic(side: MatchingSide) {
+  private setDistanceValuesForSide(side: MatchingSide) {
     if (!side.availableEntities?.length || !side.distanceColumn) {
       return;
     }
 
-    side.availableEntities.forEach((entity) => this.getDistance(entity, side));
+    side.availableEntities.forEach((entity) =>
+      this.defineDistanceValue(entity, side),
+    );
   }
 
   /**
-   * Define a non-enumerable distance on the entity for table sorting.
+   * Define a non-enumerable distance value on the entity for table sorting.
    */
-  private getDistance(entity: Entity, side: MatchingSide) {
+  private defineDistanceValue(entity: Entity, side: MatchingSide) {
     const existingDescriptor = Object.getOwnPropertyDescriptor(
       entity,
       "distance",
@@ -444,15 +446,17 @@ export class MatchingEntitiesComponent implements OnInit {
       return;
     }
 
+    const distanceValue = getMinDistanceKm(
+      entity,
+      side.distanceColumn?.coordinatesProperties ?? [],
+      side.distanceColumn?.compareCoordinates?.value ?? [],
+    );
+
     Object.defineProperty(entity, "distance", {
       configurable: true,
       enumerable: false,
-      get: () =>
-        getMinDistanceKm(
-          entity,
-          side.distanceColumn?.coordinatesProperties ?? [],
-          side.distanceColumn?.compareCoordinates?.value ?? [],
-        ),
+      value: distanceValue,
+      writable: true,
     });
   }
 
@@ -467,6 +471,7 @@ export class MatchingEntitiesComponent implements OnInit {
       if (side.highlightedSelected) {
         this.updateDistanceColumn(side);
       }
+      this.setDistanceValuesForSide(side);
     });
   }
 
