@@ -201,12 +201,28 @@
               ></fa-icon>
             </app-anonymize-options>
 
-            <!-- TODO: not supported yet
-              <mat-form-field>
-                <mat-label i18n>Searchable</mat-label>
-                <input formControlName="searchable" matInput />
-              </mat-form-field>
-              -->
+            @if (
+              ["string", "long-text", "email", "url", "number"].includes(
+                formDataType.value
+              )
+            ) {
+              <div class="margin-top-regular">
+                <mat-checkbox
+                  formControlName="searchable"
+                  matTooltip="Include this field's values in global search indexing."
+                  i18n-matTooltip
+                  i18n
+                >
+                  Searchable [experimental]
+                </mat-checkbox>
+                @if (isSearchable()) {
+                  <div class="hint-text" i18n>
+                    This field is already searchable because it is part of the
+                    record's display name.
+                  </div>
+                }
+              </div>
+            }
           </div>
 
           <div class="entity-form-cell">

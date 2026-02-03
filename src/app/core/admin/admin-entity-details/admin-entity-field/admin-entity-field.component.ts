@@ -114,6 +114,7 @@ export class AdminEntityFieldComponent implements OnInit {
   dataTypes: SimpleDropdownValue[] = [];
 
   ngOnInit() {
+    this.entityType = this.data.entityType;
     this.initSettings();
 
     if (this.data.overwriteLocally) {
@@ -317,6 +318,12 @@ export class AdminEntityFieldComponent implements OnInit {
     this.additionalForm.reset(null);
     this.typeAdditionalOptions = [];
     this.createNewAdditionalOption = undefined;
+  }
+
+  isSearchable(): boolean {
+    const fieldId = this.fieldIdForm?.getRawValue();
+    const toStringAttributes = this.entityType?.toStringAttributes ?? [];
+    return !!fieldId && toStringAttributes.includes(fieldId);
   }
 
   async save() {
