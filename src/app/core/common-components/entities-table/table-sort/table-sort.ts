@@ -61,6 +61,10 @@ function getComparableValue<OBJECT, PROPERTY extends keyof OBJECT>(
     return value._ordinal;
   }
   value = getReadableValue(value);
+  // Special handling for distance to keep it numeric for correct sorting; other numbers are stringified
+  if (String(key) === "distance" && typeof value === "number") {
+    return value;
+  }
   if (value instanceof Date) {
     return value.getTime() + "";
   } else if (typeof value === "number") {

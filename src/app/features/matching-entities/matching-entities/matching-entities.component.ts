@@ -432,9 +432,6 @@ export class MatchingEntitiesComponent implements OnInit {
     side.availableEntities.forEach((entity) =>
       this.defineDistanceValue(entity, side),
     );
-
-    // Trigger table data refresh so MatSort re-evaluates the updated values.
-    side.availableEntities = [...side.availableEntities];
   }
 
   /**
