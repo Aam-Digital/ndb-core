@@ -429,9 +429,9 @@ export class MatchingEntitiesComponent implements OnInit {
       return;
     }
 
-    side.availableEntities.forEach((entity) =>
-      this.defineDistanceValue(entity, side),
-    );
+    for (const entity of side.availableEntities) {
+      this.defineDistanceValue(entity, side);
+    }
   }
 
   /**
