@@ -19,6 +19,7 @@ import { filter, take } from "rxjs/operators";
   providedIn: "root",
 })
 export class BulkOperationStateService implements OnDestroy {
+  private static readonly DEFAULT_BULK_OP_TIMEOUT_MS = 30000;
   private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   private readonly operationInProgress = new BehaviorSubject<boolean>(false);
@@ -96,6 +97,9 @@ export class BulkOperationStateService implements OnDestroy {
     }
 
     this.expectedUpdateIds.delete(id);
+    if (this.expectedUpdateIds.size === 0) {
+      this.completeBulkOperation();
+    }
     return true;
   }
 
