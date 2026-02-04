@@ -10,6 +10,12 @@ import { DatabaseField } from "app/core/entity/database-field.decorator";
 @DatabaseEntity("ConditionsEditorTestEntity")
 class ConditionsEditorTestEntity extends Entity {
   @DatabaseField() name: string;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "genders",
+    isArray: true,
+  })
+  gender: string[];
 }
 
 describe("ConditionsEditorComponent", () => {
@@ -105,5 +111,52 @@ describe("ConditionsEditorComponent", () => {
 
     expect(component.conditionFormFieldConfigs.size).toBe(1);
     expect(component.conditionFormControls.size).toBe(1);
+  });
+
+  it("should wrap array field values in $elemMatch", () => {
+    component.addCondition();
+    mockEntitySchemaService.getComponent.and.returnValue("test-component");
+    mockEntitySchemaService.valueToEntityFormat.and.returnValue(null);
+    mockEntitySchemaService.valueToDatabaseFormat.and.returnValue(["X"]);
+
+    component.onConditionFieldChange(0, "gender");
+
+    const formControl = component.conditionFormControls.get("0");
+    formControl.setValue(["X"]);
+
+    expect(component.conditionsArray()[0]).toEqual({
+      gender: "X",
+    });
+  });
+
+  it("should load array field with implicit matching format", () => {
+    mockEntitySchemaService.getComponent.and.returnValue("test-component");
+    mockEntitySchemaService.valueToEntityFormat.and.callFake(
+      (val) => val || [],
+    );
+
+    component.conditions = {
+      $or: [{ gender: "X" }],
+    };
+    component.ngOnInit();
+
+    expect(mockEntitySchemaService.valueToEntityFormat).toHaveBeenCalledWith(
+      ["X"],
+      jasmine.objectContaining({ isArray: true }),
+    );
+  });
+
+  it("should handle non-array fields normally", () => {
+    component.addCondition();
+    mockEntitySchemaService.getComponent.and.returnValue("test-component");
+    mockEntitySchemaService.valueToEntityFormat.and.returnValue(null);
+    mockEntitySchemaService.valueToDatabaseFormat.and.returnValue("John");
+
+    component.onConditionFieldChange(0, "name");
+
+    const formControl = component.conditionFormControls.get("0");
+    formControl.setValue("John");
+
+    expect(component.conditionsArray()[0]).toEqual({ name: "John" });
   });
 });

@@ -140,10 +140,37 @@ export class ConditionsEditorComponent implements OnInit {
     const conditions = this.conditionsArray();
     const condition = conditions[conditionIndex];
 
-    const initialValue = this.entitySchemaService.valueToEntityFormat(
-      condition[fieldKey],
-      fieldConfig,
-    );
+    // For array fields with $elemMatch format (legacy), convert to array
+    // Otherwise use value as-is for implicit array matching
+    let initialValue;
+    if (fieldConfig.isArray) {
+      if (condition[fieldKey]?.$elemMatch?.$eq) {
+        // Legacy format: { $elemMatch: { $eq: "X" } }
+        initialValue = this.entitySchemaService.valueToEntityFormat(
+          [condition[fieldKey].$elemMatch.$eq],
+          fieldConfig,
+        );
+      } else if (
+        condition[fieldKey] !== null &&
+        condition[fieldKey] !== undefined
+      ) {
+        // New format: just "X" for implicit matching
+        initialValue = this.entitySchemaService.valueToEntityFormat(
+          [condition[fieldKey]],
+          fieldConfig,
+        );
+      } else {
+        initialValue = this.entitySchemaService.valueToEntityFormat(
+          condition[fieldKey],
+          fieldConfig,
+        );
+      }
+    } else {
+      initialValue = this.entitySchemaService.valueToEntityFormat(
+        condition[fieldKey],
+        fieldConfig,
+      );
+    }
     const formControl = new FormControl(initialValue);
     this.conditionFormControls.set(key, formControl);
 
@@ -152,7 +179,15 @@ export class ConditionsEditorComponent implements OnInit {
         value,
         fieldConfig,
       );
-      condition[fieldKey] = dbValue;
+
+      // For array fields, store single value for implicit array matching
+      // MongoDB/ucast will match if the array contains this value
+      if (fieldConfig.isArray && Array.isArray(dbValue) && dbValue.length > 0) {
+        condition[fieldKey] = dbValue[0];
+      } else {
+        condition[fieldKey] = dbValue;
+      }
+
       this.conditionsChange.emit(this.conditions);
     });
 
