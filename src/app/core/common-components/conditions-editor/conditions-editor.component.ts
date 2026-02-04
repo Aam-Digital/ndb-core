@@ -42,7 +42,11 @@ import { IconButtonComponent } from "../icon-button/icon-button.component";
 })
 export class ConditionsEditorComponent implements OnInit {
   @Input() conditions: any = { $or: [] };
-  @Input() entityConstructor: EntityConstructor;
+  @Input() entityConstructor?: EntityConstructor;
+  @Input() disabled = false;
+  @Input() label = $localize`Edit JSON`;
+  // we use it to render a more compact version of the component like only showing an icon button to open the json editor
+  @Input() compactMode = false;
 
   @Output() conditionsChange = new EventEmitter<any>();
 

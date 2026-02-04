@@ -1,57 +1,68 @@
-<div class="conditions-container">
-  <div class="conditions-list flex-column">
-    @for (
-      condition of conditionsArray();
-      track condition;
-      let conditionId = $index
-    ) {
-      <div class="condition-item flex-row flex-wrap gap-regular align-center">
-        <mat-form-field class="field-selector">
-          <mat-label i18n>Field</mat-label>
-          <app-entity-field-select
-            [entityType]="entityConstructor"
-            [value]="getConditionField(condition)"
-            (valueChange)="onConditionFieldChange(conditionId, $event)"
-          ></app-entity-field-select>
-        </mat-form-field>
+<div class="conditions-container" [class.compactMode]="compactMode">
+  @if (compactMode) {
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="openJsonEditor()"
+      [disabled]="disabled"
+    >
+      {{ label }}
+    </button>
+  } @else {
+    <div class="conditions-list flex-column">
+      @for (
+        condition of conditionsArray();
+        track condition;
+        let conditionId = $index
+      ) {
+        <div class="condition-item flex-row flex-wrap gap-regular align-center">
+          <mat-form-field class="field-selector">
+            <mat-label i18n>Field</mat-label>
+            <app-entity-field-select
+              [entityType]="entityConstructor"
+              [value]="getConditionField(condition)"
+              (valueChange)="onConditionFieldChange(conditionId, $event)"
+            ></app-entity-field-select>
+          </mat-form-field>
 
-        @if (
-          conditionFormFieldConfigs.get(conditionId + "");
-          as formFieldConfig
-        ) {
-          @if (conditionFormControls.get(conditionId + ""); as formControl) {
-            <mat-form-field class="value-input" floatLabel="always">
-              <mat-label>{{ formFieldConfig.label }}</mat-label>
-              <app-dynamic-edit
-                [formFieldConfig]="formFieldConfig"
-                [formControl]="formControl"
-              ></app-dynamic-edit>
-            </mat-form-field>
+          @if (
+            conditionFormFieldConfigs.get(conditionId + "");
+            as formFieldConfig
+          ) {
+            @if (conditionFormControls.get(conditionId + ""); as formControl) {
+              <mat-form-field class="value-input" floatLabel="always">
+                <mat-label>{{ formFieldConfig.label }}</mat-label>
+                <app-dynamic-edit
+                  [formFieldConfig]="formFieldConfig"
+                  [formControl]="formControl"
+                ></app-dynamic-edit>
+              </mat-form-field>
+            }
           }
-        }
 
-        <button
-          mat-icon-button
-          type="button"
-          style="margin: auto"
-          color="warn"
-          (click)="deleteCondition(conditionId)"
-          matTooltip="Delete condition"
-          i18n-matTooltip
-        >
-          <fa-icon icon="trash"></fa-icon>
-        </button>
+          <button
+            mat-icon-button
+            type="button"
+            style="margin: auto"
+            color="warn"
+            (click)="deleteCondition(conditionId)"
+            matTooltip="Delete condition"
+            i18n-matTooltip
+          >
+            <fa-icon icon="trash"></fa-icon>
+          </button>
+        </div>
+      }
+
+      <div class="button-row flex-row gap-small">
+        <app-icon-button icon="plus" (buttonClick)="addCondition()" i18n>
+          Add Condition
+        </app-icon-button>
+
+        <app-icon-button icon="code" (buttonClick)="openJsonEditor()">
+          {{ label }}
+        </app-icon-button>
       </div>
-    }
-
-    <div class="button-row flex-row gap-small">
-      <app-icon-button icon="plus" (buttonClick)="addCondition()" i18n>
-        Add Condition
-      </app-icon-button>
-
-      <app-icon-button icon="code" (buttonClick)="openJsonEditor()" i18n>
-        Edit JSON
-      </app-icon-button>
     </div>
-  </div>
+  }
 </div>

@@ -10,17 +10,13 @@ import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatOptionModule } from "@angular/material/core";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatButtonModule } from "@angular/material/button";
 
 import { AdminListManagerComponent } from "../../../../core/admin/admin-list-manager/admin-list-manager.component";
 import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { MatchingSideConfig } from "#src/app/features/matching-entities/matching-entities/matching-entities-config";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
-import { MatDialog } from "@angular/material/dialog";
-import { JsonEditorDialogComponent } from "../../../../core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import { EntityTypeSelectComponent } from "#src/app/core/entity/entity-type-select/entity-type-select.component";
-import { IconButtonComponent } from "../../../../core/common-components/icon-button/icon-button.component";
+import { ConditionsEditorComponent } from "app/core/common-components/conditions-editor/conditions-editor.component";
 
 @Component({
   selector: "app-edit-matching-entity-side",
@@ -29,17 +25,14 @@ import { IconButtonComponent } from "../../../../core/common-components/icon-but
     MatFormFieldModule,
     MatSelectModule,
     MatOptionModule,
-    MatButtonModule,
-    FontAwesomeModule,
     AdminListManagerComponent,
     EntityTypeSelectComponent,
-    IconButtonComponent,
+    ConditionsEditorComponent,
   ],
   templateUrl: "./edit-matching-entity-side.component.html",
   styleUrls: ["./edit-matching-entity-side.component.scss"],
 })
 export class EditMatchingEntitySideComponent implements OnInit {
-  readonly dialog = inject(MatDialog);
   readonly entityRegistry = inject(EntityRegistry);
 
   @Input() sideConfig: MatchingSideConfig;
@@ -122,18 +115,11 @@ export class EditMatchingEntitySideComponent implements OnInit {
     this.sideConfigChange.emit(this.sideConfig);
   }
 
-  openPrefilterEditor() {
-    const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
-      data: { value: this.sideConfig.prefilter || {}, closeButton: true },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result == null) return;
-      this.sideConfig = {
-        ...this.sideConfig,
-        prefilter: result,
-      };
-      this.sideConfigChange.emit(this.sideConfig);
-    });
+  onPrefilterChange(updatedPrefilter: any) {
+    this.sideConfig = {
+      ...this.sideConfig,
+      prefilter: updatedPrefilter ?? {},
+    };
+    this.sideConfigChange.emit(this.sideConfig);
   }
 }

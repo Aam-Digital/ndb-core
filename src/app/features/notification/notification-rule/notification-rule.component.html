@@ -73,13 +73,12 @@
             >Conditions currently have to be edited using the JSON Editor. We
             will implement a visual UI here soon.</em
           >
-          <button
-            mat-stroked-button
-            (click)="openConditionsInJsonEditorPopup()"
-            i18n
-          >
-            Open Conditions Editor
-          </button>
+          <app-conditions-editor
+            [conditions]="form.get('conditions')?.value"
+            [compactMode]="true"
+            [disabled]="!value.entityType"
+            (conditionsChange)="onConditionsChange($event)"
+          ></app-conditions-editor>
         </div>
       </div>
 
@@ -93,16 +92,6 @@
         >
           Delete
         </app-icon-button>
-
-        <button
-          mat-icon-button
-          matTooltip="Update Notification Condition via JSON editor"
-          i18n-matTooltip
-          (click)="openConditionsInJsonEditorPopup()"
-          [disabled]="!value.entityType"
-        >
-          <fa-icon icon="tools"></fa-icon>
-        </button>
 
         <!-- TODO: re-enable selection of "per-rule notification channels or remove completely (currently hidden to simplify UX)
         <mat-form-field class="flex-grow">
