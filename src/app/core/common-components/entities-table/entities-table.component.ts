@@ -481,9 +481,8 @@ export class EntitiesTableComponent<
   }
 
   private emitFilteredRecordsFromDataSource() {
-    const rows = this.recordsDataSource.filteredData ??
-      this.recordsDataSource.data ??
-      [];
+    const rows =
+      this.recordsDataSource.filteredData ?? this.recordsDataSource.data ?? [];
     this.filteredRecordsChange.emit(rows.map((row) => row.record));
   }
 
