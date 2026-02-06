@@ -125,18 +125,18 @@ describe("ConditionsEditorComponent", () => {
     formControl.setValue(["X"]);
 
     expect(component.conditionsArray()[0]).toEqual({
-      gender: "X",
+      gender: { $elemMatch: { $eq: "X" } },
     });
   });
 
-  it("should load array field with implicit matching format", () => {
+  it("should extract value from $elemMatch when loading array field conditions", () => {
     mockEntitySchemaService.getComponent.and.returnValue("test-component");
     mockEntitySchemaService.valueToEntityFormat.and.callFake(
       (val) => val || [],
     );
 
     component.conditions = {
-      $or: [{ gender: "X" }],
+      $or: [{ gender: { $elemMatch: { $eq: "X" } } }],
     };
     component.ngOnInit();
 

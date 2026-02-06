@@ -140,31 +140,13 @@ export class ConditionsEditorComponent implements OnInit {
     const conditions = this.conditionsArray();
     const condition = conditions[conditionIndex];
 
-    // For array fields with $elemMatch format (legacy), convert to array
-    // Otherwise use value as-is for implicit array matching
+    // For array fields, extract value from $elemMatch.$eq if present
     let initialValue;
-    if (fieldConfig.isArray) {
-      if (condition[fieldKey]?.$elemMatch?.$eq) {
-        // Legacy format: { $elemMatch: { $eq: "X" } }
-        initialValue = this.entitySchemaService.valueToEntityFormat(
-          [condition[fieldKey].$elemMatch.$eq],
-          fieldConfig,
-        );
-      } else if (
-        condition[fieldKey] !== null &&
-        condition[fieldKey] !== undefined
-      ) {
-        // New format: just "X" for implicit matching
-        initialValue = this.entitySchemaService.valueToEntityFormat(
-          [condition[fieldKey]],
-          fieldConfig,
-        );
-      } else {
-        initialValue = this.entitySchemaService.valueToEntityFormat(
-          condition[fieldKey],
-          fieldConfig,
-        );
-      }
+    if (fieldConfig.isArray && condition[fieldKey]?.$elemMatch?.$eq) {
+      initialValue = this.entitySchemaService.valueToEntityFormat(
+        [condition[fieldKey].$elemMatch.$eq],
+        fieldConfig,
+      );
     } else {
       initialValue = this.entitySchemaService.valueToEntityFormat(
         condition[fieldKey],
@@ -180,10 +162,11 @@ export class ConditionsEditorComponent implements OnInit {
         fieldConfig,
       );
 
-      // For array fields, store single value for implicit array matching
-      // MongoDB/ucast will match if the array contains this value
+      // For array fields, wrap in $elemMatch with $eq for proper array matching
       if (fieldConfig.isArray && Array.isArray(dbValue) && dbValue.length > 0) {
-        condition[fieldKey] = dbValue[0];
+        condition[fieldKey] = {
+          $elemMatch: { $eq: dbValue[0] },
+        };
       } else {
         condition[fieldKey] = dbValue;
       }
