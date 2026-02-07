@@ -207,13 +207,13 @@
               )
             ) {
               <div class="margin-top-regular">
-                <mat-checkbox
-                  formControlName="searchable"
-                  matTooltip="Include this field's values in global search indexing."
-                  i18n-matTooltip
-                  i18n
-                >
-                  Searchable [experimental]
+                <mat-checkbox formControlName="searchable">
+                  <span i18n>Searchable</span>
+                  <fa-icon
+                    icon="question-circle"
+                    matTooltip="By enabling the checkbox, you can find the record from the global search by inputting the value."
+                    i18n-matTooltip
+                  ></fa-icon>
                 </mat-checkbox>
                 @if (isSearchable()) {
                   <div class="hint-text" i18n>
