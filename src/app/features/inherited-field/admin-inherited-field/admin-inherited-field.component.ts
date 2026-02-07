@@ -94,11 +94,16 @@ export class AdminInheritedFieldComponent
       const fieldConfig = this.entityType.schema.get(attr);
 
       if (fieldConfig?.additional) {
-        const referencedEntityType = this.entityRegistry.get(
-          fieldConfig.additional,
-        );
+        const referencedTypeIds = Array.isArray(fieldConfig.additional)
+          ? [...new Set(fieldConfig.additional)]
+          : [fieldConfig.additional];
 
-        if (referencedEntityType) {
+        referencedTypeIds.forEach((typeId) => {
+          const referencedEntityType = this.entityRegistry.get(typeId);
+          if (!referencedEntityType) {
+            return;
+          }
+
           const refFieldLabel = this.getFieldLabel(attr, this.entityType);
 
           const option: InheritanceOption = {
@@ -115,7 +120,7 @@ export class AdminInheritedFieldComponent
           };
 
           this.availableOptions.push(option);
-        }
+        });
       }
     });
 
@@ -224,7 +229,7 @@ export class AdminInheritedFieldComponent
     const relatedEntities =
       this.entityRelationsService.getEntityTypesReferencingType(
         this.entityType.ENTITY_TYPE,
-      );
+      ) ?? [];
 
     return relatedEntities
       .filter(

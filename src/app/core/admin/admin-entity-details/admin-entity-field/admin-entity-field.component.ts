@@ -41,6 +41,8 @@ import { MatCheckbox } from "@angular/material/checkbox";
 import { AdminDefaultValueComponent } from "../../../default-values/admin-default-value/admin-default-value.component";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
+import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 /**
  * Dialog data for AdminEntityFieldComponent
@@ -100,6 +102,7 @@ export class AdminEntityFieldComponent implements OnInit {
   private configurableEnumService = inject(ConfigurableEnumService);
   private entityRegistry = inject(EntityRegistry);
   private dialog = inject(MatDialog);
+  private confirmationDialog = inject(ConfirmationDialogService);
 
   fieldId: string;
   entityType: EntityConstructor;
@@ -112,6 +115,7 @@ export class AdminEntityFieldComponent implements OnInit {
   additionalForm: FormControl;
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
+  entityAdditionalMultiSelect = false;
 
   ngOnInit() {
     this.initSettings();
@@ -260,12 +264,15 @@ export class AdminEntityFieldComponent implements OnInit {
 
   private updateDataTypeAdditional(
     dataType: string,
-    newAdditional: string = this.data.entitySchemaField.additional,
+    newAdditional: string | string[] | undefined = this.data.entitySchemaField
+      .additional,
   ) {
     this.resetAdditional();
 
     if (dataType === ConfigurableEnumDatatype.dataType) {
-      this.initAdditionalForEnum(newAdditional);
+      this.initAdditionalForEnum(
+        typeof newAdditional === "string" ? newAdditional : undefined,
+      );
     } else if (dataType === EntityDatatype.dataType) {
       this.initAdditionalForEntityRef(newAdditional);
     }
@@ -301,12 +308,22 @@ export class AdminEntityFieldComponent implements OnInit {
     }
   }
 
-  private initAdditionalForEntityRef(newAdditional?: string) {
+  private initAdditionalForEntityRef(newAdditional?: string | string[]) {
     this.typeAdditionalOptions = this.entityRegistry
       .getEntityTypes(true)
       .map((x) => ({ label: x.value.label, value: x.value.ENTITY_TYPE }));
 
     this.additionalForm.addValidators(Validators.required);
+    this.entityAdditionalMultiSelect = Array.isArray(newAdditional);
+
+    if (Array.isArray(newAdditional)) {
+      const validValues = newAdditional.filter((value) =>
+        this.typeAdditionalOptions.some((x) => x.value === value),
+      );
+      this.additionalForm.setValue(validValues);
+      return;
+    }
+
     if (this.typeAdditionalOptions.some((x) => x.value === newAdditional)) {
       this.additionalForm.setValue(newAdditional);
     }
@@ -317,6 +334,51 @@ export class AdminEntityFieldComponent implements OnInit {
     this.additionalForm.reset(null);
     this.typeAdditionalOptions = [];
     this.createNewAdditionalOption = undefined;
+    this.entityAdditionalMultiSelect = false;
+  }
+
+  async onEntityAdditionalSelectionModeChange(isMulti: boolean) {
+    if (
+      this.schemaFieldsForm.get("dataType")?.value !== EntityDatatype.dataType
+    ) {
+      return;
+    }
+    if (this.entityAdditionalMultiSelect === isMulti) {
+      return;
+    }
+
+    const currentValue = this.additionalForm.value;
+
+    if (isMulti) {
+      this.entityAdditionalMultiSelect = true;
+      if (Array.isArray(currentValue)) {
+        return;
+      }
+      this.additionalForm.setValue(currentValue ? [currentValue] : []);
+      return;
+    }
+
+    if (!Array.isArray(currentValue) || currentValue.length <= 1) {
+      this.entityAdditionalMultiSelect = false;
+      this.additionalForm.setValue(
+        Array.isArray(currentValue) ? (currentValue[0] ?? null) : currentValue,
+      );
+      return;
+    }
+
+    const confirmed = await this.confirmationDialog.getConfirmation(
+      $localize`:Entity field config switch mode title:Switch to single selection?`,
+      $localize`:Entity field config switch mode body:You selected multiple target record types. Switching to single selection will clear this selection. Continue?`,
+      YesNoButtons,
+    );
+
+    if (!confirmed) {
+      this.entityAdditionalMultiSelect = true;
+      return;
+    }
+
+    this.entityAdditionalMultiSelect = false;
+    this.additionalForm.setValue(null);
   }
 
   async save() {

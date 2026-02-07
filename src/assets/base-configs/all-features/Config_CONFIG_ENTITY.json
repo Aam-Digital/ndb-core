@@ -167,7 +167,7 @@
           "label": "Children",
           "dataType": "entity",
           "isArray": true,
-          "additional": "Child",
+          "additional": ["Child", "School"],
           "entityReferenceRole": "composite",
           "editComponent": "EditAttendance",
           "anonymize": "retain"
