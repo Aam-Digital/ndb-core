@@ -1,50 +1,28 @@
-<div class="flex-row gap-small">
-  <mat-select
-    [value]="selectedOption"
-    (valueChange)="onOptionSelected($event)"
-    class="select-box"
-    placeholder="Select inheritance option"
-    i18n-placeholder
-  >
-    @for (option of availableOptions; track option) {
-      <mat-option [value]="option" [matTooltip]="option.tooltip">
-        <div class="flex-row gap-small align-items-center">
-          @if (option.type === "inherit") {
-            <!-- inheritance: field > entity -->
-            <span i18n>field</span>
-            <span> "{{ option.labelParts.fieldName }}"</span>
-            <span>></span>
-            <span style="font-weight: bold" class="text-primary">{{
-              option.labelParts.entityName
-            }}</span>
-          } @else {
-            <!-- automation: entity > field -->
-            <span style="font-weight: bold" class="text-primary">{{
-              option.labelParts.entityName
-            }}</span>
-            <span> > </span>
-            <span i18n>field</span>
-            <span> "{{ option.labelParts.fieldName }}"</span>
-          }
-        </div>
-      </mat-option>
-    } @empty {
-      <mat-option disabled>
-        <em i18n>No inheritance options available</em>
-      </mat-option>
-    }
-  </mat-select>
+<div class="inherited-field-container">
+  <div class="flex-row gap-small align-center">
+    <app-entity-reference-field-selector
+      [entityType]="entityType"
+      [entitySchemaField]="entitySchemaField"
+      [value]="value"
+      (optionSelected)="onOptionSelected($event)"
+      class="flex-1"
+    ></app-entity-reference-field-selector>
 
-  @if (value?.sourceReferenceField) {
-    <button
-      mat-stroked-button
-      class="configure-button"
-      (click)="openConfigDetailsDialog()"
-      matTooltip="Configure the value from the other record that should be inherited (and any transformation, if necessary)."
-      i18n-matTooltip
-      i18n
-    >
-      Configure
-    </button>
-  }
+    @if (value?.sourceReferenceField) {
+      <button
+        mat-stroked-button
+        class="configure-button"
+        (click)="openConfigDetailsDialog()"
+        matTooltip="Configure the value from the other record that should be inherited (and any transformation, if necessary)."
+        i18n-matTooltip
+        i18n
+      >
+        Configure
+      </button>
+    }
+  </div>
+
+  <div class="hint-text" i18n>
+    You can inherit the value for this field from a related record.
+  </div>
 </div>

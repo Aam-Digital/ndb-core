@@ -82,6 +82,12 @@ export class EditImportColumnMappingComponent implements OnChanges {
    */
   @Input() additionalSettings: ImportAdditionalSettings;
 
+  /**
+   * Field IDs that are disabled (already set as prefilled in additional actions)
+   * (these fields cannot be selected in the dropdown)
+   */
+  @Input() disabledFields: string[] = [];
+
   @Output() columnMappingChange = new EventEmitter<ColumnMapping>();
 
   currentlyMappedDatatype: DefaultDatatype;

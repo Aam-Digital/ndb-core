@@ -3,10 +3,11 @@
  */
 export type AdditionalImportAction =
   | AdditonalDirectLinkAction
-  | AdditionalIndirectLinkAction;
+  | AdditionalIndirectLinkAction
+  | AdditionalPrefilledFieldAction;
 
 interface AdditionalImportBaseAction {
-  mode: "direct" | "indirect";
+  mode: "direct" | "indirect" | "prefill";
 
   /**
    * EntityType of the source entity
@@ -33,7 +34,11 @@ export interface AdditonalDirectLinkAction extends AdditionalImportBaseAction {
   /**
    * EntityType of the target entity (into which the entities should be linked)
    */
-  targetType: string;
+
+  /**
+   * EntityType of the entity being referenced (the type of entity selected for prefill)
+   */
+  targetEntityType: string;
 
   /**
    * Attribute of the target entity to which the linked entities should be added
@@ -77,4 +82,27 @@ export interface AdditionalIndirectLinkAction extends AdditionalImportBaseAction
    * EntityType of the target entity (to which the entities should be linked)
    */
   targetType: string;
+}
+
+/**
+ * Details of an import action that pre-fills an entity reference field with a fixed value for all imported records.
+ * This allows linking imported data to an existing entity by setting the reference field directly on the imported entities.
+ */
+export interface AdditionalPrefilledFieldAction extends AdditionalImportBaseAction {
+  mode: "prefill";
+
+  /**
+   * ID of the field on the imported entity that should be pre-filled
+   */
+  fieldId: string;
+
+  /**
+   * EntityType of the entity being referenced (the type of entity selected for prefill)
+   */
+  targetType: string;
+
+  /**
+   * ID of the entity to use as the prefilled value
+   */
+  targetEntityId?: string;
 }

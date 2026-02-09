@@ -4,6 +4,7 @@
     <app-entity-field-select
       [entityType]="entityCtor"
       [hideOption]="hideOption"
+      [disabledFields]="disabledFields"
       [(ngModel)]="columnMapping.propertyName"
       (ngModelChange)="updateMapping()"
     />

@@ -51,3 +51,23 @@ em {
     text-overflow: ellipsis;
   }
 }
+
+.disabled-option-info {
+  margin-left: auto;
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 0.875rem;
+  pointer-events: auto;
+  cursor: help;
+}
+
+::ng-deep .mat-mdc-option.mdc-list-item--disabled .disabled-option-info {
+  pointer-events: auto !important;
+}
+
+::ng-deep .mat-mdc-option[disabled] {
+  pointer-events: none;
+
+  .disabled-option-info {
+    pointer-events: auto !important;
+  }
+}
