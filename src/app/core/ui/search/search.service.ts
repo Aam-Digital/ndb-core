@@ -62,11 +62,12 @@ export class SearchService {
 
   private getSearchIndexDesignDoc() {
     let searchIndex = `(doc) => {\n`;
+    searchIndex += `const tokenize = (value) => value.toString().toLowerCase().split(/[^a-z0-9]+/).filter((val) => !!val)\n`;
     this.searchableEntities.forEach(([type, attributes]) => {
       searchIndex += `if (doc._id.startsWith("${type}:")) {\n`;
       attributes.forEach((attr) => {
-        searchIndex += `if (doc["${attr}"]) {\n`;
-        searchIndex += `doc["${attr}"].toString().toLowerCase().split(" ").forEach((val) => emit(val))\n`;
+        searchIndex += `if (doc["${attr}"] !== undefined && doc["${attr}"] !== null) {\n`;
+        searchIndex += `tokenize(doc["${attr}"]).forEach((val) => emit(val))\n`;
         searchIndex += `}\n`;
       });
       searchIndex += `return\n`;
@@ -82,7 +83,10 @@ export class SearchService {
    * @param searchTerm for which entities should be returned
    */
   async getSearchResults(searchTerm: string): Promise<Entity[]> {
-    const searchTerms = searchTerm.toLowerCase().split(" ");
+    const searchTerms = this.tokenizeSearchTerm(searchTerm);
+    if (searchTerms.length === 0) {
+      return [];
+    }
     const res = await this.indexingService.queryIndexRaw(
       "search_index/by_name",
       {
@@ -106,10 +110,26 @@ export class SearchService {
     const entityType = Entity.extractTypeFromId(doc._id);
     const values = this.searchableEntities
       .find(([type]) => type === entityType)[1]
-      .map((attr) => doc[attr])
+      .map((attr) => this.tokenizeSearchTerm(doc[attr]).join(" "))
       .join(" ")
       .toLowerCase();
     return searchTerms.every((s) => values.includes(s));
+  }
+
+  /**
+   * Normalize a search input into lowercase alphanumeric tokens.
+   * Splits on any non-alphanumeric separator (e.g. spaces, dots, slashes).
+   */
+  private tokenizeSearchTerm(searchTerm: unknown): string[] {
+    if (searchTerm === null || searchTerm === undefined) {
+      return [];
+    }
+
+    return searchTerm
+      .toString()
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter((token) => token.length > 0);
   }
 
   private transformDocToEntity(doc): Entity {
