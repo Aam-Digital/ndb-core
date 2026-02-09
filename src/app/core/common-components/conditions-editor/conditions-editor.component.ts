@@ -140,11 +140,11 @@ export class ConditionsEditorComponent implements OnInit {
     const conditions = this.conditionsArray();
     const condition = conditions[conditionIndex];
 
-    // For array fields, extract value from $elemMatch.$eq if present
+    // For array fields, extract value from $elemMatch.$in if present
     let initialValue;
-    if (fieldConfig.isArray && condition[fieldKey]?.$elemMatch?.$eq) {
+    if (fieldConfig.isArray && condition[fieldKey]?.$elemMatch?.$in) {
       initialValue = this.entitySchemaService.valueToEntityFormat(
-        [condition[fieldKey].$elemMatch.$eq],
+        condition[fieldKey].$elemMatch.$in,
         fieldConfig,
       );
     } else {
@@ -162,11 +162,9 @@ export class ConditionsEditorComponent implements OnInit {
         fieldConfig,
       );
 
-      // For array fields, wrap in $elemMatch with $eq for proper array matching
+      // For array fields, wrap in $elemMatch with $in for proper array matching
       if (fieldConfig.isArray && Array.isArray(dbValue) && dbValue.length > 0) {
-        condition[fieldKey] = {
-          $elemMatch: { $eq: dbValue[0] },
-        };
+        condition[fieldKey] = { $elemMatch: { $in: dbValue } };
       } else {
         condition[fieldKey] = dbValue;
       }
@@ -180,6 +178,7 @@ export class ConditionsEditorComponent implements OnInit {
       dataType: fieldConfig.dataType,
       additional: fieldConfig.additional,
       label: fieldConfig.label || fieldKey,
+      isArray: fieldConfig.isArray,
     } as FormFieldConfig);
   }
 

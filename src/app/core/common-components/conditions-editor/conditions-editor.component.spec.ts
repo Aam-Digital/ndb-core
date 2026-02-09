@@ -125,7 +125,7 @@ describe("ConditionsEditorComponent", () => {
     formControl.setValue(["X"]);
 
     expect(component.conditionsArray()[0]).toEqual({
-      gender: { $elemMatch: { $eq: "X" } },
+      gender: { $elemMatch: { $in: ["X"] } },
     });
   });
 
@@ -136,7 +136,7 @@ describe("ConditionsEditorComponent", () => {
     );
 
     component.conditions = {
-      $or: [{ gender: { $elemMatch: { $eq: "X" } } }],
+      $or: [{ gender: { $elemMatch: { $in: ["X"] } } }],
     };
     component.ngOnInit();
 
