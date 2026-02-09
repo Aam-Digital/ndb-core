@@ -1,4 +1,10 @@
-import { Component, inject, OnInit } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  WritableSignal,
+} from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
   MAT_DIALOG_DATA,
@@ -43,6 +49,7 @@ import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/en
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { MatSlideToggleChange } from "@angular/material/slide-toggle";
 
 /**
  * Dialog data for AdminEntityFieldComponent
@@ -115,7 +122,7 @@ export class AdminEntityFieldComponent implements OnInit {
   additionalForm: FormControl;
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
-  entityAdditionalMultiSelect = false;
+  entityAdditionalMultiSelect: WritableSignal<boolean> = signal(false);
 
   ngOnInit() {
     this.initSettings();
@@ -314,7 +321,7 @@ export class AdminEntityFieldComponent implements OnInit {
       .map((x) => ({ label: x.value.label, value: x.value.ENTITY_TYPE }));
 
     this.additionalForm.addValidators(Validators.required);
-    this.entityAdditionalMultiSelect = Array.isArray(newAdditional);
+    this.entityAdditionalMultiSelect.set(Array.isArray(newAdditional));
 
     if (Array.isArray(newAdditional)) {
       const validValues = newAdditional.filter((value) =>
@@ -334,23 +341,31 @@ export class AdminEntityFieldComponent implements OnInit {
     this.additionalForm.reset(null);
     this.typeAdditionalOptions = [];
     this.createNewAdditionalOption = undefined;
-    this.entityAdditionalMultiSelect = false;
+    this.entityAdditionalMultiSelect.set(false);
   }
 
-  async onEntityAdditionalSelectionModeChange(isMulti: boolean) {
+  async onEntityAdditionalSelectionModeChange(
+    change: boolean | MatSlideToggleChange,
+  ) {
+    const isMulti = typeof change === "boolean" ? change : change.checked;
+    const toggle = typeof change === "boolean" ? undefined : change.source;
+
     if (
       this.schemaFieldsForm.get("dataType")?.value !== EntityDatatype.dataType
     ) {
+      if (toggle) {
+        toggle.checked = this.entityAdditionalMultiSelect();
+      }
       return;
     }
-    if (this.entityAdditionalMultiSelect === isMulti) {
+    if (this.entityAdditionalMultiSelect() === isMulti) {
       return;
     }
 
     const currentValue = this.additionalForm.value;
 
     if (isMulti) {
-      this.entityAdditionalMultiSelect = true;
+      this.entityAdditionalMultiSelect.set(true);
       if (Array.isArray(currentValue)) {
         return;
       }
@@ -359,7 +374,7 @@ export class AdminEntityFieldComponent implements OnInit {
     }
 
     if (!Array.isArray(currentValue) || currentValue.length <= 1) {
-      this.entityAdditionalMultiSelect = false;
+      this.entityAdditionalMultiSelect.set(false);
       this.additionalForm.setValue(
         Array.isArray(currentValue) ? (currentValue[0] ?? null) : currentValue,
       );
@@ -373,11 +388,14 @@ export class AdminEntityFieldComponent implements OnInit {
     );
 
     if (!confirmed) {
-      this.entityAdditionalMultiSelect = true;
+      this.entityAdditionalMultiSelect.set(true);
+      if (toggle) {
+        toggle.checked = true;
+      }
       return;
     }
 
-    this.entityAdditionalMultiSelect = false;
+    this.entityAdditionalMultiSelect.set(false);
     this.additionalForm.setValue(null);
   }
 

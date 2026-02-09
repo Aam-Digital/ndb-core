@@ -158,15 +158,6 @@
 
             <!-- "additional" for entity ref datatypes -->
             @if (formDataType.value === "entity") {
-              <mat-checkbox
-                [checked]="entityAdditionalMultiSelect"
-                [disabled]="additionalForm.disabled"
-                (change)="onEntityAdditionalSelectionModeChange($event.checked)"
-                i18n
-              >
-                Allow multiple target record types
-              </mat-checkbox>
-
               <mat-form-field>
                 <mat-label>
                   <span i18n> Type Details (target record type)</span>
@@ -178,9 +169,18 @@
                 </mat-label>
                 <app-entity-type-select
                   formControlName="additional"
-                  [multi]="entityAdditionalMultiSelect"
+                  [multi]="entityAdditionalMultiSelect()"
                 ></app-entity-type-select>
               </mat-form-field>
+
+              <mat-slide-toggle
+                [checked]="entityAdditionalMultiSelect()"
+                [disabled]="additionalForm.disabled"
+                (change)="onEntityAdditionalSelectionModeChange($event)"
+                i18n
+              >
+                Allow multiple target record types
+              </mat-slide-toggle>
             }
           </div>
         </div>

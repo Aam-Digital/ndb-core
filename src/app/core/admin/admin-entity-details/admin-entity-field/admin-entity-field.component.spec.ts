@@ -219,7 +219,7 @@ describe("AdminEntityFieldComponent", () => {
     component.ngOnInit();
     tick();
 
-    expect(component.entityAdditionalMultiSelect).toBeTrue();
+    expect(component.entityAdditionalMultiSelect()).toBeTrue();
     expect(component.additionalForm.value).toEqual([
       TestEntity.ENTITY_TYPE,
       RecurringActivity.ENTITY_TYPE,
@@ -239,7 +239,7 @@ describe("AdminEntityFieldComponent", () => {
     void component.onEntityAdditionalSelectionModeChange(true);
     tick();
 
-    expect(component.entityAdditionalMultiSelect).toBeTrue();
+    expect(component.entityAdditionalMultiSelect()).toBeTrue();
     expect(component.additionalForm.value).toEqual([TestEntity.ENTITY_TYPE]);
   }));
 
@@ -257,7 +257,7 @@ describe("AdminEntityFieldComponent", () => {
     tick();
 
     expect(confirmationDialog.getConfirmation).toHaveBeenCalled();
-    expect(component.entityAdditionalMultiSelect).toBeFalse();
+    expect(component.entityAdditionalMultiSelect()).toBeFalse();
     expect(component.additionalForm.value).toBeNull();
   }));
 
@@ -275,7 +275,7 @@ describe("AdminEntityFieldComponent", () => {
     void component.onEntityAdditionalSelectionModeChange(false);
     tick();
 
-    expect(component.entityAdditionalMultiSelect).toBeTrue();
+    expect(component.entityAdditionalMultiSelect()).toBeTrue();
     expect(component.additionalForm.value).toEqual([
       TestEntity.ENTITY_TYPE,
       RecurringActivity.ENTITY_TYPE,
