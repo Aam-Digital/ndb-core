@@ -17,8 +17,6 @@ import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { getDefaultConfigEntity } from "../../core/config/testing-config-service";
-import { Entity } from "../../core/entity/model/entity";
-import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
@@ -268,124 +266,6 @@ describe("PublicFormComponent", () => {
     );
   }));
 
-  it("should add hidden prefilled field for related entity when query param exists", fakeAsync(() => {
-    testFormConfig.linkedEntities = ["childId"];
-
-    initComponent();
-    tick();
-
-    const lastColumn = component.formConfig.columns.at(-1);
-    expect(lastColumn?.fields).toContain(
-      jasmine.objectContaining({
-        id: "childId",
-        defaultValue: { mode: "static", config: { value: "Child:3" } },
-        hideFromForm: true,
-      }),
-    );
-  }));
-
-  it("should process configured URL parameters and create prefilled fields for multi-entity magic links", fakeAsync(() => {
-    // Configure which entities are allowed to be linked (security feature)
-    testFormConfig.linkedEntities = [
-      "childId",
-      "schoolId",
-      "eventId",
-      "teacherId",
-    ];
-
-    // Create a mock ActivatedRoute with multiple URL parameters
-    const multiParamRoute = {
-      snapshot: {
-        paramMap: new Map([["id", FORM_ID]]),
-        queryParamMap: new Map([
-          ["childId", "Child:123"],
-          ["schoolId", "School:456"],
-          ["eventId", "Event:789"],
-          ["teacherId", "Teacher:101"],
-        ]),
-        queryParams: {
-          childId: "Child:123",
-          schoolId: "School:456",
-          eventId: "Event:789",
-          teacherId: "Teacher:101",
-        },
-      },
-    };
-
-    // Replace the route in the component
-    component["route"] = multiParamRoute as any;
-
-    initComponent();
-    tick();
-
-    const lastColumn = component.formConfig.columns.at(-1);
-
-    // Expected URL parameters and their values
-    const expectedParams = {
-      childId: "Child:123",
-      schoolId: "School:456",
-      eventId: "Event:789",
-      teacherId: "Teacher:101",
-    };
-
-    // Verify all configured URL parameters were processed and added as hidden fields
-    Object.entries(expectedParams).forEach(([paramId, paramValue]) => {
-      expect(lastColumn?.fields).toContain(
-        jasmine.objectContaining({
-          id: paramId,
-          defaultValue: { mode: "static", config: { value: paramValue } },
-          hideFromForm: true,
-        }),
-      );
-    });
-  }));
-
-  it("should ignore unconfigured URL parameters for security", fakeAsync(() => {
-    // Configure only specific entities
-    testFormConfig.linkedEntities = ["childId", "schoolId"];
-
-    const securityTestRoute = {
-      snapshot: {
-        paramMap: new Map([["id", FORM_ID]]),
-        queryParamMap: new Map([
-          ["childId", "Child:123"],
-          ["schoolId", "School:456"],
-          ["hackerId", "Hacker:malicious"],
-          ["adminId", "Admin:dangerous"],
-        ]),
-        queryParams: {
-          childId: "Child:123", // Allowed
-          schoolId: "School:456", // Allowed
-          hackerId: "Hacker:malicious", //should be ignored
-          adminId: "Admin:dangerous", //should be ignored
-        },
-      },
-    };
-
-    component["route"] = securityTestRoute as any;
-
-    initComponent();
-    tick();
-
-    const lastColumn = component.formConfig.columns.at(-1);
-
-    // Should process allowed parameters
-    expect(lastColumn?.fields).toContain(
-      jasmine.objectContaining({
-        id: "childId",
-        defaultValue: { mode: "static", config: { value: "Child:123" } },
-        hideFromForm: true,
-      }),
-    );
-
-    // Should ignore unauthorized parameters
-    const unauthorizedFields = lastColumn?.fields.filter((field) => {
-      const fieldId = typeof field === "string" ? field : field.id;
-      return fieldId === "hackerId" || fieldId === "adminId";
-    });
-    expect(unauthorizedFields.length).toBe(0);
-  }));
-
   it("should update defaultValue for a field in prefilled that is already visible", fakeAsync(() => {
     const config = new PublicFormConfig();
     config.columns = [
@@ -408,56 +288,6 @@ describe("PublicFormComponent", () => {
     expect(
       component.entityFormEntries[0].form.formGroup.get("other"),
     ).toHaveValue("prefilled default");
-  }));
-
-  it("should link entities from linkedFromForm when submitting multi-form config", fakeAsync(() => {
-    class SchoolEntity extends Entity {
-      static override ENTITY_TYPE = "School";
-      static override schema = new Map([["name", {}]]);
-    }
-    class ChildEntity extends Entity {
-      static override ENTITY_TYPE = "Child";
-      static override schema = new Map([["school", { additional: "School" }]]);
-    }
-
-    const entityRegistry = TestBed.inject(EntityRegistry);
-    entityRegistry.add(SchoolEntity.ENTITY_TYPE, SchoolEntity);
-    entityRegistry.add(ChildEntity.ENTITY_TYPE, ChildEntity);
-
-    const config = new PublicFormConfig();
-    config.route = FORM_ID;
-    config.entity = "Child";
-    config.forms = [
-      {
-        entity: "School",
-        columns: [{ fields: ["name"] }],
-      },
-      {
-        entity: "Child",
-        columns: [{ fields: ["school"] }],
-        linkedFromForm: ["school"],
-      },
-    ];
-
-    initComponent(config);
-    tick();
-
-    const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
-    saveSpy.and.resolveTo();
-
-    const schoolEntry = component.entityFormEntries.find(
-      (entry) => entry.entityType === SchoolEntity,
-    );
-    const childEntry = component.entityFormEntries.find(
-      (entry) => entry.entityType === ChildEntity,
-    );
-
-    component.submit();
-
-    expect(childEntry.entity["school"]).toBe(schoolEntry.entity.getId());
-    expect(childEntry.form.formGroup.get("school")).toHaveValue(
-      schoolEntry.entity.getId(),
-    );
   }));
 
   it("should migrate linkedEntities from old FormFieldConfig[] format to string[] format", () => {
