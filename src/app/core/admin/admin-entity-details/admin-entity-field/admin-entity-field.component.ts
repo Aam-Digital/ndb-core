@@ -327,7 +327,10 @@ export class AdminEntityFieldComponent implements OnInit {
       const validValues = newAdditional.filter((value) =>
         this.typeAdditionalOptions.some((x) => x.value === value),
       );
-      this.additionalForm.setValue(validValues);
+      // Use setTimeout to ensure Angular processes the multi input change before setting the value
+      setTimeout(() => {
+        this.additionalForm.setValue(validValues);
+      });
       return;
     }
 
@@ -344,20 +347,16 @@ export class AdminEntityFieldComponent implements OnInit {
     this.entityAdditionalMultiSelect.set(false);
   }
 
-  async onEntityAdditionalSelectionModeChange(
-    change: boolean | MatSlideToggleChange,
-  ) {
-    const isMulti = typeof change === "boolean" ? change : change.checked;
-    const toggle = typeof change === "boolean" ? undefined : change.source;
-
+  async onEntityAdditionalSelectionModeChange(change: MatSlideToggleChange) {
     if (
       this.schemaFieldsForm.get("dataType")?.value !== EntityDatatype.dataType
     ) {
-      if (toggle) {
-        toggle.checked = this.entityAdditionalMultiSelect();
-      }
+      change.source.checked = this.entityAdditionalMultiSelect();
       return;
     }
+
+    const isMulti = change.checked;
+
     if (this.entityAdditionalMultiSelect() === isMulti) {
       return;
     }
@@ -366,37 +365,30 @@ export class AdminEntityFieldComponent implements OnInit {
 
     if (isMulti) {
       this.entityAdditionalMultiSelect.set(true);
-      if (Array.isArray(currentValue)) {
-        return;
-      }
       this.additionalForm.setValue(currentValue ? [currentValue] : []);
       return;
     }
 
+    // Switching to single-select with 0 or 1 values - no confirmation needed
     if (!Array.isArray(currentValue) || currentValue.length <= 1) {
       this.entityAdditionalMultiSelect.set(false);
-      this.additionalForm.setValue(
-        Array.isArray(currentValue) ? (currentValue[0] ?? null) : currentValue,
-      );
+      this.additionalForm.setValue(currentValue?.[0] ?? null);
       return;
     }
 
+    // Switching to single-select with multiple values - ask for confirmation
     const confirmed = await this.confirmationDialog.getConfirmation(
       $localize`:Entity field config switch mode title:Switch to single selection?`,
       $localize`:Entity field config switch mode body:You selected multiple target record types. Switching to single selection will clear this selection. Continue?`,
       YesNoButtons,
     );
 
-    if (!confirmed) {
-      this.entityAdditionalMultiSelect.set(true);
-      if (toggle) {
-        toggle.checked = true;
-      }
-      return;
+    if (confirmed) {
+      this.entityAdditionalMultiSelect.set(false);
+      this.additionalForm.setValue(null);
+    } else {
+      change.source.checked = true;
     }
-
-    this.entityAdditionalMultiSelect.set(false);
-    this.additionalForm.setValue(null);
   }
 
   async save() {

@@ -236,7 +236,10 @@ describe("AdminEntityFieldComponent", () => {
     component.ngOnInit();
     tick();
 
-    void component.onEntityAdditionalSelectionModeChange(true);
+    void component.onEntityAdditionalSelectionModeChange({
+      checked: true,
+      source: { checked: true } as any,
+    } as any);
     tick();
 
     expect(component.entityAdditionalMultiSelect()).toBeTrue();
@@ -253,7 +256,10 @@ describe("AdminEntityFieldComponent", () => {
     component.ngOnInit();
     tick();
 
-    void component.onEntityAdditionalSelectionModeChange(false);
+    void component.onEntityAdditionalSelectionModeChange({
+      checked: false,
+      source: { checked: false } as any,
+    } as any);
     tick();
 
     expect(confirmationDialog.getConfirmation).toHaveBeenCalled();
@@ -272,10 +278,15 @@ describe("AdminEntityFieldComponent", () => {
     component.ngOnInit();
     tick();
 
-    void component.onEntityAdditionalSelectionModeChange(false);
+    const mockToggle = { checked: false };
+    void component.onEntityAdditionalSelectionModeChange({
+      checked: false,
+      source: mockToggle as any,
+    } as any);
     tick();
 
     expect(component.entityAdditionalMultiSelect()).toBeTrue();
+    expect(mockToggle.checked).toBeTrue();
     expect(component.additionalForm.value).toEqual([
       TestEntity.ENTITY_TYPE,
       RecurringActivity.ENTITY_TYPE,
