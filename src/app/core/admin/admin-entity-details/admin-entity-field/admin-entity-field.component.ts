@@ -25,7 +25,10 @@ import {
 } from "@angular/forms";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { MatTabsModule } from "@angular/material/tabs";
-import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import {
+  MatSlideToggleModule,
+  MatSlideToggleChange,
+} from "@angular/material/slide-toggle";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
@@ -49,7 +52,6 @@ import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/en
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
-import { MatSlideToggleChange } from "@angular/material/slide-toggle";
 
 /**
  * Dialog data for AdminEntityFieldComponent
@@ -109,7 +111,7 @@ export class AdminEntityFieldComponent implements OnInit {
   private configurableEnumService = inject(ConfigurableEnumService);
   private entityRegistry = inject(EntityRegistry);
   private dialog = inject(MatDialog);
-  private confirmationDialog = inject(ConfirmationDialogService);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   fieldId: string;
   entityType: EntityConstructor;
