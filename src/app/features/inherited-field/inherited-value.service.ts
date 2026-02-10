@@ -15,6 +15,7 @@ import { FormFieldConfig } from "../../core/common-components/entity-form/FormCo
 import { DefaultValueConfigInheritedField } from "./inherited-field-config";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { AutomatedFieldUpdateConfigService } from "./automated-field-update/automated-field-update-config.service";
+import { Logging } from "../../core/logging/logging.service";
 
 /**
  * An advanced default-value strategy that sets values based on the value in a referenced related entity.
@@ -154,18 +155,15 @@ export class InheritedValueService extends DefaultValueStrategy {
       }
     }
 
-    let parentEntity: Entity = await this.entityMapper.load(
-      Entity.extractTypeFromId(change),
-      change,
-    );
+    const parentEntity = await this.loadEntity(change);
 
     if (
       !parentEntity ||
       parentEntity[defaultConfig.sourceValueField] === undefined
     ) {
+      targetFormControl.setValue(undefined);
       return;
     }
-
     let sourceValue = parentEntity[defaultConfig.sourceValueField];
 
     if (fieldConfig.isArray) {
@@ -269,10 +267,7 @@ export class InheritedValueService extends DefaultValueStrategy {
 
       let parentEntity: Entity;
       if (parentEntityIds.length === 1) {
-        parentEntity = await this.entityMapper.load(
-          Entity.extractTypeFromId(parentEntityIds[0]),
-          parentEntityIds[0],
-        );
+        parentEntity = await this.loadEntity(parentEntityIds[0]);
       }
 
       const config = inheritedConfigs.get(fieldId);
@@ -341,6 +336,22 @@ export class InheritedValueService extends DefaultValueStrategy {
       return linkedFieldValue?.length === 1 ? linkedFieldValue[0] : undefined;
     } else {
       return linkedFieldValue;
+    }
+  }
+
+  private async loadEntity(entityId: string): Promise<Entity | undefined> {
+    try {
+      return await this.entityMapper.load(
+        Entity.extractTypeFromId(entityId),
+        entityId,
+      );
+    } catch (error) {
+      Logging.warn(
+        "InheritedValueService could not load source entity for inherited field",
+        entityId,
+        error,
+      );
+      return undefined;
     }
   }
 }
