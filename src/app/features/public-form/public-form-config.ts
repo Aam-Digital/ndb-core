@@ -131,4 +131,14 @@ export class PublicFormConfig extends Entity {
     dataType: "boolean",
   })
   showSubmitAnotherButton: boolean = false;
+
+  override get isActive(): boolean {
+    // hide the new style public forms (nested `forms` array) because the Admin UI is not ready yet
+    // TODO: remove after implementing https://github.com/Aam-Digital/ndb-core/issues/3610
+    if (this.forms?.length) {
+      return false;
+    }
+
+    return super.isActive;
+  }
 }
