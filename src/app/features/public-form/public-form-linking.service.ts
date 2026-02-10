@@ -63,29 +63,10 @@ export class PublicFormLinkingService {
     const linkedFieldIds = this.getLinkedFieldIds(entries);
     if (!linkedFieldIds.size) return;
 
-    this.applyUrlParamPrefills(entries, urlParams, applyPrefillFn);
-    this.warnIgnoredParams(urlParams, linkedFieldIds);
-  }
-
-  /**
-   * Links fields from other forms within the same submission.
-   * Uses field schema to determine target entity type and sets the field
-   * to the matching entity's ID (only if currently empty).
-   *
-   * @param entries - Array of form entries with initialized entities and forms
-   */
-  applyLinkedFromForm(entries: PublicFormEntry[]): void {
-    if (
-      !entries.length ||
-      entries.some((entry) => !entry.entity || !entry.form)
-    )
-      return;
-
-    const entitiesByType = this.buildEntityTypeMap(entries);
-
-    for (const entry of entries) {
-      this.linkFieldsFromOtherForms(entry, entitiesByType);
+    for (const partialForm of entries) {
+      this.applyUrlParamPrefills(partialForm, urlParams, applyPrefillFn);
     }
+    this.warnIgnoredParams(urlParams, linkedFieldIds);
   }
 
   /**
@@ -103,24 +84,22 @@ export class PublicFormLinkingService {
    * Applies URL parameter values as prefills to matching linked fields.
    */
   private applyUrlParamPrefills(
-    entries: PublicFormEntry[],
+    entry: PublicFormEntry,
     urlParams: Params,
     applyPrefillFn: ApplyPrefillFn,
   ): void {
-    for (const entry of entries) {
-      if (!entry.config.columns) continue;
+    if (!entry.config.columns) return;
 
-      for (const fieldId of entry.config.linkedEntities ?? []) {
-        const paramValue = urlParams[fieldId];
-        if (!fieldId || !paramValue) continue;
+    for (const fieldId of entry.config.linkedEntities ?? []) {
+      const paramValue = urlParams[fieldId];
+      if (!fieldId || !paramValue) continue;
 
-        applyPrefillFn(
-          entry.config.columns,
-          fieldId,
-          { mode: "static", config: { value: paramValue } },
-          true,
-        );
-      }
+      applyPrefillFn(
+        entry.config.columns,
+        fieldId,
+        { mode: "static", config: { value: paramValue } },
+        true,
+      );
     }
   }
 
@@ -141,6 +120,27 @@ export class PublicFormLinkingService {
         undefined,
         { duration: 5000 },
       );
+    }
+  }
+
+  /**
+   * Links fields from other forms within the same submission.
+   * Uses field schema to determine target entity type and sets the field
+   * to the matching entity's ID (only if currently empty).
+   *
+   * @param entries - Array of form entries with initialized entities and forms
+   */
+  applyLinkedFromForm(entries: PublicFormEntry[]): void {
+    if (
+      !entries.length ||
+      entries.some((entry) => !entry.entity || !entry.form)
+    )
+      return;
+
+    const entitiesByType = this.buildEntityTypeMap(entries);
+
+    for (const entry of entries) {
+      this.linkFieldsFromOtherForms(entry, entitiesByType);
     }
   }
 
