@@ -130,4 +130,17 @@ describe("DiscreteImportConfigComponent", () => {
     expect(formValue[2]).toEqual(numericEnumOptions[1]);
     expect(formValue[2].isInvalidOption).toBeUndefined();
   });
+
+  it("should not split comma-separated values for single-select enum fields", () => {
+    data.values = ["media (article, ad, tv etc.)", "phone (mobile, landline)"];
+    data.col.additional = undefined;
+
+    component.ngOnInit();
+
+    const formValue = component.form.getRawValue();
+    // Should have 2 form controls, not split by commas inside parentheses
+    expect(Object.keys(formValue).length).toBe(2);
+    expect(formValue["media (article, ad, tv etc.)"]).toBeDefined();
+    expect(formValue["phone (mobile, landline)"]).toBeDefined();
+  });
 });

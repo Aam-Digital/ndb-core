@@ -75,7 +75,10 @@ export class DiscreteImportConfigComponent implements OnInit {
         continue;
       }
 
-      const parts: string[] = splitArrayValue(value, separator);
+      // Only split values for array fields (multi-select)
+      const parts: string[] = this.schema?.isArray
+        ? splitArrayValue(value, separator)
+        : [String(value)];
       parts.forEach((part) => uniqueValues.add(part));
     }
 
