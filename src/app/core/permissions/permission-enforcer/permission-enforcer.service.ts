@@ -49,6 +49,10 @@ export class PermissionEnforcerService {
       // TODO: is it enough to destroy the default DB or could other DBs also be affected?
       await this.dbResolver.destroyDatabases();
       this.location.reload();
+    } else {
+      // Rules changed but no lost permissions — the user may have gained access to new data.
+      // Clear sync checkpoints to force a full re-check on the next sync.
+      await this.dbResolver.resetSync();
     }
     window.localStorage.setItem(this.getUserStorageKey(), userRulesString);
   }

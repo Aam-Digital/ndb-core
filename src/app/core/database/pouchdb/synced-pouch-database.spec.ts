@@ -173,4 +173,53 @@ describe("SyncedPouchDatabase", () => {
     // Verify the change was forwarded to the service's changes feed
     expect(changesSpy).toHaveBeenCalledWith(mockChange);
   }));
+
+  describe("resetSync", () => {
+    it("should delete all _local/ checkpoint documents", async () => {
+      const mockDb = jasmine.createSpyObj<PouchDB.Database>([
+        "allDocs",
+        "remove",
+      ]);
+      const checkpointDocs = {
+        rows: [
+          { doc: { _id: "_local/abc123", _rev: "0-1" } },
+          { doc: { _id: "_local/def456", _rev: "0-1" } },
+        ],
+      };
+      mockDb.allDocs.and.resolveTo(checkpointDocs as any);
+      mockDb.remove.and.resolveTo({ ok: true } as any);
+      spyOn(service, "getPouchDB").and.returnValue(mockDb);
+
+      await service.resetSync();
+
+      expect(mockDb.allDocs).toHaveBeenCalledWith(
+        jasmine.objectContaining({
+          startkey: "_local/",
+          endkey: "_local/\ufff0",
+          include_docs: true,
+        }),
+      );
+      expect(mockDb.remove).toHaveBeenCalledTimes(2);
+    });
+
+    it("should handle empty checkpoint list gracefully", async () => {
+      const mockDb = jasmine.createSpyObj<PouchDB.Database>([
+        "allDocs",
+        "remove",
+      ]);
+      mockDb.allDocs.and.resolveTo({ rows: [] } as any);
+      spyOn(service, "getPouchDB").and.returnValue(mockDb);
+
+      await service.resetSync();
+
+      expect(mockDb.allDocs).toHaveBeenCalled();
+      expect(mockDb.remove).not.toHaveBeenCalled();
+    });
+
+    it("should do nothing if PouchDB is not initialized", async () => {
+      spyOn(service, "getPouchDB").and.returnValue(undefined);
+
+      await expectAsync(service.resetSync()).toBeResolved();
+    });
+  });
 });

@@ -167,6 +167,34 @@ export class SyncedPouchDatabase extends PouchDatabase {
   }
 
   /**
+   * Clear local PouchDB sync checkpoint documents to force a full re-check on the next sync.
+   * This does not delete any synced data, it only removes the `_local/` checkpoint docs
+   * that PouchDB uses to track the last-synced sequence number.
+   */
+  async resetSync(): Promise<void> {
+    const db = this.getPouchDB();
+    if (!db) {
+      return;
+    }
+
+    const result = await db.allDocs({
+      startkey: "_local/",
+      endkey: "_local/\ufff0",
+      include_docs: true,
+    });
+
+    for (const row of result.rows) {
+      if (row.doc) {
+        await db.remove(row.doc);
+      }
+    }
+
+    Logging.debug(
+      `Cleared ${result.rows.length} sync checkpoint(s) for database "${this.dbName}"`,
+    );
+  }
+
+  /**
    * Continuous syncing in background.
    */
   liveSyncEnabled: boolean;

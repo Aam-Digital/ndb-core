@@ -57,6 +57,18 @@ export class DatabaseResolverService {
   }
 
   /**
+   * Clear sync checkpoint documents in all synced databas^es,
+   * forcing a full re-check on the next sync without deleting any data.
+   */
+  async resetSync() {
+    for (const db of this.databases.values()) {
+      if (db instanceof SyncedPouchDatabase) {
+        await db.resetSync();
+      }
+    }
+  }
+
+  /**
    * Connect the database(s) for the current user's "session",
    * i.e. configuring the access for that account after login
    * (especially for local and remote database modes)
