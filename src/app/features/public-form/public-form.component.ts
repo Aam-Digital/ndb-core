@@ -90,10 +90,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     }
     try {
       for (const entry of this.entityFormEntries) {
-        if (!entry.form || !entry.entity) {
-          this.validationError = true;
-          return;
-        }
         await this.entityFormService.saveChanges(entry.form, entry.entity);
       }
       this.router.navigate(["/public-form/submission-success"], {

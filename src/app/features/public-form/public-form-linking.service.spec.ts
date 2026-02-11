@@ -1,6 +1,8 @@
 import { TestBed } from "@angular/core/testing";
-import { PublicFormLinkingService } from "./public-form-linking.service";
-import { PublicFormEntry } from "./public-form-linking.service";
+import {
+  PublicFormEntry,
+  PublicFormLinkingService,
+} from "./public-form-linking.service";
 import { Entity, EntityConstructor } from "../../core/entity/model/entity";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { FormControl, FormGroup } from "@angular/forms";
