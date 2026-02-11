@@ -46,6 +46,7 @@ export class EntityEditService extends CascadingEntityAction {
 
     if (action) {
       const result = await this.editEntity(action, entitiesToEdit);
+      await this.bulkOperationState.waitForBulkOperationToFinish();
       this.entityActionsService.showSnackbarConfirmationWithUndo(
         this.entityActionsService.generateMessageForConfirmationWithUndo(
           entities,
@@ -74,7 +75,10 @@ export class EntityEditService extends CascadingEntityAction {
       e[action.selectedField] = action.value;
     }
 
-    this.bulkOperationState.startBulkOperation(newEntities.length);
+    this.bulkOperationState.startBulkOperation(
+      newEntities.length,
+      newEntities.map((entity) => entity.getId()),
+    );
 
     try {
       // Use bulk save for performance - progress tracking happens in bulk-operation-state service
