@@ -59,8 +59,8 @@ jobs:
     steps:
       - name: Set image names
         run: |
-          echo "GHCR_IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
-          echo "DOCKERHUB_IMAGE=aamdigital/ndb-server" >> $GITHUB_ENV
+          echo "GHCR_IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+          echo "DOCKERHUB_IMAGE=aamdigital/ndb-server" >> "$GITHUB_ENV"
       
       - name: Login to DockerHub
         uses: docker/login-action@v3
