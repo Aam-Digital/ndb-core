@@ -123,7 +123,12 @@
               formDataType.value === "configurable-enum" ||
               formDataType.value === "entity"
             ) {
-              <mat-checkbox formControlName="isArray" i18n>
+              <mat-checkbox
+                formControlName="isArray"
+                matTooltip="Check this to let users select more than just one entry in this field."
+                i18n-matTooltip
+                i18n
+              >
                 allow multiple values (multi-select)
               </mat-checkbox>
             }
@@ -171,16 +176,20 @@
                   formControlName="additional"
                   [multi]="entityAdditionalMultiSelect()"
                 ></app-entity-type-select>
-              </mat-form-field>
 
-              <mat-slide-toggle
-                [checked]="entityAdditionalMultiSelect()"
-                [disabled]="additionalForm.disabled"
-                (change)="onEntityAdditionalSelectionModeChange($event)"
-                i18n
-              >
-                Allow multiple target record types
-              </mat-slide-toggle>
+                <mat-hint>
+                  <mat-slide-toggle
+                    [checked]="entityAdditionalMultiSelect()"
+                    [disabled]="additionalForm.disabled"
+                    (change)="onEntityAdditionalSelectionModeChange($event)"
+                    matTooltip="Check this to allow more than one record *type* to choose from. For example, configuring this field so that users can select either Participants or Organizations from the same dropdown list."
+                    i18n-matTooltip
+                    i18n
+                  >
+                    Advanced mode (mix multiple target record types)
+                  </mat-slide-toggle>
+                </mat-hint>
+              </mat-form-field>
             }
           </div>
         </div>
