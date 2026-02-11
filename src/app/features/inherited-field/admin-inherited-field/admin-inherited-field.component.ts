@@ -99,9 +99,7 @@ export class AdminInheritedFieldComponent
 
         for (const typeId of referencedTypeIds) {
           const referencedEntityType = this.entityRegistry.get(typeId);
-          if (!referencedEntityType) {
-            return;
-          }
+          if (!referencedEntityType) continue;
 
           const refFieldLabel = this.getFieldLabel(attr, this.entityType);
 
