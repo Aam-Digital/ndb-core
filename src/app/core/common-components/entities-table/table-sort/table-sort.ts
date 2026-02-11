@@ -63,23 +63,25 @@ function getComparableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   value = getReadableValue(value);
   if (value instanceof Date) {
     return value.getTime() + "";
-  } else if (typeof value === "number") {
-    return value + "";
   } else {
     return value as any;
   }
 }
 
 function compareValues(a, b) {
+  // treat null and undefined as equal
+  a = a === null ? undefined : a;
+  b = b === null ? undefined : b;
+
   if (a === b) {
     return 0;
-  } else if (typeof a === "string" && typeof b === "string") {
-    return a.localeCompare(b, undefined, { numeric: true });
-  } else if (a > b || b === null || b === undefined) {
-    return -1;
-  } else if (a < b || a === null || a === undefined) {
+  } else if (a === undefined) {
+    // sort `undefined` to the end for ascending order
     return 1;
   } else if (typeof a === "number" && typeof b === "number") {
     return a - b;
+  } else {
+    // Fallback to localeCompare for strings for any types that don't have a special comparison
+    return String(a).localeCompare(String(b), undefined, { numeric: true });
   }
 }

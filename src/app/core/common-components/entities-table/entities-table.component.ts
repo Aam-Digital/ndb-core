@@ -471,8 +471,8 @@ export class EntitiesTableComponent<
   private createDataSource() {
     const dataSource = new MatTableDataSource<TableRow<T>>();
     dataSource.sortData = (data, sort) =>
-      tableSort(data, {
-        active: sort.active as keyof Entity | "",
+      tableSort<T, keyof T>(data, {
+        active: (sort.active as keyof T) ?? "",
         direction: sort.direction,
       });
     dataSource.filterPredicate = (data, filter) =>
