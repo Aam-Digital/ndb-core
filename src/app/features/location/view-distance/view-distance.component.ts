@@ -2,12 +2,11 @@ import { ChangeDetectorRef, Component, OnInit, inject } from "@angular/core";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { Entity } from "../../../core/entity/model/entity";
 import { Coordinates } from "../coordinates";
-import { getKmDistance } from "../map-utils";
+import { getMinDistanceKm } from "../map-utils";
 import { Observable } from "rxjs";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ReadonlyFunctionComponent } from "../../../core/common-components/display-readonly-function/readonly-function.component";
-import { GeoLocation } from "../geo-location";
 
 /**
  * Config for displaying the distance between two entities
@@ -55,37 +54,17 @@ export class ViewDistanceComponent
 
   private setDistanceFunction(compareCoordinates: Coordinates[]) {
     this.distanceFunction = (e: Entity) => {
-      const distances = this.getAllDistances(compareCoordinates, e);
-      if (distances.length > 0) {
-        const closest = Math.min(...distances).toFixed(2);
-        return $localize`:distance with unit|e.g. 5 km:${closest} km`;
-      } else {
+      const closest = getMinDistanceKm(
+        e,
+        this.config.coordinatesProperties ?? [],
+        compareCoordinates,
+      );
+      if (closest === null) {
         return "-";
       }
+      return $localize`:distance with unit|e.g. 5 km:${closest.toFixed(2)} km`;
     };
     // somehow changes to `displayFunction` don't trigger the change detection
     this.changeDetector.detectChanges();
-  }
-
-  private getAllDistances(compareCoordinates: Coordinates[], e: Entity) {
-    const results: number[] = [];
-    // Defensive check: ensure coordinatesProperties is defined and iterable
-    if (
-      !this.config.coordinatesProperties ||
-      !Array.isArray(this.config.coordinatesProperties)
-    ) {
-      return results;
-    }
-
-    for (const prop of this.config.coordinatesProperties) {
-      for (const coord of compareCoordinates) {
-        if (e[prop]?.geoLookup && coord) {
-          results.push(
-            getKmDistance((e[prop] as GeoLocation).geoLookup, coord),
-          );
-        }
-      }
-    }
-    return results;
   }
 }

@@ -1,7 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 import { PublicFormsService } from "./public-forms.service";
 import { PublicFormConfig } from "./public-form-config";
-import { Entity } from "app/core/entity/model/entity";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
@@ -13,6 +13,14 @@ describe("PublicFormsService", () => {
   let mockEntityRegistry: jasmine.SpyObj<EntityRegistry>;
   let mockEntityConfigService: jasmine.SpyObj<EntityConfigService>;
   let mockAdminEntityService: jasmine.SpyObj<AdminEntityService>;
+
+  function createMockEntityConstructor(
+    schemaEntries: [string, any][],
+  ): EntityConstructor {
+    return {
+      schema: new Map(schemaEntries),
+    } as EntityConstructor;
+  }
 
   beforeEach(() => {
     mockEntityRegistry = jasmine.createSpyObj("EntityRegistry", ["get"]);
@@ -64,7 +72,14 @@ describe("PublicFormsService", () => {
   it("should copy base URL when no entity is provided", async () => {
     const config = new PublicFormConfig();
     config.route = "test-form";
-    config.linkedEntities = [{ id: "children", additional: "Child" }];
+    config.entity = "TestEntity";
+    config.linkedEntities = ["children"];
+
+    mockEntityRegistry.get.and.returnValue(
+      createMockEntityConstructor([
+        ["children", { dataType: "entity", additional: "Child" }],
+      ]),
+    );
 
     const result = await service.copyPublicFormLinkFromConfig(config);
     expect(result).toBe(false); // No entity, no parameters
@@ -76,7 +91,14 @@ describe("PublicFormsService", () => {
   it("should copy base URL when entity type does not match any linkedEntity", async () => {
     const config = new PublicFormConfig();
     config.route = "test-form";
-    config.linkedEntities = [{ id: "children", additional: "Child" }];
+    config.entity = "TestEntity";
+    config.linkedEntities = ["children"];
+
+    mockEntityRegistry.get.and.returnValue(
+      createMockEntityConstructor([
+        ["children", { dataType: "entity", additional: "Child" }],
+      ]),
+    );
 
     const entity = new Entity();
     entity.getConstructor = jasmine.createSpy().and.returnValue({
@@ -93,6 +115,7 @@ describe("PublicFormsService", () => {
   it("should copy base URL when config has no linkedEntities", async () => {
     const config = new PublicFormConfig();
     config.route = "test-form";
+    config.entity = "TestEntity";
     config.linkedEntities = [];
 
     const entity = new Entity();
@@ -110,10 +133,15 @@ describe("PublicFormsService", () => {
   it("should copy URL with parameters for matching entity type", async () => {
     const config = new PublicFormConfig();
     config.route = "test-form";
-    config.linkedEntities = [
-      { id: "children", additional: "Child" },
-      { id: "schools", additional: "School" },
-    ];
+    config.entity = "TestEntity";
+    config.linkedEntities = ["children", "schools"];
+
+    mockEntityRegistry.get.and.returnValue(
+      createMockEntityConstructor([
+        ["children", { dataType: "entity", additional: "Child" }],
+        ["schools", { dataType: "entity", additional: "School" }],
+      ]),
+    );
 
     const entity = new Entity();
     entity.getConstructor = jasmine.createSpy().and.returnValue({
@@ -131,10 +159,15 @@ describe("PublicFormsService", () => {
   it("should copy URL with parameters for multiple matching entity types", async () => {
     const config = new PublicFormConfig();
     config.route = "test-form";
-    config.linkedEntities = [
-      { id: "children", additional: "Child" },
-      { id: "schools", additional: "Child" },
-    ];
+    config.entity = "TestEntity";
+    config.linkedEntities = ["children", "schools"];
+
+    mockEntityRegistry.get.and.returnValue(
+      createMockEntityConstructor([
+        ["children", { dataType: "entity", additional: "Child" }],
+        ["schools", { dataType: "entity", additional: "Child" }],
+      ]),
+    );
 
     const entity = new Entity();
     entity.getConstructor = jasmine.createSpy().and.returnValue({
@@ -152,10 +185,15 @@ describe("PublicFormsService", () => {
   it("should not copy URL when linkedEntities exist but no matching type", async () => {
     const config = new PublicFormConfig();
     config.route = "test-form";
-    config.linkedEntities = [
-      { id: "children", additional: "Child" },
-      { id: "schools", additional: "School" },
-    ];
+    config.entity = "TestEntity";
+    config.linkedEntities = ["children", "schools"];
+
+    mockEntityRegistry.get.and.returnValue(
+      createMockEntityConstructor([
+        ["children", { dataType: "entity", additional: "Child" }],
+        ["schools", { dataType: "entity", additional: "School" }],
+      ]),
+    );
 
     const entity = new Entity();
     entity.getConstructor = jasmine.createSpy().and.returnValue({
@@ -172,7 +210,8 @@ describe("PublicFormsService", () => {
   // Tests for isEntityTypeLinkedToConfig method
   it("should not return isEntityTypeLinkedToConfig when entity has no constructor", async () => {
     const config = new PublicFormConfig();
-    config.linkedEntities = [{ id: "children", additional: "Child" }];
+    config.entity = "TestEntity";
+    config.linkedEntities = ["children"];
 
     const entity = new Entity();
     // Entity without getConstructor method
@@ -183,6 +222,7 @@ describe("PublicFormsService", () => {
 
   it("should return false for isEntityTypeLinkedToConfig when config has no linkedEntities", async () => {
     const config = new PublicFormConfig();
+    config.entity = "TestEntity";
     config.linkedEntities = [];
 
     const entity = new Entity();
@@ -196,7 +236,14 @@ describe("PublicFormsService", () => {
 
   it("should return true for isEntityTypeLinkedToConfig when entity type matches linkedEntity additional property", async () => {
     const config = new PublicFormConfig();
-    config.linkedEntities = [{ id: "children", additional: "Child" }];
+    config.entity = "TestEntity";
+    config.linkedEntities = ["children"];
+
+    mockEntityRegistry.get.and.returnValue(
+      createMockEntityConstructor([
+        ["children", { dataType: "entity", additional: "Child" }],
+      ]),
+    );
 
     const entity = new Entity();
     entity.getConstructor = jasmine.createSpy().and.returnValue({
@@ -209,7 +256,14 @@ describe("PublicFormsService", () => {
 
   it("should return false for isEntityTypeLinkedToConfig when entity type does not match linkedEntity additional property", async () => {
     const config = new PublicFormConfig();
-    config.linkedEntities = [{ id: "children", additional: "Child" }];
+    config.entity = "TestEntity";
+    config.linkedEntities = ["children"];
+
+    mockEntityRegistry.get.and.returnValue(
+      createMockEntityConstructor([
+        ["children", { dataType: "entity", additional: "Child" }],
+      ]),
+    );
 
     const entity = new Entity();
     entity.getConstructor = jasmine.createSpy().and.returnValue({
@@ -222,10 +276,15 @@ describe("PublicFormsService", () => {
 
   it("should return true for isEntityTypeLinkedToConfig when entity type matches any of multiple linkedEntities", async () => {
     const config = new PublicFormConfig();
-    config.linkedEntities = [
-      { id: "children", additional: "Child" },
-      { id: "schools", additional: "School" },
-    ];
+    config.entity = "TestEntity";
+    config.linkedEntities = ["children", "schools"];
+
+    mockEntityRegistry.get.and.returnValue(
+      createMockEntityConstructor([
+        ["children", { dataType: "entity", additional: "Child" }],
+        ["schools", { dataType: "entity", additional: "School" }],
+      ]),
+    );
 
     const entity = new Entity();
     entity.getConstructor = jasmine.createSpy().and.returnValue({
@@ -285,5 +344,39 @@ describe("PublicFormsService", () => {
     expect(
       mockAdminEntityService.setAndSaveEntityConfig,
     ).not.toHaveBeenCalled();
+  });
+
+  it("should copy URL with parameters for multiple matching entity types", async () => {
+    const config = new PublicFormConfig();
+    config.route = "test-act2";
+    config.forms = [
+      {
+        entity: "RecurringActivity",
+        columns: [
+          {
+            fields: ["title", "assignedTo"],
+          },
+        ],
+        linkedEntities: ["assignedTo"],
+      },
+    ];
+
+    mockEntityRegistry.get.and.returnValue(
+      createMockEntityConstructor([
+        ["assignedTo", { dataType: "entity", additional: "Child" }],
+      ]),
+    );
+
+    const entity = new Entity();
+    entity.getConstructor = jasmine.createSpy().and.returnValue({
+      ENTITY_TYPE: "Child",
+    });
+    entity.getId = jasmine.createSpy().and.returnValue("Child:123");
+
+    const result = await service.copyPublicFormLinkFromConfig(config, entity);
+    expect(result).toBe(true);
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      `${window.location.origin}/public-form/form/test-act2?assignedTo=Child%3A123`,
+    );
   });
 });

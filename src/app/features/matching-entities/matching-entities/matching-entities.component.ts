@@ -41,7 +41,10 @@ import { RouteTarget } from "../../../route-target";
 import { FlattenArrayPipe } from "../../../utils/flatten-array/flatten-array.pipe";
 import { addAlphaToHexColor } from "../../../utils/style-utils";
 import { Coordinates } from "../../location/coordinates";
-import { getLocationProperties } from "../../location/map-utils";
+import {
+  getLocationProperties,
+  getMinDistanceKm,
+} from "../../location/map-utils";
 import { LocationProperties } from "../../location/map/map-properties-popup/map-properties-popup.component";
 import { MapComponent } from "../../location/map/map.component";
 import {
@@ -387,6 +390,7 @@ export class MatchingEntitiesComponent implements OnInit {
       const columnConfig = this.getDistanceColumnConfig(side);
       side.columns[sideIndex] = columnConfig;
       side.distanceColumn = columnConfig.additional;
+      this.setDistanceValuesForSide(side);
       const colIndex = this.columns.findIndex((row) => {
         const col = row[index];
         return typeof col === "string"
@@ -399,17 +403,61 @@ export class MatchingEntitiesComponent implements OnInit {
     }
   }
 
+  /**
+   * Build the display-only distance column configuration for matching tables.
+   */
   private getDistanceColumnConfig(side: MatchingSide): FormFieldConfig {
     return {
       id: "distance",
       label: $localize`:Matching View column name:Distance`,
       viewComponent: "DisplayDistance",
+      dataType: "number",
       additional: {
         coordinatesProperties:
           this.displayedLocationProperties[side.entityType],
         compareCoordinates: new BehaviorSubject<Coordinates[]>([]),
       },
     };
+  }
+
+  /**
+   * Pre-calculate and attach a non-enumerable "distance" value on each entity
+   * so the table can sort without custom sort functions.
+   */
+  private setDistanceValuesForSide(side: MatchingSide) {
+    if (!side.availableEntities?.length || !side.distanceColumn) {
+      return;
+    }
+
+    for (const entity of side.availableEntities) {
+      this.defineDistanceValue(entity, side);
+    }
+  }
+
+  /**
+   * Define a non-enumerable distance value on the entity for table sorting.
+   */
+  private defineDistanceValue(entity: Entity, side: MatchingSide) {
+    const existingDescriptor = Object.getOwnPropertyDescriptor(
+      entity,
+      "distance",
+    );
+    if (existingDescriptor && existingDescriptor.configurable === false) {
+      return;
+    }
+
+    const distanceValue = getMinDistanceKm(
+      entity,
+      side.distanceColumn?.coordinatesProperties ?? [],
+      side.distanceColumn?.compareCoordinates?.value ?? [],
+    );
+
+    Object.defineProperty(entity, "distance", {
+      configurable: true,
+      enumerable: false,
+      value: distanceValue,
+      writable: true,
+    });
   }
 
   updateMarkersAndDistances() {
@@ -423,6 +471,7 @@ export class MatchingEntitiesComponent implements OnInit {
       if (side.highlightedSelected) {
         this.updateDistanceColumn(side);
       }
+      this.setDistanceValuesForSide(side);
     });
   }
 
@@ -437,6 +486,8 @@ export class MatchingEntitiesComponent implements OnInit {
       );
       distanceColumn.compareCoordinates.next(coordinates);
     }
+    const distanceSide = this.sideDetails[otherIndex];
+    this.setDistanceValuesForSide(distanceSide);
   }
 }
 
