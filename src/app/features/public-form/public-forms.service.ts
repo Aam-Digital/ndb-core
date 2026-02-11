@@ -4,7 +4,10 @@ import { AlertService } from "app/core/alerts/alert.service";
 import { EntityActionsMenuService } from "app/core/entity-details/entity-actions-menu/entity-actions-menu.service";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "app/core/entity/model/entity";
-import { PublicFormConfig } from "./public-form-config";
+import {
+  PublicFormConfig,
+  PublicFormEntityFormConfig,
+} from "./public-form-config";
 import { asArray } from "#src/app/utils/asArray";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
@@ -72,26 +75,35 @@ export class PublicFormsService {
     config: PublicFormConfig,
     entity?: Entity,
   ): Promise<boolean> {
-    let url = `${window.location.origin}/public-form/form/${config.route}`;
-    let hasMatchingParameters = false;
+    const relevantForm = entity
+      ? this.getRelevantFormForEntity(config, entity)
+      : undefined;
+    const formConfig = relevantForm ?? this.getFormConfigs(config)[0];
 
-    if (entity && config.linkedEntities?.length) {
+    return this.copyPublicFormLinkFromEntityFormConfig(
+      config.route,
+      formConfig,
+      entity,
+    );
+  }
+
+  private async copyPublicFormLinkFromEntityFormConfig(
+    route: string,
+    formConfig: PublicFormEntityFormConfig,
+    entity?: Entity,
+  ): Promise<boolean> {
+    let url = `${window.location.origin}/public-form/form/${route}`;
+
+    const matchingFieldIds = entity
+      ? this.findMatchingLinkedFieldIds(formConfig, entity)
+      : [];
+
+    if (matchingFieldIds.length) {
       const params = new URLSearchParams();
-
-      config.linkedEntities.forEach((entityConfig) => {
-        if (
-          entityConfig.id &&
-          entityConfig.additional?.toLowerCase() ===
-            entity.getConstructor?.()?.ENTITY_TYPE?.toLowerCase()
-        ) {
-          params.set(entityConfig.id, entity.getId());
-          hasMatchingParameters = true;
-        }
-      });
-
-      if (hasMatchingParameters) {
-        url += `?${params.toString()}`;
-      }
+      matchingFieldIds.forEach((fieldId) =>
+        params.set(fieldId, entity.getId()),
+      );
+      url += `?${params.toString()}`;
     }
 
     try {
@@ -103,7 +115,20 @@ export class PublicFormsService {
       );
     }
     this.alertService.addInfo("Link copied: " + url);
-    return hasMatchingParameters;
+    return matchingFieldIds.length > 0;
+  }
+
+  /**
+   * Gets the relevant form configuration for a given entity from a PublicFormConfig.
+   * Handles both OLD format (entity/linkedEntities at top level) and NEW format (forms array).
+   */
+  private getRelevantFormForEntity(
+    config: PublicFormConfig,
+    entity: Entity,
+  ): PublicFormEntityFormConfig | undefined {
+    return this.getFormConfigs(config).find(
+      (form) => this.findMatchingLinkedFieldIds(form, entity).length > 0,
+    );
   }
 
   /**
@@ -117,23 +142,67 @@ export class PublicFormsService {
     config: PublicFormConfig,
     entity: Entity,
   ): Promise<boolean> {
-    if (!entity.getConstructor) {
-      return false;
-    }
-
-    const entityType = entity.getConstructor().ENTITY_TYPE.toLowerCase();
-    const linkedEntities = config.linkedEntities || [];
-
-    return linkedEntities.some(
-      (entityConfig) => entityConfig.additional?.toLowerCase() === entityType,
-    );
+    return this.getRelevantFormForEntity(config, entity) !== undefined;
   }
 
   /**
    * Checks if a PublicFormConfig has any linked entities configured.
    */
-  private hasLinkedEntities(config: PublicFormConfig): boolean {
-    return !!config.linkedEntities?.length;
+  public hasLinkedEntities(config: PublicFormConfig): boolean {
+    if (config.linkedEntities?.length) {
+      return true;
+    }
+
+    if (!config.forms?.length) {
+      return false;
+    }
+
+    return config.forms.some((form) => form.linkedEntities?.length);
+  }
+
+  /**
+   * Returns the normalized list of form configs, supporting both
+   * the new `forms` array and legacy top-level config.
+   */
+  private getFormConfigs(
+    config: PublicFormConfig,
+  ): PublicFormEntityFormConfig[] {
+    if (config.forms?.length) {
+      return config.forms;
+    }
+    return [
+      {
+        entity: config.entity,
+        columns: config.columns ?? [],
+        prefilled: config.prefilled,
+        linkedEntities: config.linkedEntities,
+      },
+    ];
+  }
+
+  /**
+   * Finds linked field IDs in a form config whose schema references the given entity's type.
+   */
+  private findMatchingLinkedFieldIds(
+    formConfig: PublicFormEntityFormConfig,
+    entity: Entity,
+  ): string[] {
+    const entityType = entity.getConstructor?.()?.ENTITY_TYPE?.toLowerCase();
+    if (
+      !entityType ||
+      !formConfig.entity ||
+      !formConfig.linkedEntities?.length
+    ) {
+      return [];
+    }
+
+    const entityConstructor = this.entities.get(formConfig.entity);
+    if (!entityConstructor) return [];
+
+    return formConfig.linkedEntities.filter((fieldId) => {
+      const fieldSchema = entityConstructor.schema.get(fieldId);
+      return fieldSchema?.additional?.toLowerCase() === entityType;
+    });
   }
 
   /**
