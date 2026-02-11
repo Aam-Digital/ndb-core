@@ -21,6 +21,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 import { IconButtonComponent } from "../icon-button/icon-button.component";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
 /**
  * Reusable component for editing conditions (field-value pairs) with JSON support
@@ -140,37 +141,16 @@ export class ConditionsEditorComponent implements OnInit {
     const conditions = this.conditionsArray();
     const condition = conditions[conditionIndex];
 
-    // For array fields, extract value from $elemMatch.$in if present
-    let initialValue;
-    if (fieldConfig.isArray && condition[fieldKey]?.$elemMatch?.$in) {
-      initialValue = this.entitySchemaService.valueToEntityFormat(
-        condition[fieldKey].$elemMatch.$in,
-        fieldConfig,
-      );
-    } else {
-      initialValue = this.entitySchemaService.valueToEntityFormat(
-        condition[fieldKey],
-        fieldConfig,
-      );
-    }
+    const initialValue = this.extractValueFromCondition(
+      condition[fieldKey],
+      fieldConfig,
+    );
     const formControl = new FormControl(initialValue);
     this.conditionFormControls.set(key, formControl);
 
-    formControl.valueChanges.subscribe((value) => {
-      const dbValue = this.entitySchemaService.valueToDatabaseFormat(
-        value,
-        fieldConfig,
-      );
-
-      // For array fields, wrap in $elemMatch with $in for proper array matching
-      if (fieldConfig.isArray && Array.isArray(dbValue) && dbValue.length > 0) {
-        condition[fieldKey] = { $elemMatch: { $in: dbValue } };
-      } else {
-        condition[fieldKey] = dbValue;
-      }
-
-      this.conditionsChange.emit(this.conditions);
-    });
+    formControl.valueChanges.subscribe((value) =>
+      this.onFormValueChange(condition, fieldKey, value, fieldConfig),
+    );
 
     this.conditionFormFieldConfigs.set(key, {
       id: fieldKey,
@@ -180,6 +160,42 @@ export class ConditionsEditorComponent implements OnInit {
       label: fieldConfig.label || fieldKey,
       isArray: fieldConfig.isArray,
     } as FormFieldConfig);
+  }
+
+  private extractValueFromCondition(
+    conditionValue: any,
+    fieldConfig: EntitySchemaField,
+  ): any {
+    let value;
+    if (fieldConfig.isArray && conditionValue?.$elemMatch?.$in) {
+      // For array fields, extract value from $elemMatch.$in if present
+      value = conditionValue.$elemMatch.$in;
+    } else {
+      value = conditionValue;
+    }
+
+    return this.entitySchemaService.valueToEntityFormat(value, fieldConfig);
+  }
+
+  private onFormValueChange(
+    condition: any,
+    fieldKey: string,
+    value: any,
+    fieldConfig: EntitySchemaField,
+  ): void {
+    const dbValue = this.entitySchemaService.valueToDatabaseFormat(
+      value,
+      fieldConfig,
+    );
+
+    if (fieldConfig.isArray && Array.isArray(dbValue) && dbValue.length > 0) {
+      // For array fields, wrap in $elemMatch with $in for proper array matching
+      condition[fieldKey] = { $elemMatch: { $in: dbValue } };
+    } else {
+      condition[fieldKey] = dbValue;
+    }
+
+    this.conditionsChange.emit(this.conditions);
   }
 
   /**
