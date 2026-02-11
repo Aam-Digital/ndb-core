@@ -19,7 +19,6 @@ import { filter, take } from "rxjs/operators";
   providedIn: "root",
 })
 export class BulkOperationStateService implements OnDestroy {
-  private static readonly DEFAULT_BULK_OP_TIMEOUT_MS = 30000;
   private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   private readonly operationInProgress = new BehaviorSubject<boolean>(false);
@@ -30,7 +29,6 @@ export class BulkOperationStateService implements OnDestroy {
   private expectedUpdateCount = 0;
   private processedUpdateCount = 0;
   private expectedUpdateIds: Set<string> | null = null;
-  private progressDialogClosed: Promise<void> = Promise.resolve();
 
   isBulkOperationInProgress$ = this.operationInProgress.asObservable();
   isBulkOperationInProgress(): boolean {
@@ -51,9 +49,6 @@ export class BulkOperationStateService implements OnDestroy {
     this.progressDialogRef = this.confirmationDialog.showProgressDialog(
       this.progressDialogMessage,
     );
-    this.progressDialogClosed = firstValueFrom(
-      this.progressDialogRef.afterClosed(),
-    ).then(() => undefined);
   }
 
   /**
@@ -72,6 +67,9 @@ export class BulkOperationStateService implements OnDestroy {
 
     const shouldCount = this.shouldCountUpdate(updatedEntity);
     if (shouldCount) {
+      if (this.expectedUpdateIds) {
+        this.expectedUpdateIds.delete(updatedEntity.entity.getId());
+      }
       this.processedUpdateCount += 1;
       this.updateProgressDialog();
     }
@@ -92,15 +90,7 @@ export class BulkOperationStateService implements OnDestroy {
     }
 
     const id = updatedEntity?.entity?.getId?.();
-    if (!id || !this.expectedUpdateIds.has(id)) {
-      return false;
-    }
-
-    this.expectedUpdateIds.delete(id);
-    if (this.expectedUpdateIds.size === 0) {
-      this.completeBulkOperation();
-    }
-    return true;
+    return !!id && this.expectedUpdateIds.has(id);
   }
 
   /**
@@ -138,8 +128,16 @@ export class BulkOperationStateService implements OnDestroy {
     this.expectedUpdateCount = 0;
     this.expectedUpdateIds = null;
     if (this.progressDialogRef) {
-      this.progressDialogRef.close();
-      this.progressDialogRef = null;
+      const dialogRef = this.progressDialogRef;
+      dialogRef
+        .afterClosed()
+        .pipe(take(1))
+        .subscribe(() => {
+          if (this.progressDialogRef === dialogRef) {
+            this.progressDialogRef = null;
+          }
+        });
+      dialogRef.close();
     }
   }
 
@@ -152,7 +150,9 @@ export class BulkOperationStateService implements OnDestroy {
         ),
       );
     }
-    await this.progressDialogClosed;
+    if (this.progressDialogRef) {
+      await firstValueFrom(this.progressDialogRef.afterClosed().pipe(take(1)));
+    }
   }
 
   ngOnDestroy() {
