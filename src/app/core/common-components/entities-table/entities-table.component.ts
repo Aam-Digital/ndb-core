@@ -263,12 +263,12 @@ export class EntitiesTableComponent<
     const filterPredicate = this.filterService.getFilterPredicate(this._filter);
     const filteredData = this._records.filter(filterPredicate);
     this.recordsDataSource.data = filteredData.map((record) => ({ record }));
-
-    this.filteredRecordsChange.emit(filteredData);
+    this.emitFilteredRecordsFromDataSource();
   }
 
   @Input() set filterFreetext(value: string) {
     this.recordsDataSource.filter = value;
+    this.emitFilteredRecordsFromDataSource();
   }
 
   /**
@@ -471,13 +471,19 @@ export class EntitiesTableComponent<
   private createDataSource() {
     const dataSource = new MatTableDataSource<TableRow<T>>();
     dataSource.sortData = (data, sort) =>
-      tableSort(data, {
-        active: sort.active as keyof Entity | "",
+      tableSort<T, keyof T>(data, {
+        active: (sort.active as keyof T) ?? "",
         direction: sort.direction,
       });
     dataSource.filterPredicate = (data, filter) =>
       entityFilterPredicate(data.record, filter);
     return dataSource;
+  }
+
+  private emitFilteredRecordsFromDataSource() {
+    const rows =
+      this.recordsDataSource.filteredData ?? this.recordsDataSource.data ?? [];
+    this.filteredRecordsChange.emit(rows.map((row) => row.record));
   }
 
   private getSelectedRows(): TableRow<T>[] {

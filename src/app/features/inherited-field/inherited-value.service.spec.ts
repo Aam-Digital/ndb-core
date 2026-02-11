@@ -361,6 +361,34 @@ describe("InheritedValueService", () => {
     expect(form.formGroup.get("field").value).toBe(undefined);
   }));
 
+  it("should not throw if parent entity load fails while initializing inherited values", fakeAsync(() => {
+    const form = getDefaultInheritedForm({
+      field: {
+        defaultValue: {
+          mode: "inherited-field",
+          config: {
+            sourceValueField: "foo",
+            sourceReferenceField: "reference-1",
+          },
+        },
+      },
+    });
+    form.entity = new Entity("Entity:123");
+    form.entity["reference-1"] = "User:missing";
+    mockEntityMapperService.load.and.returnValue(
+      Promise.reject(new Error("forbidden")),
+    );
+
+    let thrownError: Error | undefined;
+    defaultValueService
+      .handleEntityForm(form, form.entity)
+      .catch((error: Error) => (thrownError = error));
+    tick();
+
+    expect(thrownError).toBeUndefined();
+    expect(form.inheritedParentValues.get("field")).toBeUndefined();
+  }));
+
   it("should do nothing, if formGroup is disabled", fakeAsync(() => {
     // given
     let form = getDefaultInheritedForm({

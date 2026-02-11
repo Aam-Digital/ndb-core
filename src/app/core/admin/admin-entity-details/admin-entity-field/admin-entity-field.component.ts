@@ -1,4 +1,10 @@
-import { Component, inject, OnInit } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  WritableSignal,
+} from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
   MAT_DIALOG_DATA,
@@ -19,7 +25,10 @@ import {
 } from "@angular/forms";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { MatTabsModule } from "@angular/material/tabs";
-import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import {
+  MatSlideToggleModule,
+  MatSlideToggleChange,
+} from "@angular/material/slide-toggle";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
@@ -41,6 +50,8 @@ import { MatCheckbox } from "@angular/material/checkbox";
 import { AdminDefaultValueComponent } from "../../../default-values/admin-default-value/admin-default-value.component";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
+import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 /**
  * Dialog data for AdminEntityFieldComponent
@@ -100,6 +111,7 @@ export class AdminEntityFieldComponent implements OnInit {
   private configurableEnumService = inject(ConfigurableEnumService);
   private entityRegistry = inject(EntityRegistry);
   private dialog = inject(MatDialog);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   fieldId: string;
   entityType: EntityConstructor;
@@ -112,6 +124,7 @@ export class AdminEntityFieldComponent implements OnInit {
   additionalForm: FormControl;
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
+  entityAdditionalMultiSelect: WritableSignal<boolean> = signal(false);
 
   ngOnInit() {
     this.entityType = this.data.entityType;
@@ -261,12 +274,15 @@ export class AdminEntityFieldComponent implements OnInit {
 
   private updateDataTypeAdditional(
     dataType: string,
-    newAdditional: string = this.data.entitySchemaField.additional,
+    newAdditional: string | string[] | undefined = this.data.entitySchemaField
+      .additional,
   ) {
     this.resetAdditional();
 
     if (dataType === ConfigurableEnumDatatype.dataType) {
-      this.initAdditionalForEnum(newAdditional);
+      this.initAdditionalForEnum(
+        typeof newAdditional === "string" ? newAdditional : undefined,
+      );
     } else if (dataType === EntityDatatype.dataType) {
       this.initAdditionalForEntityRef(newAdditional);
     }
@@ -302,12 +318,25 @@ export class AdminEntityFieldComponent implements OnInit {
     }
   }
 
-  private initAdditionalForEntityRef(newAdditional?: string) {
+  private initAdditionalForEntityRef(newAdditional?: string | string[]) {
     this.typeAdditionalOptions = this.entityRegistry
       .getEntityTypes(true)
       .map((x) => ({ label: x.value.label, value: x.value.ENTITY_TYPE }));
 
     this.additionalForm.addValidators(Validators.required);
+    this.entityAdditionalMultiSelect.set(Array.isArray(newAdditional));
+
+    if (Array.isArray(newAdditional)) {
+      const validValues = newAdditional.filter((value) =>
+        this.typeAdditionalOptions.some((x) => x.value === value),
+      );
+      // Use setTimeout to ensure Angular processes the multi input change before setting the value
+      setTimeout(() => {
+        this.additionalForm.setValue(validValues);
+      });
+      return;
+    }
+
     if (this.typeAdditionalOptions.some((x) => x.value === newAdditional)) {
       this.additionalForm.setValue(newAdditional);
     }
@@ -318,6 +347,54 @@ export class AdminEntityFieldComponent implements OnInit {
     this.additionalForm.reset(null);
     this.typeAdditionalOptions = [];
     this.createNewAdditionalOption = undefined;
+    this.entityAdditionalMultiSelect.set(false);
+  }
+
+  async onEntityAdditionalSelectionModeChange(change: MatSlideToggleChange) {
+    if (
+      this.schemaFieldsForm.get("dataType")?.value !== EntityDatatype.dataType
+    ) {
+      change.source.checked = this.entityAdditionalMultiSelect();
+      return;
+    }
+
+    const isMulti = change.checked;
+
+    if (this.entityAdditionalMultiSelect() === isMulti) {
+      return;
+    }
+
+    const currentValue = this.additionalForm.value;
+
+    if (isMulti) {
+      this.entityAdditionalMultiSelect.set(true);
+      this.additionalForm.setValue(currentValue ? [currentValue] : []);
+      return;
+    }
+
+    // Switching to single-select with 0 or 1 values - no confirmation needed
+    if (!Array.isArray(currentValue) || currentValue.length <= 1) {
+      this.entityAdditionalMultiSelect.set(false);
+      this.additionalForm.setValue(
+        Array.isArray(currentValue) ? (currentValue[0] ?? null) : null,
+      );
+      return;
+    }
+
+    // Switching to single-select with multiple values - ask for confirmation
+    const confirmed = await this.confirmationDialog.getConfirmation(
+      $localize`:Entity field config switch mode title:Switch to single selection?`,
+      $localize`:Entity field config switch mode body:You selected multiple target record types. Switching to single selection will clear this selection. Continue?`,
+      YesNoButtons,
+    );
+
+    if (confirmed) {
+      this.entityAdditionalMultiSelect.set(false);
+      this.additionalForm.setValue(null);
+    } else {
+      // cancelled: reset the toggle and keep checked
+      change.source.checked = true;
+    }
   }
 
   isSearchable(): boolean {

@@ -23,6 +23,7 @@ import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { Validators } from "@angular/forms";
 import { RecurringActivity } from "../../../../child-dev-project/attendance/model/recurring-activity";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 describe("AdminEntityFieldComponent", () => {
   let component: AdminEntityFieldComponent;
@@ -30,6 +31,7 @@ describe("AdminEntityFieldComponent", () => {
   let loader: HarnessLoader;
 
   let mockEnumService: jasmine.SpyObj<ConfigurableEnumService>;
+  let confirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
 
   beforeEach(() => {
     mockEnumService = jasmine.createSpyObj([
@@ -37,6 +39,8 @@ describe("AdminEntityFieldComponent", () => {
       "listEnums",
       "preLoadEnums",
     ]);
+    confirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
+    confirmationDialog.getConfirmation.and.resolveTo(true);
     mockEnumService.listEnums.and.returnValue([]);
 
     TestBed.configureTestingModule({
@@ -56,6 +60,7 @@ describe("AdminEntityFieldComponent", () => {
         },
         { provide: MatDialogRef, useValue: { close: () => null } },
         { provide: ConfigurableEnumService, useValue: mockEnumService },
+        { provide: ConfirmationDialogService, useValue: confirmationDialog },
       ],
     });
     fixture = TestBed.createComponent(AdminEntityFieldComponent);
@@ -202,5 +207,89 @@ describe("AdminEntityFieldComponent", () => {
       { value: RecurringActivity.ENTITY_TYPE, label: RecurringActivity.label },
     ]);
     expect(component.additionalForm.value).toBe(TestEntity.ENTITY_TYPE);
+  }));
+
+  it("should support array values for entity type additional", fakeAsync(() => {
+    component.data.entityType = TestEntity;
+    component.data.entitySchemaField = {
+      label: "related records",
+      dataType: EntityDatatype.dataType,
+      additional: [TestEntity.ENTITY_TYPE, RecurringActivity.ENTITY_TYPE],
+    };
+    component.ngOnInit();
+    tick();
+
+    expect(component.entityAdditionalMultiSelect()).toBeTrue();
+    expect(component.additionalForm.value).toEqual([
+      TestEntity.ENTITY_TYPE,
+      RecurringActivity.ENTITY_TYPE,
+    ]);
+  }));
+
+  it("should convert entity additional from single to multi mode", fakeAsync(() => {
+    component.data.entityType = TestEntity;
+    component.data.entitySchemaField = {
+      label: "ref",
+      dataType: EntityDatatype.dataType,
+      additional: TestEntity.ENTITY_TYPE,
+    };
+    component.ngOnInit();
+    tick();
+
+    void component.onEntityAdditionalSelectionModeChange({
+      checked: true,
+      source: { checked: true } as any,
+    } as any);
+    tick();
+
+    expect(component.entityAdditionalMultiSelect()).toBeTrue();
+    expect(component.additionalForm.value).toEqual([TestEntity.ENTITY_TYPE]);
+  }));
+
+  it("should ask confirmation and clear value when switching to single mode with multiple selections", fakeAsync(() => {
+    component.data.entityType = TestEntity;
+    component.data.entitySchemaField = {
+      label: "related records",
+      dataType: EntityDatatype.dataType,
+      additional: [TestEntity.ENTITY_TYPE, RecurringActivity.ENTITY_TYPE],
+    };
+    component.ngOnInit();
+    tick();
+
+    void component.onEntityAdditionalSelectionModeChange({
+      checked: false,
+      source: { checked: false } as any,
+    } as any);
+    tick();
+
+    expect(confirmationDialog.getConfirmation).toHaveBeenCalled();
+    expect(component.entityAdditionalMultiSelect()).toBeFalse();
+    expect(component.additionalForm.value).toBeNull();
+  }));
+
+  it("should keep multi mode when switching to single mode is not confirmed", fakeAsync(() => {
+    confirmationDialog.getConfirmation.and.resolveTo(false);
+    component.data.entityType = TestEntity;
+    component.data.entitySchemaField = {
+      label: "related records",
+      dataType: EntityDatatype.dataType,
+      additional: [TestEntity.ENTITY_TYPE, RecurringActivity.ENTITY_TYPE],
+    };
+    component.ngOnInit();
+    tick();
+
+    const mockToggle = { checked: false };
+    void component.onEntityAdditionalSelectionModeChange({
+      checked: false,
+      source: mockToggle as any,
+    } as any);
+    tick();
+
+    expect(component.entityAdditionalMultiSelect()).toBeTrue();
+    expect(mockToggle.checked).toBeTrue();
+    expect(component.additionalForm.value).toEqual([
+      TestEntity.ENTITY_TYPE,
+      RecurringActivity.ENTITY_TYPE,
+    ]);
   }));
 });
