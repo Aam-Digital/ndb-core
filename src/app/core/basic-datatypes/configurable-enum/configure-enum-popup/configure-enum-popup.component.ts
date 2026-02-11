@@ -166,6 +166,7 @@ export class ConfigureEnumPopupComponent {
   }
 
   drop(event: CdkDragDrop<string[]>) {
+    // TODO: this should probably update the _ordinal to allow sorting by custom order in tables (https://github.com/Aam-Digital/ndb-core/issues/3655)
     moveItemInArray(
       this.localEnum.values,
       event.previousIndex,

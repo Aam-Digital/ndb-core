@@ -45,6 +45,14 @@ export class TestEntity extends Entity {
   ref: string;
 
   @DatabaseField({
+    label: "Reference (multi, mixed)",
+    dataType: EntityDatatype.dataType,
+    additional: ["Note", "Todo"],
+    isArray: true,
+  })
+  refMixed: string[];
+
+  @DatabaseField({
     label: "Category",
     dataType: ConfigurableEnumDatatype.dataType,
     additional: "genders",

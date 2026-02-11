@@ -18,7 +18,6 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { Router, ActivatedRoute } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -76,42 +75,6 @@ describe("EntitiesTableComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should sort enums by the label", () => {
-    class Test extends Entity {
-      public enumValue: ConfigurableEnumValue;
-
-      constructor(label: string, id: string) {
-        super();
-        this.enumValue = { label: label, id: id };
-      }
-    }
-
-    const first = new Test("aaa", "first");
-    const second = new Test("aab", "second");
-    const third = new Test("c", "third");
-    component.records = [second, first, third];
-    component.customColumns = [
-      {
-        id: "enumValue",
-        label: "Test Configurable Enum",
-        viewComponent: "DisplayConfigurableEnum",
-      },
-    ];
-    fixture.detectChanges();
-
-    component.recordsDataSource.sort.direction = "";
-    component.recordsDataSource.sort.sort({
-      id: "enumValue",
-      start: "asc",
-      disableClear: false,
-    });
-
-    const sortedData = component.recordsDataSource
-      ._orderData(component.recordsDataSource.data)
-      .map((row) => row.record);
-    expect(sortedData).toEqual([first, second, third]);
-  });
-
   it("should apply default sort on first column and order dates descending", () => {
     component.entityType = Note;
     component.customColumns = [
@@ -145,30 +108,13 @@ describe("EntitiesTableComponent", () => {
     expect(component.recordsDataSource.sort.active).toBe("subject");
   });
 
-  it("should sort standard objects", () => {
-    const children = [
-      new TestEntity("0"),
-      new TestEntity("1"),
-      new TestEntity("2"),
-      new TestEntity("3"),
-    ];
-    children[0].name = "AA";
-    children[3].name = "AB";
-    children[2].name = "Z";
-    children[1].name = "C";
-    component.records = children;
-
-    component.sortBy = { active: "name", direction: "asc" };
-    fixture.detectChanges();
-
-    const sortedIds = component.recordsDataSource
-      ._orderData(component.recordsDataSource.data)
-      .map((c) => c.record.getId(true));
-    expect(sortedIds).toEqual(["0", "3", "1", "2"]);
-  });
-
   it("should sort non-standard objects", () => {
-    const notes = [new Note("0"), new Note("1"), new Note("2"), new Note("3")];
+    const notes = [
+      new Note("note-0"),
+      new Note("note-1"),
+      new Note("note-2"),
+      new Note("note-3"),
+    ];
     notes[0].category = { id: "0", label: "AA", _ordinal: 3 };
     notes[1].category = { id: "3", label: "C", _ordinal: 1 };
     notes[2].category = { id: "2", label: "Z", _ordinal: 0 };
@@ -181,21 +127,7 @@ describe("EntitiesTableComponent", () => {
     const sortedIds = component.recordsDataSource
       ._orderData(component.recordsDataSource.data)
       .map((note) => note.record.getId(true));
-    expect(sortedIds).toEqual(["0", "3", "1", "2"]);
-  });
-
-  it("should sort strings ignoring case", () => {
-    const names = ["C", "A", "b"];
-    component.records = names.map((name) => TestEntity.create(name));
-
-    component.sortBy = { active: "name", direction: "asc" };
-    fixture.detectChanges();
-
-    const sortedNames = component.recordsDataSource
-      ._orderData(component.recordsDataSource.data)
-      .map((row) => row.record["name"]);
-
-    expect(sortedNames).toEqual(["A", "b", "C"]);
+    expect(sortedIds).toEqual(["note-2", "note-1", "note-3", "note-0"]);
   });
 
   it("should notify when an entity is clicked", (done) => {

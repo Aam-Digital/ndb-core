@@ -8,6 +8,7 @@ import { EntityRelationsService } from "../../../core/entity/entity-mapper/entit
 import { AdminInheritedFieldComponent } from "./admin-inherited-field.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 
 describe("AdminInheritedFieldComponent", () => {
   let component: AdminInheritedFieldComponent;
@@ -37,5 +38,16 @@ describe("AdminInheritedFieldComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should create inherit options for entity reference fields with multiple additional types", () => {
+    component.entityType = TestEntity;
+
+    component.updateAvailableOptions();
+
+    const relatedEntitiesOptions = component.availableOptions.filter(
+      (option) => option.sourceReferenceField === "refMixed",
+    );
+    expect(relatedEntitiesOptions.length).toBeGreaterThan(1);
   });
 });
