@@ -5,9 +5,12 @@ import {
   signal,
   WritableSignal,
 } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, firstValueFrom } from "rxjs";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MatDialogRef } from "@angular/material/dialog";
+import { UpdatedEntity } from "../model/entity-update";
+import { Entity } from "../model/entity";
+import { filter, take } from "rxjs/operators";
 
 /**
  * Service to communicate bulk operation status between edit service and list components
@@ -25,6 +28,7 @@ export class BulkOperationStateService implements OnDestroy {
   );
   private expectedUpdateCount = 0;
   private processedUpdateCount = 0;
+  private expectedUpdateIds: Set<string> | null = null;
 
   isBulkOperationInProgress$ = this.operationInProgress.asObservable();
   isBulkOperationInProgress(): boolean {
@@ -34,9 +38,12 @@ export class BulkOperationStateService implements OnDestroy {
   /**
    * Start a bulk operation
    */
-  startBulkOperation(expectedCount?: number) {
-    this.expectedUpdateCount = expectedCount || 0;
+  startBulkOperation(expectedCount?: number, expectedEntityIds?: string[]) {
+    this.expectedUpdateCount = expectedCount ?? expectedEntityIds?.length ?? 0;
     this.processedUpdateCount = 0;
+    this.expectedUpdateIds = expectedEntityIds
+      ? new Set(expectedEntityIds)
+      : null;
     this.operationInProgress.next(true);
     this.updateProgressDialog();
     this.progressDialogRef = this.confirmationDialog.showProgressDialog(
@@ -51,15 +58,21 @@ export class BulkOperationStateService implements OnDestroy {
    * @return boolean - whether the bulk operation is still in progress
    */
   updateBulkOperationProgress(
-    count: number,
+    updatedEntity: UpdatedEntity<Entity>,
     autoCompleteBulkOperation?: boolean,
   ): boolean {
     if (!this.operationInProgress.value) {
       return false;
     }
 
-    this.processedUpdateCount += count;
-    this.updateProgressDialog();
+    const shouldCount = this.shouldCountUpdate(updatedEntity);
+    if (shouldCount) {
+      if (this.expectedUpdateIds) {
+        this.expectedUpdateIds.delete(updatedEntity.entity.getId());
+      }
+      this.processedUpdateCount += 1;
+      this.updateProgressDialog();
+    }
 
     if (this.processedUpdateCount >= this.expectedUpdateCount) {
       if (autoCompleteBulkOperation) {
@@ -69,6 +82,15 @@ export class BulkOperationStateService implements OnDestroy {
     }
 
     return true;
+  }
+
+  private shouldCountUpdate(updatedEntity: UpdatedEntity<Entity>): boolean {
+    if (!this.expectedUpdateIds) {
+      return true;
+    }
+
+    const id = updatedEntity?.entity?.getId?.();
+    return !!id && this.expectedUpdateIds.has(id);
   }
 
   /**
@@ -104,9 +126,32 @@ export class BulkOperationStateService implements OnDestroy {
     this.operationInProgress.next(false);
     this.processedUpdateCount = 0;
     this.expectedUpdateCount = 0;
+    this.expectedUpdateIds = null;
     if (this.progressDialogRef) {
-      this.progressDialogRef.close();
-      this.progressDialogRef = null;
+      const dialogRef = this.progressDialogRef;
+      dialogRef
+        .afterClosed()
+        .pipe(take(1))
+        .subscribe(() => {
+          if (this.progressDialogRef === dialogRef) {
+            this.progressDialogRef = null;
+          }
+        });
+      dialogRef.close();
+    }
+  }
+
+  async waitForBulkOperationToFinish(): Promise<void> {
+    if (this.operationInProgress.value) {
+      await firstValueFrom(
+        this.operationInProgress.pipe(
+          filter((inProgress) => !inProgress),
+          take(1),
+        ),
+      );
+    }
+    if (this.progressDialogRef) {
+      await firstValueFrom(this.progressDialogRef.afterClosed().pipe(take(1)));
     }
   }
 
