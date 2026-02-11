@@ -3895,7 +3895,7 @@
       </trans-unit>
       <trans-unit id="6375746665146474586" datatype="html">
         <source> imported by <x id="START_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="&lt;app-entity-block           [entityId]=&quot;item.user&quot;           [linkDisabled]=&quot;true&quot;         &gt;"/><x id="CLOSE_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="at"/> at <x id="INTERPOLATION" equiv-text="{{ item.date | customDate: &quot;shortDate&quot; }}"/> </source>
-        <target> importé par <x id="START_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="&lt;app-entity-block         [entityId]=&quot;item.user&quot;         entityType=&quot;User&quot;         [linkDisabled]=&quot;true&quot;       &gt;"/><x id="CLOSE_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="at {{"/> à <x id="INTERPOLATION" equiv-text="{{ item.date | date: &quot;medium&quot; }}"/> </target>
+        <target> importé par <x id="START_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="&lt;app-entity-block           [entityId]=&quot;item.user&quot;           [linkDisabled]=&quot;true&quot;         &gt;"/><x id="CLOSE_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="at"/> à <x id="INTERPOLATION" equiv-text="{{ item.date | customDate: &quot;shortDate&quot; }}"/> </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-history/import-history.component.html</context>
           <context context-type="linenumber">20,27</context>
@@ -5951,7 +5951,7 @@
       </trans-unit>
       <trans-unit id="7336132279158298652" datatype="html">
         <source> by <x id="INTERPOLATION" equiv-text="{{ completedBy?.toString() }}"/> on <x id="INTERPOLATION_1" equiv-text="{{ value.completedAt | customDate: &quot;shortDate&quot; }}"/> </source>
-        <target> par <x id="INTERPOLATION" equiv-text="{{ completedBy?.toString() }}"/> le <x id="INTERPOLATION_1" equiv-text="{{ value.completedAt | date }}"/> </target>
+        <target> par <x id="INTERPOLATION" equiv-text="{{ completedBy?.toString() }}"/> le <x id="INTERPOLATION_1" equiv-text="{{ value.completedAt | customDate: &quot;shortDate&quot; }}"/> </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-completion/display-todo-completion/display-todo-completion.component.html</context>
           <context context-type="linenumber">7,10</context>
@@ -11656,7 +11656,7 @@ Sélectionnez d&apos;abord un type d&apos;importation ci-dessus pour activer cet
       </trans-unit>
       <trans-unit id="8700121026680200191" datatype="html">
         <source>Clear</source>
-        <target>Clair</target>
+        <target>Effacer</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
           <context context-type="linenumber">73</context>
@@ -11755,7 +11755,7 @@ Sélectionnez d&apos;abord un type d&apos;importation ci-dessus pour activer cet
       </trans-unit>
       <trans-unit id="3037688516554204485" datatype="html">
         <source>Multiple Forms</source>
-        <target>Formes multiples</target>
+        <target>Formulaires multiples</target>
         <note priority="1" from="description">PublicFormConfig</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
