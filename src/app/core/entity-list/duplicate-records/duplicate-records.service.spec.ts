@@ -10,6 +10,7 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
 import { StringDatatype } from "../../basic-datatypes/string/string.datatype";
 import { BooleanDatatype } from "../../basic-datatypes/boolean/boolean.datatype";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { BulkOperationStateService } from "../../entity/entity-actions/bulk-operation-state.service";
 
 describe("DuplicateRecordsService", () => {
   let service: DuplicateRecordService;
@@ -34,6 +35,13 @@ describe("DuplicateRecordsService", () => {
           provide: EntityMapperService,
           useValue: jasmine.createSpyObj(["saveAll"]),
         },
+        {
+          provide: BulkOperationStateService,
+          useValue: jasmine.createSpyObj([
+            "startBulkOperation",
+            "waitForBulkOperationToFinish",
+          ]),
+        },
         EntitySchemaService,
         { provide: DefaultDatatype, useClass: DefaultDatatype, multi: true },
         { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
@@ -42,6 +50,10 @@ describe("DuplicateRecordsService", () => {
     });
     service = TestBed.inject(DuplicateRecordService);
     entityMapperService = TestBed.inject(EntityMapperService);
+    const bulkOperationState = TestBed.inject(
+      BulkOperationStateService,
+    ) as jasmine.SpyObj<BulkOperationStateService>;
+    bulkOperationState.waitForBulkOperationToFinish.and.resolveTo();
   });
 
   it("should be created", () => {
