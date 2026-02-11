@@ -374,7 +374,9 @@ export class AdminEntityFieldComponent implements OnInit {
     // Switching to single-select with 0 or 1 values - no confirmation needed
     if (!Array.isArray(currentValue) || currentValue.length <= 1) {
       this.entityAdditionalMultiSelect.set(false);
-      this.additionalForm.setValue(currentValue?.[0] ?? null);
+      this.additionalForm.setValue(
+        Array.isArray(currentValue) ? (currentValue[0] ?? null) : null,
+      );
       return;
     }
 
@@ -389,6 +391,7 @@ export class AdminEntityFieldComponent implements OnInit {
       this.entityAdditionalMultiSelect.set(false);
       this.additionalForm.setValue(null);
     } else {
+      // cancelled: reset the toggle and keep checked
       change.source.checked = true;
     }
   }
