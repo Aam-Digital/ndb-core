@@ -18,6 +18,10 @@ describe("TableSort", () => {
     testSort(["PN1", "PN2", "PN12"]);
   });
 
+  it("should sort strings ignoring case", () => {
+    testSort(["A", "b", "C"]);
+  });
+
   it("should sort dates correctly", () => {
     testSort([
       moment().subtract(1, "week").toDate(),
