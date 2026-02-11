@@ -8,6 +8,7 @@ import { DateWithAge } from "../../core/basic-datatypes/date-with-age/dateWithAg
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { EntityBlockConfig } from "../../core/basic-datatypes/entity/entity-block/entity-block-config";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { Note } from "#src/app/child-dev-project/notes/model/note";
 
 /**
  * Basic Entity type for unit tests, so that we don't have to create custom entity classes for every test.
@@ -43,6 +44,14 @@ export class TestEntity extends Entity {
     additional: TestEntity.ENTITY_TYPE,
   })
   ref: string;
+
+  @DatabaseField({
+    label: "Reference (multi, mixed)",
+    dataType: EntityDatatype.dataType,
+    additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
+    isArray: true,
+  })
+  refMixed: string[];
 
   @DatabaseField({
     label: "Category",

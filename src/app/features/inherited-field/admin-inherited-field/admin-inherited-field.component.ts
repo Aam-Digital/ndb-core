@@ -24,6 +24,7 @@ import {
   AutomatedFieldMappingDialogData,
 } from "#src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component";
 import { DefaultValueConfigInheritedField } from "../inherited-field-config";
+import { asArray } from "#src/app/utils/asArray";
 
 interface InheritanceOption {
   type: "inherit" | "automated";
@@ -94,11 +95,9 @@ export class AdminInheritedFieldComponent
       const fieldConfig = this.entityType.schema.get(attr);
 
       if (fieldConfig?.additional) {
-        const referencedTypeIds = Array.isArray(fieldConfig.additional)
-          ? [...new Set(fieldConfig.additional)]
-          : [fieldConfig.additional];
+        const referencedTypeIds = asArray(fieldConfig.additional);
 
-        referencedTypeIds.forEach((typeId) => {
+        for (const typeId of referencedTypeIds) {
           const referencedEntityType = this.entityRegistry.get(typeId);
           if (!referencedEntityType) {
             return;
@@ -120,7 +119,7 @@ export class AdminInheritedFieldComponent
           };
 
           this.availableOptions.push(option);
-        });
+        }
       }
     });
 
