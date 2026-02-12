@@ -9,6 +9,7 @@ import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
+  FormsModule,
 } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -23,7 +24,6 @@ import { ConfigurableEnumService } from "../../configurable-enum/configurable-en
 import { DynamicEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/dynamic-edit.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { FormsModule } from "@angular/forms";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 
 /**
