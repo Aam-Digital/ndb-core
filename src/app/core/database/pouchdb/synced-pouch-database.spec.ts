@@ -174,23 +174,21 @@ describe("SyncedPouchDatabase", () => {
     expect(changesSpy).toHaveBeenCalledWith(mockChange);
   }));
 
-  describe("resetSync", () => {
-    it("should trigger one full sync run without checkpoints", async () => {
-      const syncSpy = spyOn(service, "sync").and.resolveTo({} as any);
+  it("should trigger one full sync run without checkpoints", async () => {
+    const syncSpy = spyOn(service, "sync").and.resolveTo({} as any);
+    spyOnProperty(service, "isInRemoteOnlyMode", "get").and.returnValue(false);
 
-      await service.resetSync();
+    await service.resetSync();
 
-      expect(syncSpy).toHaveBeenCalledWith({ checkpoint: false });
-    });
+    expect(syncSpy).toHaveBeenCalledWith({ checkpoint: false });
+  });
 
-    it("should skip immediate sync if sync is already running", async () => {
-      const syncSpy = spyOn(service, "sync").and.resolveTo({} as any);
-      const syncState = service["syncState"] as SyncStateSubject;
-      syncState.next(SyncState.STARTED);
+  it("should skip resetSync if only remote", async () => {
+    const syncSpy = spyOn(service, "sync").and.resolveTo({} as any);
+    spyOnProperty(service, "isInRemoteOnlyMode", "get").and.returnValue(true);
 
-      await service.resetSync();
+    await service.resetSync();
 
-      expect(syncSpy).not.toHaveBeenCalled();
-    });
+    expect(syncSpy).not.toHaveBeenCalled();
   });
 });

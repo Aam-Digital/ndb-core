@@ -57,7 +57,7 @@ export class DatabaseResolverService {
   }
 
   /**
-   * Clear sync checkpoint documents in all synced databas^es,
+   * Clear sync checkpoint documents in all synced databases,
    * forcing a full re-check on the next sync without deleting any data.
    */
   async resetSync() {

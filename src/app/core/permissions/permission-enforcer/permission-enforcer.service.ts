@@ -91,8 +91,8 @@ export class PermissionEnforcerService {
     return (
       [...subjects]
         .map((subj) => this.entities.get(subj))
-        // TODO: there is some problem doing this for NotificationEvents:
-        .filter((subj) => subj.DATABASE === Entity.DATABASE)
+        // TODO: there is some problem doing this for NotificationEvents (but those are not relevant for permissions anyway)
+        .filter((subj) => !!subj && subj.DATABASE === Entity.DATABASE)
     );
   }
 

@@ -26,7 +26,7 @@ describe("PermissionEnforcerService", () => {
   let entityMapper: EntityMapperService;
   let mockLocation: jasmine.SpyObj<Location>;
   let destroySpy: jasmine.Spy;
-  let clearCheckpointsSpy: jasmine.Spy;
+  let resetSyncSpy: jasmine.Spy;
 
   beforeEach(waitForAsync(() => {
     entityUpdates = new Subject();
@@ -46,7 +46,7 @@ describe("PermissionEnforcerService", () => {
     dbResolver.destroyDatabases = () => null;
     destroySpy = spyOn(dbResolver, "destroyDatabases");
     dbResolver.resetSync = () => Promise.resolve();
-    clearCheckpointsSpy = spyOn(dbResolver, "resetSync").and.resolveTo();
+    resetSyncSpy = spyOn(dbResolver, "resetSync").and.resolveTo();
 
     TestBed.inject(AbilityService).initializeRules();
   }));
@@ -134,7 +134,7 @@ describe("PermissionEnforcerService", () => {
   it("should not reset if roles didnt change since last check", fakeAsync(() => {
     updateRulesAndTriggerEnforcer(userRules);
     tick();
-    clearCheckpointsSpy.calls.reset();
+    resetSyncSpy.calls.reset();
 
     entityMapper.save(new TestEntity());
     tick();
@@ -144,7 +144,7 @@ describe("PermissionEnforcerService", () => {
 
     expect(destroySpy).not.toHaveBeenCalled();
     expect(mockLocation.reload).not.toHaveBeenCalled();
-    expect(clearCheckpointsSpy).not.toHaveBeenCalled();
+    expect(resetSyncSpy).not.toHaveBeenCalled();
   }));
 
   it("should reset if roles changed since last check and entities without permissions exist", fakeAsync(() => {
@@ -219,14 +219,14 @@ describe("PermissionEnforcerService", () => {
     expect(JSON.parse(storedRules)).toEqual(rules);
   }));
 
-  it("should clear sync checkpoints if rules changed but no entities lack permissions", fakeAsync(() => {
+  it("should call resetSync if rules changed but no entities lack permissions", fakeAsync(() => {
     // No entities saved, so no permissions violations
     updateRulesAndTriggerEnforcer([{ subject: "all", action: "manage" }]);
     tick();
 
     expect(destroySpy).not.toHaveBeenCalled();
     expect(mockLocation.reload).not.toHaveBeenCalled();
-    expect(clearCheckpointsSpy).toHaveBeenCalled();
+    expect(resetSyncSpy).toHaveBeenCalled();
   }));
 
   function updateRulesAndTriggerEnforcer(rules: DatabaseRule[]) {

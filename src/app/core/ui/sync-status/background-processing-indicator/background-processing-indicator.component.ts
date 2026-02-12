@@ -44,7 +44,7 @@ export class BackgroundProcessingIndicatorComponent implements OnInit {
   @Input() summarize: boolean = true;
   wasClosed: boolean = false;
 
-  private dbResolver = inject(DatabaseResolverService);
+  private readonly dbResolver = inject(DatabaseResolverService);
 
   /** handle to programmatically open/close the details dropdown */
   @ViewChild(MatMenuTrigger) taskListDropdownTrigger: MatMenuTrigger;
