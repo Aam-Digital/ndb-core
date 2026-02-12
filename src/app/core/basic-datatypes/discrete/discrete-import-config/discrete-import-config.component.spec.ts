@@ -102,6 +102,7 @@ describe("DiscreteImportConfigComponent", () => {
     component.save();
 
     expect(closeSpy).toHaveBeenCalled();
+    // For single-select fields, enableSplitting is not saved
     expect(data.col.additional).toEqual({
       male: "M",
       female: "F",
