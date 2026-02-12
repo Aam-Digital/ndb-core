@@ -24,7 +24,8 @@
   "rangeStrategy": "bump",
   "ignoreDeps": [
     "zone.js",
-    "moment"
+    "moment",
+    "@playwright/test"
   ],
   "constraints": {
     "npm": ">=11.0.0"
