@@ -42,21 +42,26 @@
       </div>
     }
 
-    <mat-divider></mat-divider>
-
-    <button mat-menu-item (click)="resetSync()" i18n="Trigger re-sync">
-      <fa-icon icon="rotate"></fa-icon>
-      Re-sync
-    </button>
-
-    @if ((allTasksFinished | async) === false) {
+    <div class="full-width flex-row align-center gap-small">
       <button
-        mat-menu-item
+        mat-stroked-button
         (click)="taskListDropdownTrigger.closeMenu()"
         i18n="Hide sync details"
+        class="flex-grow"
+        matTooltip="System will continue to sync data regularly"
+        i18n-matTooltip
       >
         Continue in background
       </button>
-    }
+
+      <button
+        mat-icon-button
+        (click)="resetSync()"
+        matTooltip="Manually trigger re-sync"
+        i18n-matTooltip
+      >
+        <fa-icon icon="rotate"></fa-icon>
+      </button>
+    </div>
   </div>
 </mat-menu>
