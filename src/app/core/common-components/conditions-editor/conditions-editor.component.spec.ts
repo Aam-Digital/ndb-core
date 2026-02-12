@@ -16,6 +16,11 @@ class ConditionsEditorTestEntity extends Entity {
     isArray: true,
   })
   gender: string[];
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "genders",
+  })
+  genderSingle: string;
 }
 
 describe("ConditionsEditorComponent", () => {
@@ -44,6 +49,12 @@ describe("ConditionsEditorComponent", () => {
     component = fixture.componentInstance;
     component.entityConstructor = ConditionsEditorTestEntity;
     component.conditions = { $or: [] };
+    mockEntitySchemaService.getComponent.and.callFake(
+      (fieldConfig: { dataType?: string }) =>
+        fieldConfig?.dataType === "configurable-enum"
+          ? "EditConfigurableEnum"
+          : "test-component",
+    );
     fixture.detectChanges();
   });
 
@@ -81,7 +92,6 @@ describe("ConditionsEditorComponent", () => {
   it("should handle condition field change", () => {
     component.addCondition();
     const fieldConfig = component.entityConstructor.schema.get("name");
-    mockEntitySchemaService.getComponent.and.returnValue("test-component");
 
     component.onConditionFieldChange(0, "name");
 
@@ -103,7 +113,6 @@ describe("ConditionsEditorComponent", () => {
   });
 
   it("should rebuild form configs on init with existing conditions", () => {
-    mockEntitySchemaService.getComponent.and.returnValue("test-component");
     mockEntitySchemaService.valueToEntityFormat.and.returnValue("Test Value");
 
     component.conditions = { $or: [{ name: "Test" }] };
@@ -115,7 +124,6 @@ describe("ConditionsEditorComponent", () => {
 
   it("should wrap array field values in $elemMatch", () => {
     component.addCondition();
-    mockEntitySchemaService.getComponent.and.returnValue("test-component");
     mockEntitySchemaService.valueToEntityFormat.and.returnValue(null);
     mockEntitySchemaService.valueToDatabaseFormat.and.returnValue(["X"]);
 
@@ -130,7 +138,6 @@ describe("ConditionsEditorComponent", () => {
   });
 
   it("should extract value from $elemMatch when loading array field conditions", () => {
-    mockEntitySchemaService.getComponent.and.returnValue("test-component");
     mockEntitySchemaService.valueToEntityFormat.and.callFake(
       (val) => val || [],
     );
@@ -148,7 +155,6 @@ describe("ConditionsEditorComponent", () => {
 
   it("should handle non-array fields normally", () => {
     component.addCondition();
-    mockEntitySchemaService.getComponent.and.returnValue("test-component");
     mockEntitySchemaService.valueToEntityFormat.and.returnValue(null);
     mockEntitySchemaService.valueToDatabaseFormat.and.returnValue("John");
 
@@ -158,5 +164,39 @@ describe("ConditionsEditorComponent", () => {
     formControl.setValue("John");
 
     expect(component.conditionsArray()[0]).toEqual({ name: "John" });
+  });
+
+  it("should wrap non-array enum field multi-selection in $in", () => {
+    component.addCondition();
+    mockEntitySchemaService.valueToEntityFormat.and.returnValue(null);
+    mockEntitySchemaService.valueToDatabaseFormat.and.returnValue(["X", "Y"]);
+
+    component.onConditionFieldChange(0, "genderSingle");
+
+    const formControl = component.conditionFormControls.get("0");
+    formControl.setValue(["X", "Y"]);
+
+    expect(component.conditionsArray()[0]).toEqual({
+      genderSingle: { $in: ["X", "Y"] },
+    });
+  });
+
+  it("should extract value from $in when loading non-array enum field conditions", () => {
+    mockEntitySchemaService.valueToEntityFormat.and.callFake(
+      (val) => val || [],
+    );
+
+    component.conditions = {
+      $or: [{ genderSingle: { $in: ["X"] } }],
+    };
+    component.ngOnInit();
+
+    expect(mockEntitySchemaService.valueToEntityFormat).toHaveBeenCalledWith(
+      ["X"],
+      jasmine.objectContaining({
+        isArray: true,
+        dataType: "configurable-enum",
+      }),
+    );
   });
 });
