@@ -10,6 +10,7 @@ import { ConfigService } from "../../config/config.service";
 import { firstValueFrom } from "rxjs";
 import { SessionSubject } from "../../session/auth/session-info";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * This service checks whether the relevant rules for the current user changed.
@@ -36,12 +37,20 @@ export class PermissionEnforcerService {
   async enforcePermissionsOnLocalData(
     userRules: DatabaseRule[],
   ): Promise<void> {
+    Logging.debug(
+      "Checking for updated permissions [PermissionEnforcerService]",
+    );
+
     const userRulesString = JSON.stringify(userRules);
     if (!this.sessionInfo.value || !this.userRulesChanged(userRulesString)) {
       return;
     }
+
+    Logging.debug("Detected changed permissions for user. Resetting sync ...");
+
     const subjects = this.getSubjectsWithReadRestrictions(userRules);
     if (await this.dbHasEntitiesWithoutPermissions(subjects)) {
+      Logging.debug("destroying local db due to lost permissions");
       this.analyticsService.eventTrack(
         "destroying local db due to lost permissions",
         { category: "Migration" },
@@ -54,6 +63,8 @@ export class PermissionEnforcerService {
       // Clear sync checkpoints to force a full re-check on the next sync.
       await this.dbResolver.resetSync();
     }
+
+    // update stored rules to check for future changes
     window.localStorage.setItem(this.getUserStorageKey(), userRulesString);
   }
 
