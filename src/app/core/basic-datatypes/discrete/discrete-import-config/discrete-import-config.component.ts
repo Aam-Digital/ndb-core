@@ -69,7 +69,7 @@ export class DiscreteImportConfigComponent implements OnInit {
     // For array fields: default to splitting (but can be disabled)
     // For single-select: never split
     if (this.schema?.isArray) {
-      this.enableSplitting = this.data.col.additional?.enableSplitting ?? true;
+      this.enableSplitting = this.data.col.enableSplitting ?? true;
     } else {
       this.enableSplitting = false;
     }
@@ -78,10 +78,30 @@ export class DiscreteImportConfigComponent implements OnInit {
   }
 
   /**
-   * Rebuild form when user toggles splitting option
+   * Rebuild form when user toggles splitting option.
+   * Attempts to preserve existing mappings where possible.
    */
   onSplittingToggle() {
+    // Save current mappings before rebuilding
+    const currentMappings = this.getValuesInDatabaseFormat(
+      this.form.getRawValue(),
+    );
+
     this.buildForm();
+
+    // Try to restore mappings that still match
+    const newFormValue = {};
+    for (const key in this.form.controls) {
+      if (currentMappings[key] !== undefined) {
+        newFormValue[key] = this.schemaService.valueToEntityFormat(
+          currentMappings[key],
+          this.schema,
+        );
+      }
+    }
+    if (Object.keys(newFormValue).length > 0) {
+      this.form.patchValue(newFormValue);
+    }
   }
 
   /**
@@ -156,11 +176,14 @@ export class DiscreteImportConfigComponent implements OnInit {
         $localize`Some values don't have a mapping and will not be imported. Are you sure you want to keep it like this?`,
       ));
     if (confirmed) {
-      // Save mappings and splitting setting (only for array fields)
-      this.data.col.additional = { ...rawValues };
+      // Save value mappings in 'additional'
+      this.data.col.additional = rawValues;
+
+      // Save splitting setting separately (only for array fields)
       if (this.schema?.isArray) {
-        this.data.col.additional.enableSplitting = this.enableSplitting;
+        this.data.col.enableSplitting = this.enableSplitting;
       }
+
       this.dialog.close();
     }
   }
