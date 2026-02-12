@@ -15,7 +15,7 @@ class ConditionsEditorTestEntity extends Entity {
     additional: "genders",
     isArray: true,
   })
-  gender: string[];
+  genderMulti: string[];
   @DatabaseField({
     dataType: "configurable-enum",
     additional: "genders",
@@ -127,13 +127,13 @@ describe("ConditionsEditorComponent", () => {
     mockEntitySchemaService.valueToEntityFormat.and.returnValue(null);
     mockEntitySchemaService.valueToDatabaseFormat.and.returnValue(["X"]);
 
-    component.onConditionFieldChange(0, "gender");
+    component.onConditionFieldChange(0, "genderMulti");
 
     const formControl = component.conditionFormControls.get("0");
     formControl.setValue(["X"]);
 
     expect(component.conditionsArray()[0]).toEqual({
-      gender: { $elemMatch: { $in: ["X"] } },
+      genderMulti: { $elemMatch: { $in: ["X"] } },
     });
   });
 
@@ -143,7 +143,7 @@ describe("ConditionsEditorComponent", () => {
     );
 
     component.conditions = {
-      $or: [{ gender: { $elemMatch: { $in: ["X"] } } }],
+      $or: [{ genderMulti: { $elemMatch: { $in: ["X"] } } }],
     };
     component.ngOnInit();
 

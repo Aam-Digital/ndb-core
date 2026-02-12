@@ -141,13 +141,13 @@ export class ConditionsEditorComponent implements OnInit {
       fieldConfig,
       "edit",
     );
-    const isDropdownMultiSelect = this.shouldUseMultiSelectCondition(
+    const allowMultiValueCondition = this.shouldUseMultiSelectCondition(
       fieldConfig,
       editComponent,
     );
     const conditionFieldConfig = {
       ...fieldConfig,
-      isArray: isDropdownMultiSelect,
+      isArray: allowMultiValueCondition,
     };
 
     const conditions = this.conditionsArray();
@@ -177,7 +177,7 @@ export class ConditionsEditorComponent implements OnInit {
       dataType: fieldConfig.dataType,
       additional: fieldConfig.additional,
       label: fieldConfig.label || fieldKey,
-      isArray: isDropdownMultiSelect,
+      isArray: allowMultiValueCondition,
     } as FormFieldConfig);
   }
 
@@ -233,6 +233,10 @@ export class ConditionsEditorComponent implements OnInit {
     this.conditionsChange.emit(this.conditions);
   }
 
+  /**
+   * For certain data types, we allow users to select more than one value.
+   * The condition then accepts any of the selected values.
+   */
   private shouldUseMultiSelectCondition(
     fieldConfig: EntitySchemaField,
     editComponent: string,
