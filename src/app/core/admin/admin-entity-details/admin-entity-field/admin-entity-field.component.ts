@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   inject,
   OnInit,
   signal,
@@ -125,6 +126,27 @@ export class AdminEntityFieldComponent implements OnInit {
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
   entityAdditionalMultiSelect: WritableSignal<boolean> = signal(false);
+  private readonly searchableDataTypes = new Set([
+    "string",
+    "long-text",
+    "email",
+    "url",
+    "number",
+  ]);
+  private selectedDataType = signal<string>("");
+  private searchableChecked = signal<boolean>(false);
+  private currentFieldId = signal<string>("");
+  readonly isSearchableDataType = computed(() =>
+    this.searchableDataTypes.has(this.selectedDataType()),
+  );
+  readonly isImplicitlySearchable = computed(() => {
+    const fieldId = this.currentFieldId();
+    const toStringAttributes = this.entityType?.toStringAttributes ?? [];
+    return !!fieldId && toStringAttributes.includes(fieldId);
+  });
+  readonly showImplicitSearchableNote = computed(
+    () => this.isImplicitlySearchable() && !this.searchableChecked(),
+  );
 
   ngOnInit() {
     this.entityType = this.data.entityType;
@@ -206,9 +228,23 @@ export class AdminEntityFieldComponent implements OnInit {
         this.schemaFieldsForm.get("labelShort").setValue(null);
       });
     this.updateDataTypeAdditional(this.schemaFieldsForm.get("dataType").value);
+    this.selectedDataType.set(
+      this.schemaFieldsForm.get("dataType").value?.toString() ?? "",
+    );
+    this.searchableChecked.set(!!this.schemaFieldsForm.get("searchable").value);
+    this.currentFieldId.set(this.fieldIdForm.getRawValue() ?? "");
+    this.applySearchableAvailability();
+    this.schemaFieldsForm.get("dataType").valueChanges.subscribe((v) => {
+      this.updateDataTypeAdditional(v);
+      this.selectedDataType.set(v?.toString() ?? "");
+      this.applySearchableAvailability();
+    });
     this.schemaFieldsForm
-      .get("dataType")
-      .valueChanges.subscribe((v) => this.updateDataTypeAdditional(v));
+      .get("searchable")
+      .valueChanges.subscribe((v) => this.searchableChecked.set(!!v));
+    this.fieldIdForm.valueChanges.subscribe((id) =>
+      this.currentFieldId.set(id ?? ""),
+    );
     this.updateForNewOrExistingField();
   }
 
@@ -397,10 +433,22 @@ export class AdminEntityFieldComponent implements OnInit {
     }
   }
 
-  isSearchable(): boolean {
-    const fieldId = this.fieldIdForm?.getRawValue();
-    const toStringAttributes = this.entityType?.toStringAttributes ?? [];
-    return !!fieldId && toStringAttributes.includes(fieldId);
+  private applySearchableAvailability() {
+    const searchableControl = this.schemaFieldsForm.get("searchable");
+    if (!searchableControl) {
+      return;
+    }
+
+    if (!this.isSearchableDataType()) {
+      searchableControl.setValue(false);
+      searchableControl.disable({ emitEvent: false });
+      this.searchableChecked.set(false);
+      return;
+    }
+
+    if (searchableControl.disabled) {
+      searchableControl.enable({ emitEvent: false });
+    }
   }
 
   async save() {

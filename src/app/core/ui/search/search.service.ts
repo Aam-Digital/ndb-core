@@ -62,13 +62,12 @@ export class SearchService {
 
   private getSearchIndexDesignDoc() {
     let searchIndex = `(doc) => {\n`;
-    searchIndex += `const normalizeUrl = (value) => value.toString().toLowerCase().replace(/^https?:\\/\\//, "")\n`;
+    searchIndex += `const splitTokens = (value) => value.toLowerCase().split(/[\\s/.:,]+/).filter((val) => !!val)\n`;
     this.searchableEntities.forEach(([type, attributes]) => {
       searchIndex += `if (doc._id.startsWith("${type}:")) {\n`;
       attributes.forEach((attr) => {
         searchIndex += `if (doc["${attr}"] !== undefined && doc["${attr}"] !== null) {\n`;
-        searchIndex += `doc["${attr}"].toString().toLowerCase().split(" ").forEach((val) => emit(val))\n`;
-        searchIndex += `normalizeUrl(doc["${attr}"]).split(" ").forEach((val) => emit(val))\n`;
+        searchIndex += `splitTokens(doc["${attr}"].toString()).forEach((val) => emit(val))\n`;
         searchIndex += `}\n`;
       });
       searchIndex += `return\n`;
@@ -84,20 +83,15 @@ export class SearchService {
    * @param searchTerm for which entities should be returned
    */
   async getSearchResults(searchTerm: string): Promise<Entity[]> {
-    const searchTerms = searchTerm
-      .toLowerCase()
-      .trim()
-      .split(" ")
-      .filter(Boolean);
+    const searchTerms = this.tokenizeSearchTerm(searchTerm);
     if (searchTerms.length === 0) {
       return [];
     }
-    const primarySearchTerm = this.normalizeUrlPrefix(searchTerms[0]);
     const res = await this.indexingService.queryIndexRaw(
       "search_index/by_name",
       {
-        startkey: primarySearchTerm,
-        endkey: primarySearchTerm + "\ufff0",
+        startkey: searchTerms[0],
+        endkey: searchTerms[0] + "\ufff0",
         include_docs: true,
       },
     );
@@ -116,18 +110,36 @@ export class SearchService {
     const entityType = Entity.extractTypeFromId(doc._id);
     const values = this.searchableEntities
       .find(([type]) => type === entityType)[1]
-      .map((attr) =>
-        this.normalizeUrlPrefix(doc[attr]?.toString().toLowerCase() ?? ""),
-      )
+      .flatMap((attr) => this.tokenizeSearchTerm(doc[attr]))
       .join(" ")
       .toLowerCase();
-    return searchTerms.every((s) =>
-      values.includes(this.normalizeUrlPrefix(s)),
-    );
+    return searchTerms.every((s) => values.includes(s));
   }
 
-  private normalizeUrlPrefix(value: string): string {
-    return value.replace(/^https?:\/\//, "");
+  /**
+   * Converts a search value into lowercase tokens used for indexing and matching.
+   * Supports primitive values and arrays; splits tokens by whitespace, "/", ":", ".", and ",".
+   */
+  private tokenizeSearchTerm(value: unknown): string[] {
+    if (value === null || value === undefined) {
+      return [];
+    }
+    if (Array.isArray(value)) {
+      return value.flatMap((entry) => this.tokenizeSearchTerm(entry));
+    }
+    if (
+      typeof value !== "string" &&
+      typeof value !== "number" &&
+      typeof value !== "boolean" &&
+      typeof value !== "bigint"
+    ) {
+      return [];
+    }
+    return value
+      .toString()
+      .toLowerCase()
+      .split(/[\s/.:,]+/)
+      .filter((token) => token.length > 0);
   }
 
   private transformDocToEntity(doc): Entity {

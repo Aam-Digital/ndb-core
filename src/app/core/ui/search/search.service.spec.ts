@@ -92,6 +92,7 @@ describe("SearchService", () => {
 
     await runSearchTest("https://www.bhila.com", [child], [child]);
     await runSearchTest("www.bhila.com", [child]);
+    await runSearchTest("bhila", [child]);
 
     delete TestEntity.schema.get("other").searchable;
   });
