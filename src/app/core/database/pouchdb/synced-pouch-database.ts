@@ -130,7 +130,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
   /**
    * Execute a (one-time) sync between the local and server database.
    */
-  sync(): Promise<SyncResult> {
+  sync(options: PouchDB.Replication.SyncOptions = {}): Promise<SyncResult> {
     if (!this.navigator.onLine) {
       Logging.debug("Not syncing because offline");
       this.syncState.next(SyncState.UNSYNCED);
@@ -142,6 +142,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     return this.getPouchDB()
       .sync(this.remoteDatabase.getPouchDB(), {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
+        ...options,
       })
       .then((res) => {
         if (res) res["dbName"] = this.dbName; // add for debugging information
@@ -167,31 +168,19 @@ export class SyncedPouchDatabase extends PouchDatabase {
   }
 
   /**
-   * Clear local PouchDB sync checkpoint documents to force a full re-check on the next sync.
-   * This does not delete any synced data, it only removes the `_local/` checkpoint docs
-   * that PouchDB uses to track the last-synced sequence number.
+   * Force a full re-check against the remote DB without deleting local data.
+   * Uses `checkpoint: false` once so PouchDB ignores previous checkpoints for this run.
    */
   async resetSync(): Promise<void> {
-    const db = this.getPouchDB();
-    if (!db) {
+    if (this.syncState.value === SyncState.STARTED) {
+      Logging.debug(
+        `skipping immediate re-sync for "${this.dbName}" because sync is already running`,
+      );
       return;
     }
 
-    const result = await db.allDocs({
-      startkey: "_local/",
-      endkey: "_local/\ufff0",
-      include_docs: true,
-    });
-
-    for (const row of result.rows) {
-      if (row.doc) {
-        await db.remove(row.doc);
-      }
-    }
-
-    Logging.debug(
-      `Cleared ${result.rows.length} sync checkpoint(s) for database "${this.dbName}"`,
-    );
+    Logging.debug(`triggering full re-sync for "${this.dbName}"`);
+    await this.sync({ checkpoint: false });
   }
 
   /**
