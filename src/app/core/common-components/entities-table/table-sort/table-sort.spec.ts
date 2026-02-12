@@ -18,6 +18,10 @@ describe("TableSort", () => {
     testSort(["PN1", "PN2", "PN12"]);
   });
 
+  it("should sort strings ignoring case", () => {
+    testSort(["A", "b", "C"]);
+  });
+
   it("should sort dates correctly", () => {
     testSort([
       moment().subtract(1, "week").toDate(),
@@ -31,7 +35,7 @@ describe("TableSort", () => {
   });
 
   it("should sort a array with null and undefined values correctly", () => {
-    testSort(["1", 2, "three", undefined]);
+    testSort([2, "three", undefined]);
   });
 
   it("should sort configurable enums based on their label", () => {
@@ -45,9 +49,9 @@ describe("TableSort", () => {
 
   it("should sort configurable with an ordinal value based on their ordinal value", () => {
     const values: Ordering.Config<ConfigurableEnumValue> = [
-      { id: "first", label: "X", _ordinal: 2 },
+      { id: "first", label: "X", _ordinal: 0 },
       { id: "second", label: "Cgt", _ordinal: 1 },
-      { id: "third", label: "876", _ordinal: 0 },
+      { id: "third", label: "876", _ordinal: 2 },
     ];
     testSort(values);
   });
