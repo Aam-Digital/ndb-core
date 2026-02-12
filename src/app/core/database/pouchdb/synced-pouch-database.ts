@@ -172,10 +172,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * Uses `checkpoint: false` once so PouchDB ignores previous checkpoints for this run.
    */
   async resetSync(): Promise<void> {
-    if (this.syncState.value === SyncState.STARTED) {
-      Logging.debug(
-        `skipping immediate re-sync for "${this.dbName}" because sync is already running`,
-      );
+    if (this.isInRemoteOnlyMode) {
       return;
     }
 
