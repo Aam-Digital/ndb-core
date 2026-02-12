@@ -251,7 +251,7 @@ export class EntityFormService {
       await this.entityMapper.save(updatedEntity);
     } catch (err) {
       Logging.debug("EntityFormService error saving", entity, err);
-      throw new Error(`Could not save Entity from form service\: ${err}`);
+      throw new Error(`Could not save Entity from form service: ${err}`);
     }
     this.unsavedChanges.pending = false;
     form.markAsPristine();
