@@ -241,10 +241,6 @@ export class ConditionsEditorComponent implements OnInit {
     fieldConfig: EntitySchemaField,
     editComponent: string,
   ): boolean {
-    if (fieldConfig.isArray) {
-      return true;
-    }
-
     return (
       editComponent === "EditConfigurableEnum" ||
       editComponent === "EditEntity" ||
