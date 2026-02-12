@@ -133,9 +133,9 @@ export class AdminEntityFieldComponent implements OnInit {
     "url",
     "number",
   ]);
-  private selectedDataType = signal<string>("");
-  private searchableChecked = signal<boolean>(false);
-  private currentFieldId = signal<string>("");
+  private readonly selectedDataType = signal<string>("");
+  private readonly searchableChecked = signal<boolean>(false);
+  private readonly currentFieldId = signal<string>("");
   readonly isSearchableDataType = computed(() =>
     this.searchableDataTypes.has(this.selectedDataType()),
   );
