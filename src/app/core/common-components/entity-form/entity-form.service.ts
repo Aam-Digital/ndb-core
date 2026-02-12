@@ -19,6 +19,7 @@ import {
   EntityFormSavedEvent,
   TypedFormGroup,
 } from "#src/app/core/common-components/entity-form/entity-form";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -249,9 +250,9 @@ export class EntityFormService {
     try {
       await this.entityMapper.save(updatedEntity);
     } catch (err) {
-      throw new Error(`Could not save ${entity.getType()}\: ${err}`);
+      Logging.debug("EntityFormService error saving", entity, err);
+      throw new Error(`Could not save Entity from form service\: ${err}`);
     }
-
     this.unsavedChanges.pending = false;
     form.markAsPristine();
     form.disable();
