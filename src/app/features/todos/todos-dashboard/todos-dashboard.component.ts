@@ -44,6 +44,7 @@ export class TodosDashboardComponent extends DashboardWidget {
   filterEntries = (todo: Todo) => {
     return (
       !todo.completed &&
+      todo.isActive &&
       todo.assignedTo.includes(this.currentUser.value?.getId()) &&
       moment(todo.startDate).isSameOrBefore(moment(), "days")
     );
