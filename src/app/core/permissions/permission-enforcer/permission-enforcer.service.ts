@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { DatabaseRule } from "../permission-types";
-import { EntityConstructor } from "../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { AnalyticsService } from "../../analytics/analytics.service";
@@ -46,11 +46,11 @@ export class PermissionEnforcerService {
       return;
     }
 
-    Logging.debug("Detected changed permissions for user. Resetting sync ...");
-
     const subjects = this.getSubjectsWithReadRestrictions(userRules);
     if (await this.dbHasEntitiesWithoutPermissions(subjects)) {
-      Logging.debug("destroying local db due to lost permissions");
+      Logging.debug(
+        "Detected changed permissions for user. Destroying local db due to lost permissions ...",
+      );
       this.analyticsService.eventTrack(
         "destroying local db due to lost permissions",
         { category: "Migration" },
@@ -61,6 +61,9 @@ export class PermissionEnforcerService {
     } else {
       // Rules changed but no lost permissions — the user may have gained access to new data.
       // Clear sync checkpoints to force a full re-check on the next sync.
+      Logging.debug(
+        "Detected changed permissions for user. Resetting sync ...",
+      );
       await this.dbResolver.resetSync();
     }
 
@@ -84,7 +87,13 @@ export class PermissionEnforcerService {
     rules
       .filter((rule) => this.isReadRule(rule))
       .forEach((rule) => this.collectSubjectsFromRule(rule, subjects));
-    return [...subjects].map((subj) => this.entities.get(subj));
+
+    return (
+      [...subjects]
+        .map((subj) => this.entities.get(subj))
+        // TODO: there is some problem doing this for NotificationEvents:
+        .filter((subj) => subj.DATABASE === Entity.DATABASE)
+    );
   }
 
   private collectSubjectsFromRule(rule: DatabaseRule, subjects: Set<string>) {
