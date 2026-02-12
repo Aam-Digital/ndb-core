@@ -38,8 +38,18 @@ test("Translated and localized app versions (i18n)", async ({ page }) => {
   // FIXME: The dashboard may load before demo data is generated and not display
   // it. As a workaround we move to a different view and back to the dashboard
   await page.getByRole("navigation").getByText("Schüler:innen").click();
+
+  // Extract the count from the paginator (e.g., "1 – 10 von 99" in German)
+  // Wait for the paginator to load
+  await page.locator(".mat-mdc-paginator-range-label").waitFor();
+  const paginatorText = await page
+    .locator(".mat-mdc-paginator-range-label")
+    .textContent();
+  const countMatch = paginatorText.match(/von (\d+)/);
+  const studentCount = countMatch ? countMatch[1] : "0";
+
   await page.getByRole("navigation").getByText("Dashboard").click();
-  await expect(page.getByText("99 Schüler:innen")).toBeVisible({
+  await expect(page.getByText(`${studentCount} Schüler:innen`)).toBeVisible({
     timeout: 10_000,
   });
 
