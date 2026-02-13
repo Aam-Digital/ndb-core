@@ -207,7 +207,7 @@ export class ConditionsEditorComponent implements OnInit {
     ) {
       // Support legacy array-condition format: { $elemMatch: "id" }
       const elemMatch = conditionValue.$elemMatch;
-       if (Array.isArray(elemMatch)) {
+      if (Array.isArray(elemMatch)) {
         value = elemMatch;
       } else {
         value = [elemMatch];
