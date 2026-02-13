@@ -49,6 +49,7 @@ import { AnonymizeOptionsComponent } from "./anonymize-options/anonymize-options
 import { MatCheckbox } from "@angular/material/checkbox";
 import { AdminDefaultValueComponent } from "../../../default-values/admin-default-value/admin-default-value.component";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
+import { AdminSearchableCheckboxComponent } from "./admin-searchable-checkbox/admin-searchable-checkbox.component";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
@@ -101,6 +102,7 @@ export interface AdminEntityFieldData {
     MatCheckbox,
     AdminDefaultValueComponent,
     EntityTypeSelectComponent,
+    AdminSearchableCheckboxComponent,
   ],
 })
 export class AdminEntityFieldComponent implements OnInit {
@@ -127,6 +129,7 @@ export class AdminEntityFieldComponent implements OnInit {
   entityAdditionalMultiSelect: WritableSignal<boolean> = signal(false);
 
   ngOnInit() {
+    this.entityType = this.data.entityType;
     this.initSettings();
 
     if (this.data.overwriteLocally) {
@@ -205,9 +208,9 @@ export class AdminEntityFieldComponent implements OnInit {
         this.schemaFieldsForm.get("labelShort").setValue(null);
       });
     this.updateDataTypeAdditional(this.schemaFieldsForm.get("dataType").value);
-    this.schemaFieldsForm
-      .get("dataType")
-      .valueChanges.subscribe((v) => this.updateDataTypeAdditional(v));
+    this.schemaFieldsForm.get("dataType").valueChanges.subscribe((v) => {
+      this.updateDataTypeAdditional(v);
+    });
     this.updateForNewOrExistingField();
   }
 

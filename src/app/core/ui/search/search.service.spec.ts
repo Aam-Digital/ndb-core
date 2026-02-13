@@ -84,6 +84,19 @@ describe("SearchService", () => {
     delete TestEntity.schema.get("other").searchable;
   });
 
+  it("should support searching url fields without protocol", async () => {
+    TestEntity.toStringAttributes = ["name"];
+    TestEntity.schema.get("other").searchable = true;
+    const child = TestEntity.create("test");
+    child.other = "https://www.bhila.com";
+
+    await runSearchTest("https://www.bhila.com", [child], [child]);
+    await runSearchTest("www.bhila.com", [child]);
+    await runSearchTest("bhila", [child]);
+
+    delete TestEntity.schema.get("other").searchable;
+  });
+
   it("should support search terms with multiple words", async () => {
     TestEntity.toStringAttributes = ["name", "other"];
     const child = TestEntity.create("test");

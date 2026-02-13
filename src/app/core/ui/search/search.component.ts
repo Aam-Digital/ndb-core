@@ -64,7 +64,6 @@ export class SearchComponent {
   readonly SEARCH_IN_PROGRESS = 2;
   readonly NO_RESULTS = 3;
   readonly SHOW_RESULTS = 4;
-  readonly ILLEGAL_INPUT = 5;
 
   state = this.NOTHING_ENTERED;
 
@@ -91,9 +90,11 @@ export class SearchComponent {
       .pipe(
         debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
         tap((next) => {
-          this.currentSearchString = next || "";
-          this.state = this.updateState(next);
+          const searchTerm = this.normalizeSearchTerm(next);
+          this.currentSearchString = searchTerm;
+          this.state = this.updateState(searchTerm);
         }),
+        map((next) => this.normalizeSearchTerm(next)),
         switchMap((next: string) => this.searchResults(next)),
         untilDestroyed(this),
       )
@@ -101,17 +102,12 @@ export class SearchComponent {
         this.resultsSubject.next(entities);
       });
   }
-  private updateState(next: any): number {
-    if (typeof next !== "string") {
-      return this.ILLEGAL_INPUT;
-    }
-    if (next.length === 0) {
+
+  private updateState(searchTerm: string): number {
+    if (searchTerm.length === 0) {
       return this.NOTHING_ENTERED;
     }
-    if (!this.isRelevantSearchInput(next)) {
-      return this.ILLEGAL_INPUT;
-    }
-    return next.length < this.MIN_CHARACTERS_FOR_SEARCH
+    return searchTerm.length < this.MIN_CHARACTERS_FOR_SEARCH
       ? this.TOO_FEW_CHARACTERS
       : this.SEARCH_IN_PROGRESS;
   }
@@ -154,15 +150,6 @@ export class SearchComponent {
     }
   }
 
-  /**
-   * Check if the input should start an actual search.
-   * Only search for words starting with a char or number -> no searching for space or no input
-   * @param searchText
-   */
-  private isRelevantSearchInput(searchText: string): boolean {
-    return /^[a-zA-Z]+|\d+$/.test(searchText);
-  }
-
   private prepareResults(entities: Entity[]): Entity[] {
     return entities.filter((entity) =>
       this.userRoleGuard.checkRoutePermissions(entity.getConstructor().route),
@@ -185,10 +172,14 @@ export class SearchComponent {
       this.searchActive = false;
     }
     // Reset state if field is empty when losing focus
-    const currentValue = this.formControl.value || "";
+    const currentValue = this.normalizeSearchTerm(this.formControl.value);
     if (currentValue.length === 0) {
       this.currentSearchString = "";
       this.state = this.NOTHING_ENTERED;
     }
+  }
+
+  private normalizeSearchTerm(searchTerm: unknown): string {
+    return typeof searchTerm === "string" ? searchTerm.trim() : "";
   }
 }
