@@ -48,7 +48,9 @@ describe("EntityActionsService", () => {
     mockedBulkOperationState = jasmine.createSpyObj([
       "startBulkOperation",
       "completeBulkOperation",
+      "waitForBulkOperationToFinish",
     ]);
+    mockedBulkOperationState.waitForBulkOperationToFinish.and.resolveTo();
     mockedEntityMapper = jasmine.createSpyObj([
       "save",
       "saveAll",

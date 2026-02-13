@@ -269,5 +269,6 @@ When developing new functionality:
 - Moment.js for date handling
 - RxJS for reactive programming
 - `@faker-js/faker` for test data generation
+- Utility functions like `asArray` from "src/app/utils/" folder
 
 Remember: This is a social impact application helping organizations work with beneficiaries. Code quality, accessibility, and reliability are paramount for the mission-critical nature of this software.

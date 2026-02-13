@@ -21,6 +21,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 import { IconButtonComponent } from "../icon-button/icon-button.component";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
 /**
  * Reusable component for editing conditions (field-value pairs) with JSON support
@@ -140,33 +141,115 @@ export class ConditionsEditorComponent implements OnInit {
     const key = `${conditionIndex}`;
     const fieldConfig = this.entityConstructor.schema.get(fieldKey);
     if (!fieldConfig) return;
+    const editComponent = this.entitySchemaService.getComponent(
+      fieldConfig,
+      "edit",
+    );
+    const isDropdownMultiSelect = this.shouldUseMultiSelectCondition(
+      fieldConfig,
+      editComponent,
+    );
+    const conditionFieldConfig = {
+      ...fieldConfig,
+      isArray: isDropdownMultiSelect,
+    };
 
     const conditions = this.conditionsArray();
     const condition = conditions[conditionIndex];
 
-    const initialValue = this.entitySchemaService.valueToEntityFormat(
+    const initialValue = this.extractValueFromCondition(
       condition[fieldKey],
       fieldConfig,
+      conditionFieldConfig,
     );
     const formControl = new FormControl(initialValue);
     this.conditionFormControls.set(key, formControl);
 
-    formControl.valueChanges.subscribe((value) => {
-      const dbValue = this.entitySchemaService.valueToDatabaseFormat(
+    formControl.valueChanges.subscribe((value) =>
+      this.onFormValueChange(
+        condition,
+        fieldKey,
         value,
         fieldConfig,
-      );
-      condition[fieldKey] = dbValue;
-      this.conditionsChange.emit(this.conditions);
-    });
+        conditionFieldConfig,
+      ),
+    );
 
     this.conditionFormFieldConfigs.set(key, {
       id: fieldKey,
-      editComponent: this.entitySchemaService.getComponent(fieldConfig, "edit"),
+      editComponent,
       dataType: fieldConfig.dataType,
       additional: fieldConfig.additional,
       label: fieldConfig.label || fieldKey,
+      isArray: isDropdownMultiSelect,
     } as FormFieldConfig);
+  }
+
+  private extractValueFromCondition(
+    conditionValue: any,
+    fieldConfig: EntitySchemaField,
+    conditionFieldConfig: EntitySchemaField,
+  ): any {
+    let value;
+    if (fieldConfig.isArray && conditionValue?.$elemMatch?.$in) {
+      // For array fields, extract value from $elemMatch.$in if present
+      value = conditionValue.$elemMatch.$in;
+    } else if (!fieldConfig.isArray && conditionValue?.$in) {
+      // For non-array dropdown fields, extract value from $in
+      value = conditionValue.$in;
+    } else {
+      value = conditionValue;
+    }
+
+    return this.entitySchemaService.valueToEntityFormat(
+      value,
+      conditionFieldConfig,
+    );
+  }
+
+  private onFormValueChange(
+    condition: any,
+    fieldKey: string,
+    value: any,
+    fieldConfig: EntitySchemaField,
+    conditionFieldConfig: EntitySchemaField,
+  ): void {
+    const dbValue = this.entitySchemaService.valueToDatabaseFormat(
+      value,
+      conditionFieldConfig,
+    );
+
+    if (fieldConfig.isArray && Array.isArray(dbValue) && dbValue.length > 0) {
+      // For array fields, wrap in $elemMatch with $in for proper array matching
+      condition[fieldKey] = { $elemMatch: { $in: dbValue } };
+    } else if (
+      !fieldConfig.isArray &&
+      conditionFieldConfig.isArray &&
+      Array.isArray(dbValue) &&
+      dbValue.length > 0
+    ) {
+      // For non-array dropdown fields, wrap multi selection in $in
+      condition[fieldKey] = { $in: dbValue };
+    } else {
+      condition[fieldKey] = dbValue;
+    }
+
+    this.conditionsChange.emit(this.conditions);
+  }
+
+  private shouldUseMultiSelectCondition(
+    fieldConfig: EntitySchemaField,
+    editComponent: string,
+  ): boolean {
+    if (fieldConfig.isArray) {
+      return true;
+    }
+
+    return (
+      editComponent === "EditConfigurableEnum" ||
+      editComponent === "EditEntity" ||
+      editComponent === "EditEntityType"
+    );
   }
 
   /**
