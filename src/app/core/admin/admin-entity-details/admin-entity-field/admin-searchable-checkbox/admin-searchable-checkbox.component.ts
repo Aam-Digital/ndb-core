@@ -32,7 +32,7 @@ export class AdminSearchableCheckboxComponent
   dataType = input.required<string>();
 
   searchableControl: FormControl<boolean>;
-  private isChecked = signal(false);
+  private readonly isChecked = signal(false);
 
   private readonly searchableDataTypes = new Set([
     "string",
