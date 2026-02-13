@@ -130,7 +130,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
   /**
    * Execute a (one-time) sync between the local and server database.
    */
-  sync(): Promise<SyncResult> {
+  sync(options: PouchDB.Replication.SyncOptions = {}): Promise<SyncResult> {
     if (!this.navigator.onLine) {
       Logging.debug("Not syncing because offline");
       this.syncState.next(SyncState.UNSYNCED);
@@ -142,6 +142,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     return this.getPouchDB()
       .sync(this.remoteDatabase.getPouchDB(), {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
+        ...options,
       })
       .then((res) => {
         if (res) res["dbName"] = this.dbName; // add for debugging information
@@ -164,6 +165,19 @@ export class SyncedPouchDatabase extends PouchDatabase {
         this.syncState.next(SyncState.FAILED);
         throw err;
       });
+  }
+
+  /**
+   * Force a full re-check against the remote DB without deleting local data.
+   * Uses `checkpoint: false` once so PouchDB ignores previous checkpoints for this run.
+   */
+  async resetSync(): Promise<void> {
+    if (this.isInRemoteOnlyMode) {
+      return;
+    }
+
+    Logging.debug(`triggering full re-sync for "${this.dbName}"`);
+    await this.sync({ checkpoint: false });
   }
 
   /**
