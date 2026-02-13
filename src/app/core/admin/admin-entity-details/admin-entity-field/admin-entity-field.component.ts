@@ -50,6 +50,7 @@ import { AnonymizeOptionsComponent } from "./anonymize-options/anonymize-options
 import { MatCheckbox } from "@angular/material/checkbox";
 import { AdminDefaultValueComponent } from "../../../default-values/admin-default-value/admin-default-value.component";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
+import { AdminSearchableCheckboxComponent } from "./admin-searchable-checkbox/admin-searchable-checkbox.component";
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
@@ -102,6 +103,7 @@ export interface AdminEntityFieldData {
     MatCheckbox,
     AdminDefaultValueComponent,
     EntityTypeSelectComponent,
+    AdminSearchableCheckboxComponent,
   ],
 })
 export class AdminEntityFieldComponent implements OnInit {
@@ -126,27 +128,6 @@ export class AdminEntityFieldComponent implements OnInit {
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
   entityAdditionalMultiSelect: WritableSignal<boolean> = signal(false);
-  private readonly searchableDataTypes = new Set([
-    "string",
-    "long-text",
-    "email",
-    "url",
-    "number",
-  ]);
-  private readonly selectedDataType = signal<string>("");
-  private readonly searchableChecked = signal<boolean>(false);
-  private readonly currentFieldId = signal<string>("");
-  readonly isSearchableDataType = computed(() =>
-    this.searchableDataTypes.has(this.selectedDataType()),
-  );
-  readonly isImplicitlySearchable = computed(() => {
-    const fieldId = this.currentFieldId();
-    const toStringAttributes = this.entityType?.toStringAttributes ?? [];
-    return !!fieldId && toStringAttributes.includes(fieldId);
-  });
-  readonly showImplicitSearchableNote = computed(
-    () => this.isImplicitlySearchable() && !this.searchableChecked(),
-  );
 
   ngOnInit() {
     this.entityType = this.data.entityType;
@@ -228,23 +209,9 @@ export class AdminEntityFieldComponent implements OnInit {
         this.schemaFieldsForm.get("labelShort").setValue(null);
       });
     this.updateDataTypeAdditional(this.schemaFieldsForm.get("dataType").value);
-    this.selectedDataType.set(
-      this.schemaFieldsForm.get("dataType").value?.toString() ?? "",
-    );
-    this.searchableChecked.set(!!this.schemaFieldsForm.get("searchable").value);
-    this.currentFieldId.set(this.fieldIdForm.getRawValue() ?? "");
-    this.applySearchableAvailability();
     this.schemaFieldsForm.get("dataType").valueChanges.subscribe((v) => {
       this.updateDataTypeAdditional(v);
-      this.selectedDataType.set(v?.toString() ?? "");
-      this.applySearchableAvailability();
     });
-    this.schemaFieldsForm
-      .get("searchable")
-      .valueChanges.subscribe((v) => this.searchableChecked.set(!!v));
-    this.fieldIdForm.valueChanges.subscribe((id) =>
-      this.currentFieldId.set(id ?? ""),
-    );
     this.updateForNewOrExistingField();
   }
 
@@ -430,24 +397,6 @@ export class AdminEntityFieldComponent implements OnInit {
     } else {
       // cancelled: reset the toggle and keep checked
       change.source.checked = true;
-    }
-  }
-
-  private applySearchableAvailability() {
-    const searchableControl = this.schemaFieldsForm.get("searchable");
-    if (!searchableControl) {
-      return;
-    }
-
-    if (!this.isSearchableDataType()) {
-      searchableControl.setValue(false);
-      searchableControl.disable({ emitEvent: false });
-      this.searchableChecked.set(false);
-      return;
-    }
-
-    if (searchableControl.disabled) {
-      searchableControl.enable({ emitEvent: false });
     }
   }
 
