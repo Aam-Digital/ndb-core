@@ -1,7 +1,7 @@
 <button
   mat-icon-button
   class="white"
-  [hidden]="allTasksFinished | async"
+  [style.opacity]="(allTasksFinished | async) ? 0.5 : 1"
   [matMenuTriggerFor]="taskListDropdown"
   (menuClosed)="wasClosed = true"
 >
@@ -16,10 +16,12 @@
 
 <mat-menu #taskListDropdown="matMenu">
   <div class="padding-left-regular padding-right-regular">
-    <div i18n class="details-header">
-      The following processes are still running in the background. Until these
-      are finished some pages may be slow or incomplete.
-    </div>
+    @if ((allTasksFinished | async) === false) {
+      <div i18n class="details-header">
+        The following processes are still running in the background. Until these
+        are finished some pages may be slow or incomplete.
+      </div>
+    }
 
     @for (process of filteredProcesses | async; track process) {
       <div class="flex-row gap-small align-center mat-subtitle-2 details-line">
@@ -40,13 +42,26 @@
       </div>
     }
 
-    <button
-      mat-stroked-button
-      class="full-width"
-      (click)="taskListDropdownTrigger.closeMenu()"
-      i18n="Hide sync details"
-    >
-      Continue in background
-    </button>
+    <div class="full-width flex-row align-center gap-small">
+      <button
+        mat-stroked-button
+        (click)="taskListDropdownTrigger.closeMenu()"
+        i18n="Hide sync details"
+        class="flex-grow"
+        matTooltip="System will continue to sync data regularly"
+        i18n-matTooltip
+      >
+        Continue in background
+      </button>
+
+      <button
+        mat-icon-button
+        (click)="resetSync()"
+        matTooltip="Manually trigger re-sync"
+        i18n-matTooltip
+      >
+        <fa-icon icon="rotate"></fa-icon>
+      </button>
+    </div>
   </div>
 </mat-menu>

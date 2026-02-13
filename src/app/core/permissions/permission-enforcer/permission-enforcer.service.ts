@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { DatabaseRule } from "../permission-types";
-import { EntityConstructor } from "../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { AnalyticsService } from "../../analytics/analytics.service";
@@ -10,6 +10,7 @@ import { ConfigService } from "../../config/config.service";
 import { firstValueFrom } from "rxjs";
 import { SessionSubject } from "../../session/auth/session-info";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * This service checks whether the relevant rules for the current user changed.
@@ -36,12 +37,20 @@ export class PermissionEnforcerService {
   async enforcePermissionsOnLocalData(
     userRules: DatabaseRule[],
   ): Promise<void> {
+    Logging.debug(
+      "Checking for updated permissions [PermissionEnforcerService]",
+    );
+
     const userRulesString = JSON.stringify(userRules);
     if (!this.sessionInfo.value || !this.userRulesChanged(userRulesString)) {
       return;
     }
+
     const subjects = this.getSubjectsWithReadRestrictions(userRules);
     if (await this.dbHasEntitiesWithoutPermissions(subjects)) {
+      Logging.debug(
+        "Detected changed permissions for user. Destroying local db due to lost permissions ...",
+      );
       this.analyticsService.eventTrack(
         "destroying local db due to lost permissions",
         { category: "Migration" },
@@ -49,7 +58,16 @@ export class PermissionEnforcerService {
       // TODO: is it enough to destroy the default DB or could other DBs also be affected?
       await this.dbResolver.destroyDatabases();
       this.location.reload();
+    } else {
+      // Rules changed but no lost permissions — the user may have gained access to new data.
+      // Clear sync checkpoints to force a full re-check on the next sync.
+      Logging.debug(
+        "Detected changed permissions for user. Resetting sync ...",
+      );
+      await this.dbResolver.resetSync();
     }
+
+    // update stored rules to check for future changes
     window.localStorage.setItem(this.getUserStorageKey(), userRulesString);
   }
 
@@ -69,7 +87,13 @@ export class PermissionEnforcerService {
     rules
       .filter((rule) => this.isReadRule(rule))
       .forEach((rule) => this.collectSubjectsFromRule(rule, subjects));
-    return [...subjects].map((subj) => this.entities.get(subj));
+
+    return (
+      [...subjects]
+        .map((subj) => this.entities.get(subj))
+        // TODO: there is some problem doing this for NotificationEvents (but those are not relevant for permissions anyway)
+        .filter((subj) => !!subj && subj.DATABASE === Entity.DATABASE)
+    );
   }
 
   private collectSubjectsFromRule(rule: DatabaseRule, subjects: Set<string>) {
