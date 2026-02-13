@@ -46,8 +46,6 @@ export class ConditionsEditorComponent implements OnInit {
   @Input() entityConstructor?: EntityConstructor;
   @Input() disabled = false;
   @Input() label = $localize`Edit JSON`;
-  // we use it to render a more compact version of the component like only showing an icon button to open the json editor
-  @Input() compactMode = false;
 
   @Output() conditionsChange = new EventEmitter<any>();
 
@@ -61,6 +59,7 @@ export class ConditionsEditorComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this.entityConstructor) return;
+    this.conditions = this.normalizeConditions(this.conditions);
     this.conditionsSignal.set(this.conditions);
     this.rebuildFormConfigs();
   }
@@ -185,6 +184,14 @@ export class ConditionsEditorComponent implements OnInit {
     } as FormFieldConfig);
   }
 
+  /**
+   * Extract the actual value from various condition formats (current and legacy).
+   * Supports:
+   * - Standard array format: { $elemMatch: { $in: [...] } }
+   * - Legacy array formats: { $elemMatch: "id" } or { $elemMatch: { $eq: "id" } }
+   * - Dropdown multi-select: { $in: [...] }
+   * - Direct values for other field types
+   */
   private extractValueFromCondition(
     conditionValue: any,
     fieldConfig: EntitySchemaField,
@@ -194,6 +201,17 @@ export class ConditionsEditorComponent implements OnInit {
     if (fieldConfig.isArray && conditionValue?.$elemMatch?.$in) {
       // For array fields, extract value from $elemMatch.$in if present
       value = conditionValue.$elemMatch.$in;
+    } else if (
+      fieldConfig.isArray &&
+      conditionValue?.$elemMatch !== undefined
+    ) {
+      // Support legacy array-condition format: { $elemMatch: "id" }
+      const elemMatch = conditionValue.$elemMatch;
+       if (Array.isArray(elemMatch)) {
+        value = elemMatch;
+      } else {
+        value = [elemMatch];
+      }
     } else if (!fieldConfig.isArray && conditionValue?.$in) {
       // For non-array dropdown fields, extract value from $in
       value = conditionValue.$in;
@@ -207,6 +225,12 @@ export class ConditionsEditorComponent implements OnInit {
     );
   }
 
+  /**
+   * Handle form value changes and update the condition object with the appropriate format.
+   * - Array fields use { $elemMatch: { $in: [...] } } format
+   * - Non-array fields with multi-select use { $in: [...] } format
+   * - Other fields use direct value assignment
+   */
   private onFormValueChange(
     condition: any,
     fieldKey: string,
@@ -277,11 +301,42 @@ export class ConditionsEditorComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.conditions = result;
-        this.conditionsSignal.set(result);
+        this.conditions = this.normalizeConditions(result);
+        this.conditionsSignal.set(this.conditions);
         this.rebuildFormConfigs();
         this.conditionsChange.emit(this.conditions);
       }
     });
+  }
+
+  /**
+   * Normalize conditions to the standard { $or: [...] } format.
+   * Handles both current format and legacy formats where conditions were stored
+   * as direct key-value pairs without the $or wrapper.
+   *
+   * @param input - The conditions object to normalize
+   * @returns Normalized conditions in { $or: [...] } format
+   */
+  private normalizeConditions(input: any): { $or: Record<string, any>[] } {
+    if (!input || typeof input !== "object" || Array.isArray(input)) {
+      return { $or: [] };
+    }
+
+    const existingOr = Array.isArray(input.$or)
+      ? input.$or.filter(
+          (condition) => condition && typeof condition === "object",
+        )
+      : [];
+    if (existingOr.length > 0) {
+      // Prefer the explicit $or format to avoid keeping duplicated legacy keys.
+      return { $or: existingOr };
+    }
+
+    const legacyEntries = Object.entries(input).filter(
+      ([key]) => key !== "$or",
+    );
+    return {
+      $or: legacyEntries.map(([key, value]) => ({ [key]: value })),
+    };
   }
 }

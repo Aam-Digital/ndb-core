@@ -38,10 +38,10 @@
       the required criteria (e.g. having a required status).
     </p>
     <app-conditions-editor
-      [conditions]="sideConfig.prefilter"
-      [compactMode]="true"
       label="Edit Prefilters"
       i18n-label
+      [conditions]="sideConfig.prefilter"
+      [entityConstructor]="entityConstructor"
       (conditionsChange)="onPrefilterChange($event)"
     ></app-conditions-editor>
   </div>

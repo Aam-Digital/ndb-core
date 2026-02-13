@@ -31,6 +31,8 @@ import {
 } from "@angular/material/expansion";
 import { IconButtonComponent } from "../../../core/common-components/icon-button/icon-button.component";
 import { ConditionsEditorComponent } from "app/core/common-components/conditions-editor/conditions-editor.component";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { EntityConstructor } from "app/core/entity/model/entity";
 
 /**
  * Configure a single notification rule.
@@ -67,6 +69,9 @@ export class NotificationRuleComponent implements OnChanges {
 
   form: FormGroup;
   entityTypeControl: AbstractControl;
+  entityConstructor: EntityConstructor | null = null;
+
+  private readonly entityRegistry = inject(EntityRegistry);
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
@@ -91,6 +96,10 @@ export class NotificationRuleComponent implements OnChanges {
       ),
     });
     this.entityTypeControl = this.form.get("entityType");
+    this.updateEntityConstructor(this.entityTypeControl.value);
+    this.entityTypeControl.valueChanges.subscribe((entityType) =>
+      this.updateEntityConstructor(entityType),
+    );
 
     this.updateEntityTypeControlState();
     this.form.valueChanges.subscribe((value) => this.updateValue(value));
@@ -135,5 +144,12 @@ export class NotificationRuleComponent implements OnChanges {
   onConditionsChange(updatedConditions: any) {
     const conditionsForm = this.form.get("conditions");
     conditionsForm.setValue(updatedConditions ?? {});
+  }
+
+  private updateEntityConstructor(entityType: string) {
+    this.entityConstructor =
+      entityType && this.entityRegistry.has(entityType)
+        ? this.entityRegistry.get(entityType)
+        : null;
   }
 }

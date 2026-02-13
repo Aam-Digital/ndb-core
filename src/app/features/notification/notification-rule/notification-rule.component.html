@@ -68,18 +68,12 @@
         </div>
 
         <!-- Conditions -->
-        <div class="flex-row flex-wrap gap-small align-center">
-          <em i18n
-            >Conditions currently have to be edited using the JSON Editor. We
-            will implement a visual UI here soon.</em
-          >
-          <app-conditions-editor
-            [conditions]="form.get('conditions')?.value"
-            [compactMode]="true"
-            [disabled]="!value.entityType"
-            (conditionsChange)="onConditionsChange($event)"
-          ></app-conditions-editor>
-        </div>
+        <app-conditions-editor
+          [disabled]="!value.entityType"
+          [conditions]="form.get('conditions')?.value"
+          [entityConstructor]="entityConstructor"
+          (conditionsChange)="onConditionsChange($event)"
+        ></app-conditions-editor>
       </div>
 
       <div class="flex-row gap-regular flex-wrap align-center">
