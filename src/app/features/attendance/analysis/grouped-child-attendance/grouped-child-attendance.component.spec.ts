@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { GroupedChildAttendanceComponent } from "./grouped-child-attendance.component";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 
 describe("GroupedChildAttendanceComponent", () => {
   let component: GroupedChildAttendanceComponent;

@@ -5,16 +5,20 @@ import {
   ViewEncapsulation,
   inject,
 } from "@angular/core";
-import { Entity } from "../../../../core/entity/model/entity";
-import { AttendanceService } from "#src/app/features/attendance/attendance.service";
-import { RecurringActivity } from "#src/app/features/attendance/model/recurring-activity";
-import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
+import { Entity } from "#src/app/core/entity/model/entity";
+import { AttendanceService } from "../../attendance.service";
+import { RecurringActivity } from "../../model/recurring-activity";
+import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatTabsModule } from "@angular/material/tabs";
-import { TabStateModule } from "../../../../utils/tab-state/tab-state.module";
-import { ActivityAttendanceSectionComponent } from "#src/app/features/attendance/analysis/activity-attendance-section/activity-attendance-section.component";
+import { TabStateModule } from "#src/app/utils/tab-state/tab-state.module";
+import { ActivityAttendanceSectionComponent } from "../activity-attendance-section/activity-attendance-section.component";
 import { MatSelectModule } from "@angular/material/select";
 
+/**
+ * Lists all activities of the given child
+ * and displays a tab with detailed analysis for each.
+ */
 @DynamicComponent("GroupedChildAttendance")
 @Component({
   selector: "app-grouped-child-attendance",

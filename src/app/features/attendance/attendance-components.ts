@@ -16,6 +16,13 @@ export const attendanceComponents: ComponentTuple[] = [
       ),
   ],
   [
+    "GroupedChildAttendance",
+    () =>
+      import("./analysis/grouped-child-attendance/grouped-child-attendance.component").then(
+        (c) => c.GroupedChildAttendanceComponent,
+      ),
+  ],
+  [
     "ActivityAttendanceSection",
     () =>
       import("./analysis/activity-attendance-section/activity-attendance-section.component").then(

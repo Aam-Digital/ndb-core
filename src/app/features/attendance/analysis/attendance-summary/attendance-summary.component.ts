@@ -4,6 +4,9 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 import { CustomDatePipe } from "#src/app/core/basic-datatypes/date/custom-date.pipe";
 import { DynamicComponentDirective } from "#src/app/core/config/dynamic-components/dynamic-component.directive";
 
+/**
+ * Short overall attendance statistics of all events within a given activity, beyond a fixed monthly period.
+ */
 @Component({
   selector: "app-attendance-summary",
   templateUrl: "./attendance-summary.component.html",
