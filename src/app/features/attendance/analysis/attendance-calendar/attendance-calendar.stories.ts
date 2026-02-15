@@ -1,10 +1,10 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
-import { generateEventWithAttendance } from "../model/activity-attendance";
-import { AttendanceLogicalStatus } from "../model/attendance-status";
+import { generateEventWithAttendance } from "../../model/activity-attendance";
+import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { AttendanceCalendarComponent } from "./attendance-calendar.component";
-import { Note } from "../../notes/model/note";
+import { Note } from "#src/app/child-dev-project/notes/model/note";
 import moment from "moment";
-import { StorybookBaseModule } from "#src/app/features/utils/storybook-base.module";
+import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 
 const demoEvents: Note[] = [
