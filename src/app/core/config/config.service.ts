@@ -110,7 +110,6 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateInheritedFieldConfig,
       migrateUserEntityAndPanels,
       migrateComponentEntityTypeDefaults,
-      migrateActivitiesOverviewComponent,
       removeOutdatedTodoViews,
       migrateChildSchoolOverviewComponent,
       migrateEditDescriptionOnly,
@@ -428,56 +427,6 @@ const migrateComponentEntityTypeDefaults: ConfigMigration = (
   }
 
   return configPart;
-};
-
-/**
- * Migration to replace the deprecated `ActivitiesOverview` component
- * with the more flexible `RelatedEntities` component configured for `RecurringActivity`.
- * - If a config exists, only the component string is replaced to preserve the system-specific config.
- * - If no config is defined, a default config is added with common columns like:
- * This ensures consistency while maintaining any existing customizations.
- */
-const migrateActivitiesOverviewComponent: ConfigMigration = (
-  _key,
-  configPart,
-) => {
-  if (
-    typeof configPart !== "object" ||
-    configPart?.component !== "ActivitiesOverview"
-  ) {
-    return configPart;
-  }
-
-  const existingConfig =
-    configPart.config && Object.keys(configPart.config).length > 0;
-
-  if (existingConfig) {
-    configPart.entityType = "RecurringActivity";
-    return {
-      ...configPart,
-      component: "RelatedEntities",
-    };
-  }
-
-  return {
-    component: "RelatedEntities",
-    config: {
-      entityType: "RecurringActivity",
-      columns: [
-        {
-          id: "title",
-          editComponent: "EditTextWithAutocomplete",
-          additional: {
-            entityType: "RecurringActivity",
-            relevantProperty: "linkedGroups",
-          },
-        },
-        { id: "assignedTo" },
-        { id: "linkedGroups" },
-        { id: "excludedParticipants" },
-      ],
-    },
-  };
 };
 
 /* Remove outdated task view configs
