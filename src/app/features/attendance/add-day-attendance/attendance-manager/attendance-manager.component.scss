@@ -1,7 +1,7 @@
-@use "../../../../../styles/variables/sizes";
-@use "../../../../../styles/variables/colors";
-@use "../../../../../styles/mixins/grid-layout";
-@use "../../../../../styles/typography/custom-typography";
+@use "variables/sizes";
+@use "variables/colors";
+@use "mixins/grid-layout";
+@use "typography/custom-typography";
 
 .cards-wrapper {
   margin-top: sizes.$large;

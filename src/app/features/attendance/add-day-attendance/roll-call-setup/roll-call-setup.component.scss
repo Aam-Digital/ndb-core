@@ -1,6 +1,6 @@
-@use "../../../../../styles/mixins/grid-layout";
-@use "../../../../../styles/variables/sizes";
-@use "../../../../../styles/variables/colors";
+@use "mixins/grid-layout";
+@use "variables/sizes";
+@use "variables/colors";
 
 .top-control {
   position: sticky;

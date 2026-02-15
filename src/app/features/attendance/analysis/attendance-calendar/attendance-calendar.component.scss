@@ -1,6 +1,6 @@
-@use "../../../../../styles/variables/colors";
-@use "../../../../../styles/functions/gradient-helpers";
-@use "../../../../../styles/variables/sizes";
+@use "variables/colors";
+@use "functions/gradient-helpers";
+@use "variables/sizes";
 
 mat-calendar {
   min-width: 200px;

@@ -1,6 +1,6 @@
 @use "sass:map";
-@use "../../../../../styles/variables/sizes";
-@use "../../../../../styles/variables/colors";
+@use "variables/sizes";
+@use "variables/colors";
 
 .summary-title {
   margin-bottom: 0.25em;
