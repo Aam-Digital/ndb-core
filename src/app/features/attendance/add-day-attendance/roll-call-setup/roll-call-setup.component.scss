@@ -1,0 +1,29 @@
+@use "../../../../../styles/mixins/grid-layout";
+@use "../../../../../styles/variables/sizes";
+@use "../../../../../styles/variables/colors";
+
+.top-control {
+  position: sticky;
+  top: 0;
+  /* make this visible while other contents go "under" this top control */
+  z-index: 1;
+  /* These small hacks remove the global margin and re-apply them as padding.
+     This way, the margin stays consistent and scrolling works
+     as intended (there is no overflow left or right)  */
+  margin-left: -(sizes.$margin-main-view-left);
+  padding-left: sizes.$margin-main-view-left;
+  margin-right: -(sizes.$margin-main-view-right);
+  padding-right: sizes.$margin-main-view-right;
+  margin-top: -(sizes.$margin-main-view-top);
+  padding-top: sizes.$margin-main-view-top;
+  background-color: colors.$background;
+}
+
+.cards-list {
+  @include grid-layout.adaptive(350px, 414px);
+}
+
+.process-spinner {
+  display: flex;
+  justify-content: center;
+}

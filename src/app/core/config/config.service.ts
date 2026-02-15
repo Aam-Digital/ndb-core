@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
 import { shareReplay } from "rxjs/operators";
-import { addDefaultRecurringActivityDetailsConfig } from "../../child-dev-project/attendance/add-default-recurring-activity-views";
+import { addDefaultRecurringActivityDetailsConfig } from "#src/app/features/attendance/add-default-recurring-activity-views";
 import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
 import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
 import { migrateInheritedFieldConfig } from "../../features/inherited-field/inherited-field-config-migration";

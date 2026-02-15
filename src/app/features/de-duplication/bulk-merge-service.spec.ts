@@ -12,7 +12,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
 import { Entity } from "app/core/entity/model/entity";
 import { DatabaseField } from "app/core/entity/database-field.decorator";
-import { EventAttendance } from "app/child-dev-project/attendance/model/event-attendance";
+import { EventAttendance } from "#src/app/features/attendance/model/event-attendance";
 import { Note } from "app/child-dev-project/notes/model/note";
 import { createEntityOfType } from "app/core/demo-data/create-entity-of-type";
 

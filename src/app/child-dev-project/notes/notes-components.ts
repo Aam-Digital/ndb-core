@@ -9,13 +9,6 @@ export const notesComponents: ComponentTuple[] = [
       ),
   ],
   [
-    "NoteAttendanceCountBlock",
-    () =>
-      import("./note-attendance-block/note-attendance-count-block.component").then(
-        (c) => c.NoteAttendanceCountBlockComponent,
-      ),
-  ],
-  [
     "NotesDashboard",
     () =>
       import("./dashboard-widgets/notes-dashboard/notes-dashboard.component").then(

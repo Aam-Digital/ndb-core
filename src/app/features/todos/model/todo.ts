@@ -1,7 +1,7 @@
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
+import { RecurringActivity } from "#src/app/features/attendance/model/recurring-activity";
 import { TimeInterval } from "../recurring-interval/time-interval";
 import { TodoCompletion } from "./todo-completion";
 import { WarningLevel } from "../../../child-dev-project/warning-level";

@@ -1,0 +1,14 @@
+@use "../../../../../styles/variables/colors";
+@use "../../../../../styles/functions/gradient-helpers";
+
+.day-cell {
+  padding: 0.28em;
+  line-height: 1em;
+  width: 1ch;
+}
+
+.has-remark {
+  background-image: gradient-helpers.top-right-triangle(
+    colors.$muted-background
+  );
+}

@@ -9,7 +9,7 @@ import { EntityListComponent } from "./entity-list.component";
 import { BooleanFilterConfig, EntityListConfig } from "../EntityListConfig";
 import { Entity } from "../../entity/model/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
-import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
+import { AttendanceService } from "#src/app/features/attendance/attendance.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject } from "rxjs";
@@ -29,17 +29,7 @@ describe("EntityListComponent", () => {
 
   const testConfig: EntityListConfig = {
     title: "Children List",
-    columns: [
-      { viewComponent: "DisplayText", label: "Age", id: "age" },
-      {
-        viewComponent: "RecentAttendanceBlocks",
-        label: "Attendance (School)",
-        id: "school",
-        additional: {
-          filterByActivityType: "SCHOOL_CLASS",
-        },
-      },
-    ],
+    columns: [{ viewComponent: "DisplayText", label: "Age", id: "age" }],
     columnGroups: {
       default: "School Info",
       mobile: "School Info",

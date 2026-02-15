@@ -9,7 +9,7 @@ import {
   ColumnGroupsConfig,
   FilterConfig,
 } from "../../../core/entity-list/EntityListConfig";
-import { EventNote } from "../../attendance/model/event-note";
+import { EventNote } from "#src/app/features/attendance/model/event-note";
 import { merge } from "rxjs";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";

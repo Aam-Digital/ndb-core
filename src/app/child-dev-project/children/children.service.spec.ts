@@ -9,7 +9,7 @@ import { DatabaseTestingModule } from "../../utils/database-testing.module";
 import { sortByAttribute } from "../../utils/utils";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { DateWithAge } from "../../core/basic-datatypes/date-with-age/dateWithAge";
-import { AttendanceModule } from "../attendance/attendance.module";
+import { AttendanceModule } from "#src/app/features/attendance/attendance.module";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { createEntityOfType } from "../../core/demo-data/create-entity-of-type";
 import { Entity } from "../../core/entity/model/entity";

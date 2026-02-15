@@ -25,11 +25,11 @@ import {
 import {
   EventAttendance,
   EventAttendanceMap,
-} from "../../attendance/model/event-attendance";
+} from "#src/app/features/attendance/model/event-attendance";
 import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
-} from "../../attendance/model/attendance-status";
+} from "#src/app/features/attendance/model/attendance-status";
 import { getWarningLevelColor, WarningLevel } from "../../warning-level";
 import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
