@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceDetailsComponent } from "./attendance-details.component";
 import {
-    ActivityAttendance,
-    generateEventWithAttendance,
+  ActivityAttendance,
+  generateEventWithAttendance,
 } from "../../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { RecurringActivity } from "../../model/recurring-activity";

@@ -1,6 +1,6 @@
 import { RollCallComponent } from "./roll-call.component";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service";
-import { applicationConfig, Meta, StoryFn, StoryObj } from "@storybook/angular";
+import { applicationConfig, Meta, StoryObj } from "@storybook/angular";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";

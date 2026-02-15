@@ -1,13 +1,13 @@
 import {
-    applicationConfig,
-    Meta,
-    moduleMetadata,
-    StoryFn,
+  applicationConfig,
+  Meta,
+  moduleMetadata,
+  StoryFn,
 } from "@storybook/angular";
 import { RecurringActivity } from "../../model/recurring-activity";
 import {
-    ActivityAttendance,
-    generateEventWithAttendance,
+  ActivityAttendance,
+  generateEventWithAttendance,
 } from "../../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { AttendanceDetailsComponent } from "./attendance-details.component";

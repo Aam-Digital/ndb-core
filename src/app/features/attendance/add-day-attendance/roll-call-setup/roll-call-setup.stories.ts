@@ -1,5 +1,5 @@
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service";
-import { applicationConfig, Meta, StoryFn, StoryObj } from "@storybook/angular";
+import { applicationConfig, Meta, StoryObj } from "@storybook/angular";
 import { RollCallSetupComponent } from "./roll-call-setup.component";
 import moment from "moment";
 import { Note } from "#src/app/child-dev-project/notes/model/note";

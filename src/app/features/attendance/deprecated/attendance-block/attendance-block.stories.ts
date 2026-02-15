@@ -1,7 +1,7 @@
 import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import {
-    ActivityAttendance,
-    generateEventWithAttendance,
+  ActivityAttendance,
+  generateEventWithAttendance,
 } from "../../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { AttendanceBlockComponent } from "./attendance-block.component";
