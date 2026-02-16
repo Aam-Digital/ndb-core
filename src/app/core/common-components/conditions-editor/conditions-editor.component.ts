@@ -225,12 +225,6 @@ export class ConditionsEditorComponent implements OnInit {
     );
   }
 
-  /**
-   * Handle form value changes and update the condition object with the appropriate format.
-   * - Array fields use { $elemMatch: { $in: [...] } } format
-   * - Non-array fields with multi-select use { $in: [...] } format
-   * - Other fields use direct value assignment
-   */
   private onFormValueChange(
     condition: any,
     fieldKey: string,
