@@ -11,17 +11,27 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EMPTY, of } from "rxjs";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { expectObservable } from "../../../../utils/test-utils/observable-utils";
+import { DatabaseResolverService } from "../../../database/database-resolver.service";
 
 describe("BackgroundProcessingIndicatorComponent", () => {
   let component: BackgroundProcessingIndicatorComponent;
   let fixture: ComponentFixture<BackgroundProcessingIndicatorComponent>;
+  let mockDbResolver: jasmine.SpyObj<DatabaseResolverService>;
 
   beforeEach(waitForAsync(() => {
+    mockDbResolver = jasmine.createSpyObj("DatabaseResolverService", [
+      "resetSync",
+    ]);
+    mockDbResolver.resetSync.and.returnValue(Promise.resolve());
+
     TestBed.configureTestingModule({
       imports: [
         BackgroundProcessingIndicatorComponent,
         NoopAnimationsModule,
         FontAwesomeTestingModule,
+      ],
+      providers: [
+        { provide: DatabaseResolverService, useValue: mockDbResolver },
       ],
     }).compileComponents();
   }));
@@ -81,4 +91,9 @@ describe("BackgroundProcessingIndicatorComponent", () => {
     tick();
     expect(component.taskListDropdownTrigger.openMenu).not.toHaveBeenCalled();
   }));
+
+  it("should call resetSync on DatabaseResolverService when resetSync is called", async () => {
+    await component.resetSync();
+    expect(mockDbResolver.resetSync).toHaveBeenCalled();
+  });
 });

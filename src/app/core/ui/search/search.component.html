@@ -72,17 +72,6 @@
       </mat-option>
     }
 
-    @case (ILLEGAL_INPUT) {
-      <mat-option class="result-hint" [disabled]="true">
-        <p
-          i18n="Invalid characters were entered into the search field"
-          class="remove-margin-bottom"
-        >
-          Please only enter numbers or letters
-        </p>
-      </mat-option>
-    }
-
     @default {
       @for (res of results | async; track res) {
         <mat-option [value]="res">

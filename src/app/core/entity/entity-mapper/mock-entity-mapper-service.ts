@@ -15,7 +15,9 @@ export function createEntityMapperSpyObj() {
 
 export function mockEntityMapperProvider(
   withData: Entity[] = [],
-  customDatabaseResolverService: DatabaseResolverService | {} = {},
+  customDatabaseResolverService: DatabaseResolverService | {} = {
+    resetSync: () => Promise.resolve(),
+  },
 ): Provider[] {
   return [
     {

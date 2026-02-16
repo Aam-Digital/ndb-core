@@ -68,6 +68,30 @@ describe("SearchComponent", () => {
     subscr.unsubscribe();
   }));
 
+  it("should search for mixed alphanumeric input", fakeAsync(() => {
+    const subscr = component.results.subscribe();
+
+    component.formControl.setValue("10012bcfg");
+    tick(SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2);
+
+    expect(component.state).toBe(component.NO_RESULTS);
+    expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
+
+    subscr.unsubscribe();
+  }));
+
+  it("should trim leading and trailing spaces before searching", fakeAsync(() => {
+    const subscr = component.results.subscribe();
+
+    component.formControl.setValue("  AB  ");
+    tick(SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2);
+
+    expect(component.state).toBe(component.NO_RESULTS);
+    expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
+
+    subscr.unsubscribe();
+  }));
+
   function expectResultToBeEmpty(done: DoneFn) {
     subscription = component.results.subscribe((next) => {
       expect(next).toEqual([]);

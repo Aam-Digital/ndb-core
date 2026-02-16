@@ -62,11 +62,12 @@ export class SearchService {
 
   private getSearchIndexDesignDoc() {
     let searchIndex = `(doc) => {\n`;
+    searchIndex += `const splitTokens = (value) => value.toLowerCase().split(/[\\s/.:,]+/).filter((val) => !!val)\n`;
     this.searchableEntities.forEach(([type, attributes]) => {
       searchIndex += `if (doc._id.startsWith("${type}:")) {\n`;
       attributes.forEach((attr) => {
-        searchIndex += `if (doc["${attr}"]) {\n`;
-        searchIndex += `doc["${attr}"].toString().toLowerCase().split(" ").forEach((val) => emit(val))\n`;
+        searchIndex += `if (doc["${attr}"] !== undefined && doc["${attr}"] !== null) {\n`;
+        searchIndex += `splitTokens(doc["${attr}"].toString()).forEach((val) => emit(val))\n`;
         searchIndex += `}\n`;
       });
       searchIndex += `return\n`;
@@ -82,7 +83,10 @@ export class SearchService {
    * @param searchTerm for which entities should be returned
    */
   async getSearchResults(searchTerm: string): Promise<Entity[]> {
-    const searchTerms = searchTerm.toLowerCase().split(" ");
+    const searchTerms = this.tokenizeSearchTerm(searchTerm);
+    if (searchTerms.length === 0) {
+      return [];
+    }
     const res = await this.indexingService.queryIndexRaw(
       "search_index/by_name",
       {
@@ -106,10 +110,36 @@ export class SearchService {
     const entityType = Entity.extractTypeFromId(doc._id);
     const values = this.searchableEntities
       .find(([type]) => type === entityType)[1]
-      .map((attr) => doc[attr])
+      .flatMap((attr) => this.tokenizeSearchTerm(doc[attr]))
       .join(" ")
       .toLowerCase();
     return searchTerms.every((s) => values.includes(s));
+  }
+
+  /**
+   * Converts a search value into lowercase tokens used for indexing and matching.
+   * Supports primitive values and arrays; splits tokens by whitespace, "/", ":", ".", and ",".
+   */
+  private tokenizeSearchTerm(value: unknown): string[] {
+    if (value === null || value === undefined) {
+      return [];
+    }
+    if (Array.isArray(value)) {
+      return value.flatMap((entry) => this.tokenizeSearchTerm(entry));
+    }
+    if (
+      typeof value !== "string" &&
+      typeof value !== "number" &&
+      typeof value !== "boolean" &&
+      typeof value !== "bigint"
+    ) {
+      return [];
+    }
+    return value
+      .toString()
+      .toLowerCase()
+      .split(/[\s/.:,]+/)
+      .filter((token) => token.length > 0);
   }
 
   private transformDocToEntity(doc): Entity {
