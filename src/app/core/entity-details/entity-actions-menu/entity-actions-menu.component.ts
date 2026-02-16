@@ -35,7 +35,7 @@ import { MatDialogRef } from "@angular/material/dialog";
 export class EntityActionsMenuComponent implements OnChanges {
   private entityActionsMenuService = inject(EntityActionsMenuService);
   protected viewContext = inject(ViewComponentContext, { optional: true });
-  private dialogRef = inject(MatDialogRef, { optional: true });
+  private readonly dialogRef = inject(MatDialogRef, { optional: true });
 
   @Input() entity: Entity;
 
