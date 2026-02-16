@@ -184,14 +184,6 @@ export class ConditionsEditorComponent implements OnInit {
     } as FormFieldConfig);
   }
 
-  /**
-   * Extract the actual value from various condition formats (current and legacy).
-   * Supports:
-   * - Standard array format: { $elemMatch: { $in: [...] } }
-   * - Legacy array formats: { $elemMatch: "id" } or { $elemMatch: { $eq: "id" } }
-   * - Dropdown multi-select: { $in: [...] }
-   * - Direct values for other field types
-   */
   private extractValueFromCondition(
     conditionValue: any,
     fieldConfig: EntitySchemaField,
