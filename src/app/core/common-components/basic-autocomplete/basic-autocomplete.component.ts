@@ -210,7 +210,10 @@ export class BasicAutocompleteComponent<O, V = O>
     });
     // Subscribe to the valueChanges observable to print the input value
     this.autocompleteForm.valueChanges.subscribe((value) => {
-      if (typeof value === "string" && value !== this.displayText) {
+      if (
+        typeof value === "string" &&
+        (this.display !== "text" || value !== this.displayText)
+      ) {
         this.retainSearchValue = value;
       }
     });
@@ -303,7 +306,7 @@ export class BasicAutocompleteComponent<O, V = O>
     if (this.multi && this.retainSearchValue) {
       // reset the search value to previously entered text to help user selecting multiple similar options without retyping filter text
       this.autocompleteForm.setValue(this.retainSearchValue);
-    } else if (this.multi && this.displayText) {
+    } else if (this.multi && this.display === "text" && this.displayText) {
       // keep selected items visible when the multi-select input is focused/opened
       this.autocompleteForm.setValue(this.displayText);
     } else {
@@ -338,7 +341,9 @@ export class BasicAutocompleteComponent<O, V = O>
 
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {
     const filterText =
-      this.multi && inputText === this.displayText ? "" : inputText;
+      this.multi && this.display === "text" && inputText === this.displayText
+        ? ""
+        : inputText;
 
     let filteredOptions = this._options.filter(
       (o) => !this.hideOption(o.initial) && !o.isHidden,
