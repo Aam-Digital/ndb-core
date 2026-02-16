@@ -13,7 +13,7 @@ import { Logging } from "../../logging/logging.service";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
-import { EventAttendanceMapDatatype } from "../../../child-dev-project/attendance/model/event-attendance.datatype";
+import { EventAttendanceMapDatatype } from "#src/app/features/attendance/model/event-attendance.datatype";
 import { SessionSubject } from "../../session/auth/session-info";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";

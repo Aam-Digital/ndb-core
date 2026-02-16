@@ -523,24 +523,6 @@
             "id": "schoolId",
             "additional": "School",
             "noSorting": true
-          },
-          {
-            "viewComponent": "RecentAttendanceBlocks",
-            "label": "Attendance (School)",
-            "id": "schoolAttendance",
-            "additional": {
-              "filterByActivityType": "SCHOOL_CLASS"
-            },
-            "noSorting": true
-          },
-          {
-            "viewComponent": "RecentAttendanceBlocks",
-            "label": "Attendance (Coaching)",
-            "id": "coachingAttendance",
-            "additional": {
-              "filterByActivityType": "COACHING_CLASS"
-            },
-            "noSorting": true
           }
         ],
         "columnGroups": {
@@ -569,8 +551,6 @@
                 "age",
                 "schoolClass",
                 "schoolId",
-                "schoolAttendance",
-                "coachingAttendance",
                 "motherTongue"
               ]
             },
