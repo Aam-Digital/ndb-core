@@ -143,7 +143,7 @@ export class NotificationRuleComponent implements OnChanges {
    */
   onConditionsChange(updatedConditions: any) {
     const conditionsForm = this.form.get("conditions");
-    conditionsForm.setValue(updatedConditions ?? {});
+    conditionsForm?.setValue(updatedConditions ?? {});
   }
 
   private updateEntityConstructor(entityType: string) {
