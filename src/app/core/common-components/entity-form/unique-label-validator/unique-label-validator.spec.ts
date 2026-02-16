@@ -1,11 +1,11 @@
 import { waitForAsync } from "@angular/core/testing";
 import { uniqueLabelValidator } from "./unique-label-validator";
-import { FormControl, ValidatorFn } from "@angular/forms";
+import { AsyncValidatorFn, FormControl } from "@angular/forms";
 import { Entity } from "../../../entity/model/entity";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 
 describe("UniqueLabelValidator", () => {
-  let validator: ValidatorFn;
+  let validator: AsyncValidatorFn;
   let formControl: FormControl;
   let testEntityType: typeof Entity;
 
@@ -13,8 +13,8 @@ describe("UniqueLabelValidator", () => {
     // Create a test entity type with some fields
     class TestEntity extends Entity {
       static override readonly ENTITY_TYPE = "TestEntity";
-      static override label = "Test Entity";
-      static override schema = new Map<string, EntitySchemaField>([
+      static override readonly label = "Test Entity";
+      static override readonly schema = new Map<string, EntitySchemaField>([
         ["field1", { id: "field1", label: "Name" }],
         ["field2", { id: "field2", label: "Age" }],
         ["field3", { id: "field3", label: "Email" }],
@@ -67,15 +67,6 @@ describe("UniqueLabelValidator", () => {
 
   it("should allow the same label when editing existing field", async () => {
     validator = uniqueLabelValidator(testEntityType, "field2");
-    formControl = new FormControl("Age", { nonNullable: true });
-    formControl.markAsDirty();
-    const validationResult = await validator(formControl);
-
-    expect(formControl.pristine).toBeFalse();
-    expect(validationResult).toBeNull();
-  });
-
-  it("should allow to keep unchanged value (default value)", async () => {
     formControl = new FormControl("Age", { nonNullable: true });
     formControl.markAsDirty();
     const validationResult = await validator(formControl);

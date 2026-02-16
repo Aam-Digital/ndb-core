@@ -299,8 +299,8 @@ describe("AdminEntityFieldComponent", () => {
     // Create a simple entity type with existing fields
     class TestEntityWithFields extends Entity {
       static override readonly ENTITY_TYPE = "TestEntityWithFields";
-      static override label = "Test Entity";
-      static override schema = new Map<string, EntitySchemaField>([
+      static override readonly label = "Test Entity";
+      static override readonly schema = new Map<string, EntitySchemaField>([
         ["field1", { id: "field1", label: "Existing Label 1" }],
         ["field2", { id: "field2", label: "Existing Label 2" }],
         ["field3", { id: "field3", label: "Another Field" }],
@@ -328,6 +328,39 @@ describe("AdminEntityFieldComponent", () => {
 
     // Case-insensitive duplicate should also be invalid
     labelControl.setValue("existing label 2");
+    await fixture.whenStable();
+    expect(labelControl.errors).toEqual({
+      duplicateLabel: jasmine.any(String),
+    });
+  }));
+
+  it("should allow keeping the same label when editing existing field", waitForAsync(async () => {
+    class TestEntityWithFields extends Entity {
+      static override readonly ENTITY_TYPE = "TestEntityWithFields";
+      static override readonly label = "Test Entity";
+      static override readonly schema = new Map<string, EntitySchemaField>([
+        ["field1", { id: "field1", label: "Existing Label" }],
+        ["field2", { id: "field2", label: "Another Label" }],
+      ]);
+    }
+
+    component.data.entityType = TestEntityWithFields;
+    component.data.entitySchemaField = {
+      id: "field1",
+      label: "Existing Label",
+    };
+    component.ngOnInit();
+    await fixture.whenStable();
+
+    const labelControl = component.schemaFieldsForm.get("label");
+
+    // Keeping the same label should be valid
+    expect(labelControl.value).toBe("Existing Label");
+    await fixture.whenStable();
+    expect(labelControl.errors).toBeNull();
+
+    // Changing to another existing label should be invalid
+    labelControl.setValue("Another Label");
     await fixture.whenStable();
     expect(labelControl.errors).toEqual({
       duplicateLabel: jasmine.any(String),

@@ -15,8 +15,7 @@ export function uniqueLabelValidator(
   currentFieldId?: string,
 ): AsyncPromiseValidatorFn {
   return async (control: FormControl): Promise<ValidationErrors | null> => {
-    // Allow unchanged values (for editing existing fields)
-    if (!control.value || control.value === control.defaultValue) {
+    if (!control.value) {
       return null;
     }
 
