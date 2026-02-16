@@ -9,7 +9,6 @@ import { EntityListComponent } from "./entity-list.component";
 import { BooleanFilterConfig, EntityListConfig } from "../EntityListConfig";
 import { Entity } from "../../entity/model/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
-import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject } from "rxjs";
@@ -29,17 +28,7 @@ describe("EntityListComponent", () => {
 
   const testConfig: EntityListConfig = {
     title: "Children List",
-    columns: [
-      { viewComponent: "DisplayText", label: "Age", id: "age" },
-      {
-        viewComponent: "RecentAttendanceBlocks",
-        label: "Attendance (School)",
-        id: "school",
-        additional: {
-          filterByActivityType: "SCHOOL_CLASS",
-        },
-      },
-    ],
+    columns: [{ viewComponent: "DisplayText", label: "Age", id: "age" }],
     columnGroups: {
       default: "School Info",
       mobile: "School Info",
@@ -67,17 +56,10 @@ describe("EntityListComponent", () => {
       },
     ],
   };
-  let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
   let mockActivatedRoute: Partial<ActivatedRoute>;
   let routeData: Subject<DynamicComponentConfig<EntityListConfig>>;
 
   beforeEach(waitForAsync(() => {
-    mockAttendanceService = jasmine.createSpyObj([
-      "getActivitiesForChild",
-      "getAllActivityAttendancesForPeriod",
-    ]);
-    mockAttendanceService.getActivitiesForChild.and.resolveTo([]);
-    mockAttendanceService.getAllActivityAttendancesForPeriod.and.resolveTo([]);
     routeData = new Subject<DynamicComponentConfig<EntityListConfig>>();
     mockActivatedRoute = {
       component: undefined,
@@ -89,7 +71,6 @@ describe("EntityListComponent", () => {
     TestBed.configureTestingModule({
       imports: [EntityListComponent, MockedTestingModule.withState()],
       providers: [
-        { provide: AttendanceService, useValue: mockAttendanceService },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         {
           provide: FormDialogService,

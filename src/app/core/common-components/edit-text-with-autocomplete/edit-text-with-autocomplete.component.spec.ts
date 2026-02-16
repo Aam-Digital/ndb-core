@@ -2,7 +2,7 @@ import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { FormControl } from "@angular/forms";
 import { By } from "@angular/platform-browser";
-import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
+import { RecurringActivity } from "#src/app/features/attendance/model/recurring-activity";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";

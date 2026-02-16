@@ -5,7 +5,7 @@ import {
   DataAggregationService,
 } from "./data-aggregation.service";
 import { QueryService } from "../../core/export/query.service";
-import { EventNote } from "../../child-dev-project/attendance/model/event-note";
+import { EventNote } from "#src/app/features/attendance/model/event-note";
 import moment from "moment";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { genders } from "../../child-dev-project/children/model/genders";

@@ -5,7 +5,7 @@ import {
   AttendanceLogicalStatus,
   AttendanceStatusType,
   NullAttendanceStatusType,
-} from "../../attendance/model/attendance-status";
+} from "#src/app/features/attendance/model/attendance-status";
 import { InteractionType } from "./interaction-type.interface";
 import {
   getWarningLevelColor,
