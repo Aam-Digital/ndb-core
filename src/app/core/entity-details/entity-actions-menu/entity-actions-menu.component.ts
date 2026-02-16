@@ -17,6 +17,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
 import { EntityActionsMenuService } from "./entity-actions-menu.service";
 import { EntityAction } from "./entity-action.interface";
+import { MatDialogRef } from "@angular/material/dialog";
 
 @Component({
   selector: "app-entity-actions-menu",
@@ -34,6 +35,7 @@ import { EntityAction } from "./entity-action.interface";
 export class EntityActionsMenuComponent implements OnChanges {
   private entityActionsMenuService = inject(EntityActionsMenuService);
   protected viewContext = inject(ViewComponentContext, { optional: true });
+  private dialogRef = inject(MatDialogRef, { optional: true });
 
   @Input() entity: Entity;
 
@@ -80,6 +82,15 @@ export class EntityActionsMenuComponent implements OnChanges {
     );
     if (result) {
       this.actionTriggered.emit(action.action);
+
+      // Close dialog after successful delete action
+      if (
+        action.action === "delete" &&
+        this.viewContext?.isDialog &&
+        this.dialogRef
+      ) {
+        this.dialogRef.close();
+      }
     }
     setTimeout(() => this.filterAvailableActions());
   }
