@@ -21,7 +21,7 @@ import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-e
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { Validators } from "@angular/forms";
-import { RecurringActivity } from "../../../../child-dev-project/attendance/model/recurring-activity";
+import { RecurringActivity } from "#src/app/features/attendance/model/recurring-activity";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 

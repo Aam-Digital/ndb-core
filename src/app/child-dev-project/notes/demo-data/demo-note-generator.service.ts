@@ -7,7 +7,7 @@ import { noteIndividualStories } from "./notes_individual-stories";
 import { noteGroupStories } from "./notes_group-stories";
 import { centersUnique } from "../../children/demo-data-generators/fixtures/centers";
 import { absenceRemarks } from "./remarks";
-import { AttendanceLogicalStatus } from "../../attendance/model/attendance-status";
+import { AttendanceLogicalStatus } from "#src/app/features/attendance/model/attendance-status";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { warningLevels } from "../../warning-level";

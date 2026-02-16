@@ -5,7 +5,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { Entity } from "../../entity/model/entity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
-import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
+import { RecurringActivity } from "#src/app/features/attendance/model/recurring-activity";
 import { ImportMetadata, ImportSettings } from "../import-metadata";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import {

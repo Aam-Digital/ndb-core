@@ -1,12 +1,12 @@
 import { Injectable, inject } from "@angular/core";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 import { Note } from "../../child-dev-project/notes/model/note";
-import { EventNote } from "../../child-dev-project/attendance/model/event-note";
+import { EventNote } from "#src/app/features/attendance/model/event-note";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
-import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
-import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
+import { AttendanceService } from "#src/app/features/attendance/attendance.service";
+import { EventAttendance } from "#src/app/features/attendance/model/event-attendance";
 import jsonQuery from "json-query";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 

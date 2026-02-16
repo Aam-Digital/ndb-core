@@ -1,0 +1,27 @@
+:host {
+  width: 100%;
+  display: block !important;
+  transition:
+    transform 500ms cubic-bezier(0.35, 0, 0.25, 1),
+    visibility 500ms cubic-bezier(0.35, 0, 0.25, 1);
+
+  &.tab-center {
+    transform: none;
+  }
+
+  &.tab-left {
+    transform: translate(-110%);
+    // If the tab is either on the left or right, we additionally add a `min-height` of 1px
+    // in order to ensure that the element has a height before its state changes. This is
+    // necessary because Chrome does seem to skip the transition in RTL mode if the element does
+    // not have a static height and is not rendered. See related issue: #9465
+    min-height: 1px;
+    visibility: hidden;
+  }
+
+  &.tab-right {
+    transform: translate(110%);
+    min-height: 1px;
+    visibility: hidden;
+  }
+}
