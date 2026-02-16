@@ -507,8 +507,14 @@ export class EntitiesTableComponent<
   }
 
   private inferDefaultSort(): Sort {
-    // initial sorting by first column, ensure that not the 'action' column is used
-    const sortBy = this._columnsToDisplay.filter((c) => !c.startsWith("__"))[0];
+    // Initial sorting by first sortable user column, ignore internal action columns
+    // and columns that explicitly disable sorting.
+    const sortBy = this._columnsToDisplay
+      .filter((columnId) => !columnId.startsWith("__"))
+      .find((columnId) => {
+        const column = this._columns.find((c) => c.id === columnId);
+        return !column?.noSorting;
+      });
     const sortByColumn = this._columns.find((c) => c.id === sortBy);
 
     let sortDirection: SortDirection = "asc";
