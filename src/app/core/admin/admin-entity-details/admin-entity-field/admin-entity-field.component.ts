@@ -43,6 +43,7 @@ import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/ge
 import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
 import { uniqueIdValidator } from "app/core/common-components/entity-form/unique-id-validator/unique-id-validator";
+import { uniqueLabelValidator } from "app/core/common-components/entity-form/unique-label-validator/unique-label-validator";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { AnonymizeOptionsComponent } from "./anonymize-options/anonymize-options.component";
@@ -166,9 +167,22 @@ export class AdminEntityFieldComponent implements OnInit {
       this.data.entitySchemaField.additional,
     );
 
+    const labelFormControl = this.fb.control(
+      this.data.entitySchemaField.label,
+      {
+        validators: [Validators.required],
+        asyncValidators: [
+          uniqueLabelValidator(
+            this.data.entityType,
+            this.data.entitySchemaField.id,
+          ),
+        ],
+      },
+    );
+
     this.schemaFieldsForm = this.fb.group({
       id: this.fieldIdForm,
-      label: [this.data.entitySchemaField.label, Validators.required],
+      label: labelFormControl,
       labelShort: [this.data.entitySchemaField.labelShort],
       displayFullLengthLabel: [
         this.data.entitySchemaField.displayFullLengthLabel ?? false,

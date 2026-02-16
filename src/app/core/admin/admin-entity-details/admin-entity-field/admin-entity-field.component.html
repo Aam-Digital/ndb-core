@@ -29,6 +29,11 @@
             <mat-form-field>
               <mat-label i18n>Label</mat-label>
               <input formControlName="label" matInput #formLabel />
+              @if (schemaFieldsForm.get("label").hasError("duplicateLabel")) {
+                <mat-error>
+                  {{ schemaFieldsForm.get("label").getError("duplicateLabel") }}
+                </mat-error>
+              }
             </mat-form-field>
 
             <mat-checkbox
