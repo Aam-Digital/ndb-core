@@ -4545,21 +4545,12 @@
           <context context-type="linenumber">69,71</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1887713602115119994" datatype="html">
-        <source> Please only enter numbers or letters </source>
-        <target>Bitte tragen Sie nur Zahlen oder Buchstaben in das Feld ein</target>
-        <note priority="1" from="description">Invalid characters were entered into the search field</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/ui/search/search.component.html</context>
-          <context context-type="linenumber">80,82</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="5070851088634386614" datatype="html">
         <source> The following processes are still running in the background. Until these are finished some pages may be slow or incomplete. </source>
         <target>Die Folgenden Prozesse laufen noch im Hintergrund ab. Bis diese abgeschlossen sind könnten manche Seiten langsam oder nicht komplett sein.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/sync-status/background-processing-indicator/background-processing-indicator.component.html</context>
-          <context context-type="linenumber">19,22</context>
+          <context context-type="linenumber">20,23</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7844839672877990404" datatype="html">
@@ -4568,7 +4559,7 @@
         <note priority="1" from="description">Hide sync details</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/sync-status/background-processing-indicator/background-processing-indicator.component.html</context>
-          <context context-type="linenumber">48,50</context>
+          <context context-type="linenumber">53,55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4971191729650002888" datatype="html">
@@ -5385,7 +5376,7 @@
       </trans-unit>
       <trans-unit id="2549737213024136740" datatype="html">
         <source><x id="PH" equiv-text="closest.toFixed(2)"/> km</source>
-        <target><x id="PH" equiv-text="res"/> km</target>
+        <target><x id="PH" equiv-text="closest.toFixed(2)"/> km</target>
         <note priority="1" from="description">e.g. 5 km</note>
         <note priority="1" from="meaning">distance with unit</note>
         <context-group purpose="location">
@@ -11766,7 +11757,7 @@ Wählen Sie zunächst oben einen Importtyp aus, um diesen Abschnitt zu aktiviere
         <note priority="1" from="description">Entity field config switch mode title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts</context>
-          <context context-type="linenumber">385</context>
+          <context context-type="linenumber">388</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1551802631953460051" datatype="html">
@@ -11775,7 +11766,7 @@ Wählen Sie zunächst oben einen Importtyp aus, um diesen Abschnitt zu aktiviere
         <note priority="1" from="description">Entity field config switch mode body</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts</context>
-          <context context-type="linenumber">386</context>
+          <context context-type="linenumber">389</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3037688516554204485" datatype="html">
@@ -11785,6 +11776,54 @@ Wählen Sie zunächst oben einen Importtyp aus, um diesen Abschnitt zu aktiviere
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
           <context context-type="linenumber">123</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7925969536690280744" datatype="html">
+        <source>System will continue to sync data regularly</source>
+        <target>Daten werden im Hintergrund regelmäßig synchronisiert.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/ui/sync-status/background-processing-indicator/background-processing-indicator.component.html</context>
+          <context context-type="linenumber">51</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3612205056251341590" datatype="html">
+        <source>Manually trigger re-sync</source>
+        <target>Manuelle neue Synchronisierung anstoßen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/ui/sync-status/background-processing-indicator/background-processing-indicator.component.html</context>
+          <context context-type="linenumber">60</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="414449054602112754" datatype="html">
+        <source>Search for this type of field is not supported.</source>
+        <target>Die Suche nach diesem Feldtyp wird nicht unterstützt.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-searchable-checkbox/admin-searchable-checkbox.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4194729079652775690" datatype="html">
+        <source>Searchable</source>
+        <target>Global suchbar</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-searchable-checkbox/admin-searchable-checkbox.component.html</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="947177379001683820" datatype="html">
+        <source>By enabling the checkbox, you can find the record from the global search by inputting the value.</source>
+        <target>Durch Aktivieren der Option können Sie den Datensatz in der globalen Suche finden, indem Sie nach dem Wert dieses Feldes suchen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-searchable-checkbox/admin-searchable-checkbox.component.html</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3740467671430385425" datatype="html">
+        <source> This field is already searchable because it is part of the record&apos;s display name. </source>
+        <target>Dieses Feld ist bereits durchsuchbar, da es Teil des Anzeigenamens des Datensatzes ist. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-searchable-checkbox/admin-searchable-checkbox.component.html</context>
+          <context context-type="linenumber">17,20</context>
         </context-group>
       </trans-unit>
     </body>

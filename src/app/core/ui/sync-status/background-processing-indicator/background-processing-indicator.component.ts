@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import { Component, inject, Input, OnInit, ViewChild } from "@angular/core";
 import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { BackgroundProcessState } from "../background-process-state.interface";
 import { Observable } from "rxjs";
@@ -10,6 +10,8 @@ import { AsyncPipe } from "@angular/common";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatDividerModule } from "@angular/material/divider";
+import { DatabaseResolverService } from "../../../database/database-resolver.service";
 
 /**
  * A dumb component handling presentation of the sync indicator icon
@@ -28,6 +30,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatProgressSpinnerModule,
     FontAwesomeModule,
     MatTooltipModule,
+    MatDividerModule,
   ],
 })
 export class BackgroundProcessingIndicatorComponent implements OnInit {
@@ -41,8 +44,17 @@ export class BackgroundProcessingIndicatorComponent implements OnInit {
   @Input() summarize: boolean = true;
   wasClosed: boolean = false;
 
+  private readonly dbResolver = inject(DatabaseResolverService);
+
   /** handle to programmatically open/close the details dropdown */
   @ViewChild(MatMenuTrigger) taskListDropdownTrigger: MatMenuTrigger;
+
+  /**
+   * Clear sync checkpoints and trigger a full re-sync.
+   */
+  async resetSync(): Promise<void> {
+    await this.dbResolver.resetSync();
+  }
 
   ngOnInit() {
     this.filteredProcesses = this.backgroundProcesses.pipe(
