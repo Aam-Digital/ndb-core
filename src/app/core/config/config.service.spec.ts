@@ -431,39 +431,6 @@ describe("ConfigService", () => {
     );
   }));
 
-  it("should migrate ActivitiesOverview component", fakeAsync(() => {
-    const oldConfig = {
-      "view:activities": {
-        component: "ActivitiesOverview",
-        config: {},
-      },
-    };
-
-    const expectedConfig = {
-      "view:activities": {
-        component: "RelatedEntities",
-        config: {
-          entityType: "RecurringActivity",
-          columns: [
-            {
-              id: "title",
-              editComponent: "EditTextWithAutocomplete",
-              additional: {
-                entityType: "RecurringActivity",
-                relevantProperty: "linkedGroups",
-              },
-            },
-            { id: "assignedTo" },
-            { id: "linkedGroups" },
-            { id: "excludedParticipants" },
-          ],
-        },
-      },
-    };
-
-    testConfigMigration(oldConfig, expectedConfig);
-  }));
-
   it("should migrate deprecated ChildSchoolOverview components", fakeAsync(() => {
     const oldConfig = {
       "view:child/:id": {

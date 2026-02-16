@@ -1,4 +1,4 @@
-import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
+import { RecurringActivity } from "#src/app/features/attendance/model/recurring-activity";
 import { AdditionalImportAction } from "../additional-actions/additional-import-action";
 import { Entity } from "../../entity/model/entity";
 import { ColumnMapping } from "../column-mapping";

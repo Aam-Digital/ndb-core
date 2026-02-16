@@ -7,7 +7,7 @@ import { ChildSchoolRelation } from "../../../child-dev-project/children/model/c
 import { ExportColumnConfig } from "./export-column-config";
 import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
 import moment from "moment";
-import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
+import { RecurringActivity } from "#src/app/features/attendance/model/recurring-activity";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { Entity } from "../../entity/model/entity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
