@@ -25,6 +25,7 @@ jobs:
       docker_tags: |
         type=ref,event=tag
         type=raw,value=master,enabled=${{ contains(github.ref_name, '-master') }}
+        type=raw,value=stable,enabled=${{ !contains(github.ref_name, '-') }}
 
   sentry-upload-sourcemaps:
     runs-on: ubuntu-latest

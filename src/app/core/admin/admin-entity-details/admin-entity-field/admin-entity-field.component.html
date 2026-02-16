@@ -22,7 +22,7 @@
   }
 
   <form [formGroup]="form">
-    <mat-tab-group formGroupName="schemaFields">
+    <mat-tab-group formGroupName="schemaFields" [dynamicHeight]="true">
       <mat-tab label="Basics" i18n-label>
         <div class="grid-layout margin-top-regular">
           <div class="entity-form-cell">
@@ -225,12 +225,12 @@
               ></fa-icon>
             </app-anonymize-options>
 
-            <!-- TODO: not supported yet
-              <mat-form-field>
-                <mat-label i18n>Searchable</mat-label>
-                <input formControlName="searchable" matInput />
-              </mat-form-field>
-              -->
+            <app-admin-searchable-checkbox
+              formControlName="searchable"
+              [entityType]="entityType"
+              [fieldId]="fieldIdForm.value"
+              [dataType]="schemaFieldsForm.get('dataType').value"
+            ></app-admin-searchable-checkbox>
           </div>
 
           <div class="entity-form-cell">
