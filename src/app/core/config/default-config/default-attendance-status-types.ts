@@ -1,4 +1,4 @@
-import { AttendanceStatusType } from "../../../child-dev-project/attendance/model/attendance-status";
+import { AttendanceStatusType } from "#src/app/features/attendance/model/attendance-status";
 import enumJson from "../../../../assets/base-configs/basic/ConfigurableEnum_attendance-status.json";
 
 export const defaultAttendanceStatusTypes =

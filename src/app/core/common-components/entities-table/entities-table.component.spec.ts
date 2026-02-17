@@ -108,6 +108,19 @@ describe("EntitiesTableComponent", () => {
     expect(component.recordsDataSource.sort.active).toBe("subject");
   });
 
+  it("should skip non-sortable columns when inferring default sort", () => {
+    component.entityType = Note;
+    component.columnsToDisplay = ["children", "subject"];
+
+    const n1 = Note.create(new Date(), "B");
+    const n2 = Note.create(new Date(), "A");
+    component.records = [n1, n2];
+    fixture.detectChanges();
+
+    expect(component.recordsDataSource.sort.active).toBe("subject");
+    expect(component.recordsDataSource.sort.direction).toBe("asc");
+  });
+
   it("should sort non-standard objects", () => {
     const notes = [
       new Note("note-0"),

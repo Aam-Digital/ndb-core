@@ -1,7 +1,6 @@
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import { TimeInterval } from "../recurring-interval/time-interval";
 import { TodoCompletion } from "./todo-completion";
 import { WarningLevel } from "../../../child-dev-project/warning-level";
@@ -78,7 +77,7 @@ export class Todo extends Entity {
     dataType: "entity",
     isArray: true,
     label: $localize`:label for the related Entities:Related Records`,
-    additional: ["Child", "School", RecurringActivity.ENTITY_TYPE],
+    additional: ["Child", "School", "RecurringActivity"],
     entityReferenceRole: "composite",
     showInDetailsView: true,
     anonymize: "retain",

@@ -428,15 +428,6 @@
             "id": "schoolId",
             "additional": "School",
             "noSorting": true
-          },
-          {
-            "viewComponent": "RecentAttendanceBlocks",
-            "label": "Anwesenheit (Schule)",
-            "id": "schoolAttendance",
-            "additional": {
-              "filterByActivityType": "SCHOOL_CLASS"
-            },
-            "noSorting": true
           }
         ],
         "columnGroups": {
