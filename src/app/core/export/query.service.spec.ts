@@ -6,13 +6,13 @@ import {
   AttendanceInfo,
   AttendanceReport,
 } from "./query.service";
-import { EventNote } from "../../child-dev-project/attendance/model/event-note";
+import { EventNote } from "#src/app/features/attendance/model/event-note";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { Note } from "../../child-dev-project/notes/model/note";
-import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
-import { AttendanceStatusType } from "../../child-dev-project/attendance/model/attendance-status";
+import { EventAttendance } from "#src/app/features/attendance/model/event-attendance";
+import { AttendanceStatusType } from "#src/app/features/attendance/model/attendance-status";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
-import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
+import { AttendanceService } from "#src/app/features/attendance/attendance.service";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
 import {

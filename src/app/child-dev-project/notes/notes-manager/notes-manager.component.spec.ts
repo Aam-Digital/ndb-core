@@ -16,7 +16,7 @@ import {
   EntityListConfig,
 } from "../../../core/entity-list/EntityListConfig";
 import { InteractionType } from "../model/interaction-type.interface";
-import { EventNote } from "../../attendance/model/event-note";
+import { EventNote } from "#src/app/features/attendance/model/event-note";
 import { UpdatedEntity } from "../../../core/entity/model/entity-update";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
