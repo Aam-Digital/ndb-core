@@ -135,12 +135,14 @@ export class ImportReviewDataComponent implements OnChanges {
       this.matDialog
         .open(ImportConfirmSummaryComponent, {
           data: {
+            rawData: this.rawData,
             entitiesToImport: this.mappedEntities,
             importSettings: {
               entityType: this.entityType,
               columnMapping: this.columnMapping,
               additionalActions: this.additionalActions,
               importExisting: this.importExisting,
+              additionalSettings: this.additionalSettings,
               filename: this.filename,
             },
           } as ImportDialogData,
