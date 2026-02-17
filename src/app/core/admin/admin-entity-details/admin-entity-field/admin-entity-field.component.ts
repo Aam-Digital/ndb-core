@@ -42,8 +42,7 @@ import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/con
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
-import { uniqueIdValidator } from "app/core/common-components/entity-form/unique-id-validator/unique-id-validator";
-import { uniqueLabelValidator } from "app/core/common-components/entity-form/unique-label-validator/unique-label-validator";
+import { uniquePropertyValidator } from "app/core/common-components/entity-form/unique-property-validator/unique-property-validator";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { AnonymizeOptionsComponent } from "./anonymize-options/anonymize-options.component";
@@ -163,7 +162,13 @@ export class AdminEntityFieldComponent implements OnInit {
     this.fieldIdForm = this.fb.control(this.data.entitySchemaField.id, {
       validators: [Validators.required, Validators.pattern(/^[a-zA-Z0-9_]*$/)],
       asyncValidators: [
-        uniqueIdValidator(Array.from(this.data.entityType.schema.keys())),
+        uniquePropertyValidator({
+          getExistingValues: async () =>
+            Array.from(this.data.entityType.schema.keys()),
+          normalize: false,
+          errorKey: "uniqueId",
+          errorMessage: $localize`:form field validation error:id already in use`,
+        }),
       ],
     });
     this.additionalForm = this.fb.control(
@@ -175,10 +180,27 @@ export class AdminEntityFieldComponent implements OnInit {
       {
         validators: [Validators.required],
         asyncValidators: [
-          uniqueLabelValidator(
-            this.data.entityType,
-            this.data.entitySchemaField.id,
-          ),
+          uniquePropertyValidator({
+            getExistingValues: async () => {
+              const labels: string[] = [];
+              for (const [
+                fieldId,
+                field,
+              ] of this.data.entityType.schema.entries()) {
+                if (field.label) {
+                  labels.push(field.label);
+                }
+              }
+              return labels;
+            },
+            excludeValue: this.data.entitySchemaField.id
+              ? this.data.entityType.schema.get(this.data.entitySchemaField.id)
+                  ?.label
+              : undefined,
+            normalize: true,
+            errorKey: "duplicateLabel",
+            errorMessage: $localize`:form field validation error:A field with this label already exists`,
+          }),
         ],
       },
     );

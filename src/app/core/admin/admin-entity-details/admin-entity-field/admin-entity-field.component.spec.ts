@@ -3,7 +3,6 @@ import {
   fakeAsync,
   TestBed,
   tick,
-  waitForAsync,
 } from "@angular/core/testing";
 import { AdminEntityFieldComponent } from "./admin-entity-field.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -295,7 +294,7 @@ describe("AdminEntityFieldComponent", () => {
     ]);
   }));
 
-  it("should validate that label is unique", waitForAsync(async () => {
+  it("should validate that label is unique", fakeAsync(() => {
     // Create a simple entity type with existing fields
     class TestEntityWithFields extends Entity {
       static override readonly ENTITY_TYPE = "TestEntityWithFields";
@@ -310,31 +309,31 @@ describe("AdminEntityFieldComponent", () => {
     component.data.entityType = TestEntityWithFields;
     component.data.entitySchemaField = { label: "New Label", id: undefined };
     component.ngOnInit();
-    await fixture.whenStable();
+    tick();
 
     const labelControl = component.schemaFieldsForm.get("label");
 
     // New unique label should be valid
     labelControl.setValue("Unique New Label");
-    await fixture.whenStable();
+    tick();
     expect(labelControl.errors).toBeNull();
 
     // Exact duplicate label should be invalid
     labelControl.setValue("Existing Label 1");
-    await fixture.whenStable();
+    tick();
     expect(labelControl.errors).toEqual({
       duplicateLabel: jasmine.any(String),
     });
 
     // Case-insensitive duplicate should also be invalid
     labelControl.setValue("existing label 2");
-    await fixture.whenStable();
+    tick();
     expect(labelControl.errors).toEqual({
       duplicateLabel: jasmine.any(String),
     });
   }));
 
-  it("should allow keeping the same label when editing existing field", waitForAsync(async () => {
+  it("should allow keeping the same label when editing existing field", fakeAsync(() => {
     class TestEntityWithFields extends Entity {
       static override readonly ENTITY_TYPE = "TestEntityWithFields";
       static override readonly label = "Test Entity";
@@ -350,18 +349,18 @@ describe("AdminEntityFieldComponent", () => {
       label: "Existing Label",
     };
     component.ngOnInit();
-    await fixture.whenStable();
+    tick();
 
     const labelControl = component.schemaFieldsForm.get("label");
 
     // Keeping the same label should be valid
     expect(labelControl.value).toBe("Existing Label");
-    await fixture.whenStable();
+    tick();
     expect(labelControl.errors).toBeNull();
 
     // Changing to another existing label should be invalid
     labelControl.setValue("Another Label");
-    await fixture.whenStable();
+    tick();
     expect(labelControl.errors).toEqual({
       duplicateLabel: jasmine.any(String),
     });

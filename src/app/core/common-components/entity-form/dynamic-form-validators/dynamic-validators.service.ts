@@ -9,7 +9,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { Logging } from "../../../logging/logging.service";
-import { uniqueIdValidator } from "../unique-id-validator/unique-id-validator";
+import { uniquePropertyValidator } from "../unique-property-validator/unique-property-validator";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { buildReadonlyValidator } from "./readonly-after-set.validator";
 import { Entity } from "../../../entity/model/entity";
@@ -212,12 +212,16 @@ export class DynamicValidatorsService {
     fn: AsyncPromiseValidatorFn;
   } {
     return {
-      fn: uniqueIdValidator(() =>
-        this.entityMapper
-          .loadType(value)
-          // TODO: extend this to allow checking for any configurable property (e.g. Child.name rather than only id)
-          .then((entities) => entities.map((entity) => entity.getId())),
-      ),
+      fn: uniquePropertyValidator({
+        getExistingValues: () =>
+          this.entityMapper
+            .loadType(value)
+            // TODO: extend this to allow checking for any configurable property (e.g. Child.name rather than only id)
+            .then((entities) => entities.map((entity) => entity.getId())),
+        normalize: false,
+        errorKey: "uniqueId",
+        errorMessage: $localize`:form field validation error:id already in use`,
+      }),
       async: true,
     };
   }
