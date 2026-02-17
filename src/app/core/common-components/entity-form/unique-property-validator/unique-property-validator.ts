@@ -24,6 +24,38 @@ export interface UniquePropertyValidatorConfig {
   errorMessage: string;
 }
 
+function normalizeValue(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+function isDuplicate(
+  currentValue: string,
+  existingValues: string[],
+  excludeValue: string | undefined,
+  shouldNormalize: boolean,
+): boolean {
+  const normalizedCurrent = shouldNormalize
+    ? normalizeValue(currentValue)
+    : currentValue;
+  const normalizedExclude =
+    excludeValue !== undefined && shouldNormalize
+      ? normalizeValue(excludeValue)
+      : excludeValue;
+
+  return existingValues.some((existing) => {
+    const normalizedExisting = shouldNormalize
+      ? normalizeValue(existing)
+      : existing;
+    if (
+      normalizedExclude !== undefined &&
+      normalizedExisting === normalizedExclude
+    ) {
+      return false;
+    }
+    return normalizedExisting === normalizedCurrent;
+  });
+}
+
 /**
  * Generic validator to ensure a property value is unique within a collection.
  * Can be configured to validate different properties (id, label, etc.) with optional normalization.
@@ -35,56 +67,18 @@ export function uniquePropertyValidator(
   config: UniquePropertyValidatorConfig,
 ): AsyncPromiseValidatorFn {
   return async (control: FormControl): Promise<ValidationErrors | null> => {
-    // Skip validation for empty values
-    if (!control.value) {
-      return null;
-    }
-
-    // Skip validation for default/unchanged values (allow editing existing entities)
-    if (control.value === control.defaultValue) {
+    if (!control.value || control.value === control.defaultValue) {
       return null;
     }
 
     const existingValues = await config.getExistingValues();
-    let currentValue = control.value;
+    const hasDuplicate = isDuplicate(
+      control.value,
+      existingValues,
+      config.excludeValue,
+      config.normalize ?? false,
+    );
 
-    // Apply normalization if configured
-    if (config.normalize) {
-      currentValue = currentValue.trim().toLowerCase();
-    }
-
-    // Normalize excludeValue if needed
-    let normalizedExcludeValue: string | undefined;
-    if (config.excludeValue !== undefined) {
-      normalizedExcludeValue = config.normalize
-        ? config.excludeValue.trim().toLowerCase()
-        : config.excludeValue;
-    }
-
-    // Check for duplicates
-    for (const existingValue of existingValues) {
-      let compareValue = existingValue;
-
-      // Apply normalization to existing value if configured
-      if (config.normalize) {
-        compareValue = existingValue.trim().toLowerCase();
-      }
-
-      // Skip the excluded value (used when editing existing items)
-      if (
-        normalizedExcludeValue !== undefined &&
-        compareValue === normalizedExcludeValue
-      ) {
-        continue;
-      }
-
-      if (compareValue === currentValue) {
-        return {
-          [config.errorKey]: config.errorMessage,
-        };
-      }
-    }
-
-    return null;
+    return hasDuplicate ? { [config.errorKey]: config.errorMessage } : null;
   };
 }

@@ -183,10 +183,7 @@ export class AdminEntityFieldComponent implements OnInit {
           uniquePropertyValidator({
             getExistingValues: async () => {
               const labels: string[] = [];
-              for (const [
-                fieldId,
-                field,
-              ] of this.data.entityType.schema.entries()) {
+              for (const field of this.data.entityType.schema.values()) {
                 if (field.label) {
                   labels.push(field.label);
                 }
