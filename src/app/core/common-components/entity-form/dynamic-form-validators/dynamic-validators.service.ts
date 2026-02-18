@@ -216,8 +216,6 @@ export class DynamicValidatorsService {
         getExistingValues: () =>
           this.entityMapper
             .loadType(value)
-            // TODO: extend this to allow checking for any configurable property (e.g. Child.name rather than only id)
-            
             .then((entities) => entities.map((entity) => entity.getId())),
         normalize: false,
         errorKey: "uniqueId",
