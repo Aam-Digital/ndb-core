@@ -4,6 +4,9 @@ import { Entity } from "../../entity/model/entity";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { ConfigService } from "../../config/config.service";
+import { Logging } from "../../logging/logging.service";
+import { EMPTY, from } from "rxjs";
+import { catchError, exhaustMap, startWith } from "rxjs/operators";
 
 /**
  * This service handles to logic for global searches across all entities
@@ -20,15 +23,26 @@ export class SearchService {
   private searchableEntities: [string, string[]][];
 
   constructor() {
-    this.configService.configUpdates.subscribe(() => this.createSearchIndex());
-    this.createSearchIndex();
+    this.configService.configUpdates
+      .pipe(
+        startWith(null),
+        exhaustMap(() =>
+          from(this.createSearchIndex()).pipe(
+            catchError((error) => {
+              Logging.error("Failed to create search index", error);
+              return EMPTY;
+            }),
+          ),
+        ),
+      )
+      .subscribe();
   }
 
   /**
    * Creates the search index based on the `toStringAttributes` and the `searchable` schema property
    * @private
    */
-  private createSearchIndex() {
+  private async createSearchIndex(): Promise<void> {
     this.initializeSearchableEntities();
 
     const designDoc = {
@@ -40,7 +54,7 @@ export class SearchService {
       },
     };
 
-    this.indexingService.createIndex(designDoc);
+    await this.indexingService.createIndex(designDoc);
   }
 
   private initializeSearchableEntities() {
