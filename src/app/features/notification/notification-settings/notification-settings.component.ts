@@ -75,8 +75,9 @@ export class NotificationSettingsComponent implements OnInit {
   }
 
   async ngOnInit() {
-    // TODO: Temporary bypass for local work; revert to API check before production.
-    this.isFeatureEnabled.set(true);
+    this.isFeatureEnabled.set(
+      await this.notificationService.isNotificationServerEnabled(),
+    );
 
     this.isBrowserSupported.set(
       this.notificationService.isPushNotificationSupported(),
