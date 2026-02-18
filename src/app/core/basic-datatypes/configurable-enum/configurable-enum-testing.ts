@@ -10,10 +10,6 @@ import { centersUnique } from "app/child-dev-project/children/demo-data-generato
 import { defaultAttendanceStatusTypes } from "app/core/config/default-config/default-attendance-status-types";
 import { INTERACTION_TYPE_CONFIG_ID } from "app/child-dev-project/notes/model/interaction-type.interface";
 import { defaultInteractionTypes } from "app/core/config/default-config/default-interaction-types";
-import {
-  ACTIVITY_STATUS_ENUM,
-  defaultActivityStatus,
-} from "../../config/default-config/default-activity-status";
 import { ConfigurableEnum } from "./configurable-enum";
 
 export function getDefaultEnumEntities(): ConfigurableEnum[] {
@@ -27,7 +23,6 @@ export function getDefaultEnumEntities(): ConfigurableEnum[] {
     center: centersUnique,
     "attendance-status": defaultAttendanceStatusTypes,
     [INTERACTION_TYPE_CONFIG_ID]: defaultInteractionTypes,
-    [ACTIVITY_STATUS_ENUM]: defaultActivityStatus,
   }).map(([key, value]) => {
     const e = new ConfigurableEnum(key);
     e.values = value;

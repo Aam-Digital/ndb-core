@@ -74,7 +74,7 @@ import {
   NAVIGATOR_TOKEN,
   WINDOW_TOKEN,
 } from "./utils/di-tokens";
-import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
+import { AttendanceModule } from "#src/app/features/attendance/attendance.module";
 import { NotesModule } from "./child-dev-project/notes/notes.module";
 import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
 import { ProgressDashboardWidgetModule } from "./features/dashboard-widgets/progress-dashboard-widget/progress-dashboard-widget.module";
