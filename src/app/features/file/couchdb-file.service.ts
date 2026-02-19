@@ -14,7 +14,6 @@ import { FileService } from "./file.service";
 import { Logging } from "../../core/logging/logging.service";
 import { ObservableQueue } from "./observable-queue/observable-queue";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
-import { SyncState } from "../../core/session/session-states/sync-state.enum";
 import { environment } from "../../../environments/environment";
 import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
 import { NotAvailableOfflineError } from "../../core/session/not-available-offline.error";
@@ -75,19 +74,11 @@ export class CouchdbFileService extends FileService {
    * Manually send this doc to the DB here because sync is only happening at slower intervals.
    * @private
    */
-  private ensureDocIsSynced(): Observable<SyncState> {
+  private ensureDocIsSynced(): Observable<void> {
     const mainDb = this.databaseResolver.getDatabase();
-
-    // if in online-only mode (e.g. unauthenticated public forms use), no need to sync
-    if ((mainDb as SyncedPouchDatabase)?.isInRemoteOnlyMode) {
-      return of(SyncState.COMPLETED);
-    }
-
-    let sync: () => Promise<any> = (mainDb as SyncedPouchDatabase).sync
-      ? () => (mainDb as SyncedPouchDatabase).sync()
-      : () => Promise.resolve();
-
-    return from(sync()).pipe(map(() => this.syncState.value));
+    const syncPromise =
+      (mainDb as SyncedPouchDatabase)?.ensureSynced?.() ?? Promise.resolve();
+    return from(syncPromise);
   }
 
   private getAttachmentsDocument(

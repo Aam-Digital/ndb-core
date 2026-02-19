@@ -18,6 +18,7 @@ import {
 } from "../../session/session-type";
 import { from, interval, merge, of } from "rxjs";
 import { LoginState } from "../../session/session-states/login-state.enum";
+import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 
 /**
  * An alternative implementation of PouchDatabase that additionally
@@ -178,6 +179,24 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
     Logging.debug(`triggering full re-sync for "${this.dbName}"`);
     await this.sync({ checkpoint: false });
+  }
+
+  /**
+   * Ensure the database is synced with the remote server.
+   * Resolves immediately if in remote-only mode.
+   * Throws {@link NotAvailableOfflineError} if offline.
+   * Otherwise triggers a one-time sync and resolves when complete.
+   */
+  async ensureSynced(): Promise<void> {
+    if (this.isInRemoteOnlyMode) {
+      return;
+    }
+
+    if (!this.navigator.onLine) {
+      throw new NotAvailableOfflineError("Database sync");
+    }
+
+    await this.sync();
   }
 
   /**

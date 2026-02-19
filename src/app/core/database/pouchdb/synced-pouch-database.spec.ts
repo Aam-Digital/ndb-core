@@ -10,6 +10,7 @@ import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.s
 import { Subject } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase } from "./synced-pouch-database";
+import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 
 describe("SyncedPouchDatabase", () => {
   let service: SyncedPouchDatabase;
@@ -190,5 +191,34 @@ describe("SyncedPouchDatabase", () => {
     await service.resetSync();
 
     expect(syncSpy).not.toHaveBeenCalled();
+  });
+
+  it("ensureSynced should resolve without syncing in remote-only mode", async () => {
+    const syncSpy = spyOn(service, "sync").and.resolveTo({} as any);
+    spyOnProperty(service, "isInRemoteOnlyMode", "get").and.returnValue(true);
+
+    await service.ensureSynced();
+
+    expect(syncSpy).not.toHaveBeenCalled();
+  });
+
+  it("ensureSynced should throw NotAvailableOfflineError when offline", async () => {
+    spyOn(service, "sync").and.resolveTo({} as any);
+    spyOnProperty(service, "isInRemoteOnlyMode", "get").and.returnValue(false);
+    mockNavigator.onLine = false;
+
+    await expectAsync(service.ensureSynced()).toBeRejectedWithError(
+      NotAvailableOfflineError,
+    );
+  });
+
+  it("ensureSynced should call sync when online and not remote-only", async () => {
+    const syncSpy = spyOn(service, "sync").and.resolveTo({} as any);
+    spyOnProperty(service, "isInRemoteOnlyMode", "get").and.returnValue(false);
+    mockNavigator.onLine = true;
+
+    await service.ensureSynced();
+
+    expect(syncSpy).toHaveBeenCalled();
   });
 });
