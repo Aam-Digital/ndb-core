@@ -4,6 +4,7 @@ import PouchDB from "pouchdb-browser";
 import { HttpStatusCode } from "@angular/common/http";
 import { RemotePouchDatabase } from "./remote-pouch-database";
 import { SyncStateSubject } from "app/core/session/session-type";
+import { environment } from "environments/environment";
 
 describe("RemotePouchDatabase tests", () => {
   let database: PouchDatabase;
@@ -172,4 +173,99 @@ describe("RemotePouchDatabase tests", () => {
     tick(10000);
     expect(pouchDB.changes).not.toHaveBeenCalled();
   }));
+
+  describe("lostPermissions interception", () => {
+    it("should accumulate lostPermissions from _changes responses intercepted in defaultFetch", async () => {
+      database.init("");
+      const lostPermissions = [
+        { _id: "Child:1", _rev: "3-abc" },
+        { _id: "School:2", _rev: "2-def" },
+      ];
+
+      // Call extractLostPermissions directly with a response containing lostPermissions
+      const response = new Response(
+        JSON.stringify({ last_seq: "42-xyz", results: [], lostPermissions }),
+        { status: HttpStatusCode.Ok },
+      );
+      await (database as any).extractLostPermissions(response);
+
+      const collected = (
+        database as RemotePouchDatabase
+      ).collectAndClearLostPermissions();
+      expect(collected).toEqual(lostPermissions);
+    });
+
+    it("should not accumulate anything when lostPermissions field is absent", async () => {
+      database.init("");
+
+      const response = new Response(
+        JSON.stringify({ last_seq: "5-seq", results: [] }),
+        { status: HttpStatusCode.Ok },
+      );
+      await (database as any).extractLostPermissions(response);
+
+      const collected = (
+        database as RemotePouchDatabase
+      ).collectAndClearLostPermissions();
+      expect(collected).toEqual([]);
+    });
+
+    it("should reset after collectAndClearLostPermissions is called", async () => {
+      database.init("");
+      const response = new Response(
+        JSON.stringify({
+          results: [],
+          last_seq: "1-seq",
+          lostPermissions: [{ _id: "X:1", _rev: "1-a" }],
+        }),
+        { status: HttpStatusCode.Ok },
+      );
+      await (database as any).extractLostPermissions(response);
+
+      (database as RemotePouchDatabase).collectAndClearLostPermissions();
+      const second = (
+        database as RemotePouchDatabase
+      ).collectAndClearLostPermissions();
+      expect(second).toEqual([]);
+    });
+
+    it("should call extractLostPermissions for _changes URLs with 200 response", async () => {
+      database.init("");
+      spyOn(database as any, "extractLostPermissions");
+      (PouchDB.fetch as jasmine.Spy).and.returnValue(
+        Promise.resolve(
+          new Response(JSON.stringify({ results: [] }), {
+            status: HttpStatusCode.Ok,
+          }),
+        ),
+      );
+
+      // Use defaultFetch directly with a _changes URL
+      await (database as any).defaultFetch(
+        `${environment.DB_PROXY_PREFIX}/app/_changes?since=0`,
+        { headers: {} },
+      );
+
+      expect((database as any).extractLostPermissions).toHaveBeenCalled();
+    });
+
+    it("should not call extractLostPermissions for non-_changes URLs", async () => {
+      database.init("");
+      spyOn(database as any, "extractLostPermissions");
+      (PouchDB.fetch as jasmine.Spy).and.returnValue(
+        Promise.resolve(
+          new Response(JSON.stringify({ _id: "Entity:1" }), {
+            status: HttpStatusCode.Ok,
+          }),
+        ),
+      );
+
+      await (database as any).defaultFetch(
+        `${environment.DB_PROXY_PREFIX}/app/Entity:1`,
+        { headers: {} },
+      );
+
+      expect((database as any).extractLostPermissions).not.toHaveBeenCalled();
+    });
+  });
 });

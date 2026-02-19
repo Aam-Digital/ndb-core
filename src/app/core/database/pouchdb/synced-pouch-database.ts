@@ -144,9 +144,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
         ...options,
       })
-      .then((res) => {
+      .then(async (res) => {
         if (res) res["dbName"] = this.dbName; // add for debugging information
         Logging.debug("sync completed", res);
+        await this.purgeDocsWithLostPermissions();
         this.syncState.next(SyncState.COMPLETED);
         return res as SyncResult;
       })
@@ -165,6 +166,27 @@ export class SyncedPouchDatabase extends PouchDatabase {
         this.syncState.next(SyncState.FAILED);
         throw err;
       });
+  }
+
+  /**
+   * Purge local documents for which the server reported lost permissions
+   * during the most recent sync's `_changes` calls.
+   */
+  private async purgeDocsWithLostPermissions(): Promise<void> {
+    const lostPermissions =
+      this.remoteDatabase.collectAndClearLostPermissions();
+
+    for (const { _id, _rev } of lostPermissions) {
+      try {
+        await (this.getPouchDB() as any).purge(_id, _rev);
+        Logging.debug(`Purged doc with lost permissions: ${_id}`);
+      } catch (err) {
+        Logging.debug(
+          `Could not purge doc ${_id} (may not exist locally)`,
+          err,
+        );
+      }
+    }
   }
 
   /**

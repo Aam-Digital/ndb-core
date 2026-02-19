@@ -20,6 +20,12 @@ export class RemotePouchDatabase extends PouchDatabase {
   private unauthenticatedSession?: boolean;
 
   /**
+   * Docs whose permissions were lost as reported by the server in `_changes` responses.
+   * Accumulated across all `_changes` calls during a sync and consumed after sync completes.
+   */
+  private pendingLostPermissions: { _id: string; _rev: string }[] = [];
+
+  /**
    * Polling interval for changes in milliseconds (for remote-only databases).
    * Avoids long-polling connection issues by using periodic polling instead.
    * @private
@@ -116,8 +122,47 @@ export class RemotePouchDatabase extends PouchDatabase {
       }
     }
 
+    if (
+      result?.status === HttpStatusCode.Ok &&
+      remoteUrl.includes("_changes")
+    ) {
+      await this.extractLostPermissions(result.clone());
+    }
+
     return result;
   };
+
+  /**
+   * Parse `lostPermissions` from a `_changes` response and accumulate them
+   * for later retrieval via {@link collectAndClearLostPermissions}.
+   *
+   * Awaited inside `defaultFetch` to ensure items are collected before the
+   * fetch resolves — preventing a race with `collectAndClearLostPermissions`.
+   */
+  private async extractLostPermissions(response: Response): Promise<void> {
+    try {
+      const body = await response.json();
+      if (body.lostPermissions?.length) {
+        this.pendingLostPermissions.push(...body.lostPermissions);
+      }
+    } catch (err) {
+      Logging.debug(
+        "Could not parse lostPermissions from _changes response",
+        err,
+      );
+    }
+  }
+
+  /**
+   * Returns all docs whose permissions were lost since the last sync
+   * (as reported in `_changes` responses intercepted during that sync)
+   * and resets the internal list.
+   */
+  collectAndClearLostPermissions(): { _id: string; _rev: string }[] {
+    const collected = this.pendingLostPermissions;
+    this.pendingLostPermissions = [];
+    return collected;
+  }
 
   /**
    * Poll the _changes endpoint periodically to detect document changes.
