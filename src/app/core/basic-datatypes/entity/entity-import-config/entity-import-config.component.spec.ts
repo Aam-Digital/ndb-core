@@ -49,10 +49,16 @@ describe("EntityImportConfigComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should show all properties of the provided entity that have a label", () => {
+  it("should show all properties of the provided entity that have a label, plus _id", () => {
     const childPropertiesWithLabel = [...TestEntity.schema.entries()]
-      .filter(([_, schema]) => !!schema.label && !schema.isInternalField)
-      .map(([property, schema]) => ({ property, label: schema.label }));
+      .filter(
+        ([prop, schema]) =>
+          (!!schema.label && !schema.isInternalField) || prop === "_id",
+      )
+      .map(([property, schema]) => ({
+        property,
+        label: property === "_id" ? "ID (Internal UUID)" : schema.label,
+      }));
     expect(component.availableProperties).toEqual(childPropertiesWithLabel);
   });
 
