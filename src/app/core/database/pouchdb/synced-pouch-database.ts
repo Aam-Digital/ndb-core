@@ -40,6 +40,14 @@ export class SyncedPouchDatabase extends PouchDatabase {
   private remoteDatabase: RemotePouchDatabase;
   private syncState: SyncStateSubject = new SyncStateSubject();
 
+  /**
+   * Get the internal sync state subject for this database (not the global one).
+   * Useful for observing when this specific database's sync completes.
+   */
+  get localSyncState(): SyncStateSubject {
+    return this.syncState;
+  }
+
   constructor(
     dbName: string,
     authService: KeycloakAuthService,
@@ -100,6 +108,14 @@ export class SyncedPouchDatabase extends PouchDatabase {
       // keep remote database on default name (e.g. "app" instead of "user_uuid-app")
       this.remoteDatabase.init(remoteDbName);
     }
+  }
+
+  /**
+   * Get the underlying remote PouchDB instance.
+   * Can be used as a replication source for background migration.
+   */
+  getRemotePouchDB(): PouchDB.Database {
+    return this.remoteDatabase?.getPouchDB();
   }
 
   private async logSyncContext() {

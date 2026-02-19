@@ -13,6 +13,11 @@ export enum SessionType {
   synced = "synced",
 
   /**
+   * synced local PouchDB (legacy "idb" adapter) — for rollback if indexeddb adapter causes issues
+   */
+  synced_idb = "synced-idb",
+
+  /**
    * local only demo mode - PouchDB database without a remote sync counterpart
    */
   local = "local",

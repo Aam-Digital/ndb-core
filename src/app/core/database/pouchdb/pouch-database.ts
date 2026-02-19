@@ -1,6 +1,7 @@
 import { Database, GetAllOptions, GetOptions, QueryOptions } from "../database";
 import { Logging } from "../../logging/logging.service";
 import PouchDB from "pouchdb-browser";
+import indexeddbAdapter from "pouchdb-adapter-indexeddb";
 import { NgZone } from "@angular/core";
 import { PerformanceAnalysisLogging } from "../../../utils/performance-analysis-logging";
 import { firstValueFrom, Observable, Subject } from "rxjs";
@@ -9,6 +10,9 @@ import { environment } from "environments/environment";
 import { SyncState } from "app/core/session/session-states/sync-state.enum";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { NotificationEvent } from "#src/app/features/notification/model/notification-event";
+
+// Register the newer "indexeddb" adapter alongside the default "idb" adapter
+PouchDB.plugin(indexeddbAdapter);
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -42,6 +46,13 @@ export class PouchDatabase extends Database {
   /** trigger to unsubscribe any internal subscriptions */
   protected readonly destroy$ = new Subject<void>();
 
+  /**
+   * The PouchDB adapter to use for local storage.
+   * Set by the factory/resolver before calling init().
+   * Default: "indexeddb" (the newer adapter). Use "idb" for the legacy adapter.
+   */
+  adapter: string = "indexeddb";
+
   constructor(
     dbName: string,
     protected globalSyncState?: SyncStateSubject,
@@ -62,7 +73,10 @@ export class PouchDatabase extends Database {
     options?: PouchDB.Configuration.DatabaseConfiguration | any,
     suppressSyncCompleted?: boolean,
   ) {
-    this.pouchDB = new PouchDB(dbName ?? this.dbName, options);
+    this.pouchDB = new PouchDB(dbName ?? this.dbName, {
+      adapter: this.adapter,
+      ...options,
+    });
     this.databaseInitialized.complete();
 
     if (!suppressSyncCompleted) {
