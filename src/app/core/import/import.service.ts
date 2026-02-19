@@ -182,7 +182,8 @@ export class ImportService {
     let value;
 
     // Determine if we should split array values based on enableSplitting flag
-    const shouldSplit = schema.isArray && (mapping.enableSplitting ?? true);
+    const shouldSplit =
+      schema.isArray && (mapping.additional?.enableSplitting ?? true);
 
     if (!shouldSplit) {
       // Handle as single value (either non-array field or array field with splitting disabled)

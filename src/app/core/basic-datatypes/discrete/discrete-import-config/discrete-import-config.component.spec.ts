@@ -64,7 +64,7 @@ describe("DiscreteImportConfigComponent", () => {
   });
 
   it("should init with entity format of provided mappings in 'additional'", () => {
-    data.col.additional = { male: "M", female: "F" };
+    data.col.additional = { values: { male: "M", female: "F" } };
     spyOn(
       TestBed.inject(ConfigurableEnumService),
       "getEnumValues",
@@ -102,11 +102,12 @@ describe("DiscreteImportConfigComponent", () => {
     component.save();
 
     expect(closeSpy).toHaveBeenCalled();
-    // For single-select fields, enableSplitting is not saved
     expect(data.col.additional).toEqual({
-      male: "M",
-      female: "F",
-      other: "other",
+      values: {
+        male: "M",
+        female: "F",
+        other: "other",
+      },
     });
   });
 

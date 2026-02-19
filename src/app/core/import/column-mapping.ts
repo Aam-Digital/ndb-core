@@ -19,10 +19,4 @@ export interface ColumnMapping {
    * This is used to track if the coloumns are manually updated or not.
    */
   manuallyUpdated?: boolean;
-
-  /**
-   * For array/multi-select fields: whether to split values by the configured separator.
-   * Stored separately from 'additional' to avoid conflicts with user data.
-   */
-  enableSplitting?: boolean;
 }

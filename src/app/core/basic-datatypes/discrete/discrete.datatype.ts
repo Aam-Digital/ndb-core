@@ -29,28 +29,32 @@ export abstract class DiscreteDatatype<
   override async importMapFunction(
     val,
     schemaField: EntitySchemaField,
-    additional: { [key: string]: any },
+    additional: DiscreteColumnMappingAdditional,
   ) {
+    const valueMappings = additional?.values;
+
     // If mapping dialog was skipped entirely,
     // treat as raw string value and let transformToObjectFormat handle it
-    if (!additional) {
+    if (!valueMappings) {
       return super.importMapFunction(val, schemaField);
     }
 
     // If mapping dialog was opened but this specific value was not mapped,
     // skip the property by returning undefined
-    if (additional[val] === undefined) {
+    if (valueMappings[val] === undefined) {
       return undefined;
     }
 
-    return super.importMapFunction(additional[val], schemaField);
+    return super.importMapFunction(valueMappings[val], schemaField);
   }
 
   override importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
-    if (!col.additional) {
+    const valueMappings = (col.additional as DiscreteColumnMappingAdditional)
+      ?.values;
+    if (!valueMappings) {
       return "?";
     }
-    const unmappedValues = Object.values(col.additional).filter(
+    const unmappedValues = Object.values(valueMappings).filter(
       (v) => v === undefined,
     );
     if (unmappedValues.length > 0) {
@@ -58,4 +62,15 @@ export abstract class DiscreteDatatype<
     }
     return undefined;
   }
+}
+
+/**
+ * Structure for the `additional` field of a ColumnMapping for discrete datatypes.
+ */
+export interface DiscreteColumnMappingAdditional {
+  /** Whether to split values by the configured separator (for array/multi-select fields). */
+  enableSplitting?: boolean;
+
+  /** Key-value mapping from raw import values to target entity values. */
+  values: { [key: string]: any };
 }

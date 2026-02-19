@@ -25,6 +25,7 @@ import { DynamicEditComponent } from "../../../entity/entity-field-edit/dynamic-
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
+import { DiscreteColumnMappingAdditional } from "../discrete.datatype";
 
 /**
  * UI to configure import value mappings for discrete datatypes like boolean or enum.
@@ -66,10 +67,13 @@ export class DiscreteImportConfigComponent implements OnInit {
     this.component = this.schemaService.getComponent(this.schema, "edit");
     this.separator = this.data.additionalSettings?.multiValueSeparator ?? ",";
 
+    const discreteAdditional = this.data.col
+      .additional as DiscreteColumnMappingAdditional;
+
     // For array fields: default to splitting (but can be disabled)
     // For single-select: never split
     if (this.schema?.isArray) {
-      this.enableSplitting = this.data.col.enableSplitting ?? true;
+      this.enableSplitting = discreteAdditional?.enableSplitting ?? true;
     } else {
       this.enableSplitting = false;
     }
@@ -108,9 +112,11 @@ export class DiscreteImportConfigComponent implements OnInit {
    * Build the form with value mappings
    */
   private buildForm() {
+    const discreteAdditional = this.data.col
+      .additional as DiscreteColumnMappingAdditional;
     const splitValues = this.splitAndFlattenValues(this.data.values);
     this.form = this.fb.group(
-      this.getFormValues(this.data.col.additional, splitValues),
+      this.getFormValues(discreteAdditional?.values, splitValues),
     );
   }
 
@@ -176,13 +182,14 @@ export class DiscreteImportConfigComponent implements OnInit {
         $localize`Some values don't have a mapping and will not be imported. Are you sure you want to keep it like this?`,
       ));
     if (confirmed) {
-      // Save value mappings in 'additional'
-      this.data.col.additional = rawValues;
-
-      // Save splitting setting separately (only for array fields)
+      // Save value mappings and splitting setting in 'additional'
+      const discreteAdditional: DiscreteColumnMappingAdditional = {
+        values: rawValues,
+      };
       if (this.schema?.isArray) {
-        this.data.col.enableSplitting = this.enableSplitting;
+        discreteAdditional.enableSplitting = this.enableSplitting;
       }
+      this.data.col.additional = discreteAdditional;
 
       this.dialog.close();
     }
