@@ -1666,12 +1666,10 @@
         "prefilter": {
           "$or": [
             {
-              "center": {
-                "$in": [
-                  "C1",
-                  "C2"
-                ]
-              }
+              "center.id": "C1"
+            },
+            {
+              "center.id": "C2"
             }
           ]
         }

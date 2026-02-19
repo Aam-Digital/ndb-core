@@ -106,6 +106,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migratePercentageDatatype,
       migrateEntityBlock,
       migrateGroupByConfig,
+      migrateLegacyIdFilters,
       migrateDefaultValue,
       migrateInheritedFieldConfig,
       migrateUserEntityAndPanels,
@@ -344,6 +345,57 @@ const migrateGroupByConfig: ConfigMigration = (key, configPart) => {
   }
 
   // Return the unchanged part if no modification is needed
+  return configPart;
+};
+
+/**
+ * Migrate legacy ".id" filter keys in OR clauses to the current filter format.
+ * Example:
+ * { $or: [{ "projectStatus.id": "A" }, { "projectStatus.id": "B" }] }
+ *   -> { $or: [{ projectStatus: { $in: ["A", "B"] } }] }
+ */
+const migrateLegacyIdFilters: ConfigMigration = (key, configPart) => {
+  if (!configPart || typeof configPart !== "object") {
+    return configPart;
+  }
+
+  // This migration only applies to OR-filter objects.
+  const orConditions = configPart["$or"];
+  if (!Array.isArray(orConditions)) {
+    return configPart;
+  }
+
+  const migratedConditions: any[] = [];
+  const groupedValues = new Map<string, any[]>();
+
+  for (const orCondition of orConditions) {
+    const entries = Object.entries(orCondition);
+    if (entries.length !== 1) {
+      migratedConditions.push(orCondition);
+      continue;
+    }
+
+    const [rawKey, rawValue] = entries[0];
+    if (!rawKey.endsWith(".id")) {
+      migratedConditions.push(orCondition);
+      continue;
+    }
+
+    const keyWithoutId = rawKey.slice(0, -3);
+    // Collect all values for the same legacy key (e.g. `projectStatus.id`)
+    // and emit one merged `{ projectStatus: { $in: [...] } }` later.
+    const currentValues = groupedValues.get(keyWithoutId) ?? [];
+    currentValues.push(rawValue);
+    groupedValues.set(keyWithoutId, currentValues);
+  }
+
+  // Merge legacy `field.id` OR clauses into one `$in` clause per field.
+  groupedValues.forEach((values, filterKey) => {
+    const uniqueValues = [...new Set(values)];
+    migratedConditions.push({ [filterKey]: { $in: uniqueValues } });
+  });
+
+  configPart["$or"] = migratedConditions;
   return configPart;
 };
 
