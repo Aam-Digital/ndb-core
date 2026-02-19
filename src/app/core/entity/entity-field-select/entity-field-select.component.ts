@@ -40,7 +40,16 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
    * Whether to show the internal _id field in the dropdown.
    * Useful for import contexts where matching by UUID is needed.
    */
-  @Input() showInternalIdField: boolean = false;
+  @Input() set showInternalIdField(value: boolean) {
+    this._showInternalIdField = value;
+    if (this._entityType) {
+      this.options = this.getAllFieldProps(this._entityType.schema);
+    }
+  }
+  get showInternalIdField(): boolean {
+    return this._showInternalIdField;
+  }
+  private _showInternalIdField: boolean = false;
 
   @Input() set entityType(entity: string | EntityConstructor) {
     if (!entity) {
