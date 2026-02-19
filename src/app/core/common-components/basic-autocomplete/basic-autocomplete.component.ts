@@ -210,7 +210,10 @@ export class BasicAutocompleteComponent<O, V = O>
     });
     // Subscribe to the valueChanges observable to print the input value
     this.autocompleteForm.valueChanges.subscribe((value) => {
-      if (typeof value === "string") {
+      if (
+        typeof value === "string" &&
+        (this.display !== "text" || value !== this.displayText)
+      ) {
         this.retainSearchValue = value;
       }
     });
@@ -303,6 +306,9 @@ export class BasicAutocompleteComponent<O, V = O>
     if (this.multi && this.retainSearchValue) {
       // reset the search value to previously entered text to help user selecting multiple similar options without retyping filter text
       this.autocompleteForm.setValue(this.retainSearchValue);
+    } else if (this.multi && this.display === "text" && this.displayText) {
+      // keep selected items visible when the multi-select input is focused/opened
+      this.autocompleteForm.setValue(this.displayText);
     } else {
       // reset the search value to show all available options again
       this.autocompleteForm.setValue("");
@@ -334,14 +340,19 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {
+    const filterText =
+      this.multi && this.display === "text" && inputText === this.displayText
+        ? ""
+        : inputText;
+
     let filteredOptions = this._options.filter(
       (o) => !this.hideOption(o.initial) && !o.isHidden,
     );
-    if (inputText) {
+    if (filterText) {
       this.autocompleteFilterFunction = (option) =>
         this.optionToString(option)
           ?.toLowerCase()
-          ?.includes(inputText.toLowerCase());
+          ?.includes(filterText.toLowerCase());
       this.autocompleteFilterChange.emit(this.autocompleteFilterFunction);
 
       filteredOptions = filteredOptions.filter((o) =>
@@ -350,7 +361,7 @@ export class BasicAutocompleteComponent<O, V = O>
 
       // do not allow users to create a new entry "identical" to an existing one:
       this.showAddOption = !this._options.some(
-        (o) => o?.asString?.toLowerCase() === inputText?.toLowerCase(),
+        (o) => o?.asString?.toLowerCase() === filterText?.toLowerCase(),
       );
     }
     return filteredOptions;
