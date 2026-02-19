@@ -218,6 +218,46 @@ describe("SyncedPouchDatabase", () => {
       expect(mockLocalDb.purge).toHaveBeenCalledWith("School:2", "2-def");
     });
 
+    it("should emit synthetic deletion events for purged docs", async () => {
+      const lostPermissions = [
+        { _id: "Child:1", _rev: "3-abc" },
+        { _id: "School:2", _rev: "2-def" },
+      ];
+      spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      ).and.returnValue(lostPermissions);
+
+      const emittedChanges: any[] = [];
+      service.changes().subscribe((doc) => emittedChanges.push(doc));
+
+      await service.sync();
+
+      expect(emittedChanges).toContain(
+        jasmine.objectContaining({ _id: "Child:1", _deleted: true }),
+      );
+      expect(emittedChanges).toContain(
+        jasmine.objectContaining({ _id: "School:2", _deleted: true }),
+      );
+    });
+
+    it("should not emit change events for docs that failed to purge", async () => {
+      spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      ).and.returnValue([{ _id: "Child:missing", _rev: "1-abc" }]);
+      mockLocalDb.purge.and.rejectWith({ status: 404 });
+
+      const emittedChanges: any[] = [];
+      service.changes().subscribe((doc) => emittedChanges.push(doc));
+
+      await service.sync();
+
+      expect(emittedChanges).not.toContain(
+        jasmine.objectContaining({ _id: "Child:missing", _deleted: true }),
+      );
+    });
+
     it("should not purge anything if no permissions were lost", async () => {
       spyOn(
         service["remoteDatabase"],
