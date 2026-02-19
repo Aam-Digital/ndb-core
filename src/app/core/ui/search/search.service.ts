@@ -6,7 +6,7 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { ConfigService } from "../../config/config.service";
 import { Logging } from "../../logging/logging.service";
 import { EMPTY, from } from "rxjs";
-import { catchError, exhaustMap, startWith } from "rxjs/operators";
+import { catchError, concatMap } from "rxjs/operators";
 
 /**
  * This service handles to logic for global searches across all entities
@@ -25,8 +25,7 @@ export class SearchService {
   constructor() {
     this.configService.configUpdates
       .pipe(
-        startWith(null),
-        exhaustMap(() =>
+        concatMap(() =>
           from(this.createSearchIndex()).pipe(
             catchError((error) => {
               Logging.error("Failed to create search index", error);
