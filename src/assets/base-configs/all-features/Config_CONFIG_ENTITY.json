@@ -1637,27 +1637,24 @@
         ],
         [
           "motherTongue",
-          "language"
+          "enumDropdown"
         ],
         [
           "address",
-          "address"
+          "locationField"
         ],
         [
           "distance",
-          "privateSchool"
+          "distance"
         ]
       ],
       "rightSide": {
         "entityType": "School",
         "availableFilters": [
           {
-            "id": "language"
+            "id": "enumDropdown"
           }
-        ],
-        "prefilter": {
-          "privateSchool": true
-        }
+        ]
       },
       "leftSide": {
         "entityType": "Child",
@@ -1669,10 +1666,12 @@
         "prefilter": {
           "$or": [
             {
-              "center.id": "C1"
-            },
-            {
-              "center.id": "C2"
+              "center": {
+                "$in": [
+                  "C1",
+                  "C2"
+                ]
+              }
             }
           ]
         }
