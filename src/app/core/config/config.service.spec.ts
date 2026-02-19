@@ -228,6 +228,7 @@ describe("ConfigService", () => {
               { "projectStatus.id": "test_id1" },
               { "projectStatus.id": "test_id2" },
               { "projectStatus.id": "test_id3" },
+              { "otherField.id": "A" },
             ],
           },
         },
@@ -242,6 +243,11 @@ describe("ConfigService", () => {
               {
                 projectStatus: {
                   $in: ["test_id1", "test_id2", "test_id3"],
+                },
+              },
+              {
+                otherField: {
+                  $in: ["A"],
                 },
               },
             ],

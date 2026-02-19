@@ -354,19 +354,24 @@ const migrateGroupByConfig: ConfigMigration = (key, configPart) => {
  * { $or: [{ "projectStatus.id": "A" }, { "projectStatus.id": "B" }] }
  *   -> { $or: [{ projectStatus: { $in: ["A", "B"] } }] }
  */
+type OrFilterCondition = Record<string, unknown>;
+type LegacyOrFilterConfig = Record<string, unknown> & {
+  $or: OrFilterCondition[];
+};
+
 const migrateLegacyIdFilters: ConfigMigration = (key, configPart) => {
   if (!configPart || typeof configPart !== "object") {
     return configPart;
   }
 
   // This migration only applies to OR-filter objects.
-  const orConditions = configPart["$or"];
+  const orConditions = (configPart as LegacyOrFilterConfig)["$or"];
   if (!Array.isArray(orConditions)) {
     return configPart;
   }
 
-  const migratedConditions: any[] = [];
-  const groupedValues = new Map<string, any[]>();
+  const migratedConditions: OrFilterCondition[] = [];
+  const groupedValues = new Map<string, unknown[]>();
 
   for (const orCondition of orConditions) {
     const entries = Object.entries(orCondition);
