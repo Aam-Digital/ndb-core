@@ -64,7 +64,7 @@ describe("DiscreteImportConfigComponent", () => {
   });
 
   it("should init with entity format of provided mappings in 'additional'", () => {
-    data.col.additional = { male: "M", female: "F" };
+    data.col.additional = { values: { male: "M", female: "F" } };
     spyOn(
       TestBed.inject(ConfigurableEnumService),
       "getEnumValues",
@@ -103,9 +103,11 @@ describe("DiscreteImportConfigComponent", () => {
 
     expect(closeSpy).toHaveBeenCalled();
     expect(data.col.additional).toEqual({
-      male: "M",
-      female: "F",
-      other: "other",
+      values: {
+        male: "M",
+        female: "F",
+        other: "other",
+      },
     });
   });
 
@@ -129,5 +131,18 @@ describe("DiscreteImportConfigComponent", () => {
     expect(formValue["1a"].isInvalidOption).toBeUndefined();
     expect(formValue[2]).toEqual(numericEnumOptions[1]);
     expect(formValue[2].isInvalidOption).toBeUndefined();
+  });
+
+  it("should not split comma-separated values for single-select enum fields", () => {
+    data.values = ["media (article, ad, tv etc.)", "phone (mobile, landline)"];
+    data.col.additional = undefined;
+
+    component.ngOnInit();
+
+    const formValue = component.form.getRawValue();
+    // Should have 2 form controls, not split by commas inside parentheses
+    expect(Object.keys(formValue).length).toBe(2);
+    expect(formValue["media (article, ad, tv etc.)"]).toBeDefined();
+    expect(formValue["phone (mobile, landline)"]).toBeDefined();
   });
 });
