@@ -87,11 +87,7 @@ export class IndexeddbMigrationService {
    * @param db The database instance to migrate from
    * @param dbKey Which database to migrate: "app" or "notifications"
    */
-  runBackgroundMigration(
-    session: SessionInfo,
-    db: Database,
-    dbKey: "app" | "notifications" = "app",
-  ): void {
+  runBackgroundMigration(session: SessionInfo, db: Database): void {
     if (!this.migrationPending) {
       return;
     }
@@ -107,8 +103,10 @@ export class IndexeddbMigrationService {
     }
 
     const newDbNames = computeDbNames(session);
+
+    // we only migrate the "app" database; logic to track completed migration is simplified!
     this.migrateDatabase(
-      newDbNames[dbKey],
+      newDbNames["app"],
       remotePouchDB,
       db.localSyncState,
       session,
@@ -132,6 +130,7 @@ export class IndexeddbMigrationService {
 
     const checkBothComplete = () => {
       if (replicationDone && oldSyncDone) {
+        // we only migrate "app" DB for simplicity (no need to track separate migration states for all DBs)
         this.setMigrated(session);
         newDb.close();
         this.promptReload();
