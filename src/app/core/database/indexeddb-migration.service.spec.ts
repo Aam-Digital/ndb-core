@@ -1,9 +1,12 @@
-import { TestBed } from "@angular/core/testing";
+import { fakeAsync, flushMicrotasks, TestBed } from "@angular/core/testing";
 import { IndexeddbMigrationService } from "./indexeddb-migration.service";
 import { SessionInfo } from "../session/auth/session-info";
 import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from "../../utils/di-tokens";
 import { environment } from "../../../environments/environment";
+import { SyncStateSubject } from "../session/session-type";
+import { SyncState } from "../session/session-states/sync-state.enum";
+import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
 
 describe("IndexeddbMigrationService", () => {
   let service: IndexeddbMigrationService;
@@ -21,6 +24,35 @@ describe("IndexeddbMigrationService", () => {
   };
 
   let originalUseIndexeddbAdapter: boolean;
+
+  const createSyncedDbMock = () => {
+    const localSyncState = new SyncStateSubject();
+    const mockDb = Object.create(
+      SyncedPouchDatabase.prototype,
+    ) as SyncedPouchDatabase;
+    mockDb.getRemotePouchDB = () => ({}) as any;
+    Object.defineProperty(mockDb, "localSyncState", {
+      get: () => localSyncState,
+    });
+
+    return { mockDb, localSyncState };
+  };
+
+  const mockPouchDbCreation = () => {
+    const { mockDb, localSyncState } = createSyncedDbMock();
+    const mockNewDb = {
+      replicate: {
+        from: jasmine.createSpy("from").and.resolveTo({ ok: true }),
+      },
+      close: jasmine.createSpy("close"),
+    };
+    const createPouchDbSpy = spyOn<any>(
+      service,
+      "createPouchDb",
+    ).and.returnValue(mockNewDb as any);
+
+    return { mockDb, localSyncState, mockNewDb, createPouchDbSpy };
+  };
 
   beforeEach(() => {
     originalUseIndexeddbAdapter = environment.use_indexeddb_adapter;
@@ -81,14 +113,18 @@ describe("IndexeddbMigrationService", () => {
       expect(service.migrationPending).toBeFalse();
     });
 
-    it("should return new config for fresh install (no old DB)", async () => {
+    it("should return new config for fresh install (no old DB for that user)", async () => {
       environment.use_indexeddb_adapter = true;
-      mockWindow.indexedDB.databases.and.resolveTo([]);
+      mockWindow.indexedDB.databases.and.resolveTo([
+        { name: "_pouch_otheruser-app", version: 1 },
+        { name: "_pouch_notifications_other-user-id", version: 1 },
+      ]);
 
       const config = await service.resolveDbConfig(session);
 
       expect(config.adapter).toBe("indexeddb");
       expect(config.dbNames.app).toBe("abc-123-uuid-app");
+      expect(config.dbNames.notifications).toBe("abc-123-uuid-notifications");
       expect(service.migrationPending).toBeFalse();
     });
 
@@ -126,17 +162,48 @@ describe("IndexeddbMigrationService", () => {
       expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
     });
 
-    it("should set migration flag when both replication and sync complete", async () => {
-      // Verify initial state
+    it("should set migration flag when both replication and sync complete", fakeAsync(() => {
+      service.migrationPending = true;
+      const { mockDb, localSyncState, mockNewDb, createPouchDbSpy } =
+        mockPouchDbCreation();
+
       expect(localStorage.getItem("DB_MIGRATED_abc-123-uuid")).toBeNull();
-    });
 
-    it("should prompt user to reload after migration completes", async () => {
+      service.runBackgroundMigration(session, mockDb);
+      flushMicrotasks();
+      expect(createPouchDbSpy).toHaveBeenCalledWith("abc-123-uuid-app");
+      expect(mockNewDb.replicate.from).toHaveBeenCalledWith(
+        mockDb.getRemotePouchDB(),
+        { batch_size: 500 },
+      );
+      expect(localStorage.getItem("DB_MIGRATED_abc-123-uuid")).toBeNull();
+
+      localSyncState.next(SyncState.COMPLETED);
+
+      expect(localStorage.getItem("DB_MIGRATED_abc-123-uuid")).toBe("true");
+    }));
+
+    it("should prompt user to reload after migration completes", fakeAsync(() => {
+      service.migrationPending = true;
       confirmationDialogSpy.getConfirmation.and.resolveTo(true);
+      const { mockDb, localSyncState, mockNewDb, createPouchDbSpy } =
+        mockPouchDbCreation();
 
-      // The confirmation dialog is tested to be called correctly
+      service.runBackgroundMigration(session, mockDb);
+      flushMicrotasks();
+      expect(createPouchDbSpy).toHaveBeenCalledWith("abc-123-uuid-app");
+      expect(mockNewDb.replicate.from).toHaveBeenCalledWith(
+        mockDb.getRemotePouchDB(),
+        { batch_size: 500 },
+      );
       expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
-    });
+
+      localSyncState.next(SyncState.COMPLETED);
+      flushMicrotasks();
+
+      expect(confirmationDialogSpy.getConfirmation).toHaveBeenCalledTimes(1);
+      expect(mockWindow.location.reload).toHaveBeenCalledTimes(1);
+    }));
   });
 
   describe("cleanupLegacyDatabases", () => {

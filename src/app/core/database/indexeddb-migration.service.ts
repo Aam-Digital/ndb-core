@@ -123,7 +123,7 @@ export class IndexeddbMigrationService {
       `IndexeddbMigration: starting background replication into "${newDbName}"`,
     );
 
-    const newDb = new PouchDB(newDbName, { adapter: "indexeddb" });
+    const newDb = this.createPouchDb(newDbName);
 
     let replicationDone = false;
     let oldSyncDone = false;
@@ -169,6 +169,10 @@ export class IndexeddbMigrationService {
           checkBothComplete();
         });
     }
+  }
+
+  private createPouchDb(newDbName: string): PouchDB.Database {
+    return new PouchDB(newDbName, { adapter: "indexeddb" });
   }
 
   private async promptReload(): Promise<void> {
