@@ -11,7 +11,6 @@ import { Subject } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase } from "./synced-pouch-database";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
-import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 
 describe("SyncedPouchDatabase", () => {
   let service: SyncedPouchDatabase;

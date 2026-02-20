@@ -19,7 +19,6 @@ import {
 import { from, interval, merge, of } from "rxjs";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
-import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 
 /**
  * An alternative implementation of PouchDatabase that additionally
@@ -47,6 +46,14 @@ export class SyncedPouchDatabase extends PouchDatabase {
    */
   get localSyncState(): SyncStateSubject {
     return this.syncState;
+  }
+
+  /**
+   * Get the underlying remote PouchDB instance.
+   * Can be used as a replication source for background migration.
+   */
+  getRemotePouchDB(): PouchDB.Database {
+    return this.remoteDatabase?.getPouchDB();
   }
 
   constructor(
@@ -109,14 +116,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
       // keep remote database on default name (e.g. "app" instead of "user_uuid-app")
       this.remoteDatabase.init(remoteDbName);
     }
-  }
-
-  /**
-   * Get the underlying remote PouchDB instance.
-   * Can be used as a replication source for background migration.
-   */
-  getRemotePouchDB(): PouchDB.Database {
-    return this.remoteDatabase?.getPouchDB();
   }
 
   private async logSyncContext() {
