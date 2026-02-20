@@ -6,6 +6,22 @@
     import.</app-hint-box
   >
 
+  @if (schema?.isArray) {
+    <div style="margin-bottom: 16px">
+      <mat-checkbox
+        [(ngModel)]="enableSplitting"
+        (change)="onSplittingToggle()"
+      >
+        <span i18n>Split values at separator ({{ separator }})</span>
+      </mat-checkbox>
+      <app-help-button
+        text="Enable this to split values containing the separator into multiple entries. Disable for values that contain the separator as part of the text (e.g., 'media (article, ad, tv)')."
+        i18n-text="import discrete config split toggle help"
+      >
+      </app-help-button>
+    </div>
+  }
+
   <table class="mapping-table">
     <tr>
       <th i18n="Import mapping header" class="first-column">Imported values</th>

@@ -185,7 +185,7 @@ describe("BasicAutocompleteComponent", () => {
     expect(component.displayText).toBe("some, values");
 
     component.showAutocomplete();
-    expect(component.autocompleteForm).toHaveValue("");
+    expect(component.autocompleteForm.value).toBe("some, values");
     expect(component.isInSearchMode()).toBeTrue();
 
     component.onFocusOut({} as any);
