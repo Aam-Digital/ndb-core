@@ -213,12 +213,29 @@ describe("SyncedPouchDatabase", () => {
   });
 
   it("ensureSynced should call sync when online and not remote-only", async () => {
-    const syncSpy = spyOn(service, "sync").and.resolveTo({} as any);
+    const syncSpy = spyOn(service, "sync").and.callFake(async () => {
+      service["syncState"].next(SyncState.COMPLETED);
+      return {} as any;
+    });
     spyOnProperty(service, "isInRemoteOnlyMode", "get").and.returnValue(false);
     mockNavigator.onLine = true;
 
     await service.ensureSynced();
 
+    expect(syncSpy).toHaveBeenCalled();
+  });
+
+  it("ensureSynced should throw NotAvailableOfflineError when sync ends UNSYNCED", async () => {
+    const syncSpy = spyOn(service, "sync").and.callFake(async () => {
+      service["syncState"].next(SyncState.UNSYNCED);
+      return {} as any;
+    });
+    spyOnProperty(service, "isInRemoteOnlyMode", "get").and.returnValue(false);
+    mockNavigator.onLine = true;
+
+    await expectAsync(service.ensureSynced()).toBeRejectedWithError(
+      NotAvailableOfflineError,
+    );
     expect(syncSpy).toHaveBeenCalled();
   });
 });

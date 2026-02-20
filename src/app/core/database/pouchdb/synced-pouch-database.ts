@@ -193,10 +193,18 @@ export class SyncedPouchDatabase extends PouchDatabase {
     }
 
     if (!this.navigator.onLine) {
-      throw new NotAvailableOfflineError("Database sync");
+      throw new NotAvailableOfflineError(
+        "Failed to ensure synced. Cannot sync database while offline.",
+      );
     }
 
     await this.sync();
+
+    if (this.syncState.value === SyncState.UNSYNCED) {
+      throw new NotAvailableOfflineError(
+        "Failed to ensure synced. SyncState still reported as UNSYNCED.",
+      );
+    }
   }
 
   /**

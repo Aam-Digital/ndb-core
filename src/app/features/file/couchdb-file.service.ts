@@ -9,16 +9,16 @@ import {
   tap,
 } from "rxjs/operators";
 import { from, Observable, of, throwError } from "rxjs";
-import { Entity } from "../../core/entity/model/entity";
+import { Entity } from "#src/app/core/entity/model/entity";
 import { FileService } from "./file.service";
-import { Logging } from "../../core/logging/logging.service";
+import { Logging } from "#src/app/core/logging/logging.service";
 import { ObservableQueue } from "./observable-queue/observable-queue";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
-import { environment } from "../../../environments/environment";
-import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
-import { NotAvailableOfflineError } from "../../core/session/not-available-offline.error";
-import { DatabaseResolverService } from "../../core/database/database-resolver.service";
-import { SyncedPouchDatabase } from "app/core/database/pouchdb/synced-pouch-database";
+import { environment } from "#src/environments/environment";
+import { NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
+import { NotAvailableOfflineError } from "#src/app/core/session/not-available-offline.error";
+import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
+import { SyncedPouchDatabase } from "#src/app/core/database/pouchdb/synced-pouch-database";
 
 /**
  * Stores the files in the CouchDB.
