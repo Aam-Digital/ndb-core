@@ -219,7 +219,7 @@ describe("ConfigService", () => {
     testConfigMigration({ "view:X": oldFormat }, { "view:X": newFormat });
   }));
 
-  it("should migrate legacy .id OR filters to $in format", fakeAsync(() => {
+  it("should migrate legacy .id OR filters to new format", fakeAsync(() => {
     const oldFormat = {
       "appConfig:matching-entities": {
         leftSide: {
@@ -229,6 +229,7 @@ describe("ConfigService", () => {
               { "projectStatus.id": "test_id2" },
               { "projectStatus.id": "test_id3" },
               { "otherField.id": "A" },
+              { name: "Test" },
             ],
           },
         },
@@ -240,16 +241,11 @@ describe("ConfigService", () => {
         leftSide: {
           prefilter: {
             $or: [
-              {
-                projectStatus: {
-                  $in: ["test_id1", "test_id2", "test_id3"],
-                },
-              },
-              {
-                otherField: {
-                  $in: ["A"],
-                },
-              },
+              { projectStatus: "test_id1" },
+              { projectStatus: "test_id2" },
+              { projectStatus: "test_id3" },
+              { otherField: "A" },
+              { name: "Test" },
             ],
           },
         },
