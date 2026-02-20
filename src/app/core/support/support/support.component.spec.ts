@@ -36,7 +36,7 @@ describe("SupportComponent", () => {
   const testUser: SessionInfo = { name: TEST_USER, id: TEST_USER, roles: [] };
   const userEntity = new Entity(TEST_USER);
   const mockSW = { isEnabled: false };
-  let mockDB: jasmine.SpyObj<PouchDatabase>;
+  let mockDB: any;
   const mockWindow = {
     navigator: {
       userAgent: "mock user agent",
@@ -46,10 +46,15 @@ describe("SupportComponent", () => {
 
   beforeEach(async () => {
     localStorage.clear();
-    mockDB = jasmine.createSpyObj(["destroy", "getPouchDB"]);
-    mockDB.getPouchDB.and.returnValue({
+    const testDbName = TEST_USER + "-" + Entity.DATABASE;
+    mockDB = Object.create(SyncedPouchDatabase.prototype);
+    Object.defineProperty(mockDB, "LAST_SYNC_KEY", {
+      value: SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + testDbName,
+    });
+    mockDB.getPouchDB = jasmine.createSpy("getPouchDB").and.returnValue({
       info: () => Promise.resolve({ doc_count: 1, update_seq: 2 }),
     } as any);
+    mockDB.destroy = jasmine.createSpy("destroy");
 
     await TestBed.configureTestingModule({
       imports: [SupportComponent, MatDialogModule, NoopAnimationsModule],
@@ -104,10 +109,7 @@ describe("SupportComponent", () => {
 
   it("should correctly read sync and remote login status from local storage", async () => {
     const lastSync = new Date("2022-01-01").toISOString();
-    localStorage.setItem(
-      SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + Entity.DATABASE,
-      lastSync,
-    );
+    localStorage.setItem(mockDB.LAST_SYNC_KEY, lastSync);
     const lastRemoteLogin = new Date("2022-01-02").toISOString();
     localStorage.setItem(KeycloakAuthService.LAST_AUTH_KEY, lastRemoteLogin);
 
