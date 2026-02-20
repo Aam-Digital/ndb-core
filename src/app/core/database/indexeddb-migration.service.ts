@@ -202,9 +202,18 @@ export class IndexeddbMigrationService {
     // PouchDB prefixes IndexedDB database names with "_pouch_"
     const expectedName = `_pouch_${legacyNames.app}`;
 
+    const indexedDBApi = this.window?.indexedDB;
+    if (!indexedDBApi) {
+      Logging.debug(
+        "IndexeddbMigration: window.indexedDB not available; assuming legacy DB may exist",
+      );
+      // If IndexedDB is not available (e.g. SSR), assume migration is needed (safe default)
+      return true;
+    }
+
     try {
-      if (typeof indexedDB?.databases === "function") {
-        const dbs = await indexedDB.databases();
+      if (typeof indexedDBApi.databases === "function") {
+        const dbs = await indexedDBApi.databases();
         return dbs.some((db) => db.name === expectedName);
       }
     } catch (e) {
