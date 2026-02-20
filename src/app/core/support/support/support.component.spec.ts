@@ -36,7 +36,7 @@ describe("SupportComponent", () => {
   const testUser: SessionInfo = { name: TEST_USER, id: TEST_USER, roles: [] };
   const userEntity = new Entity(TEST_USER);
   const mockSW = { isEnabled: false };
-  let mockDB: any;
+  let mockDB: Partial<SyncedPouchDatabase>;
   const mockWindow = {
     navigator: {
       userAgent: "mock user agent",
