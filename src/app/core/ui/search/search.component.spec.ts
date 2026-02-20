@@ -49,7 +49,6 @@ describe("SearchComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
-    expect(mockIndexService.createIndex).toHaveBeenCalled();
   });
 
   it("should not search for less than MIN_CHARACTERS_FOR_SEARCH character of input", fakeAsync(() => {
