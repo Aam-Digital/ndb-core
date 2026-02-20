@@ -224,6 +224,13 @@ describe("IndexeddbMigrationService", () => {
         setTimeout(() => req.onsuccess?.(new Event("success")));
         return req;
       });
+      mockWindow.indexedDB.databases.and.resolveTo([
+        { name: "_pouch_testuser-app", version: 1 },
+        { name: "_pouch_testuser-app_mrview123", version: 1 },
+        { name: "_pouch_notifications_abc-123-uuid", version: 1 },
+        { name: "_pouch_abc-123-uuid-app", version: 1 },
+        { name: "_pouch_abc-123-uuid-notifications", version: 1 },
+      ]);
 
       await service.cleanupLegacyDatabases(session);
 
@@ -231,13 +238,24 @@ describe("IndexeddbMigrationService", () => {
         "_pouch_testuser-app",
       );
       expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith(
+        "_pouch_testuser-app_mrview123",
+      );
+      expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith(
         "_pouch_notifications_abc-123-uuid",
       );
-      expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledTimes(2);
+      expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledTimes(3);
+
+      expect(mockWindow.indexedDB.deleteDatabase).not.toHaveBeenCalledWith(
+        "_pouch_abc-123-uuid-app",
+      );
     });
 
     it("should continue if one database deletion fails", async () => {
       localStorage.setItem("DB_MIGRATED_abc-123-uuid", "true");
+      mockWindow.indexedDB.databases.and.resolveTo([
+        { name: "_pouch_testuser-app", version: 1 },
+        { name: "_pouch_notifications_abc-123-uuid", version: 1 },
+      ]);
       let callCount = 0;
       mockWindow.indexedDB.deleteDatabase.and.callFake(() => {
         callCount++;
