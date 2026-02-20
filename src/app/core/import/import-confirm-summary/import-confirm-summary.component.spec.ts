@@ -21,7 +21,11 @@ describe("ImportConfirmSummaryComponent", () => {
   let mockDialogRef: jasmine.SpyObj<MatDialogRef<any>>;
 
   beforeEach(async () => {
-    mockImportService = jasmine.createSpyObj(["executeImport", "undoImport"]);
+    mockImportService = jasmine.createSpyObj([
+      "executeImport",
+      "undoImport",
+      "transformRawDataToEntities",
+    ]);
     mockSnackbar = jasmine.createSpyObj(["open"]);
     mockSnackbar.open.and.returnValue({ onAction: () => of(null) } as any);
     mockDialogRef = jasmine.createSpyObj(["close"]);
@@ -29,7 +33,10 @@ describe("ImportConfirmSummaryComponent", () => {
     await TestBed.configureTestingModule({
       imports: [ImportConfirmSummaryComponent],
       providers: [
-        { provide: MAT_DIALOG_DATA, useValue: {} },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: { rawData: [], entitiesToImport: [], importSettings: {} },
+        },
         { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: MatSnackBar, useValue: mockSnackbar },
         { provide: ImportService, useValue: mockImportService },
@@ -54,5 +61,25 @@ describe("ImportConfirmSummaryComponent", () => {
     expect(mockImportService.executeImport).toHaveBeenCalled();
     expect(mockSnackbar.open).toHaveBeenCalled();
     expect(mockDialogRef.close).toHaveBeenCalled();
+    expect(component.importInProgress).toBeFalse();
+    expect(mockDialogRef.disableClose).toBeFalse();
   }));
+
+  it("should refresh import data and show warning for putAll conflict errors", async () => {
+    const putAllConflictError = [{ status: 409, name: "conflict" }];
+    mockImportService.executeImport.and.rejectWith(putAllConflictError);
+    mockImportService.transformRawDataToEntities.and.resolveTo([]);
+
+    await component.executeImport();
+
+    expect(mockImportService.transformRawDataToEntities).toHaveBeenCalled();
+    expect(component.importInProgress).toBeFalse();
+    expect(mockDialogRef.disableClose).toBeFalse();
+    expect(mockSnackbar.open).toHaveBeenCalledWith(
+      "Some records changed while importing. Data has been refreshed. Please review and run import again.",
+      "Close",
+      { duration: 10000 },
+    );
+    expect(mockDialogRef.close).not.toHaveBeenCalled();
+  });
 });
