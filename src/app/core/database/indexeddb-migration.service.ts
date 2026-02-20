@@ -238,20 +238,40 @@ export class IndexeddbMigrationService {
       return;
     }
 
+    const indexedDBApi = this.window?.indexedDB;
+    if (!indexedDBApi) {
+      Logging.debug(
+        "IndexeddbMigration: window.indexedDB not available; skipping cleanup",
+      );
+      return;
+    }
+
     const legacyNames = computeLegacyDbNames(session);
     for (const [key, dbName] of Object.entries(legacyNames)) {
+      // PouchDB prefixes IndexedDB database names with "_pouch_"
+      const idbName = `_pouch_${dbName}`;
       try {
-        const db = new PouchDB(dbName, { adapter: "idb" });
-        await db.destroy();
+        await this.deleteIndexedDb(indexedDBApi, idbName);
         Logging.debug(
-          `IndexeddbMigration: deleted legacy ${key} database "${dbName}"`,
+          `IndexeddbMigration: deleted legacy ${key} database "${idbName}"`,
         );
       } catch (e) {
         Logging.warn(
-          `IndexeddbMigration: failed to delete legacy ${key} database "${dbName}"`,
+          `IndexeddbMigration: failed to delete legacy ${key} database "${idbName}"`,
           e,
         );
       }
     }
+  }
+
+  private deleteIndexedDb(
+    indexedDBApi: IDBFactory,
+    name: string,
+  ): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const req = indexedDBApi.deleteDatabase(name);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
   }
 }

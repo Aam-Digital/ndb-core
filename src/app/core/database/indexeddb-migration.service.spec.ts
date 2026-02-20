@@ -8,7 +8,10 @@ import { environment } from "../../../environments/environment";
 describe("IndexeddbMigrationService", () => {
   let service: IndexeddbMigrationService;
   let confirmationDialogSpy: jasmine.SpyObj<ConfirmationDialogService>;
-  let mockWindow: { location: { reload: jasmine.Spy } };
+  let mockWindow: {
+    location: { reload: jasmine.Spy };
+    indexedDB: { databases: jasmine.Spy; deleteDatabase: jasmine.Spy };
+  };
   let mockNavigator: { onLine: boolean };
 
   const session: SessionInfo = {
@@ -25,7 +28,13 @@ describe("IndexeddbMigrationService", () => {
       "getConfirmation",
     ]);
     confirmationDialogSpy.getConfirmation.and.resolveTo(false);
-    mockWindow = { location: { reload: jasmine.createSpy("reload") } };
+    mockWindow = {
+      location: { reload: jasmine.createSpy("reload") },
+      indexedDB: {
+        databases: jasmine.createSpy("databases").and.resolveTo([]),
+        deleteDatabase: jasmine.createSpy("deleteDatabase"),
+      },
+    };
     mockNavigator = { onLine: true };
 
     TestBed.configureTestingModule({
@@ -74,8 +83,7 @@ describe("IndexeddbMigrationService", () => {
 
     it("should return new config for fresh install (no old DB)", async () => {
       environment.use_indexeddb_adapter = true;
-      // Mock indexedDB.databases() to return empty
-      spyOn(indexedDB, "databases").and.resolveTo([]);
+      mockWindow.indexedDB.databases.and.resolveTo([]);
 
       const config = await service.resolveDbConfig(session);
 
@@ -86,8 +94,7 @@ describe("IndexeddbMigrationService", () => {
 
     it("should return legacy config with migrationPending when old DB exists", async () => {
       environment.use_indexeddb_adapter = true;
-      // Mock indexedDB.databases() to return an old DB
-      spyOn(indexedDB, "databases").and.resolveTo([
+      mockWindow.indexedDB.databases.and.resolveTo([
         { name: "_pouch_testuser-app", version: 1 },
       ]);
 
@@ -135,28 +142,15 @@ describe("IndexeddbMigrationService", () => {
   describe("cleanupLegacyDatabases", () => {
     it("should skip cleanup when not migrated", async () => {
       localStorage.removeItem("DB_MIGRATED_abc-123-uuid");
-      const deleteSpy = spyOn(indexedDB, "deleteDatabase").and.returnValue(
-        Object.assign(new EventTarget(), {
-          onsuccess: null,
-          onerror: null,
-          onblocked: null,
-          onupgradeneeded: null,
-          result: undefined,
-          error: null,
-          source: null,
-          transaction: null,
-          readyState: "done",
-        }) as any,
-      );
 
       await service.cleanupLegacyDatabases(session);
 
-      expect(deleteSpy).not.toHaveBeenCalled();
+      expect(mockWindow.indexedDB.deleteDatabase).not.toHaveBeenCalled();
     });
 
     it("should delete legacy databases when migrated", async () => {
       localStorage.setItem("DB_MIGRATED_abc-123-uuid", "true");
-      spyOn(indexedDB, "deleteDatabase").and.callFake(() => {
+      mockWindow.indexedDB.deleteDatabase.and.callFake(() => {
         const req = {
           onsuccess: null as any,
           onerror: null as any,
@@ -167,19 +161,19 @@ describe("IndexeddbMigrationService", () => {
 
       await service.cleanupLegacyDatabases(session);
 
-      expect(indexedDB.deleteDatabase).toHaveBeenCalledWith(
+      expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith(
         "_pouch_testuser-app",
       );
-      expect(indexedDB.deleteDatabase).toHaveBeenCalledWith(
+      expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith(
         "_pouch_notifications_abc-123-uuid",
       );
-      expect(indexedDB.deleteDatabase).toHaveBeenCalledTimes(2);
+      expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledTimes(2);
     });
 
     it("should continue if one database deletion fails", async () => {
       localStorage.setItem("DB_MIGRATED_abc-123-uuid", "true");
       let callCount = 0;
-      spyOn(indexedDB, "deleteDatabase").and.callFake(() => {
+      mockWindow.indexedDB.deleteDatabase.and.callFake(() => {
         callCount++;
         const req = {
           onsuccess: null as any,
