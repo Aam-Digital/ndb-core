@@ -58,17 +58,9 @@ export class IndexeddbMigrationService {
       };
     }
 
-    // Already migrated
-    if (this.isMigrated(session)) {
-      return {
-        dbNames: computeDbNames(session),
-        adapter: "indexeddb",
-      };
-    }
-
-    // Fresh install: no old DB exists
+    // Already migrated or fresh install (no old DB exists)
     const oldDbExists = await this.legacyDbExists(session);
-    if (!oldDbExists) {
+    if (this.isMigrated(session) || !oldDbExists) {
       return {
         dbNames: computeDbNames(session),
         adapter: "indexeddb",

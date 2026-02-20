@@ -122,6 +122,8 @@ export class DatabaseResolverService {
     } else {
       db.init(browserDbName ?? serverDbName);
     }
+
+    // Notifications are not critical, therefore we ignore a pre-migration sync for that database
   }
 
   initDatabasesForAnonymous() {
