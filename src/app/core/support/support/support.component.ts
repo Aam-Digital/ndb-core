@@ -85,10 +85,11 @@ export class SupportComponent implements OnInit {
   }
 
   private initLastSync() {
+    const db = this.databaseResolver.getDatabase();
+    const lastSyncKey =
+      db instanceof SyncedPouchDatabase ? db.LAST_SYNC_KEY : undefined;
     this.lastSync =
-      localStorage.getItem(
-        SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + Entity.DATABASE,
-      ) || "never";
+      (lastSyncKey && localStorage.getItem(lastSyncKey)) || "never";
   }
 
   private initLastRemoteLogin() {
