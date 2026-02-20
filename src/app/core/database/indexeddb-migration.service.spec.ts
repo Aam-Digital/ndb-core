@@ -155,8 +155,7 @@ describe("IndexeddbMigrationService", () => {
     it("should skip migration when offline", () => {
       service.migrationPending = true;
       mockNavigator.onLine = false;
-      const mockDb = { getRemotePouchDB: () => ({}) } as any;
-      // Fake instanceof check by not being a real SyncedPouchDatabase
+      const { mockDb } = createSyncedDbMock();
       service.runBackgroundMigration(session, mockDb);
 
       expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();

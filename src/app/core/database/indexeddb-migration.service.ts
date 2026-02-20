@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { SessionInfo } from "../session/auth/session-info";
+import { SessionInfo, SessionSubject } from "../session/auth/session-info";
 import { SyncStateSubject } from "../session/session-type";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { computeDbNames, computeLegacyDbNames } from "./db-name-helpers";
@@ -34,6 +34,7 @@ export class IndexeddbMigrationService {
     optional: true,
   });
   private readonly window = inject<Window>(WINDOW_TOKEN, { optional: true });
+  private readonly session = inject(SessionSubject, { optional: true });
 
   /** Whether the last resolveDbConfig() determined migration is needed. */
   migrationPending = false;
@@ -237,7 +238,9 @@ export class IndexeddbMigrationService {
    *
    * Currently not called. Will be added in a future release after users have had time to migrate, to clean up old databases and free up space.
    */
-  async cleanupLegacyDatabases(session: SessionInfo): Promise<void> {
+  async cleanupLegacyDatabases(
+    session: SessionInfo = this.session.value,
+  ): Promise<void> {
     if (!this.isMigrated(session)) {
       return;
     }
@@ -276,6 +279,13 @@ export class IndexeddbMigrationService {
       const req = indexedDBApi.deleteDatabase(name);
       req.onsuccess = () => resolve();
       req.onerror = () => reject(req.error);
+      req.onblocked = () => {
+        Logging.warn(
+          `IndexeddbMigration: deletion of "${name}" is blocked by open connections; resolving anyway`,
+        );
+        // Deletion will proceed once connections close; treat as non-fatal.
+        resolve();
+      };
     });
   }
 }
