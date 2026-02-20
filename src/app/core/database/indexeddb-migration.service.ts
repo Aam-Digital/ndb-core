@@ -51,8 +51,10 @@ export class IndexeddbMigrationService {
   async resolveDbConfig(session: SessionInfo): Promise<DbConfig> {
     this.migrationPending = false; // reset pending flag on each resolve attempt
 
-    // New adapter not enabled → use legacy adapter, no migration
     if (!environment.use_indexeddb_adapter) {
+      Logging.debug(
+        "IndexeddbMigration: use_indexeddb_adapter disabled; using legacy DB config",
+      );
       return {
         dbNames: computeLegacyDbNames(session),
         adapter: "idb",
@@ -62,6 +64,12 @@ export class IndexeddbMigrationService {
     // Already migrated or fresh install (no old DB exists)
     const oldDbExists = await this.legacyDbExists(session);
     if (this.isMigrated(session) || !oldDbExists) {
+      Logging.debug(
+        "IndexeddbMigration: using new DB config",
+        this.isMigrated(session)
+          ? "(migration flag set)"
+          : "(no legacy DB found; assuming fresh install)",
+      );
       return {
         dbNames: computeDbNames(session),
         adapter: "indexeddb",
@@ -70,6 +78,9 @@ export class IndexeddbMigrationService {
 
     // Old DB exists, not yet migrated → use old DB, migration pending
     this.migrationPending = true;
+    Logging.debug(
+      "IndexeddbMigration: using legacy DB config (migration pending)",
+    );
     return {
       dbNames: computeLegacyDbNames(session),
       adapter: "idb",
@@ -254,21 +265,32 @@ export class IndexeddbMigrationService {
     }
 
     const legacyNames = computeLegacyDbNames(session);
+    const dbs = await indexedDBApi.databases();
     for (const [key, dbName] of Object.entries(legacyNames)) {
       // PouchDB prefixes IndexedDB database names with "_pouch_"
       const idbName = `_pouch_${dbName}`;
-      try {
-        await this.deleteIndexedDb(indexedDBApi, idbName);
-        Logging.debug(
-          `IndexeddbMigration: deleted legacy ${key} database "${idbName}"`,
-        );
-      } catch (e) {
-        Logging.warn(
-          `IndexeddbMigration: failed to delete legacy ${key} database "${idbName}"`,
-          e,
-        );
+      // delete any related DB (PouchDB adds some views as separate DBs with suffixes)
+      const dbsToDelete = dbs.filter((db) => db.name.startsWith(idbName));
+
+      for (const dbInfo of dbsToDelete) {
+        try {
+          await this.deleteIndexedDb(indexedDBApi, dbInfo.name);
+          Logging.debug(
+            `IndexeddbMigration: deleted legacy ${key} database "${dbInfo.name}"`,
+          );
+        } catch (e) {
+          Logging.warn(
+            `IndexeddbMigration: failed to delete legacy ${key} database "${dbInfo.name}"`,
+            e,
+          );
+        }
       }
     }
+
+    localStorage.removeItem(DB_MIGRATED_PREFIX + session.id);
+    Logging.debug(
+      `IndexeddbMigration: cleanup complete for user ${session.id}; migration flag removed`,
+    );
   }
 
   private deleteIndexedDb(
