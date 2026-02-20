@@ -25,13 +25,14 @@ import { NotificationRule } from "../model/notification-config";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
-import { JsonEditorDialogComponent } from "#src/app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
 } from "@angular/material/expansion";
-import { MatDialog } from "@angular/material/dialog";
 import { IconButtonComponent } from "../../../core/common-components/icon-button/icon-button.component";
+import { ConditionsEditorComponent } from "app/core/common-components/conditions-editor/conditions-editor.component";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { EntityConstructor } from "app/core/entity/model/entity";
 
 /**
  * Configure a single notification rule.
@@ -55,6 +56,7 @@ import { IconButtonComponent } from "../../../core/common-components/icon-button
     MatExpansionPanel,
     MatExpansionPanelHeader,
     IconButtonComponent,
+    ConditionsEditorComponent,
   ],
   templateUrl: "./notification-rule.component.html",
   styleUrl: "./notification-rule.component.scss",
@@ -67,8 +69,9 @@ export class NotificationRuleComponent implements OnChanges {
 
   form: FormGroup;
   entityTypeControl: AbstractControl;
+  entityConstructor: EntityConstructor | null = null;
 
-  readonly dialog = inject(MatDialog);
+  private readonly entityRegistry = inject(EntityRegistry);
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
@@ -93,6 +96,10 @@ export class NotificationRuleComponent implements OnChanges {
       ),
     });
     this.entityTypeControl = this.form.get("entityType");
+    this.updateEntityConstructor(this.entityTypeControl.value);
+    this.entityTypeControl.valueChanges.subscribe((entityType) =>
+      this.updateEntityConstructor(entityType),
+    );
 
     this.updateEntityTypeControlState();
     this.form.valueChanges.subscribe((value) => this.updateValue(value));
@@ -132,22 +139,17 @@ export class NotificationRuleComponent implements OnChanges {
   }
 
   /**
-   * Open the conditions JSON editor popup.
+   * Handle conditions updates from the editor.
    */
-  openConditionsInJsonEditorPopup() {
+  onConditionsChange(updatedConditions: any) {
     const conditionsForm = this.form.get("conditions");
+    conditionsForm?.setValue(updatedConditions ?? {});
+  }
 
-    const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
-      data: {
-        value: conditionsForm.value ?? {},
-        closeButton: true,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (!result) return;
-
-      conditionsForm.setValue(result);
-    });
+  private updateEntityConstructor(entityType: string) {
+    this.entityConstructor =
+      entityType && this.entityRegistry.has(entityType)
+        ? this.entityRegistry.get(entityType)
+        : null;
   }
 }
