@@ -41,20 +41,9 @@ describe("DatabaseFactoryService", () => {
     await testDatabaseCreation(SessionType.mock, MemoryPouchDatabase);
     await testDatabaseCreation(SessionType.local, PouchDatabase);
     await testDatabaseCreation(SessionType.synced, SyncedPouchDatabase);
-    await testDatabaseCreation(SessionType.synced_idb, SyncedPouchDatabase);
   });
 
-  it("should set idb adapter for synced_idb session type", () => {
-    const prev = environment.session_type;
-
-    environment.session_type = SessionType.synced_idb;
-    const db = service.createDatabase("test-db") as SyncedPouchDatabase;
-    expect(db.adapter).toBe("idb");
-
-    environment.session_type = prev;
-  });
-
-  it("should use indexeddb adapter for synced session type", () => {
+  it("should default to indexeddb adapter for synced session type", () => {
     const prev = environment.session_type;
 
     environment.session_type = SessionType.synced;

@@ -33,11 +33,8 @@ export class DatabaseFactoryService {
     const syncState =
       dbName === Entity.DATABASE ? this.syncState : new SyncStateSubject();
 
-    if (
-      environment.session_type === SessionType.synced ||
-      environment.session_type === SessionType.synced_idb
-    ) {
-      const db = new SyncedPouchDatabase(
+    if (environment.session_type === SessionType.synced) {
+      return new SyncedPouchDatabase(
         dbName,
         this.authService,
         syncState,
@@ -45,10 +42,6 @@ export class DatabaseFactoryService {
         this.loginStateSubject,
         this.ngZone,
       );
-      if (environment.session_type === SessionType.synced_idb) {
-        db.adapter = "idb";
-      }
-      return db;
     } else if (environment.session_type === SessionType.local) {
       return new PouchDatabase(dbName, syncState, this.ngZone);
     } else {

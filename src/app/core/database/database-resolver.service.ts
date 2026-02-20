@@ -20,8 +20,8 @@ import {
   providedIn: "root",
 })
 export class DatabaseResolverService {
-  private databaseFactory = inject(DatabaseFactoryService);
-  private migrationService = inject(IndexeddbMigrationService);
+  private readonly databaseFactory = inject(DatabaseFactoryService);
+  private readonly migrationService = inject(IndexeddbMigrationService);
 
   private databases: Map<string, Database> = new Map();
 

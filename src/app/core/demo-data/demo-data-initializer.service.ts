@@ -103,7 +103,10 @@ export class DemoDataInitializerService {
       PouchDB.plugin(memory);
       demoUserDB = new PouchDB(dbName, { adapter: "memory" });
     } else {
-      demoUserDB = new PouchDB(dbName, { adapter: "indexeddb" });
+      demoUserDB = new PouchDB(
+        dbName,
+        environment.use_indexeddb_adapter ? { adapter: "indexeddb" } : {},
+      );
     }
     const currentUserDB = (
       this.dbResolver.getDatabase() as PouchDatabase

@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { SessionInfo } from "../session/auth/session-info";
-import { SessionType, SyncStateSubject } from "../session/session-type";
+import { SyncStateSubject } from "../session/session-type";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { computeDbNames, computeLegacyDbNames } from "./db-name-helpers";
 import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -29,9 +29,11 @@ const DB_MIGRATED_PREFIX = "DB_MIGRATED_";
  */
 @Injectable({ providedIn: "root" })
 export class IndexeddbMigrationService {
-  private confirmationDialog = inject(ConfirmationDialogService);
-  private navigator = inject<Navigator>(NAVIGATOR_TOKEN, { optional: true });
-  private window = inject<Window>(WINDOW_TOKEN, { optional: true });
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
+  private readonly navigator = inject<Navigator>(NAVIGATOR_TOKEN, {
+    optional: true,
+  });
+  private readonly window = inject<Window>(WINDOW_TOKEN, { optional: true });
 
   /** Whether the last resolveDbConfig() determined migration is needed. */
   migrationPending = false;
@@ -40,14 +42,16 @@ export class IndexeddbMigrationService {
    * Determine the database configuration (names + adapter) for the current session.
    *
    * Decision logic:
-   * 1. SessionType.synced_idb → legacy names + "idb" adapter (forced rollback)
+   * 1. use_indexeddb_adapter disabled → legacy names + "idb" adapter (no migration)
    * 2. Migration flag set → new names + "indexeddb"
    * 3. No old DB exists (fresh install) → new names + "indexeddb"
    * 4. Old DB exists, no flag → legacy names + "idb" (migration pending)
    */
   async resolveDbConfig(session: SessionInfo): Promise<DbConfig> {
-    // Forced legacy mode via config
-    if (environment.session_type === SessionType.synced_idb) {
+    this.migrationPending = false; // reset pending flag on each resolve attempt
+
+    // New adapter not enabled → use legacy adapter, no migration
+    if (!environment.use_indexeddb_adapter) {
       return {
         dbNames: computeLegacyDbNames(session),
         adapter: "idb",

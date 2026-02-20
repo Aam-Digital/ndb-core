@@ -1,7 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 import { IndexeddbMigrationService } from "./indexeddb-migration.service";
 import { SessionInfo } from "../session/auth/session-info";
-import { SessionType } from "../session/session-type";
 import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from "../../utils/di-tokens";
 import { environment } from "../../../environments/environment";
@@ -18,10 +17,10 @@ describe("IndexeddbMigrationService", () => {
     roles: ["user_app"],
   };
 
-  let originalSessionType: SessionType;
+  let originalUseIndexeddbAdapter: boolean;
 
   beforeEach(() => {
-    originalSessionType = environment.session_type;
+    originalUseIndexeddbAdapter = environment.use_indexeddb_adapter;
     confirmationDialogSpy = jasmine.createSpyObj("ConfirmationDialogService", [
       "getConfirmation",
     ]);
@@ -45,13 +44,13 @@ describe("IndexeddbMigrationService", () => {
   });
 
   afterEach(() => {
-    environment.session_type = originalSessionType;
+    environment.use_indexeddb_adapter = originalUseIndexeddbAdapter;
     localStorage.removeItem("DB_MIGRATED_abc-123-uuid");
   });
 
   describe("resolveDbConfig", () => {
-    it("should return legacy config for SessionType.synced_idb", async () => {
-      environment.session_type = SessionType.synced_idb;
+    it("should return legacy config when use_indexeddb_adapter is disabled", async () => {
+      environment.use_indexeddb_adapter = false;
 
       const config = await service.resolveDbConfig(session);
 
@@ -62,7 +61,7 @@ describe("IndexeddbMigrationService", () => {
     });
 
     it("should return new config when migration flag is set", async () => {
-      environment.session_type = SessionType.synced;
+      environment.use_indexeddb_adapter = true;
       localStorage.setItem("DB_MIGRATED_abc-123-uuid", "true");
 
       const config = await service.resolveDbConfig(session);
@@ -74,7 +73,7 @@ describe("IndexeddbMigrationService", () => {
     });
 
     it("should return new config for fresh install (no old DB)", async () => {
-      environment.session_type = SessionType.synced;
+      environment.use_indexeddb_adapter = true;
       // Mock indexedDB.databases() to return empty
       spyOn(indexedDB, "databases").and.resolveTo([]);
 
@@ -86,7 +85,7 @@ describe("IndexeddbMigrationService", () => {
     });
 
     it("should return legacy config with migrationPending when old DB exists", async () => {
-      environment.session_type = SessionType.synced;
+      environment.use_indexeddb_adapter = true;
       // Mock indexedDB.databases() to return an old DB
       spyOn(indexedDB, "databases").and.resolveTo([
         { name: "_pouch_testuser-app", version: 1 },

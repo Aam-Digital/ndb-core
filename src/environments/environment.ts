@@ -55,4 +55,11 @@ export const environment = {
 
   /** Has the system a subscription with access to personal user support? */
   userSupportEnabled: false,
+
+  /**
+   * Use the newer "indexeddb" PouchDB adapter instead of the legacy "idb" adapter.
+   * When false (default), the old adapter is used. Set to true via config.json
+   * to opt into the new adapter for gradual rollout.
+   */
+  use_indexeddb_adapter: false,
 };
