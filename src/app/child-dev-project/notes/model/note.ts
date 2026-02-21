@@ -22,10 +22,8 @@ import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
 } from "./interaction-type.interface";
-import {
-  AttendanceItem,
-  EventAttendanceMap,
-} from "#src/app/features/attendance/model/attendance-item";
+import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
+import { EventAttendanceMap } from "#src/app/features/attendance/model/event-attendance.datatype";
 import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
