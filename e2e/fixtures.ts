@@ -6,7 +6,7 @@ import {
   ArgosScreenshotOptions,
 } from "@argos-ci/playwright";
 import { Injector } from "@angular/core";
-import { EventAttendanceMapDatatype } from "#src/app/features/attendance/model/event-attendance.datatype.js";
+import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype.js";
 import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype.js";
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.js";
 import { DateOnlyDatatype } from "#src/app/core/basic-datatypes/date-only/date-only.datatype.js";
@@ -147,7 +147,7 @@ function serializeEntities(entities: Entity[]): unknown[] {
       { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
       {
         provide: DefaultDatatype,
-        useClass: EventAttendanceMapDatatype,
+        useClass: AttendanceDatatype,
         multi: true,
       },
     ],

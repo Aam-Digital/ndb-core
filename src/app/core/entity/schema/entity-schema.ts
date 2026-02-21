@@ -24,3 +24,12 @@ import { EntitySchemaField } from "./entity-schema-field";
  * and then defines the transformation for that whole entity type.
  */
 export type EntitySchema = Map<string, EntitySchemaField>;
+
+/**
+ * Constructor type for classes that have a static `schema` (via `@DatabaseField()` annotations)
+ * but don't necessarily extend `Entity`.
+ * This is used for embedded/nested schema objects like `AttendanceItem` or `UpdateMetadata`.
+ */
+export type SchemaEmbeddedType<T = any> = (new (...args: any[]) => T) & {
+  schema: EntitySchema;
+};

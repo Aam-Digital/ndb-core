@@ -4,22 +4,14 @@ import { attendanceComponents } from "./attendance-components";
 import { RecurringActivity } from "./model/recurring-activity";
 import { EventNote } from "./model/event-note";
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
-import {
-  EventAttendanceDatatype,
-  EventAttendanceMapDatatype,
-} from "./model/event-attendance.datatype";
+import { AttendanceDatatype } from "./model/attendance.datatype";
 import { DashboardWidgetRegistryService } from "#src/app/core/dashboard/dashboard-widget-registry.service";
 
 @NgModule({
   providers: [
     {
       provide: DefaultDatatype,
-      useClass: EventAttendanceDatatype,
-      multi: true,
-    },
-    {
-      provide: DefaultDatatype,
-      useClass: EventAttendanceMapDatatype,
+      useClass: AttendanceDatatype,
       multi: true,
     },
   ],

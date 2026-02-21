@@ -16,7 +16,7 @@ import {
 import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
-import { EventAttendanceMapDatatype } from "#src/app/features/attendance/model/event-attendance.datatype";
+import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { throwError } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -59,7 +59,7 @@ describe("EntityDeleteService", () => {
         { provide: MatSnackBar, useValue: snackBarSpy },
         {
           provide: DefaultDatatype,
-          useClass: EventAttendanceMapDatatype,
+          useClass: AttendanceDatatype,
           multi: true,
         },
         {

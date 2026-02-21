@@ -36,20 +36,16 @@ describe("EventNote", () => {
       _id: "EventNote:some-id",
       children: ["child-1", "child-2"],
       childrenAttendance: [
-        [
-          "child-1",
-          {
-            status: defaultAttendanceStatusTypes[1].id,
-            remarks: "did not show up",
-          },
-        ],
-        [
-          "child-2",
-          {
-            status: defaultAttendanceStatusTypes[0].id,
-            remarks: "",
-          },
-        ],
+        {
+          participantId: "child-1",
+          status: defaultAttendanceStatusTypes[1].id,
+          remarks: "did not show up",
+        },
+        {
+          participantId: "child-2",
+          status: defaultAttendanceStatusTypes[0].id,
+          remarks: "",
+        },
       ],
       category: defaultInteractionTypes.find((it) => it.isMeeting).id,
       authors: ["some-coach"],

@@ -4,13 +4,14 @@ import {
   NullAttendanceStatusType,
 } from "./attendance-status";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
+import { EntitySchema } from "#src/app/core/entity/schema/entity-schema";
 
 /**
- * Simple relationship object to represent an individual child's status at an event including context information.
+ * Simple relationship object to represent an individual participant's status at an event including context information.
  * TODO overwork this concept to either be a sublass of Entity or not (at the moment it uses a lot of casting, e.g. to be used in the entity subrecord)
  */
-export class EventAttendance {
-  static DATA_TYPE = "event-attendance";
+export class AttendanceItem {
+  declare static schema: EntitySchema;
 
   private _status: AttendanceStatusType;
   @DatabaseField({
@@ -35,25 +36,32 @@ export class EventAttendance {
 
   @DatabaseField() remarks: string;
 
+  /** The entity ID of the participant this attendance entry is for (e.g. "Child:abc"). */
+  @DatabaseField({ dataType: "entity" }) participantId: string;
+
   constructor(
     status: AttendanceStatusType = NullAttendanceStatusType,
     remarks: string = "",
+    participantId?: string,
   ) {
     this.status = status;
     this.remarks = remarks;
+    if (participantId) {
+      this.participantId = participantId;
+    }
   }
 
-  public copy(): EventAttendance {
-    return Object.assign(new EventAttendance(), this);
+  public copy(): AttendanceItem {
+    return Object.assign(new AttendanceItem(), this);
   }
 }
 
 /**
  * A full registry of event-attendance entries for multiple participants.
  *
- * TODO: this class can become the basis for a more generic attendance data that is not hard-wired to Note entities.
+ * TODO (#1364): Replace with EventAttendance[] once Note model is refactored.
  */
-export class EventAttendanceMap extends Map<string, EventAttendance> {
+export class EventAttendanceMap extends Map<string, AttendanceItem> {
   static DATA_TYPE = "event-attendance-map";
 
   constructor() {
