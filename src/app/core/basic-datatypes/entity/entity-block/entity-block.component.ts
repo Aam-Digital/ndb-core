@@ -63,11 +63,11 @@ export class EntityBlockComponent {
 
   entityBlockConfig = computed(() => {
     return this.entityResource.value()?.getConstructor()
-      .toBlockDetailsAttributes;
+      ?.toBlockDetailsAttributes;
   });
 
   entityIcon = computed(() => {
-    return this.entityResource.value()?.getConstructor().icon || "diamond";
+    return this.entityResource.value()?.getConstructor()?.icon || "diamond";
   });
 
   showDetailsPage() {

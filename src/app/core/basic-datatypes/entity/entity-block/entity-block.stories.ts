@@ -1,4 +1,4 @@
-import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryObj } from "@storybook/angular";
 import { EntityBlockComponent } from "./entity-block.component";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
@@ -13,33 +13,22 @@ export default {
       providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
-} as Meta;
-
-const Template: StoryFn<EntityBlockComponent> = (
-  args: EntityBlockComponent,
-) => ({
-  component: EntityBlockComponent,
-  props: args,
-});
+} as Meta<EntityBlockComponent>;
 
 const testChild = createEntityOfType("Child");
 testChild.name = "Test Name";
 testChild.projectNumber = "10";
 
-export const ChildComponent = {
-  render: Template,
-
+export const ChildComponent: StoryObj<EntityBlockComponent> = {
   args: {
-    entityToDisplay: testChild,
+    entity: testChild,
   },
 };
 
 const testEntity = new Entity();
 
-export const DefaultComponent = {
-  render: Template,
-
+export const DefaultComponent: StoryObj<EntityBlockComponent> = {
   args: {
-    entityToDisplay: testEntity,
+    entity: testEntity,
   },
 };
