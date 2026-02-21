@@ -26,6 +26,7 @@ import { UpdateMetadata } from "../model/update-metadata";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { DatabaseDocChange } from "../../database/database";
+import { DatabaseIndexingService } from "../database-indexing/database-indexing.service";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -43,6 +44,26 @@ export class EntityMapperService {
   private entitySchemaService = inject(EntitySchemaService);
   private currentUser = inject(CurrentUserSubject);
   private registry = inject(EntityRegistry);
+  private readonly dbIndexing = inject(DatabaseIndexingService);
+
+  private static readonly ACTIVE_ENTITIES_INDEX = {
+    _id: "_design/all_entities_index",
+    views: {
+      active: {
+        map: `(doc) => {
+            emit([doc._id.split(":")[0], !doc.inactive]);
+          }`,
+      },
+    },
+  };
+
+  constructor() {
+    // ensure that the active entities index is created
+    this.dbIndexing.createIndex(
+      EntityMapperService.ACTIVE_ENTITIES_INDEX,
+      Entity.DATABASE,
+    );
+  }
 
   /**
    * Load an Entity from the database with the given id or the registered name of that class.
@@ -70,16 +91,30 @@ export class EntityMapperService {
    *
    * @param entityType Class that implements Entity, which is the type of Entity the results should be transformed to
    * or the registered name of that class.
+   * @param loadInactive Whether to load only active records, only inactive records, or all records.
+   *        Defaults to "active" to load only non-archived records.
    * @returns A Promise resolving to an array of instances of entityType with the data of the loaded entities.
    */
   public async loadType<T extends Entity>(
     entityType: EntityConstructor<T> | string,
+    loadInactive: "active" | "inactive" | "all" = "all",
   ): Promise<T[]> {
     const ctor = this.resolveConstructor(entityType);
-    const records = await this.dbResolver
-      .getDatabase(ctor.DATABASE)
-      .getAll(ctor.ENTITY_TYPE + ":");
-    return records.map((rec) => this.transformToEntityFormat(rec, ctor));
+
+    if (loadInactive === "all" || ctor.DATABASE !== Entity.DATABASE) {
+      // legacy way to avoid performance hits while this is still being optimized
+      // also, we do not have the index for other databases yet
+      const records = await this.dbResolver
+        .getDatabase(ctor.DATABASE)
+        .getAll(ctor.ENTITY_TYPE + ":");
+      return records.map((rec) => this.transformToEntityFormat(rec, ctor));
+    }
+
+    const isActive = loadInactive === "active";
+    return this.dbIndexing.queryIndexDocs(ctor, "all_entities_index/active", {
+      startkey: [ctor.ENTITY_TYPE, isActive],
+      endkey: [ctor.ENTITY_TYPE, isActive, {}],
+    });
   }
 
   private transformToEntityFormat<T extends Entity>(
