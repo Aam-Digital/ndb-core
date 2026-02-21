@@ -238,7 +238,8 @@ When developing new functionality:
 ### For Agent mode implementations
 
 - Create complete, production-ready code
-- Include proper error handling and logging
+- Include proper error handling and logging.
+  Use `Logging` from `#src/app/core/logging/logging.service.ts`, not `console.log`
 - Generate demo data when creating new entities
 - Follow the established file organization
 - Generate or adapt unit tests
@@ -255,7 +256,7 @@ When developing new functionality:
 ## Common Commands
 
 - `npm run start` - Development server
-- `npm run test -- --watch=false` - Unit tests
+- `npm run test -- --watch=false --include='**/relevant-file.spec.ts'` - Unit tests
 - `npm run e2e` - End-to-end tests
 - `npm run build` - Production build
 - `npm run lint:fix` - Linting (including automatic fixes)
