@@ -484,7 +484,7 @@
               "dataType": "entity",
               "additional": [
                 "Child",
-                "School"
+                "User"
               ]
             }
           }
@@ -522,19 +522,7 @@
                         "description",
                         "authors"
                       ]
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "title": "Attendance",
-            "components": [
-              {
-                "component": "Form",
-                "config": {
-                  "fieldGroups": [
+                    },
                     {
                       "fields": [
                         "attendance"

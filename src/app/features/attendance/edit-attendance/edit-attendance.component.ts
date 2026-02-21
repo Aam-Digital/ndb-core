@@ -1,12 +1,19 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  inject,
+  Input,
+  OnInit,
+} from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { startWith } from "rxjs/operators";
 import { EditEntityComponent } from "#src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component";
 import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
 import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
@@ -14,12 +21,17 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { ScreenWidthObserver } from "#src/app/utils/media/screen-size-observer.service";
-import { InteractionType } from "#src/app/child-dev-project/notes/model/interaction-type.interface";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { AttendanceStatusSelectComponent } from "./attendance-status-select/attendance-status-select.component";
 import { AttendanceItem } from "../model/attendance-item";
 
-@UntilDestroy()
+/**
+ * Edit component for the `attendance` datatype.
+ *
+ * Manages an array of {@link AttendanceItem} objects, each with a participant entity reference,
+ * attendance status, and remarks.
+ *
+ * Participants can be of any entity type configured via the field's `additional.participant.additional`.
+ */
 @DynamicComponent("EditAttendance")
 @Component({
   selector: "app-edit-attendance",
@@ -35,79 +47,102 @@ import { AttendanceItem } from "../model/attendance-item";
   ],
   templateUrl: "./edit-attendance.component.html",
   styleUrls: ["./edit-attendance.component.scss"],
-  // TODO: refactor this to use signals and be ready for OnPush change detection
-  //changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     { provide: MatFormFieldControl, useExisting: EditAttendanceComponent },
   ],
 })
 export class EditAttendanceComponent
-  extends CustomFormControlDirective<string[]>
+  extends CustomFormControlDirective<AttendanceItem[]>
   implements OnInit, EditComponent
 {
   @Input() formFieldConfig?: FormFieldConfig;
-  @Input() entity?: Note;
 
-  showAttendance = false;
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly screenWidthObserver = inject(ScreenWidthObserver);
+  private readonly changeDetector = inject(ChangeDetectorRef);
+
   mobile = false;
 
-  get formControl(): FormControl<string[]> {
-    return this.ngControl.control as FormControl<string[]>;
-  }
+  /** Internal form control for the entity autocomplete to add new participants */
+  addParticipantControl = new FormControl<string>(null);
 
-  get parent() {
-    return this.formControl.parent as FormGroup;
-  }
+  /** FormFieldConfig for the internal entity autocomplete */
+  participantFieldConfig: FormFieldConfig;
 
-  constructor() {
-    super();
-    const screenWithObserver = inject(ScreenWidthObserver);
-
-    screenWithObserver
-      .platform()
-      .pipe(untilDestroyed(this))
-      .subscribe((isDesktop) => (this.mobile = !isDesktop));
+  get formControl(): FormControl<AttendanceItem[]> {
+    return this.ngControl.control as FormControl<AttendanceItem[]>;
   }
 
   ngOnInit() {
-    const category = this.parent.get(
-      "category",
-    ) as FormControl<InteractionType>;
-    if (category) {
-      category.valueChanges.pipe(startWith(category.value)).subscribe((val) => {
-        this.showAttendance = !!val?.isMeeting;
-        if (this.showAttendance) {
-          let childrenAttendanceForm = new FormControl(
-            this.entity.copy()["childrenAttendance"],
-          );
-          this.parent.addControl("childrenAttendance", childrenAttendanceForm);
-        } else {
-          this.parent.removeControl("childrenAttendance");
+    this.screenWidthObserver
+      .platform()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((isDesktop) => (this.mobile = !isDesktop));
+
+    // Build the config for the participant entity autocomplete
+    // from the nested `additional.participant` schema config
+    const participantConfig = this.formFieldConfig?.additional?.participant;
+    this.participantFieldConfig = {
+      id: "participant",
+      label: $localize`:Placeholder for adding a participant:Select additional participant`,
+      dataType: "entity",
+      additional: participantConfig?.additional,
+    };
+
+    // Whenever a new participant is selected in the autocomplete, add them
+    this.addParticipantControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((selectedId) => {
+        if (selectedId) {
+          this.addParticipant(selectedId);
+          this.addParticipantControl.setValue(null, { emitEvent: false });
         }
       });
+
+    // Re-render when the form control value or status changes externally (e.g. loading entity data, switching between view/edit mode)
+    this.formControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.changeDetector.markForCheck());
+    this.formControl.statusChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.changeDetector.markForCheck());
+  }
+
+  addParticipant(participantId: string) {
+    const current = this.formControl.value ?? [];
+    // Prevent duplicates
+    if (current.some((item) => item.participant === participantId)) {
+      return;
+    }
+    const newItem = new AttendanceItem(undefined, "", participantId);
+    this.formControl.setValue([...current, newItem]);
+    this.formControl.markAsDirty();
+  }
+
+  removeParticipant(participantId: string) {
+    const current = this.formControl.value ?? [];
+    this.formControl.setValue(
+      current.filter((item) => item.participant !== participantId),
+    );
+    this.formControl.markAsDirty();
+  }
+
+  updateAttendanceValue(
+    participantId: string,
+    property: "status" | "remarks",
+    newValue: any,
+  ) {
+    const item = this.getAttendanceItem(participantId);
+    if (item) {
+      item[property] = newValue;
+      this.formControl.markAsDirty();
     }
   }
 
-  getAttendance(childId: string) {
-    let attendance = this.parent.get("childrenAttendance").value.get(childId);
-    if (!attendance) {
-      attendance = new AttendanceItem();
-      this.parent.get("childrenAttendance").value.set(childId, attendance);
-    }
-    return attendance;
-  }
-
-  removeChild(id: string) {
-    const children = this.formControl.value;
-    const index = children.indexOf(id);
-    children.splice(index, 1);
-    this.parent.get("childrenAttendance").value.delete(id);
-    this.formControl.markAsDirty();
-    this.formControl.setValue([...children]);
-  }
-
-  updateAttendanceValue(childId, property: "status" | "remarks", newValue) {
-    this.formControl.markAsDirty();
-    this.getAttendance(childId)[property] = newValue;
+  getAttendanceItem(participantId: string): AttendanceItem | undefined {
+    return (this.formControl.value ?? []).find(
+      (item) => item.participant === participantId,
+    );
   }
 }

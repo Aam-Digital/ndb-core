@@ -100,7 +100,7 @@ export class EditEntityComponent<
    * The placeholder is what is seen when someone clicks into the input
    * field and adds new entities.
    */
-  override placeholder: string;
+  @Input() override placeholder: string;
 
   /**
    * Whether to show entities in the list.
