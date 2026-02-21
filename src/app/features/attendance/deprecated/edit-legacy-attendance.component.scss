@@ -4,7 +4,8 @@
 }
 
 .table {
-  width: 100%;
+  /* add gap of same size as the hidden subscript wrappers */
+  margin-bottom: 22px;
 }
 
 .mobile-remove-item {

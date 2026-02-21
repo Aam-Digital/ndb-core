@@ -1,0 +1,29 @@
+@if (items().length && percentage() !== undefined) {
+  <span
+    class="mat-elevation-z1 attendance-block {{ warningClass() }}"
+    [appTemplateTooltip]="tooltip"
+  >
+    {{ percentage() | percent: "1.0-0" }}
+  </span>
+
+  <ng-template #tooltip>
+    <div class="attendance-tooltip">
+      <div class="attendance-stats">
+        @for (item of items(); track item.participant) {
+          <div class="flex-row gap-regular">
+            <app-attendance-day-block
+              [attendance]="item"
+            ></app-attendance-day-block>
+            <app-entity-block
+              class="flex-grow"
+              [entityId]="item.participant"
+              [linkDisabled]="true"
+            ></app-entity-block>
+          </div>
+        }
+      </div>
+    </div>
+  </ng-template>
+} @else {
+  <span>-</span>
+}

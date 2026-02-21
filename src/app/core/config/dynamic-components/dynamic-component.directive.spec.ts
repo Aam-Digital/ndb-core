@@ -44,7 +44,6 @@ describe("DynamicComponentDirective", () => {
         missingProp: "should not exist",
       },
     };
-    const changesSpy = jasmine.createSpy();
     const comp: any = {
       prototype: {
         constructor: {
@@ -54,19 +53,25 @@ describe("DynamicComponentDirective", () => {
         },
       },
     };
-    const compRef: any = { instance: { ngOnChanges: changesSpy } };
+    const setInputSpy = jasmine.createSpy("setInput");
+    const compRef: any = {
+      componentType: comp,
+      setInput: setInputSpy,
+    };
     mockRegistry.get.and.returnValue(() => Promise.resolve(comp));
     mockContainer.createComponent.and.returnValue(compRef);
 
     await directive.ngOnChanges();
 
-    expect(compRef.instance.numberProp).toBe(0);
-    expect(compRef.instance.stringProp).toBe("should exist");
-    expect(compRef.instance.missingProp).toBeUndefined();
-    expect(compRef.instance.otherProp).toBeUndefined();
-    expect(compRef.instance.ngOnChanges).toHaveBeenCalledWith({
-      numberProp: jasmine.anything(),
-      stringProp: jasmine.anything(),
-    });
+    expect(setInputSpy).toHaveBeenCalledWith("numberProp", 0);
+    expect(setInputSpy).toHaveBeenCalledWith("stringProp", "should exist");
+    expect(setInputSpy).not.toHaveBeenCalledWith(
+      "missingProp",
+      jasmine.anything(),
+    );
+    expect(setInputSpy).not.toHaveBeenCalledWith(
+      "otherProp",
+      jasmine.anything(),
+    );
   });
 });

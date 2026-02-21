@@ -1,5 +1,5 @@
-import { AttendanceItem } from "./attendance-item";
-import { EventAttendanceMap } from "./event-attendance.datatype";
+import { AttendanceItem } from "../model/attendance-item";
+import { EventAttendanceMap } from "./event-attendance-map.datatype";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";

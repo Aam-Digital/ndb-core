@@ -1,47 +1,47 @@
 <span
   class="block-height truncate-text"
-  [class.clickable]="!linkDisabled"
-  [class.inactive]="!entity?.isActive"
+  [class.clickable]="!linkDisabled()"
+  [class.inactive]="!entityResource.value()?.isActive"
   (click)="showDetailsPage()"
   [appTemplateTooltip]="tooltip"
-  [tooltipDisabled]="!entityBlockConfig"
-  [title]="entity?.toString()"
+  [tooltipDisabled]="!entityBlockConfig()"
+  [title]="entityResource.value()?.toString()"
 >
   <app-fa-dynamic-icon
-    [icon]="entityIcon"
+    [icon]="entityIcon()"
     class="margin-right-small"
   ></app-fa-dynamic-icon>
 
-  {{ entity?.toString() }}
+  {{ entityResource.value()?.toString() }}
 </span>
 
 <!-- Tooltip on Hover -->
 <ng-template #tooltip>
   <div class="tooltip-container">
-    @if (entityBlockConfig?.image) {
+    @if (entityBlockConfig()?.image) {
       <app-display-img
         class="tooltip-photo"
-        [entity]="entity"
-        [imgProperty]="entityBlockConfig?.image"
+        [entity]="entityResource.value()"
+        [imgProperty]="entityBlockConfig()?.image"
       ></app-display-img>
     }
 
     <div>
       <!-- Font-weight is applied as style to override the default -->
       <h3 style="font-weight: bold">
-        @if (entityBlockConfig?.title) {
+        @if (entityBlockConfig()?.title) {
           <app-entity-field-view
-            [entity]="entity"
-            [field]="entityBlockConfig?.title"
+            [entity]="entityResource.value()"
+            [field]="entityBlockConfig()?.title"
           ></app-entity-field-view>
         } @else {
-          {{ entity?.toString() }}
+          {{ entityResource.value()?.toString() }}
         }
       </h3>
 
-      @for (field of entityBlockConfig?.fields; track field) {
+      @for (field of entityBlockConfig()?.fields; track field) {
         <app-entity-field-view
-          [entity]="entity"
+          [entity]="entityResource.value()"
           [field]="field"
         ></app-entity-field-view>
       }

@@ -1,25 +1,19 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
-import { FormControl, FormGroup } from "@angular/forms";
-import { MatInputHarness } from "@angular/material/input/testing";
+import { FormControl } from "@angular/forms";
 import { By } from "@angular/platform-browser";
-import { defaultInteractionTypes } from "#src/app/core/config/default-config/default-interaction-types";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { LoginState } from "#src/app/core/session/session-states/login-state.enum";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
-import { InteractionType } from "#src/app/child-dev-project/notes/model/interaction-type.interface";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { AttendanceStatusSelectComponent } from "./attendance-status-select/attendance-status-select.component";
 import { EditAttendanceComponent } from "./edit-attendance.component";
+import { AttendanceItem } from "../model/attendance-item";
 
 describe("EditAttendanceComponent", () => {
   let component: EditAttendanceComponent;
   let fixture: ComponentFixture<EditAttendanceComponent>;
-  let parentFormGroup: FormGroup;
-  let categoryForm: FormControl<InteractionType>;
-  let childrenForm: FormControl<string[]>;
+  let attendanceForm: FormControl<AttendanceItem[]>;
 
   let childrenEntities: Entity[];
 
@@ -35,21 +29,22 @@ describe("EditAttendanceComponent", () => {
 
     fixture = TestBed.createComponent(EditAttendanceComponent);
     component = fixture.componentInstance;
-    categoryForm = new FormControl<InteractionType>(defaultInteractionTypes[0]);
-    childrenForm = new FormControl(childrenEntities.map((c) => c.getId()));
 
-    // Create parent form group that contains both category and children controls
-    parentFormGroup = new FormGroup({
-      category: categoryForm,
-      children: childrenForm,
-    });
+    const initialItems = childrenEntities.map(
+      (c) => new AttendanceItem(undefined, "", c.getId()),
+    );
+    attendanceForm = new FormControl<AttendanceItem[]>(initialItems);
 
     component.ngControl = {
-      control: childrenForm,
+      control: attendanceForm,
     } as any;
 
-    component.formFieldConfig = { id: "children" };
-    component.entity = new Note();
+    component.formFieldConfig = {
+      id: "attendance",
+      additional: {
+        participant: { dataType: "entity", additional: "TestEntity" },
+      },
+    };
     fixture.detectChanges();
   });
 
@@ -57,60 +52,65 @@ describe("EditAttendanceComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should show the child meeting note attendance component when the event is a meeting", () => {
-    categoryForm.setValue(defaultInteractionTypes.find((c) => c.isMeeting));
-    fixture.detectChanges();
-
-    const element = fixture.debugElement.query(
+  it("should show attendance status selects for each participant", () => {
+    const elements = fixture.debugElement.queryAll(
       By.directive(AttendanceStatusSelectComponent),
     );
-
-    expect(element).toBeTruthy();
+    expect(elements).toHaveSize(2);
   });
 
-  it("should not show the child meeting note attendance component when the event's category is undefined", () => {
-    categoryForm.setValue(defaultInteractionTypes.find((c) => !c.isMeeting));
-    fixture.detectChanges();
+  it("should add a participant when addParticipant is called", () => {
+    component.addParticipant("child3");
+    expect(attendanceForm.value).toHaveSize(3);
+    expect(attendanceForm.value[2].participant).toBe("child3");
+  });
 
-    const element = fixture.debugElement.query(
-      By.directive(AttendanceStatusSelectComponent),
+  it("should not add duplicate participant", () => {
+    component.addParticipant(childrenEntities[0].getId());
+    expect(attendanceForm.value).toHaveSize(2);
+  });
+
+  it("should remove a participant from the attendance array", () => {
+    const a1 = component.getAttendanceItem(childrenEntities[0].getId());
+    a1.remarks = "present";
+
+    component.removeParticipant(childrenEntities[1].getId());
+
+    expect(attendanceForm.value).toHaveSize(1);
+    expect(attendanceForm.value[0].participant).toBe(
+      childrenEntities[0].getId(),
     );
-
-    expect(element).toBeFalsy();
+    expect(attendanceForm.value[0].remarks).toBe("present");
   });
 
-  it("should remove a child from the children array if the attendance is removed", () => {
-    categoryForm.setValue(defaultInteractionTypes.find((c) => c.isMeeting));
-    fixture.detectChanges();
-    const attendanceForm = parentFormGroup.get("childrenAttendance");
-    const a1 = component.getAttendance(childrenEntities[0].getId());
-    const a2 = component.getAttendance(childrenEntities[1].getId());
-    a1.remarks = "absent";
-    a2.remarks = "excused";
-
-    expect([...attendanceForm.value.values()]).toHaveSize(2);
-
-    component.removeChild(childrenEntities[1].getId());
-
-    expect(childrenForm.value).toEqual([childrenEntities[0].getId()]);
-    expect([...attendanceForm.value.values()]).toHaveSize(1);
-    expect(attendanceForm.value.get(childrenEntities[0].getId())).toBe(a1);
-  });
-
-  it("should mark form as dirty when some attendance detail was changed", async () => {
-    categoryForm.setValue(defaultInteractionTypes.find((c) => c.isMeeting));
-    fixture.detectChanges();
-
-    const inputElements =
-      await TestbedHarnessEnvironment.loader(fixture).getAllHarnesses(
-        MatInputHarness,
-      );
-    const firstRemarkInput = inputElements[2];
-    await firstRemarkInput.setValue("new remarks");
+  it("should mark form as dirty when some attendance detail was changed", () => {
+    component.updateAttendanceValue(
+      childrenEntities[0].getId(),
+      "remarks",
+      "new remarks",
+    );
 
     expect(
-      component.getAttendance(childrenEntities[0].getId()).remarks,
+      component.getAttendanceItem(childrenEntities[0].getId()).remarks,
     ).toEqual("new remarks");
     expect(component.formControl.dirty).toBeTrue();
+  });
+
+  it("should exclude already-added participants from the filter", () => {
+    const existingEntity = childrenEntities[0];
+    const newEntity = new TestEntity("child3");
+
+    const filter = component.participantFilter();
+    expect(filter(existingEntity)).toBeFalse();
+    expect(filter(newEntity)).toBeTrue();
+  });
+
+  it("should update the participant filter after adding a participant", () => {
+    const newEntity = new TestEntity("child3");
+    expect(component.participantFilter()(newEntity)).toBeTrue();
+
+    component.addParticipant(newEntity.getId());
+
+    expect(component.participantFilter()(newEntity)).toBeFalse();
   });
 });

@@ -27,6 +27,9 @@
           "entityType": "Note"
         },
         {
+          "entityType": "Event"
+        },
+        {
           "entityType": "Todo"
         },
         {
@@ -169,7 +172,7 @@
           "isArray": true,
           "additional": "Child",
           "entityReferenceRole": "composite",
-          "editComponent": "EditAttendance",
+          "editComponent": "EditLegacyAttendance",
           "anonymize": "retain"
         },
         "childrenAttendance": {
@@ -429,6 +432,111 @@
         ]
       },
       "_id": "view:note/:id"
+    },
+    "entity:Event": {
+      "label": "Event",
+      "labelPlural": "Events",
+      "icon": "calendar",
+      "toStringAttributes": [
+        "subject"
+      ],
+      "route": "event",
+      "attributes": {
+        "date": {
+          "label": "Date",
+          "dataType": "date-only",
+          "defaultValue": {
+            "mode": "dynamic",
+            "config": {
+              "value": "$now"
+            }
+          }
+        },
+        "subject": {
+          "label": "Subject",
+          "dataType": "string",
+          "validators": {
+            "required": true
+          }
+        },
+        "description": {
+          "label": "Description",
+          "dataType": "long-text"
+        },
+        "authors": {
+          "label": "Team involved",
+          "dataType": "entity",
+          "isArray": true,
+          "additional": "User",
+          "defaultValue": {
+            "mode": "dynamic",
+            "config": {
+              "value": "$current_user"
+            }
+          }
+        },
+        "attendance": {
+          "label": "Attendance",
+          "dataType": "attendance",
+          "isArray": true,
+          "additional": {
+            "participant": {
+              "dataType": "entity",
+              "additional": [
+                "Child",
+                "User"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "view:event": {
+      "component": "EntityList",
+      "config": {
+        "entityType": "Event",
+        "columns": [
+          "date",
+          "subject",
+          "authors",
+          "attendance"
+        ]
+      },
+      "_id": "view:event"
+    },
+    "view:event/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "entityType": "Event",
+        "panels": [
+          {
+            "title": "Event Details",
+            "components": [
+              {
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "date",
+                        "subject",
+                        "description",
+                        "authors"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "attendance"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "_id": "view:event/:id"
     },
     "view:import": {
       "component": "Import",
