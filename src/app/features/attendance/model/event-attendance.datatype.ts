@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { SchemaEmbedDatatype } from "#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype";
-import { EntityConstructor } from "#src/app/core/entity/model/entity";
-import { EventAttendance, EventAttendanceMap } from "./event-attendance";
+import { AttendanceItem, EventAttendanceMap } from "./attendance-item";
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
 
 /**
@@ -55,7 +54,7 @@ export class EventAttendanceMapDatatype extends DefaultDatatype<
     for (const keyValue of value) {
       const transformedElement = this.embeddedType.transformToObjectFormat(
         keyValue[1],
-      ) as unknown as EventAttendance;
+      ) as unknown as AttendanceItem;
       result.set(keyValue[0], transformedElement);
     }
     return result;
@@ -65,7 +64,7 @@ export class EventAttendanceMapDatatype extends DefaultDatatype<
 /** @deprecated do not use externally, use EventAttendanceMap instead **/
 @Injectable()
 export class EventAttendanceDatatype extends SchemaEmbedDatatype {
-  static override dataType = EventAttendance.DATA_TYPE;
+  static override dataType = AttendanceItem.DATA_TYPE;
 
-  override embeddedType = EventAttendance as unknown as EntityConstructor;
+  override embeddedType = AttendanceItem;
 }

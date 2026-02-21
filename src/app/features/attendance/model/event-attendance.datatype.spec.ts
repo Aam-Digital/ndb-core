@@ -1,6 +1,6 @@
 import { testDatatype } from "#src/app/core/entity/schema/entity-schema.service.spec";
 import { EventAttendanceDatatype } from "./event-attendance.datatype";
-import { EventAttendance, EventAttendanceMap } from "./event-attendance";
+import { AttendanceItem, EventAttendanceMap } from "./attendance-item";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
 import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype";
@@ -32,11 +32,11 @@ describe("Schema data type: event-attendance-map", () => {
     const originalEntity = new TestEntity(id);
     originalEntity.attendanceMap.set(
       "a",
-      new EventAttendance(defaultAttendanceStatusTypes[1]),
+      new AttendanceItem(defaultAttendanceStatusTypes[1]),
     );
     originalEntity.attendanceMap.set(
       "b",
-      new EventAttendance(defaultAttendanceStatusTypes[0], "test remark"),
+      new AttendanceItem(defaultAttendanceStatusTypes[0], "test remark"),
     );
 
     const rawData =
@@ -63,11 +63,11 @@ describe("Schema data type: event-attendance-map", () => {
     const originalEntity = new TestEntity(id);
     originalEntity.attendanceMap.set(
       "a",
-      new EventAttendance(defaultAttendanceStatusTypes[1]),
+      new AttendanceItem(defaultAttendanceStatusTypes[1]),
     );
     originalEntity.attendanceMap.set(
       "b",
-      new EventAttendance(defaultAttendanceStatusTypes[0], "test remark"),
+      new AttendanceItem(defaultAttendanceStatusTypes[0], "test remark"),
     );
 
     const rawData =
@@ -93,7 +93,7 @@ describe("Schema data type: event-attendance-map", () => {
 describe("Schema data type: event-attendance", () => {
   testDatatype(
     EventAttendanceDatatype,
-    new EventAttendance(defaultAttendanceStatusTypes[0], "test remark"),
+    new AttendanceItem(defaultAttendanceStatusTypes[0], "test remark"),
     {
       status: defaultAttendanceStatusTypes[0].id,
       remarks: "test remark",
