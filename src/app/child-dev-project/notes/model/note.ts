@@ -23,7 +23,7 @@ import {
   InteractionType,
 } from "./interaction-type.interface";
 import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
-import { EventAttendanceMap } from "#src/app/features/attendance/model/event-attendance.datatype";
+import { EventAttendanceMap } from "#src/app/features/attendance/deprecated/event-attendance-map.datatype";
 import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
@@ -94,7 +94,7 @@ export class Note extends Entity {
     isArray: true,
     additional: "Child",
     entityReferenceRole: "composite",
-    editComponent: "EditAttendance",
+    editComponent: "EditLegacyAttendance",
     anonymize: "retain",
   })
   children: string[] = [];

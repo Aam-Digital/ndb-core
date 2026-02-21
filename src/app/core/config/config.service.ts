@@ -113,6 +113,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       removeOutdatedTodoViews,
       migrateChildSchoolOverviewComponent,
       migrateEditDescriptionOnly,
+      migrateEditAttendanceComponent,
     ];
 
     // default migrations that are not only temporary but will remain in the codebase
@@ -534,6 +535,20 @@ const migrateEditDescriptionOnly: ConfigMigration = (key, configPart) => {
 
   configPart.viewComponent = "DisplayDescriptionOnly";
   delete configPart.editComponent;
+
+  return configPart;
+};
+
+/**
+ * Change editComponent "EditAttendance" to "EditLegacyAttendance"
+ * as part of the new attendance datatype migration.
+ */
+const migrateEditAttendanceComponent: ConfigMigration = (key, configPart) => {
+  if (configPart?.editComponent !== "EditAttendance") {
+    return configPart;
+  }
+
+  configPart.editComponent = "EditLegacyAttendance";
 
   return configPart;
 };

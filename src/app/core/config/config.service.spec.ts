@@ -535,4 +535,34 @@ describe("ConfigService", () => {
 
     testConfigMigration(oldConfig, expectedConfig);
   }));
+
+  it("should migrate editComponent EditAttendance to EditLegacyAttendance", fakeAsync(() => {
+    const oldConfig = {
+      "entity:Note": {
+        attributes: {
+          children: {
+            dataType: "entity",
+            isArray: true,
+            additional: "Child",
+            editComponent: "EditAttendance",
+          },
+        },
+      },
+    };
+
+    const expectedConfig = {
+      "entity:Note": {
+        attributes: {
+          children: {
+            dataType: "entity",
+            isArray: true,
+            additional: "Child",
+            editComponent: "EditLegacyAttendance",
+          },
+        },
+      },
+    };
+
+    testConfigMigration(oldConfig, expectedConfig);
+  }));
 });

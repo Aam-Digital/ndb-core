@@ -34,14 +34,23 @@ export class AttendanceItem {
     }
   }
 
+  @DatabaseField({
+    dataType: "entity",
+  })
+  participant: string;
+
   @DatabaseField() remarks: string;
 
   constructor(
     status: AttendanceStatusType = NullAttendanceStatusType,
     remarks: string = "",
+    participant?: string,
   ) {
     this.status = status;
     this.remarks = remarks;
+    if (participant) {
+      this.participant = participant;
+    }
   }
 
   public copy(): AttendanceItem {
