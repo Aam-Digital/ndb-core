@@ -9,6 +9,7 @@ import {
   signal,
   WritableSignal,
 } from "@angular/core";
+import { NgTemplateOutlet } from "@angular/common";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -39,6 +40,7 @@ import { AttendanceItem } from "../model/attendance-item";
 @Component({
   selector: "app-edit-attendance",
   imports: [
+    NgTemplateOutlet,
     ReactiveFormsModule,
     EditEntityComponent,
     FontAwesomeModule,

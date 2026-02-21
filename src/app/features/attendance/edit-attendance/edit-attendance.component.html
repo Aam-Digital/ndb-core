@@ -54,15 +54,7 @@
       @if (!formControl.disabled) {
         <tr>
           <td colspan="4">
-            <mat-form-field>
-              <mat-label i18n>Add participant</mat-label>
-              <app-edit-entity
-                [formControl]="addParticipantControl"
-                [formFieldConfig]="participantFieldConfig"
-                [showEntities]="false"
-                [additionalFilter]="participantFilter()"
-              ></app-edit-entity>
-            </mat-form-field>
+            <ng-container *ngTemplateOutlet="addParticipant"></ng-container>
           </td>
         </tr>
       }
@@ -120,15 +112,19 @@
       </mat-card>
     }
     @if (!formControl.disabled) {
-      <mat-form-field>
-        <mat-label i18n>Add participant</mat-label>
-        <app-edit-entity
-          [formControl]="addParticipantControl"
-          [formFieldConfig]="participantFieldConfig"
-          [showEntities]="false"
-          [additionalFilter]="participantFilter()"
-        ></app-edit-entity>
-      </mat-form-field>
+      <ng-container *ngTemplateOutlet="addParticipant"></ng-container>
     }
   </div>
 }
+
+<ng-template #addParticipant>
+  <mat-form-field>
+    <mat-label i18n>Add participant</mat-label>
+    <app-edit-entity
+      [formControl]="addParticipantControl"
+      [formFieldConfig]="participantFieldConfig"
+      [showEntities]="false"
+      [additionalFilter]="participantFilter()"
+    ></app-edit-entity>
+  </mat-form-field>
+</ng-template>
