@@ -27,4 +27,5 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
   override embeddedType = AttendanceItem;
 
   override editComponent = "EditAttendance";
+  override viewComponent = "DisplayAttendance";
 }

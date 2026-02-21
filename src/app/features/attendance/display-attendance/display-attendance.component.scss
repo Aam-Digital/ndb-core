@@ -1,0 +1,39 @@
+@use "variables/colors";
+
+.display-attendance-container {
+  position: relative;
+  min-width: 100px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+mat-progress-bar {
+  flex: 1;
+  min-width: 60px;
+}
+
+.percentage-label {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.attendance-tooltip {
+  padding: 8px;
+}
+
+.attendance-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+
+  strong {
+    text-align: right;
+  }
+}

@@ -1,0 +1,37 @@
+@if (value && percentage !== undefined) {
+  <div class="display-attendance-container" [appTemplateTooltip]="tooltip">
+    <mat-progress-bar
+      mode="determinate"
+      [value]="percentage * 100"
+      [style.--mdc-linear-progress-active-indicator-color]="getBarColor()"
+    ></mat-progress-bar>
+    <span class="percentage-label">
+      {{ percentage | percent: "1.0-0" }}
+    </span>
+  </div>
+
+  <ng-template #tooltip>
+    <div class="attendance-tooltip">
+      <div class="attendance-stats">
+        <div class="stat-row">
+          <span i18n="Label for present attendance status">Present:</span>
+          <strong>{{ statusCounts[LStatus.PRESENT] || 0 }}</strong>
+        </div>
+        <div class="stat-row">
+          <span i18n="Label for absent attendance status">Absent:</span>
+          <strong>{{ statusCounts[LStatus.ABSENT] || 0 }}</strong>
+        </div>
+        @if (statusCounts[LStatus.IGNORE] > 0) {
+          <div class="stat-row">
+            <span i18n="Label for ignored/excused attendance status"
+              >Excused/Unknown:</span
+            >
+            <strong>{{ statusCounts[LStatus.IGNORE] }}</strong>
+          </div>
+        }
+      </div>
+    </div>
+  </ng-template>
+} @else {
+  <span>-</span>
+}

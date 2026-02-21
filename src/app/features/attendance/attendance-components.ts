@@ -51,6 +51,13 @@ export const attendanceComponents: ComponentTuple[] = [
       ),
   ],
   [
+    "DisplayAttendance",
+    () =>
+      import("./display-attendance/display-attendance.component").then(
+        (c) => c.DisplayAttendanceComponent,
+      ),
+  ],
+  [
     "AttendanceWeekDashboardSettings",
     () =>
       import("./attendance-week-dashboard/attendance-week-dashboard-settings.component/attendance-week-dashboard-settings.component").then(
