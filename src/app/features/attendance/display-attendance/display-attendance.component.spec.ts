@@ -1,7 +1,17 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DisplayAttendanceComponent } from "./display-attendance.component";
-import { ActivityAttendance } from "../model/activity-attendance";
-import { AttendanceLogicalStatus } from "../model/attendance-status";
+import { AttendanceItem } from "../model/attendance-item";
+import {
+  AttendanceLogicalStatus,
+  AttendanceStatusType,
+} from "../model/attendance-status";
+
+function makeStatus(
+  countAs: AttendanceLogicalStatus,
+  shortName = "",
+): AttendanceStatusType {
+  return { id: countAs, label: countAs, shortName, countAs };
+}
 
 describe("DisplayAttendanceComponent", () => {
   let component: DisplayAttendanceComponent;
@@ -20,51 +30,48 @@ describe("DisplayAttendanceComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should calculate percentage for individual child", () => {
-    const attendance = new ActivityAttendance();
-    attendance.individualLogicalStatusCounts.set("child1", {
-      [AttendanceLogicalStatus.PRESENT]: 8,
-      [AttendanceLogicalStatus.ABSENT]: 2,
-    });
-    spyOn(attendance, "getAttendancePercentage").and.returnValue(0.8);
-
-    component.value = attendance;
-    component.config = { forChild: "child1" };
+  it("should calculate percentage from attendance items", () => {
+    component.value = [
+      new AttendanceItem(makeStatus(AttendanceLogicalStatus.PRESENT, "P")),
+      new AttendanceItem(makeStatus(AttendanceLogicalStatus.PRESENT, "P")),
+      new AttendanceItem(makeStatus(AttendanceLogicalStatus.ABSENT, "A")),
+      new AttendanceItem(makeStatus(AttendanceLogicalStatus.IGNORE, "E")),
+    ];
     component.ngOnInit();
 
-    expect(component.percentage).toBe(0.8);
-    expect(component.statusCounts[AttendanceLogicalStatus.PRESENT]).toBe(8);
-    expect(component.statusCounts[AttendanceLogicalStatus.ABSENT]).toBe(2);
+    // 2 present / (2 present + 1 absent) = 0.666...
+    expect(component.percentage).toBeCloseTo(2 / 3);
+    expect(component.items.length).toBe(4);
   });
 
-  it("should calculate average percentage for all participants", () => {
-    const attendance = new ActivityAttendance();
-    spyOn(attendance, "getAttendancePercentageAverage").and.returnValue(0.75);
-    spyOn(attendance, "countTotalPresent").and.returnValue(15);
-    spyOn(attendance, "countTotalAbsent").and.returnValue(5);
-
-    component.value = attendance;
-    component.config = {};
+  it("should return undefined percentage when no present/absent items", () => {
+    component.value = [
+      new AttendanceItem(makeStatus(AttendanceLogicalStatus.IGNORE, "E")),
+    ];
     component.ngOnInit();
 
-    expect(component.percentage).toBe(0.75);
-    expect(component.statusCounts[AttendanceLogicalStatus.PRESENT]).toBe(15);
-    expect(component.statusCounts[AttendanceLogicalStatus.ABSENT]).toBe(5);
+    expect(component.percentage).toBeUndefined();
   });
 
-  it("should return color based on warning level", () => {
-    const attendance = new ActivityAttendance();
-    spyOn(attendance, "getColor").and.returnValue("#ff0000");
+  it("should compute warning class based on percentage", () => {
+    component.value = [
+      new AttendanceItem(makeStatus(AttendanceLogicalStatus.PRESENT, "P")),
+    ];
+    component.ngOnInit();
 
-    component.value = attendance;
-    component.config = { forChild: "child1" };
-
-    expect(component.getBarColor()).toBe("#ff0000");
-    expect(attendance.getColor).toHaveBeenCalledWith("child1");
+    // 100% present → OK
+    expect(component.warningClass).toBe("w-OK");
   });
 
   it("should handle missing value gracefully", () => {
     component.value = null;
+    component.ngOnInit();
+
+    expect(component.percentage).toBeUndefined();
+  });
+
+  it("should handle empty array gracefully", () => {
+    component.value = [];
     component.ngOnInit();
 
     expect(component.percentage).toBeUndefined();

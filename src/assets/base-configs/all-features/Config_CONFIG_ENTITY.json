@@ -498,7 +498,8 @@
         "columns": [
           "date",
           "subject",
-          "authors"
+          "authors",
+          "attendance"
         ]
       },
       "_id": "view:event"

@@ -1,32 +1,24 @@
-@if (value && percentage !== undefined) {
-  <div class="display-attendance-container" [appTemplateTooltip]="tooltip">
-    <mat-progress-bar
-      mode="determinate"
-      [value]="percentage * 100"
-      [style.--mdc-linear-progress-active-indicator-color]="getBarColor()"
-    ></mat-progress-bar>
-    <span class="percentage-label">
-      {{ percentage | percent: "1.0-0" }}
-    </span>
-  </div>
+@if (value?.length && percentage !== undefined) {
+  <span
+    class="mat-elevation-z1 attendance-block {{ warningClass }}"
+    [appTemplateTooltip]="tooltip"
+  >
+    {{ percentage | percent: "1.0-0" }}
+  </span>
 
   <ng-template #tooltip>
     <div class="attendance-tooltip">
       <div class="attendance-stats">
-        <div class="stat-row">
-          <span i18n="Label for present attendance status">Present:</span>
-          <strong>{{ statusCounts[LStatus.PRESENT] || 0 }}</strong>
-        </div>
-        <div class="stat-row">
-          <span i18n="Label for absent attendance status">Absent:</span>
-          <strong>{{ statusCounts[LStatus.ABSENT] || 0 }}</strong>
-        </div>
-        @if (statusCounts[LStatus.IGNORE] > 0) {
-          <div class="stat-row">
-            <span i18n="Label for ignored/excused attendance status"
-              >Excused/Unknown:</span
-            >
-            <strong>{{ statusCounts[LStatus.IGNORE] }}</strong>
+        @for (item of items; track item.participant) {
+          <div class="flex-row gap-regular">
+            <app-attendance-day-block
+              [attendance]="item"
+            ></app-attendance-day-block>
+            <app-entity-block
+              class="flex-grow"
+              [entityId]="item.participant"
+              [linkDisabled]="true"
+            ></app-entity-block>
           </div>
         }
       </div>
