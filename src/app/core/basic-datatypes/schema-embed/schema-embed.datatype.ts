@@ -19,6 +19,7 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityConstructor } from "../../entity/model/entity";
 import { inject, Injectable } from "@angular/core";
+import { SchemaEmbeddedType } from "../../entity/schema/entity-schema";
 
 /**
  * Datatype for the EntitySchemaService transforming values of complex objects recursively.
@@ -34,21 +35,27 @@ import { inject, Injectable } from "@angular/core";
  * implement this as its own datatype for a specific class functioning as "embedded" schema.
  */
 @Injectable()
-export abstract class SchemaEmbedDatatype extends DefaultDatatype {
-  abstract embeddedType: EntityConstructor;
+export abstract class SchemaEmbedDatatype<
+  EntityType = any,
+  DBType = any,
+> extends DefaultDatatype<EntityType, DBType> {
+  abstract embeddedType: SchemaEmbeddedType<EntityType>;
 
   protected readonly schemaService = inject(EntitySchemaService);
 
-  override transformToDatabaseFormat(value: any) {
+  override transformToDatabaseFormat(value: EntityType): DBType {
     return this.schemaService.transformEntityToDatabaseFormat(
+      value as any,
+      this.embeddedType.schema,
+    ) as DBType;
+  }
+
+  override transformToObjectFormat(value: DBType): EntityType {
+    const instance = new this.embeddedType();
+    const transformed = this.schemaService.transformDatabaseToEntityFormat(
       value,
       this.embeddedType.schema,
     );
-  }
-
-  override transformToObjectFormat(value: any) {
-    const instance = new this.embeddedType();
-    this.schemaService.loadDataIntoEntity(instance, value);
-    return instance;
+    return Object.assign(instance, transformed);
   }
 }
