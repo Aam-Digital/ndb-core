@@ -1,17 +1,15 @@
 import {
   ChangeDetectorRef,
+  ComponentRef,
   Directive,
   Input,
   OnChanges,
-  SimpleChange,
-  SimpleChanges,
   Type,
   ViewContainerRef,
   inject,
 } from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
 import { ComponentRegistry } from "../../../dynamic-components";
-import { pick } from "lodash-es";
 import { Logging } from "../../logging/logging.service";
 
 /**
@@ -60,36 +58,22 @@ export class DynamicComponentDirective implements OnChanges {
     const componentRef = this.viewContainerRef.createComponent(component);
 
     if (this.appDynamicComponent.config) {
-      this.setInputProperties(component.prototype, componentRef.instance);
+      this.setInputProperties(componentRef);
     }
     // it seems like the asynchronicity of this function requires this
     this.changeDetector.detectChanges();
   }
 
-  private setInputProperties(proto: any, component: any) {
-    const inputs = Object.keys(proto.constructor["ɵcmp"].inputs).filter(
-      (input) => this.appDynamicComponent.config?.[input] !== undefined,
-    );
-    const inputValues = pick(this.appDynamicComponent.config, inputs);
-    const initialValues = pick(component, inputs);
-    Object.assign(component, inputValues);
+  private setInputProperties(componentRef: ComponentRef<any>) {
+    const inputs = Object.keys(
+      componentRef.componentType.prototype.constructor["ɵcmp"].inputs,
+    ).filter((input) => this.appDynamicComponent.config?.[input] !== undefined);
 
-    if (
-      typeof component["ngOnChanges"] === "function" &&
-      Object.keys(inputValues).length > 0
-    ) {
-      const changes: SimpleChanges = inputs.reduce(
-        (c, prop) =>
-          Object.assign(c, {
-            [prop]: new SimpleChange(
-              initialValues[prop],
-              inputValues[prop],
-              true,
-            ),
-          }),
-        {},
+    for (const inputName of inputs) {
+      componentRef.setInput(
+        inputName,
+        this.appDynamicComponent.config[inputName],
       );
-      component["ngOnChanges"](changes);
     }
   }
 }
