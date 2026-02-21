@@ -25,12 +25,13 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
 import { NumberDatatype } from "../number/number.datatype";
 import { MonthDatatype } from "../month/month.datatype";
 import { Injectable } from "@angular/core";
+import { EntitySchema } from "../../entity/schema/entity-schema";
 
 describe("Schema data type: schema-embed", () => {
   @Injectable()
   class SchemaEmbedTestDatatype extends SchemaEmbedDatatype {
     static override dataType = "schema-embed-test";
-    override embeddedType = InnerClass as unknown as EntityConstructor;
+    override embeddedType = InnerClass;
   }
 
   class TestEntity extends Entity {
@@ -41,6 +42,8 @@ describe("Schema data type: schema-embed", () => {
   }
 
   class InnerClass {
+    declare static schema: EntitySchema;
+
     @DatabaseField({ dataType: "month" }) value: Date;
 
     private _value2: number;
