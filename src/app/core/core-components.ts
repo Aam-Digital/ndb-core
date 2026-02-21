@@ -283,4 +283,11 @@ export const coreComponents: ComponentTuple[] = [
         (c) => c.DisplayEmailComponent,
       ),
   ],
+  [
+    "EditDateFormat",
+    () =>
+      import("./basic-datatypes/date/edit-date-format/edit-date-format.component").then(
+        (c) => c.EditDateFormatComponent,
+      ),
+  ],
 ];
