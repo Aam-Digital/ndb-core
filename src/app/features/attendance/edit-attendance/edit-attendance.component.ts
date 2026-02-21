@@ -6,6 +6,8 @@ import {
   inject,
   Input,
   OnInit,
+  signal,
+  WritableSignal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -19,6 +21,7 @@ import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entit
 import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
+import { Entity } from "#src/app/core/entity/model/entity";
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { ScreenWidthObserver } from "#src/app/utils/media/screen-size-observer.service";
 import { AttendanceStatusSelectComponent } from "./attendance-status-select/attendance-status-select.component";
@@ -70,6 +73,11 @@ export class EditAttendanceComponent
   /** FormFieldConfig for the internal entity autocomplete */
   participantFieldConfig: FormFieldConfig;
 
+  /** Filter to exclude already-added participants from the autocomplete */
+  participantFilter: WritableSignal<(e: Entity) => boolean> = signal(
+    () => true,
+  );
+
   get formControl(): FormControl<AttendanceItem[]> {
     return this.ngControl.control as FormControl<AttendanceItem[]>;
   }
@@ -103,10 +111,22 @@ export class EditAttendanceComponent
     // Re-render when the form control value or status changes externally (e.g. loading entity data, switching between view/edit mode)
     this.formControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.changeDetector.markForCheck());
+      .subscribe(() => {
+        this.updateParticipantFilter();
+        this.changeDetector.markForCheck();
+      });
     this.formControl.statusChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.changeDetector.markForCheck());
+
+    this.updateParticipantFilter();
+  }
+
+  private updateParticipantFilter() {
+    const currentIds = new Set(
+      (this.formControl.value ?? []).map((item) => item.participant),
+    );
+    this.participantFilter.set((e: Entity) => !currentIds.has(e.getId()));
   }
 
   addParticipant(participantId: string) {

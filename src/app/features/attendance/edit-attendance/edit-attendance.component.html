@@ -31,11 +31,10 @@
           </td>
           <td class="full-width">
             <mat-form-field class="adjust-top margin-small">
+              <mat-label i18n>Remarks</mat-label>
               <input
                 #inputElement
                 matInput
-                i18n-placeholder
-                placeholder="Remarks"
                 name="remarks"
                 type="text"
                 [value]="item.remarks"
@@ -61,6 +60,7 @@
                 [formControl]="addParticipantControl"
                 [formFieldConfig]="participantFieldConfig"
                 [showEntities]="false"
+                [additionalFilter]="participantFilter()"
               ></app-edit-entity>
             </mat-form-field>
           </td>
@@ -98,11 +98,10 @@
             >
             </app-attendance-status-select>
             <mat-form-field>
+              <mat-label i18n>Remarks</mat-label>
               <input
                 #inputElement
                 matInput
-                i18n-placeholder
-                placeholder="Remarks"
                 name="remarks"
                 type="text"
                 [value]="item.remarks"
@@ -127,6 +126,7 @@
           [formControl]="addParticipantControl"
           [formFieldConfig]="participantFieldConfig"
           [showEntities]="false"
+          [additionalFilter]="participantFilter()"
         ></app-edit-entity>
       </mat-form-field>
     }

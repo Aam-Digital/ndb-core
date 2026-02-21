@@ -95,4 +95,22 @@ describe("EditAttendanceComponent", () => {
     ).toEqual("new remarks");
     expect(component.formControl.dirty).toBeTrue();
   });
+
+  it("should exclude already-added participants from the filter", () => {
+    const existingEntity = childrenEntities[0];
+    const newEntity = new TestEntity("child3");
+
+    const filter = component.participantFilter();
+    expect(filter(existingEntity)).toBeFalse();
+    expect(filter(newEntity)).toBeTrue();
+  });
+
+  it("should update the participant filter after adding a participant", () => {
+    const newEntity = new TestEntity("child3");
+    expect(component.participantFilter()(newEntity)).toBeTrue();
+
+    component.addParticipant(newEntity.getId());
+
+    expect(component.participantFilter()(newEntity)).toBeFalse();
+  });
 });
