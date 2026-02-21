@@ -7,7 +7,7 @@ import { BulkMergeRecordsComponent } from "app/features/de-duplication/bulk-merg
 import { AlertService } from "app/core/alerts/alert.service";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 import { Note } from "app/child-dev-project/notes/model/note";
-import { EventAttendanceMap } from "#src/app/features/attendance/model/event-attendance";
+import { EventAttendanceMap } from "#src/app/features/attendance/model/attendance-item";
 import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 

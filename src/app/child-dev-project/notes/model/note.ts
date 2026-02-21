@@ -23,9 +23,9 @@ import {
   InteractionType,
 } from "./interaction-type.interface";
 import {
-  EventAttendance,
+  AttendanceItem,
   EventAttendanceMap,
-} from "#src/app/features/attendance/model/event-attendance";
+} from "#src/app/features/attendance/model/attendance-item";
 import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
@@ -261,7 +261,7 @@ export class Note extends Entity {
    *
    * @param child: The child or the id of the child to look for
    */
-  getAttendance(child: string | Entity): EventAttendance {
+  getAttendance(child: string | Entity): AttendanceItem {
     const childId = typeof child === "string" ? child : child.getId();
     if (!this.children.includes(childId)) {
       return undefined;
@@ -269,11 +269,11 @@ export class Note extends Entity {
 
     let attendance = this.childrenAttendance.get(childId);
     if (!attendance) {
-      attendance = new EventAttendance();
+      attendance = new AttendanceItem();
       this.childrenAttendance.set(childId, attendance);
     }
-    if (!(attendance instanceof EventAttendance)) {
-      attendance = Object.assign(new EventAttendance(), attendance);
+    if (!(attendance instanceof AttendanceItem)) {
+      attendance = Object.assign(new AttendanceItem(), attendance);
     }
     return attendance;
   }

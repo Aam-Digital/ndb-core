@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { EventNote } from "#src/app/features/attendance/model/event-note";
@@ -6,7 +6,7 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "#src/app/features/attendance/attendance.service";
-import { EventAttendance } from "#src/app/features/attendance/model/event-attendance";
+import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import jsonQuery from "json-query";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 
@@ -483,7 +483,7 @@ export class QueryService {
 
 export interface AttendanceInfo {
   participant: string;
-  status: EventAttendance;
+  status: AttendanceItem;
   school?: string;
 }
 
