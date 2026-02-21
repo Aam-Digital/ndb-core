@@ -48,16 +48,3 @@ export class AttendanceItem {
     return Object.assign(new AttendanceItem(), this);
   }
 }
-
-/**
- * A full registry of event-attendance entries for multiple participants.
- *
- * TODO: this class can become the basis for a more generic attendance data that is not hard-wired to Note entities.
- */
-export class EventAttendanceMap extends Map<string, AttendanceItem> {
-  static DATA_TYPE = "event-attendance-map";
-
-  constructor() {
-    super();
-  }
-}
