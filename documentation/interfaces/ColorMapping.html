@@ -1,0 +1,822 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  ColorMapping</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/entity/model/entity.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>This allows defining different colors for entities based on their properties using MongoDB-style queries.</p>
+
+            </p>
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#color" 
+>
+                                            color
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#condition" 
+>
+                                            condition
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="color"></a>
+                                        <span class="name "><b>color</b>
+                                            <a href="#color">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>color:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="condition"></a>
+                                        <span class="name "><b>condition</b>
+                                            <a href="#condition">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>condition:         <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;any&gt;</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;any&gt;</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>MongoDB-style query condition that must match for this color to apply</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { v4 as uuid } from &quot;uuid&quot;;
+import { EntitySchema } from &quot;../schema/entity-schema&quot;;
+import { DatabaseField } from &quot;../database-field.decorator&quot;;
+import {
+  getWarningLevelColor,
+  WarningLevel,
+} from &quot;../../../child-dev-project/warning-level&quot;;
+import { IconName } from &quot;@fortawesome/fontawesome-svg-core&quot;;
+import { UpdateMetadata } from &quot;./update-metadata&quot;;
+import { EntityBlockConfig } from &quot;../../basic-datatypes/entity/entity-block/entity-block-config&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
+import { DataFilter } from &quot;../../filter/filters/filters&quot;;
+import {
+  allInterpreters,
+  allParsingInstructions,
+  createFactory,
+} from &quot;@ucast/mongo2js&quot;;
+import { extendedCompare } from &quot;../../../utils/filter-compare-utils&quot;;
+
+/**
+ * This represents a static class of type &lt;T&gt;.
+ * It can be used for passing a class from which new objects should be created.
+ * It can also be used to check the ENTITY_TYPE of a class
+ * For example usage check the {@link EntityMapperService}.
+ */
+export type EntityConstructor&lt;T extends Entity &#x3D; Entity&gt; &#x3D; (new (
+  id?: string,
+) &#x3D;&gt; T) &amp;
+  typeof Entity;
+
+/**
+ * This allows defining different colors for entities based on their properties using MongoDB-style queries.
+ */
+export interface ColorMapping {
+  /** MongoDB-style query condition that must match for this color to apply */
+  condition: DataFilter&lt;any&gt;;
+  color: string;
+}
+
+/**
+ * &quot;Entity&quot; is a base class for all domain model classes.
+ * It implements the basic general properties and methods that are required for all Entity types
+ * e.g. supporting the Entity Schema system or basic database logic.
+ *
+ * Entity classes do not deal with database actions, use {@link EntityMapperService} with its find/save/delete functions.
+ *
+ * Do not use the Entity class directly. Instead, implement your own Entity types, writing classes that extend &quot;Entity&quot;.
+ * A How-To Guide on how to implement your own types is available:
+ * - [How to Create a new Entity Type]{@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
+ */
+export class Entity {
+  /**
+   * The entity&#x27;s type.
+   * In classes extending Entity this is usually overridden by the class annotation &#x60;@DatabaseEntity(&#x27;NewEntity&#x27;)&#x60;.
+   * The type needs to be used as routing path in lower case. The routing path can be defined in the configuration file.
+   */
+  static ENTITY_TYPE &#x3D; &quot;Entity&quot;;
+
+  /**
+   * The database where these entities are stored.
+   */
+  static DATABASE &#x3D; &quot;app&quot;;
+
+  /**
+   * EntitySchema defining property transformations from/to the database.
+   * This is auto-generated from the property annotations &#x60;@DatabaseField()&#x60;.
+   *
+   * see {@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
+   */
+  static schema: EntitySchema;
+
+  /**
+   * True if this type&#x27;s schema has been customized dynamically from the config.
+   * @deprecated todo: This property is no longer used and will be removed in future versions.
+   */
+  static _isCustomizedType?: boolean; // todo should be private or renamed to &quot;isCustomizedType&quot;
+
+  /**
+   * Defining which attribute values of an entity should be shown in the &#x60;.toString()&#x60; method.
+   *
+   * The default is the ID of the entity (&#x60;entityId&#x60;).
+   * This can be overwritten in subclasses or through the config.
+   */
+  static toStringAttributes &#x3D; [&quot;entityId&quot;];
+
+  /**
+   * Defining which attributes will be displayed in a tooltip on hover when the record is displayed as an entity-block.
+   */
+  static toBlockDetailsAttributes?: EntityBlockConfig;
+
+  /**
+   * human-readable name/label of the entity in the UI
+   */
+  static label: string;
+
+  /**
+   * if this entity type is an internal entity,
+   * i.e. only defined in the code base to store internal system data
+   * and not visible to the user for customization.
+   */
+  static isInternalEntity?: boolean;
+
+  /**
+   * Whether to enable user account creation for this entity type.
+   * When true, the UI will allow management of user accounts associated with this entity.
+   */
+  static enableUserAccounts?: boolean;
+
+  /**
+   * human-readable label for uses of plural of the entity in the UI
+   */
+  static get labelPlural(): string {
+    return this._labelPlural ?? this.label;
+  }
+
+  static set labelPlural(value: string) {
+    this._labelPlural &#x3D; value;
+  }
+
+  private static _labelPlural: string;
+
+  /**
+   * Returns a human-readable string representation of the entity *type*
+   * (not the individual record).
+   */
+  static toString(plural: boolean &#x3D; false): string {
+    const result &#x3D; plural ? this.labelPlural : this.label;
+    return result ?? this.ENTITY_TYPE;
+  }
+
+  /**
+   * icon id used for this entity
+   */
+  static icon: IconName;
+
+  /**
+   * color used for to highlight this entity type across the app.
+   *
+   * Can be either:
+   * - A simple string (hex color code) for a single color
+   * - An array of ColorMapping objects for conditional colors based on entity properties
+   */
+  static color: string | ColorMapping[];
+
+  /**
+   * Base route of the entity (list/details) view for this entity type.
+   */
+  static get route(): string {
+    let route &#x3D; this._route ?? this.ENTITY_TYPE.toLowerCase();
+    if (!route.startsWith(&quot;/&quot;)) {
+      route &#x3D; &quot;/&quot; + route;
+    }
+    return route;
+  }
+
+  static set route(value: string) {
+    this._route &#x3D; value;
+  }
+
+  private static _route: string;
+
+  /**
+   * Extract the ENTITY_TYPE from an id.
+   * @param id An entity&#x27;s id including prefix.
+   */
+  static extractTypeFromId(id: string): string {
+    if (!id || typeof id !&#x3D;&#x3D; &quot;string&quot;) {
+      throw new Error(
+        &#x60;Invalid entity id provided: ${id}. Expected a non-empty string.&#x60;,
+      );
+    }
+    const split &#x3D; id.indexOf(&quot;:&quot;);
+    return id.substring(0, split);
+  }
+
+  /**
+   * Extract entityId without prefix.
+   * @param id An entity&#x27;s id including prefix.
+   */
+  static extractEntityIdFromId(id: string): string {
+    if (!id || typeof id !&#x3D;&#x3D; &quot;string&quot;) {
+      throw new Error(
+        &#x60;Invalid record id provided: ${id}. Expected a non-empty string.&#x60;,
+      );
+    }
+    let type: string &#x3D; undefined;
+    try {
+      const split &#x3D; id.indexOf(&quot;:&quot;);
+      type &#x3D; id.substring(split + 1);
+    } catch (e) {
+      Logging.debug(&quot;Error extracting recordId from id&quot;, id, e);
+    }
+    return type;
+  }
+
+  /**
+   * Create a prefixed id by adding the type prefix if it isn&#x27;t already part of the given id.
+   * @param type The type prefix to be added.
+   * @param id The id to be extended with a prefix.
+   */
+  static createPrefixedId(type: string, id: string): string {
+    id &#x3D; String(id);
+    const prefix &#x3D; type + &quot;:&quot;;
+    if (!id.startsWith(prefix)) {
+      return prefix + id;
+    } else {
+      return id;
+    }
+  }
+
+  /**
+   * whether this entity type can contain &quot;personally identifiable information&quot; (PII)
+   * and therefore should follow strict data protection requirements
+   * and offer a function to anonymize records.
+   */
+  static hasPII: boolean &#x3D; false;
+
+  /**
+   * Internal database id.
+   * This is usually combined from the ENTITY_TYPE as a prefix with the entityId field &#x60;EntityType:entityId&#x60;
+   * @example &quot;Entity:123&quot;
+   */
+  @DatabaseField({ anonymize: &quot;retain&quot;, isInternalField: true })
+  private _id: string;
+
+  /** internal database doc revision, used to detect conflicts by PouchDB/CouchDB */
+  @DatabaseField({ anonymize: &quot;retain&quot;, isInternalField: true }) _rev: string;
+
+  @DatabaseField({
+    anonymize: &quot;retain&quot;,
+    isInternalField: true,
+  })
+  created: UpdateMetadata;
+
+  @DatabaseField({
+    anonymize: &quot;retain&quot;,
+    isInternalField: true,
+  })
+  updated: UpdateMetadata;
+
+  @DatabaseField({ anonymize: &quot;retain&quot;, isInternalField: true })
+  inactive: boolean;
+
+  /**
+   * Whether this entity has been anonymized and therefore cannot be re-activated.
+   */
+  @DatabaseField({ anonymize: &quot;retain&quot;, isInternalField: true })
+  anonymized: boolean;
+
+  /** whether this entity object is newly created and not yet saved to database */
+  get isNew(): boolean {
+    return !this._rev;
+  }
+
+  /** actual id without prefix */
+  private get entityId(): string {
+    return Entity.extractEntityIdFromId(this._id);
+  }
+
+  /**
+   * Set id without prefix.
+   * @param newEntityId The new id without prefix.
+   */
+  private set entityId(newEntityId: string) {
+    this._id &#x3D; Entity.createPrefixedId(this.getType(), newEntityId);
+  }
+
+  /**
+   * Check, if this entity is considered active or archived.
+   *
+   * This is taken from the property &quot;inactive&quot;.
+   * If the property doesn&#x27;t exist, the default is &#x60;true&#x60;.
+   *
+   * Some subclasses overwrite this functionality, but this logic is considered deprecated (!) now
+   * and implementations have to make sure that &quot;inactive&quot; property takes precedence!
+   */
+  get isActive(): boolean {
+    if (this.inactive !&#x3D;&#x3D; undefined) {
+      return !this.inactive;
+    }
+    if (this[&quot;active&quot;] !&#x3D;&#x3D; undefined) {
+      return this[&quot;active&quot;];
+    }
+    return true;
+  }
+
+  /**
+   * If existing entities with &#x60;isActive: false&#x60; exist, then these values are assigned to the property &quot;active&quot;.
+   * @param isActive
+   */
+  set isActive(isActive: boolean) {
+    this[&quot;active&quot;] &#x3D; isActive;
+    this.inactive &#x3D; !isActive;
+  }
+
+  /**
+   * Creates an entity object with the given id. This id is final and won&#x27;t be changeable after this object has been
+   * created.
+   *
+   * @param id a unique id for this entity; if no id is passed a uuid is generated automatically
+   */
+  constructor(id: string &#x3D; uuid()) {
+    this.entityId &#x3D; id;
+  }
+
+  /**
+   * Get the class (Entity or the actual subclass of the instance) to call static methods on the correct class considering inheritance
+   */
+  getConstructor(): EntityConstructor&lt;this&gt; {
+    return this.constructor as EntityConstructor&lt;this&gt;;
+  }
+
+  /**
+   * Get the entity schema of this class
+   */
+  getSchema(): EntitySchema {
+    return this.getConstructor().schema;
+  }
+
+  /**
+   * Returns the id of this entity.
+   *
+   * Note that an id is final and can&#x27;t be changed after the object has been instantiated, hence there is no
+   * &lt;code&gt;setId()&lt;/code&gt; method.
+   *
+   * @returns {string} the unique id of this entity
+   */
+  public getId(withoutPrefix &#x3D; false): string {
+    return withoutPrefix ? this.entityId : this._id;
+  }
+
+  /**
+   * Returns the type which is used to categorize this entity in the database.
+   *
+   * &lt;b&gt;Important: Do not overwrite this method! Types are handled internally.&lt;/b&gt;
+   *
+   * @returns {string} the entity&#x27;s type (which is the class name).
+   */
+  public getType(): string {
+    return this.getConstructor().ENTITY_TYPE;
+  }
+
+  /**
+   * Returns a string representation or summary of the instance.
+   * This can be configured with the static &#x60;toStringAttributes&#x60; for each subclass.
+   *
+   * @returns {string} the instance&#x27;s string representation.
+   */
+  public toString(): string {
+    if (
+      this.anonymized &amp;&amp;
+      this.getConstructor().toStringAttributes.every(
+        (attr) &#x3D;&gt; this[attr] &#x3D;&#x3D;&#x3D; undefined,
+      )
+    ) {
+      return $localize&#x60;:Entity.toString fallback for anonymized record:[anonymized ${
+        this.getConstructor().label
+      }]&#x60;;
+    }
+
+    return this.getConstructor()
+      .toStringAttributes.map((attr) &#x3D;&gt; {
+        let value &#x3D; this[attr];
+        if (value?.label) {
+          value &#x3D; value.label;
+        }
+        if (value instanceof Date) {
+          value &#x3D; value.toLocaleDateString();
+        }
+        return value;
+      })
+      .join(&quot; &quot;);
+  }
+
+  /**
+   * Used by some generic UI components to set the color for the entity instance.
+   * Override this method as needed.
+   */
+  public getColor(): string {
+    return Entity.getColorWithConditions(this);
+  }
+
+  /**
+   * Static method to evaluate conditional colors for an entity based on ColorMapping configuration.
+   */
+  static getColorWithConditions(entity: Entity): string {
+    const colorConfig &#x3D; entity.getConstructor().color;
+
+    // Handle simple string color
+    if (typeof colorConfig &#x3D;&#x3D;&#x3D; &quot;string&quot; &amp;&amp; colorConfig) {
+      return colorConfig;
+    }
+
+    // Handle conditional colors array
+    if (Array.isArray(colorConfig) &amp;&amp; colorConfig.length &gt; 0) {
+      try {
+        const interpret &#x3D; createFactory(
+          allParsingInstructions,
+          allInterpreters,
+          { compare: extendedCompare },
+        );
+        let fallbackColor: string | null &#x3D; null;
+
+        for (const mapping of colorConfig) {
+          if (!mapping.color) continue;
+
+          const conditionKeys &#x3D; mapping.condition
+            ? Object.keys(mapping.condition)
+            : [];
+
+          if (conditionKeys.length &#x3D;&#x3D;&#x3D; 0) {
+            fallbackColor &#x3D; mapping.color;
+            continue;
+          }
+
+          try {
+            const test &#x3D; interpret(mapping.condition as any);
+            if (test(entity)) return mapping.color;
+          } catch (e) {
+            Logging.debug(
+              &quot;Error evaluating color condition&quot;,
+              mapping.condition,
+              e,
+            );
+          }
+        }
+
+        return fallbackColor;
+      } catch (e) {
+        Logging.warn(&quot;Error processing conditional colors&quot;, e);
+      }
+    }
+
+    // Default fallback
+    return getWarningLevelColor(entity.getWarningLevel());
+  }
+
+  /**
+   * Override getWarningLevel() to define when the entity is in a critical condition and should be color-coded
+   * and highlighted in generic components of the UI.
+   */
+  public getWarningLevel(): WarningLevel {
+    return WarningLevel.NONE;
+  }
+
+  /**
+   * Shallow copy of the entity.
+   * The resulting entity will be of the same type as this
+   * (taking into account subclassing)
+   *
+   * @param newId if true, a new entityId will be generated; if a string, that value is used as new entityId
+   */
+  public copy(newId: string | boolean &#x3D; false): this {
+    const other &#x3D; new (this.getConstructor())(this._id);
+    Object.assign(other, this);
+
+    if (newId) {
+      other.entityId &#x3D; typeof newId &#x3D;&#x3D;&#x3D; &quot;string&quot; ? newId : uuid();
+      delete other._rev;
+      delete other.created;
+      delete other.updated;
+    }
+
+    return other;
+  }
+
+  /**
+   * Checks if the entity is valid and if the check fails, throws an error explaining the failed check.
+   */
+  assertValid(): void {
+    return;
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'ColorMapping.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

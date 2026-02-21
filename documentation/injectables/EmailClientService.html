@@ -1,0 +1,668 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >EmailClientService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/email-client/email-client.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#buildMailtoLink" >buildMailtoLink</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#executeMailto" >executeMailto</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="buildMailtoLink"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>buildMailtoLink</b></span>
+                        <a href="#buildMailtoLink"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>buildMailtoLink(recipients: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, subject: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, body: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, sendAsBCC: unknown)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="110"
+                                    class="link-to-prism">src/app/features/email-client/email-client.service.ts:110</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>recipients</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>subject</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>body</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>sendAsBCC</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="executeMailto"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>executeMailto</b></span>
+                        <a href="#executeMailto"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>executeMailto(entities: <a href="../classes/Entity.html" target="_self">Entity | Entity[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="41"
+                                    class="link-to-prism">src/app/features/email-client/email-client.service.ts:41</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Build a mailto link from an entity&#39;s email fields and open the local mail client.</p>
+<p>If no default email client is available on the device / configured in the browser, then nothing will happen here.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entities</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity | Entity[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EmailDatatype } from &quot;#src/app/core/basic-datatypes/string/email.datatype&quot;;
+import { EntityRegistry } from &quot;#src/app/core/entity/database-entity.decorator&quot;;
+import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
+import { inject, Injectable } from &quot;@angular/core&quot;;
+import { AlertService } from &quot;#src/app/core/alerts/alert.service&quot;;
+import { MatDialog } from &quot;@angular/material/dialog&quot;;
+import {
+  EmailTemplateSelectionDialogComponent,
+  EmailTemplateSelectionDialogData,
+  EmailTemplateSelectionResult,
+} from &quot;./email-template-selection-dialog/email-template-selection-dialog.component&quot;;
+import { lastValueFrom } from &quot;rxjs&quot;;
+import { FormDialogService } from &quot;#src/app/core/form-dialog/form-dialog.service&quot;;
+import { Note } from &quot;#src/app/child-dev-project/notes/model/note&quot;;
+import { EmailTemplate } from &quot;./email-template.entity&quot;;
+import {
+  ConfirmationDialogComponent,
+  ConfirmationDialogConfig,
+} from &quot;#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
+import { asArray } from &quot;#src/app/utils/asArray&quot;;
+import { WINDOW_TOKEN } from &quot;#src/app/utils/di-tokens&quot;;
+
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class EmailClientService {
+  /** milliseconds to wait for the email client to open before discarding the confirmation dialog */
+  private static readonly EMAIL_CLIENT_WAIT_DURATION &#x3D; 5000;
+
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
+  private readonly alertService &#x3D; inject(AlertService);
+  private readonly dialog &#x3D; inject(MatDialog);
+  private readonly formDialog &#x3D; inject(FormDialogService);
+  private readonly window &#x3D; inject(WINDOW_TOKEN);
+
+  /**
+   * Build a mailto link from an entity&#x27;s email fields and open the local mail client.
+   *
+   * If no default email client is available on the device / configured in the browser, then nothing will happen here.
+   */
+  async executeMailto(entities: Entity | Entity[]): Promise&lt;boolean&gt; {
+    const isBulk &#x3D; Array.isArray(entities);
+    const entityList &#x3D; isBulk ? entities : [entities];
+
+    const { recipients, excludedEntities } &#x3D;
+      this.getEmailsForEntities(entityList);
+
+    if (!recipients.length) {
+      await this.dialog
+        .open(ConfirmationDialogComponent, {
+          data: {
+            title: $localize&#x60;Email Error&#x60;,
+            text: $localize&#x60;Please fill an email address for this record to use this functionality.&#x60;,
+            buttons: [
+              {
+                text: $localize&#x60;:Confirmation dialog OK:OK&#x60;,
+                dialogResult: true,
+                click() {},
+              },
+            ],
+          } as ConfirmationDialogConfig,
+        })
+        .afterClosed()
+        .toPromise();
+      return false;
+    }
+
+    const filteredEntities &#x3D; entityList.filter(
+      (e) &#x3D;&gt; !excludedEntities.includes(e),
+    );
+
+    const result &#x3D; await this.selectTemplate(
+      filteredEntities[0],
+      excludedEntities.length,
+      isBulk,
+    );
+    if (!result) return false;
+
+    const { template, createNote, sendAsBCC, sendSemicolonSeparated } &#x3D; result;
+    const mailto &#x3D; this.buildMailtoLink(
+      isBulk
+        ? asArray(recipients).join(sendSemicolonSeparated ? &quot;;&quot; : &quot;,&quot;)
+        : recipients[0],
+      template.subject,
+      template.body,
+      sendAsBCC,
+    );
+
+    this.window.location.href &#x3D; mailto;
+
+    this.showConfirmationAndOpenNote(filteredEntities, template, createNote);
+    return true;
+  }
+
+  private async selectTemplate(
+    entity: Entity,
+    excludedEntitiesCount: number,
+    isBulk: boolean,
+  ): Promise&lt;EmailTemplateSelectionResult | undefined&gt; {
+    const dialogRef &#x3D; this.dialog.open(EmailTemplateSelectionDialogComponent, {
+      data: {
+        entity,
+        excludedEntitiesCount,
+        isBulk,
+      } as EmailTemplateSelectionDialogData,
+    });
+    return await lastValueFrom(dialogRef.afterClosed());
+  }
+
+  public buildMailtoLink(
+    recipients: string,
+    subject: string,
+    body: string,
+    sendAsBCC &#x3D; false,
+  ): string {
+    let recipientsString &#x3D; encodeURIComponent(recipients);
+
+    const params: string[] &#x3D; [];
+    params.push(&#x60;subject&#x3D;${encodeURIComponent(subject.trim())}&#x60;);
+    params.push(&#x60;body&#x3D;${encodeURIComponent(body)}&#x60;);
+
+    if (sendAsBCC) {
+      return &#x60;mailto:?bcc&#x3D;${recipientsString}&amp;${params.join(&quot;&amp;&quot;)}&#x60;;
+    } else {
+      return &#x60;mailto:${recipientsString}${params.length ? &quot;?&quot; : &quot;&quot;}${params.join(&quot;&amp;&quot;)}&#x60;;
+    }
+  }
+
+  private async showConfirmationAndOpenNote(
+    entities: Entity[],
+    template: EmailTemplate,
+    createNote: boolean,
+  ) {
+    const confirmDialogRef &#x3D; this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: $localize&#x60;Opening email on your device...&#x60;,
+        text: $localize&#x60;If nothing is happening, please check your default email client. &lt;a href&#x3D;&quot;https://chatwoot.help/hc/aam-digital/articles/1756720692-send-e_mail-and-use-mail-templates&quot; target&#x3D;&quot;_blank&quot;&gt;link to user guide&lt;/a&gt;&#x60;,
+        closeButton: true,
+        buttons: [{ text: $localize&#x60;Continue&#x60; }],
+      } as ConfirmationDialogConfig,
+    });
+
+    setTimeout(() &#x3D;&gt; {
+      confirmDialogRef.close();
+
+      // Only offer to create/edit a note if the user opted in
+      if (createNote) {
+        const note &#x3D; this.prefilledNote(entities, template);
+        this.formDialog.openView(note, &quot;NoteDetails&quot;);
+      }
+    }, EmailClientService.EMAIL_CLIENT_WAIT_DURATION);
+  }
+
+  private prefilledNote(entities: Entity[], template: EmailTemplate): Note {
+    const note &#x3D; new Note();
+
+    note.subject &#x3D; template.subject;
+    note.text &#x3D; template.body;
+    note.category &#x3D; template.category;
+
+    const entityType &#x3D; (Array.isArray(entities) ? entities[0] : entities)
+      .constructor as EntityConstructor&lt;Entity&gt;;
+    const relatedProperty &#x3D; Note.getPropertyFor(entityType.ENTITY_TYPE);
+    note[relatedProperty] &#x3D; entities.map((e) &#x3D;&gt; e.getId());
+
+    return note;
+  }
+
+  private getEmailsForEntities(entities: Entity[]): {
+    recipients: string[];
+    excludedEntities: Entity[];
+  } {
+    const emailFieldId &#x3D; this.findFirstEmailFieldId(
+      entities?.[0].getConstructor(),
+    );
+    if (!emailFieldId) return { recipients: [], excludedEntities: entities };
+
+    const recipients &#x3D; new Set&lt;string&gt;();
+    const excludedEntities: Entity[] &#x3D; [];
+
+    for (const e of entities) {
+      const value &#x3D; e[emailFieldId];
+      if (value) {
+        recipients.add(value);
+      } else {
+        excludedEntities.push(e);
+      }
+    }
+
+    return { recipients: Array.from(recipients), excludedEntities };
+  }
+
+  /** Find the first field id with EmailDatatype in the schema */
+  private findFirstEmailFieldId(
+    entityType: EntityConstructor&lt;Entity&gt;,
+  ): string | null {
+    if (!entityType) return null;
+
+    for (const [, field] of entityType.schema.entries()) {
+      if (field.dataType &#x3D;&#x3D;&#x3D; EmailDatatype.dataType) {
+        return field.id;
+      }
+    }
+    return null;
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'EmailClientService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

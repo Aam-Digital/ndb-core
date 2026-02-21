@@ -1,0 +1,1037 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >AutomatedFieldUpdateConfigService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Service to automatically update related entities based on configured rules.
+It finds dependent entities and updates their fields based on changes in the source entity.</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#applyRulesToDependentEntities" >applyRulesToDependentEntities</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#calculateNewValue" >calculateNewValue</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#transformSourceValueToDatabaseFormat" >transformSourceValueToDatabaseFormat</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="applyRulesToDependentEntities"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>applyRulesToDependentEntities</b></span>
+                        <a href="#applyRulesToDependentEntities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>applyRulesToDependentEntities(entity: <a href="../classes/Entity.html" target="_self">Entity</a>, entityBeforeChanges: <a href="../classes/Entity.html" target="_self">Entity</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="48"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:48</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Applies rules to dependent entities based on changes in the provided entity.
+Also prompts user confirmation and saves updates if any changes were made.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The source entity whose changes should trigger updates</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>entityBeforeChanges</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The state of the entity before changes were applied to identify what has changed</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="calculateNewValue"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>calculateNewValue</b></span>
+                        <a href="#calculateNewValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>calculateNewValue(sourceEntity: <a href="../classes/Entity.html" target="_self">Entity</a>, rule: <a href="../interfaces/DefaultValueConfigInheritedField.html" target="_self">DefaultValueConfigInheritedField</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="279"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:279</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Calculate the new value from source entity with value mapping applied.
+Transforms to database format for consistent handling of all datatypes.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>sourceEntity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The entity containing the source value</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>rule</td>
+                                            <td>
+                                                            <code><a href="../interfaces/DefaultValueConfigInheritedField.html" target="_self" >DefaultValueConfigInheritedField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The inheritance rule configuration</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="transformSourceValueToDatabaseFormat"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>transformSourceValueToDatabaseFormat</b></span>
+                        <a href="#transformSourceValueToDatabaseFormat"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>transformSourceValueToDatabaseFormat(value: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, sourceEntity: <a href="../classes/Entity.html" target="_self">Entity</a>, sourceFieldId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, entitySchemaService: <a href="../injectables/EntitySchemaService.html" target="_self">EntitySchemaService</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="314"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:314</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Transform a source field value to database format for inherited field operations.
+This finds the field schema from the source entity and applies the transformation.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The value to transform</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>sourceEntity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The entity containing the value</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>sourceFieldId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The field ID where the value comes from</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>entitySchemaService</td>
+                                            <td>
+                                                            <code><a href="../injectables/EntitySchemaService.html" target="_self" >EntitySchemaService</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The schema service for transformations</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
+import { EntityMapperService } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import { EntityRegistry } from &quot;#src/app/core/entity/database-entity.decorator&quot;;
+import { MatDialog } from &quot;@angular/material/dialog&quot;;
+import {
+  AffectedEntity,
+  AutomatedFieldUpdateComponent,
+} from &quot;./automated-field-update.component&quot;;
+import { lastValueFrom } from &quot;rxjs&quot;;
+import { UnsavedChangesService } from &quot;#src/app/core/entity-details/form/unsaved-changes.service&quot;;
+import { DefaultValueConfigInheritedField } from &quot;../inherited-field-config&quot;;
+import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
+import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
+
+/**
+ * Represents a rule with its associated entity type and field information
+ */
+interface AffectedRule {
+  rule: DefaultValueConfigInheritedField;
+  entityType: EntityConstructor;
+  fieldId: string;
+}
+
+/**
+ * Service to automatically update related entities based on configured rules.
+ * It finds dependent entities and updates their fields based on changes in the source entity.
+ */
+@Injectable({ providedIn: &quot;root&quot; })
+export class AutomatedFieldUpdateConfigService {
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly dialog &#x3D; inject(MatDialog);
+  private readonly unsavedChangesService &#x3D; inject(UnsavedChangesService);
+  private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
+
+  /**
+   * Track processed entity revisions to prevent duplicate automated status updates within the same save operation
+   */
+  private readonly processedRevisions &#x3D; new Set&lt;string&gt;();
+
+  /**
+   * Applies rules to dependent entities based on changes in the provided entity.
+   * Also prompts user confirmation and saves updates if any changes were made.
+   * @param entity - The source entity whose changes should trigger updates
+   * @param entityBeforeChanges The state of the entity before changes were applied to identify what has changed
+   */
+  public async applyRulesToDependentEntities(
+    entity: Entity,
+    entityBeforeChanges: Entity,
+  ): Promise&lt;void&gt; {
+    if (this.checkRefAlreadyProcessed(entity)) return;
+
+    const changedFields &#x3D; this.getChangedFields(entity, entityBeforeChanges);
+    const changedFieldIds &#x3D; changedFields.map((f) &#x3D;&gt; f.fieldId);
+
+    const relevantDirectRules: AffectedRule[] &#x3D;
+      this.getInheritanceRulesFromDirectEntity(entity.getConstructor()).filter(
+        (r) &#x3D;&gt; changedFieldIds.includes(r.rule.sourceValueField),
+      );
+    const relevantIndirectRules: AffectedRule[] &#x3D;
+      this.getInheritanceRulesReferencingThisEntity(
+        entity.getConstructor(),
+      ).filter((r) &#x3D;&gt; changedFieldIds.includes(r.rule.sourceValueField));
+
+    const affectedEntities: AffectedEntity[] &#x3D; [
+      ...(
+        await Promise.all(
+          relevantDirectRules.map((rule) &#x3D;&gt;
+            this.loadAffectedEntitiesForRule(rule, entity),
+          ),
+        )
+      ).flat(),
+      ...(
+        await Promise.all(
+          relevantIndirectRules.map((rule) &#x3D;&gt;
+            this.loadAffectedEntitiesForInheritanceRule(rule, entity),
+          ),
+        )
+      ).flat(),
+    ];
+
+    if (affectedEntities.length &gt; 0) {
+      await this.confirmAndSaveAffectedEntities(affectedEntities);
+    }
+  }
+
+  /**
+   * skip if already processed this specific entity revision
+   * Note views can otherwise open multiple overlapping dialogs (because the note-details component contains three components, all sharing the same form instance)
+   */
+  private checkRefAlreadyProcessed(entity: Entity): boolean {
+    const entityKey &#x3D; &#x60;${entity.getId()}-${entity._rev}&#x60;;
+    const alreadyProcessed &#x3D; this.processedRevisions.has(entityKey);
+    this.processedRevisions.add(entityKey);
+    return alreadyProcessed;
+  }
+
+  /**
+   * Find all Inheritance Rules on other entity types that list the given sourceReferenceEntity.
+   *
+   * For example:
+   * Given the method parameter sourceReferenceEntity &#x3D; School
+   * Return any Rule in Child entity type, which refers to sourceReferenceEntity &#x3D; School
+   * (as well as any other such rule in any entity type)
+   */
+  private getInheritanceRulesFromDirectEntity(
+    sourceReferenceEntity: EntityConstructor,
+  ): AffectedRule[] {
+    const rules: AffectedRule[] &#x3D; [];
+
+    for (const targetEntityType of this.entityRegistry.values()) {
+      for (const [fieldId, fieldConfig] of targetEntityType.schema.entries()) {
+        if (fieldConfig.defaultValue?.mode &#x3D;&#x3D;&#x3D; &quot;inherited-field&quot;) {
+          const rule &#x3D; fieldConfig.defaultValue
+            .config as DefaultValueConfigInheritedField;
+
+          if (
+            rule?.sourceReferenceEntity &#x3D;&#x3D;&#x3D; sourceReferenceEntity.ENTITY_TYPE
+          ) {
+            rules.push({
+              rule,
+              entityType: targetEntityType,
+              fieldId,
+            });
+          }
+        }
+      }
+    }
+
+    return rules;
+  }
+
+  /**
+   * Find all Inheritance Rules where the sourceReferenceField&#x27;s entity type (in &quot;additional&quot;) matches the given sourceReferenceEntity.
+   *
+   * For example:
+   * Given the method parameter sourceReferenceEntity &#x3D; School
+   * Return any Rule in Child entity type, which has an undefined sourceReferenceEntity
+   *      and the sourceReferenceField (on the Child entity) has an &quot;additional&quot; &#x3D; School dataType
+   * (as well as any other such rule in any entity type)
+   */
+  private getInheritanceRulesReferencingThisEntity(
+    sourceReferenceEntity: EntityConstructor,
+  ): AffectedRule[] {
+    const rules: AffectedRule[] &#x3D; [];
+
+    for (const targetEntityType of this.entityRegistry.values()) {
+      for (const [fieldId, fieldConfig] of targetEntityType.schema.entries()) {
+        if (fieldConfig.defaultValue?.mode &#x3D;&#x3D;&#x3D; &quot;inherited-field&quot;) {
+          const rule &#x3D; fieldConfig.defaultValue
+            .config as DefaultValueConfigInheritedField;
+
+          // For inheritance rules: sourceReferenceEntity is undefined
+          if (!rule?.sourceReferenceEntity &amp;&amp; rule?.sourceReferenceField) {
+            // Check if the sourceReferenceField could reference our entity type
+            const referenceFieldConfig &#x3D; targetEntityType.schema.get(
+              rule.sourceReferenceField,
+            );
+
+            // If the reference field is configured to reference our entity type
+            if (
+              referenceFieldConfig?.dataType &#x3D;&#x3D;&#x3D; &quot;entity&quot; &amp;&amp;
+              referenceFieldConfig?.additional &#x3D;&#x3D;&#x3D;
+                sourceReferenceEntity.ENTITY_TYPE
+            ) {
+              rules.push({
+                rule,
+                entityType: targetEntityType,
+                fieldId,
+              });
+            }
+          }
+        }
+      }
+    }
+
+    return rules;
+  }
+
+  /**
+   * Load affected entities for a single automation rule (direct references)
+   * Source entity has reference field pointing TO target entities
+   */
+  private async loadAffectedEntitiesForRule(
+    affectedRule: AffectedRule,
+    sourceEntity: Entity,
+  ): Promise&lt;AffectedEntity[]&gt; {
+    const { rule, entityType, fieldId } &#x3D; affectedRule;
+
+    const referencedEntityIds &#x3D; sourceEntity[rule.sourceReferenceField];
+    if (!referencedEntityIds) return [];
+
+    const targetEntities &#x3D; await this.loadEntitiesByIds(
+      entityType,
+      Array.isArray(referencedEntityIds)
+        ? referencedEntityIds
+        : [referencedEntityIds],
+    );
+
+    return this.processTargetEntities(
+      targetEntities,
+      rule,
+      sourceEntity,
+      entityType,
+      fieldId,
+    );
+  }
+
+  /**
+   * Load affected entities for a single inheritance rule (indirect references)
+   * Target entities have reference field pointing TO source entity
+   */
+  private async loadAffectedEntitiesForInheritanceRule(
+    affectedRule: AffectedRule,
+    sourceEntity: Entity,
+  ): Promise&lt;AffectedEntity[]&gt; {
+    const { rule, entityType, fieldId } &#x3D; affectedRule;
+
+    // Load all entities of target type and filter for those referencing source entity
+    const allTargetEntities &#x3D; await this.entityMapper.loadType(entityType);
+    const targetEntities &#x3D; allTargetEntities.filter(
+      (entity) &#x3D;&gt; entity[rule.sourceReferenceField] &#x3D;&#x3D;&#x3D; sourceEntity.getId(),
+    );
+
+    return this.processTargetEntities(
+      targetEntities,
+      rule,
+      sourceEntity,
+      entityType,
+      fieldId,
+    );
+  }
+
+  /**
+   * Common logic for processing target entities and creating AffectedEntity objects
+   */
+  private processTargetEntities(
+    targetEntities: Entity[],
+    rule: DefaultValueConfigInheritedField,
+    sourceEntity: Entity,
+    targetEntityType: EntityConstructor,
+    targetFieldId: string,
+  ): AffectedEntity[] {
+    const affectedEntities: AffectedEntity[] &#x3D; [];
+    const sourceEntityType &#x3D; sourceEntity.getConstructor();
+    const relatedReferenceFieldEntityType &#x3D; rule.sourceReferenceEntity
+      ? sourceEntityType
+      : targetEntityType;
+
+    for (const targetEntity of targetEntities) {
+      const newValue &#x3D; this.calculateNewValue(sourceEntity, rule);
+
+      if (targetEntity[targetFieldId] !&#x3D;&#x3D; newValue) {
+        const fieldConfig &#x3D; targetEntityType.schema.get(targetFieldId);
+
+        affectedEntities.push({
+          id: targetEntity.getId(),
+          newValue: newValue,
+          targetFieldId,
+          targetEntityType,
+          selectedField: { ...fieldConfig, id: targetFieldId },
+          affectedEntity: targetEntity,
+          relatedReferenceField: rule.sourceReferenceField,
+          relatedReferenceFieldEntityType,
+        });
+      }
+    }
+
+    return affectedEntities;
+  }
+
+  /**
+   * Calculate the new value from source entity with value mapping applied.
+   * Transforms to database format for consistent handling of all datatypes.
+   * @param sourceEntity The entity containing the source value
+   * @param rule The inheritance rule configuration
+   */
+  public calculateNewValue(
+    sourceEntity: Entity,
+    rule: DefaultValueConfigInheritedField,
+  ): any {
+    if (!sourceEntity) {
+      return undefined;
+    }
+
+    const sourceValue &#x3D; sourceEntity[rule.sourceValueField];
+    let newValue &#x3D; sourceValue;
+
+    if (rule.valueMapping &amp;&amp; sourceValue) {
+      const mappingKey &#x3D; sourceValue.id;
+      newValue &#x3D; rule.valueMapping[mappingKey] || sourceValue;
+
+      return newValue;
+    }
+
+    return this.transformSourceValueToDatabaseFormat(
+      newValue,
+      sourceEntity,
+      rule.sourceValueField,
+      this.entitySchemaService,
+    );
+  }
+
+  /**
+   * Transform a source field value to database format for inherited field operations.
+   * This finds the field schema from the source entity and applies the transformation.
+   *
+   * @param value The value to transform
+   * @param sourceEntity The entity containing the value
+   * @param sourceFieldId The field ID where the value comes from
+   * @param entitySchemaService The schema service for transformations
+   */
+  public transformSourceValueToDatabaseFormat(
+    value: any,
+    sourceEntity: Entity,
+    sourceFieldId: string,
+    entitySchemaService: EntitySchemaService,
+  ): any {
+    if (value &#x3D;&#x3D;&#x3D; null || value &#x3D;&#x3D;&#x3D; undefined) {
+      return value;
+    }
+
+    const sourceFieldConfig &#x3D; sourceEntity
+      .getConstructor()
+      .schema.get(sourceFieldId);
+
+    if (!sourceFieldConfig) {
+      return value;
+    }
+
+    return entitySchemaService.valueToDatabaseFormat(
+      value,
+      sourceFieldConfig,
+      sourceEntity,
+    );
+  }
+
+  /**
+   * Load entities by their IDs
+   */
+  private async loadEntitiesByIds(
+    entityType: EntityConstructor,
+    entityIds: string[],
+  ): Promise&lt;Entity[]&gt; {
+    const loadedEntities &#x3D; await Promise.all(
+      entityIds.map(async (id) &#x3D;&gt; {
+        try {
+          const entity &#x3D; await this.entityMapper.load(entityType, id);
+          return entity;
+        } catch (error) {
+          Logging.warn(
+            &#x60;AutomatedFieldUpdateConfigService: Failed to load entity of type ${entityType.ENTITY_TYPE} with ID ${id}: ${error}&#x60;,
+          );
+          return null;
+        }
+      }),
+    );
+
+    return loadedEntities.filter((entity) &#x3D;&gt; entity);
+  }
+
+  /**
+   * Analyze which fields changed during the current editing.
+   * @param newEntity Updated entity after saving
+   * @param originalEntity Entity before changes were applied
+   * @return List of key-value pairs of all changed fields
+   *         (field ID and new value in that field)
+   * @private
+   */
+  private getChangedFields(
+    newEntity: Entity,
+    originalEntity: Entity,
+  ): { fieldId: string; value: any }[] {
+    const changedFields &#x3D; [];
+
+    for (const [key] of originalEntity.getSchema().entries()) {
+      if (
+        JSON.stringify(originalEntity[key]) !&#x3D;&#x3D; JSON.stringify(newEntity[key])
+      ) {
+        changedFields.push({ fieldId: key, value: newEntity[key] });
+      }
+    }
+
+    return changedFields;
+  }
+
+  /**
+   * Opens a dialog to confirm entity updates with the user.
+   * Saves entities only if the user confirms the changes.
+   */
+  private async confirmAndSaveAffectedEntities(
+    affectedEntities: AffectedEntity[],
+  ): Promise&lt;void&gt; {
+    const userConfirmed &#x3D; await this.showConfirmationDialog(affectedEntities);
+    if (!userConfirmed) return;
+
+    // Todo: Currently if there are multiple rule set for same entity and field, we are showing in UI as multiple entries,
+    // we need a proper UI to show the same entity and field with multiple values
+    const updatesByEntityId &#x3D; new Map&lt;string, AffectedEntity[]&gt;();
+    userConfirmed.forEach((update) &#x3D;&gt; {
+      const existing &#x3D; updatesByEntityId.get(update.id) || [];
+      existing.push(update);
+      updatesByEntityId.set(update.id, existing);
+    });
+
+    const savePromises: Promise&lt;any&gt;[] &#x3D; [];
+    updatesByEntityId.forEach((updates) &#x3D;&gt; {
+      const entity &#x3D; updates[0].affectedEntity;
+      if (entity) {
+        updates.forEach((update) &#x3D;&gt; {
+          entity[update.targetFieldId] &#x3D; update.newValue;
+        });
+        savePromises.push(this.entityMapper.save(entity));
+      }
+    });
+
+    this.unsavedChangesService.pending &#x3D; false;
+    await Promise.all(savePromises);
+  }
+
+  /**
+   * Opens the confirmation dialog to let user to approve or update the changes.
+   * @param entitiesToUpdate - List of entities with pending updates
+   */
+  private async showConfirmationDialog(
+    entitiesToUpdate: AffectedEntity[],
+  ): Promise&lt;AffectedEntity[] | null&gt; {
+    const dialogRef &#x3D; this.dialog.open(AutomatedFieldUpdateComponent, {
+      maxHeight: &quot;90vh&quot;,
+      data: { entities: entitiesToUpdate },
+    });
+    return await lastValueFrom(dialogRef.afterClosed());
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'AutomatedFieldUpdateConfigService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

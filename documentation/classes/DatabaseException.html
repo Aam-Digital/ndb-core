@@ -1,0 +1,764 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >DatabaseException</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/database/pouchdb/pouch-database.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>This overwrites PouchDB&#39;s error class which only logs limited information</p>
+
+            </p>
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                        <code>Error</code>
+            </p>
+
+
+
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(error: PouchDB.Core.Error | literal type, entityId?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="436" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:436</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>error</td>
+                                                  
+                                                        <td>
+                                                                    <code>PouchDB.Core.Error | literal type</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>entityId</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            Yes
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Database, GetAllOptions, GetOptions, QueryOptions } from &quot;../database&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
+import PouchDB from &quot;pouchdb-browser&quot;;
+import indexeddbAdapter from &quot;pouchdb-adapter-indexeddb&quot;;
+import { NgZone } from &quot;@angular/core&quot;;
+import { PerformanceAnalysisLogging } from &quot;../../../utils/performance-analysis-logging&quot;;
+import { firstValueFrom, Observable, Subject } from &quot;rxjs&quot;;
+import { HttpStatusCode } from &quot;@angular/common/http&quot;;
+import { environment } from &quot;environments/environment&quot;;
+import { SyncState } from &quot;app/core/session/session-states/sync-state.enum&quot;;
+import { SyncStateSubject } from &quot;app/core/session/session-type&quot;;
+import { NotificationEvent } from &quot;#src/app/features/notification/model/notification-event&quot;;
+
+// Register the newer &quot;indexeddb&quot; adapter alongside the default &quot;idb&quot; adapter
+PouchDB.plugin(indexeddbAdapter);
+
+/**
+ * Wrapper for a PouchDB instance to decouple the code from
+ * that external library.
+ *
+ * Additional convenience functions on top of the PouchDB API
+ * should be implemented in the abstract {@link Database}.
+ */
+export class PouchDatabase extends Database {
+  /**
+   * The reference to the PouchDB instance
+   * @private
+   */
+  protected pouchDB: PouchDB.Database;
+
+  /**
+   * A list of promises that resolve once all the (until now saved) indexes are created
+   * @private
+   */
+  protected indexPromises: Promise&lt;any&gt;[] &#x3D; [];
+
+  /**
+   * An observable that emits a value whenever the PouchDB receives a new change.
+   * This change can come from the current user or remotely from the (live) synchronization
+   * @private
+   */
+  protected changesFeed: Subject&lt;any&gt;;
+
+  protected databaseInitialized &#x3D; new Subject&lt;void&gt;();
+
+  /** trigger to unsubscribe any internal subscriptions */
+  protected readonly destroy$ &#x3D; new Subject&lt;void&gt;();
+
+  /**
+   * The PouchDB adapter to use for local storage.
+   * Set by the factory/resolver before calling init().
+   * Default: &quot;indexeddb&quot; (the newer adapter). Use &quot;idb&quot; for the legacy adapter.
+   */
+  adapter: string &#x3D; &quot;indexeddb&quot;;
+
+  constructor(
+    dbName: string,
+    protected globalSyncState?: SyncStateSubject,
+    protected ngZone?: NgZone,
+  ) {
+    super(dbName);
+  }
+
+  /**
+   * Initialize the PouchDB with the IndexedDB/in-browser adapter (default).
+   * See {link https://github.com/pouchdb/pouchdb/tree/master/packages/node_modules/pouchdb-browser}
+   * @param dbName the name for the database under which the IndexedDB entries will be created
+   * @param options PouchDB options which are directly passed to the constructor
+   * @param suppressSyncCompleted whether to skip emitting a SyncState.COMPLETED event to the globalSyncState (because other logic for sync is building on top of this)
+   */
+  init(
+    dbName?: string,
+    options?: PouchDB.Configuration.DatabaseConfiguration | any,
+    suppressSyncCompleted?: boolean,
+  ) {
+    this.pouchDB &#x3D; new PouchDB(dbName ?? this.dbName, {
+      adapter: this.adapter,
+      ...options,
+    });
+    this.databaseInitialized.complete();
+
+    if (!suppressSyncCompleted) {
+      this.globalSyncState?.next(SyncState.COMPLETED);
+    }
+  }
+
+  override isInitialized(): boolean {
+    return !!this.pouchDB;
+  }
+
+  async getPouchDBOnceReady(): Promise&lt;PouchDB.Database&gt; {
+    await firstValueFrom(this.databaseInitialized, {
+      defaultValue: this.pouchDB,
+    });
+    return this.pouchDB;
+  }
+
+  /**
+   * Get the actual instance of the PouchDB
+   */
+  getPouchDB(): PouchDB.Database {
+    return this.pouchDB;
+  }
+
+  /**
+   * Load a single document by id from the database.
+   * (see {@link Database})
+   * @param id The primary key of the document to be loaded
+   * @param options Optional PouchDB options for the request
+   * @param returnUndefined (Optional) return undefined instead of throwing error if doc is not found in database
+   */
+  async get(
+    id: string,
+    options: GetOptions &#x3D; {},
+    returnUndefined?: boolean,
+  ): Promise&lt;any&gt; {
+    try {
+      return await (await this.getPouchDBOnceReady()).get(id, options);
+    } catch (err) {
+      if (err.status &#x3D;&#x3D;&#x3D; 404) {
+        Logging.debug(&quot;Doc not found in database: &quot; + id);
+        if (returnUndefined) {
+          return undefined;
+        }
+      }
+
+      throw new DatabaseException(err, id);
+    }
+  }
+
+  /**
+   * Load all documents (matching the given PouchDB options) from the database.
+   * (see {@link Database})
+   *
+   * Normally you should rather use &quot;getAll()&quot; or another well typed method of this class
+   * instead of passing PouchDB specific options here
+   * because that will make your code tightly coupled with PouchDB rather than any other database provider.
+   *
+   * @param options PouchDB options object as in the normal PouchDB library
+   */
+  async allDocs(options?: GetAllOptions) {
+    try {
+      const result &#x3D; await (await this.getPouchDBOnceReady()).allDocs(options);
+      return result.rows.map((row) &#x3D;&gt; row.doc);
+    } catch (err) {
+      throw new DatabaseException(
+        err,
+        &quot;allDocs; startkey: &quot; + options?.[&quot;startkey&quot;],
+      );
+    }
+  }
+
+  /**
+   * Save a document to the database.
+   * (see {@link Database})
+   *
+   * @param object The document to be saved
+   * @param forceOverwrite (Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.
+   */
+  async put(object: any, forceOverwrite &#x3D; false): Promise&lt;any&gt; {
+    if (forceOverwrite) {
+      object._rev &#x3D; undefined;
+    }
+
+    try {
+      return await (await this.getPouchDBOnceReady()).put(object);
+    } catch (err) {
+      if (err.status &#x3D;&#x3D;&#x3D; 409) {
+        return this.resolveConflict(object, forceOverwrite, err);
+      } else {
+        throw new DatabaseException(err, object._id);
+      }
+    }
+  }
+
+  /**
+   * Save an array of documents to the database
+   * @param objects the documents to be saved
+   * @param forceOverwrite whether conflicting versions should be overwritten
+   * @returns array with the result for each object to be saved, if any item fails to be saved, this returns a rejected Promise.
+   *          The save can partially fail and return a mix of success and error states in the array (e.g. &#x60;[{ ok: true, ... }, { error: true, ... }]&#x60;)
+   */
+  async putAll(objects: any[], forceOverwrite &#x3D; false): Promise&lt;any&gt; {
+    if (forceOverwrite) {
+      objects.forEach((obj) &#x3D;&gt; (obj._rev &#x3D; undefined));
+    }
+
+    const pouchDB &#x3D; await this.getPouchDBOnceReady();
+    const results &#x3D; await pouchDB.bulkDocs(objects);
+
+    for (let i &#x3D; 0; i &lt; results.length; i++) {
+      // Check if document update conflicts happened in the request
+      const result &#x3D; results[i] as PouchDB.Core.Error;
+      if (result.status &#x3D;&#x3D;&#x3D; 409) {
+        results[i] &#x3D; await this.resolveConflict(
+          objects.find((obj) &#x3D;&gt; obj._id &#x3D;&#x3D;&#x3D; result.id),
+          forceOverwrite,
+          result,
+        ).catch((e) &#x3D;&gt; {
+          Logging.warn(
+            &quot;error during putAll&quot;,
+            e,
+            objects.map((x) &#x3D;&gt; x._id),
+          );
+          return new DatabaseException(e);
+        });
+      }
+    }
+
+    if (results.some((r) &#x3D;&gt; r instanceof Error)) {
+      return Promise.reject(results);
+    }
+    return results;
+  }
+
+  /**
+   * Delete a document from the database
+   * (see {@link Database})
+   *
+   * @param object The document to be deleted (usually this object must at least contain the _id and _rev)
+   */
+  remove(object: any) {
+    return this.getPouchDBOnceReady()
+      .then((pouchDB) &#x3D;&gt; pouchDB.remove(object))
+      .catch((err) &#x3D;&gt; {
+        throw new DatabaseException(err, object[&quot;_id&quot;]);
+      });
+  }
+
+  /**
+   * Check if a database is new/empty.
+   * Returns true if there are no documents in the database
+   */
+  isEmpty(): Promise&lt;boolean&gt; {
+    return this.getPouchDBOnceReady()
+      .then((pouchDB) &#x3D;&gt; pouchDB.info())
+      .then((res) &#x3D;&gt; res.doc_count &#x3D;&#x3D;&#x3D; 0);
+  }
+
+  /**
+   * Listen to changes to documents in the database.
+   * Use rxjs operators to filter for specific prefixes etc. if needed.
+   * @returns observable which emits the filtered changes
+   */
+  changes(): Observable&lt;any&gt; {
+    if (!this.changesFeed) {
+      this.changesFeed &#x3D; new Subject();
+
+      // trigger subscription only once DB ready, to go to the right instance (e.g. remote only)
+      this.getPouchDBOnceReady().then(() &#x3D;&gt; this.subscribeChanges());
+    }
+    return this.changesFeed;
+  }
+
+  protected async subscribeChanges() {
+    const runSubscription &#x3D; async () &#x3D;&gt; {
+      const db &#x3D; await this.getPouchDBOnceReady();
+      db.changes({
+        live: true,
+        since: &quot;now&quot;,
+        include_docs: true,
+      })
+        .addListener(&quot;change&quot;, (change) &#x3D;&gt; {
+          // Emit changes inside Angular zone to trigger change detection
+          if (this.ngZone) {
+            this.ngZone.run(() &#x3D;&gt; this.changesFeed.next(change.doc));
+          } else {
+            this.changesFeed.next(change.doc);
+          }
+        })
+        .catch((err) &#x3D;&gt; {
+          if (
+            err.statusCode &#x3D;&#x3D;&#x3D; HttpStatusCode.Unauthorized ||
+            err.statusCode &#x3D;&#x3D;&#x3D; HttpStatusCode.GatewayTimeout
+          ) {
+            Logging.warn(err);
+          } else {
+            Logging.error(err);
+          }
+
+          // retry
+          setTimeout(() &#x3D;&gt; this.subscribeChanges(), 10000);
+        });
+    };
+
+    // run PouchDB change listener outside Angular zone to avoid excessive change detection
+    if (this.ngZone) {
+      this.ngZone.runOutsideAngular(() &#x3D;&gt; runSubscription());
+    } else {
+      runSubscription();
+    }
+  }
+
+  /**
+   * Destroy the database and all saved data
+   */
+  async destroy(): Promise&lt;any&gt; {
+    this.destroy$.next();
+
+    await Promise.all(this.indexPromises);
+    if (this.pouchDB) {
+      return this.pouchDB.destroy();
+    }
+  }
+
+  /**
+   * Reset the database state so a new one can be opened.
+   */
+  async reset() {
+    this.destroy$.next();
+
+    this.pouchDB &#x3D; undefined;
+    // keep this.changesFeed because some services are already subscribed to this reference
+    this.databaseInitialized &#x3D; new Subject();
+  }
+
+  /**
+   * Query data from the database based on a more complex, indexed request.
+   * (see {@link Database})
+   *
+   * This is directly calling the PouchDB implementation of this function.
+   * Also see the documentation there: {@link https://pouchdb.com/api.html#query_database}
+   *
+   * @param fun The name of a previously saved database index
+   * @param options Additional options for the query, like a &#x60;key&#x60;. See the PouchDB docs for details.
+   */
+  query(
+    fun: string | ((doc: any, emit: any) &#x3D;&gt; void),
+    options: QueryOptions,
+  ): Promise&lt;any&gt; {
+    return this.getPouchDBOnceReady()
+      .then((pouchDB) &#x3D;&gt; pouchDB.query(fun, options))
+      .catch((err) &#x3D;&gt; {
+        throw new DatabaseException(
+          err,
+          typeof fun &#x3D;&#x3D;&#x3D; &quot;string&quot; ? fun : undefined,
+        );
+      });
+  }
+
+  /**
+   * Create a database index to &#x60;query()&#x60; certain data more efficiently in the future.
+   * (see {@link Database})
+   *
+   * Also see the PouchDB documentation regarding indices and queries: {@link https://pouchdb.com/api.html#query_database}
+   *
+   * @param designDoc The PouchDB style design document for the map/reduce query
+   */
+  saveDatabaseIndex(designDoc: any): Promise&lt;void&gt; {
+    const creationPromise &#x3D; this.createOrUpdateDesignDoc(designDoc);
+    this.indexPromises.push(creationPromise);
+    return creationPromise;
+  }
+
+  private async createOrUpdateDesignDoc(designDoc): Promise&lt;void&gt; {
+    const existingDesignDoc &#x3D; await this.get(designDoc._id, {}, true);
+    if (!existingDesignDoc) {
+      Logging.debug(&quot;creating new database index&quot;);
+    } else if (
+      JSON.stringify(existingDesignDoc.views) !&#x3D;&#x3D;
+      JSON.stringify(designDoc.views)
+    ) {
+      Logging.debug(&quot;replacing existing database index&quot;);
+      designDoc._rev &#x3D; existingDesignDoc._rev;
+    } else {
+      // already up to date, nothing more to do
+      return;
+    }
+
+    await this.put(designDoc, true);
+
+    // for faster initial loading we disable prebuilding views in development
+    // TODO: check if this should be completely removed, also for production systems
+    if (environment.production) {
+      await this.prebuildViewsOfDesignDoc(designDoc);
+    }
+  }
+
+  @PerformanceAnalysisLogging
+  private async prebuildViewsOfDesignDoc(designDoc: any): Promise&lt;void&gt; {
+    for (const viewName of Object.keys(designDoc.views)) {
+      const queryName &#x3D; designDoc._id.replace(/_design\//, &quot;&quot;) + &quot;/&quot; + viewName;
+      await this.query(queryName, { key: &quot;1&quot; });
+    }
+  }
+
+  /**
+   * Attempt to intelligently resolve conflicting document versions automatically.
+   * @param newObject
+   * @param overwriteChanges
+   * @param existingError
+   */
+  private async resolveConflict(
+    newObject: any,
+    overwriteChanges &#x3D; false,
+    existingError: any &#x3D; {},
+  ): Promise&lt;any&gt; {
+    const existingObject &#x3D; await this.get(newObject._id);
+    const resolvedObject &#x3D; this.mergeObjects(existingObject, newObject);
+    if (resolvedObject) {
+      Logging.debug(
+        &quot;resolved document conflict automatically (&quot; + resolvedObject._id + &quot;)&quot;,
+      );
+      return this.put(resolvedObject);
+    } else if (overwriteChanges) {
+      Logging.debug(
+        &quot;overwriting conflicting document version (&quot; + newObject._id + &quot;)&quot;,
+      );
+      newObject._rev &#x3D; existingObject._rev;
+      return this.put(newObject);
+    } else {
+      existingError.message &#x3D; &#x60;${
+        existingError.message
+      } (unable to resolve) ID: ${JSON.stringify(newObject)}&#x60;;
+      throw new DatabaseException(existingError);
+    }
+  }
+
+  private mergeObjects(_existingObject: any, _newObject: any) {
+    // TODO: implement automatic merging of conflicting entity versions
+    return undefined;
+  }
+
+  /**
+   * Check if this is a notifications database based on the database name.
+   * (may be used for special handling of notification DBs)
+   */
+  protected isNotificationsDatabase(): boolean {
+    return this.dbName?.startsWith(NotificationEvent.DATABASE) ?? false;
+  }
+}
+
+/**
+ * This overwrites PouchDB&#x27;s error class which only logs limited information
+ */
+export class DatabaseException extends Error {
+  constructor(
+    error: PouchDB.Core.Error | { message: string; [key: string]: any },
+    entityId?: string,
+  ) {
+    super(error?.message);
+
+    if (entityId) {
+      error[&quot;entityId&quot;] &#x3D; entityId;
+    }
+    Object.assign(this, error);
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'DatabaseException.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

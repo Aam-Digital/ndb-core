@@ -1,0 +1,1837 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  UserDetailsComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/core/user/user-details/user-details.component.ts</code>
+</p>
+
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Reusable user account details form component.</p>
+
+    </p>
+
+
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+            <tr>
+                <td class="col-md-3">changeDetection</td>
+                <td class="col-md-9"><code>ChangeDetectionStrategy.OnPush</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-user-details</code></td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                                <code><a href="https://angular.io/api/forms/ReactiveFormsModule" target="_blank" >ReactiveFormsModule</a></code>
+                            <code>MatFormFieldModule</code>
+                            <code>MatInputModule</code>
+                            <code>MatSelectModule</code>
+                            <code>MatTooltipModule</code>
+                            <code>MatButtonModule</code>
+                            <code>MatDialogModule</code>
+                                <code><a href="../components/DialogCloseComponent.html" target="_self" >DialogCloseComponent</a></code>
+                            <code>Angulartics2Module</code>
+                                <code><a href="../components/EditEntityComponent.html" target="_self" >EditEntityComponent</a></code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./user-details.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./user-details.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#availableRoles" >availableRoles</a>
+                            </li>
+                            <li>
+                                <a href="#creatingNewAccount" >creatingNewAccount</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
+                                <a href="#currentUser" >currentUser</a>
+                            </li>
+                            <li>
+                                <a href="#form" >form</a>
+                            </li>
+                            <li>
+                                <a href="#formDisabled" >formDisabled</a>
+                            </li>
+                            <li>
+                                <a href="#passwordChangeDisabled" >passwordChangeDisabled</a>
+                            </li>
+                            <li>
+                                <a href="#showPasswordChange" >showPasswordChange</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#cancel" >cancel</a>
+                            </li>
+                            <li>
+                                <a href="#changePassword" >changePassword</a>
+                            </li>
+                            <li>
+                                <a href="#editMode" >editMode</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#enableAccount" >enableAccount</a>
+                            </li>
+                            <li>
+                                <a href="#getFormError" >getFormError</a>
+                            </li>
+                            <li>
+                                <a href="#getGlobalError" >getGlobalError</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#save" >save</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#isInDialog" >isInDialog</a>
+                            </li>
+                            <li>
+                                <a href="#isProfileMode" >isProfileMode</a>
+                            </li>
+                            <li>
+                                <a href="#userAccount" >userAccount</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Outputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#userAccount" >userAccount</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="162" class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:162</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
+
+    <section data-compodoc="block-inputs">
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="isInDialog"></a>
+                        <b>isInDialog</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>!!this._dialogData || false</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="102" class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:102</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="isProfileMode"></a>
+                        <b>isProfileMode</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="103" class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:103</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="userAccount"></a>
+                        <b>userAccount</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/UserAccount.html" target="_self" >UserAccount | null</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>this._dialogData?.userAccount</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="101" class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:101</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+    <section data-compodoc="block-outputs">
+    <h3 id="outputs">Outputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="userAccount"></a>
+                        <b>userAccount</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/UserAccount.html" target="_self" >UserAccount | null</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="101" class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:101</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="cancel"></a>
+                    <span class="name">
+                        <span ><b>cancel</b></span>
+                        <a href="#cancel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>cancel()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="380"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:380</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="changePassword"></a>
+                    <span class="name">
+                        <span ><b>changePassword</b></span>
+                        <a href="#changePassword"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>changePassword()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="405"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:405</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="editMode"></a>
+                    <span class="name">
+                        <span ><b>editMode</b></span>
+                        <a href="#editMode"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>editMode()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="376"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:376</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="enableAccount"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>enableAccount</b></span>
+                        <a href="#enableAccount"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>enableAccount(enabled: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="368"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:368</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>enabled</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getFormError"></a>
+                    <span class="name">
+                        <span ><b>getFormError</b></span>
+                        <a href="#getFormError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getFormError(field: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, errorType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="397"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:397</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>field</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>errorType</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getGlobalError"></a>
+                    <span class="name">
+                        <span ><b>getGlobalError</b></span>
+                        <a href="#getGlobalError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getGlobalError()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="401"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:401</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>string | null</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="save"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>save</b></span>
+                        <a href="#save"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>save()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="240"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:240</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="availableRoles"></a>
+                    <span class="name">
+                        <span ><b>availableRoles</b></span>
+                        <a href="#availableRoles"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>resource&lt;Role[], unknown&gt;({
+    loader: async () &#x3D;&gt; {
+      if (this.isProfileMode()) {
+        return this.userAccount()?.roles ?? [];
+      }
+
+      try {
+        return await lastValueFrom(this.userAdminService.getAllRoles());
+      } catch (err) {
+        // in profile view, this may be expected
+        Logging.debug(&quot;Failed to load available roles:&quot;, err);
+        return [];
+      }
+    },
+    defaultValue: [],
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="145" class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:145</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="creatingNewAccount"></a>
+                    <span class="name">
+                        <span ><b>creatingNewAccount</b></span>
+                        <a href="#creatingNewAccount"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
+    return !this.userAccount()?.id &amp;&amp; !this.isProfileMode();
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="141" class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:141</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="currentUser"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>currentUser</b></span>
+                        <a href="#currentUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(CurrentUserSubject, { optional: true })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="99" class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:99</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="form"></a>
+                    <span class="name">
+                        <span ><b>form</b></span>
+                        <a href="#form"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://angular.io/api/forms/FormGroup" target="_blank" >FormGroup</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="162" class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:162</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="formDisabled"></a>
+                    <span class="name">
+                        <span ><b>formDisabled</b></span>
+                        <a href="#formDisabled"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(true)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="109" class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:109</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Signal tracking whether the form is disabled (view mode) or enabled (edit mode).
+This is automatically updating the <code>form.disabled</code> also.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="passwordChangeDisabled"></a>
+                    <span class="name">
+                        <span ><b>passwordChangeDisabled</b></span>
+                        <a href="#passwordChangeDisabled"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
+    if (!this.isProfileMode()) return false;
+
+    if (environment.session_type !&#x3D;&#x3D; SessionType.synced) {
+      return true; // Disabled in demo mode
+    }
+    if (typeof navigator !&#x3D;&#x3D; &quot;undefined&quot; &amp;&amp; !navigator.onLine) {
+      return true; // Disabled when offline
+    }
+    return false;
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="129" class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:129</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="showPasswordChange"></a>
+                    <span class="name">
+                        <span ><b>showPasswordChange</b></span>
+                        <a href="#showPasswordChange"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; this.isProfileMode())</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="128" class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:128</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  model,
+  resource,
+  signal,
+} from &quot;@angular/core&quot;;
+import { HttpClient } from &quot;@angular/common/http&quot;;
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from &quot;@angular/forms&quot;;
+import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
+import { MatInputModule } from &quot;@angular/material/input&quot;;
+import { MatSelectModule } from &quot;@angular/material/select&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from &quot;@angular/material/dialog&quot;;
+import { Role, UserAccount } from &quot;../user-admin-service/user-account&quot;;
+import { UserAdminService } from &quot;../user-admin-service/user-admin.service&quot;;
+import { UntilDestroy, untilDestroyed } from &quot;@ngneat/until-destroy&quot;;
+import { DialogCloseComponent } from &quot;../../common-components/dialog-close/dialog-close.component&quot;;
+import { AlertService } from &quot;../../alerts/alert.service&quot;;
+import { KeycloakAuthService } from &quot;../../session/auth/keycloak/keycloak-auth.service&quot;;
+import { CurrentUserSubject } from &quot;../../session/current-user-subject&quot;;
+import { Angulartics2Module } from &quot;angulartics2&quot;;
+import { environment } from &quot;../../../../environments/environment&quot;;
+import { SessionType } from &quot;../../session/session-type&quot;;
+import { EditEntityComponent } from &quot;../../basic-datatypes/entity/edit-entity/edit-entity.component&quot;;
+import { lastValueFrom, of } from &quot;rxjs&quot;;
+import { Entity } from &quot;../../entity/model/entity&quot;;
+import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
+import { catchError, map } from &quot;rxjs/operators&quot;;
+
+/**
+ * Options as input to the UserDetailsComponent when it is opened in a dialog.
+ */
+export interface UserDetailsDialogData {
+  userAccount: UserAccount | null;
+}
+
+/**
+ * Return value of the UserDetailsComponent after a user interacts with it.
+ */
+export interface UserDetailsAction {
+  type: &quot;formCancel&quot; | &quot;editRequested&quot; | &quot;accountCreated&quot; | &quot;accountUpdated&quot;;
+  data?: any;
+}
+
+/**
+ * Reusable user account details form component.
+ */
+@UntilDestroy()
+@Component({
+  selector: &quot;app-user-details&quot;,
+  templateUrl: &quot;./user-details.component.html&quot;,
+  styleUrls: [&quot;./user-details.component.scss&quot;],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatTooltipModule,
+    MatButtonModule,
+    MatDialogModule,
+    DialogCloseComponent,
+    Angulartics2Module,
+    EditEntityComponent,
+  ],
+})
+export class UserDetailsComponent {
+  private fb &#x3D; inject(FormBuilder);
+  private readonly userAdminService &#x3D; inject(UserAdminService);
+  private readonly alertService &#x3D; inject(AlertService);
+  private readonly http &#x3D; inject(HttpClient);
+  private readonly _dialogData: UserDetailsDialogData &#x3D; inject(
+    MAT_DIALOG_DATA,
+    { optional: true },
+  );
+  private readonly dialogRef &#x3D; inject(
+    MatDialogRef&lt;UserDetailsComponent, UserDetailsAction&gt;,
+    { optional: true },
+  );
+  private readonly authService &#x3D; inject(KeycloakAuthService, {
+    optional: true,
+  });
+  protected currentUser &#x3D; inject(CurrentUserSubject, { optional: true });
+
+  userAccount &#x3D; model&lt;UserAccount | null&gt;(this._dialogData?.userAccount);
+  isInDialog &#x3D; input&lt;boolean&gt;(!!this._dialogData || false);
+  isProfileMode &#x3D; input&lt;boolean&gt;(false);
+
+  /**
+   * Signal tracking whether the form is disabled (view mode) or enabled (edit mode).
+   * This is automatically updating the &#x60;form.disabled&#x60; also.
+   */
+  formDisabled &#x3D; signal(true);
+  private readonly formDisabledEffect &#x3D; effect(() &#x3D;&gt; {
+    if (!this.form) return;
+
+    // special form rules:
+    if (this.isProfileMode() &amp;&amp; !this.formDisabled()) {
+      this.formDisabled.set(true);
+    }
+
+    if (this.formDisabled()) {
+      this.form.disable();
+    } else {
+      this.form.enable();
+
+      // profile entity is currently always readonly. Updates not supported yet
+      this.form.get(&quot;userEntityId&quot;).disable();
+    }
+  });
+
+  showPasswordChange &#x3D; computed(() &#x3D;&gt; this.isProfileMode());
+  passwordChangeDisabled &#x3D; computed(() &#x3D;&gt; {
+    if (!this.isProfileMode()) return false;
+
+    if (environment.session_type !&#x3D;&#x3D; SessionType.synced) {
+      return true; // Disabled in demo mode
+    }
+    if (typeof navigator !&#x3D;&#x3D; &quot;undefined&quot; &amp;&amp; !navigator.onLine) {
+      return true; // Disabled when offline
+    }
+    return false;
+  });
+
+  creatingNewAccount &#x3D; computed(() &#x3D;&gt; {
+    return !this.userAccount()?.id &amp;&amp; !this.isProfileMode();
+  });
+
+  availableRoles &#x3D; resource&lt;Role[], unknown&gt;({
+    loader: async () &#x3D;&gt; {
+      if (this.isProfileMode()) {
+        return this.userAccount()?.roles ?? [];
+      }
+
+      try {
+        return await lastValueFrom(this.userAdminService.getAllRoles());
+      } catch (err) {
+        // in profile view, this may be expected
+        Logging.debug(&quot;Failed to load available roles:&quot;, err);
+        return [];
+      }
+    },
+    defaultValue: [],
+  });
+
+  form: FormGroup;
+
+  constructor() {
+    this.initForm();
+
+    // Add roles validation only when not in profile mode
+    effect(() &#x3D;&gt; {
+      const isProfileMode &#x3D; this.isProfileMode();
+      const rolesControl &#x3D; this.form.get(&quot;roles&quot;);
+      if (rolesControl) {
+        if (isProfileMode) {
+          rolesControl.clearValidators();
+        } else {
+          rolesControl.setValidators([Validators.required]);
+        }
+        rolesControl.updateValueAndValidity();
+      }
+    });
+
+    // Auto-trim whitespace from email
+    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((next) &#x3D;&gt; {
+      if (next.email?.startsWith(&quot; &quot;) || next.email?.endsWith(&quot; &quot;)) {
+        this.form
+          .get(&quot;email&quot;)
+          ?.setValue(next.email.trim(), { emitEvent: false });
+      }
+    });
+
+    effect(() &#x3D;&gt; {
+      const user &#x3D; this.userAccount();
+      const roleOptions &#x3D; this.availableRoles.value(); // make effect dependent on roles also (which are used in updateFormFromUser)
+      if (user) {
+        this.updateFormFromUser(user);
+      }
+    });
+  }
+
+  private initForm() {
+    this.form &#x3D; this.fb.group({
+      email: [&quot;&quot;, [Validators.required, Validators.email]],
+      roles: new FormControl&lt;Role[]&gt;([]),
+      userEntityId: new FormControl&lt;string | null&gt;(null),
+    });
+
+    // Initialize form as disabled
+    if (!this.creatingNewAccount()) {
+      this.formDisabled.set(true);
+    } else {
+      this.formDisabled.set(false);
+    }
+
+    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() &#x3D;&gt; {
+      this.form.markAllAsTouched();
+      this.form.markAsDirty();
+    });
+  }
+
+  private updateFormFromUser(user: UserAccount) {
+    this.form.patchValue(
+      {
+        email: user.email,
+        roles: (user.roles ?? [])
+          .map((role) &#x3D;&gt;
+            this.availableRoles.value()?.find((r) &#x3D;&gt; r.id &#x3D;&#x3D;&#x3D; role.id),
+          )
+          .filter((role): role is Role &#x3D;&gt; role !&#x3D;&#x3D; undefined), // Filter out undefined roles
+        userEntityId: !user.userEntityId
+          ? null
+          : user.userEntityId.includes(&quot;:&quot;)
+            ? user.userEntityId
+            : &quot;User:&quot; + user.userEntityId,
+      },
+      { emitEvent: false },
+    );
+
+    this.form.markAsPristine();
+  }
+
+  async save() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const formValue &#x3D; this.form.getRawValue();
+
+    if (this.creatingNewAccount()) {
+      await this.createAccount(formValue);
+    } else {
+      await this.updateAccount(formValue);
+    }
+  }
+
+  private async createAccount(formData: Partial&lt;UserAccount&gt;) {
+    const userEntityId &#x3D; formData.userEntityId;
+    if (!userEntityId) {
+      this.alertService.addDanger(
+        $localize&#x60;:Error message:No profile ID available for user creation&#x60;,
+      );
+      return;
+    }
+
+    if (!formData.email || !formData.roles) {
+      return;
+    }
+
+    this.userAdminService
+      .createUser(userEntityId, formData.email, formData.roles)
+      .subscribe({
+        next: (createdUser) &#x3D;&gt; {
+          this.alertService.addInfo(
+            $localize&#x60;:Snackbar message:Account created. An email has been sent to ${formData.email}&#x60;,
+          );
+          this.formDisabled.set(true);
+          this.closeDialog({
+            type: &quot;accountCreated&quot;,
+            data: {
+              ...formData,
+              userEntityId: userEntityId,
+              enabled: true,
+              id: createdUser.id,
+            } as UserAccount,
+          });
+        },
+        error: (err) &#x3D;&gt; {
+          this.alertService.addDanger(
+            err?.error?.message ||
+              err?.message ||
+              $localize&#x60;:Error message:Failed to create account&#x60;,
+          );
+        },
+      });
+  }
+
+  private async updateAccount(formData: Partial&lt;UserAccount&gt;) {
+    const currentUser &#x3D; this.userAccount();
+    if (!currentUser) {
+      return;
+    }
+
+    const update: Partial&lt;UserAccount&gt; &#x3D; {};
+    if (formData.email !&#x3D;&#x3D; currentUser.email) {
+      update.email &#x3D; formData.email;
+    }
+    if (JSON.stringify(formData.roles) !&#x3D;&#x3D; JSON.stringify(currentUser.roles)) {
+      update.roles &#x3D; formData.roles;
+    }
+
+    if (Object.keys(update).length &#x3D;&#x3D;&#x3D; 0) {
+      this.closeDialog({ type: &quot;formCancel&quot; });
+      return;
+    }
+
+    const result &#x3D; await this.updateUserAccount(
+      update,
+      $localize&#x60;:Snackbar message:Successfully updated user&#x60;,
+    );
+    this.formDisabled.set(true);
+    this.closeDialog({
+      type: &quot;accountUpdated&quot;,
+      data: {
+        user: result,
+      },
+    });
+  }
+
+  private async updateUserAccount(
+    update: Partial&lt;UserAccount&gt;,
+    message: string,
+  ): Promise&lt;UserAccount | null&gt; {
+    const currentUser &#x3D; this.userAccount();
+    if (!currentUser) {
+      return null;
+    }
+
+    return lastValueFrom(
+      this.userAdminService.updateUser(currentUser.id, update).pipe(
+        map((result) &#x3D;&gt; {
+          if (!result.userUpdated) {
+            Logging.warn(&quot;User account not updated&quot;);
+            return null;
+          }
+
+          this.alertService.addInfo(message);
+          const updatedUser &#x3D; { ...currentUser, ...update };
+          this.userAccount.set(updatedUser);
+
+          if (update.roles?.length &gt; 0) {
+            this.triggerSyncReset();
+          }
+
+          return updatedUser;
+        }),
+        catchError((error) &#x3D;&gt; {
+          this.alertService.addDanger(
+            error?.error?.message ||
+              error?.message ||
+              $localize&#x60;:Error message:Failed to update user account&#x60;,
+          );
+          Logging.error(&quot;Failed to update user account&quot;, error);
+          return of(null);
+        }),
+      ),
+    );
+  }
+
+  async enableAccount(enabled: boolean) {
+    const message &#x3D; enabled
+      ? $localize&#x60;:Snackbar message:Account has been activated, user can login again.&#x60;
+      : $localize&#x60;:Snackbar message:Account has been disabled, user will not be able to login anymore.&#x60;;
+
+    await this.updateUserAccount({ enabled }, message);
+  }
+
+  editMode() {
+    this.formDisabled.set(false);
+  }
+
+  cancel() {
+    this.form.reset();
+    const user &#x3D; this.userAccount();
+    if (user) {
+      this.updateFormFromUser(user);
+    }
+
+    this.formDisabled.set(true);
+    this.closeDialog({ type: &quot;formCancel&quot; });
+  }
+
+  private closeDialog(result: UserDetailsAction) {
+    if (this.dialogRef) {
+      this.dialogRef.close(result);
+    }
+  }
+
+  getFormError(field: string, errorType: string): boolean {
+    return this.form.get(field)?.hasError(errorType) ?? false;
+  }
+
+  getGlobalError(): string | null {
+    return this.form.getError(&quot;failed&quot;);
+  }
+
+  changePassword() {
+    if (this.authService) {
+      this.authService.changePassword();
+    }
+  }
+
+  /**
+   * Reset server DB sync state to ensure previously hidden docs are re-synced
+   * after an account has gained more access permissions.
+   *
+   * see https://github.com/Aam-Digital/replication-backend/blob/master/src/admin/admin.controller.ts
+   * @private
+   */
+  private triggerSyncReset() {
+    this.http
+      .post(
+        &#x60;${environment.DB_PROXY_PREFIX}/admin/clear_local/${Entity.DATABASE}&#x60;,
+        undefined,
+      )
+      .subscribe({
+        next: () &#x3D;&gt; undefined,
+        // request fails if no permission backend is used - this is fine
+        error: () &#x3D;&gt; undefined,
+      });
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">@if (isInDialog()) {
+  &lt;div&gt;
+    &lt;h2 mat-dialog-title i18n&gt;Edit User Account&lt;/h2&gt;
+    &lt;app-dialog-close&gt;&lt;/app-dialog-close&gt;
+  &lt;/div&gt;
+}
+
+&lt;div class&#x3D;&quot;flex-column padding-right-regular padding-left-regular&quot;&gt;
+  @if (!isProfileMode()) {
+    &lt;!-- Creating a new account --&gt;
+    @if (creatingNewAccount()) {
+      &lt;div class&#x3D;&quot;align-self-start padding-bottom-small&quot;&gt;
+        &lt;p i18n class&#x3D;&quot;field-hint field-warning&quot;&gt;
+          There is no user account set up for this user yet. Enable this user to
+          log into the app by filling the details below.
+        &lt;/p&gt;
+        @if (!formDisabled()) {
+          &lt;button
+            mat-raised-button
+            type&#x3D;&quot;submit&quot;
+            (click)&#x3D;&quot;save()&quot;
+            class&#x3D;&quot;invite-button&quot;
+            color&#x3D;&quot;accent&quot;
+            [class.invite-button-animate]&#x3D;&quot;true&quot;
+            i18n
+          &gt;
+            Create account &amp; send invitation
+          &lt;/button&gt;
+        }
+      &lt;/div&gt;
+    } @else {
+      &lt;!-- Actions editing existing account --&gt;
+      &lt;div
+        class&#x3D;&quot;padding-bottom-small flex-row gap-small align-self-end flex-wrap padding-top-small&quot;
+      &gt;
+        @if (formDisabled()) {
+          &lt;button
+            mat-raised-button
+            class&#x3D;&quot;action-button&quot;
+            (click)&#x3D;&quot;editMode()&quot;
+            i18n&#x3D;&quot;Edit button for forms&quot;
+          &gt;
+            Edit
+          &lt;/button&gt;
+        } @else {
+          @if (userAccount()?.enabled) {
+            &lt;button
+              mat-stroked-button
+              color&#x3D;&quot;warn&quot;
+              (click)&#x3D;&quot;enableAccount(false)&quot;
+              matTooltip&#x3D;&quot;User will not be able to login again, no information will be lost&quot;
+              i18n&#x3D;&quot;button to update disable a user&quot;
+            &gt;
+              Deactivate user
+            &lt;/button&gt;
+          } @else {
+            &lt;button
+              mat-raised-button
+              color&#x3D;&quot;accent&quot;
+              (click)&#x3D;&quot;enableAccount(true)&quot;
+              matTooltip&#x3D;&quot;User can login again with the previously used credentials&quot;
+              i18n&#x3D;&quot;button to enable a user&quot;
+            &gt;
+              Activate user
+            &lt;/button&gt;
+          }
+
+          &lt;button
+            mat-raised-button
+            color&#x3D;&quot;accent&quot;
+            class&#x3D;&quot;action-button&quot;
+            [disabled]&#x3D;&quot;!form.valid || !form.dirty&quot;
+            (click)&#x3D;&quot;save()&quot;
+            i18n&#x3D;&quot;Save button for forms&quot;
+          &gt;
+            Save
+          &lt;/button&gt;
+          &lt;button
+            mat-stroked-button
+            class&#x3D;&quot;action-button&quot;
+            (click)&#x3D;&quot;cancel()&quot;
+            i18n&#x3D;&quot;Cancel button for forms&quot;
+          &gt;
+            Cancel
+          &lt;/button&gt;
+        }
+      &lt;/div&gt;
+    }
+  }
+
+  @if (userAccount() &amp;&amp; !userAccount()?.enabled) {
+    &lt;p i18n&#x3D;&quot;Hint in user account page&quot; class&#x3D;&quot;field-hint field-warning&quot;&gt;
+      User is currently disabled and will not be able to login to the app
+    &lt;/p&gt;
+  }
+
+  &lt;div class&#x3D;&quot;user-details-form&quot;&gt;
+    &lt;form [formGroup]&#x3D;&quot;form&quot;&gt;
+      &lt;mat-form-field class&#x3D;&quot;full-width&quot;&gt;
+        &lt;mat-label i18n&#x3D;&quot;label of email input&quot;&gt;Email&lt;/mat-label&gt;
+        &lt;input matInput type&#x3D;&quot;text&quot; formControlName&#x3D;&quot;email&quot; /&gt;
+        @if (getFormError(&quot;email&quot;, &quot;email&quot;)) {
+          &lt;mat-error i18n&gt; Please enter a valid email&lt;/mat-error&gt;
+        }
+        @if (getFormError(&quot;email&quot;, &quot;required&quot;)) {
+          &lt;mat-error i18n&gt; This field is required&lt;/mat-error&gt;
+        }
+        @if (isInDialog() &amp;&amp; userAccount()?.userEntityId) {
+          &lt;mat-hint i18n&#x3D;&quot;hint showing username/entity ID in dialog&quot;&gt;
+            Username: {{ userAccount()?.userEntityId }}
+          &lt;/mat-hint&gt;
+        }
+        @if (isProfileMode()) {
+          &lt;mat-hint i18n&gt;
+            Changing your email is temporarily only possible for administrators.
+            Please contact your project coordinator or the support team.
+          &lt;/mat-hint&gt;
+        }
+      &lt;/mat-form-field&gt;
+
+      &lt;mat-form-field class&#x3D;&quot;full-width&quot;&gt;
+        &lt;mat-label i18n&#x3D;&quot;label of roles input&quot;&gt;Roles&lt;/mat-label&gt;
+        &lt;mat-select formControlName&#x3D;&quot;roles&quot; multiple&gt;
+          &lt;mat-select-trigger&gt;
+            @for (role of form.get(&quot;roles&quot;)?.value; track role.id) {
+              &lt;span&gt;{{ role.name }} &lt;/span&gt;
+            }
+          &lt;/mat-select-trigger&gt;
+          @for (role of availableRoles.value(); track role.id) {
+            &lt;mat-option [value]&#x3D;&quot;role&quot; [matTooltip]&#x3D;&quot;role.description&quot;&gt;
+              {{ role.description }}
+              &lt;em class&#x3D;&quot;role-name&quot;&gt;{{ role.name }}&lt;/em&gt;
+            &lt;/mat-option&gt;
+          }
+        &lt;/mat-select&gt;
+        @if (getFormError(&quot;roles&quot;, &quot;required&quot;)) {
+          &lt;mat-error i18n&gt; This field is required&lt;/mat-error&gt;
+        }
+        @if (!isInDialog()) {
+          &lt;mat-hint i18n&gt;
+            You should select at least one user role. Otherwise this user will
+            not even be able to access the basic app layout like the menu.
+          &lt;/mat-hint&gt;
+        }
+      &lt;/mat-form-field&gt;
+
+      @if (showPasswordChange()) {
+        &lt;div class&#x3D;&quot;field-row&quot;&gt;
+          &lt;button
+            mat-stroked-button
+            type&#x3D;&quot;button&quot;
+            color&#x3D;&quot;primary&quot;
+            (click)&#x3D;&quot;changePassword()&quot;
+            angulartics2On&#x3D;&quot;click&quot;
+            angularticsCategory&#x3D;&quot;User&quot;
+            angularticsAction&#x3D;&quot;password_update&quot;
+            [disabled]&#x3D;&quot;passwordChangeDisabled()&quot;
+            i18n&#x3D;&quot;button to change password&quot;
+          &gt;
+            Change Password
+          &lt;/button&gt;
+        &lt;/div&gt;
+      }
+
+      &lt;mat-form-field class&#x3D;&quot;full-width&quot;&gt;
+        &lt;mat-label i18n&gt;Profile&lt;/mat-label&gt;
+        &lt;app-edit-entity formControlName&#x3D;&quot;userEntityId&quot;&gt;&lt;/app-edit-entity&gt;
+        &lt;mat-hint i18n&gt;
+          Editing linked profile record is not possible here. Please contact
+          user support.
+        &lt;/mat-hint&gt;
+      &lt;/mat-form-field&gt;
+
+      @if (getGlobalError()) {
+        &lt;mat-error class&#x3D;&quot;global-error&quot;&gt;{{ getGlobalError() }}&lt;/mat-error&gt;
+      }
+    &lt;/form&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./user-details.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;variables/colors&quot;;
+
+.user-details-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+.field-label {
+  font-weight: 500;
+  color: colors.$muted;
+}
+
+.field-value {
+  color: colors.$primary;
+}
+
+.role-name {
+  font-size: 0.75rem;
+  margin-left: 0.5rem;
+}
+
+.global-error {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background-color: rgba(244, 67, 54, 0.1);
+  border-radius: 4px;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis-network.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div>@if (isInDialog()) {  <div>    <h2 mat-dialog-title i18n>Edit User Account</h2>    <app-dialog-close></app-dialog-close>  </div>}<div class="flex-column padding-right-regular padding-left-regular">  @if (!isProfileMode()) {    <!-- Creating a new account -->    @if (creatingNewAccount()) {      <div class="align-self-start padding-bottom-small">        <p i18n class="field-hint field-warning">          There is no user account set up for this user yet. Enable this user to          log into the app by filling the details below.        </p>        @if (!formDisabled()) {          <button            mat-raised-button            type="submit"            (click)="save()"            class="invite-button"            color="accent"            [class.invite-button-animate]="true"            i18n          >            Create account & send invitation          </button>        }      </div>    } @else {      <!-- Actions editing existing account -->      <div        class="padding-bottom-small flex-row gap-small align-self-end flex-wrap padding-top-small"      >        @if (formDisabled()) {          <button            mat-raised-button            class="action-button"            (click)="editMode()"            i18n="Edit button for forms"          >            Edit          </button>        } @else {          @if (userAccount()?.enabled) {            <button              mat-stroked-button              color="warn"              (click)="enableAccount(false)"              matTooltip="User will not be able to login again, no information will be lost"              i18n="button to update disable a user"            >              Deactivate user            </button>          } @else {            <button              mat-raised-button              color="accent"              (click)="enableAccount(true)"              matTooltip="User can login again with the previously used credentials"              i18n="button to enable a user"            >              Activate user            </button>          }          <button            mat-raised-button            color="accent"            class="action-button"            [disabled]="!form.valid || !form.dirty"            (click)="save()"            i18n="Save button for forms"          >            Save          </button>          <button            mat-stroked-button            class="action-button"            (click)="cancel()"            i18n="Cancel button for forms"          >            Cancel          </button>        }      </div>    }  }  @if (userAccount() && !userAccount()?.enabled) {    <p i18n="Hint in user account page" class="field-hint field-warning">      User is currently disabled and will not be able to login to the app    </p>  }  <div class="user-details-form">    <form [formGroup]="form">      <mat-form-field class="full-width">        <mat-label i18n="label of email input">Email</mat-label>        <input matInput type="text" formControlName="email" />        @if (getFormError("email", "email")) {          <mat-error i18n> Please enter a valid email</mat-error>        }        @if (getFormError("email", "required")) {          <mat-error i18n> This field is required</mat-error>        }        @if (isInDialog() && userAccount()?.userEntityId) {          <mat-hint i18n="hint showing username/entity ID in dialog">            Username: {{ userAccount()?.userEntityId }}          </mat-hint>        }        @if (isProfileMode()) {          <mat-hint i18n>            Changing your email is temporarily only possible for administrators.            Please contact your project coordinator or the support team.          </mat-hint>        }      </mat-form-field>      <mat-form-field class="full-width">        <mat-label i18n="label of roles input">Roles</mat-label>        <mat-select formControlName="roles" multiple>          <mat-select-trigger>            @for (role of form.get("roles")?.value; track role.id) {              <span>{{ role.name }} </span>            }          </mat-select-trigger>          @for (role of availableRoles.value(); track role.id) {            <mat-option [value]="role" [matTooltip]="role.description">              {{ role.description }}              <em class="role-name">{{ role.name }}</em>            </mat-option>          }        </mat-select>        @if (getFormError("roles", "required")) {          <mat-error i18n> This field is required</mat-error>        }        @if (!isInDialog()) {          <mat-hint i18n>            You should select at least one user role. Otherwise this user will            not even be able to access the basic app layout like the menu.          </mat-hint>        }      </mat-form-field>      @if (showPasswordChange()) {        <div class="field-row">          <button            mat-stroked-button            type="button"            color="primary"            (click)="changePassword()"            angulartics2On="click"            angularticsCategory="User"            angularticsAction="password_update"            [disabled]="passwordChangeDisabled()"            i18n="button to change password"          >            Change Password          </button>        </div>      }      <mat-form-field class="full-width">        <mat-label i18n>Profile</mat-label>        <app-edit-entity formControlName="userEntityId"></app-edit-entity>        <mat-hint i18n>          Editing linked profile record is not possible here. Please contact          user support.        </mat-hint>      </mat-form-field>      @if (getGlobalError()) {        <mat-error class="global-error">{{ getGlobalError() }}</mat-error>      }    </form>  </div></div></div>'
+    var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddDayAttendanceComponent', 'selector': 'app-add-day-attendance'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminUserRolesComponent', 'selector': 'app-admin-user-roles'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block]'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceStatusSelectComponent', 'selector': 'app-attendance-status-select'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportAdditionalSettingsComponent', 'selector': 'app-import-additional-settings'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'InputFileComponent', 'selector': 'app-input-file'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesManagerComponent', 'selector': 'app-notes-manager'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
+    var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'ExportDataDirective', 'selector': '[appExportData]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
+    var ACTUAL_COMPONENT = {'name': 'UserDetailsComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'UserDetailsComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

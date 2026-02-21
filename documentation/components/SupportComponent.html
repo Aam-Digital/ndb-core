@@ -1,0 +1,1250 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  SupportComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/core/support/support/support.component.ts</code>
+</p>
+
+
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-support</code></td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>MatExpansionModule</code>
+                            <code>MatButtonModule</code>
+                            <code>MatTooltipModule</code>
+                                <code><a href="../components/HintBoxComponent.html" target="_self" >HintBoxComponent</a></code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./support.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./support.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#appVersion" >appVersion</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#assistantService" >assistantService</a>
+                            </li>
+                            <li>
+                                <a href="#currentSyncState" >currentSyncState</a>
+                            </li>
+                            <li>
+                                <a href="#currentUser" >currentUser</a>
+                            </li>
+                            <li>
+                                <a href="#dbInfo" >dbInfo</a>
+                            </li>
+                            <li>
+                                <a href="#lastRemoteLogin" >lastRemoteLogin</a>
+                            </li>
+                            <li>
+                                <a href="#lastSync" >lastSync</a>
+                            </li>
+                            <li>
+                                <a href="#sessionInfo" >sessionInfo</a>
+                            </li>
+                            <li>
+                                <a href="#storageInfo" >storageInfo</a>
+                            </li>
+                            <li>
+                                <a href="#swLog" >swLog</a>
+                            </li>
+                            <li>
+                                <a href="#swStatus" >swStatus</a>
+                            </li>
+                            <li>
+                                <a href="#userAgent" >userAgent</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#copyDetails" >copyDetails</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#downloadLocalDatabase" >downloadLocalDatabase</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#resetApplication" >resetApplication</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="copyDetails"></a>
+                    <span class="name">
+                        <span ><b>copyDetails</b></span>
+                        <a href="#copyDetails"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>copyDetails()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="141"
+                                    class="link-to-prism">src/app/core/support/support/support.component.ts:141</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="downloadLocalDatabase"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>downloadLocalDatabase</b></span>
+                        <a href="#downloadLocalDatabase"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>downloadLocalDatabase()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="171"
+                                    class="link-to-prism">src/app/core/support/support/support.component.ts:171</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="resetApplication"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>resetApplication</b></span>
+                        <a href="#resetApplication"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>resetApplication()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="167"
+                                    class="link-to-prism">src/app/core/support/support/support.component.ts:167</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="appVersion"></a>
+                    <span class="name">
+                        <span ><b>appVersion</b></span>
+                        <a href="#appVersion"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/support/support/support.component.ts:58</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="assistantService"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>assistantService</b></span>
+                        <a href="#assistantService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(AssistantService)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/support/support/support.component.ts:46</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="currentSyncState"></a>
+                    <span class="name">
+                        <span ><b>currentSyncState</b></span>
+                        <a href="#currentSyncState"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/core/support/support/support.component.ts:51</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="currentUser"></a>
+                    <span class="name">
+                        <span ><b>currentUser</b></span>
+                        <a href="#currentUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/core/support/support/support.component.ts:50</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dbInfo"></a>
+                    <span class="name">
+                        <span ><b>dbInfo</b></span>
+                        <a href="#dbInfo"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/core/support/support/support.component.ts:59</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="lastRemoteLogin"></a>
+                    <span class="name">
+                        <span ><b>lastRemoteLogin</b></span>
+                        <a href="#lastRemoteLogin"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/core/support/support/support.component.ts:53</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="lastSync"></a>
+                    <span class="name">
+                        <span ><b>lastSync</b></span>
+                        <a href="#lastSync"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/core/support/support/support.component.ts:52</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sessionInfo"></a>
+                    <span class="name">
+                        <span ><b>sessionInfo</b></span>
+                        <a href="#sessionInfo"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/SessionInfo.html" target="_self" >SessionInfo</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/core/support/support/support.component.ts:49</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="storageInfo"></a>
+                    <span class="name">
+                        <span ><b>storageInfo</b></span>
+                        <a href="#storageInfo"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/support/support/support.component.ts:54</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="swLog"></a>
+                    <span class="name">
+                        <span ><b>swLog</b></span>
+                        <a href="#swLog"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;not available&quot;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/support/support/support.component.ts:56</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="swStatus"></a>
+                    <span class="name">
+                        <span ><b>swStatus</b></span>
+                        <a href="#swStatus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/support/support/support.component.ts:55</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="userAgent"></a>
+                    <span class="name">
+                        <span ><b>userAgent</b></span>
+                        <a href="#userAgent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/core/support/support/support.component.ts:57</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, OnInit } from &quot;@angular/core&quot;;
+import { WINDOW_TOKEN } from &quot;../../../utils/di-tokens&quot;;
+import { SyncState } from &quot;../../session/session-states/sync-state.enum&quot;;
+import { SwUpdate } from &quot;@angular/service-worker&quot;;
+import { HttpClient } from &quot;@angular/common/http&quot;;
+import { environment } from &quot;../../../../environments/environment&quot;;
+import { SessionInfo, SessionSubject } from &quot;../../session/auth/session-info&quot;;
+import { firstValueFrom } from &quot;rxjs&quot;;
+import { MatExpansionModule } from &quot;@angular/material/expansion&quot;;
+import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+import { BackupService } from &quot;../../admin/backup/backup.service&quot;;
+import { DownloadService } from &quot;../../export/download-service/download.service&quot;;
+import { SyncStateSubject } from &quot;../../session/session-type&quot;;
+import { KeycloakAuthService } from &quot;../../session/auth/keycloak/keycloak-auth.service&quot;;
+import { CurrentUserSubject } from &quot;../../session/current-user-subject&quot;;
+import { Entity } from &quot;../../entity/model/entity&quot;;
+import { SyncedPouchDatabase } from &quot;../../database/pouchdb/synced-pouch-database&quot;;
+import { DatabaseResolverService } from &quot;../../database/database-resolver.service&quot;;
+import { PouchDatabase } from &quot;../../database/pouchdb/pouch-database&quot;;
+import { HintBoxComponent } from &quot;#src/app/core/common-components/hint-box/hint-box.component&quot;;
+import { AssistantService } from &quot;#src/app/core/setup/assistant.service&quot;;
+import { Clipboard } from &quot;@angular/cdk/clipboard&quot;;
+
+@Component({
+  selector: &quot;app-support&quot;,
+  templateUrl: &quot;./support.component.html&quot;,
+  styleUrls: [&quot;./support.component.scss&quot;],
+  imports: [
+    MatExpansionModule,
+    MatButtonModule,
+    MatTooltipModule,
+    HintBoxComponent,
+  ],
+})
+export class SupportComponent implements OnInit {
+  private syncState &#x3D; inject(SyncStateSubject);
+  private sessionSubject &#x3D; inject(SessionSubject);
+  private currentUserSubject &#x3D; inject(CurrentUserSubject);
+  private sw &#x3D; inject(SwUpdate);
+  private databaseResolver &#x3D; inject(DatabaseResolverService);
+  private http &#x3D; inject(HttpClient);
+  private backupService &#x3D; inject(BackupService);
+  private downloadService &#x3D; inject(DownloadService);
+  private window &#x3D; inject&lt;Window&gt;(WINDOW_TOKEN);
+  protected readonly assistantService &#x3D; inject(AssistantService);
+  private readonly clipboard &#x3D; inject(Clipboard);
+
+  sessionInfo: SessionInfo;
+  currentUser: Entity;
+  currentSyncState: string;
+  lastSync: string;
+  lastRemoteLogin: string;
+  storageInfo: string;
+  swStatus: string;
+  swLog &#x3D; &quot;not available&quot;;
+  userAgent: string;
+  appVersion: string;
+  dbInfo: string;
+
+  ngOnInit() {
+    this.userAgent &#x3D; this.window.navigator.userAgent;
+    this.sessionInfo &#x3D; this.sessionSubject.value;
+    this.currentUser &#x3D; this.currentUserSubject.value;
+    this.appVersion &#x3D; environment.appVersion;
+    this.initCurrentSyncState();
+    this.initLastSync();
+    this.initLastRemoteLogin();
+    this.initStorageInfo();
+    this.initSwStatus();
+    return this.initDbInfo();
+  }
+
+  private initCurrentSyncState() {
+    switch (this.syncState.value) {
+      case SyncState.COMPLETED:
+        this.currentSyncState &#x3D; &quot;synced&quot;;
+        return;
+      case SyncState.STARTED:
+        this.currentSyncState &#x3D; &quot;in progress&quot;;
+        return;
+      default:
+        this.currentSyncState &#x3D; &quot;unsynced&quot;;
+    }
+  }
+
+  private initLastSync() {
+    const db &#x3D; this.databaseResolver.getDatabase();
+    const lastSyncKey &#x3D;
+      db instanceof SyncedPouchDatabase ? db.LAST_SYNC_KEY : undefined;
+    this.lastSync &#x3D;
+      (lastSyncKey &amp;&amp; localStorage.getItem(lastSyncKey)) || &quot;never&quot;;
+  }
+
+  private initLastRemoteLogin() {
+    this.lastRemoteLogin &#x3D;
+      localStorage.getItem(KeycloakAuthService.LAST_AUTH_KEY) || &quot;never&quot;;
+  }
+
+  private initStorageInfo() {
+    const storage &#x3D; this.window.navigator?.storage;
+    if (storage &amp;&amp; &quot;estimate&quot; in storage) {
+      storage.estimate().then((estimate) &#x3D;&gt; {
+        const used &#x3D; estimate.usage / 1048576;
+        const available &#x3D; estimate.quota / 1048576;
+        this.storageInfo &#x3D; &#x60;${used.toFixed(2)}MBs / ${available.toFixed(2)}MBs&#x60;;
+      });
+    }
+  }
+
+  private initSwStatus() {
+    if (this.sw.isEnabled) {
+      this.swStatus &#x3D; &quot;enabled&quot;;
+    } else {
+      this.swStatus &#x3D; &quot;not enabled&quot;;
+    }
+    this.window.navigator.serviceWorker.ready
+      .then(() &#x3D;&gt;
+        firstValueFrom(this.http.get(&quot;/ngsw/state&quot;, { responseType: &quot;text&quot; })),
+      )
+      .then((res) &#x3D;&gt; (this.swLog &#x3D; res));
+  }
+
+  private initDbInfo() {
+    const pouchDb: PouchDB.Database &#x3D; (
+      this.databaseResolver.getDatabase() as PouchDatabase
+    )?.getPouchDB?.();
+    if (!pouchDb) {
+      this.dbInfo &#x3D; &quot;db not initialized&quot;;
+      return;
+    }
+
+    return pouchDb
+      .info()
+      .then(
+        (res) &#x3D;&gt;
+          (this.dbInfo &#x3D; &#x60;${res.doc_count} (update sequence ${res.update_seq})&#x60;),
+      );
+  }
+
+  copyDetails() {
+    // This is sent even without submitting the crash report.
+    const debugInfo &#x3D; {
+      user: {
+        id: this.sessionInfo?.id,
+        email: this.sessionInfo?.email,
+        name: this.sessionInfo?.name,
+      },
+      level: &quot;debug&quot;,
+      extra: {
+        currentUser: this.currentUser?.getId(),
+        currentSyncState: this.currentSyncState,
+        lastSync: this.lastSync,
+        lastRemoteLogin: this.lastRemoteLogin,
+        swStatus: this.swStatus,
+        userAgent: this.userAgent,
+        swLog: this.swLog,
+        storageInfo: this.storageInfo,
+        dbInfo: this.dbInfo,
+        timestamp: new Date().toISOString(),
+      },
+    };
+
+    this.clipboard.copy(JSON.stringify(debugInfo, null, 2));
+  }
+
+  async resetApplication() {
+    await this.backupService.resetApplication();
+  }
+
+  async downloadLocalDatabase() {
+    const backup &#x3D; await this.backupService.getDatabaseExport();
+    await this.downloadService.triggerDownload(
+      backup,
+      &quot;json&quot;,
+      &quot;aamdigital_data_&quot; + new Date().toISOString(),
+    );
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;app-hint-box&gt;
+  &lt;h2 i18n&gt;User Guides &amp; Support&lt;/h2&gt;
+  &lt;p i18n&gt;
+    You can use our context-aware &quot;Virtual Assistant&quot; to get support and access
+    our help articles and other resources. Click on the button in the top
+    toolbar to open it. This page here is providing technical details for
+    advanced troubleshooting.
+  &lt;/p&gt;
+  &lt;div&gt;
+    &lt;button
+      mat-raised-button
+      color&#x3D;&quot;accent&quot;
+      (click)&#x3D;&quot;assistantService.openAssistant()&quot;
+      i18n
+    &gt;
+      Open Virtual Assistant
+    &lt;/button&gt;
+  &lt;/div&gt;
+&lt;/app-hint-box&gt;
+
+&lt;div class&#x3D;&quot;margin-top-large&quot;&gt;&lt;/div&gt;
+
+&lt;h1 i18n&gt;Technical User Support Details&lt;/h1&gt;
+
+&lt;p id&#x3D;&quot;table-description&quot; class&#x3D;&quot;text-secondary&quot; i18n&gt;
+  The following details of your device and app can help the user support
+  troubleshoot when you are having technical issues.
+&lt;/p&gt;
+
+&lt;table class&#x3D;&quot;support-table&quot; aria-describedby&#x3D;&quot;table-description&quot;&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Detail&lt;/th&gt;
+      &lt;th&gt;Value&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody class&#x3D;&quot;support-table--body&quot;&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Session&lt;/td&gt;
+      &lt;td&gt;{{ sessionInfo?.id ?? &quot;-&quot; }}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Username&lt;/td&gt;
+      &lt;td&gt;{{ sessionInfo?.email ?? &quot;-&quot; }}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;User Profile&lt;/td&gt;
+      &lt;td&gt;
+        @if (currentUser) {
+          {{ sessionInfo?.entityId }} ({{ currentUser?.toString() }})
+        } @else {
+          -
+        }
+      &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;App version&lt;/td&gt;
+      &lt;td&gt;{{ appVersion }}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Device info&lt;/td&gt;
+      &lt;td&gt;{{ userAgent }}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Current sync state&lt;/td&gt;
+      &lt;td&gt;{{ currentSyncState }}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Last sync&lt;/td&gt;
+      &lt;td&gt;{{ lastSync }}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Last remote login&lt;/td&gt;
+      &lt;td&gt;{{ lastRemoteLogin }}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Storage usage&lt;/td&gt;
+      &lt;td&gt;{{ storageInfo || &quot;No information&quot; }}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Database documents&lt;/td&gt;
+      &lt;td&gt;{{ dbInfo }}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Service Worker&lt;/td&gt;
+      &lt;td&gt;{{ swStatus }}&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;mat-expansion-panel class&#x3D;&quot;mat-elevation-z0&quot;&gt;
+  &lt;mat-expansion-panel-header&gt;
+    &lt;mat-panel-title class&#x3D;&quot;tech-details&quot;&gt;
+      Service Worker Logs
+    &lt;/mat-panel-title&gt;
+  &lt;/mat-expansion-panel-header&gt;
+  &lt;div class&#x3D;&quot;sw-logs tech-details&quot;&gt;{{ swLog }}&lt;/div&gt;
+&lt;/mat-expansion-panel&gt;
+
+&lt;div class&#x3D;&quot;flex-row gap-regular&quot;&gt;
+  &lt;button mat-raised-button (click)&#x3D;&quot;copyDetails()&quot; i18n&gt;Copy Details&lt;/button&gt;
+  &lt;button
+    mat-raised-button
+    matTooltip&#x3D;&quot;Download a backup of all data in your local database.&quot;
+    i18n-matTooltip&#x3D;&quot;Support Panel - Download local db tooltip&quot;
+    (click)&#x3D;&quot;downloadLocalDatabase()&quot;
+    i18n
+  &gt;
+    Download Local Database
+  &lt;/button&gt;
+  &lt;button mat-raised-button color&#x3D;&quot;warn&quot; (click)&#x3D;&quot;resetApplication()&quot; i18n&gt;
+    Reset Application
+  &lt;/button&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./support.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;variables/sizes&quot;;
+@use &quot;variables/colors&quot;;
+
+$table-odd-color: colors.$grey-light;
+$table-even-color: colors.$grey-medium;
+$table-border-color: colors.$border-color;
+
+$table-border: 1px solid $table-border-color;
+
+$table-padding-horizontal: 12px;
+$table-padding-vertical: 16px;
+
+$table-padding: $table-padding-vertical $table-padding-horizontal;
+
+:host {
+  max-width: sizes.$max-text-width;
+  margin: 0 auto;
+  display: block;
+}
+
+.support-table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-bottom: sizes.$large;
+
+  &amp;--body {
+    &gt; tr:nth-of-type(odd) {
+      background-color: $table-odd-color;
+      border-top: $table-border;
+      border-bottom: $table-border;
+    }
+
+    &gt; tr:nth-of-type(even) {
+      background-color: $table-even-color;
+    }
+
+    &gt; tr td:first-child {
+      width: 25%;
+    }
+
+    &gt; tr td:nth-child(2) {
+      width: 75%;
+    }
+  }
+
+  th {
+    padding: $table-padding;
+    text-align: left;
+  }
+
+  td {
+    padding: $table-padding;
+  }
+}
+
+.tech-details {
+  color: colors.$hint-text;
+}
+
+.mat-expansion-panel {
+  background-color: transparent;
+  border: 1px colors.$hint-text solid;
+  margin-bottom: sizes.$large;
+}
+
+.sw-logs {
+  overflow: auto;
+  white-space: pre;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis-network.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><app-hint-box>  <h2 i18n>User Guides & Support</h2>  <p i18n>    You can use our context-aware "Virtual Assistant" to get support and access    our help articles and other resources. Click on the button in the top    toolbar to open it. This page here is providing technical details for    advanced troubleshooting.  </p>  <div>    <button      mat-raised-button      color="accent"      (click)="assistantService.openAssistant()"      i18n    >      Open Virtual Assistant    </button>  </div></app-hint-box><div class="margin-top-large"></div><h1 i18n>Technical User Support Details</h1><p id="table-description" class="text-secondary" i18n>  The following details of your device and app can help the user support  troubleshoot when you are having technical issues.</p><table class="support-table" aria-describedby="table-description">  <thead>    <tr>      <th>Detail</th>      <th>Value</th>    </tr>  </thead>  <tbody class="support-table--body">    <tr>      <td>Session</td>      <td>{{ sessionInfo?.id ?? "-" }}</td>    </tr>    <tr>      <td>Username</td>      <td>{{ sessionInfo?.email ?? "-" }}</td>    </tr>    <tr>      <td>User Profile</td>      <td>        @if (currentUser) {          {{ sessionInfo?.entityId }} ({{ currentUser?.toString() }})        } @else {          -        }      </td>    </tr>    <tr>      <td>App version</td>      <td>{{ appVersion }}</td>    </tr>    <tr>      <td>Device info</td>      <td>{{ userAgent }}</td>    </tr>    <tr>      <td>Current sync state</td>      <td>{{ currentSyncState }}</td>    </tr>    <tr>      <td>Last sync</td>      <td>{{ lastSync }}</td>    </tr>    <tr>      <td>Last remote login</td>      <td>{{ lastRemoteLogin }}</td>    </tr>    <tr>      <td>Storage usage</td>      <td>{{ storageInfo || "No information" }}</td>    </tr>    <tr>      <td>Database documents</td>      <td>{{ dbInfo }}</td>    </tr>    <tr>      <td>Service Worker</td>      <td>{{ swStatus }}</td>    </tr>  </tbody></table><mat-expansion-panel class="mat-elevation-z0">  <mat-expansion-panel-header>    <mat-panel-title class="tech-details">      Service Worker Logs    </mat-panel-title>  </mat-expansion-panel-header>  <div class="sw-logs tech-details">{{ swLog }}</div></mat-expansion-panel><div class="flex-row gap-regular">  <button mat-raised-button (click)="copyDetails()" i18n>Copy Details</button>  <button    mat-raised-button    matTooltip="Download a backup of all data in your local database."    i18n-matTooltip="Support Panel - Download local db tooltip"    (click)="downloadLocalDatabase()"    i18n  >    Download Local Database  </button>  <button mat-raised-button color="warn" (click)="resetApplication()" i18n>    Reset Application  </button></div></div>'
+    var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddDayAttendanceComponent', 'selector': 'app-add-day-attendance'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminUserRolesComponent', 'selector': 'app-admin-user-roles'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block]'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceStatusSelectComponent', 'selector': 'app-attendance-status-select'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportAdditionalSettingsComponent', 'selector': 'app-import-additional-settings'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'InputFileComponent', 'selector': 'app-input-file'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesManagerComponent', 'selector': 'app-notes-manager'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
+    var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'ExportDataDirective', 'selector': '[appExportData]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
+    var ACTUAL_COMPONENT = {'name': 'SupportComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'SupportComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

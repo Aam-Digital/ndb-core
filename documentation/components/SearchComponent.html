@@ -1,0 +1,1472 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  SearchComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/core/ui/search/search.component.ts</code>
+</p>
+
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>General search box that provides results out of any kind of entities from the system
+as soon as the user starts typing.</p>
+<p>This is usually displayed in the app header to be available to the user anywhere, allowing to navigate quickly.</p>
+
+    </p>
+
+
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+            <tr>
+                <td class="col-md-3">changeDetection</td>
+                <td class="col-md-9"><code>ChangeDetectionStrategy.OnPush</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">encapsulation</td>
+                <td class="col-md-9"><code>ViewEncapsulation.None</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-search</code></td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>MatFormFieldModule</code>
+                            <code>FontAwesomeModule</code>
+                            <code>MatInputModule</code>
+                                <code><a href="https://angular.io/api/forms/ReactiveFormsModule" target="_blank" >ReactiveFormsModule</a></code>
+                            <code>MatAutocompleteModule</code>
+                                <code><a href="../components/EntityBlockComponent.html" target="_self" >EntityBlockComponent</a></code>
+                                <code><a href="https://angular.io/api/common/AsyncPipe" target="_blank" >AsyncPipe</a></code>
+                            <code>MatButtonModule</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./search.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./search.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#autocomplete" >autocomplete</a>
+                            </li>
+                            <li>
+                                <a href="#formControl" >formControl</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
+                                <a href="#INPUT_DEBOUNCE_TIME_MS" >INPUT_DEBOUNCE_TIME_MS</a>
+                            </li>
+                            <li>
+                                <a href="#MIN_CHARACTERS_FOR_SEARCH" >MIN_CHARACTERS_FOR_SEARCH</a>
+                            </li>
+                            <li>
+                                <a href="#mobile" >mobile</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#NO_RESULTS" >NO_RESULTS</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#NOTHING_ENTERED" >NOTHING_ENTERED</a>
+                            </li>
+                            <li>
+                                <a href="#results" >results</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#SEARCH_IN_PROGRESS" >SEARCH_IN_PROGRESS</a>
+                            </li>
+                            <li>
+                                <a href="#searchActive" >searchActive</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#searchInput" >searchInput</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#SHOW_RESULTS" >SHOW_RESULTS</a>
+                            </li>
+                            <li>
+                                <a href="#state" >state</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#TOO_FEW_CHARACTERS" >TOO_FEW_CHARACTERS</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#clickOption" >clickOption</a>
+                            </li>
+                            <li>
+                                <a href="#onFocusOut" >onFocusOut</a>
+                            </li>
+                            <li>
+                                <a href="#searchResults" >searchResults</a>
+                            </li>
+                            <li>
+                                <a href="#toggleSearch" >toggleSearch</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/core/ui/search/search.component.ts:79</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="clickOption"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>clickOption</b></span>
+                        <a href="#clickOption"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>clickOption(optionElement: unknown)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="141"
+                                    class="link-to-prism">src/app/core/ui/search/search.component.ts:141</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>optionElement</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onFocusOut"></a>
+                    <span class="name">
+                        <span ><b>onFocusOut</b></span>
+                        <a href="#onFocusOut"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onFocusOut()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="170"
+                                    class="link-to-prism">src/app/core/ui/search/search.component.ts:170</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="searchResults"></a>
+                    <span class="name">
+                        <span ><b>searchResults</b></span>
+                        <a href="#searchResults"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>searchResults(searchTerm: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="115"
+                                    class="link-to-prism">src/app/core/ui/search/search.component.ts:115</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>searchTerm</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Observable&lt;Entity[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toggleSearch"></a>
+                    <span class="name">
+                        <span ><b>toggleSearch</b></span>
+                        <a href="#toggleSearch"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>toggleSearch()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="159"
+                                    class="link-to-prism">src/app/core/ui/search/search.component.ts:159</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="autocomplete"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>autocomplete</b></span>
+                        <a href="#autocomplete"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>MatAutocomplete</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @ViewChild(&#x27;autoResults&#x27;)<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/core/ui/search/search.component.ts:77</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="formControl"></a>
+                    <span class="name">
+                        <span ><b>formControl</b></span>
+                        <a href="#formControl"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new FormControl(&quot;&quot;)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/ui/search/search.component.ts:73</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="INPUT_DEBOUNCE_TIME_MS"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                        <span ><b>INPUT_DEBOUNCE_TIME_MS</b></span>
+                        <a href="#INPUT_DEBOUNCE_TIME_MS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>400</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/core/ui/search/search.component.ts:59</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="MIN_CHARACTERS_FOR_SEARCH"></a>
+                    <span class="name">
+                        <span ><b>MIN_CHARACTERS_FOR_SEARCH</b></span>
+                        <a href="#MIN_CHARACTERS_FOR_SEARCH"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>2</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/ui/search/search.component.ts:60</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="mobile"></a>
+                    <span class="name">
+                        <span ><b>mobile</b></span>
+                        <a href="#mobile"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/ui/search/search.component.ts:70</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="NO_RESULTS"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>NO_RESULTS</b></span>
+                        <a href="#NO_RESULTS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>3</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/core/ui/search/search.component.ts:65</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="NOTHING_ENTERED"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>NOTHING_ENTERED</b></span>
+                        <a href="#NOTHING_ENTERED"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>0</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/core/ui/search/search.component.ts:62</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="results"></a>
+                    <span class="name">
+                        <span ><b>results</b></span>
+                        <a href="#results"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >Observable&lt;Entity[]&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>this.resultsSubject.asObservable()</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/ui/search/search.component.ts:75</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SEARCH_IN_PROGRESS"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>SEARCH_IN_PROGRESS</b></span>
+                        <a href="#SEARCH_IN_PROGRESS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>2</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">src/app/core/ui/search/search.component.ts:64</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="searchActive"></a>
+                    <span class="name">
+                        <span ><b>searchActive</b></span>
+                        <a href="#searchActive"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/core/ui/search/search.component.ts:71</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="searchInput"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>searchInput</b></span>
+                        <a href="#searchInput"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>ElementRef&lt;HTMLInputElement&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @ViewChild(&#x27;searchInput&#x27;)<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/ui/search/search.component.ts:76</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SHOW_RESULTS"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>SHOW_RESULTS</b></span>
+                        <a href="#SHOW_RESULTS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>4</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/core/ui/search/search.component.ts:66</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="state"></a>
+                    <span class="name">
+                        <span ><b>state</b></span>
+                        <a href="#state"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>this.NOTHING_ENTERED</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/core/ui/search/search.component.ts:68</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="TOO_FEW_CHARACTERS"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>TOO_FEW_CHARACTERS</b></span>
+                        <a href="#TOO_FEW_CHARACTERS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>1</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/ui/search/search.component.ts:63</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  ViewChild,
+  ViewEncapsulation,
+  inject,
+} from &quot;@angular/core&quot;;
+import { Entity } from &quot;../../entity/model/entity&quot;;
+import { BehaviorSubject, Observable, from, of } from &quot;rxjs&quot;;
+import { switchMap, debounceTime, tap, map, catchError } from &quot;rxjs/operators&quot;;
+import { Router } from &quot;@angular/router&quot;;
+import { FormControl, ReactiveFormsModule } from &quot;@angular/forms&quot;;
+import { UserRoleGuard } from &quot;../../permissions/permission-guard/user-role.guard&quot;;
+import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
+import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
+import { MatInputModule } from &quot;@angular/material/input&quot;;
+import {
+  MatAutocomplete,
+  MatAutocompleteModule,
+} from &quot;@angular/material/autocomplete&quot;;
+import { AsyncPipe } from &quot;@angular/common&quot;;
+import { EntityBlockComponent } from &quot;../../basic-datatypes/entity/entity-block/entity-block.component&quot;;
+import { UntilDestroy, untilDestroyed } from &quot;@ngneat/until-destroy&quot;;
+import { SearchService } from &quot;./search.service&quot;;
+import { ScreenWidthObserver } from &quot;app/utils/media/screen-size-observer.service&quot;;
+import { MatButtonModule } from &quot;@angular/material/button&quot;;
+
+/**
+ * General search box that provides results out of any kind of entities from the system
+ * as soon as the user starts typing.
+ *
+ * This is usually displayed in the app header to be available to the user anywhere, allowing to navigate quickly.
+ */
+@UntilDestroy()
+@Component({
+  selector: &quot;app-search&quot;,
+  templateUrl: &quot;./search.component.html&quot;,
+  styleUrls: [&quot;./search.component.scss&quot;],
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    MatFormFieldModule,
+    FontAwesomeModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule,
+    EntityBlockComponent,
+    AsyncPipe,
+    MatButtonModule,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class SearchComponent {
+  private router &#x3D; inject(Router);
+  private userRoleGuard &#x3D; inject(UserRoleGuard);
+  private searchService &#x3D; inject(SearchService);
+  private readonly resultsSubject &#x3D; new BehaviorSubject&lt;Entity[]&gt;([]);
+
+  static INPUT_DEBOUNCE_TIME_MS &#x3D; 400;
+  MIN_CHARACTERS_FOR_SEARCH &#x3D; 2;
+
+  readonly NOTHING_ENTERED &#x3D; 0;
+  readonly TOO_FEW_CHARACTERS &#x3D; 1;
+  readonly SEARCH_IN_PROGRESS &#x3D; 2;
+  readonly NO_RESULTS &#x3D; 3;
+  readonly SHOW_RESULTS &#x3D; 4;
+
+  state &#x3D; this.NOTHING_ENTERED;
+
+  mobile &#x3D; false;
+  searchActive &#x3D; false;
+
+  formControl &#x3D; new FormControl(&quot;&quot;);
+
+  results: Observable&lt;Entity[]&gt; &#x3D; this.resultsSubject.asObservable();
+  @ViewChild(&quot;searchInput&quot;) searchInput: ElementRef&lt;HTMLInputElement&gt;;
+  @ViewChild(&quot;autoResults&quot;) autocomplete: MatAutocomplete;
+
+  private currentSearchString &#x3D; &quot;&quot;;
+
+  constructor() {
+    const screenWithObserver &#x3D; inject(ScreenWidthObserver);
+
+    screenWithObserver
+      .platform()
+      .pipe(untilDestroyed(this))
+      .subscribe((isDesktop) &#x3D;&gt; (this.mobile &#x3D; !isDesktop));
+
+    this.formControl.valueChanges
+      .pipe(
+        debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
+        tap((next) &#x3D;&gt; {
+          const searchTerm &#x3D; this.normalizeSearchTerm(next);
+          this.currentSearchString &#x3D; searchTerm;
+          this.state &#x3D; this.updateState(searchTerm);
+        }),
+        map((next) &#x3D;&gt; this.normalizeSearchTerm(next)),
+        switchMap((next: string) &#x3D;&gt; this.searchResults(next)),
+        untilDestroyed(this),
+      )
+      .subscribe((entities) &#x3D;&gt; {
+        this.resultsSubject.next(entities);
+      });
+  }
+
+  private updateState(searchTerm: string): number {
+    if (searchTerm.length &#x3D;&#x3D;&#x3D; 0) {
+      return this.NOTHING_ENTERED;
+    }
+    return searchTerm.length &lt; this.MIN_CHARACTERS_FOR_SEARCH
+      ? this.TOO_FEW_CHARACTERS
+      : this.SEARCH_IN_PROGRESS;
+  }
+
+  searchResults(searchTerm: string): Observable&lt;Entity[]&gt; {
+    // Return empty results for invalid states or empty input
+    if (this.state !&#x3D;&#x3D; this.SEARCH_IN_PROGRESS) {
+      return of([]);
+    }
+
+    const originalSearchString &#x3D; searchTerm;
+
+    return from(this.searchService.getSearchResults(searchTerm)).pipe(
+      map((entities) &#x3D;&gt; {
+        if (this.currentSearchString !&#x3D;&#x3D; originalSearchString) {
+          // Abort because the results are not relevant anymore
+          return [];
+        }
+        const filtered &#x3D; this.prepareResults(entities);
+        this.state &#x3D;
+          filtered.length &#x3D;&#x3D;&#x3D; 0 ? this.NO_RESULTS : this.SHOW_RESULTS;
+        return filtered;
+      }),
+      catchError((_err) &#x3D;&gt; {
+        this.state &#x3D; this.NO_RESULTS;
+        return of([]);
+      }),
+    );
+  }
+
+  async clickOption(optionElement) {
+    await this.router.navigate([
+      optionElement.value.getConstructor().route,
+      optionElement.value.getId(true),
+    ]);
+    this.formControl.setValue(&quot;&quot;);
+    this.state &#x3D; this.NOTHING_ENTERED;
+    if (this.mobile) {
+      this.searchActive &#x3D; false;
+    }
+  }
+
+  private prepareResults(entities: Entity[]): Entity[] {
+    return entities.filter((entity) &#x3D;&gt;
+      this.userRoleGuard.checkRoutePermissions(entity.getConstructor().route),
+    );
+  }
+
+  toggleSearch() {
+    this.searchActive &#x3D; !this.searchActive;
+    if (!this.searchActive) {
+      this.formControl.setValue(&quot;&quot;);
+      this.currentSearchString &#x3D; &quot;&quot;;
+      this.state &#x3D; this.NOTHING_ENTERED;
+    } else {
+      setTimeout(() &#x3D;&gt; this.searchInput?.nativeElement.focus());
+    }
+  }
+
+  onFocusOut() {
+    if (this.mobile &amp;&amp; !this.autocomplete.isOpen) {
+      this.searchActive &#x3D; false;
+    }
+    // Reset state if field is empty when losing focus
+    const currentValue &#x3D; this.normalizeSearchTerm(this.formControl.value);
+    if (currentValue.length &#x3D;&#x3D;&#x3D; 0) {
+      this.currentSearchString &#x3D; &quot;&quot;;
+      this.state &#x3D; this.NOTHING_ENTERED;
+    }
+  }
+
+  private normalizeSearchTerm(searchTerm: unknown): string {
+    return typeof searchTerm &#x3D;&#x3D;&#x3D; &quot;string&quot; ? searchTerm.trim() : &quot;&quot;;
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;white mat-subtitle-2 remove-margin-bottom&quot;&gt;
+  @if (mobile &amp;&amp; !searchActive) {
+    &lt;button
+      mat-icon-button
+      matTooltip&#x3D;&quot;Search&quot;
+      i18n-matTooltip&#x3D;&quot;search toolbar icon tooltip&quot;
+      (click)&#x3D;&quot;toggleSearch()&quot;
+    &gt;
+      &lt;fa-icon icon&#x3D;&quot;search&quot;&gt;&lt;/fa-icon&gt;
+    &lt;/button&gt;
+  } @else {
+    &lt;mat-form-field
+      class&#x3D;&quot;full-width searchbar&quot;
+      [class.mobile-search-wrapper]&#x3D;&quot;mobile&quot;
+    &gt;
+      &lt;fa-icon
+        matIconPrefix
+        class&#x3D;&quot;padding-right-small&quot;
+        icon&#x3D;&quot;search&quot;
+      &gt;&lt;/fa-icon&gt;
+
+      &lt;input
+        #searchInput
+        matInput
+        class&#x3D;&quot;full-width search-input&quot;
+        title&#x3D;&quot;Search&quot;
+        i18n-placeholder&#x3D;&quot;Search label&quot;
+        placeholder&#x3D;&quot;Search&quot;
+        [formControl]&#x3D;&quot;formControl&quot;
+        [matAutocomplete]&#x3D;&quot;autoResults&quot;
+        (blur)&#x3D;&quot;onFocusOut()&quot;
+      /&gt;
+
+      @if (mobile) {
+        &lt;button mat-icon-button matSuffix (click)&#x3D;&quot;toggleSearch()&quot;&gt;
+          &lt;fa-icon icon&#x3D;&quot;times&quot;&gt;&lt;/fa-icon&gt;
+        &lt;/button&gt;
+      }
+    &lt;/mat-form-field&gt;
+  }
+&lt;/div&gt;
+
+&lt;mat-autocomplete
+  #autoResults&#x3D;&quot;matAutocomplete&quot;
+  (optionSelected)&#x3D;&quot;clickOption($event.option)&quot;
+&gt;
+  @switch (state) {
+    @case (TOO_FEW_CHARACTERS) {
+      &lt;mat-option class&#x3D;&quot;result-hint&quot; [disabled]&#x3D;&quot;true&quot;&gt;
+        &lt;p
+          i18n&#x3D;&quot;The user has inserted too few characters to start a search&quot;
+          class&#x3D;&quot;remove-margin-bottom&quot;
+        &gt;
+          Insert at least {{ MIN_CHARACTERS_FOR_SEARCH }} characters
+        &lt;/p&gt;
+      &lt;/mat-option&gt;
+    }
+
+    @case (SEARCH_IN_PROGRESS) {
+      &lt;mat-option class&#x3D;&quot;result-hint&quot; [disabled]&#x3D;&quot;true&quot;&gt;
+        &lt;p i18n&#x3D;&quot;A search is in progress&quot; class&#x3D;&quot;remove-margin-bottom&quot;&gt;
+          Search in progress...
+        &lt;/p&gt;
+      &lt;/mat-option&gt;
+    }
+
+    @case (NO_RESULTS) {
+      &lt;mat-option class&#x3D;&quot;result-hint&quot; [disabled]&#x3D;&quot;true&quot;&gt;
+        &lt;p i18n&#x3D;&quot;No search results are available&quot; class&#x3D;&quot;remove-margin-bottom&quot;&gt;
+          There were no results
+        &lt;/p&gt;
+      &lt;/mat-option&gt;
+    }
+
+    @default {
+      @for (res of results | async; track res) {
+        &lt;mat-option [value]&#x3D;&quot;res&quot;&gt;
+          &lt;app-entity-block [entity]&#x3D;&quot;res&quot;&gt;&lt;/app-entity-block&gt;
+        &lt;/mat-option&gt;
+      }
+    }
+  }
+&lt;/mat-autocomplete&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./search.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;variables/colors&quot;;
+
+.result-hint {
+  background-color: colors.$grey-light;
+  font-style: italic;
+}
+
+.search-input {
+  caret-color: white !important;
+}
+
+.search-input,
+.search-input::placeholder {
+  color: white !important;
+}
+
+.searchbar {
+  margin-top: 10px;
+
+  .mat-mdc-form-field-focus-overlay {
+    background-color: transparent !important;
+  }
+
+  .mdc-text-field--filled .mdc-line-ripple::before,
+  .mdc-text-field--active .mdc-line-ripple::before,
+  .mdc-text-field--filled .mdc-line-ripple::after {
+    border-bottom-color: white !important;
+  }
+}
+
+.mobile-search-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: -webkit-fill-available;
+  z-index: 1000;
+  background-color: colors.$primary !important;
+  margin-top: 0;
+  padding-left: 10px;
+
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none !important;
+  }
+
+  .mdc-line-ripple {
+    display: none !important;
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis-network.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div class="white mat-subtitle-2 remove-margin-bottom">  @if (mobile && !searchActive) {    <button      mat-icon-button      matTooltip="Search"      i18n-matTooltip="search toolbar icon tooltip"      (click)="toggleSearch()"    >      <fa-icon icon="search"></fa-icon>    </button>  } @else {    <mat-form-field      class="full-width searchbar"      [class.mobile-search-wrapper]="mobile"    >      <fa-icon        matIconPrefix        class="padding-right-small"        icon="search"      ></fa-icon>      <input        #searchInput        matInput        class="full-width search-input"        title="Search"        i18n-placeholder="Search label"        placeholder="Search"        [formControl]="formControl"        [matAutocomplete]="autoResults"        (blur)="onFocusOut()"      />      @if (mobile) {        <button mat-icon-button matSuffix (click)="toggleSearch()">          <fa-icon icon="times"></fa-icon>        </button>      }    </mat-form-field>  }</div><mat-autocomplete  #autoResults="matAutocomplete"  (optionSelected)="clickOption($event.option)">  @switch (state) {    @case (TOO_FEW_CHARACTERS) {      <mat-option class="result-hint" [disabled]="true">        <p          i18n="The user has inserted too few characters to start a search"          class="remove-margin-bottom"        >          Insert at least {{ MIN_CHARACTERS_FOR_SEARCH }} characters        </p>      </mat-option>    }    @case (SEARCH_IN_PROGRESS) {      <mat-option class="result-hint" [disabled]="true">        <p i18n="A search is in progress" class="remove-margin-bottom">          Search in progress...        </p>      </mat-option>    }    @case (NO_RESULTS) {      <mat-option class="result-hint" [disabled]="true">        <p i18n="No search results are available" class="remove-margin-bottom">          There were no results        </p>      </mat-option>    }    @default {      @for (res of results | async; track res) {        <mat-option [value]="res">          <app-entity-block [entity]="res"></app-entity-block>        </mat-option>      }    }  }</mat-autocomplete></div>'
+    var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddDayAttendanceComponent', 'selector': 'app-add-day-attendance'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminUserRolesComponent', 'selector': 'app-admin-user-roles'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block]'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceStatusSelectComponent', 'selector': 'app-attendance-status-select'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportAdditionalSettingsComponent', 'selector': 'app-import-additional-settings'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'InputFileComponent', 'selector': 'app-input-file'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesManagerComponent', 'selector': 'app-notes-manager'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
+    var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'ExportDataDirective', 'selector': '[appExportData]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
+    var ACTUAL_COMPONENT = {'name': 'SearchComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'SearchComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

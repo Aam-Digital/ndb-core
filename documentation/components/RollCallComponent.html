@@ -1,0 +1,1809 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  RollCallComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts</code>
+</p>
+
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Displays the participants of the given event one by one to mark attendance status.</p>
+
+    </p>
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="https://angular.io/api/core/OnChanges" target="_blank" >OnChanges</a></code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">providers</td>
+                <td class="col-md-9">
+                                <code><a href="../injectables/HorizontalHammerConfig.html" target="_self" >HorizontalHammerConfig</a></code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-roll-call</code></td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>MatProgressBarModule</code>
+                            <code>MatButtonModule</code>
+                            <code>FontAwesomeModule</code>
+                                <code><a href="../components/EntityBlockComponent.html" target="_self" >EntityBlockComponent</a></code>
+                                <code><a href="../components/RollCallTabComponent.html" target="_self" >RollCallTabComponent</a></code>
+                                <code><a href="https://angular.io/api/platform-browser/HammerModule" target="_blank" >HammerModule</a></code>
+                            <code>MatTooltipModule</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./roll-call.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./roll-call.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#availableStatus" >availableStatus</a>
+                            </li>
+                            <li>
+                                <a href="#children" >children</a>
+                            </li>
+                            <li>
+                                <a href="#currentAttendance" >currentAttendance</a>
+                            </li>
+                            <li>
+                                <a href="#currentChild" >currentChild</a>
+                            </li>
+                            <li>
+                                <a href="#currentIndex" >currentIndex</a>
+                            </li>
+                            <li>
+                                <a href="#inactiveParticipants" >inactiveParticipants</a>
+                            </li>
+                            <li>
+                                <a href="#isDirty" >isDirty</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#finish" >finish</a>
+                            </li>
+                            <li>
+                                <a href="#goToFirst" >goToFirst</a>
+                            </li>
+                            <li>
+                                <a href="#goToLast" >goToLast</a>
+                            </li>
+                            <li>
+                                <a href="#goToNext" >goToNext</a>
+                            </li>
+                            <li>
+                                <a href="#goToParticipantWithIndex" >goToParticipantWithIndex</a>
+                            </li>
+                            <li>
+                                <a href="#goToPrevious" >goToPrevious</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#includeInactive" >includeInactive</a>
+                            </li>
+                            <li>
+                                <a href="#markAttendance" >markAttendance</a>
+                            </li>
+                            <li>
+                                <a href="#showDetails" >showDetails</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#eventEntity" >eventEntity</a>
+                            </li>
+                            <li>
+                                <a href="#sortParticipantsBy" >sortParticipantsBy</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Outputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#complete" >complete</a>
+                            </li>
+                            <li>
+                                <a href="#exit" >exit</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Accessors</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                    <a href="#isFirst" >isFirst</a>
+                                </li>
+                                <li>
+                                    <a href="#isLast" >isLast</a>
+                                </li>
+                                <li>
+                                    <a href="#isFinished" >isFinished</a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+        </tbody>
+    </table>
+</section>
+
+
+    <section data-compodoc="block-inputs">
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="eventEntity"></a>
+                        <b>eventEntity</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/Note.html" target="_self" >Note</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:88</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>The event to be displayed and edited.</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="sortParticipantsBy"></a>
+                        <b>sortParticipantsBy</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="93" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:93</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>(optional) property name of the participant entities by which they are sorted</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+    <section data-compodoc="block-outputs">
+    <h3 id="outputs">Outputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="complete"></a>
+                        <b>complete</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://angular.io/api/core/EventEmitter" target="_blank" >EventEmitter</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="98" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:98</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Emitted when the roll call is finished and results can be saved.</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="exit"></a>
+                        <b>exit</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://angular.io/api/core/EventEmitter" target="_blank" >EventEmitter</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="103" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:103</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Emitted when the user wants to dismiss &amp; leave the roll call view.</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="finish"></a>
+                    <span class="name">
+                        <span ><b>finish</b></span>
+                        <a href="#finish"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>finish()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="256"
+                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:256</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="goToFirst"></a>
+                    <span class="name">
+                        <span ><b>goToFirst</b></span>
+                        <a href="#goToFirst"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>goToFirst()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="235"
+                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:235</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="goToLast"></a>
+                    <span class="name">
+                        <span ><b>goToLast</b></span>
+                        <a href="#goToLast"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>goToLast()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="239"
+                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:239</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="goToNext"></a>
+                    <span class="name">
+                        <span ><b>goToNext</b></span>
+                        <a href="#goToNext"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>goToNext()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="229"
+                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:229</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="goToParticipantWithIndex"></a>
+                    <span class="name">
+                        <span ><b>goToParticipantWithIndex</b></span>
+                        <a href="#goToParticipantWithIndex"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>goToParticipantWithIndex(newIndex: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="210"
+                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:210</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>newIndex</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="goToPrevious"></a>
+                    <span class="name">
+                        <span ><b>goToPrevious</b></span>
+                        <a href="#goToPrevious"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>goToPrevious()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="223"
+                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:223</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="includeInactive"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>includeInactive</b></span>
+                        <a href="#includeInactive"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>includeInactive()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="264"
+                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:264</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="markAttendance"></a>
+                    <span class="name">
+                        <span ><b>markAttendance</b></span>
+                        <a href="#markAttendance"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>markAttendance(status: <a href="../interfaces/AttendanceStatusType.html" target="_self">AttendanceStatusType</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="203"
+                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:203</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>status</td>
+                                            <td>
+                                                            <code><a href="../interfaces/AttendanceStatusType.html" target="_self" >AttendanceStatusType</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="showDetails"></a>
+                    <span class="name">
+                        <span ><b>showDetails</b></span>
+                        <a href="#showDetails"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>showDetails()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="260"
+                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:260</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="availableStatus"></a>
+                    <span class="name">
+                        <span ><b>availableStatus</b></span>
+                        <a href="#availableStatus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/AttendanceStatusType.html" target="_self" >AttendanceStatusType[]</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="117" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:117</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>options available for selecting an attendance status</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="children"></a>
+                    <span class="name">
+                        <span ><b>children</b></span>
+                        <a href="#children"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="119" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:119</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="currentAttendance"></a>
+                    <span class="name">
+                        <span ><b>currentAttendance</b></span>
+                        <a href="#currentAttendance"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/AttendanceItem.html" target="_self" >AttendanceItem</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="110" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:110</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="currentChild"></a>
+                    <span class="name">
+                        <span ><b>currentChild</b></span>
+                        <a href="#currentChild"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="109" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:109</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="currentIndex"></a>
+                    <span class="name">
+                        <span ><b>currentIndex</b></span>
+                        <a href="#currentIndex"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>0</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="108" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:108</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The index, child and attendance that is currently being processed</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="inactiveParticipants"></a>
+                    <span class="name">
+                        <span ><b>inactiveParticipants</b></span>
+                        <a href="#inactiveParticipants"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="120" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:120</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isDirty"></a>
+                    <span class="name">
+                        <span ><b>isDirty</b></span>
+                        <a href="#isDirty"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="114" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:114</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>whether any changes have been made to the model</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-accessors">
+    <h3 id="accessors">
+        Accessors
+    </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="isFirst"></a>
+                        <span class="name"><b>isFirst</b><a href="#isFirst"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>isFirst()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="244" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:244</a></div>
+                                </td>
+                            </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="isLast"></a>
+                        <span class="name"><b>isLast</b><a href="#isLast"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>isLast()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="248" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:248</a></div>
+                                </td>
+                            </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="isFinished"></a>
+                        <span class="name"><b>isFinished</b><a href="#isFinished"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>isFinished()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="252" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:252</a></div>
+                                </td>
+                            </tr>
+
+            </tbody>
+        </table>
+</section>
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  EventEmitter,
+  inject,
+  Injectable,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from &quot;@angular/core&quot;;
+import { animate, style, transition, trigger } from &quot;@angular/animations&quot;;
+import {
+  ATTENDANCE_STATUS_CONFIG_ID,
+  AttendanceStatusType,
+} from &quot;../../model/attendance-status&quot;;
+import { Note } from &quot;#src/app/child-dev-project/notes/model/note&quot;;
+import { AttendanceItem } from &quot;../../model/attendance-item&quot;;
+import { EntityMapperService } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
+import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
+import { sortByAttribute } from &quot;#src/app/utils/utils&quot;;
+import { FormDialogService } from &quot;#src/app/core/form-dialog/form-dialog.service&quot;;
+import { MatProgressBarModule } from &quot;@angular/material/progress-bar&quot;;
+import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
+import { RollCallTabComponent } from &quot;./roll-call-tab/roll-call-tab.component&quot;;
+import {
+  HAMMER_GESTURE_CONFIG,
+  HammerGestureConfig,
+  HammerModule,
+} from &quot;@angular/platform-browser&quot;;
+import Hammer from &quot;hammerjs&quot;;
+import { ConfigurableEnumService } from &quot;#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+import { ConfirmationDialogService } from &quot;#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service&quot;;
+import { EntityBlockComponent } from &quot;#src/app/core/basic-datatypes/entity/entity-block/entity-block.component&quot;;
+
+// Only allow horizontal swiping
+@Injectable()
+class HorizontalHammerConfig extends HammerGestureConfig {
+  override overrides &#x3D; {
+    swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
+    pinch: { enable: false },
+    rotate: { enable: false },
+  };
+}
+
+/**
+ * Displays the participants of the given event one by one to mark attendance status.
+ */
+@Component({
+  selector: &quot;app-roll-call&quot;,
+  templateUrl: &quot;./roll-call.component.html&quot;,
+  styleUrls: [&quot;./roll-call.component.scss&quot;],
+  animations: [
+    trigger(&quot;completeRollCall&quot;, [
+      transition(&quot;void &#x3D;&gt; *&quot;, [
+        style({ backgroundColor: &quot;transparent&quot; }),
+        animate(1000),
+      ]),
+    ]),
+  ],
+  imports: [
+    MatProgressBarModule,
+    MatButtonModule,
+    FontAwesomeModule,
+    EntityBlockComponent,
+    RollCallTabComponent,
+    HammerModule,
+    MatTooltipModule,
+  ],
+  providers: [
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: HorizontalHammerConfig,
+    },
+  ],
+})
+export class RollCallComponent implements OnChanges {
+  private enumService &#x3D; inject(ConfigurableEnumService);
+  private entityMapper &#x3D; inject(EntityMapperService);
+  private formDialog &#x3D; inject(FormDialogService);
+  private confirmationDialog &#x3D; inject(ConfirmationDialogService);
+
+  /**
+   * The event to be displayed and edited.
+   */
+  @Input() eventEntity: Note;
+
+  /**
+   * (optional) property name of the participant entities by which they are sorted
+   */
+  @Input() sortParticipantsBy?: string;
+
+  /**
+   * Emitted when the roll call is finished and results can be saved.
+   */
+  @Output() complete &#x3D; new EventEmitter&lt;Note&gt;();
+
+  /**
+   * Emitted when the user wants to dismiss &amp; leave the roll call view.
+   */
+  @Output() exit &#x3D; new EventEmitter();
+
+  /**
+   * The index, child and attendance that is currently being processed
+   */
+  currentIndex &#x3D; 0;
+  currentChild: Entity;
+  currentAttendance: AttendanceItem;
+  /**
+   * whether any changes have been made to the model
+   */
+  isDirty: boolean &#x3D; false;
+
+  /** options available for selecting an attendance status */
+  availableStatus: AttendanceStatusType[];
+
+  children: Entity[] &#x3D; [];
+  inactiveParticipants: Entity[];
+
+  async ngOnChanges(changes: SimpleChanges) {
+    if (changes.eventEntity) {
+      this.loadAttendanceStatusTypes();
+      await this.loadParticipants();
+      this.setInitialIndex();
+    }
+    if (changes.sortParticipantsBy) {
+      this.sortParticipants();
+    }
+  }
+
+  /**
+   * Set the index of the first child that expects user input.
+   * This is the first entry of the list, if the user has never recorded attendance
+   * for this event. Else it is the first child without any attendance information
+   * (i.e. got skipped or the user left at this child)
+   * @private
+   */
+  private setInitialIndex() {
+    let index &#x3D; 0;
+    for (const entry of this.children) {
+      if (!this.eventEntity.getAttendance(entry.getId())?.status?.id) {
+        break;
+      }
+      index +&#x3D; 1;
+    }
+
+    // do not jump to end - if all participants are recorded, start with first instead
+    if (index &gt;&#x3D; this.children.length) {
+      index &#x3D; 0;
+    }
+
+    this.goToParticipantWithIndex(index);
+  }
+
+  private loadAttendanceStatusTypes() {
+    this.availableStatus &#x3D; this.enumService.getEnumValues&lt;AttendanceStatusType&gt;(
+      ATTENDANCE_STATUS_CONFIG_ID,
+    );
+  }
+
+  private async loadParticipants() {
+    this.children &#x3D; [];
+    this.inactiveParticipants &#x3D; [];
+    for (const childId of this.eventEntity.children) {
+      let child: Entity;
+      try {
+        child &#x3D; await this.entityMapper.load(
+          Entity.extractTypeFromId(childId),
+          childId,
+        );
+      } catch (e) {
+        Logging.debug(
+          &quot;Could not find child &quot; +
+            childId +
+            &quot; for event &quot; +
+            this.eventEntity.getId(),
+        );
+        this.eventEntity.removeChild(childId);
+        continue;
+      }
+
+      if (child.isActive) {
+        this.children.push(child);
+      } else {
+        this.inactiveParticipants.push(child);
+      }
+    }
+    this.sortParticipants();
+  }
+
+  private sortParticipants() {
+    if (!this.sortParticipantsBy) {
+      return;
+    }
+
+    this.children.sort(sortByAttribute&lt;any&gt;(this.sortParticipantsBy, &quot;asc&quot;));
+    // also sort the participants in the Note entity itself for display in details view later
+    this.eventEntity.children &#x3D; this.children.map((e) &#x3D;&gt; e.getId());
+  }
+
+  markAttendance(status: AttendanceStatusType) {
+    this.currentAttendance.status &#x3D; status;
+    this.isDirty &#x3D; true;
+
+    this.goToNext();
+  }
+
+  goToParticipantWithIndex(newIndex: number) {
+    this.currentIndex &#x3D; newIndex;
+
+    if (this.isFinished) {
+      this.complete.emit(this.eventEntity);
+    } else {
+      this.currentChild &#x3D; this.children[this.currentIndex];
+      this.currentAttendance &#x3D; this.eventEntity.getAttendance(
+        this.currentChild.getId(),
+      );
+    }
+  }
+
+  goToPrevious() {
+    if (this.currentIndex - 1 &gt;&#x3D; 0) {
+      this.goToParticipantWithIndex(this.currentIndex - 1);
+    }
+  }
+
+  goToNext() {
+    if (this.currentIndex + 1 &lt;&#x3D; this.children.length) {
+      this.goToParticipantWithIndex(this.currentIndex + 1);
+    }
+  }
+
+  goToFirst() {
+    this.goToParticipantWithIndex(0);
+  }
+
+  goToLast() {
+    // jump directly to completed state, i.e. beyond last participant index
+    this.goToParticipantWithIndex(this.children.length);
+  }
+
+  get isFirst(): boolean {
+    return this.currentIndex &#x3D;&#x3D;&#x3D; 0;
+  }
+
+  get isLast(): boolean {
+    return this.currentIndex &#x3D;&#x3D;&#x3D; this.children.length - 1;
+  }
+
+  get isFinished(): boolean {
+    return this.currentIndex &gt;&#x3D; this.children.length;
+  }
+
+  finish() {
+    this.exit.emit();
+  }
+
+  showDetails() {
+    this.formDialog.openView(this.eventEntity, &quot;NoteDetails&quot;);
+  }
+
+  async includeInactive() {
+    const confirmation &#x3D; await this.confirmationDialog.getConfirmation(
+      $localize&#x60;Also include archived participants?&#x60;,
+      $localize&#x60;This event has some participants who are &quot;archived&quot;. We automatically remove them from the attendance list for you. Do you want to also include archived participants for this event?&#x60;,
+    );
+    if (confirmation) {
+      this.children &#x3D; [...this.children, ...this.inactiveParticipants];
+      this.inactiveParticipants &#x3D; [];
+    }
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;!-- Individual Student&#x27;s Page --&gt;
+@if (children?.length &gt; 0) {
+  &lt;div class&#x3D;&quot;flex-column gap-regular&quot;&gt;
+    &lt;mat-progress-bar
+      mode&#x3D;&quot;determinate&quot;
+      [value]&#x3D;&quot;(currentIndex / children.length) * 100&quot;
+    &gt;&lt;/mat-progress-bar&gt;
+    &lt;div class&#x3D;&quot;progress-nav flex-row&quot;&gt;
+      &lt;div style&#x3D;&quot;margin-left: -10px&quot;&gt;
+        &lt;button
+          mat-icon-button
+          (click)&#x3D;&quot;goToFirst()&quot;
+          [disabled]&#x3D;&quot;isFirst&quot;
+          class&#x3D;&quot;button-skip&quot;
+        &gt;
+          &lt;fa-icon icon&#x3D;&quot;angle-double-left&quot;&gt;&lt;/fa-icon&gt;
+        &lt;/button&gt;
+        &lt;button
+          mat-icon-button
+          (click)&#x3D;&quot;goToPrevious()&quot;
+          [disabled]&#x3D;&quot;isFirst&quot;
+          class&#x3D;&quot;button-skip&quot;
+        &gt;
+          &lt;fa-icon icon&#x3D;&quot;angle-left&quot;&gt;&lt;/fa-icon&gt;
+        &lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div
+        class&#x3D;&quot;progress-label flex-grow&quot;
+        [style.visibility]&#x3D;&quot;
+          currentIndex &lt; children.length ? &#x27;visible&#x27; : &#x27;hidden&#x27;
+        &quot;
+      &gt;
+        {{ currentIndex + 1 }} / {{ children.length }}
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;button
+          mat-icon-button
+          (click)&#x3D;&quot;goToNext()&quot;
+          [disabled]&#x3D;&quot;isFinished&quot;
+          class&#x3D;&quot;button-skip&quot;
+        &gt;
+          &lt;fa-icon icon&#x3D;&quot;angle-right&quot;&gt;&lt;/fa-icon&gt;
+        &lt;/button&gt;
+        &lt;button
+          mat-icon-button
+          (click)&#x3D;&quot;goToLast()&quot;
+          [disabled]&#x3D;&quot;isFinished&quot;
+          class&#x3D;&quot;button-skip&quot;
+        &gt;
+          &lt;fa-icon icon&#x3D;&quot;angle-double-right&quot;&gt;&lt;/fa-icon&gt;
+        &lt;/button&gt;
+      &lt;/div&gt;
+      @if (inactiveParticipants?.length &gt; 0) {
+        &lt;div style&#x3D;&quot;margin-right: -10px&quot;&gt;
+          &lt;button
+            mat-icon-button
+            (click)&#x3D;&quot;includeInactive()&quot;
+            [disabled]&#x3D;&quot;isFinished&quot;
+            color&#x3D;&quot;warn&quot;
+            matTooltip&#x3D;&quot;Excluded some archived participants. Click to include.&quot;
+            i18n-matTooltip
+          &gt;
+            &lt;fa-icon icon&#x3D;&quot;warning&quot;&gt;&lt;/fa-icon&gt;
+          &lt;/button&gt;
+        &lt;/div&gt;
+      }
+    &lt;/div&gt;
+    @if (!isFinished) {
+      &lt;app-entity-block
+        class&#x3D;&quot;margin-small&quot;
+        [entity]&#x3D;&quot;currentChild&quot;
+        [linkDisabled]&#x3D;&quot;true&quot;
+      &gt;
+      &lt;/app-entity-block&gt;
+    }
+    @if (!isFinished &amp;&amp; currentAttendance) {
+      &lt;div class&#x3D;&quot;tab-wrapper&quot;&gt;
+        @for (child of children; track child; let i &#x3D; $index) {
+          &lt;app-roll-call-tab
+            (swiperight)&#x3D;&quot;goToPrevious()&quot;
+            (swipeleft)&#x3D;&quot;goToNext()&quot;
+            class&#x3D;&quot;tab-body&quot;
+            [class.tab-body-active]&#x3D;&quot;currentIndex &#x3D;&#x3D;&#x3D; i&quot;
+            [position]&#x3D;&quot;i - currentIndex&quot;
+          &gt;
+            &lt;div&gt;
+              @for (option of availableStatus; track option) {
+                &lt;div
+                  role&#x3D;&quot;button&quot;
+                  class&#x3D;&quot;group-select-option&quot;
+                  (click)&#x3D;&quot;markAttendance(option)&quot;
+                  [class]&#x3D;&quot;
+                    eventEntity.getAttendance(child).status.id &#x3D;&#x3D;&#x3D; option.id
+                      ? option.style
+                      : &#x27;&#x27;
+                  &quot;
+                &gt;
+                  &lt;div
+                    style&#x3D;&quot;
+                      display: flex;
+                      flex-direction: row;
+                      padding: 16px;
+                      gap: 16px;
+                    &quot;
+                  &gt;
+                    @if (
+                      eventEntity.getAttendance(child).status.id &#x3D;&#x3D;&#x3D; option.id
+                    ) {
+                      &lt;fa-icon icon&#x3D;&quot;check&quot;&gt;&lt;/fa-icon&gt;
+                    }
+                    &lt;p style&#x3D;&quot;margin: 0&quot;&gt;{{ option.label }}&lt;/p&gt;
+                  &lt;/div&gt;
+                &lt;/div&gt;
+              }
+            &lt;/div&gt;
+          &lt;/app-roll-call-tab&gt;
+        }
+      &lt;/div&gt;
+    }
+  &lt;/div&gt;
+}
+
+&lt;!-- Completion Page --&gt;
+@if (isFinished) {
+  &lt;div class&#x3D;&quot;flex-column gap-regular margin-top-regular&quot;&gt;
+    &lt;div class&#x3D;&quot;roll-call-complete&quot; @completeRollCall&gt;
+      &lt;fa-icon icon&#x3D;&quot;check-circle&quot; size&#x3D;&quot;3x&quot;&gt;&lt;/fa-icon&gt;
+      &lt;div
+        i18n&#x3D;&quot;
+          Attendance completed|shows when the user has registered the attendance
+          of all children
+        &quot;
+        (click)&#x3D;&quot;finish()&quot;
+      &gt;
+        Attendance completed.
+      &lt;/div&gt;
+      &lt;button
+        (click)&#x3D;&quot;showDetails()&quot;
+        class&#x3D;&quot;finished-screen-button&quot;
+        mat-raised-button
+        color&#x3D;&quot;accent&quot;
+        i18n&#x3D;&quot;Open details of recorded event for review&quot;
+      &gt;
+        Review Details
+      &lt;/button&gt;
+    &lt;/div&gt;
+    &lt;button
+      (click)&#x3D;&quot;finish()&quot;
+      color&#x3D;&quot;primary&quot;
+      mat-raised-button
+      i18n&#x3D;&quot;Back to overview button after finishing a roll call&quot;
+    &gt;
+      Back to Overview
+    &lt;/button&gt;
+  &lt;/div&gt;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./roll-call.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;variables/sizes&quot;;
+@use &quot;variables/colors&quot;;
+@use &quot;sass:color&quot;;
+
+.group-select-option {
+  width: 100%;
+  cursor: pointer;
+  box-sizing: border-box;
+  border: 1px solid;
+  border-top: 0;
+  &amp;:first-child {
+    border-top: 1px solid;
+  }
+}
+
+.roll-call-complete {
+  display: flex;
+  flex-direction: column;
+  place-content: center;
+  place-items: center;
+  height: 200px;
+  gap: sizes.$small;
+
+  background-color: color.adjust(colors.$success, $alpha: -0.5);
+  border-radius: 4px;
+}
+
+.progress-label {
+  display: flex;
+  place-content: center;
+}
+
+.attendance-progress-bar {
+  display: flex;
+  flex-direction: column;
+  margin-top: sizes.$small;
+  margin-bottom: sizes.$small;
+}
+
+.progress-nav {
+  margin-top: -4px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tab-body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  display: flex;
+  overflow-x: hidden;
+}
+
+.tab-body-active {
+  position: relative;
+  flex-grow: 1;
+  place-content: center;
+  z-index: 1;
+}
+
+.tab-wrapper {
+  display: flex;
+  position: relative;
+  overflow-x: hidden;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis-network.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><!-- Individual Student\'s Page -->@if (children?.length > 0) {  <div class="flex-column gap-regular">    <mat-progress-bar      mode="determinate"      [value]="(currentIndex / children.length) * 100"    ></mat-progress-bar>    <div class="progress-nav flex-row">      <div style="margin-left: -10px">        <button          mat-icon-button          (click)="goToFirst()"          [disabled]="isFirst"          class="button-skip"        >          <fa-icon icon="angle-double-left"></fa-icon>        </button>        <button          mat-icon-button          (click)="goToPrevious()"          [disabled]="isFirst"          class="button-skip"        >          <fa-icon icon="angle-left"></fa-icon>        </button>      </div>      <div        class="progress-label flex-grow"        [style.visibility]="          currentIndex < children.length ? \'visible\' : \'hidden\'        "      >        {{ currentIndex + 1 }} / {{ children.length }}      </div>      <div>        <button          mat-icon-button          (click)="goToNext()"          [disabled]="isFinished"          class="button-skip"        >          <fa-icon icon="angle-right"></fa-icon>        </button>        <button          mat-icon-button          (click)="goToLast()"          [disabled]="isFinished"          class="button-skip"        >          <fa-icon icon="angle-double-right"></fa-icon>        </button>      </div>      @if (inactiveParticipants?.length > 0) {        <div style="margin-right: -10px">          <button            mat-icon-button            (click)="includeInactive()"            [disabled]="isFinished"            color="warn"            matTooltip="Excluded some archived participants. Click to include."            i18n-matTooltip          >            <fa-icon icon="warning"></fa-icon>          </button>        </div>      }    </div>    @if (!isFinished) {      <app-entity-block        class="margin-small"        [entity]="currentChild"        [linkDisabled]="true"      >      </app-entity-block>    }    @if (!isFinished && currentAttendance) {      <div class="tab-wrapper">        @for (child of children; track child; let i = $index) {          <app-roll-call-tab            (swiperight)="goToPrevious()"            (swipeleft)="goToNext()"            class="tab-body"            [class.tab-body-active]="currentIndex === i"            [position]="i - currentIndex"          >            <div>              @for (option of availableStatus; track option) {                <div                  role="button"                  class="group-select-option"                  (click)="markAttendance(option)"                  [class]="                    eventEntity.getAttendance(child).status.id === option.id                      ? option.style                      : \'\'                  "                >                  <div                    style="                      display: flex;                      flex-direction: row;                      padding: 16px;                      gap: 16px;                    "                  >                    @if (                      eventEntity.getAttendance(child).status.id === option.id                    ) {                      <fa-icon icon="check"></fa-icon>                    }                    <p style="margin: 0">{{ option.label }}</p>                  </div>                </div>              }            </div>          </app-roll-call-tab>        }      </div>    }  </div>}<!-- Completion Page -->@if (isFinished) {  <div class="flex-column gap-regular margin-top-regular">    <div class="roll-call-complete" @completeRollCall>      <fa-icon icon="check-circle" size="3x"></fa-icon>      <div        i18n="          Attendance completed|shows when the user has registered the attendance          of all children        "        (click)="finish()"      >        Attendance completed.      </div>      <button        (click)="showDetails()"        class="finished-screen-button"        mat-raised-button        color="accent"        i18n="Open details of recorded event for review"      >        Review Details      </button>    </div>    <button      (click)="finish()"      color="primary"      mat-raised-button      i18n="Back to overview button after finishing a roll call"    >      Back to Overview    </button>  </div>}</div>'
+    var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddDayAttendanceComponent', 'selector': 'app-add-day-attendance'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminUserRolesComponent', 'selector': 'app-admin-user-roles'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block]'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceStatusSelectComponent', 'selector': 'app-attendance-status-select'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportAdditionalSettingsComponent', 'selector': 'app-import-additional-settings'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'InputFileComponent', 'selector': 'app-input-file'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesManagerComponent', 'selector': 'app-notes-manager'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
+    var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'ExportDataDirective', 'selector': '[appExportData]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
+    var ACTUAL_COMPONENT = {'name': 'RollCallComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'RollCallComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

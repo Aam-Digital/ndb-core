@@ -1,0 +1,1869 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  MatchingEntitiesComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/features/matching-entities/matching-entities/matching-entities.component.ts</code>
+</p>
+
+
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-matching-entities</code></td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>MatTableModule</code>
+                            <code>FontAwesomeModule</code>
+                            <code>MatTooltipModule</code>
+                            <code>MatButtonModule</code>
+                                <code><a href="../components/EntitiesTableComponent.html" target="_self" >EntitiesTableComponent</a></code>
+                                <code><a href="../components/EntityFieldViewComponent.html" target="_self" >EntityFieldViewComponent</a></code>
+                                <code><a href="../components/MapComponent.html" target="_self" >MapComponent</a></code>
+                                <code><a href="../components/FilterComponent.html" target="_self" >FilterComponent</a></code>
+                            <code>FlattenArrayPipe</code>
+                            <code>MatMenuModule</code>
+                            <code>MatIconButton</code>
+                                <code><a href="../components/IconComponent.html" target="_self" >FaIconComponent</a></code>
+                                <code><a href="https://angular.io/api/router/RouterLink" target="_blank" >RouterLink</a></code>
+                            <code>AblePurePipe</code>
+                                <code><a href="https://angular.io/api/common/AsyncPipe" target="_blank" >AsyncPipe</a></code>
+                                <code><a href="../classes/Entity.html" target="_self" >EntityTypePipe</a></code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./matching-entities.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./matching-entities.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#columnsToDisplay" >columnsToDisplay</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
+                                <a href="#DEFAULT_CONFIG_KEY" >DEFAULT_CONFIG_KEY</a>
+                            </li>
+                            <li>
+                                <a href="#displayedLocationProperties" >displayedLocationProperties</a>
+                            </li>
+                            <li>
+                                <a href="#filteredMapEntities" >filteredMapEntities</a>
+                            </li>
+                            <li>
+                                <a href="#getEntityBackgroundColor" >getEntityBackgroundColor</a>
+                            </li>
+                            <li>
+                                <a href="#lockedMatching" >lockedMatching</a>
+                            </li>
+                            <li>
+                                <a href="#mapVisible" >mapVisible</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#matchComparisonElement" >matchComparisonElement</a>
+                            </li>
+                            <li>
+                                <a href="#sideDetails" >sideDetails</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#applySelectedFilters" >applySelectedFilters</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createMatch" >createMatch</a>
+                            </li>
+                            <li>
+                                <a href="#entityInMapClicked" >entityInMapClicked</a>
+                            </li>
+                            <li>
+                                <a href="#updateMarkersAndDistances" >updateMarkersAndDistances</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#columns" >columns</a>
+                            </li>
+                            <li>
+                                <a href="#entity" >entity</a>
+                            </li>
+                            <li>
+                                <a href="#leftSide" >leftSide</a>
+                            </li>
+                            <li>
+                                <a href="#matchActionLabel" >matchActionLabel</a>
+                            </li>
+                            <li>
+                                <a href="#onMatch" >onMatch</a>
+                            </li>
+                            <li>
+                                <a href="#rightSide" >rightSide</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="135" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:135</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
+
+    <section data-compodoc="block-inputs">
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="columns"></a>
+                        <b>columns</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="121" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:121</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Column mapping of property pairs of left and right entity that should be compared side by side.</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="entity"></a>
+                        <b>entity</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="114" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:114</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="leftSide"></a>
+                        <b>leftSide</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/MatchingSideConfig.html" target="_self" >MatchingSideConfig</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{}</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="115" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:115</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="matchActionLabel"></a>
+                        <b>matchActionLabel</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>$localize&#x60;:Matching button label:create matching&#x60;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="123" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:123</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="onMatch"></a>
+                        <b>onMatch</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/NewMatchAction.html" target="_self" >NewMatchAction</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="124" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:124</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="rightSide"></a>
+                        <b>rightSide</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/MatchingSideConfig.html" target="_self" >MatchingSideConfig</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{}</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="116" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:116</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="applySelectedFilters"></a>
+                    <span class="name">
+                        <span ><b>applySelectedFilters</b></span>
+                        <a href="#applySelectedFilters"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>applySelectedFilters(side: <a href="../interfaces/MatchingSide.html" target="_self">MatchingSide</a>, filter: <a href="../miscellaneous/typealiases.html#DataFilter" target="_self">DataFilter&lt;Entity&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="351"
+                                    class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:351</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>side</td>
+                                            <td>
+                                                            <code><a href="../interfaces/MatchingSide.html" target="_self" >MatchingSide</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>filter</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#DataFilter" target="_self" >DataFilter&lt;Entity&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createMatch"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createMatch</b></span>
+                        <a href="#createMatch"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createMatch()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="309"
+                                    class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:309</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="entityInMapClicked"></a>
+                    <span class="name">
+                        <span ><b>entityInMapClicked</b></span>
+                        <a href="#entityInMapClicked"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>entityInMapClicked(entity: <a href="../classes/Entity.html" target="_self">Entity</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="369"
+                                    class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:369</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateMarkersAndDistances"></a>
+                    <span class="name">
+                        <span ><b>updateMarkersAndDistances</b></span>
+                        <a href="#updateMarkersAndDistances"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>updateMarkersAndDistances()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="463"
+                                    class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:463</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="columnsToDisplay"></a>
+                    <span class="name">
+                        <span ><b>columnsToDisplay</b></span>
+                        <a href="#columnsToDisplay"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="129" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:129</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DEFAULT_CONFIG_KEY"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                        <span ><b>DEFAULT_CONFIG_KEY</b></span>
+                        <a href="#DEFAULT_CONFIG_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;appConfig:matching-entities&quot;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="112" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:112</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="displayedLocationProperties"></a>
+                    <span class="name">
+                        <span ><b>displayedLocationProperties</b></span>
+                        <a href="#displayedLocationProperties"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#LocationProperties" target="_self" >LocationProperties</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{}</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="135" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:135</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="filteredMapEntities"></a>
+                    <span class="name">
+                        <span ><b>filteredMapEntities</b></span>
+                        <a href="#filteredMapEntities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="134" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:134</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getEntityBackgroundColor"></a>
+                    <span class="name">
+                        <span ><b>getEntityBackgroundColor</b></span>
+                        <a href="#getEntityBackgroundColor"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="297" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:297</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Get background color for entity rows in matching tables.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="lockedMatching"></a>
+                    <span class="name">
+                        <span ><b>lockedMatching</b></span>
+                        <a href="#lockedMatching"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="130" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:130</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="mapVisible"></a>
+                    <span class="name">
+                        <span ><b>mapVisible</b></span>
+                        <a href="#mapVisible"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="133" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:133</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="matchComparisonElement"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>matchComparisonElement</b></span>
+                        <a href="#matchComparisonElement"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://angular.io/api/core/ElementRef" target="_blank" >ElementRef</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @ViewChild(&#x27;matchComparison&#x27;, {static: true})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="127" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:127</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sideDetails"></a>
+                    <span class="name">
+                        <span ><b>sideDetails</b></span>
+                        <a href="#sideDetails"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/MatchingSide.html" target="_self" >[MatchingSide, MatchingSide]</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="131" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:131</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EntityTypePipe } from &quot;#src/app/core/common-components/entity-type/entity-type.pipe&quot;;
+import { AsyncPipe } from &quot;@angular/common&quot;;
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  inject,
+  Input,
+  OnInit,
+  ViewChild,
+} from &quot;@angular/core&quot;;
+import { MatButtonModule, MatIconButton } from &quot;@angular/material/button&quot;;
+import { MatMenuModule } from &quot;@angular/material/menu&quot;;
+import { MatTableModule } from &quot;@angular/material/table&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+import { ActivatedRoute, RouterLink } from &quot;@angular/router&quot;;
+import { AblePurePipe } from &quot;@casl/angular&quot;;
+import {
+  FaIconComponent,
+  FontAwesomeModule,
+} from &quot;@fortawesome/angular-fontawesome&quot;;
+import { GeoLocation } from &quot;app/features/location/geo-location&quot;;
+import { BehaviorSubject } from &quot;rxjs&quot;;
+import { EntitiesTableComponent } from &quot;../../../core/common-components/entities-table/entities-table.component&quot;;
+import {
+  ColumnConfig,
+  FormFieldConfig,
+} from &quot;../../../core/common-components/entity-form/FormConfig&quot;;
+import { ConfigService } from &quot;../../../core/config/config.service&quot;;
+import { DynamicComponentConfig } from &quot;../../../core/config/dynamic-components/dynamic-component-config.interface&quot;;
+import { DynamicComponent } from &quot;../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
+import { EntityRegistry } from &quot;../../../core/entity/database-entity.decorator&quot;;
+import { EntityFieldViewComponent } from &quot;../../../core/entity/entity-field-view/entity-field-view.component&quot;;
+import { EntityMapperService } from &quot;../../../core/entity/entity-mapper/entity-mapper.service&quot;;
+import { Entity } from &quot;../../../core/entity/model/entity&quot;;
+import { FilterService } from &quot;../../../core/filter/filter.service&quot;;
+import { FilterComponent } from &quot;../../../core/filter/filter/filter.component&quot;;
+import { DataFilter } from &quot;../../../core/filter/filters/filters&quot;;
+import { FormDialogService } from &quot;../../../core/form-dialog/form-dialog.service&quot;;
+import { RouteTarget } from &quot;../../../route-target&quot;;
+import { FlattenArrayPipe } from &quot;../../../utils/flatten-array/flatten-array.pipe&quot;;
+import { addAlphaToHexColor } from &quot;../../../utils/style-utils&quot;;
+import { Coordinates } from &quot;../../location/coordinates&quot;;
+import {
+  getLocationProperties,
+  getMinDistanceKm,
+} from &quot;../../location/map-utils&quot;;
+import { LocationProperties } from &quot;../../location/map/map-properties-popup/map-properties-popup.component&quot;;
+import { MapComponent } from &quot;../../location/map/map.component&quot;;
+import {
+  MatchingEntitiesConfig,
+  MatchingSideConfig,
+  NewMatchAction,
+} from &quot;./matching-entities-config&quot;;
+
+export interface MatchingSide extends MatchingSideConfig {
+  /** pass along filters from app-filter to subrecord component */
+  filterObj?: DataFilter&lt;Entity&gt;;
+
+  availableEntities?: Entity[];
+  selectMatch?: (e) &#x3D;&gt; void;
+  entityType: string;
+
+  /** whether this allows to select more than one selected match */
+  multiSelect: boolean;
+
+  selected?: Entity[];
+
+  /** item of &#x60;selected&#x60; that is currently highlighted */
+  highlightedSelected: Entity;
+
+  distanceColumn: {
+    coordinatesProperties: string[];
+    compareCoordinates: BehaviorSubject&lt;Coordinates[]&gt;;
+  };
+}
+
+@RouteTarget(&quot;MatchingEntities&quot;)
+@DynamicComponent(&quot;MatchingEntities&quot;)
+@Component({
+  selector: &quot;app-matching-entities&quot;,
+  templateUrl: &quot;./matching-entities.component.html&quot;,
+  styleUrls: [&quot;./matching-entities.component.scss&quot;],
+  imports: [
+    MatTableModule,
+    FontAwesomeModule,
+    MatTooltipModule,
+    MatButtonModule,
+    EntitiesTableComponent,
+    EntityFieldViewComponent,
+    MapComponent,
+    FilterComponent,
+    FlattenArrayPipe,
+    MatMenuModule,
+    MatIconButton,
+    FaIconComponent,
+    RouterLink,
+    AblePurePipe,
+    AsyncPipe,
+    EntityTypePipe,
+  ],
+})
+export class MatchingEntitiesComponent implements OnInit {
+  private route &#x3D; inject(ActivatedRoute);
+  private formDialog &#x3D; inject(FormDialogService);
+  private entityMapper &#x3D; inject(EntityMapperService);
+  private configService &#x3D; inject(ConfigService);
+  private entityRegistry &#x3D; inject(EntityRegistry);
+  private filterService &#x3D; inject(FilterService);
+  private changeDetector &#x3D; inject(ChangeDetectorRef);
+
+  static DEFAULT_CONFIG_KEY &#x3D; &quot;appConfig:matching-entities&quot;;
+
+  @Input() entity: Entity;
+  @Input() leftSide: MatchingSideConfig &#x3D; {};
+  @Input() rightSide: MatchingSideConfig &#x3D; {};
+  /**
+   * Column mapping of property pairs of left and right entity that should be compared side by side.
+   * @param value
+   */
+  @Input() columns: [ColumnConfig, ColumnConfig][] &#x3D; [];
+  @Input()
+  matchActionLabel: string &#x3D; $localize&#x60;:Matching button label:create matching&#x60;;
+  @Input() onMatch: NewMatchAction;
+
+  @ViewChild(&quot;matchComparison&quot;, { static: true })
+  matchComparisonElement: ElementRef;
+
+  columnsToDisplay &#x3D; [];
+  lockedMatching &#x3D; false;
+  sideDetails: [MatchingSide, MatchingSide];
+
+  mapVisible &#x3D; false;
+  filteredMapEntities: Entity[] &#x3D; [];
+  displayedLocationProperties: LocationProperties &#x3D; {};
+
+  constructor() {
+    const config: MatchingEntitiesConfig &#x3D;
+      this.configService.getConfig&lt;MatchingEntitiesConfig&gt;(
+        MatchingEntitiesComponent.DEFAULT_CONFIG_KEY,
+      ) ?? {};
+    Object.assign(this, JSON.parse(JSON.stringify(config)));
+
+    this.route.data.subscribe(
+      (data: DynamicComponentConfig&lt;MatchingEntitiesConfig&gt;) &#x3D;&gt; {
+        if (
+          !data?.config?.leftSide &amp;&amp;
+          !data?.config?.rightSide &amp;&amp;
+          !data?.config?.columns
+        ) {
+          return;
+        }
+        Object.assign(this, JSON.parse(JSON.stringify(data.config)));
+      },
+    );
+  }
+
+  // TODO: fill selection on hover already?
+
+  async ngOnInit() {
+    this.sideDetails &#x3D; [
+      await this.initSideDetails(this.leftSide, 0),
+      await this.initSideDetails(this.rightSide, 1),
+    ];
+    this.sideDetails.forEach((side, index) &#x3D;&gt;
+      this.initDistanceColumn(side, index),
+    );
+    this.filterMapEntities();
+    this.columnsToDisplay &#x3D; [&quot;side-0&quot;, &quot;side-1&quot;];
+    // needed due to async
+    this.changeDetector.detectChanges();
+  }
+
+  /**
+   * Generate setup for a side of the matching view template based on the component input properties.
+   * @param side
+   * @param sideIndex
+   * @private
+   */
+  private async initSideDetails(
+    side: MatchingSideConfig,
+    sideIndex: number,
+  ): Promise&lt;MatchingSide&gt; {
+    const newSide &#x3D; buildMatchingSideConfig(
+      side,
+      this.columns,
+      sideIndex,
+    ) as MatchingSide;
+
+    if (!newSide.entityType) {
+      newSide.selected &#x3D; newSide.selected ?? [this.entity];
+      newSide.highlightedSelected &#x3D; newSide.selected[0];
+      newSide.entityType &#x3D; newSide.highlightedSelected?.getType();
+    }
+
+    newSide.multiSelect &#x3D; this.checkIfMultiSelect(
+      this.onMatch.newEntityType,
+      sideIndex &#x3D;&#x3D;&#x3D; 0
+        ? this.onMatch.newEntityMatchPropertyLeft
+        : this.onMatch.newEntityMatchPropertyRight,
+    );
+
+    if (newSide.multiSelect) {
+      newSide.selectMatch &#x3D; this.getMultiSelectFunction(newSide);
+    } else {
+      newSide.selectMatch &#x3D; this.getSingleSelectFunction(newSide);
+    }
+
+    if (!newSide.selected &amp;&amp; newSide.entityType) {
+      newSide.availableEntities &#x3D; await this.entityMapper.loadType(
+        newSide.entityType,
+      );
+      newSide.availableFilters &#x3D; newSide.availableFilters ?? [];
+      newSide.filterObj &#x3D; { ...(side.prefilter ?? {}) };
+    }
+
+    this.mapVisible &#x3D;
+      this.mapVisible ||
+      getLocationProperties(this.entityRegistry.get(newSide.entityType))
+        .length &gt; 0;
+
+    return newSide;
+  }
+
+  private checkIfMultiSelect(
+    onMatchEntityType: string,
+    onMatchProperty: string,
+  ) {
+    const schemaField &#x3D; this.entityRegistry
+      .get(onMatchEntityType)
+      .schema.get(onMatchProperty);
+
+    return schemaField.isArray;
+  }
+
+  private getMultiSelectFunction(newSide: MatchingSide) {
+    return (e: Entity) &#x3D;&gt; {
+      if (!newSide.selected) {
+        newSide.selected &#x3D; [];
+      }
+
+      if (newSide.selected.includes(e)) {
+        // unselect
+        this.highlightSelectedRow(e, true);
+        newSide.selected &#x3D; newSide.selected.filter((s) &#x3D;&gt; s !&#x3D;&#x3D; e);
+        if (newSide.highlightedSelected &#x3D;&#x3D;&#x3D; e) {
+          newSide.highlightedSelected &#x3D; newSide.selected[0];
+        }
+      } else {
+        this.highlightSelectedRow(e);
+        newSide.selected &#x3D; [...newSide.selected, e];
+        newSide.highlightedSelected &#x3D; e;
+      }
+
+      this.matchComparisonElement.nativeElement.scrollIntoView();
+      this.updateDistanceColumn(newSide);
+    };
+  }
+
+  private getSingleSelectFunction(newSide: MatchingSide) {
+    return (e: Entity) &#x3D;&gt; {
+      if (newSide.selected?.[0] &#x3D;&#x3D;&#x3D; e) {
+        // Deselect if already selected
+        this.highlightSelectedRow(e, true);
+        newSide.selected &#x3D; [];
+        newSide.highlightedSelected &#x3D; null;
+      } else {
+        this.highlightSelectedRow(e);
+        if (newSide.highlightedSelected) {
+          this.highlightSelectedRow(newSide.highlightedSelected, true);
+        }
+        newSide.selected &#x3D; [e];
+        newSide.highlightedSelected &#x3D; e;
+      }
+
+      this.matchComparisonElement.nativeElement.scrollIntoView();
+      this.updateDistanceColumn(newSide);
+    };
+  }
+
+  private highlightSelectedRow(newSelectedEntity: Entity, unHighlight &#x3D; false) {
+    if (unHighlight) {
+      newSelectedEntity.getColor &#x3D;
+        newSelectedEntity.getConstructor().prototype.getColor;
+    } else {
+      newSelectedEntity.getColor &#x3D; () &#x3D;&gt;
+        addAlphaToHexColor(
+          Entity.getColorWithConditions(newSelectedEntity),
+          0.2,
+        );
+    }
+  }
+
+  /**
+   * Get background color for entity rows in matching tables.
+   */
+  getEntityBackgroundColor &#x3D; (entity: Entity): string &#x3D;&gt; {
+    const isSelected &#x3D; this.sideDetails?.some((side) &#x3D;&gt;
+      side.selected?.some((selected) &#x3D;&gt; selected.getId() &#x3D;&#x3D;&#x3D; entity.getId()),
+    );
+    if (isSelected) {
+      const color &#x3D; Entity.getColorWithConditions(entity);
+      return addAlphaToHexColor(color, 0.2);
+    }
+
+    return &quot;&quot;;
+  };
+
+  async createMatch() {
+    const newMatchEntity &#x3D; new (this.entityRegistry.get(
+      this.onMatch.newEntityType,
+    ))();
+
+    const leftMatch &#x3D; this.sideDetails[0].selected;
+    const rightMatch &#x3D; this.sideDetails[1].selected;
+
+    newMatchEntity[this.onMatch.newEntityMatchPropertyLeft] &#x3D; this
+      .sideDetails[0].multiSelect
+      ? leftMatch.map((e) &#x3D;&gt; e.getId())
+      : leftMatch[0].getId();
+    newMatchEntity[this.onMatch.newEntityMatchPropertyRight] &#x3D; this
+      .sideDetails[1].multiSelect
+      ? rightMatch.map((e) &#x3D;&gt; e.getId())
+      : rightMatch[0].getId();
+
+    // best guess properties (if they do not exist on the specific entity, the values will be discarded during save
+    newMatchEntity[&quot;date&quot;] &#x3D; new Date();
+    newMatchEntity[&quot;start&quot;] &#x3D; new Date();
+    newMatchEntity[&quot;name&quot;] &#x3D;
+      newMatchEntity.getConstructor().label +
+      &quot; &quot; +
+      leftMatch.map((e) &#x3D;&gt; e.toString()).join(&quot;, &quot;) +
+      &quot; - &quot; +
+      rightMatch.map((e) &#x3D;&gt; e.toString()).join(&quot;, &quot;);
+
+    if (this.onMatch.columnsToReview) {
+      this.formDialog
+        .openFormPopup(newMatchEntity, this.onMatch.columnsToReview)
+        .afterClosed()
+        .subscribe((result) &#x3D;&gt; {
+          if (result instanceof newMatchEntity.getConstructor()) {
+            this.lockedMatching &#x3D; true;
+          }
+        });
+    } else {
+      await this.entityMapper.save(newMatchEntity);
+      this.lockedMatching &#x3D; true;
+    }
+  }
+
+  applySelectedFilters(side: MatchingSide, filter: DataFilter&lt;Entity&gt;) {
+    side.filterObj &#x3D; { ...side.prefilter, ...filter };
+    this.filterMapEntities();
+  }
+
+  private filterMapEntities() {
+    this.filteredMapEntities &#x3D; [];
+    this.sideDetails.forEach((side) &#x3D;&gt; {
+      if (side.filterObj) {
+        const predicate &#x3D; this.filterService.getFilterPredicate(side.filterObj);
+        const filtered &#x3D; side.availableEntities.filter(predicate);
+        this.filteredMapEntities.push(...filtered);
+      } else {
+        this.filteredMapEntities.push(...(side.availableEntities ?? []));
+      }
+    });
+  }
+
+  entityInMapClicked(entity: Entity) {
+    const side &#x3D; this.sideDetails.find(
+      (s) &#x3D;&gt; s.entityType &#x3D;&#x3D;&#x3D; entity.getType(),
+    );
+    if (side) {
+      side.selectMatch(entity);
+    }
+  }
+
+  /**
+   * Initialize distance column for columns of side and columns of EntitySubrecord
+   * @param side
+   * @param index of the side
+   * @private
+   */
+  private initDistanceColumn(side: MatchingSide, index: number) {
+    const sideIndex &#x3D; side.columns.findIndex((col) &#x3D;&gt;
+      typeof col &#x3D;&#x3D;&#x3D; &quot;string&quot; ? col &#x3D;&#x3D;&#x3D; &quot;distance&quot; : col.id &#x3D;&#x3D;&#x3D; &quot;distance&quot;,
+    );
+
+    if (sideIndex !&#x3D;&#x3D; -1) {
+      const columnConfig &#x3D; this.getDistanceColumnConfig(side);
+      side.columns[sideIndex] &#x3D; columnConfig;
+      side.distanceColumn &#x3D; columnConfig.additional;
+      this.setDistanceValuesForSide(side);
+      const colIndex &#x3D; this.columns.findIndex((row) &#x3D;&gt; {
+        const col &#x3D; row[index];
+        return typeof col &#x3D;&#x3D;&#x3D; &quot;string&quot;
+          ? col &#x3D;&#x3D;&#x3D; &quot;distance&quot;
+          : col?.id &#x3D;&#x3D;&#x3D; &quot;distance&quot;;
+      });
+      if (colIndex !&#x3D;&#x3D; -1) {
+        this.columns[colIndex][index] &#x3D; columnConfig;
+      }
+    }
+  }
+
+  /**
+   * Build the display-only distance column configuration for matching tables.
+   */
+  private getDistanceColumnConfig(side: MatchingSide): FormFieldConfig {
+    return {
+      id: &quot;distance&quot;,
+      label: $localize&#x60;:Matching View column name:Distance&#x60;,
+      viewComponent: &quot;DisplayDistance&quot;,
+      dataType: &quot;number&quot;,
+      additional: {
+        coordinatesProperties:
+          this.displayedLocationProperties[side.entityType],
+        compareCoordinates: new BehaviorSubject&lt;Coordinates[]&gt;([]),
+      },
+    };
+  }
+
+  /**
+   * Pre-calculate and attach a non-enumerable &quot;distance&quot; value on each entity
+   * so the table can sort without custom sort functions.
+   */
+  private setDistanceValuesForSide(side: MatchingSide) {
+    if (!side.availableEntities?.length || !side.distanceColumn) {
+      return;
+    }
+
+    for (const entity of side.availableEntities) {
+      this.defineDistanceValue(entity, side);
+    }
+  }
+
+  /**
+   * Define a non-enumerable distance value on the entity for table sorting.
+   */
+  private defineDistanceValue(entity: Entity, side: MatchingSide) {
+    const existingDescriptor &#x3D; Object.getOwnPropertyDescriptor(
+      entity,
+      &quot;distance&quot;,
+    );
+    if (existingDescriptor &amp;&amp; existingDescriptor.configurable &#x3D;&#x3D;&#x3D; false) {
+      return;
+    }
+
+    const distanceValue &#x3D; getMinDistanceKm(
+      entity,
+      side.distanceColumn?.coordinatesProperties ?? [],
+      side.distanceColumn?.compareCoordinates?.value ?? [],
+    );
+
+    Object.defineProperty(entity, &quot;distance&quot;, {
+      configurable: true,
+      enumerable: false,
+      value: distanceValue,
+      writable: true,
+    });
+  }
+
+  updateMarkersAndDistances() {
+    this.sideDetails.forEach((side) &#x3D;&gt; {
+      const sideProperties &#x3D; this.displayedLocationProperties[side.entityType];
+      if (side.distanceColumn) {
+        side.distanceColumn.coordinatesProperties &#x3D; sideProperties;
+        const lastValue &#x3D; side.distanceColumn.compareCoordinates.value;
+        side.distanceColumn.compareCoordinates.next(lastValue);
+      }
+      if (side.highlightedSelected) {
+        this.updateDistanceColumn(side);
+      }
+      this.setDistanceValuesForSide(side);
+    });
+  }
+
+  private updateDistanceColumn(side: MatchingSide) {
+    const locationProperties &#x3D;
+      this.displayedLocationProperties[side.highlightedSelected?.getType()];
+    const otherIndex &#x3D; this.sideDetails[0] &#x3D;&#x3D;&#x3D; side ? 1 : 0;
+    const distanceColumn &#x3D; this.sideDetails[otherIndex].distanceColumn;
+    if (locationProperties &amp;&amp; distanceColumn) {
+      const coordinates: Coordinates[] &#x3D; locationProperties.map(
+        (prop) &#x3D;&gt; (side.highlightedSelected[prop] as GeoLocation)?.geoLookup,
+      );
+      distanceColumn.compareCoordinates.next(coordinates);
+    }
+    const distanceSide &#x3D; this.sideDetails[otherIndex];
+    this.setDistanceValuesForSide(distanceSide);
+  }
+}
+
+/**
+ * Create a MatchingSideConfig object
+ * and fill it with columns from comparison array if necessary
+ * @param side Base side configuration
+ * @param columns columns array from the overall matching configuration
+ * @param sideIndex index (0 or 1) of the side in the columns array
+ */
+export function buildMatchingSideConfig(
+  side: MatchingSideConfig,
+  columns: [ColumnConfig, ColumnConfig][],
+  sideIndex: number,
+): MatchingSideConfig {
+  const newSide &#x3D; Object.assign({}, side) as MatchingSide; // we are transforming it into this type here
+  newSide.columns &#x3D;
+    newSide.columns ??
+    (columns ?? []).map((p) &#x3D;&gt; p[sideIndex]).filter((c) &#x3D;&gt; !!c);
+  return newSide;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;actions-container&quot;&gt;
+  @if (&quot;update&quot; | ablePure: &quot;Config&quot; | async) {
+    &lt;button mat-icon-button color&#x3D;&quot;primary&quot; [matMenuTriggerFor]&#x3D;&quot;additional&quot;&gt;
+      &lt;fa-icon icon&#x3D;&quot;ellipsis-v&quot;&gt;&lt;/fa-icon&gt;
+    &lt;/button&gt;
+    &lt;mat-menu #additional&gt;
+      &lt;button mat-menu-item [routerLink]&#x3D;&quot;[&#x27;/admin/matching&#x27;]&quot;&gt;
+        &lt;fa-icon
+          class&#x3D;&quot;standard-icon-with-text color-accent&quot;
+          icon&#x3D;&quot;tools&quot;
+        &gt;&lt;/fa-icon&gt;
+        &lt;span i18n&gt;Edit Matching Entities&lt;/span&gt;
+      &lt;/button&gt;
+    &lt;/mat-menu&gt;
+  }
+&lt;/div&gt;
+
+&lt;div class&#x3D;&quot;margin-bottom-small&quot; #matchComparison&gt;
+  &lt;table
+    mat-table
+    [dataSource]&#x3D;&quot;columns&quot;
+    class&#x3D;&quot;match-comparison-table mat-elevation-z1&quot;
+  &gt;
+    @for (side of sideDetails; track side; let i &#x3D; $index) {
+      &lt;ng-container [matColumnDef]&#x3D;&quot;&#x27;side-&#x27; + i&quot;&gt;
+        &lt;th
+          mat-header-cell
+          *matHeaderCellDef
+          class&#x3D;&quot;comparison-header&quot;
+          [style.color]&#x3D;&quot;(side.entityType | entityType)?.color ?? &#x27;black&#x27;&quot;
+        &gt;
+          &lt;em class&#x3D;&quot;comparison-header-type&quot;
+            &gt;{{ (side.entityType | entityType)?.label }}:&lt;/em
+          &gt;
+          &amp;nbsp;
+          @for (s of side.selected; track s; let i &#x3D; $index) {
+            &lt;span
+              [class.highlighted-name]&#x3D;&quot;s &#x3D;&#x3D;&#x3D; side.highlightedSelected&quot;
+              (click)&#x3D;&quot;side.highlightedSelected &#x3D; s&quot;
+              &gt;{{ s.toString() }}&lt;/span
+            &gt;
+            @if (i &lt; side.selected.length - 1) {
+              ,
+            }
+          }
+          &amp;nbsp;
+          @if (!side.availableEntities || lockedMatching) {
+            &lt;fa-icon
+              icon&#x3D;&quot;lock&quot;
+              matTooltip&#x3D;&quot;These details of the record are displayed to make comparison easier. You cannot select a different record here.&quot;
+              i18n-matTooltip&#x3D;&quot;
+                tooltip explaining that this entity in matching is locked
+              &quot;
+              class&#x3D;&quot;icon&quot;
+            &gt;&lt;/fa-icon&gt;
+          }
+        &lt;/th&gt;
+        &lt;td mat-cell *matCellDef&#x3D;&quot;let property&quot;&gt;
+          @if (side.highlightedSelected &amp;&amp; property[i]) {
+            &lt;app-entity-field-view
+              [entity]&#x3D;&quot;side.highlightedSelected&quot;
+              [field]&#x3D;&quot;property[i]&quot;
+              showLabel&#x3D;&quot;above&quot;
+            &gt;&lt;/app-entity-field-view&gt;
+          } @else {
+            -
+          }
+        &lt;/td&gt;
+      &lt;/ng-container&gt;
+    }
+
+    &lt;tr mat-header-row *matHeaderRowDef&#x3D;&quot;columnsToDisplay&quot;&gt;&lt;/tr&gt;
+    &lt;tr mat-row *matRowDef&#x3D;&quot;let row; columns: columnsToDisplay&quot;&gt;&lt;/tr&gt;
+  &lt;/table&gt;
+&lt;/div&gt;
+
+&lt;div class&#x3D;&quot;margin-bottom-large flex-column gap-small&quot;&gt;
+  &lt;button
+    mat-raised-button
+    color&#x3D;&quot;accent&quot;
+    style&#x3D;&quot;width: 100%&quot;
+    (click)&#x3D;&quot;createMatch()&quot;
+    [disabled]&#x3D;&quot;
+      !(
+        sideDetails?.[0].selected?.length &gt; 0 &amp;&amp;
+        sideDetails?.[1].selected?.length &gt; 0
+      ) || lockedMatching
+    &quot;
+  &gt;
+    {{ matchActionLabel }}
+  &lt;/button&gt;
+  @if (mapVisible) {
+    &lt;app-map
+      class&#x3D;&quot;flex-grow&quot;
+      [expandable]&#x3D;&quot;true&quot;
+      [showMapOnly]&#x3D;&quot;true&quot;
+      [entities]&#x3D;&quot;filteredMapEntities&quot;
+      [highlightedEntities]&#x3D;&quot;
+        [sideDetails?.[0].selected, sideDetails?.[1].selected] | flattenArray
+      &quot;
+      (entityClick)&#x3D;&quot;entityInMapClicked($event)&quot;
+      [(displayedProperties)]&#x3D;&quot;displayedLocationProperties&quot;
+      (displayedPropertiesChange)&#x3D;&quot;updateMarkersAndDistances()&quot;
+    &gt;&lt;/app-map&gt;
+  }
+&lt;/div&gt;
+
+@if (!lockedMatching) {
+  &lt;div class&#x3D;&quot;flex-row flex-wrap gap-large&quot;&gt;
+    @for (side of sideDetails; track side) {
+      @if (side.availableEntities) {
+        &lt;div class&#x3D;&quot;flex-grow&quot;&gt;
+          &lt;h3
+            [style.color]&#x3D;&quot;(side.entityType | entityType)?.color ?? &#x27;black&#x27;&quot;
+            class&#x3D;&quot;selection-header&quot;
+            i18n&#x3D;&quot;header of section with entities available for selection&quot;
+          &gt;
+            Select {{ (side.entityType | entityType)?.label }}
+          &lt;/h3&gt;
+
+          @if (side.multiSelect) {
+            &lt;div class&#x3D;&quot;selection-table-hint margin-bottom-regular&quot; i18n&gt;
+              Click on multiple rows below to match a group.
+            &lt;/div&gt;
+          }
+
+          &lt;app-filter
+            class&#x3D;&quot;flex-row gap-regular flex-wrap&quot;
+            [filterConfig]&#x3D;&quot;side.availableFilters&quot;
+            [entityType]&#x3D;&quot;side.entityType | entityType&quot;
+            [entities]&#x3D;&quot;side.availableEntities&quot;
+            (filterObjChange)&#x3D;&quot;applySelectedFilters(side, $event)&quot;
+          &gt;&lt;/app-filter&gt;
+
+          &lt;app-entities-table
+            [entityType]&#x3D;&quot;side.entityType | entityType&quot;
+            [records]&#x3D;&quot;side.availableEntities&quot;
+            [customColumns]&#x3D;&quot;side.columns&quot;
+            [editable]&#x3D;&quot;false&quot;
+            clickMode&#x3D;&quot;none&quot;
+            (entityClick)&#x3D;&quot;side.selectMatch($event)&quot;
+            [filter]&#x3D;&quot;side.filterObj&quot;
+            [getBackgroundColor]&#x3D;&quot;getEntityBackgroundColor&quot;
+          &gt;&lt;/app-entities-table&gt;
+        &lt;/div&gt;
+      }
+    }
+  &lt;/div&gt;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./matching-entities.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;mixins/grid-layout&quot;;
+@use &quot;variables/sizes&quot;;
+
+.overall-layout {
+  @include grid-layout.adaptive(380px, 100%);
+}
+
+.map-placeholder {
+  background-color: lightgrey;
+  height: 100px;
+  padding: 2em;
+}
+
+.match-comparison-table {
+  table-layout: fixed;
+  width: 100%;
+  border-spacing: sizes.$large 0;
+  margin: auto;
+}
+
+.comparison-header {
+  font-size: medium;
+}
+.comparison-header-type {
+  font-weight: bold;
+}
+.selection-header {
+  font-weight: 500;
+  font-size: medium;
+}
+
+.highlighted-name {
+  text-decoration: underline;
+}
+
+.actions-container {
+  position: absolute;
+  right: 0;
+}
+
+.selection-table-hint {
+  font-size: 0.9em;
+  font-style: italic;
+
+  // replace the margin of the heading above
+  margin-top: -16px;
+}</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis-network.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div class="actions-container">  @if ("update" | ablePure: "Config" | async) {    <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">      <fa-icon icon="ellipsis-v"></fa-icon>    </button>    <mat-menu #additional>      <button mat-menu-item [routerLink]="[\'/admin/matching\']">        <fa-icon          class="standard-icon-with-text color-accent"          icon="tools"        ></fa-icon>        <span i18n>Edit Matching Entities</span>      </button>    </mat-menu>  }</div><div class="margin-bottom-small" #matchComparison>  <table    mat-table    [dataSource]="columns"    class="match-comparison-table mat-elevation-z1"  >    @for (side of sideDetails; track side; let i = $index) {      <ng-container [matColumnDef]="\'side-\' + i">        <th          mat-header-cell          *matHeaderCellDef          class="comparison-header"          [style.color]="(side.entityType | entityType)?.color ?? \'black\'"        >          <em class="comparison-header-type"            >{{ (side.entityType | entityType)?.label }}:</em          >          &nbsp;          @for (s of side.selected; track s; let i = $index) {            <span              [class.highlighted-name]="s === side.highlightedSelected"              (click)="side.highlightedSelected = s"              >{{ s.toString() }}</span            >            @if (i < side.selected.length - 1) {              ,            }          }          &nbsp;          @if (!side.availableEntities || lockedMatching) {            <fa-icon              icon="lock"              matTooltip="These details of the record are displayed to make comparison easier. You cannot select a different record here."              i18n-matTooltip="                tooltip explaining that this entity in matching is locked              "              class="icon"            ></fa-icon>          }        </th>        <td mat-cell *matCellDef="let property">          @if (side.highlightedSelected && property[i]) {            <app-entity-field-view              [entity]="side.highlightedSelected"              [field]="property[i]"              showLabel="above"            ></app-entity-field-view>          } @else {            -          }        </td>      </ng-container>    }    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>    <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>  </table></div><div class="margin-bottom-large flex-column gap-small">  <button    mat-raised-button    color="accent"    style="width: 100%"    (click)="createMatch()"    [disabled]="      !(        sideDetails?.[0].selected?.length > 0 &&        sideDetails?.[1].selected?.length > 0      ) || lockedMatching    "  >    {{ matchActionLabel }}  </button>  @if (mapVisible) {    <app-map      class="flex-grow"      [expandable]="true"      [showMapOnly]="true"      [entities]="filteredMapEntities"      [highlightedEntities]="        [sideDetails?.[0].selected, sideDetails?.[1].selected] | flattenArray      "      (entityClick)="entityInMapClicked($event)"      [(displayedProperties)]="displayedLocationProperties"      (displayedPropertiesChange)="updateMarkersAndDistances()"    ></app-map>  }</div>@if (!lockedMatching) {  <div class="flex-row flex-wrap gap-large">    @for (side of sideDetails; track side) {      @if (side.availableEntities) {        <div class="flex-grow">          <h3            [style.color]="(side.entityType | entityType)?.color ?? \'black\'"            class="selection-header"            i18n="header of section with entities available for selection"          >            Select {{ (side.entityType | entityType)?.label }}          </h3>          @if (side.multiSelect) {            <div class="selection-table-hint margin-bottom-regular" i18n>              Click on multiple rows below to match a group.            </div>          }          <app-filter            class="flex-row gap-regular flex-wrap"            [filterConfig]="side.availableFilters"            [entityType]="side.entityType | entityType"            [entities]="side.availableEntities"            (filterObjChange)="applySelectedFilters(side, $event)"          ></app-filter>          <app-entities-table            [entityType]="side.entityType | entityType"            [records]="side.availableEntities"            [customColumns]="side.columns"            [editable]="false"            clickMode="none"            (entityClick)="side.selectMatch($event)"            [filter]="side.filterObj"            [getBackgroundColor]="getEntityBackgroundColor"          ></app-entities-table>        </div>      }    }  </div>}</div>'
+    var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddDayAttendanceComponent', 'selector': 'app-add-day-attendance'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminUserRolesComponent', 'selector': 'app-admin-user-roles'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block]'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceStatusSelectComponent', 'selector': 'app-attendance-status-select'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportAdditionalSettingsComponent', 'selector': 'app-import-additional-settings'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'InputFileComponent', 'selector': 'app-input-file'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesManagerComponent', 'selector': 'app-notes-manager'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
+    var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'ExportDataDirective', 'selector': '[appExportData]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
+    var ACTUAL_COMPONENT = {'name': 'MatchingEntitiesComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'MatchingEntitiesComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

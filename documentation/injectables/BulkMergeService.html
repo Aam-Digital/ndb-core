@@ -1,0 +1,610 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >BulkMergeService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/de-duplication/bulk-merge-service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#executeMerge" >executeMerge</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#showMergeDialog" >showMergeDialog</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="executeMerge"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>executeMerge</b></span>
+                        <a href="#executeMerge"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>executeMerge(mergedEntity: E, entitiesToMerge: E[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="55"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-service.ts:55</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>E</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Merges the selected entities into a single entity.
+deletes the other entities.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>mergedEntity</td>
+                                            <td>
+                                                        <code>E</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The merged entity.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>entitiesToMerge</td>
+                                            <td>
+                                                        <code>E[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="showMergeDialog"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>showMergeDialog</b></span>
+                        <a href="#showMergeDialog"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>showMergeDialog(entitiesToMerge: E[], entityType: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="30"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-service.ts:30</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>E</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Opens the merge popup with the selected entities details.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entitiesToMerge</td>
+                                            <td>
+                                                        <code>E[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The entities to merge.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The type of the entities.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { EntityMapperService } from &quot;app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import { Entity, EntityConstructor } from &quot;app/core/entity/model/entity&quot;;
+import { MatDialog } from &quot;@angular/material/dialog&quot;;
+import { lastValueFrom } from &quot;rxjs&quot;;
+import { BulkMergeRecordsComponent } from &quot;app/features/de-duplication/bulk-merge-records/bulk-merge-records.component&quot;;
+import { AlertService } from &quot;app/core/alerts/alert.service&quot;;
+import { UnsavedChangesService } from &quot;app/core/entity-details/form/unsaved-changes.service&quot;;
+import { Note } from &quot;app/child-dev-project/notes/model/note&quot;;
+import { EventAttendanceMap } from &quot;../attendance/model/event-attendance.datatype&quot;;
+import { EntityRelationsService } from &quot;app/core/entity/entity-mapper/entity-relations.service&quot;;
+import { FormFieldConfig } from &quot;app/core/common-components/entity-form/FormConfig&quot;;
+
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class BulkMergeService {
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly entityRelationshipService &#x3D; inject(EntityRelationsService);
+  private readonly matDialog &#x3D; inject(MatDialog);
+  private readonly alert &#x3D; inject(AlertService);
+  private readonly unsavedChangesService &#x3D; inject(UnsavedChangesService);
+
+  /**
+   * Opens the merge popup with the selected entities details.
+   *
+   * @param entitiesToMerge The entities to merge.
+   * @param entityType The type of the entities.
+   */
+  async showMergeDialog&lt;E extends Entity&gt;(
+    entitiesToMerge: E[],
+    entityType: EntityConstructor,
+  ): Promise&lt;void&gt; {
+    const dialogRef &#x3D; this.matDialog.open(BulkMergeRecordsComponent, {
+      maxHeight: &quot;90vh&quot;,
+      data: { entityConstructor: entityType, entitiesToMerge: entitiesToMerge },
+    });
+    const mergedEntity: E &#x3D; await lastValueFrom(dialogRef.afterClosed());
+
+    if (mergedEntity) {
+      await this.executeMerge(mergedEntity, entitiesToMerge);
+
+      this.unsavedChangesService.pending &#x3D; false;
+      this.alert.addInfo($localize&#x60;Records merged successfully.&#x60;);
+    }
+  }
+
+  /**
+   * Merges the selected entities into a single entity.
+   * deletes the other entities.
+   *
+   * @param mergedEntity The merged entity.
+   * @param entitiesToMerge
+   */
+  async executeMerge&lt;E extends Entity&gt;(
+    mergedEntity: E,
+    entitiesToMerge: E[],
+  ): Promise&lt;void&gt; {
+    await this.entityMapper.save(mergedEntity);
+
+    // Process all entities to be deleted
+    for (let e of entitiesToMerge) {
+      if (e.getId() &#x3D;&#x3D;&#x3D; mergedEntity.getId()) continue;
+
+      await this.updateRelatedRefId(e, mergedEntity);
+
+      await this.entityMapper.remove(e);
+    }
+  }
+
+  /**
+   * Update references from the entity being deleted to the merged entity
+   */
+  private async updateRelatedRefId(
+    oldEntity: Entity,
+    newEntity: Entity,
+  ): Promise&lt;void&gt; {
+    const affectedEntities &#x3D;
+      await this.entityRelationshipService.loadAllLinkingToEntity(oldEntity);
+    for (const affected of affectedEntities) {
+      await this.updateEntityReferences(
+        affected.entity,
+        oldEntity,
+        newEntity,
+        affected.fields,
+      );
+    }
+  }
+
+  /**
+   * Updates references from the oldEntity to the newEntity in a related entity.
+   */
+  private async updateEntityReferences(
+    relatedEntity: Entity,
+    oldEntity: Entity,
+    newEntity: Entity,
+    refField: FormFieldConfig[],
+  ): Promise&lt;void&gt; {
+    const oldId &#x3D; oldEntity.getId();
+    const newId &#x3D; newEntity.getId();
+    const refFieldId &#x3D; refField[0].id;
+
+    if (Array.isArray(relatedEntity[refFieldId])) {
+      relatedEntity[refFieldId] &#x3D; Array.from(
+        new Set(
+          relatedEntity[refFieldId].map((id) &#x3D;&gt; (id &#x3D;&#x3D;&#x3D; oldId ? newId : id)),
+        ),
+      );
+    } else if (relatedEntity[refFieldId] &#x3D;&#x3D;&#x3D; oldId) {
+      relatedEntity[refFieldId] &#x3D; newId;
+    }
+
+    if (relatedEntity instanceof Note &amp;&amp; refFieldId &#x3D;&#x3D;&#x3D; &quot;children&quot;) {
+      this.updateChildrenAttendance(relatedEntity, oldId, newId);
+    }
+
+    await this.entityMapper.save(relatedEntity);
+  }
+
+  /**
+   * Helper method to updates the attendance records of children in a Note entity by replacing
+   * references to the old entity ID with the new entity ID.
+   */
+  private updateChildrenAttendance(
+    relatedEntity: Note,
+    oldId: string,
+    newId: string,
+  ): void {
+    const childrenAttendance &#x3D; (relatedEntity as any)
+      .childrenAttendance as EventAttendanceMap;
+    if (childrenAttendance.has(oldId)) {
+      childrenAttendance.set(newId, childrenAttendance.get(oldId));
+      childrenAttendance.delete(oldId);
+    }
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'BulkMergeService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

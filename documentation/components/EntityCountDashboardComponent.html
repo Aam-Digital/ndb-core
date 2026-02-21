@@ -1,0 +1,1515 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  EntityCountDashboardComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts</code>
+</p>
+
+
+
+    <p class="comment">
+        <h3>Extends</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="../classes/DashboardWidget.html" target="_self" >DashboardWidget</a></code>
+    </p>
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="../interfaces/EntityCountDashboardConfig.html" target="_self" >EntityCountDashboardConfig</a></code>
+                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-entity-count-dashboard-widget</code></td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>MatTableModule</code>
+                            <code>FontAwesomeModule</code>
+                            <code>Angulartics2Module</code>
+                                <code><a href="../components/DashboardListWidgetComponent.html" target="_self" >DashboardListWidgetComponent</a></code>
+                            <code>MatTooltipModule</code>
+                            <code>MatIconButton</code>
+                                <code><a href="../components/EntityFieldLabelComponent.html" target="_self" >EntityFieldLabelComponent</a></code>
+                                <code><a href="../components/EntityFieldViewComponent.html" target="_self" >EntityFieldViewComponent</a></code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./entity-count-dashboard.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./entity-count-dashboard.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Protected</span>
+                                <a href="#_entity" >_entity</a>
+                            </li>
+                            <li>
+                                <a href="#currentGroupIndex" >currentGroupIndex</a>
+                            </li>
+                            <li>
+                                <a href="#entityGroupCounts" >entityGroupCounts</a>
+                            </li>
+                            <li>
+                                <a href="#entityIcon" >entityIcon</a>
+                            </li>
+                            <li>
+                                <a href="#label" >label</a>
+                            </li>
+                            <li>
+                                <a href="#totalEntities" >totalEntities</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#getNext" >getNext</a>
+                            </li>
+                            <li>
+                                <a href="#getPrev" >getPrev</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
+                                    <span class="modifier"></span>
+                                <a href="#getRequiredEntities" >getRequiredEntities</a>
+                            </li>
+                            <li>
+                                <a href="#goToEntityList" >goToEntityList</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#entityType" >entityType</a>
+                            </li>
+                            <li>
+                                <a href="#explanation" >explanation</a>
+                            </li>
+                            <li>
+                                <a href="#groupBy" >groupBy</a>
+                            </li>
+                            <li>
+                                <a href="#subtitle" >subtitle</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Accessors</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                    <a href="#entityType" >entityType</a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+        </tbody>
+    </table>
+</section>
+
+
+    <section data-compodoc="block-inputs">
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="entityType"></a>
+                        <b>entityType</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="102" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:102</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Entity name which should be grouped</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="explanation"></a>
+                        <b>explanation</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>$localize&#x60;:dashboard widget explanation:Counting all &quot;active&quot; records. If configured, you can view different disaggregations by using the arrows below.&#x60;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="134" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:134</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="groupBy"></a>
+                        <b>groupBy</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>string[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[&quot;center&quot;, &quot;gender&quot;]</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="113" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:113</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>The property of the entities to group counts by.</p>
+<p>Default is &quot;center&quot;.</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="subtitle"></a>
+                        <b>subtitle</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="133" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:133</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getNext"></a>
+                    <span class="name">
+                        <span ><b>getNext</b></span>
+                        <a href="#getNext"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getNext()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="90"
+                                    class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:90</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getPrev"></a>
+                    <span class="name">
+                        <span ><b>getPrev</b></span>
+                        <a href="#getPrev"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getPrev()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="85"
+                                    class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:85</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getRequiredEntities"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                            <span class="modifier"></span>
+                        <span ><b>getRequiredEntities</b></span>
+                        <a href="#getRequiredEntities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getRequiredEntities(config: <a href="../interfaces/EntityCountDashboardConfig.html" target="_self">EntityCountDashboardConfig</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/DashboardWidget.html" target="_self" >DashboardWidget</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/DashboardWidget.html#source" target="_self" >DashboardWidget:94</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>config</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntityCountDashboardConfig.html" target="_self" >EntityCountDashboardConfig</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="goToEntityList"></a>
+                    <span class="name">
+                        <span ><b>goToEntityList</b></span>
+                        <a href="#goToEntityList"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>goToEntityList(filterId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="269"
+                                    class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:269</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>filterId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="_entity"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>_entity</b></span>
+                        <a href="#_entity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="106" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:106</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="currentGroupIndex"></a>
+                    <span class="name">
+                        <span ><b>currentGroupIndex</b></span>
+                        <a href="#currentGroupIndex"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>0</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="123" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:123</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Index of the currently displayed groupBy field / entityGroupCounts entry.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="entityGroupCounts"></a>
+                    <span class="name">
+                        <span ><b>entityGroupCounts</b></span>
+                        <a href="#entityGroupCounts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>literal type</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{}</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="118" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:118</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The counts of entities for each of the groupBy fields.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="entityIcon"></a>
+                    <span class="name">
+                        <span ><b>entityIcon</b></span>
+                        <a href="#entityIcon"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>IconName</code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="131" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:131</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="label"></a>
+                    <span class="name">
+                        <span ><b>label</b></span>
+                        <a href="#label"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="130" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:130</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The label of the entity type (displayed as an overall dashboard widget subtitle)</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="totalEntities"></a>
+                    <span class="name">
+                        <span ><b>totalEntities</b></span>
+                        <a href="#totalEntities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="125" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:125</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-accessors">
+    <h3 id="accessors">
+        Accessors
+    </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="entityType"></a>
+                        <span class="name"><b>entityType</b><a href="#entityType"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>set</b><code>entityType(value: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="102" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:102</a></div>
+                                </td>
+                            </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-description"><p>Entity name which should be grouped</p>
+</div>
+
+                                <div class="io-description">
+                                        <b>Parameters :</b>
+                                        <table class="params">
+                                            <thead>
+                                                <tr>
+                                                    <td>Name</td>
+                                                        <td>Type</td>
+                                                    <td>Optional</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    <tr>
+                                                            <td>value</td>
+                                                    
+                                                            <td>
+                                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                                            </td>
+                                                    
+                                                        <td>
+                                                                No
+                                                        </td>
+                                                        
+                                                    </tr>
+                                            </tbody>
+                                        </table>
+                                </div>
+                                <div class="io-description">
+                                    <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                                </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+</section>
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input, OnInit, inject } from &quot;@angular/core&quot;;
+import { Router } from &quot;@angular/router&quot;;
+
+import { MatIconButton } from &quot;@angular/material/button&quot;;
+import { MatTableModule } from &quot;@angular/material/table&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
+import { IconName } from &quot;@fortawesome/fontawesome-svg-core&quot;;
+import { Angulartics2Module } from &quot;angulartics2&quot;;
+import { ConfigurableEnumService } from &quot;app/core/basic-datatypes/configurable-enum/configurable-enum.service&quot;;
+import { ConfigurableEnumValue } from &quot;app/core/basic-datatypes/configurable-enum/configurable-enum.types&quot;;
+import { DynamicComponent } from &quot;../../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
+import { DashboardListWidgetComponent } from &quot;../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component&quot;;
+import { DashboardWidget } from &quot;../../../../core/dashboard/dashboard-widget/dashboard-widget&quot;;
+import { EntityRegistry } from &quot;../../../../core/entity/database-entity.decorator&quot;;
+import { EntityFieldLabelComponent } from &quot;../../../../core/entity/entity-field-label/entity-field-label.component&quot;;
+import { EntityMapperService } from &quot;../../../../core/entity/entity-mapper/entity-mapper.service&quot;;
+import {
+  Entity,
+  EntityConstructor,
+} from &quot;../../../../core/entity/model/entity&quot;;
+import { groupBy } from &quot;../../../../utils/utils&quot;;
+import { EntityFieldViewComponent } from &quot;#src/app/core/entity/entity-field-view/entity-field-view.component&quot;;
+
+/**
+ * Configuration (stored in Config document in the DB) for the dashboard widget.
+ */
+export interface EntityCountDashboardConfig {
+  entityType?: string;
+  groupBy?: string[];
+}
+
+/**
+ * Details of one row of disaggregated counts (e.g. for a specific category value) to be displayed.
+ */
+interface GroupCountRow {
+  label: string | undefined;
+  id: string;
+
+  /**
+   * The count of entities part of this group
+   */
+  value: number;
+
+  isInvalidOption?: boolean;
+  color?: string;
+
+  /**
+   * entity with the field value set for display component rendering
+   */
+  entity?: Entity;
+
+  /**
+   * Field name for the display component
+   */
+  fieldName?: string;
+}
+
+@DynamicComponent(&quot;ChildrenCountDashboard&quot;)
+@DynamicComponent(&quot;EntityCountDashboard&quot;)
+@Component({
+  selector: &quot;app-entity-count-dashboard-widget&quot;,
+  templateUrl: &quot;./entity-count-dashboard.component.html&quot;,
+  styleUrls: [&quot;./entity-count-dashboard.component.scss&quot;],
+  imports: [
+    MatTableModule,
+    FontAwesomeModule,
+    Angulartics2Module,
+    DashboardListWidgetComponent,
+    MatTooltipModule,
+    MatIconButton,
+    EntityFieldLabelComponent,
+    EntityFieldViewComponent,
+  ],
+})
+export class EntityCountDashboardComponent
+  extends DashboardWidget
+  implements EntityCountDashboardConfig, OnInit
+{
+  private entityMapper &#x3D; inject(EntityMapperService);
+  private router &#x3D; inject(Router);
+  private entities &#x3D; inject(EntityRegistry);
+  private configurableEnum &#x3D; inject(ConfigurableEnumService);
+
+  getPrev() {
+    this.currentGroupIndex &#x3D;
+      (this.currentGroupIndex - 1 + this.groupBy.length) % this.groupBy.length;
+  }
+
+  getNext() {
+    this.currentGroupIndex &#x3D; (this.currentGroupIndex + 1) % this.groupBy.length;
+  }
+
+  static override getRequiredEntities(config: EntityCountDashboardConfig) {
+    return config?.entityType || &quot;Child&quot;;
+  }
+
+  /**
+   * Entity name which should be grouped
+   * @param value
+   */
+  @Input() set entityType(value: string) {
+    this._entity &#x3D; this.entities.get(value);
+  }
+
+  protected _entity: EntityConstructor;
+
+  /**
+   * The property of the entities to group counts by.
+   *
+   * Default is &quot;center&quot;.
+   */
+  @Input() groupBy: string[] &#x3D; [&quot;center&quot;, &quot;gender&quot;];
+
+  /**
+   * The counts of entities for each of the groupBy fields.
+   */
+  entityGroupCounts: { [groupBy: string]: GroupCountRow[] } &#x3D; {};
+
+  /**
+   * Index of the currently displayed groupBy field / entityGroupCounts entry.
+   */
+  currentGroupIndex &#x3D; 0;
+
+  totalEntities: number;
+
+  /**
+   * The label of the entity type (displayed as an overall dashboard widget subtitle)
+   */
+  label: string;
+  entityIcon: IconName;
+
+  @Input() subtitle: string;
+  @Input() explanation: string &#x3D;
+    $localize&#x60;:dashboard widget explanation:Counting all &quot;active&quot; records. If configured, you can view different disaggregations by using the arrows below.&#x60;;
+
+  async ngOnInit() {
+    if (!this._entity) {
+      this.entityType &#x3D; &quot;Child&quot;;
+    }
+    this.label &#x3D; this._entity.labelPlural;
+    this.entityIcon &#x3D; this._entity.icon;
+
+    // Load all entities of the specified type
+    const entities &#x3D; await this.entityMapper.loadType(this._entity);
+
+    // Filter entities to only include active ones for the total count
+    const activeEntities &#x3D; entities.filter((e) &#x3D;&gt; e.isActive);
+
+    this.totalEntities &#x3D; activeEntities.length;
+    for (const groupByField of this.groupBy) {
+      this.entityGroupCounts[groupByField] &#x3D; this.calculateGroupCounts(
+        activeEntities,
+        groupByField,
+      );
+    }
+  }
+
+  private calculateGroupCounts(
+    entities: Entity[],
+    fieldName: string,
+  ): GroupCountRow[] {
+    const field &#x3D; this._entity.schema.get(fieldName);
+
+    let groupCounts &#x3D; this.getGroupCounts(entities, fieldName);
+    groupCounts &#x3D; this.mergeNotDefinedGroups(groupCounts);
+
+    if (field.dataType &#x3D;&#x3D;&#x3D; &quot;configurable-enum&quot;) {
+      return this.getEnumGroupCounts(groupCounts, field);
+    }
+
+    return groupCounts;
+  }
+
+  /** Groups entities by field and returns initial groupCounts array */
+  private getGroupCounts(
+    entities: Entity[],
+    fieldName: string,
+  ): GroupCountRow[] {
+    const groups &#x3D; groupBy(entities, fieldName as keyof Entity);
+    return groups.map(([group, entities]) &#x3D;&gt; {
+      const row: GroupCountRow &#x3D; {
+        label: extractHumanReadableLabel(group),
+        value: entities.length,
+        id: extractGroupId(group),
+        fieldName,
+      };
+
+      // Create a dummy entity with the field value set for display component rendering
+      if (group !&#x3D;&#x3D; undefined &amp;&amp; group !&#x3D;&#x3D; null &amp;&amp; group !&#x3D;&#x3D; &quot;&quot;) {
+        const entity &#x3D; new this._entity();
+        entity[fieldName] &#x3D; group;
+        row.entity &#x3D; entity;
+      }
+      return row;
+    });
+  }
+
+  /** Merges &quot;&quot; and undefined groups into a single group with label: undefined */
+  private mergeNotDefinedGroups(groupCounts: GroupCountRow[]): GroupCountRow[] {
+    const notDefinedGroups &#x3D; groupCounts.filter(
+      (g) &#x3D;&gt; g.id &#x3D;&#x3D;&#x3D; &quot;&quot; || g.id &#x3D;&#x3D;&#x3D; undefined,
+    );
+    if (notDefinedGroups.length &gt; 1) {
+      const merged &#x3D; {
+        label: undefined,
+        value: notDefinedGroups.reduce((sum, g) &#x3D;&gt; sum + g.value, 0),
+        id: &quot;&quot;,
+      };
+      return [
+        merged,
+        ...groupCounts.filter((g) &#x3D;&gt; g.id !&#x3D;&#x3D; &quot;&quot; &amp;&amp; g.id !&#x3D;&#x3D; undefined),
+      ];
+    }
+    return groupCounts;
+  }
+
+  /** Handles groupCounts for configurable-enum fields, including color and invalid option merging */
+  private getEnumGroupCounts(
+    groupCounts: GroupCountRow[],
+    field: any,
+  ): GroupCountRow[] {
+    const enumValues &#x3D; this.configurableEnum.getEnumValues(field.additional);
+    const validIds &#x3D; new Set(enumValues.map((ev) &#x3D;&gt; ev.id));
+    const groupCountsMap &#x3D; new Map(
+      groupCounts.map((aggregate) &#x3D;&gt; [aggregate.id, aggregate]),
+    );
+
+    // Combine all invalid options into a single row
+    const invalidGroups &#x3D; groupCounts.filter(
+      (g) &#x3D;&gt; g.id &amp;&amp; !validIds.has(g.id),
+    );
+    let invalidOptionRow: GroupCountRow | undefined &#x3D; undefined;
+    if (invalidGroups.length &gt; 0) {
+      invalidOptionRow &#x3D; {
+        label: undefined,
+        value: invalidGroups.reduce((sum, g) &#x3D;&gt; sum + g.value, 0),
+        id: &quot;__invalid__&quot;,
+        isInvalidOption: true,
+      };
+    }
+
+    let groupCountSorted &#x3D; enumValues
+      .map((enumValue) &#x3D;&gt; {
+        const group &#x3D; groupCountsMap.get(enumValue.id);
+        if (group) {
+          return enumValue.color !&#x3D;&#x3D; undefined
+            ? { ...group, color: enumValue.color }
+            : { ...group };
+        }
+        return undefined;
+      })
+      .filter(Boolean);
+
+    // Add merged undefined group if present
+    if (groupCountsMap.has(&quot;&quot;)) {
+      const mergedGroup &#x3D; groupCountsMap.get(&quot;&quot;);
+      groupCountSorted.unshift(mergedGroup);
+    }
+
+    // Add the single invalid option row at the top if it exists
+    if (invalidOptionRow) {
+      groupCountSorted &#x3D; [invalidOptionRow, ...groupCountSorted];
+    }
+
+    return groupCountSorted;
+  }
+
+  goToEntityList(filterId: string) {
+    const params &#x3D; {};
+    params[this.groupBy[this.currentGroupIndex]] &#x3D; filterId;
+
+    this.router.navigate([this._entity.route], { queryParams: params });
+  }
+}
+
+/**
+ * Get a human-readable string from the given value as a label.
+ * @param value
+ */
+function extractHumanReadableLabel(
+  value: string | ConfigurableEnumValue | any,
+): string | undefined {
+  if (value &#x3D;&#x3D;&#x3D; undefined || value &#x3D;&#x3D;&#x3D; null || value &#x3D;&#x3D;&#x3D; &quot;&quot;) {
+    return undefined;
+  }
+  if (typeof value &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
+    return value;
+  }
+  if (value?.label) {
+    return value.label;
+  }
+
+  return String(value);
+}
+
+/**
+ * Extract a group ID from a group value (string, object, etc.)
+ */
+function extractGroupId(group: any): string {
+  if (group &#x3D;&#x3D;&#x3D; undefined || group &#x3D;&#x3D;&#x3D; null || group &#x3D;&#x3D;&#x3D; &quot;&quot;) {
+    return &quot;&quot;;
+  }
+  if (typeof group &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; &quot;id&quot; in group) {
+    return group.id;
+  }
+  return group;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;app-dashboard-list-widget
+  [icon]&#x3D;&quot;entityIcon&quot;
+  theme&#x3D;&quot;child&quot;
+  [title]&#x3D;&quot;totalEntities&quot;
+  [subtitle]&#x3D;&quot;subtitle ?? label&quot;
+  [explanation]&#x3D;&quot;explanation&quot;
+  [entries]&#x3D;&quot;entityGroupCounts[groupBy[currentGroupIndex]]&quot;
+  [paginationPageSize]&#x3D;&quot;4&quot;
+&gt;
+  &lt;div class&#x3D;&quot;flex-row navigation-controls&quot;&gt;
+    &lt;button
+      mat-icon-button
+      matTooltip&#x3D;&quot;Previous Grouping&quot;
+      i18n-matTooltip
+      caption&#x3D;&quot;Previous&quot;
+      aria-label&#x3D;&quot;Previous grouping&quot;
+      (click)&#x3D;&quot;getPrev()&quot;
+      [style.visibility]&#x3D;&quot;groupBy?.length &gt; 1 ? &#x27;visible&#x27; : &#x27;hidden&#x27;&quot;
+      [style.transform]&#x3D;&quot;&#x27;scale(0.75)&#x27;&quot;
+    &gt;
+      &lt;fa-icon icon&#x3D;&quot;circle-chevron-left&quot; size&#x3D;&quot;xs&quot;&gt;&lt;/fa-icon&gt;
+    &lt;/button&gt;
+
+    &lt;span
+      class&#x3D;&quot;flex-grow groupby-label&quot;
+      i18n&#x3D;&quot;category of disagregation in EntityCountDashboard&quot;
+    &gt;
+      by
+      &lt;app-entity-field-label
+        [entityType]&#x3D;&quot;_entity&quot;
+        [field]&#x3D;&quot;groupBy[currentGroupIndex]&quot;
+      &gt;
+      &lt;/app-entity-field-label&gt;
+      :
+    &lt;/span&gt;
+
+    &lt;button
+      mat-icon-button
+      matTooltip&#x3D;&quot;Next Grouping&quot;
+      i18n-matTooltip
+      caption&#x3D;&quot;Next&quot;
+      aria-label&#x3D;&quot;Next grouping&quot;
+      (click)&#x3D;&quot;getNext()&quot;
+      [style.visibility]&#x3D;&quot;groupBy?.length &gt; 1 ? &#x27;visible&#x27; : &#x27;hidden&#x27;&quot;
+      [style.transform]&#x3D;&quot;&#x27;scale(0.75)&#x27;&quot;
+    &gt;
+      &lt;fa-icon icon&#x3D;&quot;circle-chevron-right&quot;&gt;&lt;/fa-icon&gt;
+    &lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;div class&#x3D;&quot;label-separator&quot;&gt;&lt;/div&gt;
+
+  &lt;div class&#x3D;&quot;table-wrapper&quot;&gt;
+    &lt;table
+      mat-table
+      i18n-aria-label&#x3D;&quot;Label for children count dashboard&quot;
+      aria-label&#x3D;&quot;Table showing disaggregation of the beneficiaries&quot;
+    &gt;
+      &lt;ng-container matColumnDef&#x3D;&quot;label&quot;&gt;
+        &lt;td *matCellDef&#x3D;&quot;let group&quot;&gt;
+          @if (group.isInvalidOption) {
+            &lt;span
+              class&#x3D;&quot;invalid-label&quot;
+              matTooltip&#x3D;&quot;records with a value that is not matching any available dropdown option&quot;
+              i18n-matTooltip
+              i18n
+            &gt;
+              [invalid option]
+            &lt;/span&gt;
+          } @else if (group.label &#x3D;&#x3D;&#x3D; undefined) {
+            &lt;span
+              class&#x3D;&quot;not-defined-label&quot;
+              matTooltip&#x3D;&quot;records where this field is empty&quot;
+              i18n-matTooltip
+              i18n
+              &gt;not defined&lt;/span
+            &gt;
+          } @else if (group.entity &amp;&amp; group.fieldName) {
+            &lt;app-entity-field-view
+              [entity]&#x3D;&quot;group.entity&quot;
+              [field]&#x3D;&quot;group.fieldName&quot;
+            &gt;&lt;/app-entity-field-view&gt;
+          }
+        &lt;/td&gt;
+      &lt;/ng-container&gt;
+      &lt;ng-container matColumnDef&#x3D;&quot;value&quot;&gt;
+        &lt;td *matCellDef&#x3D;&quot;let group&quot; class&#x3D;&quot;text-align-end padding-left-regular&quot;&gt;
+          {{ group.value }}
+        &lt;/td&gt;
+      &lt;/ng-container&gt;
+      &lt;ng-container matColumnDef&#x3D;&quot;link&quot;&gt;
+        &lt;td *matCellDef class&#x3D;&quot;text-align-end&quot;&gt;
+          &lt;fa-icon icon&#x3D;&quot;external-link-square-alt&quot;&gt;&lt;/fa-icon&gt;
+        &lt;/td&gt;
+      &lt;/ng-container&gt;
+
+      &lt;tr hidden&gt;
+        &lt;th
+          scope&#x3D;&quot;col&quot;
+          i18n&#x3D;&quot;The center that a partiipant belongs to, e.g. a city&quot;
+        &gt;
+          Center
+        &lt;/th&gt;
+        &lt;th scope&#x3D;&quot;col&quot; i18n&#x3D;&quot;The amount of children that study at one school&quot;&gt;
+          Count of children
+        &lt;/th&gt;
+        &lt;th scope&#x3D;&quot;col&quot; i18n&#x3D;&quot;A link that takes a user to a center&quot;&gt;Link&lt;/th&gt;
+      &lt;/tr&gt;
+      &lt;tr
+        mat-row
+        *matRowDef&#x3D;&quot;let row; let i &#x3D; index; columns: [&#x27;label&#x27;, &#x27;value&#x27;, &#x27;link&#x27;]&quot;
+        (click)&#x3D;&quot;goToEntityList(row.id)&quot;
+        class&#x3D;&quot;pointer&quot;
+        angulartics2On&#x3D;&quot;click&quot;
+        angularticsCategory&#x3D;&quot;Navigation&quot;
+        angularticsAction&#x3D;&quot;dashboard_children_count_school_link&quot;
+        [angularticsLabel]&#x3D;&quot;&#x27;list-entry-&#x27; + i&quot;
+      &gt;&lt;/tr&gt;
+    &lt;/table&gt;
+  &lt;/div&gt;
+&lt;/app-dashboard-list-widget&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./entity-count-dashboard.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;../../../../core/dashboard/dashboard-widget-base&quot;;
+@use &quot;../../../../core/common-components/special-option-labels.scss&quot;;
+
+.groupby-label {
+  margin: auto;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.label-separator {
+  border-top: 1px solid #ccc;
+  margin: 8px 0 0 0;
+}
+
+.mat-mdc-table {
+  .mat-mdc-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    column-gap: 8px;
+  }
+}
+
+.navigation-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis-network.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><app-dashboard-list-widget  [icon]="entityIcon"  theme="child"  [title]="totalEntities"  [subtitle]="subtitle ?? label"  [explanation]="explanation"  [entries]="entityGroupCounts[groupBy[currentGroupIndex]]"  [paginationPageSize]="4">  <div class="flex-row navigation-controls">    <button      mat-icon-button      matTooltip="Previous Grouping"      i18n-matTooltip      caption="Previous"      aria-label="Previous grouping"      (click)="getPrev()"      [style.visibility]="groupBy?.length > 1 ? \'visible\' : \'hidden\'"      [style.transform]="\'scale(0.75)\'"    >      <fa-icon icon="circle-chevron-left" size="xs"></fa-icon>    </button>    <span      class="flex-grow groupby-label"      i18n="category of disagregation in EntityCountDashboard"    >      by      <app-entity-field-label        [entityType]="_entity"        [field]="groupBy[currentGroupIndex]"      >      </app-entity-field-label>      :    </span>    <button      mat-icon-button      matTooltip="Next Grouping"      i18n-matTooltip      caption="Next"      aria-label="Next grouping"      (click)="getNext()"      [style.visibility]="groupBy?.length > 1 ? \'visible\' : \'hidden\'"      [style.transform]="\'scale(0.75)\'"    >      <fa-icon icon="circle-chevron-right"></fa-icon>    </button>  </div>  <div class="label-separator"></div>  <div class="table-wrapper">    <table      mat-table      i18n-aria-label="Label for children count dashboard"      aria-label="Table showing disaggregation of the beneficiaries"    >      <ng-container matColumnDef="label">        <td *matCellDef="let group">          @if (group.isInvalidOption) {            <span              class="invalid-label"              matTooltip="records with a value that is not matching any available dropdown option"              i18n-matTooltip              i18n            >              [invalid option]            </span>          } @else if (group.label === undefined) {            <span              class="not-defined-label"              matTooltip="records where this field is empty"              i18n-matTooltip              i18n              >not defined</span            >          } @else if (group.entity && group.fieldName) {            <app-entity-field-view              [entity]="group.entity"              [field]="group.fieldName"            ></app-entity-field-view>          }        </td>      </ng-container>      <ng-container matColumnDef="value">        <td *matCellDef="let group" class="text-align-end padding-left-regular">          {{ group.value }}        </td>      </ng-container>      <ng-container matColumnDef="link">        <td *matCellDef class="text-align-end">          <fa-icon icon="external-link-square-alt"></fa-icon>        </td>      </ng-container>      <tr hidden>        <th          scope="col"          i18n="The center that a partiipant belongs to, e.g. a city"        >          Center        </th>        <th scope="col" i18n="The amount of children that study at one school">          Count of children        </th>        <th scope="col" i18n="A link that takes a user to a center">Link</th>      </tr>      <tr        mat-row        *matRowDef="let row; let i = index; columns: [\'label\', \'value\', \'link\']"        (click)="goToEntityList(row.id)"        class="pointer"        angulartics2On="click"        angularticsCategory="Navigation"        angularticsAction="dashboard_children_count_school_link"        [angularticsLabel]="\'list-entry-\' + i"      ></tr>    </table>  </div></app-dashboard-list-widget></div>'
+    var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddDayAttendanceComponent', 'selector': 'app-add-day-attendance'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminUserRolesComponent', 'selector': 'app-admin-user-roles'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block]'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceStatusSelectComponent', 'selector': 'app-attendance-status-select'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportAdditionalSettingsComponent', 'selector': 'app-import-additional-settings'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'InputFileComponent', 'selector': 'app-input-file'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesManagerComponent', 'selector': 'app-notes-manager'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
+    var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'ExportDataDirective', 'selector': '[appExportData]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
+    var ACTUAL_COMPONENT = {'name': 'EntityCountDashboardComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'EntityCountDashboardComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

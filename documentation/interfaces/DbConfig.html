@@ -1,0 +1,649 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  DbConfig</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/database/indexeddb-migration.service.ts</code>
+        </p>
+
+
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#adapter" 
+>
+                                            adapter
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#dbNames" 
+>
+                                            dbNames
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="adapter"></a>
+                                        <span class="name "><b>adapter</b>
+                                            <a href="#adapter">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>adapter:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="dbNames"></a>
+                                        <span class="name "><b>dbNames</b>
+                                            <a href="#dbNames">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>dbNames:     <code>literal type</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>literal type</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { SessionInfo, SessionSubject } from &quot;../session/auth/session-info&quot;;
+import { SyncStateSubject } from &quot;../session/session-type&quot;;
+import { SyncState } from &quot;../session/session-states/sync-state.enum&quot;;
+import { computeDbNames, computeLegacyDbNames } from &quot;./db-name-helpers&quot;;
+import { ConfirmationDialogService } from &quot;../common-components/confirmation-dialog/confirmation-dialog.service&quot;;
+import { Logging } from &quot;../logging/logging.service&quot;;
+import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from &quot;../../utils/di-tokens&quot;;
+import { filter, first } from &quot;rxjs/operators&quot;;
+import PouchDB from &quot;pouchdb-browser&quot;;
+import { environment } from &quot;../../../environments/environment&quot;;
+import { Database } from &quot;./database&quot;;
+import { SyncedPouchDatabase } from &quot;./pouchdb/synced-pouch-database&quot;;
+
+export interface DbConfig {
+  dbNames: { app: string; notifications: string };
+  adapter: string;
+}
+
+const DB_MIGRATED_PREFIX &#x3D; &quot;DB_MIGRATED_&quot;;
+
+/**
+ * Manages the migration from the legacy PouchDB &quot;idb&quot; adapter to the newer &quot;indexeddb&quot; adapter,
+ * and from username-based DB names to Keycloak-UUID-based DB names.
+ *
+ * The migration is non-blocking: the app continues to work on the old DB while a background
+ * replication populates the new DB. Once both old-DB sync and new-DB replication are complete,
+ * a migration flag is set and the user is prompted to reload.
+ */
+@Injectable({ providedIn: &quot;root&quot; })
+export class IndexeddbMigrationService {
+  private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
+  private readonly navigator &#x3D; inject&lt;Navigator&gt;(NAVIGATOR_TOKEN, {
+    optional: true,
+  });
+  private readonly window &#x3D; inject&lt;Window&gt;(WINDOW_TOKEN, { optional: true });
+  private readonly session &#x3D; inject(SessionSubject, { optional: true });
+
+  /** Whether the last resolveDbConfig() determined migration is needed. */
+  migrationPending &#x3D; false;
+
+  /**
+   * Determine the database configuration (names + adapter) for the current session.
+   *
+   * Decision logic:
+   * 1. use_indexeddb_adapter disabled → legacy names + &quot;idb&quot; adapter (no migration)
+   * 2. Migration flag set → new names + &quot;indexeddb&quot;
+   * 3. No old DB exists (fresh install) → new names + &quot;indexeddb&quot;
+   * 4. Old DB exists, no flag → legacy names + &quot;idb&quot; (migration pending)
+   */
+  async resolveDbConfig(session: SessionInfo): Promise&lt;DbConfig&gt; {
+    this.migrationPending &#x3D; false; // reset pending flag on each resolve attempt
+
+    if (!environment.use_indexeddb_adapter) {
+      Logging.debug(
+        &quot;IndexeddbMigration: use_indexeddb_adapter disabled; using legacy DB config&quot;,
+      );
+      return {
+        dbNames: computeLegacyDbNames(session),
+        adapter: &quot;idb&quot;,
+      };
+    }
+
+    // Already migrated or fresh install (no old DB exists)
+    const oldDbExists &#x3D; await this.legacyDbExists(session);
+    if (this.isMigrated(session) || !oldDbExists) {
+      Logging.debug(
+        &quot;IndexeddbMigration: using new DB config&quot;,
+        this.isMigrated(session)
+          ? &quot;(migration flag set)&quot;
+          : &quot;(no legacy DB found; assuming fresh install)&quot;,
+      );
+      return {
+        dbNames: computeDbNames(session),
+        adapter: &quot;indexeddb&quot;,
+      };
+    }
+
+    // Old DB exists, not yet migrated → use old DB, migration pending
+    this.migrationPending &#x3D; true;
+    Logging.debug(
+      &quot;IndexeddbMigration: using legacy DB config (migration pending)&quot;,
+    );
+    return {
+      dbNames: computeLegacyDbNames(session),
+      adapter: &quot;idb&quot;,
+    };
+  }
+
+  /**
+   * Start a background migration for the given database if migration is pending,
+   * the database is a SyncedPouchDatabase, and we are online.
+   *
+   * Replicates all data from the remote CouchDB into a new local DB with the
+   * &quot;indexeddb&quot; adapter and new naming scheme. Once both old-DB sync and new-DB
+   * replication complete, the migration flag is set and the user is prompted to reload.
+   *
+   * @param session Current user session
+   * @param db The database instance to migrate from
+   * @param dbKey Which database to migrate: &quot;app&quot; or &quot;notifications&quot;
+   */
+  runBackgroundMigration(session: SessionInfo, db: Database): void {
+    if (!this.migrationPending) {
+      return;
+    }
+    if (!(db instanceof SyncedPouchDatabase)) {
+      return;
+    }
+    const remotePouchDB &#x3D; db.getRemotePouchDB();
+    if (!remotePouchDB || !this.navigator?.onLine) {
+      Logging.debug(
+        &quot;IndexeddbMigration: skipping background migration (offline or no remote)&quot;,
+      );
+      return;
+    }
+
+    const newDbNames &#x3D; computeDbNames(session);
+
+    // we only migrate the &quot;app&quot; database; logic to track completed migration is simplified!
+    this.migrateDatabase(
+      newDbNames[&quot;app&quot;],
+      remotePouchDB,
+      db.localSyncState,
+      session,
+    );
+  }
+
+  private migrateDatabase(
+    newDbName: string,
+    remotePouchDB: PouchDB.Database,
+    oldDbSyncState: SyncStateSubject,
+    session: SessionInfo,
+  ): void {
+    Logging.debug(
+      &#x60;IndexeddbMigration: starting background replication into &quot;${newDbName}&quot;&#x60;,
+    );
+
+    const newDb &#x3D; this.createPouchDb(newDbName);
+
+    let replicationDone &#x3D; false;
+    let oldSyncDone &#x3D; false;
+
+    const checkBothComplete &#x3D; () &#x3D;&gt; {
+      if (replicationDone &amp;&amp; oldSyncDone) {
+        // we only migrate &quot;app&quot; DB for simplicity (no need to track separate migration states for all DBs)
+        this.setMigrated(session);
+        newDb.close();
+        this.promptReload();
+      }
+    };
+
+    // Background replication from remote → new local DB
+    newDb.replicate
+      .from(remotePouchDB, { batch_size: 500 })
+      .then(() &#x3D;&gt; {
+        Logging.debug(
+          &#x60;IndexeddbMigration: replication into &quot;${newDbName}&quot; completed&#x60;,
+        );
+        replicationDone &#x3D; true;
+        checkBothComplete();
+      })
+      .catch((err) &#x3D;&gt; {
+        Logging.warn(
+          &#x60;IndexeddbMigration: replication into &quot;${newDbName}&quot; failed&#x60;,
+          err,
+        );
+        newDb.close();
+      });
+
+    // Wait for old DB to complete its initial sync
+    if (oldDbSyncState.value &#x3D;&#x3D;&#x3D; SyncState.COMPLETED) {
+      oldSyncDone &#x3D; true;
+    } else {
+      oldDbSyncState
+        .pipe(
+          filter((state) &#x3D;&gt; state &#x3D;&#x3D;&#x3D; SyncState.COMPLETED),
+          first(),
+        )
+        .subscribe(() &#x3D;&gt; {
+          oldSyncDone &#x3D; true;
+          checkBothComplete();
+        });
+    }
+  }
+
+  private createPouchDb(newDbName: string): PouchDB.Database {
+    return new PouchDB(newDbName, { adapter: &quot;indexeddb&quot; });
+  }
+
+  private async promptReload(): Promise&lt;void&gt; {
+    const confirmed &#x3D; await this.confirmationDialog.getConfirmation(
+      $localize&#x60;:Migration dialog title:Database Upgrade Ready&#x60;,
+      $localize&#x60;:Migration dialog text:Your database has been upgraded for improved performance. Reload now to start using it?&#x60;,
+    );
+
+    if (confirmed) {
+      this.window?.location.reload();
+    }
+  }
+
+  private isMigrated(session: SessionInfo): boolean {
+    return localStorage.getItem(DB_MIGRATED_PREFIX + session.id) &#x3D;&#x3D;&#x3D; &quot;true&quot;;
+  }
+
+  private setMigrated(session: SessionInfo): void {
+    localStorage.setItem(DB_MIGRATED_PREFIX + session.id, &quot;true&quot;);
+    Logging.debug(
+      &#x60;IndexeddbMigration: migration flag set for user ${session.id}&#x60;,
+    );
+  }
+
+  /**
+   * Check whether a legacy (old-format) database exists in IndexedDB.
+   * Uses the &#x60;indexedDB.databases()&#x60; API where available.
+   */
+  private async legacyDbExists(session: SessionInfo): Promise&lt;boolean&gt; {
+    const legacyNames &#x3D; computeLegacyDbNames(session);
+    // PouchDB prefixes IndexedDB database names with &quot;_pouch_&quot;
+    const expectedName &#x3D; &#x60;_pouch_${legacyNames.app}&#x60;;
+
+    const indexedDBApi &#x3D; this.window?.indexedDB;
+    if (!indexedDBApi) {
+      Logging.debug(
+        &quot;IndexeddbMigration: window.indexedDB not available; assuming legacy DB may exist&quot;,
+      );
+      // If IndexedDB is not available (e.g. SSR), assume migration is needed (safe default)
+      return true;
+    }
+
+    try {
+      if (typeof indexedDBApi.databases &#x3D;&#x3D;&#x3D; &quot;function&quot;) {
+        const dbs &#x3D; await indexedDBApi.databases();
+        return dbs.some((db) &#x3D;&gt; db.name &#x3D;&#x3D;&#x3D; expectedName);
+      }
+    } catch (e) {
+      Logging.debug(
+        &quot;IndexeddbMigration: indexedDB.databases() not available&quot;,
+        e,
+      );
+    }
+
+    // If the API is not available, assume migration is needed (safe default)
+    return true;
+  }
+
+  /**
+   * Delete legacy IndexedDB databases after a successful migration.
+   * Only runs if the migration flag is set for the given session.
+   *
+   * Currently not called. Will be added in a future release after users have had time to migrate, to clean up old databases and free up space.
+   */
+  async cleanupLegacyDatabases(
+    session: SessionInfo &#x3D; this.session.value,
+  ): Promise&lt;void&gt; {
+    if (!this.isMigrated(session)) {
+      return;
+    }
+
+    const indexedDBApi &#x3D; this.window?.indexedDB;
+    if (!indexedDBApi) {
+      Logging.debug(
+        &quot;IndexeddbMigration: window.indexedDB not available; skipping cleanup&quot;,
+      );
+      return;
+    }
+
+    const legacyNames &#x3D; computeLegacyDbNames(session);
+    const dbs &#x3D; await indexedDBApi.databases();
+    for (const [key, dbName] of Object.entries(legacyNames)) {
+      // PouchDB prefixes IndexedDB database names with &quot;_pouch_&quot;
+      const idbName &#x3D; &#x60;_pouch_${dbName}&#x60;;
+      // delete any related DB (PouchDB adds some views as separate DBs with suffixes)
+      const dbsToDelete &#x3D; dbs.filter((db) &#x3D;&gt; db.name.startsWith(idbName));
+
+      for (const dbInfo of dbsToDelete) {
+        try {
+          await this.deleteIndexedDb(indexedDBApi, dbInfo.name);
+          Logging.debug(
+            &#x60;IndexeddbMigration: deleted legacy ${key} database &quot;${dbInfo.name}&quot;&#x60;,
+          );
+        } catch (e) {
+          Logging.warn(
+            &#x60;IndexeddbMigration: failed to delete legacy ${key} database &quot;${dbInfo.name}&quot;&#x60;,
+            e,
+          );
+        }
+      }
+    }
+
+    localStorage.removeItem(DB_MIGRATED_PREFIX + session.id);
+    Logging.debug(
+      &#x60;IndexeddbMigration: cleanup complete for user ${session.id}; migration flag removed&#x60;,
+    );
+  }
+
+  private deleteIndexedDb(
+    indexedDBApi: IDBFactory,
+    name: string,
+  ): Promise&lt;void&gt; {
+    return new Promise&lt;void&gt;((resolve, reject) &#x3D;&gt; {
+      const req &#x3D; indexedDBApi.deleteDatabase(name);
+      req.onsuccess &#x3D; () &#x3D;&gt; resolve();
+      req.onerror &#x3D; () &#x3D;&gt; reject(req.error);
+      req.onblocked &#x3D; () &#x3D;&gt; {
+        Logging.warn(
+          &#x60;IndexeddbMigration: deletion of &quot;${name}&quot; is blocked by open connections; resolving anyway&#x60;,
+        );
+        // Deletion will proceed once connections close; treat as non-fatal.
+        resolve();
+      };
+    });
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'DbConfig.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

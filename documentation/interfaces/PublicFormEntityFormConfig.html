@@ -1,0 +1,659 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  PublicFormEntityFormConfig</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/public-form/public-form-config.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Configuration for a single entity form within a public form.
+Supports multiple entity types in one public form submission.</p>
+
+            </p>
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#columns" 
+>
+                                            columns
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#entity" 
+>
+                                            entity
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#linkedEntities" 
+>
+                                            linkedEntities
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#linkedFromForm" 
+>
+                                            linkedFromForm
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#prefilled" 
+>
+                                            prefilled
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="columns"></a>
+                                        <span class="name "><b>columns</b>
+                                            <a href="#columns">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>columns:         <code><a href="../interfaces/FieldGroup.html" target="_self" >FieldGroup[]</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../interfaces/FieldGroup.html" target="_self" >FieldGroup[]</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Fields to display in the form, organized into field groups/columns.</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="entity"></a>
+                                        <span class="name "><b>entity</b>
+                                            <a href="#entity">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>entity:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>The type of record that is created when someone submits the form.
+(e.g. if you select &quot;Note&quot; here, the form will create new entries in your &quot;Notes List&quot;
+and you can select only fields of your &quot;Note&quot; data structure for this form)</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="linkedEntities"></a>
+                                        <span class="name "><b>linkedEntities</b>
+                                            <a href="#linkedEntities">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>linkedEntities:     <code>string[]</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>string[]</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Field IDs that link to other entities in the same form submission.
+These fields will be automatically populated with IDs of entities created
+by other forms in the same submission or passed as URL parameters.</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="linkedFromForm"></a>
+                                        <span class="name "><b>linkedFromForm</b>
+                                            <a href="#linkedFromForm">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>linkedFromForm:     <code>string[]</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>string[]</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Field IDs that should be linked from other forms in the same submission.
+Uses schema metadata to decide which form&#39;s entity ID to apply.</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="prefilled"></a>
+                                        <span class="name "><b>prefilled</b>
+                                            <a href="#prefilled">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>prefilled:     <code>literal type</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>literal type</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Fields with default/prefilled values.
+Key is the field ID, value is the default value configuration.</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Entity } from &quot;../../core/entity/model/entity&quot;;
+import { DatabaseEntity } from &quot;../../core/entity/database-entity.decorator&quot;;
+import { DatabaseField } from &quot;../../core/entity/database-field.decorator&quot;;
+import { LongTextDatatype } from &quot;app/core/basic-datatypes/string/long-text.datatype&quot;;
+import { FieldGroup } from &quot;app/core/entity-details/form/field-group&quot;;
+import { DefaultValueConfig } from &quot;#src/app/core/default-values/default-value-config&quot;;
+
+/**
+ * Configuration for a single entity form within a public form.
+ * Supports multiple entity types in one public form submission.
+ */
+export interface PublicFormEntityFormConfig {
+  /**
+   * The type of record that is created when someone submits the form.
+   * (e.g. if you select &quot;Note&quot; here, the form will create new entries in your &quot;Notes List&quot;
+   * and you can select only fields of your &quot;Note&quot; data structure for this form)
+   */
+  entity: string;
+
+  /**
+   * Fields to display in the form, organized into field groups/columns.
+   */
+  columns: FieldGroup[];
+
+  /**
+   * Fields with default/prefilled values.
+   * Key is the field ID, value is the default value configuration.
+   */
+  prefilled?: { [key: string]: DefaultValueConfig };
+
+  /**
+   * Field IDs that link to other entities in the same form submission.
+   * These fields will be automatically populated with IDs of entities created
+   * by other forms in the same submission or passed as URL parameters.
+   */
+  linkedEntities?: string[];
+
+  /**
+   * Field IDs that should be linked from other forms in the same submission.
+   * Uses schema metadata to decide which form&#x27;s entity ID to apply.
+   */
+  linkedFromForm?: string[];
+}
+
+/**
+ * Each entity of this type defines a new publicly accessible form
+ * that can be reached through the given route even by users without being logged in
+ * used in the public forms where we wanted to linked multiple entities in one form.
+ */
+@DatabaseEntity(&quot;PublicFormConfig&quot;)
+export class PublicFormConfig extends Entity {
+  static override label &#x3D; $localize&#x60;:PublicFormConfig:Public Form&#x60;;
+  static override labelPlural &#x3D; $localize&#x60;:PublicFormConfig:Public Forms&#x60;;
+  static override route &#x3D; &quot;admin/public-form&quot;;
+  static override toStringAttributes &#x3D; [&quot;title&quot;];
+  static override isInternalEntity &#x3D; true;
+
+  @DatabaseField({
+    label: $localize&#x60;:PublicFormConfig:Form Logo&#x60;,
+    description: $localize&#x60;:PublicFormConfig:Add an image to be displayed at the top of the form&#x60;,
+    dataType: &quot;file&quot;,
+    additional: 300,
+  })
+  logo: string;
+
+  @DatabaseField({
+    label: $localize&#x60;:PublicFormConfig:Title&#x60;,
+  })
+  title: string;
+
+  @DatabaseField({
+    label: $localize&#x60;:PublicFormConfig:Form Link ID&#x60;,
+    validators: {
+      required: true,
+    },
+    editComponent: &quot;EditPublicformRoute&quot;,
+  })
+  route: string;
+
+  @DatabaseField({
+    label: $localize&#x60;:PublicFormConfig:Description&#x60;,
+    dataType: LongTextDatatype.dataType,
+  })
+  description: string;
+
+  /** @deprecated Use &#x60;forms&#x60; array instead for multi-form support */
+  @DatabaseField({
+    label: $localize&#x60;:PublicFormConfig:Record&#x60;,
+    description: $localize&#x60;:PublicFormConfig:The type of record that is created when a someone submits the form (e.g. if you select &quot;Note&quot; here, the form will create new entries in your &quot;Notes List&quot; and you can select only fields of your &quot;Note&quot; data structure for this form)&#x60;,
+    editComponent: &quot;EditEntityType&quot;,
+    viewComponent: &quot;DisplayEntityType&quot;,
+    validators: {
+      required: true,
+      readonlyAfterSet: true,
+    },
+  })
+  entity: string;
+
+  /** @deprecated Use &#x60;forms&#x60; array instead for multi-form support */
+  @DatabaseField({
+    label: $localize&#x60;:PublicFormConfig:Fields&#x60;,
+    editComponent: &quot;EditPublicFormColumns&quot;,
+    isArray: true,
+  })
+  columns: FieldGroup[];
+
+  /** @deprecated Use &#x60;forms&#x60; array instead for multi-form support */
+  @DatabaseField({
+    label: $localize&#x60;:PublicFormConfig:Prefilled Fields&#x60;,
+    editComponent: &quot;EditPrefilledValuesComponent&quot;,
+  })
+  prefilled: { [key: string]: DefaultValueConfig };
+
+  /** @deprecated Use &#x60;forms&#x60; array instead for multi-form support */
+  @DatabaseField({
+    label: $localize&#x60;:PublicFormConfig:Linked Entities&#x60;,
+    editComponent: &quot;EditPublicFormRelatedEntitiesComponent&quot;,
+    isArray: true,
+  })
+  linkedEntities: string[];
+
+  @DatabaseField({
+    label: $localize&#x60;:PublicFormConfig:Multiple Forms&#x60;,
+    isArray: true,
+  })
+  forms: PublicFormEntityFormConfig[];
+
+  @DatabaseField({
+    label: $localize&#x60;:PublicFormConfig:Show &quot;Submit Another Form&quot; Button&#x60;,
+    description: $localize&#x60;:PublicFormConfig:If enabled, users will see a &quot;Submit Another Form&quot; button after a successful submission. This helps when you want multiple submissions from the same user.&#x60;,
+    dataType: &quot;boolean&quot;,
+  })
+  showSubmitAnotherButton: boolean &#x3D; false;
+
+  override get isActive(): boolean {
+    // hide the new style public forms (nested &#x60;forms&#x60; array) because the Admin UI is not ready yet
+    // TODO: remove after implementing https://github.com/Aam-Digital/ndb-core/issues/3610
+    if (this.forms?.length) {
+      return false;
+    }
+
+    return super.isActive;
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'PublicFormEntityFormConfig.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

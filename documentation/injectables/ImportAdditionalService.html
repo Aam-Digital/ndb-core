@@ -1,0 +1,1063 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >ImportAdditionalService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/import/additional-actions/import-additional.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Service to handle additional import actions
+like creating secondary relationship entities.</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#createActionLabel" >createActionLabel</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#executeImport" >executeImport</a>
+                            </li>
+                            <li>
+                                <a href="#getActionsLinkingFor" >getActionsLinkingFor</a>
+                            </li>
+                            <li>
+                                <a href="#getActionsLinkingTo" >getActionsLinkingTo</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#undoImport" >undoImport</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:34</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createActionLabel"></a>
+                    <span class="name">
+                        <span ><b>createActionLabel</b></span>
+                        <a href="#createActionLabel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>createActionLabel(importAction: <a href="../miscellaneous/typealiases.html#AdditionalImportAction" target="_self">AdditionalImportAction</a>, forTargetType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="300"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:300</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Create a human-readable label for the given import action.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>importAction</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#AdditionalImportAction" target="_self" >AdditionalImportAction</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>forTargetType</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>(Optional) If true, phrased for the context menu of the target type to import the source type and link back</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="executeImport"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>executeImport</b></span>
+                        <a href="#executeImport"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>executeImport(entities: <a href="../classes/Entity.html" target="_self">Entity[]</a>, settings: <a href="../interfaces/ImportSettings.html" target="_self">ImportSettings</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="162"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:162</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Execute additional import actions for the given entities,
+linking entities.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entities</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>settings</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ImportSettings.html" target="_self" >ImportSettings</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getActionsLinkingFor"></a>
+                    <span class="name">
+                        <span ><b>getActionsLinkingFor</b></span>
+                        <a href="#getActionsLinkingFor"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getActionsLinkingFor(entityType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="134"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:134</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get the entity actions that data of the given entity type can be linked to during its import.
+(e.g. for &quot;Child&quot; entityType, the result could be [{ targetType: &quot;School&quot; ...}], indicating that during import of children, they can be linked to a school)</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/typealiases.html#AdditionalImportAction" target="_self" >AdditionalImportAction[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getActionsLinkingTo"></a>
+                    <span class="name">
+                        <span ><b>getActionsLinkingTo</b></span>
+                        <a href="#getActionsLinkingTo"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getActionsLinkingTo(targetEntityType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="143"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:143</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get the entity types that during their import can be linked to the given target entity type.
+(e.g. for &quot;School&quot; targetEntityType, the result could be [{ sourceType: &quot;Child&quot; ... }], indicating that during import of children, they can be linked to a school)</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>targetEntityType</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/typealiases.html#AdditionalImportAction" target="_self" >AdditionalImportAction[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="undoImport"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>undoImport</b></span>
+                        <a href="#undoImport"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>undoImport(importMeta: <a href="../classes/ImportMetadata.html" target="_self">ImportMetadata</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="183"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:183</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>importMeta</td>
+                                            <td>
+                                                            <code><a href="../classes/ImportMetadata.html" target="_self" >ImportMetadata</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
+import { ImportMetadata, ImportSettings } from &quot;../import-metadata&quot;;
+import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
+import { EntityRegistry } from &quot;../../entity/database-entity.decorator&quot;;
+import {
+  AdditionalImportAction,
+  AdditionalIndirectLinkAction,
+  AdditonalDirectLinkAction,
+} from &quot;./additional-import-action&quot;;
+import { EntityDatatype } from &quot;../../basic-datatypes/entity/entity.datatype&quot;;
+import { FormFieldConfig } from &quot;../../common-components/entity-form/FormConfig&quot;;
+import { ConfigService } from &quot;../../config/config.service&quot;;
+import { Note } from &quot;../../../child-dev-project/notes/model/note&quot;;
+import { EventNote } from &quot;#src/app/features/attendance/model/event-note&quot;;
+import { Todo } from &quot;../../../features/todos/model/todo&quot;;
+import { EntityRelationsService } from &quot;../../entity/entity-mapper/entity-relations.service&quot;;
+import { asArray } from &quot;../../../utils/asArray&quot;;
+
+/**
+ * Service to handle additional import actions
+ * like creating secondary relationship entities.
+ */
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class ImportAdditionalService {
+  private configService &#x3D; inject(ConfigService);
+
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
+  private readonly entityRelationsService &#x3D; inject(EntityRelationsService);
+
+  private linkableEntities &#x3D; new Map&lt;string, AdditionalImportAction[]&gt;();
+
+  constructor() {
+    this.updateLinkableEntities();
+    this.configService.configUpdates.subscribe(() &#x3D;&gt;
+      // need to wait until EntityConfigService has updated the entityRegistry after the configUpdate
+      // TODO: better way to wait for EntityConfig updates?
+      setTimeout(() &#x3D;&gt; this.updateLinkableEntities()),
+    );
+  }
+
+  private updateLinkableEntities() {
+    this.linkableEntities.clear();
+    for (const [entityTypeId] of this.entityRegistry.entries()) {
+      const actions &#x3D; this.generateLinkActionsFor(entityTypeId);
+      if (actions.length &gt; 0) {
+        this.linkableEntities.set(entityTypeId, actions);
+      } else {
+        this.linkableEntities.delete(entityTypeId);
+      }
+    }
+  }
+
+  private generateLinkActionsFor(sourceType: string): AdditionalImportAction[] {
+    const refs &#x3D;
+      this.entityRelationsService.getEntityTypesReferencingType(sourceType);
+
+    const directActions: AdditonalDirectLinkAction[] &#x3D; [];
+    const indirectActions: AdditionalIndirectLinkAction[] &#x3D; [];
+
+    for (const ref of refs) {
+      for (const field of ref.referencingProperties) {
+        if (field.entityReferenceRole &#x3D;&#x3D;&#x3D; &quot;composite&quot;) {
+          // for &quot;relationship&quot; types that only serve as connections, do not add a &quot;direct&quot; link import but an &quot;indirect&quot; one
+          indirectActions.push(
+            ...this.findIndirectLinkActionsForField(
+              ref.entityType.ENTITY_TYPE,
+              field,
+              sourceType,
+            ),
+          );
+        } else {
+          // direct linking to the target entity
+          if (field.isArray) {
+            directActions.push({
+              sourceType,
+              mode: &quot;direct&quot;,
+              targetType: ref.entityType.ENTITY_TYPE,
+              targetProperty: field.id,
+            });
+          }
+        }
+      }
+    }
+
+    return [...directActions, ...indirectActions];
+  }
+
+  private findIndirectLinkActionsForField(
+    targetType: string,
+    targetField: FormFieldConfig,
+    sourceType: string,
+  ) {
+    const indirectActions: AdditionalIndirectLinkAction[] &#x3D; [];
+    const targetTypeCtr &#x3D; this.entityRegistry.get(targetType);
+
+    // other types these referencing types are also linking to (so they can serve as a connection relationship entity)
+    for (const [fieldId2, field2] of targetTypeCtr.schema.entries()) {
+      if (targetField.entityReferenceRole !&#x3D;&#x3D; &quot;composite&quot;) continue; // only use explicit relationship fields for indirect actions
+      if (fieldId2 &#x3D;&#x3D;&#x3D; targetField.id) continue; // skip the same field
+      if (field2.dataType !&#x3D;&#x3D; EntityDatatype.dataType) continue; // skip non-entity fields
+      if (
+        !field2.additional ||
+        (Array.isArray(field2.additional) &amp;&amp; field2.additional.length &#x3D;&#x3D;&#x3D; 0)
+      )
+        continue; // skip if no reference type is enabled
+
+      indirectActions.push({
+        sourceType,
+        mode: &quot;indirect&quot;,
+        relationshipEntityType: targetType,
+        relationshipProperty: targetField.id,
+        relationshipTargetProperty: fieldId2,
+        targetType: field2.additional,
+        expertOnly:
+          targetType &#x3D;&#x3D;&#x3D; sourceType ||
+          [Note.ENTITY_TYPE, EventNote.ENTITY_TYPE, Todo.ENTITY_TYPE].includes(
+            targetType,
+          ),
+      });
+    }
+
+    return indirectActions;
+  }
+
+  /**
+   * Get the entity actions that data of the given entity type can be linked to during its import.
+   * (e.g. for &quot;Child&quot; entityType, the result could be [{ targetType: &quot;School&quot; ...}], indicating that during import of children, they can be linked to a school)
+   * @param entityType
+   */
+  getActionsLinkingFor(entityType: string): AdditionalImportAction[] {
+    return this.linkableEntities.get(entityType) ?? [];
+  }
+
+  /**
+   * Get the entity types that during their import can be linked to the given target entity type.
+   * (e.g. for &quot;School&quot; targetEntityType, the result could be [{ sourceType: &quot;Child&quot; ... }], indicating that during import of children, they can be linked to a school)
+   * @param targetEntityType
+   */
+  getActionsLinkingTo(targetEntityType: string): AdditionalImportAction[] {
+    const linkingTypes: AdditionalImportAction[] &#x3D; [];
+
+    for (const entityType of this.linkableEntities.keys()) {
+      const matchingActions &#x3D; (
+        this.linkableEntities.get(entityType) ?? []
+      ).filter((a) &#x3D;&gt; a.targetType &#x3D;&#x3D;&#x3D; targetEntityType);
+      linkingTypes.push(...matchingActions);
+    }
+
+    return linkingTypes;
+  }
+
+  /**
+   * Execute additional import actions for the given entities,
+   * linking entities.
+   * @param entities
+   * @param settings
+   */
+  public executeImport(entities: Entity[], settings: ImportSettings) {
+    const actionFuncs &#x3D; [];
+
+    for (const additionalImport of settings.additionalActions ?? []) {
+      let action;
+
+      switch (additionalImport.mode) {
+        case &quot;direct&quot;:
+          action &#x3D; this.linkDirectly(entities, additionalImport);
+          break;
+        case &quot;indirect&quot;:
+          action &#x3D; this.linkIndirectly(entities, additionalImport);
+          break;
+      }
+
+      if (action) actionFuncs.push(action);
+    }
+
+    return Promise.all(actionFuncs);
+  }
+
+  public async undoImport(importMeta: ImportMetadata): Promise&lt;void&gt; {
+    const undoActions &#x3D; [];
+
+    for (const additionalImport of importMeta.config.additionalActions ?? []) {
+      let action;
+
+      switch (additionalImport.mode) {
+        case &quot;direct&quot;:
+          action &#x3D; this.undoLinkDirectly(
+            importMeta.createdEntities,
+            additionalImport,
+          );
+          break;
+        case &quot;indirect&quot;:
+          action &#x3D; this.undoLinkIndirectly(
+            importMeta.createdEntities,
+            additionalImport,
+          );
+          break;
+      }
+
+      if (action) undoActions.push(action);
+    }
+
+    await Promise.all(undoActions);
+  }
+
+  /**
+   * Link the imported entities &quot;indirectly&quot;
+   * by creating &quot;relationship entities&quot; between the imported entities and a given target entity.
+   * @param entitiesToBeLinked An array of imported entities for which the additional linking should be done
+   * @param action Details of the specific action to be performed
+   * @private
+   */
+  private linkIndirectly(
+    entitiesToBeLinked: Entity[],
+    action: AdditionalIndirectLinkAction,
+  ) {
+    const relationCtr &#x3D; this.entityRegistry.get(action.relationshipEntityType);
+
+    const relations &#x3D; entitiesToBeLinked.map((entity) &#x3D;&gt; {
+      const relation &#x3D; new relationCtr();
+      relation[action.relationshipProperty] &#x3D; entity.getId();
+      relation[action.relationshipTargetProperty] &#x3D; action.targetId;
+      return relation;
+    });
+    return this.entityMapper.saveAll(relations);
+  }
+
+  /**
+   * Undo the &#x60;linkIndirectly&#x60; action and delete relationship entities linking imported entities to other entity.
+   * @param entitiesToBeUnlinked An array of imported entities for which the additional linking was done
+   * @param action Details of the specific action to be performed
+   * @private
+   */
+  private async undoLinkIndirectly(
+    entitiesToBeUnlinked: string[],
+    action: AdditionalIndirectLinkAction,
+  ) {
+    const relations &#x3D; await this.entityMapper.loadType(
+      action.relationshipEntityType,
+    );
+    const imported &#x3D; relations.filter((rel) &#x3D;&gt;
+      entitiesToBeUnlinked.includes(rel[action.relationshipProperty]),
+    );
+    await Promise.all(imported.map((rel) &#x3D;&gt; this.entityMapper.remove(rel)));
+  }
+
+  /**
+   * Link the imported entities &quot;directly&quot;
+   * by updating and entity-reference field in a given other entity.
+   * @param entitiesToBeLinked An array of imported entities for which the additional linking should be done
+   * @param action Details of the specific action to be performed
+   * @private
+   */
+  private async linkDirectly(
+    entitiesToBeLinked: Entity[],
+    action: AdditonalDirectLinkAction,
+  ) {
+    const targetEntity &#x3D; await this.entityMapper.load(
+      action.targetType,
+      action.targetId,
+    );
+    const ids &#x3D; entitiesToBeLinked.map((e) &#x3D;&gt; e.getId());
+
+    if (!targetEntity[action.targetProperty]) {
+      targetEntity[action.targetProperty] &#x3D; [];
+    }
+    targetEntity[action.targetProperty].push(...ids);
+    return this.entityMapper.save(targetEntity);
+  }
+
+  /**
+   * Undo the &#x60;linkDirectly&#x60; action and remove references to the imported entities from the target entity.
+   * @param entitiesToBeUnlinked An array of imported entities for which the additional linking was done
+   * @param action Details of the specific action to be performed
+   * @private
+   */
+  private async undoLinkDirectly(
+    entitiesToBeUnlinked: string[],
+    action: AdditonalDirectLinkAction,
+  ) {
+    const targetEntity &#x3D; await this.entityMapper.load(
+      action.targetType,
+      action.targetId,
+    );
+    targetEntity[action.targetProperty] &#x3D; targetEntity[
+      action.targetProperty
+    ]?.filter((e) &#x3D;&gt; !entitiesToBeUnlinked.includes(e));
+    return this.entityMapper.save(targetEntity);
+  }
+
+  /**
+   * Create a human-readable label for the given import action.
+   * @param importAction
+   * @param forTargetType (Optional) If true, phrased for the context menu of the target type to import the source type and link back
+   */
+  createActionLabel(
+    importAction: AdditionalImportAction,
+    forTargetType: boolean &#x3D; false,
+  ): string {
+    const sourceType &#x3D; this.entityRegistry.get(importAction.sourceType);
+    const targetTypes &#x3D; importAction[&quot;targetType&quot;]
+      ? asArray(importAction[&quot;targetType&quot;]).map((type) &#x3D;&gt;
+          this.entityRegistry.get(type),
+        )
+      : [];
+    const relationshipType &#x3D; importAction[&quot;relationshipEntityType&quot;]
+      ? this.entityRegistry.get(importAction[&quot;relationshipEntityType&quot;])
+      : null;
+
+    // normally just one type; join with &quot; / &quot; if several
+    const targetTypeLabel &#x3D; targetTypes.map((t) &#x3D;&gt; t.toString()).join(&quot; / &quot;);
+
+    let label: string;
+    if (!forTargetType) {
+      label &#x3D; $localize&#x60;Link imported ${sourceType.toString(true)} to a ${targetTypeLabel}&#x60;;
+    } else {
+      label &#x3D; $localize&#x60;Import related ${sourceType.toString(true)} for this ${targetTypeLabel}&#x60;;
+    }
+
+    label +&#x3D; this.getAdditionalContextDetailsForActionLabel(
+      importAction,
+      targetTypes,
+      relationshipType,
+    );
+
+    return label;
+  }
+
+  private getAdditionalContextDetailsForActionLabel(
+    importAction: AdditonalDirectLinkAction | AdditionalIndirectLinkAction,
+    targetTypes: EntityConstructor[],
+    relationshipType: EntityConstructor,
+  ): string {
+    let labelExtension &#x3D; &quot;&quot;;
+
+    if (
+      (importAction as AdditonalDirectLinkAction).targetProperty &amp;&amp;
+      targetTypes?.length
+    ) {
+      const targetProps &#x3D; targetTypes
+        .map(
+          (t) &#x3D;&gt;
+            t.schema.get(
+              (importAction as AdditonalDirectLinkAction).targetProperty,
+            )?.label,
+        )
+        .filter(Boolean) as string[];
+      if (targetProps?.length) {
+        labelExtension &#x3D; &#x60; (as ${targetProps.join(&quot;, &quot;)})&#x60;;
+      }
+    } else if (
+      (importAction as AdditionalIndirectLinkAction).relationshipEntityType &amp;&amp;
+      relationshipType?.label
+    ) {
+      labelExtension &#x3D; &#x60; (through ${relationshipType?.toString(true)})&#x60;;
+    }
+
+    return labelExtension;
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'ImportAdditionalService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

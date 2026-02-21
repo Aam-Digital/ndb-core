@@ -1,0 +1,2722 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  AdminEntityFormComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts</code>
+</p>
+
+
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="https://angular.io/api/core/OnChanges" target="_blank" >OnChanges</a></code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-admin-entity-form</code></td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>DragDropModule</code>
+                                <code><a href="../components/IconComponent.html" target="_self" >FaIconComponent</a></code>
+                            <code>MatButtonModule</code>
+                            <code>MatTooltipModule</code>
+                            <code>MatCardModule</code>
+                            <code>MatFormFieldModule</code>
+                            <code>MatIconModule</code>
+                            <code>MatInputModule</code>
+                                <code><a href="https://angular.io/api/forms/ReactiveFormsModule" target="_blank" >ReactiveFormsModule</a></code>
+                                <code><a href="../components/EntityFieldLabelComponent.html" target="_self" >EntityFieldLabelComponent</a></code>
+                                <code><a href="../components/EntityFieldEditComponent.html" target="_self" >EntityFieldEditComponent</a></code>
+                                <code><a href="../components/AdminSectionHeaderComponent.html" target="_self" >AdminSectionHeaderComponent</a></code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./admin-entity-form.component.scss,<br>../../building-blocks/admin-section-header/admin-section-header.component.scss,<br>../../../common-components/entity-form/entity-form/entity-form.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./admin-entity-form.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#availableFields" >availableFields</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#createNewFieldPlaceholder" >createNewFieldPlaceholder</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#createNewTextPlaceholder" >createNewTextPlaceholder</a>
+                            </li>
+                            <li>
+                                <a href="#dummyEntity" >dummyEntity</a>
+                            </li>
+                            <li>
+                                <a href="#dummyForm" >dummyForm</a>
+                            </li>
+                            <li>
+                                <a href="#filteredFields" >filteredFields</a>
+                            </li>
+                            <li>
+                                <a href="#searchFilter" >searchFilter</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#clearSearch" >clearSearch</a>
+                            </li>
+                            <li>
+                                <a href="#drop" >drop</a>
+                            </li>
+                            <li>
+                                <a href="#dropfieldGroups" >dropfieldGroups</a>
+                            </li>
+                            <li>
+                                <a href="#dropNewGroup" >dropNewGroup</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
+                                <a href="#emitUpdatedConfig" >emitUpdatedConfig</a>
+                            </li>
+                            <li>
+                                <a href="#getConnectedGroups" >getConnectedGroups</a>
+                            </li>
+                            <li>
+                                <a href="#hideField" >hideField</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#openConfigDetails" >openConfigDetails</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#openFieldConfig" >openFieldConfig</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#openTextConfig" >openTextConfig</a>
+                            </li>
+                            <li>
+                                <a href="#removeGroup" >removeGroup</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#config" >config</a>
+                            </li>
+                            <li>
+                                <a href="#entityType" >entityType</a>
+                            </li>
+                            <li>
+                                <a href="#fieldsOnlyMode" >fieldsOnlyMode</a>
+                            </li>
+                            <li>
+                                <a href="#isDisabled" >isDisabled</a>
+                            </li>
+                            <li>
+                                <a href="#uniqueAreaId" >uniqueAreaId</a>
+                            </li>
+                            <li>
+                                <a href="#updateEntitySchema" >updateEntitySchema</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Outputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#configChange" >configChange</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Accessors</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                    <a href="#config" >config</a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="152" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:152</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
+
+    <section data-compodoc="block-inputs">
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="config"></a>
+                        <b>config</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/FormConfig.html" target="_self" >FormConfig</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="89" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:89</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="entityType"></a>
+                        <b>entityType</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:81</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="fieldsOnlyMode"></a>
+                        <b>fieldsOnlyMode</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="129" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:129</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Whether to only show fields in a compact layout.
+If false, the full admin layout with section headers and drag&amp;drop areas is shown.</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="isDisabled"></a>
+                        <b>isDisabled</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="119" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:119</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Whether the UI is readonly, not allowing the user to drag or edit things.</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="uniqueAreaId"></a>
+                        <b>uniqueAreaId</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:87</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Unique identifier for the drag-and-drop area to ensure correct drag&amp;drop behavior.
+(e.g. a combination of tabindex and section index)</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="updateEntitySchema"></a>
+                        <b>updateEntitySchema</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>true</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="124" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:124</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Also update any changes to fields to the global entity type schema.</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+    <section data-compodoc="block-outputs">
+    <h3 id="outputs">Outputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="configChange"></a>
+                        <b>configChange</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://angular.io/api/core/EventEmitter" target="_blank" >EventEmitter</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="114" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:114</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="clearSearch"></a>
+                    <span class="name">
+                        <span ><b>clearSearch</b></span>
+                        <a href="#clearSearch"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>clearSearch()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="549"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:549</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="drop"></a>
+                    <span class="name">
+                        <span ><b>drop</b></span>
+                        <a href="#drop"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>drop(event: <a href="../classes/Config.html" target="_self">CdkDragDrop&lt;ColumnConfig[] | ColumnConfig[]&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="283"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:283</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+                                            <td>
+                                                            <code><a href="../classes/Config.html" target="_self" >CdkDragDrop&lt;ColumnConfig[] | ColumnConfig[]&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dropfieldGroups"></a>
+                    <span class="name">
+                        <span ><b>dropfieldGroups</b></span>
+                        <a href="#dropfieldGroups"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>dropfieldGroups(event: CdkDragDrop<E[] | any>, fieldGroupsArray: E[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="331"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:331</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>E</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+                                            <td>
+                                                        <code>CdkDragDrop&lt;E[] | any&gt;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>fieldGroupsArray</td>
+                                            <td>
+                                                        <code>E[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dropNewGroup"></a>
+                    <span class="name">
+                        <span ><b>dropNewGroup</b></span>
+                        <a href="#dropNewGroup"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>dropNewGroup(event: CdkDragDrop<any | any>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="499"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:499</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+                                            <td>
+                                                        <code>CdkDragDrop&lt;any | any&gt;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="emitUpdatedConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>emitUpdatedConfig</b></span>
+                        <a href="#emitUpdatedConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>emitUpdatedConfig()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="221"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:221</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getConnectedGroups"></a>
+                    <span class="name">
+                        <span ><b>getConnectedGroups</b></span>
+                        <a href="#getConnectedGroups"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getConnectedGroups()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="190"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:190</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Returns a list of group IDs that are connected to the drag&amp;drop area.
+This is used to determine which groups are connected to the drag&amp;drop area.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>string[]</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hideField"></a>
+                    <span class="name">
+                        <span ><b>hideField</b></span>
+                        <a href="#hideField"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>hideField(field: <a href="../miscellaneous/typealiases.html#ColumnConfig" target="_self">ColumnConfig</a>, group: <a href="../interfaces/FieldGroup.html" target="_self">FieldGroup</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="513"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:513</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>field</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#ColumnConfig" target="_self" >ColumnConfig</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>group</td>
+                                            <td>
+                                                            <code><a href="../interfaces/FieldGroup.html" target="_self" >FieldGroup</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="openConfigDetails"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>openConfigDetails</b></span>
+                        <a href="#openConfigDetails"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>openConfigDetails(field: <a href="../miscellaneous/typealiases.html#ColumnConfig" target="_self">ColumnConfig</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="363"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:363</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Opens the configuration settings for a field.
+If the field has an editComponent defined in the schema, it opens the text configuration.
+Otherwise, it opens the field configuration.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>field</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#ColumnConfig" target="_self" >ColumnConfig</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The field to open the configuration settings for.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="openFieldConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>openFieldConfig</b></span>
+                        <a href="#openFieldConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>openFieldConfig(field: <a href="../miscellaneous/typealiases.html#ColumnConfig" target="_self">ColumnConfig</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="231"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:231</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Open the form to edit details of a single field&#39;s schema.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>field</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#ColumnConfig" target="_self" >ColumnConfig</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>field to edit or { id: null } to create a new field</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/EntitySchemaField.html" target="_self" >Promise&lt;EntitySchemaField&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>the id of the field that was edited or created (which is newly defined in the dialog for new fields)</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="openTextConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>openTextConfig</b></span>
+                        <a href="#openTextConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>openTextConfig(textField: <a href="../interfaces/FormFieldConfig.html" target="_self">FormFieldConfig</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="269"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:269</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Open the form to edit details of a single text&#39;s schema.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>textField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/FormFieldConfig.html" target="_self" >FormFieldConfig</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>text to edit or { id: null } to create a new text</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >Promise&lt;FormFieldConfig&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>the id of the text that was edited or created (which is newly defined in the dialog for new fields)</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeGroup"></a>
+                    <span class="name">
+                        <span ><b>removeGroup</b></span>
+                        <a href="#removeGroup"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>removeGroup(i: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="506"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:506</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>i</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="availableFields"></a>
+                    <span class="name">
+                        <span ><b>availableFields</b></span>
+                        <a href="#availableFields"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;ColumnConfig[]&gt;([])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="134" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:134</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createNewFieldPlaceholder"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>createNewFieldPlaceholder</b></span>
+                        <a href="#createNewFieldPlaceholder"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >FormFieldConfig</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+    id: null,
+    label: $localize&#x60;:Label drag and drop item:Create New Field&#x60;,
+  }</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="135" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:135</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createNewTextPlaceholder"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>createNewTextPlaceholder</b></span>
+                        <a href="#createNewTextPlaceholder"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >FormFieldConfig</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+    id: null,
+    label: $localize&#x60;:Label drag and drop item:Create Text Block&#x60;,
+  }</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="140" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:140</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dummyEntity"></a>
+                    <span class="name">
+                        <span ><b>dummyEntity</b></span>
+                        <a href="#dummyEntity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="131" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:131</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dummyForm"></a>
+                    <span class="name">
+                        <span ><b>dummyForm</b></span>
+                        <a href="#dummyForm"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/EntityForm.html" target="_self" >EntityForm&lt;any&gt;</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="132" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:132</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="filteredFields"></a>
+                    <span class="name">
+                        <span ><b>filteredFields</b></span>
+                        <a href="#filteredFields"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
+    const searchTerm &#x3D; this.searchFieldSignal()?.toLowerCase().trim() || &quot;&quot;;
+    const fields &#x3D; this.availableFields();
+
+    if (!searchTerm) {
+      return fields;
+    }
+
+    return fields.filter((field) &#x3D;&gt; {
+      // always show the create new field and create new text placeholders
+      if (
+        field &#x3D;&#x3D;&#x3D; this.createNewFieldPlaceholder ||
+        field &#x3D;&#x3D;&#x3D; this.createNewTextPlaceholder
+      ) {
+        return true;
+      }
+
+      const fieldConfig &#x3D;
+        this.entityFormService?.extendFormFieldConfig(field, this.entityType) ||
+        toFormFieldConfig(field);
+
+      const fieldId &#x3D; fieldConfig.id?.toLowerCase() || &quot;&quot;;
+      const fieldLabel &#x3D; fieldConfig.label?.toLowerCase() || &quot;&quot;;
+
+      return fieldId.includes(searchTerm) || fieldLabel.includes(searchTerm);
+    });
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="521" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:521</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="searchFilter"></a>
+                    <span class="name">
+                        <span ><b>searchFilter</b></span>
+                        <a href="#searchFilter"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new FormControl(&quot;&quot;)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="145" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:145</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-accessors">
+    <h3 id="accessors">
+        Accessors
+    </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="config"></a>
+                        <span class="name"><b>config</b><a href="#config"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>config()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="108" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:108</a></div>
+                                </td>
+                            </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>set</b><code>config(value: <a href="../interfaces/FormConfig.html" target="_self">FormConfig</a>)</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="89" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:89</a></div>
+                                </td>
+                            </tr>
+                    <tr>
+                        <td class="col-md-4">
+
+                                <div class="io-description">
+                                        <b>Parameters :</b>
+                                        <table class="params">
+                                            <thead>
+                                                <tr>
+                                                    <td>Name</td>
+                                                        <td>Type</td>
+                                                    <td>Optional</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    <tr>
+                                                            <td>value</td>
+                                                    
+                                                            <td>
+                                                                            <code><a href="../interfaces/FormConfig.html" target="_self" >FormConfig</a></code>
+                                                            </td>
+                                                    
+                                                        <td>
+                                                                No
+                                                        </td>
+                                                        
+                                                    </tr>
+                                            </tbody>
+                                        </table>
+                                </div>
+                                <div class="io-description">
+                                    <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                                </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+</section>
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EntityForm } from &quot;#src/app/core/common-components/entity-form/entity-form&quot;;
+import {
+  CdkDragDrop,
+  DragDropModule,
+  moveItemInArray,
+  transferArrayItem,
+} from &quot;@angular/cdk/drag-drop&quot;;
+import {
+  Component,
+  computed,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  Output,
+  signal,
+  WritableSignal,
+  SimpleChanges,
+} from &quot;@angular/core&quot;;
+import { toSignal } from &quot;@angular/core/rxjs-interop&quot;;
+import { FormControl, ReactiveFormsModule } from &quot;@angular/forms&quot;;
+import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { MatCardModule } from &quot;@angular/material/card&quot;;
+import { MatDialog } from &quot;@angular/material/dialog&quot;;
+import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
+import { MatIconModule } from &quot;@angular/material/icon&quot;;
+import { MatInputModule } from &quot;@angular/material/input&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+import { FaIconComponent } from &quot;@fortawesome/angular-fontawesome&quot;;
+import { UntilDestroy, untilDestroyed } from &quot;@ngneat/until-destroy&quot;;
+import { FieldGroup } from &quot;app/core/entity-details/form/field-group&quot;;
+import { EntitySchemaField } from &quot;app/core/entity/schema/entity-schema-field&quot;;
+import { lastValueFrom } from &quot;rxjs&quot;;
+import { EntityFormService } from &quot;../../../common-components/entity-form/entity-form.service&quot;;
+import {
+  ColumnConfig,
+  FormFieldConfig,
+  toFormFieldConfig,
+} from &quot;../../../common-components/entity-form/FormConfig&quot;;
+import { FormConfig } from &quot;../../../entity-details/form/form.component&quot;;
+import { EntityFieldEditComponent } from &quot;../../../entity/entity-field-edit/entity-field-edit.component&quot;;
+import { EntityFieldLabelComponent } from &quot;../../../entity/entity-field-label/entity-field-label.component&quot;;
+import { Entity, EntityConstructor } from &quot;../../../entity/model/entity&quot;;
+import { AdminEntityService } from &quot;../../admin-entity.service&quot;;
+import { AdminSectionHeaderComponent } from &quot;../../building-blocks/admin-section-header/admin-section-header.component&quot;;
+import { AdminEditDescriptionOnlyFieldComponent } from &quot;../admin-entity-field/admin-edit-description-only-field/admin-edit-description-only-field.component&quot;;
+import {
+  AdminEntityFieldComponent,
+  AdminEntityFieldData,
+} from &quot;../admin-entity-field/admin-entity-field.component&quot;;
+
+@UntilDestroy()
+@Component({
+  selector: &quot;app-admin-entity-form&quot;,
+  templateUrl: &quot;./admin-entity-form.component.html&quot;,
+  styleUrls: [
+    &quot;./admin-entity-form.component.scss&quot;,
+    &quot;../../building-blocks/admin-section-header/admin-section-header.component.scss&quot;,
+    &quot;../../../common-components/entity-form/entity-form/entity-form.component.scss&quot;,
+  ],
+  imports: [
+    DragDropModule,
+    FaIconComponent,
+    MatButtonModule,
+    MatTooltipModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    EntityFieldLabelComponent,
+    EntityFieldEditComponent,
+    AdminSectionHeaderComponent,
+  ],
+})
+export class AdminEntityFormComponent implements OnChanges {
+  private entityFormService &#x3D; inject(EntityFormService);
+  private matDialog &#x3D; inject(MatDialog);
+  private adminEntityService &#x3D; inject(AdminEntityService);
+
+  @Input() entityType: EntityConstructor;
+
+  /**
+   * Unique identifier for the drag-and-drop area to ensure correct drag&amp;drop behavior.
+   * (e.g. a combination of tabindex and section index)
+   */
+  @Input() uniqueAreaId: string;
+
+  @Input() set config(value: FormConfig) {
+    if (value &#x3D;&#x3D;&#x3D; this._config) {
+      // may be caused by two-way binding re-inputting the recently emitted change
+      // skip in this case
+      return;
+    }
+
+    // assign default value and make a deep copy to avoid side effects
+    if (!value) {
+      value &#x3D; { fieldGroups: [] };
+    }
+    value &#x3D; JSON.parse(JSON.stringify(value));
+    if (!value.fieldGroups) {
+      value.fieldGroups &#x3D; [];
+    }
+
+    this._config &#x3D; value;
+  }
+
+  get config(): FormConfig {
+    return this._config;
+  }
+
+  private _config: FormConfig;
+
+  @Output() configChange &#x3D; new EventEmitter&lt;FormConfig&gt;();
+
+  /**
+   * Whether the UI is readonly, not allowing the user to drag or edit things.
+   */
+  @Input() isDisabled: boolean &#x3D; false;
+
+  /**
+   * Also update any changes to fields to the global entity type schema.
+   */
+  @Input() updateEntitySchema?: boolean &#x3D; true;
+
+  /** Whether to only show fields in a compact layout.
+   * If false, the full admin layout with section headers and drag&amp;drop areas is shown.
+   */
+  @Input() fieldsOnlyMode?: boolean &#x3D; false;
+
+  dummyEntity: Entity;
+  dummyForm: EntityForm&lt;any&gt;;
+
+  availableFields &#x3D; signal&lt;ColumnConfig[]&gt;([]);
+  readonly createNewFieldPlaceholder: FormFieldConfig &#x3D; {
+    id: null,
+    label: $localize&#x60;:Label drag and drop item:Create New Field&#x60;,
+  };
+
+  readonly createNewTextPlaceholder: FormFieldConfig &#x3D; {
+    id: null,
+    label: $localize&#x60;:Label drag and drop item:Create Text Block&#x60;,
+  };
+
+  searchFilter &#x3D; new FormControl(&quot;&quot;);
+
+  private readonly searchFieldSignal &#x3D; toSignal(
+    this.searchFilter.valueChanges,
+    {
+      initialValue: &quot;&quot;,
+    },
+  );
+
+  constructor() {
+    const adminEntityService &#x3D; inject(AdminEntityService);
+
+    adminEntityService.entitySchemaUpdated
+      .pipe(untilDestroyed(this))
+      .subscribe(() &#x3D;&gt; {
+        this.availableFields.set([]); // force re-init of the label components that otherwise do not detect the change
+        setTimeout(() &#x3D;&gt; this.initForm());
+      });
+  }
+
+  async ngOnChanges(changes: SimpleChanges): Promise&lt;void&gt; {
+    if (Object.hasOwn(changes, &quot;config&quot;)) {
+      await this.initForm();
+    }
+  }
+
+  private async initForm() {
+    this.initAvailableFields();
+
+    this.dummyEntity &#x3D; new this.entityType();
+    this.dummyForm &#x3D; await this.entityFormService.createEntityForm(
+      [...this.getUsedFields(this.config), ...this.availableFields()],
+      this.dummyEntity,
+    );
+    this.dummyForm.formGroup.disable();
+  }
+
+  private getUsedFields(config: FormConfig): ColumnConfig[] {
+    return config.fieldGroups.reduce((p, c) &#x3D;&gt; p.concat(c.fields), []);
+  }
+
+  /**
+   * Returns a list of group IDs that are connected to the drag&amp;drop area.
+   * This is used to determine which groups are connected to the drag&amp;drop area.
+   */
+  getConnectedGroups(): string[] {
+    return [
+      ...this.config.fieldGroups.map(
+        (_, groupIndex) &#x3D;&gt; &#x60;${this.uniqueAreaId}-group${groupIndex}&#x60;,
+      ),
+      &#x60;newGroupDropArea-${this.uniqueAreaId}&#x60;,
+    ];
+  }
+
+  /**
+   * Load any fields from schema that are not already in the form, so that the user can drag them into the form.
+   * @param config
+   * @private
+   */
+  private initAvailableFields() {
+    const usedFields &#x3D; this.getUsedFields(this.config).map((x) &#x3D;&gt;
+      toFormFieldConfig(x),
+    );
+    const unusedFields &#x3D; Array.from(this.entityType.schema.entries())
+      .filter(([key]) &#x3D;&gt; !usedFields.some((x) &#x3D;&gt; x.id &#x3D;&#x3D;&#x3D; key))
+      .filter(([key, value]) &#x3D;&gt; !value.isInternalField &amp;&amp; value.label) // no technical, internal fields and must have label
+      .sort(([aId, a], [bId, b]) &#x3D;&gt; a.label.localeCompare(b.label))
+      .map(([key]) &#x3D;&gt; key);
+
+    this.availableFields.set([
+      this.createNewFieldPlaceholder,
+      this.createNewTextPlaceholder,
+      ...unusedFields,
+    ]);
+  }
+
+  protected emitUpdatedConfig() {
+    this.configChange.emit(this.config);
+  }
+
+  /**
+   * Open the form to edit details of a single field&#x27;s schema.
+   *
+   * @param field field to edit or { id: null } to create a new field
+   * @returns the id of the field that was edited or created (which is newly defined in the dialog for new fields)
+   */
+  async openFieldConfig(field: ColumnConfig): Promise&lt;EntitySchemaField&gt; {
+    const entitySchemaField &#x3D; {
+      ...this.entityType.schema.get(toFormFieldConfig(field).id),
+    } as EntitySchemaField;
+    if (field instanceof Object) {
+      Object.assign(entitySchemaField, field);
+    }
+
+    // prefill with search filter text when creating new field
+    if (
+      (field &#x3D;&#x3D;&#x3D; this.createNewFieldPlaceholder ||
+        (typeof field &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; field.id &#x3D;&#x3D;&#x3D; null)) &amp;&amp;
+      this.searchFilter.value?.trim()
+    ) {
+      entitySchemaField.label &#x3D; this.searchFilter.value.trim();
+    }
+
+    const dialogRef &#x3D; this.matDialog.open(AdminEntityFieldComponent, {
+      width: &quot;99%&quot;,
+      maxHeight: &quot;90vh&quot;,
+      data: {
+        entitySchemaField: entitySchemaField,
+        entityType: this.entityType,
+        overwriteLocally: !this.updateEntitySchema,
+      } as AdminEntityFieldData,
+    });
+
+    const result &#x3D; lastValueFrom(dialogRef.afterClosed());
+
+    return result;
+  }
+
+  /**
+   * Open the form to edit details of a single text&#x27;s schema.
+   *
+   * @param textField text to edit or { id: null } to create a new text
+   * @returns the id of the text that was edited or created (which is newly defined in the dialog for new fields)
+   */
+  async openTextConfig(textField: FormFieldConfig): Promise&lt;FormFieldConfig&gt; {
+    const dialogRef &#x3D; this.matDialog.open(
+      AdminEditDescriptionOnlyFieldComponent,
+      {
+        data: textField,
+      },
+    );
+
+    const result &#x3D; await lastValueFrom(dialogRef.afterClosed());
+    this.emitUpdatedConfig();
+
+    return result;
+  }
+
+  drop(event: CdkDragDrop&lt;ColumnConfig[], ColumnConfig[]&gt;) {
+    const prevFieldsArray &#x3D; event.previousContainer.data;
+    const newFieldsArray &#x3D; event.container.data;
+
+    if (
+      prevFieldsArray[event.previousIndex] &#x3D;&#x3D;&#x3D; this.createNewFieldPlaceholder
+    ) {
+      this.dropNewField(event);
+      return;
+    }
+
+    if (
+      prevFieldsArray[event.previousIndex] &#x3D;&#x3D;&#x3D; this.createNewTextPlaceholder
+    ) {
+      this.dropNewText(event);
+      return;
+    }
+
+    if (event.previousContainer &#x3D;&#x3D;&#x3D; event.container) {
+      moveItemInArray(newFieldsArray, event.previousIndex, event.currentIndex);
+    } else {
+      // if transferring from filtered available fields, find the actual field in availableFields and remove it from there
+      if (prevFieldsArray &#x3D;&#x3D;&#x3D; this.filteredFields()) {
+        const transferredField &#x3D; prevFieldsArray[event.previousIndex];
+        this.transferArraySignalItem(
+          this.availableFields,
+          newFieldsArray,
+          transferredField,
+          event.currentIndex,
+        );
+      } else {
+        transferArrayItem(
+          prevFieldsArray,
+          newFieldsArray,
+          event.previousIndex,
+          event.currentIndex,
+        );
+      }
+    }
+
+    if (newFieldsArray &#x3D;&#x3D;&#x3D; this.availableFields()) {
+      // ensure available fields have consistent order
+      this.initAvailableFields();
+    }
+
+    this.emitUpdatedConfig();
+  }
+
+  dropfieldGroups&lt;E&gt;(event: CdkDragDrop&lt;E[], any&gt;, fieldGroupsArray: E[]) {
+    moveItemInArray(fieldGroupsArray, event.previousIndex, event.currentIndex);
+
+    this.emitUpdatedConfig();
+  }
+
+  /**
+   * Helper method to transfer an item from a source signal array to a target array
+   */
+  private transferArraySignalItem(
+    sourceSignal: WritableSignal&lt;ColumnConfig[]&gt;,
+    targetArray: ColumnConfig[],
+    transferredField: ColumnConfig,
+    targetIndex: number,
+  ): void {
+    const actualIndex &#x3D; sourceSignal().findIndex(
+      (field) &#x3D;&gt; field &#x3D;&#x3D;&#x3D; transferredField,
+    );
+    if (actualIndex !&#x3D;&#x3D; -1) {
+      sourceSignal.update((fields) &#x3D;&gt;
+        fields.filter((_, index) &#x3D;&gt; index !&#x3D;&#x3D; actualIndex),
+      );
+      targetArray.splice(targetIndex, 0, transferredField);
+    }
+  }
+
+  /**
+   * Opens the configuration settings for a field.
+   * If the field has an editComponent defined in the schema, it opens the text configuration.
+   * Otherwise, it opens the field configuration.
+   * @param field The field to open the configuration settings for.
+   */
+  async openConfigDetails(field: ColumnConfig) {
+    let fieldIdToEdit &#x3D; toFormFieldConfig(field).id;
+    const configDetails &#x3D; Object.assign(
+      {},
+      this.entityType.schema.get(fieldIdToEdit) ?? {},
+      field,
+    ) as FormFieldConfig;
+
+    const updatedField &#x3D;
+      configDetails.viewComponent &#x3D;&#x3D;&#x3D; &quot;DisplayDescriptionOnly&quot;
+        ? await this.openTextConfig(configDetails)
+        : await this.openFieldConfig(field);
+
+    if (!updatedField) return;
+
+    if (typeof updatedField &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
+      this.applySchemaOverride(updatedField, updatedField);
+      await this.initForm();
+      this.emitUpdatedConfig();
+      return;
+    }
+
+    if (
+      !this.updateEntitySchema ||
+      configDetails.viewComponent &#x3D;&#x3D;&#x3D; &quot;DisplayDescriptionOnly&quot;
+    ) {
+      this.applySchemaOverride(
+        updatedField.id,
+        updatedField as FormFieldConfig,
+      );
+      await this.initForm();
+    } else {
+      // save to entity type&#x27;s global schema
+      this.adminEntityService.updateSchemaField(
+        this.entityType,
+        updatedField.id,
+        updatedField,
+      );
+    }
+    this.emitUpdatedConfig();
+  }
+
+  private applySchemaOverride(
+    fieldId: string,
+    updatedField: string | FormFieldConfig,
+  ): void {
+    for (const group of this.config.fieldGroups) {
+      const index &#x3D; group.fields.findIndex((f) &#x3D;&gt;
+        f instanceof String
+          ? f &#x3D;&#x3D;&#x3D; fieldId
+          : toFormFieldConfig(f).id &#x3D;&#x3D;&#x3D; fieldId,
+      );
+      if (index !&#x3D;&#x3D; -1) {
+        group.fields[index] &#x3D; updatedField;
+      }
+    }
+  }
+
+  /**
+   * drop handler specifically for the &quot;create new field&quot; item
+   * @param event
+   * @private
+   */
+  private async dropNewField(
+    event: CdkDragDrop&lt;ColumnConfig[], ColumnConfig[]&gt;,
+  ) {
+    if (event.container.data &#x3D;&#x3D;&#x3D; this.availableFields()) {
+      // don&#x27;t add new field to the available fields that are not in the form yet
+      return;
+    }
+
+    const newField &#x3D; await this.openFieldConfig({ id: null });
+    if (!newField) {
+      return;
+    }
+
+    const newFieldId &#x3D; newField.id;
+
+    if (this.updateEntitySchema) {
+      this.adminEntityService.updateSchemaField(
+        this.entityType,
+        newField.id,
+        newField,
+      );
+      // the schema update has added the new field to the available fields already, remove it from there
+      const updatedFields &#x3D; [...this.availableFields()];
+      updatedFields.splice(updatedFields.indexOf(newFieldId), 1);
+      this.availableFields.set(updatedFields);
+    } else {
+      // For local-only updates (e.g., public forms), manually update schema
+      this.entityType.schema.set(newField.id, newField);
+      const updatedFields &#x3D; [...this.availableFields()];
+      const fieldIndex &#x3D; updatedFields.indexOf(newFieldId);
+      if (fieldIndex !&#x3D;&#x3D; -1) {
+        updatedFields.splice(fieldIndex, 1);
+        this.availableFields.set(updatedFields);
+      }
+    }
+
+    this.dummyForm.formGroup.addControl(newFieldId, new FormControl());
+    this.dummyForm.formGroup.disable();
+    event.container.data.splice(event.currentIndex, 0, newFieldId);
+
+    this.emitUpdatedConfig();
+  }
+
+  /**
+   * drop handler specifically for the &quot;create new Text field&quot; item
+   * @param event
+   * @private
+   */
+  private async dropNewText(
+    event: CdkDragDrop&lt;ColumnConfig[], ColumnConfig[]&gt;,
+  ) {
+    if (event.container.data &#x3D;&#x3D;&#x3D; this.availableFields()) {
+      // don&#x27;t add new Text field to the available fields that are not in the form yet
+      return;
+    }
+
+    const newTextField &#x3D; await this.openTextConfig({ id: null });
+    if (!newTextField) {
+      return;
+    }
+
+    this.dummyForm.formGroup.addControl(newTextField.id, new FormControl());
+    this.dummyForm.formGroup.disable();
+    event.container.data.splice(event.currentIndex, 0, newTextField);
+
+    // the schema update has added the new Text field to the available fields already, remove it from there
+    const updatedFields &#x3D; [...this.availableFields()];
+    updatedFields.splice(updatedFields.indexOf(newTextField), 1);
+    this.availableFields.set(updatedFields);
+
+    this.emitUpdatedConfig();
+  }
+
+  dropNewGroup(event: CdkDragDrop&lt;any, any&gt;) {
+    const newCol &#x3D; { fields: [] };
+    this.config.fieldGroups.push(newCol);
+    event.container.data &#x3D; newCol.fields;
+    this.drop(event);
+  }
+
+  removeGroup(i: number) {
+    this.config.fieldGroups.splice(i, 1);
+    this.initAvailableFields();
+
+    this.emitUpdatedConfig();
+  }
+
+  hideField(field: ColumnConfig, group: FieldGroup) {
+    const fieldIndex &#x3D; group.fields.indexOf(field);
+    group.fields.splice(fieldIndex, 1);
+    this.initAvailableFields();
+
+    this.emitUpdatedConfig();
+  }
+
+  filteredFields &#x3D; computed(() &#x3D;&gt; {
+    const searchTerm &#x3D; this.searchFieldSignal()?.toLowerCase().trim() || &quot;&quot;;
+    const fields &#x3D; this.availableFields();
+
+    if (!searchTerm) {
+      return fields;
+    }
+
+    return fields.filter((field) &#x3D;&gt; {
+      // always show the create new field and create new text placeholders
+      if (
+        field &#x3D;&#x3D;&#x3D; this.createNewFieldPlaceholder ||
+        field &#x3D;&#x3D;&#x3D; this.createNewTextPlaceholder
+      ) {
+        return true;
+      }
+
+      const fieldConfig &#x3D;
+        this.entityFormService?.extendFormFieldConfig(field, this.entityType) ||
+        toFormFieldConfig(field);
+
+      const fieldId &#x3D; fieldConfig.id?.toLowerCase() || &quot;&quot;;
+      const fieldLabel &#x3D; fieldConfig.label?.toLowerCase() || &quot;&quot;;
+
+      return fieldId.includes(searchTerm) || fieldLabel.includes(searchTerm);
+    });
+  });
+
+  clearSearch() {
+    this.searchFilter.setValue(&quot;&quot;);
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;overall-container flex-row&quot; [class.disabled]&#x3D;&quot;isDisabled&quot;&gt;
+  &lt;!-- FORM PREVIEW --&gt;
+  &lt;div
+    cdkDropList
+    (cdkDropListDropped)&#x3D;&quot;dropfieldGroups($event, config.fieldGroups)&quot;
+    cdkDropListOrientation&#x3D;&quot;mixed&quot;
+    class&#x3D;&quot;flex-grow padding-right-regular drop-list&quot;
+    [class.admin-grid-layout]&#x3D;&quot;!fieldsOnlyMode&quot;
+    [class.fieldsOnlyMode]&#x3D;&quot;fieldsOnlyMode&quot;
+  &gt;
+    &lt;!-- FIELD GROUPS --&gt;
+    @for (group of config.fieldGroups; track group; let i &#x3D; $index) {
+      &lt;div class&#x3D;&quot;entity-form-cell admin-form-column section-container&quot; cdkDrag&gt;
+        @if (!fieldsOnlyMode) {
+          &lt;div class&#x3D;&quot;flex-row align-center&quot;&gt;
+            &lt;fa-icon
+              icon&#x3D;&quot;grip-vertical&quot;
+              size&#x3D;&quot;xl&quot;
+              class&#x3D;&quot;drag-handle&quot;
+            &gt;&lt;/fa-icon&gt;
+            &lt;!-- GROUP HEADER --&gt;
+            &lt;app-admin-section-header
+              class&#x3D;&quot;flex-grow&quot;
+              [title]&#x3D;&quot;group.header&quot;
+              (titleChange)&#x3D;&quot;group.header &#x3D; $event; emitUpdatedConfig()&quot;
+              (remove)&#x3D;&quot;removeGroup(i)&quot;
+            &gt;&lt;/app-admin-section-header&gt;
+          &lt;/div&gt;
+        }
+        &lt;div
+          cdkDropList
+          [id]&#x3D;&quot;uniqueAreaId + &#x27;-group&#x27; + i&quot;
+          [cdkDropListData]&#x3D;&quot;group.fields&quot;
+          (cdkDropListDropped)&#x3D;&quot;drop($event)&quot;
+          [cdkDropListConnectedTo]&#x3D;&quot;getConnectedGroups()&quot;
+          [cdkDropListDisabled]&#x3D;&quot;isDisabled&quot;
+          cdkDropListOrientation&#x3D;&quot;mixed&quot;
+          class&#x3D;&quot;fields-group-list drop-list&quot;
+        &gt;
+          &lt;!-- FIELD [start] --&gt;
+          @for (field of group.fields; track field) {
+            &lt;div
+              class&#x3D;&quot;admin-form-field flex-row align-center&quot;
+              cdkDrag
+              cdkDragBoundary&#x3D;&quot;.overall-container&quot;
+            &gt;
+              &lt;fa-icon
+                icon&#x3D;&quot;grip-vertical&quot;
+                size&#x3D;&quot;xl&quot;
+                class&#x3D;&quot;drag-handle&quot;
+              &gt;&lt;/fa-icon&gt;
+              &lt;div class&#x3D;&quot;field-hover-buttons flex-row align-center gap-small&quot;&gt;
+                &lt;button
+                  class&#x3D;&quot;field-edit-button&quot;
+                  mat-stroked-button
+                  color&#x3D;&quot;accent&quot;
+                  (click)&#x3D;&quot;openConfigDetails(field)&quot;
+                  i18n&#x3D;&quot;Button label&quot;
+                &gt;
+                  Edit Field
+                &lt;/button&gt;
+                &lt;button
+                  mat-icon-button
+                  color&#x3D;&quot;black&quot;
+                  (click)&#x3D;&quot;hideField(field, group)&quot;
+                  aria-label&#x3D;&quot;Hide Field&quot;
+                  matTooltip&#x3D;&quot;remove (i.e. hide) this field from the form&quot;
+                  i18n-matTooltip
+                &gt;
+                  &lt;fa-icon icon&#x3D;&quot;times&quot;&gt;&lt;/fa-icon&gt;
+                &lt;/button&gt;
+              &lt;/div&gt;
+              &lt;div class&#x3D;&quot;dummy-form-field&quot;&gt;
+                &lt;app-entity-field-edit
+                  [field]&#x3D;&quot;field&quot;
+                  [entity]&#x3D;&quot;dummyEntity&quot;
+                  [form]&#x3D;&quot;dummyForm&quot;
+                &gt;&lt;/app-entity-field-edit&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          }
+          &lt;!-- FIELD [end]--&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    }
+
+    &lt;!-- DROP AREA: NEW FIELD GROUP --&gt;
+    @if (!fieldsOnlyMode) {
+      &lt;div class&#x3D;&quot;entity-form-cell admin-form-column&quot;&gt;
+        &lt;div
+          [id]&#x3D;&quot;&#x27;newGroupDropArea-&#x27; + uniqueAreaId&quot;
+          cdkDropList
+          [cdkDropListConnectedTo]&#x3D;&quot;getConnectedGroups()&quot;
+          (cdkDropListDropped)&#x3D;&quot;dropNewGroup($event)&quot;
+          class&#x3D;&quot;fields-group-list drop-list drop-area-hint&quot;
+        &gt;
+          &lt;span i18n&#x3D;&quot;Header of drag and drop box&quot;
+            &gt;drop here to create new field group&lt;/span
+          &gt;
+          &lt;fa-icon
+            icon&#x3D;&quot;question-circle&quot;
+            matTooltip&#x3D;&quot;You can group fields so that they will always appear next to each other while the layout is automatically adjusted to different screen sizes. Such field groups can also have a title displayed to users.&quot;
+            i18n-matTooltip
+          &gt;&lt;/fa-icon&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    }
+  &lt;/div&gt;
+
+  &lt;!-- TOOLBAR --&gt;
+  &lt;mat-card class&#x3D;&quot;toolbar&quot;&gt;
+    &lt;mat-card-content&gt;
+      &lt;div
+        cdkDropList
+        (cdkDropListDropped)&#x3D;&quot;drop($event)&quot;
+        [cdkDropListData]&#x3D;&quot;filteredFields()&quot;
+        [cdkDropListConnectedTo]&#x3D;&quot;getConnectedGroups()&quot;
+        class&#x3D;&quot;drop-list&quot;
+      &gt;
+        &lt;div class&#x3D;&quot;drop-area-hint&quot;&gt;
+          &lt;em i18n&#x3D;&quot;title for drag and drop section&quot;&gt;hidden fields&lt;/em&gt;&lt;br /&gt;
+          &lt;span i18n&#x3D;&quot;subtitle for drag and drop section&quot;&gt;
+            drag &amp; drop to / from here
+          &lt;/span&gt;
+          &lt;fa-icon
+            icon&#x3D;&quot;question-circle&quot;
+            matTooltip&#x3D;&quot;You can remove fields from this form without deleting them completely. The fields here will not be visible or editable for users but you can display them in other views or keep them archived to not lose previously collected data. Drag a field back into the form preview to display it.&quot;
+            i18n-matTooltip
+          &gt;&lt;/fa-icon&gt;
+        &lt;/div&gt;
+
+        &lt;div class&#x3D;&quot;margin-top-regular&quot;&gt;
+          &lt;mat-form-field appearance&#x3D;&quot;fill&quot; class&#x3D;&quot;full-width&quot;&gt;
+            &lt;input
+              matInput
+              [formControl]&#x3D;&quot;searchFilter&quot;
+              placeholder&#x3D;&quot;Search fields&quot;
+              i18n-placeholder
+            /&gt;
+
+            &lt;button
+              matIconSuffix
+              mat-icon-button
+              class&#x3D;&quot;muted-button&quot;
+              (click)&#x3D;&quot;clearSearch()&quot;
+              matTooltip&#x3D;&quot;Clear search&quot;
+              i18n-matTooltip&#x3D;&quot;Clear search tooltip&quot;
+              aria-label&#x3D;&quot;Clear search&quot;
+              i18n-aria-label&#x3D;&quot;Clear search aria label&quot;
+            &gt;
+              &lt;fa-icon icon&#x3D;&quot;times&quot;&gt;&lt;/fa-icon&gt;
+            &lt;/button&gt;
+          &lt;/mat-form-field&gt;
+        &lt;/div&gt;
+
+        @for (field of filteredFields(); track field) {
+          &lt;div
+            class&#x3D;&quot;admin-form-field flex-row align-center&quot;
+            [class.admin-form-field-new]&#x3D;&quot;
+              field &#x3D;&#x3D;&#x3D; createNewFieldPlaceholder ||
+              field &#x3D;&#x3D;&#x3D; createNewTextPlaceholder
+            &quot;
+            cdkDrag
+            cdkDragBoundary&#x3D;&quot;mat-drawer-container&quot;
+          &gt;
+            &lt;fa-icon
+              icon&#x3D;&quot;grip-vertical&quot;
+              size&#x3D;&quot;xl&quot;
+              class&#x3D;&quot;drag-handle&quot;
+            &gt;&lt;/fa-icon&gt;
+            &lt;div&gt;
+              &lt;app-entity-field-label
+                [field]&#x3D;&quot;field&quot;
+                [entityType]&#x3D;&quot;entityType&quot;
+              &gt;&lt;/app-entity-field-label&gt;
+              @if (
+                field !&#x3D;&#x3D; createNewFieldPlaceholder &amp;&amp;
+                field !&#x3D;&#x3D; createNewTextPlaceholder
+              ) {
+                &lt;button
+                  mat-stroked-button
+                  color&#x3D;&quot;accent&quot;
+                  class&#x3D;&quot;field-hover-buttons field-edit-button&quot;
+                  (click)&#x3D;&quot;openConfigDetails(field)&quot;
+                &gt;
+                  Edit
+                &lt;/button&gt;
+              }
+            &lt;/div&gt;
+          &lt;/div&gt;
+        }
+      &lt;/div&gt;
+    &lt;/mat-card-content&gt;
+  &lt;/mat-card&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./admin-entity-form.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;variables/colors&quot;;
+@use &quot;variables/sizes&quot;;
+@use &quot;mixins/grid-layout&quot;;
+@use &quot;@angular/material/core/style/elevation&quot; as mat-elevation;
+
+$toolbar-width: 300px;
+.toolbar {
+  width: $toolbar-width;
+  padding: sizes.$small;
+  margin-right: -(sizes.$small);
+  margin-bottom: -(sizes.$small);
+
+  @include mat-elevation.elevation(4);
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 0;
+  background-color: transparent;
+}
+
+.admin-grid-layout {
+  @include grid-layout.adaptive(
+    $min-block-width: calc(
+        #{sizes.$form-group-min-width} + 28px + 2 * 2 *#{sizes.$small}
+      ),
+    $max-screen-width: 414px
+  );
+}
+
+.fields-group-list {
+  border: dashed 1px #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  display: block;
+  padding: 0 sizes.$small;
+}
+.drop-list {
+  min-height: 60px;
+  height: 99%;
+}
+
+.admin-form-field {
+  padding: sizes.$small;
+  margin: sizes.$small auto;
+  border: dotted 1px colors.$accent;
+  border-radius: sizes.$x-small;
+  position: relative;
+  overflow: hidden;
+
+  /* draggable item must not be wider than toolbar, otherwise it cannot be dropped there due to cdkDragBoundary */
+  max-width: $toolbar-width;
+  min-height: 3.5em;
+  min-width: 250px;
+}
+.admin-form-field:hover {
+  background-color: colors.$grey-transparent;
+}
+
+.admin-form-field-new,
+.admin-form-field-new:hover {
+  border-color: green;
+  background-color: rgba(0, 255, 0, 0.05);
+  font-style: italic;
+  cursor: move;
+}
+
+.drag-handle {
+  color: colors.$accent;
+  cursor: move;
+  min-width: 2em;
+  text-align: center;
+}
+
+.field-hover-buttons {
+  visibility: hidden;
+  z-index: 10;
+
+  position: absolute;
+  /* center within parent: */
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: fit-content;
+
+  align-self: center;
+}
+.admin-form-field:hover .field-hover-buttons {
+  visibility: visible;
+}
+.field-edit-button {
+  background: white !important;
+  padding: 1.5em;
+}
+
+.dummy-form-field {
+  width: 100%;
+}
+.dummy-form-field ::ng-deep input,
+.dummy-form-field ::ng-deep button {
+  pointer-events: none;
+}
+.dummy-form-field ::ng-deep mat-form-field {
+  width: 100%;
+}
+.dummy-form-field ::ng-deep app-help-button {
+  opacity: 50%;
+}
+
+.drop-area-hint {
+  text-align: center;
+  padding: sizes.$small;
+  color: colors.$hint-text;
+}
+
+.admin-form-column {
+  border: dashed 1px #ccc;
+  padding: sizes.$small;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow:
+    0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.4;
+  border-color: green;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.drop-list.cdk-drop-list-dragging .admin-form-field:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+// Horizontal layout only when fieldsOnlyMode is true
+.fieldsOnlyMode {
+  .fields-group-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: sizes.$small;
+    padding: sizes.$small;
+  }
+
+  .fields-group-list .admin-form-field {
+    margin: 0;
+    flex: 0 1 auto;
+  }
+}
+
+/* make the clear search button a bit different from the &quot;delete section&quot; x buttons */
+.muted-button {
+  color: colors.$muted;
+}
+</code></pre>
+                <p class="comment">
+                    <code>../../building-blocks/admin-section-header/admin-section-header.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">.section-container:has(.group-remove-button:hover) {
+  border-color: rgb(255, 0, 0);
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
+.no-field-margin {
+  margin-bottom: .5em;
+}</code></pre>
+                <p class="comment">
+                    <code>../../../common-components/entity-form/entity-form/entity-form.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;mixins/grid-layout&quot;;
+@use &quot;variables/sizes&quot;;
+
+.grid-layout {
+  @include grid-layout.adaptive(
+    $min-block-width: sizes.$form-group-min-width,
+    $max-screen-width: 414px
+  );
+}
+
+.entity-form-cell {
+  display: flex;
+  flex-direction: column;
+
+  /* set the width of each form field to 100% in every form component that is a descendent
+     of the columns-wrapper class */
+  mat-form-field {
+    width: 100%;
+    max-width: 864px;
+  }
+
+  /* We align the photo (and only tht photo) to the center of the cell if there is one.
+     This looks better on desktop and mobile compared to an alignment to the start of the cell
+     which is the default for all other elements */
+  &gt; app-edit-photo {
+    align-self: center;
+  }
+}
+
+.full-width mat-form-field {
+  max-width: none;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis-network.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div class="overall-container flex-row" [class.disabled]="isDisabled">  <!-- FORM PREVIEW -->  <div    cdkDropList    (cdkDropListDropped)="dropfieldGroups($event, config.fieldGroups)"    cdkDropListOrientation="mixed"    class="flex-grow padding-right-regular drop-list"    [class.admin-grid-layout]="!fieldsOnlyMode"    [class.fieldsOnlyMode]="fieldsOnlyMode"  >    <!-- FIELD GROUPS -->    @for (group of config.fieldGroups; track group; let i = $index) {      <div class="entity-form-cell admin-form-column section-container" cdkDrag>        @if (!fieldsOnlyMode) {          <div class="flex-row align-center">            <fa-icon              icon="grip-vertical"              size="xl"              class="drag-handle"            ></fa-icon>            <!-- GROUP HEADER -->            <app-admin-section-header              class="flex-grow"              [title]="group.header"              (titleChange)="group.header = $event; emitUpdatedConfig()"              (remove)="removeGroup(i)"            ></app-admin-section-header>          </div>        }        <div          cdkDropList          [id]="uniqueAreaId + \'-group\' + i"          [cdkDropListData]="group.fields"          (cdkDropListDropped)="drop($event)"          [cdkDropListConnectedTo]="getConnectedGroups()"          [cdkDropListDisabled]="isDisabled"          cdkDropListOrientation="mixed"          class="fields-group-list drop-list"        >          <!-- FIELD [start] -->          @for (field of group.fields; track field) {            <div              class="admin-form-field flex-row align-center"              cdkDrag              cdkDragBoundary=".overall-container"            >              <fa-icon                icon="grip-vertical"                size="xl"                class="drag-handle"              ></fa-icon>              <div class="field-hover-buttons flex-row align-center gap-small">                <button                  class="field-edit-button"                  mat-stroked-button                  color="accent"                  (click)="openConfigDetails(field)"                  i18n="Button label"                >                  Edit Field                </button>                <button                  mat-icon-button                  color="black"                  (click)="hideField(field, group)"                  aria-label="Hide Field"                  matTooltip="remove (i.e. hide) this field from the form"                  i18n-matTooltip                >                  <fa-icon icon="times"></fa-icon>                </button>              </div>              <div class="dummy-form-field">                <app-entity-field-edit                  [field]="field"                  [entity]="dummyEntity"                  [form]="dummyForm"                ></app-entity-field-edit>              </div>            </div>          }          <!-- FIELD [end]-->        </div>      </div>    }    <!-- DROP AREA: NEW FIELD GROUP -->    @if (!fieldsOnlyMode) {      <div class="entity-form-cell admin-form-column">        <div          [id]="\'newGroupDropArea-\' + uniqueAreaId"          cdkDropList          [cdkDropListConnectedTo]="getConnectedGroups()"          (cdkDropListDropped)="dropNewGroup($event)"          class="fields-group-list drop-list drop-area-hint"        >          <span i18n="Header of drag and drop box"            >drop here to create new field group</span          >          <fa-icon            icon="question-circle"            matTooltip="You can group fields so that they will always appear next to each other while the layout is automatically adjusted to different screen sizes. Such field groups can also have a title displayed to users."            i18n-matTooltip          ></fa-icon>        </div>      </div>    }  </div>  <!-- TOOLBAR -->  <mat-card class="toolbar">    <mat-card-content>      <div        cdkDropList        (cdkDropListDropped)="drop($event)"        [cdkDropListData]="filteredFields()"        [cdkDropListConnectedTo]="getConnectedGroups()"        class="drop-list"      >        <div class="drop-area-hint">          <em i18n="title for drag and drop section">hidden fields</em><br />          <span i18n="subtitle for drag and drop section">            drag & drop to / from here          </span>          <fa-icon            icon="question-circle"            matTooltip="You can remove fields from this form without deleting them completely. The fields here will not be visible or editable for users but you can display them in other views or keep them archived to not lose previously collected data. Drag a field back into the form preview to display it."            i18n-matTooltip          ></fa-icon>        </div>        <div class="margin-top-regular">          <mat-form-field appearance="fill" class="full-width">            <input              matInput              [formControl]="searchFilter"              placeholder="Search fields"              i18n-placeholder            />            <button              matIconSuffix              mat-icon-button              class="muted-button"              (click)="clearSearch()"              matTooltip="Clear search"              i18n-matTooltip="Clear search tooltip"              aria-label="Clear search"              i18n-aria-label="Clear search aria label"            >              <fa-icon icon="times"></fa-icon>            </button>          </mat-form-field>        </div>        @for (field of filteredFields(); track field) {          <div            class="admin-form-field flex-row align-center"            [class.admin-form-field-new]="              field === createNewFieldPlaceholder ||              field === createNewTextPlaceholder            "            cdkDrag            cdkDragBoundary="mat-drawer-container"          >            <fa-icon              icon="grip-vertical"              size="xl"              class="drag-handle"            ></fa-icon>            <div>              <app-entity-field-label                [field]="field"                [entityType]="entityType"              ></app-entity-field-label>              @if (                field !== createNewFieldPlaceholder &&                field !== createNewTextPlaceholder              ) {                <button                  mat-stroked-button                  color="accent"                  class="field-hover-buttons field-edit-button"                  (click)="openConfigDetails(field)"                >                  Edit                </button>              }            </div>          </div>        }      </div>    </mat-card-content>  </mat-card></div></div>'
+    var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddDayAttendanceComponent', 'selector': 'app-add-day-attendance'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminUserRolesComponent', 'selector': 'app-admin-user-roles'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block]'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceStatusSelectComponent', 'selector': 'app-attendance-status-select'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportAdditionalSettingsComponent', 'selector': 'app-import-additional-settings'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'InputFileComponent', 'selector': 'app-input-file'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesManagerComponent', 'selector': 'app-notes-manager'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
+    var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'ExportDataDirective', 'selector': '[appExportData]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
+    var ACTUAL_COMPONENT = {'name': 'AdminEntityFormComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'AdminEntityFormComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

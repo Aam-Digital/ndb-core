@@ -1,0 +1,1712 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >ConfigService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/config/config.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Access dynamic app configuration retrieved from the database
+that defines how the interface and data models should look.</p>
+
+            </p>
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                            <code><a href="../classes/LatestEntityLoader.html" target="_self" >LatestEntityLoader</a></code>
+            </p>
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#configUpdates" >configUpdates</a>
+                            </li>
+                            <li>
+                                <a href="#entityUpdated" >entityUpdated</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#applyMigrations" >applyMigrations</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#exportConfig" >exportConfig</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#exportConfig" >exportConfig</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#exportConfig" >exportConfig</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#getAllConfigs" >getAllConfigs</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#getConfig" >getConfig</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#hasConfig" >hasConfig</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#onInit" >onInit</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#saveConfig" >saveConfig</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#loadOnce" >loadOnce</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#startLoading" >startLoading</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(entityMapper: <a href="../injectables/EntityMapperService.html" target="_self">EntityMapperService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/core/config/config.service.ts:34</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>entityMapper</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EntityMapperService.html" target="_self" >EntityMapperService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="applyMigrations"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>applyMigrations</b></span>
+                        <a href="#applyMigrations"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>applyMigrations(doc: E)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="98"
+                                    class="link-to-prism">src/app/core/config/config.service.ts:98</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>E</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>doc</td>
+                                            <td>
+                                                        <code>E</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>E</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="exportConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>exportConfig</b></span>
+                        <a href="#exportConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>exportConfig(rawObject: unknown)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="70"
+                                    class="link-to-prism">src/app/core/config/config.service.ts:70</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Export the current config as a JSON string.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>rawObject</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>If true, returns the object instead of stringified value.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" target="_blank" >Object</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="exportConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>exportConfig</b></span>
+                        <a href="#exportConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>exportConfig(rawObject?: unknown)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="71"
+                                    class="link-to-prism">src/app/core/config/config.service.ts:71</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>rawObject</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="exportConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>exportConfig</b></span>
+                        <a href="#exportConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>exportConfig(rawObject?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="72"
+                                    class="link-to-prism">src/app/core/config/config.service.ts:72</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>rawObject</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>string | Object</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllConfigs"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>getAllConfigs</b></span>
+                        <a href="#getAllConfigs"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllConfigs(prefix: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="87"
+                                    class="link-to-prism">src/app/core/config/config.service.ts:87</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Return all config items of the given &quot;type&quot;
+(determined by the given prefix of their id).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>prefix</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The prefix of config items to return (e.g. &quot;view:&quot; or &quot;entity:&quot;)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>T[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>getConfig</b></span>
+                        <a href="#getConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getConfig(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="77"
+                                    class="link-to-prism">src/app/core/config/config.service.ts:77</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>T | undefined</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>hasConfig</b></span>
+                        <a href="#hasConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>hasConfig()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="58"
+                                    class="link-to-prism">src/app/core/config/config.service.ts:58</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onInit"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>onInit</b></span>
+                        <a href="#onInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>onInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/LatestEntityLoader.html" target="_self" >LatestEntityLoader</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:43</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="saveConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>saveConfig</b></span>
+                        <a href="#saveConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>saveConfig(config: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="62"
+                                    class="link-to-prism">src/app/core/config/config.service.ts:62</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>config</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadOnce"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>loadOnce</b></span>
+                        <a href="#loadOnce"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>loadOnce()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/LatestEntityLoader.html" target="_self" >LatestEntityLoader</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:47</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Do an initial load of the entity to be available through the <code>entityUpdated</code> property
+(without watching for continuous updates).</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;T | undefined&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="startLoading"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>startLoading</b></span>
+                        <a href="#startLoading"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>startLoading()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/LatestEntityLoader.html" target="_self" >LatestEntityLoader</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:34</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Initialize the loader to make the entity available and emit continuous updates
+through the <code>entityUpdated</code> property</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="configUpdates"></a>
+                    <span class="name">
+                        <span ><b>configUpdates</b></span>
+                        <a href="#configUpdates"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>this.entityUpdated.pipe(shareReplay(1))</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/core/config/config.service.ts:34</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="entityUpdated"></a>
+                    <span class="name">
+                        <span ><b>entityUpdated</b></span>
+                        <a href="#entityUpdated"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Subject&lt;T&gt;()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/LatestEntityLoader.html" target="_self" >LatestEntityLoader</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:15</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>subscribe to this and execute any actions required when the entity changes</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
+import { RELATED_ENTITIES_DEFAULT_CONFIGS } from &quot;app/utils/related-entities-default-config&quot;;
+import { shareReplay } from &quot;rxjs/operators&quot;;
+import { addDefaultRecurringActivityDetailsConfig } from &quot;#src/app/features/attendance/add-default-recurring-activity-views&quot;;
+import { addDefaultNoteDetailsConfig } from &quot;../../child-dev-project/notes/add-default-note-views&quot;;
+import { addDefaultTodoViews } from &quot;../../features/todos/add-default-todo-views&quot;;
+import { migrateInheritedFieldConfig } from &quot;../../features/inherited-field/inherited-field-config-migration&quot;;
+import { addDefaultImportViewConfig } from &quot;../import/add-default-import-view&quot;;
+import { EntityDatatype } from &quot;../basic-datatypes/entity/entity.datatype&quot;;
+import { DefaultValueConfig } from &quot;../default-values/default-value-config&quot;;
+import { PanelComponent } from &quot;../entity-details/EntityDetailsConfig&quot;;
+import { EntityMapperService } from &quot;../entity/entity-mapper/entity-mapper.service&quot;;
+import { LoaderMethod } from &quot;../entity/entity-special-loader/entity-special-loader.service&quot;;
+import { LatestEntityLoader } from &quot;../entity/latest-entity-loader&quot;;
+import {
+  EntitySchemaField,
+  PLACEHOLDERS,
+} from &quot;../entity/schema/entity-schema-field&quot;;
+import { Logging } from &quot;../logging/logging.service&quot;;
+import { Config } from &quot;./config&quot;;
+import { ConfigMigration } from &quot;./config-migration&quot;;
+
+/**
+ * Access dynamic app configuration retrieved from the database
+ * that defines how the interface and data models should look.
+ */
+@Injectable({ providedIn: &quot;root&quot; })
+export class ConfigService extends LatestEntityLoader&lt;Config&gt; {
+  /**
+   * Subscribe to receive the current config and get notified whenever the config is updated.
+   */
+  private currentConfig: Config;
+
+  configUpdates &#x3D; this.entityUpdated.pipe(shareReplay(1));
+
+  constructor(
+    // eslint-disable-next-line
+    entityMapper: EntityMapperService, // Prefer using the inject() function not possible here because base class requires the dependency to be passed to super()
+  ) {
+    super(Config, Config.CONFIG_KEY, entityMapper);
+  }
+
+  override onInit() {
+    this.entityUpdated.subscribe(async (config) &#x3D;&gt; {
+      this.currentConfig &#x3D; this.applyMigrations(config);
+      this.logConfigRev();
+    });
+
+    this.startLoading();
+  }
+
+  private logConfigRev() {
+    Logging.addContext(&quot;Aam Digital config&quot;, {
+      &quot;config _rev&quot;: this.currentConfig._rev,
+    });
+  }
+
+  public hasConfig() {
+    return this.currentConfig !&#x3D;&#x3D; undefined;
+  }
+
+  public saveConfig(config: any): Promise&lt;void&gt; {
+    return this.entityMapper.save(new Config(Config.CONFIG_KEY, config), true);
+  }
+
+  /**
+   * Export the current config as a JSON string.
+   * @param rawObject If true, returns the object instead of stringified value.
+   */
+  public exportConfig(rawObject: true): Object;
+  public exportConfig(rawObject?: false): string;
+  public exportConfig(rawObject?: boolean): string | Object {
+    const value &#x3D; JSON.stringify(this.currentConfig.data);
+    return rawObject ? JSON.parse(value) : value;
+  }
+
+  public getConfig&lt;T&gt;(id: string): T | undefined {
+    return this.currentConfig.data[id];
+  }
+
+  /**
+   * Return all config items of the given &quot;type&quot;
+   * (determined by the given prefix of their id).
+   *
+   * @param prefix The prefix of config items to return (e.g. &quot;view:&quot; or &quot;entity:&quot;)
+   */
+  public getAllConfigs&lt;T&gt;(prefix: string): T[] {
+    const matchingConfigs &#x3D; [];
+    for (const id of Object.keys(this.currentConfig.data)) {
+      if (id.startsWith(prefix)) {
+        this.currentConfig.data[id]._id &#x3D; id;
+        matchingConfigs.push(this.currentConfig.data[id]);
+      }
+    }
+    return matchingConfigs;
+  }
+
+  public applyMigrations&lt;E&gt;(doc: E): E {
+    const migrations: ConfigMigration[] &#x3D; [
+      migrateEntityDetailsInputEntityType,
+      migrateEntityArrayDatatype,
+      migrateEntitySchemaDefaultValue,
+      migrateChildrenListConfig,
+      migrateHistoricalDataComponent,
+      migratePhotoDatatype,
+      migratePercentageDatatype,
+      migrateEntityBlock,
+      migrateGroupByConfig,
+      migrateDefaultValue,
+      migrateInheritedFieldConfig,
+      migrateUserEntityAndPanels,
+      migrateComponentEntityTypeDefaults,
+      removeOutdatedTodoViews,
+      migrateChildSchoolOverviewComponent,
+      migrateEditDescriptionOnly,
+    ];
+
+    // default migrations that are not only temporary but will remain in the codebase
+    const defaultConfigs: ConfigMigration[] &#x3D; [
+      addDefaultNoteDetailsConfig,
+      addDefaultTodoViews,
+      addDefaultRecurringActivityDetailsConfig,
+      addDefaultImportViewConfig,
+    ];
+
+    const newDoc &#x3D; JSON.parse(JSON.stringify(doc), (_that, rawValue) &#x3D;&gt; {
+      let docPart &#x3D; rawValue;
+      for (const migration of migrations.concat(defaultConfigs)) {
+        docPart &#x3D; migration(_that, docPart);
+      }
+      return docPart;
+    });
+
+    return Object.assign(new (doc.constructor as new () &#x3D;&gt; E)(), newDoc);
+  }
+}
+
+const migrateFormFieldConfigView2ViewComponent: ConfigMigration &#x3D; (
+  key,
+  configPart,
+) &#x3D;&gt; {
+  if (
+    !(key &#x3D;&#x3D;&#x3D; &quot;columns&quot; || key &#x3D;&#x3D;&#x3D; &quot;fields&quot; || key &#x3D;&#x3D;&#x3D; &quot;cols&quot;) &amp;&amp;
+    key !&#x3D;&#x3D; null
+  ) {
+    return configPart;
+  }
+
+  if (Array.isArray(configPart)) {
+    return configPart.map((c) &#x3D;&gt;
+      migrateFormFieldConfigView2ViewComponent(null, c),
+    );
+  }
+
+  if (configPart?.view) {
+    configPart.viewComponent &#x3D; configPart.view;
+    delete configPart.view;
+  }
+  if (configPart?.edit) {
+    configPart.editComponent &#x3D; configPart.edit;
+    delete configPart.edit;
+  }
+  return configPart;
+};
+
+/**
+ * Config properties specifying an entityType should be named &quot;entityType&quot; rather than &quot;entity&quot;
+ * to avoid confusion with a specific instance of an entity being passed in components.
+ * @param key
+ * @param configPart
+ */
+const migrateEntityDetailsInputEntityType: ConfigMigration &#x3D; (
+  key,
+  configPart,
+) &#x3D;&gt; {
+  if (key !&#x3D;&#x3D; &quot;config&quot;) {
+    return configPart;
+  }
+
+  if (configPart[&quot;entity&quot;]) {
+    configPart[&quot;entityType&quot;] &#x3D; configPart[&quot;entity&quot;];
+    delete configPart[&quot;entity&quot;];
+  }
+
+  return configPart;
+};
+
+/**
+ * Replace custom &quot;entity-array&quot; dataType with dataType&#x3D;&quot;array&quot;, innerDatatype&#x3D;&quot;entity&quot;
+ * @param key
+ * @param configPart
+ */
+const migrateEntityArrayDatatype: ConfigMigration &#x3D; (key, configPart) &#x3D;&gt; {
+  if (configPart &#x3D;&#x3D;&#x3D; &quot;DisplayEntityArray&quot;) {
+    return &quot;DisplayEntity&quot;;
+  }
+
+  if (!configPart?.hasOwnProperty(&quot;dataType&quot;)) {
+    return configPart;
+  }
+
+  const config: EntitySchemaField &#x3D; configPart;
+  if (config.dataType &#x3D;&#x3D;&#x3D; &quot;entity-array&quot;) {
+    config.dataType &#x3D; EntityDatatype.dataType;
+    config.isArray &#x3D; true;
+  }
+
+  if (config.dataType &#x3D;&#x3D;&#x3D; &quot;array&quot;) {
+    config.dataType &#x3D; config[&quot;innerDataType&quot;];
+    delete config[&quot;innerDataType&quot;];
+    config.isArray &#x3D; true;
+  }
+
+  if (config.dataType &#x3D;&#x3D;&#x3D; &quot;configurable-enum&quot; &amp;&amp; config[&quot;innerDataType&quot;]) {
+    config.additional &#x3D; config[&quot;innerDataType&quot;];
+    delete config[&quot;innerDataType&quot;];
+  }
+
+  return configPart;
+};
+
+/** Migrate the &quot;file&quot; datatype to use the new &quot;photo&quot; datatype  and remove editComponent if no longer needed */
+const migratePhotoDatatype: ConfigMigration &#x3D; (key, configPart) &#x3D;&gt; {
+  if (
+    configPart?.dataType &#x3D;&#x3D;&#x3D; &quot;file&quot; &amp;&amp;
+    configPart?.editComponent &#x3D;&#x3D;&#x3D; &quot;EditPhoto&quot;
+  ) {
+    configPart.dataType &#x3D; &quot;photo&quot;;
+    delete configPart.editComponent;
+  }
+  return configPart;
+};
+
+/** Migrate the number datatype to use the new &quot;percentage&quot; datatype */
+const migratePercentageDatatype: ConfigMigration &#x3D; (key, configPart) &#x3D;&gt; {
+  if (
+    configPart?.dataType &#x3D;&#x3D;&#x3D; &quot;number&quot; &amp;&amp;
+    configPart?.viewComponent &#x3D;&#x3D;&#x3D; &quot;DisplayPercentage&quot;
+  ) {
+    configPart.dataType &#x3D; &quot;percentage&quot;;
+    delete configPart.viewComponent;
+    delete configPart.editComponent;
+  }
+
+  return configPart;
+};
+
+const migrateEntitySchemaDefaultValue: ConfigMigration &#x3D; (
+  key: string,
+  configPart: any,
+): any &#x3D;&gt; {
+  if (key !&#x3D;&#x3D; &quot;defaultValue&quot;) {
+    return configPart;
+  }
+
+  if (typeof configPart &#x3D;&#x3D; &quot;object&quot;) {
+    return configPart;
+  }
+
+  let placeholderValue: string | undefined &#x3D; Object.values(PLACEHOLDERS).find(
+    (value) &#x3D;&gt; value &#x3D;&#x3D;&#x3D; configPart,
+  );
+
+  if (placeholderValue) {
+    return {
+      mode: &quot;dynamic&quot;,
+      value: placeholderValue,
+    } as DefaultValueConfig;
+  }
+
+  return {
+    mode: &quot;static&quot;,
+    value: configPart,
+  } as DefaultValueConfig;
+};
+
+const migrateChildrenListConfig: ConfigMigration &#x3D; (key, configPart) &#x3D;&gt; {
+  if (
+    typeof configPart !&#x3D;&#x3D; &quot;object&quot; ||
+    configPart?.[&quot;component&quot;] !&#x3D;&#x3D; &quot;ChildrenList&quot;
+  ) {
+    return configPart;
+  }
+
+  configPart[&quot;component&quot;] &#x3D; &quot;EntityList&quot;;
+
+  configPart[&quot;config&quot;] &#x3D; configPart[&quot;config&quot;] ?? {};
+  configPart[&quot;config&quot;][&quot;entityType&quot;] &#x3D; &quot;Child&quot;;
+  configPart[&quot;config&quot;][&quot;loaderMethod&quot;] &#x3D; &quot;ChildrenService&quot;;
+
+  return configPart;
+};
+
+const migrateHistoricalDataComponent: ConfigMigration &#x3D; (key, configPart) &#x3D;&gt; {
+  if (
+    typeof configPart !&#x3D;&#x3D; &quot;object&quot; ||
+    configPart?.[&quot;component&quot;] !&#x3D;&#x3D; &quot;HistoricalDataComponent&quot;
+  ) {
+    return configPart;
+  }
+
+  configPart[&quot;component&quot;] &#x3D; &quot;RelatedEntities&quot;;
+
+  configPart[&quot;config&quot;] &#x3D; configPart[&quot;config&quot;] ?? {};
+  if (Array.isArray(configPart[&quot;config&quot;])) {
+    configPart[&quot;config&quot;] &#x3D; { columns: configPart[&quot;config&quot;] };
+  }
+  configPart[&quot;config&quot;][&quot;entityType&quot;] &#x3D; &quot;HistoricalEntityData&quot;;
+  configPart[&quot;config&quot;][&quot;loaderMethod&quot;] &#x3D; LoaderMethod.HistoricalDataService;
+
+  return configPart;
+};
+
+/**
+ * ChildBlockComponent was removed and entity types can instead define a configurable tooltip setting.
+ */
+const migrateEntityBlock: ConfigMigration &#x3D; (key, configPart) &#x3D;&gt; {
+  if (configPart?.[&quot;blockComponent&quot;] &#x3D;&#x3D;&#x3D; &quot;ChildBlock&quot;) {
+    delete configPart[&quot;blockComponent&quot;];
+    configPart[&quot;toBlockDetailsAttributes&quot;] &#x3D; {
+      title: &quot;name&quot;,
+      image: &quot;photo&quot;,
+      fields: [&quot;phone&quot;, &quot;schoolId&quot;, &quot;schoolClass&quot;],
+    };
+
+    return configPart;
+  }
+
+  if (key &#x3D;&#x3D;&#x3D; &quot;viewComponent&quot; &amp;&amp; configPart &#x3D;&#x3D;&#x3D; &quot;ChildBlock&quot;) {
+    return &quot;EntityBlock&quot;;
+  }
+
+  return configPart;
+};
+
+const migrateGroupByConfig: ConfigMigration &#x3D; (key, configPart) &#x3D;&gt; {
+  // Check if we are working with the EntityCountDashboard component and within the &#x27;config&#x27; object
+  if (
+    configPart?.component &#x3D;&#x3D;&#x3D; &quot;EntityCountDashboard&quot; &amp;&amp;
+    typeof configPart?.config?.groupBy &#x3D;&#x3D;&#x3D; &quot;string&quot;
+  ) {
+    configPart.config.groupBy &#x3D; [configPart.config.groupBy]; // Wrap groupBy as an array
+    return configPart;
+  }
+
+  // Return the unchanged part if no modification is needed
+  return configPart;
+};
+
+/**
+ * The DefaultValueConfig &#x60;mode&#x60; &quot;inherited&quot; has been renamed to &quot;inherited-from-referenced-entity&quot;
+ * and structure moved into a &quot;config&quot; subproperty.
+ */
+const migrateDefaultValue: ConfigMigration &#x3D; (key, configPart) &#x3D;&gt; {
+  if (key !&#x3D;&#x3D; &quot;defaultValue&quot;) {
+    return configPart;
+  }
+
+  if (configPart?.mode &#x3D;&#x3D;&#x3D; &quot;inherited&quot;) {
+    configPart.mode &#x3D; &quot;inherited-from-referenced-entity&quot;;
+  }
+
+  if (!configPart.config) {
+    configPart.config &#x3D; {};
+    if (configPart.value) {
+      configPart.config.value &#x3D; configPart.value;
+      delete configPart.value;
+    }
+    if (configPart.localAttribute) {
+      configPart.config.localAttribute &#x3D; configPart.localAttribute;
+      delete configPart.localAttribute;
+    }
+    if (configPart.field) {
+      configPart.config.field &#x3D; configPart.field;
+      delete configPart.field;
+    }
+  }
+
+  return configPart;
+};
+
+/**
+ * Migration to enable user account features by setting the &#x60;enableUserAccounts&#x60; flag
+ * and remove the UserSecurity panel from view:user/:id.
+ */
+const migrateUserEntityAndPanels: ConfigMigration &#x3D; (key, configPart) &#x3D;&gt; {
+  if (key &#x3D;&#x3D;&#x3D; &quot;entity:User&quot;) {
+    configPart.enableUserAccounts &#x3D; true;
+  }
+
+  if (key &#x3D;&#x3D;&#x3D; &quot;view:user/:id&quot;) {
+    configPart.config.panels &#x3D; (configPart.config.panels || []).filter(
+      (panel) &#x3D;&gt;
+        !panel.components?.some(
+          (c: PanelComponent) &#x3D;&gt; c.component &#x3D;&#x3D;&#x3D; &quot;UserSecurity&quot;,
+        ),
+    );
+  }
+
+  return configPart;
+};
+
+/**
+ * Migration to set or update entityType for specific components
+ */
+const migrateComponentEntityTypeDefaults: ConfigMigration &#x3D; (
+  key,
+  configPart,
+) &#x3D;&gt; {
+  if (typeof configPart !&#x3D;&#x3D; &quot;object&quot; || !configPart?.component) {
+    return configPart;
+  }
+
+  if (!configPart.config) {
+    configPart.config &#x3D; {};
+  }
+
+  const defaults &#x3D; RELATED_ENTITIES_DEFAULT_CONFIGS[configPart.component];
+  if (defaults) {
+    configPart.config.entityType &#x3D; defaults.entityType;
+    if (
+      !Array.isArray(configPart.config.columns) ||
+      configPart.config.columns.length &#x3D;&#x3D;&#x3D; 0
+    ) {
+      configPart.config.columns &#x3D; defaults.columns;
+    }
+  }
+
+  return configPart;
+};
+
+/* Remove outdated task view configs
+ * to fall back to the new default that is automatically added.
+ */
+const removeOutdatedTodoViews: ConfigMigration &#x3D; (key, configPart) &#x3D;&gt; {
+  if (
+    configPart?.component &#x3D;&#x3D;&#x3D; &quot;TodoList&quot; ||
+    configPart?.component &#x3D;&#x3D;&#x3D; &quot;TodoDetails&quot;
+  ) {
+    return undefined; // remove this config
+  }
+
+  return configPart;
+};
+
+/**
+ * Replace deprecated &#x60;ChildSchoolOverview&#x60;/&#x60;PreviousSchools&#x60;/&#x60;ChildrenOverview&#x60;
+ * components with &#x60;RelatedEntities&#x60; using ChildSchoolRelation entity.
+ * - If a config exists, only replace the component string.
+ * - If config is missing, replace the entire component with the default config.
+ */
+const migrateChildSchoolOverviewComponent: ConfigMigration &#x3D; (
+  key,
+  configPart,
+) &#x3D;&gt; {
+  const deprecatedComponents &#x3D; [
+    &quot;ChildSchoolOverview&quot;,
+    &quot;PreviousSchools&quot;,
+    &quot;ChildrenOverview&quot;,
+  ];
+
+  // determine if this is part of EntityDetails for Child or for School
+  if (typeof configPart &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; Array.isArray(configPart?.panels)) {
+    const entityType &#x3D; configPart?.entityType;
+    const isChildDetails &#x3D;
+      typeof entityType &#x3D;&#x3D;&#x3D; &quot;string&quot; &amp;&amp; entityType.toLowerCase() &#x3D;&#x3D;&#x3D; &quot;child&quot;;
+
+    configPart.panels.forEach((panel) &#x3D;&gt; {
+      panel.components?.forEach((component, index) &#x3D;&gt; {
+        if (
+          typeof component &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp;
+          deprecatedComponents.includes(component.component)
+        ) {
+          const newConfig &#x3D; Object.assign(
+            {},
+            isChildDetails ? relatedEntitiesForChild : relatedEntitiesForSchool,
+            component.config,
+          ); // let existing config override defaults
+
+          panel.components[index] &#x3D; {
+            component: &quot;RelatedEntities&quot;,
+            config: newConfig,
+          };
+          // enforce important new config properties
+          component.config.entityType &#x3D; &quot;ChildSchoolRelation&quot;;
+          component.config.loaderMethod &#x3D; &quot;ChildrenServiceQueryRelations&quot;;
+        }
+      });
+    });
+  }
+
+  return configPart;
+};
+
+/**
+ * Default configuration for RelatedEntities used in School entity details.
+ * Displays child-related school history (childId, start/end dates, class, result).
+ */
+const relatedEntitiesForSchool &#x3D; {
+  entityType: &quot;ChildSchoolRelation&quot;,
+  columns: [
+    { id: &quot;childId&quot; },
+    { id: &quot;start&quot;, visibleFrom: &quot;md&quot; },
+    { id: &quot;end&quot;, visibleFrom: &quot;md&quot; },
+    { id: &quot;schoolClass&quot; },
+    { id: &quot;result&quot; },
+  ],
+  loaderMethod: &quot;ChildrenServiceQueryRelations&quot;,
+};
+/**
+ * Default configuration for RelatedEntities used in Child entity details.
+ * Displays school-related history (start/end dates, schoolId, class, result) and includes inactive records.
+ */
+const relatedEntitiesForChild &#x3D; {
+  entityType: &quot;ChildSchoolRelation&quot;,
+  columns: [
+    { id: &quot;start&quot;, visibleFrom: &quot;md&quot; },
+    { id: &quot;end&quot;, visibleFrom: &quot;md&quot; },
+    { id: &quot;schoolId&quot; },
+    { id: &quot;schoolClass&quot; },
+    { id: &quot;result&quot; },
+  ],
+  loaderMethod: &quot;ChildrenServiceQueryRelations&quot;,
+  showInactive: true,
+};
+
+/**
+ * Change editComponent &quot;EditDescriptionOnly&quot; to viewComponent &quot;DisplayDescriptionOnly&quot;
+ */
+const migrateEditDescriptionOnly: ConfigMigration &#x3D; (key, configPart) &#x3D;&gt; {
+  if (configPart?.editComponent !&#x3D;&#x3D; &quot;EditDescriptionOnly&quot;) {
+    return configPart;
+  }
+
+  configPart.viewComponent &#x3D; &quot;DisplayDescriptionOnly&quot;;
+  delete configPart.editComponent;
+
+  return configPart;
+};
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'ConfigService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
