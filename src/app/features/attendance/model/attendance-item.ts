@@ -37,7 +37,7 @@ export class AttendanceItem {
   @DatabaseField({
     dataType: "entity",
   })
-  participant: string;
+  participant?: string;
 
   @DatabaseField() remarks: string;
 

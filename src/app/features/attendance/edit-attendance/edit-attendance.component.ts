@@ -155,11 +155,17 @@ export class EditAttendanceComponent
     property: "status" | "remarks",
     newValue: any,
   ) {
-    const item = this.getAttendanceItem(participantId);
-    if (item) {
-      item[property] = newValue;
-      this.formControl.markAsDirty();
-    }
+    const current = this.formControl.value ?? [];
+    const updatedArray = current.map((item) => {
+      if (item.participant !== participantId) {
+        return item;
+      }
+      const updatedItem = item.copy();
+      updatedItem[property] = newValue;
+      return updatedItem;
+    });
+    this.formControl.setValue(updatedArray);
+    this.formControl.markAsDirty();
   }
 
   getAttendanceItem(participantId: string): AttendanceItem | undefined {

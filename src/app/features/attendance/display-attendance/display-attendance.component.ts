@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  OnChanges,
+  signal,
+  SimpleChanges,
+} from "@angular/core";
 import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { AttendanceItem } from "../model/attendance-item";
@@ -28,27 +35,15 @@ const THRESHOLD_WARNING = 0.8;
 })
 export class DisplayAttendanceComponent
   extends ViewDirective<AttendanceItem[], any>
-  implements OnInit
+  implements OnChanges
 {
-  percentage: number | undefined;
-  warningClass: string = "";
-  items: AttendanceItem[] = [];
+  items = signal<AttendanceItem[]>([]);
 
-  ngOnInit() {
-    if (!this.value?.length) {
-      return;
-    }
-
-    this.items = this.value;
-    this.percentage = this.calculatePercentage();
-    this.warningClass = this.getWarningClass();
-  }
-
-  private calculatePercentage(): number | undefined {
+  percentage = computed(() => {
     let present = 0;
     let absent = 0;
 
-    for (const item of this.value) {
+    for (const item of this.items()) {
       switch (item.status?.countAs) {
         case AttendanceLogicalStatus.PRESENT:
           present++;
@@ -61,19 +56,26 @@ export class DisplayAttendanceComponent
 
     const total = present + absent;
     return total > 0 ? present / total : undefined;
-  }
+  });
 
-  private getWarningClass(): string {
-    if (this.percentage == null) {
+  warningClass = computed(() => {
+    const pct = this.percentage();
+    if (pct == null) {
       return "";
     }
-
-    if (this.percentage < THRESHOLD_URGENT) {
+    if (pct < THRESHOLD_URGENT) {
       return "w-" + WarningLevel.URGENT;
-    } else if (this.percentage < THRESHOLD_WARNING) {
+    } else if (pct < THRESHOLD_WARNING) {
       return "w-" + WarningLevel.WARNING;
     } else {
       return "w-" + WarningLevel.OK;
     }
+  });
+
+  // TODO: Remove ngOnChanges once ViewDirective migrates to signal inputs.
+  //  Then replace with: items = computed(() => this.value()?.length ? this.value() : []);
+  override ngOnChanges(changes?: SimpleChanges) {
+    super.ngOnChanges(changes);
+    this.items.set(this.value?.length ? this.value : []);
   }
 }
