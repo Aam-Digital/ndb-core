@@ -24,6 +24,7 @@ import { Validators } from "@angular/forms";
 import { RecurringActivity } from "#src/app/features/attendance/model/recurring-activity";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 
 describe("AdminEntityFieldComponent", () => {
   let component: AdminEntityFieldComponent;
@@ -291,5 +292,77 @@ describe("AdminEntityFieldComponent", () => {
       TestEntity.ENTITY_TYPE,
       RecurringActivity.ENTITY_TYPE,
     ]);
+  }));
+
+  it("should validate that label is unique", fakeAsync(() => {
+    // Create a simple entity type with existing fields
+    class TestEntityWithFields extends Entity {
+      static override readonly ENTITY_TYPE = "TestEntityWithFields";
+      static override readonly label = "Test Entity";
+      static override readonly schema = new Map<string, EntitySchemaField>([
+        ["field1", { id: "field1", label: "Existing Label 1" }],
+        ["field2", { id: "field2", label: "Existing Label 2" }],
+        ["field3", { id: "field3", label: "Another Field" }],
+      ]);
+    }
+
+    component.data.entityType = TestEntityWithFields;
+    component.data.entitySchemaField = { label: "New Label", id: undefined };
+    component.ngOnInit();
+    tick();
+
+    const labelControl = component.schemaFieldsForm.get("label");
+
+    // New unique label should be valid
+    labelControl.setValue("Unique New Label");
+    tick();
+    expect(labelControl.errors).toBeNull();
+
+    // Exact duplicate label should be invalid
+    labelControl.setValue("Existing Label 1");
+    tick();
+    expect(labelControl.errors).toEqual({
+      uniqueProperty: jasmine.any(String),
+    });
+
+    // Case-insensitive duplicate should also be invalid
+    labelControl.setValue("existing label 2");
+    tick();
+    expect(labelControl.errors).toEqual({
+      uniqueProperty: jasmine.any(String),
+    });
+  }));
+
+  it("should allow keeping the same label when editing existing field", fakeAsync(() => {
+    class TestEntityWithFields extends Entity {
+      static override readonly ENTITY_TYPE = "TestEntityWithFields";
+      static override readonly label = "Test Entity";
+      static override readonly schema = new Map<string, EntitySchemaField>([
+        ["field1", { id: "field1", label: "Existing Label" }],
+        ["field2", { id: "field2", label: "Another Label" }],
+      ]);
+    }
+
+    component.data.entityType = TestEntityWithFields;
+    component.data.entitySchemaField = {
+      id: "field1",
+      label: "Existing Label",
+    };
+    component.ngOnInit();
+    tick();
+
+    const labelControl = component.schemaFieldsForm.get("label");
+
+    // Keeping the same label should be valid
+    expect(labelControl.value).toBe("Existing Label");
+    tick();
+    expect(labelControl.errors).toBeNull();
+
+    // Changing to another existing label should be invalid
+    labelControl.setValue("Another Label");
+    tick();
+    expect(labelControl.errors).toEqual({
+      uniqueProperty: jasmine.any(String),
+    });
   }));
 });
