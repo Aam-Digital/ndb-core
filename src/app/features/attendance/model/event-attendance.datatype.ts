@@ -1,12 +1,24 @@
-import { Injectable } from "@angular/core";
-import { SchemaEmbedDatatype } from "#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype";
-import { EntityConstructor } from "#src/app/core/entity/model/entity";
-import { EventAttendance, EventAttendanceMap } from "./event-attendance";
+import { inject, Injectable } from "@angular/core";
+import { AttendanceItem } from "./attendance-item";
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+
+/**
+ * A full registry of event-attendance entries for multiple participants.
+ */
+
+export class EventAttendanceMap extends Map<string, AttendanceItem> {
+  static DATA_TYPE = "event-attendance-map";
+
+  constructor() {
+    super();
+  }
+}
 
 /**
  * Holds a full register of EventAttendance entries.
- * (previously this was "MapDatatype")
+ * Each value in the map is an {@link AttendanceItem}, transformed
+ * using its schema annotations (via {@link EntitySchemaService}).
  */
 @Injectable()
 export class EventAttendanceMapDatatype extends DefaultDatatype<
@@ -15,12 +27,7 @@ export class EventAttendanceMapDatatype extends DefaultDatatype<
 > {
   static override dataType = EventAttendanceMap.DATA_TYPE;
 
-  embeddedType: EventAttendanceDatatype;
-
-  constructor() {
-    super();
-    this.embeddedType = new EventAttendanceDatatype();
-  }
+  private readonly schemaService = inject(EntitySchemaService);
 
   override transformToDatabaseFormat(value: Map<string, any>) {
     if (!(value instanceof Map)) {
@@ -33,7 +40,13 @@ export class EventAttendanceMapDatatype extends DefaultDatatype<
 
     const result: [string, any][] = [];
     value.forEach((item, key) => {
-      result.push([key, this.embeddedType.transformToDatabaseFormat(item)]);
+      result.push([
+        key,
+        this.schemaService.transformEntityToDatabaseFormat(
+          item,
+          AttendanceItem.schema,
+        ),
+      ]);
     });
     return result;
   }
@@ -53,19 +66,15 @@ export class EventAttendanceMapDatatype extends DefaultDatatype<
 
     const result = new EventAttendanceMap();
     for (const keyValue of value) {
-      const transformedElement = this.embeddedType.transformToObjectFormat(
-        keyValue[1],
-      ) as unknown as EventAttendance;
-      result.set(keyValue[0], transformedElement);
+      const transformedValue =
+        this.schemaService.transformDatabaseToEntityFormat<AttendanceItem>(
+          keyValue[1],
+          AttendanceItem.schema,
+        );
+      const instance = new AttendanceItem();
+      Object.assign(instance, transformedValue);
+      result.set(keyValue[0], instance);
     }
     return result;
   }
-}
-
-/** @deprecated do not use externally, use EventAttendanceMap instead **/
-@Injectable()
-export class EventAttendanceDatatype extends SchemaEmbedDatatype {
-  static override dataType = EventAttendance.DATA_TYPE;
-
-  override embeddedType = EventAttendance as unknown as EntityConstructor;
 }

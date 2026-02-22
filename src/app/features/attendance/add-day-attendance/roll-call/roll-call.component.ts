@@ -1,12 +1,12 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Injectable,
   Input,
   OnChanges,
   Output,
   SimpleChanges,
-  inject,
 } from "@angular/core";
 import { animate, style, transition, trigger } from "@angular/animations";
 import {
@@ -14,7 +14,7 @@ import {
   AttendanceStatusType,
 } from "../../model/attendance-status";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
-import { EventAttendance } from "../../model/event-attendance";
+import { AttendanceItem } from "../../model/attendance-item";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { Logging } from "#src/app/core/logging/logging.service";
@@ -107,7 +107,7 @@ export class RollCallComponent implements OnChanges {
    */
   currentIndex = 0;
   currentChild: Entity;
-  currentAttendance: EventAttendance;
+  currentAttendance: AttendanceItem;
   /**
    * whether any changes have been made to the model
    */

@@ -4,13 +4,14 @@ import {
   NullAttendanceStatusType,
 } from "./attendance-status";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
+import { EntitySchema } from "#src/app/core/entity/schema/entity-schema";
 
 /**
- * Simple relationship object to represent an individual child's status at an event including context information.
- * TODO overwork this concept to either be a sublass of Entity or not (at the moment it uses a lot of casting, e.g. to be used in the entity subrecord)
+ * Simple relationship object to represent an individual participant's status at an event including context information.
  */
-export class EventAttendance {
+export class AttendanceItem {
   static DATA_TYPE = "event-attendance";
+  declare static schema: EntitySchema;
 
   private _status: AttendanceStatusType;
   @DatabaseField({
@@ -43,20 +44,7 @@ export class EventAttendance {
     this.remarks = remarks;
   }
 
-  public copy(): EventAttendance {
-    return Object.assign(new EventAttendance(), this);
-  }
-}
-
-/**
- * A full registry of event-attendance entries for multiple participants.
- *
- * TODO: this class can become the basis for a more generic attendance data that is not hard-wired to Note entities.
- */
-export class EventAttendanceMap extends Map<string, EventAttendance> {
-  static DATA_TYPE = "event-attendance-map";
-
-  constructor() {
-    super();
+  public copy(): AttendanceItem {
+    return Object.assign(new AttendanceItem(), this);
   }
 }

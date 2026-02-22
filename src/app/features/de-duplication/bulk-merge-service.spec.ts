@@ -12,7 +12,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
 import { Entity } from "app/core/entity/model/entity";
 import { DatabaseField } from "app/core/entity/database-field.decorator";
-import { EventAttendance } from "#src/app/features/attendance/model/event-attendance";
+import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import { Note } from "app/child-dev-project/notes/model/note";
 import { createEntityOfType } from "app/core/demo-data/create-entity-of-type";
 
@@ -114,7 +114,7 @@ describe("BulkMergeService", () => {
     const note2 = new Note("note2");
     note2.addChild(child2);
 
-    const attendance = new EventAttendance();
+    const attendance = new AttendanceItem();
     (note2 as any).childrenAttendance.set(child2.getId(), attendance);
 
     await entityMapper.saveAll([note1, note2]);
