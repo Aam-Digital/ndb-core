@@ -163,11 +163,14 @@ export class AdminEntityFieldComponent implements OnInit {
       validators: [Validators.required, Validators.pattern(/^[a-zA-Z0-9_]*$/)],
       asyncValidators: [
         uniquePropertyValidator({
-          getExistingValues: async () =>
-            Array.from(this.data.entityType.schema.keys()),
+          getExistingValues: async () => {
+            const keys = Array.from(this.data.entityType.schema.keys());
+            return this.data.entitySchemaField.id
+              ? keys.filter((k) => k !== this.data.entitySchemaField.id)
+              : keys;
+          },
           normalize: false,
-          errorKey: "uniqueId",
-          errorMessage: $localize`:form field validation error:id already in use`,
+          fieldLabel: $localize`:field label:id`,
         }),
       ],
     });
@@ -183,20 +186,19 @@ export class AdminEntityFieldComponent implements OnInit {
           uniquePropertyValidator({
             getExistingValues: async () => {
               const labels: string[] = [];
-              for (const field of this.data.entityType.schema.values()) {
+              for (const [
+                key,
+                field,
+              ] of this.data.entityType.schema.entries()) {
+                if (key === this.data.entitySchemaField.id) continue;
                 if (field.label) {
                   labels.push(field.label);
                 }
               }
               return labels;
             },
-            excludeValue: this.data.entitySchemaField.id
-              ? this.data.entityType.schema.get(this.data.entitySchemaField.id)
-                  ?.label
-              : undefined,
             normalize: true,
-            errorKey: "duplicateLabel",
-            errorMessage: $localize`:form field validation error:A field with this label already exists`,
+            fieldLabel: $localize`:field label:label`,
           }),
         ],
       },

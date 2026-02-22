@@ -322,14 +322,14 @@ describe("AdminEntityFieldComponent", () => {
     labelControl.setValue("Existing Label 1");
     tick();
     expect(labelControl.errors).toEqual({
-      duplicateLabel: jasmine.any(String),
+      uniqueProperty: jasmine.any(String),
     });
 
     // Case-insensitive duplicate should also be invalid
     labelControl.setValue("existing label 2");
     tick();
     expect(labelControl.errors).toEqual({
-      duplicateLabel: jasmine.any(String),
+      uniqueProperty: jasmine.any(String),
     });
   }));
 
@@ -362,7 +362,7 @@ describe("AdminEntityFieldComponent", () => {
     labelControl.setValue("Another Label");
     tick();
     expect(labelControl.errors).toEqual({
-      duplicateLabel: jasmine.any(String),
+      uniqueProperty: jasmine.any(String),
     });
   }));
 });

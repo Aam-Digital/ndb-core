@@ -218,8 +218,7 @@ export class DynamicValidatorsService {
             .loadType(value)
             .then((entities) => entities.map((entity) => entity.getId())),
         normalize: false,
-        errorKey: "uniqueId",
-        errorMessage: $localize`:form field validation error:id already in use`,
+        fieldLabel: $localize`:field label:id`,
       }),
       async: true,
     };

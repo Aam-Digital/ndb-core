@@ -13,8 +13,7 @@ describe("UniquePropertyValidator", () => {
     validator = uniquePropertyValidator({
       getExistingValues: async () => demoValues,
       normalize: false,
-      errorKey: "uniqueId",
-      errorMessage: "id already in use",
+      fieldLabel: "id",
     });
   }));
 
@@ -31,7 +30,7 @@ describe("UniquePropertyValidator", () => {
     formControl.markAsDirty();
     const validationResult = await validator(formControl);
 
-    expect(validationResult).toEqual({ uniqueId: jasmine.any(String) });
+    expect(validationResult).toEqual({ uniqueProperty: jasmine.any(String) });
   });
 
   it("should allow to keep unchanged value (to not refuse saving an existing entity with unchanged value)", async () => {
@@ -47,33 +46,31 @@ describe("UniquePropertyValidator", () => {
     validator = uniquePropertyValidator({
       getExistingValues: async () => ["Existing Label", "Another Label"],
       normalize: true,
-      errorKey: "duplicateLabel",
-      errorMessage: "duplicate label",
+      fieldLabel: "label",
     });
 
     formControl.setValue("existing label"); // lowercase
     const validationResult = await validator(formControl);
 
-    expect(validationResult).toEqual({ duplicateLabel: jasmine.any(String) });
+    expect(validationResult).toEqual({ uniqueProperty: jasmine.any(String) });
   });
 
-  it("should work with excludeValue", async () => {
+  it("should allow keeping unchanged value via defaultValue", async () => {
     validator = uniquePropertyValidator({
       getExistingValues: async () => ["Existing Label", "Another Label"],
-      excludeValue: "Existing Label",
       normalize: true,
-      errorKey: "duplicateLabel",
-      errorMessage: "duplicate label",
+      fieldLabel: "label",
     });
 
-    // Should allow the excluded value
-    formControl.setValue("Existing Label");
+    // A control initialized with "Existing Label" should allow keeping it (defaultValue match)
+    formControl = new FormControl("Existing Label", { nonNullable: true });
+    formControl.markAsDirty();
     let validationResult = await validator(formControl);
     expect(validationResult).toBeNull();
 
     // Should still reject other duplicates
     formControl.setValue("Another Label");
     validationResult = await validator(formControl);
-    expect(validationResult).toEqual({ duplicateLabel: jasmine.any(String) });
+    expect(validationResult).toEqual({ uniqueProperty: jasmine.any(String) });
   });
 });

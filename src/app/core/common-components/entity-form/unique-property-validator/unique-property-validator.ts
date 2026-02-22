@@ -1,27 +1,22 @@
 import { FormControl, ValidationErrors } from "@angular/forms";
 import { AsyncPromiseValidatorFn } from "../dynamic-form-validators/validator-types";
 
+export const UNIQUE_PROPERTY_ERROR_KEY = "uniqueProperty";
+
 export interface UniquePropertyValidatorConfig {
   /**
    * Function to get existing values to compare against
    */
   getExistingValues: () => Promise<string[]>;
   /**
-   * Optional value to exclude from comparison (e.g., when editing an existing field)
-   */
-  excludeValue?: string;
-  /**
    * Whether to normalize values (trim and lowercase) before comparison
    */
   normalize?: boolean;
   /**
-   * Custom error key for validation message
+   * Label of the field being validated, used to generate the error message.
+   * The error message will be: "A record with this {fieldLabel} already exists."
    */
-  errorKey: string;
-  /**
-   * Error message to display
-   */
-  errorMessage: string;
+  fieldLabel: string;
 }
 
 function normalizeValue(value: string): string {
@@ -31,29 +26,14 @@ function normalizeValue(value: string): string {
 function isDuplicate(
   currentValue: string,
   existingValues: string[],
-  excludeValue: string | undefined,
   shouldNormalize: boolean,
 ): boolean {
-  const normalizedCurrent = shouldNormalize
-    ? normalizeValue(currentValue)
-    : currentValue;
-  const normalizedExclude =
-    excludeValue !== undefined && shouldNormalize
-      ? normalizeValue(excludeValue)
-      : excludeValue;
+  if (shouldNormalize) {
+    currentValue = normalizeValue(currentValue);
+    existingValues = existingValues.map(normalizeValue);
+  }
 
-  return existingValues.some((existing) => {
-    const normalizedExisting = shouldNormalize
-      ? normalizeValue(existing)
-      : existing;
-    if (
-      normalizedExclude !== undefined &&
-      normalizedExisting === normalizedExclude
-    ) {
-      return false;
-    }
-    return normalizedExisting === normalizedCurrent;
-  });
+  return existingValues.includes(currentValue);
 }
 
 /**
@@ -75,10 +55,13 @@ export function uniquePropertyValidator(
     const hasDuplicate = isDuplicate(
       control.value,
       existingValues,
-      config.excludeValue,
       config.normalize ?? false,
     );
 
-    return hasDuplicate ? { [config.errorKey]: config.errorMessage } : null;
+    return hasDuplicate
+      ? {
+          uniqueProperty: $localize`:form field validation error:A record with this ${config.fieldLabel} already exists.`,
+        }
+      : null;
   };
 }

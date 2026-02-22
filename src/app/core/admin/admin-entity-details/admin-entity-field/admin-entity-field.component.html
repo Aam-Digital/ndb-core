@@ -29,9 +29,9 @@
             <mat-form-field>
               <mat-label i18n>Label</mat-label>
               <input formControlName="label" matInput #formLabel />
-              @if (schemaFieldsForm.get("label").hasError("duplicateLabel")) {
+              @if (schemaFieldsForm.get("label").hasError("uniqueProperty")) {
                 <mat-error>
-                  {{ schemaFieldsForm.get("label").getError("duplicateLabel") }}
+                  {{ schemaFieldsForm.get("label").getError("uniqueProperty") }}
                 </mat-error>
               }
             </mat-form-field>
@@ -100,9 +100,9 @@
                   >
                 </mat-error>
               }
-              @if (fieldIdForm.hasError("uniqueId")) {
+              @if (fieldIdForm.hasError("uniqueProperty")) {
                 <mat-error>
-                  {{ fieldIdForm.getError("uniqueId") }}
+                  {{ fieldIdForm.getError("uniqueProperty") }}
                 </mat-error>
               }
             </mat-form-field>
