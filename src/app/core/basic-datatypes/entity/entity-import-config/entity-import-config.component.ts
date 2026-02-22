@@ -47,8 +47,14 @@ export class EntityImportConfigComponent {
     const entityName = this.data.entityType.schema.get(propertyName).additional;
     this.entity = this.entities.get(entityName);
     this.availableProperties = [...this.entity.schema.entries()]
-      .filter(([_, schema]) => !!schema.label && !schema.isInternalField)
-      .map(([prop, schema]) => ({ label: schema.label, property: prop }));
+      .filter(
+        ([prop, schema]) =>
+          (!!schema.label && !schema.isInternalField) || prop === "_id",
+      )
+      .map(([prop, schema]) => ({
+        label: prop === "_id" ? $localize`ID (Internal UUID)` : schema.label,
+        property: prop,
+      }));
     this.propertyForm.setValue(this.data.col.additional);
   }
 

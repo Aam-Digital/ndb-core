@@ -36,6 +36,21 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
 
   @Input() override hideOption: (option: FormFieldConfig) => boolean;
 
+  /**
+   * Whether to show the internal _id field in the dropdown.
+   * Useful for import contexts where matching by UUID is needed.
+   */
+  @Input() set showInternalIdField(value: boolean) {
+    this._showInternalIdField = value;
+    if (this._entityType) {
+      this.options = this.getAllFieldProps(this._entityType.schema);
+    }
+  }
+  get showInternalIdField(): boolean {
+    return this._showInternalIdField;
+  }
+  private _showInternalIdField: boolean = false;
+
   @Input() set entityType(entity: string | EntityConstructor) {
     if (!entity) {
       return;
@@ -56,9 +71,15 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
   private getAllFieldProps(schema: EntitySchema): FormFieldConfig[] {
     return [...schema.entries()]
       .filter(
-        ([_, fieldSchema]) =>
-          !fieldSchema.isInternalField && !!fieldSchema.label,
+        ([prop, fieldSchema]) =>
+          (!fieldSchema.isInternalField && !!fieldSchema.label) ||
+          (this.showInternalIdField && prop === "_id"),
       )
-      .map(([name, fieldSchema]) => ({ ...fieldSchema, id: name }));
+      .map(([name, fieldSchema]) => ({
+        ...fieldSchema,
+        id: name,
+        label:
+          name === "_id" ? $localize`ID (Internal UUID)` : fieldSchema.label,
+      }));
   }
 }

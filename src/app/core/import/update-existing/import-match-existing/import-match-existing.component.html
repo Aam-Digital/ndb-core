@@ -19,6 +19,7 @@
       [entityType]="entityType()"
       [value]="settings()?.matchExistingByFields"
       (valueChange)="updateMatchFields($event)"
+      [showInternalIdField]="true"
     ></app-entity-field-select>
     <mat-hint i18n
       >All selected fields have to be equal in an existing record and your
