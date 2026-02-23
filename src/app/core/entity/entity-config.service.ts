@@ -13,6 +13,7 @@ import { EntitySchemaField } from "./schema/entity-schema-field";
 import { EntitySchema } from "./schema/entity-schema";
 import { EntityDetailsConfig } from "../entity-details/EntityDetailsConfig";
 import { EntityListConfig } from "../entity-list/EntityListConfig";
+import { EntitySchemaService } from "./schema/entity-schema.service";
 
 /**
  * A service that allows to work with configuration-objects
@@ -25,6 +26,7 @@ import { EntityListConfig } from "../entity-list/EntityListConfig";
 export class EntityConfigService {
   private configService = inject(ConfigService);
   private entities = inject(EntityRegistry);
+  private entitySchemaService = inject(EntitySchemaService);
 
   /** @deprecated will become private, use the service to access the data */
   static readonly PREFIX_ENTITY_CONFIG = "entity:";
@@ -137,7 +139,8 @@ export class EntityConfigService {
     const entityConfig = configAttributes || this.getEntityConfig(entityType);
     for (const [key, value] of Object.entries(entityConfig?.attributes ?? {})) {
       delete value["_isCustomizedField"]; // clean up previous flag that is not deprecated
-      addPropertySchema(entityType.prototype, key, value);
+      const normalized = this.normalizeDatatypeDefaults(value);
+      addPropertySchema(entityType.prototype, key, normalized);
     }
 
     // TODO: shall we just assign all properties that are present in the config object?
@@ -156,6 +159,23 @@ export class EntityConfigService {
       entityConfig?.enableUserAccounts ?? entityType?.enableUserAccounts;
 
     entityType._isCustomizedType = true;
+  }
+
+  /**
+   * Let the datatype normalize any schema field properties it requires.
+   * (e.g. a datatype may enforce `isArray: true`)
+   */
+  private normalizeDatatypeDefaults(
+    schemaField: EntitySchemaField,
+  ): EntitySchemaField {
+    if (!schemaField.dataType) {
+      return schemaField;
+    }
+    const dataType = this.entitySchemaService.getDatatypeOrDefault(
+      schemaField.dataType,
+      true,
+    );
+    return dataType?.normalizeSchemaField(schemaField) ?? schemaField;
   }
 
   /**
