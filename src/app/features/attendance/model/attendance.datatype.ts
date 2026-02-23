@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { SchemaEmbedDatatype } from "#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype";
 import { AttendanceItem } from "./attendance-item";
+import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
 
 /**
  * Datatype for attendance tracking on any entity.
@@ -30,4 +31,11 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
 
   override editComponent = "EditAttendance";
   override viewComponent = "DisplayAttendance";
+
+  override normalizeSchemaField(
+    schemaField: EntitySchemaField,
+  ): EntitySchemaField {
+    // attendance always requires isArray
+    return { ...schemaField, isArray: true };
+  }
 }
