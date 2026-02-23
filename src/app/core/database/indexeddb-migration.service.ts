@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { SessionInfo, SessionSubject } from "../session/auth/session-info";
-import { SessionType, SyncStateSubject } from "../session/session-type";
+import { SyncStateSubject } from "../session/session-type";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { computeDbNames, computeLegacyDbNames } from "./db-name-helpers";
 import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -53,26 +53,6 @@ export class IndexeddbMigrationService {
 
     // Local mode has no remote source for migration, so switch by config directly.
     // If legacy and new names would collide (id === name), use a dedicated suffix.
-    if (environment.session_type === SessionType.local) {
-      if (!environment.use_indexeddb_adapter) {
-        return {
-          dbNames: computeLegacyDbNames(session),
-          adapter: "idb",
-        };
-      }
-
-      const newNames = computeDbNames(session);
-
-      return {
-        // In local mode we always use dedicated names to avoid collisions with
-        // historical legacy databases that may share the same base name.
-        dbNames: {
-          app: `${newNames.app}-indexeddb`,
-          notifications: `${newNames.notifications}-indexeddb`,
-        },
-        adapter: "indexeddb",
-      };
-    }
 
     if (!environment.use_indexeddb_adapter) {
       Logging.debug(
@@ -84,9 +64,16 @@ export class IndexeddbMigrationService {
       };
     }
 
-    // Already migrated or fresh install (no old DB exists)
     const oldDbExists = await this.legacyDbExists(session);
-    if (this.isMigrated(session) || !oldDbExists) {
+    if (!oldDbExists) {
+      localStorage.setItem(DB_MIGRATED_PREFIX + session.id, "true");
+      Logging.debug(
+        "IndexeddbMigration: no legacy DB found; assuming fresh install and setting migration flag",
+      );
+    }
+
+    // Already migrated or fresh install (no old DB exists)
+    if (this.isMigrated(session)) {
       Logging.debug(
         "IndexeddbMigration: using new DB config",
         this.isMigrated(session)
