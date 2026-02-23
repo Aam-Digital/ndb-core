@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { SessionInfo, SessionSubject } from "../session/auth/session-info";
-import { SyncStateSubject } from "../session/session-type";
+import { SessionType, SyncStateSubject } from "../session/session-type";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { computeDbNames, computeLegacyDbNames } from "./db-name-helpers";
 import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -50,6 +50,29 @@ export class IndexeddbMigrationService {
    */
   async resolveDbConfig(session: SessionInfo): Promise<DbConfig> {
     this.migrationPending = false; // reset pending flag on each resolve attempt
+
+    // Local mode has no remote source for migration, so switch by config directly.
+    // If legacy and new names would collide (id === name), use a dedicated suffix.
+    if (environment.session_type === SessionType.local) {
+      if (!environment.use_indexeddb_adapter) {
+        return {
+          dbNames: computeLegacyDbNames(session),
+          adapter: "idb",
+        };
+      }
+
+      const newNames = computeDbNames(session);
+
+      return {
+        // In local mode we always use dedicated names to avoid collisions with
+        // historical legacy databases that may share the same base name.
+        dbNames: {
+          app: `${newNames.app}-indexeddb`,
+          notifications: `${newNames.notifications}-indexeddb`,
+        },
+        adapter: "indexeddb",
+      };
+    }
 
     if (!environment.use_indexeddb_adapter) {
       Logging.debug(

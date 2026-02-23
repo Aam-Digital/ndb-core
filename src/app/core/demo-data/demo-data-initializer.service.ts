@@ -97,7 +97,10 @@ export class DemoDataInitializerService {
   private async syncWithDemoUserDB() {
     const demoSession = this.normalUser;
     const dbNames = computeDbNames(demoSession);
-    const dbName = dbNames.app;
+    const dbName =
+      environment.use_indexeddb_adapter
+        ? `${dbNames.app}-indexeddb`
+        : dbNames.app;
     let demoUserDB: PouchDB.Database;
     if (environment.session_type === SessionType.mock) {
       PouchDB.plugin(memory);
