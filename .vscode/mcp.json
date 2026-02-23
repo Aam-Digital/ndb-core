@@ -6,7 +6,7 @@
     },
     "chrome-devtools": {
       "command": "npx",
-      "args": ["chrome-devtools-mcp@latest", "--autoConnect"]
+      "args": ["-y", "chrome-devtools-mcp", "--autoConnect"]
     },
     "sentry": {
       "command": "npx",
