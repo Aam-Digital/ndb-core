@@ -15,7 +15,7 @@ export const APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES = provideAppInitializer(
 
     // Re-trigger services that depend on the config when something changes
     configService.configUpdates
-      .pipe(takeUntilDestroyed(destroyRef))
+      .pipe(takeUntilDestroyed(destroyRef)) // especially for tests, this ensures cleanup
       .subscribe(() => {
         routerService.initRouting();
         entityConfigService.setupEntitiesFromConfig();

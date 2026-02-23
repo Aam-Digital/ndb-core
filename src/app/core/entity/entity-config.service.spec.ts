@@ -17,7 +17,7 @@ import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { DefaultDatatype } from "./default-datatype/default.datatype";
 
 class ForceArrayDatatype extends DefaultDatatype {
-  static override dataType = "force-array-test";
+  static override readonly dataType = "force-array-test";
 
   override normalizeSchemaField(
     schemaField: EntitySchemaField,
