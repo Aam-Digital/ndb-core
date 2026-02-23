@@ -51,9 +51,6 @@ export class IndexeddbMigrationService {
   async resolveDbConfig(session: SessionInfo): Promise<DbConfig> {
     this.migrationPending = false; // reset pending flag on each resolve attempt
 
-    // Local mode has no remote source for migration, so switch by config directly.
-    // If legacy and new names would collide (id === name), use a dedicated suffix.
-
     if (!environment.use_indexeddb_adapter) {
       Logging.debug(
         "IndexeddbMigration: use_indexeddb_adapter disabled; using legacy DB config",
@@ -68,17 +65,14 @@ export class IndexeddbMigrationService {
     if (!oldDbExists) {
       localStorage.setItem(DB_MIGRATED_PREFIX + session.id, "true");
       Logging.debug(
-        "IndexeddbMigration: no legacy DB found; assuming fresh install and setting migration flag",
+        "IndexeddbMigration: no legacy DB found; assuming fresh install and setting 'migrated' flag",
       );
     }
 
     // Already migrated or fresh install (no old DB exists)
     if (this.isMigrated(session)) {
       Logging.debug(
-        "IndexeddbMigration: using new DB config",
-        this.isMigrated(session)
-          ? "(migration flag set)"
-          : "(no legacy DB found; assuming fresh install)",
+        "IndexeddbMigration: using new DB config (migration flag set)",
       );
       return {
         dbNames: computeDbNames(session),
