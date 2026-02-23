@@ -61,14 +61,18 @@ export class IndexeddbMigrationService {
       };
     }
 
-    // Already migrated or fresh install (no old DB exists)
     const oldDbExists = await this.legacyDbExists(session);
-    if (this.isMigrated(session) || !oldDbExists) {
+    if (!oldDbExists) {
+      localStorage.setItem(DB_MIGRATED_PREFIX + session.id, "true");
       Logging.debug(
-        "IndexeddbMigration: using new DB config",
-        this.isMigrated(session)
-          ? "(migration flag set)"
-          : "(no legacy DB found; assuming fresh install)",
+        "IndexeddbMigration: no legacy DB found; assuming fresh install and setting 'migrated' flag",
+      );
+    }
+
+    // Already migrated or fresh install (no old DB exists)
+    if (this.isMigrated(session)) {
+      Logging.debug(
+        "IndexeddbMigration: using new DB config (migration flag set)",
       );
       return {
         dbNames: computeDbNames(session),
