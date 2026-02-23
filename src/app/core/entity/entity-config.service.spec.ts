@@ -14,6 +14,17 @@ import { mockEntityMapperProvider } from "./entity-mapper/mock-entity-mapper-ser
 import { EntityConfig } from "./entity-config";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
+import { DefaultDatatype } from "./default-datatype/default.datatype";
+
+class ForceArrayDatatype extends DefaultDatatype {
+  static override dataType = "force-array-test";
+
+  override normalizeSchemaField(
+    schemaField: EntitySchemaField,
+  ): EntitySchemaField {
+    return { ...schemaField, isArray: true };
+  }
+}
 
 describe("EntityConfigService", () => {
   let service: EntityConfigService;
@@ -34,6 +45,11 @@ describe("EntityConfigService", () => {
           useValue: entityRegistry,
         },
         EntitySchemaService,
+        {
+          provide: DefaultDatatype,
+          useClass: ForceArrayDatatype,
+          multi: true,
+        },
       ],
     });
     service = TestBed.inject(EntityConfigService);
@@ -44,10 +60,10 @@ describe("EntityConfigService", () => {
   });
 
   it("should add attributes to a entity class schema", () => {
-    expect(Test.schema).toHaveKey("name");
+    expect(Test.schema.has("name")).toBeTrue();
     service.addConfigAttributes<Test>(Test);
-    expect(Test.schema).toHaveKey("testAttribute");
-    expect(Test.schema).toHaveKey("name");
+    expect(Test.schema.has("testAttribute")).toBeTrue();
+    expect(Test.schema.has("name")).toBeTrue();
   });
 
   it("should assign the correct schema", () => {
@@ -78,8 +94,8 @@ describe("EntityConfigService", () => {
     ];
     mockConfigService.getAllConfigs.and.returnValue(mockEntityConfigs);
     service.setupEntitiesFromConfig();
-    expect(Test.schema).toHaveKey(ATTRIBUTE_1_NAME);
-    expect(Test2.schema).toHaveKey(ATTRIBUTE_2_NAME);
+    expect(Test.schema.has(ATTRIBUTE_1_NAME)).toBeTrue();
+    expect(Test2.schema.has(ATTRIBUTE_2_NAME)).toBeTrue();
   });
 
   it("should reset attribute to basic class config if custom attribute disappears from config doc", () => {
@@ -211,6 +227,17 @@ describe("EntityConfigService", () => {
     const dynamicInstance = new dynamicEntity("someId");
     expect(dynamicInstance instanceof Entity).toBeTrue();
     expect(dynamicInstance.getId()).toBe("NoExtends:someId");
+  });
+
+  it("should let datatypes normalize schema fields (e.g. force isArray)", () => {
+    service.addConfigAttributes<Test>(Test, {
+      attributes: {
+        forcedArrayField: { dataType: "force-array-test" },
+      },
+    });
+
+    const field = Test.schema.get("forcedArrayField");
+    expect(field.isArray).toBeTrue();
   });
 });
 

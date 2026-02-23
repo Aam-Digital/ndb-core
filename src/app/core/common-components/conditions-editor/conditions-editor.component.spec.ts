@@ -34,6 +34,7 @@ describe("ConditionsEditorComponent", () => {
       "valueToEntityFormat",
       "valueToDatabaseFormat",
       "getComponent",
+      "getDatatypeOrDefault",
     ]);
     mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
 
