@@ -85,6 +85,60 @@ To learn more about the build process, see [/build](./build/README.md).
 
 ---
 
+# AI-Assisted Development
+
+This project supports AI-assisted development through GitHub Copilot, Claude Code, and CodeRabbit.
+
+## Tools Overview
+
+| Tool | Usage |
+|---|---|
+| **GitHub Copilot** (VS Code) | Code generation, chat, agent mode — reads `AGENTS.md` |
+| **Claude Code** (CLI) | Interactive coding assistant — reads `CLAUDE.md` → `AGENTS.md` |
+| **CodeRabbit** (GitHub) | Automated PR reviews — configured via `.coderabbit.yaml` |
+
+## Prompt Files
+
+Reusable prompt files in `.github/prompts/` can be invoked in Copilot chat:
+
+| Prompt | Purpose |
+|---|---|
+| `analyze-requirements` | Flesh out user requirements from a GitHub issue |
+| `troubleshoot` | Debug issues using Sentry, devtools, and stack traces |
+| `plan-implementation` | Design technical approach and architecture |
+| `implement-feature` | Full implementation workflow with tests |
+| `refactor-code` | Code analysis and refactoring suggestions |
+| `write-e2e-tests` | Generate Playwright e2e tests |
+
+## Recommended Workflows
+
+| Workflow | Recommended Tool |
+|---|---|
+| Requirements analysis | Copilot chat + `analyze-requirements` prompt |
+| Troubleshooting | Copilot/Claude Code with Sentry MCP |
+| Architecture planning | Copilot chat + `plan-implementation` prompt |
+| Implementation | Copilot agent mode or Claude Code |
+| Code review/refactoring | CodeRabbit (automatic) + `refactor-code` prompt |
+| E2E tests | Copilot agent + `write-e2e-tests` prompt |
+
+## MCP Servers
+
+MCP servers are configured in `.vscode/mcp.json`:
+
+- **angular-cli** — Angular CLI operations, schematics, component generation
+- **chrome-devtools** — Runtime debugging, DOM inspection, console access
+- **sentry** — Production error data, issue investigation (requires `SENTRY_AUTH_TOKEN` env var)
+- **github** — Issues, PRs, diffs, repository context (requires `GITHUB_PERSONAL_ACCESS_TOKEN` env var)
+
+## Tips for Effective Prompting
+
+- Be specific about the entity/component you're working with
+- Reference existing patterns and similar implementations
+- Let agents read relevant files first before making changes
+- Use the prompt files as starting points for common workflows
+
+---
+
 # Contribute
 
 Our project is completely run by volunteers. Contributions welcome!

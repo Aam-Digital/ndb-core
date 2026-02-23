@@ -194,6 +194,7 @@ fabric.properties
 ### VisualStudioCode template
 .vs/*
 .vscode/*
+!.vscode/mcp.json
 
 # video and screenshot of the tests from e2e tests (Playwright, Cypress)
 ./e2e/screenshots
