@@ -1,19 +1,25 @@
-<span
-  class="block-height truncate-text"
-  [class.clickable]="!linkDisabled()"
-  [class.inactive]="!entityResource.value()?.isActive"
-  (click)="showDetailsPage()"
-  [appTemplateTooltip]="tooltip"
-  [tooltipDisabled]="!entityBlockConfig()"
-  [title]="entityResource.value()?.toString()"
->
-  <app-fa-dynamic-icon
-    [icon]="entityIcon()"
-    class="margin-right-small"
-  ></app-fa-dynamic-icon>
+@if (initialLoading()) {
+  <span class="block-height">
+    <mat-spinner diameter="16" class="inline-spinner"></mat-spinner>
+  </span>
+} @else {
+  <span
+    class="block-height truncate-text"
+    [class.clickable]="!linkDisabled()"
+    [class.inactive]="!entityResource.value()?.isActive"
+    (click)="showDetailsPage()"
+    [appTemplateTooltip]="tooltip"
+    [tooltipDisabled]="!entityBlockConfig()"
+    [title]="entityResource.value()?.toString()"
+  >
+    <app-fa-dynamic-icon
+      [icon]="entityIcon()"
+      class="margin-right-small"
+    ></app-fa-dynamic-icon>
 
-  {{ entityResource.value()?.toString() }}
-</span>
+    {{ entityResource.value()?.toString() }}
+  </span>
+}
 
 <!-- Tooltip on Hover -->
 <ng-template #tooltip>
