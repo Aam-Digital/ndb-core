@@ -4,10 +4,10 @@ COPY ./dist/ /usr/share/nginx/html
 
 # The port on which the app will run in the Docker container
 ENV PORT=8080
-# The url to the CouchDB database
-ENV COUCHDB_URL="http://localhost"
+# The url to the CouchDB database (default matches the network alias in docker-compose)
+ENV COUCHDB_URL="http://db-entrypoint:5984"
 # The url to the query backend, see https://github.com/Aam-Digital/query-backend
-ENV QUERY_URL="http://localhost:3000"
+ENV QUERY_URL="http://aam-backend-service:8080"
 # The url to a nominatim instance, see https://nominatim.org/
 ENV NOMINATIM_URL="https://nominatim.openstreetmap.org"
 
