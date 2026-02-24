@@ -196,8 +196,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * during the most recent sync's `_changes` calls.
    */
   private async purgeDocsWithLostPermissions(): Promise<void> {
-    const lostPermissionIds =
-      this.remoteDatabase.collectAndClearLostPermissions();
+    const lostPermissionIds = this.remoteDatabase
+      .collectAndClearLostPermissions()
+      // design docs for indices are managed locally (and shouldn't be synced anyway)
+      .filter((id) => !id.startsWith("_design/"));
 
     for (const _id of lostPermissionIds) {
       try {
