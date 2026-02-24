@@ -60,7 +60,7 @@ describe("BirthdayDashboardComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  xit("should only show birthdays in the next 31 days", fakeAsync(() => {
+  it("should only show birthdays in the next 31 days", fakeAsync(() => {
     const birthdaySoon = moment()
       .subtract(10, "years")
       .add(5, "days")
