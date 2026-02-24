@@ -240,69 +240,25 @@ describe("SyncedPouchDatabase", () => {
   });
 
   describe("purgeDocsWithLostPermissions", () => {
-    let mockLocalDb: jasmine.SpyObj<any>;
+    let purgeSpy: jasmine.Spy;
 
     beforeEach(() => {
-      mockLocalDb = jasmine.createSpyObj(["sync", "purge"]);
+      const mockLocalDb = jasmine.createSpyObj(["sync"]);
       mockLocalDb.sync.and.resolveTo({});
-      mockLocalDb.purge.and.resolveTo({});
       spyOn(service, "getPouchDB").and.returnValue(mockLocalDb);
+      purgeSpy = spyOn(service, "purge").and.resolveTo(true);
     });
 
     it("should purge local docs reported in lostPermissions after sync", async () => {
-      const lostPermissions = [
-        { _id: "Child:1", _rev: "3-abc" },
-        { _id: "School:2", _rev: "2-def" },
-      ];
       spyOn(
         service["remoteDatabase"],
         "collectAndClearLostPermissions",
-      ).and.returnValue(lostPermissions);
+      ).and.returnValue(["Child:1", "School:2"]);
 
       await service.sync();
 
-      expect(mockLocalDb.purge).toHaveBeenCalledWith("Child:1", "3-abc");
-      expect(mockLocalDb.purge).toHaveBeenCalledWith("School:2", "2-def");
-    });
-
-    it("should emit synthetic deletion events for purged docs", async () => {
-      const lostPermissions = [
-        { _id: "Child:1", _rev: "3-abc" },
-        { _id: "School:2", _rev: "2-def" },
-      ];
-      spyOn(
-        service["remoteDatabase"],
-        "collectAndClearLostPermissions",
-      ).and.returnValue(lostPermissions);
-
-      const emittedChanges: any[] = [];
-      service.changes().subscribe((doc) => emittedChanges.push(doc));
-
-      await service.sync();
-
-      expect(emittedChanges).toContain(
-        jasmine.objectContaining({ _id: "Child:1", _deleted: true }),
-      );
-      expect(emittedChanges).toContain(
-        jasmine.objectContaining({ _id: "School:2", _deleted: true }),
-      );
-    });
-
-    it("should not emit change events for docs that failed to purge", async () => {
-      spyOn(
-        service["remoteDatabase"],
-        "collectAndClearLostPermissions",
-      ).and.returnValue([{ _id: "Child:missing", _rev: "1-abc" }]);
-      mockLocalDb.purge.and.rejectWith({ status: 404 });
-
-      const emittedChanges: any[] = [];
-      service.changes().subscribe((doc) => emittedChanges.push(doc));
-
-      await service.sync();
-
-      expect(emittedChanges).not.toContain(
-        jasmine.objectContaining({ _id: "Child:missing", _deleted: true }),
-      );
+      expect(purgeSpy).toHaveBeenCalledWith("Child:1");
+      expect(purgeSpy).toHaveBeenCalledWith("School:2");
     });
 
     it("should not purge anything if no permissions were lost", async () => {
@@ -313,17 +269,34 @@ describe("SyncedPouchDatabase", () => {
 
       await service.sync();
 
-      expect(mockLocalDb.purge).not.toHaveBeenCalled();
+      expect(purgeSpy).not.toHaveBeenCalled();
     });
 
-    it("should skip purge gracefully if a doc does not exist locally", async () => {
+    it("should skip gracefully if purge returns false (doc not found locally)", async () => {
+      purgeSpy.and.resolveTo(false);
       spyOn(
         service["remoteDatabase"],
         "collectAndClearLostPermissions",
-      ).and.returnValue([{ _id: "Child:missing", _rev: "1-abc" }]);
-      mockLocalDb.purge.and.rejectWith({ status: 404 });
+      ).and.returnValue(["Child:missing"]);
 
       await expectAsync(service.sync()).toBeResolved();
+    });
+
+    it("should continue purging remaining docs if one fails", async () => {
+      purgeSpy.and.callFake((id: string) =>
+        id === "Child:1"
+          ? Promise.reject(new Error("unexpected"))
+          : Promise.resolve(true),
+      );
+      spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      ).and.returnValue(["Child:1", "School:2"]);
+
+      await service.sync();
+
+      expect(purgeSpy).toHaveBeenCalledWith("Child:1");
+      expect(purgeSpy).toHaveBeenCalledWith("School:2");
     });
   });
 });

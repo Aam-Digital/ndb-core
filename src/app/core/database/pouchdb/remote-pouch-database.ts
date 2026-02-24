@@ -26,10 +26,10 @@ export class RemotePouchDatabase extends PouchDatabase {
   private trackLostPermissions?: boolean;
 
   /**
-   * Docs whose permissions were lost as reported by the server in `_changes` responses.
+   * Doc IDs whose permissions were lost as reported by the server in `_changes` responses.
    * Accumulated across all `_changes` calls during a sync and consumed after sync completes.
    */
-  private pendingLostPermissions: { _id: string; _rev: string }[] = [];
+  private pendingLostPermissions: string[] = [];
 
   /**
    * Polling interval for changes in milliseconds (for remote-only databases).
@@ -170,11 +170,11 @@ export class RemotePouchDatabase extends PouchDatabase {
   }
 
   /**
-   * Returns all docs whose permissions were lost since the last sync
+   * Returns all doc IDs whose permissions were lost since the last sync
    * (as reported in `_changes` responses intercepted during that sync)
    * and resets the internal list.
    */
-  collectAndClearLostPermissions(): { _id: string; _rev: string }[] {
+  collectAndClearLostPermissions(): string[] {
     const collected = this.pendingLostPermissions;
     this.pendingLostPermissions = [];
     return collected;

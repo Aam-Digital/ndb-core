@@ -196,29 +196,19 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * during the most recent sync's `_changes` calls.
    */
   private async purgeDocsWithLostPermissions(): Promise<void> {
-    const lostPermissions =
+    const lostPermissionIds =
       this.remoteDatabase.collectAndClearLostPermissions();
 
-    for (const { _id, _rev } of lostPermissions) {
+    for (const _id of lostPermissionIds) {
       try {
-        await (this.getPouchDB() as any).purge(_id, _rev);
-        Logging.warn(`Purged doc with lost permissions: ${_id}`);
-
-        // PouchDB purge() does not emit change events, so manually notify
-        // the entity layer so in-memory caches drop the purged entity.
-        if (this.changesFeed) {
-          const deletionEvent = { _id, _rev, _deleted: true };
-          if (this.ngZone) {
-            this.ngZone.run(() => this.changesFeed.next(deletionEvent));
-          } else {
-            this.changesFeed.next(deletionEvent);
-          }
+        const purged = await this.purge(_id);
+        if (purged) {
+          Logging.debug(`Purged doc with lost permissions: ${_id}`);
+        } else {
+          Logging.debug(`Skipped purge for ${_id} (does not exist locally)`);
         }
       } catch (err) {
-        Logging.debug(
-          `Could not purge doc ${_id} (may not exist locally)`,
-          err,
-        );
+        Logging.debug(`Error trying to purge doc`, _id, err);
       }
     }
   }

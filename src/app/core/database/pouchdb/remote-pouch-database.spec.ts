@@ -177,10 +177,7 @@ describe("RemotePouchDatabase tests", () => {
   describe("lostPermissions interception", () => {
     it("should accumulate lostPermissions from _changes responses intercepted in defaultFetch", async () => {
       database.init("");
-      const lostPermissions = [
-        { _id: "Child:1", _rev: "3-abc" },
-        { _id: "School:2", _rev: "2-def" },
-      ];
+      const lostPermissions = ["Child:1", "School:2"];
 
       // Call extractLostPermissions directly with a response containing lostPermissions
       const response = new Response(
@@ -216,7 +213,7 @@ describe("RemotePouchDatabase tests", () => {
         JSON.stringify({
           results: [],
           last_seq: "1-seq",
-          lostPermissions: [{ _id: "X:1", _rev: "1-a" }],
+          lostPermissions: ["X:1"],
         }),
         { status: HttpStatusCode.Ok },
       );
@@ -230,7 +227,7 @@ describe("RemotePouchDatabase tests", () => {
     });
 
     it("should call extractLostPermissions for _changes URLs with 200 response", async () => {
-      database.init("");
+      database.init("", { trackLostPermissions: true });
       spyOn(database as any, "extractLostPermissions");
       (PouchDB.fetch as jasmine.Spy).and.returnValue(
         Promise.resolve(
