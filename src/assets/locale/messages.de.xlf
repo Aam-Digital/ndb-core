@@ -9,7 +9,7 @@
       show-unrelated button</note>
         <note priority="1" from="meaning">Show unrelated tooltip</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/activity-attendance-section/activity-attendance-section.component.html</context>
           <context context-type="linenumber">44</context>
         </context-group>
       </trans-unit>
@@ -20,7 +20,7 @@
       linked to the child of interest</note>
         <note priority="1" from="meaning">slider</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/activity-attendance-section/activity-attendance-section.component.html</context>
           <context context-type="linenumber">45,47</context>
         </context-group>
       </trans-unit>
@@ -30,7 +30,7 @@
         <note priority="1" from="description">load all records, not only the ones from the last 6 months</note>
         <note priority="1" from="meaning">load-all button</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/activity-attendance-section/activity-attendance-section.component.html</context>
           <context context-type="linenumber">55,57</context>
         </context-group>
       </trans-unit>
@@ -39,8 +39,8 @@
         <target>Monat</target>
         <note priority="1" from="description">The month something took place</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
-          <context context-type="linenumber">58</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/activity-attendance-section/activity-attendance-section.component.ts</context>
+          <context context-type="linenumber">62</context>
         </context-group>
       </trans-unit>
       <trans-unit id="521390001853856745" datatype="html">
@@ -49,8 +49,8 @@
         <note priority="1" from="description">Title of table column</note>
         <note priority="1" from="meaning">How many children are present at a meeting</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
-          <context context-type="linenumber">63</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/activity-attendance-section/activity-attendance-section.component.ts</context>
+          <context context-type="linenumber">67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5729418620241283277" datatype="html">
@@ -58,8 +58,8 @@
         <target>Aktivitäten</target>
         <note priority="1" from="description">Events of an attendance</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
-          <context context-type="linenumber">72</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/activity-attendance-section/activity-attendance-section.component.ts</context>
+          <context context-type="linenumber">76</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1669277742108379782" datatype="html">
@@ -67,31 +67,31 @@
         <target>Teilgenommen</target>
         <note priority="1" from="description">Percentage of people that attended an event</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
-          <context context-type="linenumber">78</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/activity-attendance-section/activity-attendance-section.component.ts</context>
+          <context context-type="linenumber">82</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.ts</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-details/attendance-details.component.ts</context>
+          <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7122178387978631158" datatype="html">
         <source>{VAR_PLURAL, plural, one {participant} other {participants}}</source>
         <target>{VAR_PLURAL, plural, one {Teilnehmer} other {Teilnehmer}}</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-card/activity-card.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/activity-card/activity-card.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">72,75</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">84,88</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">97,100</context>
         </context-group>
       </trans-unit>
@@ -103,29 +103,26 @@
     (e.g. selecting the event, recording it)</note>
         <note priority="1" from="meaning">Record Attendance</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/add-day-attendance.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/add-day-attendance.component.html</context>
           <context context-type="linenumber">7,9</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8890553633144307762" datatype="html">
         <source>Back</source>
         <target>Zurück</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/add-day-attendance.component.html</context>
-          <context context-type="linenumber">17</context>
-        </context-group>
+        <note priority="1" from="description">Generic back button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/view-title/view-title.component.html</context>
           <context context-type="linenumber">8</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/add-day-attendance.component.html</context>
+          <context context-type="linenumber">17</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3768927257183755959" datatype="html">
         <source>Save</source>
         <target>Speichern</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/add-day-attendance.component.ts</context>
-          <context context-type="linenumber">45</context>
-        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.html</context>
           <context context-type="linenumber">60</context>
@@ -137,6 +134,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.html</context>
           <context context-type="linenumber">42</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/add-day-attendance.component.ts</context>
+          <context context-type="linenumber">45</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
@@ -156,12 +157,12 @@
         <target>Verwerfen</target>
         <note priority="1" from="description">Discard changes made to a form</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/add-day-attendance.component.ts</context>
-          <context context-type="linenumber">54</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.ts</context>
           <context context-type="linenumber">89</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/add-day-attendance.component.ts</context>
+          <context context-type="linenumber">54</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5533417381380215183" datatype="html">
@@ -169,7 +170,7 @@
         <target>Wählen Sie ein Event aus</target>
         <note priority="1" from="description">One of the stages while recording child-attendances</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/add-day-attendance.component.ts</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/add-day-attendance.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
       </trans-unit>
@@ -178,7 +179,7 @@
         <target>Anwesenheiten aufnehmen</target>
         <note priority="1" from="description">One of the stages while recording child-attendances</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/add-day-attendance.component.ts</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/add-day-attendance.component.ts</context>
           <context context-type="linenumber">64</context>
         </context-group>
       </trans-unit>
@@ -187,7 +188,7 @@
         <target>Schließen</target>
         <note priority="1" from="description">Exit from the current screen</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/add-day-attendance.component.ts</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/add-day-attendance.component.ts</context>
           <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
@@ -195,7 +196,7 @@
         <source>Do you want to save your progress before going back?</source>
         <target>Wollen Sie die Änderungen speichern?</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/add-day-attendance.component.ts</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/add-day-attendance.component.ts</context>
           <context context-type="linenumber">76</context>
         </context-group>
       </trans-unit>
@@ -206,7 +207,7 @@
         inputted</note>
         <note priority="1" from="meaning">Event-Record label</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
           <context context-type="linenumber">8,9</context>
         </context-group>
       </trans-unit>
@@ -215,7 +216,7 @@
         <target>Weniger anzeigen</target>
         <note priority="1" from="description">Show less entries of a list</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
           <context context-type="linenumber">68</context>
         </context-group>
       </trans-unit>
@@ -224,7 +225,7 @@
         <target>Mehr anzeigen</target>
         <note priority="1" from="description">Show more entries of a list</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
           <context context-type="linenumber">70</context>
         </context-group>
       </trans-unit>
@@ -234,7 +235,7 @@
         <note priority="1" from="description">Allows to create a new event</note>
         <note priority="1" from="meaning">Not listed</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
           <context context-type="linenumber">80,82</context>
         </context-group>
       </trans-unit>
@@ -243,7 +244,7 @@
         <target>Ungültiges Datum</target>
         <note priority="1" from="description">Alert when selected date is invalid</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.ts</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.ts</context>
           <context context-type="linenumber">213</context>
         </context-group>
       </trans-unit>
@@ -251,7 +252,7 @@
         <source>Excluded some archived participants. Click to include.</source>
         <target>Archivierte Teilnehmende ausgeblendet. Klicken um diese einzubeziehen.</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
           <context context-type="linenumber">60</context>
         </context-group>
       </trans-unit>
@@ -262,7 +263,7 @@
         of all children</note>
         <note priority="1" from="meaning">Attendance completed</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
           <context context-type="linenumber">134,136</context>
         </context-group>
       </trans-unit>
@@ -271,7 +272,7 @@
         <target>Details anzeigen</target>
         <note priority="1" from="description">Open details of recorded event for review</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
           <context context-type="linenumber">143,145</context>
         </context-group>
       </trans-unit>
@@ -280,7 +281,7 @@
         <target>Zurück zur Übersicht</target>
         <note priority="1" from="description">Back to overview button after finishing a roll call</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
           <context context-type="linenumber">152,154</context>
         </context-group>
       </trans-unit>
@@ -288,7 +289,7 @@
         <source>Also include archived participants?</source>
         <target>Archivierte Teilnehmende mit berücksichtigen?</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.ts</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts</context>
           <context context-type="linenumber">266</context>
         </context-group>
       </trans-unit>
@@ -296,29 +297,8 @@
         <source>This event has some participants who are &quot;archived&quot;. We automatically remove them from the attendance list for you. Do you want to also include archived participants for this event?</source>
         <target>Dieses Event hat Teilnehmende, die &quot;archiviert&quot; wurden. Wir haben diese von der Teilname-Liste entfernt. Wollen Sie die archivierten Teilnehmenden für dieses Event ebenfalls berücksichtigen?</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.ts</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts</context>
           <context context-type="linenumber">267</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7825554332432550849" datatype="html">
-        <source> attended <x id="INTERPOLATION" equiv-text="{{ attendanceDescription }}"/> events </source>
-        <target>haben an <x id="INTERPOLATION" equiv-text="{{attendanceDescription}}"/> events teilgenommen</target>
-        <note priority="1" from="description">How many attendees were present / how many attendees
-        were absent</note>
-        <note priority="1" from="meaning">Attended Tooltip</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-block/attendance-block.component.html</context>
-          <context context-type="linenumber">29,31</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5262656323908784944" datatype="html">
-        <source> (excluding <x id="INTERPOLATION" equiv-text="{{ logicalCount[LStatus.IGNORE] }}"/> events excused or unknown) </source>
-        <target>(ausgenommene Events<x id="INTERPOLATION" equiv-text="{{ logicalCount[LStatus.IGNORE] }}"/>; entschuldigt oder unbekannt)</target>
-        <note priority="1" from="description">How many events were excluded</note>
-        <note priority="1" from="meaning">Attended Tooltip</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-block/attendance-block.component.html</context>
-          <context context-type="linenumber">34,36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3216180006022397597" datatype="html">
@@ -328,7 +308,7 @@
             given</note>
         <note priority="1" from="meaning">Remarks</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
@@ -339,7 +319,7 @@
         percent)</note>
         <note priority="1" from="meaning">Event participants</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">69,77</context>
         </context-group>
       </trans-unit>
@@ -347,7 +327,7 @@
         <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }}"/> attended (of <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{selectedEvent.children.length, plural,                 one {participant}                 other {participants}                }" xid="7122178387978631158"/>) </source>
         <target><x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }"/> haben teilgenommen (von <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/>)</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">80,89</context>
         </context-group>
       </trans-unit>
@@ -357,7 +337,7 @@
         <note priority="1" from="description">How many children are without a status</note>
         <note priority="1" from="meaning">Unknown status</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">95,102</context>
         </context-group>
       </trans-unit>
@@ -368,11 +348,11 @@
         place at a particular day</note>
         <note priority="1" from="meaning">Show Details Button</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">57,59</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">115,117</context>
         </context-group>
       </trans-unit>
@@ -382,7 +362,7 @@
         <note priority="1" from="description">Informs the user that there are no events at a particular date</note>
         <note priority="1" from="meaning">No Events</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">126,128</context>
         </context-group>
       </trans-unit>
@@ -393,7 +373,7 @@
         selected date</note>
         <note priority="1" from="meaning">Add New Event Button</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">140,142</context>
         </context-group>
       </trans-unit>
@@ -404,7 +384,7 @@
       (in percent)</note>
         <note priority="1" from="meaning">Attendance</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-details/attendance-details.component.html</context>
           <context context-type="linenumber">15,23</context>
         </context-group>
       </trans-unit>
@@ -412,8 +392,8 @@
         <source>Event</source>
         <target>Event</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.ts</context>
-          <context context-type="linenumber">43</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-details/attendance-details.component.ts</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3043605875207927048" datatype="html">
@@ -424,7 +404,7 @@
     Attendance Register</note>
         <note priority="1" from="meaning">Heading for Attendance Register</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/attendance-manager/attendance-manager.component.html</context>
           <context context-type="linenumber">6,8</context>
         </context-group>
       </trans-unit>
@@ -433,7 +413,7 @@
         <target>Anwesenheiten aufnehmen</target>
         <note priority="1" from="description">Record attendance title</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/attendance-manager/attendance-manager.component.html</context>
           <context context-type="linenumber">13,15</context>
         </context-group>
       </trans-unit>
@@ -442,7 +422,7 @@
         <target>Nehmen Sie Anwesenheit auf für eine Aktivität an einem bestimmten Tag. Optimiert für Smartphones.</target>
         <note priority="1" from="description">Record attendance content</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/attendance-manager/attendance-manager.component.html</context>
           <context context-type="linenumber">18,21</context>
         </context-group>
       </trans-unit>
@@ -451,7 +431,7 @@
         <target>Aufzeichnen</target>
         <note priority="1" from="description">Record attendance button</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/attendance-manager/attendance-manager.component.html</context>
           <context context-type="linenumber">26,28</context>
         </context-group>
       </trans-unit>
@@ -460,7 +440,7 @@
         <target>Wiederkehrende Aktivitäten</target>
         <note priority="1" from="description">Manage Activities title</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/attendance-manager/attendance-manager.component.html</context>
           <context context-type="linenumber">34,36</context>
         </context-group>
       </trans-unit>
@@ -469,7 +449,7 @@
         <target>Verwalten Sie &quot;wiederkehrende Aktivitäten&quot;, für die regelmäßig Anwesenheit aufgezeichnet wird. Sie können Teilnehmende und Nutzer zuweisen und die langfristige Anwesenheit analysieren.</target>
         <note priority="1" from="description">Manage Activities content</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/attendance-manager/attendance-manager.component.html</context>
           <context context-type="linenumber">39,43</context>
         </context-group>
       </trans-unit>
@@ -478,7 +458,7 @@
         <target>Aktivitäten verwalten</target>
         <note priority="1" from="description">Manage activities button</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/attendance-manager/attendance-manager.component.html</context>
           <context context-type="linenumber">48,50</context>
         </context-group>
       </trans-unit>
@@ -487,7 +467,7 @@
         <target>Monatliche Anwesenheit</target>
         <note priority="1" from="description">Monthly attendance title</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/attendance-manager/attendance-manager.component.html</context>
           <context context-type="linenumber">56,58</context>
         </context-group>
       </trans-unit>
@@ -496,7 +476,7 @@
         <target>Dokumentieren Sie die gesammelte Anwesenheit eines ganzen Monats, die zunächst auf Papier aufgezeichnet wurde.</target>
         <note priority="1" from="description">Monthly attendance content</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/attendance-manager/attendance-manager.component.html</context>
           <context context-type="linenumber">61,64</context>
         </context-group>
       </trans-unit>
@@ -505,7 +485,7 @@
         <target>Monat dokumentieren</target>
         <note priority="1" from="description">Enter attendance button</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/add-day-attendance/attendance-manager/attendance-manager.component.html</context>
           <context context-type="linenumber">69,71</context>
         </context-group>
       </trans-unit>
@@ -514,7 +494,7 @@
         <target>Anwesenheit insgesamt</target>
         <note priority="1" from="description">Attendance summary title</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-summary/attendance-summary.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-summary/attendance-summary.component.html</context>
           <context context-type="linenumber">2,4</context>
         </context-group>
       </trans-unit>
@@ -522,7 +502,7 @@
         <source>No attendance information</source>
         <target>Keine Informationen über Abwesenheiten</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard/attendance-day-block/attendance-day-block.component.ts</context>
+          <context context-type="sourcefile">src/app/features/attendance/attendance-week-dashboard/attendance-day-block/attendance-day-block.component.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
@@ -531,7 +511,7 @@
         <target>Fälle, die mehrmals in der betroffenen Woche abwesend waren</target>
         <note priority="1" from="description">Dashboard attendance component explanation tooltip</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/attendance-week-dashboard/attendance-week-dashboard.component.html</context>
           <context context-type="linenumber">5</context>
         </context-group>
       </trans-unit>
@@ -539,7 +519,7 @@
         <source>cases absent multiple times</source>
         <target>Fälle mit mehrmaliger Abwesenheit</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/attendance-week-dashboard/attendance-week-dashboard.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
@@ -548,7 +528,7 @@
         <target>Teilnehmer:in</target>
         <note priority="1" from="description">The participant of a group, e.g. a school</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/attendance-week-dashboard/attendance-week-dashboard.component.html</context>
           <context context-type="linenumber">13,15</context>
         </context-group>
       </trans-unit>
@@ -557,7 +537,7 @@
         <target>Anwesenheit</target>
         <note priority="1" from="description">The attendance of a participant, e.g. a student</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/attendance-week-dashboard/attendance-week-dashboard.component.html</context>
           <context context-type="linenumber">16,18</context>
         </context-group>
       </trans-unit>
@@ -566,7 +546,7 @@
         <target>Keine Abwesenheit dokumentiert</target>
         <note priority="1" from="description">Placeholder if no absences are visible in dashboar</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/attendance-week-dashboard/attendance-week-dashboard.component.html</context>
           <context context-type="linenumber">54,56</context>
         </context-group>
       </trans-unit>
@@ -575,7 +555,7 @@
         <target>Abwesenheiten <x id="PH" equiv-text="config.periodLabel"/></target>
         <note priority="1" from="description">Dashboard attendance component subtitle</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component.ts</context>
+          <context context-type="sourcefile">src/app/features/attendance/attendance-week-dashboard/attendance-week-dashboard.component.ts</context>
           <context context-type="linenumber">87</context>
         </context-group>
       </trans-unit>
@@ -584,7 +564,7 @@
         <target>krank</target>
         <note priority="1" from="description">Event demo attendance remarks</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/demo-data/demo-activity-events-generator.service.ts</context>
+          <context context-type="sourcefile">src/app/features/attendance/demo-data/demo-activity-events-generator.service.ts</context>
           <context context-type="linenumber">48</context>
         </context-group>
       </trans-unit>
@@ -593,7 +573,7 @@
         <target>Fieber</target>
         <note priority="1" from="description">Event demo attendance remarks</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/demo-data/demo-activity-events-generator.service.ts</context>
+          <context context-type="sourcefile">src/app/features/attendance/demo-data/demo-activity-events-generator.service.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
@@ -602,7 +582,7 @@
         <target>kein Informationen</target>
         <note priority="1" from="description">Event demo attendance remarks</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/demo-data/demo-activity-events-generator.service.ts</context>
+          <context context-type="sourcefile">src/app/features/attendance/demo-data/demo-activity-events-generator.service.ts</context>
           <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
@@ -610,11 +590,11 @@
         <source>Remarks</source>
         <target>Vermerk</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/edit-attendance/edit-attendance.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/edit-attendance/edit-attendance.component.html</context>
           <context context-type="linenumber">42</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/edit-attendance/edit-attendance.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/edit-attendance/edit-attendance.component.html</context>
           <context context-type="linenumber">91</context>
         </context-group>
       </trans-unit>
@@ -622,7 +602,7 @@
         <source> This section displays historical activities that have been archived. </source>
         <target> Dieser Bereich zeigt frühere Aktivitäten an, die archiviert wurden. </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/child-details/grouped-child-attendance/grouped-child-attendance.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/grouped-child-attendance/grouped-child-attendance.component.html</context>
           <context context-type="linenumber">20,22</context>
         </context-group>
       </trans-unit>
@@ -630,7 +610,7 @@
         <source>Select activity</source>
         <target>Aktivität auswählen</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/child-details/grouped-child-attendance/grouped-child-attendance.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/grouped-child-attendance/grouped-child-attendance.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
@@ -778,7 +758,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">44</context>
+          <context context-type="linenumber">43</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1006138510285524819" datatype="html">
@@ -1384,7 +1364,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.html</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">56</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/entity/entity-import-config/entity-import-config.component.html</context>
@@ -1520,12 +1500,12 @@
         <target>Typ</target>
         <note priority="1" from="description">Label for the interaction type of a recurring activity</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
-          <context context-type="linenumber">47</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
           <context context-type="linenumber">111</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/attendance/model/recurring-activity.ts</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5626190928095412575" datatype="html">
@@ -2044,12 +2024,12 @@
         <target>Titel</target>
         <note priority="1" from="description">Admin UI - Config Section Header form field label</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
-          <context context-type="linenumber">34</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/building-blocks/admin-section-header/admin-section-header.component.ts</context>
           <context context-type="linenumber">46</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/attendance/model/recurring-activity.ts</context>
+          <context context-type="linenumber">34</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
@@ -2281,7 +2261,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.html</context>
-          <context context-type="linenumber">37,39</context>
+          <context context-type="linenumber">53,55</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/entity/entity-import-config/entity-import-config.component.html</context>
@@ -2301,7 +2281,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.ts</context>
-          <context context-type="linenumber">122</context>
+          <context context-type="linenumber">181</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2844542848589379119" datatype="html">
@@ -2313,7 +2293,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.ts</context>
-          <context context-type="linenumber">123</context>
+          <context context-type="linenumber">182</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6017615317312721960" datatype="html">
@@ -2388,7 +2368,7 @@
         <note priority="1" from="description">Import mapping header</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.html</context>
-          <context context-type="linenumber">11</context>
+          <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9025866945269409823" datatype="html">
@@ -2397,7 +2377,7 @@
         <note priority="1" from="description">Import mapping header</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.html</context>
-          <context context-type="linenumber">12</context>
+          <context context-type="linenumber">28</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1089978064726290096" datatype="html">
@@ -2852,7 +2832,7 @@
         <note priority="1" from="description">Menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4388879716045736175" datatype="html">
@@ -2891,7 +2871,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">31</context>
+          <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1806667489382256324" datatype="html">
@@ -2921,7 +2901,7 @@
         <note priority="1" from="description">label for the related Entities</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">80</context>
+          <context context-type="linenumber">79</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5944812089887969249" datatype="html">
@@ -2929,12 +2909,12 @@
         <target>Gruppen</target>
         <note priority="1" from="description">label for the linked schools</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
-          <context context-type="linenumber">63</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
           <context context-type="linenumber">175</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/attendance/model/recurring-activity.ts</context>
+          <context context-type="linenumber">63</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5611592591303869712" datatype="html">
@@ -2977,7 +2957,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4639885659149595318" datatype="html">
@@ -2985,7 +2965,7 @@
         <target>Wiederkehrende Aktivität</target>
         <note priority="1" from="description">label for entity</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
+          <context context-type="sourcefile">src/app/features/attendance/model/recurring-activity.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
@@ -2994,7 +2974,7 @@
         <target>Wiederkehrende Aktivitäten</target>
         <note priority="1" from="description">label (plural) for entity</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
+          <context context-type="sourcefile">src/app/features/attendance/model/recurring-activity.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
@@ -3003,12 +2983,12 @@
         <target>Teilnehmer:innen</target>
         <note priority="1" from="description">Label for the participants of a recurring activity</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
-          <context context-type="linenumber">55</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
           <context context-type="linenumber">80</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/attendance/model/recurring-activity.ts</context>
+          <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6012224301120514394" datatype="html">
@@ -3016,7 +2996,7 @@
         <target>Ausgenommene Teilnehmer:innen</target>
         <note priority="1" from="description">Label for excluded participants of a recurring activity</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
+          <context context-type="sourcefile">src/app/features/attendance/model/recurring-activity.ts</context>
           <context context-type="linenumber">71</context>
         </context-group>
       </trans-unit>
@@ -3025,7 +3005,7 @@
         <target>Verantwortliche:r</target>
         <note priority="1" from="description">Label for the assigned user(s) of a recurring activity</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
+          <context context-type="sourcefile">src/app/features/attendance/model/recurring-activity.ts</context>
           <context context-type="linenumber">79</context>
         </context-group>
       </trans-unit>
@@ -5127,7 +5107,7 @@
         <target>&quot;<x id="PH" equiv-text="file.name"/>&quot; wird hochgeladen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">48</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4204232858147199020" datatype="html">
@@ -5768,7 +5748,7 @@
         <note priority="1" from="description">label for entity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">19</context>
+          <context context-type="linenumber">18</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3108168000666137165" datatype="html">
@@ -5777,7 +5757,7 @@
         <note priority="1" from="description">Label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3482147988988085984" datatype="html">
@@ -5786,7 +5766,7 @@
         <note priority="1" from="description">Description</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">45</context>
+          <context context-type="linenumber">44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8235419386075820707" datatype="html">
@@ -5795,7 +5775,7 @@
         <note priority="1" from="description">Label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">59</context>
+          <context context-type="linenumber">58</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2365282192455083444" datatype="html">
@@ -5804,7 +5784,7 @@
         <note priority="1" from="description">label for Todo entity property</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">89</context>
+          <context context-type="linenumber">88</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4200563526108969174" datatype="html">
@@ -5813,7 +5793,7 @@
         <note priority="1" from="description">repetition interval option</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">92</context>
+          <context context-type="linenumber">91</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5223228686581774646" datatype="html">
@@ -5822,7 +5802,7 @@
         <note priority="1" from="description">repetition interval option</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">96</context>
+          <context context-type="linenumber">95</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7510279840486540181" datatype="html">
@@ -5831,7 +5811,7 @@
         <note priority="1" from="description">label for Todo entity property</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">106</context>
+          <context context-type="linenumber">105</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-completion/display-todo-completion/display-todo-completion.component.html</context>
@@ -7210,7 +7190,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <note priority="1" from="description">How many days a child was present</note>
         <note priority="1" from="meaning">days present</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-details/attendance-details.component.html</context>
           <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
@@ -7220,7 +7200,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <note priority="1" from="description">How many days a child was absent</note>
         <note priority="1" from="meaning">days absent</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-details/attendance-details.component.html</context>
           <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
@@ -7231,7 +7211,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
           unknown</note>
         <note priority="1" from="meaning">unknown status</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-details/attendance-details.component.html</context>
           <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
@@ -7241,7 +7221,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <note priority="1" from="description">How many children were present</note>
         <note priority="1" from="meaning">Total present</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-details/attendance-details.component.html</context>
           <context context-type="linenumber">69</context>
         </context-group>
       </trans-unit>
@@ -7251,7 +7231,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <note priority="1" from="description">How many children were absent</note>
         <note priority="1" from="meaning">Total absent</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-details/attendance-details.component.html</context>
           <context context-type="linenumber">80</context>
         </context-group>
       </trans-unit>
@@ -7262,7 +7242,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
           status</note>
         <note priority="1" from="meaning">Total unknown</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/analysis/attendance-details/attendance-details.component.html</context>
           <context context-type="linenumber">95</context>
         </context-group>
       </trans-unit>
@@ -8845,23 +8825,23 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source>Attendance (recent absences)</source>
         <target>Anwesenheit (kürzliche Abwesenheiten)</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance.module.ts</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="sourcefile">src/app/features/attendance/attendance.module.ts</context>
+          <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8955128195791312286" datatype="html">
         <source>this week</source>
         <target>diese Woche</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance.module.ts</context>
-          <context context-type="linenumber">54</context>
+          <context context-type="sourcefile">src/app/features/attendance/attendance.module.ts</context>
+          <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
       <trans-unit id="73779976139401211" datatype="html">
         <source>Period Label</source>
         <target>Periodenbezeichnung</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard-settings.component/attendance-week-dashboard-settings.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/attendance-week-dashboard/attendance-week-dashboard-settings.component/attendance-week-dashboard-settings.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
@@ -8869,7 +8849,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source>Days Offset</source>
         <target>Tage Offset</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard-settings.component/attendance-week-dashboard-settings.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/attendance-week-dashboard/attendance-week-dashboard-settings.component/attendance-week-dashboard-settings.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
       </trans-unit>
@@ -8877,7 +8857,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source>Attendance Status Type</source>
         <target>Anwesenheitsstatustyp</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard-settings.component/attendance-week-dashboard-settings.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/attendance-week-dashboard/attendance-week-dashboard-settings.component/attendance-week-dashboard-settings.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
       </trans-unit>
@@ -8885,7 +8865,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <source>(optional, e.g. LATE)</source>
         <target>(optional, z. B. &quot;zu spät&quot;)</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard-settings.component/attendance-week-dashboard-settings.component.html</context>
+          <context context-type="sourcefile">src/app/features/attendance/attendance-week-dashboard/attendance-week-dashboard-settings.component/attendance-week-dashboard-settings.component.html</context>
           <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
@@ -11824,6 +11804,41 @@ Wählen Sie zunächst oben einen Importtyp aus, um diesen Abschnitt zu aktiviere
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-searchable-checkbox/admin-searchable-checkbox.component.html</context>
           <context context-type="linenumber">17,20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2166850211720821701" datatype="html">
+        <source>Split values at separator (<x id="INTERPOLATION" equiv-text="{{ separator }}"/>)</source>
+        <target>Mehrere Werte an Trennzeichen aufteilen (<x id="INTERPOLATION" equiv-text="{{ separator }}"/>)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3867745417101128833" datatype="html">
+        <source>Enable this to split values containing the separator into multiple entries. Disable for values that contain the separator as part of the text (e.g., &apos;media (article, ad, tv)&apos;).</source>
+        <target>Aktivieren Sie diese Option, um Werte, die das Trennzeichen enthalten, in mehrere Einträge aufzuteilen. Deaktivieren Sie sie für Werte, die das Trennzeichen als Teil des Textes enthalten, um Probleme zu vermeiden (z. B. &apos;media (article, ad, tv)&apos;).</target>
+        <note priority="1" from="description">import discrete config split toggle help</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3905448599345156259" datatype="html">
+        <source>Database Upgrade Ready</source>
+        <target>Datenbank Upgrade</target>
+        <note priority="1" from="description">Migration dialog title</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/database/indexeddb-migration.service.ts</context>
+          <context context-type="linenumber">192</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5709046777415939097" datatype="html">
+        <source>Your database has been upgraded for improved performance. Reload now to start using it?</source>
+        <target>Ihre Datenbank wurde für eine verbesserte Leistung aktualisiert. Jetzt neu laden, um das Update zu nutzen?</target>
+        <note priority="1" from="description">Migration dialog text</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/database/indexeddb-migration.service.ts</context>
+          <context context-type="linenumber">193</context>
         </context-group>
       </trans-unit>
     </body>

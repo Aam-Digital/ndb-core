@@ -1397,6 +1397,22 @@
           "id": "templateExportFileField",
           "label": "Template Export File Field",
           "dataType": "template-export-file"
+        },
+        "embeddedArrayOfObjects": {
+          "id": "embeddedArrayOfObjects",
+          "label": "Embedded Array of Objects",
+          "dataType": "schema-embed",
+          "additional": {
+            "type": {
+              "dataType": "string",
+              "label": "embedded item type"
+            },
+            "value": {
+              "dataType": "number",
+              "label": "embedded item value"
+            }
+          },
+          "isArray": true
         }
       },
       "hasPII": false
@@ -1468,7 +1484,8 @@
                         "timeIntervalField",
                         "eventAttendanceField",
                         "eventAttendanceMapField",
-                        "templateExportFileField"
+                        "templateExportFileField",
+                        "embeddedArrayOfObjects"
                       ]
                     }
                   ]
