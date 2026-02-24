@@ -106,7 +106,13 @@ export class SyncedPouchDatabase extends PouchDatabase {
    */
   override init(dbName?: string | null, remoteDbName?: string) {
     if (dbName === null) {
-      this.remoteDatabase.init(null, true);
+      Logging.debug(
+        "Initializing remote-only session for database",
+        this.dbName,
+      );
+
+      this.remoteDatabase.init(null, { unauthenticatedSession: true });
+
       // use the remote database as internal database driver
       this.pouchDB = this.remoteDatabase.getPouchDB();
       this.databaseInitialized.complete();
@@ -114,7 +120,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       super.init(dbName ?? this.dbName, undefined, true);
 
       // keep remote database on default name (e.g. "app" instead of "user_uuid-app")
-      this.remoteDatabase.init(remoteDbName);
+      this.remoteDatabase.init(remoteDbName, { trackLostPermissions: true });
     }
   }
 

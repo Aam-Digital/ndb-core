@@ -20,6 +20,12 @@ export class RemotePouchDatabase extends PouchDatabase {
   private unauthenticatedSession?: boolean;
 
   /**
+   * Whether to track docs whose permissions were lost as reported by the server.
+   * @private
+   */
+  private trackLostPermissions?: boolean;
+
+  /**
    * Docs whose permissions were lost as reported by the server in `_changes` responses.
    * Accumulated across all `_changes` calls during a sync and consumed after sync completes.
    */
@@ -45,13 +51,22 @@ export class RemotePouchDatabase extends PouchDatabase {
    * Initializes the PouchDB with the http adapter to directly access a remote CouchDB without replication
    * See {@link https://pouchdb.com/adapters.html#pouchdb_over_http}
    * @param dbName (relative) path to the remote database
+   * @param config optional configuration for the remote database session
    */
-  override init(dbName?: string, unauthenticatedSession?: boolean) {
-    this.unauthenticatedSession = unauthenticatedSession;
+  override init(
+    dbName?: string,
+    config?: {
+      unauthenticatedSession?: boolean;
+      trackLostPermissions?: boolean;
+    },
+  ) {
+    this.unauthenticatedSession = config?.unauthenticatedSession;
+    this.trackLostPermissions = config?.trackLostPermissions;
 
     if (dbName) {
       this.dbName = dbName;
     }
+    this.pendingLostPermissions = [];
 
     const options = {
       adapter: "http",
@@ -123,6 +138,7 @@ export class RemotePouchDatabase extends PouchDatabase {
     }
 
     if (
+      this.trackLostPermissions &&
       result?.status === HttpStatusCode.Ok &&
       remoteUrl.includes("_changes")
     ) {
