@@ -21,11 +21,7 @@ describe("ImportConfirmSummaryComponent", () => {
   let mockDialogRef: jasmine.SpyObj<MatDialogRef<any>>;
 
   beforeEach(async () => {
-    mockImportService = jasmine.createSpyObj([
-      "executeImport",
-      "undoImport",
-      "transformRawDataToEntities",
-    ]);
+    mockImportService = jasmine.createSpyObj(["executeImport", "undoImport"]);
     mockSnackbar = jasmine.createSpyObj(["open"]);
     mockSnackbar.open.and.returnValue({ onAction: () => of(null) } as any);
     mockDialogRef = jasmine.createSpyObj(["close"]);
@@ -35,7 +31,7 @@ describe("ImportConfirmSummaryComponent", () => {
       providers: [
         {
           provide: MAT_DIALOG_DATA,
-          useValue: { rawData: [], entitiesToImport: [], importSettings: {} },
+          useValue: { entitiesToImport: [], importSettings: {} },
         },
         { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: MatSnackBar, useValue: mockSnackbar },
@@ -60,23 +56,41 @@ describe("ImportConfirmSummaryComponent", () => {
 
     expect(mockImportService.executeImport).toHaveBeenCalled();
     expect(mockSnackbar.open).toHaveBeenCalled();
-    expect(mockDialogRef.close).toHaveBeenCalled();
+    expect(mockDialogRef.close).toHaveBeenCalledWith({
+      completedImport: testImportResult,
+    });
     expect(component.importInProgress).toBeFalse();
     expect(mockDialogRef.disableClose).toBeFalse();
   }));
 
-  it("should refresh import data and show warning for putAll conflict errors", async () => {
+  it("should close dialog with conflict flag for putAll conflict errors", async () => {
     const putAllConflictError = [{ status: 409, name: "conflict" }];
     mockImportService.executeImport.and.rejectWith(putAllConflictError);
-    mockImportService.transformRawDataToEntities.and.resolveTo([]);
 
     await component.executeImport();
 
-    expect(mockImportService.transformRawDataToEntities).toHaveBeenCalled();
     expect(component.importInProgress).toBeFalse();
     expect(mockDialogRef.disableClose).toBeFalse();
     expect(mockSnackbar.open).toHaveBeenCalledWith(
       "Some records changed while importing. Data has been refreshed. Please review and run import again.",
+      "Close",
+      { duration: 10000 },
+    );
+    expect(mockDialogRef.close).toHaveBeenCalledWith({
+      conflictOccurred: true,
+    });
+  });
+
+  it("should handle general errors with logging and error message", async () => {
+    const generalError = new Error("Network error");
+    mockImportService.executeImport.and.rejectWith(generalError);
+
+    await component.executeImport();
+
+    expect(component.importInProgress).toBeFalse();
+    expect(mockDialogRef.disableClose).toBeFalse();
+    expect(mockSnackbar.open).toHaveBeenCalledWith(
+      "Import failed. Please try again or contact support if the problem persists.",
       "Close",
       { duration: 10000 },
     );

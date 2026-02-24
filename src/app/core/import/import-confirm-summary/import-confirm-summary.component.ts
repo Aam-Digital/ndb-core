@@ -10,14 +10,22 @@ import { ImportMetadata, ImportSettings } from "../import-metadata";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatButtonModule } from "@angular/material/button";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Data passed into Import Confirmation Dialog.
  */
 export interface ImportDialogData {
-  rawData: any[];
   entitiesToImport: Entity[];
   importSettings: ImportSettings;
+}
+
+/**
+ * Result returned from Import Confirmation Dialog.
+ */
+export interface ImportDialogResult {
+  completedImport?: ImportMetadata;
+  conflictOccurred?: boolean;
 }
 
 /**
@@ -50,13 +58,15 @@ export class ImportConfirmSummaryComponent {
         this.data.importSettings,
       );
       this.showImportSuccessToast(completedImport);
-      this.dialogRef.close(completedImport);
+      this.dialogRef.close({ completedImport });
     } catch (error) {
       if (this.isPutAllConflictError(error)) {
-        await this.handlePutAllConflict();
+        this.handlePutAllConflict();
         return;
       }
-      throw error;
+      // Handle all other errors
+      Logging.warn("Import failed with error", error);
+      this.showImportErrorMessage();
     } finally {
       this.importInProgress = false;
       this.dialogRef.disableClose = false;
@@ -84,17 +94,17 @@ export class ImportConfirmSummaryComponent {
     );
   }
 
-  private async handlePutAllConflict() {
-    await this.refreshImportDataAfterConflict();
-    this.showImportPutAllConflictWarning();
+  private showImportErrorMessage() {
+    this.snackBar.open(
+      $localize`Import failed. Please try again or contact support if the problem persists.`,
+      $localize`Close`,
+      { duration: 10000 },
+    );
   }
 
-  private async refreshImportDataAfterConflict() {
-    this.data.entitiesToImport =
-      await this.importService.transformRawDataToEntities(
-        this.data.rawData,
-        this.data.importSettings,
-      );
+  private handlePutAllConflict() {
+    this.showImportPutAllConflictWarning();
+    this.dialogRef.close({ conflictOccurred: true });
   }
 
   private isPutAllConflictError(error: unknown): boolean {
