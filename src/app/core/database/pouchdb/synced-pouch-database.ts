@@ -196,7 +196,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     for (const { _id, _rev } of lostPermissions) {
       try {
         await (this.getPouchDB() as any).purge(_id, _rev);
-        Logging.debug(`Purged doc with lost permissions: ${_id}`);
+        Logging.warn(`Purged doc with lost permissions: ${_id}`);
 
         // PouchDB purge() does not emit change events, so manually notify
         // the entity layer so in-memory caches drop the purged entity.
