@@ -1,11 +1,11 @@
 import {
   Component,
+  inject,
   Input,
   OnChanges,
   SimpleChanges,
   ViewChild,
   ViewEncapsulation,
-  inject,
 } from "@angular/core";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import {
@@ -14,7 +14,7 @@ import {
   MatDatepickerModule,
 } from "@angular/material/datepicker";
 import moment, { Moment } from "moment";
-import { EventAttendance } from "../../model/event-attendance";
+import { AttendanceItem } from "../../model/attendance-item";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import {
@@ -75,8 +75,8 @@ export class AttendanceCalendarComponent implements OnChanges {
 
   selectedDate: moment.Moment;
   selectedEvent: Note;
-  selectedEventAttendance: EventAttendance;
-  selectedEventAttendanceOriginal: EventAttendance;
+  selectedEventAttendance: AttendanceItem;
+  selectedEventAttendanceOriginal: AttendanceItem;
   selectedEventStats: AverageAttendanceStats;
 
   constructor() {

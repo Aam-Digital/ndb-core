@@ -1,6 +1,7 @@
 import { Database, GetAllOptions, GetOptions, QueryOptions } from "../database";
 import { Logging } from "../../logging/logging.service";
 import PouchDB from "pouchdb-browser";
+import indexeddbAdapter from "pouchdb-adapter-indexeddb";
 import { NgZone } from "@angular/core";
 import { PerformanceAnalysisLogging } from "../../../utils/performance-analysis-logging";
 import { firstValueFrom, Observable, Subject } from "rxjs";
@@ -9,6 +10,9 @@ import { environment } from "environments/environment";
 import { SyncState } from "app/core/session/session-states/sync-state.enum";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { NotificationEvent } from "#src/app/features/notification/model/notification-event";
+
+// Register the newer "indexeddb" adapter alongside the default "idb" adapter
+PouchDB.plugin(indexeddbAdapter);
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -42,6 +46,13 @@ export class PouchDatabase extends Database {
   /** trigger to unsubscribe any internal subscriptions */
   protected readonly destroy$ = new Subject<void>();
 
+  /**
+   * The PouchDB adapter to use for local storage.
+   * Set by the factory/resolver before calling init().
+   * Default: "indexeddb" (the newer adapter). Use "idb" for the legacy adapter.
+   */
+  adapter: string = "indexeddb";
+
   constructor(
     dbName: string,
     protected globalSyncState?: SyncStateSubject,
@@ -62,7 +73,10 @@ export class PouchDatabase extends Database {
     options?: PouchDB.Configuration.DatabaseConfiguration | any,
     suppressSyncCompleted?: boolean,
   ) {
-    this.pouchDB = new PouchDB(dbName ?? this.dbName, options);
+    this.pouchDB = new PouchDB(dbName ?? this.dbName, {
+      adapter: this.adapter,
+      ...options,
+    });
     this.databaseInitialized.complete();
 
     if (!suppressSyncCompleted) {
@@ -211,6 +225,53 @@ export class PouchDatabase extends Database {
       .catch((err) => {
         throw new DatabaseException(err, object["_id"]);
       });
+  }
+
+  /**
+   * Permanently purge a document and all its revisions from the local database.
+   *
+   * Unlike {@link remove}, which creates a deletion tombstone that is synced,
+   * purge completely removes local data without affecting the remote database.
+   * This also emits a synthetic deletion event via the changes feed so that
+   * in-memory caches (entity stores) drop the purged entity.
+   *
+   * @param id The document ID to purge
+   * @returns true if the document was purged, false if it did not exist locally
+   */
+  async purge(id: string): Promise<boolean> {
+    const db = await this.getPouchDBOnceReady();
+    let localDoc: PouchDB.Core.IdMeta & PouchDB.Core.GetMeta;
+    try {
+      localDoc = await db.get(id, { conflicts: true });
+    } catch (err) {
+      if (err.status === 404) {
+        return false;
+      }
+      throw err;
+    }
+
+    // Purge the winning revision and any conflicting leaf revisions
+    // so the document is fully removed from local storage.
+    const revsToPurge = [
+      localDoc._rev,
+      ...((localDoc as any)._conflicts ?? []),
+    ];
+    for (const rev of revsToPurge) {
+      await (db as any).purge(id, rev);
+    }
+
+    // PouchDB purge() does not emit change events, so manually notify
+    // the changes feed so in-memory caches drop the purged entity.
+    if (this.changesFeed) {
+      const deletionEvent = { _id: id, _rev: localDoc._rev, _deleted: true };
+      if (this.ngZone) {
+        this.ngZone.run(() => this.changesFeed.next(deletionEvent));
+      } else {
+        this.changesFeed.next(deletionEvent);
+      }
+    }
+
+    return true;
   }
 
   /**

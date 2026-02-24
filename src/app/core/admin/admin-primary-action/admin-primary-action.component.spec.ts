@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AdminPrimaryActionComponent } from "./admin-primary-action.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ConfigService } from "../../config/config.service";
+import { NEVER } from "rxjs";
 
 describe("AdminPrimaryActionComponent", () => {
   let component: AdminPrimaryActionComponent;
@@ -12,7 +13,7 @@ describe("AdminPrimaryActionComponent", () => {
       "ConfigService",
       ["getConfig", "saveConfig", "exportConfig", "getAllConfigs"],
       {
-        configUpdates: { subscribe: jasmine.createSpy() },
+        configUpdates: NEVER,
       },
     );
 

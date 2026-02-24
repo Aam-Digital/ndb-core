@@ -17,38 +17,107 @@
 
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { EntityConstructor } from "../../entity/model/entity";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import {
+  EntitySchema,
+  SchemaEmbeddedType,
+} from "../../entity/schema/entity-schema";
 import { inject, Injectable } from "@angular/core";
+
+/**
+ * Configuration for the "schema-embed" datatype's `additional` field.
+ *
+ * Defines the inner schema of the embedded object, using the same format as
+ * entity `attributes` config: a map of field names to their schema definitions.
+ *
+ * @example
+ * ```
+ * @DatabaseField({
+ *   dataType: "schema-embed",
+ *   additional: {
+ *     "phoneNumber": { dataType: "string" },
+ *     "type": { dataType: "string" }
+ *   } as SchemaEmbedDatatypeAdditional
+ * })
+ * phoneNumber: { phoneNumber: string; type: string };
+ * ```
+ */
+export interface SchemaEmbedDatatypeAdditional {
+  [fieldId: string]: EntitySchemaField;
+}
 
 /**
  * Datatype for the EntitySchemaService transforming values of complex objects recursively.
  *
- * (De)serialize instances of any class recognizing the normal @DatabaseField() annotations within that referenced class.
- * This is useful if your Entity type is complex and has properties that are instances of other classes
- * rather just basic value types like string or number.
- * You can then annotate some properties of that referenced class so they will be saved to the database while ignoring other properties.
- * The referenced class instance will be saved embedded into the entity's object and not as an own "stand-alone" entity.
+ * Can be used in two ways:
+ * 1. **Config-based** (directly via annotation): Set `dataType: "schema-embed"` and define the inner schema
+ *    in `additional` as a {@link SchemaEmbedDatatypeAdditional} map.
+ * 2. **Subclass-based** (extending this class): Override `embeddedType` to point to a class
+ *    with `@DatabaseField()` annotations.
  *
- * see the unit tests in entity-schema.service.spec.ts for an example
- *
- * implement this as its own datatype for a specific class functioning as "embedded" schema.
+ * The config in `additional` is merged with the `embeddedType` schema (if present),
+ * allowing runtime config to extend or override a class's annotations.
  */
 @Injectable()
-export abstract class SchemaEmbedDatatype extends DefaultDatatype {
-  abstract embeddedType: EntityConstructor;
+export class SchemaEmbedDatatype<
+  EntityType = any,
+  DBType = any,
+> extends DefaultDatatype<EntityType, DBType> {
+  static override readonly dataType: string = "schema-embed";
+
+  embeddedType?: SchemaEmbeddedType<EntityType>;
 
   protected readonly schemaService = inject(EntitySchemaService);
 
-  override transformToDatabaseFormat(value: any) {
-    return this.schemaService.transformEntityToDatabaseFormat(
-      value,
-      this.embeddedType.schema,
+  /**
+   * Build the effective inner schema from the embedded type's annotations
+   * and/or the `additional` config.
+   */
+  private getEffectiveSchema(schemaField?: EntitySchemaField): EntitySchema {
+    // Clone the base schema to avoid mutating the original class schema
+    const baseSchema: EntitySchema = new Map(
+      this.embeddedType?.schema ?? new Map(),
     );
+    const additional: SchemaEmbedDatatypeAdditional =
+      schemaField?.additional ?? {};
+
+    // Add schema from additional config, taking precedence over baseSchema if present
+    for (const [key, value] of Object.entries(additional)) {
+      baseSchema.set(key, { ...value, id: key });
+    }
+
+    return baseSchema;
   }
 
-  override transformToObjectFormat(value: any) {
-    const instance = new this.embeddedType();
-    this.schemaService.loadDataIntoEntity(instance, value);
-    return instance;
+  override transformToDatabaseFormat(
+    value: EntityType,
+    schemaField?: EntitySchemaField,
+  ): DBType {
+    const schema = this.getEffectiveSchema(schemaField);
+    return this.schemaService.transformEntityToDatabaseFormat(
+      value as any,
+      schema,
+    ) as DBType;
+  }
+
+  override transformToObjectFormat(
+    value: DBType,
+    schemaField?: EntitySchemaField,
+  ): EntityType {
+    const schema = this.getEffectiveSchema(schemaField);
+
+    const transformedValue =
+      this.schemaService.transformDatabaseToEntityFormat<EntityType>(
+        value,
+        schema,
+      );
+
+    if (this.embeddedType) {
+      const instance = new this.embeddedType();
+      Object.assign(instance, transformedValue);
+      return instance;
+    }
+
+    return transformedValue;
   }
 }

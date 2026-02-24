@@ -1,8 +1,8 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceService } from "../attendance.service";
-import { EventAttendance } from "../model/event-attendance";
+import { AttendanceItem } from "../model/attendance-item";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { RecurringActivity } from "../model/recurring-activity";
 import moment, { Moment } from "moment";
@@ -19,7 +19,7 @@ import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 interface AttendanceWeekRow {
   childId: string;
   activity: RecurringActivity;
-  attendanceDays: (EventAttendance | undefined)[];
+  attendanceDays: (AttendanceItem | undefined)[];
 }
 
 @DynamicComponent("AttendanceWeekDashboard")
