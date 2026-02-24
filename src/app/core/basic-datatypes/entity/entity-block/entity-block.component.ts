@@ -1,5 +1,12 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+} from "@angular/core";
 import { Router } from "@angular/router";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { DisplayImgComponent } from "../../../../features/file/display-img/display-img.component";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { TemplateTooltipDirective } from "../../../common-components/template-tooltip/template-tooltip.directive";
@@ -8,7 +15,7 @@ import { EntityFieldViewComponent } from "../../../entity/entity-field-view/enti
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../entity/model/entity";
 import { Logging } from "../../../logging/logging.service";
-import { EntityBlockConfig } from "./entity-block-config";
+import { resourceWithRetention } from "../../../../utils/resourceWithRetention";
 
 /**
  * Display an inline block representing an entity.
@@ -18,76 +25,67 @@ import { EntityBlockConfig } from "./entity-block-config";
   selector: "app-entity-block",
   templateUrl: "./entity-block.component.html",
   styleUrls: ["./entity-block.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FaDynamicIconComponent,
     TemplateTooltipDirective,
     DisplayImgComponent,
     EntityFieldViewComponent,
+    MatProgressSpinnerModule,
   ],
 })
-export class EntityBlockComponent implements OnInit {
+export class EntityBlockComponent {
   private entityMapper = inject(EntityMapperService);
   private router = inject(Router);
 
-  @Input() entity: Entity;
-  @Input() linkDisabled = false;
+  /** The entity to display directly. Takes precedence over entityId. */
+  entity = input<Entity>();
+
+  /** If entity is not set, entityId (with prefix) is used to load the entity. */
+  entityId = input<string>();
+
+  linkDisabled = input(false);
+
+  entityResource = resourceWithRetention({
+    params: () => ({ entity: this.entity(), entityId: this.entityId() }),
+    loader: async ({ params: { entity, entityId } }) => {
+      if (entity) return entity;
+      if (!entityId) return undefined;
+      try {
+        return await this.entityMapper.load(
+          Entity.extractTypeFromId(entityId),
+          entityId,
+        );
+      } catch (e) {
+        Logging.debug("[DISPLAY_ENTITY] Could not find entity.", entityId, e);
+        return undefined;
+      }
+    },
+  });
 
   /**
-   * If `entityToDisplay` is not set, `entityId` with prefix required to load the entity
-   * If `entityToDisplay` is set, this input is ignored
+   * True during initial loading when no entity value is available yet.
+   * Otherwise, we want to use the previous value through the resource's retention.
    */
-  @Input() entityId: string;
+  initialLoading = computed(
+    () => this.entityResource.isLoading() && !this.entityResource.value(),
+  );
 
-  entityBlockConfig: EntityBlockConfig;
-  entityIcon: string;
+  entityBlockConfig = computed(() => {
+    return this.entityResource.value()?.getConstructor()
+      ?.toBlockDetailsAttributes;
+  });
 
-  async ngOnInit() {
-    if (!this.entity) {
-      await this.loadEntity();
-    }
-
-    this.initDisplayDetails();
-  }
-
-  private async loadEntity() {
-    if (!this.entityId) {
-      return;
-    }
-
-    try {
-      this.entity = await this.entityMapper.load(
-        Entity.extractTypeFromId(this.entityId),
-        this.entityId,
-      );
-    } catch (e) {
-      // this may be caused by restrictive permissions and therefore shouldn't be treated as a technical issue
-      Logging.debug(
-        "[DISPLAY_ENTITY] Could not find entity.",
-        this.entityId,
-        e,
-      );
-    }
-  }
-
-  private initDisplayDetails() {
-    if (!this.entity) {
-      return;
-    }
-
-    const entityType = this.entity.getConstructor();
-
-    this.entityBlockConfig = entityType.toBlockDetailsAttributes;
-    this.entityIcon = entityType.icon || "diamond";
-  }
+  entityIcon = computed(() => {
+    return this.entityResource.value()?.getConstructor()?.icon || "diamond";
+  });
 
   showDetailsPage() {
-    if (this.linkDisabled) {
+    const entity = this.entityResource.value();
+    if (this.linkDisabled() || !entity) {
       return;
     }
 
-    this.router.navigate([
-      this.entity.getConstructor().route,
-      this.entity.getId(true),
-    ]);
+    this.router.navigate([entity.getConstructor().route, entity.getId(true)]);
   }
 }
