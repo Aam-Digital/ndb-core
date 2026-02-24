@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { ImportService } from "../import.service";
+import { ImportCellError, ImportService } from "../import.service";
 import { MatDialog } from "@angular/material/dialog";
 import {
   ImportConfirmSummaryComponent,
@@ -37,6 +37,9 @@ import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/
 import { HintBoxComponent } from "../../common-components/hint-box/hint-box.component";
 import { ImportExistingService } from "../update-existing/import-existing.service";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { Logging } from "../../logging/logging.service";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { CustomYesNoButtons } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: "app-import-review-data",
@@ -62,6 +65,7 @@ export class ImportReviewDataComponent implements OnChanges {
   private importService = inject(ImportService);
   private matDialog = inject(MatDialog);
   private entityRegistry = inject(EntityRegistry);
+  private confirmationDialog = inject(ConfirmationDialogService);
 
   readonly IMPORT_STATUS_COLUMN = "_importStatus";
 
@@ -98,20 +102,39 @@ export class ImportReviewDataComponent implements OnChanges {
     }
 
     this.isLoading = true;
-    this.mappedEntities = (
-      await this.importService.transformRawDataToEntities(this.rawData, {
-        entityType: this.entityType,
-        columnMapping: this.columnMapping,
-        additionalActions: this.additionalActions,
-        importExisting: this.importExisting,
-        additionalSettings: this.additionalSettings,
-      })
-    ).sort((a, b) => {
-      // sort _rev (existing records being updated) first, then new records
-      if (a._rev === b._rev) return 0;
-      if (!!a._rev) return -1;
-      return 1;
-    });
+    try {
+      const result = await this.importService.transformRawDataToEntities(
+        this.rawData,
+        {
+          entityType: this.entityType,
+          columnMapping: this.columnMapping,
+          additionalActions: this.additionalActions,
+          importExisting: this.importExisting,
+          additionalSettings: this.additionalSettings,
+        },
+      );
+
+      if (result.errors.length > 0) {
+        const confirmed = await this.showTransformationErrorDialog(
+          result.errors,
+        );
+        if (!confirmed) {
+          this.mappedEntities = [];
+          this.isLoading = false;
+          return;
+        }
+      }
+
+      this.mappedEntities = result.entities.sort((a, b) => {
+        // sort _rev (existing records being updated) first, then new records
+        if (a._rev === b._rev) return 0;
+        if (!!a._rev) return -1;
+        return 1;
+      });
+    } catch (e) {
+      Logging.error("Failed to transform import data", e);
+      this.mappedEntities = [];
+    }
 
     this.displayColumns = [
       this.IMPORT_STATUS_COLUMN,
@@ -163,5 +186,17 @@ export class ImportReviewDataComponent implements OnChanges {
     if (confirmationResult?.completedImport) {
       this.importComplete.emit(confirmationResult.completedImport);
     }
+  }
+
+  private showTransformationErrorDialog(
+    error: ImportCellError[],
+  ): Promise<boolean | string | undefined> {
+    Logging.warn("Import Cell Errors", error);
+
+    return this.confirmationDialog.getConfirmation(
+      $localize`Problems while preparing data for import`,
+      $localize`${error.length} value(s) could not be transformed and will be skipped. Do you want to continue with the import preview anyway?`,
+      CustomYesNoButtons($localize`Continue`, $localize`Cancel`),
+    );
   }
 }
