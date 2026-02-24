@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
@@ -17,7 +17,7 @@ import { ScreenWidthObserver } from "#src/app/utils/media/screen-size-observer.s
 import { InteractionType } from "#src/app/child-dev-project/notes/model/interaction-type.interface";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { AttendanceStatusSelectComponent } from "./attendance-status-select/attendance-status-select.component";
-import { EventAttendance } from "../model/event-attendance";
+import { AttendanceItem } from "../model/attendance-item";
 
 @UntilDestroy()
 @DynamicComponent("EditAttendance")
@@ -91,7 +91,7 @@ export class EditAttendanceComponent
   getAttendance(childId: string) {
     let attendance = this.parent.get("childrenAttendance").value.get(childId);
     if (!attendance) {
-      attendance = new EventAttendance();
+      attendance = new AttendanceItem();
       this.parent.get("childrenAttendance").value.set(childId, attendance);
     }
     return attendance;

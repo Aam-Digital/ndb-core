@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { EventAttendance } from "../../model/event-attendance";
+import { AttendanceItem } from "../../model/attendance-item";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
@@ -9,7 +9,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   imports: [MatTooltipModule],
 })
 export class AttendanceDayBlockComponent {
-  @Input() attendance?: EventAttendance;
+  @Input() attendance?: AttendanceItem;
 
   get tooltip(): string {
     if (!this.attendance) {

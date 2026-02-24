@@ -1,11 +1,6 @@
-import { testDatatype } from "#src/app/core/entity/schema/entity-schema.service.spec";
-import { EventAttendanceDatatype } from "./event-attendance.datatype";
-import { EventAttendance, EventAttendanceMap } from "./event-attendance";
+import { AttendanceItem } from "./attendance-item";
+import { EventAttendanceMap } from "./event-attendance.datatype";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
-import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
-import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype";
-import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
-import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
@@ -32,11 +27,11 @@ describe("Schema data type: event-attendance-map", () => {
     const originalEntity = new TestEntity(id);
     originalEntity.attendanceMap.set(
       "a",
-      new EventAttendance(defaultAttendanceStatusTypes[1]),
+      new AttendanceItem(defaultAttendanceStatusTypes[1]),
     );
     originalEntity.attendanceMap.set(
       "b",
-      new EventAttendance(defaultAttendanceStatusTypes[0], "test remark"),
+      new AttendanceItem(defaultAttendanceStatusTypes[0], "test remark"),
     );
 
     const rawData =
@@ -63,11 +58,11 @@ describe("Schema data type: event-attendance-map", () => {
     const originalEntity = new TestEntity(id);
     originalEntity.attendanceMap.set(
       "a",
-      new EventAttendance(defaultAttendanceStatusTypes[1]),
+      new AttendanceItem(defaultAttendanceStatusTypes[1]),
     );
     originalEntity.attendanceMap.set(
       "b",
-      new EventAttendance(defaultAttendanceStatusTypes[0], "test remark"),
+      new AttendanceItem(defaultAttendanceStatusTypes[0], "test remark"),
     );
 
     const rawData =
@@ -88,28 +83,4 @@ describe("Schema data type: event-attendance-map", () => {
     );
     expect(loadedEntity2.attendanceMap).toEqual(originalEntity.attendanceMap);
   });
-});
-
-describe("Schema data type: event-attendance", () => {
-  testDatatype(
-    EventAttendanceDatatype,
-    new EventAttendance(defaultAttendanceStatusTypes[0], "test remark"),
-    {
-      status: defaultAttendanceStatusTypes[0].id,
-      remarks: "test remark",
-    },
-    undefined,
-    [
-      { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
-      {
-        provide: DefaultDatatype,
-        useClass: ConfigurableEnumDatatype,
-        multi: true,
-      },
-      {
-        provide: ConfigurableEnumService,
-        useValue: { getEnumValues: () => defaultAttendanceStatusTypes },
-      },
-    ],
-  );
 });

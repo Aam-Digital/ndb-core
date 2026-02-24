@@ -21,6 +21,7 @@ import { SessionSubject } from "./session/auth/session-info";
 import { PercentageDatatype } from "./basic-datatypes/number/display-percentage/percentage.datatype";
 import { UrlDatatype } from "./basic-datatypes/string/url.datatype";
 import { EmailDatatype } from "./basic-datatypes/string/email.datatype";
+import { SchemaEmbedDatatype } from "./basic-datatypes/schema-embed/schema-embed.datatype";
 
 /**
  * Core module registering basic parts like datatypes and components.
@@ -30,6 +31,7 @@ import { EmailDatatype } from "./basic-datatypes/string/email.datatype";
     SessionSubject,
     CurrentUserSubject,
     // base dataTypes
+    { provide: DefaultDatatype, useClass: SchemaEmbedDatatype, multi: true },
     { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
     { provide: DefaultDatatype, useClass: LongTextDatatype, multi: true },
     { provide: DefaultDatatype, useClass: BooleanDatatype, multi: true },
