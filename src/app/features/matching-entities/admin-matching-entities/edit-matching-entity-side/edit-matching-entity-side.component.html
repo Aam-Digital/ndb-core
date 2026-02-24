@@ -37,13 +37,10 @@
       Configure filters to only show certain records for matching, that fulfill
       the required criteria (e.g. having a required status).
     </p>
-    <app-icon-button
-      buttonType="mat-stroked-button"
-      icon="tools"
-      (buttonClick)="openPrefilterEditor()"
-      i18n
-    >
-      Edit Prefilters
-    </app-icon-button>
+    <app-conditions-editor
+      [conditions]="sideConfig.prefilter"
+      [entityConstructor]="entityConstructor"
+      (conditionsChange)="onPrefilterChange($event)"
+    ></app-conditions-editor>
   </div>
 </div>
