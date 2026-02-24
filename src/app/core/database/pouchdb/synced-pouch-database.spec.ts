@@ -238,4 +238,65 @@ describe("SyncedPouchDatabase", () => {
     );
     expect(syncSpy).toHaveBeenCalled();
   });
+
+  describe("purgeDocsWithLostPermissions", () => {
+    let purgeSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      const mockLocalDb = jasmine.createSpyObj(["sync"]);
+      mockLocalDb.sync.and.resolveTo({});
+      spyOn(service, "getPouchDB").and.returnValue(mockLocalDb);
+      purgeSpy = spyOn(service, "purge").and.resolveTo(true);
+    });
+
+    it("should purge local docs reported in lostPermissions after sync", async () => {
+      spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      ).and.returnValue(["Child:1", "School:2"]);
+
+      await service.sync();
+
+      expect(purgeSpy).toHaveBeenCalledWith("Child:1");
+      expect(purgeSpy).toHaveBeenCalledWith("School:2");
+    });
+
+    it("should not purge anything if no permissions were lost", async () => {
+      spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      ).and.returnValue([]);
+
+      await service.sync();
+
+      expect(purgeSpy).not.toHaveBeenCalled();
+    });
+
+    it("should skip gracefully if purge returns false (doc not found locally)", async () => {
+      purgeSpy.and.resolveTo(false);
+      spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      ).and.returnValue(["Child:missing"]);
+
+      await expectAsync(service.sync()).toBeResolved();
+    });
+
+    it("should continue purging remaining docs if one fails", async () => {
+      purgeSpy.and.callFake((id: string) =>
+        id === "Child:1"
+          ? Promise.reject(new Error("unexpected"))
+          : Promise.resolve(true),
+      );
+      spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      ).and.returnValue(["Child:1", "School:2"]);
+
+      await service.sync();
+
+      expect(purgeSpy).toHaveBeenCalledWith("Child:1");
+      expect(purgeSpy).toHaveBeenCalledWith("School:2");
+    });
+  });
 });
