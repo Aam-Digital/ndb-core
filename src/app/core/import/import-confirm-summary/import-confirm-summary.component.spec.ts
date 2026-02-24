@@ -11,6 +11,7 @@ import { ImportService } from "../import.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ImportMetadata } from "../import-metadata";
 import { of } from "rxjs";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 
 describe("ImportConfirmSummaryComponent", () => {
   let component: ImportConfirmSummaryComponent;
@@ -19,12 +20,15 @@ describe("ImportConfirmSummaryComponent", () => {
   let mockImportService: jasmine.SpyObj<ImportService>;
   let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
   let mockDialogRef: jasmine.SpyObj<MatDialogRef<any>>;
+  let mockConfirmationService: jasmine.SpyObj<ConfirmationDialogService>;
 
   beforeEach(async () => {
     mockImportService = jasmine.createSpyObj(["executeImport", "undoImport"]);
     mockSnackbar = jasmine.createSpyObj(["open"]);
     mockSnackbar.open.and.returnValue({ onAction: () => of(null) } as any);
     mockDialogRef = jasmine.createSpyObj(["close"]);
+    mockConfirmationService = jasmine.createSpyObj(["getConfirmation"]);
+    mockConfirmationService.getConfirmation.and.resolveTo(true);
 
     await TestBed.configureTestingModule({
       imports: [ImportConfirmSummaryComponent],
@@ -36,6 +40,10 @@ describe("ImportConfirmSummaryComponent", () => {
         { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: MatSnackBar, useValue: mockSnackbar },
         { provide: ImportService, useValue: mockImportService },
+        {
+          provide: ConfirmationDialogService,
+          useValue: mockConfirmationService,
+        },
       ],
     }).compileComponents();
 
@@ -63,7 +71,7 @@ describe("ImportConfirmSummaryComponent", () => {
     expect(mockDialogRef.disableClose).toBeFalse();
   }));
 
-  it("should close dialog with conflict flag for putAll conflict errors", async () => {
+  it("should close dialog with error flag for putAll conflict errors", async () => {
     const putAllConflictError = [{ status: 409, name: "conflict" }];
     mockImportService.executeImport.and.rejectWith(putAllConflictError);
 
@@ -71,17 +79,13 @@ describe("ImportConfirmSummaryComponent", () => {
 
     expect(component.importInProgress).toBeFalse();
     expect(mockDialogRef.disableClose).toBeFalse();
-    expect(mockSnackbar.open).toHaveBeenCalledWith(
-      "Some records changed while importing. Data has been refreshed. Please review and run import again.",
-      "Close",
-      { duration: 10000 },
-    );
+    expect(mockConfirmationService.getConfirmation).toHaveBeenCalled();
     expect(mockDialogRef.close).toHaveBeenCalledWith({
-      conflictOccurred: true,
+      errorOccured: true,
     });
   });
 
-  it("should handle general errors with logging and error message", async () => {
+  it("should handle general errors with confirmation dialog and close dialog", async () => {
     const generalError = new Error("Network error");
     mockImportService.executeImport.and.rejectWith(generalError);
 
@@ -89,11 +93,9 @@ describe("ImportConfirmSummaryComponent", () => {
 
     expect(component.importInProgress).toBeFalse();
     expect(mockDialogRef.disableClose).toBeFalse();
-    expect(mockSnackbar.open).toHaveBeenCalledWith(
-      "Import failed. Please try again or contact support if the problem persists.",
-      "Close",
-      { duration: 10000 },
-    );
-    expect(mockDialogRef.close).not.toHaveBeenCalled();
+    expect(mockConfirmationService.getConfirmation).toHaveBeenCalled();
+    expect(mockDialogRef.close).toHaveBeenCalledWith({
+      errorOccured: true,
+    });
   });
 });

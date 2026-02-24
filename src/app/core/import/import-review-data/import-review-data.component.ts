@@ -154,8 +154,8 @@ export class ImportReviewDataComponent implements OnChanges {
         .afterClosed(),
     );
 
-    if (confirmationResult?.conflictOccurred) {
-      // Data changed during import - refresh and let user retry
+    if (confirmationResult?.errorOccured) {
+      // Problem during import - maybe underlying data changed. Refresh and let user retry
       await this.parseRawData();
       return;
     }

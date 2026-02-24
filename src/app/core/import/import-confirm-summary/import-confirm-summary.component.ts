@@ -11,6 +11,8 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatButtonModule } from "@angular/material/button";
 import { Logging } from "../../logging/logging.service";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 /**
  * Data passed into Import Confirmation Dialog.
@@ -25,7 +27,7 @@ export interface ImportDialogData {
  */
 export interface ImportDialogResult {
   completedImport?: ImportMetadata;
-  conflictOccurred?: boolean;
+  errorOccured?: boolean;
 }
 
 /**
@@ -38,11 +40,12 @@ export interface ImportDialogResult {
   imports: [MatDialogModule, MatProgressBarModule, MatButtonModule],
 })
 export class ImportConfirmSummaryComponent {
-  private dialogRef =
+  private readonly dialogRef =
     inject<MatDialogRef<ImportConfirmSummaryComponent>>(MatDialogRef);
   data = inject<ImportDialogData>(MAT_DIALOG_DATA);
-  private snackBar = inject(MatSnackBar);
-  private importService = inject(ImportService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly confirmationService = inject(ConfirmationDialogService);
+  private readonly importService = inject(ImportService);
 
   importInProgress: boolean;
 
@@ -61,12 +64,13 @@ export class ImportConfirmSummaryComponent {
       this.dialogRef.close({ completedImport });
     } catch (error) {
       if (this.isPutAllConflictError(error)) {
-        this.handlePutAllConflict();
-        return;
+        this.showImportPutAllConflictWarning();
+      } else {
+        // Handle all other errors
+        Logging.warn("Import failed with error", error);
+        this.showImportErrorMessage(error);
       }
-      // Handle all other errors
-      Logging.warn("Import failed with error", error);
-      this.showImportErrorMessage();
+      this.dialogRef.close({ errorOccured: true });
     } finally {
       this.importInProgress = false;
       this.dialogRef.disableClose = false;
@@ -84,27 +88,6 @@ export class ImportConfirmSummaryComponent {
     snackBarRef.onAction().subscribe(async () => {
       await this.importService.undoImport(completedImport);
     });
-  }
-
-  private showImportPutAllConflictWarning() {
-    this.snackBar.open(
-      $localize`Some records changed while importing. Data has been refreshed. Please review and run import again.`,
-      $localize`Close`,
-      { duration: 10000 },
-    );
-  }
-
-  private showImportErrorMessage() {
-    this.snackBar.open(
-      $localize`Import failed. Please try again or contact support if the problem persists.`,
-      $localize`Close`,
-      { duration: 10000 },
-    );
-  }
-
-  private handlePutAllConflict() {
-    this.showImportPutAllConflictWarning();
-    this.dialogRef.close({ conflictOccurred: true });
   }
 
   private isPutAllConflictError(error: unknown): boolean {
@@ -125,5 +108,21 @@ export class ImportConfirmSummaryComponent {
         putAllError.error === "conflict"
       );
     });
+  }
+
+  private showImportPutAllConflictWarning() {
+    this.confirmationService.getConfirmation(
+      $localize`Conflicts overwriting updated data`,
+      $localize`Some records changed from synchronisation while preparing the import. We are refreshing the data for you. Please review and run import again.`,
+      OkButton,
+    );
+  }
+
+  private showImportErrorMessage(error) {
+    this.confirmationService.getConfirmation(
+      $localize`Import failed`,
+      $localize`Sorry, some error occurred during import. Please try again. If the problem persists, contact support. [${JSON.stringify(error)}]`,
+      OkButton,
+    );
   }
 }
