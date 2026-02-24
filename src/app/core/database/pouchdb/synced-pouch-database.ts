@@ -208,7 +208,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
           Logging.debug(`Skipped purge for ${_id} (does not exist locally)`);
         }
       } catch (err) {
-        Logging.debug(`Error trying to purge doc`, _id, err);
+        Logging.warn(`Error trying to purge doc`, _id, err);
       }
     }
   }
