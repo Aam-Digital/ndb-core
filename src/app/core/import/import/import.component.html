@@ -163,6 +163,7 @@
         [additionalActions]="importSettings.additionalActions"
         [importExisting]="importSettings.importExisting"
         [filename]="importSettings.filename"
+        [stepIsFocused]="stepper.selectedIndex === 3"
         (importComplete)="onImportCompleted()"
       ></app-import-review-data>
     </ng-template>
