@@ -219,6 +219,42 @@ describe("ConfigService", () => {
     testConfigMigration({ "view:X": oldFormat }, { "view:X": newFormat });
   }));
 
+  it("should migrate legacy .id OR filters to new format", fakeAsync(() => {
+    const oldFormat = {
+      "appConfig:matching-entities": {
+        leftSide: {
+          prefilter: {
+            $or: [
+              { "projectStatus.id": "test_id1" },
+              { "projectStatus.id": "test_id2" },
+              { "projectStatus.id": "test_id3" },
+              { "otherField.id": "A" },
+              { name: "Test" },
+            ],
+          },
+        },
+      },
+    };
+
+    const newFormat = {
+      "appConfig:matching-entities": {
+        leftSide: {
+          prefilter: {
+            $or: [
+              { projectStatus: "test_id1" },
+              { projectStatus: "test_id2" },
+              { projectStatus: "test_id3" },
+              { otherField: "A" },
+              { name: "Test" },
+            ],
+          },
+        },
+      },
+    };
+
+    testConfigMigration(oldFormat, newFormat);
+  }));
+
   it("should migrate to new photo dataType", fakeAsync(() => {
     const config = new Config();
     const oldFormat = {

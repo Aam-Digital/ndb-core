@@ -24,9 +24,9 @@ import { EntitySchemaService } from "./schema/entity-schema.service";
   providedIn: "root",
 })
 export class EntityConfigService {
-  private configService = inject(ConfigService);
-  private entities = inject(EntityRegistry);
-  private entitySchemaService = inject(EntitySchemaService);
+  private readonly configService = inject(ConfigService);
+  private readonly entities = inject(EntityRegistry);
+  private readonly entitySchemaService = inject(EntitySchemaService);
 
   /** @deprecated will become private, use the service to access the data */
   static readonly PREFIX_ENTITY_CONFIG = "entity:";

@@ -1,7 +1,20 @@
 import { TestBed } from "@angular/core/testing";
-import { ChangeDetectorRef, ViewContainerRef } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  Component,
+  ViewContainerRef,
+  input,
+} from "@angular/core";
 import { DynamicComponentDirective } from "./dynamic-component.directive";
 import { ComponentRegistry } from "../../../dynamic-components";
+
+@Component({
+  selector: "app-test-signal-input",
+  template: "",
+})
+class TestSignalInputComponent {
+  signalInput = input<number>(1);
+}
 
 describe("DynamicComponentDirective", () => {
   let directive: DynamicComponentDirective;
@@ -73,5 +86,29 @@ describe("DynamicComponentDirective", () => {
       "otherProp",
       jasmine.anything(),
     );
+  });
+
+  it("should use setInput for signal inputs without mutating the signal property", async () => {
+    directive.appDynamicComponent = {
+      component: "TestComp",
+      config: {
+        signalInput: 42,
+      },
+    };
+
+    const fixture = TestBed.createComponent(TestSignalInputComponent);
+    const componentRef = fixture.componentRef;
+    const setInputSpy = spyOn(componentRef, "setInput").and.callThrough();
+
+    mockRegistry.get.and.returnValue(() =>
+      Promise.resolve(TestSignalInputComponent),
+    );
+    mockContainer.createComponent.and.returnValue(componentRef);
+
+    await directive.ngOnChanges();
+
+    expect(setInputSpy).toHaveBeenCalledWith("signalInput", 42);
+    expect(typeof componentRef.instance.signalInput).toBe("function");
+    expect(componentRef.instance.signalInput).not.toBe(42);
   });
 });

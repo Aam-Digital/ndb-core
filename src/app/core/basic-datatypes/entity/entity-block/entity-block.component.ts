@@ -6,6 +6,7 @@ import {
   input,
 } from "@angular/core";
 import { Router } from "@angular/router";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { DisplayImgComponent } from "../../../../features/file/display-img/display-img.component";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { TemplateTooltipDirective } from "../../../common-components/template-tooltip/template-tooltip.directive";
@@ -30,6 +31,7 @@ import { resourceWithRetention } from "../../../../utils/resourceWithRetention";
     TemplateTooltipDirective,
     DisplayImgComponent,
     EntityFieldViewComponent,
+    MatProgressSpinnerModule,
   ],
 })
 export class EntityBlockComponent {
@@ -60,6 +62,14 @@ export class EntityBlockComponent {
       }
     },
   });
+
+  /**
+   * True during initial loading when no entity value is available yet.
+   * Otherwise, we want to use the previous value through the resource's retention.
+   */
+  initialLoading = computed(
+    () => this.entityResource.isLoading() && !this.entityResource.value(),
+  );
 
   entityBlockConfig = computed(() => {
     return this.entityResource.value()?.getConstructor()
