@@ -63,8 +63,12 @@ describe("ImportReviewDataComponent", () => {
       { column: "x", propertyName: "name" },
       { column: "y", propertyName: undefined }, // unmapped property => not displayed
     ];
+    component.showErrorDialog = true;
 
-    component.ngOnChanges({});
+    component.ngOnChanges({
+      columnMapping: {} as any,
+      showErrorDialog: {} as any,
+    });
     tick();
 
     expect(component.mappedEntities).toEqual(testEntities);
@@ -88,7 +92,11 @@ describe("ImportReviewDataComponent", () => {
     spyOn(Logging, "error");
 
     component.columnMapping = [{ column: "x", propertyName: "name" }];
-    component.ngOnChanges({});
+    component.showErrorDialog = true;
+    component.ngOnChanges({
+      columnMapping: {} as any,
+      showErrorDialog: {} as any,
+    });
     tick();
 
     expect(component.mappedEntities).toEqual([]);
@@ -112,7 +120,11 @@ describe("ImportReviewDataComponent", () => {
     mockConfirmationDialog.getConfirmation.and.resolveTo(true);
 
     component.columnMapping = [{ column: "x", propertyName: "name" }];
-    component.ngOnChanges({});
+    component.showErrorDialog = true;
+    component.ngOnChanges({
+      columnMapping: {} as any,
+      showErrorDialog: {} as any,
+    });
     tick();
 
     expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
@@ -136,7 +148,11 @@ describe("ImportReviewDataComponent", () => {
     mockConfirmationDialog.getConfirmation.and.resolveTo(false);
 
     component.columnMapping = [{ column: "x", propertyName: "name" }];
-    component.ngOnChanges({});
+    component.showErrorDialog = true;
+    component.ngOnChanges({
+      columnMapping: {} as any,
+      showErrorDialog: {} as any,
+    });
     tick();
 
     expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
@@ -144,7 +160,7 @@ describe("ImportReviewDataComponent", () => {
     expect(component.isLoading).toBeFalse();
   }));
 
-  it("should not show confirmation dialog when showErrorDialog is false", fakeAsync(() => {
+  it("should show confirmation dialog when preview becomes visible with errors", fakeAsync(() => {
     const testEntities = [new TestEntity("1")];
     mockImportService.transformRawDataToEntities.and.resolveTo({
       entities: testEntities,
@@ -160,11 +176,94 @@ describe("ImportReviewDataComponent", () => {
     component.showErrorDialog = false;
 
     component.columnMapping = [{ column: "x", propertyName: "name" }];
-    component.ngOnChanges({});
+    // Simulate data change and then making preview visible
+    component.ngOnChanges({
+      columnMapping: {} as any,
+    });
     tick();
 
-    expect(mockConfirmationDialog.getConfirmation).not.toHaveBeenCalled();
+    // Data changed but preview not visible yet - should NOT parse yet
+    expect(mockImportService.transformRawDataToEntities).not.toHaveBeenCalled();
+    expect(component.mappedEntities).toEqual([]);
+
+    // Now show the preview
+    component.showErrorDialog = true;
+    component.ngOnChanges({
+      showErrorDialog: {} as any,
+    });
+    tick();
+
+    // Should parse now and show the confirmation dialog for errors
+    expect(mockImportService.transformRawDataToEntities).toHaveBeenCalled();
+    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
     expect(component.mappedEntities).toEqual(testEntities);
     expect(component.isLoading).toBeFalse();
+  }));
+
+  it("should delay parsing until preview is visible for performance", fakeAsync(() => {
+    const testEntities = [new TestEntity("1")];
+    mockImportService.transformRawDataToEntities.and.resolveTo({
+      entities: testEntities,
+      errors: [],
+    });
+    component.showErrorDialog = false;
+
+    // Change data while preview is not visible
+    component.columnMapping = [{ column: "x", propertyName: "name" }];
+    component.ngOnChanges({
+      columnMapping: {} as any,
+    });
+    tick();
+
+    // Should NOT parse yet
+    expect(mockImportService.transformRawDataToEntities).not.toHaveBeenCalled();
+    expect(component.mappedEntities).toEqual([]);
+
+    // Make preview visible
+    component.showErrorDialog = true;
+    component.ngOnChanges({
+      showErrorDialog: {} as any,
+    });
+    tick();
+
+    expect(mockImportService.transformRawDataToEntities).toHaveBeenCalled();
+    expect(component.mappedEntities).toEqual(testEntities);
+  }));
+
+  it("should not re-parse when only navigating away and back without data changes", fakeAsync(() => {
+    const testEntities = [new TestEntity("1")];
+    mockImportService.transformRawDataToEntities.and.resolveTo({
+      entities: testEntities,
+      errors: [],
+    });
+    component.showErrorDialog = true;
+    component.columnMapping = [{ column: "x", propertyName: "name" }];
+
+    // Initial parse when data changes and preview is visible
+    component.ngOnChanges({
+      columnMapping: {} as any,
+      showErrorDialog: {} as any,
+    });
+    tick();
+
+    expect(mockImportService.transformRawDataToEntities).toHaveBeenCalledTimes(1);
+    mockImportService.transformRawDataToEntities.calls.reset();
+
+    // Navigate away from preview
+    component.showErrorDialog = false;
+    component.ngOnChanges({
+      showErrorDialog: {} as any,
+    });
+    tick();
+
+    // Navigate back to preview (no data changes)
+    component.showErrorDialog = true;
+    component.ngOnChanges({
+      showErrorDialog: {} as any,
+    });
+    tick();
+
+    // Should NOT re-parse since data hasn't changed
+    expect(mockImportService.transformRawDataToEntities).not.toHaveBeenCalled();
   }));
 });

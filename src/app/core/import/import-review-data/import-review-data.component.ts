@@ -90,11 +90,56 @@ export class ImportReviewDataComponent implements OnChanges {
   MULTIPLE_MATCHING_ENTITIES_KEY =
     ImportExistingService.MULTIPLE_MATCHING_ENTITIES_KEY;
 
+  private static readonly DATA_INPUT_KEYS = [
+    "rawData",
+    "entityType",
+    "columnMapping",
+    "additionalActions",
+    "importExisting",
+    "additionalSettings",
+  ];
+
+  private dataInputsChanged = false;
+  private previousShowErrorDialog = false;
+
   ngOnChanges(changes: SimpleChanges) {
     this.entityConstructor = this.entityRegistry.get(this.entityType);
 
-    // Every change requires a complete re-calculation
-    this.parseRawData();
+    const dataChanged = this.hasDataInputChanges(changes);
+    if (dataChanged) {
+      this.dataInputsChanged = true;
+    }
+
+    if (this.shouldParseData(changes, dataChanged)) {
+      this.parseRawData();
+      this.dataInputsChanged = false;
+    }
+  }
+
+  private hasDataInputChanges(changes: SimpleChanges): boolean {
+    return ImportReviewDataComponent.DATA_INPUT_KEYS.some(
+      (key) => key in changes,
+    );
+  }
+
+  private shouldParseData(
+    changes: SimpleChanges,
+    dataChanged: boolean,
+  ): boolean {
+    // Check if preview just became visible
+    if (changes["showErrorDialog"]) {
+      const nowVisible = this.showErrorDialog;
+      const becameVisible = nowVisible && !this.previousShowErrorDialog;
+      this.previousShowErrorDialog = nowVisible;
+
+      // Parse when preview becomes visible and data has changed
+      if (becameVisible && this.dataInputsChanged) {
+        return true;
+      }
+    }
+
+    // Parse if data changed while preview is already visible
+    return dataChanged && this.showErrorDialog;
   }
 
   private async parseRawData() {
