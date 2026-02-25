@@ -28,7 +28,7 @@
     </app-hint-box>
   }
 
-  @if (showErrorDialog && transformationErrorColumns.length > 0) {
+  @if (transformationErrorColumns?.length > 0) {
     <app-hint-box>
       <div class="flex-row gap-small align-center warning-red">
         <span i18n>Some values could not be transformed and were skipped.</span>

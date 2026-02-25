@@ -1,8 +1,8 @@
 import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
+    ComponentFixture,
+    fakeAsync,
+    TestBed,
+    tick,
 } from "@angular/core/testing";
 
 import { ImportReviewDataComponent } from "./import-review-data.component";
@@ -63,7 +63,7 @@ describe("ImportReviewDataComponent", () => {
       { column: "x", propertyName: "name" },
       { column: "y", propertyName: undefined }, // unmapped property => not displayed
     ];
-    component.showErrorDialog = true;
+    component.stepIsFocused = true;
 
     component.ngOnChanges({
       columnMapping: {} as any,
@@ -92,7 +92,7 @@ describe("ImportReviewDataComponent", () => {
     spyOn(Logging, "error");
 
     component.columnMapping = [{ column: "x", propertyName: "name" }];
-    component.showErrorDialog = true;
+    component.stepIsFocused = true;
     component.ngOnChanges({
       columnMapping: {} as any,
       showErrorDialog: {} as any,
@@ -120,7 +120,7 @@ describe("ImportReviewDataComponent", () => {
     mockConfirmationDialog.getConfirmation.and.resolveTo(true);
 
     component.columnMapping = [{ column: "x", propertyName: "name" }];
-    component.showErrorDialog = true;
+    component.stepIsFocused = true;
     component.ngOnChanges({
       columnMapping: {} as any,
       showErrorDialog: {} as any,
@@ -148,7 +148,7 @@ describe("ImportReviewDataComponent", () => {
     mockConfirmationDialog.getConfirmation.and.resolveTo(false);
 
     component.columnMapping = [{ column: "x", propertyName: "name" }];
-    component.showErrorDialog = true;
+    component.stepIsFocused = true;
     component.ngOnChanges({
       columnMapping: {} as any,
       showErrorDialog: {} as any,
@@ -173,7 +173,7 @@ describe("ImportReviewDataComponent", () => {
         },
       ],
     });
-    component.showErrorDialog = false;
+    component.stepIsFocused = false;
 
     component.columnMapping = [{ column: "x", propertyName: "name" }];
     // Simulate data change and then making preview visible
@@ -187,7 +187,7 @@ describe("ImportReviewDataComponent", () => {
     expect(component.mappedEntities).toEqual([]);
 
     // Now show the preview
-    component.showErrorDialog = true;
+    component.stepIsFocused = true;
     component.ngOnChanges({
       showErrorDialog: {} as any,
     });
@@ -206,7 +206,7 @@ describe("ImportReviewDataComponent", () => {
       entities: testEntities,
       errors: [],
     });
-    component.showErrorDialog = false;
+    component.stepIsFocused = false;
 
     // Change data while preview is not visible
     component.columnMapping = [{ column: "x", propertyName: "name" }];
@@ -220,7 +220,7 @@ describe("ImportReviewDataComponent", () => {
     expect(component.mappedEntities).toEqual([]);
 
     // Make preview visible
-    component.showErrorDialog = true;
+    component.stepIsFocused = true;
     component.ngOnChanges({
       showErrorDialog: {} as any,
     });
@@ -236,7 +236,7 @@ describe("ImportReviewDataComponent", () => {
       entities: testEntities,
       errors: [],
     });
-    component.showErrorDialog = true;
+    component.stepIsFocused = true;
     component.columnMapping = [{ column: "x", propertyName: "name" }];
 
     // Initial parse when data changes and preview is visible
@@ -252,14 +252,14 @@ describe("ImportReviewDataComponent", () => {
     mockImportService.transformRawDataToEntities.calls.reset();
 
     // Navigate away from preview
-    component.showErrorDialog = false;
+    component.stepIsFocused = false;
     component.ngOnChanges({
       showErrorDialog: {} as any,
     });
     tick();
 
     // Navigate back to preview (no data changes)
-    component.showErrorDialog = true;
+    component.stepIsFocused = true;
     component.ngOnChanges({
       showErrorDialog: {} as any,
     });

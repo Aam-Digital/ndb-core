@@ -77,7 +77,12 @@ export class ImportReviewDataComponent implements OnChanges {
   @Input() importExisting: ImportExistingSettings | undefined;
   @Input() additionalSettings: ImportAdditionalSettings;
   @Input() filename: string;
-  @Input() showErrorDialog = true;
+
+  /**
+   * Indicate if the component is currently visible,
+   * so that re-calculation and popups only happen then.
+   */
+  @Input() stepIsFocused = true;
 
   entityConstructor: EntityConstructor;
 
@@ -100,7 +105,6 @@ export class ImportReviewDataComponent implements OnChanges {
   ];
 
   private dataInputsChanged = false;
-  private previousShowErrorDialog = false;
 
   ngOnChanges(changes: SimpleChanges) {
     this.entityConstructor = this.entityRegistry.get(this.entityType);
@@ -110,7 +114,7 @@ export class ImportReviewDataComponent implements OnChanges {
       this.dataInputsChanged = true;
     }
 
-    if (this.shouldParseData(changes, dataChanged)) {
+    if (this.dataInputsChanged && this.stepIsFocused) {
       this.parseRawData();
       this.dataInputsChanged = false;
     }
@@ -120,26 +124,6 @@ export class ImportReviewDataComponent implements OnChanges {
     return ImportReviewDataComponent.DATA_INPUT_KEYS.some(
       (key) => key in changes,
     );
-  }
-
-  private shouldParseData(
-    changes: SimpleChanges,
-    dataChanged: boolean,
-  ): boolean {
-    // Check if preview just became visible
-    if (changes["showErrorDialog"]) {
-      const nowVisible = this.showErrorDialog;
-      const becameVisible = nowVisible && !this.previousShowErrorDialog;
-      this.previousShowErrorDialog = nowVisible;
-
-      // Parse when preview becomes visible and data has changed
-      if (becameVisible && this.dataInputsChanged) {
-        return true;
-      }
-    }
-
-    // Parse if data changed while preview is already visible
-    return dataChanged && this.showErrorDialog;
   }
 
   private async parseRawData() {
@@ -162,7 +146,7 @@ export class ImportReviewDataComponent implements OnChanges {
       );
       this.setTransformationErrors(result.errors);
 
-      if (result.errors.length > 0 && this.showErrorDialog) {
+      if (result.errors.length > 0 && this.stepIsFocused) {
         await this.showTransformationErrorDialog(result.errors);
       }
 
