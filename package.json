@@ -68,6 +68,7 @@
     "moment": "2.29.4",
     "ngx-markdown": "^21.1.0",
     "ngx-papaparse": "^8.0.0",
+    "pouchdb-adapter-indexeddb": "^9.0.0",
     "pouchdb-adapter-memory": "^9.0.0",
     "pouchdb-browser": "^9.0.0",
     "process": "^0.11.10",

@@ -180,7 +180,13 @@ export class ImportService {
 
     const datatype = this.schemaService.getDatatypeOrDefault(schema.dataType);
     let value;
-    if (!schema.isArray) {
+
+    // Determine if we should split array values based on enableSplitting flag
+    const shouldSplit =
+      schema.isArray && (mapping.additional?.enableSplitting ?? true);
+
+    if (!shouldSplit) {
+      // Handle as single value (either non-array field or array field with splitting disabled)
       value = await datatype.importMapFunction(
         val,
         schema,
@@ -188,7 +194,7 @@ export class ImportService {
         importProcessingContext,
       );
     } else {
-      // For array fields, split the value and map each item individually
+      // For array fields with splitting enabled, split the value and map each item individually
       const separator =
         importProcessingContext.importSettings.additionalSettings
           ?.multiValueSeparator ?? ",";
