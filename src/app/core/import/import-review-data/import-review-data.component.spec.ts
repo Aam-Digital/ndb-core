@@ -1,8 +1,8 @@
 import {
-    ComponentFixture,
-    fakeAsync,
-    TestBed,
-    tick,
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
 } from "@angular/core/testing";
 
 import { ImportReviewDataComponent } from "./import-review-data.component";
