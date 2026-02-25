@@ -39,7 +39,7 @@ import { ImportExistingService } from "../update-existing/import-existing.servic
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { Logging } from "../../logging/logging.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { CustomYesNoButtons } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: "app-import-review-data",
@@ -77,6 +77,7 @@ export class ImportReviewDataComponent implements OnChanges {
   @Input() importExisting: ImportExistingSettings | undefined;
   @Input() additionalSettings: ImportAdditionalSettings;
   @Input() filename: string;
+  @Input() showErrorDialog = true;
 
   entityConstructor: EntityConstructor;
 
@@ -85,6 +86,7 @@ export class ImportReviewDataComponent implements OnChanges {
   isLoading: boolean;
   mappedEntities: Entity[] = [];
   displayColumns: string[] = [];
+  transformationErrorColumns: string[] = [];
   MULTIPLE_MATCHING_ENTITIES_KEY =
     ImportExistingService.MULTIPLE_MATCHING_ENTITIES_KEY;
 
@@ -113,16 +115,10 @@ export class ImportReviewDataComponent implements OnChanges {
           additionalSettings: this.additionalSettings,
         },
       );
+      this.setTransformationErrors(result.errors);
 
-      if (result.errors.length > 0) {
-        const confirmed = await this.showTransformationErrorDialog(
-          result.errors,
-        );
-        if (!confirmed) {
-          this.mappedEntities = [];
-          this.isLoading = false;
-          return;
-        }
+      if (result.errors.length > 0 && this.showErrorDialog) {
+        await this.showTransformationErrorDialog(result.errors);
       }
 
       this.mappedEntities = result.entities.sort((a, b) => {
@@ -134,6 +130,7 @@ export class ImportReviewDataComponent implements OnChanges {
     } catch (e) {
       Logging.error("Failed to transform import data", e);
       this.mappedEntities = [];
+      this.transformationErrorColumns = [];
     }
 
     this.displayColumns = [
@@ -189,14 +186,19 @@ export class ImportReviewDataComponent implements OnChanges {
   }
 
   private showTransformationErrorDialog(
-    error: ImportCellError[],
+    errors: ImportCellError[],
   ): Promise<boolean | string | undefined> {
-    Logging.warn("Import Cell Errors", error);
+    Logging.warn("Import Cell Errors", errors);
 
     return this.confirmationDialog.getConfirmation(
       $localize`Problems while preparing data for import`,
-      $localize`${error.length} value(s) could not be transformed and will be skipped. Do you want to continue with the import preview anyway?`,
-      CustomYesNoButtons($localize`Continue`, $localize`Cancel`),
+      $localize`${errors.length} value(s) could not be transformed and were skipped.`,
+      OkButton,
     );
+  }
+
+  private setTransformationErrors(errors: ImportCellError[]): void {
+    const uniqueColumns = [...new Set(errors.map((e) => e.column))];
+    this.transformationErrorColumns = uniqueColumns;
   }
 }

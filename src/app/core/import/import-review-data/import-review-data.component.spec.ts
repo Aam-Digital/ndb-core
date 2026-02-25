@@ -120,7 +120,7 @@ describe("ImportReviewDataComponent", () => {
     expect(component.isLoading).toBeFalse();
   }));
 
-  it("should show confirmation dialog and clear entities when user cancels after transformation errors", fakeAsync(() => {
+  it("should continue preview even if transformation dialog resolves false", fakeAsync(() => {
     const testEntities = [new TestEntity("1")];
     mockImportService.transformRawDataToEntities.and.resolveTo({
       entities: testEntities,
@@ -140,7 +140,31 @@ describe("ImportReviewDataComponent", () => {
     tick();
 
     expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
-    expect(component.mappedEntities).toEqual([]);
+    expect(component.mappedEntities).toEqual(testEntities);
+    expect(component.isLoading).toBeFalse();
+  }));
+
+  it("should not show confirmation dialog when showErrorDialog is false", fakeAsync(() => {
+    const testEntities = [new TestEntity("1")];
+    mockImportService.transformRawDataToEntities.and.resolveTo({
+      entities: testEntities,
+      errors: [
+        {
+          column: "address",
+          propertyName: "location",
+          rowIndex: 0,
+          error: new Error("lookup failed"),
+        },
+      ],
+    });
+    component.showErrorDialog = false;
+
+    component.columnMapping = [{ column: "x", propertyName: "name" }];
+    component.ngOnChanges({});
+    tick();
+
+    expect(mockConfirmationDialog.getConfirmation).not.toHaveBeenCalled();
+    expect(component.mappedEntities).toEqual(testEntities);
     expect(component.isLoading).toBeFalse();
   }));
 });
