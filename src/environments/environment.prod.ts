@@ -21,4 +21,5 @@ export const environment = {
   notificationsConfig: undefined,
   SaaS: false,
   userSupportEnabled: false,
+  use_indexeddb_adapter: false,
 };

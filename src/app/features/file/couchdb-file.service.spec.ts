@@ -57,8 +57,8 @@ describe("CouchdbFileService", () => {
     Entity.schema.set("testProp", {
       dataType: FileDatatype.dataType,
     });
-    let mockDb = jasmine.createSpyObj(["sync"]);
-    mockDb.sync.and.resolveTo(null);
+    let mockDb = jasmine.createSpyObj(["ensureSynced"]);
+    mockDb.ensureSynced.and.resolveTo(undefined);
     mockNavigator = { onLine: true };
 
     TestBed.configureTestingModule({
@@ -136,7 +136,7 @@ describe("CouchdbFileService", () => {
           TestBed.inject(
             DatabaseResolverService,
           ).getDatabase() as SyncedPouchDatabase
-        ).sync,
+        ).ensureSynced,
       ).toHaveBeenCalled();
 
       expect(mockHttp.put).toHaveBeenCalledWith(

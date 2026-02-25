@@ -106,6 +106,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migratePercentageDatatype,
       migrateEntityBlock,
       migrateGroupByConfig,
+      migrateLegacyIdFilters,
       migrateDefaultValue,
       migrateInheritedFieldConfig,
       migrateUserEntityAndPanels,
@@ -344,6 +345,54 @@ const migrateGroupByConfig: ConfigMigration = (key, configPart) => {
   }
 
   // Return the unchanged part if no modification is needed
+  return configPart;
+};
+
+/**
+ * Migrate legacy ".id" filter keys in OR clauses to the current filter format.
+ * Example:
+ * { $or: [{ "projectStatus.id": "A" }, { "projectStatus.id": "B" }] }
+ *   -> { $or: [{ projectStatus: "A" }, { projectStatus: "B" }] }
+ */
+type OrFilterCondition = Record<string, unknown>;
+type LegacyOrFilterConfig = Record<string, unknown> & {
+  $or: OrFilterCondition[];
+};
+
+const migrateLegacyIdFilters: ConfigMigration = (key, configPart) => {
+  if (!configPart || typeof configPart !== "object") {
+    return configPart;
+  }
+
+  // This migration only applies to OR-filter objects.
+  const orConditions = (configPart as LegacyOrFilterConfig)["$or"];
+  if (!Array.isArray(orConditions)) {
+    return configPart;
+  }
+
+  const migratedConditions = orConditions.map((orCondition) => {
+    if (!orCondition || typeof orCondition !== "object") {
+      return orCondition;
+    }
+
+    let hasLegacyIdKey = false;
+    const normalizedEntries = Object.entries(orCondition).map(
+      ([key, value]) => {
+        if (key.endsWith(".id")) {
+          hasLegacyIdKey = true;
+          return [key.slice(0, -3), value] as const;
+        }
+
+        return [key, value] as const;
+      },
+    );
+
+    return hasLegacyIdKey
+      ? (Object.fromEntries(normalizedEntries) as OrFilterCondition)
+      : orCondition;
+  });
+
+  configPart["$or"] = migratedConditions;
   return configPart;
 };
 

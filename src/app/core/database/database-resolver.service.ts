@@ -6,6 +6,11 @@ import { Entity } from "../entity/model/entity";
 import { Observable, Subject } from "rxjs";
 import { NotificationEvent } from "app/features/notification/model/notification-event";
 import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
+import { PouchDatabase } from "./pouchdb/pouch-database";
+import {
+  DbConfig,
+  IndexeddbMigrationService,
+} from "./indexeddb-migration.service";
 
 /**
  * Manages access to individual databases,
@@ -15,9 +20,13 @@ import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
   providedIn: "root",
 })
 export class DatabaseResolverService {
-  private databaseFactory = inject(DatabaseFactoryService);
+  private readonly databaseFactory = inject(DatabaseFactoryService);
+  private readonly migrationService = inject(IndexeddbMigrationService);
 
   private databases: Map<string, Database> = new Map();
+
+  /** Resolved DB config for the current session (set during initDatabasesForSession). */
+  private dbConfig: DbConfig;
 
   /**
    * A stream of changes from all databases.
@@ -74,12 +83,20 @@ export class DatabaseResolverService {
    * (especially for local and remote database modes)
    */
   async initDatabasesForSession(session: SessionInfo) {
+    this.dbConfig = await this.migrationService.resolveDbConfig(session);
     this.initializeAppDatabaseForCurrentUser(session);
   }
 
   private initializeAppDatabaseForCurrentUser(user: SessionInfo) {
-    const userDBName = `${user.name}-${Entity.DATABASE}`;
-    this.getDatabase(Entity.DATABASE).init(userDBName);
+    const db = this.getDatabase(Entity.DATABASE);
+
+    if (db instanceof PouchDatabase) {
+      db.adapter = this.dbConfig.adapter;
+    }
+
+    db.init(this.dbConfig.dbNames.app);
+
+    this.migrationService.runBackgroundMigration(user, db);
   }
 
   /**
@@ -94,13 +111,19 @@ export class DatabaseResolverService {
       return;
     }
 
-    const serverDbName = `${NotificationEvent.DATABASE}_${userId}`;
-    const browserDbName = serverDbName;
-    if (db instanceof SyncedPouchDatabase) {
-      db.init(browserDbName, serverDbName);
-    } else {
-      db.init(browserDbName);
+    if (db instanceof PouchDatabase && this.dbConfig) {
+      db.adapter = this.dbConfig.adapter;
     }
+
+    const browserDbName = this.dbConfig?.dbNames?.notifications;
+    const serverDbName = `${NotificationEvent.DATABASE}_${userId}`;
+    if (db instanceof SyncedPouchDatabase) {
+      db.init(browserDbName ?? serverDbName, serverDbName);
+    } else {
+      db.init(browserDbName ?? serverDbName);
+    }
+
+    // Notifications are not critical, therefore we ignore a pre-migration sync for that database
   }
 
   initDatabasesForAnonymous() {

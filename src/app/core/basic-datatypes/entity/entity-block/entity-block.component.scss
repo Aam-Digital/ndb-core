@@ -9,6 +9,11 @@
   color: colors.$inactive;
 }
 
+.inline-spinner {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .tooltip-container {
   padding: 0.5em;
   display: flex;

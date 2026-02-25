@@ -2,14 +2,14 @@ import { TestBed } from "@angular/core/testing";
 import moment from "moment";
 
 import {
-  QueryService,
   AttendanceInfo,
   AttendanceReport,
+  QueryService,
 } from "./query.service";
 import { EventNote } from "#src/app/features/attendance/model/event-note";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { Note } from "../../child-dev-project/notes/model/note";
-import { EventAttendance } from "#src/app/features/attendance/model/event-attendance";
+import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import { AttendanceStatusType } from "#src/app/features/attendance/model/attendance-status";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "#src/app/features/attendance/attendance.service";
@@ -541,21 +541,21 @@ describe("QueryService", () => {
             status: {
               status: presentAttendanceStatus,
               remarks: "",
-            } as EventAttendance,
+            } as AttendanceItem,
           },
           {
             participant: "p1",
             status: {
               status: presentAttendanceStatus,
               remarks: "",
-            } as EventAttendance,
+            } as AttendanceItem,
           },
           {
             participant: "p2",
             status: {
               status: absentAttendanceStatus,
               remarks: "",
-            } as EventAttendance,
+            } as AttendanceItem,
           },
         ];
 
@@ -580,14 +580,14 @@ describe("QueryService", () => {
             status: {
               status: presentAttendanceStatus,
               remarks: "",
-            } as EventAttendance,
+            } as AttendanceItem,
           },
           {
             participant: "p1",
             status: {
               status: absentAttendanceStatus,
               remarks: "",
-            } as EventAttendance,
+            } as AttendanceItem,
           },
         ];
 
@@ -610,14 +610,14 @@ describe("QueryService", () => {
             status: {
               status: presentAttendanceStatus,
               remarks: "",
-            } as EventAttendance,
+            } as AttendanceItem,
           },
           {
             participant: "p1",
             status: {
               status: ignoreAttendanceStatus,
               remarks: "",
-            } as EventAttendance,
+            } as AttendanceItem,
           },
         ];
 
@@ -639,21 +639,21 @@ describe("QueryService", () => {
             status: {
               status: presentAttendanceStatus,
               remarks: "",
-            } as EventAttendance,
+            } as AttendanceItem,
           },
           {
             participant: "p1",
             status: {
               status: presentAttendanceStatus,
               remarks: "",
-            } as EventAttendance,
+            } as AttendanceItem,
           },
           {
             participant: "p1",
             status: {
               status: absentAttendanceStatus,
               remarks: "",
-            } as EventAttendance,
+            } as AttendanceItem,
           },
         ];
 

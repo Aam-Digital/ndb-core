@@ -18,6 +18,7 @@ import {
 } from "../../session/session-type";
 import { from, interval, merge, of } from "rxjs";
 import { LoginState } from "../../session/session-states/login-state.enum";
+import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 
 /**
  * An alternative implementation of PouchDatabase that additionally
@@ -38,6 +39,22 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   private remoteDatabase: RemotePouchDatabase;
   private syncState: SyncStateSubject = new SyncStateSubject();
+
+  /**
+   * Get the internal sync state subject for this database (not the global one).
+   * Useful for observing when this specific database's sync completes.
+   */
+  get localSyncState(): SyncStateSubject {
+    return this.syncState;
+  }
+
+  /**
+   * Get the underlying remote PouchDB instance.
+   * Can be used as a replication source for background migration.
+   */
+  getRemotePouchDB(): PouchDB.Database {
+    return this.remoteDatabase?.getPouchDB();
+  }
 
   constructor(
     dbName: string,
@@ -89,7 +106,13 @@ export class SyncedPouchDatabase extends PouchDatabase {
    */
   override init(dbName?: string | null, remoteDbName?: string) {
     if (dbName === null) {
-      this.remoteDatabase.init(null, true);
+      Logging.debug(
+        "Initializing remote-only session for database",
+        this.dbName,
+      );
+
+      this.remoteDatabase.init(null, { unauthenticatedSession: true });
+
       // use the remote database as internal database driver
       this.pouchDB = this.remoteDatabase.getPouchDB();
       this.databaseInitialized.complete();
@@ -97,7 +120,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       super.init(dbName ?? this.dbName, undefined, true);
 
       // keep remote database on default name (e.g. "app" instead of "user_uuid-app")
-      this.remoteDatabase.init(remoteDbName);
+      this.remoteDatabase.init(remoteDbName, { trackLostPermissions: true });
     }
   }
 
@@ -144,9 +167,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
         ...options,
       })
-      .then((res) => {
+      .then(async (res) => {
         if (res) res["dbName"] = this.dbName; // add for debugging information
         Logging.debug("sync completed", res);
+        await this.purgeDocsWithLostPermissions();
         this.syncState.next(SyncState.COMPLETED);
         return res as SyncResult;
       })
@@ -168,6 +192,30 @@ export class SyncedPouchDatabase extends PouchDatabase {
   }
 
   /**
+   * Purge local documents for which the server reported lost permissions
+   * during the most recent sync's `_changes` calls.
+   */
+  private async purgeDocsWithLostPermissions(): Promise<void> {
+    const lostPermissionIds = this.remoteDatabase
+      .collectAndClearLostPermissions()
+      // design docs for indices are managed locally (and shouldn't be synced anyway)
+      .filter((id) => !id.startsWith("_design/"));
+
+    for (const _id of lostPermissionIds) {
+      try {
+        const purged = await this.purge(_id);
+        if (purged) {
+          Logging.debug(`Purged doc with lost permissions: ${_id}`);
+        } else {
+          Logging.debug(`Skipped purge for ${_id} (does not exist locally)`);
+        }
+      } catch (err) {
+        Logging.warn(`Error trying to purge doc`, _id, err);
+      }
+    }
+  }
+
+  /**
    * Force a full re-check against the remote DB without deleting local data.
    * Uses `checkpoint: false` once so PouchDB ignores previous checkpoints for this run.
    */
@@ -178,6 +226,32 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
     Logging.debug(`triggering full re-sync for "${this.dbName}"`);
     await this.sync({ checkpoint: false });
+  }
+
+  /**
+   * Ensure the database is synced with the remote server.
+   * Resolves immediately if in remote-only mode.
+   * Throws {@link NotAvailableOfflineError} if offline.
+   * Otherwise triggers a one-time sync and resolves when complete.
+   */
+  async ensureSynced(): Promise<void> {
+    if (this.isInRemoteOnlyMode) {
+      return;
+    }
+
+    if (!this.navigator.onLine) {
+      throw new NotAvailableOfflineError(
+        "Failed to ensure synced. Cannot sync database while offline.",
+      );
+    }
+
+    await this.sync();
+
+    if (this.syncState.value === SyncState.UNSYNCED) {
+      throw new NotAvailableOfflineError(
+        "Failed to ensure synced. SyncState still reported as UNSYNCED.",
+      );
+    }
   }
 
   /**

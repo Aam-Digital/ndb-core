@@ -131,7 +131,7 @@ describe("Schema data type: configurable-enum", () => {
         dataType: "configurable-enum",
         additional: "genders",
       },
-      { MALEx: GENDER_MALE.id },
+      { values: { MALEx: GENDER_MALE.id } },
     );
 
     expect(actualMapped).toEqual(GENDER_MALE);
@@ -147,7 +147,7 @@ describe("Schema data type: configurable-enum", () => {
         dataType: "configurable-enum",
         additional: "genders",
       },
-      { MALEx: GENDER_MALE.id },
+      { values: { MALEx: GENDER_MALE.id } },
     );
 
     expect(actualMapped).toBeUndefined();

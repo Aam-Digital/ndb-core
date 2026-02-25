@@ -4,6 +4,7 @@ import { PrimaryActionComponent } from "./primary-action.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ConfigService } from "../../config/config.service";
 import { PrimaryActionConfig } from "../../admin/admin-primary-action/primary-action-config";
+import { NEVER } from "rxjs";
 
 describe("PrimaryActionComponent", () => {
   let component: PrimaryActionComponent;
@@ -19,15 +20,11 @@ describe("PrimaryActionComponent", () => {
   beforeEach(waitForAsync(() => {
     mockConfigService = jasmine.createSpyObj("ConfigService", [
       "getConfig",
-      "configUpdates",
+      "getAllConfigs",
     ]);
     mockConfigService.getConfig.and.returnValue(mockPrimaryActionConfig);
-    mockConfigService.configUpdates = jasmine.createSpyObj("Observable", [
-      "subscribe",
-    ]);
-    (mockConfigService.configUpdates.subscribe as jasmine.Spy).and.returnValue({
-      unsubscribe: jasmine.createSpy(),
-    });
+    mockConfigService.getAllConfigs.and.returnValue([]);
+    mockConfigService.configUpdates = NEVER;
 
     TestBed.configureTestingModule({
       imports: [PrimaryActionComponent, MockedTestingModule.withState()],

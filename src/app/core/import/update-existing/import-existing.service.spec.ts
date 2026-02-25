@@ -72,9 +72,11 @@ describe("ImportExistingService", () => {
           column: "category",
           propertyName: "category",
           additional: {
-            M1: genders[1].id,
-            M2: genders[2].id,
-            O1: "O1",
+            values: {
+              M1: genders[1].id,
+              M2: genders[2].id,
+              O1: "O1",
+            },
           },
         },
         { column: "other", propertyName: "other" },
@@ -156,7 +158,9 @@ describe("ImportExistingService", () => {
         {
           column: "category",
           propertyName: "category",
-          additional: { [overwrittenGender.id]: overwrittenGender.id },
+          additional: {
+            values: { [overwrittenGender.id]: overwrittenGender.id },
+          },
         },
         { column: "dateOfBirth", propertyName: "dateOfBirth" },
       ],
@@ -254,7 +258,9 @@ describe("ImportExistingService", () => {
           column: "category",
           propertyName: "category",
           additional: {
-            M1: genders[1].id,
+            values: {
+              M1: genders[1].id,
+            },
           },
         },
         { column: "other", propertyName: "other" },

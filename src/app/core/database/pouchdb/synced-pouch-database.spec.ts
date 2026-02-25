@@ -10,6 +10,7 @@ import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.s
 import { Subject } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase } from "./synced-pouch-database";
+import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 
 describe("SyncedPouchDatabase", () => {
   let service: SyncedPouchDatabase;
@@ -190,5 +191,112 @@ describe("SyncedPouchDatabase", () => {
     await service.resetSync();
 
     expect(syncSpy).not.toHaveBeenCalled();
+  });
+
+  it("ensureSynced should resolve without syncing in remote-only mode", async () => {
+    const syncSpy = spyOn(service, "sync").and.resolveTo({} as any);
+    spyOnProperty(service, "isInRemoteOnlyMode", "get").and.returnValue(true);
+
+    await service.ensureSynced();
+
+    expect(syncSpy).not.toHaveBeenCalled();
+  });
+
+  it("ensureSynced should throw NotAvailableOfflineError when offline", async () => {
+    spyOn(service, "sync").and.resolveTo({} as any);
+    spyOnProperty(service, "isInRemoteOnlyMode", "get").and.returnValue(false);
+    mockNavigator.onLine = false;
+
+    await expectAsync(service.ensureSynced()).toBeRejectedWithError(
+      NotAvailableOfflineError,
+    );
+  });
+
+  it("ensureSynced should call sync when online and not remote-only", async () => {
+    const syncSpy = spyOn(service, "sync").and.callFake(async () => {
+      service["syncState"].next(SyncState.COMPLETED);
+      return {} as any;
+    });
+    spyOnProperty(service, "isInRemoteOnlyMode", "get").and.returnValue(false);
+    mockNavigator.onLine = true;
+
+    await service.ensureSynced();
+
+    expect(syncSpy).toHaveBeenCalled();
+  });
+
+  it("ensureSynced should throw NotAvailableOfflineError when sync ends UNSYNCED", async () => {
+    const syncSpy = spyOn(service, "sync").and.callFake(async () => {
+      service["syncState"].next(SyncState.UNSYNCED);
+      return {} as any;
+    });
+    spyOnProperty(service, "isInRemoteOnlyMode", "get").and.returnValue(false);
+    mockNavigator.onLine = true;
+
+    await expectAsync(service.ensureSynced()).toBeRejectedWithError(
+      NotAvailableOfflineError,
+    );
+    expect(syncSpy).toHaveBeenCalled();
+  });
+
+  describe("purgeDocsWithLostPermissions", () => {
+    let purgeSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      const mockLocalDb = jasmine.createSpyObj(["sync"]);
+      mockLocalDb.sync.and.resolveTo({});
+      spyOn(service, "getPouchDB").and.returnValue(mockLocalDb);
+      purgeSpy = spyOn(service, "purge").and.resolveTo(true);
+    });
+
+    it("should purge local docs reported in lostPermissions after sync", async () => {
+      spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      ).and.returnValue(["Child:1", "School:2"]);
+
+      await service.sync();
+
+      expect(purgeSpy).toHaveBeenCalledWith("Child:1");
+      expect(purgeSpy).toHaveBeenCalledWith("School:2");
+    });
+
+    it("should not purge anything if no permissions were lost", async () => {
+      spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      ).and.returnValue([]);
+
+      await service.sync();
+
+      expect(purgeSpy).not.toHaveBeenCalled();
+    });
+
+    it("should skip gracefully if purge returns false (doc not found locally)", async () => {
+      purgeSpy.and.resolveTo(false);
+      spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      ).and.returnValue(["Child:missing"]);
+
+      await expectAsync(service.sync()).toBeResolved();
+    });
+
+    it("should continue purging remaining docs if one fails", async () => {
+      purgeSpy.and.callFake((id: string) =>
+        id === "Child:1"
+          ? Promise.reject(new Error("unexpected"))
+          : Promise.resolve(true),
+      );
+      spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      ).and.returnValue(["Child:1", "School:2"]);
+
+      await service.sync();
+
+      expect(purgeSpy).toHaveBeenCalledWith("Child:1");
+      expect(purgeSpy).toHaveBeenCalledWith("School:2");
+    });
   });
 });

@@ -9,6 +9,7 @@ import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
+  FormsModule,
 } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -22,6 +23,9 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
 import { ConfigurableEnumService } from "../../configurable-enum/configurable-enum.service";
 import { DynamicEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/dynamic-edit.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
+import { DiscreteColumnMappingAdditional } from "../discrete.datatype";
 
 /**
  * UI to configure import value mappings for discrete datatypes like boolean or enum.
@@ -39,6 +43,9 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
     ReactiveFormsModule,
     DynamicEditComponent,
     HintBoxComponent,
+    MatCheckboxModule,
+    FormsModule,
+    HelpButtonComponent,
   ],
 })
 export class DiscreteImportConfigComponent implements OnInit {
@@ -52,14 +59,64 @@ export class DiscreteImportConfigComponent implements OnInit {
   form: FormGroup;
   component: string;
   schema: EntitySchemaField;
+  enableSplitting: boolean;
+  separator: string;
 
   ngOnInit() {
     this.schema = this.data.entityType.schema.get(this.data.col.propertyName);
     this.component = this.schemaService.getComponent(this.schema, "edit");
+    this.separator = this.data.additionalSettings?.multiValueSeparator ?? ",";
 
+    const discreteAdditional = this.data.col
+      .additional as DiscreteColumnMappingAdditional;
+
+    // For array fields: default to splitting (but can be disabled)
+    // For single-select: never split
+    if (this.schema?.isArray) {
+      this.enableSplitting = discreteAdditional?.enableSplitting ?? true;
+    } else {
+      this.enableSplitting = false;
+    }
+
+    this.buildForm();
+  }
+
+  /**
+   * Rebuild form when user toggles splitting option.
+   * Attempts to preserve existing mappings where possible.
+   */
+  onSplittingToggle() {
+    // Save current mappings before rebuilding
+    const currentMappings = this.getValuesInDatabaseFormat(
+      this.form.getRawValue(),
+    );
+
+    this.buildForm();
+
+    // Try to restore mappings that still match
+    const newFormValue = {};
+    for (const key in this.form.controls) {
+      if (currentMappings[key] !== undefined) {
+        newFormValue[key] = this.schemaService.valueToEntityFormat(
+          currentMappings[key],
+          this.schema,
+        );
+      }
+    }
+    if (Object.keys(newFormValue).length > 0) {
+      this.form.patchValue(newFormValue);
+    }
+  }
+
+  /**
+   * Build the form with value mappings
+   */
+  private buildForm() {
+    const discreteAdditional = this.data.col
+      .additional as DiscreteColumnMappingAdditional;
     const splitValues = this.splitAndFlattenValues(this.data.values);
     this.form = this.fb.group(
-      this.getFormValues(this.data.col.additional, splitValues),
+      this.getFormValues(discreteAdditional?.values, splitValues),
     );
   }
 
@@ -67,7 +124,6 @@ export class DiscreteImportConfigComponent implements OnInit {
    * Split raw values using the configured separator and return unique individual values.
    */
   private splitAndFlattenValues(values: any[]): string[] {
-    const separator = this.data.additionalSettings?.multiValueSeparator ?? ",";
     const uniqueValues = new Set<string>();
 
     for (const value of values) {
@@ -75,7 +131,10 @@ export class DiscreteImportConfigComponent implements OnInit {
         continue;
       }
 
-      const parts: string[] = splitArrayValue(value, separator);
+      // Split values only if user enabled splitting for this column
+      const parts: string[] = this.enableSplitting
+        ? splitArrayValue(value, this.separator)
+        : [String(value)];
       parts.forEach((part) => uniqueValues.add(part));
     }
 
@@ -123,7 +182,15 @@ export class DiscreteImportConfigComponent implements OnInit {
         $localize`Some values don't have a mapping and will not be imported. Are you sure you want to keep it like this?`,
       ));
     if (confirmed) {
-      this.data.col.additional = rawValues;
+      // Save value mappings and splitting setting in 'additional'
+      const discreteAdditional: DiscreteColumnMappingAdditional = {
+        values: rawValues,
+      };
+      if (this.schema?.isArray) {
+        discreteAdditional.enableSplitting = this.enableSplitting;
+      }
+      this.data.col.additional = discreteAdditional;
+
       this.dialog.close();
     }
   }
