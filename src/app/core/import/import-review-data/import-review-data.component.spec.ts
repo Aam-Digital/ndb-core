@@ -246,7 +246,9 @@ describe("ImportReviewDataComponent", () => {
     });
     tick();
 
-    expect(mockImportService.transformRawDataToEntities).toHaveBeenCalledTimes(1);
+    expect(mockImportService.transformRawDataToEntities).toHaveBeenCalledTimes(
+      1,
+    );
     mockImportService.transformRawDataToEntities.calls.reset();
 
     // Navigate away from preview
