@@ -48,7 +48,7 @@ export class EditDateFormatComponent
     return this.ngControl.control as FormControl<string>;
   }
 
-  private currentValue: WritableSignal<string | null | undefined> =
+  private readonly currentValue: WritableSignal<string | null | undefined> =
     signal(undefined);
 
   ngOnInit() {
