@@ -65,7 +65,7 @@ export class ImportReviewDataComponent implements OnChanges {
   private importService = inject(ImportService);
   private matDialog = inject(MatDialog);
   private entityRegistry = inject(EntityRegistry);
-  private confirmationDialog = inject(ConfirmationDialogService);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   readonly IMPORT_STATUS_COLUMN = "_importStatus";
 
