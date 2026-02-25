@@ -273,3 +273,47 @@ When developing new functionality:
 - Utility functions like `asArray` from "src/app/utils/" folder
 
 Remember: This is a social impact application helping organizations work with beneficiaries. Code quality, accessibility, and reliability are paramount for the mission-critical nature of this software.
+
+---
+
+## Custom Agents
+
+Custom agents are defined in `.claude/agents/`. They are automatically invoked based on your request.
+
+### `business-analyst`
+**When to use:** When you have rough or unclear requirements that need refining into a structured, testable requirement document before engineering begins.
+
+**Example prompts:**
+- "Refine these rough notes into a requirement doc: [paste notes]"
+- "Clean up this feature request and make the acceptance criteria testable"
+- "Turn this client call transcript into proper requirements"
+
+---
+
+### `implementation-planner`
+**When to use:** When you want a technical breakdown before writing any code. Provide a GitHub issue number — it will explore the codebase and post the plan as a comment on the issue.
+
+**Example prompts:**
+- "Plan the implementation for issue #1234"
+- "Create a technical breakdown for this feature: [describe feature]"
+- "Break this requirement into tasks: [paste requirement]"
+
+---
+
+### `implementation-executor`
+**When to use:** When a plan already exists as a GitHub issue comment and you want to build it — implements task by task, commits after each, and opens a PR.
+
+**Example prompts:**
+- "Execute the implementation plan on issue #1234"
+- "Start coding the plan from this issue: [url]"
+- "We've planned the feature, now let's build it"
+
+---
+
+### Typical workflow
+
+```
+1. business-analyst      →  refine rough requirements into a clear requirement doc
+2. implementation-planner  →  create a technical plan posted on the GitHub issue
+3. implementation-executor →  implement the plan, commit per task, open PR
+```
