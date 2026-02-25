@@ -18,6 +18,7 @@ import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../demo-data/create-entity-of-type";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { Logging } from "../logging/logging.service";
 
 describe("ImportService", () => {
   let service: ImportService;
@@ -103,10 +104,11 @@ describe("ImportService", () => {
       { column: "rawText", propertyName: "text" },
     ];
 
-    const parsedEntities = await service.transformRawDataToEntities(rawData, {
-      entityType: "ImportTestTarget",
-      columnMapping,
-    });
+    const { entities: parsedEntities } =
+      await service.transformRawDataToEntities(rawData, {
+        entityType: "ImportTestTarget",
+        columnMapping,
+      });
 
     let expectedEntities: any[] = [
       { name: "John", counter: 111 },
@@ -149,10 +151,11 @@ describe("ImportService", () => {
     ];
 
     // Run
-    const parsedEntities = await service.transformRawDataToEntities(rawData, {
-      entityType: "ImportTestTarget",
-      columnMapping,
-    });
+    const { entities: parsedEntities } =
+      await service.transformRawDataToEntities(rawData, {
+        entityType: "ImportTestTarget",
+        columnMapping,
+      });
 
     // Verify
     let expectedEntities: any[] = [
@@ -238,10 +241,12 @@ describe("ImportService", () => {
       { column: "items", propertyName: "items" },
     ];
 
-    const parsedEntities = (await service.transformRawDataToEntities(rawData, {
-      entityType: "ArrayImportTestEntity",
-      columnMapping,
-    })) as ArrayImportTestEntity[];
+    const parsedEntities = (
+      await service.transformRawDataToEntities(rawData, {
+        entityType: "ArrayImportTestEntity",
+        columnMapping,
+      })
+    ).entities as ArrayImportTestEntity[];
 
     expect(importMapFunctionSpy).toHaveBeenCalled();
 
@@ -273,25 +278,26 @@ describe("ImportService", () => {
     ];
 
     // Test with semicolon separator
-    const parsedEntities = (await service.transformRawDataToEntities(rawData, {
-      entityType: "ArrayImportTestEntity",
-      columnMapping,
-      additionalSettings: { multiValueSeparator: ";" },
-    })) as ArrayImportTestEntity[];
+    const parsedEntities = (
+      await service.transformRawDataToEntities(rawData, {
+        entityType: "ArrayImportTestEntity",
+        columnMapping,
+        additionalSettings: { multiValueSeparator: ";" },
+      })
+    ).entities as ArrayImportTestEntity[];
 
     expect(parsedEntities.length).toBe(2);
     expect(parsedEntities[0].items).toEqual(["one", "two", "three"]);
     expect(parsedEntities[1].items).toEqual(["one, with comma", "two"]);
 
     // Test with comma separator (same raw data, different expectations)
-    const parsedEntitiesComma = (await service.transformRawDataToEntities(
-      rawData,
-      {
+    const parsedEntitiesComma = (
+      await service.transformRawDataToEntities(rawData, {
         entityType: "ArrayImportTestEntity",
         columnMapping,
         additionalSettings: { multiValueSeparator: "," },
-      },
-    )) as ArrayImportTestEntity[];
+      })
+    ).entities as ArrayImportTestEntity[];
 
     expect(parsedEntitiesComma.length).toBe(2);
     expect(parsedEntitiesComma[0].items).toEqual(["one; two; three"]);
@@ -317,13 +323,62 @@ describe("ImportService", () => {
       { column: "items", propertyName: "items" },
     ];
 
-    const parsedEntities = (await service.transformRawDataToEntities(rawData, {
-      entityType: "ArrayImportTestEntity",
-      columnMapping,
-    })) as ArrayImportTestEntity[];
+    const parsedEntities = (
+      await service.transformRawDataToEntities(rawData, {
+        entityType: "ArrayImportTestEntity",
+        columnMapping,
+      })
+    ).entities as ArrayImportTestEntity[];
 
     expect(parsedEntities.length).toBe(2);
     expect(parsedEntities[0].items).toEqual(["a", "b", "c"]);
     expect(parsedEntities[1].items).toEqual(["x", "y"]);
+  });
+
+  it("should gracefully skip cell when importMapFunction throws an error", async () => {
+    spyOn(TestBed.inject(EntityRegistry), "get").and.returnValue(
+      ImportTestTarget,
+    );
+
+    const schemaService = TestBed.inject(EntitySchemaService);
+    const mockDatatype = schemaService.getDatatypeOrDefault("string");
+    let callCount = 0;
+    spyOn(mockDatatype, "importMapFunction").and.callFake(async (val: any) => {
+      callCount++;
+      if (val === "fail") {
+        throw new Error("lookup failed");
+      }
+      return val;
+    });
+    spyOn(Logging, "warn");
+
+    const rawData: any[] = [
+      { rawName: "fail", rawText: "ok value" },
+      { rawName: "good", rawText: "another value" },
+    ];
+    const columnMapping: ColumnMapping[] = [
+      { column: "rawName", propertyName: "name" },
+      { column: "rawText", propertyName: "text" },
+    ];
+
+    const result = await service.transformRawDataToEntities(rawData, {
+      entityType: "ImportTestTarget",
+      columnMapping,
+    });
+
+    // First row: "fail" in name throws, so name is skipped; text is still parsed
+    expect(result.entities.length).toBe(2);
+    expect(result.entities[0]["name"]).toBeUndefined();
+    expect(result.entities[0]["text"]).toBe("ok value");
+
+    // Second row: both fields parsed normally
+    expect(result.entities[1]["name"]).toBe("good");
+    expect(result.entities[1]["text"]).toBe("another value");
+
+    expect(result.errors.length).toBe(1);
+    expect(result.errors[0].column).toBe("rawName");
+    expect(result.errors[0].propertyName).toBe("name");
+    expect(result.errors[0].rowIndex).toBe(0);
+    expect(Logging.warn).toHaveBeenCalled();
   });
 });
