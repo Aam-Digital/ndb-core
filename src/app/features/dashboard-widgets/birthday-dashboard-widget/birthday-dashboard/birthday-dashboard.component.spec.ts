@@ -61,15 +61,17 @@ describe("BirthdayDashboardComponent", () => {
   });
 
   it("should only show birthdays in the next 31 days", fakeAsync(() => {
+    // add days before subtracting years to avoid landing on Feb 29 of a leap year,
+    // which moment and JS Date handle differently when mapping back to a non-leap year
     const birthdaySoon = moment()
-      .subtract(10, "years")
       .add(5, "days")
+      .subtract(10, "years")
       .startOf("day");
     const child1 = new TestEntity();
     child1.dateOfBirth = new DateWithAge(birthdaySoon.toDate());
     const birthdayFarAway = moment()
-      .subtract(15, "years")
       .add(5, "weeks")
+      .subtract(15, "years")
       .startOf("day");
     const child2 = new TestEntity();
     child2.dateOfBirth = new DateWithAge(birthdayFarAway.toDate());
@@ -86,14 +88,14 @@ describe("BirthdayDashboardComponent", () => {
 
   it("should sort birthdays correctly", fakeAsync(() => {
     const firstBirthday = moment()
-      .subtract(12, "years")
       .add(5, "days")
+      .subtract(12, "years")
       .startOf("day");
     const child1 = new TestEntity();
     child1.dateOfBirth = new DateWithAge(firstBirthday.toDate());
     const secondBirthday = moment()
-      .subtract(15, "years")
       .add(2, "weeks")
+      .subtract(15, "years")
       .startOf("day");
     const child2 = new TestEntity();
     child2.dateOfBirth = new DateWithAge(secondBirthday.toDate());
@@ -118,15 +120,15 @@ describe("BirthdayDashboardComponent", () => {
 
     const e1 = new BirthdayEntity();
     e1.birthday = new DateWithAge(
-      moment().subtract(4, "year").add(1, "day").toDate(),
+      moment().add(1, "day").subtract(4, "year").toDate(),
     );
     const e2 = new BirthdayEntity();
     e2.birthday = new DateWithAge(
-      moment().subtract(12, "year").add(3, "day").toDate(),
+      moment().add(3, "day").subtract(12, "year").toDate(),
     );
     const e3 = new TestEntity();
     e3.dateOfBirth = new DateWithAge(
-      moment().subtract(8, "year").add(2, "day").toDate(),
+      moment().add(2, "day").subtract(8, "year").toDate(),
     );
     entityMapper.saveAll([e1, e2, e3]);
 

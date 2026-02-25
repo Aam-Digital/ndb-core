@@ -14,6 +14,7 @@ import { MatDialog } from "@angular/material/dialog";
 import {
   ImportConfirmSummaryComponent,
   ImportDialogData,
+  ImportDialogResult,
 } from "../import-confirm-summary/import-confirm-summary.component";
 import { lastValueFrom } from "rxjs";
 import { ImportExistingSettings, ImportMetadata } from "../import-metadata";
@@ -133,7 +134,11 @@ export class ImportReviewDataComponent implements OnChanges {
   async startImport() {
     const confirmationResult = await lastValueFrom(
       this.matDialog
-        .open(ImportConfirmSummaryComponent, {
+        .open<
+          ImportConfirmSummaryComponent,
+          ImportDialogData,
+          ImportDialogResult
+        >(ImportConfirmSummaryComponent, {
           data: {
             entitiesToImport: this.mappedEntities,
             importSettings: {
@@ -141,6 +146,7 @@ export class ImportReviewDataComponent implements OnChanges {
               columnMapping: this.columnMapping,
               additionalActions: this.additionalActions,
               importExisting: this.importExisting,
+              additionalSettings: this.additionalSettings,
               filename: this.filename,
             },
           } as ImportDialogData,
@@ -148,8 +154,14 @@ export class ImportReviewDataComponent implements OnChanges {
         .afterClosed(),
     );
 
-    if (!!confirmationResult) {
-      this.importComplete.emit(confirmationResult);
+    if (confirmationResult?.errorOccured) {
+      // Problem during import - maybe underlying data changed. Refresh and let user retry
+      await this.parseRawData();
+      return;
+    }
+
+    if (confirmationResult?.completedImport) {
+      this.importComplete.emit(confirmationResult.completedImport);
     }
   }
 }

@@ -44,13 +44,18 @@
       </div>
     }
 
+    <div class="hint margin-top-regular" i18n>
+      Condition applies if any one of the selected criteria matches ("or"
+      conditions).
+    </div>
+
     <div class="button-row flex-row gap-small">
       <app-icon-button icon="plus" (buttonClick)="addCondition()" i18n>
         Add Condition
       </app-icon-button>
 
       <app-icon-button icon="code" (buttonClick)="openJsonEditor()" i18n>
-        Edit JSON
+        {{ label }}
       </app-icon-button>
     </div>
   </div>

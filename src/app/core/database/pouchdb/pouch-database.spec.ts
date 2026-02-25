@@ -273,4 +273,74 @@ describe("PouchDatabase tests", () => {
 
     await expectAsync(database.isEmpty()).toBeResolvedTo(false);
   });
+
+  describe("purge", () => {
+    it("should purge doc and emit changes deletion event", async () => {
+      await database.put({ _id: "Child:2", name: "test" });
+
+      const db = database.getPouchDB();
+      const rawPurgeSpy = jasmine.createSpy("purge").and.resolveTo({});
+      (db as any).purge = rawPurgeSpy;
+
+      const emittedChanges: any[] = [];
+      database.changes().subscribe((doc) => emittedChanges.push(doc));
+
+      const result = await database.purge("Child:2");
+
+      expect(result).toBe(true);
+      expect(rawPurgeSpy).toHaveBeenCalledTimes(1);
+      expect(rawPurgeSpy.calls.argsFor(0)[0]).toBe("Child:2");
+      expect(emittedChanges).toContain(
+        jasmine.objectContaining({ _id: "Child:2", _deleted: true }),
+      );
+    });
+
+    it("should return false if the document does not exist", async () => {
+      const result = await database.purge("NonExistent:1");
+
+      expect(result).toBe(false);
+    });
+
+    it("should throw error if purge fails with other than 404", async () => {
+      await database.put({ _id: "Child:1", name: "test" });
+
+      const db = database.getPouchDB();
+      (db as any).purge = jasmine
+        .createSpy("purge")
+        .and.rejectWith({ status: 500, message: "server error" });
+
+      await expectAsync(database.purge("Child:1")).toBeRejectedWith(
+        jasmine.objectContaining({ status: 500 }),
+      );
+    });
+
+    it("should purge all conflicting revisions of a document", async () => {
+      await database.put({ _id: "Child:1", name: "test" });
+
+      const db = database.getPouchDB();
+      const rawPurgeSpy = jasmine.createSpy("purge").and.resolveTo({});
+      (db as any).purge = rawPurgeSpy;
+
+      // Simulate a doc with one conflict
+      const realGet = db.get.bind(db);
+      spyOn(db, "get").and.callFake(async (id: string, opts?: any) => {
+        const doc = await realGet(id, opts);
+        if (opts?.conflicts) {
+          (doc as any)._conflicts = ["1-conflict"];
+        }
+        return doc;
+      });
+
+      const result = await database.purge("Child:1");
+
+      expect(result).toBe(true);
+      expect(db.get).toHaveBeenCalledWith(
+        "Child:1",
+        jasmine.objectContaining({ conflicts: true }),
+      );
+      expect(rawPurgeSpy).toHaveBeenCalledTimes(2);
+      expect(rawPurgeSpy.calls.argsFor(0)[0]).toBe("Child:1");
+      expect(rawPurgeSpy.calls.argsFor(1)).toEqual(["Child:1", "1-conflict"]);
+    });
+  });
 });
