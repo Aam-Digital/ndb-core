@@ -147,3 +147,53 @@ test("Dashboard shows correct counts", async ({ page }) => {
 ```bash
 npm run e2e
 ```
+
+## Common Interaction Patterns
+
+### Actions
+
+- Prefer direct actions over checking visibility first
+- Use `click()` directly rather than checking if clickable
+- Navigate via clicks instead of `page.goto()` to avoid reloads
+
+### Form Interactions
+
+```typescript
+// Select options
+await page.getByRole("option", { name: fixture.name }).click();
+
+// Fill forms
+await page.getByLabel("Field").fill(fixture.value);
+
+// For select options with checkboxes, use { checked: true } not { selected: true }
+await page.getByRole("option", { name: fixture.name }).getByRole("checkbox", { checked: true });
+```
+
+### Verification
+
+```typescript
+// Check visibility
+await expect(page.getByText(fixture.name)).toBeVisible();
+
+// Check absence
+await expect(page.getByText(fixture.value)).not.toBeVisible();
+```
+
+### Table/List Interactions
+
+```typescript
+await page.getByRole("cell", { name: fixture.title }).click();
+await page.getByText(fixture.name).click();
+```
+
+## Test Data Naming
+
+Use semantic names for test fixtures: `childToAdd`, `childToKeep`, `childToRemove`, `activityToTest`, `userToAssign`.
+
+Use descriptive titles with angle brackets for test activities (e.g., `"<COACHING CLASS>"`, `"<MATH TUTORING>"`) to distinguish them from real data.
+
+## Quirks & Special Cases
+
+- For select options with checkboxes, use `{ checked: true }` not `{ selected: true }`
+- Modal interactions: use specific button names within modal context
+- Use `aria-busy=true` on loading elements for screenshot stability

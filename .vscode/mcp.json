@@ -2,19 +2,33 @@
   "servers": {
     "angular-cli": {
       "command": "npx",
-      "args": ["-y", "@angular/cli", "mcp"]
+      "args": [
+        "-y",
+        "@angular/cli",
+        "mcp"
+      ]
     },
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp", "--autoConnect"]
+      "args": [
+        "-y",
+        "chrome-devtools-mcp",
+        "--autoConnect"
+      ]
     },
     "sentry": {
       "command": "npx",
-      "args": ["-y", "@sentry/mcp-server"]
+      "args": [
+        "-y",
+        "@sentry/mcp-server"
+      ]
     },
     "github": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ]
     }
   }
 }

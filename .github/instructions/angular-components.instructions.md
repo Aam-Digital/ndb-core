@@ -4,6 +4,8 @@ applyTo: "**/*.component.ts"
 
 # Angular Component Patterns
 
+> **Legacy code note:** Some existing code may not implement these guidelines yet. For new components, always follow these instructions. For existing components, analyse the status and refactor only after confirmation. Separate refactoring changes into their own commits and PRs.
+
 ## Change Detection
 
 All components **must** use `OnPush` change detection:
@@ -54,21 +56,6 @@ export class ExampleComponent {
 
 Do NOT use `mutate` on signals — use `update` or `set` instead.
 
-## Host Bindings
-
-Use the `host` object in the decorator — **not** `@HostBinding` / `@HostListener`:
-
-```typescript
-@Component({
-  selector: "app-example",
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    "[class.active]": "isActive()",
-    "(click)": "onClick($event)",
-  },
-})
-```
-
 ## Template Control Flow
 
 Use native control flow — **not** structural directives (`*ngIf`, `*ngFor`, `*ngSwitch`):
@@ -107,11 +94,11 @@ export class ExampleComponent {
   entity = input.required<Child>();
   saved = output<Child>();
 
-  // Injected dependencies
-  private entityMapper = inject(EntityMapperService);
-
   // Derived state
   displayName = computed(() => this.entity().toString());
+
+  // Injected dependencies
+  private entityMapper = inject(EntityMapperService);
 }
 ```
 

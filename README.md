@@ -89,37 +89,24 @@ To learn more about the build process, see [/build](./build/README.md).
 
 This project supports AI-assisted development through GitHub Copilot, Claude Code, and CodeRabbit.
 
-## Tools Overview
+| Tool                         | Usage                                                                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **GitHub Copilot** (VS Code) | Code generation, chat, agent mode — reads `AGENTS.md`. Use **Plan mode** for architecture planning before implementation. |
+| **Claude Code** (CLI)        | Interactive coding assistant — reads `CLAUDE.md` → `AGENTS.md`                                                            |
+| **CodeRabbit** (GitHub)      | Automated PR reviews — configured via `.coderabbit.yaml`                                                                  |
 
-| Tool | Usage |
-|---|---|
-| **GitHub Copilot** (VS Code) | Code generation, chat, agent mode — reads `AGENTS.md` |
-| **Claude Code** (CLI) | Interactive coding assistant — reads `CLAUDE.md` → `AGENTS.md` |
-| **CodeRabbit** (GitHub) | Automated PR reviews — configured via `.coderabbit.yaml` |
+## Agents & Prompts
 
-## Prompt Files
+Reusable prompt/agent files can be invoked in Copilot chat (`.github/prompts/`) or Claude Code (`.claude/agents/`):
 
-Reusable prompt files in `.github/prompts/` can be invoked in Copilot chat:
-
-| Prompt | Purpose |
-|---|---|
-| `analyze-requirements` | Flesh out user requirements from a GitHub issue |
-| `troubleshoot` | Debug issues using Sentry, devtools, and stack traces |
-| `plan-implementation` | Design technical approach and architecture |
-| `implement-feature` | Full implementation workflow with tests |
-| `refactor-code` | Code analysis and refactoring suggestions |
-| `write-e2e-tests` | Generate Playwright e2e tests |
-
-## Recommended Workflows
-
-| Workflow | Recommended Tool |
-|---|---|
-| Requirements analysis | Copilot chat + `analyze-requirements` prompt |
-| Troubleshooting | Copilot/Claude Code with Sentry MCP |
-| Architecture planning | Copilot chat + `plan-implementation` prompt |
-| Implementation | Copilot agent mode or Claude Code |
-| Code review/refactoring | CodeRabbit (automatic) + `refactor-code` prompt |
-| E2E tests | Copilot agent + `write-e2e-tests` prompt |
+| Agent / Prompt         | Purpose                                               | Recommended Tool                       |
+| ---------------------- | ----------------------------------------------------- | -------------------------------------- |
+| `analyze-requirements` | Flesh out user requirements from a GitHub issue       | Copilot chat or Claude Code            |
+| `troubleshoot`         | Debug issues using Sentry, devtools, and stack traces | Copilot/Claude Code with Sentry MCP    |
+| `plan-implementation`  | Design technical approach and architecture            | Copilot **Plan mode** or Claude Code   |
+| `implement-feature`    | Full implementation workflow with tests               | Copilot agent mode or Claude Code      |
+| `refactor-code`        | Code analysis and refactoring suggestions             | CodeRabbit (automatic) + manual prompt |
+| `write-e2e-tests`      | Generate Playwright e2e tests                         | Copilot agent mode or Claude Code      |
 
 ## MCP Servers
 

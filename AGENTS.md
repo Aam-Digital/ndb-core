@@ -170,6 +170,11 @@ When developing new functionality:
 - `.github/prompts/` - Reusable prompt files for key agent workflows
 - Follow the existing module structure with entity-based organization
 
+### Refactoring & Legacy Code
+
+- Some existing code may not follow current conventions. For existing code, analyse the status and refactor only after confirmation.
+- Always separate refactoring changes into their own commits and PRs — do not mix refactoring with feature work.
+
 ## UX and Styling
 
 - Use Angular Material components for UI consistency
@@ -199,23 +204,11 @@ When developing new functionality:
 ### Unit Testing (Jasmine/Karma)
 
 - Write unit tests for all new components and services
-- Use `MockedTestingModule.withState()` as the standard test setup (from `src/app/utils/mocked-testing.module.ts`)
-- Use `TestEntity` (from `src/app/utils/test-utils/TestEntity.ts`) for generic entity tests
-- Mock dependencies with `jasmine.createSpyObj` and `mockEntityMapperProvider()`
-- Custom Jasmine matchers available: `toHaveType`, `toContainFormError`, `toHaveValue`, `toBeValidForm`, `toBeEnabled`, `toHaveKey`, `toBeEmpty`, `toBeFinite`, `toBeDate`
-- Use `fakeAsync`/`tick`/`flush` for async test patterns
-- Use `expectObservable()` from `src/app/utils/test-utils/observable-utils.ts` for observable assertions
 - Run tests: `npm run test -- --watch=false --include='**/relevant-file.spec.ts'`
 - See [`.github/instructions/unit-tests.instructions.md`](.github/instructions/unit-tests.instructions.md) for detailed patterns and examples
 
 ### End-to-End Testing (Playwright)
 
-- Import from `#e2e/fixtures.js` (not `@playwright/test` directly — ESLint enforced)
-- Use `loadApp(page, entities?)` to bootstrap app with optional custom entity data
-- Use standalone `generate*()` functions for test data: `generateChild()`, `generateNote()`, `generateTodo()`, `generateActivity()`, `generateUsers()`
-- Use `argosScreenshot()` for visual regression snapshots
-- Use accessibility-based locators (priority: `getByLabel` > `getByTitle` > `getByPlaceholder` > `getByRole` > `getByText`)
-- Clock is mocked to fixed date via `E2E_REF_DATE`
 - Run tests: `npm run e2e`
 - See [`.github/instructions/e2e-tests.instructions.md`](.github/instructions/e2e-tests.instructions.md) for detailed patterns and examples
 
@@ -229,10 +222,10 @@ When developing new functionality:
 
 ## Agent Workflows
 
-Agents support these key workflows. Use `.github/prompts/` files where available:
+Agents support these key workflows. Use `.github/prompts/` (Copilot) or `.claude/agents/` (Claude Code) files where available:
 
 1. **Fleshing out requirements** — Read the linked GitHub issue, identify affected entities/components, list acceptance criteria and edge cases, flag ambiguities. See `.github/prompts/analyze-requirements.prompt.md`.
-2. **Troubleshooting** — Analyze stack traces, use Sentry MCP for production errors, use `Logging` service (not `console.log`). See `.github/prompts/troubleshoot.prompt.md`.
+2. **Troubleshooting** — Analyze stack traces, use Sentry MCP for production errors. See `.github/prompts/troubleshoot.prompt.md`.
 3. **Planning implementation** — Analyze existing patterns, propose structure following conventions, consider config-driven approaches and offline-first implications. See `.github/prompts/plan-implementation.prompt.md`.
 4. **Implementing changes** — Follow all conventions, include unit tests, use `$localize` for strings, run lint and tests. See `.github/prompts/implement-feature.prompt.md`.
 5. **Analyzing & refactoring** — Identify code smells, check DRY violations, verify OnPush/signals/inject() usage, suggest simplifications. See `.github/prompts/refactor-code.prompt.md`.
@@ -242,12 +235,12 @@ Agents support these key workflows. Use `.github/prompts/` files where available
 
 The following MCP servers are available in `.vscode/mcp.json`:
 
-| Server | Purpose |
-|---|---|
-| `angular-cli` | Angular CLI operations, schematics, component generation |
-| `chrome-devtools` | Runtime debugging, DOM inspection, console access |
-| `sentry` | Production error data, issue investigation |
-| `github` | Issues, PRs, comments, diffs, repository context |
+| Server            | Purpose                                                  |
+| ----------------- | -------------------------------------------------------- |
+| `angular-cli`     | Angular CLI operations, schematics, component generation |
+| `chrome-devtools` | Runtime debugging, DOM inspection, console access        |
+| `sentry`          | Production error data, issue investigation               |
+| `github`          | Issues, PRs, comments, diffs, repository context         |
 
 ## Common Commands
 

@@ -1,8 +1,13 @@
 ---
-applyTo: "**/*.entity.ts,**/entity/**"
+applyTo: "**/*.entity.ts,**/*.datatype.ts,**/entity/**"
 ---
 
 # Entity Model Patterns
+
+## File Naming
+
+- Entity class files must use the `*.entity.ts` naming convention (e.g., `child.entity.ts`)
+- Custom datatype files must use the `*.datatype.ts` naming convention (e.g., `date-with-age.datatype.ts`)
 
 ## Entity Class Definition
 

@@ -6,7 +6,8 @@ applyTo: "**/*.spec.ts"
 
 ## Test Module Setup
 
-Use `MockedTestingModule.withState()` as the standard unit test setup:
+Prefer to mock all dependencies to have isolated unit tests.
+For very complex test cases, `MockedTestingModule.withState()` can be used:
 
 ```typescript
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
@@ -34,12 +35,13 @@ describe("MyComponent", () => {
 You can pass initial login state and seed entities:
 
 ```typescript
-MockedTestingModule.withState(LoginState.LOGGED_IN, [testEntity1, testEntity2])
+MockedTestingModule.withState(LoginState.LOGGED_IN, [testEntity1, testEntity2]);
 ```
 
 ## TestEntity for Generic Tests
 
-Use `TestEntity` from `src/app/utils/test-utils/TestEntity.ts` when you need a generic entity:
+Use `TestEntity` from `src/app/utils/test-utils/TestEntity.ts` when you need a generic entity.
+If a special entity type or field is required, create a new Entity class inline in the test file instead.
 
 ```typescript
 import { TestEntity } from "../../utils/test-utils/TestEntity";

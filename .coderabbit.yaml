@@ -1,18 +1,4 @@
 reviews:
-  instructions: |
-    This is an Angular application (Aam Digital) using TypeScript.
-    Key conventions to check:
-    - All components must use `changeDetection: ChangeDetectionStrategy.OnPush`
-    - Use `input()`/`output()` functions, not `@Input()`/`@Output()` decorators
-    - Use `inject()` function, not constructor injection
-    - Use native control flow (`@if`, `@for`, `@switch`), not structural directives
-    - Use signals and `computed()` for state, not imperative patterns
-    - Use `host` object, not `@HostBinding`/`@HostListener`
-    - All user-facing strings must use `$localize` or i18n markers
-    - Use `Logging` service, never `console.log`
-    - Avoid `any` type — use `unknown` or proper generics
-    - Entity models use `@DatabaseField()` decorators
-    - New components/services should have unit tests
   path_instructions:
     - path: "src/app/core/entity/**"
       instructions: "Core entity system — extra scrutiny for schema changes, backward compatibility"
