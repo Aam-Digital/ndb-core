@@ -135,6 +135,22 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
   }
 
   /**
+   * Return the (potentially adjusted) schema field for this datatype.
+   *
+   * Called when schema fields are set up (e.g. from config),
+   * allowing the datatype to normalize or fill in required settings.
+   *
+   * Override this in a subclass to enforce constraints
+   * (e.g. always setting `isArray: true`).
+   *
+   * @param schemaField The current schema field definition
+   * @returns The schema field to use (default: unchanged)
+   */
+  normalizeSchemaField(schemaField: EntitySchemaField): EntitySchemaField {
+    return schemaField;
+  }
+
+  /**
    * (Partially) anonymize to "retain-anonymized" for reporting purposes without personal identifiable information.
    * @param value The original value to be anonymized
    */

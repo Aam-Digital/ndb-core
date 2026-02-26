@@ -106,7 +106,13 @@ export class SyncedPouchDatabase extends PouchDatabase {
    */
   override init(dbName?: string | null, remoteDbName?: string) {
     if (dbName === null) {
-      this.remoteDatabase.init(null, true);
+      Logging.debug(
+        "Initializing remote-only session for database",
+        this.dbName,
+      );
+
+      this.remoteDatabase.init(null, { unauthenticatedSession: true });
+
       // use the remote database as internal database driver
       this.pouchDB = this.remoteDatabase.getPouchDB();
       this.databaseInitialized.complete();
@@ -114,7 +120,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       super.init(dbName ?? this.dbName, undefined, true);
 
       // keep remote database on default name (e.g. "app" instead of "user_uuid-app")
-      this.remoteDatabase.init(remoteDbName);
+      this.remoteDatabase.init(remoteDbName, { trackLostPermissions: true });
     }
   }
 
@@ -161,9 +167,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
         ...options,
       })
-      .then((res) => {
+      .then(async (res) => {
         if (res) res["dbName"] = this.dbName; // add for debugging information
         Logging.debug("sync completed", res);
+        await this.purgeDocsWithLostPermissions();
         this.syncState.next(SyncState.COMPLETED);
         return res as SyncResult;
       })
@@ -182,6 +189,30 @@ export class SyncedPouchDatabase extends PouchDatabase {
         this.syncState.next(SyncState.FAILED);
         throw err;
       });
+  }
+
+  /**
+   * Purge local documents for which the server reported lost permissions
+   * during the most recent sync's `_changes` calls.
+   */
+  private async purgeDocsWithLostPermissions(): Promise<void> {
+    const lostPermissionIds = this.remoteDatabase
+      .collectAndClearLostPermissions()
+      // design docs for indices are managed locally (and shouldn't be synced anyway)
+      .filter((id) => !id.startsWith("_design/"));
+
+    for (const _id of lostPermissionIds) {
+      try {
+        const purged = await this.purge(_id);
+        if (purged) {
+          Logging.debug(`Purged doc with lost permissions: ${_id}`);
+        } else {
+          Logging.debug(`Skipped purge for ${_id} (does not exist locally)`);
+        }
+      } catch (err) {
+        Logging.warn(`Error trying to purge doc`, _id, err);
+      }
+    }
   }
 
   /**

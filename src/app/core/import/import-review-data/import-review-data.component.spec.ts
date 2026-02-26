@@ -11,6 +11,8 @@ import { MatDialog } from "@angular/material/dialog";
 import { of } from "rxjs";
 import { ImportService } from "../import.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { Logging } from "../../logging/logging.service";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 
 describe("ImportReviewDataComponent", () => {
   let component: ImportReviewDataComponent;
@@ -18,18 +20,28 @@ describe("ImportReviewDataComponent", () => {
 
   let mockImportService: jasmine.SpyObj<ImportService>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
 
   beforeEach(async () => {
     mockImportService = jasmine.createSpyObj(["transformRawDataToEntities"]);
-    mockImportService.transformRawDataToEntities.and.resolveTo([]);
+    mockImportService.transformRawDataToEntities.and.resolveTo({
+      entities: [],
+      errors: [],
+    });
     mockDialog = jasmine.createSpyObj(["open"]);
     mockDialog.open.and.returnValue({ afterClosed: () => of({}) } as any);
+    mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
+    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
 
     await TestBed.configureTestingModule({
       imports: [MockedTestingModule, ImportReviewDataComponent],
       providers: [
         { provide: ImportService, useValue: mockImportService },
         { provide: MatDialog, useValue: mockDialog },
+        {
+          provide: ConfirmationDialogService,
+          useValue: mockConfirmationDialog,
+        },
       ],
     }).compileComponents();
 
@@ -43,13 +55,20 @@ describe("ImportReviewDataComponent", () => {
 
   it("should parse data whenever it changes", fakeAsync(() => {
     const testEntities = [new TestEntity("1")];
-    mockImportService.transformRawDataToEntities.and.resolveTo(testEntities);
+    mockImportService.transformRawDataToEntities.and.resolveTo({
+      entities: testEntities,
+      errors: [],
+    });
     component.columnMapping = [
       { column: "x", propertyName: "name" },
       { column: "y", propertyName: undefined }, // unmapped property => not displayed
     ];
+    component.stepIsFocused = true;
 
-    component.ngOnChanges({});
+    component.ngOnChanges({
+      columnMapping: {} as any,
+      showErrorDialog: {} as any,
+    });
     tick();
 
     expect(component.mappedEntities).toEqual(testEntities);
@@ -64,5 +83,189 @@ describe("ImportReviewDataComponent", () => {
     tick();
 
     expect(mockDialog.open).toHaveBeenCalled();
+  }));
+
+  it("should handle errors from transformRawDataToEntities gracefully", fakeAsync(() => {
+    mockImportService.transformRawDataToEntities.and.rejectWith(
+      new Error("location lookup failed"),
+    );
+    spyOn(Logging, "error");
+
+    component.columnMapping = [{ column: "x", propertyName: "name" }];
+    component.stepIsFocused = true;
+    component.ngOnChanges({
+      columnMapping: {} as any,
+      showErrorDialog: {} as any,
+    });
+    tick();
+
+    expect(component.mappedEntities).toEqual([]);
+    expect(component.isLoading).toBeFalse();
+    expect(Logging.error).toHaveBeenCalled();
+  }));
+
+  it("should show confirmation dialog and keep entities when user continues after transformation errors", fakeAsync(() => {
+    const testEntities = [new TestEntity("1")];
+    mockImportService.transformRawDataToEntities.and.resolveTo({
+      entities: testEntities,
+      errors: [
+        {
+          column: "address",
+          propertyName: "location",
+          rowIndex: 0,
+          error: new Error("lookup failed"),
+        },
+      ],
+    });
+    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
+
+    component.columnMapping = [{ column: "x", propertyName: "name" }];
+    component.stepIsFocused = true;
+    component.ngOnChanges({
+      columnMapping: {} as any,
+      showErrorDialog: {} as any,
+    });
+    tick();
+
+    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
+    expect(component.mappedEntities).toEqual(testEntities);
+    expect(component.isLoading).toBeFalse();
+  }));
+
+  it("should continue preview even if transformation dialog resolves false", fakeAsync(() => {
+    const testEntities = [new TestEntity("1")];
+    mockImportService.transformRawDataToEntities.and.resolveTo({
+      entities: testEntities,
+      errors: [
+        {
+          column: "address",
+          propertyName: "location",
+          rowIndex: 0,
+          error: new Error("lookup failed"),
+        },
+      ],
+    });
+    mockConfirmationDialog.getConfirmation.and.resolveTo(false);
+
+    component.columnMapping = [{ column: "x", propertyName: "name" }];
+    component.stepIsFocused = true;
+    component.ngOnChanges({
+      columnMapping: {} as any,
+      showErrorDialog: {} as any,
+    });
+    tick();
+
+    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
+    expect(component.mappedEntities).toEqual(testEntities);
+    expect(component.isLoading).toBeFalse();
+  }));
+
+  it("should show confirmation dialog when preview becomes visible with errors", fakeAsync(() => {
+    const testEntities = [new TestEntity("1")];
+    mockImportService.transformRawDataToEntities.and.resolveTo({
+      entities: testEntities,
+      errors: [
+        {
+          column: "address",
+          propertyName: "location",
+          rowIndex: 0,
+          error: new Error("lookup failed"),
+        },
+      ],
+    });
+    component.stepIsFocused = false;
+
+    component.columnMapping = [{ column: "x", propertyName: "name" }];
+    // Simulate data change and then making preview visible
+    component.ngOnChanges({
+      columnMapping: {} as any,
+    });
+    tick();
+
+    // Data changed but preview not visible yet - should NOT parse yet
+    expect(mockImportService.transformRawDataToEntities).not.toHaveBeenCalled();
+    expect(component.mappedEntities).toEqual([]);
+
+    // Now show the preview
+    component.stepIsFocused = true;
+    component.ngOnChanges({
+      showErrorDialog: {} as any,
+    });
+    tick();
+
+    // Should parse now and show the confirmation dialog for errors
+    expect(mockImportService.transformRawDataToEntities).toHaveBeenCalled();
+    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
+    expect(component.mappedEntities).toEqual(testEntities);
+    expect(component.isLoading).toBeFalse();
+  }));
+
+  it("should delay parsing until preview is visible for performance", fakeAsync(() => {
+    const testEntities = [new TestEntity("1")];
+    mockImportService.transformRawDataToEntities.and.resolveTo({
+      entities: testEntities,
+      errors: [],
+    });
+    component.stepIsFocused = false;
+
+    // Change data while preview is not visible
+    component.columnMapping = [{ column: "x", propertyName: "name" }];
+    component.ngOnChanges({
+      columnMapping: {} as any,
+    });
+    tick();
+
+    // Should NOT parse yet
+    expect(mockImportService.transformRawDataToEntities).not.toHaveBeenCalled();
+    expect(component.mappedEntities).toEqual([]);
+
+    // Make preview visible
+    component.stepIsFocused = true;
+    component.ngOnChanges({
+      showErrorDialog: {} as any,
+    });
+    tick();
+
+    expect(mockImportService.transformRawDataToEntities).toHaveBeenCalled();
+    expect(component.mappedEntities).toEqual(testEntities);
+  }));
+
+  it("should not re-parse when only navigating away and back without data changes", fakeAsync(() => {
+    const testEntities = [new TestEntity("1")];
+    mockImportService.transformRawDataToEntities.and.resolveTo({
+      entities: testEntities,
+      errors: [],
+    });
+    component.stepIsFocused = true;
+    component.columnMapping = [{ column: "x", propertyName: "name" }];
+
+    // Initial parse when data changes and preview is visible
+    component.ngOnChanges({
+      columnMapping: {} as any,
+      showErrorDialog: {} as any,
+    });
+    tick();
+
+    expect(mockImportService.transformRawDataToEntities).toHaveBeenCalledTimes(
+      1,
+    );
+    mockImportService.transformRawDataToEntities.calls.reset();
+
+    // Navigate away from preview
+    component.stepIsFocused = false;
+    component.ngOnChanges({
+      showErrorDialog: {} as any,
+    });
+    tick();
+
+    // Navigate back to preview (no data changes)
+    component.stepIsFocused = true;
+    component.ngOnChanges({
+      showErrorDialog: {} as any,
+    });
+    tick();
+
+    // Should NOT re-parse since data hasn't changed
+    expect(mockImportService.transformRawDataToEntities).not.toHaveBeenCalled();
   }));
 });
