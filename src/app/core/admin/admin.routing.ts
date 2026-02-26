@@ -12,6 +12,7 @@ import { AdvancedFeaturesComponent } from "./advanced-features/advanced-features
 import { DataPrivacyComponent } from "./data-privacy/data-privacy.component";
 import { UserListComponent } from "../user/user-list/user-list.component";
 import { AdminPrimaryActionComponent } from "./admin-primary-action/admin-primary-action.component";
+import { AdminAiAgentComponent } from "./admin-ai-agent/admin-ai-agent.component";
 
 export const adminRoutes: Routes = [
   {
@@ -154,6 +155,14 @@ export const adminRoutes: Routes = [
   {
     path: "conflicts",
     component: ConflictResolutionListComponent,
+    canActivate: [UserRoleGuard],
+    data: {
+      permittedUserRoles: ["admin_app"],
+    },
+  },
+  {
+    path: "ai-agent",
+    component: AdminAiAgentComponent,
     canActivate: [UserRoleGuard],
     data: {
       permittedUserRoles: ["admin_app"],

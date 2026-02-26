@@ -1,0 +1,29 @@
+<app-view-title i18n>Configure using AI Agents</app-view-title>
+
+<mat-card class="margin-regular">
+  <mat-card-content>
+    <p i18n>
+      Download a snapshot of all configuration documents from this system as a
+      single JSON file. You can share this file with an AI assistant (e.g.
+      ChatGPT, Claude) so it has the context needed to help you adjust
+      configuration, reports, or forms.
+    </p>
+    <p i18n>
+      The download contains only structural configuration — no personal data or
+      case records are included.
+    </p>
+    <p><strong i18n>Included document types:</strong></p>
+    <ul>
+      <li i18n>Application Configuration</li>
+      <li i18n>Configurable Enums</li>
+      <li i18n>Report Configurations</li>
+      <li i18n>Public Form Configurations</li>
+    </ul>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button color="accent" (click)="downloadAiContext()">
+      <fa-icon icon="download"></fa-icon>
+      <span i18n>Download AI Context (JSON)</span>
+    </button>
+  </mat-card-actions>
+</mat-card>
