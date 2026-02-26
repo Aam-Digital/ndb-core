@@ -27,8 +27,8 @@ import { Database } from "../../database/database";
   ],
 })
 export class AdminAiAgentComponent {
-  private db: Database = inject(DatabaseResolverService).getDatabase();
-  private downloadService = inject(DownloadService);
+  private readonly db: Database = inject(DatabaseResolverService).getDatabase();
+  private readonly downloadService = inject(DownloadService);
 
   /** DB ID prefixes for all config-related document types to include in the AI context export. */
   static readonly AI_CONTEXT_PREFIXES = [
