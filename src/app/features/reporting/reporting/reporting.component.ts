@@ -35,6 +35,7 @@ import { Angulartics2Module } from "angulartics2";
 import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
 import { JsonEditorService } from "#src/app/core/admin/json-editor/json-editor.service";
 import { MatTooltip } from "@angular/material/tooltip";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 @RouteTarget("Reporting")
 @Component({
@@ -127,7 +128,8 @@ export class ReportingComponent {
         " " +
         ((reason as ReportCalculationError)?.reportCalculation?.errorDetails ??
           "");
-      return Promise.reject(reason.message || reason);
+      Logging.warn(reason.message ?? "Report Calculation Error", reason);
+      return [];
     });
 
     this.currentReport = selectedReport;
