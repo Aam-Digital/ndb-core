@@ -2815,11 +2815,11 @@
         <note priority="1" from="description">Menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">42</context>
+          <context context-type="linenumber">40</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">115</context>
+          <context context-type="linenumber">113</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/notes.module.ts</context>
@@ -2841,7 +2841,7 @@
         <note priority="1" from="description">label for entity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">41</context>
+          <context context-type="linenumber">39</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3973931101896534797" datatype="html">
@@ -2850,7 +2850,7 @@
         <note priority="1" from="description">Label for the date of a note</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">99</context>
+          <context context-type="linenumber">97</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9127604588498960753" datatype="html">
@@ -2859,7 +2859,7 @@
         <note priority="1" from="description">Label for the subject of a note</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">110</context>
+          <context context-type="linenumber">108</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.html</context>
@@ -2880,7 +2880,7 @@
         <note priority="1" from="description">Label for the category of a note</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">135</context>
+          <context context-type="linenumber">133</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/email-client/email-template.entity.ts</context>
@@ -2892,7 +2892,7 @@
         <target>Anhang</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">143</context>
+          <context context-type="linenumber">141</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5032142018133486821" datatype="html">
@@ -2910,7 +2910,7 @@
         <note priority="1" from="description">label for the linked schools</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">175</context>
+          <context context-type="linenumber">173</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/attendance/model/recurring-activity.ts</context>
@@ -2923,7 +2923,7 @@
         <note priority="1" from="description">Status of a note</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">185</context>
+          <context context-type="linenumber">183</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8953033926734869941" datatype="html">
@@ -2984,7 +2984,7 @@
         <note priority="1" from="description">Label for the participants of a recurring activity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">80</context>
+          <context context-type="linenumber">78</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/attendance/model/recurring-activity.ts</context>
@@ -3430,7 +3430,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-confirm-summary/import-confirm-summary.component.ts</context>
-          <context context-type="linenumber">58</context>
+          <context context-type="linenumber">83</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/admin-user-roles/admin-user-roles.component.ts</context>
@@ -3840,7 +3840,7 @@
         <target>Import abgeschlossen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-confirm-summary/import-confirm-summary.component.ts</context>
-          <context context-type="linenumber">57</context>
+          <context context-type="linenumber">82</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2120530309769865545" datatype="html">
@@ -6133,7 +6133,7 @@
         <note priority="1" from="description">Label for the social worker(s) who created the note</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">122</context>
+          <context context-type="linenumber">120</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6281284727431074654" datatype="html">
@@ -7114,7 +7114,7 @@ Sind Sie sicher, dass Sie fortfahren möchten?</target>
         <target>Import-Status </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
-          <context context-type="linenumber">39,41</context>
+          <context context-type="linenumber">50,52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8727233064229561894" datatype="html">
@@ -7122,7 +7122,7 @@ Sind Sie sicher, dass Sie fortfahren möchten?</target>
         <target>Wir haben einen vorhandenen Datensatz in der Datenbank gefunden, der Ihren importierten Daten entspricht (basierend auf den ID-Feldern, die Sie im vorherigen Schritt ausgewählt haben). Die Daten des Datensatzes werden für die hier in der Vorschau angezeigten Felder aktualisiert.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4871585862661997483" datatype="html">
@@ -7130,7 +7130,7 @@ Sind Sie sicher, dass Sie fortfahren möchten?</target>
         <target> Aktualisiert </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
-          <context context-type="linenumber">49,51</context>
+          <context context-type="linenumber">60,62</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7414819980940434612" datatype="html">
@@ -7138,7 +7138,7 @@ Sind Sie sicher, dass Sie fortfahren möchten?</target>
         <target>Diese in der Vorschau angezeigten Daten werden als neuer Datensatz zur Datenbank hinzugefügt.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8667665916832796867" datatype="html">
@@ -7146,7 +7146,7 @@ Sind Sie sicher, dass Sie fortfahren möchten?</target>
         <target>Neu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
-          <context context-type="linenumber">59</context>
+          <context context-type="linenumber">70</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4148006450341989648" datatype="html">
@@ -7256,8 +7256,12 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         </context-group>
       </trans-unit>
       <trans-unit id="7708270344948043036" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ notification.created?.at | notificationTime | async }}"/> </source>
+        <source> <x id="INTERPOLATION" equiv-text="{{ label }}"/> </source>
         <target> <x id="INTERPOLATION" equiv-text="{{ notification.created?.at | notificationTime | async }}"/> </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/conditions-editor/conditions-editor.component.html</context>
+          <context context-type="linenumber">57,59</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-item/notification-item.component.html</context>
           <context context-type="linenumber">21,23</context>
@@ -7365,30 +7369,6 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
           <context context-type="linenumber">65</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1561207217222709383" datatype="html">
-        <source>Conditions currently have to be edited using the JSON Editor. We will implement a visual UI here soon.</source>
-        <target>Bedingungen müssen aktuell im JSON-Editor bearbeitet werden. Wir werden hier in Zukunft eine visuelle Benutzeroberfläche implementieren.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
-          <context context-type="linenumber">73,74</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3730816294738124737" datatype="html">
-        <source> Open Conditions Editor </source>
-        <target> Bedingungs-Editor öffnen </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
-          <context context-type="linenumber">80,82</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="388773612994986939" datatype="html">
-        <source>Update Notification Condition via JSON editor</source>
-        <target>Aktualisieren Sie die Benachrichtigungsbedingung über den JSON-Editor</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
-          <context context-type="linenumber">99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2335219158796507825" datatype="html">
@@ -8704,7 +8684,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <note priority="1" from="description">label for field represented as DisplayEntity block to select in Admin UI</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-matching-entity-side/edit-matching-entity-side.component.ts</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">63</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5556518443552910962" datatype="html">
@@ -8826,7 +8806,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>Anwesenheit (kürzliche Abwesenheiten)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/attendance/attendance.module.ts</context>
-          <context context-type="linenumber">35</context>
+          <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8955128195791312286" datatype="html">
@@ -8834,7 +8814,7 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         <target>diese Woche</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/attendance/attendance.module.ts</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
       <trans-unit id="73779976139401211" datatype="html">
@@ -11323,23 +11303,7 @@ Wählen Sie zunächst oben einen Importtyp aus, um diesen Abschnitt zu aktiviere
         <target>Bedingung hinzufügen </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/conditions-editor/conditions-editor.component.html</context>
-          <context context-type="linenumber">48,50</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4899395008228656440" datatype="html">
-        <source> Edit JSON </source>
-        <target>JSON bearbeiten </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/common-components/conditions-editor/conditions-editor.component.html</context>
-          <context context-type="linenumber">52,54</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3584575017861290748" datatype="html">
-        <source> Edit Prefilters </source>
-        <target>Vorfilter bearbeiten </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/matching-entities/admin-matching-entities/edit-matching-entity-side/edit-matching-entity-side.component.html</context>
-          <context context-type="linenumber">45,47</context>
+          <context context-type="linenumber">53,55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6660925946511264619" datatype="html">
@@ -11347,7 +11311,7 @@ Wählen Sie zunächst oben einen Importtyp aus, um diesen Abschnitt zu aktiviere
         <target> Löschen </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
-          <context context-type="linenumber">93,95</context>
+          <context context-type="linenumber">86,88</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1991432124565542842" datatype="html">
@@ -11679,7 +11643,7 @@ Wählen Sie zunächst oben einen Importtyp aus, um diesen Abschnitt zu aktiviere
         <target>Warnung: Es wurden mehrere Datensätze gefunden, die den importierten Daten anhand der im vorherigen Schritt ausgewählten ID-Felder entsprechen. Daher wird ein neuer Datensatz erstellt, anstatt einen bestehenden zu aktualisieren.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
-          <context context-type="linenumber">65</context>
+          <context context-type="linenumber">76</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5650463829778254379" datatype="html">
@@ -11829,7 +11793,7 @@ Wählen Sie zunächst oben einen Importtyp aus, um diesen Abschnitt zu aktiviere
         <note priority="1" from="description">Migration dialog title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/database/indexeddb-migration.service.ts</context>
-          <context context-type="linenumber">192</context>
+          <context context-type="linenumber">196</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5709046777415939097" datatype="html">
@@ -11838,7 +11802,87 @@ Wählen Sie zunächst oben einen Importtyp aus, um diesen Abschnitt zu aktiviere
         <note priority="1" from="description">Migration dialog text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/database/indexeddb-migration.service.ts</context>
-          <context context-type="linenumber">193</context>
+          <context context-type="linenumber">197</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7724361443262323317" datatype="html">
+        <source> Condition applies if any one of the selected criteria matches (&quot;or&quot; conditions). </source>
+        <target>Die Bedingung gilt, wenn eines der ausgewählten Kriterien mit den (&quot;oder&quot;-Bedingungen) übereinstimmt. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/conditions-editor/conditions-editor.component.html</context>
+          <context context-type="linenumber">47,50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5786452744215028715" datatype="html">
+        <source>Edit JSON</source>
+        <target>JSON bearbeiten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/conditions-editor/conditions-editor.component.ts</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2915778723698518140" datatype="html">
+        <source>Conflicts overwriting updated data</source>
+        <target>Konflikte überschreiben aktualisierte Daten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-confirm-summary/import-confirm-summary.component.ts</context>
+          <context context-type="linenumber">115</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4233906413704543671" datatype="html">
+        <source>Some records changed from synchronisation while preparing the import. We are refreshing the data for you. Please review and run import again.</source>
+        <target>Bei der Vorbereitung des Imports haben sich einige Datensätze durch die Synchronisierung geändert. Wir aktualisieren die Daten für Sie. Bitte überprüfen Sie die Daten und führen Sie den Import erneut aus.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-confirm-summary/import-confirm-summary.component.ts</context>
+          <context context-type="linenumber">116</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1916995782667784441" datatype="html">
+        <source>Import failed</source>
+        <target>Import fehlgeschlagen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-confirm-summary/import-confirm-summary.component.ts</context>
+          <context context-type="linenumber">123</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8519590233025744685" datatype="html">
+        <source>Sorry, some error occurred during import. Please try again. If the problem persists, contact support. [<x id="PH" equiv-text="JSON.stringify(error)"/>]</source>
+        <target>Leider ist beim Import ein Fehler aufgetreten. Bitte versuchen Sie es erneut. Sollte das Problem weiterhin bestehen, wenden Sie sich bitte an den Support. [<x id="PH" equiv-text="JSON.stringify(error)"/>]</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-confirm-summary/import-confirm-summary.component.ts</context>
+          <context context-type="linenumber">124</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2463599160033117309" datatype="html">
+        <source>Some values could not be transformed and were skipped.</source>
+        <target>Einige Werte konnten nicht transformiert werden und wurden daher übersprungen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4193783009868188938" datatype="html">
+        <source> Affected column(s): <x id="INTERPOLATION" equiv-text="{{ transformationErrorColumns.join(&quot;, &quot;) }}"/> </source>
+        <target>Betroffene Spalte(n): <x id="INTERPOLATION" equiv-text="{{ transformationErrorColumns.join(&quot;, &quot;) }}"/> </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
+          <context context-type="linenumber">35,37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6769189312662487943" datatype="html">
+        <source>Problems while preparing data for import</source>
+        <target>Probleme bei der Datenvorbereitung für den Import</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.ts</context>
+          <context context-type="linenumber">223</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6390334628064786929" datatype="html">
+        <source><x id="PH" equiv-text="errors.length"/> value(s) could not be transformed and were skipped.</source>
+        <target><x id="PH" equiv-text="errors.length"/> Werte konnten nicht transformiert werden und wurden übersprungen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.ts</context>
+          <context context-type="linenumber">224</context>
         </context-group>
       </trans-unit>
     </body>
