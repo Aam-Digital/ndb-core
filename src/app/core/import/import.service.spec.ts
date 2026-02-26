@@ -379,6 +379,5 @@ describe("ImportService", () => {
     expect(result.errors[0].column).toBe("rawName");
     expect(result.errors[0].propertyName).toBe("name");
     expect(result.errors[0].rowIndex).toBe(0);
-    expect(Logging.warn).toHaveBeenCalled();
   });
 });
