@@ -331,17 +331,16 @@ describe("ReportingComponent", () => {
     mockSqlReportService.query.and.returnValue(Promise.reject(Error("foo")));
 
     // When
-    return component
-      .calculateResults(report, new Date("2023-01-01"), new Date("2023-01-01"))
-      .then(() => {
-        fail("should have thrown an error");
-      })
-      .catch((reason) => {
-        // Then
-        expect(reason).toEqual("foo");
-        expect(component.isError).toBeTrue();
-        expect(component.errorDetails).not.toBeNull();
-      });
+    await component.calculateResults(
+      report,
+      new Date("2023-01-01"),
+      new Date("2023-01-01"),
+    );
+
+    // Then
+    expect(component.isError).toBeTrue();
+    expect(component.errorDetails).not.toBeNull();
+    expect(component.data).toEqual([]);
   });
 
   it("should return raw data for version 1 SQL reports", () => {

@@ -217,7 +217,7 @@ export class ImportReviewDataComponent implements OnChanges {
   private showTransformationErrorDialog(
     errors: ImportCellError[],
   ): Promise<boolean | string | undefined> {
-    Logging.warn("Import Cell Errors", errors);
+    Logging.warn("Import Cell Errors", JSON.stringify(errors));
 
     return this.confirmationDialog.getConfirmation(
       $localize`Problems while preparing data for import`,
