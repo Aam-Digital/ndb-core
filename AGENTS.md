@@ -167,7 +167,7 @@ When developing new functionality:
   - `doc/compodoc_sources/how-to-guides/` - Detailed developer guides (entities, datatypes, testing, etc.)
 - `build/` - Build configuration and scripts
 - `.github/instructions/` - Auto-attached Copilot instructions per file type (detailed patterns and examples)
-- `.github/prompts/` - Reusable prompt files for key agent workflows
+- `.claude/agents/` - Custom Claude Code agents for key workflows (these can be selected from GitHub Copilot)
 - Follow the existing module structure with entity-based organization
 
 ### Refactoring & Legacy Code
@@ -222,14 +222,22 @@ When developing new functionality:
 
 ## Agent Workflows
 
-Agents support these key workflows. Use `.github/prompts/` (Copilot) or `.claude/agents/` (Claude Code) files where available:
+Custom agents are defined in `.claude/agents/`. They support these key workflows (in logical order):
 
-1. **Fleshing out requirements** — Read the linked GitHub issue, identify affected entities/components, list acceptance criteria and edge cases, flag ambiguities. See `.github/prompts/analyze-requirements.prompt.md`.
-2. **Troubleshooting** — Analyze stack traces, use Sentry MCP for production errors. See `.github/prompts/troubleshoot.prompt.md`.
-3. **Planning implementation** — Analyze existing patterns, propose structure following conventions, consider config-driven approaches and offline-first implications. See `.github/prompts/plan-implementation.prompt.md`.
-4. **Implementing changes** — Follow all conventions, include unit tests, use `$localize` for strings, run lint and tests. See `.github/prompts/implement-feature.prompt.md`.
-5. **Analyzing & refactoring** — Identify code smells, check DRY violations, verify OnPush/signals/inject() usage, suggest simplifications. See `.github/prompts/refactor-code.prompt.md`.
-6. **Generating e2e tests** — Use Playwright fixtures, standalone generators, accessibility locators, visual regression snapshots. See `.github/prompts/write-e2e-tests.prompt.md`.
+1. **Fleshing out requirements** — Refine rough feature requests into structured, testable requirement documents. See `.claude/agents/1-business-analyst.md`.
+2. **Planning implementation** — Create detailed technical breakdowns with phased tasks, posted as GitHub issue comments. See `.claude/agents/2-implementation-planner.md`.
+3. **Implementing changes** — Execute an implementation plan task by task, committing after each, and opening a PR. See `.claude/agents/3-implementation-executor.md`.
+4. **Troubleshooting** — Debug issues using Sentry, devtools, stack traces, and codebase analysis. See `.claude/agents/4-troubleshooter.md`.
+5. **Analyzing & refactoring** — Identify code smells, check convention adherence, suggest specific refactorings. See `.claude/agents/5-refactorer.md`.
+6. **Generating e2e tests** — Write Playwright tests with fixtures, accessibility locators, and visual regression snapshots. See `.claude/agents/6-e2e-test-writer.md`.
+
+### Typical workflow
+
+```
+1-business-analyst        →  refine rough requirements into a clear requirement doc
+2-implementation-planner  →  create a technical plan posted on the GitHub issue
+3-implementation-executor →  implement the plan, commit per task, open PR
+```
 
 ## MCP Servers
 
@@ -262,47 +270,3 @@ The following MCP servers are available in `.vscode/mcp.json`:
 - Utility functions like `asArray` from "src/app/utils/" folder
 
 Remember: This is a social impact application helping organizations work with beneficiaries. Code quality, accessibility, and reliability are paramount for the mission-critical nature of this software.
-
----
-
-## Custom Agents
-
-Custom agents are defined in `.claude/agents/`. They are automatically invoked based on your request.
-
-### `business-analyst`
-**When to use:** When you have rough or unclear requirements that need refining into a structured, testable requirement document before engineering begins.
-
-**Example prompts:**
-- "Refine these rough notes into a requirement doc: [paste notes]"
-- "Clean up this feature request and make the acceptance criteria testable"
-- "Turn this client call transcript into proper requirements"
-
----
-
-### `implementation-planner`
-**When to use:** When you want a technical breakdown before writing any code. Provide a GitHub issue number — it will explore the codebase and post the plan as a comment on the issue.
-
-**Example prompts:**
-- "Plan the implementation for issue #1234"
-- "Create a technical breakdown for this feature: [describe feature]"
-- "Break this requirement into tasks: [paste requirement]"
-
----
-
-### `implementation-executor`
-**When to use:** When a plan already exists as a GitHub issue comment and you want to build it — implements task by task, commits after each, and opens a PR.
-
-**Example prompts:**
-- "Execute the implementation plan on issue #1234"
-- "Start coding the plan from this issue: [url]"
-- "We've planned the feature, now let's build it"
-
----
-
-### Typical workflow
-
-```
-1. business-analyst      →  refine rough requirements into a clear requirement doc
-2. implementation-planner  →  create a technical plan posted on the GitHub issue
-3. implementation-executor →  implement the plan, commit per task, open PR
-```
