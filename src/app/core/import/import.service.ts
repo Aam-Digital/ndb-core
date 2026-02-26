@@ -250,10 +250,6 @@ export class ImportService {
         value = [...new Set(value)];
       }
     } catch (e) {
-      Logging.warn(
-        `Import: error transforming value for "${mapping.propertyName}" (column "${mapping.column}")`,
-        e,
-      );
       errors.push({
         column: mapping.column,
         propertyName: mapping.propertyName,
