@@ -282,9 +282,9 @@ describe("RollCallComponent", () => {
     expect(component.eventEntity.children).toEqual(
       expectedParticipantsOrder.map((p) => p.getId()),
     );
-    expect(
-      component.eventEntity.attendance.map((a) => a.participant),
-    ).toEqual(expectedParticipantsOrder.map((p) => p.getId()));
+    expect(component.eventEntity.attendance.map((a) => a.participant)).toEqual(
+      expectedParticipantsOrder.map((p) => p.getId()),
+    );
     flush();
   }
 });

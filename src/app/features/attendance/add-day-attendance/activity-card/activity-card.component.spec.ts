@@ -51,17 +51,13 @@ describe("ActivityCardComponent", () => {
   });
 
   it("warningLevel should be 'warning' for recurring events with unknown attendances", () => {
-    component.event.attendance = [
-      new AttendanceItem(undefined, "", "child1"),
-    ];
+    component.event.attendance = [new AttendanceItem(undefined, "", "child1")];
     component.recurring = true;
     expect(component.warningLevel).toBe("warning");
   });
 
   it("warningLevel should be 'urgent' for non-recurring events with unknown attendances", () => {
-    component.event.attendance = [
-      new AttendanceItem(undefined, "", "child1"),
-    ];
+    component.event.attendance = [new AttendanceItem(undefined, "", "child1")];
     component.recurring = false;
     expect(component.warningLevel).toBe("urgent");
   });
