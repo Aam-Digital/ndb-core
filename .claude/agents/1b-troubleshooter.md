@@ -65,11 +65,6 @@ If a GitHub issue exists, suggest adding clear steps to reproduce to the issue.
 
 Be aware of these frequent issues:
 
-- **Entity not registered**: Missing `@DatabaseEntity()` decorator or not imported in a module
-- **DatabaseField type mismatch**: Schema annotation doesn't match the actual data in CouchDB
-- **Permission errors**: CASL rules not updated for new entity types or fields
-- **Sync conflicts**: PouchDB/CouchDB revision conflicts during concurrent edits
-- **Config-driven errors**: Typos in JSON configuration referencing non-existent components or entity types
 - **Change detection**: OnPush components not updating because signals/observables aren't properly wired
 
 ## Persistent Agent Memory
