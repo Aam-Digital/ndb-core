@@ -94,7 +94,6 @@ export class Note extends Entity {
     isArray: true,
     additional: "Child",
     entityReferenceRole: "composite",
-    editComponent: "EditLegacyAttendance",
     anonymize: "retain",
   })
   children: string[] = [];
@@ -216,6 +215,12 @@ export class Note extends Entity {
     dataType: "attendance",
     isArray: true,
     anonymize: "retain",
+    additional: {
+      participant: {
+        dataType: "entity",
+        additional: "Child",
+      },
+    },
   })
   attendance: AttendanceItem[] = [];
 
@@ -244,8 +249,8 @@ export class Note extends Entity {
   public getColorForId(childId: string): string {
     if (
       this.category?.isMeeting &&
-      this.childrenAttendance.get(childId)?.status.countAs ===
-        AttendanceLogicalStatus.ABSENT
+      this.attendance.find((item) => item.participant === childId)?.status
+        .countAs === AttendanceLogicalStatus.ABSENT
     ) {
       // child is absent, highlight the entry
       return getWarningLevelColor(WarningLevel.URGENT);
