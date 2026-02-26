@@ -3,6 +3,7 @@ import { AdminAiAgentComponent } from "./admin-ai-agent.component";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { DownloadService } from "../../export/download-service/download.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AdminAiAgentComponent", () => {
   let component: AdminAiAgentComponent;
@@ -18,7 +19,11 @@ describe("AdminAiAgentComponent", () => {
     mockDownloadService.triggerDownload.and.returnValue(Promise.resolve());
 
     TestBed.configureTestingModule({
-      imports: [AdminAiAgentComponent, NoopAnimationsModule],
+      imports: [
+        AdminAiAgentComponent,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
       providers: [
         {
           provide: DatabaseResolverService,

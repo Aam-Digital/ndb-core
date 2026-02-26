@@ -30,13 +30,18 @@ export class AdminAiAgentComponent {
   private readonly db: Database = inject(DatabaseResolverService).getDatabase();
   private readonly downloadService = inject(DownloadService);
 
-  /** DB ID prefixes for all config-related document types to include in the AI context export. */
+  /** DB ID prefixes for typed config groups to include in the AI context export. */
   static readonly AI_CONTEXT_PREFIXES = [
-    "Config:",
     "ConfigurableEnum:",
     "ReportConfig:",
     "PublicFormConfig:",
-  ];
+  ] as const;
+
+  /** Specific Config document IDs to include (avoids exporting all Config: docs). */
+  static readonly AI_CONTEXT_CONFIG_IDS = [
+    "Config:CONFIG_ENTITY",
+    "Config:Permissions",
+  ] as const;
 
   /**
    * Fetches all relevant config documents from the database and downloads
@@ -49,7 +54,15 @@ export class AdminAiAgentComponent {
       ),
     );
 
-    const docs = docArrays.flat().map(({ _rev: _, ...doc }) => doc);
+    const configDocs = (await this.db.getAll("Config:")).filter(({ _id }) =>
+      AdminAiAgentComponent.AI_CONTEXT_CONFIG_IDS.includes(
+        _id as (typeof AdminAiAgentComponent.AI_CONTEXT_CONFIG_IDS)[number],
+      ),
+    );
+
+    const docs = [...docArrays.flat(), ...configDocs].map(
+      ({ _rev: _, ...doc }) => doc,
+    );
 
     await this.downloadService.triggerDownload(
       JSON.stringify(docs, null, 2),
