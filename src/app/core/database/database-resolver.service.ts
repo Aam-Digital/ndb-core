@@ -11,6 +11,7 @@ import {
   DbConfig,
   IndexeddbMigrationService,
 } from "./indexeddb-migration.service";
+import { DatabaseMigrationService } from "./database-migration.service";
 
 /**
  * Manages access to individual databases,
@@ -22,6 +23,7 @@ import {
 export class DatabaseResolverService {
   private readonly databaseFactory = inject(DatabaseFactoryService);
   private readonly migrationService = inject(IndexeddbMigrationService);
+  private readonly databaseMigration = inject(DatabaseMigrationService);
 
   private databases: Map<string, Database> = new Map();
 
@@ -97,6 +99,7 @@ export class DatabaseResolverService {
     db.init(this.dbConfig.dbNames.app);
 
     this.migrationService.runBackgroundMigration(user, db);
+    this.databaseMigration.runMigrations(db);
   }
 
   /**

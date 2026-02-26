@@ -89,7 +89,7 @@ export class Note extends Entity {
    * @deprecated Default structure will only use a combined `relatedEntities` field
    */
   @DatabaseField({
-    label: $localize`:Label fsor the participants field of a note:Participants`,
+    label: $localize`:Label for the participants field of a note:Participants`,
     dataType: "entity",
     isArray: true,
     additional: "Child",
@@ -204,6 +204,20 @@ export class Note extends Entity {
     anonymize: "retain",
   })
   warningLevel: Ordering.EnumValue;
+
+  /**
+   * Attendance records for participants at this event.
+   * Each entry holds a participant reference and their attendance status.
+   *
+   * This replaces the legacy `childrenAttendance` field after DB migration.
+   */
+  @DatabaseField({
+    label: $localize`:Label for the attendance details of a note:Attendance details`,
+    dataType: "attendance",
+    isArray: true,
+    anonymize: "retain",
+  })
+  attendance: AttendanceItem[] = [];
 
   override getWarningLevel(): WarningLevel {
     if (this.warningLevel) {
@@ -364,6 +378,7 @@ export class Note extends Entity {
     this.childrenAttendance.forEach((value, key) => {
       note.childrenAttendance.set(key, value.copy());
     });
+    note.attendance = this.attendance.map((item) => item.copy());
     return note;
   }
 }
