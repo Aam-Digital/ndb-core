@@ -36,12 +36,16 @@ export class AttendanceItem {
 
   @DatabaseField() remarks: string;
 
+  @DatabaseField() participant: string;
+
   constructor(
     status: AttendanceStatusType = NullAttendanceStatusType,
     remarks: string = "",
+    participant: string = "",
   ) {
     this.status = status;
     this.remarks = remarks;
+    this.participant = participant;
   }
 
   public copy(): AttendanceItem {

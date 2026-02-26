@@ -43,9 +43,12 @@ export class ActivityCardComponent {
   }
 
   get warningLevel(): "ok" | "warning" | "urgent" {
-    if (!this.event.hasUnknownAttendances()) {
+    if (!this.event.attendance.some((a) => !a.status?.id)) {
       return "ok";
-    } else if (!this.recurring && this.event.hasUnknownAttendances()) {
+    } else if (
+      !this.recurring &&
+      this.event.attendance.some((a) => !a.status?.id)
+    ) {
       return "urgent";
     } else {
       return "warning";

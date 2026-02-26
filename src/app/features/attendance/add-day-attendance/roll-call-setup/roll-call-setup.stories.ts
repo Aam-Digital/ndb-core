@@ -6,6 +6,7 @@ import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { generateActivity } from "../../demo-data/demo-activity-generator.service";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
+import { AttendanceItem } from "../../model/attendance-item";
 
 const demoEvents: Note[] = [
   Note.create(new Date(), "Class 5a Parents Meeting"),
@@ -24,7 +25,10 @@ const demoEvent = Note.create(new Date(), "coaching");
 demoEvent.category = { id: "COACHING", label: "Coaching", isMeeting: true };
 
 const demoChildren = [generateChild(), generateChild(), generateChild()];
-demoChildren.forEach((c) => demoEvent.addChild(c));
+demoChildren.forEach((c) => {
+  demoEvent.addChild(c);
+  demoEvent.attendance.push(new AttendanceItem(undefined, "", c.getId()));
+});
 
 const demoActivities = [
   generateActivity({ participants: demoChildren }),

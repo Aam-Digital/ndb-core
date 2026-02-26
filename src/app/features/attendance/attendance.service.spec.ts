@@ -133,6 +133,9 @@ describe("AttendanceService", () => {
     expect(actualEvents[0].children).toEqual(
       jasmine.arrayWithExactContents(["1", "2", "3"]),
     );
+    expect(actualEvents[0].attendance.map((a) => a.participant)).toEqual(
+      jasmine.arrayWithExactContents(["3"]),
+    );
   });
 
   it("should create an event without the excluded participants", async () => {
@@ -146,6 +149,9 @@ describe("AttendanceService", () => {
 
     const event = await service.createEventForActivity(activity, new Date());
     expect(event.children).toEqual(
+      jasmine.arrayWithExactContents(["member", "direct"]),
+    );
+    expect(event.attendance.map((a) => a.participant)).toEqual(
       jasmine.arrayWithExactContents(["member", "direct"]),
     );
   });
@@ -302,6 +308,13 @@ describe("AttendanceService", () => {
     expect(event.children).toHaveSize(2);
     expect(event.children).toContain(directlyAddedChild.getId());
     expect(event.children).toContain(childAttendingSchool.childId);
+    expect(event.attendance).toHaveSize(2);
+    expect(event.attendance.map((a) => a.participant)).toContain(
+      directlyAddedChild.getId(),
+    );
+    expect(event.attendance.map((a) => a.participant)).toContain(
+      childAttendingSchool.childId,
+    );
   });
 
   it("should not include duplicate children for event from activity", async () => {
@@ -333,6 +346,16 @@ describe("AttendanceService", () => {
     expect(event.children).toContain(directlyAddedChild.getId());
     expect(event.children).toContain(duplicateChild.getId());
     expect(event.children).toContain(anotherRelation.childId);
+    expect(event.attendance).toHaveSize(3);
+    expect(event.attendance.map((a) => a.participant)).toContain(
+      directlyAddedChild.getId(),
+    );
+    expect(event.attendance.map((a) => a.participant)).toContain(
+      duplicateChild.getId(),
+    );
+    expect(event.attendance.map((a) => a.participant)).toContain(
+      anotherRelation.childId,
+    );
   });
 
   it("should load the events for a date with date-picker format", async () => {
