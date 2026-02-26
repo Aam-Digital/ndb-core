@@ -134,7 +134,7 @@ describe("AttendanceService", () => {
       jasmine.arrayWithExactContents(["1", "2", "3"]),
     );
     expect(actualEvents[0].attendance.map((a) => a.participant)).toEqual(
-      jasmine.arrayWithExactContents(["3"]),
+      jasmine.arrayWithExactContents(["2", "3"]),
     );
   });
 
