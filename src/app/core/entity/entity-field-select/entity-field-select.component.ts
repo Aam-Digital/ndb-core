@@ -54,7 +54,7 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
 
   private entityRegistry = inject(EntityRegistry);
 
-  private resolvedEntityType = computed(() => {
+  private readonly resolvedEntityType = computed(() => {
     const entity = this.entityType();
     if (!entity) {
       return undefined;
@@ -64,7 +64,7 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
       : entity;
   });
 
-  private fieldOptions = computed(() => {
+  private readonly fieldOptions = computed(() => {
     const entityType = this.resolvedEntityType();
     if (!entityType) {
       return [];
