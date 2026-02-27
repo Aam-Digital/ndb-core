@@ -51,7 +51,7 @@ describe("RollCallComponent", () => {
     const id =
       typeof participant === "string" ? participant : participant.getId();
     note.children.push(id);
-    note.attendance.push(new AttendanceItem(undefined, "", id));
+    note.childrenAttendance.push(new AttendanceItem(undefined, "", id));
   }
 
   beforeEach(waitForAsync(() => {
@@ -111,7 +111,7 @@ describe("RollCallComponent", () => {
     expect(component.children).toEqual([participant1]);
     expect(component.eventEntity.children).not.toContain(nonExistingChildId);
     expect(
-      component.eventEntity.attendance.some(
+      component.eventEntity.childrenAttendance.some(
         (a) => a.participant === nonExistingChildId,
       ),
     ).toBeFalse();
@@ -132,12 +132,14 @@ describe("RollCallComponent", () => {
     component.markAttendance(ABSENT);
 
     expect(
-      note.attendance.find((a) => a.participant === participant1.getId())
-        .status,
+      note.childrenAttendance.find(
+        (a) => a.participant === participant1.getId(),
+      ).status,
     ).toEqual(PRESENT);
     expect(
-      note.attendance.find((a) => a.participant === participant2.getId())
-        .status,
+      note.childrenAttendance.find(
+        (a) => a.participant === participant2.getId(),
+      ).status,
     ).toEqual(ABSENT);
     flush();
   }));
@@ -212,10 +214,10 @@ describe("RollCallComponent", () => {
     for (const child of [participant1, participant2, participant3]) {
       addParticipant(component.eventEntity, child);
     }
-    component.eventEntity.attendance.find(
+    component.eventEntity.childrenAttendance.find(
       (a) => a.participant === participant1.getId(),
     ).status = PRESENT;
-    component.eventEntity.attendance.find(
+    component.eventEntity.childrenAttendance.find(
       (a) => a.participant === participant3.getId(),
     ).status = ABSENT;
     await component.ngOnChanges(dummyChanges);
@@ -282,9 +284,9 @@ describe("RollCallComponent", () => {
     expect(component.eventEntity.children).toEqual(
       expectedParticipantsOrder.map((p) => p.getId()),
     );
-    expect(component.eventEntity.attendance.map((a) => a.participant)).toEqual(
-      expectedParticipantsOrder.map((p) => p.getId()),
-    );
+    expect(
+      component.eventEntity.childrenAttendance.map((a) => a.participant),
+    ).toEqual(expectedParticipantsOrder.map((p) => p.getId()));
     flush();
   }
 });

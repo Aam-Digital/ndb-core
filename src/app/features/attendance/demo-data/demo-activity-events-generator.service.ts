@@ -7,6 +7,7 @@ import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-confi
 import { DemoActivityGeneratorService } from "./demo-activity-generator.service";
 import moment from "moment";
 import { EventNote } from "../model/event-note";
+import { AttendanceItem } from "../model/attendance-item";
 
 export class DemoEventsConfig {
   forNLastYears: number;
@@ -35,10 +36,10 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventN
     eventNote.authors = activity.assignedTo;
     eventNote.category = activity.type;
     eventNote.relatesTo = activity.getId();
+    eventNote.children = [...activity.participants];
 
     for (const participantId of activity.participants) {
-      eventNote.addChild(participantId);
-      const eventAtt = eventNote.getAttendance(participantId);
+      const eventAtt = new AttendanceItem(undefined, "", participantId);
       eventAtt.status = faker.helpers.arrayElement(
         defaultAttendanceStatusTypes,
       );
@@ -50,6 +51,8 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventN
           $localize`:Event demo attendance remarks:no information`,
         ]);
       }
+
+      eventNote.childrenAttendance.push(eventAtt);
     }
 
     return eventNote;

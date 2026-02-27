@@ -43,7 +43,7 @@ describe("ActivityCardComponent", () => {
   });
 
   it("warningLevel should be 'ok' when all attendance statuses are set", () => {
-    component.event.attendance = [
+    component.event.childrenAttendance = [
       new AttendanceItem(PRESENT, "", "child1"),
       new AttendanceItem(PRESENT, "", "child2"),
     ];
@@ -51,19 +51,23 @@ describe("ActivityCardComponent", () => {
   });
 
   it("warningLevel should be 'warning' for recurring events with unknown attendances", () => {
-    component.event.attendance = [new AttendanceItem(undefined, "", "child1")];
+    component.event.childrenAttendance = [
+      new AttendanceItem(undefined, "", "child1"),
+    ];
     component.recurring = true;
     expect(component.warningLevel).toBe("warning");
   });
 
   it("warningLevel should be 'urgent' for non-recurring events with unknown attendances", () => {
-    component.event.attendance = [new AttendanceItem(undefined, "", "child1")];
+    component.event.childrenAttendance = [
+      new AttendanceItem(undefined, "", "child1"),
+    ];
     component.recurring = false;
     expect(component.warningLevel).toBe("urgent");
   });
 
   it("warningLevel should be 'ok' when attendance array is empty", () => {
-    component.event.attendance = [];
+    component.event.childrenAttendance = [];
     expect(component.warningLevel).toBe("ok");
   });
 });

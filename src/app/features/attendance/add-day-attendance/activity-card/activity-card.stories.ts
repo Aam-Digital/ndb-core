@@ -29,7 +29,9 @@ const demoChildren = [generateChild(), generateChild(), generateChild()];
 const simpleEvent = Note.create(new Date(), "some meeting");
 demoChildren.forEach((c) => {
   simpleEvent.addChild(c);
-  simpleEvent.attendance.push(new AttendanceItem(undefined, "", c.getId()));
+  simpleEvent.childrenAttendance.push(
+    new AttendanceItem(undefined, "", c.getId()),
+  );
 });
 
 const longEvent = Note.create(new Date(), "another meeting");
@@ -42,14 +44,18 @@ longEvent.category = {
 };
 demoChildren.forEach((c) => {
   longEvent.addChild(c);
-  longEvent.attendance.push(new AttendanceItem(undefined, "", c.getId()));
+  longEvent.childrenAttendance.push(
+    new AttendanceItem(undefined, "", c.getId()),
+  );
 });
 
 const activityEvent = Note.create(new Date(), "Coaching Batch C");
 activityEvent.relatesTo = RecurringActivity.create("Coaching Batch C").getId();
 demoChildren.forEach((c) => {
   activityEvent.addChild(c);
-  activityEvent.attendance.push(new AttendanceItem(undefined, "", c.getId()));
+  activityEvent.childrenAttendance.push(
+    new AttendanceItem(undefined, "", c.getId()),
+  );
 });
 
 export const OneTimeEvent = {

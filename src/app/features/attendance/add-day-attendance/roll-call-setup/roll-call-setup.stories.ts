@@ -27,7 +27,9 @@ demoEvent.category = { id: "COACHING", label: "Coaching", isMeeting: true };
 const demoChildren = [generateChild(), generateChild(), generateChild()];
 demoChildren.forEach((c) => {
   demoEvent.addChild(c);
-  demoEvent.attendance.push(new AttendanceItem(undefined, "", c.getId()));
+  demoEvent.childrenAttendance.push(
+    new AttendanceItem(undefined, "", c.getId()),
+  );
 });
 
 const demoActivities = [

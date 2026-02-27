@@ -7,7 +7,7 @@ import { BulkMergeRecordsComponent } from "app/features/de-duplication/bulk-merg
 import { AlertService } from "app/core/alerts/alert.service";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 import { Note } from "app/child-dev-project/notes/model/note";
-import { EventAttendanceMap } from "../attendance/deprecated/event-attendance-map.datatype";
+import { AttendanceItem } from "../attendance/model/attendance-item";
 import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 
@@ -126,11 +126,14 @@ export class BulkMergeService {
     oldId: string,
     newId: string,
   ): void {
-    const childrenAttendance = (relatedEntity as any)
-      .childrenAttendance as EventAttendanceMap;
-    if (childrenAttendance.has(oldId)) {
-      childrenAttendance.set(newId, childrenAttendance.get(oldId));
-      childrenAttendance.delete(oldId);
+    const attendance: AttendanceItem[] = (relatedEntity as any)
+      .childrenAttendance;
+    if (Array.isArray(attendance)) {
+      for (const item of attendance) {
+        if (item.participant === oldId) {
+          item.participant = newId;
+        }
+      }
     }
   }
 }

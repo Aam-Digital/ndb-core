@@ -4,19 +4,6 @@ import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.d
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 
 /**
- * A full registry of event-attendance entries for multiple participants.
- *
- * @deprecated Use the new `attendance` datatype ({@link AttendanceDatatype}) with `isArray: true` instead.
- */
-export class EventAttendanceMap extends Map<string, AttendanceItem> {
-  static DATA_TYPE = "event-attendance-map";
-
-  constructor() {
-    super();
-  }
-}
-
-/**
  * Holds a full register of EventAttendance entries.
  * Each value in the map is an {@link AttendanceItem}, transformed
  * using its schema annotations (via {@link EntitySchemaService}).
@@ -25,49 +12,48 @@ export class EventAttendanceMap extends Map<string, AttendanceItem> {
  */
 @Injectable()
 export class EventAttendanceMapDatatype extends DefaultDatatype<
-  Map<string, any>,
+  AttendanceItem[],
   [string, any][]
 > {
-  static override dataType = EventAttendanceMap.DATA_TYPE;
+  static override dataType = "event-attendance-map";
+
+  override editComponent = "EditAttendance";
+  override viewComponent = "DisplayAttendance";
 
   private readonly schemaService = inject(EntitySchemaService);
 
-  override transformToDatabaseFormat(value: Map<string, any>) {
-    if (!(value instanceof Map)) {
+  override transformToDatabaseFormat(value: AttendanceItem[]) {
+    if (!Array.isArray(value)) {
       console.warn(
-        'property to be saved with "map" RecordSchema is not of expected type',
+        'property to be saved with "event-attendance-map" datatype is not of expected type',
         value,
       );
       return value as any;
     }
 
     const result: [string, any][] = [];
-    value.forEach((item, key) => {
+    for (const item of value) {
       result.push([
-        key,
+        item.participant ?? "",
         this.schemaService.transformEntityToDatabaseFormat(
-          item,
+          item as any,
           AttendanceItem.schema,
         ),
       ]);
-    });
+    }
     return result;
   }
 
   override transformToObjectFormat(value: any[]) {
-    if (value instanceof Map) {
-      // usually this shouldn't already be a map but in MockDatabase somehow this can happen
-      return value;
-    }
     if (!Array.isArray(value) || value === null) {
       console.warn(
-        'property to be loaded with "map" RecordSchema is not valid',
+        'property to be loaded with "event-attendance-map" datatype is not valid',
         value,
       );
       return value as any;
     }
 
-    const result = new EventAttendanceMap();
+    const result: AttendanceItem[] = [];
     for (const keyValue of value) {
       const transformedValue =
         this.schemaService.transformDatabaseToEntityFormat<AttendanceItem>(
@@ -76,7 +62,8 @@ export class EventAttendanceMapDatatype extends DefaultDatatype<
         );
       const instance = new AttendanceItem();
       Object.assign(instance, transformedValue);
-      result.set(keyValue[0], instance);
+      instance.participant = keyValue[0];
+      result.push(instance);
     }
     return result;
   }

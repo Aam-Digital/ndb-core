@@ -23,7 +23,6 @@ import {
   InteractionType,
 } from "./interaction-type.interface";
 import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
-import { EventAttendanceMap } from "#src/app/features/attendance/deprecated/event-attendance-map.datatype";
 import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
@@ -89,12 +88,11 @@ export class Note extends Entity {
    * @deprecated Default structure will only use a combined `relatedEntities` field
    */
   @DatabaseField({
-    label: $localize`:Label fsor the participants field of a note:Participants`,
+    label: $localize`:Label for the participants field of a note:Participants`,
     dataType: "entity",
     isArray: true,
     additional: "Child",
     entityReferenceRole: "composite",
-    editComponent: "EditLegacyAttendance",
     anonymize: "retain",
   })
   children: string[] = [];
@@ -106,15 +104,18 @@ export class Note extends Entity {
    *
    * @deprecated Attendance logic will be decoupled from Note. By default, notes will not include attendance details anymore. Any entity type can add an `attendance` type field.
    */
-  @DatabaseField({ anonymize: "retain" })
-  private childrenAttendance: EventAttendanceMap = new EventAttendanceMap();
-
   @DatabaseField({
-    dataType: "event-attendance",
-    isArray: true,
+    label: $localize`:Label for the participants field of a note:Participants (with attendance)`,
     anonymize: "retain",
+    dataType: "event-attendance-map",
+    additional: {
+      participant: {
+        dataType: "entity",
+        additional: ["Child"],
+      },
+    },
   })
-  attendance: AttendanceItem[] = [];
+  childrenAttendance: AttendanceItem[] = [];
 
   @DatabaseField({
     label: $localize`:Label for the date of a note:Date`,
@@ -237,8 +238,8 @@ export class Note extends Entity {
   public getColorForId(childId: string): string {
     if (
       this.category?.isMeeting &&
-      this.childrenAttendance.get(childId)?.status.countAs ===
-        AttendanceLogicalStatus.ABSENT
+      this.childrenAttendance.find((item) => item.participant === childId)
+        ?.status.countAs === AttendanceLogicalStatus.ABSENT
     ) {
       // child is absent, highlight the entry
       return getWarningLevelColor(WarningLevel.URGENT);
@@ -254,7 +255,9 @@ export class Note extends Entity {
    */
   removeChild(childId: string) {
     this.children = this.children.filter((c) => c !== childId);
-    this.childrenAttendance.delete(childId);
+    this.childrenAttendance = this.childrenAttendance.filter(
+      (item) => item.participant !== childId,
+    );
   }
 
   /**
@@ -303,10 +306,12 @@ export class Note extends Entity {
       return undefined;
     }
 
-    let attendance = this.childrenAttendance.get(childId);
+    let attendance = this.childrenAttendance.find(
+      (item) => item.participant === childId,
+    );
     if (!attendance) {
       attendance = new AttendanceItem();
-      this.childrenAttendance.set(childId, attendance);
+      this.childrenAttendance.push(attendance);
     }
     if (!(attendance instanceof AttendanceItem)) {
       attendance = Object.assign(new AttendanceItem(), attendance);
@@ -329,10 +334,10 @@ export class Note extends Entity {
       );
     }
 
-    if (this.childrenAttendance.size < this.children.length) {
+    if (this.childrenAttendance.length < this.children.length) {
       return true;
     } else {
-      for (const v of this.childrenAttendance.values()) {
+      for (const v of this.childrenAttendance) {
         if (v.status.id === NullAttendanceStatusType.id) {
           return true;
         }
@@ -367,11 +372,7 @@ export class Note extends Entity {
     note.schools = [...this.schools];
     note.relatedEntities = [...this.relatedEntities];
     note.authors = [...this.authors];
-    note.attendance = this.attendance.map((a) => a.copy());
-    note.childrenAttendance = new EventAttendanceMap();
-    this.childrenAttendance.forEach((value, key) => {
-      note.childrenAttendance.set(key, value.copy());
-    });
+    note.childrenAttendance = this.childrenAttendance.map((a) => a.copy());
     return note;
   }
 }
