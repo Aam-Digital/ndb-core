@@ -42,7 +42,7 @@ import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/con
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
-import { uniqueIdValidator } from "app/core/common-components/entity-form/unique-id-validator/unique-id-validator";
+import { uniquePropertyValidator } from "app/core/common-components/entity-form/unique-property-validator/unique-property-validator";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { AnonymizeOptionsComponent } from "./anonymize-options/anonymize-options.component";
@@ -162,16 +162,51 @@ export class AdminEntityFieldComponent implements OnInit {
     this.fieldIdForm = this.fb.control(this.data.entitySchemaField.id, {
       validators: [Validators.required, Validators.pattern(/^[a-zA-Z0-9_]*$/)],
       asyncValidators: [
-        uniqueIdValidator(Array.from(this.data.entityType.schema.keys())),
+        uniquePropertyValidator({
+          getExistingValues: async () => {
+            const keys = Array.from(this.data.entityType.schema.keys());
+            return this.data.entitySchemaField.id
+              ? keys.filter((k) => k !== this.data.entitySchemaField.id)
+              : keys;
+          },
+          normalize: false,
+          fieldLabel: $localize`:field label:id`,
+        }),
       ],
     });
     this.additionalForm = this.fb.control(
       this.data.entitySchemaField.additional,
     );
 
+    const labelFormControl = this.fb.control(
+      this.data.entitySchemaField.label,
+      {
+        validators: [Validators.required],
+        asyncValidators: [
+          uniquePropertyValidator({
+            getExistingValues: async () => {
+              const labels: string[] = [];
+              for (const [
+                key,
+                field,
+              ] of this.data.entityType.schema.entries()) {
+                if (key === this.data.entitySchemaField.id) continue;
+                if (field.label) {
+                  labels.push(field.label);
+                }
+              }
+              return labels;
+            },
+            normalize: true,
+            fieldLabel: $localize`:field label:label`,
+          }),
+        ],
+      },
+    );
+
     this.schemaFieldsForm = this.fb.group({
       id: this.fieldIdForm,
-      label: [this.data.entitySchemaField.label, Validators.required],
+      label: labelFormControl,
       labelShort: [this.data.entitySchemaField.labelShort],
       displayFullLengthLabel: [
         this.data.entitySchemaField.displayFullLengthLabel ?? false,
