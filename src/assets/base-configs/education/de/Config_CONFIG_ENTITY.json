@@ -132,12 +132,21 @@
           "isArray": true,
           "additional": "Child",
           "entityReferenceRole": "composite",
-          "editComponent": "EditLegacyAttendance",
           "anonymize": "retain"
         },
         "childrenAttendance": {
+          "label": "Anwesenheitsliste",
           "dataType": "event-attendance-map",
-          "anonymize": "retain"
+          "anonymize": "retain",
+          "additional": {
+            "participant": {
+              "dataType": "entity",
+              "additional": [
+                "Child",
+                "User"
+              ]
+            }
+          }
         },
         "date": {
           "label": "Datum",

@@ -17,6 +17,9 @@ export class EventAttendanceMapDatatype extends DefaultDatatype<
 > {
   static override dataType = "event-attendance-map";
 
+  override editComponent = "EditAttendance";
+  override viewComponent = "DisplayAttendance";
+
   private readonly schemaService = inject(EntitySchemaService);
 
   override transformToDatabaseFormat(value: AttendanceItem[]) {
