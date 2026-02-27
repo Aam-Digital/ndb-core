@@ -22,8 +22,10 @@ import {
 import {
   AttendanceLogicalStatus,
   AttendanceStatusType,
+  NullAttendanceStatusType,
 } from "./attendance-status";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
+import { AttendanceItem } from "./attendance-item";
 
 describe("ActivityAttendance", () => {
   let testInstance: ActivityAttendance;
@@ -170,7 +172,8 @@ describe("ActivityAttendance", () => {
     const StatusLate: AttendanceStatusType = defaultAttendanceStatusTypes.find(
       (t) => t.id === "LATE",
     );
-    record.events[0].getAttendance("1").status = StatusLate;
+    record.events[0].attendance.find((a) => a.participant === "1").status =
+      StatusLate;
     record.recalculateStats();
 
     const typeCount1 = record.individualStatusTypeCounts.get("1");
@@ -195,8 +198,12 @@ describe("ActivityAttendance", () => {
     ]);
 
     // adding participants without attendance to one event
-    attendance.events[1].children.push("3");
-    attendance.events[1].children.push("4");
+    attendance.events[1].attendance.push(
+      new AttendanceItem(NullAttendanceStatusType, "", "3"),
+    );
+    attendance.events[1].attendance.push(
+      new AttendanceItem(NullAttendanceStatusType, "", "4"),
+    );
 
     expect(attendance.countEventsWithUnknownStatus()).toBe(1); // one unique event with undefined attendances
     expect(attendance.countEventsWithUnknownStatus("2")).toBe(0);

@@ -15,6 +15,7 @@ import {
 } from "@angular/material/datepicker";
 import moment, { Moment } from "moment";
 import { AttendanceItem } from "../../model/attendance-item";
+import { NullAttendanceStatusType } from "../../model/attendance-status";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import {
@@ -105,7 +106,9 @@ export class AttendanceCalendarComponent implements OnChanges {
     const event = this.records.find((e) => cellMoment.isSame(e.date, "day"));
     if (event && this.highlightForChild) {
       // coloring for individual child
-      const eventAttendance = event.getAttendance(this.highlightForChild);
+      const eventAttendance = event.attendance.find(
+        (a) => a.participant === this.highlightForChild,
+      );
 
       const statusClass = eventAttendance?.status?.style;
       classes[statusClass] = true;
@@ -167,10 +170,18 @@ export class AttendanceCalendarComponent implements OnChanges {
         this.selectedDate.isSame(e.date, "day"),
       );
       if (this.selectedEvent && this.highlightForChild) {
-        this.selectedEvent.addChild(this.highlightForChild); // ensure child is part of the event
-        this.selectedEventAttendance = this.selectedEvent.getAttendance(
-          this.highlightForChild,
+        let attendance = this.selectedEvent.attendance.find(
+          (a) => a.participant === this.highlightForChild,
         );
+        if (!attendance) {
+          attendance = new AttendanceItem(
+            NullAttendanceStatusType,
+            "",
+            this.highlightForChild,
+          );
+          this.selectedEvent.attendance.push(attendance);
+        }
+        this.selectedEventAttendance = attendance;
       }
       // clone attendance information to allow detecting and reverting changes
       this.selectedEventAttendanceOriginal = Object.assign(

@@ -51,7 +51,10 @@ export class AttendanceDetailsComponent {
       viewComponent: "ReadonlyFunction",
       additional: (note: Note) => {
         if (this.forChild) {
-          return note.getAttendance(this.forChild)?.status?.label || "-";
+          return (
+            note.attendance.find((a) => a.participant === this.forChild)?.status
+              ?.label || "-"
+          );
         } else {
           return (
             (calculateAverageAttendance(note).average * 100).toFixed(0) + "%" ||

@@ -15,6 +15,8 @@ import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service
 import { MatNativeDateModule } from "@angular/material/core";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { createEntityMapperSpyObj } from "#src/app/core/entity/entity-mapper/mock-entity-mapper-service";
+import { AttendanceItem } from "../../model/attendance-item";
+import { NullAttendanceStatusType } from "../../model/attendance-status";
 
 describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;
@@ -79,17 +81,25 @@ describe("AttendanceCalendarComponent", () => {
     const childWithoutAttendance = new TestEntity("childWithoutAttendance");
     const note = new Note();
     note.date = new Date();
-    note.addChild(attendedChild);
-    note.addChild(absentChild);
-    note.addChild(childWithoutAttendance);
     const presentAttendance = defaultAttendanceStatusTypes.find(
       (it) => it.id === "PRESENT",
     );
     const absentAttendance = defaultAttendanceStatusTypes.find(
       (it) => it.id === "ABSENT",
     );
-    note.getAttendance(attendedChild).status = presentAttendance;
-    note.getAttendance(absentChild).status = absentAttendance;
+    note.attendance.push(
+      new AttendanceItem(presentAttendance, "", attendedChild.getId()),
+    );
+    note.attendance.push(
+      new AttendanceItem(absentAttendance, "", absentChild.getId()),
+    );
+    note.attendance.push(
+      new AttendanceItem(
+        NullAttendanceStatusType,
+        "",
+        childWithoutAttendance.getId(),
+      ),
+    );
     component.records = [note];
 
     component.selectDay(new Date());
@@ -109,6 +119,10 @@ describe("AttendanceCalendarComponent", () => {
 
     component.selectDay(testDate);
 
-    expect(component.selectedEvent.children).toContain(excludedChild.getId());
+    expect(
+      component.selectedEvent.attendance.some(
+        (a) => a.participant === excludedChild.getId(),
+      ),
+    ).toBeTrue();
   });
 });

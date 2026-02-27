@@ -22,8 +22,8 @@ export function calculateAverageAttendance(
 
   const statusCounts = new Map<string, number>();
 
-  for (const childId of event.children) {
-    const status = event.getAttendance(childId).status;
+  for (const item of event.attendance) {
+    const status = item.status;
     const countStatus = statusCounts.get(status?.id) ?? 0;
     statusCounts.set(status?.id, countStatus + 1);
 

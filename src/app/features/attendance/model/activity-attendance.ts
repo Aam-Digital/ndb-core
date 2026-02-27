@@ -1,7 +1,11 @@
-import { AttendanceLogicalStatus } from "./attendance-status";
+import {
+  AttendanceLogicalStatus,
+  NullAttendanceStatusType,
+} from "./attendance-status";
 import { RecurringActivity } from "./recurring-activity";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { EventNote } from "./event-note";
+import { AttendanceItem } from "./attendance-item";
 import {
   getWarningLevelColor,
   WarningLevel,
@@ -60,7 +64,9 @@ export class ActivityAttendance extends Entity {
    * List of (actual, recorded in at least one event) participants.
    */
   get participants(): string[] {
-    return Array.from(new Set(this.events.flatMap((event) => event.children)));
+    return Array.from(
+      new Set(this.events.flatMap((event) => event.attendance.map((a) => a.participant))),
+    );
   }
 
   /**
@@ -94,7 +100,8 @@ export class ActivityAttendance extends Entity {
   ) {
     return this.events.filter(
       (eventNote) =>
-        eventNote.getAttendance(childId)?.status.countAs === countingType,
+        eventNote.attendance.find((a) => a.participant === childId)?.status
+          ?.countAs === countingType,
     ).length;
   }
 
@@ -116,7 +123,10 @@ export class ActivityAttendance extends Entity {
 
   private countWithStatus(matchingType: AttendanceLogicalStatus) {
     return this.events.reduce(
-      (total, event) => total + event.countWithStatus(matchingType),
+      (total, event) =>
+        total +
+        event.attendance.filter((a) => a.status.countAs === matchingType)
+          .length,
       0,
     );
   }
@@ -133,10 +143,10 @@ export class ActivityAttendance extends Entity {
       .map((event) => {
         const eventStats = {
           matching: 0,
-          total: event.children.length,
+          total: event.attendance.length,
         };
-        for (const childId of event.children) {
-          const att = event.getAttendance(childId).status;
+        for (const item of event.attendance) {
+          const att = item.status;
           if (att.countAs === matchingType) {
             eventStats.matching++;
           } else if (att.countAs === AttendanceLogicalStatus.IGNORE) {
@@ -176,12 +186,19 @@ export class ActivityAttendance extends Entity {
    */
   countEventsWithUnknownStatus(forChildId?: string): number {
     return this.events
-      .filter((e) => !forChildId || e.children.includes(forChildId))
-      .reduce(
-        (count: number, e: EventNote) =>
-          e.hasUnknownAttendances(forChildId) ? count + 1 : count,
-        0,
-      );
+      .filter(
+        (e) => !forChildId || e.attendance.some((a) => a.participant === forChildId),
+      )
+      .reduce((count: number, e: EventNote) => {
+        const relevantItems = forChildId
+          ? e.attendance.filter((a) => a.participant === forChildId)
+          : e.attendance;
+        return relevantItems.some(
+          (a) => a.status.id === NullAttendanceStatusType.id,
+        )
+          ? count + 1
+          : count;
+      }, 0);
   }
 
   recalculateStats() {
@@ -189,7 +206,8 @@ export class ActivityAttendance extends Entity {
     this.individualLogicalStatusCounts = new Map();
 
     for (const event of this.events) {
-      for (const participant of event.children) {
+      for (const item of event.attendance) {
+        const participant = item.participant;
         let logicalCount = this.individualLogicalStatusCounts.get(participant);
         if (!logicalCount) {
           logicalCount = {};
@@ -201,10 +219,9 @@ export class ActivityAttendance extends Entity {
           this.individualStatusTypeCounts.set(participant, typeCount);
         }
 
-        const att = event.getAttendance(participant);
-        logicalCount[att.status.countAs] =
-          (logicalCount[att.status.countAs] ?? 0) + 1;
-        typeCount[att.status.id] = (typeCount[att.status.id] ?? 0) + 1;
+        logicalCount[item.status.countAs] =
+          (logicalCount[item.status.countAs] ?? 0) + 1;
+        typeCount[item.status.id] = (typeCount[item.status.id] ?? 0) + 1;
       }
     }
   }
@@ -255,13 +272,11 @@ export function generateEventWithAttendance(
 ): EventNote {
   const event = EventNote.create(date);
   for (const att of participating) {
-    event.addChild(att[0]);
-    event.getAttendance(att[0]).status = defaultAttendanceStatusTypes.find(
+    const status = defaultAttendanceStatusTypes.find(
       (t) => t.countAs === att[1],
     );
-    if (att.length === 3) {
-      event.getAttendance(att[0]).remarks = att[2];
-    }
+    const remarks = att.length === 3 ? att[2] : "";
+    event.attendance.push(new AttendanceItem(status, remarks, att[0]));
   }
   event.relatesTo = activity?.getId();
   return event;
