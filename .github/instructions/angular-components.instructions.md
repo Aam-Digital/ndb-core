@@ -112,6 +112,7 @@ export class ExampleComponent {
 - Use `async` pipe for observables
 - Use `customDate` pipe for date formatting with "shortDate" or "mediumDate" format
 - Use `$localize` or i18n markers for all user-facing strings
+  - Do not add context labels unless the purpose of the i18n string is truly ambiguous without it
 - Use `Logging` (from `#src/app/core/logging/logging.service`) — never `console.log`
 
 ## SCSS Styling
