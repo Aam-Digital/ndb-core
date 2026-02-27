@@ -1,20 +1,21 @@
 # AI Agent instructions
 
-You are an expert Angular 20 and TypeScript developer working on Aam Digital, a case management software for social organizations. Follow these project-specific guidelines and best practices.
+You are an expert Angular and TypeScript developer working on Aam Digital, a case management software for social organizations. Follow these project-specific guidelines and best practices.
 
 ## Project Context
 
-Aam Digital is a comprehensive case management software for social organizations, designed to improve effectiveness and transparency in work with beneficiaries. It's built with Angular 20 and uses TypeScript, Material Design, and various modern web technologies.
+Aam Digital is a comprehensive case management software for social organizations, designed to improve effectiveness and transparency in work with beneficiaries. It's built with latest Angular (see `package.json` for current version) and uses TypeScript, Material Design, and various modern web technologies.
 
 ### Architecture & Tech Stack
 
-- **Frontend**: Angular 20, TypeScript, Angular Material
+- **Frontend**: Latest Angular (see `package.json`), TypeScript, Angular Material
 - **State Management**: RxJS, Entity system with PouchDB
 - **Authentication**: Keycloak integration
 - **Database**: PouchDB (CouchDB compatible) with offline-first approach
-- **Testing**: Jasmine, Karma, Playwright for E2E
+- **Testing**: Jasmine, Karma for unit tests; Playwright for E2E
 - **Documentation**: Compodoc for API docs
 - **Build & Deploy**: Angular CLI, Docker
+- **Path Aliases**: `#src/` maps to `src/` (used in imports, e.g. `import { Logging } from "#src/app/core/logging/logging.service"`)
 
 ### Key Features
 
@@ -129,14 +130,16 @@ export class ExampleComponent {
 
 ### Entity Architecture
 
-- All data models extend the base `Entity` class
-- Use entity schemas for configuration-driven field definitions
-- Define entity schemas through `@DatabaseField()` annotations in the model classes
+- All data models extend the base `Entity` class (from `src/app/core/entity/model/entity.ts`)
+- Register entities with the `@DatabaseEntity("TypeName")` decorator
+- Define fields with `@DatabaseField()` annotations, specifying `dataType`, `label`, `additional` options as needed
+- Use `EntitySchemaService` for serialization/deserialization of entities
+- Use `EntityMapperService` for CRUD operations on entities
 - Implement proper permissions checking via CASL integration.
   Components and buttons can use `EntityAbility` and `DisableEntityOperationDirective` to check and enforce permissions.
-- Follow entity lifecycle patterns for CRUD operations
-- Use entity services for data access and caching
 - Implement specific datatypes (Date, ConfigurableEnum, etc.) extending the `DefaultDatatype` class. Implement "edit" and "display" components for a datatype's customized UI.
+- Use `TestEntity` (from `src/app/utils/test-utils/TestEntity.ts`) for generic entity tests
+- See `doc/compodoc_sources/how-to-guides/` for detailed guides on entities, datatypes, and more
 
 ### Configuration System
 
@@ -161,8 +164,16 @@ When developing new functionality:
 - `src/app/features/` - Feature-specific modules
 - `e2e/` - End-to-end tests with Playwright
 - `doc/` - Documentation and API reference
+  - `doc/compodoc_sources/how-to-guides/` - Detailed developer guides (entities, datatypes, testing, etc.)
 - `build/` - Build configuration and scripts
+- `.github/instructions/` - Auto-attached Copilot instructions per file type (detailed patterns and examples)
+- `.claude/agents/` - Custom Claude Code agents for key workflows (these can be selected from GitHub Copilot)
 - Follow the existing module structure with entity-based organization
+
+### Refactoring & Legacy Code
+
+- Some existing code may not follow current conventions. For existing code, analyse the status and refactor only after confirmation.
+- Always separate refactoring changes into their own commits and PRs — do not mix refactoring with feature work.
 
 ## UX and Styling
 
@@ -193,15 +204,13 @@ When developing new functionality:
 ### Unit Testing (Jasmine/Karma)
 
 - Write unit tests for all new components and services
-- Mock dependencies properly using Angular testing utilities
-- Test entity operations with proper data setup/teardown
-- Use established testing patterns from the project
+- Run tests: `npm run test -- --watch=false --include='**/relevant-file.spec.ts'`
+- See [`.github/instructions/unit-tests.instructions.md`](.github/instructions/unit-tests.instructions.md) for detailed patterns and examples
 
 ### End-to-End Testing (Playwright)
 
-- Follow Playwright patterns in `e2e/tests/`
-- Use realistic user scenarios
-- Test critical user flows and accessibility
+- Run tests: `npm run e2e`
+- See [`.github/instructions/e2e-tests.instructions.md`](.github/instructions/e2e-tests.instructions.md) for detailed patterns and examples
 
 ### Demo Data & Development
 
@@ -211,47 +220,35 @@ When developing new functionality:
 
 ---
 
-## GitHub Copilot-Specific Guidelines
+## Agent Workflows
 
-### When generating code
+Custom agents are defined in `.claude/agents/`. They support these key workflows (in logical order):
 
-1. Follow the established Angular patterns and TypeScript standards
-2. Use the entity system patterns for data operations
-3. Generate appropriate unit tests alongside components
-4. Include proper i18n or $localize markers for user-facing strings
+1. **Fleshing out requirements** — Refine rough feature requests into structured, testable requirement documents. See `.claude/agents/1-business-analyst.md`.
+2. **Planning implementation** — Create detailed technical breakdowns with phased tasks, posted as GitHub issue comments. See `.claude/agents/2-implementation-planner.md`.
+3. **Implementing changes** — Execute an implementation plan task by task, committing after each, and opening a PR. See `.claude/agents/3-implementation-executor.md`.
+4. **Troubleshooting** — Debug issues using Sentry, devtools, stack traces, and codebase analysis. See `.claude/agents/1b-troubleshooter.md`.
+5. **Analyzing & refactoring** — Identify code smells, check convention adherence, suggest specific refactorings. See `.claude/agents/4-refactorer.md`.
+6. **Generating e2e tests** — Write Playwright tests with fixtures, accessibility locators, and visual regression snapshots. See `.claude/agents/5-e2e-test-writer.md`.
 
-### When suggesting solutions
+### Typical workflow
 
-- Consider the offline-first architecture
-- Leverage existing entity services and configurations
-- Suggest Angular Material components when appropriate
-- Include accessibility considerations
-- Follow the established testing patterns
-- Challenge ideas and suggestions constructively, don't just agree. Be direct and skeptical when needed. Push back if something seems off even slightly. Assume I want to learn, not be flattered. Include potential downsides, challenges and alternative suggestions regarding ideas. Question my assumptions.
+```
+1-business-analyst        →  refine rough requirements into a clear requirement doc
+2-implementation-planner  →  create a technical plan posted on the GitHub issue
+3-implementation-executor →  implement the plan, commit per task, open PR
+```
 
-### For Ask mode queries
+## MCP Servers
 
-- Reference existing patterns from the codebase
-- Explain how solutions fit into the entity system
-- Consider configuration-driven approaches
+The following MCP servers are available in `.vscode/mcp.json`:
 
-### For Agent mode implementations
-
-- Create complete, production-ready code
-- Include proper error handling and logging.
-  Use `Logging` from `#src/app/core/logging/logging.service.ts`, not `console.log`
-- Generate demo data when creating new entities
-- Follow the established file organization
-- Generate or adapt unit tests
-- If similar changes are required in multiple places, only implement in one place and ask for review before implementing elsewhere
-- If a change is complex or large, first suggest and approach broken into smaller parts and ask for review after each part
-- If unsure about a specific implementation detail, ask for clarification before proceeding
-- Do not change any code or tests that are unrelated to the direct task
-- Check the "Problems" tab in VSCode for TypeScript errors and any other issues after making changes before running tests
-- Remove unused typescript imports
-- Check terminal output and fix unused Angular component imports or other warnings
-- When all changes are done, ask the user if the task should be finalized.
-  After confirmation, run tests (`npm run test`) and linting (`npm run lint`) and fix any issues.
+| Server            | Purpose                                                  |
+| ----------------- | -------------------------------------------------------- |
+| `angular-cli`     | Angular CLI operations, schematics, component generation |
+| `chrome-devtools` | Runtime debugging, DOM inspection, console access        |
+| `sentry`          | Production error data, issue investigation               |
+| `github`          | Issues, PRs, comments, diffs, repository context         |
 
 ## Common Commands
 
