@@ -1,4 +1,11 @@
-import { Component, inject, Input } from "@angular/core";
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  Input,
+} from "@angular/core";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import {
   BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
@@ -40,40 +47,44 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
    * Whether to show the internal _id field in the dropdown.
    * Useful for import contexts where matching by UUID is needed.
    */
-  @Input() set showInternalIdField(value: boolean) {
-    this._showInternalIdField = value;
-    if (this._entityType) {
-      this.options = this.getAllFieldProps(this._entityType.schema);
-    }
-  }
-  get showInternalIdField(): boolean {
-    return this._showInternalIdField;
-  }
-  private _showInternalIdField: boolean = false;
+  showInternalIdField = input(false);
 
-  @Input() set entityType(entity: string | EntityConstructor) {
-    if (!entity) {
-      return;
-    }
-    if (typeof entity === "string") {
-      this._entityType = this.entityRegistry.get(entity);
-    } else {
-      this._entityType = entity;
-    }
-
-    this.options = this.getAllFieldProps(this._entityType.schema);
-  }
-
-  private _entityType: EntityConstructor;
+  /** The entity type whose fields to display. */
+  entityType = input<string | EntityConstructor>();
 
   private entityRegistry = inject(EntityRegistry);
+
+  private resolvedEntityType = computed(() => {
+    const entity = this.entityType();
+    if (!entity) {
+      return undefined;
+    }
+    return typeof entity === "string"
+      ? this.entityRegistry.get(entity)
+      : entity;
+  });
+
+  private fieldOptions = computed(() => {
+    const entityType = this.resolvedEntityType();
+    if (!entityType) {
+      return [];
+    }
+    return this.getAllFieldProps(entityType.schema);
+  });
+
+  constructor() {
+    super();
+    effect(() => {
+      this.options = this.fieldOptions();
+    });
+  }
 
   private getAllFieldProps(schema: EntitySchema): FormFieldConfig[] {
     return [...schema.entries()]
       .filter(
         ([prop, fieldSchema]) =>
           (!fieldSchema.isInternalField && !!fieldSchema.label) ||
-          (this.showInternalIdField && prop === "_id"),
+          (this.showInternalIdField() && prop === "_id"),
       )
       .map(([name, fieldSchema]) => ({
         ...fieldSchema,
