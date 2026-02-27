@@ -84,10 +84,9 @@ describe("ImportExistingService", () => {
       importExisting: { matchExistingByFields: ["name", "category"] },
     };
 
-    const parsedEntities = await service.transformRawDataToEntities(
-      rawData,
-      importSettings,
-    );
+    const parsedEntities = (
+      await service.transformRawDataToEntities(rawData, importSettings)
+    ).entities;
 
     let expectedEntities: any[] = [
       {
@@ -167,10 +166,9 @@ describe("ImportExistingService", () => {
       importExisting: { matchExistingByFields: ["name"] },
     };
 
-    const entitiesToImport = await service.transformRawDataToEntities(
-      dataToImport,
-      importSettings,
-    );
+    const entitiesToImport = (
+      await service.transformRawDataToEntities(dataToImport, importSettings)
+    ).entities;
     const importMetadata = await service.executeImport(
       entitiesToImport,
       importSettings,
@@ -268,10 +266,9 @@ describe("ImportExistingService", () => {
       importExisting: { matchExistingByFields: ["name", "category", "other"] },
     };
 
-    const parsedEntities = await service.transformRawDataToEntities(
-      rawData,
-      importSettings,
-    );
+    const parsedEntities = (
+      await service.transformRawDataToEntities(rawData, importSettings)
+    ).entities;
 
     // Verify matches
     const expectedEntities: any[] = [
@@ -344,10 +341,9 @@ describe("ImportExistingService", () => {
       importExisting: { matchExistingByFields: ["other", "category"] }, // only empty fields
     };
 
-    const parsedEntities = await service.transformRawDataToEntities(
-      rawData,
-      importSettings,
-    );
+    const parsedEntities = (
+      await service.transformRawDataToEntities(rawData, importSettings)
+    ).entities;
 
     // Should be a new entity since all matching fields were empty
     expect(parsedEntities.length).toBe(1);
@@ -393,10 +389,9 @@ describe("ImportExistingService", () => {
       importExisting: { matchExistingByFields: ["name"] },
     };
 
-    const parsedEntities = await service.transformRawDataToEntities(
-      rawData,
-      importSettings,
-    );
+    const parsedEntities = (
+      await service.transformRawDataToEntities(rawData, importSettings)
+    ).entities;
 
     expect(parsedEntities.length).toBe(2);
 
@@ -450,10 +445,9 @@ describe("ImportExistingService", () => {
       importExisting: { matchExistingByFields: ["name"] },
     };
 
-    const parsedEntities = await service.transformRawDataToEntities(
-      rawData,
-      importSettings,
-    );
+    const parsedEntities = (
+      await service.transformRawDataToEntities(rawData, importSettings)
+    ).entities;
 
     expect(parsedEntities.length).toBe(3);
 
@@ -494,10 +488,9 @@ describe("ImportExistingService", () => {
       importExisting: { matchExistingByFields: ["name"], strictMatching: true },
     };
 
-    const parsedEntities = await service.transformRawDataToEntities(
-      rawData,
-      importSettings,
-    );
+    const parsedEntities = (
+      await service.transformRawDataToEntities(rawData, importSettings)
+    ).entities;
 
     expect(parsedEntities.length).toBe(2);
 

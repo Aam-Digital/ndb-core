@@ -8,6 +8,30 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { ImportAdditionalService } from "./additional-actions/import-additional.service";
 import { ImportExistingService } from "./update-existing/import-existing.service";
 import { ImportProcessingContext } from "./import-processing-context";
+import { Logging } from "../logging/logging.service";
+
+/**
+ * Details about a single cell transformation error during import.
+ */
+export interface ImportCellError {
+  /** The column name in the raw data */
+  column: string;
+  /** The entity property name the column is mapped to */
+  propertyName: string;
+  /** The row index (0-based) where the error occurred */
+  rowIndex: number;
+  /** The original error */
+  error: unknown;
+}
+
+/**
+ * Result of transforming raw data to entities, including any errors that occurred.
+ */
+export interface ImportTransformationResult {
+  entities: Entity[];
+  /** Errors that occurred during value transformation (affected cells were skipped) */
+  errors: ImportCellError[];
+}
 
 /**
  * Supporting import of data from spreadsheets.
@@ -83,18 +107,19 @@ export class ImportService {
   async transformRawDataToEntities(
     rawData: any[],
     importSettings: ImportSettings,
-  ): Promise<Entity[]> {
+  ): Promise<ImportTransformationResult> {
     if (
       !rawData ||
       !importSettings.entityType ||
       !importSettings.columnMapping
     ) {
-      return [];
+      return { entities: [], errors: [] };
     }
 
     const entityConstructor = this.entityTypes.get(importSettings.entityType);
 
     const mappedEntities: Entity[] = [];
+    const errors: ImportCellError[] = [];
     const importProcessingContext = new ImportProcessingContext(importSettings);
     for (const row of rawData) {
       importProcessingContext.row = row;
@@ -105,16 +130,19 @@ export class ImportService {
         entityConstructor,
         importSettings,
         importProcessingContext,
+        errors,
       );
       if (newEntity !== undefined) {
         mappedEntities.push(newEntity);
       }
     }
 
-    return this.importExistingService.applyExistingEntitiesIfApplicable(
-      mappedEntities,
-      importSettings,
-    );
+    const entities =
+      await this.importExistingService.applyExistingEntitiesIfApplicable(
+        mappedEntities,
+        importSettings,
+      );
+    return { entities, errors };
   }
 
   /**
@@ -130,6 +158,7 @@ export class ImportService {
     entityConstructor: EntityConstructor,
     importSettings: ImportSettings,
     importProcessingContext: ImportProcessingContext,
+    errors: ImportCellError[],
   ): Promise<Entity | undefined> {
     let entity = new entityConstructor();
     let hasMappedProperty = false; // to avoid empty records being created
@@ -147,6 +176,7 @@ export class ImportService {
         mapping,
         entity,
         importProcessingContext,
+        errors,
       );
 
       if (parsed === undefined) {
@@ -168,6 +198,7 @@ export class ImportService {
     mapping: ColumnMapping,
     entity: Entity,
     importProcessingContext: ImportProcessingContext,
+    errors: ImportCellError[],
   ) {
     if (val === undefined || val === null) {
       return undefined;
@@ -185,37 +216,47 @@ export class ImportService {
     const shouldSplit =
       schema.isArray && (mapping.additional?.enableSplitting ?? true);
 
-    if (!shouldSplit) {
-      // Handle as single value (either non-array field or array field with splitting disabled)
-      value = await datatype.importMapFunction(
-        val,
-        schema,
-        mapping.additional,
-        importProcessingContext,
-      );
-    } else {
-      // For array fields with splitting enabled, split the value and map each item individually
-      const separator =
-        importProcessingContext.importSettings.additionalSettings
-          ?.multiValueSeparator ?? ",";
-      const rawValues = splitArrayValue(val, separator);
-      value = [];
-      for (const rawValue of rawValues) {
-        const mapped = await datatype.importMapFunction(
-          rawValue,
-          {
-            ...schema,
-            isArray: false, // transform here only for single values, array mapping is handled here separately
-          },
+    try {
+      if (!shouldSplit) {
+        // Handle as single value (either non-array field or array field with splitting disabled)
+        value = await datatype.importMapFunction(
+          val,
+          schema,
           mapping.additional,
           importProcessingContext,
         );
-        if (mapped !== undefined && mapped !== null && mapped !== "") {
-          value.push(mapped);
+      } else {
+        // For array fields with splitting enabled, split the value and map each item individually
+        const separator =
+          importProcessingContext.importSettings.additionalSettings
+            ?.multiValueSeparator ?? ",";
+        const rawValues = splitArrayValue(val, separator);
+        value = [];
+        for (const rawValue of rawValues) {
+          const mapped = await datatype.importMapFunction(
+            rawValue,
+            {
+              ...schema,
+              isArray: false, // transform here only for single values, array mapping is handled here separately
+            },
+            mapping.additional,
+            importProcessingContext,
+          );
+          if (mapped !== undefined && mapped !== null && mapped !== "") {
+            value.push(mapped);
+          }
         }
+        // Filter duplicate values
+        value = [...new Set(value)];
       }
-      // Filter duplicate values
-      value = [...new Set(value)];
+    } catch (e) {
+      errors.push({
+        column: mapping.column,
+        propertyName: mapping.propertyName,
+        rowIndex: importProcessingContext.rowIndex,
+        error: e,
+      });
+      return undefined;
     }
 
     // ignore empty or invalid values for import

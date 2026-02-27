@@ -17,6 +17,8 @@ import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
+import { AttendanceItem } from "../../model/attendance-item";
+import { Entity } from "#src/app/core/entity/model/entity";
 
 const PRESENT = {
   id: "PRESENT",
@@ -44,6 +46,13 @@ describe("RollCallComponent", () => {
   const dummyChanges = {
     eventEntity: new SimpleChange(undefined, {}, true),
   };
+
+  function addParticipant(note: Note, participant: Entity | string) {
+    const id =
+      typeof participant === "string" ? participant : participant.getId();
+    note.children.push(id);
+    note.attendance.push(new AttendanceItem(undefined, "", id));
+  }
 
   beforeEach(waitForAsync(() => {
     participant1 = new TestEntity("child1");
@@ -78,7 +87,7 @@ describe("RollCallComponent", () => {
     const options = [PRESENT, ABSENT];
     const enumService = TestBed.inject(ConfigurableEnumService);
     spyOn(enumService, "getEnumValues").and.returnValue(options);
-    component.eventEntity.addChild(participant1);
+    addParticipant(component.eventEntity, participant1);
     await component.ngOnChanges(dummyChanges);
     fixture.detectChanges();
     await fixture.whenStable();
@@ -92,8 +101,8 @@ describe("RollCallComponent", () => {
   it("should not record attendance if childId does not exist", fakeAsync(() => {
     const nonExistingChildId = "notExistingChild";
     const noteWithNonExistingChild = new Note();
-    noteWithNonExistingChild.addChild(participant1);
-    noteWithNonExistingChild.addChild(nonExistingChildId);
+    addParticipant(noteWithNonExistingChild, participant1);
+    addParticipant(noteWithNonExistingChild, nonExistingChildId);
     component.eventEntity = noteWithNonExistingChild;
 
     component.ngOnChanges(dummyChanges);
@@ -101,13 +110,18 @@ describe("RollCallComponent", () => {
 
     expect(component.children).toEqual([participant1]);
     expect(component.eventEntity.children).not.toContain(nonExistingChildId);
+    expect(
+      component.eventEntity.attendance.some(
+        (a) => a.participant === nonExistingChildId,
+      ),
+    ).toBeFalse();
     flush();
   }));
 
   it("should correctly assign the attendance", fakeAsync(() => {
     const note = new Note("noteWithAttendance");
-    note.addChild(participant1);
-    note.addChild(participant2);
+    addParticipant(note, participant1);
+    addParticipant(note, participant2);
 
     component.eventEntity = note;
     component.ngOnChanges(dummyChanges);
@@ -117,16 +131,22 @@ describe("RollCallComponent", () => {
     tick(1000);
     component.markAttendance(ABSENT);
 
-    expect(note.getAttendance(participant1).status).toEqual(PRESENT);
-    expect(note.getAttendance(participant2).status).toEqual(ABSENT);
+    expect(
+      note.attendance.find((a) => a.participant === participant1.getId())
+        .status,
+    ).toEqual(PRESENT);
+    expect(
+      note.attendance.find((a) => a.participant === participant2.getId())
+        .status,
+    ).toEqual(ABSENT);
     flush();
   }));
 
   it("should mark roll call as done when all existing children are finished", fakeAsync(() => {
     const note = new Note();
-    note.addChild(participant1);
-    note.addChild("notExistingChild");
-    note.addChild(participant2);
+    addParticipant(note, participant1);
+    addParticipant(note, "notExistingChild");
+    addParticipant(note, participant2);
 
     spyOn(component.complete, "emit");
     component.eventEntity = note;
@@ -154,10 +174,12 @@ describe("RollCallComponent", () => {
   });
 
   it("isn't dirty when the user has skipped participants", async () => {
-    component.eventEntity = Note.create(new Date(), "test", [
-      participant1.getId(),
-      participant2.getId(),
-    ]);
+    const event = new Note();
+    addParticipant(event, participant1.getId());
+    addParticipant(event, participant2.getId());
+    event.date = new Date();
+    event.subject = "test";
+    component.eventEntity = event;
     await component.ngOnChanges(dummyChanges);
 
     component.goToNext();
@@ -167,9 +189,11 @@ describe("RollCallComponent", () => {
   });
 
   it("is dirty when the user has entered some attendance", async () => {
-    component.eventEntity = Note.create(new Date(), "test", [
-      participant1.getId(),
-    ]);
+    const event = new Note();
+    addParticipant(event, participant1.getId());
+    event.date = new Date();
+    event.subject = "test";
+    component.eventEntity = event;
     await component.ngOnChanges(dummyChanges);
 
     component.markAttendance(undefined);
@@ -177,7 +201,7 @@ describe("RollCallComponent", () => {
   });
 
   it("starts with the initial child if no attendance has been registered", async () => {
-    component.eventEntity.addChild(participant1);
+    addParticipant(component.eventEntity, participant1);
     await component.ngOnChanges(dummyChanges);
 
     expect(component.currentIndex).toBe(0);
@@ -186,10 +210,14 @@ describe("RollCallComponent", () => {
 
   it("starts with the first child that doesn't have an attendance status set", async () => {
     for (const child of [participant1, participant2, participant3]) {
-      component.eventEntity.addChild(child);
+      addParticipant(component.eventEntity, child);
     }
-    component.eventEntity.getAttendance(participant1).status = PRESENT;
-    component.eventEntity.getAttendance(participant3).status = ABSENT;
+    component.eventEntity.attendance.find(
+      (a) => a.participant === participant1.getId(),
+    ).status = PRESENT;
+    component.eventEntity.attendance.find(
+      (a) => a.participant === participant3.getId(),
+    ).status = ABSENT;
     await component.ngOnChanges(dummyChanges);
     expect(component.currentChild).toBe(participant2);
     expect(component.currentIndex).toBe(1);
@@ -238,7 +266,7 @@ describe("RollCallComponent", () => {
   ) {
     const event = new Note();
     for (const p of participantsInput) {
-      event.addChild(p);
+      addParticipant(event, p);
     }
     component.eventEntity = event;
     component.ngOnChanges(dummyChanges);
@@ -252,6 +280,9 @@ describe("RollCallComponent", () => {
 
     expect(component.children).toEqual(expectedParticipantsOrder);
     expect(component.eventEntity.children).toEqual(
+      expectedParticipantsOrder.map((p) => p.getId()),
+    );
+    expect(component.eventEntity.attendance.map((a) => a.participant)).toEqual(
       expectedParticipantsOrder.map((p) => p.getId()),
     );
     flush();
