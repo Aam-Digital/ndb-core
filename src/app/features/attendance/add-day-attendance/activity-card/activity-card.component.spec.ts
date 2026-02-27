@@ -6,8 +6,8 @@ import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { AttendanceItem } from "../../model/attendance-item";
 import {
-    AttendanceLogicalStatus,
-    AttendanceStatusType,
+  AttendanceLogicalStatus,
+  AttendanceStatusType,
 } from "../../model/attendance-status";
 
 const PRESENT: AttendanceStatusType = {
