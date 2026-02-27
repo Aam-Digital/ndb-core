@@ -41,8 +41,6 @@ export class AttendanceItem {
 
   @DatabaseField() remarks: string;
 
-  @DatabaseField() participant: string;
-
   constructor(
     status: AttendanceStatusType = NullAttendanceStatusType,
     remarks: string = "",
