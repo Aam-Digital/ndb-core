@@ -4,19 +4,6 @@ import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.d
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 
 /**
- * A full registry of event-attendance entries for multiple participants.
- *
- * @deprecated Use the new `attendance` datatype ({@link AttendanceDatatype}) with `isArray: true` instead.
- */
-export class EventAttendanceMap extends Map<string, AttendanceItem> {
-  static DATA_TYPE = "event-attendance-map";
-
-  constructor() {
-    super();
-  }
-}
-
-/**
  * Holds a full register of EventAttendance entries.
  * Each value in the map is an {@link AttendanceItem}, transformed
  * using its schema annotations (via {@link EntitySchemaService}).
@@ -28,7 +15,7 @@ export class EventAttendanceMapDatatype extends DefaultDatatype<
   AttendanceItem[],
   [string, any][]
 > {
-  static override dataType = EventAttendanceMap.DATA_TYPE;
+  static override dataType = "event-attendance-map";
 
   private readonly schemaService = inject(EntitySchemaService);
 

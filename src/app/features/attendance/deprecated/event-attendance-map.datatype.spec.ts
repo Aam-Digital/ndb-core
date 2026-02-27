@@ -28,9 +28,7 @@ describe("Schema data type: event-attendance-map", () => {
       new AttendanceItem(defaultAttendanceStatusTypes[1], "remark2", "b"),
     ];
 
-    const rawData =
-      entitySchemaService.transformEntityToDatabaseFormat(entity);
-
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
     expect(rawData.attendance).toEqual([
       ["a", { status: "PRESENT", remarks: "remark1", participant: "a" }],
       ["b", { status: "ABSENT", remarks: "remark2", participant: "b" }],
