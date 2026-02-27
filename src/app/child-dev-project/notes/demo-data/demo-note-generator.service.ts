@@ -162,7 +162,7 @@ function generateGroupNote(params: { children: Entity[]; author: Entity }) {
         (t) => t.countAs === AttendanceLogicalStatus.PRESENT,
       );
     }
-    note.attendance.push(item);
+    note.childrenAttendance.push(item);
   });
 
   note.authors = [params.author.getId()];

@@ -83,7 +83,6 @@ describe("Note", () => {
 
       children: ["1", "2", "5"],
       childrenAttendance: [],
-      attendance: [],
       schools: [],
       relatedEntities: [],
       date: "2023-05-01",

@@ -135,12 +135,12 @@ export class RollCallComponent implements OnChanges {
    * or creates and pushes a new one.
    */
   getOrCreateAttendance(participantId: string): AttendanceItem {
-    let item = this.eventEntity.attendance.find(
+    let item = this.eventEntity.childrenAttendance.find(
       (a) => a.participant === participantId,
     );
     if (!item) {
       item = new AttendanceItem(undefined, "", participantId);
-      this.eventEntity.attendance.push(item);
+      this.eventEntity.childrenAttendance.push(item);
     }
     return item;
   }
@@ -178,7 +178,7 @@ export class RollCallComponent implements OnChanges {
   private async loadParticipants() {
     this.children = [];
     this.inactiveParticipants = [];
-    for (const attendanceItem of this.eventEntity.attendance) {
+    for (const attendanceItem of this.eventEntity.childrenAttendance) {
       const childId = attendanceItem.participant;
       let child: Entity;
       try {
@@ -194,9 +194,10 @@ export class RollCallComponent implements OnChanges {
             this.eventEntity.getId(),
         );
         this.eventEntity.removeChild(childId);
-        this.eventEntity.attendance = this.eventEntity.attendance.filter(
-          (a) => a.participant !== childId,
-        );
+        this.eventEntity.childrenAttendance =
+          this.eventEntity.childrenAttendance.filter(
+            (a) => a.participant !== childId,
+          );
         continue;
       }
 
@@ -218,7 +219,7 @@ export class RollCallComponent implements OnChanges {
     // also sort the participants in the Note entity itself for display in details view later
     this.eventEntity.children = this.children.map((e) => e.getId());
     const sortedIds = this.children.map((e) => e.getId());
-    this.eventEntity.attendance.sort(
+    this.eventEntity.childrenAttendance.sort(
       (a, b) =>
         sortedIds.indexOf(a.participant) - sortedIds.indexOf(b.participant),
     );

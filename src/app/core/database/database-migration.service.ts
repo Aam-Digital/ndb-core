@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Database } from "./database";
 import { Logging } from "#src/app/core/logging/logging.service";
-import { migrateNoteAttendance } from "#src/app/features/attendance/model/note-children-attendance-migration";
+import { migrateNoteAttendance } from "#src/app/features/attendance/deprecated/note-children-attendance-migration";
 
 /**
  * A database document migration function.

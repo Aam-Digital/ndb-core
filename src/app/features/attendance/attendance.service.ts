@@ -128,8 +128,12 @@ export class AttendanceService {
       );
       for (const newParticipant of participants) {
         event.addChild(newParticipant);
-        if (!event.attendance.some((a) => a.participant === newParticipant)) {
-          event.attendance.push(
+        if (
+          !event.childrenAttendance.some(
+            (a) => a.participant === newParticipant,
+          )
+        ) {
+          event.childrenAttendance.push(
             new AttendanceItem(undefined, "", newParticipant),
           );
         }
@@ -267,7 +271,7 @@ export class AttendanceService {
       date,
     );
     instance.children = participantIds;
-    instance.attendance = participantIds.map(
+    instance.childrenAttendance = participantIds.map(
       (id) => new AttendanceItem(undefined, "", id),
     );
     instance.schools = activity.linkedGroups;
