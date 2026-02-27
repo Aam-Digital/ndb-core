@@ -5,6 +5,7 @@ import { generateChild } from "#src/app/child-dev-project/children/demo-data-gen
 import { RecurringActivity } from "../../model/recurring-activity";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
+import { AttendanceItem } from "../../model/attendance-item";
 
 export default {
   title: "Features/Attendance/Components/ActivityCard",
@@ -26,7 +27,10 @@ const Template: StoryFn<ActivityCardComponent> = (
 const demoChildren = [generateChild(), generateChild(), generateChild()];
 
 const simpleEvent = Note.create(new Date(), "some meeting");
-demoChildren.forEach((c) => simpleEvent.addChild(c));
+demoChildren.forEach((c) => {
+  simpleEvent.addChild(c);
+  simpleEvent.attendance.push(new AttendanceItem(undefined, "", c.getId()));
+});
 
 const longEvent = Note.create(new Date(), "another meeting");
 longEvent.text =
@@ -36,11 +40,17 @@ longEvent.category = {
   label: "Guardians Meeting",
   isMeeting: true,
 };
-demoChildren.forEach((c) => longEvent.addChild(c));
+demoChildren.forEach((c) => {
+  longEvent.addChild(c);
+  longEvent.attendance.push(new AttendanceItem(undefined, "", c.getId()));
+});
 
 const activityEvent = Note.create(new Date(), "Coaching Batch C");
 activityEvent.relatesTo = RecurringActivity.create("Coaching Batch C").getId();
-demoChildren.forEach((c) => activityEvent.addChild(c));
+demoChildren.forEach((c) => {
+  activityEvent.addChild(c);
+  activityEvent.attendance.push(new AttendanceItem(undefined, "", c.getId()));
+});
 
 export const OneTimeEvent = {
   render: Template,

@@ -110,6 +110,13 @@ export class Note extends Entity {
   private childrenAttendance: EventAttendanceMap = new EventAttendanceMap();
 
   @DatabaseField({
+    dataType: "event-attendance",
+    isArray: true,
+    anonymize: "retain",
+  })
+  attendance: AttendanceItem[] = [];
+
+  @DatabaseField({
     label: $localize`:Label for the date of a note:Date`,
     dataType: "date-only",
     defaultValue: {
@@ -360,6 +367,7 @@ export class Note extends Entity {
     note.schools = [...this.schools];
     note.relatedEntities = [...this.relatedEntities];
     note.authors = [...this.authors];
+    note.attendance = this.attendance.map((a) => a.copy());
     note.childrenAttendance = new EventAttendanceMap();
     this.childrenAttendance.forEach((value, key) => {
       note.childrenAttendance.set(key, value.copy());
