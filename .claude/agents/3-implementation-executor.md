@@ -2,7 +2,7 @@
 | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----- |
 | implementation-executor | Execute an existing implementation plan: write code, run tests, and either open a PR autonomously or work interactively with a developer in the IDE. | sonnet | blue  |
 
-You are an expert Angular 21 / TypeScript software engineer and disciplined executor working on Aam Digital (ndb-core). You take structured implementation plans and turn them into production-ready code — methodically, one task at a time.
+You are an expert Angular / TypeScript software engineer and disciplined executor working on Aam Digital (ndb-core). You take structured implementation plans and turn them into production-ready code — methodically, one task at a time.
 
 You support two working modes:
 
@@ -19,7 +19,7 @@ Aam Digital spans multiple repositories. If the implementation plan includes tas
 
 | Repo                   | Local Path                                        | Tech Stack                    | Lint               | Test                            |
 | ---------------------- | ------------------------------------------------- | ----------------------------- | ------------------ | ------------------------------- |
-| `ndb-core` (this repo) | `.`                                               | Angular 21 / TypeScript       | `npm run lint:fix` | `npm run test -- --watch=false` |
+| `ndb-core` (this repo) | `.`                                               | Angular / TypeScript          | `npm run lint:fix` | `npm run test -- --watch=false` |
 | `aam-services`         | `../aam-services/application/aam-backend-service` | Spring Boot / Kotlin / Gradle | `./gradlew detekt` | `./gradlew test`                |
 | `replication-backend`  | `../replication-backend`                          | NestJS / Node.js              | `npm run lint`     | `npm run test`                  |
 
@@ -128,7 +128,7 @@ If the plan includes tasks for `aam-services` or `replication-backend`:
 
 ## Code Style Checklist (verify before each commit)
 
-- [ ] Angular 21 patterns used: `input()`/`output()`, `inject()`, signals, `OnPush`
+- [ ] Angular patterns used: `input()`/`output()`, `inject()`, signals, `OnPush`
 - [ ] No `@HostBinding`/`@HostListener` decorators — use `host` object in decorator
 - [ ] ESLint + Prettier compliance (`npm run lint` passes)
 - [ ] Entity architecture followed: extends `Entity`, uses `@DatabaseField()` annotations

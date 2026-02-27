@@ -95,18 +95,18 @@ This project supports AI-assisted development through GitHub Copilot, Claude Cod
 | **Claude Code** (CLI)        | Interactive coding assistant — reads `CLAUDE.md` → `AGENTS.md`                                                            |
 | **CodeRabbit** (GitHub)      | Automated PR reviews — configured via `.coderabbit.yaml`                                                                  |
 
-## Agents & Prompts
+## Agents
 
-Reusable prompt/agent files can be invoked in Copilot chat (`.github/prompts/`) or Claude Code (`.claude/agents/`):
+Custom agents are defined in `.claude/agents/` and can be invoked from Copilot chat or Claude Code:
 
-| Agent / Prompt         | Purpose                                               | Recommended Tool                       |
-| ---------------------- | ----------------------------------------------------- | -------------------------------------- |
-| `analyze-requirements` | Flesh out user requirements from a GitHub issue       | Copilot chat or Claude Code            |
-| `troubleshoot`         | Debug issues using Sentry, devtools, and stack traces | Copilot/Claude Code with Sentry MCP    |
-| `plan-implementation`  | Design technical approach and architecture            | Copilot **Plan mode** or Claude Code   |
-| `implement-feature`    | Full implementation workflow with tests               | Copilot agent mode or Claude Code      |
-| `refactor-code`        | Code analysis and refactoring suggestions             | CodeRabbit (automatic) + manual prompt |
-| `write-e2e-tests`      | Generate Playwright e2e tests                         | Copilot agent mode or Claude Code      |
+| Agent                     | Purpose                                               | Recommended Tool                       |
+| ------------------------- | ----------------------------------------------------- | -------------------------------------- |
+| `business-analyst`        | Refine requirements into structured, testable docs    | Copilot chat or Claude Code            |
+| `troubleshooter`          | Debug issues using Sentry, devtools, and stack traces | Copilot/Claude Code with Sentry MCP    |
+| `implementation-planner`  | Design technical approach and architecture            | Copilot **Plan mode** or Claude Code   |
+| `implementation-executor` | Full implementation workflow with tests               | Copilot agent mode or Claude Code      |
+| `refactorer`              | Code analysis and refactoring suggestions             | CodeRabbit (automatic) + manual prompt |
+| `e2e-test-writer`         | Generate Playwright e2e tests                         | Copilot agent mode or Claude Code      |
 
 ## MCP Servers
 
@@ -122,7 +122,7 @@ MCP servers are configured in `.vscode/mcp.json`:
 - Be specific about the entity/component you're working with
 - Reference existing patterns and similar implementations
 - Let agents read relevant files first before making changes
-- Use the prompt files as starting points for common workflows
+- Use the agent files as starting points for common workflows
 
 ---
 
