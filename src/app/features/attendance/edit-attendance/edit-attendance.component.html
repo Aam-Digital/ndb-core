@@ -1,111 +1,130 @@
-<app-edit-entity
-  [formControl]="formControl"
-  [formFieldConfig]="formFieldConfig"
-  [showEntities]="!showAttendance"
-></app-edit-entity>
-
-@if (showAttendance) {
-  <!-- If feasible, this whole setup should be replaced with a more simple setup that
-  automatically adapts to the screen size without having to rely on two different layout techniques for
-  small and big screens.
-  -->
-  @if (!mobile) {
-    <div>
-      <!-- Desktop view: display the information as table -->
-      <table class="table">
-        @for (childId of formControl.value; track childId) {
-          <tr>
-            <td>
-              @if (!formControl.disabled) {
-                <button mat-icon-button (click)="removeChild(childId)">
-                  <fa-icon icon="trash"></fa-icon>
-                </button>
-              }
-            </td>
-            <td>
-              <app-entity-block [entityId]="childId"></app-entity-block>
-            </td>
-            <td>
-              <app-attendance-status-select
-                [value]="getAttendance(childId).status"
-                (valueChange)="updateAttendanceValue(childId, 'status', $event)"
-                [disabled]="formControl.disabled"
+@if (!mobile) {
+  <div>
+    <!-- Desktop view: display the information as table -->
+    <table class="table">
+      @for (item of formControl.value; track item.participant) {
+        <tr>
+          <td>
+            @if (!formControl.disabled) {
+              <button
+                mat-icon-button
+                (click)="removeParticipant(item.participant)"
+                matTooltip="Remove participant"
+                i18n-matTooltip
               >
-              </app-attendance-status-select>
-            </td>
-            <td class="full-width">
-              <mat-form-field class="adjust-top margin-small">
-                <input
-                  #inputElement
-                  matInput
-                  i18n-placeholder
-                  placeholder="Remarks"
-                  name="remarks"
-                  type="text"
-                  [value]="getAttendance(childId).remarks"
-                  (input)="
-                    updateAttendanceValue(
-                      childId,
-                      'remarks',
-                      inputElement.value
-                    )
-                  "
-                  [disabled]="formControl.disabled"
-                />
-              </mat-form-field>
-            </td>
-          </tr>
-        }
-      </table>
-    </div>
-  } @else {
-    <div class="attendance-blocks">
-      <!-- Mobile view / smaller screen: display the information using a flex-layout -->
-      @for (childId of formControl.value; track childId) {
-        <mat-card class="attendance-item mat-elevation-z1 margin-bottom-small">
-          <mat-card-content>
-            <div class="attendance-item--header margin-bottom-regular">
-              <app-entity-block [entityId]="childId"></app-entity-block>
-              @if (!formControl.disabled) {
-                <button
-                  mat-icon-button
-                  (click)="removeChild(childId)"
-                  class="mobile-remove-item"
-                >
-                  <fa-icon icon="trash"></fa-icon>
-                </button>
-              }
-            </div>
-            <div class="attendance-item--content">
-              <app-attendance-status-select
-                [value]="getAttendance(childId).status"
-                (valueChange)="updateAttendanceValue(childId, 'status', $event)"
+                <fa-icon icon="xmark"></fa-icon>
+              </button>
+            }
+          </td>
+          <td>
+            <app-entity-block [entityId]="item.participant"></app-entity-block>
+          </td>
+          <td>
+            <app-attendance-status-select
+              [value]="item.status"
+              (valueChange)="
+                updateAttendanceValue(item.participant, 'status', $event)
+              "
+              [disabled]="formControl.disabled"
+            >
+            </app-attendance-status-select>
+          </td>
+          <td class="full-width">
+            <mat-form-field class="adjust-top margin-small">
+              <mat-label i18n>Remarks</mat-label>
+              <input
+                #inputElement
+                matInput
+                name="remarks"
+                type="text"
+                [value]="item.remarks"
+                (input)="
+                  updateAttendanceValue(
+                    item.participant,
+                    'remarks',
+                    inputElement.value
+                  )
+                "
                 [disabled]="formControl.disabled"
-              >
-              </app-attendance-status-select>
-              <mat-form-field>
-                <input
-                  #inputElement
-                  matInput
-                  i18n-placeholder
-                  placeholder="Remarks"
-                  name="remarks"
-                  type="text"
-                  [value]="getAttendance(childId).remarks"
-                  (input)="
-                    updateAttendanceValue(
-                      childId,
-                      'remarks',
-                      inputElement.value
-                    )
-                  "
-                  [disabled]="formControl.disabled"
-                />
-              </mat-form-field>
-            </div>
-          </mat-card-content>
-        </mat-card>
+              />
+            </mat-form-field>
+          </td>
+        </tr>
       }
-    </div>
-  }
+      @if (!formControl.disabled) {
+        <tr>
+          <td colspan="4">
+            <ng-container *ngTemplateOutlet="addParticipant"></ng-container>
+          </td>
+        </tr>
+      }
+    </table>
+  </div>
+} @else {
+  <div class="attendance-blocks">
+    <!-- Mobile view / smaller screen: display the information using a flex-layout -->
+    @for (item of formControl.value; track item.participant) {
+      <mat-card class="attendance-item mat-elevation-z1 margin-bottom-small">
+        <mat-card-content>
+          <div class="attendance-item--header margin-bottom-regular">
+            <app-entity-block [entityId]="item.participant"></app-entity-block>
+            @if (!formControl.disabled) {
+              <button
+                mat-icon-button
+                (click)="removeParticipant(item.participant)"
+                class="mobile-remove-item"
+                matTooltip="Remove participant"
+                i18n-matTooltip
+              >
+                <fa-icon icon="xmark"></fa-icon>
+              </button>
+            }
+          </div>
+          <div class="attendance-item--content">
+            <app-attendance-status-select
+              [value]="item.status"
+              (valueChange)="
+                updateAttendanceValue(item.participant, 'status', $event)
+              "
+              [disabled]="formControl.disabled"
+            >
+            </app-attendance-status-select>
+            <mat-form-field>
+              <mat-label i18n>Remarks</mat-label>
+              <input
+                #inputElement
+                matInput
+                name="remarks"
+                type="text"
+                [value]="item.remarks"
+                (input)="
+                  updateAttendanceValue(
+                    item.participant,
+                    'remarks',
+                    inputElement.value
+                  )
+                "
+                [disabled]="formControl.disabled"
+              />
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+    @if (!formControl.disabled) {
+      <ng-container *ngTemplateOutlet="addParticipant"></ng-container>
+    }
+  </div>
 }
+
+<ng-template #addParticipant>
+  <mat-form-field>
+    <mat-label i18n>Add participant</mat-label>
+    <app-edit-entity
+      [formControl]="addParticipantControl"
+      [formFieldConfig]="participantFieldConfig"
+      [showEntities]="false"
+      [additionalFilter]="participantFilter()"
+    ></app-edit-entity>
+  </mat-form-field>
+</ng-template>

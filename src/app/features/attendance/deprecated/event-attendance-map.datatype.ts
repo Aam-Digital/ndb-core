@@ -1,12 +1,13 @@
 import { inject, Injectable } from "@angular/core";
-import { AttendanceItem } from "./attendance-item";
+import { AttendanceItem } from "../model/attendance-item";
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 
 /**
  * A full registry of event-attendance entries for multiple participants.
+ *
+ * @deprecated Use the new `attendance` datatype ({@link AttendanceDatatype}) with `isArray: true` instead.
  */
-
 export class EventAttendanceMap extends Map<string, AttendanceItem> {
   static DATA_TYPE = "event-attendance-map";
 
@@ -19,6 +20,8 @@ export class EventAttendanceMap extends Map<string, AttendanceItem> {
  * Holds a full register of EventAttendance entries.
  * Each value in the map is an {@link AttendanceItem}, transformed
  * using its schema annotations (via {@link EntitySchemaService}).
+ *
+ * @deprecated Use the new `attendance` datatype ({@link AttendanceDatatype}) with `isArray: true` instead.
  */
 @Injectable()
 export class EventAttendanceMapDatatype extends DefaultDatatype<

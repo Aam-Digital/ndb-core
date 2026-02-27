@@ -132,7 +132,7 @@
           "isArray": true,
           "additional": "Child",
           "entityReferenceRole": "composite",
-          "editComponent": "EditAttendance",
+          "editComponent": "EditLegacyAttendance",
           "anonymize": "retain"
         },
         "childrenAttendance": {
