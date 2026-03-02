@@ -6,6 +6,7 @@ import {
   OnChanges,
   OnInit,
   Output,
+  signal,
   SimpleChanges,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
@@ -39,6 +40,7 @@ import { ExportDataDirective } from "../../export/export-data-directive/export-d
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { DuplicateRecordService } from "../duplicate-records/duplicate-records.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { Sort } from "@angular/material/sort";
 import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
 import { RouteTarget } from "../../../route-target";
@@ -94,6 +96,7 @@ import { BulkOperationStateService } from "../../entity/entity-actions/bulk-oper
     DisableEntityOperationDirective,
     RouterLink,
     MatTooltipModule,
+    MatProgressBarModule,
     EntityCreateButtonComponent,
     AsyncPipe,
     AblePurePipe,
@@ -138,9 +141,12 @@ export class EntityListComponent<T extends Entity>
 
   /** initial / default state whether to include archived records in the list */
   @Input() showInactive: boolean;
+  /** allow parent to manage inactive loading (e.g. when combining multiple entity types) */
+  @Input() disableInactiveAutoLoad: boolean = false;
 
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
+  @Output() showInactiveChange = new EventEmitter<boolean>();
   selectedRows: T[];
 
   isDesktop: boolean;
@@ -261,12 +267,47 @@ export class EntityListComponent<T extends Entity>
    * Template method that can be overwritten to change the loading logic.
    * @protected
    */
-  protected getEntities(): Promise<T[]> {
+  protected async getEntities(): Promise<T[]> {
     if (this.loaderMethod && this.entitySpecialLoader) {
       return this.entitySpecialLoader.loadData(this.loaderMethod);
     }
 
-    return this.entityMapperService.loadType(this.entityConstructor);
+    const activeRecords = await this.entityMapperService.loadType(
+      this.entityConstructor,
+      "active",
+    );
+    if (this.showInactive && !this.disableInactiveAutoLoad) {
+      await this.loadInactiveEntities();
+    }
+    return activeRecords;
+  }
+
+  private inactiveLoaded = false;
+  loadingInactive = signal(false);
+
+  async onShowInactiveChange(showInactive: boolean) {
+    this.showInactive = showInactive;
+    this.showInactiveChange.emit(showInactive);
+    if (this.disableInactiveAutoLoad) {
+      return;
+    }
+    if (showInactive && !this.inactiveLoaded) {
+      await this.loadInactiveEntities();
+    }
+  }
+
+  private async loadInactiveEntities() {
+    if (this.inactiveLoaded || this.loadingInactive()) {
+      return;
+    }
+    this.loadingInactive.set(true);
+    const inactiveEntities = await this.entityMapperService.loadType(
+      this.entityConstructor,
+      "inactive",
+    );
+    this.allEntities = [...this.allEntities, ...inactiveEntities];
+    this.inactiveLoaded = true;
+    this.loadingInactive.set(false);
   }
 
   private updateSubscription: Subscription;
