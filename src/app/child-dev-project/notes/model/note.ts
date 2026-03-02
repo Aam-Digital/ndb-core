@@ -117,20 +117,6 @@ export class Note extends Entity {
   })
   childrenAttendance: AttendanceItem[] = [];
 
-  /**
-   * Attendance records for participants at this event.
-   * Each entry holds a participant reference and their attendance status.
-   *
-   * This replaces the legacy `childrenAttendance` field after DB migration.
-   */
-  @DatabaseField({
-    label: $localize`:Label for the attendance details of a note:Attendance details`,
-    dataType: "attendance",
-    isArray: true,
-    anonymize: "retain",
-  })
-  attendance: AttendanceItem[] = [];
-
   @DatabaseField({
     label: $localize`:Label for the date of a note:Date`,
     dataType: "date-only",
