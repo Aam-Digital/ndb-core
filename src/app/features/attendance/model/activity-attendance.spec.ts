@@ -23,7 +23,7 @@ import {
   AttendanceLogicalStatus,
   AttendanceStatusType,
 } from "./attendance-status";
-import { getOrCreateAttendance } from "./attendance-item";
+import { AttendanceItem, getOrCreateAttendance } from "./attendance-item";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 
 describe("ActivityAttendance", () => {
@@ -196,9 +196,11 @@ describe("ActivityAttendance", () => {
       ]),
     ]);
 
-    // adding participants without attendance to one event
-    attendance.events[1].children.push("3");
-    attendance.events[1].children.push("4");
+    // adding participants with default (unknown) attendance status to one event
+    attendance.events[1].childrenAttendance.push(
+      new AttendanceItem(undefined, "", "3"),
+      new AttendanceItem(undefined, "", "4"),
+    );
 
     expect(attendance.countEventsWithUnknownStatus()).toBe(1); // one unique event with undefined attendances
     expect(attendance.countEventsWithUnknownStatus("2")).toBe(0);

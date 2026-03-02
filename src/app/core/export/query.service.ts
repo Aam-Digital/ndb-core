@@ -6,10 +6,7 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "#src/app/features/attendance/attendance.service";
-import {
-  AttendanceItem,
-  getOrCreateAttendance,
-} from "#src/app/features/attendance/model/attendance-item";
+import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import jsonQuery from "json-query";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 
@@ -376,12 +373,9 @@ export class QueryService {
   ): string[] {
     const attendedChildren: string[] = [];
     events.forEach((e) =>
-      e.children.forEach((childId) => {
-        if (
-          getOrCreateAttendance(e.childrenAttendance, childId).status
-            .countAs === attendanceStatus
-        ) {
-          attendedChildren.push(childId);
+      e.childrenAttendance.forEach((item) => {
+        if (item.status.countAs === attendanceStatus) {
+          attendedChildren.push(item.participant);
         }
       }),
     );
@@ -404,13 +398,15 @@ export class QueryService {
         ? this.getMembersOfGroupsForEvent(event)
         : [];
 
-      for (const child of event.children) {
+      for (const item of event.childrenAttendance) {
         const attendance: AttendanceInfo = {
-          participant: child,
-          status: getOrCreateAttendance(event.childrenAttendance, child),
+          participant: item.participant,
+          status: item,
         };
 
-        const relation = linkedRelations.find((rel) => rel.childId === child);
+        const relation = linkedRelations.find(
+          (rel) => rel.childId === item.participant,
+        );
         if (relation) {
           attendance.school = relation.schoolId;
         }

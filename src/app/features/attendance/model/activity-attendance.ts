@@ -10,11 +10,7 @@ import {
   WarningLevel,
 } from "#src/app/child-dev-project/warning-level";
 import { Entity } from "#src/app/core/entity/model/entity";
-import {
-  AttendanceItem,
-  getAttendance,
-  getOrCreateAttendance,
-} from "./attendance-item";
+import { AttendanceItem, getAttendance } from "./attendance-item";
 
 /**
  * Aggregate information about all events for a {@link RecurringActivity} within a given time period.
@@ -68,7 +64,13 @@ export class ActivityAttendance extends Entity {
    * List of (actual, recorded in at least one event) participants.
    */
   get participants(): string[] {
-    return Array.from(new Set(this.events.flatMap((event) => event.children)));
+    return Array.from(
+      new Set(
+        this.events.flatMap((event) =>
+          event.childrenAttendance.map((a) => a.participant),
+        ),
+      ),
+    );
   }
 
   /**
@@ -146,16 +148,12 @@ export class ActivityAttendance extends Entity {
       .map((event) => {
         const eventStats = {
           matching: 0,
-          total: event.children.length,
+          total: event.childrenAttendance.length,
         };
-        for (const childId of event.children) {
-          const att = getOrCreateAttendance(
-            event.childrenAttendance,
-            childId,
-          ).status;
-          if (att.countAs === matchingType) {
+        for (const item of event.childrenAttendance) {
+          if (item.status.countAs === matchingType) {
             eventStats.matching++;
-          } else if (att.countAs === AttendanceLogicalStatus.IGNORE) {
+          } else if (item.status.countAs === AttendanceLogicalStatus.IGNORE) {
             eventStats.total--;
           }
         }
@@ -192,7 +190,11 @@ export class ActivityAttendance extends Entity {
    */
   countEventsWithUnknownStatus(forChildId?: string): number {
     return this.events
-      .filter((e) => !forChildId || e.children.includes(forChildId))
+      .filter(
+        (e) =>
+          !forChildId ||
+          e.childrenAttendance.some((a) => a.participant === forChildId),
+      )
       .reduce(
         (count: number, e: EventNote) =>
           this.hasUnknownAttendances(e, forChildId) ? count + 1 : count,
@@ -205,9 +207,6 @@ export class ActivityAttendance extends Entity {
       const att = getAttendance(event.childrenAttendance, childId);
       return !att || att.status.id === NullAttendanceStatusType.id;
     }
-    if (event.childrenAttendance.length < event.children.length) {
-      return true;
-    }
     return event.childrenAttendance.some(
       (v) => v.status.id === NullAttendanceStatusType.id,
     );
@@ -218,7 +217,8 @@ export class ActivityAttendance extends Entity {
     this.individualLogicalStatusCounts = new Map();
 
     for (const event of this.events) {
-      for (const participant of event.children) {
+      for (const item of event.childrenAttendance) {
+        const participant = item.participant;
         let logicalCount = this.individualLogicalStatusCounts.get(participant);
         if (!logicalCount) {
           logicalCount = {};
@@ -230,13 +230,9 @@ export class ActivityAttendance extends Entity {
           this.individualStatusTypeCounts.set(participant, typeCount);
         }
 
-        const att = getOrCreateAttendance(
-          event.childrenAttendance,
-          participant,
-        );
-        logicalCount[att.status.countAs] =
-          (logicalCount[att.status.countAs] ?? 0) + 1;
-        typeCount[att.status.id] = (typeCount[att.status.id] ?? 0) + 1;
+        logicalCount[item.status.countAs] =
+          (logicalCount[item.status.countAs] ?? 0) + 1;
+        typeCount[item.status.id] = (typeCount[item.status.id] ?? 0) + 1;
       }
     }
   }

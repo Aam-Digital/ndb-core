@@ -9,10 +9,7 @@ import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { EventNote } from "../../model/event-note";
 import { AttendanceService } from "../../attendance.service";
-import {
-  AttendanceItem,
-  getOrCreateAttendance,
-} from "../../model/attendance-item";
+import { getOrCreateAttendance } from "../../model/attendance-item";
 import { AnalyticsService } from "#src/app/core/analytics/analytics.service";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
@@ -83,11 +80,6 @@ describe("AttendanceCalendarComponent", () => {
     const childWithoutAttendance = new TestEntity("childWithoutAttendance");
     const note = new Note();
     note.date = new Date();
-    note.children.push(
-      attendedChild.getId(),
-      absentChild.getId(),
-      childWithoutAttendance.getId(),
-    );
     const presentAttendance = defaultAttendanceStatusTypes.find(
       (it) => it.id === "PRESENT",
     );
@@ -100,6 +92,10 @@ describe("AttendanceCalendarComponent", () => {
     ).status = presentAttendance;
     getOrCreateAttendance(note.childrenAttendance, absentChild.getId()).status =
       absentAttendance;
+    getOrCreateAttendance(
+      note.childrenAttendance,
+      childWithoutAttendance.getId(),
+    );
     component.records = [note];
 
     component.selectDay(new Date());
@@ -119,6 +115,8 @@ describe("AttendanceCalendarComponent", () => {
 
     component.selectDay(testDate);
 
-    expect(component.selectedEvent.children).toContain(excludedChild.getId());
+    expect(
+      component.selectedEvent.childrenAttendance.map((a) => a.participant),
+    ).toContain(excludedChild.getId());
   });
 });
