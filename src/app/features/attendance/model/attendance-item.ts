@@ -24,11 +24,17 @@ export class AttendanceItem {
 
   set status(value) {
     if (typeof value === "object") {
-      if (value.isInvalidOption) {
+      if (value.isInvalidOption && !value.id) {
+        // empty id means "no status" — normalize to the canonical NullAttendanceStatusType
+        // so the value stays consistent after a database round-trip
+        this._status = NullAttendanceStatusType;
+      } else if (value.isInvalidOption) {
         value.shortName = "?";
         value.countAs = NullAttendanceStatusType.countAs;
+        this._status = value;
+      } else {
+        this._status = value;
       }
-      this._status = value;
     } else {
       this._status = NullAttendanceStatusType;
     }
