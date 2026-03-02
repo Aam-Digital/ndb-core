@@ -40,7 +40,7 @@ import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { ConfigureEnumPopupComponent } from "../../../basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component";
 import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
-import { merge } from "rxjs";
+import { merge, Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
 import { uniquePropertyValidator } from "app/core/common-components/entity-form/unique-property-validator/unique-property-validator";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
@@ -127,6 +127,8 @@ export class AdminEntityFieldComponent implements OnInit {
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
   entityAdditionalMultiSelect: WritableSignal<boolean> = signal(false);
+  attendanceParticipantTypesForm = new FormControl<string[]>([]);
+  private attendanceParticipantSubscription?: Subscription;
 
   ngOnInit() {
     this.entityType = this.data.entityType;
@@ -311,8 +313,7 @@ export class AdminEntityFieldComponent implements OnInit {
 
   private updateDataTypeAdditional(
     dataType: string,
-    newAdditional: string | string[] | undefined = this.data.entitySchemaField
-      .additional,
+    newAdditional: any = this.data.entitySchemaField.additional,
   ) {
     this.resetAdditional();
 
@@ -322,6 +323,8 @@ export class AdminEntityFieldComponent implements OnInit {
       );
     } else if (dataType === EntityDatatype.dataType) {
       this.initAdditionalForEntityRef(newAdditional);
+    } else if (dataType === "attendance") {
+      this.initAdditionalForAttendance(newAdditional);
     }
 
     // hasInnerType: [ArrayDatatype.dataType].includes(d.dataType),
@@ -380,11 +383,56 @@ export class AdminEntityFieldComponent implements OnInit {
   }
 
   private resetAdditional() {
+    this.attendanceParticipantSubscription?.unsubscribe();
+    this.attendanceParticipantSubscription = undefined;
     this.additionalForm.removeValidators(Validators.required);
     this.additionalForm.reset(null);
     this.typeAdditionalOptions = [];
     this.createNewAdditionalOption = undefined;
     this.entityAdditionalMultiSelect.set(false);
+  }
+
+  private initAdditionalForAttendance(newAdditional?: any) {
+    this.typeAdditionalOptions = this.entityRegistry
+      .getEntityTypes(true)
+      .map((x) => ({ label: x.value.label, value: x.value.ENTITY_TYPE }));
+
+    // Extract participant types from the nested additional format
+    let participantTypes: string[] = [];
+    if (newAdditional?.participant?.additional) {
+      const raw = newAdditional.participant.additional;
+      participantTypes = Array.isArray(raw) ? [...raw] : [raw];
+    }
+
+    // Sync participant type selection back to additionalForm in nested format
+    this.attendanceParticipantSubscription =
+      this.attendanceParticipantTypesForm.valueChanges.subscribe((types) => {
+        const nestedAdditional =
+          types && types.length > 0
+            ? {
+                participant: {
+                  dataType: "entity",
+                  additional: types,
+                },
+              }
+            : null;
+        this.additionalForm.setValue(nestedAdditional);
+      });
+
+    // Set initial nested value if we have participant types
+    if (participantTypes.length > 0) {
+      this.additionalForm.setValue({
+        participant: {
+          dataType: "entity",
+          additional: participantTypes,
+        },
+      });
+    }
+
+    // Use setTimeout to ensure Angular processes the @if block and creates the EntityTypeSelectComponent before setting the value
+    setTimeout(() => {
+      this.attendanceParticipantTypesForm.setValue(participantTypes);
+    });
   }
 
   async onEntityAdditionalSelectionModeChange(change: MatSlideToggleChange) {

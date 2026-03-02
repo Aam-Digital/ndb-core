@@ -294,6 +294,72 @@ describe("AdminEntityFieldComponent", () => {
     ]);
   }));
 
+  it("should init 'additional' for attendance datatype from nested format", fakeAsync(() => {
+    const mockEntityTypes = [TestEntity, RecurringActivity];
+    const entityRegistry = TestBed.inject(EntityRegistry);
+    spyOn(entityRegistry, "getEntityTypes").and.returnValue(
+      mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
+    );
+
+    component.data.entityType = TestEntity;
+    component.data.entitySchemaField = {
+      label: "Attendance",
+      dataType: "attendance",
+      isArray: true,
+      additional: {
+        participant: {
+          dataType: "entity",
+          additional: [TestEntity.ENTITY_TYPE, RecurringActivity.ENTITY_TYPE],
+        },
+      },
+    };
+    component.ngOnInit();
+    tick();
+
+    expect(component.attendanceParticipantTypesForm.value).toEqual([
+      TestEntity.ENTITY_TYPE,
+      RecurringActivity.ENTITY_TYPE,
+    ]);
+    expect(component.additionalForm.value).toEqual({
+      participant: {
+        dataType: "entity",
+        additional: [TestEntity.ENTITY_TYPE, RecurringActivity.ENTITY_TYPE],
+      },
+    });
+  }));
+
+  it("should sync attendance participant type selection to nested additional format", fakeAsync(() => {
+    const mockEntityTypes = [TestEntity, RecurringActivity];
+    const entityRegistry = TestBed.inject(EntityRegistry);
+    spyOn(entityRegistry, "getEntityTypes").and.returnValue(
+      mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
+    );
+
+    component.data.entityType = TestEntity;
+    component.data.entitySchemaField = {
+      label: "Attendance",
+      dataType: "attendance",
+      isArray: true,
+    };
+    component.ngOnInit();
+    tick();
+
+    component.attendanceParticipantTypesForm.setValue([TestEntity.ENTITY_TYPE]);
+    tick();
+
+    expect(component.additionalForm.value).toEqual({
+      participant: {
+        dataType: "entity",
+        additional: [TestEntity.ENTITY_TYPE],
+      },
+    });
+
+    // Clearing selection sets additional to null
+    component.attendanceParticipantTypesForm.setValue([]);
+    tick();
+    expect(component.additionalForm.value).toBeNull();
+  }));
+
   it("should validate that label is unique", fakeAsync(() => {
     // Create a simple entity type with existing fields
     class TestEntityWithFields extends Entity {

@@ -24,8 +24,7 @@ import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-fie
 @Injectable()
 export class AttendanceDatatype extends SchemaEmbedDatatype {
   static override readonly dataType = "attendance";
-  // TODO: need a way to configure the entity types for `participant` field before enabling this in the Admin UI
-  //static override label: string = $localize`:datatype-label:attendance (participants with status)`;
+  static override label: string = $localize`:datatype-label:attendance (participants with status)`;
 
   override embeddedType = AttendanceItem;
 
