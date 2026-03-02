@@ -3,7 +3,6 @@ import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
 } from "./attendance-status";
-import { getOrCreateAttendance } from "./attendance-item";
 
 export interface AverageAttendanceStats {
   average: number;
@@ -23,11 +22,8 @@ export function calculateAverageAttendance(
 
   const statusCounts = new Map<string, number>();
 
-  for (const childId of event.children) {
-    const status = getOrCreateAttendance(
-      event.childrenAttendance,
-      childId,
-    ).status;
+  for (const item of event.childrenAttendance) {
+    const status = item.status;
     const countStatus = statusCounts.get(status?.id) ?? 0;
     statusCounts.set(status?.id, countStatus + 1);
 

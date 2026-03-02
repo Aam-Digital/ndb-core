@@ -174,9 +174,6 @@ export class AttendanceCalendarComponent implements OnChanges {
         this.selectedDate.isSame(e.date, "day"),
       );
       if (this.selectedEvent && this.highlightForChild) {
-        if (!this.selectedEvent.children.includes(this.highlightForChild)) {
-          this.selectedEvent.children.push(this.highlightForChild);
-        }
         this.selectedEventAttendance = getOrCreateAttendance(
           this.selectedEvent.childrenAttendance,
           this.highlightForChild,
