@@ -33,12 +33,14 @@ export class EventAttendanceMapDatatype extends DefaultDatatype<
 
     const result: [string, any][] = [];
     for (const item of value) {
+      const attItem = this.schemaService.transformEntityToDatabaseFormat(
+        item as any,
+        AttendanceItem.schema,
+      );
+
       result.push([
         item.participant ?? "",
-        this.schemaService.transformEntityToDatabaseFormat(
-          item as any,
-          AttendanceItem.schema,
-        ),
+        { status: attItem.status, remarks: attItem.remarks },
       ]);
     }
     return result;

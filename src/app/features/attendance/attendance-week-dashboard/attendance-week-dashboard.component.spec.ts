@@ -7,6 +7,10 @@ import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-confi
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { AttendanceService } from "../attendance.service";
+import {
+  AttendanceItem,
+  getOrCreateAttendance,
+} from "../model/attendance-item";
 import { RecurringActivity } from "../model/recurring-activity";
 import moment from "moment";
 import * as MockDate from "mockdate";
@@ -56,10 +60,14 @@ describe("AttendanceWeekDashboardComponent", () => {
       (s) => s.countAs === AttendanceLogicalStatus.ABSENT,
     );
     [e1, e2].forEach((e) => {
-      e.addChild(absentChild);
-      e.getAttendance(absentChild).status = absentStatus;
-      e.addChild(presentChild);
-      e.getAttendance(presentChild).status = presentStatus;
+      e.children.push(absentChild.getId());
+      e.childrenAttendance.push(
+        new AttendanceItem(absentStatus, "", absentChild.getId()),
+      );
+      e.children.push(presentChild.getId());
+      e.childrenAttendance.push(
+        new AttendanceItem(presentStatus, "", presentChild.getId()),
+      );
     });
     const activity = new RecurringActivity();
     activity.participants = e1.children;
@@ -78,8 +86,8 @@ describe("AttendanceWeekDashboardComponent", () => {
           activity: activity,
           attendanceDays: [
             // sundays are excluded
-            e1.getAttendance(absentChild),
-            e2.getAttendance(absentChild),
+            getOrCreateAttendance(e1.childrenAttendance, absentChild.getId()),
+            getOrCreateAttendance(e2.childrenAttendance, absentChild.getId()),
             undefined,
             undefined,
             undefined,
@@ -99,8 +107,10 @@ describe("AttendanceWeekDashboardComponent", () => {
       (s) => s.countAs === AttendanceLogicalStatus.ABSENT,
     );
     [e1, e2].forEach((e) => {
-      e.addChild(absentChild);
-      e.getAttendance(absentChild).status = absentStatus;
+      e.children.push(absentChild.getId());
+      e.childrenAttendance.push(
+        new AttendanceItem(absentStatus, "", absentChild.getId()),
+      );
     });
     const activity = new RecurringActivity();
     delete activity.participants; // no participants set directly on RecurringActivity
@@ -119,8 +129,8 @@ describe("AttendanceWeekDashboardComponent", () => {
           activity: activity,
           attendanceDays: [
             // sundays are excluded
-            e1.getAttendance(absentChild),
-            e2.getAttendance(absentChild),
+            getOrCreateAttendance(e1.childrenAttendance, absentChild.getId()),
+            getOrCreateAttendance(e2.childrenAttendance, absentChild.getId()),
             undefined,
             undefined,
             undefined,

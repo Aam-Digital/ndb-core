@@ -193,7 +193,9 @@ export class RollCallComponent implements OnChanges {
             " for event " +
             this.eventEntity.getId(),
         );
-        this.eventEntity.removeChild(childId);
+        this.eventEntity.children = this.eventEntity.children.filter(
+          (c) => c !== childId,
+        );
         this.eventEntity.childrenAttendance =
           this.eventEntity.childrenAttendance.filter(
             (a) => a.participant !== childId,

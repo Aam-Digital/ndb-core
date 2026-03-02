@@ -1,7 +1,10 @@
 import { Component, inject, Input, OnInit } from "@angular/core";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceService } from "../attendance.service";
-import { AttendanceItem } from "../model/attendance-item";
+import {
+  AttendanceItem,
+  getOrCreateAttendance,
+} from "../model/attendance-item";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { RecurringActivity } from "../model/recurring-activity";
 import moment, { Moment } from "moment";
@@ -135,7 +138,9 @@ export class AttendanceWeekDashboardComponent
       while (day.isSameOrBefore(to, "day")) {
         const event = att.events.find((e) => day.isSame(e.date, "day"));
         if (event) {
-          eventAttendances.push(event.getAttendance(participant));
+          eventAttendances.push(
+            getOrCreateAttendance(event.childrenAttendance, participant),
+          );
         } else {
           // put a "placeholder" into the array for the current day
           eventAttendances.push(undefined);

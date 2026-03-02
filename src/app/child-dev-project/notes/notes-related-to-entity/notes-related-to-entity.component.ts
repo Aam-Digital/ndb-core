@@ -12,6 +12,8 @@ import { FormFieldConfig } from "../../../core/common-components/entity-form/For
 import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
 import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
+import { AttendanceLogicalStatus } from "#src/app/features/attendance/model/attendance-status";
+import { getWarningLevelColor, WarningLevel } from "../../warning-level";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain entity.
@@ -43,7 +45,18 @@ export class NotesRelatedToEntityComponent
   override ngOnInit() {
     if (this.entity.getType() === "Child") {
       // When displaying notes for a child, use attendance color highlighting
-      this.getColor = (note: Note) => note?.getColorForId(this.entity.getId());
+      const childId = this.entity.getId();
+      this.getColor = (note: Note) => {
+        if (!note) return undefined;
+        if (
+          note.category?.isMeeting &&
+          note.childrenAttendance.find((item) => item.participant === childId)
+            ?.status.countAs === AttendanceLogicalStatus.ABSENT
+        ) {
+          return getWarningLevelColor(WarningLevel.URGENT);
+        }
+        return note.getColor();
+      };
     }
     return super.ngOnInit();
   }
@@ -79,7 +92,7 @@ export class NotesRelatedToEntityComponent
       (this.entity as ChildSchoolRelation).childId,
     )) {
       if (childId) {
-        newNote.addChild(childId);
+        newNote.children.push(childId);
       }
     }
 
@@ -87,7 +100,7 @@ export class NotesRelatedToEntityComponent
       (this.entity as ChildSchoolRelation).schoolId,
     )) {
       if (schooldId) {
-        newNote.addSchool(schooldId);
+        newNote.schools.push(schooldId);
       }
     }
   }

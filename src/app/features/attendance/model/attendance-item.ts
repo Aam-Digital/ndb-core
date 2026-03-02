@@ -57,3 +57,39 @@ export class AttendanceItem {
     return Object.assign(new AttendanceItem(), this);
   }
 }
+
+/**
+ * Find the attendance item for the given participant.
+ * Returns undefined if no entry exists for that participant.
+ */
+export function getAttendance(
+  attendanceItems: AttendanceItem[],
+  participantId: string,
+): AttendanceItem | undefined {
+  const attendance = attendanceItems.find(
+    (item) => item.participant === participantId,
+  );
+  if (!attendance) {
+    return undefined;
+  }
+  if (!(attendance instanceof AttendanceItem)) {
+    return Object.assign(new AttendanceItem(), attendance);
+  }
+  return attendance;
+}
+
+/**
+ * Find or create an attendance item for the given participant.
+ * If no entry exists, a new one with default status is created and appended to the array.
+ */
+export function getOrCreateAttendance(
+  attendanceItems: AttendanceItem[],
+  participantId: string,
+): AttendanceItem {
+  let attendance = getAttendance(attendanceItems, participantId);
+  if (!attendance) {
+    attendance = new AttendanceItem(undefined, "", participantId);
+    attendanceItems.push(attendance);
+  }
+  return attendance;
+}

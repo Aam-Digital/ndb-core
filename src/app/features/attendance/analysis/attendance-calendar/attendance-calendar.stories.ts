@@ -7,6 +7,8 @@ import moment from "moment";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 
+import { getOrCreateAttendance } from "../../model/attendance-item";
+
 const demoEvents: Note[] = [
   generateEventWithAttendance(
     [
@@ -40,7 +42,8 @@ const demoEvents: Note[] = [
   ),
 ];
 
-demoEvents[0].getAttendance("1").remarks = "cough and cold";
+getOrCreateAttendance(demoEvents[0].childrenAttendance, "1").remarks =
+  "cough and cold";
 
 export default {
   title: "Features/Attendance/Components/AttendanceCalendar",

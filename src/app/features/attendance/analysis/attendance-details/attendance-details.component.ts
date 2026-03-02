@@ -2,6 +2,7 @@ import { Component, Input, inject } from "@angular/core";
 import { ActivityAttendance } from "../../model/activity-attendance";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { calculateAverageAttendance } from "../../model/calculate-average-event-attendance";
+import { getAttendance } from "../../model/attendance-item";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { EventNote } from "../../model/event-note";
@@ -51,7 +52,10 @@ export class AttendanceDetailsComponent {
       viewComponent: "ReadonlyFunction",
       additional: (note: Note) => {
         if (this.forChild) {
-          return note.getAttendance(this.forChild)?.status?.label || "-";
+          return (
+            getAttendance(note.childrenAttendance, this.forChild)?.status
+              ?.label || "-"
+          );
         } else {
           return (
             (calculateAverageAttendance(note).average * 100).toFixed(0) + "%" ||

@@ -6,6 +6,7 @@ import { Note } from "../../../child-dev-project/notes/model/note";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { ExportColumnConfig } from "./export-column-config";
 import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
+import { getOrCreateAttendance } from "#src/app/features/attendance/model/attendance-item";
 import moment from "moment";
 import { RecurringActivity } from "#src/app/features/attendance/model/recurring-activity";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
@@ -413,7 +414,7 @@ describe("DataTransformationService", () => {
     note.children = children.map((child) => child.getId());
 
     for (let i = 0; i < attendanceStatus.length; i++) {
-      note.getAttendance(note.children[i]).status =
+      getOrCreateAttendance(note.childrenAttendance, note.children[i]).status =
         defaultAttendanceStatusTypes.find((s) => s.id === attendanceStatus[i]);
     }
     await entityMapper.save(note);

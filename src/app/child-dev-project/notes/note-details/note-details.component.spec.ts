@@ -3,6 +3,10 @@ import { Note } from "../model/note";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
+import {
+  AttendanceItem,
+  getOrCreateAttendance,
+} from "#src/app/features/attendance/model/attendance-item";
 import { NEVER } from "rxjs";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
@@ -18,8 +22,10 @@ function generateTestNote(forChildren: TestEntity[]) {
     isMeeting: true,
   };
   for (const child of forChildren) {
-    testNote.addChild(child);
-    testNote.getAttendance(child).status = defaultAttendanceStatusTypes[0];
+    testNote.children.push(child.getId());
+    testNote.childrenAttendance.push(
+      new AttendanceItem(defaultAttendanceStatusTypes[0], "", child.getId()),
+    );
   }
   return testNote;
 }

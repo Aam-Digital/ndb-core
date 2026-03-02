@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
 import { AttendanceService } from "../../attendance.service";
+import { getOrCreateAttendance } from "../../model/attendance-item";
 import { DatePipe, PercentPipe } from "@angular/common";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { ActivityAttendance } from "../../model/activity-attendance";
@@ -77,11 +78,13 @@ describe("ActivityAttendanceSectionComponent", () => {
     component.forChild = testChildId;
 
     const eventParticipatingIn = EventNote.create(new Date(), "participating");
-    eventParticipatingIn.addChild(testChildId);
-    eventParticipatingIn.getAttendance(testChildId).status =
-      defaultAttendanceStatusTypes.find(
-        (s) => s.countAs === AttendanceLogicalStatus.PRESENT,
-      );
+    eventParticipatingIn.children.push(testChildId);
+    getOrCreateAttendance(
+      eventParticipatingIn.childrenAttendance,
+      testChildId,
+    ).status = defaultAttendanceStatusTypes.find(
+      (s) => s.countAs === AttendanceLogicalStatus.PRESENT,
+    );
 
     component.allRecords = [
       ActivityAttendance.create(new Date(), []),

@@ -9,7 +9,10 @@ import {
 import { EventNote } from "#src/app/features/attendance/model/event-note";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { Note } from "../../child-dev-project/notes/model/note";
-import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
+import {
+  AttendanceItem,
+  getOrCreateAttendance,
+} from "#src/app/features/attendance/model/attendance-item";
 import { AttendanceStatusType } from "#src/app/features/attendance/model/attendance-status";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "#src/app/features/attendance/attendance.service";
@@ -726,7 +729,7 @@ describe("QueryService", () => {
     note.children = children.map((c) => c.child);
 
     children.forEach(({ child, status }) => {
-      note.getAttendance(child).status = status;
+      getOrCreateAttendance(note.childrenAttendance, child).status = status;
     });
 
     return note;

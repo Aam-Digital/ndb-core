@@ -14,7 +14,11 @@ import {
   MatDatepickerModule,
 } from "@angular/material/datepicker";
 import moment, { Moment } from "moment";
-import { AttendanceItem } from "../../model/attendance-item";
+import {
+  AttendanceItem,
+  getAttendance,
+  getOrCreateAttendance,
+} from "../../model/attendance-item";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import {
@@ -105,7 +109,10 @@ export class AttendanceCalendarComponent implements OnChanges {
     const event = this.records.find((e) => cellMoment.isSame(e.date, "day"));
     if (event && this.highlightForChild) {
       // coloring for individual child
-      const eventAttendance = event.getAttendance(this.highlightForChild);
+      const eventAttendance = getAttendance(
+        event.childrenAttendance,
+        this.highlightForChild,
+      );
 
       const statusClass = eventAttendance?.status?.style;
       classes[statusClass] = true;
@@ -167,8 +174,11 @@ export class AttendanceCalendarComponent implements OnChanges {
         this.selectedDate.isSame(e.date, "day"),
       );
       if (this.selectedEvent && this.highlightForChild) {
-        this.selectedEvent.addChild(this.highlightForChild); // ensure child is part of the event
-        this.selectedEventAttendance = this.selectedEvent.getAttendance(
+        if (!this.selectedEvent.children.includes(this.highlightForChild)) {
+          this.selectedEvent.children.push(this.highlightForChild);
+        }
+        this.selectedEventAttendance = getOrCreateAttendance(
+          this.selectedEvent.childrenAttendance,
           this.highlightForChild,
         );
       }

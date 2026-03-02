@@ -81,8 +81,7 @@ describe("AttendanceService", () => {
       moment("2020-01-01").toDate(),
       "manual event note 1",
     );
-    note1.addChild("1");
-    note1.addChild("2");
+    note1.children.push("1", "2");
     note1.category = meetingInteractionCategory;
     await entityMapper.save(note1);
 
@@ -90,7 +89,7 @@ describe("AttendanceService", () => {
       moment("2020-01-02").toDate(),
       "manual event note 2",
     );
-    note2.addChild("1");
+    note2.children.push("1");
     note2.category = meetingInteractionCategory;
     await entityMapper.save(note2);
 
@@ -98,7 +97,7 @@ describe("AttendanceService", () => {
       moment("2020-01-02").toDate(),
       "manual event note 3",
     );
-    nonMeetingNote.addChild("1");
+    nonMeetingNote.children.push("1");
     nonMeetingNote.category = defaultInteractionTypes.find((t) => !t.isMeeting);
     await entityMapper.save(nonMeetingNote);
 

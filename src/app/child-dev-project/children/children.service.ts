@@ -165,7 +165,12 @@ export class ChildrenService {
       .filter((c) => c.isActive)
       .forEach((c) => results.set(c.getId(), Number.POSITIVE_INFINITY));
 
-    const noteProperty = Note.getPropertyFor(entityType);
+    const notePropertyMap = {
+      Child: "children",
+      School: "schools",
+      User: "authors",
+    };
+    const noteProperty = notePropertyMap[entityType] ?? "relatedEntities";
     for (const note of notes) {
       // TODO: filter notes to only include them if the given child is marked "present"
 

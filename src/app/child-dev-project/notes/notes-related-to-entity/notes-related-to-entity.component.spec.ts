@@ -8,6 +8,9 @@ import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
+import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
+import { AttendanceLogicalStatus } from "#src/app/features/attendance/model/attendance-status";
 
 describe("NotesRelatedToEntityComponent", () => {
   let component: NotesRelatedToEntityComponent;
@@ -39,14 +42,21 @@ describe("NotesRelatedToEntityComponent", () => {
 
   it("should use the attendance color function when passing a child", () => {
     const note = new Note();
-    spyOn(note, "getColorForId");
+    note.category = { id: "MEETING", label: "Meeting", isMeeting: true };
     const entity = createEntityOfType("Child");
+    const absentStatus = defaultAttendanceStatusTypes.find(
+      (s) => s.countAs === AttendanceLogicalStatus.ABSENT,
+    );
+    note.children.push(entity.getId());
+    note.childrenAttendance.push(
+      new AttendanceItem(absentStatus, "", entity.getId()),
+    );
     component.entity = entity;
     component.ngOnInit();
 
-    component.getColor(note);
+    const color = component.getColor(note);
 
-    expect(note.getColorForId).toHaveBeenCalledWith(entity.getId());
+    expect(color).toBeTruthy();
   });
 
   it("should create a new note and fill it with the appropriate initial value", async () => {

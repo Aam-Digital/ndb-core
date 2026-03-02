@@ -160,7 +160,13 @@ export class EmailClientService {
 
     const entityType = (Array.isArray(entities) ? entities[0] : entities)
       .constructor as EntityConstructor<Entity>;
-    const relatedProperty = Note.getPropertyFor(entityType.ENTITY_TYPE);
+    const relatedPropertyMap = {
+      Child: "children",
+      School: "schools",
+      User: "authors",
+    };
+    const relatedProperty =
+      relatedPropertyMap[entityType.ENTITY_TYPE] ?? "relatedEntities";
     note[relatedProperty] = entities.map((e) => e.getId());
 
     return note;

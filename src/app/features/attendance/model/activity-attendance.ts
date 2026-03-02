@@ -1,4 +1,7 @@
-import { AttendanceLogicalStatus } from "./attendance-status";
+import {
+  AttendanceLogicalStatus,
+  NullAttendanceStatusType,
+} from "./attendance-status";
 import { RecurringActivity } from "./recurring-activity";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { EventNote } from "./event-note";
@@ -7,6 +10,11 @@ import {
   WarningLevel,
 } from "#src/app/child-dev-project/warning-level";
 import { Entity } from "#src/app/core/entity/model/entity";
+import {
+  AttendanceItem,
+  getAttendance,
+  getOrCreateAttendance,
+} from "./attendance-item";
 
 /**
  * Aggregate information about all events for a {@link RecurringActivity} within a given time period.
@@ -94,7 +102,8 @@ export class ActivityAttendance extends Entity {
   ) {
     return this.events.filter(
       (eventNote) =>
-        eventNote.getAttendance(childId)?.status.countAs === countingType,
+        getAttendance(eventNote.childrenAttendance, childId)?.status.countAs ===
+        countingType,
     ).length;
   }
 
@@ -116,7 +125,11 @@ export class ActivityAttendance extends Entity {
 
   private countWithStatus(matchingType: AttendanceLogicalStatus) {
     return this.events.reduce(
-      (total, event) => total + event.countWithStatus(matchingType),
+      (total, event) =>
+        total +
+        event.childrenAttendance.filter(
+          (a) => a.status.countAs === matchingType,
+        ).length,
       0,
     );
   }
@@ -136,7 +149,10 @@ export class ActivityAttendance extends Entity {
           total: event.children.length,
         };
         for (const childId of event.children) {
-          const att = event.getAttendance(childId).status;
+          const att = getOrCreateAttendance(
+            event.childrenAttendance,
+            childId,
+          ).status;
           if (att.countAs === matchingType) {
             eventStats.matching++;
           } else if (att.countAs === AttendanceLogicalStatus.IGNORE) {
@@ -179,9 +195,22 @@ export class ActivityAttendance extends Entity {
       .filter((e) => !forChildId || e.children.includes(forChildId))
       .reduce(
         (count: number, e: EventNote) =>
-          e.hasUnknownAttendances(forChildId) ? count + 1 : count,
+          this.hasUnknownAttendances(e, forChildId) ? count + 1 : count,
         0,
       );
+  }
+
+  private hasUnknownAttendances(event: EventNote, childId?: string): boolean {
+    if (childId) {
+      const att = getAttendance(event.childrenAttendance, childId);
+      return !att || att.status.id === NullAttendanceStatusType.id;
+    }
+    if (event.childrenAttendance.length < event.children.length) {
+      return true;
+    }
+    return event.childrenAttendance.some(
+      (v) => v.status.id === NullAttendanceStatusType.id,
+    );
   }
 
   recalculateStats() {
@@ -201,7 +230,10 @@ export class ActivityAttendance extends Entity {
           this.individualStatusTypeCounts.set(participant, typeCount);
         }
 
-        const att = event.getAttendance(participant);
+        const att = getOrCreateAttendance(
+          event.childrenAttendance,
+          participant,
+        );
         logicalCount[att.status.countAs] =
           (logicalCount[att.status.countAs] ?? 0) + 1;
         typeCount[att.status.id] = (typeCount[att.status.id] ?? 0) + 1;
@@ -255,13 +287,13 @@ export function generateEventWithAttendance(
 ): EventNote {
   const event = EventNote.create(date);
   for (const att of participating) {
-    event.addChild(att[0]);
-    event.getAttendance(att[0]).status = defaultAttendanceStatusTypes.find(
-      (t) => t.countAs === att[1],
+    event.children.push(att[0]);
+    const attendanceItem = new AttendanceItem(
+      defaultAttendanceStatusTypes.find((t) => t.countAs === att[1]),
+      att.length === 3 ? att[2] : "",
+      att[0],
     );
-    if (att.length === 3) {
-      event.getAttendance(att[0]).remarks = att[2];
-    }
+    event.childrenAttendance.push(attendanceItem);
   }
   event.relatesTo = activity?.getId();
   return event;

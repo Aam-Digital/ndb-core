@@ -127,7 +127,9 @@ export class AttendanceService {
         date,
       );
       for (const newParticipant of participants) {
-        event.addChild(newParticipant);
+        if (!event.children.includes(newParticipant)) {
+          event.children.push(newParticipant);
+        }
         if (
           !event.childrenAttendance.some(
             (a) => a.participant === newParticipant,

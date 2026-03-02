@@ -23,6 +23,7 @@ import {
   AttendanceLogicalStatus,
   AttendanceStatusType,
 } from "./attendance-status";
+import { getOrCreateAttendance } from "./attendance-item";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 
 describe("ActivityAttendance", () => {
@@ -170,7 +171,8 @@ describe("ActivityAttendance", () => {
     const StatusLate: AttendanceStatusType = defaultAttendanceStatusTypes.find(
       (t) => t.id === "LATE",
     );
-    record.events[0].getAttendance("1").status = StatusLate;
+    getOrCreateAttendance(record.events[0].childrenAttendance, "1").status =
+      StatusLate;
     record.recalculateStats();
 
     const typeCount1 = record.individualStatusTypeCounts.get("1");
