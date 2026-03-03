@@ -81,8 +81,9 @@ export class EntityDeleteService extends CascadingEntityAction {
     referencedEntity: Entity,
   ): Promise<CascadingActionResult> {
     const originalEntity = relatedEntityWithReference.copy();
-    const fieldSchema =
-      relatedEntityWithReference.getConstructor().schema.get(refField);
+    const fieldSchema = relatedEntityWithReference
+      .getConstructor()
+      .schema.get(refField);
 
     if (Array.isArray(relatedEntityWithReference[refField])) {
       relatedEntityWithReference[refField] = relatedEntityWithReference[
