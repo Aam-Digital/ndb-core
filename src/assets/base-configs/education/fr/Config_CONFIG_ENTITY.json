@@ -132,21 +132,12 @@
           "isArray": true,
           "additional": "Child",
           "entityReferenceRole": "composite",
+          "editComponent": "EditAttendance",
           "anonymize": "retain"
         },
         "childrenAttendance": {
-          "label": "Présence des enfants",
           "dataType": "event-attendance-map",
-          "anonymize": "retain",
-          "additional": {
-            "participant": {
-              "dataType": "entity",
-              "additional": [
-                "Child",
-                "User"
-              ]
-            }
-          }
+          "anonymize": "retain"
         },
         "date": {
           "label": "Date",
