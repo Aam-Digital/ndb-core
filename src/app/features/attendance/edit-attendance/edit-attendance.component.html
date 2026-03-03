@@ -8,6 +8,7 @@
             @if (!formControl.disabled) {
               <button
                 class="remove-btn"
+                type="button"
                 (click)="removeParticipant(item.participant)"
                 matTooltip="Remove participant"
                 i18n-matTooltip
@@ -73,6 +74,7 @@
             <app-entity-block [entityId]="item.participant"></app-entity-block>
             @if (!formControl.disabled) {
               <button
+                type="button"
                 mat-icon-button
                 (click)="removeParticipant(item.participant)"
                 class="mobile-remove-item"
