@@ -237,6 +237,106 @@ describe("RelatedEntitiesComponent", () => {
     });
   });
 
+  it("should detect entity references nested in embedded schemas (e.g. attendance.participant)", async () => {
+    @DatabaseEntity("EmbedTest")
+    class EmbedTest extends Entity {}
+
+    EmbedTest.schema.set("attendance", {
+      dataType: "attendance",
+      isArray: true,
+      additional: {
+        participant: {
+          dataType: EntityDatatype.dataType,
+          additional: [TestEntity.ENTITY_TYPE, "OtherType"],
+        },
+      },
+    });
+
+    component.entityType = EmbedTest.ENTITY_TYPE;
+    component.entity = new TestEntity();
+    component.filter = undefined;
+    component.property = undefined;
+    await component.ngOnInit();
+
+    expect(component.filter).toEqual({
+      attendance: {
+        $elemMatch: { participant: component.entity.getId() },
+      },
+    });
+  });
+
+  it("should combine direct and nested entity references in filter", async () => {
+    @DatabaseEntity("MixedEmbedTest")
+    class MixedEmbedTest extends Entity {}
+
+    MixedEmbedTest.schema.set("authors", {
+      dataType: EntityDatatype.dataType,
+      isArray: true,
+      additional: TestEntity.ENTITY_TYPE,
+    });
+    MixedEmbedTest.schema.set("attendance", {
+      dataType: "attendance",
+      isArray: true,
+      additional: {
+        participant: {
+          dataType: EntityDatatype.dataType,
+          additional: [TestEntity.ENTITY_TYPE],
+        },
+      },
+    });
+
+    component.entityType = MixedEmbedTest.ENTITY_TYPE;
+    component.entity = new TestEntity();
+    component.filter = undefined;
+    component.property = undefined;
+    await component.ngOnInit();
+
+    expect(component.filter).toEqual({
+      $or: [
+        { authors: { $elemMatch: { $eq: component.entity.getId() } } },
+        {
+          attendance: {
+            $elemMatch: { participant: component.entity.getId() },
+          },
+        },
+      ],
+    });
+  });
+
+  it("should resolve nested entity ref when property is manually set to an embedded schema field", async () => {
+    @DatabaseEntity("ManualPropTest")
+    class ManualPropTest extends Entity {}
+
+    ManualPropTest.schema.set("authors", {
+      dataType: EntityDatatype.dataType,
+      isArray: true,
+      additional: TestEntity.ENTITY_TYPE,
+    });
+    ManualPropTest.schema.set("attendance", {
+      dataType: "attendance",
+      isArray: true,
+      additional: {
+        participant: {
+          dataType: EntityDatatype.dataType,
+          additional: [TestEntity.ENTITY_TYPE],
+        },
+      },
+    });
+
+    component.entityType = ManualPropTest.ENTITY_TYPE;
+    component.entity = new TestEntity();
+    component.filter = undefined;
+    component.property = "attendance";
+    await component.ngOnInit();
+
+    // should only filter by attendance, not authors
+    expect(component.filter).toEqual({
+      attendance: {
+        $elemMatch: { participant: component.entity.getId() },
+      },
+    });
+  });
+
   it("it calls children service with id from passed child", fakeAsync(() => {
     const child = createEntityOfType("Child");
     mockLoaderService.loadDataFor.and.resolveTo([]);

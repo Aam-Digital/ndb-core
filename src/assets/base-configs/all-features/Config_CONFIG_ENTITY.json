@@ -600,6 +600,7 @@
                 "component": "RelatedEntities",
                 "config": {
                   "entityType": "Event",
+                  "property": "attendance",
                   "columns": [
                     {
                       "id": "date"
