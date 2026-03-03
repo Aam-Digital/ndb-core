@@ -15,8 +15,6 @@ import {
 } from "./cascading-entity-action.spec";
 import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { Note } from "../../../child-dev-project/notes/model/note";
-import { DefaultDatatype } from "../default-datatype/default.datatype";
-import { EventAttendanceMapDatatype } from "#src/app/features/attendance/deprecated/event-attendance-map.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { throwError } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -24,6 +22,10 @@ import { ConfirmationDialogService } from "../../common-components/confirmation-
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 import { UserAdminService } from "../../user/user-admin-service/user-admin.service";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
+import { DefaultDatatype } from "../default-datatype/default.datatype";
+import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
+import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
+import { EventAttendanceMapDatatype } from "#src/app/features/attendance/deprecated/event-attendance-map.datatype";
 
 describe("EntityDeleteService", () => {
   let service: EntityDeleteService;
@@ -57,6 +59,7 @@ describe("EntityDeleteService", () => {
         ...mockEntityMapperProvider(allEntities.map((e) => e.copy())),
         { provide: UserAdminService, useValue: mockUserAdminService },
         { provide: MatSnackBar, useValue: snackBarSpy },
+        { provide: DefaultDatatype, useClass: AttendanceDatatype, multi: true },
         {
           provide: DefaultDatatype,
           useClass: EventAttendanceMapDatatype,
@@ -259,5 +262,45 @@ describe("EntityDeleteService", () => {
     // restore original schema
     schemaField.additional = originalSchemaAdditional;
     schemaField2.additional = originalSchema2Additional;
+  });
+
+  it("should remove deleted IDs from 'attendance' field", async () => {
+    Note.schema.set("testAttendance", {
+      dataType: "attendance",
+      additional: {
+        participant: {
+          dataType: "entity",
+          additional: [TestEntity.ENTITY_TYPE],
+        },
+      },
+    });
+
+    const primary = new TestEntity();
+    const other = new TestEntity();
+    const note = new Note();
+    note.subject = "test";
+    note["testAttendance"] = [
+      new AttendanceItem(undefined, "", primary.getId()),
+      new AttendanceItem(undefined, "", other.getId()),
+    ];
+    const originalNote = note.copy();
+    await entityMapper.save(primary);
+    await entityMapper.save(other);
+    await entityMapper.save(note);
+
+    const result = await service.deleteEntity(primary);
+
+    const actualNote = entityMapper.get(Note.ENTITY_TYPE, note.getId()) as Note;
+    expect(actualNote["testAttendance"].length).toBe(1);
+    expect(actualNote["testAttendance"][0].participant).toBe(other.getId());
+
+    expect(result.originalEntitiesBeforeChange.length).toBe(2);
+    expectEntitiesToMatch(result.originalEntitiesBeforeChange, [
+      primary,
+      originalNote,
+    ]);
+
+    // restore original schema
+    Note.schema.delete("testAttendance");
   });
 });

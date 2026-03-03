@@ -7,6 +7,7 @@ import {
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { UserAdminService } from "../../user/user-admin-service/user-admin.service";
+import { itemReferencesId } from "../entity-mapper/entity-relations.service";
 
 /**
  * Safely delete an entity including handling references with related entities.
@@ -84,7 +85,7 @@ export class EntityDeleteService extends CascadingEntityAction {
     if (Array.isArray(relatedEntityWithReference[refField])) {
       relatedEntityWithReference[refField] = relatedEntityWithReference[
         refField
-      ].filter((id) => id !== referencedEntity.getId());
+      ].filter((item) => !itemReferencesId(item, referencedEntity.getId()));
     } else {
       delete relatedEntityWithReference[refField];
     }
