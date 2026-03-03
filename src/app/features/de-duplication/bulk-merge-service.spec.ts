@@ -135,7 +135,7 @@ describe("BulkMergeService", () => {
 
     const attendance = new AttendanceItem();
     attendance.participant = child2.getId();
-    (note2 as any).childrenAttendance.push(attendance);
+    note2.childrenAttendance.push(attendance);
 
     await entityMapper.saveAll([note1, note2]);
 
