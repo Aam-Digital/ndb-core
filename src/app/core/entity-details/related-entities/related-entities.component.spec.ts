@@ -14,7 +14,6 @@ import { Entity } from "../../entity/model/entity";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { DatabaseField } from "../../entity/database-field.decorator";
-import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 import {
@@ -158,12 +157,10 @@ describe("RelatedEntitiesComponent", () => {
       // is added inside table
       isActive: true,
     });
-    // no special properties set when creating a new entity
-    expectEntitiesToMatch(
-      [component.createNewRecordFactory()()],
-      [new MultiPropTest()],
-      true,
-    );
+    // all matching properties set when creating a new entity
+    const newEntity = component.createNewRecordFactory()();
+    expect(newEntity.singleChild).toBe(entity.getId());
+    expect(newEntity.multiEntities).toEqual([entity.getId()]);
   }));
 
   it("should align the filter with the related properties", async () => {
