@@ -113,6 +113,9 @@ export class RollCallComponent implements OnChanges {
    */
   isDirty: boolean = false;
 
+  /** lookup object for attendance items by participant ID, built during loadParticipants */
+  attendanceByParticipant: Record<string, AttendanceItem> = {};
+
   /** options available for selecting an attendance status */
   availableStatus: AttendanceStatusType[];
 
@@ -131,21 +134,6 @@ export class RollCallComponent implements OnChanges {
   }
 
   /**
-   * Finds an existing AttendanceItem by participant in eventEntity.attendance,
-   * or creates and pushes a new one.
-   */
-  getOrCreateAttendance(participantId: string): AttendanceItem {
-    let item = this.eventEntity.childrenAttendance.find(
-      (a) => a.participant === participantId,
-    );
-    if (!item) {
-      item = new AttendanceItem(undefined, "", participantId);
-      this.eventEntity.childrenAttendance.push(item);
-    }
-    return item;
-  }
-
-  /**
    * Set the index of the first child that expects user input.
    * This is the first entry of the list, if the user has never recorded attendance
    * for this event. Else it is the first child without any attendance information
@@ -155,7 +143,7 @@ export class RollCallComponent implements OnChanges {
   private setInitialIndex() {
     let index = 0;
     for (const entry of this.children) {
-      if (!this.getOrCreateAttendance(entry.getId())?.status?.id) {
+      if (!this.attendanceByParticipant[entry.getId()]?.status?.id) {
         break;
       }
       index += 1;
@@ -178,6 +166,20 @@ export class RollCallComponent implements OnChanges {
   private async loadParticipants() {
     this.children = [];
     this.inactiveParticipants = [];
+    this.attendanceByParticipant = {};
+
+    // ensure every child in the participants list has an attendance entry
+    for (const childId of this.eventEntity.children) {
+      if (
+        !this.eventEntity.childrenAttendance.find(
+          (a) => a.participant === childId,
+        )
+      ) {
+        const item = new AttendanceItem(undefined, "", childId);
+        this.eventEntity.childrenAttendance.push(item);
+      }
+    }
+
     for (const attendanceItem of this.eventEntity.childrenAttendance) {
       const childId = attendanceItem.participant;
       let child: Entity;
@@ -200,6 +202,8 @@ export class RollCallComponent implements OnChanges {
           );
         continue;
       }
+
+      this.attendanceByParticipant[childId] = attendanceItem;
 
       if (child.isActive) {
         this.children.push(child);
@@ -239,9 +243,8 @@ export class RollCallComponent implements OnChanges {
       this.complete.emit(this.eventEntity);
     } else {
       this.currentChild = this.children[this.currentIndex];
-      this.currentAttendance = this.getOrCreateAttendance(
-        this.currentChild.getId(),
-      );
+      this.currentAttendance =
+        this.attendanceByParticipant[this.currentChild.getId()];
     }
   }
 
