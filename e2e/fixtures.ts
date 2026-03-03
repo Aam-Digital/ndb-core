@@ -30,6 +30,7 @@ import { GeoService } from "#src/app/features/location/geo.service";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityActionsService } from "#src/app/core/entity/entity-actions/entity-actions.service";
 import { ConfigService } from "#src/app/core/config/config.service";
+import { EventAttendanceMapDatatype } from "#src/app/features/attendance/deprecated/event-attendance-map.datatype";
 
 // eslint-disable-next-line no-restricted-imports
 export { expect } from "@playwright/test";
@@ -145,6 +146,11 @@ function serializeEntities(entities: Entity[]): unknown[] {
       },
       { provide: DefaultDatatype, useClass: LocationDatatype, multi: true },
       { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
+      {
+        provide: DefaultDatatype,
+        useClass: EventAttendanceMapDatatype,
+        multi: true,
+      },
       { provide: DefaultDatatype, useClass: AttendanceDatatype, multi: true },
     ],
   });
