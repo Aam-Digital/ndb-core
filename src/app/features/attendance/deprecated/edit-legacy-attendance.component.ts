@@ -94,10 +94,15 @@ export class EditLegacyAttendanceComponent
   }
 
   getAttendance(childId: string) {
-    let attendance = this.parent.get("childrenAttendance").value.get(childId);
+    const attendanceList: AttendanceItem[] =
+      this.parent.get("childrenAttendance").value;
+    let attendance = attendanceList.find(
+      (item) => item.participant === childId,
+    );
     if (!attendance) {
       attendance = new AttendanceItem();
-      this.parent.get("childrenAttendance").value.set(childId, attendance);
+      attendance.participant = childId;
+      attendanceList.push(attendance);
     }
     return attendance;
   }
@@ -106,7 +111,14 @@ export class EditLegacyAttendanceComponent
     const children = this.formControl.value;
     const index = children.indexOf(id);
     children.splice(index, 1);
-    this.parent.get("childrenAttendance").value.delete(id);
+    const attendanceList: AttendanceItem[] =
+      this.parent.get("childrenAttendance").value;
+    const attIndex = attendanceList.findIndex(
+      (item) => item.participant === id,
+    );
+    if (attIndex >= 0) {
+      attendanceList.splice(attIndex, 1);
+    }
     this.formControl.markAsDirty();
     this.formControl.setValue([...children]);
   }

@@ -311,6 +311,7 @@ export class Note extends Entity {
     );
     if (!attendance) {
       attendance = new AttendanceItem();
+      attendance.participant = childId;
       this.childrenAttendance.push(attendance);
     }
     if (!(attendance instanceof AttendanceItem)) {
