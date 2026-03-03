@@ -10,7 +10,6 @@ import { EntitySchema } from "#src/app/core/entity/schema/entity-schema";
  * Simple relationship object to represent an individual participant's status at an event including context information.
  */
 export class AttendanceItem {
-  static DATA_TYPE = "event-attendance";
   declare static schema: EntitySchema;
 
   private _status: AttendanceStatusType;

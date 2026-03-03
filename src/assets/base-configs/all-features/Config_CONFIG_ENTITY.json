@@ -447,7 +447,7 @@
       "labelPlural": "Events",
       "icon": "calendar",
       "toStringAttributes": [
-        "subject"
+        "title"
       ],
       "route": "event",
       "attributes": {
@@ -461,8 +461,8 @@
             }
           }
         },
-        "subject": {
-          "label": "Subject",
+        "title": {
+          "label": "Title",
           "dataType": "string",
           "validators": {
             "required": true
@@ -506,7 +506,7 @@
         "entityType": "Event",
         "columns": [
           "date",
-          "subject",
+          "title",
           "authors",
           "attendance"
         ]
@@ -528,7 +528,7 @@
                     {
                       "fields": [
                         "date",
-                        "subject",
+                        "title",
                         "description",
                         "authors"
                       ]
@@ -594,10 +594,24 @@
             ]
           },
           {
-            "title": "Security",
+            "title": "Event Attendance",
             "components": [
               {
-                "component": "UserSecurity"
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "Event",
+                  "columns": [
+                    {
+                      "id": "date"
+                    },
+                    {
+                      "id": "title"
+                    },
+                    {
+                      "id": "attendance"
+                    }
+                  ]
+                }
               }
             ]
           }
@@ -864,6 +878,24 @@
               {
                 "title": "",
                 "component": "GroupedChildAttendance"
+              },
+              {
+                "title": "Event Attendance",
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "Event",
+                  "columns": [
+                    {
+                      "id": "date"
+                    },
+                    {
+                      "id": "title"
+                    },
+                    {
+                      "id": "attendance"
+                    }
+                  ]
+                }
               }
             ]
           },
@@ -1503,12 +1535,7 @@
         "eventAttendanceField": {
           "id": "eventAttendanceField",
           "label": "Event Attendance Field",
-          "dataType": "event-attendance"
-        },
-        "eventAttendanceMapField": {
-          "id": "eventAttendanceMapField",
-          "label": "Event Attendance Map Field",
-          "dataType": "event-attendance-map"
+          "dataType": "attendance"
         },
         "templateExportFileField": {
           "id": "templateExportFileField",
