@@ -55,6 +55,7 @@ import { AdminSearchableCheckboxComponent } from "./admin-searchable-checkbox/ad
 import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
 
 /**
  * Dialog data for AdminEntityFieldComponent
@@ -345,7 +346,7 @@ export class AdminEntityFieldComponent implements OnInit {
       );
     } else if (dataType === EntityDatatype.dataType) {
       this.initAdditionalForEntityRef(newAdditional);
-    } else if (dataType === "attendance") {
+    } else if (dataType === AttendanceDatatype.dataType) {
       this.initAdditionalForAttendance(newAdditional);
     }
 

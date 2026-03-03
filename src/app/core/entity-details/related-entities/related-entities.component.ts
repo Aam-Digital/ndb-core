@@ -206,9 +206,12 @@ export class RelatedEntitiesComponent<E extends Entity>
   private getFilterForProperty(property: string) {
     if (property.includes(".")) {
       const [outerProp, innerProp] = property.split(".", 2);
-      return {
-        [outerProp]: { $elemMatch: { [innerProp]: this.entity.getId() } },
-      };
+      const outerIsArray = this.entityCtr.schema.get(outerProp)?.isArray;
+      return outerIsArray
+        ? {
+            [outerProp]: { $elemMatch: { [innerProp]: this.entity.getId() } },
+          }
+        : { [`${outerProp}.${innerProp}`]: this.entity.getId() };
     }
 
     const isArray = this.entityCtr.schema.get(property)?.isArray;
