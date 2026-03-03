@@ -79,17 +79,22 @@ export class EditLegacyAttendanceComponent
       "category",
     ) as FormControl<InteractionType>;
     if (category) {
-      category.valueChanges.pipe(startWith(category.value)).subscribe((val) => {
-        this.showAttendance = !!val?.isMeeting;
-        if (this.showAttendance) {
-          let childrenAttendanceForm = new FormControl(
-            this.entity.copy()["childrenAttendance"],
-          );
-          this.parent.addControl("childrenAttendance", childrenAttendanceForm);
-        } else {
-          this.parent.removeControl("childrenAttendance");
-        }
-      });
+      category.valueChanges
+        .pipe(startWith(category.value), untilDestroyed(this))
+        .subscribe((val) => {
+          this.showAttendance = !!val?.isMeeting;
+          if (this.showAttendance) {
+            let childrenAttendanceForm = new FormControl(
+              this.entity.copy()["childrenAttendance"],
+            );
+            this.parent.addControl(
+              "childrenAttendance",
+              childrenAttendanceForm,
+            );
+          } else {
+            this.parent.removeControl("childrenAttendance");
+          }
+        });
     }
   }
 
@@ -110,6 +115,9 @@ export class EditLegacyAttendanceComponent
   removeChild(id: string) {
     const children = this.formControl.value;
     const index = children.indexOf(id);
+    if (index < 0) {
+      return;
+    }
     children.splice(index, 1);
     const attendanceList: AttendanceItem[] =
       this.parent.get("childrenAttendance").value;
