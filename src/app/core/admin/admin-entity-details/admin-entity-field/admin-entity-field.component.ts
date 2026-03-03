@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   inject,
   OnInit,
   signal,
@@ -40,8 +41,9 @@ import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { ConfigureEnumPopupComponent } from "../../../basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component";
 import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
-import { merge, Subscription } from "rxjs";
+import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { uniquePropertyValidator } from "app/core/common-components/entity-form/unique-property-validator/unique-property-validator";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
@@ -114,6 +116,7 @@ export class AdminEntityFieldComponent implements OnInit {
   private entityRegistry = inject(EntityRegistry);
   private dialog = inject(MatDialog);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
+  private readonly destroyRef = inject(DestroyRef);
 
   fieldId: string;
   entityType: EntityConstructor;
@@ -128,7 +131,6 @@ export class AdminEntityFieldComponent implements OnInit {
   dataTypes: SimpleDropdownValue[] = [];
   entityAdditionalMultiSelect: WritableSignal<boolean> = signal(false);
   attendanceParticipantTypesForm = new FormControl<string[]>([]);
-  private attendanceParticipantSubscription?: Subscription;
 
   ngOnInit() {
     this.entityType = this.data.entityType;
@@ -233,21 +235,39 @@ export class AdminEntityFieldComponent implements OnInit {
       schemaFields: this.schemaFieldsForm,
     });
 
-    this.schemaFieldsForm.valueChanges.subscribe((formValues) =>
-      this.updateSchemaFieldFromForm(formValues),
-    );
+    this.schemaFieldsForm.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((formValues) => this.updateSchemaFieldFromForm(formValues));
 
     this.schemaFieldsForm
       .get("labelShort")
-      .valueChanges.pipe(filter((v) => v === ""))
+      .valueChanges.pipe(
+        filter((v) => v === ""),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe((v) => {
         // labelShort should never be empty string, in that case it has to be removed so that label works as fallback
         this.schemaFieldsForm.get("labelShort").setValue(null);
       });
+    // Sync attendance participant type selection back to additionalForm in nested format
+    this.attendanceParticipantTypesForm.valueChanges
+      .pipe(
+        filter(
+          () => this.schemaFieldsForm.get("dataType").value === "attendance",
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((types) => {
+        this.additionalForm.setValue(this.buildAttendanceAdditional(types));
+      });
+
     this.updateDataTypeAdditional(this.schemaFieldsForm.get("dataType").value);
-    this.schemaFieldsForm.get("dataType").valueChanges.subscribe((v) => {
-      this.updateDataTypeAdditional(v);
-    });
+    this.schemaFieldsForm
+      .get("dataType")
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((v) => {
+        this.updateDataTypeAdditional(v);
+      });
     this.updateForNewOrExistingField();
   }
 
@@ -275,11 +295,13 @@ export class AdminEntityFieldComponent implements OnInit {
       const autoGenerateSubscr = merge(
         this.schemaFieldsForm.get("label").valueChanges,
         this.schemaFieldsForm.get("labelShort").valueChanges,
-      ).subscribe(() => this.autoGenerateId());
+      )
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => this.autoGenerateId());
       // stop updating id when user manually edits
-      this.fieldIdForm.valueChanges.subscribe(() =>
-        autoGenerateSubscr.unsubscribe(),
-      );
+      this.fieldIdForm.valueChanges
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => autoGenerateSubscr.unsubscribe());
     }
   }
 
@@ -383,13 +405,12 @@ export class AdminEntityFieldComponent implements OnInit {
   }
 
   private resetAdditional() {
-    this.attendanceParticipantSubscription?.unsubscribe();
-    this.attendanceParticipantSubscription = undefined;
     this.additionalForm.removeValidators(Validators.required);
     this.additionalForm.reset(null);
     this.typeAdditionalOptions = [];
     this.createNewAdditionalOption = undefined;
     this.entityAdditionalMultiSelect.set(false);
+    this.attendanceParticipantTypesForm.reset([]);
   }
 
   private initAdditionalForAttendance(newAdditional?: any) {
@@ -404,35 +425,24 @@ export class AdminEntityFieldComponent implements OnInit {
       participantTypes = Array.isArray(raw) ? [...raw] : [raw];
     }
 
-    // Sync participant type selection back to additionalForm in nested format
-    this.attendanceParticipantSubscription =
-      this.attendanceParticipantTypesForm.valueChanges.subscribe((types) => {
-        const nestedAdditional =
-          types && types.length > 0
-            ? {
-                participant: {
-                  dataType: "entity",
-                  additional: types,
-                },
-              }
-            : null;
-        this.additionalForm.setValue(nestedAdditional);
-      });
+    const validValues = participantTypes.filter((value) =>
+      this.typeAdditionalOptions.some((x) => x.value === value),
+    );
 
-    // Set initial nested value if we have participant types
-    if (participantTypes.length > 0) {
-      this.additionalForm.setValue({
-        participant: {
-          dataType: "entity",
-          additional: participantTypes,
-        },
-      });
+    if (validValues.length > 0) {
+      this.additionalForm.setValue(this.buildAttendanceAdditional(validValues));
     }
 
     // Use setTimeout to ensure Angular processes the @if block and creates the EntityTypeSelectComponent before setting the value
     setTimeout(() => {
-      this.attendanceParticipantTypesForm.setValue(participantTypes);
+      this.attendanceParticipantTypesForm.setValue(validValues);
     });
+  }
+
+  private buildAttendanceAdditional(types: string[]): object | null {
+    return types && types.length > 0
+      ? { participant: { dataType: "entity", additional: types } }
+      : null;
   }
 
   async onEntityAdditionalSelectionModeChange(change: MatSlideToggleChange) {
