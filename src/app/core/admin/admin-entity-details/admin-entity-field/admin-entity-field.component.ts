@@ -381,16 +381,12 @@ export class AdminEntityFieldComponent implements OnInit {
   }
 
   private initAdditionalForEntityRef(newAdditional?: string | string[]) {
-    this.typeAdditionalOptions = this.entityRegistry
-      .getEntityTypes(true)
-      .map((x) => ({ label: x.value.label, value: x.value.ENTITY_TYPE }));
-
     this.additionalForm.addValidators(Validators.required);
     this.entityAdditionalMultiSelect.set(Array.isArray(newAdditional));
 
     if (Array.isArray(newAdditional)) {
       const validValues = newAdditional.filter((value) =>
-        this.typeAdditionalOptions.some((x) => x.value === value),
+        this.isValidEntityType(value),
       );
       // Use setTimeout to ensure Angular processes the multi input change before setting the value
       setTimeout(() => {
@@ -399,7 +395,7 @@ export class AdminEntityFieldComponent implements OnInit {
       return;
     }
 
-    if (this.typeAdditionalOptions.some((x) => x.value === newAdditional)) {
+    if (this.isValidEntityType(newAdditional)) {
       this.additionalForm.setValue(newAdditional);
     }
   }
@@ -414,10 +410,6 @@ export class AdminEntityFieldComponent implements OnInit {
   }
 
   private initAdditionalForAttendance(newAdditional?: any) {
-    this.typeAdditionalOptions = this.entityRegistry
-      .getEntityTypes(true)
-      .map((x) => ({ label: x.value.label, value: x.value.ENTITY_TYPE }));
-
     // Extract participant types from the nested additional format
     let participantTypes: string[] = [];
     if (newAdditional?.participant?.additional) {
@@ -426,7 +418,7 @@ export class AdminEntityFieldComponent implements OnInit {
     }
 
     const validValues = participantTypes.filter((value) =>
-      this.typeAdditionalOptions.some((x) => x.value === value),
+      this.isValidEntityType(value),
     );
 
     if (validValues.length > 0) {
@@ -443,6 +435,12 @@ export class AdminEntityFieldComponent implements OnInit {
     return types && types.length > 0
       ? { participant: { dataType: "entity", additional: types } }
       : null;
+  }
+
+  private isValidEntityType(type: string): boolean {
+    return this.entityRegistry
+      .getEntityTypes(true)
+      .some((x) => x.value.ENTITY_TYPE === type);
   }
 
   async onEntityAdditionalSelectionModeChange(change: MatSlideToggleChange) {
