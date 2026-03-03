@@ -24,7 +24,6 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
-import { ScreenWidthObserver } from "#src/app/utils/media/screen-size-observer.service";
 import { AttendanceStatusSelectComponent } from "./attendance-status-select/attendance-status-select.component";
 import { AttendanceItem } from "../model/attendance-item";
 
@@ -64,10 +63,13 @@ export class EditAttendanceComponent
   @Input() formFieldConfig?: FormFieldConfig;
 
   private readonly destroyRef = inject(DestroyRef);
-  private readonly screenWidthObserver = inject(ScreenWidthObserver);
   private readonly changeDetector = inject(ChangeDetectorRef);
 
-  mobile = false;
+  private static readonly COMPACT_BREAKPOINT = 500;
+  private resizeObserver: ResizeObserver;
+
+  /** Whether the component is rendered in compact (mobile-like) layout based on its own width */
+  compact = false;
 
   /** Internal form control for the entity autocomplete to add new participants */
   addParticipantControl = new FormControl<string>(null);
@@ -85,10 +87,16 @@ export class EditAttendanceComponent
   }
 
   ngOnInit() {
-    this.screenWidthObserver
-      .platform()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((isDesktop) => (this.mobile = !isDesktop));
+    this.resizeObserver = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect?.width ?? 0;
+      const shouldBeCompact =
+        width > 0 && width < EditAttendanceComponent.COMPACT_BREAKPOINT;
+      if (shouldBeCompact !== this.compact) {
+        this.compact = shouldBeCompact;
+        this.changeDetector.detectChanges();
+      }
+    });
+    this.resizeObserver.observe(this.elementRef.nativeElement);
 
     // Build the config for the participant entity autocomplete
     // from the nested `additional.participant` schema config
@@ -172,5 +180,10 @@ export class EditAttendanceComponent
     return (this.formControl.value ?? []).find(
       (item) => item.participant === participantId,
     );
+  }
+
+  override ngOnDestroy() {
+    super.ngOnDestroy();
+    this.resizeObserver?.disconnect();
   }
 }

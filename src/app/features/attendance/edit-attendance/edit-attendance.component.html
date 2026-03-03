@@ -1,4 +1,4 @@
-@if (!mobile) {
+@if (!compact) {
   <div>
     <!-- Desktop view: display the information as table -->
     <table class="table">
@@ -7,7 +7,7 @@
           <td>
             @if (!formControl.disabled) {
               <button
-                mat-icon-button
+                class="remove-btn"
                 (click)="removeParticipant(item.participant)"
                 matTooltip="Remove participant"
                 i18n-matTooltip
@@ -17,7 +17,7 @@
             }
           </td>
 
-          <td>
+          <td class="participant-name">
             <app-entity-block [entityId]="item.participant"></app-entity-block>
           </td>
 
