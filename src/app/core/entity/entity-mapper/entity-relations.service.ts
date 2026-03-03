@@ -52,21 +52,9 @@ export class EntityRelationsService {
       return true;
     }
 
-    // Check nested embedded schema (e.g. { participant: { dataType: "entity", additional: ["Child"] } })
-    if (
-      typeof field.additional === "object" &&
-      !Array.isArray(field.additional)
-    ) {
-      for (const innerField of Object.values(
-        field.additional as Record<string, FormFieldConfig>,
-      )) {
-        if (asArray(innerField.additional).includes(type)) {
-          return true;
-        }
-      }
-    }
-
-    return false;
+    return getInnerEntityReferenceFields(field).some(([, inner]) =>
+      asArray(inner.additional).includes(type),
+    );
   }
 
   /**
@@ -123,14 +111,52 @@ export class EntityRelationsService {
 /**
  * Check whether a single value (a plain ID string or an embedded object)
  * references the given entity ID.
+ *
+ * When a `field` schema is provided and its `additional` defines an embedded
+ * schema, only the inner properties declared as entity references
+ * (`dataType: "entity"`) are inspected.  Without schema info the function
+ * falls back to checking all object values (backward-compatible).
  */
-export function itemReferencesId(item: any, refId: string): boolean {
-  return (
-    item === refId ||
-    (typeof item === "object" &&
-      item !== null &&
-      Object.values(item).includes(refId))
-  );
+export function itemReferencesId(
+  item: any,
+  refId: string,
+  field?: EntitySchemaField,
+): boolean {
+  if (item === refId) {
+    return true;
+  }
+
+  if (typeof item === "object" && item !== null) {
+    const refFields = getInnerEntityReferenceFields(field);
+    if (refFields.length > 0) {
+      return refFields.some(([key]) => asArray(item[key]).includes(refId));
+    }
+    // Fallback when no embedded schema info is available
+    return Object.values(item).includes(refId);
+  }
+
+  return false;
+}
+
+/**
+ * From a field's `additional` embedded schema, return the entries
+ * whose `dataType` is `"entity"` (i.e. inner entity-reference properties).
+ *
+ * Returns an empty array when the field has no embedded schema.
+ */
+function getInnerEntityReferenceFields(
+  field?: EntitySchemaField,
+): [string, EntitySchemaField][] {
+  if (
+    !field?.additional ||
+    typeof field.additional !== "object" ||
+    Array.isArray(field.additional)
+  ) {
+    return [];
+  }
+  return Object.entries(
+    field.additional as Record<string, EntitySchemaField>,
+  ).filter(([, inner]) => inner.dataType === "entity");
 }
 
 /**
@@ -146,6 +172,8 @@ function fieldsIncludingId(
   relevantFields: FormFieldConfig[],
 ): FormFieldConfig[] {
   return relevantFields.filter((field) =>
-    asArray(entity[field.id]).some((item) => itemReferencesId(item, refId)),
+    asArray(entity[field.id]).some((item) =>
+      itemReferencesId(item, refId, field),
+    ),
   );
 }
