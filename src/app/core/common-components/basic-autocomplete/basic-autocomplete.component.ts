@@ -140,7 +140,7 @@ export class BasicAutocompleteComponent<O, V = O>
   /**
    * Maximum number of options to display in the dropdown.
    * If more options match the current filter, a hint is shown to type to narrow results.
-   * Set to 0 or undefined for no limit.
+   * Set to 0 for no limit. Defaults to 100.
    */
   @Input() maxOptionsToDisplay: number = 100;
   hasMoreOptions = false;
