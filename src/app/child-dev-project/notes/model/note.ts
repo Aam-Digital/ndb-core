@@ -93,6 +93,7 @@ export class Note extends Entity {
     isArray: true,
     additional: "Child",
     entityReferenceRole: "composite",
+    editComponent: "EditLegacyAttendance",
     anonymize: "retain",
   })
   children: string[] = [];
@@ -105,7 +106,6 @@ export class Note extends Entity {
    * @deprecated Attendance logic will be decoupled from Note. By default, notes will not include attendance details anymore. Any entity type can add an `attendance` type field.
    */
   @DatabaseField({
-    label: $localize`:Label for the participants field of a note:Participants (with attendance)`,
     anonymize: "retain",
     dataType: "event-attendance-map",
     additional: {
