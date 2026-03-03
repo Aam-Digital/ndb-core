@@ -90,7 +90,8 @@
                   class="group-select-option"
                   (click)="markAttendance(option)"
                   [class]="
-                    getOrCreateAttendance(child.getId()).status.id === option.id
+                    attendanceByParticipant[child.getId()]?.status?.id ===
+                    option.id
                       ? option.style
                       : ''
                   "
@@ -104,7 +105,7 @@
                     "
                   >
                     @if (
-                      getOrCreateAttendance(child.getId()).status.id ===
+                      attendanceByParticipant[child.getId()]?.status?.id ===
                       option.id
                     ) {
                       <fa-icon icon="check"></fa-icon>

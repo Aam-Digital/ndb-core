@@ -66,7 +66,12 @@ export class FilterService {
   alignEntityWithFilter<T extends Entity>(entity: T, filter: DataFilter<T>) {
     const schema = entity.getSchema();
     Object.entries(filter ?? {}).forEach(([key, value]) => {
-      if (typeof value !== "object") {
+      if (key === "$or" && Array.isArray(value)) {
+        // for $or filters, try each branch
+        for (const branch of value) {
+          this.alignEntityWithFilter(entity, branch);
+        }
+      } else if (typeof value !== "object") {
         // only simple equality filters are automatically applied to new entities, complex conditions (e.g. $lt / $gt) are ignored)
         this.assignValueToEntity(key, value, schema, entity);
       } else if (value["$elemMatch"]?.["$eq"]) {

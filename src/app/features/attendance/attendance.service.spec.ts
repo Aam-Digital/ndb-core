@@ -15,6 +15,7 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
+import { AttendanceItem } from "./model/attendance-item";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -123,6 +124,10 @@ describe("AttendanceService", () => {
 
     const testNoteWithSchool = Note.create(date);
     testNoteWithSchool.children = ["1", "2"];
+    testNoteWithSchool.childrenAttendance = [
+      new AttendanceItem(undefined, "", "1"),
+      new AttendanceItem(undefined, "", "2"),
+    ];
     testNoteWithSchool.schools = [linkedSchoolId];
     testNoteWithSchool.category = meetingInteractionCategory;
     await entityMapper.save(testNoteWithSchool);
@@ -134,7 +139,7 @@ describe("AttendanceService", () => {
     );
     expect(
       actualEvents[0].childrenAttendance.map((a) => a.participant),
-    ).toEqual(jasmine.arrayWithExactContents(["2", "3"]));
+    ).toEqual(jasmine.arrayWithExactContents(["1", "2", "3"]));
   });
 
   it("should create an event without the excluded participants", async () => {

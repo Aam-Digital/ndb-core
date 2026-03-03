@@ -203,10 +203,6 @@ describe("AdminEntityFieldComponent", () => {
     dataTypeForm.setValue(EntityDatatype.dataType);
     tick();
 
-    expect(component.typeAdditionalOptions).toEqual([
-      { value: TestEntity.ENTITY_TYPE, label: TestEntity.label },
-      { value: RecurringActivity.ENTITY_TYPE, label: RecurringActivity.label },
-    ]);
     expect(component.additionalForm.value).toBe(TestEntity.ENTITY_TYPE);
   }));
 

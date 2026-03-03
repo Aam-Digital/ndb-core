@@ -34,6 +34,25 @@ class EntityWithMergedRelations extends Entity {
   multiRelated;
 }
 
+@DatabaseEntity("EntityWithAttendance")
+class EntityWithAttendance extends Entity {
+  @DatabaseField({
+    dataType: "entity",
+    additional: TestEntity.ENTITY_TYPE,
+    isArray: true,
+  })
+  participants: string[] = [];
+
+  @DatabaseField({
+    dataType: "attendance",
+    isArray: true,
+    additional: {
+      participant: { dataType: "entity", additional: [TestEntity.ENTITY_TYPE] },
+    },
+  })
+  attendance: AttendanceItem[] = [];
+}
+
 describe("BulkMergeService", () => {
   let service: BulkMergeService;
 
@@ -117,9 +136,9 @@ describe("BulkMergeService", () => {
     const note2 = new Note("note2");
     note2.children.push(child2.getId());
 
-    note2.childrenAttendance.push(
-      new AttendanceItem(undefined, "", child2.getId()),
-    );
+    const attendance = new AttendanceItem();
+    attendance.participant = child2.getId();
+    note2.childrenAttendance.push(attendance);
 
     await entityMapper.saveAll([note1, note2]);
 
@@ -132,5 +151,29 @@ describe("BulkMergeService", () => {
       child1.getId(),
     );
     expect(newAttendance).toBeDefined();
+  });
+
+  it("should update participant references in any attendance-type field when merging", async () => {
+    const relatedEntity = new EntityWithAttendance();
+    relatedEntity.participants = [recordA.getId(), recordB.getId()];
+    relatedEntity.attendance = [
+      new AttendanceItem(undefined, "", recordA.getId()),
+      new AttendanceItem(undefined, "", recordB.getId()),
+    ];
+    await entityMapper.save(relatedEntity);
+
+    const mergedEntity = TestEntity.create({ ...recordA, name: "A1" });
+    await service.executeMerge(mergedEntity, [recordA, recordB]);
+
+    const updated = entityMapper.get(
+      EntityWithAttendance.ENTITY_TYPE,
+      relatedEntity.getId(),
+    ) as EntityWithAttendance;
+
+    expect(updated.participants).toEqual([recordA.getId()]);
+    expect(updated.attendance.length).toBe(2);
+    expect(
+      updated.attendance.every((a) => a.participant === recordA.getId()),
+    ).toBeTrue();
   });
 });

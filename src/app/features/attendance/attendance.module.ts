@@ -6,7 +6,6 @@ import { EventNote } from "./model/event-note";
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
 import { EventAttendanceMapDatatype } from "./deprecated/event-attendance-map.datatype";
 import { AttendanceDatatype } from "./model/attendance.datatype";
-import { AttendanceItemDatatype } from "./model/attendance-item.datatype";
 import { DashboardWidgetRegistryService } from "#src/app/core/dashboard/dashboard-widget-registry.service";
 
 @NgModule({
@@ -19,11 +18,6 @@ import { DashboardWidgetRegistryService } from "#src/app/core/dashboard/dashboar
     {
       provide: DefaultDatatype,
       useClass: AttendanceDatatype,
-      multi: true,
-    },
-    {
-      provide: DefaultDatatype,
-      useClass: AttendanceItemDatatype,
       multi: true,
     },
   ],

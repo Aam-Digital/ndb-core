@@ -39,6 +39,6 @@ export function getDefaultNoteDetailsConfig(): NoteDetailsConfig {
   return {
     topForm: ["date", "warningLevel", "category", "authors", "attachment"],
     middleForm: ["subject", "text"],
-    bottomForm: ["children", "schools", "childrenAttendance"],
+    bottomForm: ["children", "schools"],
   };
 }

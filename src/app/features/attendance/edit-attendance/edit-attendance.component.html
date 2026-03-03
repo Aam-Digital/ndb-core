@@ -2,7 +2,7 @@
   <div>
     <!-- Desktop view: display the information as table -->
     <table class="table">
-      @for (item of formControl.value; track item.participant) {
+      @for (item of formControl.value ?? []; track item.participant) {
         <tr>
           <td>
             @if (!formControl.disabled) {
@@ -16,9 +16,11 @@
               </button>
             }
           </td>
+
           <td>
             <app-entity-block [entityId]="item.participant"></app-entity-block>
           </td>
+
           <td>
             <app-attendance-status-select
               [value]="item.status"
@@ -29,6 +31,7 @@
             >
             </app-attendance-status-select>
           </td>
+
           <td class="full-width">
             <mat-form-field class="adjust-top margin-small">
               <mat-label i18n>Remarks</mat-label>
@@ -80,6 +83,7 @@
               </button>
             }
           </div>
+
           <div class="attendance-item--content">
             <app-attendance-status-select
               [value]="item.status"
