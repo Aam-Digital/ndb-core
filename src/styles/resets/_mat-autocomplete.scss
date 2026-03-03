@@ -1,0 +1,6 @@
+// Override autocomplete panel scrolling: let cdk-virtual-scroll-viewport handle scrolling
+// instead of the panel itself, to avoid double scrollbars.
+// Material's default max-height (256px) is kept to constrain the panel size.
+.mat-mdc-autocomplete-panel:has(cdk-virtual-scroll-viewport) {
+  overflow-y: hidden !important;
+}
