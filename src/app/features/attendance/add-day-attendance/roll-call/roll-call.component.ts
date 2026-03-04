@@ -12,12 +12,12 @@ import {
   ATTENDANCE_STATUS_CONFIG_ID,
   AttendanceStatusType,
 } from "../../model/attendance-status";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { AttendanceItem } from "../../model/attendance-item";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { sortByAttribute } from "#src/app/utils/utils";
+import { AttendanceDatatype } from "../../model/attendance.datatype";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatButtonModule } from "@angular/material/button";
@@ -41,6 +41,7 @@ import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved
 import { ConfirmationDialogButton } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
 import { RouteTarget } from "#src/app/route-target";
+import { lastValueFrom } from "rxjs";
 
 // Only allow horizontal swiping
 @Injectable()
@@ -108,7 +109,13 @@ export class RollCallComponent implements OnChanges {
    * The event to be displayed and edited.
    * Can be set directly when used as an embedded component, or loaded from DB via id.
    */
-  @Input() eventEntity: Note;
+  @Input() eventEntity: Entity;
+
+  /**
+   * (optional) property name of the attendance field on the event entity.
+   * If not provided, it is auto-detected from the entity schema.
+   */
+  @Input() attendanceField?: string;
 
   /**
    * (optional) property name of the participant entities by which they are sorted
@@ -164,15 +171,15 @@ export class RollCallComponent implements OnChanges {
       const date = dateStr ? new Date(dateStr) : new Date();
 
       if (activityId) {
-        this.eventEntity = (await this.createRecurringEvent(
+        this.eventEntity = await this.attendanceService.createEventForActivity(
           activityId,
           date,
-        )) as Note;
+        );
       } else {
         this.eventEntity = await this.createOneTimeEvent(date);
       }
     } else {
-      this.eventEntity = (await this.loadExistingEvent(this.id)) as Note;
+      this.eventEntity = await this.loadExistingEvent(this.id);
     }
 
     if (this.eventEntity) {
@@ -184,50 +191,33 @@ export class RollCallComponent implements OnChanges {
     this.isLoading = false;
   }
 
-  private async createRecurringEvent(
-    activityId: string,
-    date: Date,
-  ): Promise<Entity> {
-    const activity = await this.entityMapper.load(
-      RecurringActivity,
-      activityId,
-    );
-    const newEvent = await this.attendanceService.createEventForActivity(
-      activity,
-      date,
-    );
-
-    if (this.currentUser.value && newEvent instanceof Note) {
-      newEvent.authors = [this.currentUser.value.getId()];
-    }
-    return newEvent;
-  }
-
   /**
    * Open a dialog for creating a one-time event and use it for the roll call.
    */
-  private async createOneTimeEvent(date?: Date): Promise<Note | undefined> {
-    const newNote = Note.create(date ?? new Date());
-    if (this.currentUser.value) {
-      newNote.authors = [this.currentUser.value.getId()];
-    }
+  private async createOneTimeEvent(date?: Date): Promise<Entity | undefined> {
+    // TODO: generalize this to support creating other types of entities as well
 
-    const dialogRef = this.formDialog.openView(newNote, "NoteDetails");
-    const result = await dialogRef.afterClosed().toPromise();
-    if (result) {
-      return result;
-    }
-    this.location.back();
+    // const newNote = Note.create(date ?? new Date());
+    // if (this.currentUser.value) {
+    //   newNote.authors = [this.currentUser.value.getId()];
+    // }
+
+    // const dialogRef = this.formDialog.openView(newNote, "NoteDetails");
+    // const result = await lastValueFrom(dialogRef.afterClosed());
+    // if (result) {
+    //   return result;
+    // }
+    // this.location.back();
     return undefined;
   }
 
   private async loadExistingEvent(id: string): Promise<Entity | undefined> {
     let event: Entity;
     try {
-      const entityType = Entity.extractTypeFromId(this.id);
-      event = await this.entityMapper.load(entityType, this.id);
+      const entityType = Entity.extractTypeFromId(id);
+      event = await this.entityMapper.load(entityType, id);
     } catch (e) {
-      Logging.warn("Could not load event " + this.id, e);
+      Logging.warn("Could not load event " + id, e);
       void this.router.navigate(["/404"]);
     }
     return event;
@@ -268,7 +258,14 @@ export class RollCallComponent implements OnChanges {
     this.inactiveParticipants = [];
     this.attendanceByParticipant = {};
 
-    for (const attendanceItem of this.eventEntity.childrenAttendance) {
+    this.attendanceField ??= AttendanceDatatype.detectFieldInEntity(
+      this.eventEntity,
+    );
+    const attendanceItems: AttendanceItem[] = this.attendanceField
+      ? (this.eventEntity[this.attendanceField] ?? [])
+      : [];
+
+    for (const attendanceItem of attendanceItems) {
       const childId = attendanceItem.participant;
       let child: Entity;
       try {
@@ -283,11 +280,11 @@ export class RollCallComponent implements OnChanges {
             " for event " +
             this.eventEntity.getId(),
         );
-        this.eventEntity.removeChild(childId);
-        this.eventEntity.childrenAttendance =
-          this.eventEntity.childrenAttendance.filter(
+        if (this.attendanceField) {
+          this.eventEntity[this.attendanceField] = attendanceItems.filter(
             (a) => a.participant !== childId,
           );
+        }
         continue;
       }
 
@@ -311,11 +308,15 @@ export class RollCallComponent implements OnChanges {
       sortByAttribute<any>(this.sortParticipantsBy, "asc"),
     );
     // also sort the participants in the entity itself for display in details view later
-    const sortedIds = this.participants.map((e) => e.getId());
-    this.eventEntity.childrenAttendance.sort(
-      (a, b) =>
-        sortedIds.indexOf(a.participant) - sortedIds.indexOf(b.participant),
-    );
+    if (this.attendanceField) {
+      const sortedIds = this.participants.map((e) => e.getId());
+      const attendance: AttendanceItem[] =
+        this.eventEntity[this.attendanceField] ?? [];
+      attendance.sort(
+        (a, b) =>
+          sortedIds.indexOf(a.participant) - sortedIds.indexOf(b.participant),
+      );
+    }
   }
 
   markAttendance(status: AttendanceStatusType) {

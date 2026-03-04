@@ -21,6 +21,8 @@ import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { Router } from "@angular/router";
 import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
 import { RouteTarget } from "#src/app/route-target";
+import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { OkButton } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 /**
  * Set up or select a roll call event for a specific date
@@ -45,12 +47,13 @@ import { RouteTarget } from "#src/app/route-target";
   ],
 })
 export class RollCallSetupComponent implements OnInit {
-  private entityMapper = inject(EntityMapperService);
-  private attendanceService = inject(AttendanceService);
-  private currentUser = inject(CurrentUserSubject);
-  private router = inject(Router);
-  private alertService = inject(AlertService);
-  private filterService = inject(FilterService);
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly attendanceService = inject(AttendanceService);
+  private readonly currentUser = inject(CurrentUserSubject);
+  private readonly router = inject(Router);
+  private readonly alertService = inject(AlertService);
+  private readonly filterService = inject(FilterService);
+  private readonly confirmationService = inject(ConfirmationDialogService);
 
   date = new Date();
 
@@ -192,11 +195,18 @@ export class RollCallSetupComponent implements OnInit {
   }
 
   createOneTimeEvent() {
-    this.router.navigate(["/attendance/add-day", "new"], {
-      queryParams: {
-        date: this.formatDateForQuery(this.date),
-      },
-    });
+    this.confirmationService.getConfirmation(
+      $localize`Please create a Recurring Activity`,
+      $localize`To record attendance, you need to first create a Recurring Activity (or an individual event record for the selected date).`,
+      OkButton,
+    );
+
+    // TODO: enable routing to create a one-time event again after we implemented a generically configurable version of this.
+    // this.router.navigate(["/attendance/add-day", "new"], {
+    //   queryParams: {
+    //     date: this.formatDateForQuery(this.date),
+    //   },
+    // });
   }
 
   filterExistingEvents(filter: DataFilter<Note>) {

@@ -8,6 +8,7 @@ import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/
 import { EventNote } from "./model/event-note";
 import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
 import { AttendanceItem } from "./model/attendance-item";
+import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 
 @Injectable({
   providedIn: "root",
@@ -16,6 +17,7 @@ export class AttendanceService {
   private entityMapper = inject(EntityMapperService);
   private dbIndexing = inject(DatabaseIndexingService);
   private childrenService = inject(ChildrenService);
+  private currentUser = inject(CurrentUserSubject);
 
   constructor() {
     this.createIndices();
@@ -260,9 +262,13 @@ export class AttendanceService {
   }
 
   async createEventForActivity(
-    activity: RecurringActivity,
+    activity: RecurringActivity | string,
     date: Date,
   ): Promise<EventNote> {
+    if (typeof activity === "string") {
+      activity = await this.entityMapper.load(RecurringActivity, activity);
+    }
+
     const instance = new EventNote();
     instance.date = date;
     instance.subject = activity.title;
@@ -277,6 +283,11 @@ export class AttendanceService {
     instance.schools = activity.linkedGroups;
     instance.relatesTo = activity.getId();
     instance.category = activity.type;
+
+    if (this.currentUser.value) {
+      instance.authors = [this.currentUser.value.getId()];
+    }
+
     return instance;
   }
 

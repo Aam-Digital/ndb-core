@@ -8,7 +8,6 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { AttendanceItem } from "../../model/attendance-item";
 import { AttendanceDatatype } from "../../model/attendance.datatype";
-import { EventAttendanceMapDatatype } from "../../deprecated/event-attendance-map.datatype";
 import { MatCardModule } from "@angular/material/card";
 import { BorderHighlightDirective } from "#src/app/core/common-components/border-highlight/border-highlight.directive";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -79,24 +78,11 @@ export class ActivityCardComponent {
   });
 
   /** Resolved attendance field name, auto-detected from schema if not explicitly set. */
-  private resolvedAttendanceField = computed(() => {
-    const explicit = this.attendanceField();
-    if (explicit) {
-      return explicit;
-    } else {
-      // detect field
-      const schema = this.event().getConstructor().schema;
-      for (const [fieldId, field] of schema.entries()) {
-        if (
-          field.dataType === AttendanceDatatype.dataType ||
-          field.dataType === EventAttendanceMapDatatype.dataType
-        ) {
-          return fieldId;
-        }
-      }
-      return undefined;
-    }
-  });
+  private resolvedAttendanceField = computed(
+    () =>
+      this.attendanceField() ??
+      AttendanceDatatype.detectFieldInEntity(this.event()),
+  );
 
   /** The attendance items for the current event. */
   attendance = computed<AttendanceItem[]>(() => {
