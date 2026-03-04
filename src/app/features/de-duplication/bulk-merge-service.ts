@@ -6,6 +6,8 @@ import { lastValueFrom } from "rxjs";
 import { BulkMergeRecordsComponent } from "app/features/de-duplication/bulk-merge-records/bulk-merge-records.component";
 import { AlertService } from "app/core/alerts/alert.service";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
+import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { OkButton } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { AttendanceItem } from "../attendance/model/attendance-item";
 import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
@@ -21,6 +23,27 @@ export class BulkMergeService {
   private readonly matDialog = inject(MatDialog);
   private readonly alert = inject(AlertService);
   private readonly unsavedChangesService = inject(UnsavedChangesService);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
+
+  /**
+   * Validates selection and opens the merge dialog for the given entities.
+   * Returns true if merge was executed, false otherwise.
+   */
+  async executeAction(entity: Entity | Entity[]): Promise<boolean> {
+    const entities = Array.isArray(entity) ? entity : [entity];
+    if (entities.length !== 2) {
+      await this.confirmationDialog.getConfirmation(
+        $localize`:bulk merge error:Invalid selection`,
+        $localize`:bulk merge error:You need to select exactly two records for merge.`,
+        OkButton,
+      );
+      return false;
+    }
+    const entityType = entities[0].getConstructor();
+    if (!entityType) return false;
+    await this.showMergeDialog(entities, entityType);
+    return true;
+  }
 
   /**
    * Opens the merge popup with the selected entities details.

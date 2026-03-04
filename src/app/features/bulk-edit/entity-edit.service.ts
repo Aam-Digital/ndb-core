@@ -1,16 +1,16 @@
 import { inject, Injectable } from "@angular/core";
-import { Entity, EntityConstructor } from "../model/entity";
-import { CascadingEntityAction } from "./cascading-entity-action";
+import { Entity, EntityConstructor } from "../../core/entity/model/entity";
+import { CascadingEntityAction } from "../../core/entity/entity-actions/cascading-entity-action";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 import { lastValueFrom } from "rxjs";
 import {
   BulkEditAction,
   EntityBulkEditComponent,
-} from "./entity-bulk-edit/entity-bulk-edit.component";
+} from "../../core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component";
 import { MatDialog } from "@angular/material/dialog";
-import { EntityActionsService } from "./entity-actions.service";
+import { EntityActionsService } from "../../core/entity/entity-actions/entity-actions.service";
 import { asArray } from "app/utils/asArray";
-import { BulkOperationStateService } from "./bulk-operation-state.service";
+import { BulkOperationStateService } from "../../core/entity/entity-actions/bulk-operation-state.service";
 
 /**
  * Bulk edit fields of multiple entities at once.
