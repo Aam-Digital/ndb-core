@@ -32,12 +32,20 @@ export class FormDialogService {
   };
 
   openView<E extends Entity>(entity: E, component: string = "EntityDetails") {
-    if (
-      !this.entityConfigService.getDetailsViewConfig(entity.getConstructor())
-    ) {
-      return this.openFormPopup(entity);
+    let hasDetailsViewConfig = false;
+    try {
+      hasDetailsViewConfig = !!this.entityConfigService.getDetailsViewConfig(
+        entity.getConstructor(),
+      );
+    } catch {
+      // If the config has not been loaded yet (e.g. during early app initialization),
+      // fall back to the form popup to avoid a runtime crash.
+      hasDetailsViewConfig = false;
     }
 
+    if (!hasDetailsViewConfig) {
+      return this.openFormPopup(entity);
+    }
     if (
       entity instanceof Note &&
       (!component || component === "EntityDetails")

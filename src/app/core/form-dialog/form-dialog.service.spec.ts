@@ -1,21 +1,43 @@
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { FormDialogService } from "./form-dialog.service";
 import { Entity } from "../entity/model/entity";
-import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
-import { MockedTestingModule } from "../../utils/mocked-testing.module";
+import { EntityConfigService } from "../entity/entity-config.service";
+import { MatDialog } from "@angular/material/dialog";
+import { DialogViewComponent } from "../ui/dialog-view/dialog-view.component";
+import { Note } from "#src/app/child-dev-project/notes/model/note";
+import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 
 describe("FormDialogService", () => {
   let service: FormDialogService;
+  let entityConfigServiceMock: jasmine.SpyObj<EntityConfigService>;
+  let dialogMock: jasmine.SpyObj<MatDialog>;
 
   beforeEach(waitForAsync(() => {
+    entityConfigServiceMock = jasmine.createSpyObj<EntityConfigService>(
+      "EntityConfigService",
+      ["getDetailsViewConfig"],
+    );
+    dialogMock = jasmine.createSpyObj<MatDialog>("MatDialog", ["open"]);
+    const schemaServiceMock = jasmine.createSpyObj<EntitySchemaService>(
+      "EntitySchemaService",
+      ["getComponent"],
+    );
+
     TestBed.configureTestingModule({
-      imports: [MockedTestingModule.withState()],
       providers: [
         {
-          provide: ConfirmationDialogService,
-          useValue: jasmine.createSpyObj(["getConfirmation"]),
+          provide: MatDialog,
+          useValue: dialogMock,
+        },
+        {
+          provide: EntityConfigService,
+          useValue: entityConfigServiceMock,
+        },
+        {
+          provide: EntitySchemaService,
+          useValue: schemaServiceMock,
         },
       ],
     });
@@ -54,5 +76,65 @@ describe("FormDialogService", () => {
     );
 
     expect(actualFields.map((x) => x.id)).toEqual(["field1", "field2"]);
+  });
+
+  it("should open EntityDetails by default when details view config is available", () => {
+    const entity = new Entity();
+    entityConfigServiceMock.getDetailsViewConfig.and.returnValue({} as any);
+
+    service.openView(entity);
+
+    expect(dialogMock.open).toHaveBeenCalledWith(
+      DialogViewComponent,
+      jasmine.objectContaining({
+        data: jasmine.objectContaining({
+          component: "EntityDetails",
+          entity,
+        }),
+      }),
+    );
+  });
+
+  it("should open NoteDetails by default for Note entities", () => {
+    const note = new Note();
+    entityConfigServiceMock.getDetailsViewConfig.and.returnValue({} as any);
+
+    service.openView(note);
+
+    expect(dialogMock.open).toHaveBeenCalledWith(
+      DialogViewComponent,
+      jasmine.objectContaining({
+        data: jasmine.objectContaining({
+          component: "NoteDetails",
+          entity: note,
+        }),
+      }),
+    );
+  });
+
+  it("should fall back to openFormPopup when details view config is missing", () => {
+    const entity = new Entity();
+    const openFormPopupSpy = spyOn(service, "openFormPopup").and.returnValue(
+      {} as any,
+    );
+    entityConfigServiceMock.getDetailsViewConfig.and.returnValue(undefined);
+
+    service.openView(entity);
+
+    expect(openFormPopupSpy).toHaveBeenCalledWith(entity);
+  });
+
+  it("should fall back to openFormPopup when getting details view config throws", () => {
+    const entity = new Entity();
+    const openFormPopupSpy = spyOn(service, "openFormPopup").and.returnValue(
+      {} as any,
+    );
+    entityConfigServiceMock.getDetailsViewConfig.and.throwError(
+      "config not loaded",
+    );
+
+    service.openView(entity);
+
+    expect(openFormPopupSpy).toHaveBeenCalledWith(entity);
   });
 });
