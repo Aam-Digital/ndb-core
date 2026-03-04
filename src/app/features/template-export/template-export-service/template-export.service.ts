@@ -29,21 +29,26 @@ export class TemplateExportService {
     return true;
   }
 
+  private _isExportServerEnabledPromise: Promise<boolean> | undefined;
+
   async isExportServerEnabled(): Promise<boolean> {
-    return firstValueFrom(
-      this.httpClient
-        .get(environment.API_PROXY_PREFIX + "/actuator/features")
-        .pipe(
-          map((res) => {
-            return res?.["export"]?.enabled ?? false;
-          }),
-          catchError((err) => {
-            // if aam-services backend is not running --> 502
-            // if aam-services Export API disabled --> 404
-            Logging.debug("Export API not available", err);
-            return of(false);
-          }),
-        ),
-    );
+    if (this._isExportServerEnabledPromise === undefined) {
+      this._isExportServerEnabledPromise = firstValueFrom(
+        this.httpClient
+          .get(environment.API_PROXY_PREFIX + "/actuator/features")
+          .pipe(
+            map((res) => {
+              return res?.["export"]?.enabled ?? false;
+            }),
+            catchError((err) => {
+              // if aam-services backend is not running --> 502
+              // if aam-services Export API disabled --> 404
+              Logging.debug("Export API not available", err);
+              return of(false);
+            }),
+          ),
+      );
+    }
+    return this._isExportServerEnabledPromise;
   }
 }
