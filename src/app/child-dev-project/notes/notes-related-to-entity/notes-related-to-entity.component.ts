@@ -143,6 +143,6 @@ export class NotesRelatedToEntityComponent
   }
 
   showNoteDetails(note: Note) {
-    this.formDialog.openView(note, "NoteDetails");
+    this.formDialog.openView(note);
   }
 }
