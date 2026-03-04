@@ -9,8 +9,6 @@ import { Router } from "@angular/router";
 import { ConfigService } from "../../config/config.service";
 import { PrimaryActionConfig } from "../../admin/admin-primary-action/primary-action-config";
 import { PrimaryActionService } from "../../admin/admin-primary-action/primary-action.service";
-import { EntityConfigService } from "../../entity/entity-config.service";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
 
 /**
  * The "Primary Action" is always displayed hovering over the rest of the app as a quick action for the user.
@@ -35,7 +33,6 @@ export class PrimaryActionComponent implements OnDestroy {
   }
   private formDialog = inject(FormDialogService);
   private readonly configService = inject(ConfigService);
-  private readonly entityConfigService = inject(EntityConfigService);
   private readonly router = inject(Router);
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
   private readonly primaryActionService = inject(PrimaryActionService);
@@ -63,30 +60,10 @@ export class PrimaryActionComponent implements OnDestroy {
       const ctor = this.entityConstructor;
       if (ctor) {
         const newEntity = new ctor();
-        this.openCreateDialog(newEntity);
+        this.formDialog.openView(newEntity);
       }
     } else if (this.config.actionType === "navigate" && this.config.route) {
       this.router.navigate([this.config.route]);
-    }
-  }
-
-  /**
-   * Open the appropriate type of dialog window for a new entity of the given type.
-   */
-  private openCreateDialog(entity: Entity) {
-    // if view config ("view:entityType/:id") is available, then use formDialog.openView
-    if (
-      this.entityConfigService.getDetailsViewConfig(entity.getConstructor())
-    ) {
-      if (entity.getType() === Note.ENTITY_TYPE) {
-        // for Note entities, pass a special component
-        this.formDialog.openView(entity, "NoteDetails");
-      } else {
-        this.formDialog.openView(entity);
-      }
-    } else {
-      // if no view config, then fall back to formDialog.openFormPopup
-      this.formDialog.openFormPopup(entity);
     }
   }
 }
