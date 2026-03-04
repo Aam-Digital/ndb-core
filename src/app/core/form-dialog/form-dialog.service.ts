@@ -22,9 +22,9 @@ import { Note } from "#src/app/child-dev-project/notes/model/note";
 
 @Injectable({ providedIn: "root" })
 export class FormDialogService {
-  private dialog = inject(MatDialog);
-  private schemaService = inject(EntitySchemaService);
-  private entityConfigService = inject(EntityConfigService);
+  private readonly dialog = inject(MatDialog);
+  private readonly schemaService = inject(EntitySchemaService);
+  private readonly entityConfigService = inject(EntityConfigService);
 
   static dialogSettings: MatDialogConfig = {
     width: "90%",
