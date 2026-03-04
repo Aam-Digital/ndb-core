@@ -15,6 +15,7 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
+import { AttendanceItem } from "./model/attendance-item";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -124,6 +125,10 @@ describe("AttendanceService", () => {
 
     const testNoteWithSchool = Note.create(date);
     testNoteWithSchool.children = ["1", "2"];
+    testNoteWithSchool.childrenAttendance = [
+      new AttendanceItem(undefined, "", "1"),
+      new AttendanceItem(undefined, "", "2"),
+    ];
     testNoteWithSchool.schools = [linkedSchoolId];
     testNoteWithSchool.category = meetingInteractionCategory;
     await entityMapper.save(testNoteWithSchool);
@@ -133,6 +138,9 @@ describe("AttendanceService", () => {
     expect(actualEvents[0].children).toEqual(
       jasmine.arrayWithExactContents(["1", "2", "3"]),
     );
+    expect(
+      actualEvents[0].childrenAttendance.map((a) => a.participant),
+    ).toEqual(jasmine.arrayWithExactContents(["1", "2", "3"]));
   });
 
   it("should create an event without the excluded participants", async () => {
@@ -146,6 +154,9 @@ describe("AttendanceService", () => {
 
     const event = await service.createEventForActivity(activity, new Date());
     expect(event.children).toEqual(
+      jasmine.arrayWithExactContents(["member", "direct"]),
+    );
+    expect(event.childrenAttendance.map((a) => a.participant)).toEqual(
       jasmine.arrayWithExactContents(["member", "direct"]),
     );
   });
@@ -302,6 +313,13 @@ describe("AttendanceService", () => {
     expect(event.children).toHaveSize(2);
     expect(event.children).toContain(directlyAddedChild.getId());
     expect(event.children).toContain(childAttendingSchool.childId);
+    expect(event.childrenAttendance).toHaveSize(2);
+    expect(event.childrenAttendance.map((a) => a.participant)).toContain(
+      directlyAddedChild.getId(),
+    );
+    expect(event.childrenAttendance.map((a) => a.participant)).toContain(
+      childAttendingSchool.childId,
+    );
   });
 
   it("should not include duplicate children for event from activity", async () => {
@@ -333,6 +351,16 @@ describe("AttendanceService", () => {
     expect(event.children).toContain(directlyAddedChild.getId());
     expect(event.children).toContain(duplicateChild.getId());
     expect(event.children).toContain(anotherRelation.childId);
+    expect(event.childrenAttendance).toHaveSize(3);
+    expect(event.childrenAttendance.map((a) => a.participant)).toContain(
+      directlyAddedChild.getId(),
+    );
+    expect(event.childrenAttendance.map((a) => a.participant)).toContain(
+      duplicateChild.getId(),
+    );
+    expect(event.childrenAttendance.map((a) => a.participant)).toContain(
+      anotherRelation.childId,
+    );
   });
 
   it("should load the events for a date with date-picker format", async () => {

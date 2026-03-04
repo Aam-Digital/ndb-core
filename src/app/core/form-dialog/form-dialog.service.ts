@@ -17,11 +17,14 @@ import {
   DialogViewComponent,
   DialogViewData,
 } from "../ui/dialog-view/dialog-view.component";
+import { EntityConfigService } from "../entity/entity-config.service";
+import { Note } from "#src/app/child-dev-project/notes/model/note";
 
 @Injectable({ providedIn: "root" })
 export class FormDialogService {
-  private dialog = inject(MatDialog);
-  private schemaService = inject(EntitySchemaService);
+  private readonly dialog = inject(MatDialog);
+  private readonly schemaService = inject(EntitySchemaService);
+  private readonly entityConfigService = inject(EntityConfigService);
 
   static dialogSettings: MatDialogConfig = {
     width: "90%",
@@ -29,6 +32,27 @@ export class FormDialogService {
   };
 
   openView<E extends Entity>(entity: E, component: string = "EntityDetails") {
+    let hasDetailsViewConfig = false;
+    try {
+      hasDetailsViewConfig = !!this.entityConfigService.getDetailsViewConfig(
+        entity.getConstructor(),
+      );
+    } catch {
+      // If the config has not been loaded yet (e.g. during early app initialization),
+      // fall back to the form popup to avoid a runtime crash.
+      hasDetailsViewConfig = false;
+    }
+
+    if (!hasDetailsViewConfig) {
+      return this.openFormPopup(entity);
+    }
+    if (
+      entity instanceof Note &&
+      (!component || component === "EntityDetails")
+    ) {
+      component = "NoteDetails";
+    }
+
     return this.dialog.open(DialogViewComponent, {
       width: "99%",
       maxWidth: "95vw",

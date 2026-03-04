@@ -9,11 +9,11 @@ import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { MatDialog } from "@angular/material/dialog";
 import { of } from "rxjs";
 import { WINDOW_TOKEN } from "#src/app/utils/di-tokens";
+import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
+import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 describe("EmailClientService", () => {
   let service: EmailClientService;
-  let mockRegistry: jasmine.SpyObj<EntityRegistry>;
-  let mockAlert: jasmine.SpyObj<AlertService>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
   let mockWindow: jasmine.SpyObj<Window>;
 
@@ -23,8 +23,6 @@ describe("EmailClientService", () => {
   }
 
   beforeEach(() => {
-    mockRegistry = jasmine.createSpyObj("EntityRegistry", ["get"]);
-    mockAlert = jasmine.createSpyObj("AlertService", ["addWarning"]);
     mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
     mockWindow = jasmine.createSpyObj("Window", [], {
       location: { href: "" },
@@ -33,10 +31,18 @@ describe("EmailClientService", () => {
     TestBed.configureTestingModule({
       providers: [
         EmailClientService,
-        { provide: EntityRegistry, useValue: mockRegistry },
-        { provide: AlertService, useValue: mockAlert },
         { provide: MatDialog, useValue: mockDialog },
         { provide: WINDOW_TOKEN, useValue: mockWindow },
+        {
+          provide: FormDialogService,
+          useValue: jasmine.createSpyObj("FormDialogService", ["openView"]),
+        },
+        {
+          provide: ConfirmationDialogService,
+          useValue: jasmine.createSpyObj("ConfirmationDialogService", [
+            "getConfirmation",
+          ]),
+        },
       ],
     });
 
@@ -50,7 +56,11 @@ describe("EmailClientService", () => {
   it("should show warning and return false if email field exists but value is missing", waitForAsync(async () => {
     const fakeEntity = new EntityWithEmail();
     fakeEntity.email = undefined;
-    mockRegistry.get.and.returnValue(EntityWithEmail);
+
+    const mockConfirmation = TestBed.inject(
+      ConfirmationDialogService,
+    ) as jasmine.SpyObj<ConfirmationDialogService>;
+
     mockDialog.open.and.returnValue({
       afterClosed: () => of(undefined),
     } as any);
@@ -58,15 +68,7 @@ describe("EmailClientService", () => {
     const result = await service.executeMailto(fakeEntity);
 
     expect(result).toBeFalse();
-    expect(mockDialog.open).toHaveBeenCalledWith(
-      jasmine.anything(),
-      jasmine.objectContaining({
-        data: jasmine.objectContaining({
-          title: "Email Error",
-          text: "Please fill an email address for this record to use this functionality.",
-        }),
-      }),
-    );
+    expect(mockConfirmation.getConfirmation).toHaveBeenCalled();
   }));
 
   it("should generate mailto link with bcc for multiple emails", () => {
@@ -111,7 +113,6 @@ describe("EmailClientService", () => {
     const entity3 = new EntityWithEmail();
     entity3.email = "jane@example.com";
 
-    mockRegistry.get.and.returnValue(EntityWithEmail);
     mockDialog.open.and.returnValue({
       afterClosed: () =>
         of({
@@ -143,7 +144,6 @@ describe("EmailClientService", () => {
     const entity3 = new EntityWithEmail();
     entity3.email = "jane@example.com";
 
-    mockRegistry.get.and.returnValue(EntityWithEmail);
     mockDialog.open.and.returnValue({
       afterClosed: () =>
         of({

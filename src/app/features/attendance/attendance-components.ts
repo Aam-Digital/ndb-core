@@ -37,10 +37,24 @@ export const attendanceComponents: ComponentTuple[] = [
       ),
   ],
   [
+    "EditLegacyAttendance",
+    () =>
+      import("./deprecated/edit-legacy-attendance.component").then(
+        (c) => c.EditLegacyAttendanceComponent,
+      ),
+  ],
+  [
     "EditAttendance",
     () =>
       import("./edit-attendance/edit-attendance.component").then(
         (c) => c.EditAttendanceComponent,
+      ),
+  ],
+  [
+    "DisplayAttendance",
+    () =>
+      import("./display-attendance/display-attendance.component").then(
+        (c) => c.DisplayAttendanceComponent,
       ),
   ],
   [
