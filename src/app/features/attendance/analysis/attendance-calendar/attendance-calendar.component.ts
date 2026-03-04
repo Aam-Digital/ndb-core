@@ -219,6 +219,6 @@ export class AttendanceCalendarComponent implements OnChanges {
   }
 
   showEventDetails(selectedEvent: Note) {
-    this.formDialog.openView(selectedEvent, "NoteDetails");
+    this.formDialog.openView(selectedEvent);
   }
 }
