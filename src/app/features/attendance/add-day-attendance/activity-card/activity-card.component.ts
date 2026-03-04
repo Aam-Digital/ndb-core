@@ -12,6 +12,7 @@ import { MatCardModule } from "@angular/material/card";
 import { BorderHighlightDirective } from "#src/app/core/common-components/border-highlight/border-highlight.directive";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { CustomDatePipe } from "#src/app/core/basic-datatypes/date/custom-date.pipe";
+import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
 
 /**
  * Simple representation of an event
@@ -62,19 +63,7 @@ export class ActivityCardComponent {
 
   /** Resolved date field name, auto-detected from schema if not explicitly set. */
   private resolvedDateField = computed(() => {
-    const explicit = this.dateField();
-    if (explicit) {
-      return explicit;
-    } else {
-      // detect first date field
-      const schema = this.event().getConstructor().schema;
-      for (const [fieldId, field] of schema.entries()) {
-        if (field.dataType === "date-only" || field.dataType === "date") {
-          return fieldId;
-        }
-      }
-      return undefined;
-    }
+    return this.dateField() ?? DateDatatype.detectFieldInEntity(this.event());
   });
 
   /** Resolved attendance field name, auto-detected from schema if not explicitly set. */

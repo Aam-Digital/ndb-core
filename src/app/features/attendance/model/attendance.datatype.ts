@@ -4,6 +4,7 @@ import { AttendanceItem } from "./attendance-item";
 import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EventAttendanceMapDatatype } from "../deprecated/event-attendance-map.datatype";
+import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
 
 /**
  * Datatype for attendance tracking on any entity.
@@ -40,31 +41,13 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
     return { ...schemaField, isArray: true };
   }
 
-  /**
-   * Detect the attendance field name from an entity's schema.
-   *
-   * Scans the schema for a field using the `attendance` or legacy `event-attendance-map` datatype
-   * and returns its property name.
-   *
-   * @param entityOrType An entity instance or entity constructor to inspect.
-   * @returns The field name of the first attendance-type field, or `undefined` if none is found.
-   */
-  static detectFieldInEntity(
+  /** @override Detects the first `attendance` or legacy `event-attendance-map` field in the entity schema. */
+  static override detectFieldInEntity(
     entityOrType: Entity | EntityConstructor,
   ): string | undefined {
-    const schema =
-      "schema" in entityOrType
-        ? (entityOrType as EntityConstructor).schema
-        : entityOrType.getConstructor().schema;
-
-    for (const [fieldId, field] of schema.entries()) {
-      if (
-        field.dataType === AttendanceDatatype.dataType ||
-        field.dataType === EventAttendanceMapDatatype.dataType
-      ) {
-        return fieldId;
-      }
-    }
-    return undefined;
+    return DefaultDatatype.detectFieldInEntity(entityOrType, [
+      AttendanceDatatype.dataType,
+      EventAttendanceMapDatatype.dataType,
+    ]);
   }
 }

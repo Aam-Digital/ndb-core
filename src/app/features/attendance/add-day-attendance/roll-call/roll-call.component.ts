@@ -85,15 +85,15 @@ class HorizontalHammerConfig extends HammerGestureConfig {
   ],
 })
 export class RollCallComponent implements OnChanges {
-  private enumService = inject(ConfigurableEnumService);
-  private entityMapper = inject(EntityMapperService);
-  private formDialog = inject(FormDialogService);
-  private confirmationDialog = inject(ConfirmationDialogService);
-  private router = inject(Router);
-  private location = inject(Location);
-  private route = inject(ActivatedRoute);
-  private attendanceService = inject(AttendanceService);
-  private unsavedChanges = inject(UnsavedChangesService);
+  private readonly enumService = inject(ConfigurableEnumService);
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly formDialog = inject(FormDialogService);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
+  private readonly router = inject(Router);
+  private readonly location = inject(Location);
+  private readonly route = inject(ActivatedRoute);
+  private readonly attendanceService = inject(AttendanceService);
+  private readonly unsavedChanges = inject(UnsavedChangesService);
 
   /**
    * Entity ID from route param, mapped by RoutedViewComponent.
