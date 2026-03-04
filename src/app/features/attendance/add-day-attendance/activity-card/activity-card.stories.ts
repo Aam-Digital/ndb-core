@@ -1,4 +1,4 @@
-import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryObj } from "@storybook/angular";
 import { ActivityCardComponent } from "./activity-card.component";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service";
@@ -16,13 +16,6 @@ export default {
     }),
   ],
 } as Meta;
-
-const Template: StoryFn<ActivityCardComponent> = (
-  args: ActivityCardComponent,
-) => ({
-  component: ActivityCardComponent,
-  props: args,
-});
 
 const demoChildren = [generateChild(), generateChild(), generateChild()];
 
@@ -58,25 +51,19 @@ demoChildren.forEach((c) => {
   );
 });
 
-export const OneTimeEvent = {
-  render: Template,
-
+export const OneTimeEvent: StoryObj<ActivityCardComponent> = {
   args: {
     event: simpleEvent,
   },
 };
 
-export const OneTimeEventComplex = {
-  render: Template,
-
+export const OneTimeEventComplex: StoryObj<ActivityCardComponent> = {
   args: {
     event: longEvent,
   },
 };
 
-export const RecurringEvent = {
-  render: Template,
-
+export const RecurringEvent: StoryObj<ActivityCardComponent> = {
   args: {
     event: activityEvent,
   },
