@@ -355,7 +355,7 @@ export class RollCallComponent {
     }
 
     this.participants.update((participants) =>
-      [...participants].sort(sortByAttribute<any>(sortBy, "asc")),
+      [...participants].sort(sortByAttribute<Entity>(sortBy, "asc")),
     );
     // also sort the participants in the entity itself for display in details view later
     const field = this._resolvedAttendanceField;
@@ -456,8 +456,11 @@ export class RollCallComponent {
       $localize`This event has some participants who are "archived". We automatically remove them from the attendance list for you. Do you want to also include archived participants for this event?`,
     );
     if (confirmation) {
-      this.participants.update((p) => [...p, ...this.inactiveParticipants()]);
-      this.inactiveParticipants.set([]);
+     if (confirmation) {
+       this.participants.update((p) => [...p, ...this.inactiveParticipants()]);
+       this.inactiveParticipants.set([]);
+       this.sortParticipants();
+     }
     }
   }
 }
