@@ -30,13 +30,11 @@ export default {
 export const Primary: StoryObj<RollCallComponent> = {
   args: {
     eventEntity: demoEvent,
-    participants: demoChildren,
   },
 };
 
 export const Finished: StoryObj<RollCallComponent> = {
   args: {
     eventEntity: new Note(),
-    participants: [],
   },
 };

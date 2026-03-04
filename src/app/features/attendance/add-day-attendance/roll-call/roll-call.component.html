@@ -8,36 +8,36 @@
   <button mat-icon-button (click)="exit()" matTooltip="Back" i18n-matTooltip>
     <fa-icon icon="arrow-left"></fa-icon>
   </button>
-  @if (eventEntity) {
-    <h2 class="remove-margin-bottom">{{ eventEntity.toString() }}</h2>
+  @if (event(); as event) {
+    <h2 class="remove-margin-bottom">{{ event.toString() }}</h2>
   }
 </div>
 
-@if (isLoading) {
+@if (eventResource.isLoading()) {
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 }
 
 <!-- Individual Student's Page -->
-@if (participants?.length > 0) {
+@if (participants().length > 0) {
   <div class="flex-column gap-regular">
     <mat-progress-bar
       mode="determinate"
-      [value]="(currentIndex / participants.length) * 100"
+      [value]="(currentIndex() / participants().length) * 100"
     ></mat-progress-bar>
     <div class="progress-nav flex-row">
       <div style="margin-left: -10px">
         <button
           mat-icon-button
           (click)="goToParticipantWithIndex(0)"
-          [disabled]="isFirst"
+          [disabled]="isFirst()"
           class="button-skip"
         >
           <fa-icon icon="angle-double-left"></fa-icon>
         </button>
         <button
           mat-icon-button
-          (click)="goToParticipantWithIndex(currentIndex - 1)"
-          [disabled]="isFirst"
+          (click)="goToParticipantWithIndex(currentIndex() - 1)"
+          [disabled]="isFirst()"
           class="button-skip"
         >
           <fa-icon icon="angle-left"></fa-icon>
@@ -46,35 +46,35 @@
       <div
         class="progress-label flex-grow"
         [style.visibility]="
-          currentIndex < participants.length ? 'visible' : 'hidden'
+          currentIndex() < participants().length ? 'visible' : 'hidden'
         "
       >
-        {{ currentIndex + 1 }} / {{ participants.length }}
+        {{ currentIndex() + 1 }} / {{ participants().length }}
       </div>
       <div>
         <button
           mat-icon-button
-          (click)="goToParticipantWithIndex(currentIndex + 1)"
-          [disabled]="isFinished"
+          (click)="goToParticipantWithIndex(currentIndex() + 1)"
+          [disabled]="isFinished()"
           class="button-skip"
         >
           <fa-icon icon="angle-right"></fa-icon>
         </button>
         <button
           mat-icon-button
-          (click)="goToParticipantWithIndex(participants.length)"
-          [disabled]="isFinished"
+          (click)="goToParticipantWithIndex(participants().length)"
+          [disabled]="isFinished()"
           class="button-skip"
         >
           <fa-icon icon="angle-double-right"></fa-icon>
         </button>
       </div>
-      @if (inactiveParticipants?.length > 0) {
+      @if (inactiveParticipants().length > 0) {
         <div style="margin-right: -10px">
           <button
             mat-icon-button
             (click)="includeInactive()"
-            [disabled]="isFinished"
+            [disabled]="isFinished()"
             color="warn"
             matTooltip="Excluded some archived participants. Click to include."
             i18n-matTooltip
@@ -84,33 +84,37 @@
         </div>
       }
     </div>
-    @if (!isFinished) {
+    @if (!isFinished()) {
       <app-entity-block
         class="margin-small"
-        [entity]="currentParticipant"
+        [entity]="currentParticipant()"
         [linkDisabled]="true"
       >
       </app-entity-block>
     }
-    @if (!isFinished && currentAttendance) {
+    @if (!isFinished() && currentAttendance()) {
       <div class="tab-wrapper">
-        @for (participant of participants; track participant; let i = $index) {
+        @for (
+          participant of participants();
+          track participant;
+          let i = $index
+        ) {
           <app-roll-call-tab
-            (swiperight)="goToParticipantWithIndex(currentIndex - 1)"
-            (swipeleft)="goToParticipantWithIndex(currentIndex + 1)"
+            (swiperight)="goToParticipantWithIndex(currentIndex() - 1)"
+            (swipeleft)="goToParticipantWithIndex(currentIndex() + 1)"
             class="tab-body"
-            [class.tab-body-active]="currentIndex === i"
-            [position]="i - currentIndex"
+            [class.tab-body-active]="currentIndex() === i"
+            [position]="i - currentIndex()"
           >
             <div>
-              @for (option of availableStatus; track option) {
+              @for (option of availableStatus(); track option) {
                 <div
                   role="button"
                   class="group-select-option"
                   (click)="markAttendance(option)"
                   [class]="
-                    attendanceByParticipant[participant.getId()]?.status?.id ===
-                    option.id
+                    attendanceByParticipant()[participant.getId()]?.status
+                      ?.id === option.id
                       ? option.style
                       : ''
                   "
@@ -124,7 +128,7 @@
                     "
                   >
                     @if (
-                      attendanceByParticipant[participant.getId()]?.status
+                      attendanceByParticipant()[participant.getId()]?.status
                         ?.id === option.id
                     ) {
                       <fa-icon icon="check"></fa-icon>
@@ -142,7 +146,7 @@
 }
 
 <!-- Completion Page -->
-@if (isFinished) {
+@if (isFinished()) {
   <div class="flex-column gap-regular margin-top-regular">
     <div class="roll-call-complete" @completeRollCall>
       <fa-icon icon="check-circle" size="3x"></fa-icon>

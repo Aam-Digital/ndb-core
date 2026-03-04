@@ -1,10 +1,14 @@
 import {
+  ChangeDetectionStrategy,
   Component,
+  computed,
+  effect,
   inject,
   Injectable,
-  Input,
-  OnChanges,
-  SimpleChanges,
+  input,
+  resource,
+  signal,
+  untracked,
 } from "@angular/core";
 import { Location } from "@angular/common";
 import { animate, style, transition, trigger } from "@angular/animations";
@@ -59,6 +63,7 @@ class HorizontalHammerConfig extends HammerGestureConfig {
   selector: "app-roll-call",
   templateUrl: "./roll-call.component.html",
   styleUrls: ["./roll-call.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger("completeRollCall", [
       transition("void => *", [
@@ -84,7 +89,7 @@ class HorizontalHammerConfig extends HammerGestureConfig {
     },
   ],
 })
-export class RollCallComponent implements OnChanges {
+export class RollCallComponent {
   private readonly enumService = inject(ConfigurableEnumService);
   private readonly entityMapper = inject(EntityMapperService);
   private readonly formDialog = inject(FormDialogService);
@@ -99,92 +104,123 @@ export class RollCallComponent implements OnChanges {
    * Entity ID from route param, mapped by RoutedViewComponent.
    * Supports real entity IDs, or "new" for creating a new event.
    */
-  @Input() id: string;
+  id = input<string>();
 
   /**
    * The event to be displayed and edited.
    * Can be set directly when used as an embedded component, or loaded from DB via id.
    */
-  @Input() eventEntity: Entity;
+  eventEntity = input<Entity>();
 
   /**
    * (optional) property name of the attendance field on the event entity.
    * If not provided, it is auto-detected from the entity schema.
    */
-  @Input() attendanceField?: string;
+  attendanceField = input<string>();
 
   /**
    * (optional) property name of the participant entities by which they are sorted
    */
-  @Input() sortParticipantsBy?: string;
+  sortParticipantsBy = input<string>();
 
   /**
-   * The index, participant and attendance that is currently being processed
+   * Loads the event entity from the provided input or by ID.
+   * Unifies the two input paths (direct entity vs route-based loading).
    */
-  currentIndex = 0;
-  currentParticipant: Entity;
-  currentAttendance: AttendanceItem;
-  /**
-   * whether any changes have been made to the model
-   */
-  isDirty: boolean = false;
+  eventResource = resource({
+    params: () => ({ entity: this.eventEntity(), id: this.id() }),
+    loader: async ({ params: { entity, id } }) => {
+      console.log("res", entity); // TODO: remove
+      if (entity) return entity;
+      if (!id) return undefined;
+      if (id === "new") return this.createEventFromRoute();
+      return this.loadExistingEvent(id);
+    },
+  });
 
-  /** whether the event is being loaded */
-  isLoading: boolean = false;
+  /** The resolved event entity */
+  event = computed(() => this.eventResource.value());
 
-  /** lookup object for attendance items by participant ID, built during loadParticipants */
-  attendanceByParticipant: Record<string, AttendanceItem> = {};
+  /** The index of the participant currently being processed */
+  currentIndex = signal(0);
 
-  /** options available for selecting an attendance status */
-  availableStatus: AttendanceStatusType[];
+  /** The participant currently being processed */
+  currentParticipant = computed(() => {
+    const p = this.participants();
+    const i = this.currentIndex();
+    return i < p.length ? p[i] : undefined;
+  });
 
-  participants: Entity[] = [];
-  inactiveParticipants: Entity[];
+  /** The attendance item of the current participant */
+  currentAttendance = computed(() => {
+    const participant = this.currentParticipant();
+    return participant
+      ? this.attendanceByParticipant()[participant.getId()]
+      : undefined;
+  });
 
-  async ngOnChanges(changes: SimpleChanges) {
-    if (changes.id && this.id) {
-      await this.loadEventFromRoute();
-    }
-    if (changes.eventEntity && this.eventEntity) {
-      this.loadAttendanceStatusTypes();
-      await this.loadParticipants();
-      this.setInitialIndex();
-    }
-    if (changes.sortParticipantsBy) {
-      this.sortParticipants();
-    }
+  /** Whether any changes have been made to the model */
+  isDirty = signal(false);
+
+  /** Lookup object for attendance items by participant ID, built during loadParticipants */
+  attendanceByParticipant = signal<Record<string, AttendanceItem>>({});
+
+  /** Options available for selecting an attendance status */
+  availableStatus = signal<AttendanceStatusType[]>([]);
+
+  participants = signal<Entity[]>([]);
+  inactiveParticipants = signal<Entity[]>([]);
+
+  /** Resolved attendance field name (input or auto-detected) */
+  private _resolvedAttendanceField: string | undefined;
+
+  isFirst = computed(() => this.currentIndex() === 0);
+  isLast = computed(
+    () => this.currentIndex() === this.participants().length - 1,
+  );
+  isFinished = computed(
+    () => this.currentIndex() >= this.participants().length,
+  );
+
+  constructor() {
+    // Initialize participants when event is loaded/resolved
+    effect(() => {
+      const event = this.event();
+
+      console.log("effect", event); // TODO: remove
+      if (event) {
+        untracked(() => this.initializeForEvent());
+      }
+    });
+
+    // React to sort configuration changes
+    effect(() => {
+      this.sortParticipantsBy();
+      untracked(() => this.sortParticipants());
+    });
   }
 
   /**
-   * Load or create the event based on the route id and query params.
+   * Initialize participant data for the current event entity.
    */
-  private async loadEventFromRoute() {
-    this.isLoading = true;
+  private async initializeForEvent() {
+    this.loadAttendanceStatusTypes();
+    await this.loadParticipants();
+    this.setInitialIndex();
+  }
 
-    if (this.id === "new") {
-      const activityId = this.route.snapshot.queryParamMap.get("activity");
-      const dateStr = this.route.snapshot.queryParamMap.get("date");
-      const date = dateStr ? new Date(dateStr) : new Date();
+  /**
+   * Create or load a new event based on route query params.
+   */
+  private async createEventFromRoute(): Promise<Entity | undefined> {
+    const activityId = this.route.snapshot.queryParamMap.get("activity");
+    const dateStr = this.route.snapshot.queryParamMap.get("date");
+    const date = dateStr ? new Date(dateStr) : new Date();
 
-      if (activityId) {
-        this.eventEntity = await this.attendanceService.createEventForActivity(
-          activityId,
-          date,
-        );
-      } else {
-        this.eventEntity = await this.createOneTimeEvent(date);
-      }
-    } else {
-      this.eventEntity = await this.loadExistingEvent(this.id);
+    if (activityId) {
+      return this.attendanceService.createEventForActivity(activityId, date);
     }
-
-    if (this.eventEntity) {
-      this.loadAttendanceStatusTypes();
-      await this.loadParticipants();
-      this.setInitialIndex();
-    }
-
-    this.isLoading = false;
+    return this.createOneTimeEvent(date);
   }
 
   /**
@@ -224,19 +260,20 @@ export class RollCallComponent implements OnChanges {
    * This is the first entry of the list, if the user has never recorded attendance
    * for this event. Else it is the first participant without any attendance information
    * (i.e. got skipped or the user left at this participant)
-   * @private
    */
   private setInitialIndex() {
+    const participantsList = this.participants();
+    const attendanceMap = this.attendanceByParticipant();
     let index = 0;
-    for (const entry of this.participants) {
-      if (!this.attendanceByParticipant[entry.getId()]?.status?.id) {
+    for (const entry of participantsList) {
+      if (!attendanceMap[entry.getId()]?.status?.id) {
         break;
       }
       index += 1;
     }
 
     // do not jump to end - if all participants are recorded, start with first instead
-    if (index >= this.participants.length) {
+    if (index >= participantsList.length) {
       index = 0;
     }
 
@@ -244,22 +281,26 @@ export class RollCallComponent implements OnChanges {
   }
 
   private loadAttendanceStatusTypes() {
-    this.availableStatus = this.enumService.getEnumValues<AttendanceStatusType>(
-      ATTENDANCE_STATUS_CONFIG_ID,
+    this.availableStatus.set(
+      this.enumService.getEnumValues<AttendanceStatusType>(
+        ATTENDANCE_STATUS_CONFIG_ID,
+      ),
     );
   }
 
   private async loadParticipants() {
-    this.participants = [];
-    this.inactiveParticipants = [];
-    this.attendanceByParticipant = {};
-
-    this.attendanceField ??= AttendanceDatatype.detectFieldInEntity(
-      this.eventEntity,
-    );
-    const attendanceItems: AttendanceItem[] = this.attendanceField
-      ? (this.eventEntity[this.attendanceField] ?? [])
+    const entity = this.event();
+    this._resolvedAttendanceField =
+      this.attendanceField() ?? AttendanceDatatype.detectFieldInEntity(entity);
+    const attendanceItems: AttendanceItem[] = this._resolvedAttendanceField
+      ? (entity[this._resolvedAttendanceField] ?? [])
       : [];
+
+    const active: Entity[] = [];
+    const inactive: Entity[] = [];
+    const attendanceMap: Record<string, AttendanceItem> = {};
+
+    console.log("attendanceItems", attendanceItems); // TODO: remove
 
     for (const attendanceItem of attendanceItems) {
       const participantId = attendanceItem.participant;
@@ -274,40 +315,46 @@ export class RollCallComponent implements OnChanges {
           "Could not find participant " +
             participantId +
             " for event " +
-            this.eventEntity.getId(),
+            entity.getId(),
         );
-        if (this.attendanceField) {
-          this.eventEntity[this.attendanceField] = attendanceItems.filter(
+        if (this._resolvedAttendanceField) {
+          entity[this._resolvedAttendanceField] = attendanceItems.filter(
             (a) => a.participant !== participantId,
           );
         }
         continue;
       }
 
-      this.attendanceByParticipant[participantId] = attendanceItem;
+      attendanceMap[participantId] = attendanceItem;
 
       if (participant.isActive) {
-        this.participants.push(participant);
+        active.push(participant);
       } else {
-        this.inactiveParticipants.push(participant);
+        inactive.push(participant);
       }
     }
+
+    this.participants.set(active);
+    this.inactiveParticipants.set(inactive);
+    this.attendanceByParticipant.set(attendanceMap);
     this.sortParticipants();
   }
 
   private sortParticipants() {
-    if (!this.sortParticipantsBy) {
+    const sortBy = this.sortParticipantsBy();
+    if (!sortBy) {
       return;
     }
 
-    this.participants.sort(
-      sortByAttribute<any>(this.sortParticipantsBy, "asc"),
+    this.participants.update((participants) =>
+      [...participants].sort(sortByAttribute<any>(sortBy, "asc")),
     );
     // also sort the participants in the entity itself for display in details view later
-    if (this.attendanceField) {
-      const sortedIds = this.participants.map((e) => e.getId());
-      const attendance: AttendanceItem[] =
-        this.eventEntity[this.attendanceField] ?? [];
+    const field = this._resolvedAttendanceField;
+    const entity = this.event();
+    if (field && entity) {
+      const sortedIds = this.participants().map((e) => e.getId());
+      const attendance: AttendanceItem[] = entity[field] ?? [];
       attendance.sort(
         (a, b) =>
           sortedIds.indexOf(a.participant) - sortedIds.indexOf(b.participant),
@@ -316,38 +363,24 @@ export class RollCallComponent implements OnChanges {
   }
 
   markAttendance(status: AttendanceStatusType) {
-    this.currentAttendance.status = status;
-    this.isDirty = true;
+    const attendance = this.currentAttendance();
+    if (attendance) {
+      attendance.status = status;
+    }
+    this.isDirty.set(true);
     this.unsavedChanges.pending = true;
 
-    this.goToParticipantWithIndex(this.currentIndex + 1);
+    this.goToParticipantWithIndex(this.currentIndex() + 1);
   }
 
   goToParticipantWithIndex(newIndex: number) {
-    this.currentIndex = Math.max(
-      0,
-      Math.min(newIndex, this.participants.length),
+    this.currentIndex.set(
+      Math.max(0, Math.min(newIndex, this.participants().length)),
     );
 
-    if (this.isFinished) {
+    if (this.isFinished()) {
       void this.saveEvent();
-    } else {
-      this.currentParticipant = this.participants[this.currentIndex];
-      this.currentAttendance =
-        this.attendanceByParticipant[this.currentParticipant.getId()];
     }
-  }
-
-  get isFirst(): boolean {
-    return this.currentIndex === 0;
-  }
-
-  get isLast(): boolean {
-    return this.currentIndex === this.participants.length - 1;
-  }
-
-  get isFinished(): boolean {
-    return this.currentIndex >= this.participants.length;
   }
 
   finish() {
@@ -358,7 +391,7 @@ export class RollCallComponent implements OnChanges {
    * Handle navigating back, showing save/discard dialog if there are unsaved changes.
    */
   exit() {
-    if (this.isDirty) {
+    if (this.isDirty()) {
       this.confirmationDialog.getConfirmation(
         $localize`:Exit from the current screen:Exit`,
         $localize`Do you want to save your progress before going back?`,
@@ -373,7 +406,7 @@ export class RollCallComponent implements OnChanges {
           {
             text: $localize`:Discard changes made to a form:Discard`,
             click: (): boolean => {
-              this.isDirty = false;
+              this.isDirty.set(false);
               this.unsavedChanges.pending = false;
               this.location.back();
               return false;
@@ -388,15 +421,16 @@ export class RollCallComponent implements OnChanges {
   }
 
   async saveEvent() {
-    if (this.eventEntity) {
-      await this.entityMapper.save(this.eventEntity);
-      this.isDirty = false;
+    const entity = this.event();
+    if (entity) {
+      await this.entityMapper.save(entity);
+      this.isDirty.set(false);
       this.unsavedChanges.pending = false;
     }
   }
 
   showDetails() {
-    this.formDialog.openView(this.eventEntity);
+    this.formDialog.openView(this.event());
   }
 
   async includeInactive() {
@@ -405,8 +439,8 @@ export class RollCallComponent implements OnChanges {
       $localize`This event has some participants who are "archived". We automatically remove them from the attendance list for you. Do you want to also include archived participants for this event?`,
     );
     if (confirmation) {
-      this.participants = [...this.participants, ...this.inactiveParticipants];
-      this.inactiveParticipants = [];
+      this.participants.update((p) => [...p, ...this.inactiveParticipants()]);
+      this.inactiveParticipants.set([]);
     }
   }
 }
