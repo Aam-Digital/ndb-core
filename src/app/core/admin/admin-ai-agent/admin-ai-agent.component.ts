@@ -59,7 +59,7 @@ export class AdminAiAgentComponent {
     ];
 
     await this.downloadService.triggerDownload(
-      JSON.stringify(docs, null, 2),
+      docs,
       "json",
       "aam-digital-ai-context",
     );
