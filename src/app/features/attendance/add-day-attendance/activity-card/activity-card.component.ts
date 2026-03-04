@@ -34,47 +34,47 @@ export class ActivityCardComponent {
   /**
    * The entity representing the event to be displayed.
    */
-  event = input.required<Entity>();
+  readonly event = input.required<Entity>();
 
   /**
    * The property name of the attendance field on the entity.
    * If not provided, it is auto-detected from the entity schema.
    */
-  attendanceField = input<string>();
+  readonly attendanceField = input<string>();
 
   /**
    * The property name of the date field on the entity.
    * If not provided, it is auto-detected as the first date/date-only field in the schema.
    */
-  dateField = input<string>();
+  readonly dateField = input<string>();
 
   /**
    * An optional extra entity field to display on the card (e.g. "category").
    * The value's `label` property is shown if available, otherwise the raw value.
    */
-  extraField = input<string>();
+  readonly extraField = input<string>();
 
   /**
    * Whether the event or activity is displayed in the style of events generated from a generic recurring activity.
    *
    * If not explicitly defined, it is inferred from the entity's `relatesTo` reference to a RecurringActivity.
    */
-  recurring = input<boolean>();
+  readonly recurring = input<boolean>();
 
   /** Resolved date field name, auto-detected from schema if not explicitly set. */
-  private resolvedDateField = computed(() => {
+  private readonly resolvedDateField = computed(() => {
     return this.dateField() ?? DateDatatype.detectFieldInEntity(this.event());
   });
 
   /** Resolved attendance field name, auto-detected from schema if not explicitly set. */
-  private resolvedAttendanceField = computed(
+  private readonly resolvedAttendanceField = computed(
     () =>
       this.attendanceField() ??
       AttendanceDatatype.detectFieldInEntity(this.event()),
   );
 
   /** The attendance items for the current event. */
-  attendance = computed<AttendanceItem[]>(() => {
+  readonly attendance = computed<AttendanceItem[]>(() => {
     const field = this.resolvedAttendanceField();
     if (!field) {
       return [];
@@ -83,7 +83,7 @@ export class ActivityCardComponent {
   });
 
   /** Whether this event is linked to a recurring activity. */
-  isRecurring = computed(() => {
+  readonly isRecurring = computed(() => {
     const explicit = this.recurring();
     if (explicit !== undefined) {
       return explicit;
@@ -95,7 +95,7 @@ export class ActivityCardComponent {
   });
 
   /** Resolved date value from the entity. */
-  dateValue = computed<Date | undefined>(() => {
+  readonly dateValue = computed<Date | undefined>(() => {
     const field = this.resolvedDateField();
     if (!field) {
       return undefined;
@@ -104,7 +104,7 @@ export class ActivityCardComponent {
   });
 
   /** Resolved display value of the extra field, if configured. */
-  extraFieldValue = computed<string | undefined>(() => {
+  readonly extraFieldValue = computed<string | undefined>(() => {
     const field = this.extraField();
     if (!field) {
       return undefined;
@@ -113,7 +113,7 @@ export class ActivityCardComponent {
     return val?.label ?? val;
   });
 
-  warningLevel = computed<"ok" | "warning" | "urgent">(() => {
+  readonly warningLevel = computed<"ok" | "warning" | "urgent">(() => {
     const att = this.attendance();
     const hasUnknown = att.some((a) => !a.status?.id);
     if (!hasUnknown) {

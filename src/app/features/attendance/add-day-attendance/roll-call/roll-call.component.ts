@@ -107,30 +107,30 @@ export class RollCallComponent {
    * Entity ID from route param, mapped by RoutedViewComponent.
    * Supports real entity IDs, or "new" for creating a new event.
    */
-  id = input<string>();
+  readonly id = input<string>();
 
   /**
    * The event to be displayed and edited.
    * Can be set directly when used as an embedded component, or loaded from DB via id.
    */
-  eventEntity = input<Entity>();
+  readonly eventEntity = input<Entity>();
 
   /**
    * (optional) property name of the attendance field on the event entity.
    * If not provided, it is auto-detected from the entity schema.
    */
-  attendanceField = input<string>();
+  readonly attendanceField = input<string>();
 
   /**
    * (optional) property name of the participant entities by which they are sorted
    */
-  sortParticipantsBy = input<string>();
+  readonly sortParticipantsBy = input<string>();
 
   /**
    * Loads the event entity from the provided input or by ID.
    * Unifies the two input paths (direct entity vs route-based loading).
    */
-  eventResource = resource({
+  readonly eventResource = resource({
     params: () => ({ entity: this.eventEntity(), id: this.id() }),
     loader: async ({ params: { entity, id } }) => {
       if (entity) return entity;
@@ -141,20 +141,20 @@ export class RollCallComponent {
   });
 
   /** The resolved event entity */
-  event = computed(() => this.eventResource.value());
+  readonly event = computed(() => this.eventResource.value());
 
   /** The index of the participant currently being processed */
-  currentIndex = signal(0);
+  readonly currentIndex = signal(0);
 
   /** The participant currently being processed */
-  currentParticipant = computed(() => {
+  readonly currentParticipant = computed(() => {
     const p = this.participants();
     const i = this.currentIndex();
     return i < p.length ? p[i] : undefined;
   });
 
   /** The attendance item of the current participant */
-  currentAttendance = computed(() => {
+  readonly currentAttendance = computed(() => {
     const participant = this.currentParticipant();
     return participant
       ? this.attendanceByParticipant()[participant.getId()]
@@ -162,25 +162,25 @@ export class RollCallComponent {
   });
 
   /** Whether any changes have been made to the model */
-  isDirty = signal(false);
+  readonly isDirty = signal(false);
 
   /** Lookup object for attendance items by participant ID, built during loadParticipants */
-  attendanceByParticipant = signal<Record<string, AttendanceItem>>({});
+  readonly attendanceByParticipant = signal<Record<string, AttendanceItem>>({});
 
   /** Options available for selecting an attendance status */
-  availableStatus = signal<AttendanceStatusType[]>([]);
+  readonly availableStatus = signal<AttendanceStatusType[]>([]);
 
-  participants = signal<Entity[]>([]);
-  inactiveParticipants = signal<Entity[]>([]);
+  readonly participants = signal<Entity[]>([]);
+  readonly inactiveParticipants = signal<Entity[]>([]);
 
   /** Resolved attendance field name (input or auto-detected) */
   private _resolvedAttendanceField: string | undefined;
 
-  isFirst = computed(() => this.currentIndex() === 0);
-  isLast = computed(
+  readonly isFirst = computed(() => this.currentIndex() === 0);
+  readonly isLast = computed(
     () => this.currentIndex() === this.participants().length - 1,
   );
-  isFinished = computed(
+  readonly isFinished = computed(
     () => this.currentIndex() >= this.participants().length,
   );
 
