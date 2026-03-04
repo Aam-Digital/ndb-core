@@ -19,9 +19,9 @@ import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/b
   providedIn: "root",
 })
 export class EntityEditService extends CascadingEntityAction {
-  private matDialog = inject(MatDialog);
-  private entityActionsService = inject(EntityActionsService);
-  private unsavedChanges = inject(UnsavedChangesService);
+  private readonly matDialog = inject(MatDialog);
+  private readonly entityActionsService = inject(EntityActionsService);
+  private readonly unsavedChanges = inject(UnsavedChangesService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
 
   /**

@@ -41,8 +41,7 @@ export class BulkMergeService {
     }
     const entityType = entities[0].getConstructor();
     if (!entityType) return false;
-    await this.showMergeDialog(entities, entityType);
-    return true;
+    return this.showMergeDialog(entities, entityType);
   }
 
   /**
@@ -54,19 +53,21 @@ export class BulkMergeService {
   async showMergeDialog<E extends Entity>(
     entitiesToMerge: E[],
     entityType: EntityConstructor,
-  ): Promise<void> {
+  ): Promise<boolean> {
     const dialogRef = this.matDialog.open(BulkMergeRecordsComponent, {
       maxHeight: "90vh",
       data: { entityConstructor: entityType, entitiesToMerge: entitiesToMerge },
     });
-    const mergedEntity: E = await lastValueFrom(dialogRef.afterClosed());
+    const mergedEntity: E | undefined = await lastValueFrom(
+      dialogRef.afterClosed(),
+    );
 
-    if (mergedEntity) {
-      await this.executeMerge(mergedEntity, entitiesToMerge);
+    if (!mergedEntity) return false;
 
-      this.unsavedChangesService.pending = false;
-      this.alert.addInfo($localize`Records merged successfully.`);
-    }
+    await this.executeMerge(mergedEntity, entitiesToMerge);
+    this.unsavedChangesService.pending = false;
+    this.alert.addInfo($localize`Records merged successfully.`);
+    return true;
   }
 
   /**

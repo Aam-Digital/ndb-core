@@ -1,8 +1,11 @@
 import { CommonModule } from "@angular/common";
-import { inject, NgModule } from "@angular/core";
+import { inject, Injector, NgModule } from "@angular/core";
 import { EntityActionsMenuService } from "#src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EntityEditService } from "./entity-edit.service";
+import { asArray } from "#src/app/utils/asArray";
+import { Logging } from "#src/app/core/logging/logging.service";
+import { AlertService } from "#src/app/core/alerts/alert.service";
 
 /**
  * Feature module for bulk editing multiple entities at once.
@@ -13,7 +16,8 @@ import { EntityEditService } from "./entity-edit.service";
 export class BulkEditModule {
   constructor() {
     const entityActionsMenuService = inject(EntityActionsMenuService);
-    const entityEditService = inject(EntityEditService);
+    const injector = inject(Injector);
+    const alertService = inject(AlertService);
 
     entityActionsMenuService.registerActions([
       {
@@ -23,12 +27,20 @@ export class BulkEditModule {
         tooltip: $localize`:entity context menu tooltip:Edit multiple records at once.`,
         availableFor: "bulk-only",
         permission: "update",
-        execute: async (entity: Entity | Entity[]) => {
-          const entities = Array.isArray(entity) ? entity : [entity];
+        execute: async (entities: Entity | Entity[]) => {
+          const entityEditService = injector.get(EntityEditService); // only inject lazily
+          entities = asArray(entities);
           if (!entities.length) return false;
           const entityType = entities[0].getConstructor();
           if (!entityType) return false;
-          return entityEditService.edit(entities, entityType);
+
+          return entityEditService.edit(entities, entityType).catch((error) => {
+            Logging.warn("Bulk edit failed", error);
+            alertService.addDanger(
+              $localize`:Bulk edit error message:Bulk edit failed. Please try again.`,
+            );
+            return false;
+          });
         },
       },
     ]);

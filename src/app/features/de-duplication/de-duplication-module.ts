@@ -1,4 +1,4 @@
-import { NgModule, inject } from "@angular/core";
+import { Injector, NgModule, inject } from "@angular/core";
 import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
 import { EntityActionsMenuService } from "#src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service";
 import { BulkMergeService } from "./bulk-merge-service";
@@ -8,7 +8,7 @@ export class DeDuplicationModule {
   constructor() {
     const components = inject(ComponentRegistry);
     const entityActionsMenuService = inject(EntityActionsMenuService);
-    const bulkMergeService = inject(BulkMergeService);
+    const injector = inject(Injector);
 
     components.addAll(dynamicComponents);
 
@@ -20,7 +20,8 @@ export class DeDuplicationModule {
         tooltip: $localize`:entity context menu tooltip:Merge two records into one, combining their data and deleting duplicates.`,
         availableFor: "bulk-only",
         permission: "update",
-        execute: (entity) => bulkMergeService.executeAction(entity),
+        execute: (entity) =>
+          injector.get(BulkMergeService).executeAction(entity), // only inject lazily
       },
     ]);
   }
