@@ -18,10 +18,16 @@ import { Location } from "@angular/common";
 import { AttendanceService } from "../../attendance.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { RouterTestingModule } from "@angular/router/testing";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { mockEntityMapperProvider } from "#src/app/core/entity/entity-mapper/mock-entity-mapper-service";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
+import {
+  EntityRegistry,
+  entityRegistry,
+} from "#src/app/core/entity/database-entity.decorator";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 
 const PRESENT = {
   id: "PRESENT",
@@ -38,7 +44,7 @@ const ABSENT = {
   countAs: AttendanceLogicalStatus.ABSENT,
 };
 
-fdescribe("RollCallComponent", () => {
+describe("RollCallComponent", () => {
   let component: RollCallComponent;
   let fixture: ComponentFixture<RollCallComponent>;
 
@@ -56,11 +62,11 @@ fdescribe("RollCallComponent", () => {
   }
 
   function stabilize() {
-    fixture.detectChanges();
-    TestBed.tick();
-    fixture.detectChanges();
-    TestBed.tick();
-    fixture.detectChanges();
+    for (let i = 0; i < 5; i++) {
+      fixture.detectChanges();
+      tick(); // microtasks (Promises from resource loader, etc.)
+      TestBed.tick(); // flush Angular effects and change detection
+    }
   }
 
   beforeEach(waitForAsync(() => {
@@ -73,9 +79,16 @@ fdescribe("RollCallComponent", () => {
     });
 
     TestBed.configureTestingModule({
-      imports: [RollCallComponent, NoopAnimationsModule, RouterTestingModule],
+      imports: [
+        RollCallComponent,
+        NoopAnimationsModule,
+        RouterTestingModule,
+        FontAwesomeTestingModule,
+      ],
       providers: [
         ...mockEntityMapperProvider([participant1, participant2, participant3]),
+        { provide: EntityRegistry, useValue: entityRegistry },
+        EntitySchemaService,
         { provide: ConfigurableEnumService, useValue: mockEnumService },
         {
           provide: FormDialogService,
@@ -117,14 +130,7 @@ fdescribe("RollCallComponent", () => {
     const event = Note.create(new Date());
     addParticipant(event, participant1);
     fixture.componentRef.setInput("eventEntity", event);
-
-    fixture.detectChanges();
-    TestBed.tick();
-    fixture.detectChanges();
-    TestBed.tick();
-    fixture.detectChanges();
-    TestBed.tick();
-    fixture.detectChanges();
+    stabilize();
 
     expect(component.availableStatus()).toHaveSize(options.length);
     flush();
