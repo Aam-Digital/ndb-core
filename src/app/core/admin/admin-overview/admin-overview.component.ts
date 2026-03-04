@@ -22,6 +22,7 @@ import { Config } from "#src/app/core/config/config";
 import { environment } from "#src/environments/environment";
 import moment from "moment";
 import { AdminOverviewService } from "./admin-overview.service";
+import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -39,6 +40,7 @@ import { AdminOverviewService } from "./admin-overview.service";
     MatExpansionModule,
     MatIconModule,
     MatTooltipModule,
+    WarningNotOptimizedForSmallScreenComponent,
   ],
 })
 export class AdminOverviewComponent {
