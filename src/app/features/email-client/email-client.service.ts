@@ -1,8 +1,6 @@
 import { EmailDatatype } from "#src/app/core/basic-datatypes/string/email.datatype";
-import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { inject, Injectable } from "@angular/core";
-import { AlertService } from "#src/app/core/alerts/alert.service";
 import { MatDialog } from "@angular/material/dialog";
 import {
   EmailTemplateSelectionDialogComponent,
@@ -16,9 +14,11 @@ import { EmailTemplate } from "./email-template.entity";
 import {
   ConfirmationDialogComponent,
   ConfirmationDialogConfig,
+  OkButton,
 } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { asArray } from "#src/app/utils/asArray";
 import { WINDOW_TOKEN } from "#src/app/utils/di-tokens";
+import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 @Injectable({
   providedIn: "root",
@@ -27,9 +27,8 @@ export class EmailClientService {
   /** milliseconds to wait for the email client to open before discarding the confirmation dialog */
   private static readonly EMAIL_CLIENT_WAIT_DURATION = 5000;
 
-  private readonly entityRegistry = inject(EntityRegistry);
-  private readonly alertService = inject(AlertService);
   private readonly dialog = inject(MatDialog);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly formDialog = inject(FormDialogService);
   private readonly window = inject(WINDOW_TOKEN);
 
@@ -46,22 +45,11 @@ export class EmailClientService {
       this.getEmailsForEntities(entityList);
 
     if (!recipients.length) {
-      await this.dialog
-        .open(ConfirmationDialogComponent, {
-          data: {
-            title: $localize`Email Error`,
-            text: $localize`Please fill an email address for this record to use this functionality.`,
-            buttons: [
-              {
-                text: $localize`:Confirmation dialog OK:OK`,
-                dialogResult: true,
-                click() {},
-              },
-            ],
-          } as ConfirmationDialogConfig,
-        })
-        .afterClosed()
-        .toPromise();
+      await this.confirmationDialog.getConfirmation(
+        $localize`Email Error`,
+        $localize`Please fill an email address for this record to use this functionality.`,
+        OkButton,
+      );
       return false;
     }
 

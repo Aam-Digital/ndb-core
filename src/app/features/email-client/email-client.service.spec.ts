@@ -9,6 +9,8 @@ import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { MatDialog } from "@angular/material/dialog";
 import { of } from "rxjs";
 import { WINDOW_TOKEN } from "#src/app/utils/di-tokens";
+import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
+import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 describe("EmailClientService", () => {
   let service: EmailClientService;
@@ -33,10 +35,18 @@ describe("EmailClientService", () => {
     TestBed.configureTestingModule({
       providers: [
         EmailClientService,
-        { provide: EntityRegistry, useValue: mockRegistry },
-        { provide: AlertService, useValue: mockAlert },
         { provide: MatDialog, useValue: mockDialog },
         { provide: WINDOW_TOKEN, useValue: mockWindow },
+        {
+          provide: FormDialogService,
+          useValue: jasmine.createSpyObj("FormDialogService", ["openView"]),
+        },
+        {
+          provide: ConfirmationDialogService,
+          useValue: jasmine.createSpyObj("ConfirmationDialogService", [
+            "getConfirmation",
+          ]),
+        },
       ],
     });
 
@@ -50,7 +60,11 @@ describe("EmailClientService", () => {
   it("should show warning and return false if email field exists but value is missing", waitForAsync(async () => {
     const fakeEntity = new EntityWithEmail();
     fakeEntity.email = undefined;
-    mockRegistry.get.and.returnValue(EntityWithEmail);
+
+    const mockConfirmation = TestBed.inject(
+      ConfirmationDialogService,
+    ) as jasmine.SpyObj<ConfirmationDialogService>;
+
     mockDialog.open.and.returnValue({
       afterClosed: () => of(undefined),
     } as any);
@@ -58,15 +72,7 @@ describe("EmailClientService", () => {
     const result = await service.executeMailto(fakeEntity);
 
     expect(result).toBeFalse();
-    expect(mockDialog.open).toHaveBeenCalledWith(
-      jasmine.anything(),
-      jasmine.objectContaining({
-        data: jasmine.objectContaining({
-          title: "Email Error",
-          text: "Please fill an email address for this record to use this functionality.",
-        }),
-      }),
-    );
+    expect(mockConfirmation.getConfirmation).toHaveBeenCalled();
   }));
 
   it("should generate mailto link with bcc for multiple emails", () => {
