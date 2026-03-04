@@ -1,7 +1,8 @@
 import "@angular/localize/init";
 import * as buffer from "buffer";
 import * as MockDate from "mockdate";
-import { Preview } from "@storybook/angular";
+import { applicationConfig, Preview } from "@storybook/angular";
+import { provideNativeDateAdapter } from "@angular/material/core";
 import { environment } from "../src/environments/environment";
 import { SessionType } from "../src/app/core/session/session-type";
 
@@ -14,6 +15,11 @@ environment.session_type = SessionType.mock;
 environment.demo_mode = false;
 
 const preview: Preview = {
+  decorators: [
+    applicationConfig({
+      providers: [provideNativeDateAdapter()],
+    }),
+  ],
   parameters: {
     actions: { argTypesRegex: "^on[A-Z].*" },
     options: {

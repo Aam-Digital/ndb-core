@@ -10,7 +10,6 @@ import { EntitySchema } from "#src/app/core/entity/schema/entity-schema";
  * Simple relationship object to represent an individual participant's status at an event including context information.
  */
 export class AttendanceItem {
-  static DATA_TYPE = "event-attendance";
   declare static schema: EntitySchema;
 
   private _status: AttendanceStatusType;
@@ -24,24 +23,39 @@ export class AttendanceItem {
 
   set status(value) {
     if (typeof value === "object") {
-      if (value.isInvalidOption) {
+      if (value.isInvalidOption && !value.id) {
+        // empty id means "no status" — normalize to the canonical NullAttendanceStatusType
+        // so the value stays consistent after a database round-trip
+        this._status = NullAttendanceStatusType;
+      } else if (value.isInvalidOption) {
         value.shortName = "?";
         value.countAs = NullAttendanceStatusType.countAs;
+        this._status = value;
+      } else {
+        this._status = value;
       }
-      this._status = value;
     } else {
       this._status = NullAttendanceStatusType;
     }
   }
+
+  @DatabaseField({
+    dataType: "entity",
+  })
+  participant?: string;
 
   @DatabaseField() remarks: string;
 
   constructor(
     status: AttendanceStatusType = NullAttendanceStatusType,
     remarks: string = "",
+    participant?: string,
   ) {
     this.status = status;
     this.remarks = remarks;
+    if (participant) {
+      this.participant = participant;
+    }
   }
 
   public copy(): AttendanceItem {

@@ -4,10 +4,16 @@ import { applicationConfig, Meta, StoryObj } from "@storybook/angular";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
+import { AttendanceItem } from "../../model/attendance-item";
 
 const demoEvent = Note.create(new Date(), "coaching");
 const demoChildren = [generateChild(), generateChild(), generateChild()];
-demoChildren.forEach((c) => demoEvent.addChild(c));
+demoChildren.forEach((c) => {
+  demoEvent.addChild(c);
+  demoEvent.childrenAttendance.push(
+    new AttendanceItem(undefined, "", c.getId()),
+  );
+});
 
 export default {
   title: "Features/Attendance/Views/RollCall",

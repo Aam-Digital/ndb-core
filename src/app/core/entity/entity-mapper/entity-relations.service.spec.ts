@@ -1,6 +1,9 @@
 import { TestBed } from "@angular/core/testing";
 
-import { EntityRelationsService } from "./entity-relations.service";
+import {
+  EntityRelationsService,
+  itemReferencesId,
+} from "./entity-relations.service";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import {
   mockEntityMapperProvider,
@@ -11,6 +14,7 @@ import { Entity } from "../model/entity";
 import { DatabaseField } from "../database-field.decorator";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntityMapperService } from "./entity-mapper.service";
+import { EntitySchemaField } from "../schema/entity-schema-field";
 
 describe("EntityRelationsService", () => {
   let service: EntityRelationsService;
@@ -146,5 +150,52 @@ describe("EntityRelationsService", () => {
         { entity: eTestRef, fields: [jasmine.objectContaining({ id: "ref" })] },
       ]),
     );
+  });
+});
+
+describe("itemReferencesId", () => {
+  it("should match a plain string ID", () => {
+    expect(itemReferencesId("Child:1", "Child:1")).toBeTrue();
+    expect(itemReferencesId("Child:2", "Child:1")).toBeFalse();
+  });
+
+  it("should match an embedded object by checking only declared entity-reference keys", () => {
+    const field: EntitySchemaField = {
+      additional: {
+        participant: { dataType: "entity", additional: ["Child"] },
+        status: { dataType: "configurable-enum", additional: "att-status" },
+        remarks: { dataType: "string" },
+      },
+    };
+
+    const item = { participant: "Child:1", status: "PRESENT", remarks: "" };
+    expect(itemReferencesId(item, "Child:1", field)).toBeTrue();
+  });
+
+  it("should NOT match when a non-reference property happens to equal the ID", () => {
+    const field: EntitySchemaField = {
+      additional: {
+        participant: { dataType: "entity", additional: ["Child"] },
+        remarks: { dataType: "string" },
+      },
+    };
+
+    const item = { participant: "Child:2", remarks: "Child:1" };
+    expect(itemReferencesId(item, "Child:1", field)).toBeFalse();
+  });
+
+  it("should fall back to checking all values when no schema field is provided", () => {
+    const item = { participant: "Child:1", remarks: "some text" };
+    expect(itemReferencesId(item, "Child:1")).toBeTrue();
+  });
+
+  it("should fall back to checking all values when field has no embedded schema", () => {
+    const field: EntitySchemaField = {
+      dataType: "entity",
+      additional: "Child",
+    };
+
+    const item = { participant: "Child:1", remarks: "text" };
+    expect(itemReferencesId(item, "Child:1", field)).toBeTrue();
   });
 });
