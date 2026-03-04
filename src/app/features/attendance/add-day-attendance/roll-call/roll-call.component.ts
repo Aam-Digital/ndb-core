@@ -355,7 +355,7 @@ export class RollCallComponent {
     }
 
     this.participants.update((participants) =>
-      [...participants].sort(sortByAttribute<Entity>(sortBy, "asc")),
+      [...participants].sort(sortByAttribute<any>(sortBy, "asc")),
     );
     // also sort the participants in the entity itself for display in details view later
     const field = this._resolvedAttendanceField;
