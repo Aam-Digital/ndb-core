@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { inject, NgModule } from "@angular/core";
-import { EntityActionsMenuService } from "../../core/entity-details/entity-actions-menu/entity-actions-menu.service";
-import { Entity } from "../../core/entity/model/entity";
+import { EntityActionsMenuService } from "#src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service";
+import { Entity } from "#src/app/core/entity/model/entity";
 import { EntityEditService } from "./entity-edit.service";
 
 /**
@@ -23,7 +23,7 @@ export class BulkEditModule {
         tooltip: $localize`:entity context menu tooltip:Edit multiple records at once.`,
         availableFor: "bulk-only",
         permission: "update",
-        execute: async (entity: Entity) => {
+        execute: async (entity: Entity | Entity[]) => {
           const entities = Array.isArray(entity) ? entity : [entity];
           if (!entities.length) return false;
           const entityType = entities[0].getConstructor();
