@@ -47,7 +47,7 @@ export class AdminAiAgentComponent {
       ]);
 
     const configDocs = await Promise.all([
-      this.entityMapper.load(Config, Config.CONFIG_KEY),
+      this.entityMapper.load(Config, Config.CONFIG_KEY).catch(() => null),
       this.entityMapper.load(Config, Config.PERMISSION_KEY).catch(() => null),
     ]);
 
