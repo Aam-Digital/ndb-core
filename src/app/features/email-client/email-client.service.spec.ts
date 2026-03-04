@@ -14,8 +14,6 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
 
 describe("EmailClientService", () => {
   let service: EmailClientService;
-  let mockRegistry: jasmine.SpyObj<EntityRegistry>;
-  let mockAlert: jasmine.SpyObj<AlertService>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
   let mockWindow: jasmine.SpyObj<Window>;
 
@@ -25,8 +23,6 @@ describe("EmailClientService", () => {
   }
 
   beforeEach(() => {
-    mockRegistry = jasmine.createSpyObj("EntityRegistry", ["get"]);
-    mockAlert = jasmine.createSpyObj("AlertService", ["addWarning"]);
     mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
     mockWindow = jasmine.createSpyObj("Window", [], {
       location: { href: "" },
@@ -117,7 +113,6 @@ describe("EmailClientService", () => {
     const entity3 = new EntityWithEmail();
     entity3.email = "jane@example.com";
 
-    mockRegistry.get.and.returnValue(EntityWithEmail);
     mockDialog.open.and.returnValue({
       afterClosed: () =>
         of({
@@ -149,7 +144,6 @@ describe("EmailClientService", () => {
     const entity3 = new EntityWithEmail();
     entity3.email = "jane@example.com";
 
-    mockRegistry.get.and.returnValue(EntityWithEmail);
     mockDialog.open.and.returnValue({
       afterClosed: () =>
         of({
