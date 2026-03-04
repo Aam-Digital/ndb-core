@@ -6,10 +6,11 @@ import { lastValueFrom } from "rxjs";
 import { BulkMergeRecordsComponent } from "app/features/de-duplication/bulk-merge-records/bulk-merge-records.component";
 import { AlertService } from "app/core/alerts/alert.service";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
-import { Note } from "app/child-dev-project/notes/model/note";
-import { EventAttendanceMap } from "../attendance/model/event-attendance.datatype";
+import { AttendanceItem } from "../attendance/model/attendance-item";
 import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { AttendanceDatatype } from "../attendance/model/attendance.datatype";
+import { EventAttendanceMapDatatype } from "../attendance/deprecated/event-attendance-map.datatype";
 
 @Injectable({
   providedIn: "root",
@@ -110,27 +111,39 @@ export class BulkMergeService {
       relatedEntity[refFieldId] = newId;
     }
 
-    if (relatedEntity instanceof Note && refFieldId === "children") {
-      this.updateChildrenAttendance(relatedEntity, oldId, newId);
-    }
+    this.updateAttendanceFields(relatedEntity, oldId, newId);
 
     await this.entityMapper.save(relatedEntity);
   }
 
   /**
-   * Helper method to updates the attendance records of children in a Note entity by replacing
-   * references to the old entity ID with the new entity ID.
+   * Updates participant references in all attendance-type fields of the related entity.
+   * This handles any field with dataType "attendance" or "event-attendance-map".
    */
-  private updateChildrenAttendance(
-    relatedEntity: Note,
+  private updateAttendanceFields(
+    relatedEntity: Entity,
     oldId: string,
     newId: string,
   ): void {
-    const childrenAttendance = (relatedEntity as any)
-      .childrenAttendance as EventAttendanceMap;
-    if (childrenAttendance.has(oldId)) {
-      childrenAttendance.set(newId, childrenAttendance.get(oldId));
-      childrenAttendance.delete(oldId);
+    const attendanceDataTypes = [
+      AttendanceDatatype.dataType,
+      EventAttendanceMapDatatype.dataType,
+    ];
+
+    const schema = relatedEntity.getConstructor().schema;
+    for (const [fieldId, field] of schema.entries()) {
+      if (!attendanceDataTypes.includes(field.dataType)) {
+        continue;
+      }
+
+      const attendance: AttendanceItem[] = relatedEntity[fieldId];
+      if (Array.isArray(attendance)) {
+        for (const item of attendance) {
+          if (item.participant === oldId) {
+            item.participant = newId;
+          }
+        }
+      }
     }
   }
 }

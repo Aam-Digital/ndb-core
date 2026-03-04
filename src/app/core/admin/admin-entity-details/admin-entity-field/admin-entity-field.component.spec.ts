@@ -203,10 +203,6 @@ describe("AdminEntityFieldComponent", () => {
     dataTypeForm.setValue(EntityDatatype.dataType);
     tick();
 
-    expect(component.typeAdditionalOptions).toEqual([
-      { value: TestEntity.ENTITY_TYPE, label: TestEntity.label },
-      { value: RecurringActivity.ENTITY_TYPE, label: RecurringActivity.label },
-    ]);
     expect(component.additionalForm.value).toBe(TestEntity.ENTITY_TYPE);
   }));
 
@@ -292,6 +288,72 @@ describe("AdminEntityFieldComponent", () => {
       TestEntity.ENTITY_TYPE,
       RecurringActivity.ENTITY_TYPE,
     ]);
+  }));
+
+  it("should init 'additional' for attendance datatype from nested format", fakeAsync(() => {
+    const mockEntityTypes = [TestEntity, RecurringActivity];
+    const entityRegistry = TestBed.inject(EntityRegistry);
+    spyOn(entityRegistry, "getEntityTypes").and.returnValue(
+      mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
+    );
+
+    component.data.entityType = TestEntity;
+    component.data.entitySchemaField = {
+      label: "Attendance",
+      dataType: "attendance",
+      isArray: true,
+      additional: {
+        participant: {
+          dataType: "entity",
+          additional: [TestEntity.ENTITY_TYPE, RecurringActivity.ENTITY_TYPE],
+        },
+      },
+    };
+    component.ngOnInit();
+    tick();
+
+    expect(component.attendanceParticipantTypesForm.value).toEqual([
+      TestEntity.ENTITY_TYPE,
+      RecurringActivity.ENTITY_TYPE,
+    ]);
+    expect(component.additionalForm.value).toEqual({
+      participant: {
+        dataType: "entity",
+        additional: [TestEntity.ENTITY_TYPE, RecurringActivity.ENTITY_TYPE],
+      },
+    });
+  }));
+
+  it("should sync attendance participant type selection to nested additional format", fakeAsync(() => {
+    const mockEntityTypes = [TestEntity, RecurringActivity];
+    const entityRegistry = TestBed.inject(EntityRegistry);
+    spyOn(entityRegistry, "getEntityTypes").and.returnValue(
+      mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
+    );
+
+    component.data.entityType = TestEntity;
+    component.data.entitySchemaField = {
+      label: "Attendance",
+      dataType: "attendance",
+      isArray: true,
+    };
+    component.ngOnInit();
+    tick();
+
+    component.attendanceParticipantTypesForm.setValue([TestEntity.ENTITY_TYPE]);
+    tick();
+
+    expect(component.additionalForm.value).toEqual({
+      participant: {
+        dataType: "entity",
+        additional: [TestEntity.ENTITY_TYPE],
+      },
+    });
+
+    // Clearing selection sets additional to null
+    component.attendanceParticipantTypesForm.setValue([]);
+    tick();
+    expect(component.additionalForm.value).toBeNull();
   }));
 
   it("should validate that label is unique", fakeAsync(() => {

@@ -196,6 +196,24 @@
                 </mat-hint>
               </mat-form-field>
             }
+
+            <!-- "additional" for attendance datatype -->
+            @if (formDataType.value === "attendance") {
+              <mat-form-field>
+                <mat-label>
+                  <span i18n> Type Details (participant record types)</span>
+                  <fa-icon
+                    icon="question-circle"
+                    matTooltip="Select which types of records can be added as participants for attendance tracking."
+                    i18n-matTooltip
+                  ></fa-icon>
+                </mat-label>
+                <app-entity-type-select
+                  [formControl]="attendanceParticipantTypesForm"
+                  [multi]="true"
+                ></app-entity-type-select>
+              </mat-form-field>
+            }
           </div>
         </div>
       </mat-tab>

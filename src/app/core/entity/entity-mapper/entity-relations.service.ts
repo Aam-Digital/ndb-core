@@ -4,6 +4,7 @@ import { asArray } from "../../../utils/asArray";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { EntityRegistry } from "../database-entity.decorator";
 import { EntityMapperService } from "./entity-mapper.service";
+import { EntitySchemaField } from "../schema/entity-schema-field";
 
 /**
  * Service to work with related, interlinked entities.
@@ -28,7 +29,7 @@ export class EntityRelationsService {
     const referencingTypes = [];
     for (const t of this.entityRegistry.values()) {
       for (const [key, field] of t.schema.entries()) {
-        if (asArray(field.additional).includes(type)) {
+        if (this.fieldReferencesType(field, type)) {
           let refType = referencingTypes.find((e) => e.entityType === t);
           if (!refType) {
             refType = { entityType: t, referencingProperties: [] };
@@ -40,6 +41,20 @@ export class EntityRelationsService {
       }
     }
     return referencingTypes;
+  }
+
+  /**
+   * Check whether a schema field references the given entity type,
+   * including nested references inside embedded schemas (e.g. attendance fields).
+   */
+  private fieldReferencesType(field: EntitySchemaField, type: string): boolean {
+    if (asArray(field.additional).includes(type)) {
+      return true;
+    }
+
+    return getInnerEntityReferenceFields(field).some(([, inner]) =>
+      asArray(inner.additional).includes(type),
+    );
   }
 
   /**
@@ -94,6 +109,57 @@ export class EntityRelationsService {
 }
 
 /**
+ * Check whether a single value (a plain ID string or an embedded object)
+ * references the given entity ID.
+ *
+ * When a `field` schema is provided and its `additional` defines an embedded
+ * schema, only the inner properties declared as entity references
+ * (`dataType: "entity"`) are inspected.  Without schema info the function
+ * falls back to checking all object values (backward-compatible).
+ */
+export function itemReferencesId(
+  item: any,
+  refId: string,
+  field?: EntitySchemaField,
+): boolean {
+  if (item === refId) {
+    return true;
+  }
+
+  if (typeof item === "object" && item !== null) {
+    const refFields = getInnerEntityReferenceFields(field);
+    if (refFields.length > 0) {
+      return refFields.some(([key]) => asArray(item[key]).includes(refId));
+    }
+    // Fallback when no embedded schema info is available
+    return Object.values(item).includes(refId);
+  }
+
+  return false;
+}
+
+/**
+ * From a field's `additional` embedded schema, return the entries
+ * whose `dataType` is `"entity"` (i.e. inner entity-reference properties).
+ *
+ * Returns an empty array when the field has no embedded schema.
+ */
+function getInnerEntityReferenceFields(
+  field?: EntitySchemaField,
+): [string, EntitySchemaField][] {
+  if (
+    !field?.additional ||
+    typeof field.additional !== "object" ||
+    Array.isArray(field.additional)
+  ) {
+    return [];
+  }
+  return Object.entries(
+    field.additional as Record<string, EntitySchemaField>,
+  ).filter(([, inner]) => inner.dataType === "entity");
+}
+
+/**
  * Return the fields of entity that contain the given refId.
  * If there is no such referenced ID, the array will be empty.
  * @param entity
@@ -106,6 +172,8 @@ function fieldsIncludingId(
   relevantFields: FormFieldConfig[],
 ): FormFieldConfig[] {
   return relevantFields.filter((field) =>
-    asArray(entity[field.id]).includes(refId),
+    asArray(entity[field.id]).some((item) =>
+      itemReferencesId(item, refId, field),
+    ),
   );
 }

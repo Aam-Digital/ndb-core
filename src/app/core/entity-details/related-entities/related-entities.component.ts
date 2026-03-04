@@ -18,6 +18,7 @@ import {
 import { DataFilter } from "../../filter/filters/filters";
 import { FilterService } from "../../filter/filter.service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import {
   EntitySpecialLoaderService,
   LoaderMethod,
@@ -114,6 +115,10 @@ export class RelatedEntitiesComponent<E extends Entity>
 
   async ngOnInit() {
     this.property = this.property ?? this.getProperty();
+    this.property =
+      typeof this.property === "string"
+        ? this.resolvePropertyPath(this.property)
+        : this.property.map((p) => this.resolvePropertyPath(p));
     this.data = await this.getData();
     this.filter = this.initFilter();
 
@@ -143,15 +148,42 @@ export class RelatedEntitiesComponent<E extends Entity>
     return this.entityMapper.loadType(this.entityCtr);
   }
 
+  /**
+   * Auto-detect which properties of the related entity type reference the current entity.
+   * Returns dot-paths for nested references (e.g. "attendance.participant").
+   */
   protected getProperty(): string | string[] {
     const relType = this.entity.getType();
-    const found = [...this.entityCtr.schema].filter(([, field]) => {
-      const entityDatatype = field.dataType === EntityDatatype.dataType;
-      return entityDatatype && Array.isArray(field.additional)
-        ? field.additional.includes(relType)
-        : field.additional === relType;
-    });
-    return found.length === 1 ? found[0][0] : found.map(([key]) => key);
+    const found: string[] = [];
+
+    for (const [key, field] of this.entityCtr.schema) {
+      if (this.fieldReferencesType(field, relType)) {
+        found.push(key);
+        continue;
+      }
+
+      for (const innerProp of this.findEmbeddedEntityRefs(field, relType)) {
+        found.push(`${key}.${innerProp}`);
+      }
+    }
+
+    return found.length === 1 ? found[0] : found;
+  }
+
+  /**
+   * Resolve shorthand property names that point to an embedded schema
+   * into dot-paths (e.g. "attendance" → "attendance.participant").
+   */
+  private resolvePropertyPath(property: string): string {
+    if (property.includes(".")) {
+      return property;
+    }
+    const field = this.entityCtr.schema.get(property);
+    if (!field) {
+      return property;
+    }
+    const refs = this.findEmbeddedEntityRefs(field, this.entity.getType());
+    return refs.length === 1 ? `${property}.${refs[0]}` : property;
   }
 
   protected initFilter(): DataFilter<E> {
@@ -172,11 +204,60 @@ export class RelatedEntitiesComponent<E extends Entity>
   }
 
   private getFilterForProperty(property: string) {
-    const isArray = this.entityCtr.schema.get(property).isArray;
-    const filter = isArray
-      ? { $elemMatch: { $eq: this.entity.getId() } }
-      : this.entity.getId();
-    return { [property]: filter };
+    if (property.includes(".")) {
+      const [outerProp, innerProp] = property.split(".", 2);
+      const outerIsArray = this.entityCtr.schema.get(outerProp)?.isArray;
+      return outerIsArray
+        ? {
+            [outerProp]: { $elemMatch: { [innerProp]: this.entity.getId() } },
+          }
+        : { [`${outerProp}.${innerProp}`]: this.entity.getId() };
+    }
+
+    const isArray = this.entityCtr.schema.get(property)?.isArray;
+    return {
+      [property]: isArray
+        ? { $elemMatch: { $eq: this.entity.getId() } }
+        : this.entity.getId(),
+    };
+  }
+
+  /** Check whether a schema field directly references the given entity type. */
+  private fieldReferencesType(
+    field: EntitySchemaField,
+    entityType: string,
+  ): boolean {
+    if (field.dataType !== EntityDatatype.dataType) {
+      return false;
+    }
+    return Array.isArray(field.additional)
+      ? field.additional.includes(entityType)
+      : field.additional === entityType;
+  }
+
+  /**
+   * Find inner field names in an embedded schema's `additional` config
+   * that reference the given entity type.
+   */
+  private findEmbeddedEntityRefs(
+    field: EntitySchemaField,
+    entityType: string,
+  ): string[] {
+    const additional = field?.additional;
+    if (
+      typeof additional !== "object" ||
+      additional === null ||
+      Array.isArray(additional)
+    ) {
+      return [];
+    }
+    return Object.entries<any>(additional)
+      .filter(
+        ([, inner]) =>
+          inner?.dataType === EntityDatatype.dataType &&
+          this.fieldReferencesType(inner, entityType),
+      )
+      .map(([key]) => key);
   }
 
   protected listenToEntityUpdates() {
