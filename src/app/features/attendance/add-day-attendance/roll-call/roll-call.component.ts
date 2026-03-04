@@ -35,13 +35,10 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
 import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AttendanceService } from "../../attendance.service";
-import { RecurringActivity } from "../../model/recurring-activity";
-import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
 import { ConfirmationDialogButton } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
 import { RouteTarget } from "#src/app/route-target";
-import { lastValueFrom } from "rxjs";
 
 // Only allow horizontal swiping
 @Injectable()
@@ -96,7 +93,6 @@ export class RollCallComponent implements OnChanges {
   private location = inject(Location);
   private route = inject(ActivatedRoute);
   private attendanceService = inject(AttendanceService);
-  private currentUser = inject(CurrentUserSubject);
   private unsavedChanges = inject(UnsavedChangesService);
 
   /**
@@ -224,10 +220,10 @@ export class RollCallComponent implements OnChanges {
   }
 
   /**
-   * Set the index of the first child that expects user input.
+   * Set the index of the first participant that expects user input.
    * This is the first entry of the list, if the user has never recorded attendance
-   * for this event. Else it is the first child without any attendance information
-   * (i.e. got skipped or the user left at this child)
+   * for this event. Else it is the first participant without any attendance information
+   * (i.e. got skipped or the user left at this participant)
    * @private
    */
   private setInitialIndex() {
@@ -266,34 +262,34 @@ export class RollCallComponent implements OnChanges {
       : [];
 
     for (const attendanceItem of attendanceItems) {
-      const childId = attendanceItem.participant;
-      let child: Entity;
+      const participantId = attendanceItem.participant;
+      let participant: Entity;
       try {
-        child = await this.entityMapper.load(
-          Entity.extractTypeFromId(childId),
-          childId,
+        participant = await this.entityMapper.load(
+          Entity.extractTypeFromId(participantId),
+          participantId,
         );
       } catch (e) {
         Logging.debug(
-          "Could not find child " +
-            childId +
+          "Could not find participant " +
+            participantId +
             " for event " +
             this.eventEntity.getId(),
         );
         if (this.attendanceField) {
           this.eventEntity[this.attendanceField] = attendanceItems.filter(
-            (a) => a.participant !== childId,
+            (a) => a.participant !== participantId,
           );
         }
         continue;
       }
 
-      this.attendanceByParticipant[childId] = attendanceItem;
+      this.attendanceByParticipant[participantId] = attendanceItem;
 
-      if (child.isActive) {
-        this.participants.push(child);
+      if (participant.isActive) {
+        this.participants.push(participant);
       } else {
-        this.inactiveParticipants.push(child);
+        this.inactiveParticipants.push(participant);
       }
     }
     this.sortParticipants();

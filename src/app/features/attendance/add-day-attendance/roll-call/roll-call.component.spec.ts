@@ -98,7 +98,7 @@ describe("RollCallComponent", () => {
     const options = [PRESENT, ABSENT];
     const enumService = TestBed.inject(ConfigurableEnumService);
     spyOn(enumService, "getEnumValues").and.returnValue(options);
-    addParticipant(component.eventEntity, participant1);
+    addParticipant(component.eventEntity as Note, participant1);
     await component.ngOnChanges(dummyChanges);
     fixture.detectChanges();
     await fixture.whenStable();
@@ -120,11 +120,9 @@ describe("RollCallComponent", () => {
     tick();
 
     expect(component.participants).toEqual([participant1]);
-    expect(component.eventEntity.children).not.toContain(nonExistingChildId);
+    const note = component.eventEntity as Note;
     expect(
-      component.eventEntity.childrenAttendance.some(
-        (a) => a.participant === nonExistingChildId,
-      ),
+      note.childrenAttendance.some((a) => a.participant === nonExistingChildId),
     ).toBeFalse();
     flush();
   }));
@@ -213,7 +211,7 @@ describe("RollCallComponent", () => {
   });
 
   it("starts with the initial child if no attendance has been registered", async () => {
-    addParticipant(component.eventEntity, participant1);
+    addParticipant(component.eventEntity as Note, participant1);
     await component.ngOnChanges(dummyChanges);
 
     expect(component.currentIndex).toBe(0);
@@ -221,13 +219,14 @@ describe("RollCallComponent", () => {
   });
 
   it("starts with the first child that doesn't have an attendance status set", async () => {
+    const note = component.eventEntity as Note;
     for (const child of [participant1, participant2, participant3]) {
-      addParticipant(component.eventEntity, child);
+      addParticipant(note, child);
     }
-    component.eventEntity.childrenAttendance.find(
+    note.childrenAttendance.find(
       (a) => a.participant === participant1.getId(),
     ).status = PRESENT;
-    component.eventEntity.childrenAttendance.find(
+    note.childrenAttendance.find(
       (a) => a.participant === participant3.getId(),
     ).status = ABSENT;
     await component.ngOnChanges(dummyChanges);
@@ -291,12 +290,9 @@ describe("RollCallComponent", () => {
     tick();
 
     expect(component.participants).toEqual(expectedParticipantsOrder);
-    expect(component.eventEntity.children).toEqual(
+    expect(event.childrenAttendance.map((a) => a.participant)).toEqual(
       expectedParticipantsOrder.map((p) => p.getId()),
     );
-    expect(
-      component.eventEntity.childrenAttendance.map((a) => a.participant),
-    ).toEqual(expectedParticipantsOrder.map((p) => p.getId()));
     flush();
   }
 });
