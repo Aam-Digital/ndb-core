@@ -19,7 +19,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
   styleUrl: "./warning-not-optimized-for-small-screen.component.scss",
 })
 export class WarningNotOptimizedForSmallScreenComponent {
-  private breakpointObserver = inject(BreakpointObserver);
+  private readonly breakpointObserver = inject(BreakpointObserver);
 
   isSmallScreen = toSignal(
     this.breakpointObserver
