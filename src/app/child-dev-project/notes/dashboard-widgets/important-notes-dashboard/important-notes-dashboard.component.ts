@@ -43,6 +43,6 @@ export class ImportantNotesDashboardComponent extends DashboardWidget {
   }
 
   openNote(note: Note) {
-    this.formDialog.openView(note, "NoteDetails");
+    this.formDialog.openView(note);
   }
 }

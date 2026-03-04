@@ -400,7 +400,7 @@ export class RollCallComponent implements OnChanges {
   }
 
   showDetails() {
-    this.formDialog.openView(this.eventEntity, "NoteDetails");
+    this.formDialog.openView(this.eventEntity);
   }
 
   async includeInactive() {

@@ -146,7 +146,7 @@ export class EmailClientService {
       // Only offer to create/edit a note if the user opted in
       if (createNote) {
         const note = this.prefilledNote(entities, template);
-        this.formDialog.openView(note, "NoteDetails");
+        this.formDialog.openView(note);
       }
     }, EmailClientService.EMAIL_CLIENT_WAIT_DURATION);
   }
