@@ -1,13 +1,12 @@
 import {
   Component,
-  EventEmitter,
   inject,
   Injectable,
   Input,
   OnChanges,
-  Output,
   SimpleChanges,
 } from "@angular/core";
+import { Location } from "@angular/common";
 import { animate, style, transition, trigger } from "@angular/animations";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
@@ -34,6 +33,14 @@ import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configura
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
+import { ActivatedRoute, Router } from "@angular/router";
+import { AttendanceService } from "../../attendance.service";
+import { RecurringActivity } from "../../model/recurring-activity";
+import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
+import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
+import { ConfirmationDialogButton } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
+import { RouteTarget } from "#src/app/route-target";
 
 // Only allow horizontal swiping
 @Injectable()
@@ -47,7 +54,9 @@ class HorizontalHammerConfig extends HammerGestureConfig {
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
+ * Can be used as a standalone routed view (via route param :id) or embedded with eventEntity input.
  */
+@RouteTarget("RollCall")
 @Component({
   selector: "app-roll-call",
   templateUrl: "./roll-call.component.html",
@@ -68,6 +77,7 @@ class HorizontalHammerConfig extends HammerGestureConfig {
     RollCallTabComponent,
     HammerModule,
     MatTooltipModule,
+    ViewTitleComponent,
   ],
   providers: [
     {
@@ -81,9 +91,22 @@ export class RollCallComponent implements OnChanges {
   private entityMapper = inject(EntityMapperService);
   private formDialog = inject(FormDialogService);
   private confirmationDialog = inject(ConfirmationDialogService);
+  private router = inject(Router);
+  private location = inject(Location);
+  private route = inject(ActivatedRoute);
+  private attendanceService = inject(AttendanceService);
+  private currentUser = inject(CurrentUserSubject);
+  private unsavedChanges = inject(UnsavedChangesService);
+
+  /**
+   * Entity ID from route param, mapped by RoutedViewComponent.
+   * Supports real entity IDs, or "new" for creating a new event.
+   */
+  @Input() id: string;
 
   /**
    * The event to be displayed and edited.
+   * Can be set directly when used as an embedded component, or loaded from DB via id.
    */
   @Input() eventEntity: Note;
 
@@ -93,25 +116,18 @@ export class RollCallComponent implements OnChanges {
   @Input() sortParticipantsBy?: string;
 
   /**
-   * Emitted when the roll call is finished and results can be saved.
-   */
-  @Output() complete = new EventEmitter<Note>();
-
-  /**
-   * Emitted when the user wants to dismiss & leave the roll call view.
-   */
-  @Output() exit = new EventEmitter();
-
-  /**
-   * The index, child and attendance that is currently being processed
+   * The index, participant and attendance that is currently being processed
    */
   currentIndex = 0;
-  currentChild: Entity;
+  currentParticipant: Entity;
   currentAttendance: AttendanceItem;
   /**
    * whether any changes have been made to the model
    */
   isDirty: boolean = false;
+
+  /** whether the event is being loaded */
+  isLoading: boolean = false;
 
   /** lookup object for attendance items by participant ID, built during loadParticipants */
   attendanceByParticipant: Record<string, AttendanceItem> = {};
@@ -119,11 +135,14 @@ export class RollCallComponent implements OnChanges {
   /** options available for selecting an attendance status */
   availableStatus: AttendanceStatusType[];
 
-  children: Entity[] = [];
+  participants: Entity[] = [];
   inactiveParticipants: Entity[];
 
   async ngOnChanges(changes: SimpleChanges) {
-    if (changes.eventEntity) {
+    if (changes.id && this.id) {
+      await this.loadEventFromRoute();
+    }
+    if (changes.eventEntity && this.eventEntity) {
       this.loadAttendanceStatusTypes();
       await this.loadParticipants();
       this.setInitialIndex();
@@ -131,6 +150,87 @@ export class RollCallComponent implements OnChanges {
     if (changes.sortParticipantsBy) {
       this.sortParticipants();
     }
+  }
+
+  /**
+   * Load or create the event based on the route id and query params.
+   */
+  private async loadEventFromRoute() {
+    this.isLoading = true;
+
+    if (this.id === "new") {
+      const activityId = this.route.snapshot.queryParamMap.get("activity");
+      const dateStr = this.route.snapshot.queryParamMap.get("date");
+      const date = dateStr ? new Date(dateStr) : new Date();
+
+      if (activityId) {
+        this.eventEntity = (await this.createRecurringEvent(
+          activityId,
+          date,
+        )) as Note;
+      } else {
+        this.eventEntity = await this.createOneTimeEvent(date);
+      }
+    } else {
+      this.eventEntity = (await this.loadExistingEvent(this.id)) as Note;
+    }
+
+    if (this.eventEntity) {
+      this.loadAttendanceStatusTypes();
+      await this.loadParticipants();
+      this.setInitialIndex();
+    }
+
+    this.isLoading = false;
+  }
+
+  private async createRecurringEvent(
+    activityId: string,
+    date: Date,
+  ): Promise<Entity> {
+    const activity = await this.entityMapper.load(
+      RecurringActivity,
+      activityId,
+    );
+    const newEvent = await this.attendanceService.createEventForActivity(
+      activity,
+      date,
+    );
+
+    if (this.currentUser.value && newEvent instanceof Note) {
+      newEvent.authors = [this.currentUser.value.getId()];
+    }
+    return newEvent;
+  }
+
+  /**
+   * Open a dialog for creating a one-time event and use it for the roll call.
+   */
+  private async createOneTimeEvent(date?: Date): Promise<Note | undefined> {
+    const newNote = Note.create(date ?? new Date());
+    if (this.currentUser.value) {
+      newNote.authors = [this.currentUser.value.getId()];
+    }
+
+    const dialogRef = this.formDialog.openView(newNote, "NoteDetails");
+    const result = await dialogRef.afterClosed().toPromise();
+    if (result) {
+      return result;
+    }
+    this.location.back();
+    return undefined;
+  }
+
+  private async loadExistingEvent(id: string): Promise<Entity | undefined> {
+    let event: Entity;
+    try {
+      const entityType = Entity.extractTypeFromId(this.id);
+      event = await this.entityMapper.load(entityType, this.id);
+    } catch (e) {
+      Logging.warn("Could not load event " + this.id, e);
+      void this.router.navigate(["/404"]);
+    }
+    return event;
   }
 
   /**
@@ -142,7 +242,7 @@ export class RollCallComponent implements OnChanges {
    */
   private setInitialIndex() {
     let index = 0;
-    for (const entry of this.children) {
+    for (const entry of this.participants) {
       if (!this.attendanceByParticipant[entry.getId()]?.status?.id) {
         break;
       }
@@ -150,7 +250,7 @@ export class RollCallComponent implements OnChanges {
     }
 
     // do not jump to end - if all participants are recorded, start with first instead
-    if (index >= this.children.length) {
+    if (index >= this.participants.length) {
       index = 0;
     }
 
@@ -164,21 +264,9 @@ export class RollCallComponent implements OnChanges {
   }
 
   private async loadParticipants() {
-    this.children = [];
+    this.participants = [];
     this.inactiveParticipants = [];
     this.attendanceByParticipant = {};
-
-    // ensure every child in the participants list has an attendance entry
-    for (const childId of this.eventEntity.children) {
-      if (
-        !this.eventEntity.childrenAttendance.find(
-          (a) => a.participant === childId,
-        )
-      ) {
-        const item = new AttendanceItem(undefined, "", childId);
-        this.eventEntity.childrenAttendance.push(item);
-      }
-    }
 
     for (const attendanceItem of this.eventEntity.childrenAttendance) {
       const childId = attendanceItem.participant;
@@ -206,7 +294,7 @@ export class RollCallComponent implements OnChanges {
       this.attendanceByParticipant[childId] = attendanceItem;
 
       if (child.isActive) {
-        this.children.push(child);
+        this.participants.push(child);
       } else {
         this.inactiveParticipants.push(child);
       }
@@ -219,10 +307,11 @@ export class RollCallComponent implements OnChanges {
       return;
     }
 
-    this.children.sort(sortByAttribute<any>(this.sortParticipantsBy, "asc"));
-    // also sort the participants in the Note entity itself for display in details view later
-    this.eventEntity.children = this.children.map((e) => e.getId());
-    const sortedIds = this.children.map((e) => e.getId());
+    this.participants.sort(
+      sortByAttribute<any>(this.sortParticipantsBy, "asc"),
+    );
+    // also sort the participants in the entity itself for display in details view later
+    const sortedIds = this.participants.map((e) => e.getId());
     this.eventEntity.childrenAttendance.sort(
       (a, b) =>
         sortedIds.indexOf(a.participant) - sortedIds.indexOf(b.participant),
@@ -232,41 +321,24 @@ export class RollCallComponent implements OnChanges {
   markAttendance(status: AttendanceStatusType) {
     this.currentAttendance.status = status;
     this.isDirty = true;
+    this.unsavedChanges.pending = true;
 
-    this.goToNext();
+    this.goToParticipantWithIndex(this.currentIndex + 1);
   }
 
   goToParticipantWithIndex(newIndex: number) {
-    this.currentIndex = newIndex;
+    this.currentIndex = Math.max(
+      0,
+      Math.min(newIndex, this.participants.length),
+    );
 
     if (this.isFinished) {
-      this.complete.emit(this.eventEntity);
+      void this.saveEvent();
     } else {
-      this.currentChild = this.children[this.currentIndex];
+      this.currentParticipant = this.participants[this.currentIndex];
       this.currentAttendance =
-        this.attendanceByParticipant[this.currentChild.getId()];
+        this.attendanceByParticipant[this.currentParticipant.getId()];
     }
-  }
-
-  goToPrevious() {
-    if (this.currentIndex - 1 >= 0) {
-      this.goToParticipantWithIndex(this.currentIndex - 1);
-    }
-  }
-
-  goToNext() {
-    if (this.currentIndex + 1 <= this.children.length) {
-      this.goToParticipantWithIndex(this.currentIndex + 1);
-    }
-  }
-
-  goToFirst() {
-    this.goToParticipantWithIndex(0);
-  }
-
-  goToLast() {
-    // jump directly to completed state, i.e. beyond last participant index
-    this.goToParticipantWithIndex(this.children.length);
   }
 
   get isFirst(): boolean {
@@ -274,15 +346,56 @@ export class RollCallComponent implements OnChanges {
   }
 
   get isLast(): boolean {
-    return this.currentIndex === this.children.length - 1;
+    return this.currentIndex === this.participants.length - 1;
   }
 
   get isFinished(): boolean {
-    return this.currentIndex >= this.children.length;
+    return this.currentIndex >= this.participants.length;
   }
 
   finish() {
-    this.exit.emit();
+    this.location.back();
+  }
+
+  /**
+   * Handle navigating back, showing save/discard dialog if there are unsaved changes.
+   */
+  exit() {
+    if (this.isDirty) {
+      this.confirmationDialog.getConfirmation(
+        $localize`:Exit from the current screen:Exit`,
+        $localize`Do you want to save your progress before going back?`,
+        [
+          {
+            text: $localize`Save`,
+            click: (): boolean => {
+              void this.saveEvent().then(() => this.location.back());
+              return true;
+            },
+          },
+          {
+            text: $localize`:Discard changes made to a form:Discard`,
+            click: (): boolean => {
+              this.isDirty = false;
+              this.unsavedChanges.pending = false;
+              this.location.back();
+              return false;
+            },
+          },
+        ] as ConfirmationDialogButton[],
+        true,
+      );
+    } else {
+      this.location.back();
+    }
+  }
+
+  async saveEvent() {
+    if (this.eventEntity) {
+      await this.entityMapper.save(this.eventEntity);
+      this.isDirty = false;
+      this.unsavedChanges.pending = false;
+    }
   }
 
   showDetails() {
@@ -295,7 +408,7 @@ export class RollCallComponent implements OnChanges {
       $localize`This event has some participants who are "archived". We automatically remove them from the attendance list for you. Do you want to also include archived participants for this event?`,
     );
     if (confirmation) {
-      this.children = [...this.children, ...this.inactiveParticipants];
+      this.participants = [...this.participants, ...this.inactiveParticipants];
       this.inactiveParticipants = [];
     }
   }

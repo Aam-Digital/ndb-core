@@ -15,6 +15,8 @@ import { EventNote } from "../../model/event-note";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { TEST_USER } from "#src/app/core/user/demo-user-generator.service";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
+import { Note } from "#src/app/child-dev-project/notes/model/note";
+import { Router } from "@angular/router";
 
 describe("RollCallSetupComponent", () => {
   let component: RollCallSetupComponent;
@@ -99,4 +101,45 @@ describe("RollCallSetupComponent", () => {
     expect(component.filteredExistingEvents).toHaveSize(1);
     expect(component.showingAll).toBeTrue();
   }));
+
+  it("should navigate to roll call with event ID for existing events", () => {
+    const router = TestBed.inject(Router);
+    spyOn(router, "navigate");
+    (component as any).dateField = { valid: true };
+    const event = Note.create(new Date()) as Note & {
+      isNewFromActivity?: boolean;
+    };
+    Object.defineProperty(event, "_id", { value: "EventNote:test-123" });
+
+    component.selectEvent(event);
+
+    expect(router.navigate).toHaveBeenCalledWith([
+      "/attendance/add-day",
+      "EventNote:test-123",
+    ]);
+  });
+
+  it("should navigate to new roll call with activity query params for new-from-activity events", () => {
+    const router = TestBed.inject(Router);
+    spyOn(router, "navigate");
+    (component as any).dateField = { valid: true };
+    const event = Note.create(new Date()) as Note & {
+      isNewFromActivity?: boolean;
+    };
+    event.relatesTo = "RecurringActivity:activity-1";
+    event.date = new Date(2025, 5, 15);
+    event.isNewFromActivity = true;
+
+    component.selectEvent(event);
+
+    expect(router.navigate).toHaveBeenCalledWith(
+      ["/attendance/add-day", "new"],
+      {
+        queryParams: {
+          activity: "RecurringActivity:activity-1",
+          date: "2025-06-15",
+        },
+      },
+    );
+  });
 });

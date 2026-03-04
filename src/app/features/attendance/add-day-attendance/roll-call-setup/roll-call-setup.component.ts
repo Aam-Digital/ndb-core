@@ -1,16 +1,8 @@
-import {
-  Component,
-  EventEmitter,
-  OnInit,
-  Output,
-  ViewChild,
-  inject,
-} from "@angular/core";
+import { Component, OnInit, ViewChild, inject } from "@angular/core";
 import { AttendanceService } from "../../attendance.service";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { RecurringActivity } from "../../model/recurring-activity";
-import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { AlertDisplay } from "#src/app/core/alerts/alert-display";
 import { FormsModule, NgModel } from "@angular/forms";
@@ -26,7 +18,15 @@ import { ActivityCardComponent } from "../activity-card/activity-card.component"
 import { MatButtonModule } from "@angular/material/button";
 import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
+import { Router } from "@angular/router";
+import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
+import { RouteTarget } from "#src/app/route-target";
 
+/**
+ * Set up or select a roll call event for a specific date
+ * (either one-time or related to a recurring activity).
+ */
+@RouteTarget("AddDayAttendance")
 @Component({
   selector: "app-roll-call-setup",
   templateUrl: "./roll-call-setup.component.html",
@@ -41,22 +41,21 @@ import { DataFilter } from "#src/app/core/filter/filters/filters";
     MatProgressBarModule,
     ActivityCardComponent,
     MatButtonModule,
+    ViewTitleComponent,
   ],
 })
 export class RollCallSetupComponent implements OnInit {
   private entityMapper = inject(EntityMapperService);
   private attendanceService = inject(AttendanceService);
   private currentUser = inject(CurrentUserSubject);
-  private formDialog = inject(FormDialogService);
+  private router = inject(Router);
   private alertService = inject(AlertService);
-  private filerService = inject(FilterService);
+  private filterService = inject(FilterService);
 
   date = new Date();
 
   existingEvents: NoteForActivitySetup[] = [];
   filteredExistingEvents: NoteForActivitySetup[] = [];
-
-  @Output() eventSelected = new EventEmitter<Note>();
 
   allActivities: RecurringActivity[] = [];
   visibleActivities: RecurringActivity[] = [];
@@ -184,35 +183,45 @@ export class RollCallSetupComponent implements OnInit {
     );
   }
 
-  createOneTimeEvent() {
-    const newNote = Note.create(new Date());
-    if (this.currentUser.value) {
-      newNote.authors = [this.currentUser.value.getId()];
-    }
+  private formatDateForQuery(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
 
-    this.formDialog
-      .openView(newNote, "NoteDetails")
-      .afterClosed()
-      .subscribe((createdNote: Note) => {
-        if (createdNote) {
-          this.existingEvents.push(createdNote);
-        }
-      });
+    return `${year}-${month}-${day}`;
+  }
+
+  createOneTimeEvent() {
+    this.router.navigate(["/attendance/add-day", "new"], {
+      queryParams: {
+        date: this.formatDateForQuery(this.date),
+      },
+    });
   }
 
   filterExistingEvents(filter: DataFilter<Note>) {
-    const predicate = this.filerService.getFilterPredicate(filter);
+    const predicate = this.filterService.getFilterPredicate(filter);
     this.filteredExistingEvents = this.existingEvents.filter(predicate);
   }
 
   selectEvent(event: NoteForActivitySetup) {
-    if (this.dateField.valid) {
-      this.eventSelected.emit(event);
-    } else {
+    if (!this.dateField.valid) {
       this.alertService.addWarning(
         $localize`:Alert when selected date is invalid:Invalid Date`,
         AlertDisplay.TEMPORARY,
       );
+      return;
+    }
+
+    if (event.isNewFromActivity) {
+      this.router.navigate(["/attendance/add-day", "new"], {
+        queryParams: {
+          activity: event.relatesTo,
+          date: this.formatDateForQuery(event.date),
+        },
+      });
+    } else {
+      this.router.navigate(["/attendance/add-day", event.getId()]);
     }
   }
 }

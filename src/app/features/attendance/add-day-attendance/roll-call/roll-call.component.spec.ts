@@ -10,7 +10,6 @@ import { RollCallComponent } from "./roll-call.component";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { By } from "@angular/platform-browser";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
-import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { LoginState } from "#src/app/core/session/session-states/login-state.enum";
 import { SimpleChange } from "@angular/core";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
@@ -19,6 +18,9 @@ import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configura
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { AttendanceItem } from "../../model/attendance-item";
 import { Entity } from "#src/app/core/entity/model/entity";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { Location } from "@angular/common";
+import { AttendanceService } from "../../attendance.service";
 
 const PRESENT = {
   id: "PRESENT",
@@ -68,7 +70,16 @@ describe("RollCallComponent", () => {
           participant3,
         ]),
       ],
-      providers: [{ provide: ChildrenService, useValue: {} }],
+      providers: [
+        { provide: ChildrenService, useValue: {} },
+        {
+          provide: AttendanceService,
+          useValue: {
+            createEventForActivity: () => Promise.resolve(new Note()),
+            getEventsOnDate: () => Promise.resolve([]),
+          },
+        },
+      ],
     }).compileComponents();
   }));
 
@@ -108,7 +119,7 @@ describe("RollCallComponent", () => {
     component.ngOnChanges(dummyChanges);
     tick();
 
-    expect(component.children).toEqual([participant1]);
+    expect(component.participants).toEqual([participant1]);
     expect(component.eventEntity.children).not.toContain(nonExistingChildId);
     expect(
       component.eventEntity.childrenAttendance.some(
@@ -144,31 +155,30 @@ describe("RollCallComponent", () => {
     flush();
   }));
 
-  it("should mark roll call as done when all existing children are finished", fakeAsync(() => {
+  it("should save event when all existing children are finished", fakeAsync(() => {
     const note = new Note();
     addParticipant(note, participant1);
     addParticipant(note, "notExistingChild");
     addParticipant(note, participant2);
 
-    spyOn(component.complete, "emit");
+    const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
     component.eventEntity = note;
     component.ngOnChanges(dummyChanges);
     tick();
 
-    component.goToNext();
-    component.goToNext();
+    component.goToParticipantWithIndex(component.currentIndex + 1);
+    component.goToParticipantWithIndex(component.currentIndex + 1);
 
-    expect(component.complete.emit).toHaveBeenCalledWith(note);
+    expect(saveSpy).toHaveBeenCalledWith(note);
   }));
 
-  it("should not open the dialog when the roll call is finished", () => {
-    const confirmationDialogService = TestBed.inject(ConfirmationDialogService);
-    spyOn(confirmationDialogService, "getConfirmation");
-    spyOnProperty(component, "isFinished").and.returnValue(true);
+  it("should navigate back to overview when finish is called", () => {
+    const location = TestBed.inject(Location);
+    spyOn(location, "back");
 
     component.finish();
 
-    expect(confirmationDialogService.getConfirmation).not.toHaveBeenCalled();
+    expect(location.back).toHaveBeenCalled();
   });
 
   it("isn't dirty initially", () => {
@@ -184,9 +194,9 @@ describe("RollCallComponent", () => {
     component.eventEntity = event;
     await component.ngOnChanges(dummyChanges);
 
-    component.goToNext();
-    component.goToNext();
-    component.goToPrevious();
+    component.goToParticipantWithIndex(component.currentIndex + 1);
+    component.goToParticipantWithIndex(component.currentIndex + 1);
+    component.goToParticipantWithIndex(component.currentIndex - 1);
     expect(component.isDirty).toBeFalse();
   });
 
@@ -207,7 +217,7 @@ describe("RollCallComponent", () => {
     await component.ngOnChanges(dummyChanges);
 
     expect(component.currentIndex).toBe(0);
-    expect(component.currentChild).toBe(participant1);
+    expect(component.currentParticipant).toBe(participant1);
   });
 
   it("starts with the first child that doesn't have an attendance status set", async () => {
@@ -221,7 +231,7 @@ describe("RollCallComponent", () => {
       (a) => a.participant === participant3.getId(),
     ).status = ABSENT;
     await component.ngOnChanges(dummyChanges);
-    expect(component.currentChild).toBe(participant2);
+    expect(component.currentParticipant).toBe(participant2);
     expect(component.currentIndex).toBe(1);
   });
 
@@ -280,7 +290,7 @@ describe("RollCallComponent", () => {
     });
     tick();
 
-    expect(component.children).toEqual(expectedParticipantsOrder);
+    expect(component.participants).toEqual(expectedParticipantsOrder);
     expect(component.eventEntity.children).toEqual(
       expectedParticipantsOrder.map((p) => p.getId()),
     );

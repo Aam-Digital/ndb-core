@@ -1,15 +1,34 @@
+<app-view-title
+  [disableBackButton]="true"
+  i18n="Record Attendance|Title when recording attendance for an event"
+>
+  Record Attendance
+</app-view-title>
+<div class="flex-row align-center relative-left margin-bottom-small">
+  <button mat-icon-button (click)="exit()" matTooltip="Back" i18n-matTooltip>
+    <fa-icon icon="arrow-left"></fa-icon>
+  </button>
+  @if (eventEntity) {
+    <h2 class="remove-margin-bottom">{{ eventEntity.subject }}</h2>
+  }
+</div>
+
+@if (isLoading) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
+
 <!-- Individual Student's Page -->
-@if (children?.length > 0) {
+@if (participants?.length > 0) {
   <div class="flex-column gap-regular">
     <mat-progress-bar
       mode="determinate"
-      [value]="(currentIndex / children.length) * 100"
+      [value]="(currentIndex / participants.length) * 100"
     ></mat-progress-bar>
     <div class="progress-nav flex-row">
       <div style="margin-left: -10px">
         <button
           mat-icon-button
-          (click)="goToFirst()"
+          (click)="goToParticipantWithIndex(0)"
           [disabled]="isFirst"
           class="button-skip"
         >
@@ -17,7 +36,7 @@
         </button>
         <button
           mat-icon-button
-          (click)="goToPrevious()"
+          (click)="goToParticipantWithIndex(currentIndex - 1)"
           [disabled]="isFirst"
           class="button-skip"
         >
@@ -27,15 +46,15 @@
       <div
         class="progress-label flex-grow"
         [style.visibility]="
-          currentIndex < children.length ? 'visible' : 'hidden'
+          currentIndex < participants.length ? 'visible' : 'hidden'
         "
       >
-        {{ currentIndex + 1 }} / {{ children.length }}
+        {{ currentIndex + 1 }} / {{ participants.length }}
       </div>
       <div>
         <button
           mat-icon-button
-          (click)="goToNext()"
+          (click)="goToParticipantWithIndex(currentIndex + 1)"
           [disabled]="isFinished"
           class="button-skip"
         >
@@ -43,7 +62,7 @@
         </button>
         <button
           mat-icon-button
-          (click)="goToLast()"
+          (click)="goToParticipantWithIndex(participants.length)"
           [disabled]="isFinished"
           class="button-skip"
         >
@@ -68,17 +87,17 @@
     @if (!isFinished) {
       <app-entity-block
         class="margin-small"
-        [entity]="currentChild"
+        [entity]="currentParticipant"
         [linkDisabled]="true"
       >
       </app-entity-block>
     }
     @if (!isFinished && currentAttendance) {
       <div class="tab-wrapper">
-        @for (child of children; track child; let i = $index) {
+        @for (participant of participants; track participant; let i = $index) {
           <app-roll-call-tab
-            (swiperight)="goToPrevious()"
-            (swipeleft)="goToNext()"
+            (swiperight)="goToParticipantWithIndex(currentIndex - 1)"
+            (swipeleft)="goToParticipantWithIndex(currentIndex + 1)"
             class="tab-body"
             [class.tab-body-active]="currentIndex === i"
             [position]="i - currentIndex"
@@ -90,7 +109,7 @@
                   class="group-select-option"
                   (click)="markAttendance(option)"
                   [class]="
-                    attendanceByParticipant[child.getId()]?.status?.id ===
+                    attendanceByParticipant[participant.getId()]?.status?.id ===
                     option.id
                       ? option.style
                       : ''
@@ -105,8 +124,8 @@
                     "
                   >
                     @if (
-                      attendanceByParticipant[child.getId()]?.status?.id ===
-                      option.id
+                      attendanceByParticipant[participant.getId()]?.status
+                        ?.id === option.id
                     ) {
                       <fa-icon icon="check"></fa-icon>
                     }
