@@ -7,6 +7,7 @@ import { groupBy } from "#src/app/utils/utils";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
 import { EventNote } from "./model/event-note";
 import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
+import { AttendanceItem } from "./model/attendance-item";
 
 @Injectable({
   providedIn: "root",
@@ -127,6 +128,15 @@ export class AttendanceService {
       );
       for (const newParticipant of participants) {
         event.addChild(newParticipant);
+        if (
+          !event.childrenAttendance.some(
+            (a) => a.participant === newParticipant,
+          )
+        ) {
+          event.childrenAttendance.push(
+            new AttendanceItem(undefined, "", newParticipant),
+          );
+        }
       }
     }
     return events;
@@ -256,9 +266,13 @@ export class AttendanceService {
     const instance = new EventNote();
     instance.date = date;
     instance.subject = activity.title;
-    instance.children = await this.getActiveParticipantsOfActivity(
+    const participantIds = await this.getActiveParticipantsOfActivity(
       activity,
       date,
+    );
+    instance.children = participantIds;
+    instance.childrenAttendance = participantIds.map(
+      (id) => new AttendanceItem(undefined, "", id),
     );
     instance.schools = activity.linkedGroups;
     instance.relatesTo = activity.getId();

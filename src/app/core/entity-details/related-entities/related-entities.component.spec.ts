@@ -14,7 +14,6 @@ import { Entity } from "../../entity/model/entity";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { DatabaseField } from "../../entity/database-field.decorator";
-import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 import {
@@ -158,12 +157,10 @@ describe("RelatedEntitiesComponent", () => {
       // is added inside table
       isActive: true,
     });
-    // no special properties set when creating a new entity
-    expectEntitiesToMatch(
-      [component.createNewRecordFactory()()],
-      [new MultiPropTest()],
-      true,
-    );
+    // all matching properties set when creating a new entity
+    const newEntity = component.createNewRecordFactory()();
+    expect(newEntity.singleChild).toBe(entity.getId());
+    expect(newEntity.multiEntities).toEqual([entity.getId()]);
   }));
 
   it("should align the filter with the related properties", async () => {
@@ -234,6 +231,106 @@ describe("RelatedEntitiesComponent", () => {
     await component.ngOnInit();
     expect(component.filter).toEqual({
       singleRelation: component.entity.getId(),
+    });
+  });
+
+  it("should detect entity references nested in embedded schemas (e.g. attendance.participant)", async () => {
+    @DatabaseEntity("EmbedTest")
+    class EmbedTest extends Entity {}
+
+    EmbedTest.schema.set("attendance", {
+      dataType: "attendance",
+      isArray: true,
+      additional: {
+        participant: {
+          dataType: EntityDatatype.dataType,
+          additional: [TestEntity.ENTITY_TYPE, "OtherType"],
+        },
+      },
+    });
+
+    component.entityType = EmbedTest.ENTITY_TYPE;
+    component.entity = new TestEntity();
+    component.filter = undefined;
+    component.property = undefined;
+    await component.ngOnInit();
+
+    expect(component.filter).toEqual({
+      attendance: {
+        $elemMatch: { participant: component.entity.getId() },
+      },
+    });
+  });
+
+  it("should combine direct and nested entity references in filter", async () => {
+    @DatabaseEntity("MixedEmbedTest")
+    class MixedEmbedTest extends Entity {}
+
+    MixedEmbedTest.schema.set("authors", {
+      dataType: EntityDatatype.dataType,
+      isArray: true,
+      additional: TestEntity.ENTITY_TYPE,
+    });
+    MixedEmbedTest.schema.set("attendance", {
+      dataType: "attendance",
+      isArray: true,
+      additional: {
+        participant: {
+          dataType: EntityDatatype.dataType,
+          additional: [TestEntity.ENTITY_TYPE],
+        },
+      },
+    });
+
+    component.entityType = MixedEmbedTest.ENTITY_TYPE;
+    component.entity = new TestEntity();
+    component.filter = undefined;
+    component.property = undefined;
+    await component.ngOnInit();
+
+    expect(component.filter).toEqual({
+      $or: [
+        { authors: { $elemMatch: { $eq: component.entity.getId() } } },
+        {
+          attendance: {
+            $elemMatch: { participant: component.entity.getId() },
+          },
+        },
+      ],
+    });
+  });
+
+  it("should resolve nested entity ref when property is manually set to an embedded schema field", async () => {
+    @DatabaseEntity("ManualPropTest")
+    class ManualPropTest extends Entity {}
+
+    ManualPropTest.schema.set("authors", {
+      dataType: EntityDatatype.dataType,
+      isArray: true,
+      additional: TestEntity.ENTITY_TYPE,
+    });
+    ManualPropTest.schema.set("attendance", {
+      dataType: "attendance",
+      isArray: true,
+      additional: {
+        participant: {
+          dataType: EntityDatatype.dataType,
+          additional: [TestEntity.ENTITY_TYPE],
+        },
+      },
+    });
+
+    component.entityType = ManualPropTest.ENTITY_TYPE;
+    component.entity = new TestEntity();
+    component.filter = undefined;
+    component.property = "attendance";
+    await component.ngOnInit();
+
+    // should only filter by attendance, not authors
+    expect(component.filter).toEqual({
+      attendance: {
+        $elemMatch: { participant: component.entity.getId() },
+      },
     });
   });
 

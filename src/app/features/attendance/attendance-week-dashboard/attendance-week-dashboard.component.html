@@ -18,11 +18,7 @@
         </th>
       </tr>
       <ng-container matColumnDef="child">
-        <td
-          *matCellDef="let rowGroup"
-          (click)="goToChild(rowGroup[0].childId)"
-          class="pointer"
-        >
+        <td *matCellDef="let rowGroup">
           <app-entity-block
             [entityId]="rowGroup[0].childId"
             entityType="Child"

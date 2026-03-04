@@ -98,11 +98,12 @@ export class ActivityAttendance extends Entity {
     ).length;
   }
 
-  getAttendancePercentage(childId: string): number {
+  getAttendancePercentage(childId: string): number | undefined {
     const present = this.countEventsPresent(childId);
     const absent = this.countEventsAbsent(childId);
+    const total = present + absent;
 
-    return present / (present + absent);
+    return total > 0 ? present / total : undefined;
   }
 
   countTotalPresent() {
@@ -120,7 +121,7 @@ export class ActivityAttendance extends Entity {
     );
   }
 
-  getAttendancePercentageAverage(): number {
+  getAttendancePercentageAverage(): number | undefined {
     return this.countPercentage(AttendanceLogicalStatus.PRESENT, false);
   }
 
@@ -153,6 +154,10 @@ export class ActivityAttendance extends Entity {
         },
         { total: 0, matching: 0 },
       );
+
+    if (calculatedStats.total === 0) {
+      return undefined;
+    }
 
     const result = calculatedStats.matching / calculatedStats.total;
     if (rounded) {
@@ -215,7 +220,7 @@ export class ActivityAttendance extends Entity {
       attendancePercentage = this.getAttendancePercentageAverage();
     }
 
-    if (!attendancePercentage) {
+    if (attendancePercentage === undefined) {
       return WarningLevel.NONE;
     } else if (attendancePercentage < ActivityAttendance.THRESHOLD_URGENT) {
       return WarningLevel.URGENT;

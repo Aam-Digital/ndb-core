@@ -19,9 +19,11 @@ em {
   margin: sizes.$small sizes.$regular;
 }
 
-.mat-autocomplete-panel.custom-panel {
-  overflow-y: hidden !important;
-  max-height: none !important;
+.more-options-hint {
+  display: block;
+  font-size: 0.85em;
+  color: colors.$muted;
+  padding: sizes.$small 0;
 }
 
 ::ng-deep {

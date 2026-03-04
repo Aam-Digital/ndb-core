@@ -1,5 +1,10 @@
 @use "variables/sizes";
 
+:host {
+  display: inline-block;
+  width: 180px;
+}
+
 /* The indicator is a round, colored shape with a small margin on the right
 it is used as prefix in the form field and for the individual options */
 .indicator {
