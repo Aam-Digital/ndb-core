@@ -215,7 +215,7 @@ export class RollCallSetupComponent implements OnInit {
   }
 
   selectEvent(event: NoteForActivitySetup) {
-    if (!this.dateField.valid) {
+    if (!this.dateField?.valid) {
       this.alertService.addWarning(
         $localize`:Alert when selected date is invalid:Invalid Date`,
         AlertDisplay.TEMPORARY,

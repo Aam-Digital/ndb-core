@@ -40,7 +40,10 @@ import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entit
 import { ActivatedRoute, Router } from "@angular/router";
 import { AttendanceService } from "../../attendance.service";
 import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
-import { ConfirmationDialogButton } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import {
+  ConfirmationDialogButton,
+  OkButton,
+} from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
 import { RouteTarget } from "#src/app/route-target";
 
@@ -130,7 +133,6 @@ export class RollCallComponent {
   eventResource = resource({
     params: () => ({ entity: this.eventEntity(), id: this.id() }),
     loader: async ({ params: { entity, id } }) => {
-      console.log("res", entity); // TODO: remove
       if (entity) return entity;
       if (!id) return undefined;
       if (id === "new") return this.createEventFromRoute();
@@ -186,8 +188,6 @@ export class RollCallComponent {
     // Initialize participants when event is loaded/resolved
     effect(() => {
       const event = this.event();
-
-      console.log("effect", event); // TODO: remove
       if (event) {
         untracked(() => this.initializeForEvent());
       }
@@ -215,7 +215,7 @@ export class RollCallComponent {
   private async createEventFromRoute(): Promise<Entity | undefined> {
     const activityId = this.route.snapshot.queryParamMap.get("activity");
     const dateStr = this.route.snapshot.queryParamMap.get("date");
-    const date = dateStr ? new Date(dateStr) : new Date();
+    const date = dateStr ? this.parseDateOnly(dateStr) : new Date();
 
     if (activityId) {
       return this.attendanceService.createEventForActivity(activityId, date);
@@ -243,14 +243,24 @@ export class RollCallComponent {
     return undefined;
   }
 
+  /**
+   * Parse a "YYYY-MM-DD" date string as a local date.
+   * (new Date("YYYY-MM-DD") would parse as UTC midnight, shifting the date for negative offsets.)
+   */
+  private parseDateOnly(value: string): Date {
+    const [year, month, day] = value.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  }
+
   private async loadExistingEvent(id: string): Promise<Entity | undefined> {
-    let event: Entity;
+    let event: Entity | undefined;
     try {
       const entityType = Entity.extractTypeFromId(id);
       event = await this.entityMapper.load(entityType, id);
     } catch (e) {
       Logging.warn("Could not load event " + id, e);
       void this.router.navigate(["/404"]);
+      return undefined;
     }
     return event;
   }
@@ -299,8 +309,7 @@ export class RollCallComponent {
     const active: Entity[] = [];
     const inactive: Entity[] = [];
     const attendanceMap: Record<string, AttendanceItem> = {};
-
-    console.log("attendanceItems", attendanceItems); // TODO: remove
+    const validAttendanceItems: AttendanceItem[] = [];
 
     for (const attendanceItem of attendanceItems) {
       const participantId = attendanceItem.participant;
@@ -317,14 +326,10 @@ export class RollCallComponent {
             " for event " +
             entity.getId(),
         );
-        if (this._resolvedAttendanceField) {
-          entity[this._resolvedAttendanceField] = attendanceItems.filter(
-            (a) => a.participant !== participantId,
-          );
-        }
         continue;
       }
 
+      validAttendanceItems.push(attendanceItem);
       attendanceMap[participantId] = attendanceItem;
 
       if (participant.isActive) {
@@ -334,6 +339,9 @@ export class RollCallComponent {
       }
     }
 
+    if (this._resolvedAttendanceField) {
+      entity[this._resolvedAttendanceField] = validAttendanceItems;
+    }
     this.participants.set(active);
     this.inactiveParticipants.set(inactive);
     this.attendanceByParticipant.set(attendanceMap);
@@ -423,9 +431,18 @@ export class RollCallComponent {
   async saveEvent() {
     const entity = this.event();
     if (entity) {
-      await this.entityMapper.save(entity);
-      this.isDirty.set(false);
-      this.unsavedChanges.pending = false;
+      try {
+        await this.entityMapper.save(entity);
+        this.isDirty.set(false);
+        this.unsavedChanges.pending = false;
+      } catch (e) {
+        Logging.warn("Could not save attendance event", e);
+        this.confirmationDialog.getConfirmation(
+          $localize`:Error message when saving failed:Error trying to save`,
+          $localize`An error occurred while saving the event. Please try again.`,
+          OkButton,
+        );
+      }
     }
   }
 
