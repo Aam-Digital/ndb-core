@@ -1,11 +1,14 @@
-import { Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { DownloadService } from "../../export/download-service/download.service";
-import { Database } from "../../database/database";
+import { Config } from "../../config/config";
+import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/configurable-enum";
+import { ReportEntity } from "../../../features/reporting/report-config";
+import { PublicFormConfig } from "../../../features/public-form/public-form-config";
 
 /**
  * Admin page providing tools to help configure Aam Digital using AI agents.
@@ -19,6 +22,7 @@ import { Database } from "../../database/database";
   selector: "app-admin-ai-agent",
   templateUrl: "./admin-ai-agent.component.html",
   styleUrls: ["./admin-ai-agent.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButtonModule,
     MatCardModule,
@@ -27,42 +31,32 @@ import { Database } from "../../database/database";
   ],
 })
 export class AdminAiAgentComponent {
-  private readonly db: Database = inject(DatabaseResolverService).getDatabase();
+  private readonly entityMapper = inject(EntityMapperService);
   private readonly downloadService = inject(DownloadService);
 
-  /** DB ID prefixes for typed config groups to include in the AI context export. */
-  static readonly AI_CONTEXT_PREFIXES = [
-    "ConfigurableEnum:",
-    "ReportConfig:",
-    "PublicFormConfig:",
-  ] as const;
-
-  /** Specific Config document IDs to include (avoids exporting all Config: docs). */
-  static readonly AI_CONTEXT_CONFIG_IDS = [
-    "Config:CONFIG_ENTITY",
-    "Config:Permissions",
-  ] as const;
-
   /**
-   * Fetches all relevant config documents from the database and downloads
+   * Fetches all relevant config documents via EntityMapperService and downloads
    * them as a single JSON file suitable for use as AI agent context.
    */
   async downloadAiContext(): Promise<void> {
-    const docArrays = await Promise.all(
-      AdminAiAgentComponent.AI_CONTEXT_PREFIXES.map((prefix) =>
-        this.db.getAll(prefix),
-      ),
-    );
+    const [configurableEnums, reportConfigs, publicFormConfigs] =
+      await Promise.all([
+        this.entityMapper.loadType(ConfigurableEnum),
+        this.entityMapper.loadType(ReportEntity),
+        this.entityMapper.loadType(PublicFormConfig),
+      ]);
 
-    const configDocs = (await this.db.getAll("Config:")).filter(({ _id }) =>
-      AdminAiAgentComponent.AI_CONTEXT_CONFIG_IDS.includes(
-        _id as (typeof AdminAiAgentComponent.AI_CONTEXT_CONFIG_IDS)[number],
-      ),
-    );
+    const configDocs = await Promise.all([
+      this.entityMapper.load(Config, Config.CONFIG_KEY),
+      this.entityMapper.load(Config, Config.PERMISSION_KEY).catch(() => null),
+    ]);
 
-    const docs = [...docArrays.flat(), ...configDocs].map(
-      ({ _rev: _, ...doc }) => doc,
-    );
+    const docs = [
+      ...configurableEnums,
+      ...reportConfigs,
+      ...publicFormConfigs,
+      ...configDocs.filter(Boolean),
+    ];
 
     await this.downloadService.triggerDownload(
       JSON.stringify(docs, null, 2),

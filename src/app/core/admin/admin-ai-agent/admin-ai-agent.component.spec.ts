@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { AdminAiAgentComponent } from "./admin-ai-agent.component";
-import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { DownloadService } from "../../export/download-service/download.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -10,8 +10,12 @@ describe("AdminAiAgentComponent", () => {
   let fixture: ComponentFixture<AdminAiAgentComponent>;
 
   beforeEach(waitForAsync(() => {
-    const mockDb = jasmine.createSpyObj("Database", ["getAll"]);
-    mockDb.getAll.and.returnValue(Promise.resolve([]));
+    const mockEntityMapper = jasmine.createSpyObj("EntityMapperService", [
+      "loadType",
+      "load",
+    ]);
+    mockEntityMapper.loadType.and.returnValue(Promise.resolve([]));
+    mockEntityMapper.load.and.returnValue(Promise.resolve(null));
 
     const mockDownloadService = jasmine.createSpyObj("DownloadService", [
       "triggerDownload",
@@ -25,10 +29,7 @@ describe("AdminAiAgentComponent", () => {
         FontAwesomeTestingModule,
       ],
       providers: [
-        {
-          provide: DatabaseResolverService,
-          useValue: { getDatabase: () => mockDb },
-        },
+        { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: DownloadService, useValue: mockDownloadService },
       ],
     }).compileComponents();
