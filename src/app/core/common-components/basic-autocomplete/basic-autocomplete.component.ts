@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   Component,
+  computed,
   ContentChild,
   ElementRef,
   EventEmitter,
@@ -117,7 +118,7 @@ export class BasicAutocompleteComponent<O, V = O>
    */
   @Input() reorder?: boolean;
 
-  autocompleteOptions: SelectableOption<O, V>[] = [];
+  autocompleteOptions: WritableSignal<SelectableOption<O, V>[]> = signal([]);
   autocompleteForm = new FormControl("");
   autocompleteSuggestedOptions = this.autocompleteForm.valueChanges.pipe(
     filter((val) => typeof val === "string"),
@@ -131,15 +132,18 @@ export class BasicAutocompleteComponent<O, V = O>
   showAddOption = false;
 
   /**
-   * maximum height of the autocomplete panel.
-   * We need a calculation to avoid multiple scrollbars, couldn't get this working just with css.
-   */
-  maxPanelHeight: number;
-  /**
    * Dynamic width of the autocomplete dropdown panel.
    * Set to match the full width of the Material form field container (including icons/padding).
    */
   panelWidth: string;
+
+  /**
+   * Maximum number of options to display in the dropdown.
+   * If more options match the current filter, a hint is shown to type to narrow results.
+   * Set to 0 for no limit. Defaults to 100.
+   */
+  @Input() maxOptionsToDisplay: number = 100;
+  hasMoreOptions = false;
 
   get displayText() {
     const values: V[] = Array.isArray(this.value) ? this.value : [this.value];
@@ -201,9 +205,25 @@ export class BasicAutocompleteComponent<O, V = O>
     o,
   ) => o?.asValue;
 
+  /**
+   * Height of the virtual scroll viewport, capped to fit within the panel.
+   * Material's default panel max-height is 256px. We reserve space for footer elements
+   * ("type to filter" hint, "show inactive" toggle, padding) and cap the viewport accordingly
+   * so that virtual scrolling actually virtualizes (instead of rendering all items).
+   */
+  private static readonly PANEL_MAX_HEIGHT = 256;
+  private static readonly FOOTER_RESERVE = 56;
+  viewportHeight = computed(() => {
+    const contentHeight = (this.autocompleteOptions()?.length ?? 0) * 48;
+    const availableHeight =
+      BasicAutocompleteComponent.PANEL_MAX_HEIGHT -
+      BasicAutocompleteComponent.FOOTER_RESERVE;
+    return Math.min(contentHeight, availableHeight);
+  });
+
   ngOnInit() {
     this.autocompleteSuggestedOptions.subscribe((options) => {
-      this.autocompleteOptions = options;
+      this.autocompleteOptions.set(options);
       setTimeout(() => {
         this.virtualScrollViewport.checkViewportSize();
       });
@@ -246,25 +266,6 @@ export class BasicAutocompleteComponent<O, V = O>
         this.showAutocomplete();
       }
     });
-
-    this.calculateVisibleItemsForHeight();
-  }
-
-  private calculateVisibleItemsForHeight() {
-    const screenHeight = window.innerHeight;
-    const inputBottom =
-      this.inputElement._elementRef.nativeElement.getBoundingClientRect()
-        .bottom;
-
-    const availableSpaceBelow = screenHeight - inputBottom;
-
-    // workaround for ExpressionChangedAfterItHasBeenCheckedError problems
-    setTimeout(() => {
-      const maxVisibleItems = Math.max(3, Math.floor(availableSpaceBelow / 48));
-
-      this.maxPanelHeight = Math.min(maxVisibleItems * 48, availableSpaceBelow);
-      this.virtualScrollViewport.checkViewportSize();
-    }, 0);
   }
 
   /**
@@ -285,13 +286,13 @@ export class BasicAutocompleteComponent<O, V = O>
 
   drop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer === event.container) {
-      moveItemInArray(
-        this.autocompleteOptions,
-        event.previousIndex,
-        event.currentIndex,
-      );
+      const reordered = [...this.autocompleteOptions()];
+      moveItemInArray(reordered, event.previousIndex, event.currentIndex);
+      this.autocompleteOptions.set(reordered);
     }
-    this._selectedOptions = this.autocompleteOptions.filter((o) => o.selected);
+    this._selectedOptions = this.autocompleteOptions().filter(
+      (o) => o.selected,
+    );
     if (this.multi) {
       this.value = this._selectedOptions.map((o) => o.asValue);
     } else {
@@ -364,6 +365,17 @@ export class BasicAutocompleteComponent<O, V = O>
         (o) => o?.asString?.toLowerCase() === filterText?.toLowerCase(),
       );
     }
+
+    if (
+      this.maxOptionsToDisplay > 0 &&
+      filteredOptions.length > this.maxOptionsToDisplay
+    ) {
+      this.hasMoreOptions = true;
+      filteredOptions = filteredOptions.slice(0, this.maxOptionsToDisplay);
+    } else {
+      this.hasMoreOptions = false;
+    }
+
     return filteredOptions;
   }
 
