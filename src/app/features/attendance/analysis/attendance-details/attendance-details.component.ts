@@ -1,4 +1,10 @@
-import { Component, Input, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+} from "@angular/core";
 import { ActivityAttendance } from "../../model/activity-attendance";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
@@ -21,6 +27,7 @@ import { EntitiesTableComponent } from "#src/app/core/common-components/entities
   selector: "app-attendance-details",
   templateUrl: "./attendance-details.component.html",
   styleUrls: ["./attendance-details.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DialogCloseComponent,
     MatDialogModule,
@@ -35,17 +42,20 @@ import { EntitiesTableComponent } from "#src/app/core/common-components/entities
 })
 export class AttendanceDetailsComponent {
   private formDialog = inject(FormDialogService);
+  private data = inject<{
+    forChild: string;
+    attendance: ActivityAttendance;
+  }>(MAT_DIALOG_DATA);
 
-  @Input() entity: ActivityAttendance;
-  @Input() forChild: string;
+  entity = input(this.data.attendance);
+  forChild = input(this.data.forChild);
 
-  get eventEntityType() {
-    return this.entity?.events[0]?.entity?.getConstructor();
-  }
-
-  get eventEntities(): Entity[] {
-    return this.entity?.events.map((e) => e.entity) ?? [];
-  }
+  eventEntityType = computed(() =>
+    this.entity()?.events[0]?.entity?.getConstructor(),
+  );
+  eventEntities = computed<Entity[]>(
+    () => this.entity()?.events.map((e) => e.entity) ?? [],
+  );
 
   eventsColumns: FormFieldConfig[] = [
     { id: "date" },
@@ -55,12 +65,12 @@ export class AttendanceDetailsComponent {
       label: $localize`:How a child attended, e.g. too late, in time, excused, e.t.c:Attended`,
       viewComponent: "ReadonlyFunction",
       additional: (event: Entity) => {
-        const eventWithAttendance = this.entity.events.find(
+        const eventWithAttendance = this.entity().events.find(
           (e) => e.entity === event,
         );
-        if (this.forChild) {
+        if (this.forChild()) {
           const item = eventWithAttendance?.getAttendanceForParticipant(
-            this.forChild,
+            this.forChild(),
           );
           return item?.status?.label || "-";
         } else {
@@ -73,16 +83,6 @@ export class AttendanceDetailsComponent {
       },
     },
   ];
-
-  constructor() {
-    const data = inject<{
-      forChild: string;
-      attendance: ActivityAttendance;
-    }>(MAT_DIALOG_DATA);
-
-    this.entity = data.attendance;
-    this.forChild = data.forChild;
-  }
 
   showEventDetails(event: Entity) {
     this.formDialog.openView(event);

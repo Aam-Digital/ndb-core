@@ -40,7 +40,10 @@ describe("AttendanceDetailsComponent", () => {
         { provide: MatDialogRef, useValue: {} },
         {
           provide: MAT_DIALOG_DATA,
-          useValue: { attendance: new ActivityAttendance() },
+          useValue: {
+            attendance: new ActivityAttendance(),
+            forChild: undefined,
+          },
         },
       ],
     }).compileComponents();
