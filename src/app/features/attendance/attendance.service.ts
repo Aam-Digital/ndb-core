@@ -1,5 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { Entity } from "#src/app/core/entity/model/entity";
+import { ActivityEvent, isActivityEvent } from "./model/activity-event";
 import moment from "moment";
 import { RecurringActivity } from "./model/recurring-activity";
 import { ActivityAttendance } from "./model/activity-attendance";
@@ -9,15 +11,27 @@ import { EventNote } from "./model/event-note";
 import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
 import { AttendanceItem } from "./model/attendance-item";
 import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
+import { RollCallConfig } from "./model/roll-call-config";
 
 @Injectable({
   providedIn: "root",
 })
 export class AttendanceService {
-  private entityMapper = inject(EntityMapperService);
-  private dbIndexing = inject(DatabaseIndexingService);
-  private childrenService = inject(ChildrenService);
-  private currentUser = inject(CurrentUserSubject);
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly dbIndexing = inject(DatabaseIndexingService);
+  private readonly childrenService = inject(ChildrenService);
+  private readonly currentUser = inject(CurrentUserSubject);
+
+  /**
+   * Default configuration for the roll-call UI.
+   *
+   * Will become configurable in the future.
+   */
+  readonly rollCallConfig: RollCallConfig = {
+    filterConfig: [{ id: "category" }, { id: "schools" }],
+    extraField: "category",
+    dateField: "date",
+  };
 
   constructor() {
     this.createIndices();
@@ -259,6 +273,107 @@ export class AttendanceService {
     }
 
     return activities;
+  }
+
+  /**
+   * Load all events available for a roll call on the given date,
+   * merging existing events with new (unsaved) events generated from recurring activities.
+   *
+   * Returns two lists: `events` contains only events relevant to the current user
+   * (assigned activities), while `allEvents` contains everything.
+   *
+   * @param date The date for which to load events.
+   */
+  async getAvailableEventsForRollCall(date: Date): Promise<{
+    events: (Entity | ActivityEvent)[];
+    allEvents: (Entity | ActivityEvent)[];
+  }> {
+    const currentUserId = this.currentUser.value?.getId();
+    const existingEvents = await this.getEventsWithUpdatedParticipants(date);
+
+    const allActivities = (
+      await this.entityMapper.loadType(RecurringActivity)
+    ).filter((a) => a.isActive);
+
+    const allEvents = await this.buildEventsFromActivities(
+      allActivities,
+      existingEvents,
+      currentUserId,
+      date,
+    );
+
+    let assignedActivityIds = allActivities
+      .filter((a) => a.isAssignedTo(currentUserId))
+      .map((a) => a.getId());
+
+    const events = !currentUserId
+      ? allEvents
+      : allEvents.filter(
+          (e) =>
+            !isActivityEvent(e) || assignedActivityIds.includes(e.relatesTo),
+        );
+
+    return { events, allEvents };
+  }
+
+  private async buildEventsFromActivities(
+    activities: RecurringActivity[],
+    existingEvents: EventNote[],
+    currentUserId: string | undefined,
+    date: Date,
+  ): Promise<(Entity | ActivityEvent)[]> {
+    const newEvents = await Promise.all(
+      activities.map(async (activity) => {
+        if (
+          existingEvents.find(
+            (e) => isActivityEvent(e) && e.relatesTo === activity.getId(),
+          )
+        ) {
+          return undefined;
+        }
+        const event = await this.createEventForActivity(activity, date);
+        if (currentUserId) {
+          event.authors = [currentUserId];
+        }
+        return event;
+      }),
+    );
+    const events: (Entity | ActivityEvent)[] = existingEvents.concat(
+      newEvents.filter((e): e is EventNote => !!e),
+    );
+
+    this.sortEventsByRelevance(events, activities);
+    return events;
+  }
+
+  private sortEventsByRelevance(
+    events: (Entity | ActivityEvent)[],
+    allActivities: RecurringActivity[],
+  ): void {
+    const calculatePriority = (event: Entity | ActivityEvent): number => {
+      let score = 0;
+
+      const activityAssignedUsers = isActivityEvent(event)
+        ? allActivities.find((a) => a.getId() === event.relatesTo)?.assignedTo
+        : undefined;
+      // use parent activity's assigned users and only fall back to event if necessary
+      const assignedUsers: string[] =
+        activityAssignedUsers ?? event["authors"] ?? [];
+
+      if (!isActivityEvent(event)) {
+        // show one-time events first
+        score += 1;
+      }
+
+      const currentUserId = this.currentUser.value?.getId();
+      if (currentUserId && assignedUsers.includes(currentUserId)) {
+        score += 2;
+      }
+
+      return score;
+    };
+
+    events.sort((a, b) => calculatePriority(b) - calculatePriority(a));
   }
 
   async createEventForActivity(

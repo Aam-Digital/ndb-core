@@ -1,4 +1,14 @@
-import { Component, OnInit, ViewChild, inject, input } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ViewChild,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+  resource,
+  signal,
+} from "@angular/core";
 import { AttendanceService } from "../../attendance.service";
 import { isActivityEvent } from "../../model/activity-event";
 import { AlertService } from "#src/app/core/alerts/alert.service";
@@ -31,6 +41,7 @@ import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
   selector: "app-roll-call-setup",
   templateUrl: "./roll-call-setup.component.html",
   styleUrls: ["./roll-call-setup.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatFormFieldModule,
     MatInputModule,
@@ -44,54 +55,12 @@ import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
     ViewTitleComponent,
   ],
 })
-export class RollCallSetupComponent implements OnInit {
+export class RollCallSetupComponent {
   private readonly attendanceService = inject(AttendanceService);
   private readonly router = inject(Router);
   private readonly alertService = inject(AlertService);
   private readonly filterService = inject(FilterService);
   private readonly confirmationService = inject(ConfirmationDialogService);
-
-  /**
-   * Configuration for the filter UI shown above the events list.
-   */
-  readonly filterConfig = input<FilterConfig[]>(
-    this.attendanceService.rollCallFilterConfig,
-  );
-
-  /**
-   * The entity field name to display as an extra info on each event card.
-   */
-  readonly extraField = input<string>(
-    this.attendanceService.rollCallExtraField,
-  );
-
-  /**
-   * The entity field name holding the event date, used when routing to a new roll call.
-   */
-  readonly eventDateField = input<string>(
-    this.attendanceService.rollCallDateField,
-  );
-
-  date = new Date();
-
-  /** Events relevant to the current user (filtered by assignment). */
-  ownEvents: Entity[] = [];
-  /** All available events regardless of user assignment. */
-  allEvents: Entity[] = [];
-
-  /** The active base set: either user-filtered or all, depending on showingAll. */
-  get activeEvents(): Entity[] {
-    return this.showingAll ? this.allEvents : this.ownEvents;
-  }
-
-  /** The events currently shown, after applying any active filter. */
-  filteredEvents: Entity[] = [];
-
-  showingAll = false;
-
-  @ViewChild("dateField") dateField: NgModel;
-
-  isLoading = true;
 
   /**
    * filters are displayed in the UI only if at least this many events are listed.
@@ -101,41 +70,74 @@ export class RollCallSetupComponent implements OnInit {
   readonly FILTER_VISIBLE_THRESHOLD = 4;
 
   /**
+   * Configuration for the filter UI shown above the events list.
+   */
+  readonly filterConfig = input<FilterConfig[]>(
+    this.attendanceService.rollCallConfig.filterConfig,
+  );
+
+  /**
+   * The entity field name to display as an extra info on each event card.
+   */
+  readonly extraField = input<string>(
+    this.attendanceService.rollCallConfig.extraField,
+  );
+
+  /**
+   * The entity field name holding the event date, used when routing to a new roll call.
+   */
+  readonly eventDateField = input<string>(
+    this.attendanceService.rollCallConfig.dateField,
+  );
+
+  date = signal(new Date());
+
+  protected readonly eventsResource = resource<
+    { events: Entity[]; allEvents: Entity[] },
+    Date
+  >({
+    params: () => this.date(),
+    loader: ({ params: date }) =>
+      this.attendanceService.getAvailableEventsForRollCall(date),
+  });
+
+  /**
+   * Whether all events are shown (not just the user's own).
+   * Resets to the default (true when own === all) whenever new data loads.
+   */
+  showingAll = linkedSignal(() => {
+    const result = this.eventsResource.value();
+    return result !== undefined ? result.events.length === 0 : false;
+  });
+
+  /** The active base set: either user-filtered or all, depending on showingAll. */
+  activeEvents = computed(() => {
+    const result = this.eventsResource.value();
+    const events = this.showingAll() ? result?.allEvents : result?.events;
+    return events ?? [];
+  });
+
+  /**
+   * The events currently shown, after applying any active filter.
+   * Resets to the full active set whenever the active set changes.
+   */
+  filteredEvents = linkedSignal(() => this.activeEvents());
+
+  @ViewChild("dateField") dateField: NgModel;
+
+  /**
    * The entity type inferred from the loaded events, used for filter schema look-ups.
    */
-  get entityType(): EntityConstructor | undefined {
-    return this.activeEvents[0]?.constructor as EntityConstructor | undefined;
-  }
-
-  async ngOnInit() {
-    await this.initAvailableEvents();
-  }
-
-  private async initAvailableEvents() {
-    this.isLoading = true;
-    const result = await this.attendanceService.getAvailableEventsForRollCall(
-      this.date,
-    );
-    this.ownEvents = result.events;
-    this.allEvents = result.allEvents;
-    this.showingAll = this.ownEvents === this.allEvents;
-    this.filteredEvents = this.activeEvents;
-    this.isLoading = false;
-  }
+  entityType = computed(
+    () => this.activeEvents()[0]?.constructor as EntityConstructor | undefined,
+  );
 
   showMore() {
-    this.showingAll = true;
-    this.filteredEvents = this.allEvents;
+    this.showingAll.set(true);
   }
 
   showLess() {
-    this.showingAll = false;
-    this.filteredEvents = this.ownEvents;
-  }
-
-  async setNewDate(date: Date) {
-    this.date = date;
-    await this.initAvailableEvents();
+    this.showingAll.set(false);
   }
 
   private formatDateForQuery(date: Date): string {
@@ -163,7 +165,7 @@ export class RollCallSetupComponent implements OnInit {
 
   filterExistingEvents(filter: DataFilter<Entity>) {
     const predicate = this.filterService.getFilterPredicate(filter);
-    this.filteredEvents = this.activeEvents.filter(predicate);
+    this.filteredEvents.set(this.activeEvents().filter(predicate));
   }
 
   selectEvent(event: Entity) {

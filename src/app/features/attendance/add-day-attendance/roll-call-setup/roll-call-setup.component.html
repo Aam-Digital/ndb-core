@@ -19,10 +19,10 @@
     <input
       matInput
       #dateField="ngModel"
-      [(ngModel)]="date"
+      [ngModel]="date()"
+      (ngModelChange)="date.set($event)"
       required
       [matDatepicker]="datePicker"
-      (dateChange)="setNewDate($event.value)"
     />
     <mat-datepicker-toggle
       matIconSuffix
@@ -34,25 +34,25 @@
     <mat-datepicker #datePicker></mat-datepicker>
   </mat-form-field>
 
-  @if (activeEvents.length >= FILTER_VISIBLE_THRESHOLD) {
+  @if (activeEvents().length >= FILTER_VISIBLE_THRESHOLD) {
     <app-filter
       class="flex-row flex-wrap gap-small"
       [filterConfig]="filterConfig()"
-      [entityType]="entityType"
-      [entities]="activeEvents"
+      [entityType]="entityType()"
+      [entities]="activeEvents()"
       [onlyShowRelevantFilterOptions]="true"
       (filterObjChange)="filterExistingEvents($event)"
     ></app-filter>
   }
 </div>
 
-@if (isLoading) {
+@if (eventsResource.isLoading()) {
   <div class="process-spinner">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 } @else {
   <div class="cards-list">
-    @for (event of filteredEvents; track event) {
+    @for (event of filteredEvents(); track event) {
       <app-activity-card
         class="pointer"
         [event]="event"
@@ -67,13 +67,13 @@
 <div class="padding-top-regular gap-regular flex-row">
   <button
     mat-stroked-button
-    (click)="showingAll ? showLess() : showMore()"
+    (click)="showingAll() ? showLess() : showMore()"
     angulartics2On="click"
     angularticsCategory="Record Attendance"
     angularticsAction="show_more"
     class="padding-right-small"
   >
-    @if (showingAll) {
+    @if (showingAll()) {
       <span i18n="Show less entries of a list"> Show less </span>
     } @else {
       <span i18n="Show more entries of a list"> Show more </span>

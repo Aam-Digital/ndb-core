@@ -1,8 +1,8 @@
 import {
   ComponentFixture,
   fakeAsync,
-  flush,
   TestBed,
+  tick,
   waitForAsync,
 } from "@angular/core/testing";
 
@@ -20,21 +20,32 @@ describe("RollCallSetupComponent", () => {
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
-  const emptyResult = () =>
-    Promise.resolve({
-      events: [],
-      allEvents: [],
-    });
+  function stabilize() {
+    for (let i = 0; i < 5; i++) {
+      fixture.detectChanges();
+      tick(); // microtasks (Promises from resource loader, etc.)
+      TestBed.tick(); // flush Angular effects and change detection
+    }
+  }
 
   beforeEach(waitForAsync(() => {
     mockChildrenService = jasmine.createSpyObj(["queryActiveRelationsOf"]);
     mockChildrenService.queryActiveRelationsOf.and.resolveTo([]);
-    mockAttendanceService = jasmine.createSpyObj([
-      "getAvailableEventsForRollCall",
-    ]);
-    mockAttendanceService.getAvailableEventsForRollCall.and.callFake(
-      emptyResult,
+    mockAttendanceService = jasmine.createSpyObj(
+      "AttendanceService",
+      ["getAvailableEventsForRollCall"],
+      {
+        rollCallConfig: {
+          filterConfig: [],
+          extraField: "category",
+          dateField: "date",
+        },
+      },
     );
+    mockAttendanceService.getAvailableEventsForRollCall.and.resolveTo({
+      events: [],
+      allEvents: [],
+    });
 
     TestBed.configureTestingModule({
       imports: [RollCallSetupComponent, MockedTestingModule.withState()],
@@ -43,13 +54,11 @@ describe("RollCallSetupComponent", () => {
         { provide: AttendanceService, useValue: mockAttendanceService },
       ],
     }).compileComponents();
-  }));
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(RollCallSetupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
+  }));
 
   it("should create", () => {
     expect(component).toBeTruthy();
@@ -63,25 +72,24 @@ describe("RollCallSetupComponent", () => {
       allEvents: [event1, event2],
     });
 
-    component.ngOnInit();
-    flush();
+    (component as any).eventsResource.reload();
+    stabilize();
 
-    expect(component.filteredEvents).toEqual([event1, event2]);
-    expect(component.activeEvents).toEqual([event1, event2]);
+    expect(component.filteredEvents()).toEqual([event1, event2]);
+    expect(component.activeEvents()).toEqual([event1, event2]);
   }));
 
-  it("showingAll is true when user events equal all events", fakeAsync(() => {
+  it("showingAll is true when there are no user events", fakeAsync(() => {
     const event = new EventNote();
-    const events = [event];
     mockAttendanceService.getAvailableEventsForRollCall.and.resolveTo({
-      events,
-      allEvents: events,
+      events: [],
+      allEvents: [event],
     });
 
-    component.ngOnInit();
-    flush();
+    (component as any).eventsResource.reload();
+    stabilize();
 
-    expect(component.showingAll).toBeTrue();
+    expect(component.showingAll()).toBeTrue();
   }));
 
   it("showMore() switches to allEvents without re-fetching", fakeAsync(() => {
@@ -91,14 +99,14 @@ describe("RollCallSetupComponent", () => {
       events: [userEvent],
       allEvents: [userEvent, otherEvent],
     });
-    component.ngOnInit();
-    flush();
+    (component as any).eventsResource.reload();
+    stabilize();
     mockAttendanceService.getAvailableEventsForRollCall.calls.reset();
 
     component.showMore();
 
-    expect(component.showingAll).toBeTrue();
-    expect(component.filteredEvents).toEqual([userEvent, otherEvent]);
+    expect(component.showingAll()).toBeTrue();
+    expect(component.filteredEvents()).toEqual([userEvent, otherEvent]);
     expect(
       mockAttendanceService.getAvailableEventsForRollCall,
     ).not.toHaveBeenCalled();
@@ -111,15 +119,15 @@ describe("RollCallSetupComponent", () => {
       events: [userEvent],
       allEvents: [userEvent, otherEvent],
     });
-    component.ngOnInit();
-    flush();
+    (component as any).eventsResource.reload();
+    stabilize();
     component.showMore();
     mockAttendanceService.getAvailableEventsForRollCall.calls.reset();
 
     component.showLess();
 
-    expect(component.showingAll).toBeFalse();
-    expect(component.filteredEvents).toEqual([userEvent]);
+    expect(component.showingAll()).toBeFalse();
+    expect(component.filteredEvents()).toEqual([userEvent]);
     expect(
       mockAttendanceService.getAvailableEventsForRollCall,
     ).not.toHaveBeenCalled();
@@ -170,13 +178,13 @@ describe("RollCallSetupComponent", () => {
       allEvents: [event],
     });
 
-    component.ngOnInit();
-    flush();
+    (component as any).eventsResource.reload();
+    stabilize();
 
-    expect(component.entityType).toBe(EventNote);
+    expect(component.entityType()).toBe(EventNote);
   }));
 
   it("returns undefined entityType when no events are loaded", () => {
-    expect(component.entityType).toBeUndefined();
+    expect(component.entityType()).toBeUndefined();
   });
 });

@@ -16,6 +16,8 @@ import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-typ
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
 import { AttendanceItem } from "./model/attendance-item";
+import { ActivityEvent, isActivityEvent } from "./model/activity-event";
+import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -376,6 +378,139 @@ describe("AttendanceService", () => {
     const events = await service.getEventsOnDate(datePickerDate);
     expect(events).toHaveSize(1);
     expect(events[0].subject).toBe(sameDayEvent.subject);
+  });
+
+  describe("getAvailableEventsForRollCall", () => {
+    const testDate = new Date(2024, 0, 15);
+    const mockCurrentUser = new Entity("current-user");
+
+    function findByActivity(
+      events: (Entity | ActivityEvent)[],
+      activityId: string,
+    ): (Entity | ActivityEvent) | undefined {
+      return events.find(
+        (e) => isActivityEvent(e) && e.relatesTo === activityId,
+      );
+    }
+
+    beforeEach(async () => {
+      TestBed.inject(CurrentUserSubject).next(mockCurrentUser);
+
+      // Assign the outer activities to a different user so they don't interfere
+      // with tests that rely on user-based filtering
+      activity1.assignedTo = ["User:other-user"];
+      activity2.assignedTo = ["User:other-user"];
+      await entityMapper.save(activity1);
+      await entityMapper.save(activity2);
+    });
+
+    it("returns existing events for the date", async () => {
+      const existingEvent = EventNote.create(testDate);
+      await entityMapper.save(existingEvent);
+
+      const result = await service.getAvailableEventsForRollCall(testDate);
+
+      expect(result.allEvents.map((e) => e.getId())).toContain(
+        existingEvent.getId(),
+      );
+      expect(existingEvent.isNew).toBeFalse();
+    });
+
+    it("generates an event for each activity without an existing event on the date", async () => {
+      const activity = RecurringActivity.create("new activity");
+      await entityMapper.save(activity);
+
+      const result = await service.getAvailableEventsForRollCall(testDate);
+
+      const generatedEvent = findByActivity(result.allEvents, activity.getId());
+      expect(generatedEvent).toBeTruthy();
+      expect(generatedEvent.isNew).toBeTrue();
+    });
+
+    it("does not generate a duplicate event when one already exists for the activity on that date", async () => {
+      const activity = RecurringActivity.create("duplicate test");
+      const existingEvent = EventNote.create(testDate, "existing");
+      existingEvent.relatesTo = activity.getId();
+      await entityMapper.save(activity);
+      await entityMapper.save(existingEvent);
+
+      const result = await service.getAvailableEventsForRollCall(testDate);
+
+      const eventsForActivity = result.allEvents.filter(
+        (e) => isActivityEvent(e) && e.relatesTo === activity.getId(),
+      );
+      expect(eventsForActivity).toHaveSize(1);
+    });
+
+    it("filters to activities assigned to currentUserId in events, but allEvents contains all", async () => {
+      const assignedActivity = RecurringActivity.create("assigned");
+      assignedActivity.assignedTo = [mockCurrentUser.getId()];
+      const otherActivity = RecurringActivity.create("other");
+      otherActivity.assignedTo = ["User:other-user"];
+      await entityMapper.save(assignedActivity);
+      await entityMapper.save(otherActivity);
+
+      const result = await service.getAvailableEventsForRollCall(testDate);
+
+      expect(
+        findByActivity(result.events, assignedActivity.getId()),
+      ).toBeTruthy();
+      expect(findByActivity(result.events, otherActivity.getId())).toBeFalsy();
+      expect(
+        findByActivity(result.allEvents, otherActivity.getId()),
+      ).toBeTruthy();
+    });
+
+    it("returns all activities when no current user is set", async () => {
+      TestBed.inject(CurrentUserSubject).next(undefined);
+
+      const activityAssignedToOther = RecurringActivity.create("other");
+      activityAssignedToOther.assignedTo = [mockCurrentUser.getId()];
+      await entityMapper.save(activityAssignedToOther);
+
+      const result = await service.getAvailableEventsForRollCall(testDate);
+
+      expect(
+        findByActivity(result.events, activityAssignedToOther.getId()),
+      ).toBeTruthy();
+      // when no user-relevant activities exist, events falls back to allEvents
+      expect(result.events).toBe(result.allEvents);
+    });
+
+    it("sets the currentUser as author on generated events", async () => {
+      const activity = RecurringActivity.create("activity");
+      await entityMapper.save(activity);
+
+      const result = await service.getAvailableEventsForRollCall(testDate);
+
+      const generatedEvent = findByActivity(result.allEvents, activity.getId());
+      expect(generatedEvent["authors"]).toEqual([mockCurrentUser.getId()]);
+    });
+
+    it("sorts events: assigned to current user ranked higher, one-time events ranked highest", async () => {
+      const assignedActivity = RecurringActivity.create("assigned");
+      assignedActivity.assignedTo = [mockCurrentUser.getId()];
+      const unassignedActivity = RecurringActivity.create("unassigned");
+      const oneTimeEvent = EventNote.create(testDate, "one-time");
+      // one-time events have no relatesTo
+      await entityMapper.save(assignedActivity);
+      await entityMapper.save(unassignedActivity);
+      await entityMapper.save(oneTimeEvent);
+
+      const result = await service.getAvailableEventsForRollCall(testDate);
+      const oneTimeIdx = result.allEvents.indexOf(oneTimeEvent);
+      const assignedIdx = result.allEvents.findIndex(
+        (e) => isActivityEvent(e) && e.relatesTo === assignedActivity.getId(),
+      );
+      const unassignedIdx = result.allEvents.findIndex(
+        (e) => isActivityEvent(e) && e.relatesTo === unassignedActivity.getId(),
+      );
+
+      // one-time events first (score 1 for no relatesTo alone, or score 3 if also assigned)
+      expect(oneTimeIdx).toBeLessThan(unassignedIdx);
+      // assigned activity ranked higher than unassigned
+      expect(assignedIdx).toBeLessThan(unassignedIdx);
+    });
   });
 
   async function createChildrenInSchool(
