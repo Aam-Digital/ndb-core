@@ -1,6 +1,18 @@
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceItem } from "./attendance-item";
 import { RecurringActivity } from "./recurring-activity";
+import {
+  AttendanceLogicalStatus,
+  NullAttendanceStatusType,
+} from "./attendance-status";
+
+export interface AttendanceStats {
+  average: number;
+  counted: number;
+  excludedUnknown: number;
+  statusCounts: Map<string, number>;
+  logicalStatusCounts: Map<string, number>;
+}
 
 /**
  * Adapter wrapping an event entity with typed accessors for attendance and date fields.
@@ -51,5 +63,37 @@ export class EventWithAttendance {
     return this.attendanceItems.find(
       (item) => item.participant === participantId,
     );
+  }
+
+  getAttendanceStats(): AttendanceStats {
+    const logicalStatusCounts = new Map<AttendanceLogicalStatus, number>();
+    logicalStatusCounts.set(AttendanceLogicalStatus.PRESENT, 0);
+    logicalStatusCounts.set(AttendanceLogicalStatus.ABSENT, 0);
+    logicalStatusCounts.set(AttendanceLogicalStatus.IGNORE, 0);
+
+    const statusCounts = new Map<string, number>();
+
+    for (const item of this.attendanceItems) {
+      const status = item.status;
+      statusCounts.set(status?.id, (statusCounts.get(status?.id) ?? 0) + 1);
+
+      const countAs = status?.countAs ?? AttendanceLogicalStatus.IGNORE;
+      logicalStatusCounts.set(
+        countAs,
+        (logicalStatusCounts.get(countAs) ?? 0) + 1,
+      );
+    }
+
+    const counted =
+      logicalStatusCounts.get(AttendanceLogicalStatus.PRESENT) +
+      logicalStatusCounts.get(AttendanceLogicalStatus.ABSENT);
+    return {
+      average:
+        logicalStatusCounts.get(AttendanceLogicalStatus.PRESENT) / counted,
+      counted,
+      excludedUnknown: statusCounts.get(NullAttendanceStatusType.id) ?? 0,
+      statusCounts,
+      logicalStatusCounts,
+    };
   }
 }

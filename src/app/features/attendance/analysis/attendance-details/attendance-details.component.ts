@@ -1,8 +1,6 @@
 import { Component, Input, inject } from "@angular/core";
 import { ActivityAttendance } from "../../model/activity-attendance";
 import { Entity } from "#src/app/core/entity/model/entity";
-import { AttendanceItem } from "../../model/attendance-item";
-import { calculateAverageAttendance } from "../../model/calculate-average-event-attendance";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
@@ -57,14 +55,16 @@ export class AttendanceDetailsComponent {
       label: $localize`:How a child attended, e.g. too late, in time, excused, e.t.c:Attended`,
       viewComponent: "ReadonlyFunction",
       additional: (event: Entity) => {
-        const items: AttendanceItem[] =
-          this.entity.events.find((e) => e.entity === event)?.attendanceItems ??
-          [];
+        const eventWithAttendance = this.entity.events.find(
+          (e) => e.entity === event,
+        );
         if (this.forChild) {
-          const item = items.find((i) => i.participant === this.forChild);
+          const item = eventWithAttendance?.getAttendanceForParticipant(
+            this.forChild,
+          );
           return item?.status?.label || "-";
         } else {
-          const avg = calculateAverageAttendance(items).average;
+          const avg = eventWithAttendance?.getAttendanceStats().average;
           if (!Number.isFinite(avg)) {
             return $localize`N/A`;
           }

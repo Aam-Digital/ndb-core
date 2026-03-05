@@ -18,10 +18,7 @@ import { AttendanceItem } from "../../model/attendance-item";
 import { NullAttendanceStatusType } from "../../model/attendance-status";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
-import {
-  AverageAttendanceStats,
-  calculateAverageAttendance,
-} from "../../model/calculate-average-event-attendance";
+import type { AttendanceStats } from "../../model/event-with-attendance";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { applyUpdate } from "#src/app/core/entity/model/entity-update";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -79,7 +76,7 @@ export class AttendanceCalendarComponent implements OnChanges {
   selectedEvent: EventWithAttendance;
   selectedEventAttendance: AttendanceItem;
   selectedEventAttendanceOriginal: AttendanceItem;
-  selectedEventStats: AverageAttendanceStats;
+  selectedEventStats: AttendanceStats;
 
   private updatesSubscription: Subscription;
   private currentEntityType: EntityConstructor;
@@ -157,7 +154,7 @@ export class AttendanceCalendarComponent implements OnChanges {
 
     if (event && !this.highlightForChild) {
       // coloring based on averages across all children
-      const stats = calculateAverageAttendance(event.attendanceItems);
+      const stats = event.getAttendanceStats();
 
       const percentageSlab = Math.round(stats.average * 10) * 10;
       classes["w-" + percentageSlab] = true;
@@ -228,9 +225,7 @@ export class AttendanceCalendarComponent implements OnChanges {
         this.selectedEventAttendanceOriginal,
       );
       if (this.selectedEvent) {
-        this.selectedEventStats = calculateAverageAttendance(
-          this.selectedEvent.attendanceItems,
-        );
+        this.selectedEventStats = this.selectedEvent.getAttendanceStats();
       }
 
       this.analyticsService.eventTrack("calendar_select_date", {
