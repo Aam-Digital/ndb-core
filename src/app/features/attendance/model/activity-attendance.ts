@@ -25,21 +25,12 @@ export class ActivityAttendance extends Entity {
   /**
    * Create an instance with the given initial properties.
    * @param from Start date of the period
-   * @param events Events within this period (raw entities, wrapped automatically)
-   * @param attendanceField Name of the field on event entities holding the attendance array
-   * @param dateField Name of the field on event entities holding the event date
+   * @param events Events within this period
    */
-  static create(
-    from: Date,
-    events: Entity[] = [],
-    attendanceField: string = "childrenAttendance",
-    dateField: string = "date",
-  ) {
+  static create(from: Date, events: EventWithAttendance[] = []) {
     const instance = new ActivityAttendance();
     instance.periodFrom = from;
-    instance.events = events.map(
-      (e) => new EventWithAttendance(e, attendanceField, dateField),
-    );
+    instance.events = events;
     return instance;
   }
 
@@ -291,7 +282,7 @@ export function generateEventWithAttendance(
   )[],
   date = new Date(),
   activity?: RecurringActivity,
-): EventNote {
+): EventWithAttendance {
   const event = EventNote.create(date);
   for (const att of participating) {
     event.addChild(att[0]);
@@ -303,5 +294,5 @@ export function generateEventWithAttendance(
     }
   }
   event.relatesTo = activity?.getId();
-  return event;
+  return new EventWithAttendance(event, "childrenAttendance", "date");
 }

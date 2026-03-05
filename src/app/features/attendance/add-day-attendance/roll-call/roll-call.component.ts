@@ -7,6 +7,7 @@ import {
   Injectable,
   input,
   resource,
+  ResourceRef,
   signal,
   untracked,
 } from "@angular/core";
@@ -115,7 +116,7 @@ export class RollCallComponent {
    * The event to be displayed and edited.
    * Can be set directly when used as an embedded component, or loaded from DB via id.
    */
-  readonly eventEntity = input<Entity>();
+  readonly eventEntity = input<EventWithAttendance>();
 
   /**
    * (optional) property name of the participant entities by which they are sorted
@@ -126,23 +127,20 @@ export class RollCallComponent {
    * Loads the event entity from the provided input or by ID.
    * Unifies the two input paths (direct entity vs route-based loading).
    */
-  readonly eventResource = resource({
-    params: () => ({ entity: this.eventEntity(), id: this.id() }),
-    loader: async ({ params: { entity, id } }) => {
-      if (entity) return entity;
-      if (!id) return undefined;
-      if (id === "new") return this.createEventFromRoute();
-      return this.loadExistingEvent(id);
-    },
-  });
+  readonly eventResource: ResourceRef<EventWithAttendance | undefined> =
+    resource({
+      params: () => ({ entity: this.eventEntity(), id: this.id() }),
+      loader: async ({ params: { entity, id } }) => {
+        if (entity) return entity;
+        if (!id) return undefined;
+        if (id === "new") return this.createEventFromRoute();
+        return this.loadExistingEvent(id);
+      },
+    });
 
   /** The resolved event, wrapped with typed attendance and date accessors. */
   readonly event = computed<EventWithAttendance | undefined>(() => {
-    const entity = this.eventResource.value();
-    if (!entity) return undefined;
-    const attendanceField = AttendanceDatatype.detectFieldInEntity(entity);
-    const dateField = DateDatatype.detectFieldInEntity(entity);
-    return new EventWithAttendance(entity, attendanceField, dateField);
+    return this.eventResource.value();
   });
 
   /** The index of the participant currently being processed */
@@ -211,7 +209,9 @@ export class RollCallComponent {
   /**
    * Create or load a new event based on route query params.
    */
-  private async createEventFromRoute(): Promise<Entity | undefined> {
+  private async createEventFromRoute(): Promise<
+    EventWithAttendance | undefined
+  > {
     const activityId = this.route.snapshot.queryParamMap.get("activity");
     const dateStr = this.route.snapshot.queryParamMap.get("date");
     const date = dateStr ? this.parseDateOnly(dateStr) : new Date();
@@ -219,26 +219,8 @@ export class RollCallComponent {
     if (activityId) {
       return this.attendanceService.createEventForActivity(activityId, date);
     }
-    return this.createOneTimeEvent(date);
-  }
 
-  /**
-   * Open a dialog for creating a one-time event and use it for the roll call.
-   */
-  private async createOneTimeEvent(date?: Date): Promise<Entity | undefined> {
-    // TODO: generalize this to support creating other types of entities as well
-
-    // const newNote = Note.create(date ?? new Date());
-    // if (this.currentUser.value) {
-    //   newNote.authors = [this.currentUser.value.getId()];
-    // }
-
-    // const dialogRef = this.formDialog.openView(newNote, "NoteDetails");
-    // const result = await lastValueFrom(dialogRef.afterClosed());
-    // if (result) {
-    //   return result;
-    // }
-    // this.location.back();
+    // in the future we may implement a UI to create a one-time event on the fly
     return undefined;
   }
 
@@ -251,11 +233,14 @@ export class RollCallComponent {
     return new Date(year, month - 1, day);
   }
 
-  private async loadExistingEvent(id: string): Promise<Entity | undefined> {
-    let event: Entity | undefined;
+  private async loadExistingEvent(
+    id: string,
+  ): Promise<EventWithAttendance | undefined> {
+    let event: EventWithAttendance | undefined;
     try {
       const entityType = Entity.extractTypeFromId(id);
-      event = await this.entityMapper.load(entityType, id);
+      const entity = await this.entityMapper.load(entityType, id);
+      event = AttendanceService.createEventFromEntity(entity);
     } catch (e) {
       Logging.warn("Could not load event " + id, e);
       void this.router.navigate(["/404"]);

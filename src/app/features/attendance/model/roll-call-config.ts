@@ -9,7 +9,4 @@ export interface RollCallConfig {
 
   /** Extra field shown on each event card in the roll-call UI. */
   extraField: string;
-
-  /** Field name used to read the date from an event entity in the roll-call UI. */
-  dateField: string;
 }

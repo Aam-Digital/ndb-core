@@ -26,7 +26,9 @@ describe("AttendanceCalendarComponent", () => {
     const mockAttendanceService = jasmine.createSpyObj([
       "createEventForActivity",
     ]);
-    mockAttendanceService.createEventForActivity.and.resolveTo(new EventNote());
+    mockAttendanceService.createEventForActivity.and.resolveTo(
+      new EventWithAttendance(new EventNote(), "childrenAttendance", "date"),
+    );
 
     TestBed.configureTestingModule({
       imports: [AttendanceCalendarComponent, MatNativeDateModule],
@@ -60,16 +62,8 @@ describe("AttendanceCalendarComponent", () => {
 
   it("sets min and max selectable date based on time range of given records", () => {
     component.records = [
-      new EventWithAttendance(
-        generateEventWithAttendance([], new Date("2020-01-05")),
-        "childrenAttendance",
-        "date",
-      ),
-      new EventWithAttendance(
-        generateEventWithAttendance([], new Date("2020-01-20")),
-        "childrenAttendance",
-        "date",
-      ),
+      generateEventWithAttendance([], new Date("2020-01-05")),
+      generateEventWithAttendance([], new Date("2020-01-20")),
     ];
 
     component.ngOnChanges({

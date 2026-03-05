@@ -15,11 +15,30 @@ import { RollCallConfig } from "./model/roll-call-config";
 import { AttendanceDatatype } from "./model/attendance.datatype";
 import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
 import { EventWithAttendance } from "./model/event-with-attendance";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class AttendanceService {
+  /**
+   * Wrap the given entity in an EventWithAttendance,
+   * which provides typed access to attendance and date fields.
+   *
+   * The entity must have at least one attendance field and one date field for this to work, otherwise an error is thrown.
+   */
+  static createEventFromEntity(entity: Entity): EventWithAttendance {
+    const attendanceField = AttendanceDatatype.detectFieldInEntity(entity);
+    const dateField = DateDatatype.detectFieldInEntity(entity);
+    if (!attendanceField || !dateField) {
+      Logging.debug("Entity missing attendance fields", entity.getId());
+      throw new Error(
+        `Entity does not have the required attendance and date fields for roll call.`,
+      );
+    }
+    return new EventWithAttendance(entity, attendanceField, dateField);
+  }
+
   private readonly entityMapper = inject(EntityMapperService);
   private readonly dbIndexing = inject(DatabaseIndexingService);
   private readonly childrenService = inject(ChildrenService);
@@ -33,7 +52,6 @@ export class AttendanceService {
   readonly rollCallConfig: RollCallConfig = {
     filterConfig: [{ id: "category" }, { id: "schools" }],
     extraField: "category",
-    dateField: "date",
   };
 
   constructor() {
@@ -206,38 +224,22 @@ export class AttendanceService {
 
     const events = await this.getEventsForActivity(activity.getId(), sinceDate);
 
-    const attendanceField =
-      events.length > 0
-        ? AttendanceDatatype.detectFieldInEntity(events[0])
-        : undefined;
-    const dateField =
-      events.length > 0
-        ? DateDatatype.detectFieldInEntity(events[0])
-        : undefined;
-
-    function getOrCreateAttendancePeriod(event) {
-      const date: Date = dateField ? event[dateField] : event.date;
-      const month = new Date(date.getFullYear(), date.getMonth());
+    const getOrCreateAttendancePeriod = (event: EventWithAttendance) => {
+      const month = new Date(event.date.getFullYear(), event.date.getMonth());
       let attMonth = periods.get(month.getTime());
       if (!attMonth) {
-        attMonth = ActivityAttendance.create(
-          month,
-          [],
-          attendanceField,
-          dateField,
-        );
+        attMonth = ActivityAttendance.create(month, []);
         attMonth.periodTo = moment(month).endOf("month").toDate();
         attMonth.activity = activity;
         periods.set(month.getTime(), attMonth);
       }
       return attMonth;
-    }
+    };
 
     for (const event of events) {
-      const record = getOrCreateAttendancePeriod(event);
-      record.events.push(
-        new EventWithAttendance(event, attendanceField, dateField),
-      );
+      const wrapped = AttendanceService.createEventFromEntity(event);
+      const record = getOrCreateAttendancePeriod(wrapped);
+      record.events.push(wrapped);
     }
 
     return Array.from(periods.values()).sort(
@@ -252,22 +254,11 @@ export class AttendanceService {
     const matchingEvents = await this.getEventsOnDate(from, until);
     const groupedEvents = groupBy(matchingEvents, "relatesTo");
 
-    const attendanceField =
-      matchingEvents.length > 0
-        ? AttendanceDatatype.detectFieldInEntity(matchingEvents[0])
-        : undefined;
-    const dateField =
-      matchingEvents.length > 0
-        ? DateDatatype.detectFieldInEntity(matchingEvents[0])
-        : undefined;
-
     const records = [];
     for (const [activityId, activityEvents] of groupedEvents) {
       const activityRecord = ActivityAttendance.create(
         from,
-        activityEvents,
-        attendanceField,
-        dateField,
+        activityEvents.map((e) => AttendanceService.createEventFromEntity(e)),
       );
       activityRecord.periodTo = until;
       if (activityId) {
@@ -336,7 +327,7 @@ export class AttendanceService {
         currentUserId,
         date,
       )
-    ).map((e) => this.wrapEventForRollCall(e));
+    ).map((e) => AttendanceService.createEventFromEntity(e));
 
     let assignedActivityIds = allActivities
       .filter((a) => a.isAssignedTo(currentUserId))
@@ -356,13 +347,6 @@ export class AttendanceService {
     };
   }
 
-  private wrapEventForRollCall(entity: Entity): EventWithAttendance {
-    const attendanceField =
-      AttendanceDatatype.detectFieldInEntity(entity) ?? "childrenAttendance";
-    const dateField = DateDatatype.detectFieldInEntity(entity) ?? "date";
-    return new EventWithAttendance(entity, attendanceField, dateField);
-  }
-
   private async buildEventsFromActivities(
     activities: RecurringActivity[],
     existingEvents: EventNote[],
@@ -380,9 +364,9 @@ export class AttendanceService {
         }
         const event = await this.createEventForActivity(activity, date);
         if (currentUserId) {
-          event.authors = [currentUserId];
+          (event.entity as EventNote).authors = [currentUserId];
         }
-        return event;
+        return event.entity as EventNote;
       }),
     );
     const events: (Entity | ActivityEvent)[] = existingEvents.concat(
@@ -426,7 +410,7 @@ export class AttendanceService {
   async createEventForActivity(
     activity: RecurringActivity | string,
     date: Date,
-  ): Promise<EventNote> {
+  ): Promise<EventWithAttendance> {
     if (typeof activity === "string") {
       activity = await this.entityMapper.load(RecurringActivity, activity);
     }
@@ -450,7 +434,7 @@ export class AttendanceService {
       instance.authors = [this.currentUser.value.getId()];
     }
 
-    return instance;
+    return AttendanceService.createEventFromEntity(instance);
   }
 
   private async getActiveParticipantsOfActivity(

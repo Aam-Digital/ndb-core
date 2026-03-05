@@ -6,6 +6,7 @@ import {
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { AttendanceItem } from "./attendance-item";
 import { Entity } from "#src/app/core/entity/model/entity";
+import { EventWithAttendance } from "./event-with-attendance";
 
 class TestEventEntity extends Entity {
   date: Date;
@@ -28,7 +29,7 @@ function generateTestEvent(
     | [string, AttendanceLogicalStatus, string]
   )[],
   date = new Date(),
-): TestEventEntity {
+): EventWithAttendance {
   const event = new TestEventEntity();
   event.date = date;
   for (const att of participating) {
@@ -40,28 +41,24 @@ function generateTestEvent(
       item.remarks = att[2];
     }
   }
-  return event;
+  return new EventWithAttendance(event, "attendance", "date");
 }
 
 describe("ActivityAttendance", () => {
   let testInstance: ActivityAttendance;
 
   beforeEach(() => {
-    testInstance = ActivityAttendance.create(
-      new Date(),
-      [
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.PRESENT],
-          ["2", AttendanceLogicalStatus.PRESENT],
-          ["3", AttendanceLogicalStatus.ABSENT],
-        ]),
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.PRESENT],
-          ["2", AttendanceLogicalStatus.ABSENT],
-        ]),
-      ],
-      "attendance",
-    );
+    testInstance = ActivityAttendance.create(new Date(), [
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+        ["3", AttendanceLogicalStatus.ABSENT],
+      ]),
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+    ]);
   });
 
   it("calculates individual's absent events", () => {
@@ -77,116 +74,92 @@ describe("ActivityAttendance", () => {
   });
 
   it("calculates average absent", () => {
-    const everyoneInOneEventAbsent = ActivityAttendance.create(
-      new Date(),
-      [
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.PRESENT],
-          ["2", AttendanceLogicalStatus.ABSENT],
-        ]),
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.ABSENT],
-          ["2", AttendanceLogicalStatus.PRESENT],
-        ]),
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.PRESENT],
-          ["2", AttendanceLogicalStatus.PRESENT],
-        ]),
-      ],
-      "attendance",
-    );
+    const everyoneInOneEventAbsent = ActivityAttendance.create(new Date(), [
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+    ]);
     expect(everyoneInOneEventAbsent.countTotalAbsent()).toBe(2);
 
-    const allAbsent = ActivityAttendance.create(
-      new Date(),
-      [
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.ABSENT],
-          ["2", AttendanceLogicalStatus.ABSENT],
-          ["3", AttendanceLogicalStatus.ABSENT],
-        ]),
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.ABSENT],
-          ["2", AttendanceLogicalStatus.ABSENT],
-        ]),
-      ],
-      "attendance",
-    );
+    const allAbsent = ActivityAttendance.create(new Date(), [
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+        ["3", AttendanceLogicalStatus.ABSENT],
+      ]),
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+    ]);
     expect(allAbsent.countTotalAbsent()).toBe(5);
   });
 
   it("calculates average present", () => {
-    const presentAct = ActivityAttendance.create(
-      new Date(),
-      [
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.PRESENT],
-          ["2", AttendanceLogicalStatus.PRESENT],
-        ]),
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.PRESENT],
-          ["2", AttendanceLogicalStatus.PRESENT],
-        ]),
-        generateTestEvent([["1", AttendanceLogicalStatus.PRESENT]]),
-      ],
-      "attendance",
-    );
+    const presentAct = ActivityAttendance.create(new Date(), [
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+      generateTestEvent([["1", AttendanceLogicalStatus.PRESENT]]),
+    ]);
     expect(presentAct.countTotalPresent()).toBe(5);
 
-    const allAbsent = ActivityAttendance.create(
-      new Date(),
-      [
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.ABSENT],
-          ["2", AttendanceLogicalStatus.ABSENT],
-          ["3", AttendanceLogicalStatus.ABSENT],
-        ]),
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.ABSENT],
-          ["2", AttendanceLogicalStatus.ABSENT],
-        ]),
-      ],
-      "attendance",
-    );
+    const allAbsent = ActivityAttendance.create(new Date(), [
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+        ["3", AttendanceLogicalStatus.ABSENT],
+      ]),
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+    ]);
     expect(allAbsent.countTotalPresent()).toBe(0);
 
-    const halfAbsent = ActivityAttendance.create(
-      new Date(),
-      [
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.ABSENT],
-          ["2", AttendanceLogicalStatus.PRESENT],
-        ]),
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.PRESENT],
-          ["2", AttendanceLogicalStatus.ABSENT],
-          ["3", AttendanceLogicalStatus.IGNORE],
-        ]),
-      ],
-      "attendance",
-    );
+    const halfAbsent = ActivityAttendance.create(new Date(), [
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+        ["3", AttendanceLogicalStatus.IGNORE],
+      ]),
+    ]);
     expect(halfAbsent.countTotalPresent()).toBe(2);
   });
 
   it("calculates logical stats on set of events", () => {
-    const record = ActivityAttendance.create(
-      new Date(),
-      [
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.PRESENT],
-          ["2", AttendanceLogicalStatus.ABSENT],
-        ]),
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.ABSENT],
-          ["2", AttendanceLogicalStatus.PRESENT],
-        ]),
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.PRESENT],
-          ["2", AttendanceLogicalStatus.IGNORE],
-        ]),
-      ],
-      "attendance",
-    );
+    const record = ActivityAttendance.create(new Date(), [
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.IGNORE],
+      ]),
+    ]);
 
     const logicalCount1 = record.individualLogicalStatusCounts.get("1");
     expect(logicalCount1[AttendanceLogicalStatus.ABSENT]).toBe(1);
@@ -198,24 +171,20 @@ describe("ActivityAttendance", () => {
   });
 
   it("calculates type stats on set of events", () => {
-    const record = ActivityAttendance.create(
-      new Date(),
-      [
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.PRESENT],
-          ["2", AttendanceLogicalStatus.ABSENT],
-        ]),
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.ABSENT],
-          ["2", AttendanceLogicalStatus.PRESENT],
-        ]),
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.PRESENT],
-          ["2", AttendanceLogicalStatus.IGNORE],
-        ]),
-      ],
-      "attendance",
-    );
+    const record = ActivityAttendance.create(new Date(), [
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.IGNORE],
+      ]),
+    ]);
 
     const StatusLate: AttendanceStatusType = defaultAttendanceStatusTypes.find(
       (t) => t.id === "LATE",
@@ -234,20 +203,16 @@ describe("ActivityAttendance", () => {
   });
 
   it("calculates events containing unknown/undefined attendance status", () => {
-    const attendance = ActivityAttendance.create(
-      new Date(),
-      [
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.PRESENT],
-          ["2", AttendanceLogicalStatus.IGNORE],
-        ]),
-        generateTestEvent([
-          ["1", AttendanceLogicalStatus.PRESENT],
-          ["2", AttendanceLogicalStatus.PRESENT],
-        ]),
-      ],
-      "attendance",
-    );
+    const attendance = ActivityAttendance.create(new Date(), [
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.IGNORE],
+      ]),
+      generateTestEvent([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+    ]);
 
     // adding participants without attendance to one event
     attendance.events[1].attendanceItems.push(

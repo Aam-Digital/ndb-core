@@ -8,6 +8,7 @@ import {
 } from "@angular/core/testing";
 import { RollCallComponent } from "./roll-call.component";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
+import { EventWithAttendance } from "../../model/event-with-attendance";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
@@ -105,7 +106,14 @@ describe("RollCallComponent", () => {
         {
           provide: AttendanceService,
           useValue: {
-            createEventForActivity: () => Promise.resolve(new Note()),
+            createEventForActivity: () =>
+              Promise.resolve(
+                new EventWithAttendance(
+                  new Note(),
+                  "childrenAttendance",
+                  "date",
+                ),
+              ),
             getEventsOnDate: () => Promise.resolve([]),
           },
         },
@@ -116,7 +124,10 @@ describe("RollCallComponent", () => {
   beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(RollCallComponent);
     component = fixture.componentInstance;
-    fixture.componentRef.setInput("eventEntity", Note.create(new Date()));
+    fixture.componentRef.setInput(
+      "eventEntity",
+      AttendanceService.createEventFromEntity(Note.create(new Date())),
+    );
     fixture.detectChanges();
   }));
 
@@ -129,7 +140,10 @@ describe("RollCallComponent", () => {
     mockEnumService.getEnumValues.and.returnValue(options);
     const event = Note.create(new Date());
     addParticipant(event, participant1);
-    fixture.componentRef.setInput("eventEntity", event);
+    fixture.componentRef.setInput(
+      "eventEntity",
+      AttendanceService.createEventFromEntity(event),
+    );
     stabilize();
 
     expect(component.availableStatus()).toHaveSize(options.length);
@@ -141,7 +155,11 @@ describe("RollCallComponent", () => {
     const noteWithNonExistingChild = new Note();
     addParticipant(noteWithNonExistingChild, participant1);
     addParticipant(noteWithNonExistingChild, nonExistingChildId);
-    fixture.componentRef.setInput("eventEntity", noteWithNonExistingChild);
+
+    fixture.componentRef.setInput(
+      "eventEntity",
+      AttendanceService.createEventFromEntity(noteWithNonExistingChild),
+    );
     stabilize();
 
     expect(component.participants()).toEqual([participant1]);
@@ -157,7 +175,10 @@ describe("RollCallComponent", () => {
     addParticipant(note, participant1);
     addParticipant(note, participant2);
 
-    fixture.componentRef.setInput("eventEntity", note);
+    fixture.componentRef.setInput(
+      "eventEntity",
+      AttendanceService.createEventFromEntity(note),
+    );
     stabilize();
 
     component.markAttendance(PRESENT);
@@ -184,7 +205,10 @@ describe("RollCallComponent", () => {
     addParticipant(note, participant2);
 
     const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
-    fixture.componentRef.setInput("eventEntity", note);
+    fixture.componentRef.setInput(
+      "eventEntity",
+      AttendanceService.createEventFromEntity(note),
+    );
     stabilize();
 
     component.goToParticipantWithIndex(component.currentIndex() + 1);
@@ -212,7 +236,10 @@ describe("RollCallComponent", () => {
     addParticipant(event, participant2.getId());
     event.date = new Date();
     event.subject = "test";
-    fixture.componentRef.setInput("eventEntity", event);
+    fixture.componentRef.setInput(
+      "eventEntity",
+      AttendanceService.createEventFromEntity(event),
+    );
     stabilize();
 
     component.goToParticipantWithIndex(component.currentIndex() + 1);
@@ -227,7 +254,10 @@ describe("RollCallComponent", () => {
     addParticipant(event, participant1.getId());
     event.date = new Date();
     event.subject = "test";
-    fixture.componentRef.setInput("eventEntity", event);
+    fixture.componentRef.setInput(
+      "eventEntity",
+      AttendanceService.createEventFromEntity(event),
+    );
     stabilize();
 
     component.markAttendance(undefined);
@@ -238,7 +268,10 @@ describe("RollCallComponent", () => {
   it("starts with the initial child if no attendance has been registered", fakeAsync(() => {
     const event = Note.create(new Date());
     addParticipant(event, participant1);
-    fixture.componentRef.setInput("eventEntity", event);
+    fixture.componentRef.setInput(
+      "eventEntity",
+      AttendanceService.createEventFromEntity(event),
+    );
     stabilize();
 
     expect(component.currentIndex()).toBe(0);
@@ -257,7 +290,10 @@ describe("RollCallComponent", () => {
     note.childrenAttendance.find(
       (a) => a.participant === participant3.getId(),
     ).status = ABSENT;
-    fixture.componentRef.setInput("eventEntity", note);
+    fixture.componentRef.setInput(
+      "eventEntity",
+      AttendanceService.createEventFromEntity(note),
+    );
     stabilize();
 
     expect(component.currentParticipant()).toBe(participant2);
@@ -310,7 +346,10 @@ describe("RollCallComponent", () => {
     for (const p of participantsInput) {
       addParticipant(event, p);
     }
-    fixture.componentRef.setInput("eventEntity", event);
+    fixture.componentRef.setInput(
+      "eventEntity",
+      AttendanceService.createEventFromEntity(event),
+    );
     stabilize();
 
     fixture.componentRef.setInput("sortParticipantsBy", sortParticipantsBy);

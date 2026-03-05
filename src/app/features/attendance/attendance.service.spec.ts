@@ -156,10 +156,7 @@ describe("AttendanceService", () => {
     activity.participants = ["direct", "excluded"];
 
     const event = await service.createEventForActivity(activity, new Date());
-    expect(event.children).toEqual(
-      jasmine.arrayWithExactContents(["member", "direct"]),
-    );
-    expect(event.childrenAttendance.map((a) => a.participant)).toEqual(
+    expect(event.attendanceItems.map((a) => a.participant)).toEqual(
       jasmine.arrayWithExactContents(["member", "direct"]),
     );
   });
@@ -335,14 +332,11 @@ describe("AttendanceService", () => {
     const event = await service.createEventForActivity(activity, date);
 
     expect(mockQueryRelations).toHaveBeenCalledWith(linkedSchool.getId(), date);
-    expect(event.children).toHaveSize(2);
-    expect(event.children).toContain(directlyAddedChild.getId());
-    expect(event.children).toContain(childAttendingSchool.childId);
-    expect(event.childrenAttendance).toHaveSize(2);
-    expect(event.childrenAttendance.map((a) => a.participant)).toContain(
+    expect(event.attendanceItems).toHaveSize(2);
+    expect(event.attendanceItems.map((a) => a.participant)).toContain(
       directlyAddedChild.getId(),
     );
-    expect(event.childrenAttendance.map((a) => a.participant)).toContain(
+    expect(event.attendanceItems.map((a) => a.participant)).toContain(
       childAttendingSchool.childId,
     );
   });
@@ -372,18 +366,14 @@ describe("AttendanceService", () => {
 
     const event = await service.createEventForActivity(activity, new Date());
 
-    expect(event.children).toHaveSize(3);
-    expect(event.children).toContain(directlyAddedChild.getId());
-    expect(event.children).toContain(duplicateChild.getId());
-    expect(event.children).toContain(anotherRelation.childId);
-    expect(event.childrenAttendance).toHaveSize(3);
-    expect(event.childrenAttendance.map((a) => a.participant)).toContain(
+    expect(event.attendanceItems).toHaveSize(3);
+    expect(event.attendanceItems.map((a) => a.participant)).toContain(
       directlyAddedChild.getId(),
     );
-    expect(event.childrenAttendance.map((a) => a.participant)).toContain(
+    expect(event.attendanceItems.map((a) => a.participant)).toContain(
       duplicateChild.getId(),
     );
-    expect(event.childrenAttendance.map((a) => a.participant)).toContain(
+    expect(event.attendanceItems.map((a) => a.participant)).toContain(
       anotherRelation.childId,
     );
   });

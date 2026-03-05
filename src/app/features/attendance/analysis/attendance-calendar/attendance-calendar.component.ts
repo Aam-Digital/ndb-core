@@ -119,7 +119,7 @@ export class AttendanceCalendarComponent implements OnChanges {
       .pipe(untilDestroyed(this))
       .subscribe((update) => {
         const rawEntities = this.records.map((r) => r.entity);
-        const updatedEntities = applyUpdate(rawEntities, update as any, false);
+        const updatedEntities = applyUpdate(rawEntities, update, false);
         const { attendanceField, dateField } = this.records[0];
         this.records = updatedEntities.map(
           (e) => new EventWithAttendance(e, attendanceField, dateField),
@@ -264,7 +264,7 @@ export class AttendanceCalendarComponent implements OnChanges {
     this.attendanceService
       .createEventForActivity(this.activity, this.selectedDate.toDate())
       .then((note) => {
-        this.formDialog.openView(note);
+        this.formDialog.openView(note.entity);
       });
   }
 
