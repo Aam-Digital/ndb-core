@@ -5,7 +5,7 @@ import {
   input,
 } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
-import { RecurringActivity } from "../../model/recurring-activity";
+import { isActivityEvent } from "../../model/activity-event";
 import { AttendanceItem } from "../../model/attendance-item";
 import { AttendanceDatatype } from "../../model/attendance.datatype";
 import { MatCardModule } from "@angular/material/card";
@@ -89,9 +89,7 @@ export class ActivityCardComponent {
       return explicit;
     }
     const event = this.event();
-    return !!(event["relatesTo"] ?? "")
-      .toString()
-      .startsWith(RecurringActivity.ENTITY_TYPE);
+    return isActivityEvent(event);
   });
 
   /** Resolved date value from the entity. */

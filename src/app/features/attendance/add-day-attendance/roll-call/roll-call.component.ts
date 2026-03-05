@@ -456,11 +456,9 @@ export class RollCallComponent {
       $localize`This event has some participants who are "archived". We automatically remove them from the attendance list for you. Do you want to also include archived participants for this event?`,
     );
     if (confirmation) {
-     if (confirmation) {
-       this.participants.update((p) => [...p, ...this.inactiveParticipants()]);
-       this.inactiveParticipants.set([]);
-       this.sortParticipants();
-     }
+      this.participants.update((p) => [...p, ...this.inactiveParticipants()]);
+      this.inactiveParticipants.set([]);
+      this.sortParticipants();
     }
   }
 }
