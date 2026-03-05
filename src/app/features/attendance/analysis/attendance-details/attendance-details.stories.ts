@@ -67,9 +67,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<AttendanceDetailsComponent> = (
-  args: AttendanceDetailsComponent,
-) => ({
+const Template: StoryFn<AttendanceDetailsComponent> = (args) => ({
   component: AttendanceDetailsComponent,
   props: args,
 });
@@ -92,6 +90,6 @@ export const ForIndividualChild = {
 
   args: {
     entity: activityAttendanceIndividual,
-    focusedChild: "1",
+    forChild: "1",
   },
 };
