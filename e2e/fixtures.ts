@@ -6,7 +6,7 @@ import {
   ArgosScreenshotOptions,
 } from "@argos-ci/playwright";
 import { Injector } from "@angular/core";
-import { EventAttendanceMapDatatype } from "#src/app/features/attendance/model/event-attendance.datatype.js";
+import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype.js";
 import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype.js";
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.js";
 import { DateOnlyDatatype } from "#src/app/core/basic-datatypes/date-only/date-only.datatype.js";
@@ -30,6 +30,7 @@ import { GeoService } from "#src/app/features/location/geo.service";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityActionsService } from "#src/app/core/entity/entity-actions/entity-actions.service";
 import { ConfigService } from "#src/app/core/config/config.service";
+import { EventAttendanceMapDatatype } from "#src/app/features/attendance/deprecated/event-attendance-map.datatype";
 
 // eslint-disable-next-line no-restricted-imports
 export { expect } from "@playwright/test";
@@ -150,6 +151,7 @@ function serializeEntities(entities: Entity[]): unknown[] {
         useClass: EventAttendanceMapDatatype,
         multi: true,
       },
+      { provide: DefaultDatatype, useClass: AttendanceDatatype, multi: true },
     ],
   });
 

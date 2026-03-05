@@ -81,14 +81,14 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
       id: "attendancePercentage",
       label: $localize`:Percentage of people that attended an event:Attended`,
       viewComponent: "ReadonlyFunction",
-      additional: (e: ActivityAttendance) =>
-        formatPercent(
-          this.forChild
-            ? e.getAttendancePercentage(this.forChild)
-            : e.getAttendancePercentageAverage(),
-          this.locale,
-          "1.0-0",
-        ),
+      additional: (e: ActivityAttendance) => {
+        const pct = this.forChild
+          ? e.getAttendancePercentage(this.forChild)
+          : e.getAttendancePercentageAverage();
+        return pct !== undefined
+          ? formatPercent(pct, this.locale, "1.0-0")
+          : "-";
+      },
     },
   ];
 
