@@ -108,7 +108,7 @@
   }
 
   <app-entities-table
-    [entityType]="EventNote"
+    [entityType]="eventEntityType"
     [records]="entity.events"
     [customColumns]="eventsColumns"
     clickMode="none"
@@ -121,5 +121,7 @@
     [records]="entity.events"
     [highlightForChild]="forChild"
     [activity]="entity.activity"
+    [attendanceField]="entity.attendanceField"
+    [dateField]="entity.dateField"
   ></app-attendance-calendar>
 </div>

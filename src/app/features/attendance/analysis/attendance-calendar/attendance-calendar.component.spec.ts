@@ -48,6 +48,10 @@ describe("AttendanceCalendarComponent", () => {
 
     fixture = TestBed.createComponent(AttendanceCalendarComponent);
     component = fixture.componentInstance;
+
+    component.attendanceField = "childrenAttendance";
+    component.dateField = "date";
+
     fixture.detectChanges();
   });
 
@@ -90,6 +94,7 @@ describe("AttendanceCalendarComponent", () => {
     );
     note.getAttendance(attendedChild).status = presentAttendance;
     note.getAttendance(absentChild).status = absentAttendance;
+    note.getAttendance(childWithoutAttendance); // ensure attendance item exists with default null status
     component.records = [note];
 
     component.selectDay(new Date());
@@ -109,6 +114,11 @@ describe("AttendanceCalendarComponent", () => {
 
     component.selectDay(testDate);
 
-    expect(component.selectedEvent.children).toContain(excludedChild.getId());
+    expect(
+      component.getAttendanceForParticipant(
+        component.selectedEvent,
+        excludedChild.getId(),
+      ),
+    ).toBeDefined();
   });
 });

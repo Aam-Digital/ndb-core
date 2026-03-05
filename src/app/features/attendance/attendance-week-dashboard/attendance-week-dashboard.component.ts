@@ -11,7 +11,6 @@ import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynami
 import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
 import { AttendanceDayBlockComponent } from "./attendance-day-block/attendance-day-block.component";
 import { DashboardWidget } from "#src/app/core/dashboard/dashboard-widget/dashboard-widget";
-import { EventNote } from "../model/event-note";
 import { DashboardListWidgetComponent } from "#src/app/core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 
 interface AttendanceWeekRow {
@@ -129,9 +128,13 @@ export class AttendanceWeekDashboardComponent
 
       let day = moment(from);
       while (day.isSameOrBefore(to, "day")) {
-        const event = att.events.find((e) => day.isSame(e.date, "day"));
+        const event = att.events.find((e) =>
+          day.isSame(att.getEventDate(e), "day"),
+        );
         if (event) {
-          eventAttendances.push(event.getAttendance(participant));
+          eventAttendances.push(
+            att.getAttendanceForParticipant(event, participant),
+          );
         } else {
           // put a "placeholder" into the array for the current day
           eventAttendances.push(undefined);

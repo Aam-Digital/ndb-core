@@ -7,7 +7,7 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from "@angular/core";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
+import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import {
   MatCalendar,
   MatCalendarCellCssClasses,
@@ -15,18 +15,19 @@ import {
 } from "@angular/material/datepicker";
 import moment, { Moment } from "moment";
 import { AttendanceItem } from "../../model/attendance-item";
+import { NullAttendanceStatusType } from "../../model/attendance-status";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import {
   AverageAttendanceStats,
   calculateAverageAttendance,
 } from "../../model/calculate-average-event-attendance";
-import { EventNote } from "../../model/event-note";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { applyUpdate } from "#src/app/core/entity/model/entity-update";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { AttendanceService } from "../../attendance.service";
 import { AnalyticsService } from "#src/app/core/analytics/analytics.service";
+import { Subscription } from "rxjs";
 import { PercentPipe } from "@angular/common";
 import { CustomDatePipe } from "#src/app/core/basic-datatypes/date/custom-date.pipe";
 import { AttendanceStatusSelectComponent } from "../../edit-attendance/attendance-status-select/attendance-status-select.component";
@@ -65,26 +66,83 @@ export class AttendanceCalendarComponent implements OnChanges {
   private analyticsService = inject(AnalyticsService);
   private attendanceService = inject(AttendanceService);
 
-  @Input() records: Note[] = [];
+  @Input() records: Entity[] = [];
   @Input() highlightForChild: string;
   @Input() activity: RecurringActivity;
+
+  /** Name of the field on event entities holding the attendance array */
+  @Input() attendanceField: string;
+  /** Name of the field on event entities holding the event date */
+  @Input() dateField: string;
 
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   minDate: Date;
   maxDate: Date;
 
   selectedDate: moment.Moment;
-  selectedEvent: Note;
+  selectedEvent: Entity;
   selectedEventAttendance: AttendanceItem;
   selectedEventAttendanceOriginal: AttendanceItem;
   selectedEventStats: AverageAttendanceStats;
 
-  constructor() {
-    this.entityMapper
-      .receiveUpdates(EventNote)
+  private updatesSubscription: Subscription;
+  private currentEntityType: EntityConstructor;
+
+  getEventDate(event: Entity): Date | undefined {
+    return event[this.dateField] as Date | undefined;
+  }
+
+  getAttendanceItems(event: Entity): AttendanceItem[] {
+    return (event[this.attendanceField] as AttendanceItem[]) ?? [];
+  }
+
+  getAttendanceForParticipant(
+    event: Entity,
+    participantId: string,
+  ): AttendanceItem | undefined {
+    return this.getAttendanceItems(event).find(
+      (item) => item.participant === participantId,
+    );
+  }
+
+  private ensureParticipantInAttendance(
+    event: Entity,
+    participantId: string,
+  ): AttendanceItem {
+    let item = this.getAttendanceForParticipant(event, participantId);
+    if (!item) {
+      item = new AttendanceItem(NullAttendanceStatusType, "", participantId);
+      const items = this.getAttendanceItems(event);
+      event[this.attendanceField] = [...items, item];
+    }
+    return item;
+  }
+
+  get selectedEventParticipantCount(): number {
+    return this.selectedEvent
+      ? this.getAttendanceItems(this.selectedEvent).length
+      : 0;
+  }
+
+  private subscribeToUpdates() {
+    const firstRecord = this.records[0];
+    const entityType = firstRecord?.getConstructor();
+    if (entityType === this.currentEntityType) {
+      return;
+    }
+
+    this.updatesSubscription?.unsubscribe();
+    this.currentEntityType = entityType;
+
+    if (!entityType) {
+      return;
+    }
+
+    this.updatesSubscription = this.entityMapper
+      .receiveUpdates(entityType)
       .pipe(untilDestroyed(this))
-      .subscribe((newNotes) => {
-        this.records = applyUpdate(this.records, newNotes, false);
+      .subscribe((update) => {
+        this.records = applyUpdate(this.records, update, false);
         this.selectDay(this.selectedDate?.toDate());
       });
   }
@@ -102,10 +160,15 @@ export class AttendanceCalendarComponent implements OnChanges {
       );
     }
 
-    const event = this.records.find((e) => cellMoment.isSame(e.date, "day"));
+    const event = this.records.find((e) =>
+      cellMoment.isSame(this.getEventDate(e), "day"),
+    );
     if (event && this.highlightForChild) {
       // coloring for individual child
-      const eventAttendance = event.getAttendance(this.highlightForChild);
+      const eventAttendance = this.getAttendanceForParticipant(
+        event,
+        this.highlightForChild,
+      );
 
       const statusClass = eventAttendance?.status?.style;
       classes[statusClass] = true;
@@ -116,7 +179,7 @@ export class AttendanceCalendarComponent implements OnChanges {
 
     if (event && !this.highlightForChild) {
       // coloring based on averages across all children
-      const stats = calculateAverageAttendance(event);
+      const stats = calculateAverageAttendance(this.getAttendanceItems(event));
 
       const percentageSlab = Math.round(stats.average * 10) * 10;
       classes["w-" + percentageSlab] = true;
@@ -130,6 +193,7 @@ export class AttendanceCalendarComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("records")) {
+      this.subscribeToUpdates();
       this.updateDateRange();
     }
   }
@@ -139,7 +203,10 @@ export class AttendanceCalendarComponent implements OnChanges {
    * @private
    */
   private updateDateRange() {
-    const dates: Moment[] = this.records.map((e) => moment(e.date));
+    const dates: Moment[] = this.records
+      .map((e) => this.getEventDate(e))
+      .filter((d): d is Date => !!d)
+      .map((d) => moment(d));
     this.minDate = moment.min(dates).startOf("month").toDate();
     this.maxDate = moment.max(dates).endOf("month").toDate();
 
@@ -164,11 +231,11 @@ export class AttendanceCalendarComponent implements OnChanges {
     } else {
       this.selectedDate = moment(newDate);
       this.selectedEvent = this.records.find((e) =>
-        this.selectedDate.isSame(e.date, "day"),
+        this.selectedDate.isSame(this.getEventDate(e), "day"),
       );
       if (this.selectedEvent && this.highlightForChild) {
-        this.selectedEvent.addChild(this.highlightForChild); // ensure child is part of the event
-        this.selectedEventAttendance = this.selectedEvent.getAttendance(
+        this.selectedEventAttendance = this.ensureParticipantInAttendance(
+          this.selectedEvent,
           this.highlightForChild,
         );
       }
@@ -179,7 +246,7 @@ export class AttendanceCalendarComponent implements OnChanges {
       );
       if (this.selectedEvent) {
         this.selectedEventStats = calculateAverageAttendance(
-          this.selectedEvent,
+          this.getAttendanceItems(this.selectedEvent),
         );
       }
 
@@ -218,7 +285,7 @@ export class AttendanceCalendarComponent implements OnChanges {
       });
   }
 
-  showEventDetails(selectedEvent: Note) {
+  showEventDetails(selectedEvent: Entity) {
     this.formDialog.openView(selectedEvent);
   }
 }

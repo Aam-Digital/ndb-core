@@ -12,6 +12,8 @@ import { ChildrenService } from "#src/app/child-dev-project/children/children.se
 import { AttendanceItem } from "./model/attendance-item";
 import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 import { RollCallConfig } from "./model/roll-call-config";
+import { AttendanceDatatype } from "./model/attendance.datatype";
+import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
 
 @Injectable({
   providedIn: "root",
@@ -201,19 +203,34 @@ export class AttendanceService {
   ): Promise<ActivityAttendance[]> {
     const periods = new Map<number, ActivityAttendance>();
 
+    const events = await this.getEventsForActivity(activity.getId(), sinceDate);
+
+    const attendanceField =
+      events.length > 0
+        ? AttendanceDatatype.detectFieldInEntity(events[0])
+        : undefined;
+    const dateField =
+      events.length > 0
+        ? DateDatatype.detectFieldInEntity(events[0])
+        : undefined;
+
     function getOrCreateAttendancePeriod(event) {
-      const month = new Date(event.date.getFullYear(), event.date.getMonth());
+      const date: Date = dateField ? event[dateField] : event.date;
+      const month = new Date(date.getFullYear(), date.getMonth());
       let attMonth = periods.get(month.getTime());
       if (!attMonth) {
-        attMonth = ActivityAttendance.create(month);
+        attMonth = ActivityAttendance.create(
+          month,
+          [],
+          attendanceField,
+          dateField,
+        );
         attMonth.periodTo = moment(month).endOf("month").toDate();
         attMonth.activity = activity;
         periods.set(month.getTime(), attMonth);
       }
       return attMonth;
     }
-
-    const events = await this.getEventsForActivity(activity.getId(), sinceDate);
 
     for (const event of events) {
       const record = getOrCreateAttendancePeriod(event);
@@ -232,9 +249,23 @@ export class AttendanceService {
     const matchingEvents = await this.getEventsOnDate(from, until);
     const groupedEvents = groupBy(matchingEvents, "relatesTo");
 
+    const attendanceField =
+      matchingEvents.length > 0
+        ? AttendanceDatatype.detectFieldInEntity(matchingEvents[0])
+        : undefined;
+    const dateField =
+      matchingEvents.length > 0
+        ? DateDatatype.detectFieldInEntity(matchingEvents[0])
+        : undefined;
+
     const records = [];
     for (const [activityId, activityEvents] of groupedEvents) {
-      const activityRecord = ActivityAttendance.create(from, activityEvents);
+      const activityRecord = ActivityAttendance.create(
+        from,
+        activityEvents,
+        attendanceField,
+        dateField,
+      );
       activityRecord.periodTo = until;
       if (activityId) {
         activityRecord.activity = await this.entityMapper

@@ -1,8 +1,8 @@
-import { Note } from "#src/app/child-dev-project/notes/model/note";
 import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
 } from "./attendance-status";
+import { AttendanceItem } from "./attendance-item";
 
 export interface AverageAttendanceStats {
   average: number;
@@ -13,7 +13,7 @@ export interface AverageAttendanceStats {
 }
 
 export function calculateAverageAttendance(
-  event: Note,
+  attendanceItems: AttendanceItem[],
 ): AverageAttendanceStats {
   const stats = new Map<AttendanceLogicalStatus, number>();
   stats.set(AttendanceLogicalStatus.PRESENT, 0);
@@ -22,8 +22,8 @@ export function calculateAverageAttendance(
 
   const statusCounts = new Map<string, number>();
 
-  for (const childId of event.children) {
-    const status = event.getAttendance(childId).status;
+  for (const item of attendanceItems) {
+    const status = item.status;
     const countStatus = statusCounts.get(status?.id) ?? 0;
     statusCounts.set(status?.id, countStatus + 1);
 

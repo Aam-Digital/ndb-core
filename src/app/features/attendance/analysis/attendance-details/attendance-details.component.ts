@@ -1,10 +1,10 @@
 import { Component, Input, inject } from "@angular/core";
 import { ActivityAttendance } from "../../model/activity-attendance";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
+import { Entity } from "#src/app/core/entity/model/entity";
+import { AttendanceItem } from "../../model/attendance-item";
 import { calculateAverageAttendance } from "../../model/calculate-average-event-attendance";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
-import { EventNote } from "../../model/event-note";
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -40,7 +40,10 @@ export class AttendanceDetailsComponent {
 
   @Input() entity: ActivityAttendance;
   @Input() forChild: string;
-  EventNote = EventNote;
+
+  get eventEntityType() {
+    return this.entity?.events[0]?.getConstructor();
+  }
 
   eventsColumns: FormFieldConfig[] = [
     { id: "date" },
@@ -49,13 +52,16 @@ export class AttendanceDetailsComponent {
       id: "getAttendance",
       label: $localize`:How a child attended, e.g. too late, in time, excused, e.t.c:Attended`,
       viewComponent: "ReadonlyFunction",
-      additional: (note: Note) => {
+      additional: (event: Entity) => {
+        const items: AttendanceItem[] =
+          (event[this.entity.attendanceField] as AttendanceItem[]) ?? [];
         if (this.forChild) {
-          return note.getAttendance(this.forChild)?.status?.label || "-";
+          const item = items.find((i) => i.participant === this.forChild);
+          return item?.status?.label || "-";
         } else {
           return (
-            (calculateAverageAttendance(note).average * 100).toFixed(0) + "%" ||
-            "N/A"
+            (calculateAverageAttendance(items).average * 100).toFixed(0) +
+              "%" || "N/A"
           );
         }
       },
@@ -72,7 +78,7 @@ export class AttendanceDetailsComponent {
     this.forChild = data.forChild;
   }
 
-  showEventDetails(event: EventNote) {
+  showEventDetails(event: Entity) {
     this.formDialog.openView(event);
   }
 }

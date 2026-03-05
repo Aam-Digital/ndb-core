@@ -1,4 +1,7 @@
-import { AttendanceLogicalStatus } from "./attendance-status";
+import {
+  AttendanceLogicalStatus,
+  NullAttendanceStatusType,
+} from "./attendance-status";
 import { RecurringActivity } from "./recurring-activity";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { EventNote } from "./event-note";
@@ -7,6 +10,7 @@ import {
   WarningLevel,
 } from "#src/app/child-dev-project/warning-level";
 import { Entity } from "#src/app/core/entity/model/entity";
+import { AttendanceItem } from "./attendance-item";
 
 /**
  * Aggregate information about all events for a {@link RecurringActivity} within a given time period.
@@ -20,10 +24,21 @@ export class ActivityAttendance extends Entity {
 
   /**
    * Create an instance with the given initial properties.
+   * @param from Start date of the period
+   * @param events Events within this period
+   * @param attendanceField Name of the field on event entities holding the attendance array
+   * @param dateField Name of the field on event entities holding the event date
    */
-  static create(from: Date, events: EventNote[] = []) {
+  static create(
+    from: Date,
+    events: Entity[] = [],
+    attendanceField: string = "childrenAttendance",
+    dateField: string = "date",
+  ) {
     const instance = new ActivityAttendance();
     instance.periodFrom = from;
+    instance.attendanceField = attendanceField;
+    instance.dateField = dateField;
     instance.events = events;
     return instance;
   }
@@ -38,16 +53,28 @@ export class ActivityAttendance extends Entity {
   periodTo: Date;
 
   /**
+   * Name of the field on event entities that holds the attendance array (AttendanceItem[]).
+   * Set by the service creating this instance (e.g. AttendanceService).
+   */
+  attendanceField: string = "childrenAttendance";
+
+  /**
+   * Name of the field on event entities that holds the event date.
+   * Set by the service creating this instance (e.g. AttendanceService).
+   */
+  dateField: string = "date";
+
+  /**
    * Events within the period relating to the activity
    */
-  private _events: EventNote[] = [];
+  private _events: Entity[] = [];
 
-  set events(value: EventNote[]) {
+  set events(value: Entity[]) {
     this._events = value;
     this.recalculateStats();
   }
 
-  get events(): EventNote[] {
+  get events(): Entity[] {
     return this._events;
   }
 
@@ -57,10 +84,44 @@ export class ActivityAttendance extends Entity {
   activity: RecurringActivity;
 
   /**
+   * Returns the attendance items for the given event entity, reading from the configured attendanceField.
+   */
+  getAttendanceItems(event: Entity): AttendanceItem[] {
+    return (event[this.attendanceField] as AttendanceItem[]) ?? [];
+  }
+
+  /**
+   * Returns the attendance item for the given participant in the given event, or undefined if not found.
+   */
+  getAttendanceForParticipant(
+    event: Entity,
+    participantId: string,
+  ): AttendanceItem | undefined {
+    return this.getAttendanceItems(event).find(
+      (item) => item.participant === participantId,
+    );
+  }
+
+  /**
+   * Returns the date of the given event entity, reading from the configured dateField.
+   */
+  getEventDate(event: Entity): Date | undefined {
+    return event[this.dateField] as Date | undefined;
+  }
+
+  /**
    * List of (actual, recorded in at least one event) participants.
    */
   get participants(): string[] {
-    return Array.from(new Set(this.events.flatMap((event) => event.children)));
+    return Array.from(
+      new Set(
+        this.events.flatMap((event) =>
+          this.getAttendanceItems(event)
+            .map((item) => item.participant)
+            .filter((p): p is string => !!p),
+        ),
+      ),
+    );
   }
 
   /**
@@ -93,8 +154,9 @@ export class ActivityAttendance extends Entity {
     countingType: AttendanceLogicalStatus,
   ) {
     return this.events.filter(
-      (eventNote) =>
-        eventNote.getAttendance(childId)?.status.countAs === countingType,
+      (event) =>
+        this.getAttendanceForParticipant(event, childId)?.status.countAs ===
+        countingType,
     ).length;
   }
 
@@ -116,7 +178,11 @@ export class ActivityAttendance extends Entity {
 
   private countWithStatus(matchingType: AttendanceLogicalStatus) {
     return this.events.reduce(
-      (total, event) => total + event.countWithStatus(matchingType),
+      (total, event) =>
+        total +
+        this.getAttendanceItems(event).filter(
+          (item) => item.status.countAs === matchingType,
+        ).length,
       0,
     );
   }
@@ -131,12 +197,13 @@ export class ActivityAttendance extends Entity {
   ) {
     const calculatedStats = this.events
       .map((event) => {
+        const items = this.getAttendanceItems(event);
         const eventStats = {
           matching: 0,
-          total: event.children.length,
+          total: items.length,
         };
-        for (const childId of event.children) {
-          const att = event.getAttendance(childId).status;
+        for (const item of items) {
+          const att = item.status;
           if (att.countAs === matchingType) {
             eventStats.matching++;
           } else if (att.countAs === AttendanceLogicalStatus.IGNORE) {
@@ -176,12 +243,22 @@ export class ActivityAttendance extends Entity {
    */
   countEventsWithUnknownStatus(forChildId?: string): number {
     return this.events
-      .filter((e) => !forChildId || e.children.includes(forChildId))
-      .reduce(
-        (count: number, e: EventNote) =>
-          e.hasUnknownAttendances(forChildId) ? count + 1 : count,
-        0,
-      );
+      .filter(
+        (e) =>
+          !forChildId ||
+          this.getAttendanceItems(e).some(
+            (item) => item.participant === forChildId,
+          ),
+      )
+      .reduce((count: number, e: Entity) => {
+        const items = forChildId
+          ? [this.getAttendanceForParticipant(e, forChildId)].filter(Boolean)
+          : this.getAttendanceItems(e);
+        const hasUnknown = items.some(
+          (item) => item.status.id === NullAttendanceStatusType.id,
+        );
+        return hasUnknown ? count + 1 : count;
+      }, 0);
   }
 
   recalculateStats() {
@@ -189,7 +266,10 @@ export class ActivityAttendance extends Entity {
     this.individualLogicalStatusCounts = new Map();
 
     for (const event of this.events) {
-      for (const participant of event.children) {
+      for (const item of this.getAttendanceItems(event)) {
+        const participant = item.participant;
+        if (!participant) continue;
+
         let logicalCount = this.individualLogicalStatusCounts.get(participant);
         if (!logicalCount) {
           logicalCount = {};
@@ -201,10 +281,9 @@ export class ActivityAttendance extends Entity {
           this.individualStatusTypeCounts.set(participant, typeCount);
         }
 
-        const att = event.getAttendance(participant);
-        logicalCount[att.status.countAs] =
-          (logicalCount[att.status.countAs] ?? 0) + 1;
-        typeCount[att.status.id] = (typeCount[att.status.id] ?? 0) + 1;
+        const att = item.status;
+        logicalCount[att.countAs] = (logicalCount[att.countAs] ?? 0) + 1;
+        typeCount[att.id] = (typeCount[att.id] ?? 0) + 1;
       }
     }
   }

@@ -9,6 +9,8 @@
       [records]="combinedAttendance?.events || []"
       [highlightForChild]="forChild"
       [activity]="entity"
+      [attendanceField]="combinedAttendance?.attendanceField"
+      [dateField]="combinedAttendance?.dateField"
     ></app-attendance-calendar>
     <app-attendance-summary
       [attendance]="combinedAttendance"
