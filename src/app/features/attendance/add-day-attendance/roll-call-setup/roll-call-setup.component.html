@@ -34,12 +34,12 @@
     <mat-datepicker #datePicker></mat-datepicker>
   </mat-form-field>
 
-  @if (existingEvents.length >= FILTER_VISIBLE_THRESHOLD) {
+  @if (activeEvents.length >= FILTER_VISIBLE_THRESHOLD) {
     <app-filter
       class="flex-row flex-wrap gap-small"
-      [filterConfig]="filterConfig"
+      [filterConfig]="filterConfig()"
       [entityType]="entityType"
-      [entities]="existingEvents"
+      [entities]="activeEvents"
       [onlyShowRelevantFilterOptions]="true"
       (filterObjChange)="filterExistingEvents($event)"
     ></app-filter>
@@ -52,12 +52,11 @@
   </div>
 } @else {
   <div class="cards-list">
-    @for (event of filteredExistingEvents; track event) {
+    @for (event of filteredEvents; track event) {
       <app-activity-card
         class="pointer"
         [event]="event"
-        [recurring]="event.isNewFromActivity"
-        extraField="category"
+        [extraField]="extraField()"
         (click)="selectEvent(event)"
       >
       </app-activity-card>

@@ -1,8 +1,6 @@
-import { Component, OnInit, ViewChild, inject } from "@angular/core";
+import { Component, OnInit, ViewChild, inject, input } from "@angular/core";
 import { AttendanceService } from "../../attendance.service";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
-import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { RecurringActivity } from "../../model/recurring-activity";
+import { isActivityEvent } from "../../model/activity-event";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { AlertDisplay } from "#src/app/core/alerts/alert-display";
 import { FormsModule, NgModel } from "@angular/forms";
@@ -16,13 +14,13 @@ import { FilterComponent } from "#src/app/core/filter/filter/filter.component";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { ActivityCardComponent } from "../activity-card/activity-card.component";
 import { MatButtonModule } from "@angular/material/button";
-import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { Router } from "@angular/router";
 import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
 import { RouteTarget } from "#src/app/route-target";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { OkButton } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 
 /**
  * Set up or select a roll call event for a specific date
@@ -47,23 +45,47 @@ import { OkButton } from "#src/app/core/common-components/confirmation-dialog/co
   ],
 })
 export class RollCallSetupComponent implements OnInit {
-  private readonly entityMapper = inject(EntityMapperService);
   private readonly attendanceService = inject(AttendanceService);
-  private readonly currentUser = inject(CurrentUserSubject);
   private readonly router = inject(Router);
   private readonly alertService = inject(AlertService);
   private readonly filterService = inject(FilterService);
   private readonly confirmationService = inject(ConfirmationDialogService);
 
+  /**
+   * Configuration for the filter UI shown above the events list.
+   */
+  readonly filterConfig = input<FilterConfig[]>(
+    this.attendanceService.rollCallFilterConfig,
+  );
+
+  /**
+   * The entity field name to display as an extra info on each event card.
+   */
+  readonly extraField = input<string>(
+    this.attendanceService.rollCallExtraField,
+  );
+
+  /**
+   * The entity field name holding the event date, used when routing to a new roll call.
+   */
+  readonly eventDateField = input<string>(
+    this.attendanceService.rollCallDateField,
+  );
+
   date = new Date();
 
-  existingEvents: NoteForActivitySetup[] = [];
-  filteredExistingEvents: NoteForActivitySetup[] = [];
+  /** Events relevant to the current user (filtered by assignment). */
+  ownEvents: Entity[] = [];
+  /** All available events regardless of user assignment. */
+  allEvents: Entity[] = [];
 
-  allActivities: RecurringActivity[] = [];
-  visibleActivities: RecurringActivity[] = [];
-  filterConfig: FilterConfig[] = [{ id: "category" }, { id: "schools" }];
-  entityType = Note;
+  /** The active base set: either user-filtered or all, depending on showingAll. */
+  get activeEvents(): Entity[] {
+    return this.showingAll ? this.allEvents : this.ownEvents;
+  }
+
+  /** The events currently shown, after applying any active filter. */
+  filteredEvents: Entity[] = [];
 
   showingAll = false;
 
@@ -78,112 +100,42 @@ export class RollCallSetupComponent implements OnInit {
    */
   readonly FILTER_VISIBLE_THRESHOLD = 4;
 
+  /**
+   * The entity type inferred from the loaded events, used for filter schema look-ups.
+   */
+  get entityType(): EntityConstructor | undefined {
+    return this.activeEvents[0]?.constructor as EntityConstructor | undefined;
+  }
+
   async ngOnInit() {
     await this.initAvailableEvents();
   }
 
   private async initAvailableEvents() {
     this.isLoading = true;
-    this.existingEvents =
-      await this.attendanceService.getEventsWithUpdatedParticipants(this.date);
-    await this.loadActivities();
-    this.sortEvents();
-    this.filteredExistingEvents = this.existingEvents;
+    const result = await this.attendanceService.getAvailableEventsForRollCall(
+      this.date,
+    );
+    this.ownEvents = result.events;
+    this.allEvents = result.allEvents;
+    this.showingAll = this.ownEvents === this.allEvents;
+    this.filteredEvents = this.activeEvents;
     this.isLoading = false;
   }
 
-  private async loadActivities() {
-    this.allActivities = await this.entityMapper
-      .loadType(RecurringActivity)
-      .then((res) => res.filter((a) => a.isActive));
-
-    if (this.showingAll) {
-      this.visibleActivities = this.allActivities;
-    } else {
-      // TODO implement a generic function that finds the property where a entity has relations to another entity type (e.g. `authors` for `Note` when looking for `User`) to allow dynamic checks
-      this.visibleActivities = this.allActivities.filter((a) =>
-        a.isAssignedTo(this.currentUser.value?.getId()),
-      );
-      if (this.visibleActivities.length === 0) {
-        this.visibleActivities = this.allActivities.filter(
-          (a) => a.assignedTo.length === 0,
-        );
-      }
-      if (this.visibleActivities.length === 0) {
-        this.visibleActivities = this.allActivities;
-        this.showingAll = true;
-      }
-    }
-
-    const newEvents = await Promise.all(
-      this.visibleActivities.map((activity) =>
-        this.createEventForActivity(activity),
-      ),
-    );
-    this.existingEvents = this.existingEvents.concat(
-      ...newEvents.filter((e) => !!e),
-    );
+  showMore() {
+    this.showingAll = true;
+    this.filteredEvents = this.allEvents;
   }
 
-  async showMore() {
-    this.showingAll = !this.showingAll;
-    await this.initAvailableEvents();
-  }
-
-  async showLess() {
-    this.showingAll = !this.showingAll;
-    await this.initAvailableEvents();
+  showLess() {
+    this.showingAll = false;
+    this.filteredEvents = this.ownEvents;
   }
 
   async setNewDate(date: Date) {
     this.date = date;
-
     await this.initAvailableEvents();
-  }
-
-  private async createEventForActivity(
-    activity: RecurringActivity,
-  ): Promise<NoteForActivitySetup> {
-    if (this.existingEvents.find((e) => e.relatesTo === activity.getId())) {
-      return undefined;
-    }
-
-    const event = (await this.attendanceService.createEventForActivity(
-      activity,
-      this.date,
-    )) as NoteForActivitySetup;
-    if (this.currentUser.value) {
-      event.authors = [this.currentUser.value.getId()];
-    }
-    event.isNewFromActivity = true;
-    return event;
-  }
-
-  private sortEvents() {
-    const calculateEventPriority = (event: Note) => {
-      let score = 0;
-
-      const activityAssignedUsers = this.allActivities.find(
-        (a) => a.getId() === event.relatesTo,
-      )?.assignedTo;
-      // use parent activities' assigned users and only fall back to event if necessary
-      const assignedUsers = activityAssignedUsers ?? event.authors;
-
-      if (!RecurringActivity.isActivityEventNote(event)) {
-        // show one-time events first
-        score += 1;
-      }
-
-      if (assignedUsers.includes(this.currentUser.value?.getId())) {
-        score += 2;
-      }
-
-      return score;
-    };
-
-    this.existingEvents.sort(
-      (a, b) => calculateEventPriority(b) - calculateEventPriority(a),
-    );
   }
 
   private formatDateForQuery(date: Date): string {
@@ -209,12 +161,12 @@ export class RollCallSetupComponent implements OnInit {
     // });
   }
 
-  filterExistingEvents(filter: DataFilter<Note>) {
+  filterExistingEvents(filter: DataFilter<Entity>) {
     const predicate = this.filterService.getFilterPredicate(filter);
-    this.filteredExistingEvents = this.existingEvents.filter(predicate);
+    this.filteredEvents = this.activeEvents.filter(predicate);
   }
 
-  selectEvent(event: NoteForActivitySetup) {
+  selectEvent(event: Entity) {
     if (!this.dateField?.valid) {
       this.alertService.addWarning(
         $localize`:Alert when selected date is invalid:Invalid Date`,
@@ -223,11 +175,11 @@ export class RollCallSetupComponent implements OnInit {
       return;
     }
 
-    if (event.isNewFromActivity) {
+    if (event.isNew && isActivityEvent(event)) {
       this.router.navigate(["/attendance/add-day", "new"], {
         queryParams: {
           activity: event.relatesTo,
-          date: this.formatDateForQuery(event.date),
+          date: this.formatDateForQuery(event[this.eventDateField()]),
         },
       });
     } else {
@@ -235,5 +187,3 @@ export class RollCallSetupComponent implements OnInit {
     }
   }
 }
-
-type NoteForActivitySetup = Note & { isNewFromActivity?: boolean };
