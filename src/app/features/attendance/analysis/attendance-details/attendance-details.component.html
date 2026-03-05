@@ -6,20 +6,23 @@
 </h1>
 
 <div mat-dialog-content>
-  <div
-    class="summary w-{{ entity.getWarningLevel() }}"
-    i18n="
-      Attendance|Attendance of a child (in percent) or the average of the event
-      (in percent)
-    "
-  >
-    Attendance:
-    {{
-      (forChild
+  <div class="summary w-{{ entity.getWarningLevel() }}">
+    <span
+      i18n="
+        Attendance|Attendance of a child (in percent) or the average of the
+        event (in percent)
+      "
+      >Attendance:</span
+    >
+    @let pct =
+      forChild
         ? entity?.getAttendancePercentage(forChild)
-        : entity?.getAttendancePercentageAverage()
-      ) | percent: "1.0-0"
-    }}
+        : entity?.getAttendancePercentageAverage();
+    @if (pct !== undefined) {
+      {{ pct | percent: "1.0-0" }}
+    } @else {
+      -
+    }
   </div>
 
   @if (forChild) {

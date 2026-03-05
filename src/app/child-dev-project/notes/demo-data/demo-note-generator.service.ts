@@ -8,6 +8,7 @@ import { noteGroupStories } from "./notes_group-stories";
 import { centersUnique } from "../../children/demo-data-generators/fixtures/centers";
 import { absenceRemarks } from "./remarks";
 import { AttendanceLogicalStatus } from "#src/app/features/attendance/model/attendance-status";
+import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { warningLevels } from "../../warning-level";
@@ -148,18 +149,20 @@ function generateGroupNote(params: { children: Entity[]; author: Entity }) {
 
   note.children = params.children.map((c) => c.getId());
   params.children.forEach((child) => {
-    const attendance = note.getAttendance(child.getId());
+    const item = new AttendanceItem();
+    item.participant = child.getId();
     // get an approximate presence of 85%
     if (faker.number.int(100) <= 15) {
-      attendance.status = defaultAttendanceStatusTypes.find(
+      item.status = defaultAttendanceStatusTypes.find(
         (t) => t.countAs === AttendanceLogicalStatus.ABSENT,
       );
-      attendance.remarks = faker.helpers.arrayElement(absenceRemarks);
+      item.remarks = faker.helpers.arrayElement(absenceRemarks);
     } else {
-      attendance.status = defaultAttendanceStatusTypes.find(
+      item.status = defaultAttendanceStatusTypes.find(
         (t) => t.countAs === AttendanceLogicalStatus.PRESENT,
       );
     }
+    note.childrenAttendance.push(item);
   });
 
   note.authors = [params.author.getId()];

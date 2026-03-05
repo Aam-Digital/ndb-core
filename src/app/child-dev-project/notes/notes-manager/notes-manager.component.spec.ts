@@ -107,7 +107,7 @@ describe("NotesManagerComponent", () => {
   it("should open the dialog when clicking details", () => {
     const note = new Note("testNote");
     component.showDetails(note);
-    expect(dialogMock.openView).toHaveBeenCalledWith(note, "NoteDetails");
+    expect(dialogMock.openView).toHaveBeenCalledWith(note);
   });
 
   it("should open dialog when add note is clicked", fakeAsync(() => {

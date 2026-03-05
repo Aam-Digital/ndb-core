@@ -6,10 +6,13 @@ import { lastValueFrom } from "rxjs";
 import { BulkMergeRecordsComponent } from "app/features/de-duplication/bulk-merge-records/bulk-merge-records.component";
 import { AlertService } from "app/core/alerts/alert.service";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
-import { Note } from "app/child-dev-project/notes/model/note";
-import { EventAttendanceMap } from "../attendance/model/event-attendance.datatype";
+import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { OkButton } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { AttendanceItem } from "../attendance/model/attendance-item";
 import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { AttendanceDatatype } from "../attendance/model/attendance.datatype";
+import { EventAttendanceMapDatatype } from "../attendance/deprecated/event-attendance-map.datatype";
 
 @Injectable({
   providedIn: "root",
@@ -20,6 +23,26 @@ export class BulkMergeService {
   private readonly matDialog = inject(MatDialog);
   private readonly alert = inject(AlertService);
   private readonly unsavedChangesService = inject(UnsavedChangesService);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
+
+  /**
+   * Validates selection and opens the merge dialog for the given entities.
+   * Returns true if merge was executed, false otherwise.
+   */
+  async executeAction(entity: Entity | Entity[]): Promise<boolean> {
+    const entities = Array.isArray(entity) ? entity : [entity];
+    if (entities.length !== 2) {
+      await this.confirmationDialog.getConfirmation(
+        $localize`:bulk merge error:Invalid selection`,
+        $localize`:bulk merge error:You need to select exactly two records for merge.`,
+        OkButton,
+      );
+      return false;
+    }
+    const entityType = entities[0].getConstructor();
+    if (!entityType) return false;
+    return this.showMergeDialog(entities, entityType);
+  }
 
   /**
    * Opens the merge popup with the selected entities details.
@@ -30,19 +53,21 @@ export class BulkMergeService {
   async showMergeDialog<E extends Entity>(
     entitiesToMerge: E[],
     entityType: EntityConstructor,
-  ): Promise<void> {
+  ): Promise<boolean> {
     const dialogRef = this.matDialog.open(BulkMergeRecordsComponent, {
       maxHeight: "90vh",
       data: { entityConstructor: entityType, entitiesToMerge: entitiesToMerge },
     });
-    const mergedEntity: E = await lastValueFrom(dialogRef.afterClosed());
+    const mergedEntity: E | undefined = await lastValueFrom(
+      dialogRef.afterClosed(),
+    );
 
-    if (mergedEntity) {
-      await this.executeMerge(mergedEntity, entitiesToMerge);
+    if (!mergedEntity) return false;
 
-      this.unsavedChangesService.pending = false;
-      this.alert.addInfo($localize`Records merged successfully.`);
-    }
+    await this.executeMerge(mergedEntity, entitiesToMerge);
+    this.unsavedChangesService.pending = false;
+    this.alert.addInfo($localize`Records merged successfully.`);
+    return true;
   }
 
   /**
@@ -110,27 +135,39 @@ export class BulkMergeService {
       relatedEntity[refFieldId] = newId;
     }
 
-    if (relatedEntity instanceof Note && refFieldId === "children") {
-      this.updateChildrenAttendance(relatedEntity, oldId, newId);
-    }
+    this.updateAttendanceFields(relatedEntity, oldId, newId);
 
     await this.entityMapper.save(relatedEntity);
   }
 
   /**
-   * Helper method to updates the attendance records of children in a Note entity by replacing
-   * references to the old entity ID with the new entity ID.
+   * Updates participant references in all attendance-type fields of the related entity.
+   * This handles any field with dataType "attendance" or "event-attendance-map".
    */
-  private updateChildrenAttendance(
-    relatedEntity: Note,
+  private updateAttendanceFields(
+    relatedEntity: Entity,
     oldId: string,
     newId: string,
   ): void {
-    const childrenAttendance = (relatedEntity as any)
-      .childrenAttendance as EventAttendanceMap;
-    if (childrenAttendance.has(oldId)) {
-      childrenAttendance.set(newId, childrenAttendance.get(oldId));
-      childrenAttendance.delete(oldId);
+    const attendanceDataTypes = [
+      AttendanceDatatype.dataType,
+      EventAttendanceMapDatatype.dataType,
+    ];
+
+    const schema = relatedEntity.getConstructor().schema;
+    for (const [fieldId, field] of schema.entries()) {
+      if (!attendanceDataTypes.includes(field.dataType)) {
+        continue;
+      }
+
+      const attendance: AttendanceItem[] = relatedEntity[fieldId];
+      if (Array.isArray(attendance)) {
+        for (const item of attendance) {
+          if (item.participant === oldId) {
+            item.participant = newId;
+          }
+        }
+      }
     }
   }
 }

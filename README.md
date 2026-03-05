@@ -85,6 +85,47 @@ To learn more about the build process, see [/build](./build/README.md).
 
 ---
 
+# AI-Assisted Development
+
+This project supports AI-assisted development through GitHub Copilot, Claude Code, and CodeRabbit.
+
+| Tool                         | Usage                                                                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **GitHub Copilot** (VS Code) | Code generation, chat, agent mode — reads `AGENTS.md`. Use **Plan mode** for architecture planning before implementation. |
+| **Claude Code** (CLI)        | Interactive coding assistant — reads `CLAUDE.md` → `AGENTS.md`                                                            |
+| **CodeRabbit** (GitHub)      | Automated PR reviews — configured via `.coderabbit.yaml`                                                                  |
+
+## Agents
+
+Custom agents are defined in `.claude/agents/` and can be invoked from Copilot chat or Claude Code:
+
+| Agent                     | Purpose                                               | Recommended Tool                       |
+| ------------------------- | ----------------------------------------------------- | -------------------------------------- |
+| `business-analyst`        | Refine requirements into structured, testable docs    | Copilot chat or Claude Code            |
+| `troubleshooter`          | Debug issues using Sentry, devtools, and stack traces | Copilot/Claude Code with Sentry MCP    |
+| `implementation-planner`  | Design technical approach and architecture            | Copilot **Plan mode** or Claude Code   |
+| `implementation-executor` | Full implementation workflow with tests               | Copilot agent mode or Claude Code      |
+| `refactorer`              | Code analysis and refactoring suggestions             | CodeRabbit (automatic) + manual prompt |
+| `e2e-test-writer`         | Generate Playwright e2e tests                         | Copilot agent mode or Claude Code      |
+
+## MCP Servers
+
+MCP servers are configured in `.vscode/mcp.json`:
+
+- **angular-cli** — Angular CLI operations, schematics, component generation
+- **chrome-devtools** — Runtime debugging, DOM inspection, console access
+- **sentry** — Production error data, issue investigation (requires `SENTRY_AUTH_TOKEN` env var)
+- **github** — Issues, PRs, diffs, repository context (requires `GITHUB_PERSONAL_ACCESS_TOKEN` env var)
+
+## Tips for Effective Prompting
+
+- Be specific about the entity/component you're working with
+- Reference existing patterns and similar implementations
+- Let agents read relevant files first before making changes
+- Use the agent files as starting points for common workflows
+
+---
+
 # Contribute
 
 Our project is completely run by volunteers. Contributions welcome!

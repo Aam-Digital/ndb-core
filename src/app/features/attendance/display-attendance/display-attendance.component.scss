@@ -1,0 +1,18 @@
+.attendance-block {
+  display: inline-block;
+  text-align: center;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.attendance-tooltip {
+  padding: 8px;
+}
+
+.attendance-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}

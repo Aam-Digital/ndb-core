@@ -1,5 +1,4 @@
 import { Component, inject, Input, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceService } from "../attendance.service";
 import { AttendanceItem } from "../model/attendance-item";
@@ -14,7 +13,6 @@ import { AttendanceDayBlockComponent } from "./attendance-day-block/attendance-d
 import { DashboardWidget } from "#src/app/core/dashboard/dashboard-widget/dashboard-widget";
 import { EventNote } from "../model/event-note";
 import { DashboardListWidgetComponent } from "#src/app/core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
-import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 
 interface AttendanceWeekRow {
   childId: string;
@@ -39,8 +37,6 @@ export class AttendanceWeekDashboardComponent
   implements OnInit
 {
   private attendanceService = inject(AttendanceService);
-  private router = inject(Router);
-  private entityRegistry = inject(EntityRegistry);
 
   static override getRequiredEntities() {
     return EventNote.ENTITY_TYPE;
@@ -170,10 +166,5 @@ export class AttendanceWeekDashboardComponent
     }
 
     return countAbsences > this.absentWarningThreshold;
-  }
-
-  goToChild(childId: string) {
-    const Child = this.entityRegistry.get("Child");
-    this.router.navigate([Child.route, childId]);
   }
 }

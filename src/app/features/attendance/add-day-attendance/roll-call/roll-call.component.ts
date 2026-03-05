@@ -113,6 +113,9 @@ export class RollCallComponent implements OnChanges {
    */
   isDirty: boolean = false;
 
+  /** lookup object for attendance items by participant ID, built during loadParticipants */
+  attendanceByParticipant: Record<string, AttendanceItem> = {};
+
   /** options available for selecting an attendance status */
   availableStatus: AttendanceStatusType[];
 
@@ -140,7 +143,7 @@ export class RollCallComponent implements OnChanges {
   private setInitialIndex() {
     let index = 0;
     for (const entry of this.children) {
-      if (!this.eventEntity.getAttendance(entry.getId())?.status?.id) {
+      if (!this.attendanceByParticipant[entry.getId()]?.status?.id) {
         break;
       }
       index += 1;
@@ -163,7 +166,22 @@ export class RollCallComponent implements OnChanges {
   private async loadParticipants() {
     this.children = [];
     this.inactiveParticipants = [];
+    this.attendanceByParticipant = {};
+
+    // ensure every child in the participants list has an attendance entry
     for (const childId of this.eventEntity.children) {
+      if (
+        !this.eventEntity.childrenAttendance.find(
+          (a) => a.participant === childId,
+        )
+      ) {
+        const item = new AttendanceItem(undefined, "", childId);
+        this.eventEntity.childrenAttendance.push(item);
+      }
+    }
+
+    for (const attendanceItem of this.eventEntity.childrenAttendance) {
+      const childId = attendanceItem.participant;
       let child: Entity;
       try {
         child = await this.entityMapper.load(
@@ -178,8 +196,14 @@ export class RollCallComponent implements OnChanges {
             this.eventEntity.getId(),
         );
         this.eventEntity.removeChild(childId);
+        this.eventEntity.childrenAttendance =
+          this.eventEntity.childrenAttendance.filter(
+            (a) => a.participant !== childId,
+          );
         continue;
       }
+
+      this.attendanceByParticipant[childId] = attendanceItem;
 
       if (child.isActive) {
         this.children.push(child);
@@ -198,6 +222,11 @@ export class RollCallComponent implements OnChanges {
     this.children.sort(sortByAttribute<any>(this.sortParticipantsBy, "asc"));
     // also sort the participants in the Note entity itself for display in details view later
     this.eventEntity.children = this.children.map((e) => e.getId());
+    const sortedIds = this.children.map((e) => e.getId());
+    this.eventEntity.childrenAttendance.sort(
+      (a, b) =>
+        sortedIds.indexOf(a.participant) - sortedIds.indexOf(b.participant),
+    );
   }
 
   markAttendance(status: AttendanceStatusType) {
@@ -214,9 +243,8 @@ export class RollCallComponent implements OnChanges {
       this.complete.emit(this.eventEntity);
     } else {
       this.currentChild = this.children[this.currentIndex];
-      this.currentAttendance = this.eventEntity.getAttendance(
-        this.currentChild.getId(),
-      );
+      this.currentAttendance =
+        this.attendanceByParticipant[this.currentChild.getId()];
     }
   }
 
@@ -258,7 +286,7 @@ export class RollCallComponent implements OnChanges {
   }
 
   showDetails() {
-    this.formDialog.openView(this.eventEntity, "NoteDetails");
+    this.formDialog.openView(this.eventEntity);
   }
 
   async includeInactive() {
