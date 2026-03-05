@@ -128,13 +128,9 @@ export class AttendanceWeekDashboardComponent
 
       let day = moment(from);
       while (day.isSameOrBefore(to, "day")) {
-        const event = att.events.find((e) =>
-          day.isSame(att.getEventDate(e), "day"),
-        );
+        const event = att.events.find((e) => day.isSame(e.date, "day"));
         if (event) {
-          eventAttendances.push(
-            att.getAttendanceForParticipant(event, participant),
-          );
+          eventAttendances.push(event.getAttendanceForParticipant(participant));
         } else {
           // put a "placeholder" into the array for the current day
           eventAttendances.push(undefined);

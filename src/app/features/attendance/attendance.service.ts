@@ -14,6 +14,7 @@ import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 import { RollCallConfig } from "./model/roll-call-config";
 import { AttendanceDatatype } from "./model/attendance.datatype";
 import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
+import { EventWithAttendance } from "./model/event-with-attendance";
 
 @Injectable({
   providedIn: "root",
@@ -234,7 +235,9 @@ export class AttendanceService {
 
     for (const event of events) {
       const record = getOrCreateAttendancePeriod(event);
-      record.events.push(event);
+      record.events.push(
+        new EventWithAttendance(event, attendanceField, dateField),
+      );
     }
 
     return Array.from(periods.values()).sort(
@@ -316,8 +319,8 @@ export class AttendanceService {
    * @param date The date for which to load events.
    */
   async getAvailableEventsForRollCall(date: Date): Promise<{
-    events: (Entity | ActivityEvent)[];
-    allEvents: (Entity | ActivityEvent)[];
+    events: EventWithAttendance[];
+    allEvents: EventWithAttendance[];
   }> {
     const currentUserId = this.currentUser.value?.getId();
     const existingEvents = await this.getEventsWithUpdatedParticipants(date);
@@ -326,25 +329,38 @@ export class AttendanceService {
       await this.entityMapper.loadType(RecurringActivity)
     ).filter((a) => a.isActive);
 
-    const allEvents = await this.buildEventsFromActivities(
-      allActivities,
-      existingEvents,
-      currentUserId,
-      date,
-    );
+    const allEvents: EventWithAttendance[] = (
+      await this.buildEventsFromActivities(
+        allActivities,
+        existingEvents,
+        currentUserId,
+        date,
+      )
+    ).map((e) => this.wrapEventForRollCall(e));
 
     let assignedActivityIds = allActivities
       .filter((a) => a.isAssignedTo(currentUserId))
       .map((a) => a.getId());
 
-    const events = !currentUserId
+    const filteredEvents = !currentUserId
       ? allEvents
       : allEvents.filter(
           (e) =>
-            !isActivityEvent(e) || assignedActivityIds.includes(e.relatesTo),
+            !isActivityEvent(e.entity) ||
+            assignedActivityIds.includes(e.entity.relatesTo),
         );
 
-    return { events, allEvents };
+    return {
+      events: filteredEvents,
+      allEvents: allEvents,
+    };
+  }
+
+  private wrapEventForRollCall(entity: Entity): EventWithAttendance {
+    const attendanceField =
+      AttendanceDatatype.detectFieldInEntity(entity) ?? "childrenAttendance";
+    const dateField = DateDatatype.detectFieldInEntity(entity) ?? "date";
+    return new EventWithAttendance(entity, attendanceField, dateField);
   }
 
   private async buildEventsFromActivities(

@@ -39,7 +39,7 @@
       class="flex-row flex-wrap gap-small"
       [filterConfig]="filterConfig()"
       [entityType]="entityType()"
-      [entities]="activeEvents()"
+      [entities]="entityList()"
       [onlyShowRelevantFilterOptions]="true"
       (filterObjChange)="filterExistingEvents($event)"
     ></app-filter>
@@ -52,7 +52,7 @@
   </div>
 } @else {
   <div class="cards-list">
-    @for (event of filteredEvents(); track event) {
+    @for (event of filteredEvents(); track event.entity.getId()) {
       <app-activity-card
         class="pointer"
         [event]="event"

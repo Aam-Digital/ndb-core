@@ -9,6 +9,7 @@ import {
   AttendanceLogicalStatus,
   AttendanceStatusType,
 } from "../../model/attendance-status";
+import { EventWithAttendance } from "../../model/event-with-attendance";
 
 const PRESENT: AttendanceStatusType = {
   id: "PRESENT",
@@ -16,6 +17,10 @@ const PRESENT: AttendanceStatusType = {
   label: "Present",
   countAs: AttendanceLogicalStatus.PRESENT,
 };
+
+function wrap(note: Note): EventWithAttendance {
+  return new EventWithAttendance(note, "childrenAttendance", "date");
+}
 
 describe("ActivityCardComponent", () => {
   let component: ActivityCardComponent;
@@ -34,7 +39,7 @@ describe("ActivityCardComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ActivityCardComponent);
     component = fixture.componentInstance;
-    fixture.componentRef.setInput("event", Note.create(new Date()));
+    fixture.componentRef.setInput("event", wrap(Note.create(new Date())));
     fixture.detectChanges();
   });
 
@@ -48,7 +53,7 @@ describe("ActivityCardComponent", () => {
       new AttendanceItem(PRESENT, "", "child1"),
       new AttendanceItem(PRESENT, "", "child2"),
     ];
-    fixture.componentRef.setInput("event", event);
+    fixture.componentRef.setInput("event", wrap(event));
     fixture.detectChanges();
     expect(component.warningLevel()).toBe("ok");
   });
@@ -56,7 +61,7 @@ describe("ActivityCardComponent", () => {
   it("warningLevel should be 'warning' for recurring events with unknown attendances", () => {
     const event = Note.create(new Date());
     event.childrenAttendance = [new AttendanceItem(undefined, "", "child1")];
-    fixture.componentRef.setInput("event", event);
+    fixture.componentRef.setInput("event", wrap(event));
     fixture.componentRef.setInput("recurring", true);
     fixture.detectChanges();
     expect(component.warningLevel()).toBe("warning");
@@ -65,7 +70,7 @@ describe("ActivityCardComponent", () => {
   it("warningLevel should be 'urgent' for non-recurring events with unknown attendances", () => {
     const event = Note.create(new Date());
     event.childrenAttendance = [new AttendanceItem(undefined, "", "child1")];
-    fixture.componentRef.setInput("event", event);
+    fixture.componentRef.setInput("event", wrap(event));
     fixture.componentRef.setInput("recurring", false);
     fixture.detectChanges();
     expect(component.warningLevel()).toBe("urgent");
@@ -74,32 +79,23 @@ describe("ActivityCardComponent", () => {
   it("warningLevel should be 'ok' when attendance array is empty", () => {
     const event = Note.create(new Date());
     event.childrenAttendance = [];
-    fixture.componentRef.setInput("event", event);
+    fixture.componentRef.setInput("event", wrap(event));
     fixture.detectChanges();
     expect(component.warningLevel()).toBe("ok");
   });
 
-  it("should auto-detect attendance field from entity schema", () => {
+  it("should return attendance items from the wrapped event", () => {
     const event = Note.create(new Date());
     event.childrenAttendance = [new AttendanceItem(PRESENT, "", "child1")];
-    fixture.componentRef.setInput("event", event);
+    fixture.componentRef.setInput("event", wrap(event));
     fixture.detectChanges();
     expect(component.attendance().length).toBe(1);
   });
 
-  it("should auto-detect date field from entity schema", () => {
+  it("should return date from the wrapped event", () => {
     const testDate = new Date(2025, 5, 15);
     const event = Note.create(testDate);
-    fixture.componentRef.setInput("event", event);
-    fixture.detectChanges();
-    expect(component.dateValue()).toEqual(testDate);
-  });
-
-  it("should use explicit dateField input if provided", () => {
-    const testDate = new Date(2025, 5, 15);
-    const event = Note.create(testDate);
-    fixture.componentRef.setInput("event", event);
-    fixture.componentRef.setInput("dateField", "date");
+    fixture.componentRef.setInput("event", wrap(event));
     fixture.detectChanges();
     expect(component.dateValue()).toEqual(testDate);
   });

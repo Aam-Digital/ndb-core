@@ -122,11 +122,6 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
   private createCombinedAttendance() {
     this.combinedAttendance = new ActivityAttendance();
     this.combinedAttendance.activity = this.entity;
-    if (this.allRecords.length > 0) {
-      this.combinedAttendance.attendanceField =
-        this.allRecords[0].attendanceField;
-      this.combinedAttendance.dateField = this.allRecords[0].dateField;
-    }
     this.allRecords.forEach((record) => {
       this.combinedAttendance.events.push(...record.events);
       if (

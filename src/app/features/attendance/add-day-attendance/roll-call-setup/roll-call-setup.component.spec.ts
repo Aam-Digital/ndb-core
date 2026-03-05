@@ -10,6 +10,7 @@ import { RollCallSetupComponent } from "./roll-call-setup.component";
 import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
 import { AttendanceService } from "../../attendance.service";
 import { EventNote } from "../../model/event-note";
+import { EventWithAttendance } from "../../model/event-with-attendance";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { Router } from "@angular/router";
 
@@ -65,8 +66,16 @@ describe("RollCallSetupComponent", () => {
   });
 
   it("shows events returned by the service", fakeAsync(() => {
-    const event1 = new EventNote();
-    const event2 = new EventNote();
+    const event1 = new EventWithAttendance(
+      new EventNote(),
+      "childrenAttendance",
+      "date",
+    );
+    const event2 = new EventWithAttendance(
+      new EventNote(),
+      "childrenAttendance",
+      "date",
+    );
     mockAttendanceService.getAvailableEventsForRollCall.and.resolveTo({
       events: [event1, event2],
       allEvents: [event1, event2],
@@ -80,7 +89,11 @@ describe("RollCallSetupComponent", () => {
   }));
 
   it("showingAll is true when there are no user events", fakeAsync(() => {
-    const event = new EventNote();
+    const event = new EventWithAttendance(
+      new EventNote(),
+      "childrenAttendance",
+      "date",
+    );
     mockAttendanceService.getAvailableEventsForRollCall.and.resolveTo({
       events: [],
       allEvents: [event],
@@ -93,8 +106,16 @@ describe("RollCallSetupComponent", () => {
   }));
 
   it("showMore() switches to allEvents without re-fetching", fakeAsync(() => {
-    const userEvent = new EventNote();
-    const otherEvent = new EventNote();
+    const userEvent = new EventWithAttendance(
+      new EventNote(),
+      "childrenAttendance",
+      "date",
+    );
+    const otherEvent = new EventWithAttendance(
+      new EventNote(),
+      "childrenAttendance",
+      "date",
+    );
     mockAttendanceService.getAvailableEventsForRollCall.and.resolveTo({
       events: [userEvent],
       allEvents: [userEvent, otherEvent],
@@ -113,8 +134,16 @@ describe("RollCallSetupComponent", () => {
   }));
 
   it("showLess() switches back to user events without re-fetching", fakeAsync(() => {
-    const userEvent = new EventNote();
-    const otherEvent = new EventNote();
+    const userEvent = new EventWithAttendance(
+      new EventNote(),
+      "childrenAttendance",
+      "date",
+    );
+    const otherEvent = new EventWithAttendance(
+      new EventNote(),
+      "childrenAttendance",
+      "date",
+    );
     mockAttendanceService.getAvailableEventsForRollCall.and.resolveTo({
       events: [userEvent],
       allEvents: [userEvent, otherEvent],
@@ -138,8 +167,9 @@ describe("RollCallSetupComponent", () => {
     spyOn(router, "navigate");
     (component as any).dateField = { valid: true };
 
-    const event = new EventNote();
-    Object.defineProperty(event, "_id", { value: "EventNote:test-123" });
+    const note = new EventNote();
+    Object.defineProperty(note, "_id", { value: "EventNote:test-123" });
+    const event = new EventWithAttendance(note, "childrenAttendance", "date");
 
     component.selectEvent(event);
 
@@ -154,9 +184,10 @@ describe("RollCallSetupComponent", () => {
     spyOn(router, "navigate");
     (component as any).dateField = { valid: true };
 
-    const event = new EventNote();
-    event.relatesTo = "RecurringActivity:activity-1";
-    event.date = new Date(2025, 5, 15);
+    const note = new EventNote();
+    note.relatesTo = "RecurringActivity:activity-1";
+    note.date = new Date(2025, 5, 15);
+    const event = new EventWithAttendance(note, "childrenAttendance", "date");
 
     component.selectEvent(event);
 
@@ -172,7 +203,8 @@ describe("RollCallSetupComponent", () => {
   });
 
   it("derives entityType from the first loaded event", fakeAsync(() => {
-    const event = new EventNote();
+    const note = new EventNote();
+    const event = new EventWithAttendance(note, "childrenAttendance", "date");
     mockAttendanceService.getAvailableEventsForRollCall.and.resolveTo({
       events: [event],
       allEvents: [event],

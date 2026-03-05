@@ -145,7 +145,7 @@ describe("RollCallComponent", () => {
     stabilize();
 
     expect(component.participants()).toEqual([participant1]);
-    const note = component.event() as Note;
+    const note = component.event()?.entity as Note;
     expect(
       note.childrenAttendance.some((a) => a.participant === nonExistingChildId),
     ).toBeFalse();

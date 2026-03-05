@@ -14,6 +14,7 @@ import { AttendanceDetailsComponent } from "./attendance-details.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
+import { EventNote } from "../../model/event-note";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const activityAttendance = ActivityAttendance.create(new Date("2020-01-01"), [
@@ -47,7 +48,9 @@ const activityAttendance = ActivityAttendance.create(new Date("2020-01-01"), [
     new Date("2020-01-04"),
   ),
 ]);
-activityAttendance.events.forEach((e) => (e.subject = demoActivity.title));
+activityAttendance.events.forEach(
+  (e) => ((e.entity as EventNote).subject = demoActivity.title),
+);
 activityAttendance.periodTo = new Date("2020-01-31");
 activityAttendance.activity = demoActivity;
 

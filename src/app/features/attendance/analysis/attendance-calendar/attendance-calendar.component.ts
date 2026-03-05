@@ -37,6 +37,7 @@ import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { EventWithAttendance } from "../../model/event-with-attendance";
 
 @Component({
   selector: "app-attendance-calendar",
@@ -66,21 +67,16 @@ export class AttendanceCalendarComponent implements OnChanges {
   private analyticsService = inject(AnalyticsService);
   private attendanceService = inject(AttendanceService);
 
-  @Input() records: Entity[] = [];
+  @Input() records: EventWithAttendance[] = [];
   @Input() highlightForChild: string;
   @Input() activity: RecurringActivity;
-
-  /** Name of the field on event entities holding the attendance array */
-  @Input() attendanceField: string;
-  /** Name of the field on event entities holding the event date */
-  @Input() dateField: string;
 
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   minDate: Date;
   maxDate: Date;
 
   selectedDate: moment.Moment;
-  selectedEvent: Entity;
+  selectedEvent: EventWithAttendance;
   selectedEventAttendance: AttendanceItem;
   selectedEventAttendanceOriginal: AttendanceItem;
   selectedEventStats: AverageAttendanceStats;
@@ -88,45 +84,25 @@ export class AttendanceCalendarComponent implements OnChanges {
   private updatesSubscription: Subscription;
   private currentEntityType: EntityConstructor;
 
-  getEventDate(event: Entity): Date | undefined {
-    return event[this.dateField] as Date | undefined;
-  }
-
-  getAttendanceItems(event: Entity): AttendanceItem[] {
-    return (event[this.attendanceField] as AttendanceItem[]) ?? [];
-  }
-
-  getAttendanceForParticipant(
-    event: Entity,
-    participantId: string,
-  ): AttendanceItem | undefined {
-    return this.getAttendanceItems(event).find(
-      (item) => item.participant === participantId,
-    );
-  }
-
   private ensureParticipantInAttendance(
-    event: Entity,
+    event: EventWithAttendance,
     participantId: string,
   ): AttendanceItem {
-    let item = this.getAttendanceForParticipant(event, participantId);
+    let item = event.getAttendanceForParticipant(participantId);
     if (!item) {
       item = new AttendanceItem(NullAttendanceStatusType, "", participantId);
-      const items = this.getAttendanceItems(event);
-      event[this.attendanceField] = [...items, item];
+      event.attendanceItems = [...event.attendanceItems, item];
     }
     return item;
   }
 
   get selectedEventParticipantCount(): number {
-    return this.selectedEvent
-      ? this.getAttendanceItems(this.selectedEvent).length
-      : 0;
+    return this.selectedEvent ? this.selectedEvent.attendanceItems.length : 0;
   }
 
   private subscribeToUpdates() {
     const firstRecord = this.records[0];
-    const entityType = firstRecord?.getConstructor();
+    const entityType = firstRecord?.entity?.getConstructor();
     if (entityType === this.currentEntityType) {
       return;
     }
@@ -142,7 +118,12 @@ export class AttendanceCalendarComponent implements OnChanges {
       .receiveUpdates(entityType)
       .pipe(untilDestroyed(this))
       .subscribe((update) => {
-        this.records = applyUpdate(this.records, update, false);
+        const rawEntities = this.records.map((r) => r.entity);
+        const updatedEntities = applyUpdate(rawEntities, update as any, false);
+        const { attendanceField, dateField } = this.records[0];
+        this.records = updatedEntities.map(
+          (e) => new EventWithAttendance(e, attendanceField, dateField),
+        );
         this.selectDay(this.selectedDate?.toDate());
       });
   }
@@ -160,13 +141,10 @@ export class AttendanceCalendarComponent implements OnChanges {
       );
     }
 
-    const event = this.records.find((e) =>
-      cellMoment.isSame(this.getEventDate(e), "day"),
-    );
+    const event = this.records.find((e) => cellMoment.isSame(e.date, "day"));
     if (event && this.highlightForChild) {
       // coloring for individual child
-      const eventAttendance = this.getAttendanceForParticipant(
-        event,
+      const eventAttendance = event.getAttendanceForParticipant(
         this.highlightForChild,
       );
 
@@ -179,7 +157,7 @@ export class AttendanceCalendarComponent implements OnChanges {
 
     if (event && !this.highlightForChild) {
       // coloring based on averages across all children
-      const stats = calculateAverageAttendance(this.getAttendanceItems(event));
+      const stats = calculateAverageAttendance(event.attendanceItems);
 
       const percentageSlab = Math.round(stats.average * 10) * 10;
       classes["w-" + percentageSlab] = true;
@@ -204,7 +182,7 @@ export class AttendanceCalendarComponent implements OnChanges {
    */
   private updateDateRange() {
     const dates: Moment[] = this.records
-      .map((e) => this.getEventDate(e))
+      .map((e) => e.date)
       .filter((d): d is Date => !!d)
       .map((d) => moment(d));
     this.minDate = moment.min(dates).startOf("month").toDate();
@@ -231,7 +209,7 @@ export class AttendanceCalendarComponent implements OnChanges {
     } else {
       this.selectedDate = moment(newDate);
       this.selectedEvent = this.records.find((e) =>
-        this.selectedDate.isSame(this.getEventDate(e), "day"),
+        this.selectedDate.isSame(e.date, "day"),
       );
       if (this.selectedEvent && this.highlightForChild) {
         this.selectedEventAttendance = this.ensureParticipantInAttendance(
@@ -246,7 +224,7 @@ export class AttendanceCalendarComponent implements OnChanges {
       );
       if (this.selectedEvent) {
         this.selectedEventStats = calculateAverageAttendance(
-          this.getAttendanceItems(this.selectedEvent),
+          this.selectedEvent.attendanceItems,
         );
       }
 
@@ -270,7 +248,7 @@ export class AttendanceCalendarComponent implements OnChanges {
       return;
     }
 
-    await this.entityMapper.save(this.selectedEvent);
+    await this.entityMapper.save(this.selectedEvent.entity);
 
     this.analyticsService.eventTrack("calendar_save_event_changes", {
       category: "Attendance",
@@ -281,11 +259,11 @@ export class AttendanceCalendarComponent implements OnChanges {
     this.attendanceService
       .createEventForActivity(this.activity, this.selectedDate.toDate())
       .then((note) => {
-        this.showEventDetails(note);
+        this.formDialog.openView(note);
       });
   }
 
-  showEventDetails(selectedEvent: Entity) {
-    this.formDialog.openView(selectedEvent);
+  showEventDetails(selectedEvent: EventWithAttendance) {
+    this.formDialog.openView(selectedEvent.entity);
   }
 }

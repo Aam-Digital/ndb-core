@@ -4,17 +4,17 @@
   class="main-card"
 >
   <mat-card-header>
-    <mat-card-title>{{ event().toString() }}</mat-card-title>
+    <mat-card-title>{{ event().entity.toString() }}</mat-card-title>
   </mat-card-header>
   <mat-card-content class="text-secondary">
     <fa-icon icon="child"></fa-icon>
     {{ attendance().length }}
     <span i18n>participants</span>
 
-    @if (!isRecurring() && dateValue()) {
+    @if (!isRecurring() && event().date) {
       <span class="sep">/</span>
       <fa-icon icon="calendar"></fa-icon>
-      {{ dateValue() | customDate: "shortDate" }}
+      {{ event().date | customDate: "shortDate" }}
     }
 
     @if (extraFieldValue()) {

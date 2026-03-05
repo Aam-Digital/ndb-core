@@ -22,6 +22,8 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { sortByAttribute } from "#src/app/utils/utils";
 import { AttendanceDatatype } from "../../model/attendance.datatype";
+import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
+import { EventWithAttendance } from "../../model/event-with-attendance";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatButtonModule } from "@angular/material/button";
@@ -116,12 +118,6 @@ export class RollCallComponent {
   readonly eventEntity = input<Entity>();
 
   /**
-   * (optional) property name of the attendance field on the event entity.
-   * If not provided, it is auto-detected from the entity schema.
-   */
-  readonly attendanceField = input<string>();
-
-  /**
    * (optional) property name of the participant entities by which they are sorted
    */
   readonly sortParticipantsBy = input<string>();
@@ -140,8 +136,14 @@ export class RollCallComponent {
     },
   });
 
-  /** The resolved event entity */
-  readonly event = computed(() => this.eventResource.value());
+  /** The resolved event, wrapped with typed attendance and date accessors. */
+  readonly event = computed<EventWithAttendance | undefined>(() => {
+    const entity = this.eventResource.value();
+    if (!entity) return undefined;
+    const attendanceField = AttendanceDatatype.detectFieldInEntity(entity);
+    const dateField = DateDatatype.detectFieldInEntity(entity);
+    return new EventWithAttendance(entity, attendanceField, dateField);
+  });
 
   /** The index of the participant currently being processed */
   readonly currentIndex = signal(0);
@@ -172,9 +174,6 @@ export class RollCallComponent {
 
   readonly participants = signal<Entity[]>([]);
   readonly inactiveParticipants = signal<Entity[]>([]);
-
-  /** Resolved attendance field name (input or auto-detected) */
-  private _resolvedAttendanceField: string | undefined;
 
   readonly isFirst = computed(() => this.currentIndex() === 0);
   readonly isLast = computed(
@@ -299,12 +298,8 @@ export class RollCallComponent {
   }
 
   private async loadParticipants() {
-    const entity = this.event();
-    this._resolvedAttendanceField =
-      this.attendanceField() ?? AttendanceDatatype.detectFieldInEntity(entity);
-    const attendanceItems: AttendanceItem[] = this._resolvedAttendanceField
-      ? (entity[this._resolvedAttendanceField] ?? [])
-      : [];
+    if (!this.event()) return;
+    const attendanceItems: AttendanceItem[] = this.event().attendanceItems;
 
     const active: Entity[] = [];
     const inactive: Entity[] = [];
@@ -324,7 +319,7 @@ export class RollCallComponent {
           "Could not find participant " +
             participantId +
             " for event " +
-            entity.getId(),
+            this.event().entity.getId(),
         );
         continue;
       }
@@ -339,9 +334,7 @@ export class RollCallComponent {
       }
     }
 
-    if (this._resolvedAttendanceField) {
-      entity[this._resolvedAttendanceField] = validAttendanceItems;
-    }
+    this.event().attendanceItems = validAttendanceItems;
     this.participants.set(active);
     this.inactiveParticipants.set(inactive);
     this.attendanceByParticipant.set(attendanceMap);
@@ -358,15 +351,15 @@ export class RollCallComponent {
       [...participants].sort(sortByAttribute<any>(sortBy, "asc")),
     );
     // also sort the participants in the entity itself for display in details view later
-    const field = this._resolvedAttendanceField;
-    const entity = this.event();
-    if (field && entity) {
+    const event = this.event();
+    if (event) {
       const sortedIds = this.participants().map((e) => e.getId());
-      const attendance: AttendanceItem[] = entity[field] ?? [];
+      const attendance = event.attendanceItems;
       attendance.sort(
         (a, b) =>
           sortedIds.indexOf(a.participant) - sortedIds.indexOf(b.participant),
       );
+      event.attendanceItems = attendance;
     }
   }
 
@@ -429,7 +422,7 @@ export class RollCallComponent {
   }
 
   async saveEvent() {
-    const entity = this.event();
+    const entity = this.event()?.entity;
     if (entity) {
       try {
         await this.entityMapper.save(entity);
@@ -447,7 +440,7 @@ export class RollCallComponent {
   }
 
   showDetails() {
-    this.formDialog.openView(this.event());
+    this.formDialog.openView(this.event()?.entity);
   }
 
   async includeInactive() {

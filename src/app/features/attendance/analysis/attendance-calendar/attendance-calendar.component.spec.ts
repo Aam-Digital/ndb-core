@@ -15,6 +15,7 @@ import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service
 import { MatNativeDateModule } from "@angular/material/core";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { createEntityMapperSpyObj } from "#src/app/core/entity/entity-mapper/mock-entity-mapper-service";
+import { EventWithAttendance } from "../../model/event-with-attendance";
 
 describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;
@@ -49,9 +50,6 @@ describe("AttendanceCalendarComponent", () => {
     fixture = TestBed.createComponent(AttendanceCalendarComponent);
     component = fixture.componentInstance;
 
-    component.attendanceField = "childrenAttendance";
-    component.dateField = "date";
-
     fixture.detectChanges();
   });
 
@@ -61,8 +59,16 @@ describe("AttendanceCalendarComponent", () => {
 
   it("sets min and max selectable date based on time range of given records", () => {
     component.records = [
-      generateEventWithAttendance([], new Date("2020-01-05")),
-      generateEventWithAttendance([], new Date("2020-01-20")),
+      new EventWithAttendance(
+        generateEventWithAttendance([], new Date("2020-01-05")),
+        "childrenAttendance",
+        "date",
+      ),
+      new EventWithAttendance(
+        generateEventWithAttendance([], new Date("2020-01-20")),
+        "childrenAttendance",
+        "date",
+      ),
     ];
 
     component.ngOnChanges({
@@ -95,7 +101,9 @@ describe("AttendanceCalendarComponent", () => {
     note.getAttendance(attendedChild).status = presentAttendance;
     note.getAttendance(absentChild).status = absentAttendance;
     note.getAttendance(childWithoutAttendance); // ensure attendance item exists with default null status
-    component.records = [note];
+    component.records = [
+      new EventWithAttendance(note, "childrenAttendance", "date"),
+    ];
 
     component.selectDay(new Date());
 
@@ -109,14 +117,15 @@ describe("AttendanceCalendarComponent", () => {
     const excludedChild = new TestEntity("excluded_child");
     const note = new Note();
     note.date = testDate;
-    component.records = [note];
+    component.records = [
+      new EventWithAttendance(note, "childrenAttendance", "date"),
+    ];
     component.highlightForChild = excludedChild.getId();
 
     component.selectDay(testDate);
 
     expect(
-      component.getAttendanceForParticipant(
-        component.selectedEvent,
+      component.selectedEvent.getAttendanceForParticipant(
         excludedChild.getId(),
       ),
     ).toBeDefined();

@@ -220,7 +220,7 @@ describe("ActivityAttendance", () => {
     const StatusLate: AttendanceStatusType = defaultAttendanceStatusTypes.find(
       (t) => t.id === "LATE",
     );
-    (record.events[0] as TestEventEntity).getAttendance("1").status =
+    (record.events[0].entity as TestEventEntity).getAttendance("1").status =
       StatusLate;
     record.recalculateStats();
 
@@ -250,10 +250,10 @@ describe("ActivityAttendance", () => {
     );
 
     // adding participants without attendance to one event
-    (attendance.events[1] as TestEventEntity).attendance.push(
+    attendance.events[1].attendanceItems.push(
       new AttendanceItem(undefined, "", "3"),
     );
-    (attendance.events[1] as TestEventEntity).attendance.push(
+    attendance.events[1].attendanceItems.push(
       new AttendanceItem(undefined, "", "4"),
     );
 

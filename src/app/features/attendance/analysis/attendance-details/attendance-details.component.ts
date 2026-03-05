@@ -42,7 +42,11 @@ export class AttendanceDetailsComponent {
   @Input() forChild: string;
 
   get eventEntityType() {
-    return this.entity?.events[0]?.getConstructor();
+    return this.entity?.events[0]?.entity?.getConstructor();
+  }
+
+  get eventEntities(): Entity[] {
+    return this.entity?.events.map((e) => e.entity) ?? [];
   }
 
   eventsColumns: FormFieldConfig[] = [

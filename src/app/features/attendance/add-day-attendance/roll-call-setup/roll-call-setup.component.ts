@@ -10,7 +10,7 @@ import {
   signal,
 } from "@angular/core";
 import { AttendanceService } from "../../attendance.service";
-import { isActivityEvent } from "../../model/activity-event";
+import { ActivityEvent, isActivityEvent } from "../../model/activity-event";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { AlertDisplay } from "#src/app/core/alerts/alert-display";
 import { FormsModule, NgModel } from "@angular/forms";
@@ -30,6 +30,7 @@ import { ViewTitleComponent } from "#src/app/core/common-components/view-title/v
 import { RouteTarget } from "#src/app/route-target";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { OkButton } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { EventWithAttendance } from "../../model/event-with-attendance";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 
 /**
@@ -83,17 +84,10 @@ export class RollCallSetupComponent {
     this.attendanceService.rollCallConfig.extraField,
   );
 
-  /**
-   * The entity field name holding the event date, used when routing to a new roll call.
-   */
-  readonly eventDateField = input<string>(
-    this.attendanceService.rollCallConfig.dateField,
-  );
-
   date = signal(new Date());
 
   protected readonly eventsResource = resource<
-    { events: Entity[]; allEvents: Entity[] },
+    { events: EventWithAttendance[]; allEvents: EventWithAttendance[] },
     Date
   >({
     params: () => this.date(),
@@ -111,7 +105,7 @@ export class RollCallSetupComponent {
   });
 
   /** The active base set: either user-filtered or all, depending on showingAll. */
-  activeEvents = computed(() => {
+  activeEvents = computed<EventWithAttendance[]>(() => {
     const result = this.eventsResource.value();
     const events = this.showingAll() ? result?.allEvents : result?.events;
     return events ?? [];
@@ -121,15 +115,23 @@ export class RollCallSetupComponent {
    * The events currently shown, after applying any active filter.
    * Resets to the full active set whenever the active set changes.
    */
-  filteredEvents = linkedSignal(() => this.activeEvents());
+  filteredEvents = linkedSignal<EventWithAttendance[]>(() =>
+    this.activeEvents(),
+  );
 
   @ViewChild("dateField") dateField: NgModel;
+
+  /** Raw entities from the active event set, used for filter schema look-ups and filter predicate evaluation. */
+  entityList = computed(() => this.activeEvents().map((e) => e.entity));
 
   /**
    * The entity type inferred from the loaded events, used for filter schema look-ups.
    */
   entityType = computed(
-    () => this.activeEvents()[0]?.constructor as EntityConstructor | undefined,
+    () =>
+      this.activeEvents()[0]?.entity.constructor as
+        | EntityConstructor
+        | undefined,
   );
 
   showMore() {
@@ -165,10 +167,12 @@ export class RollCallSetupComponent {
 
   filterExistingEvents(filter: DataFilter<Entity>) {
     const predicate = this.filterService.getFilterPredicate(filter);
-    this.filteredEvents.set(this.activeEvents().filter(predicate));
+    this.filteredEvents.set(
+      this.activeEvents().filter((e) => predicate(e.entity)),
+    );
   }
 
-  selectEvent(event: Entity) {
+  selectEvent(event: EventWithAttendance) {
     if (!this.dateField?.valid) {
       this.alertService.addWarning(
         $localize`:Alert when selected date is invalid:Invalid Date`,
@@ -177,15 +181,16 @@ export class RollCallSetupComponent {
       return;
     }
 
-    if (event.isNew && isActivityEvent(event)) {
+    const entity = event.entity;
+    if (entity.isNew && isActivityEvent(entity)) {
       this.router.navigate(["/attendance/add-day", "new"], {
         queryParams: {
-          activity: event.relatesTo,
-          date: this.formatDateForQuery(event[this.eventDateField()]),
+          activity: (entity as ActivityEvent).relatesTo,
+          date: this.formatDateForQuery(event.date),
         },
       });
     } else {
-      this.router.navigate(["/attendance/add-day", event.getId()]);
+      this.router.navigate(["/attendance/add-day", entity.getId()]);
     }
   }
 }

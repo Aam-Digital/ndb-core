@@ -132,7 +132,7 @@ describe("ActivityAttendanceSectionComponent", () => {
 
     expect(component.combinedAttendance.periodFrom).toBe(oldestEvent.date);
     expect(component.combinedAttendance.periodTo).toBe(latestEvent.date);
-    expect(component.combinedAttendance.events).toEqual(
+    expect(component.combinedAttendance.events.map((e) => e.entity)).toEqual(
       jasmine.arrayWithExactContents([
         oldestEvent,
         someEvent1,

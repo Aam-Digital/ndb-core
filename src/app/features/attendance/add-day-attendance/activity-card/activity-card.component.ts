@@ -4,15 +4,13 @@ import {
   computed,
   input,
 } from "@angular/core";
-import { Entity } from "#src/app/core/entity/model/entity";
 import { isActivityEvent } from "../../model/activity-event";
 import { AttendanceItem } from "../../model/attendance-item";
-import { AttendanceDatatype } from "../../model/attendance.datatype";
+import { EventWithAttendance } from "../../model/event-with-attendance";
 import { MatCardModule } from "@angular/material/card";
 import { BorderHighlightDirective } from "#src/app/core/common-components/border-highlight/border-highlight.directive";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { CustomDatePipe } from "#src/app/core/basic-datatypes/date/custom-date.pipe";
-import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
 
 /**
  * Simple representation of an event
@@ -32,21 +30,9 @@ import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
 })
 export class ActivityCardComponent {
   /**
-   * The entity representing the event to be displayed.
+   * The event to be displayed.
    */
-  readonly event = input.required<Entity>();
-
-  /**
-   * The property name of the attendance field on the entity.
-   * If not provided, it is auto-detected from the entity schema.
-   */
-  readonly attendanceField = input<string>();
-
-  /**
-   * The property name of the date field on the entity.
-   * If not provided, it is auto-detected as the first date/date-only field in the schema.
-   */
-  readonly dateField = input<string>();
+  readonly event = input.required<EventWithAttendance>();
 
   /**
    * An optional extra entity field to display on the card (e.g. "category").
@@ -61,26 +47,10 @@ export class ActivityCardComponent {
    */
   readonly recurring = input<boolean>();
 
-  /** Resolved date field name, auto-detected from schema if not explicitly set. */
-  private readonly resolvedDateField = computed(() => {
-    return this.dateField() ?? DateDatatype.detectFieldInEntity(this.event());
-  });
-
-  /** Resolved attendance field name, auto-detected from schema if not explicitly set. */
-  private readonly resolvedAttendanceField = computed(
-    () =>
-      this.attendanceField() ??
-      AttendanceDatatype.detectFieldInEntity(this.event()),
-  );
-
   /** The attendance items for the current event. */
-  readonly attendance = computed<AttendanceItem[]>(() => {
-    const field = this.resolvedAttendanceField();
-    if (!field) {
-      return [];
-    }
-    return this.event()[field] ?? [];
-  });
+  readonly attendance = computed<AttendanceItem[]>(
+    () => this.event().attendanceItems,
+  );
 
   /** Whether this event is linked to a recurring activity. */
   readonly isRecurring = computed(() => {
@@ -88,17 +58,7 @@ export class ActivityCardComponent {
     if (explicit !== undefined) {
       return explicit;
     }
-    const event = this.event();
-    return isActivityEvent(event);
-  });
-
-  /** Resolved date value from the entity. */
-  readonly dateValue = computed<Date | undefined>(() => {
-    const field = this.resolvedDateField();
-    if (!field) {
-      return undefined;
-    }
-    return this.event()[field];
+    return isActivityEvent(this.event().entity);
   });
 
   /** Resolved display value of the extra field, if configured. */
@@ -107,7 +67,7 @@ export class ActivityCardComponent {
     if (!field) {
       return undefined;
     }
-    const val = this.event()[field];
+    const val = this.event().entity[field];
     return val?.label ?? val;
   });
 
