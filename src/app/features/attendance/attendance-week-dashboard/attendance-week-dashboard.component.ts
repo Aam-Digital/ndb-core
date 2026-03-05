@@ -15,7 +15,7 @@ import { EventNote } from "../model/event-note";
 import { DashboardListWidgetComponent } from "#src/app/core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 
 interface AttendanceWeekRow {
-  childId: string;
+  participantId: string;
   activity: RecurringActivity;
   attendanceDays: (AttendanceItem | undefined)[];
 }
@@ -37,10 +37,6 @@ export class AttendanceWeekDashboardComponent
   implements OnInit
 {
   private attendanceService = inject(AttendanceService);
-
-  static override getRequiredEntities() {
-    return EventNote.ENTITY_TYPE;
-  }
 
   /**
    * The offset from the default time period, which is the last complete week.
@@ -109,12 +105,12 @@ export class AttendanceWeekDashboardComponent
 
       rows
         .filter((r) => this.filterLowAttendance(r))
-        .forEach((r) => lowAttendanceCases.add(r.childId));
+        .forEach((r) => lowAttendanceCases.add(r.participantId));
     }
 
-    const groups = groupBy(records, "childId");
+    const groups = groupBy(records, "participantId");
     this.entries = groups
-      .filter(([childId]) => lowAttendanceCases.has(childId))
+      .filter(([participantId]) => lowAttendanceCases.has(participantId))
       .map(([_, attendance]) => attendance);
   }
 
@@ -144,7 +140,7 @@ export class AttendanceWeekDashboardComponent
       }
 
       results.push({
-        childId: participant,
+        participantId: participant,
         activity: att.activity,
         attendanceDays: eventAttendances,
       });

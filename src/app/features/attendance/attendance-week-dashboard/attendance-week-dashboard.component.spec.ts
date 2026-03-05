@@ -74,7 +74,7 @@ describe("AttendanceWeekDashboardComponent", () => {
     expect(component.entries).toEqual([
       [
         {
-          childId: absentChild.getId(),
+          participantId: absentChild.getId(),
           activity: activity,
           attendanceDays: [
             // sundays are excluded
@@ -115,7 +115,7 @@ describe("AttendanceWeekDashboardComponent", () => {
     expect(component.entries).toEqual([
       [
         {
-          childId: absentChild.getId(),
+          participantId: absentChild.getId(),
           activity: activity,
           attendanceDays: [
             // sundays are excluded
