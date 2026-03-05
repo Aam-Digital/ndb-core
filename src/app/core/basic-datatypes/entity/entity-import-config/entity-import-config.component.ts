@@ -52,7 +52,7 @@ export class EntityImportConfigComponent {
           (!!schema.label && !schema.isInternalField) || prop === "_id",
       )
       .map(([prop, schema]) => ({
-        label: prop === "_id" ? $localize`ID (Internal UUID)` : schema.label,
+        label: prop === "_id" ? $localize`ID (internal unique ID)` : schema.label,
         property: prop,
       }));
     this.propertyForm.setValue(this.data.col.additional);
