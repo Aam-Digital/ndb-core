@@ -107,19 +107,21 @@
     </div>
   }
 
-  <app-entities-table
-    [entityType]="eventEntityType"
-    [records]="eventEntities"
-    [customColumns]="eventsColumns"
-    clickMode="none"
-    (entityClick)="showEventDetails($event)"
-    [editable]="false"
-  >
-  </app-entities-table>
+  @if (!!eventEntityType) {
+    <app-entities-table
+      [entityType]="eventEntityType"
+      [records]="eventEntities"
+      [customColumns]="eventsColumns"
+      clickMode="none"
+      (entityClick)="showEventDetails($event)"
+      [editable]="false"
+    >
+    </app-entities-table>
 
-  <app-attendance-calendar
-    [records]="entity.events"
-    [highlightForChild]="forChild"
-    [activity]="entity.activity"
-  ></app-attendance-calendar>
+    <app-attendance-calendar
+      [records]="entity.events"
+      [highlightForChild]="forChild"
+      [activity]="entity.activity"
+    ></app-attendance-calendar>
+  }
 </div>

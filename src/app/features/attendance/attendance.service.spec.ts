@@ -493,7 +493,7 @@ describe("AttendanceService", () => {
       await entityMapper.save(activityAssignedToOther);
 
       const result = await service.getAvailableEventsForRollCall(testDate);
-R
+
       expect(
         findByActivity(result.events, activityAssignedToOther.getId()),
       ).toBeTruthy();

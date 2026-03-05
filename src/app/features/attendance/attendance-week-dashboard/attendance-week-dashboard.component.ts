@@ -104,7 +104,9 @@ export class AttendanceWeekDashboardComponent
 
       rows
         .filter((r) => this.filterLowAttendance(r))
-        .forEach((r) => lowAttendanceCases.add(r.participantId));
+        .forEach((r) => {
+          lowAttendanceCases.add(r.participantId);
+        });
     }
 
     const groups = groupBy(records, "participantId");

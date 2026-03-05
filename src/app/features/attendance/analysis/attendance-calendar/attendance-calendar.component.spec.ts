@@ -5,8 +5,9 @@ import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-m
 import { generateEventWithAttendance } from "../../model/activity-attendance";
 import { SimpleChange } from "@angular/core";
 import moment from "moment";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
+import { AttendanceItem } from "../../model/attendance-item";
+import { NullAttendanceStatusType } from "../../model/attendance-status";
 import { EventNote } from "../../model/event-note";
 import { AttendanceService } from "../../attendance.service";
 import { AnalyticsService } from "#src/app/core/analytics/analytics.service";
@@ -87,23 +88,25 @@ describe("AttendanceCalendarComponent", () => {
     const attendedChild = new TestEntity("attendedChild");
     const absentChild = new TestEntity("absentChild");
     const childWithoutAttendance = new TestEntity("childWithoutAttendance");
-    const note = new Note();
-    note.date = new Date();
-    note.addChild(attendedChild);
-    note.addChild(absentChild);
-    note.addChild(childWithoutAttendance);
     const presentAttendance = defaultAttendanceStatusTypes.find(
       (it) => it.id === "PRESENT",
     );
     const absentAttendance = defaultAttendanceStatusTypes.find(
       (it) => it.id === "ABSENT",
     );
-    note.getAttendance(attendedChild).status = presentAttendance;
-    note.getAttendance(absentChild).status = absentAttendance;
-    note.getAttendance(childWithoutAttendance); // ensure attendance item exists with default null status
-    component.records = [
-      new EventWithAttendance(note, "childrenAttendance", "date"),
-    ];
+    const event = Object.assign(new EventNote(), {
+      date: new Date(),
+      attendance: [
+        new AttendanceItem(presentAttendance, "", attendedChild.getId()),
+        new AttendanceItem(absentAttendance, "", absentChild.getId()),
+        new AttendanceItem(
+          NullAttendanceStatusType,
+          "",
+          childWithoutAttendance.getId(),
+        ),
+      ],
+    });
+    component.records = [new EventWithAttendance(event, "attendance", "date")];
 
     component.selectDay(new Date());
 
@@ -115,11 +118,8 @@ describe("AttendanceCalendarComponent", () => {
   it("should add focused participant on the fly if not part of event already", () => {
     const testDate = new Date();
     const excludedChild = new TestEntity("excluded_child");
-    const note = new Note();
-    note.date = testDate;
-    component.records = [
-      new EventWithAttendance(note, "childrenAttendance", "date"),
-    ];
+    const event = Object.assign(new EventNote(), { date: testDate });
+    component.records = [new EventWithAttendance(event, "attendance", "date")];
     component.highlightForChild = excludedChild.getId();
 
     component.selectDay(testDate);

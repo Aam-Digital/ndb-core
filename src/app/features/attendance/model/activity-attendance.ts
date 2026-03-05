@@ -37,8 +37,6 @@ export class ActivityAttendance extends Entity {
   ) {
     const instance = new ActivityAttendance();
     instance.periodFrom = from;
-    instance.attendanceField = attendanceField;
-    instance.dateField = dateField;
     instance.events = events.map(
       (e) => new EventWithAttendance(e, attendanceField, dateField),
     );
@@ -53,18 +51,6 @@ export class ActivityAttendance extends Entity {
    * End date of the period this data refers to
    */
   periodTo: Date;
-
-  /**
-   * Name of the field on event entities that holds the attendance array (AttendanceItem[]).
-   * Set by the service creating this instance (e.g. AttendanceService).
-   */
-  attendanceField: string = "childrenAttendance";
-
-  /**
-   * Name of the field on event entities that holds the event date.
-   * Set by the service creating this instance (e.g. AttendanceService).
-   */
-  dateField: string = "date";
 
   /**
    * Events within the period relating to the activity

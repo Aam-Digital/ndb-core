@@ -7,7 +7,7 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from "@angular/core";
-import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import {
   MatCalendar,
   MatCalendarCellCssClasses,
@@ -185,6 +185,11 @@ export class AttendanceCalendarComponent implements OnChanges {
       .map((e) => e.date)
       .filter((d): d is Date => !!d)
       .map((d) => moment(d));
+    if (dates.length === 0) {
+      this.minDate = undefined;
+      this.maxDate = undefined;
+      return;
+    }
     this.minDate = moment.min(dates).startOf("month").toDate();
     this.maxDate = moment.max(dates).endOf("month").toDate();
 

@@ -97,6 +97,6 @@ describe("ActivityCardComponent", () => {
     const event = Note.create(testDate);
     fixture.componentRef.setInput("event", wrap(event));
     fixture.detectChanges();
-    expect(component.dateValue()).toEqual(testDate);
+    expect(component.event().date).toEqual(testDate);
   });
 });

@@ -48,9 +48,9 @@ const activityAttendance = ActivityAttendance.create(new Date("2020-01-01"), [
     new Date("2020-01-04"),
   ),
 ]);
-activityAttendance.events.forEach(
-  (e) => ((e.entity as EventNote).subject = demoActivity.title),
-);
+activityAttendance.events.forEach((e) => {
+  (e.entity as EventNote).subject = demoActivity.title;
+});
 activityAttendance.periodTo = new Date("2020-01-31");
 activityAttendance.activity = demoActivity;
 

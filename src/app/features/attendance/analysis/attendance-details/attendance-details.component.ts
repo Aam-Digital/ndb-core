@@ -58,15 +58,17 @@ export class AttendanceDetailsComponent {
       viewComponent: "ReadonlyFunction",
       additional: (event: Entity) => {
         const items: AttendanceItem[] =
-          (event[this.entity.attendanceField] as AttendanceItem[]) ?? [];
+          this.entity.events.find((e) => e.entity === event)?.attendanceItems ??
+          [];
         if (this.forChild) {
           const item = items.find((i) => i.participant === this.forChild);
           return item?.status?.label || "-";
         } else {
-          return (
-            (calculateAverageAttendance(items).average * 100).toFixed(0) +
-              "%" || "N/A"
-          );
+          const avg = calculateAverageAttendance(items).average;
+          if (!Number.isFinite(avg)) {
+            return $localize`N/A`;
+          }
+          return `${(avg * 100).toFixed(0)}%`;
         }
       },
     },
