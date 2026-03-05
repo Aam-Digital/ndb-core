@@ -1,5 +1,6 @@
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceItem } from "./attendance-item";
+import { RecurringActivity } from "./recurring-activity";
 
 /**
  * Adapter wrapping an event entity with typed accessors for attendance and date fields.
@@ -14,6 +15,7 @@ export class EventWithAttendance {
     readonly entity: Entity,
     readonly attendanceField: string,
     readonly dateField: string,
+    readonly relatesToField: string = "relatesTo",
   ) {}
 
   get date(): Date | undefined {
@@ -26,6 +28,21 @@ export class EventWithAttendance {
 
   set attendanceItems(value: AttendanceItem[]) {
     this.entity[this.attendanceField] = value;
+  }
+
+  /**
+   * The ID of the linked {@link RecurringActivity}, if this event belongs to one.
+   *
+   * This will be generalized to any parent entity type in the future.
+   */
+  get activityId(): string | undefined {
+    const val = this.entity[this.relatesToField] as string | undefined;
+    return val?.startsWith(RecurringActivity.ENTITY_TYPE) ? val : undefined;
+  }
+
+  /** Whether this event belongs to a {@link RecurringActivity}. */
+  get isActivityEvent(): boolean {
+    return !!this.activityId;
   }
 
   getAttendanceForParticipant(

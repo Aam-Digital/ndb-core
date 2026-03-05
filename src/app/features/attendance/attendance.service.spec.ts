@@ -16,7 +16,6 @@ import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-typ
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
 import { AttendanceItem } from "./model/attendance-item";
-import { isActivityEvent } from "./model/activity-event";
 import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 import { EventWithAttendance } from "./model/event-with-attendance";
 
@@ -401,9 +400,7 @@ describe("AttendanceService", () => {
       events: EventWithAttendance[],
       activityId: string,
     ): EventWithAttendance | undefined {
-      return events.find(
-        (e) => isActivityEvent(e.entity) && e.entity.relatesTo === activityId,
-      );
+      return events.find((e) => e.activityId === activityId);
     }
 
     beforeEach(async () => {
@@ -450,8 +447,7 @@ describe("AttendanceService", () => {
       const result = await service.getAvailableEventsForRollCall(testDate);
 
       const eventsForActivity = result.allEvents.filter(
-        (e) =>
-          isActivityEvent(e.entity) && e.entity.relatesTo === activity.getId(),
+        (e) => e.activityId === activity.getId(),
       );
       expect(eventsForActivity).toHaveSize(1);
     });
@@ -518,14 +514,10 @@ describe("AttendanceService", () => {
         (e) => e.entity === oneTimeEvent,
       );
       const assignedIdx = result.allEvents.findIndex(
-        (e) =>
-          isActivityEvent(e.entity) &&
-          e.entity.relatesTo === assignedActivity.getId(),
+        (e) => e.activityId === assignedActivity.getId(),
       );
       const unassignedIdx = result.allEvents.findIndex(
-        (e) =>
-          isActivityEvent(e.entity) &&
-          e.entity.relatesTo === unassignedActivity.getId(),
+        (e) => e.activityId === unassignedActivity.getId(),
       );
 
       // one-time events first (score 1 for no relatesTo alone, or score 3 if also assigned)

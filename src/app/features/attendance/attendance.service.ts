@@ -1,7 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "#src/app/core/entity/model/entity";
-import { ActivityEvent, isActivityEvent } from "./model/activity-event";
 import moment from "moment";
 import { RecurringActivity } from "./model/recurring-activity";
 import { ActivityAttendance } from "./model/activity-attendance";
@@ -337,8 +336,7 @@ export class AttendanceService {
       ? allEvents
       : allEvents.filter(
           (e) =>
-            !isActivityEvent(e.entity) ||
-            assignedActivityIds.includes(e.entity.relatesTo),
+            !e.isActivityEvent || assignedActivityIds.includes(e.activityId),
         );
 
     return {
@@ -352,14 +350,10 @@ export class AttendanceService {
     existingEvents: EventNote[],
     currentUserId: string | undefined,
     date: Date,
-  ): Promise<(Entity | ActivityEvent)[]> {
+  ): Promise<Entity[]> {
     const newEvents = await Promise.all(
       activities.map(async (activity) => {
-        if (
-          existingEvents.find(
-            (e) => isActivityEvent(e) && e.relatesTo === activity.getId(),
-          )
-        ) {
+        if (existingEvents.find((e) => e.relatesTo === activity.getId())) {
           return undefined;
         }
         const event = await this.createEventForActivity(activity, date);
@@ -369,7 +363,7 @@ export class AttendanceService {
         return event.entity as EventNote;
       }),
     );
-    const events: (Entity | ActivityEvent)[] = existingEvents.concat(
+    const events: Entity[] = existingEvents.concat(
       newEvents.filter((e): e is EventNote => !!e),
     );
 
@@ -378,20 +372,22 @@ export class AttendanceService {
   }
 
   private sortEventsByRelevance(
-    events: (Entity | ActivityEvent)[],
+    events: Entity[],
     allActivities: RecurringActivity[],
   ): void {
-    const calculatePriority = (event: Entity | ActivityEvent): number => {
+    const calculatePriority = (event: Entity): number => {
       let score = 0;
 
-      const activityAssignedUsers = isActivityEvent(event)
-        ? allActivities.find((a) => a.getId() === event.relatesTo)?.assignedTo
+      const relatesTo = event["relatesTo"] as string | undefined;
+      const isActivity = event["relatesTo"]?.length > 0;
+      const activityAssignedUsers = isActivity
+        ? allActivities.find((a) => a.getId() === relatesTo)?.assignedTo
         : undefined;
       // use parent activity's assigned users and only fall back to event if necessary
       const assignedUsers: string[] =
         activityAssignedUsers ?? event["authors"] ?? [];
 
-      if (!isActivityEvent(event)) {
+      if (!isActivity) {
         // show one-time events first
         score += 1;
       }

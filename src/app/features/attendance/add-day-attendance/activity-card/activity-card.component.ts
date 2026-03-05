@@ -4,7 +4,6 @@ import {
   computed,
   input,
 } from "@angular/core";
-import { isActivityEvent } from "../../model/activity-event";
 import { AttendanceItem } from "../../model/attendance-item";
 import { EventWithAttendance } from "../../model/event-with-attendance";
 import { MatCardModule } from "@angular/material/card";
@@ -58,7 +57,7 @@ export class ActivityCardComponent {
     if (explicit !== undefined) {
       return explicit;
     }
-    return isActivityEvent(this.event().entity);
+    return this.event().isActivityEvent;
   });
 
   /** Resolved display value of the extra field, if configured. */

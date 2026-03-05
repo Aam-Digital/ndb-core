@@ -10,7 +10,6 @@ import {
   signal,
 } from "@angular/core";
 import { AttendanceService } from "../../attendance.service";
-import { ActivityEvent, isActivityEvent } from "../../model/activity-event";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { AlertDisplay } from "#src/app/core/alerts/alert-display";
 import { FormsModule, NgModel } from "@angular/forms";
@@ -182,10 +181,10 @@ export class RollCallSetupComponent {
     }
 
     const entity = event.entity;
-    if (entity.isNew && isActivityEvent(entity)) {
+    if (entity.isNew && event.activityId) {
       this.router.navigate(["/attendance/add-day", "new"], {
         queryParams: {
-          activity: (entity as ActivityEvent).relatesTo,
+          activity: event.activityId,
           date: this.formatDateForQuery(event.date),
         },
       });
