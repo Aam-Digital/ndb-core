@@ -70,7 +70,7 @@ export class EntityFormService {
       );
     } catch (err) {
       throw new Error(
-        `Could not create form config for ${fullField.id}: ${err}`,
+        `Could not create form config for ${fullField?.id}: ${err}`,
       );
     }
   }
