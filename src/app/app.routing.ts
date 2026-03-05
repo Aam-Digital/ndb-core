@@ -22,6 +22,7 @@ import { SupportComponent } from "./core/support/support/support.component";
 import { AuthGuard } from "./core/session/auth.guard";
 import { LoginComponent } from "./core/session/login/login.component";
 import { AdminModule } from "./core/admin/admin.module";
+import { AttendanceModule } from "./features/attendance/attendance.module";
 import { PublicFormModule } from "./features/public-form/public-form.module";
 
 /**
@@ -53,6 +54,11 @@ export const allRoutes: Routes = [
     canActivate: [AuthGuard],
     // add directly without lazy-loading so that Menu can detect permissions for child routes
     children: AdminModule.routes,
+  },
+  {
+    path: "attendance",
+    canActivate: [AuthGuard],
+    children: AttendanceModule.routes,
   },
   { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },

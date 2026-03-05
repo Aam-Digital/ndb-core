@@ -68,8 +68,8 @@
               "
             >
               All excused (out of
-              {{ selectedEvent.children.length }}
-              {selectedEvent.children.length, plural,
+              {{ selectedEventParticipantCount }}
+              {selectedEventParticipantCount, plural,
                 one {participant}
                 other {participants}
               }
@@ -80,8 +80,8 @@
             <div i18n>
               {{ selectedEventStats.average | percent: "1.0-0" }}
               attended (of
-              {{ selectedEvent.children.length }}
-              {selectedEvent.children.length, plural,
+              {{ selectedEventParticipantCount }}
+              {selectedEventParticipantCount, plural,
                 one {participant}
                 other {participants}
 

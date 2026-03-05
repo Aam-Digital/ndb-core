@@ -1,4 +1,7 @@
-import { AttendanceLogicalStatus } from "./attendance-status";
+import {
+  AttendanceLogicalStatus,
+  NullAttendanceStatusType,
+} from "./attendance-status";
 import { RecurringActivity } from "./recurring-activity";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { EventNote } from "./event-note";
@@ -7,6 +10,7 @@ import {
   WarningLevel,
 } from "#src/app/child-dev-project/warning-level";
 import { Entity } from "#src/app/core/entity/model/entity";
+import { EventWithAttendance } from "./event-with-attendance";
 
 /**
  * Aggregate information about all events for a {@link RecurringActivity} within a given time period.
@@ -20,8 +24,10 @@ export class ActivityAttendance extends Entity {
 
   /**
    * Create an instance with the given initial properties.
+   * @param from Start date of the period
+   * @param events Events within this period
    */
-  static create(from: Date, events: EventNote[] = []) {
+  static create(from: Date, events: EventWithAttendance[] = []) {
     const instance = new ActivityAttendance();
     instance.periodFrom = from;
     instance.events = events;
@@ -40,14 +46,14 @@ export class ActivityAttendance extends Entity {
   /**
    * Events within the period relating to the activity
    */
-  private _events: EventNote[] = [];
+  private _events: EventWithAttendance[] = [];
 
-  set events(value: EventNote[]) {
+  set events(value: EventWithAttendance[]) {
     this._events = value;
     this.recalculateStats();
   }
 
-  get events(): EventNote[] {
+  get events(): EventWithAttendance[] {
     return this._events;
   }
 
@@ -60,7 +66,15 @@ export class ActivityAttendance extends Entity {
    * List of (actual, recorded in at least one event) participants.
    */
   get participants(): string[] {
-    return Array.from(new Set(this.events.flatMap((event) => event.children)));
+    return Array.from(
+      new Set(
+        this.events.flatMap((event) =>
+          event.attendanceItems
+            .map((item) => item.participant)
+            .filter((p): p is string => !!p),
+        ),
+      ),
+    );
   }
 
   /**
@@ -93,8 +107,9 @@ export class ActivityAttendance extends Entity {
     countingType: AttendanceLogicalStatus,
   ) {
     return this.events.filter(
-      (eventNote) =>
-        eventNote.getAttendance(childId)?.status.countAs === countingType,
+      (event) =>
+        event.getAttendanceForParticipant(childId)?.status.countAs ===
+        countingType,
     ).length;
   }
 
@@ -116,7 +131,11 @@ export class ActivityAttendance extends Entity {
 
   private countWithStatus(matchingType: AttendanceLogicalStatus) {
     return this.events.reduce(
-      (total, event) => total + event.countWithStatus(matchingType),
+      (total, event) =>
+        total +
+        event.attendanceItems.filter(
+          (item) => item.status.countAs === matchingType,
+        ).length,
       0,
     );
   }
@@ -131,12 +150,13 @@ export class ActivityAttendance extends Entity {
   ) {
     const calculatedStats = this.events
       .map((event) => {
+        const items = event.attendanceItems;
         const eventStats = {
           matching: 0,
-          total: event.children.length,
+          total: items.length,
         };
-        for (const childId of event.children) {
-          const att = event.getAttendance(childId).status;
+        for (const item of items) {
+          const att = item.status;
           if (att.countAs === matchingType) {
             eventStats.matching++;
           } else if (att.countAs === AttendanceLogicalStatus.IGNORE) {
@@ -176,12 +196,20 @@ export class ActivityAttendance extends Entity {
    */
   countEventsWithUnknownStatus(forChildId?: string): number {
     return this.events
-      .filter((e) => !forChildId || e.children.includes(forChildId))
-      .reduce(
-        (count: number, e: EventNote) =>
-          e.hasUnknownAttendances(forChildId) ? count + 1 : count,
-        0,
-      );
+      .filter(
+        (e) =>
+          !forChildId ||
+          e.attendanceItems.some((item) => item.participant === forChildId),
+      )
+      .reduce((count: number, e: EventWithAttendance) => {
+        const items = forChildId
+          ? [e.getAttendanceForParticipant(forChildId)].filter(Boolean)
+          : e.attendanceItems;
+        const hasUnknown = items.some(
+          (item) => item.status.id === NullAttendanceStatusType.id,
+        );
+        return hasUnknown ? count + 1 : count;
+      }, 0);
   }
 
   recalculateStats() {
@@ -189,7 +217,10 @@ export class ActivityAttendance extends Entity {
     this.individualLogicalStatusCounts = new Map();
 
     for (const event of this.events) {
-      for (const participant of event.children) {
+      for (const item of event.attendanceItems) {
+        const participant = item.participant;
+        if (!participant) continue;
+
         let logicalCount = this.individualLogicalStatusCounts.get(participant);
         if (!logicalCount) {
           logicalCount = {};
@@ -201,10 +232,9 @@ export class ActivityAttendance extends Entity {
           this.individualStatusTypeCounts.set(participant, typeCount);
         }
 
-        const att = event.getAttendance(participant);
-        logicalCount[att.status.countAs] =
-          (logicalCount[att.status.countAs] ?? 0) + 1;
-        typeCount[att.status.id] = (typeCount[att.status.id] ?? 0) + 1;
+        const att = item.status;
+        logicalCount[att.countAs] = (logicalCount[att.countAs] ?? 0) + 1;
+        typeCount[att.id] = (typeCount[att.id] ?? 0) + 1;
       }
     }
   }
@@ -252,7 +282,7 @@ export function generateEventWithAttendance(
   )[],
   date = new Date(),
   activity?: RecurringActivity,
-): EventNote {
+): EventWithAttendance {
   const event = EventNote.create(date);
   for (const att of participating) {
     event.addChild(att[0]);
@@ -264,5 +294,5 @@ export function generateEventWithAttendance(
     }
   }
   event.relatesTo = activity?.getId();
-  return event;
+  return new EventWithAttendance(event, "childrenAttendance", "date");
 }

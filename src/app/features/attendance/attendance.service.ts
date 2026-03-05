@@ -1,5 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { Entity } from "#src/app/core/entity/model/entity";
 import moment from "moment";
 import { RecurringActivity } from "./model/recurring-activity";
 import { ActivityAttendance } from "./model/activity-attendance";
@@ -8,14 +9,49 @@ import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/
 import { EventNote } from "./model/event-note";
 import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
 import { AttendanceItem } from "./model/attendance-item";
+import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
+import { RollCallConfig } from "./model/roll-call-config";
+import { AttendanceDatatype } from "./model/attendance.datatype";
+import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
+import { EventWithAttendance } from "./model/event-with-attendance";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class AttendanceService {
-  private entityMapper = inject(EntityMapperService);
-  private dbIndexing = inject(DatabaseIndexingService);
-  private childrenService = inject(ChildrenService);
+  /**
+   * Wrap the given entity in an EventWithAttendance,
+   * which provides typed access to attendance and date fields.
+   *
+   * The entity must have at least one attendance field and one date field for this to work, otherwise an error is thrown.
+   */
+  static createEventFromEntity(entity: Entity): EventWithAttendance {
+    const attendanceField = AttendanceDatatype.detectFieldInEntity(entity);
+    const dateField = DateDatatype.detectFieldInEntity(entity);
+    if (!attendanceField || !dateField) {
+      Logging.debug("Entity missing attendance fields", entity.getId());
+      throw new Error(
+        `Entity does not have the required attendance and date fields for roll call.`,
+      );
+    }
+    return new EventWithAttendance(entity, attendanceField, dateField);
+  }
+
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly dbIndexing = inject(DatabaseIndexingService);
+  private readonly childrenService = inject(ChildrenService);
+  private readonly currentUser = inject(CurrentUserSubject);
+
+  /**
+   * Default configuration for the roll-call UI.
+   *
+   * Will become configurable in the future.
+   */
+  readonly rollCallConfig: RollCallConfig = {
+    filterConfig: [{ id: "category" }, { id: "schools" }],
+    extraField: "category",
+  };
 
   constructor() {
     this.createIndices();
@@ -185,23 +221,24 @@ export class AttendanceService {
   ): Promise<ActivityAttendance[]> {
     const periods = new Map<number, ActivityAttendance>();
 
-    function getOrCreateAttendancePeriod(event) {
+    const events = await this.getEventsForActivity(activity.getId(), sinceDate);
+
+    const getOrCreateAttendancePeriod = (event: EventWithAttendance) => {
       const month = new Date(event.date.getFullYear(), event.date.getMonth());
       let attMonth = periods.get(month.getTime());
       if (!attMonth) {
-        attMonth = ActivityAttendance.create(month);
+        attMonth = ActivityAttendance.create(month, []);
         attMonth.periodTo = moment(month).endOf("month").toDate();
         attMonth.activity = activity;
         periods.set(month.getTime(), attMonth);
       }
       return attMonth;
-    }
-
-    const events = await this.getEventsForActivity(activity.getId(), sinceDate);
+    };
 
     for (const event of events) {
-      const record = getOrCreateAttendancePeriod(event);
-      record.events.push(event);
+      const wrapped = AttendanceService.createEventFromEntity(event);
+      const record = getOrCreateAttendancePeriod(wrapped);
+      record.events.push(wrapped);
     }
 
     return Array.from(periods.values()).sort(
@@ -218,7 +255,10 @@ export class AttendanceService {
 
     const records = [];
     for (const [activityId, activityEvents] of groupedEvents) {
-      const activityRecord = ActivityAttendance.create(from, activityEvents);
+      const activityRecord = ActivityAttendance.create(
+        from,
+        activityEvents.map((e) => AttendanceService.createEventFromEntity(e)),
+      );
       activityRecord.periodTo = until;
       if (activityId) {
         activityRecord.activity = await this.entityMapper
@@ -259,10 +299,118 @@ export class AttendanceService {
     return activities;
   }
 
-  async createEventForActivity(
-    activity: RecurringActivity,
+  /**
+   * Load all events available for a roll call on the given date,
+   * merging existing events with new (unsaved) events generated from recurring activities.
+   *
+   * Returns two lists: `events` contains only events relevant to the current user
+   * (assigned activities), while `allEvents` contains everything.
+   *
+   * @param date The date for which to load events.
+   */
+  async getAvailableEventsForRollCall(date: Date): Promise<{
+    events: EventWithAttendance[];
+    allEvents: EventWithAttendance[];
+  }> {
+    const currentUserId = this.currentUser.value?.getId();
+    const existingEvents = await this.getEventsWithUpdatedParticipants(date);
+
+    const allActivities = (
+      await this.entityMapper.loadType(RecurringActivity)
+    ).filter((a) => a.isActive);
+
+    const allEvents: EventWithAttendance[] = (
+      await this.buildEventsFromActivities(
+        allActivities,
+        existingEvents,
+        currentUserId,
+        date,
+      )
+    ).map((e) => AttendanceService.createEventFromEntity(e));
+
+    let assignedActivityIds = allActivities
+      .filter((a) => a.isAssignedTo(currentUserId))
+      .map((a) => a.getId());
+
+    const filteredEvents = !currentUserId
+      ? allEvents
+      : allEvents.filter(
+          (e) =>
+            !e.isActivityEvent || assignedActivityIds.includes(e.activityId),
+        );
+
+    return {
+      events: filteredEvents,
+      allEvents: allEvents,
+    };
+  }
+
+  private async buildEventsFromActivities(
+    activities: RecurringActivity[],
+    existingEvents: EventNote[],
+    currentUserId: string | undefined,
     date: Date,
-  ): Promise<EventNote> {
+  ): Promise<Entity[]> {
+    const newEvents = await Promise.all(
+      activities.map(async (activity) => {
+        if (existingEvents.find((e) => e.relatesTo === activity.getId())) {
+          return undefined;
+        }
+        const event = await this.createEventForActivity(activity, date);
+        if (currentUserId) {
+          (event.entity as EventNote).authors = [currentUserId];
+        }
+        return event.entity as EventNote;
+      }),
+    );
+    const events: Entity[] = existingEvents.concat(
+      newEvents.filter((e): e is EventNote => !!e),
+    );
+
+    this.sortEventsByRelevance(events, activities);
+    return events;
+  }
+
+  private sortEventsByRelevance(
+    events: Entity[],
+    allActivities: RecurringActivity[],
+  ): void {
+    const calculatePriority = (event: Entity): number => {
+      let score = 0;
+
+      const relatesTo = event["relatesTo"] as string | undefined;
+      const isActivity = event["relatesTo"]?.length > 0;
+      const activityAssignedUsers = isActivity
+        ? allActivities.find((a) => a.getId() === relatesTo)?.assignedTo
+        : undefined;
+      // use parent activity's assigned users and only fall back to event if necessary
+      const assignedUsers: string[] =
+        activityAssignedUsers ?? event["authors"] ?? [];
+
+      if (!isActivity) {
+        // show one-time events first
+        score += 1;
+      }
+
+      const currentUserId = this.currentUser.value?.getId();
+      if (currentUserId && assignedUsers.includes(currentUserId)) {
+        score += 2;
+      }
+
+      return score;
+    };
+
+    events.sort((a, b) => calculatePriority(b) - calculatePriority(a));
+  }
+
+  async createEventForActivity(
+    activity: RecurringActivity | string,
+    date: Date,
+  ): Promise<EventWithAttendance> {
+    if (typeof activity === "string") {
+      activity = await this.entityMapper.load(RecurringActivity, activity);
+    }
+
     const instance = new EventNote();
     instance.date = date;
     instance.subject = activity.title;
@@ -277,7 +425,12 @@ export class AttendanceService {
     instance.schools = activity.linkedGroups;
     instance.relatesTo = activity.getId();
     instance.category = activity.type;
-    return instance;
+
+    if (this.currentUser.value) {
+      instance.authors = [this.currentUser.value.getId()];
+    }
+
+    return AttendanceService.createEventFromEntity(instance);
   }
 
   private async getActiveParticipantsOfActivity(

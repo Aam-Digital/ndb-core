@@ -17,8 +17,9 @@
 
 import { $localize } from "@angular/localize/init"; // import needed to make this file work in e2e test fixtures also
 import { EntitySchemaField } from "../schema/entity-schema-field";
-import { Entity } from "../model/entity";
+import { Entity, EntityConstructor } from "../model/entity";
 import { ColumnMapping } from "../../import/column-mapping";
+import { asArray } from "../../../utils/asArray";
 
 /**
  * Extend this class to define new data types (i.e. for properties of entities)
@@ -39,6 +40,38 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
    * (e.g. `@DatabaseField() myField: string` is triggering the EntitySchemaDatatype with `name` "string".
    */
   static dataType: string = "";
+
+  /**
+   * Detect the first field of the given datatype(s) in an entity's schema.
+   *
+   * Scans the schema for a field whose `dataType` matches one of the provided strings
+   * and returns its property name.
+   *
+   * Subclasses typically override this without the extra `dataTypes` parameter,
+   * forwarding their own relevant datatype identifiers.
+   *
+   * @param entityOrType An entity instance or entity constructor to inspect.
+   * @param dataTypes One or more datatype identifiers to match against.
+   * @returns The field name of the first matching field, or `undefined` if none is found.
+   */
+  static detectFieldInEntity(
+    entityOrType: Entity | EntityConstructor,
+    dataTypes: string | string[],
+  ): string | undefined {
+    dataTypes = asArray(dataTypes);
+
+    const schema =
+      "schema" in entityOrType
+        ? (entityOrType as EntityConstructor).schema
+        : entityOrType.getConstructor().schema;
+
+    for (const [fieldId, field] of schema.entries()) {
+      if (dataTypes.includes(field.dataType)) {
+        return fieldId;
+      }
+    }
+    return undefined;
+  }
 
   /**
    * Whether this datatype allows multiple values to be mapped to the same entity field

@@ -1,12 +1,12 @@
 <h1 mat-dialog-title>
   <app-dialog-close mat-dialog-close></app-dialog-close>
-  {{ entity?.activity?.title }}:
-  {{ entity.periodFrom | customDate: "shortDate" }} -
-  {{ entity.periodTo | customDate: "shortDate" }}
+  {{ entity()?.activity?.title }}:
+  {{ entity().periodFrom | customDate: "shortDate" }} -
+  {{ entity().periodTo | customDate: "shortDate" }}
 </h1>
 
 <div mat-dialog-content>
-  <div class="summary w-{{ entity.getWarningLevel() }}">
+  <div class="summary w-{{ entity().getWarningLevel() }}">
     <span
       i18n="
         Attendance|Attendance of a child (in percent) or the average of the
@@ -15,9 +15,9 @@
       >Attendance:</span
     >
     @let pct =
-      forChild
-        ? entity?.getAttendancePercentage(forChild)
-        : entity?.getAttendancePercentageAverage();
+      forChild()
+        ? entity()?.getAttendancePercentage(forChild())
+        : entity()?.getAttendancePercentageAverage();
     @if (pct !== undefined) {
       {{ pct | percent: "1.0-0" }}
     } @else {
@@ -25,7 +25,7 @@
     }
   </div>
 
-  @if (forChild) {
+  @if (forChild()) {
     <div class="flex-row flex-wrap gap-regular">
       <mat-form-field>
         <mat-label i18n="days present|How many days a child was present"
@@ -34,7 +34,7 @@
         <input
           matInput
           type="number"
-          [value]="entity.countEventsPresent(forChild)"
+          [value]="entity().countEventsPresent(forChild())"
           readonly
         />
       </mat-form-field>
@@ -45,7 +45,7 @@
         <input
           matInput
           type="number"
-          [value]="entity.countEventsAbsent(forChild)"
+          [value]="entity().countEventsAbsent(forChild())"
           readonly
         />
       </mat-form-field>
@@ -60,7 +60,7 @@
         <input
           matInput
           type="number"
-          [value]="entity.countEventsWithUnknownStatus(forChild)"
+          [value]="entity().countEventsWithUnknownStatus(forChild())"
           readonly
         />
       </mat-form-field>
@@ -74,7 +74,7 @@
         <input
           matInput
           type="number"
-          [value]="entity.countTotalPresent()"
+          [value]="entity().countTotalPresent()"
           readonly
         />
       </mat-form-field>
@@ -85,7 +85,7 @@
         <input
           matInput
           type="number"
-          [value]="entity.countTotalAbsent()"
+          [value]="entity().countTotalAbsent()"
           readonly
         />
       </mat-form-field>
@@ -100,26 +100,28 @@
         <input
           matInput
           type="number"
-          [value]="entity.countEventsWithUnknownStatus()"
+          [value]="entity().countEventsWithUnknownStatus()"
           readonly
         />
       </mat-form-field>
     </div>
   }
 
-  <app-entities-table
-    [entityType]="EventNote"
-    [records]="entity.events"
-    [customColumns]="eventsColumns"
-    clickMode="none"
-    (entityClick)="showEventDetails($event)"
-    [editable]="false"
-  >
-  </app-entities-table>
+  @if (!!eventEntityType()) {
+    <app-entities-table
+      [entityType]="eventEntityType()"
+      [records]="eventEntities()"
+      [customColumns]="eventsColumns"
+      clickMode="none"
+      (entityClick)="showEventDetails($event)"
+      [editable]="false"
+    >
+    </app-entities-table>
 
-  <app-attendance-calendar
-    [records]="entity.events"
-    [highlightForChild]="forChild"
-    [activity]="entity.activity"
-  ></app-attendance-calendar>
+    <app-attendance-calendar
+      [records]="entity().events"
+      [highlightForChild]="forChild()"
+      [activity]="entity().activity"
+    ></app-attendance-calendar>
+  }
 </div>
