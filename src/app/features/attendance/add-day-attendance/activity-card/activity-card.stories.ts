@@ -6,6 +6,7 @@ import { RecurringActivity } from "../../model/recurring-activity";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { AttendanceItem } from "../../model/attendance-item";
+import { AttendanceService } from "../../attendance.service";
 
 export default {
   title: "Features/Attendance/Components/ActivityCard",
@@ -53,18 +54,18 @@ demoChildren.forEach((c) => {
 
 export const OneTimeEvent: StoryObj<ActivityCardComponent> = {
   args: {
-    event: simpleEvent,
+    event: AttendanceService.createEventFromEntity(simpleEvent),
   },
 };
 
 export const OneTimeEventComplex: StoryObj<ActivityCardComponent> = {
   args: {
-    event: longEvent,
+    event: AttendanceService.createEventFromEntity(longEvent),
   },
 };
 
 export const RecurringEvent: StoryObj<ActivityCardComponent> = {
   args: {
-    event: activityEvent,
+    event: AttendanceService.createEventFromEntity(activityEvent),
   },
 };
