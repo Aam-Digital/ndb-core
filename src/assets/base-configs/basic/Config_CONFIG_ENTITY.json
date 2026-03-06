@@ -236,12 +236,6 @@
         ]
       }
     },
-    "view:attendance": {
-      "component": "AttendanceManager"
-    },
-    "view:attendance/add-day": {
-      "component": "AddDayAttendance"
-    },
     "entity:School": {
       "toStringAttributes": [
         "name"

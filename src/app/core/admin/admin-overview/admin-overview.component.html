@@ -210,6 +210,14 @@
         >
       </mat-list-item>
       <mat-list-item
+        [routerLink]="['/admin/ai-agent']"
+        matTooltip="Download all configuration documents as a single JSON file to use as context for an AI agent session."
+        i18n-matTooltip
+        matTooltipPosition="before"
+      >
+        <span matListItemTitle i18n>Configure using AI Agents</span>
+      </mat-list-item>
+      <mat-list-item
         (click)="debugDatabase()"
         button
         matTooltip="Make the database service available in the browser's developer console for advanced administrative tasks."

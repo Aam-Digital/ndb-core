@@ -1,6 +1,7 @@
 import { testDatatype } from "../../entity/schema/entity-schema.service.spec";
 import { DateDatatype } from "./date.datatype";
 import { Logging } from "../../logging/logging.service";
+import { Entity } from "../../entity/model/entity";
 
 describe("Schema data type: date", () => {
   testDatatype(
@@ -53,5 +54,38 @@ describe("Schema data type: date", () => {
       "DD.MM.YYYY HH:mm",
     );
     expect(dateTime).toEqual(new Date(2025, 0, 1, 15, 6));
+  });
+
+  it("should detect date field from entity constructor", () => {
+    class TestEntity extends Entity {}
+    (TestEntity as any).schema = new Map([
+      ["name", { dataType: "string" }],
+      ["eventDate", { dataType: DateDatatype.dataType }],
+      ["birthDate", { dataType: "date-only" }],
+    ]);
+
+    expect(DateDatatype.detectFieldInEntity(TestEntity)).toBe("eventDate");
+  });
+
+  it("should detect date field from entity instance", () => {
+    class TestEntity extends Entity {}
+    (TestEntity as any).schema = new Map([
+      ["name", { dataType: "string" }],
+      ["birthDate", { dataType: "date-only" }],
+    ]);
+
+    const entity = new TestEntity();
+
+    expect(DateDatatype.detectFieldInEntity(entity)).toBe("birthDate");
+  });
+
+  it("should return undefined when no date field exists", () => {
+    class TestEntity extends Entity {}
+    (TestEntity as any).schema = new Map([
+      ["name", { dataType: "string" }],
+      ["other", { dataType: "number" }],
+    ]);
+
+    expect(DateDatatype.detectFieldInEntity(TestEntity)).toBeUndefined();
   });
 });
