@@ -11,8 +11,15 @@ export const attendanceComponents: ComponentTuple[] = [
   [
     "AddDayAttendance",
     () =>
-      import("./add-day-attendance/add-day-attendance.component").then(
-        (c) => c.AddDayAttendanceComponent,
+      import("./add-day-attendance/roll-call-setup/roll-call-setup.component").then(
+        (c) => c.RollCallSetupComponent,
+      ),
+  ],
+  [
+    "RollCall",
+    () =>
+      import("./add-day-attendance/roll-call/roll-call.component").then(
+        (c) => c.RollCallComponent,
       ),
   ],
   [

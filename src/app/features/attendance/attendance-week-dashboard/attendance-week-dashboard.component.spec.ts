@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { EventNote } from "../model/event-note";
+import { EventWithAttendance } from "../model/event-with-attendance";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { ActivityAttendance } from "../model/activity-attendance";
@@ -63,7 +64,12 @@ describe("AttendanceWeekDashboardComponent", () => {
     });
     const activity = new RecurringActivity();
     activity.participants = e1.children;
-    const attendance = ActivityAttendance.create(new Date(), [e1, e2]);
+    const wrap = (e: EventNote) =>
+      new EventWithAttendance(e, "childrenAttendance", "date");
+    const attendance = ActivityAttendance.create(new Date(), [
+      wrap(e1),
+      wrap(e2),
+    ]);
     attendance.activity = activity;
     mockAttendanceService.getAllActivityAttendancesForPeriod.and.resolveTo([
       attendance,
@@ -74,7 +80,7 @@ describe("AttendanceWeekDashboardComponent", () => {
     expect(component.entries).toEqual([
       [
         {
-          childId: absentChild.getId(),
+          participantId: absentChild.getId(),
           activity: activity,
           attendanceDays: [
             // sundays are excluded
@@ -104,7 +110,12 @@ describe("AttendanceWeekDashboardComponent", () => {
     });
     const activity = new RecurringActivity();
     delete activity.participants; // no participants set directly on RecurringActivity
-    const attendance = ActivityAttendance.create(new Date(), [e1, e2]);
+    const wrap = (e: EventNote) =>
+      new EventWithAttendance(e, "childrenAttendance", "date");
+    const attendance = ActivityAttendance.create(new Date(), [
+      wrap(e1),
+      wrap(e2),
+    ]);
     attendance.activity = activity;
     mockAttendanceService.getAllActivityAttendancesForPeriod.and.resolveTo([
       attendance,
@@ -115,7 +126,7 @@ describe("AttendanceWeekDashboardComponent", () => {
     expect(component.entries).toEqual([
       [
         {
-          childId: absentChild.getId(),
+          participantId: absentChild.getId(),
           activity: activity,
           attendanceDays: [
             // sundays are excluded

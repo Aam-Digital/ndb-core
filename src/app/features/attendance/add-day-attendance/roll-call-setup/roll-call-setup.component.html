@@ -1,3 +1,12 @@
+<app-view-title
+  i18n="
+    Record Attendance|Title when recording the attendance at a particular stage
+    (e.g. selecting the event, recording it)
+  "
+>
+  Record Attendance
+</app-view-title>
+
 <div class="top-control">
   <mat-form-field>
     <mat-label
@@ -10,10 +19,10 @@
     <input
       matInput
       #dateField="ngModel"
-      [(ngModel)]="date"
+      [ngModel]="date()"
+      (ngModelChange)="date.set($event)"
       required
       [matDatepicker]="datePicker"
-      (dateChange)="setNewDate($event.value)"
     />
     <mat-datepicker-toggle
       matIconSuffix
@@ -25,29 +34,29 @@
     <mat-datepicker #datePicker></mat-datepicker>
   </mat-form-field>
 
-  @if (existingEvents.length >= FILTER_VISIBLE_THRESHOLD) {
+  @if (activeEvents().length >= FILTER_VISIBLE_THRESHOLD) {
     <app-filter
       class="flex-row flex-wrap gap-small"
-      [filterConfig]="filterConfig"
-      [entityType]="entityType"
-      [entities]="existingEvents"
+      [filterConfig]="filterConfig()"
+      [entityType]="entityType()"
+      [entities]="entityList()"
       [onlyShowRelevantFilterOptions]="true"
       (filterObjChange)="filterExistingEvents($event)"
     ></app-filter>
   }
 </div>
 
-@if (isLoading) {
+@if (eventsResource.isLoading()) {
   <div class="process-spinner">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 } @else {
   <div class="cards-list">
-    @for (event of filteredExistingEvents; track event) {
+    @for (event of filteredEvents(); track event.entity.getId()) {
       <app-activity-card
         class="pointer"
         [event]="event"
-        [recurring]="event.isNewFromActivity"
+        [extraField]="extraField()"
         (click)="selectEvent(event)"
       >
       </app-activity-card>
@@ -58,13 +67,13 @@
 <div class="padding-top-regular gap-regular flex-row">
   <button
     mat-stroked-button
-    (click)="showingAll ? showLess() : showMore()"
+    (click)="showingAll() ? showLess() : showMore()"
     angulartics2On="click"
     angularticsCategory="Record Attendance"
     angularticsAction="show_more"
     class="padding-right-small"
   >
-    @if (showingAll) {
+    @if (showingAll()) {
       <span i18n="Show less entries of a list"> Show less </span>
     } @else {
       <span i18n="Show more entries of a list"> Show more </span>

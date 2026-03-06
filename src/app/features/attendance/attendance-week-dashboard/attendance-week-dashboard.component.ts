@@ -11,11 +11,10 @@ import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynami
 import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
 import { AttendanceDayBlockComponent } from "./attendance-day-block/attendance-day-block.component";
 import { DashboardWidget } from "#src/app/core/dashboard/dashboard-widget/dashboard-widget";
-import { EventNote } from "../model/event-note";
 import { DashboardListWidgetComponent } from "#src/app/core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 
 interface AttendanceWeekRow {
-  childId: string;
+  participantId: string;
   activity: RecurringActivity;
   attendanceDays: (AttendanceItem | undefined)[];
 }
@@ -37,10 +36,6 @@ export class AttendanceWeekDashboardComponent
   implements OnInit
 {
   private attendanceService = inject(AttendanceService);
-
-  static override getRequiredEntities() {
-    return EventNote.ENTITY_TYPE;
-  }
 
   /**
    * The offset from the default time period, which is the last complete week.
@@ -109,12 +104,14 @@ export class AttendanceWeekDashboardComponent
 
       rows
         .filter((r) => this.filterLowAttendance(r))
-        .forEach((r) => lowAttendanceCases.add(r.childId));
+        .forEach((r) => {
+          lowAttendanceCases.add(r.participantId);
+        });
     }
 
-    const groups = groupBy(records, "childId");
+    const groups = groupBy(records, "participantId");
     this.entries = groups
-      .filter(([childId]) => lowAttendanceCases.has(childId))
+      .filter(([participantId]) => lowAttendanceCases.has(participantId))
       .map(([_, attendance]) => attendance);
   }
 
@@ -135,7 +132,7 @@ export class AttendanceWeekDashboardComponent
       while (day.isSameOrBefore(to, "day")) {
         const event = att.events.find((e) => day.isSame(e.date, "day"));
         if (event) {
-          eventAttendances.push(event.getAttendance(participant));
+          eventAttendances.push(event.getAttendanceForParticipant(participant));
         } else {
           // put a "placeholder" into the array for the current day
           eventAttendances.push(undefined);
@@ -144,7 +141,7 @@ export class AttendanceWeekDashboardComponent
       }
 
       results.push({
-        childId: participant,
+        participantId: participant,
         activity: att.activity,
         attendanceDays: eventAttendances,
       });

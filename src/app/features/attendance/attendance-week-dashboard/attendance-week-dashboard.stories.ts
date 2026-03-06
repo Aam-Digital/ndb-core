@@ -3,7 +3,6 @@ import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.co
 import { RecurringActivity } from "../model/recurring-activity";
 import { generateEventWithAttendance } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
 import moment from "moment";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
@@ -19,7 +18,7 @@ act1.participants.push(child2.getId());
 const act2 = RecurringActivity.create("Other Activity");
 act1.participants.push(child1.getId());
 
-const events: Note[] = [
+const events = [
   generateEventWithAttendance(
     [
       [child1.getId(), AttendanceLogicalStatus.PRESENT],
@@ -58,14 +57,14 @@ export default {
             act2,
             child1,
             child2,
-            ...events,
-            act1,
+            ...events.map((e) => e.entity),
           ]),
         ),
         {
           provide: DatabaseIndexingService,
           useValue: {
-            queryIndexDocsRange: () => Promise.resolve(events),
+            queryIndexDocsRange: () =>
+              Promise.resolve(events.map((e) => e.entity)),
             createIndex: () => Promise.resolve(),
             queryIndexDocs: () => Promise.resolve([]),
           },

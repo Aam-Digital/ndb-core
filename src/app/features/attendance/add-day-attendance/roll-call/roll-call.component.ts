@@ -1,24 +1,30 @@
 import {
+  ChangeDetectionStrategy,
   Component,
-  EventEmitter,
+  computed,
+  effect,
   inject,
   Injectable,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
+  input,
+  resource,
+  ResourceRef,
+  signal,
+  untracked,
 } from "@angular/core";
+import { Location } from "@angular/common";
 import { animate, style, transition, trigger } from "@angular/animations";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
   AttendanceStatusType,
 } from "../../model/attendance-status";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { AttendanceItem } from "../../model/attendance-item";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { sortByAttribute } from "#src/app/utils/utils";
+import { AttendanceDatatype } from "../../model/attendance.datatype";
+import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
+import { EventWithAttendance } from "../../model/event-with-attendance";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatButtonModule } from "@angular/material/button";
@@ -34,6 +40,15 @@ import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configura
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
+import { ActivatedRoute, Router } from "@angular/router";
+import { AttendanceService } from "../../attendance.service";
+import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
+import {
+  ConfirmationDialogButton,
+  OkButton,
+} from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
+import { RouteTarget } from "#src/app/route-target";
 
 // Only allow horizontal swiping
 @Injectable()
@@ -47,11 +62,14 @@ class HorizontalHammerConfig extends HammerGestureConfig {
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
+ * Can be used as a standalone routed view (via route param :id) or embedded with eventEntity input.
  */
+@RouteTarget("RollCall")
 @Component({
   selector: "app-roll-call",
   templateUrl: "./roll-call.component.html",
   styleUrls: ["./roll-call.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger("completeRollCall", [
       transition("void => *", [
@@ -68,6 +86,7 @@ class HorizontalHammerConfig extends HammerGestureConfig {
     RollCallTabComponent,
     HammerModule,
     MatTooltipModule,
+    ViewTitleComponent,
   ],
   providers: [
     {
@@ -76,81 +95,179 @@ class HorizontalHammerConfig extends HammerGestureConfig {
     },
   ],
 })
-export class RollCallComponent implements OnChanges {
-  private enumService = inject(ConfigurableEnumService);
-  private entityMapper = inject(EntityMapperService);
-  private formDialog = inject(FormDialogService);
-  private confirmationDialog = inject(ConfirmationDialogService);
+export class RollCallComponent {
+  private readonly enumService = inject(ConfigurableEnumService);
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly formDialog = inject(FormDialogService);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
+  private readonly router = inject(Router);
+  private readonly location = inject(Location);
+  private readonly route = inject(ActivatedRoute);
+  private readonly attendanceService = inject(AttendanceService);
+  private readonly unsavedChanges = inject(UnsavedChangesService);
+
+  /**
+   * Entity ID from route param, mapped by RoutedViewComponent.
+   * Supports real entity IDs, or "new" for creating a new event.
+   */
+  readonly id = input<string>();
 
   /**
    * The event to be displayed and edited.
+   * Can be set directly when used as an embedded component, or loaded from DB via id.
    */
-  @Input() eventEntity: Note;
+  readonly eventEntity = input<EventWithAttendance>();
 
   /**
    * (optional) property name of the participant entities by which they are sorted
    */
-  @Input() sortParticipantsBy?: string;
+  readonly sortParticipantsBy = input<string>();
 
   /**
-   * Emitted when the roll call is finished and results can be saved.
+   * Loads the event entity from the provided input or by ID.
+   * Unifies the two input paths (direct entity vs route-based loading).
    */
-  @Output() complete = new EventEmitter<Note>();
+  readonly eventResource: ResourceRef<EventWithAttendance | undefined> =
+    resource({
+      params: () => ({ entity: this.eventEntity(), id: this.id() }),
+      loader: async ({ params: { entity, id } }) => {
+        if (entity) return entity;
+        if (!id) return undefined;
+        if (id === "new") return this.createEventFromRoute();
+        return this.loadExistingEvent(id);
+      },
+    });
 
-  /**
-   * Emitted when the user wants to dismiss & leave the roll call view.
-   */
-  @Output() exit = new EventEmitter();
+  /** The resolved event, wrapped with typed attendance and date accessors. */
+  readonly event = computed<EventWithAttendance | undefined>(() => {
+    return this.eventResource.value();
+  });
 
-  /**
-   * The index, child and attendance that is currently being processed
-   */
-  currentIndex = 0;
-  currentChild: Entity;
-  currentAttendance: AttendanceItem;
-  /**
-   * whether any changes have been made to the model
-   */
-  isDirty: boolean = false;
+  /** The index of the participant currently being processed */
+  readonly currentIndex = signal(0);
 
-  /** lookup object for attendance items by participant ID, built during loadParticipants */
-  attendanceByParticipant: Record<string, AttendanceItem> = {};
+  /** The participant currently being processed */
+  readonly currentParticipant = computed(() => {
+    const p = this.participants();
+    const i = this.currentIndex();
+    return i < p.length ? p[i] : undefined;
+  });
 
-  /** options available for selecting an attendance status */
-  availableStatus: AttendanceStatusType[];
+  /** The attendance item of the current participant */
+  readonly currentAttendance = computed(() => {
+    const participant = this.currentParticipant();
+    return participant
+      ? this.attendanceByParticipant()[participant.getId()]
+      : undefined;
+  });
 
-  children: Entity[] = [];
-  inactiveParticipants: Entity[];
+  /** Whether any changes have been made to the model */
+  readonly isDirty = signal(false);
 
-  async ngOnChanges(changes: SimpleChanges) {
-    if (changes.eventEntity) {
-      this.loadAttendanceStatusTypes();
-      await this.loadParticipants();
-      this.setInitialIndex();
-    }
-    if (changes.sortParticipantsBy) {
-      this.sortParticipants();
-    }
+  /** Lookup object for attendance items by participant ID, built during loadParticipants */
+  readonly attendanceByParticipant = signal<Record<string, AttendanceItem>>({});
+
+  /** Options available for selecting an attendance status */
+  readonly availableStatus = signal<AttendanceStatusType[]>([]);
+
+  readonly participants = signal<Entity[]>([]);
+  readonly inactiveParticipants = signal<Entity[]>([]);
+
+  readonly isFirst = computed(() => this.currentIndex() === 0);
+  readonly isLast = computed(
+    () => this.currentIndex() === this.participants().length - 1,
+  );
+  readonly isFinished = computed(
+    () => this.currentIndex() >= this.participants().length,
+  );
+
+  constructor() {
+    // Initialize participants when event is loaded/resolved
+    effect(() => {
+      const event = this.event();
+      if (event) {
+        untracked(() => this.initializeForEvent());
+      }
+    });
+
+    // React to sort configuration changes
+    effect(() => {
+      this.sortParticipantsBy();
+      untracked(() => this.sortParticipants());
+    });
   }
 
   /**
-   * Set the index of the first child that expects user input.
+   * Initialize participant data for the current event entity.
+   */
+  private async initializeForEvent() {
+    this.loadAttendanceStatusTypes();
+    await this.loadParticipants();
+    this.setInitialIndex();
+  }
+
+  /**
+   * Create or load a new event based on route query params.
+   */
+  private async createEventFromRoute(): Promise<
+    EventWithAttendance | undefined
+  > {
+    const activityId = this.route.snapshot.queryParamMap.get("activity");
+    const dateStr = this.route.snapshot.queryParamMap.get("date");
+    const date = dateStr ? this.parseDateOnly(dateStr) : new Date();
+
+    if (activityId) {
+      return this.attendanceService.createEventForActivity(activityId, date);
+    }
+
+    // in the future we may implement a UI to create a one-time event on the fly
+    return undefined;
+  }
+
+  /**
+   * Parse a "YYYY-MM-DD" date string as a local date.
+   * (new Date("YYYY-MM-DD") would parse as UTC midnight, shifting the date for negative offsets.)
+   */
+  private parseDateOnly(value: string): Date {
+    const [year, month, day] = value.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  private async loadExistingEvent(
+    id: string,
+  ): Promise<EventWithAttendance | undefined> {
+    let event: EventWithAttendance | undefined;
+    try {
+      const entityType = Entity.extractTypeFromId(id);
+      const entity = await this.entityMapper.load(entityType, id);
+      event = AttendanceService.createEventFromEntity(entity);
+    } catch (e) {
+      Logging.warn("Could not load event " + id, e);
+      void this.router.navigate(["/404"]);
+      return undefined;
+    }
+    return event;
+  }
+
+  /**
+   * Set the index of the first participant that expects user input.
    * This is the first entry of the list, if the user has never recorded attendance
-   * for this event. Else it is the first child without any attendance information
-   * (i.e. got skipped or the user left at this child)
-   * @private
+   * for this event. Else it is the first participant without any attendance information
+   * (i.e. got skipped or the user left at this participant)
    */
   private setInitialIndex() {
+    const participantsList = this.participants();
+    const attendanceMap = this.attendanceByParticipant();
     let index = 0;
-    for (const entry of this.children) {
-      if (!this.attendanceByParticipant[entry.getId()]?.status?.id) {
+    for (const entry of participantsList) {
+      if (!attendanceMap[entry.getId()]?.status?.id) {
         break;
       }
       index += 1;
     }
 
     // do not jump to end - if all participants are recorded, start with first instead
-    if (index >= this.children.length) {
+    if (index >= participantsList.length) {
       index = 0;
     }
 
@@ -158,135 +275,157 @@ export class RollCallComponent implements OnChanges {
   }
 
   private loadAttendanceStatusTypes() {
-    this.availableStatus = this.enumService.getEnumValues<AttendanceStatusType>(
-      ATTENDANCE_STATUS_CONFIG_ID,
+    this.availableStatus.set(
+      this.enumService.getEnumValues<AttendanceStatusType>(
+        ATTENDANCE_STATUS_CONFIG_ID,
+      ),
     );
   }
 
   private async loadParticipants() {
-    this.children = [];
-    this.inactiveParticipants = [];
-    this.attendanceByParticipant = {};
+    if (!this.event()) return;
+    const attendanceItems: AttendanceItem[] = this.event().attendanceItems;
 
-    // ensure every child in the participants list has an attendance entry
-    for (const childId of this.eventEntity.children) {
-      if (
-        !this.eventEntity.childrenAttendance.find(
-          (a) => a.participant === childId,
-        )
-      ) {
-        const item = new AttendanceItem(undefined, "", childId);
-        this.eventEntity.childrenAttendance.push(item);
-      }
-    }
+    const active: Entity[] = [];
+    const inactive: Entity[] = [];
+    const attendanceMap: Record<string, AttendanceItem> = {};
+    const validAttendanceItems: AttendanceItem[] = [];
 
-    for (const attendanceItem of this.eventEntity.childrenAttendance) {
-      const childId = attendanceItem.participant;
-      let child: Entity;
+    for (const attendanceItem of attendanceItems) {
+      const participantId = attendanceItem.participant;
+      let participant: Entity;
       try {
-        child = await this.entityMapper.load(
-          Entity.extractTypeFromId(childId),
-          childId,
+        participant = await this.entityMapper.load(
+          Entity.extractTypeFromId(participantId),
+          participantId,
         );
       } catch (e) {
         Logging.debug(
-          "Could not find child " +
-            childId +
+          "Could not find participant " +
+            participantId +
             " for event " +
-            this.eventEntity.getId(),
+            this.event().entity.getId(),
         );
-        this.eventEntity.removeChild(childId);
-        this.eventEntity.childrenAttendance =
-          this.eventEntity.childrenAttendance.filter(
-            (a) => a.participant !== childId,
-          );
         continue;
       }
 
-      this.attendanceByParticipant[childId] = attendanceItem;
+      validAttendanceItems.push(attendanceItem);
+      attendanceMap[participantId] = attendanceItem;
 
-      if (child.isActive) {
-        this.children.push(child);
+      if (participant.isActive) {
+        active.push(participant);
       } else {
-        this.inactiveParticipants.push(child);
+        inactive.push(participant);
       }
     }
+
+    this.event().attendanceItems = validAttendanceItems;
+    this.participants.set(active);
+    this.inactiveParticipants.set(inactive);
+    this.attendanceByParticipant.set(attendanceMap);
     this.sortParticipants();
   }
 
   private sortParticipants() {
-    if (!this.sortParticipantsBy) {
+    const sortBy = this.sortParticipantsBy();
+    if (!sortBy) {
       return;
     }
 
-    this.children.sort(sortByAttribute<any>(this.sortParticipantsBy, "asc"));
-    // also sort the participants in the Note entity itself for display in details view later
-    this.eventEntity.children = this.children.map((e) => e.getId());
-    const sortedIds = this.children.map((e) => e.getId());
-    this.eventEntity.childrenAttendance.sort(
-      (a, b) =>
-        sortedIds.indexOf(a.participant) - sortedIds.indexOf(b.participant),
+    this.participants.update((participants) =>
+      [...participants].sort(sortByAttribute<any>(sortBy, "asc")),
     );
+    // also sort the participants in the entity itself for display in details view later
+    const event = this.event();
+    if (event) {
+      const sortedIds = this.participants().map((e) => e.getId());
+      const attendance = event.attendanceItems;
+      attendance.sort(
+        (a, b) =>
+          sortedIds.indexOf(a.participant) - sortedIds.indexOf(b.participant),
+      );
+      event.attendanceItems = attendance;
+    }
   }
 
   markAttendance(status: AttendanceStatusType) {
-    this.currentAttendance.status = status;
-    this.isDirty = true;
+    const attendance = this.currentAttendance();
+    if (attendance) {
+      attendance.status = status;
+    }
+    this.isDirty.set(true);
+    this.unsavedChanges.pending = true;
 
-    this.goToNext();
+    this.goToParticipantWithIndex(this.currentIndex() + 1);
   }
 
   goToParticipantWithIndex(newIndex: number) {
-    this.currentIndex = newIndex;
+    this.currentIndex.set(
+      Math.max(0, Math.min(newIndex, this.participants().length)),
+    );
 
-    if (this.isFinished) {
-      this.complete.emit(this.eventEntity);
-    } else {
-      this.currentChild = this.children[this.currentIndex];
-      this.currentAttendance =
-        this.attendanceByParticipant[this.currentChild.getId()];
+    if (this.isFinished()) {
+      void this.saveEvent();
     }
-  }
-
-  goToPrevious() {
-    if (this.currentIndex - 1 >= 0) {
-      this.goToParticipantWithIndex(this.currentIndex - 1);
-    }
-  }
-
-  goToNext() {
-    if (this.currentIndex + 1 <= this.children.length) {
-      this.goToParticipantWithIndex(this.currentIndex + 1);
-    }
-  }
-
-  goToFirst() {
-    this.goToParticipantWithIndex(0);
-  }
-
-  goToLast() {
-    // jump directly to completed state, i.e. beyond last participant index
-    this.goToParticipantWithIndex(this.children.length);
-  }
-
-  get isFirst(): boolean {
-    return this.currentIndex === 0;
-  }
-
-  get isLast(): boolean {
-    return this.currentIndex === this.children.length - 1;
-  }
-
-  get isFinished(): boolean {
-    return this.currentIndex >= this.children.length;
   }
 
   finish() {
-    this.exit.emit();
+    this.location.back();
+  }
+
+  /**
+   * Handle navigating back, showing save/discard dialog if there are unsaved changes.
+   */
+  exit() {
+    if (this.isDirty()) {
+      this.confirmationDialog.getConfirmation(
+        $localize`:Exit from the current screen:Exit`,
+        $localize`Do you want to save your progress before going back?`,
+        [
+          {
+            text: $localize`Save`,
+            click: (): boolean => {
+              void this.saveEvent().then(() => this.location.back());
+              return true;
+            },
+          },
+          {
+            text: $localize`:Discard changes made to a form:Discard`,
+            click: (): boolean => {
+              this.isDirty.set(false);
+              this.unsavedChanges.pending = false;
+              this.location.back();
+              return false;
+            },
+          },
+        ] as ConfirmationDialogButton[],
+        true,
+      );
+    } else {
+      this.location.back();
+    }
+  }
+
+  async saveEvent() {
+    const entity = this.event()?.entity;
+    if (entity) {
+      try {
+        await this.entityMapper.save(entity);
+        this.isDirty.set(false);
+        this.unsavedChanges.pending = false;
+      } catch (e) {
+        Logging.warn("Could not save attendance event", e);
+        this.confirmationDialog.getConfirmation(
+          $localize`:Error message when saving failed:Error trying to save`,
+          $localize`An error occurred while saving the event. Please try again.`,
+          OkButton,
+        );
+      }
+    }
   }
 
   showDetails() {
-    this.formDialog.openView(this.eventEntity);
+    this.formDialog.openView(this.event()?.entity);
   }
 
   async includeInactive() {
@@ -295,8 +434,9 @@ export class RollCallComponent implements OnChanges {
       $localize`This event has some participants who are "archived". We automatically remove them from the attendance list for you. Do you want to also include archived participants for this event?`,
     );
     if (confirmation) {
-      this.children = [...this.children, ...this.inactiveParticipants];
-      this.inactiveParticipants = [];
+      this.participants.update((p) => [...p, ...this.inactiveParticipants()]);
+      this.inactiveParticipants.set([]);
+      this.sortParticipants();
     }
   }
 }

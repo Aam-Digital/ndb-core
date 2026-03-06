@@ -1,15 +1,25 @@
-import { Component, Input } from "@angular/core";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
-import { RecurringActivity } from "../../model/recurring-activity";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from "@angular/core";
+import { AttendanceItem } from "../../model/attendance-item";
+import { EventWithAttendance } from "../../model/event-with-attendance";
 import { MatCardModule } from "@angular/material/card";
 import { BorderHighlightDirective } from "#src/app/core/common-components/border-highlight/border-highlight.directive";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { CustomDatePipe } from "#src/app/core/basic-datatypes/date/custom-date.pipe";
 
+/**
+ * Simple representation of an event
+ * in the context of setting up or selecting an event for a roll call.
+ */
 @Component({
   selector: "app-activity-card",
   templateUrl: "./activity-card.component.html",
   styleUrls: ["./activity-card.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCardModule,
     BorderHighlightDirective,
@@ -19,40 +29,53 @@ import { CustomDatePipe } from "#src/app/core/basic-datatypes/date/custom-date.p
 })
 export class ActivityCardComponent {
   /**
-   * The Note representing the event to be displayed
+   * The event to be displayed.
    */
-  @Input() event: Note;
+  readonly event = input.required<EventWithAttendance>();
 
-  private _displayAsRecurring: boolean | null = null;
+  /**
+   * An optional extra entity field to display on the card (e.g. "category").
+   * The value's `label` property is shown if available, otherwise the raw value.
+   */
+  readonly extraField = input<string>();
 
   /**
    * Whether the event or activity is displayed in the style of events generated from a generic recurring activity.
    *
-   * If not explicitly defined, it is inferred from the given event Note's reference to an activity.
+   * If not explicitly defined, it is inferred from the entity's `relatesTo` reference to a RecurringActivity.
    */
-  @Input() set recurring(value: boolean) {
-    this._displayAsRecurring = value;
-  }
+  readonly recurring = input<boolean>();
 
-  get recurring(): boolean {
-    if (this._displayAsRecurring !== null) {
-      return this._displayAsRecurring;
-    } else {
-      return RecurringActivity.isActivityEventNote(this.event);
+  /** The attendance items for the current event. */
+  readonly attendance = computed<AttendanceItem[]>(
+    () => this.event().attendanceItems,
+  );
+
+  /** Whether this event is linked to a recurring activity. */
+  readonly isRecurring = computed(() => {
+    const explicit = this.recurring();
+    if (explicit !== undefined) {
+      return explicit;
     }
-  }
+    return this.event().isActivityEvent;
+  });
 
-  get warningLevel(): "ok" | "warning" | "urgent" {
-    if (!this.event.childrenAttendance.some((a) => !a.status?.id)) {
-      // no unknown attendance status
+  /** Resolved display value of the extra field, if configured. */
+  readonly extraFieldValue = computed<string | undefined>(() => {
+    const field = this.extraField();
+    if (!field) {
+      return undefined;
+    }
+    const val = this.event().entity[field];
+    return val?.label ?? val;
+  });
+
+  readonly warningLevel = computed<"ok" | "warning" | "urgent">(() => {
+    const att = this.attendance();
+    const hasUnknown = att.some((a) => !a.status?.id);
+    if (!hasUnknown) {
       return "ok";
-    } else if (
-      !this.recurring &&
-      this.event.childrenAttendance.some((a) => !a.status?.id)
-    ) {
-      return "urgent";
-    } else {
-      return "warning";
     }
-  }
+    return this.isRecurring() ? "warning" : "urgent";
+  });
 }
