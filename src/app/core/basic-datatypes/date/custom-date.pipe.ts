@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform, inject, LOCALE_ID } from "@angular/core";
 import { DatePipe } from "@angular/common";
-import { DEFAULT_DATE_FORMAT, DEFAULT_DATE_TIME_FORMAT } from "./date.static";
+import { defaultDateFormat, defaultDateTimeFormat } from "./date.static";
 
 /**
  * Custom date pipe that extends DatePipe to override shortDate format.
@@ -22,9 +22,9 @@ export class CustomDatePipe implements PipeTransform {
   ): string | null {
     // Override predefined formats with custom formats
     if (format === "shortDate") {
-      format = DEFAULT_DATE_FORMAT;
+      format = defaultDateFormat();
     } else if (format === "short") {
-      format = DEFAULT_DATE_TIME_FORMAT;
+      format = defaultDateTimeFormat();
     }
 
     return this.datePipe.transform(value, format, timezone, locale);

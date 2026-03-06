@@ -34,6 +34,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   siteName = this.getPropertyObservable("siteName");
   defaultLanguage = this.getPropertyObservable("defaultLanguage");
   displayLanguageSelect = this.getPropertyObservable("displayLanguageSelect");
+  dateFormat = this.getPropertyObservable("dateFormat");
 
   constructor() {
     const entityMapper = inject(EntityMapperService);
@@ -53,6 +54,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
     this.subscribeColorChanges("primary");
     this.subscribeColorChanges("secondary");
     this.subscribeColorChanges("error");
+    this.subscribeDateFormatChanges();
 
     this.initFromLocalStorage();
     this.cacheInLocalStorage();
@@ -129,6 +131,23 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
           ),
         );
       }
+    });
+  }
+
+  private subscribeDateFormatChanges() {
+    Promise.all([
+      import("../basic-datatypes/date/date.static"),
+      import("../language/date-adapter-with-formatting"),
+    ]).then(([dateModule, adapterModule]) => {
+      this.dateFormat.subscribe((format) => {
+        // Fall back to default when stored value is blank or corrupt
+        const formatToApply = format?.trim() || dateModule.defaultDateFormat();
+        dateModule.setGlobalDateFormat(formatToApply);
+        // Keep DATE_FORMATS in sync so Material Datepicker uses the current format
+        const momentFmt = dateModule.datepickerFormat();
+        adapterModule.DATE_FORMATS.parse.dateInput = momentFmt;
+        adapterModule.DATE_FORMATS.display.dateInput = momentFmt;
+      });
     });
   }
 

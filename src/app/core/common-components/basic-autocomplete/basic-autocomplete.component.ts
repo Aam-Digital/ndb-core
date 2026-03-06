@@ -109,6 +109,21 @@ export class BasicAutocompleteComponent<O, V = O>
   @Input() hideOption: (option: O) => boolean = () => false;
 
   /**
+   * Used in template to display the "Add new" option label.
+   * Delegates to optionToString so callers with a custom optionToString (e.g. showing
+   * an example date) get a preview in the "Add new" option too.
+   * Falls back to the raw input when optionToString throws or returns null/undefined
+   * (e.g. when O is an object type whose properties don't exist on a plain string).
+   */
+  protected createOptionDisplay(input: string): string {
+    try {
+      return this.optionToString(input as unknown as O) ?? input;
+    } catch {
+      return input;
+    }
+  }
+
+  /**
    * Whether the user should be able to select multiple values.
    */
   @Input() multi?: boolean;
