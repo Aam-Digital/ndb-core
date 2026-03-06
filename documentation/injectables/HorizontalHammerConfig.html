@@ -1,0 +1,756 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >HorizontalHammerConfig</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts</code>
+        </p>
+
+
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                            <code><a href="../classes/Config.html" target="_self" >HammerGestureConfig</a></code>
+            </p>
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#overrides" >overrides</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="overrides"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>overrides</b></span>
+                        <a href="#overrides"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+    swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
+    pinch: { enable: false },
+    rotate: { enable: false },
+  }</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:56</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  Injectable,
+  input,
+  resource,
+  ResourceRef,
+  signal,
+  untracked,
+} from &quot;@angular/core&quot;;
+import { Location } from &quot;@angular/common&quot;;
+import { animate, style, transition, trigger } from &quot;@angular/animations&quot;;
+import {
+  ATTENDANCE_STATUS_CONFIG_ID,
+  AttendanceStatusType,
+} from &quot;../../model/attendance-status&quot;;
+import { AttendanceItem } from &quot;../../model/attendance-item&quot;;
+import { EntityMapperService } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
+import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
+import { sortByAttribute } from &quot;#src/app/utils/utils&quot;;
+import { AttendanceDatatype } from &quot;../../model/attendance.datatype&quot;;
+import { DateDatatype } from &quot;#src/app/core/basic-datatypes/date/date.datatype&quot;;
+import { EventWithAttendance } from &quot;../../model/event-with-attendance&quot;;
+import { FormDialogService } from &quot;#src/app/core/form-dialog/form-dialog.service&quot;;
+import { MatProgressBarModule } from &quot;@angular/material/progress-bar&quot;;
+import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
+import { RollCallTabComponent } from &quot;./roll-call-tab/roll-call-tab.component&quot;;
+import {
+  HAMMER_GESTURE_CONFIG,
+  HammerGestureConfig,
+  HammerModule,
+} from &quot;@angular/platform-browser&quot;;
+import Hammer from &quot;hammerjs&quot;;
+import { ConfigurableEnumService } from &quot;#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+import { ConfirmationDialogService } from &quot;#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service&quot;;
+import { EntityBlockComponent } from &quot;#src/app/core/basic-datatypes/entity/entity-block/entity-block.component&quot;;
+import { ActivatedRoute, Router } from &quot;@angular/router&quot;;
+import { AttendanceService } from &quot;../../attendance.service&quot;;
+import { UnsavedChangesService } from &quot;#src/app/core/entity-details/form/unsaved-changes.service&quot;;
+import {
+  ConfirmationDialogButton,
+  OkButton,
+} from &quot;#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
+import { ViewTitleComponent } from &quot;#src/app/core/common-components/view-title/view-title.component&quot;;
+import { RouteTarget } from &quot;#src/app/route-target&quot;;
+
+// Only allow horizontal swiping
+@Injectable()
+class HorizontalHammerConfig extends HammerGestureConfig {
+  override overrides &#x3D; {
+    swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
+    pinch: { enable: false },
+    rotate: { enable: false },
+  };
+}
+
+/**
+ * Displays the participants of the given event one by one to mark attendance status.
+ * Can be used as a standalone routed view (via route param :id) or embedded with eventEntity input.
+ */
+@RouteTarget(&quot;RollCall&quot;)
+@Component({
+  selector: &quot;app-roll-call&quot;,
+  templateUrl: &quot;./roll-call.component.html&quot;,
+  styleUrls: [&quot;./roll-call.component.scss&quot;],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger(&quot;completeRollCall&quot;, [
+      transition(&quot;void &#x3D;&gt; *&quot;, [
+        style({ backgroundColor: &quot;transparent&quot; }),
+        animate(1000),
+      ]),
+    ]),
+  ],
+  imports: [
+    MatProgressBarModule,
+    MatButtonModule,
+    FontAwesomeModule,
+    EntityBlockComponent,
+    RollCallTabComponent,
+    HammerModule,
+    MatTooltipModule,
+    ViewTitleComponent,
+  ],
+  providers: [
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: HorizontalHammerConfig,
+    },
+  ],
+})
+export class RollCallComponent {
+  private readonly enumService &#x3D; inject(ConfigurableEnumService);
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly formDialog &#x3D; inject(FormDialogService);
+  private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
+  private readonly router &#x3D; inject(Router);
+  private readonly location &#x3D; inject(Location);
+  private readonly route &#x3D; inject(ActivatedRoute);
+  private readonly attendanceService &#x3D; inject(AttendanceService);
+  private readonly unsavedChanges &#x3D; inject(UnsavedChangesService);
+
+  /**
+   * Entity ID from route param, mapped by RoutedViewComponent.
+   * Supports real entity IDs, or &quot;new&quot; for creating a new event.
+   */
+  readonly id &#x3D; input&lt;string&gt;();
+
+  /**
+   * The event to be displayed and edited.
+   * Can be set directly when used as an embedded component, or loaded from DB via id.
+   */
+  readonly eventEntity &#x3D; input&lt;EventWithAttendance&gt;();
+
+  /**
+   * (optional) property name of the participant entities by which they are sorted
+   */
+  readonly sortParticipantsBy &#x3D; input&lt;string&gt;();
+
+  /**
+   * Loads the event entity from the provided input or by ID.
+   * Unifies the two input paths (direct entity vs route-based loading).
+   */
+  readonly eventResource: ResourceRef&lt;EventWithAttendance | undefined&gt; &#x3D;
+    resource({
+      params: () &#x3D;&gt; ({ entity: this.eventEntity(), id: this.id() }),
+      loader: async ({ params: { entity, id } }) &#x3D;&gt; {
+        if (entity) return entity;
+        if (!id) return undefined;
+        if (id &#x3D;&#x3D;&#x3D; &quot;new&quot;) return this.createEventFromRoute();
+        return this.loadExistingEvent(id);
+      },
+    });
+
+  /** The resolved event, wrapped with typed attendance and date accessors. */
+  readonly event &#x3D; computed&lt;EventWithAttendance | undefined&gt;(() &#x3D;&gt; {
+    return this.eventResource.value();
+  });
+
+  /** The index of the participant currently being processed */
+  readonly currentIndex &#x3D; signal(0);
+
+  /** The participant currently being processed */
+  readonly currentParticipant &#x3D; computed(() &#x3D;&gt; {
+    const p &#x3D; this.participants();
+    const i &#x3D; this.currentIndex();
+    return i &lt; p.length ? p[i] : undefined;
+  });
+
+  /** The attendance item of the current participant */
+  readonly currentAttendance &#x3D; computed(() &#x3D;&gt; {
+    const participant &#x3D; this.currentParticipant();
+    return participant
+      ? this.attendanceByParticipant()[participant.getId()]
+      : undefined;
+  });
+
+  /** Whether any changes have been made to the model */
+  readonly isDirty &#x3D; signal(false);
+
+  /** Lookup object for attendance items by participant ID, built during loadParticipants */
+  readonly attendanceByParticipant &#x3D; signal&lt;Record&lt;string, AttendanceItem&gt;&gt;({});
+
+  /** Options available for selecting an attendance status */
+  readonly availableStatus &#x3D; signal&lt;AttendanceStatusType[]&gt;([]);
+
+  readonly participants &#x3D; signal&lt;Entity[]&gt;([]);
+  readonly inactiveParticipants &#x3D; signal&lt;Entity[]&gt;([]);
+
+  readonly isFirst &#x3D; computed(() &#x3D;&gt; this.currentIndex() &#x3D;&#x3D;&#x3D; 0);
+  readonly isLast &#x3D; computed(
+    () &#x3D;&gt; this.currentIndex() &#x3D;&#x3D;&#x3D; this.participants().length - 1,
+  );
+  readonly isFinished &#x3D; computed(
+    () &#x3D;&gt; this.currentIndex() &gt;&#x3D; this.participants().length,
+  );
+
+  constructor() {
+    // Initialize participants when event is loaded/resolved
+    effect(() &#x3D;&gt; {
+      const event &#x3D; this.event();
+      if (event) {
+        untracked(() &#x3D;&gt; this.initializeForEvent());
+      }
+    });
+
+    // React to sort configuration changes
+    effect(() &#x3D;&gt; {
+      this.sortParticipantsBy();
+      untracked(() &#x3D;&gt; this.sortParticipants());
+    });
+  }
+
+  /**
+   * Initialize participant data for the current event entity.
+   */
+  private async initializeForEvent() {
+    this.loadAttendanceStatusTypes();
+    await this.loadParticipants();
+    this.setInitialIndex();
+  }
+
+  /**
+   * Create or load a new event based on route query params.
+   */
+  private async createEventFromRoute(): Promise&lt;
+    EventWithAttendance | undefined
+  &gt; {
+    const activityId &#x3D; this.route.snapshot.queryParamMap.get(&quot;activity&quot;);
+    const dateStr &#x3D; this.route.snapshot.queryParamMap.get(&quot;date&quot;);
+    const date &#x3D; dateStr ? this.parseDateOnly(dateStr) : new Date();
+
+    if (activityId) {
+      return this.attendanceService.createEventForActivity(activityId, date);
+    }
+
+    // in the future we may implement a UI to create a one-time event on the fly
+    return undefined;
+  }
+
+  /**
+   * Parse a &quot;YYYY-MM-DD&quot; date string as a local date.
+   * (new Date(&quot;YYYY-MM-DD&quot;) would parse as UTC midnight, shifting the date for negative offsets.)
+   */
+  private parseDateOnly(value: string): Date {
+    const [year, month, day] &#x3D; value.split(&quot;-&quot;).map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  private async loadExistingEvent(
+    id: string,
+  ): Promise&lt;EventWithAttendance | undefined&gt; {
+    let event: EventWithAttendance | undefined;
+    try {
+      const entityType &#x3D; Entity.extractTypeFromId(id);
+      const entity &#x3D; await this.entityMapper.load(entityType, id);
+      event &#x3D; AttendanceService.createEventFromEntity(entity);
+    } catch (e) {
+      Logging.warn(&quot;Could not load event &quot; + id, e);
+      void this.router.navigate([&quot;/404&quot;]);
+      return undefined;
+    }
+    return event;
+  }
+
+  /**
+   * Set the index of the first participant that expects user input.
+   * This is the first entry of the list, if the user has never recorded attendance
+   * for this event. Else it is the first participant without any attendance information
+   * (i.e. got skipped or the user left at this participant)
+   */
+  private setInitialIndex() {
+    const participantsList &#x3D; this.participants();
+    const attendanceMap &#x3D; this.attendanceByParticipant();
+    let index &#x3D; 0;
+    for (const entry of participantsList) {
+      if (!attendanceMap[entry.getId()]?.status?.id) {
+        break;
+      }
+      index +&#x3D; 1;
+    }
+
+    // do not jump to end - if all participants are recorded, start with first instead
+    if (index &gt;&#x3D; participantsList.length) {
+      index &#x3D; 0;
+    }
+
+    this.goToParticipantWithIndex(index);
+  }
+
+  private loadAttendanceStatusTypes() {
+    this.availableStatus.set(
+      this.enumService.getEnumValues&lt;AttendanceStatusType&gt;(
+        ATTENDANCE_STATUS_CONFIG_ID,
+      ),
+    );
+  }
+
+  private async loadParticipants() {
+    if (!this.event()) return;
+    const attendanceItems: AttendanceItem[] &#x3D; this.event().attendanceItems;
+
+    const active: Entity[] &#x3D; [];
+    const inactive: Entity[] &#x3D; [];
+    const attendanceMap: Record&lt;string, AttendanceItem&gt; &#x3D; {};
+    const validAttendanceItems: AttendanceItem[] &#x3D; [];
+
+    for (const attendanceItem of attendanceItems) {
+      const participantId &#x3D; attendanceItem.participant;
+      let participant: Entity;
+      try {
+        participant &#x3D; await this.entityMapper.load(
+          Entity.extractTypeFromId(participantId),
+          participantId,
+        );
+      } catch (e) {
+        Logging.debug(
+          &quot;Could not find participant &quot; +
+            participantId +
+            &quot; for event &quot; +
+            this.event().entity.getId(),
+        );
+        continue;
+      }
+
+      validAttendanceItems.push(attendanceItem);
+      attendanceMap[participantId] &#x3D; attendanceItem;
+
+      if (participant.isActive) {
+        active.push(participant);
+      } else {
+        inactive.push(participant);
+      }
+    }
+
+    this.event().attendanceItems &#x3D; validAttendanceItems;
+    this.participants.set(active);
+    this.inactiveParticipants.set(inactive);
+    this.attendanceByParticipant.set(attendanceMap);
+    this.sortParticipants();
+  }
+
+  private sortParticipants() {
+    const sortBy &#x3D; this.sortParticipantsBy();
+    if (!sortBy) {
+      return;
+    }
+
+    this.participants.update((participants) &#x3D;&gt;
+      [...participants].sort(sortByAttribute&lt;any&gt;(sortBy, &quot;asc&quot;)),
+    );
+    // also sort the participants in the entity itself for display in details view later
+    const event &#x3D; this.event();
+    if (event) {
+      const sortedIds &#x3D; this.participants().map((e) &#x3D;&gt; e.getId());
+      const attendance &#x3D; event.attendanceItems;
+      attendance.sort(
+        (a, b) &#x3D;&gt;
+          sortedIds.indexOf(a.participant) - sortedIds.indexOf(b.participant),
+      );
+      event.attendanceItems &#x3D; attendance;
+    }
+  }
+
+  markAttendance(status: AttendanceStatusType) {
+    const attendance &#x3D; this.currentAttendance();
+    if (attendance) {
+      attendance.status &#x3D; status;
+    }
+    this.isDirty.set(true);
+    this.unsavedChanges.pending &#x3D; true;
+
+    this.goToParticipantWithIndex(this.currentIndex() + 1);
+  }
+
+  goToParticipantWithIndex(newIndex: number) {
+    this.currentIndex.set(
+      Math.max(0, Math.min(newIndex, this.participants().length)),
+    );
+
+    if (this.isFinished()) {
+      void this.saveEvent();
+    }
+  }
+
+  finish() {
+    this.location.back();
+  }
+
+  /**
+   * Handle navigating back, showing save/discard dialog if there are unsaved changes.
+   */
+  exit() {
+    if (this.isDirty()) {
+      this.confirmationDialog.getConfirmation(
+        $localize&#x60;:Exit from the current screen:Exit&#x60;,
+        $localize&#x60;Do you want to save your progress before going back?&#x60;,
+        [
+          {
+            text: $localize&#x60;Save&#x60;,
+            click: (): boolean &#x3D;&gt; {
+              void this.saveEvent().then(() &#x3D;&gt; this.location.back());
+              return true;
+            },
+          },
+          {
+            text: $localize&#x60;:Discard changes made to a form:Discard&#x60;,
+            click: (): boolean &#x3D;&gt; {
+              this.isDirty.set(false);
+              this.unsavedChanges.pending &#x3D; false;
+              this.location.back();
+              return false;
+            },
+          },
+        ] as ConfirmationDialogButton[],
+        true,
+      );
+    } else {
+      this.location.back();
+    }
+  }
+
+  async saveEvent() {
+    const entity &#x3D; this.event()?.entity;
+    if (entity) {
+      try {
+        await this.entityMapper.save(entity);
+        this.isDirty.set(false);
+        this.unsavedChanges.pending &#x3D; false;
+      } catch (e) {
+        Logging.warn(&quot;Could not save attendance event&quot;, e);
+        this.confirmationDialog.getConfirmation(
+          $localize&#x60;:Error message when saving failed:Error trying to save&#x60;,
+          $localize&#x60;An error occurred while saving the event. Please try again.&#x60;,
+          OkButton,
+        );
+      }
+    }
+  }
+
+  showDetails() {
+    this.formDialog.openView(this.event()?.entity);
+  }
+
+  async includeInactive() {
+    const confirmation &#x3D; await this.confirmationDialog.getConfirmation(
+      $localize&#x60;Also include archived participants?&#x60;,
+      $localize&#x60;This event has some participants who are &quot;archived&quot;. We automatically remove them from the attendance list for you. Do you want to also include archived participants for this event?&#x60;,
+    );
+    if (confirmation) {
+      this.participants.update((p) &#x3D;&gt; [...p, ...this.inactiveParticipants()]);
+      this.inactiveParticipants.set([]);
+      this.sortParticipants();
+    }
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'HorizontalHammerConfig.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
