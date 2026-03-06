@@ -81,7 +81,11 @@ export class EntityBlockComponent {
   });
 
   entityColor = computed(() => {
-    return this.entityResource.value()?.getColor();
+    const entity = this.entityResource.value();
+    if (!entity) return undefined;
+    const colorConfig = entity.getConstructor().color;
+    if (!colorConfig) return undefined;
+    return Entity.getColorWithConditions(entity);
   });
 
   showDetailsPage() {
