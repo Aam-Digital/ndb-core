@@ -973,12 +973,6 @@
         "email": {
           "dataType": "email",
           "label": "Email"
-        },
-        "supervisor": {
-          "dataType": "entity",
-          "additional": "User",
-          "label": "Supervisor",
-          "description": "Social worker or case manager assigned to this child"
         }
       }
     },
