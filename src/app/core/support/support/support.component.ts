@@ -57,6 +57,9 @@ export class SupportComponent implements OnInit {
   userAgent: string;
   appVersion: string;
   dbInfo: string;
+  dbName: string;
+  dbAdapter: string;
+  useIndexeddbAdapter: boolean = environment.use_indexeddb_adapter;
 
   ngOnInit() {
     this.userAgent = this.window.navigator.userAgent;
@@ -121,21 +124,24 @@ export class SupportComponent implements OnInit {
       .then((res) => (this.swLog = res));
   }
 
-  private initDbInfo() {
-    const pouchDb: PouchDB.Database = (
-      this.databaseResolver.getDatabase() as PouchDatabase
-    )?.getPouchDB?.();
-    if (!pouchDb) {
+  private async initDbInfo() {
+    const db = this.databaseResolver.getDatabase();
+    if (!(db instanceof PouchDatabase)) {
       this.dbInfo = "db not initialized";
       return;
     }
 
-    return pouchDb
-      .info()
-      .then(
-        (res) =>
-          (this.dbInfo = `${res.doc_count} (update sequence ${res.update_seq})`),
-      );
+    try {
+      const pouchDb = await db.getPouchDBOnceReady();
+      const res = await pouchDb.info();
+
+      this.dbAdapter =
+        res && typeof res["adapter"] === "string" ? res["adapter"] : db.adapter;
+      this.dbName = res.db_name;
+      this.dbInfo = `${res.doc_count} (update sequence ${res.update_seq})`;
+    } catch {
+      this.dbInfo = "db not initialized";
+    }
   }
 
   copyDetails() {
@@ -157,6 +163,9 @@ export class SupportComponent implements OnInit {
         swLog: this.swLog,
         storageInfo: this.storageInfo,
         dbInfo: this.dbInfo,
+        dbName: this.dbName,
+        dbAdapter: this.dbAdapter,
+        useIndexeddbAdapter: this.useIndexeddbAdapter,
         timestamp: new Date().toISOString(),
       },
     };

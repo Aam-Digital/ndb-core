@@ -51,9 +51,13 @@ describe("SupportComponent", () => {
     Object.defineProperty(mockDB, "LAST_SYNC_KEY", {
       value: SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + testDbName,
     });
-    mockDB.getPouchDB = jasmine.createSpy("getPouchDB").and.returnValue({
-      info: () => Promise.resolve({ doc_count: 1, update_seq: 2 }),
-    } as any);
+    mockDB.getPouchDBOnceReady = jasmine
+      .createSpy("getPouchDBOnceReady")
+      .and.returnValue(
+        Promise.resolve({
+          info: () => Promise.resolve({ doc_count: 1, update_seq: 2 }),
+        } as any),
+      );
     mockDB.destroy = jasmine.createSpy("destroy");
 
     await TestBed.configureTestingModule({

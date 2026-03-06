@@ -74,6 +74,17 @@
       <td>{{ lastRemoteLogin }}</td>
     </tr>
     <tr>
+      <td>Database name</td>
+      <td>{{ dbName ?? "-" }}</td>
+    </tr>
+    <tr>
+      <td>Database adapter</td>
+      <td>
+        {{ dbAdapter ?? "-" }}
+        (use_indexeddb_adapter config flag: {{ useIndexeddbAdapter }})
+      </td>
+    </tr>
+    <tr>
       <td>Storage usage</td>
       <td>{{ storageInfo || "No information" }}</td>
     </tr>
