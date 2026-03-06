@@ -13,7 +13,8 @@ const _datepickerFormat = signal("DD.MM.YYYY");
 export const defaultDateFormat: Signal<string> = _dateFormat.asReadonly();
 
 /** Current default datetime format as a readonly signal (Angular DatePipe format, e.g., "dd.MM.yyyy HH:mm") */
-export const defaultDateTimeFormat: Signal<string> = _dateTimeFormat.asReadonly();
+export const defaultDateTimeFormat: Signal<string> =
+  _dateTimeFormat.asReadonly();
 
 /**
  * Current Moment.js format for Material Datepicker as a readonly signal (e.g., "DD.MM.YYYY").
