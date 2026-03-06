@@ -57,6 +57,9 @@ export class SupportComponent implements OnInit {
   userAgent: string;
   appVersion: string;
   dbInfo: string;
+  dbName: string;
+  dbAdapter: string;
+  useIndexeddbAdapter: boolean = environment.use_indexeddb_adapter;
 
   ngOnInit() {
     this.userAgent = this.window.navigator.userAgent;
@@ -122,20 +125,19 @@ export class SupportComponent implements OnInit {
   }
 
   private initDbInfo() {
-    const pouchDb: PouchDB.Database = (
-      this.databaseResolver.getDatabase() as PouchDatabase
-    )?.getPouchDB?.();
+    const db = this.databaseResolver.getDatabase() as PouchDatabase;
+    const pouchDb: PouchDB.Database = db?.getPouchDB?.();
     if (!pouchDb) {
       this.dbInfo = "db not initialized";
       return;
     }
 
-    return pouchDb
-      .info()
-      .then(
-        (res) =>
-          (this.dbInfo = `${res.doc_count} (update sequence ${res.update_seq})`),
-      );
+    this.dbAdapter = db.adapter;
+
+    return pouchDb.info().then((res) => {
+      this.dbName = res.db_name;
+      this.dbInfo = `${res.doc_count} (update sequence ${res.update_seq})`;
+    });
   }
 
   copyDetails() {
@@ -157,6 +159,9 @@ export class SupportComponent implements OnInit {
         swLog: this.swLog,
         storageInfo: this.storageInfo,
         dbInfo: this.dbInfo,
+        dbName: this.dbName,
+        dbAdapter: this.dbAdapter,
+        useIndexeddbAdapter: this.useIndexeddbAdapter,
         timestamp: new Date().toISOString(),
       },
     };
