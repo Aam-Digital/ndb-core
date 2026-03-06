@@ -124,20 +124,24 @@ export class SupportComponent implements OnInit {
       .then((res) => (this.swLog = res));
   }
 
-  private initDbInfo() {
-    const db = this.databaseResolver.getDatabase() as PouchDatabase;
-    const pouchDb: PouchDB.Database = db?.getPouchDB?.();
-    if (!pouchDb) {
+  private async initDbInfo() {
+    const db = this.databaseResolver.getDatabase();
+    if (!(db instanceof PouchDatabase)) {
       this.dbInfo = "db not initialized";
       return;
     }
 
-    this.dbAdapter = db.adapter;
+    try {
+      const pouchDb = await db.getPouchDBOnceReady();
+      const res = await pouchDb.info();
 
-    return pouchDb.info().then((res) => {
+      this.dbAdapter =
+        res && typeof res["adapter"] === "string" ? res["adapter"] : db.adapter;
       this.dbName = res.db_name;
       this.dbInfo = `${res.doc_count} (update sequence ${res.update_seq})`;
-    });
+    } catch {
+      this.dbInfo = "db not initialized";
+    }
   }
 
   copyDetails() {
