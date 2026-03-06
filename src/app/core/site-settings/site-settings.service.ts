@@ -140,13 +140,13 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
       import("../language/date-adapter-with-formatting"),
     ]).then(([dateModule, adapterModule]) => {
       this.dateFormat.subscribe((format) => {
-        if (format) {
-          dateModule.setGlobalDateFormat(format);
-          // Keep DATE_FORMATS in sync so Material Datepicker uses the current format
-          const momentFmt = dateModule.datepickerFormat();
-          adapterModule.DATE_FORMATS.parse.dateInput = momentFmt;
-          adapterModule.DATE_FORMATS.display.dateInput = momentFmt;
-        }
+        // Fall back to default when stored value is blank or corrupt
+        const formatToApply = format?.trim() || dateModule.defaultDateFormat();
+        dateModule.setGlobalDateFormat(formatToApply);
+        // Keep DATE_FORMATS in sync so Material Datepicker uses the current format
+        const momentFmt = dateModule.datepickerFormat();
+        adapterModule.DATE_FORMATS.parse.dateInput = momentFmt;
+        adapterModule.DATE_FORMATS.display.dateInput = momentFmt;
       });
     });
   }
