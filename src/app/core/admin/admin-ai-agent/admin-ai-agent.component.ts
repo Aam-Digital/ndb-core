@@ -9,6 +9,7 @@ import { Config } from "../../config/config";
 import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/configurable-enum";
 import { ReportEntity } from "../../../features/reporting/report-config";
 import { PublicFormConfig } from "../../../features/public-form/public-form-config";
+import moment from "moment";
 
 /**
  * Admin page providing tools to help configure Aam Digital using AI agents.
@@ -52,16 +53,20 @@ export class AdminAiAgentComponent {
     ]);
 
     const docs = [
+      ...configDocs.filter(Boolean),
       ...configurableEnums,
       ...reportConfigs,
       ...publicFormConfigs,
-      ...configDocs.filter(Boolean),
     ];
 
     await this.downloadService.triggerDownload(
       docs,
       "json",
-      "aam-digital-ai-context",
+      "aam-digital-ai-context_" +
+        location.hostname +
+        "_" +
+        moment().format() +
+        ".json",
     );
   }
 }
