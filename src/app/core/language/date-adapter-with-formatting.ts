@@ -6,19 +6,19 @@ import {
 import moment from "moment";
 import { Injectable } from "@angular/core";
 import { getLocaleFirstDayOfWeek } from "@angular/common";
-import { datepickerFormat } from "../basic-datatypes/date/date.static";
 
 /**
  * Extend MAT_NATIVE_DATE_FORMATS to also support parsing.
+ * The dateInput format is kept in sync with the global date format by SiteSettingsService.
  */
 export const DATE_FORMATS: MatDateFormats = {
   // in addition to the customDate pipe
   // we need to add dateInput and override the method because we are not using DatePipe here, we are using moment.js
   // and all date picker inputs are using moment.js, and this will ensure that dates are always displayed in our default format.
-  parse: { dateInput: datepickerFormat() },
+  parse: { dateInput: "DD.MM.YYYY" },
   display: {
     ...MAT_NATIVE_DATE_FORMATS.display,
-    dateInput: datepickerFormat(),
+    dateInput: "DD.MM.YYYY",
   },
 };
 
@@ -29,9 +29,9 @@ export class DateAdapterWithFormatting extends NativeDateAdapter {
    * @param value
    * @param parseFormat
    */
-  override parse(value: any, _parseFormat?: any): Date | null {
+  override parse(value: any, parseFormat?: any): Date | null {
     if (value && typeof value == "string") {
-      return moment(value, datepickerFormat(), this.locale, true).toDate();
+      return moment(value, parseFormat, this.locale, true).toDate();
     }
     return value ? moment(value, true).locale(this.locale).toDate() : null;
   }
@@ -42,7 +42,7 @@ export class DateAdapterWithFormatting extends NativeDateAdapter {
 
   override format(date: Date, displayFormat: any): string {
     if (typeof displayFormat === "string") {
-      return moment(date).locale(this.locale).format(datepickerFormat());
+      return moment(date).locale(this.locale).format(displayFormat);
     }
     return super.format(date, displayFormat);
   }

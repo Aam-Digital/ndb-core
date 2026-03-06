@@ -2,13 +2,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EditDateFormatComponent } from "./edit-date-format.component";
 import { FormControl } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import {
-  convertToMomentFormat,
-  datepickerFormat,
-  defaultDateFormat,
-  defaultDateTimeFormat,
-  setGlobalDateFormat,
-} from "../date.static";
 
 describe("EditDateFormatComponent", () => {
   let component: EditDateFormatComponent;
@@ -68,61 +61,5 @@ describe("EditDateFormatComponent", () => {
   it("formatOptionToString should return just the format string when format is invalid", () => {
     const label = component.formatOptionToString("not-a-valid-format");
     expect(label).toBe("not-a-valid-format");
-  });
-});
-
-describe("setGlobalDateFormat", () => {
-  // Save original state and restore after each test
-  let originalFormat: string;
-
-  beforeEach(() => {
-    originalFormat = defaultDateFormat();
-  });
-
-  afterEach(() => {
-    setGlobalDateFormat(originalFormat);
-  });
-
-  it("should update defaultDateFormat signal", () => {
-    setGlobalDateFormat("MM/dd/yyyy");
-    expect(defaultDateFormat()).toBe("MM/dd/yyyy");
-  });
-
-  it("should update defaultDateTimeFormat signal to include time", () => {
-    setGlobalDateFormat("MM/dd/yyyy");
-    expect(defaultDateTimeFormat()).toBe("MM/dd/yyyy HH:mm");
-  });
-
-  it("should update datepickerFormat signal to Moment.js equivalent", () => {
-    setGlobalDateFormat("MM/dd/yyyy");
-    expect(datepickerFormat()).toBe("MM/DD/YYYY");
-  });
-
-  it("should not update signals when called with empty string", () => {
-    setGlobalDateFormat("MM/dd/yyyy");
-    setGlobalDateFormat("");
-    expect(defaultDateFormat()).toBe("MM/dd/yyyy");
-  });
-});
-
-describe("convertToMomentFormat", () => {
-  it("should convert dd.MM.yyyy to DD.MM.YYYY", () => {
-    expect(convertToMomentFormat("dd.MM.yyyy")).toBe("DD.MM.YYYY");
-  });
-
-  it("should convert MM/dd/yyyy to MM/DD/YYYY", () => {
-    expect(convertToMomentFormat("MM/dd/yyyy")).toBe("MM/DD/YYYY");
-  });
-
-  it("should convert yyyy-MM-dd to YYYY-MM-DD", () => {
-    expect(convertToMomentFormat("yyyy-MM-dd")).toBe("YYYY-MM-DD");
-  });
-
-  it("should convert dd/MM/yyyy to DD/MM/YYYY", () => {
-    expect(convertToMomentFormat("dd/MM/yyyy")).toBe("DD/MM/YYYY");
-  });
-
-  it("should convert MMM d, yyyy to MMM D, YYYY", () => {
-    expect(convertToMomentFormat("MMM d, yyyy")).toBe("MMM D, YYYY");
   });
 });

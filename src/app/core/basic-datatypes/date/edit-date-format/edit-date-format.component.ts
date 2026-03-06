@@ -54,7 +54,12 @@ export class EditDateFormatComponent
   formatOptionToString = (format: string): string => {
     try {
       const example = this.datePipe.transform(this.exampleDate, format) ?? "";
-      return example ? `${format}  (${example})` : format;
+      // Angular DatePipe interprets unknown characters as tokens and never throws,
+      // so we verify the output actually contains the example year as a sanity check.
+      const exampleYear = this.datePipe.transform(this.exampleDate, "y");
+      return example && example.includes(exampleYear)
+        ? `${format}  (${example})`
+        : format;
     } catch {
       return format;
     }
