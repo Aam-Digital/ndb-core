@@ -1,14 +1,12 @@
 @use "@angular/material/core/style/elevation" as mat-elevation;
-@use "@angular/material" as mat;
-
-$warn-light-palette: mat.m2-define-palette(mat.$m2-orange-palette);
-$warn-light: mat.m2-get-color-from-palette($warn-light-palette, 100);
+@use "variables/colors";
 
 .small-screen-warning {
   display: flex;
   align-items: flex-start;
   gap: 0.75em;
-  background-color: $warn-light;
+  background-color: colors.$grey-light;
+  border-left: 4px solid colors.$warn;
   color: rgba(0, 0, 0, 0.87);
   padding: 1em;
   margin-bottom: 1em;
@@ -20,5 +18,10 @@ $warn-light: mat.m2-get-color-from-palette($warn-light-palette, 100);
   span {
     min-width: 0;
     overflow-wrap: break-word;
+  }
+
+  fa-icon {
+    color: colors.$warn;
+    flex-shrink: 0;
   }
 }
