@@ -2,12 +2,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   Input,
+  LOCALE_ID,
   OnInit,
   Signal,
   signal,
   WritableSignal,
 } from "@angular/core";
+import { DatePipe } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
@@ -36,6 +39,10 @@ export class EditDateFormatComponent
 {
   @Input() formFieldConfig?: FormFieldConfig;
 
+  private readonly datePipe = new DatePipe(inject(LOCALE_ID));
+  // Fixed reference date to illustrate each format: January 22, 2026
+  private readonly exampleDate = new Date(2026, 0, 22);
+
   readonly predefinedFormats: string[] = [
     "dd.MM.yyyy",
     "MM/dd/yyyy",
@@ -43,6 +50,15 @@ export class EditDateFormatComponent
     "dd/MM/yyyy",
     "MMM d, yyyy",
   ];
+
+  formatOptionToString = (format: string): string => {
+    try {
+      const example = this.datePipe.transform(this.exampleDate, format) ?? "";
+      return example ? `${format}  (${example})` : format;
+    } catch {
+      return format;
+    }
+  };
 
   get formControl(): FormControl<string> {
     return this.ngControl.control as FormControl<string>;
