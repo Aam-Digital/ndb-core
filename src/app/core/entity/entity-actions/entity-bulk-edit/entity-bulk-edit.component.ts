@@ -72,18 +72,17 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
 
   private initForm() {
     this.selectedFieldFormControl = new FormControl("", Validators.required);
-  }
-
-  async onChangeProperty(fieldId: string | string[]) {
-    fieldId = fieldId as string; // we use single-select mode
-    this.selectedField = this.entityFormService.extendFormFieldConfig(
-      { id: fieldId },
-      this.entityConstructor,
+    this.selectedFieldFormControl.valueChanges.subscribe(
+      async (fieldId: string) => {
+        if (!fieldId) return;
+        this.selectedField = this.entityFormService.extendFormFieldConfig(
+          { id: fieldId },
+          this.entityConstructor,
+        );
+        await this.createEntityForm([fieldId]);
+        this.showValueForm = true;
+      },
     );
-
-    await this.createEntityForm([fieldId]);
-
-    this.showValueForm = true;
   }
 
   private async createEntityForm(fieldKeys: string[]) {

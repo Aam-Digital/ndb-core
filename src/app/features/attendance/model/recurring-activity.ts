@@ -1,7 +1,6 @@
 import { Entity } from "#src/app/core/entity/model/entity";
 import { DatabaseEntity } from "#src/app/core/entity/database-entity.decorator";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
 import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
@@ -19,14 +18,6 @@ export class RecurringActivity extends Entity {
     const instance = new RecurringActivity();
     instance.title = title;
     return instance;
-  }
-
-  /**
-   * Check whether the given note instance represents an event of a recurring activity
-   * @param note
-   */
-  static isActivityEventNote(note: Note) {
-    return (note?.relatesTo ?? "").startsWith(RecurringActivity.ENTITY_TYPE);
   }
 
   /** primary name to identify the activity */

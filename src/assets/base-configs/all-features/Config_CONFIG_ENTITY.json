@@ -620,14 +620,6 @@
       },
       "_id": "view:user/:id"
     },
-    "view:attendance": {
-      "component": "AttendanceManager",
-      "_id": "view:attendance"
-    },
-    "view:attendance/add-day": {
-      "component": "AddDayAttendance",
-      "_id": "view:attendance/add-day"
-    },
     "view:child": {
       "component": "EntityList",
       "config": {

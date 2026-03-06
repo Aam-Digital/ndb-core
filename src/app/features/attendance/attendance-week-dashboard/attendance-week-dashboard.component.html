@@ -17,11 +17,10 @@
           Attendance
         </th>
       </tr>
-      <ng-container matColumnDef="child">
+      <ng-container matColumnDef="participant">
         <td *matCellDef="let rowGroup">
           <app-entity-block
-            [entityId]="rowGroup[0].childId"
-            entityType="Child"
+            [entityId]="rowGroup[0].participantId"
           ></app-entity-block>
         </td>
       </ng-container>
@@ -40,7 +39,10 @@
         </td>
       </ng-container>
 
-      <tr mat-row *matRowDef="let row; columns: ['child', 'attendance']"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: ['participant', 'attendance']"
+      ></tr>
     </table>
 
     @if (entries?.length === 0) {

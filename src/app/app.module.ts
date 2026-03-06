@@ -95,6 +95,7 @@ import { Logging } from "./core/logging/logging.service";
 import { TemplateExportModule } from "./features/template-export/template-export.module";
 import { PublicFormModule } from "./features/public-form/public-form.module";
 import { SkillModule } from "./features/skill/skill.module";
+import { BulkEditModule } from "./features/bulk-edit/bulk-edit.module";
 import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty/application-loading.component";
 import { NotificationService } from "./features/notification/notification.service";
 import { AngularFireModule } from "@angular/fire/compat";
@@ -105,6 +106,7 @@ import { defaultValueStrategyProviders } from "./core/default-values/standard-de
 import { DemoDataModule } from "./core/demo-data/demo-data.module";
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
 import { EmailClientServiceModule } from "./features/email-client/email-client.module";
+import { DeDuplicationModule } from "./features/de-duplication/de-duplication-module";
 
 /**
  * Main entry point of the application.
@@ -150,6 +152,8 @@ import { EmailClientServiceModule } from "./features/email-client/email-client.m
     AdminModule,
     TemplateExportModule,
     SkillModule,
+    BulkEditModule,
+    DeDuplicationModule,
     DemoDataModule,
     EmailClientServiceModule,
     PublicFormModule,

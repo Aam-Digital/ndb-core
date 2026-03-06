@@ -2,12 +2,12 @@ import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { generateEventWithAttendance } from "../../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { AttendanceCalendarComponent } from "./attendance-calendar.component";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
 import moment from "moment";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
+import { EventWithAttendance } from "../../model/event-with-attendance";
 
-const demoEvents: Note[] = [
+const demoEvents: EventWithAttendance[] = [
   generateEventWithAttendance(
     [
       ["1", AttendanceLogicalStatus.ABSENT],
@@ -40,7 +40,7 @@ const demoEvents: Note[] = [
   ),
 ];
 
-demoEvents[0].getAttendance("1").remarks = "cough and cold";
+demoEvents[0].getAttendanceForParticipant("1").remarks = "cough and cold";
 
 export default {
   title: "Features/Attendance/Components/AttendanceCalendar",
