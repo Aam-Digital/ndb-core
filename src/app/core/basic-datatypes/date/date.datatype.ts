@@ -17,6 +17,7 @@
 
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { Injectable } from "@angular/core";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import moment from "moment";
 import { Logging } from "../../logging/logging.service";
@@ -39,6 +40,16 @@ export class DateDatatype<DBFormat = string> extends DefaultDatatype<
   static override dataType = "date";
   // currently not shown to users in Admin UI, as this is not supported well with timezones and UI
   // static override label: string = $localize`:datatype-label:date (with time)`;
+
+  /** @override Detects the first `date` or `date-only` field in the entity schema. */
+  static override detectFieldInEntity(
+    entityOrType: Entity | EntityConstructor,
+  ): string | undefined {
+    return DefaultDatatype.detectFieldInEntity(entityOrType, [
+      DateDatatype.dataType,
+      "date-only",
+    ]);
+  }
 
   override viewComponent = "DisplayDate";
   override editComponent = "EditDate";

@@ -9,6 +9,7 @@ import {
   AttendanceLogicalStatus,
   AttendanceStatusType,
 } from "../../model/attendance-status";
+import { EventWithAttendance } from "../../model/event-with-attendance";
 
 const PRESENT: AttendanceStatusType = {
   id: "PRESENT",
@@ -16,6 +17,10 @@ const PRESENT: AttendanceStatusType = {
   label: "Present",
   countAs: AttendanceLogicalStatus.PRESENT,
 };
+
+function wrap(note: Note): EventWithAttendance {
+  return new EventWithAttendance(note, "childrenAttendance", "date");
+}
 
 describe("ActivityCardComponent", () => {
   let component: ActivityCardComponent;
@@ -34,7 +39,7 @@ describe("ActivityCardComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ActivityCardComponent);
     component = fixture.componentInstance;
-    component.event = Note.create(new Date());
+    fixture.componentRef.setInput("event", wrap(Note.create(new Date())));
     fixture.detectChanges();
   });
 
@@ -43,31 +48,55 @@ describe("ActivityCardComponent", () => {
   });
 
   it("warningLevel should be 'ok' when all attendance statuses are set", () => {
-    component.event.childrenAttendance = [
+    const event = Note.create(new Date());
+    event.childrenAttendance = [
       new AttendanceItem(PRESENT, "", "child1"),
       new AttendanceItem(PRESENT, "", "child2"),
     ];
-    expect(component.warningLevel).toBe("ok");
+    fixture.componentRef.setInput("event", wrap(event));
+    fixture.detectChanges();
+    expect(component.warningLevel()).toBe("ok");
   });
 
   it("warningLevel should be 'warning' for recurring events with unknown attendances", () => {
-    component.event.childrenAttendance = [
-      new AttendanceItem(undefined, "", "child1"),
-    ];
-    component.recurring = true;
-    expect(component.warningLevel).toBe("warning");
+    const event = Note.create(new Date());
+    event.childrenAttendance = [new AttendanceItem(undefined, "", "child1")];
+    fixture.componentRef.setInput("event", wrap(event));
+    fixture.componentRef.setInput("recurring", true);
+    fixture.detectChanges();
+    expect(component.warningLevel()).toBe("warning");
   });
 
   it("warningLevel should be 'urgent' for non-recurring events with unknown attendances", () => {
-    component.event.childrenAttendance = [
-      new AttendanceItem(undefined, "", "child1"),
-    ];
-    component.recurring = false;
-    expect(component.warningLevel).toBe("urgent");
+    const event = Note.create(new Date());
+    event.childrenAttendance = [new AttendanceItem(undefined, "", "child1")];
+    fixture.componentRef.setInput("event", wrap(event));
+    fixture.componentRef.setInput("recurring", false);
+    fixture.detectChanges();
+    expect(component.warningLevel()).toBe("urgent");
   });
 
   it("warningLevel should be 'ok' when attendance array is empty", () => {
-    component.event.childrenAttendance = [];
-    expect(component.warningLevel).toBe("ok");
+    const event = Note.create(new Date());
+    event.childrenAttendance = [];
+    fixture.componentRef.setInput("event", wrap(event));
+    fixture.detectChanges();
+    expect(component.warningLevel()).toBe("ok");
+  });
+
+  it("should return attendance items from the wrapped event", () => {
+    const event = Note.create(new Date());
+    event.childrenAttendance = [new AttendanceItem(PRESENT, "", "child1")];
+    fixture.componentRef.setInput("event", wrap(event));
+    fixture.detectChanges();
+    expect(component.attendance().length).toBe(1);
+  });
+
+  it("should return date from the wrapped event", () => {
+    const testDate = new Date(2025, 5, 15);
+    const event = Note.create(testDate);
+    fixture.componentRef.setInput("event", wrap(event));
+    fixture.detectChanges();
+    expect(component.event().date).toEqual(testDate);
   });
 });

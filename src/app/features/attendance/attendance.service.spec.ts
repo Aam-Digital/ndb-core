@@ -16,6 +16,8 @@ import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-typ
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
 import { AttendanceItem } from "./model/attendance-item";
+import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
+import { EventWithAttendance } from "./model/event-with-attendance";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -115,7 +117,7 @@ describe("AttendanceService", () => {
     const actualEvents = await service.getEventsOnDate(
       moment("2007-01-01").toDate(),
     );
-    expect(actualEvents).toBeEmpty();
+    expect(actualEvents).toEqual([]);
   });
 
   it("gets events and loads additional participants from linked schools", async () => {
@@ -153,10 +155,7 @@ describe("AttendanceService", () => {
     activity.participants = ["direct", "excluded"];
 
     const event = await service.createEventForActivity(activity, new Date());
-    expect(event.children).toEqual(
-      jasmine.arrayWithExactContents(["member", "direct"]),
-    );
-    expect(event.childrenAttendance.map((a) => a.participant)).toEqual(
+    expect(event.attendanceItems.map((a) => a.participant)).toEqual(
       jasmine.arrayWithExactContents(["member", "direct"]),
     );
   });
@@ -177,7 +176,10 @@ describe("AttendanceService", () => {
         "day",
       ),
     ).toBeTrue();
-    expectEntitiesToMatch(actualAttendances[0].events, [e1_1, e1_2]);
+    expectEntitiesToMatch(
+      actualAttendances[0].events.map((e) => e.entity),
+      [e1_1, e1_2],
+    );
     expect(actualAttendances[0].activity).toEqual(activity1);
 
     expect(
@@ -186,7 +188,10 @@ describe("AttendanceService", () => {
         "day",
       ),
     ).toBeTrue();
-    expectEntitiesToMatch(actualAttendances[1].events, [e1_3]);
+    expectEntitiesToMatch(
+      actualAttendances[1].events.map((e) => e.entity),
+      [e1_3],
+    );
     expect(actualAttendances[1].activity).toEqual(activity1);
   });
 
@@ -198,20 +203,36 @@ describe("AttendanceService", () => {
 
     expect(actualAttendences).toHaveSize(2);
     expectEntitiesToMatch(
-      actualAttendences.find((t) => t.activity.getId() === activity1.getId())
-        .events,
+      actualAttendences
+        .find((t) => t.activity.getId() === activity1.getId())
+        .events.map((e) => e.entity),
       [e1_1, e1_2],
     );
     expectEntitiesToMatch(
-      actualAttendences.find((t) => t.activity.getId() === activity2.getId())
-        .events,
+      actualAttendences
+        .find((t) => t.activity.getId() === activity2.getId())
+        .events.map((e) => e.entity),
       [e2_1],
     );
 
-    expect(actualAttendences[0].periodFrom).toBeDate("2020-01-01");
-    expect(actualAttendences[0].periodTo).toBeDate("2020-01-05");
-    expect(actualAttendences[1].periodFrom).toBeDate("2020-01-01");
-    expect(actualAttendences[1].periodTo).toBeDate("2020-01-05");
+    expect(
+      moment(actualAttendences[0].periodFrom).isSame(
+        moment("2020-01-01"),
+        "day",
+      ),
+    ).toBeTrue();
+    expect(
+      moment(actualAttendences[0].periodTo).isSame(moment("2020-01-05"), "day"),
+    ).toBeTrue();
+    expect(
+      moment(actualAttendences[1].periodFrom).isSame(
+        moment("2020-01-01"),
+        "day",
+      ),
+    ).toBeTrue();
+    expect(
+      moment(actualAttendences[1].periodTo).isSame(moment("2020-01-05"), "day"),
+    ).toBeTrue();
   });
 
   it("getActivitiesForChild gets all existing RecurringActivities where it is a participant", async () => {
@@ -310,14 +331,11 @@ describe("AttendanceService", () => {
     const event = await service.createEventForActivity(activity, date);
 
     expect(mockQueryRelations).toHaveBeenCalledWith(linkedSchool.getId(), date);
-    expect(event.children).toHaveSize(2);
-    expect(event.children).toContain(directlyAddedChild.getId());
-    expect(event.children).toContain(childAttendingSchool.childId);
-    expect(event.childrenAttendance).toHaveSize(2);
-    expect(event.childrenAttendance.map((a) => a.participant)).toContain(
+    expect(event.attendanceItems).toHaveSize(2);
+    expect(event.attendanceItems.map((a) => a.participant)).toContain(
       directlyAddedChild.getId(),
     );
-    expect(event.childrenAttendance.map((a) => a.participant)).toContain(
+    expect(event.attendanceItems.map((a) => a.participant)).toContain(
       childAttendingSchool.childId,
     );
   });
@@ -347,18 +365,14 @@ describe("AttendanceService", () => {
 
     const event = await service.createEventForActivity(activity, new Date());
 
-    expect(event.children).toHaveSize(3);
-    expect(event.children).toContain(directlyAddedChild.getId());
-    expect(event.children).toContain(duplicateChild.getId());
-    expect(event.children).toContain(anotherRelation.childId);
-    expect(event.childrenAttendance).toHaveSize(3);
-    expect(event.childrenAttendance.map((a) => a.participant)).toContain(
+    expect(event.attendanceItems).toHaveSize(3);
+    expect(event.attendanceItems.map((a) => a.participant)).toContain(
       directlyAddedChild.getId(),
     );
-    expect(event.childrenAttendance.map((a) => a.participant)).toContain(
+    expect(event.attendanceItems.map((a) => a.participant)).toContain(
       duplicateChild.getId(),
     );
-    expect(event.childrenAttendance.map((a) => a.participant)).toContain(
+    expect(event.attendanceItems.map((a) => a.participant)).toContain(
       anotherRelation.childId,
     );
   });
@@ -376,6 +390,141 @@ describe("AttendanceService", () => {
     const events = await service.getEventsOnDate(datePickerDate);
     expect(events).toHaveSize(1);
     expect(events[0].subject).toBe(sameDayEvent.subject);
+  });
+
+  describe("getAvailableEventsForRollCall", () => {
+    const testDate = new Date(2024, 0, 15);
+    const mockCurrentUser = new Entity("current-user");
+
+    function findByActivity(
+      events: EventWithAttendance[],
+      activityId: string,
+    ): EventWithAttendance | undefined {
+      return events.find((e) => e.activityId === activityId);
+    }
+
+    beforeEach(async () => {
+      TestBed.inject(CurrentUserSubject).next(mockCurrentUser);
+
+      // Assign the outer activities to a different user so they don't interfere
+      // with tests that rely on user-based filtering
+      activity1.assignedTo = ["User:other-user"];
+      activity2.assignedTo = ["User:other-user"];
+      await entityMapper.save(activity1);
+      await entityMapper.save(activity2);
+    });
+
+    it("returns existing events for the date", async () => {
+      const existingEvent = EventNote.create(testDate);
+      await entityMapper.save(existingEvent);
+
+      const result = await service.getAvailableEventsForRollCall(testDate);
+
+      expect(result.allEvents.map((e) => e.entity.getId())).toContain(
+        existingEvent.getId(),
+      );
+      expect(existingEvent.isNew).toBeFalse();
+    });
+
+    it("generates an event for each activity without an existing event on the date", async () => {
+      const activity = RecurringActivity.create("new activity");
+      await entityMapper.save(activity);
+
+      const result = await service.getAvailableEventsForRollCall(testDate);
+
+      const generatedEvent = findByActivity(result.allEvents, activity.getId());
+      expect(generatedEvent).toBeTruthy();
+      expect(generatedEvent.entity.isNew).toBeTrue();
+    });
+
+    it("does not generate a duplicate event when one already exists for the activity on that date", async () => {
+      const activity = RecurringActivity.create("duplicate test");
+      const existingEvent = EventNote.create(testDate, "existing");
+      existingEvent.relatesTo = activity.getId();
+      await entityMapper.save(activity);
+      await entityMapper.save(existingEvent);
+
+      const result = await service.getAvailableEventsForRollCall(testDate);
+
+      const eventsForActivity = result.allEvents.filter(
+        (e) => e.activityId === activity.getId(),
+      );
+      expect(eventsForActivity).toHaveSize(1);
+    });
+
+    it("filters to activities assigned to currentUserId in events, but allEvents contains all", async () => {
+      const assignedActivity = RecurringActivity.create("assigned");
+      assignedActivity.assignedTo = [mockCurrentUser.getId()];
+      const otherActivity = RecurringActivity.create("other");
+      otherActivity.assignedTo = ["User:other-user"];
+      await entityMapper.save(assignedActivity);
+      await entityMapper.save(otherActivity);
+
+      const result = await service.getAvailableEventsForRollCall(testDate);
+
+      expect(
+        findByActivity(result.events, assignedActivity.getId()),
+      ).toBeTruthy();
+      expect(findByActivity(result.events, otherActivity.getId())).toBeFalsy();
+      expect(
+        findByActivity(result.allEvents, otherActivity.getId()),
+      ).toBeTruthy();
+    });
+
+    it("returns all activities when no current user is set", async () => {
+      TestBed.inject(CurrentUserSubject).next(undefined);
+
+      const activityAssignedToOther = RecurringActivity.create("other");
+      activityAssignedToOther.assignedTo = [mockCurrentUser.getId()];
+      await entityMapper.save(activityAssignedToOther);
+
+      const result = await service.getAvailableEventsForRollCall(testDate);
+
+      expect(
+        findByActivity(result.events, activityAssignedToOther.getId()),
+      ).toBeTruthy();
+      // when no user-relevant activities exist, events and allEvents contain the same event wrappers
+      expect(result.events.length).toBe(result.allEvents.length);
+    });
+
+    it("sets the currentUser as author on generated events", async () => {
+      const activity = RecurringActivity.create("activity");
+      await entityMapper.save(activity);
+
+      const result = await service.getAvailableEventsForRollCall(testDate);
+
+      const generatedEvent = findByActivity(result.allEvents, activity.getId());
+      expect(generatedEvent.entity["authors"]).toEqual([
+        mockCurrentUser.getId(),
+      ]);
+    });
+
+    it("sorts events: assigned to current user ranked higher, one-time events ranked highest", async () => {
+      const assignedActivity = RecurringActivity.create("assigned");
+      assignedActivity.assignedTo = [mockCurrentUser.getId()];
+      const unassignedActivity = RecurringActivity.create("unassigned");
+      const oneTimeEvent = EventNote.create(testDate, "one-time");
+      // one-time events have no relatesTo
+      await entityMapper.save(assignedActivity);
+      await entityMapper.save(unassignedActivity);
+      await entityMapper.save(oneTimeEvent);
+
+      const result = await service.getAvailableEventsForRollCall(testDate);
+      const oneTimeIdx = result.allEvents.findIndex(
+        (e) => e.entity === oneTimeEvent,
+      );
+      const assignedIdx = result.allEvents.findIndex(
+        (e) => e.activityId === assignedActivity.getId(),
+      );
+      const unassignedIdx = result.allEvents.findIndex(
+        (e) => e.activityId === unassignedActivity.getId(),
+      );
+
+      // one-time events first (score 1 for no relatesTo alone, or score 3 if also assigned)
+      expect(oneTimeIdx).toBeLessThan(unassignedIdx);
+      // assigned activity ranked higher than unassigned
+      expect(assignedIdx).toBeLessThan(unassignedIdx);
+    });
   });
 
   async function createChildrenInSchool(

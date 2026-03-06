@@ -1,21 +1,24 @@
 <mat-card
   appBorderHighlight
-  [borderClass]="'border-' + warningLevel"
+  [borderClass]="'border-' + warningLevel()"
   class="main-card"
 >
   <mat-card-header>
-    <mat-card-title>{{ event?.subject }}</mat-card-title>
+    <mat-card-title>{{ event().entity.toString() }}</mat-card-title>
   </mat-card-header>
   <mat-card-content class="text-secondary">
     <fa-icon icon="child"></fa-icon>
-    {{ event.childrenAttendance?.length ?? 0 }}
+    {{ attendance().length }}
     <span i18n>participants</span>
 
-    @if (!recurring) {
+    @if (!isRecurring() && event().date) {
       <span class="sep">/</span>
       <fa-icon icon="calendar"></fa-icon>
-      {{ event.date | customDate: "shortDate" }}
+      {{ event().date | customDate: "shortDate" }}
     }
-    <span class="sep">/</span>{{ event.category?.label }}
+
+    @if (extraFieldValue()) {
+      <span class="sep">/</span>{{ extraFieldValue() }}
+    }
   </mat-card-content>
 </mat-card>

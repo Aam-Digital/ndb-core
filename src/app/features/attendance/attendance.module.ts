@@ -1,6 +1,7 @@
 import { NgModule, inject } from "@angular/core";
 import { ComponentRegistry } from "#src/app/dynamic-components";
 import { attendanceComponents } from "./attendance-components";
+import { attendanceRoutes } from "./attendance.routing";
 import { RecurringActivity } from "./model/recurring-activity";
 import { EventNote } from "./model/event-note";
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
@@ -24,6 +25,7 @@ import { DashboardWidgetRegistryService } from "#src/app/core/dashboard/dashboar
 })
 export class AttendanceModule {
   static databaseEntities = [RecurringActivity, EventNote];
+  static routes = attendanceRoutes;
 
   private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
 

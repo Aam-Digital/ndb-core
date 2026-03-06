@@ -6,6 +6,7 @@ import { DatePipe, PercentPipe } from "@angular/common";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { ActivityAttendance } from "../../model/activity-attendance";
 import { EventNote } from "../../model/event-note";
+import { EventWithAttendance } from "../../model/event-with-attendance";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
@@ -86,9 +87,19 @@ describe("ActivityAttendanceSectionComponent", () => {
     component.allRecords = [
       ActivityAttendance.create(new Date(), []),
       ActivityAttendance.create(new Date(), [
-        EventNote.create(new Date(), "empty test"),
+        new EventWithAttendance(
+          EventNote.create(new Date(), "empty test"),
+          "childrenAttendance",
+          "date",
+        ),
       ]),
-      ActivityAttendance.create(new Date(), [eventParticipatingIn]),
+      ActivityAttendance.create(new Date(), [
+        new EventWithAttendance(
+          eventParticipatingIn,
+          "childrenAttendance",
+          "date",
+        ),
+      ]),
     ];
 
     component.updateDisplayedRecords(false);
@@ -109,17 +120,19 @@ describe("ActivityAttendanceSectionComponent", () => {
       moment().subtract(1, "months").toDate(),
     );
     const latestEvent = EventNote.create(new Date());
+    const wrap = (e: EventNote) =>
+      new EventWithAttendance(e, "childrenAttendance", "date");
     const oldestAttendance = ActivityAttendance.create(oldestEvent.date, [
-      oldestEvent,
+      wrap(oldestEvent),
     ]);
     oldestAttendance.periodTo = oldestEvent.date;
     const middleAttendance = ActivityAttendance.create(someEvent1.date, [
-      someEvent1,
-      someEvent2,
+      wrap(someEvent1),
+      wrap(someEvent2),
     ]);
     middleAttendance.periodTo = someEvent2.date;
     const latestAttendance = ActivityAttendance.create(latestEvent.date, [
-      latestEvent,
+      wrap(latestEvent),
     ]);
     latestAttendance.periodTo = latestEvent.date;
     mockAttendanceService.getActivityAttendances.and.resolveTo([
@@ -132,7 +145,7 @@ describe("ActivityAttendanceSectionComponent", () => {
 
     expect(component.combinedAttendance.periodFrom).toBe(oldestEvent.date);
     expect(component.combinedAttendance.periodTo).toBe(latestEvent.date);
-    expect(component.combinedAttendance.events).toEqual(
+    expect(component.combinedAttendance.events.map((e) => e.entity)).toEqual(
       jasmine.arrayWithExactContents([
         oldestEvent,
         someEvent1,

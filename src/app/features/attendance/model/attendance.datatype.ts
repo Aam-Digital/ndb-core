@@ -2,6 +2,9 @@ import { Injectable } from "@angular/core";
 import { SchemaEmbedDatatype } from "#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype";
 import { AttendanceItem } from "./attendance-item";
 import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
+import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { EventAttendanceMapDatatype } from "../deprecated/event-attendance-map.datatype";
+import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
 
 /**
  * Datatype for attendance tracking on any entity.
@@ -36,5 +39,15 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
   ): EntitySchemaField {
     // attendance always requires isArray
     return { ...schemaField, isArray: true };
+  }
+
+  /** @override Detects the first `attendance` or legacy `event-attendance-map` field in the entity schema. */
+  static override detectFieldInEntity(
+    entityOrType: Entity | EntityConstructor,
+  ): string | undefined {
+    return DefaultDatatype.detectFieldInEntity(entityOrType, [
+      AttendanceDatatype.dataType,
+      EventAttendanceMapDatatype.dataType,
+    ]);
   }
 }

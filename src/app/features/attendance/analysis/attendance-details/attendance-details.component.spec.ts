@@ -8,8 +8,6 @@ import {
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { EventNote } from "../../model/event-note";
-import { AttendanceService } from "../../attendance.service";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 
 describe("AttendanceDetailsComponent", () => {
@@ -17,11 +15,6 @@ describe("AttendanceDetailsComponent", () => {
   let fixture: ComponentFixture<AttendanceDetailsComponent>;
 
   beforeEach(waitForAsync(() => {
-    const mockAttendanceService = jasmine.createSpyObj([
-      "createEventForActivity",
-    ]);
-    mockAttendanceService.createEventForActivity.and.resolveTo(new EventNote());
-
     const entity = ActivityAttendance.create(new Date(), [
       generateEventWithAttendance(
         [
@@ -45,10 +38,12 @@ describe("AttendanceDetailsComponent", () => {
       imports: [AttendanceDetailsComponent, MockedTestingModule.withState()],
       providers: [
         { provide: MatDialogRef, useValue: {} },
-        { provide: AttendanceService, useValue: mockAttendanceService },
         {
           provide: MAT_DIALOG_DATA,
-          useValue: { attendance: new ActivityAttendance() },
+          useValue: {
+            attendance: new ActivityAttendance(),
+            forChild: undefined,
+          },
         },
       ],
     }).compileComponents();
