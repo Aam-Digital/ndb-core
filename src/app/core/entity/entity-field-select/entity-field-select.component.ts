@@ -86,11 +86,6 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
           (!fieldSchema.isInternalField && !!fieldSchema.label) ||
           (this.showInternalIdField() && prop === "_id"),
       )
-      .map(([name, fieldSchema]) => ({
-        ...fieldSchema,
-        id: name,
-        label:
-          name === "_id" ? $localize`ID (Internal UUID)` : fieldSchema.label,
-      }));
+      .map(([name, fieldSchema]) => ({ ...fieldSchema, id: name }));
   }
 }

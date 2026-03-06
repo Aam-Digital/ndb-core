@@ -57,7 +57,7 @@ describe("EntityImportConfigComponent", () => {
       )
       .map(([property, schema]) => ({
         property,
-        label: property === "_id" ? "ID (Internal UUID)" : schema.label,
+        label: schema.label,
       }));
     expect(component.availableProperties).toEqual(childPropertiesWithLabel);
   });
