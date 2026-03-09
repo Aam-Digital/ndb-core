@@ -14,7 +14,7 @@ export interface AttendanceFeatureConfig {
   };
 
   /**
-   * Entity types than can serve as a template to create a new roll-call event for a specific date.
+   * Entity types that can serve as a template to create a new roll-call event for a specific date.
    */
   recurringActivityTypes: EntityConstructor[];
 
