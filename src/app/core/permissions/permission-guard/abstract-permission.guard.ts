@@ -6,6 +6,7 @@ import {
 } from "@angular/router";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { inject, Injectable } from "@angular/core";
+import { EntityAbility } from "../ability/entity-ability";
 
 /**
  * Abstract base class common to all guards that check configurable user permissions or roles.
@@ -15,6 +16,13 @@ import { inject, Injectable } from "@angular/core";
 @Injectable()
 export abstract class AbstractPermissionGuard implements CanActivate {
   protected readonly router = inject(Router);
+  protected readonly ability = inject(EntityAbility, { optional: true });
+
+  protected async ensureAbilityInitialized(): Promise<void> {
+    if (this.ability && this.ability.rules.length === 0) {
+      await new Promise((res) => this.ability.on("updated", res));
+    }
+  }
 
   /**
    * Check if current navigation is allowed. This is used by Angular Router.

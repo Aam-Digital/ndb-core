@@ -2,7 +2,6 @@ import { inject, Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot } from "@angular/router";
 import { AbstractPermissionGuard } from "#src/app/core/permissions/permission-guard/abstract-permission.guard";
 import { DynamicComponentConfig } from "#src/app/core/config/dynamic-components/dynamic-component-config.interface";
-import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 import { AttendanceService } from "./attendance.service";
 import { AttendanceFeatureConfig } from "./model/attendance-feature-config";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
@@ -36,7 +35,6 @@ const COMPONENT_PERMISSIONS: Record<
  */
 @Injectable()
 export class AttendancePermissionGuard extends AbstractPermissionGuard {
-  private readonly ability = inject(EntityAbility);
   private readonly attendanceService = inject(AttendanceService);
 
   override async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
@@ -71,11 +69,5 @@ export class AttendancePermissionGuard extends AbstractPermissionGuard {
     return entityTypes.some((type) =>
       this.ability.can(permissionConfig.operation, type),
     );
-  }
-
-  private async ensureAbilityInitialized(): Promise<void> {
-    if (this.ability.rules.length === 0) {
-      await new Promise((res) => this.ability.on("updated", res));
-    }
   }
 }
