@@ -1,13 +1,13 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    ViewChild,
-    computed,
-    inject,
-    input,
-    linkedSignal,
-    resource,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  ViewChild,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+  resource,
+  signal,
 } from "@angular/core";
 import { AttendanceService } from "../../attendance.service";
 import { AlertService } from "#src/app/core/alerts/alert.service";
