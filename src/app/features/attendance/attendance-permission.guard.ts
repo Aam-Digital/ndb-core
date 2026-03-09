@@ -21,6 +21,7 @@ const COMPONENT_PERMISSIONS: Record<
     operation: "read",
   },
   AddDayAttendance: { configKey: "eventTypes", operation: "create" },
+  RollCall: { configKey: "eventTypes", operation: "create" },
 };
 
 /**
@@ -28,6 +29,7 @@ const COMPONENT_PERMISSIONS: Record<
  * The user is granted access if they can perform the required operation on at least one of the configured entity types.
  *
  * For the RollCall route, the entity type is extracted from the `:id` param prefix (e.g. `EventNote:abc` → `EventNote`).
+ * If no type can be extracted (e.g. `/new`), falls back to checking the `eventTypes` featureConfig (same as AddDayAttendance).
  *
  * Register this guard via `{ provide: AbstractPermissionGuard, useExisting: AttendancePermissionGuard, multi: true }`
  * so it is also evaluated during menu filtering by `RoutePermissionsService`.
@@ -38,28 +40,18 @@ export class AttendancePermissionGuard extends AbstractPermissionGuard {
   private readonly attendanceService = inject(AttendanceService);
 
   override async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
-    if (route.data?.["component"] === "RollCall") {
-      await this.checkEntityPermissionForIdArg(route.params["id"]);
-    }
-    return super.canActivate(route);
-  }
+    const entityType =
+      route.data?.["component"] === "RollCall"
+        ? route.params["id"]?.split(":")[0]
+        : undefined;
 
-  /**
-   * Extract the entity type from the ID in the route,
-   * to check against the exact entity to be created for a Roll Call.
-   */
-  private async checkEntityPermissionForIdArg(id: string) {
-    const entityType = id?.split(":")[0];
-    if (entityType) {
-      if (this.ability.rules.length === 0) {
-        await new Promise((res) => this.ability.on("updated", res));
-      }
-      if (this.ability.can("create", entityType)) {
-        return true;
-      }
-      this.router.navigate(["/404"]);
-      return false;
-    }
+    if (!entityType) return super.canActivate(route);
+
+    await this.ensureAbilityInitialized();
+    if (this.ability.can("create", entityType)) return true;
+
+    this.router.navigate(["/404"]);
+    return false;
   }
 
   protected async canAccessRoute(
@@ -75,12 +67,15 @@ export class AttendancePermissionGuard extends AbstractPermissionGuard {
 
     if (entityTypes.length === 0) return true;
 
-    if (this.ability.rules.length === 0) {
-      await new Promise((res) => this.ability.on("updated", res));
-    }
-
+    await this.ensureAbilityInitialized();
     return entityTypes.some((type) =>
       this.ability.can(permissionConfig.operation, type),
     );
+  }
+
+  private async ensureAbilityInitialized(): Promise<void> {
+    if (this.ability.rules.length === 0) {
+      await new Promise((res) => this.ability.on("updated", res));
+    }
   }
 }
