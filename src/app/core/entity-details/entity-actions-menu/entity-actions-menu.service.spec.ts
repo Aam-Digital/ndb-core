@@ -1,16 +1,52 @@
 import { TestBed } from "@angular/core/testing";
 
 import { EntityActionsMenuService } from "./entity-actions-menu.service";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("EntityActionsMenuService", () => {
   let service: EntityActionsMenuService;
+  let ability: jasmine.SpyObj<EntityAbility>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    ability = jasmine.createSpyObj<EntityAbility>("EntityAbility", ["can"]);
+    ability.can.and.returnValue(true);
+
+    TestBed.configureTestingModule({
+      providers: [{ provide: EntityAbility, useValue: ability }],
+    });
     service = TestBed.inject(EntityActionsMenuService);
   });
 
   it("should be created", () => {
     expect(service).toBeTruthy();
+  });
+
+  it("should filter out single actions if required permission is missing", async () => {
+    const entity = TestEntity.create("Record A");
+    ability.can.and.returnValue(false);
+
+    service.registerActions([
+      {
+        action: "permission-required",
+        label: "Permission Required",
+        icon: "lock",
+        permission: "update",
+        execute: async () => true,
+      },
+      {
+        action: "no-permission-required",
+        label: "No Permission Required",
+        icon: "check",
+        execute: async () => true,
+      },
+    ]);
+
+    const actions = await service.getActionsForSingle(entity);
+
+    expect(actions.map((action) => action.action)).toEqual([
+      "no-permission-required",
+    ]);
+    expect(ability.can).toHaveBeenCalledWith("update", entity);
   });
 });
