@@ -34,24 +34,32 @@ const COMPONENT_PERMISSIONS: Record<
  */
 @Injectable()
 export class AttendancePermissionGuard extends AbstractPermissionGuard {
-  private ability = inject(EntityAbility);
-  private attendanceService = inject(AttendanceService);
+  private readonly ability = inject(EntityAbility);
+  private readonly attendanceService = inject(AttendanceService);
 
   override async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
     if (route.data?.["component"] === "RollCall") {
-      const entityType = route.params["id"]?.split(":")[0];
-      if (entityType) {
-        if (this.ability.rules.length === 0) {
-          await new Promise((res) => this.ability.on("updated", res));
-        }
-        if (this.ability.can("create", entityType)) {
-          return true;
-        }
-        this.router.navigate(["/404"]);
-        return false;
-      }
+      await this.checkEntityPermissionForIdArg(route.params["id"]);
     }
     return super.canActivate(route);
+  }
+
+  /**
+   * Extract the entity type from the ID in the route,
+   * to check against the exact entity to be created for a Roll Call.
+   */
+  private async checkEntityPermissionForIdArg(id: string) {
+    const entityType = id?.split(":")[0];
+    if (entityType) {
+      if (this.ability.rules.length === 0) {
+        await new Promise((res) => this.ability.on("updated", res));
+      }
+      if (this.ability.can("create", entityType)) {
+        return true;
+      }
+      this.router.navigate(["/404"]);
+      return false;
+    }
   }
 
   protected async canAccessRoute(
