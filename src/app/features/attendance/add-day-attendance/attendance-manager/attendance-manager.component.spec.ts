@@ -8,7 +8,7 @@ import { AttendanceService } from "../../attendance.service";
 import { AttendanceFeatureConfig } from "../../model/attendance-feature-config";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 
-fdescribe("AttendanceManagerComponent", () => {
+describe("AttendanceManagerComponent", () => {
   let component: AttendanceManagerComponent;
   let fixture: ComponentFixture<AttendanceManagerComponent>;
 
