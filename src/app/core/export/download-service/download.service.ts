@@ -129,8 +129,8 @@ export class DownloadService {
     const columnLabels = new Map<string, string>();
 
     for (const [id, field] of entitySchema.entries()) {
-      if (!field.label) {
-        // skip "technical" fields without an explicit label
+      if (!field.label || field.isInternalField) {
+        // skip "technical" fields without an explicit label or internal fields
         continue;
       }
 
