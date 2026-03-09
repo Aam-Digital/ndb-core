@@ -34,10 +34,10 @@ export class AttendanceManagerComponent {
   private readonly attendanceService = inject(AttendanceService);
 
   activityTypes: Signal<EntityConstructor[]> = signal(
-    this.attendanceService.featureConfig.recurringActivityTypes,
+    this.attendanceService.featureSettings.recurringActivityTypes,
   );
 
   eventTypes: Signal<EntityConstructor[]> = signal(
-    this.attendanceService.featureConfig.eventTypes,
+    this.attendanceService.featureSettings.eventTypes,
   );
 }

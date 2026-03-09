@@ -126,7 +126,7 @@ describe("RollCallComponent", () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput(
       "eventEntity",
-      AttendanceService.createEventFromEntity(Note.create(new Date())),
+      EventWithAttendance.from(Note.create(new Date())),
     );
     fixture.detectChanges();
   }));
@@ -142,7 +142,7 @@ describe("RollCallComponent", () => {
     addParticipant(event, participant1);
     fixture.componentRef.setInput(
       "eventEntity",
-      AttendanceService.createEventFromEntity(event),
+      EventWithAttendance.from(event),
     );
     stabilize();
 
@@ -158,7 +158,7 @@ describe("RollCallComponent", () => {
 
     fixture.componentRef.setInput(
       "eventEntity",
-      AttendanceService.createEventFromEntity(noteWithNonExistingChild),
+      EventWithAttendance.from(noteWithNonExistingChild),
     );
     stabilize();
 
@@ -177,7 +177,7 @@ describe("RollCallComponent", () => {
 
     fixture.componentRef.setInput(
       "eventEntity",
-      AttendanceService.createEventFromEntity(note),
+      EventWithAttendance.from(note),
     );
     stabilize();
 
@@ -207,7 +207,7 @@ describe("RollCallComponent", () => {
     const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
     fixture.componentRef.setInput(
       "eventEntity",
-      AttendanceService.createEventFromEntity(note),
+      EventWithAttendance.from(note),
     );
     stabilize();
 
@@ -238,7 +238,7 @@ describe("RollCallComponent", () => {
     event.subject = "test";
     fixture.componentRef.setInput(
       "eventEntity",
-      AttendanceService.createEventFromEntity(event),
+      EventWithAttendance.from(event),
     );
     stabilize();
 
@@ -256,7 +256,7 @@ describe("RollCallComponent", () => {
     event.subject = "test";
     fixture.componentRef.setInput(
       "eventEntity",
-      AttendanceService.createEventFromEntity(event),
+      EventWithAttendance.from(event),
     );
     stabilize();
 
@@ -270,7 +270,7 @@ describe("RollCallComponent", () => {
     addParticipant(event, participant1);
     fixture.componentRef.setInput(
       "eventEntity",
-      AttendanceService.createEventFromEntity(event),
+      EventWithAttendance.from(event),
     );
     stabilize();
 
@@ -292,7 +292,7 @@ describe("RollCallComponent", () => {
     ).status = ABSENT;
     fixture.componentRef.setInput(
       "eventEntity",
-      AttendanceService.createEventFromEntity(note),
+      EventWithAttendance.from(note),
     );
     stabilize();
 
@@ -348,7 +348,7 @@ describe("RollCallComponent", () => {
     }
     fixture.componentRef.setInput(
       "eventEntity",
-      AttendanceService.createEventFromEntity(event),
+      EventWithAttendance.from(event),
     );
     stabilize();
 

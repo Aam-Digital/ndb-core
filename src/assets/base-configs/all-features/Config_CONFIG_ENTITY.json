@@ -1,6 +1,25 @@
 {
   "_id": "Config:CONFIG_ENTITY",
   "data": {
+    "appConfig:attendance": {
+      "recurringActivityTypes": [
+        "RecurringActivity"
+      ],
+      "eventTypes": [
+        "EventNote"
+      ],
+      "rollCallSetup": {
+        "filterConfig": [
+          {
+            "id": "category"
+          },
+          {
+            "id": "schools"
+          }
+        ],
+        "extraField": "category"
+      }
+    },
     "appConfig:usage-analytics": {
       "url": "https://matomo.aam-digital.org",
       "site_id": "8"

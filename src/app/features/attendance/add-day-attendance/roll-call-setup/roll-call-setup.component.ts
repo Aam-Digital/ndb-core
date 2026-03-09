@@ -73,14 +73,14 @@ export class RollCallSetupComponent {
    * Configuration for the filter UI shown above the events list.
    */
   readonly filterConfig = input<FilterConfig[]>(
-    this.attendanceService.featureConfig.rollCallSetup.filterConfig ?? [],
+    this.attendanceService.featureSettings.rollCallSetup.filterConfig ?? [],
   );
 
   /**
    * The entity field name to display as an extra info on each event card.
    */
   readonly extraField = input<string>(
-    this.attendanceService.featureConfig.rollCallSetup.extraField,
+    this.attendanceService.featureSettings.rollCallSetup.extraField,
   );
 
   date = signal(new Date());
