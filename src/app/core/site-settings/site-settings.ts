@@ -35,6 +35,13 @@ export class SiteSettings extends Entity {
   displayLanguageSelect: boolean = true;
 
   @DatabaseField({
+    label: $localize`Date format`,
+    description: $localize`Select a predefined format or enter a custom date format string`,
+    editComponent: "EditDateFormat",
+  })
+  dateFormat: string = "dd.MM.yyyy";
+
+  @DatabaseField({
     label: $localize`Logo`,
     dataType: "file",
     editComponent: "EditPhoto",

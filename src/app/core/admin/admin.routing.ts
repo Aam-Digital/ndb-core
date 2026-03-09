@@ -138,6 +138,7 @@ export const adminRoutes: Routes = [
                         "siteName",
                         "defaultLanguage",
                         "displayLanguageSelect",
+                        "dateFormat",
                       ],
                     },
                     { fields: ["primary", "secondary", "error", "font"] },
