@@ -17,7 +17,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 export class EntityActionsMenuService {
   private actions: EntityAction[] = [];
   private actionsFactories: EntityActionsFactory[] = [];
-  private readonly ability = inject(EntityAbility, { optional: true });
+  private readonly ability = inject(EntityAbility);
 
   getActions(entity?: Entity): EntityAction[] {
     return [
@@ -84,7 +84,7 @@ export class EntityActionsMenuService {
     action: EntityAction,
     entities: Entity | Entity[] | undefined,
   ): boolean {
-    if (!action.permission || !this.ability) {
+    if (!action.permission) {
       return true;
     }
 
