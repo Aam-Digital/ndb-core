@@ -8,11 +8,13 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
 import { inject, Injectable } from "@angular/core";
 
 /**
- * Abstract base class with functionality common to all guards that check configurable user permissions or roles.
+ * Abstract base class common to all guards that check configurable user permissions or roles.
+ *
+ * Use this as an injection token to provide guards from feature modules that should be used to hide menu items.
  */
 @Injectable()
 export abstract class AbstractPermissionGuard implements CanActivate {
-  private readonly router = inject(Router);
+  protected readonly router = inject(Router);
 
   /**
    * Check if current navigation is allowed. This is used by Angular Router.
