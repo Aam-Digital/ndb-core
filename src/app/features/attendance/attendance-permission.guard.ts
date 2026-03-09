@@ -38,9 +38,11 @@ export class AttendancePermissionGuard extends AbstractPermissionGuard {
   private readonly attendanceService = inject(AttendanceService);
 
   override async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
+    // if RollCall is opened with an id param, extract the type from this
+    const id = route.params["id"];
     const entityType =
-      route.data?.["component"] === "RollCall"
-        ? route.params["id"]?.split(":")[0]
+      route.data?.["component"] === "RollCall" && id?.includes(":")
+        ? id.split(":")[0]
         : undefined;
 
     if (!entityType) return super.canActivate(route);
