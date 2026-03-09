@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   signal,
   Signal,
@@ -13,6 +14,7 @@ import { ViewTitleComponent } from "#src/app/core/common-components/view-title/v
 import { RouteTarget } from "#src/app/route-target";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
+import { AttendanceService } from "../../attendance.service";
 
 @RouteTarget("AttendanceManager")
 @Component({
@@ -29,8 +31,14 @@ import { DisableEntityOperationDirective } from "#src/app/core/permissions/permi
   ],
 })
 export class AttendanceManagerComponent {
-  comingSoonDialog = inject(ComingSoonDialogService);
+  protected readonly comingSoonDialog = inject(ComingSoonDialogService);
+  private readonly attendanceService = inject(AttendanceService);
 
-  activityTypes: Signal<EntityConstructor[]> = signal([]);
-  hasPermissionsToRecordEvent: Signal<boolean> = signal(true);
+  activityTypes: Signal<EntityConstructor[]> = signal(
+    this.attendanceService.featureConfig.recurringActivityTypes,
+  );
+
+  eventTypes: Signal<EntityConstructor[]> = signal(
+    this.attendanceService.featureConfig.eventTypes,
+  );
 }

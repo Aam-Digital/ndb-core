@@ -23,7 +23,10 @@
         mat-raised-button
         class="full-width"
         routerLink="/attendance/add-day"
-        [disabled]="!hasPermissionsToRecordEvent()"
+        *appDisabledEntityOperation="{
+          entity: eventTypes(),
+          operation: 'create',
+        }"
         i18n
       >
         Record
