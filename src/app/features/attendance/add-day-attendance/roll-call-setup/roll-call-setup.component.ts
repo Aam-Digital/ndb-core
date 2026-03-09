@@ -1,13 +1,13 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    ViewChild,
-    computed,
-    inject,
-    input,
-    linkedSignal,
-    resource,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  ViewChild,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+  resource,
+  signal,
 } from "@angular/core";
 import { AttendanceService } from "../../attendance.service";
 import { AlertService } from "#src/app/core/alerts/alert.service";
@@ -73,7 +73,7 @@ export class RollCallSetupComponent {
    * Configuration for the filter UI shown above the events list.
    */
   readonly filterConfig = input<FilterConfig[]>(
-    this.attendanceService.featureConfig.rollCallSetup.filterConfig,
+    this.attendanceService.featureConfig.rollCallSetup.filterConfig ?? [],
   );
 
   /**
