@@ -17,8 +17,9 @@ mat-card-content {
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+}
 
-  > button {
-    width: 100%;
-  }
+.no-types-hint {
+  font-style: italic;
+  color: colors.$hint-text;
 }
