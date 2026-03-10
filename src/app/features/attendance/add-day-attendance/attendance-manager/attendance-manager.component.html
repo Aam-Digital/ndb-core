@@ -20,8 +20,13 @@
         smartphones.
       </p>
       <button
-        routerLink="/attendance/add-day"
         mat-raised-button
+        class="full-width"
+        routerLink="/attendance/add-day"
+        *appDisabledEntityOperation="{
+          entity: eventTypes(),
+          operation: 'create',
+        }"
         i18n="Record attendance button"
       >
         Record
@@ -41,13 +46,26 @@
         You can assign participants and users to these activities and analyze
         their attendance across time.
       </p>
-      <button
-        routerLink="/attendance/recurring-activity"
-        mat-raised-button
-        i18n="Manage activities button"
-      >
-        Manage Activities
-      </button>
+      <div class="flex-column gap-small">
+        @for (activity of activityTypes(); track activity.ENTITY_TYPE) {
+          <button
+            mat-raised-button
+            class="full-width"
+            [routerLink]="activity.route"
+            *appDisabledEntityOperation="{
+              entity: activity,
+              operation: 'read',
+            }"
+          >
+            {{ activity.labelPlural }}
+          </button>
+        } @empty {
+          <span class="no-types-hint" i18n
+            >No record types have been set up as "recurring activities"
+            yet.</span
+          >
+        }
+      </div>
     </mat-card-content>
   </mat-card>
 
