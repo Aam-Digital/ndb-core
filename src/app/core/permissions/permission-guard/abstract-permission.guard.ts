@@ -19,7 +19,7 @@ export abstract class AbstractPermissionGuard implements CanActivate {
   protected readonly ability = inject(EntityAbility, { optional: true });
 
   protected async ensureAbilityInitialized(): Promise<void> {
-    if (this.ability && this.ability.rules.length === 0) {
+    if (this.ability && !this.ability.initialized) {
       await new Promise((res) => this.ability.on("updated", res));
     }
   }
