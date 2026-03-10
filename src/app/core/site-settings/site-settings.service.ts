@@ -34,6 +34,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   siteName = this.getPropertyObservable("siteName");
   defaultLanguage = this.getPropertyObservable("defaultLanguage");
   displayLanguageSelect = this.getPropertyObservable("displayLanguageSelect");
+  dateFormat = this.getPropertyObservable("dateFormat");
 
   constructor() {
     const entityMapper = inject(EntityMapperService);
@@ -53,6 +54,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
     this.subscribeColorChanges("primary");
     this.subscribeColorChanges("secondary");
     this.subscribeColorChanges("error");
+    this.subscribeDateFormatChanges();
 
     this.initFromLocalStorage();
     this.cacheInLocalStorage();
@@ -129,6 +131,16 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
           ),
         );
       }
+    });
+  }
+
+  private subscribeDateFormatChanges() {
+    import("../basic-datatypes/date/date.static").then((dateModule) => {
+      this.dateFormat.subscribe((format) => {
+        // Fall back to default when stored value is blank or corrupt
+        const formatToApply = format?.trim() || dateModule.defaultDateFormat();
+        dateModule.setGlobalDateFormat(formatToApply);
+      });
     });
   }
 

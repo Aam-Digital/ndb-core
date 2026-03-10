@@ -13,6 +13,7 @@ import { EventNote } from "../../model/event-note";
 import { EventWithAttendance } from "../../model/event-with-attendance";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { Router } from "@angular/router";
+import { AttendanceFeatureConfig } from "../../model/attendance-feature-config";
 
 describe("RollCallSetupComponent", () => {
   let component: RollCallSetupComponent;
@@ -36,11 +37,13 @@ describe("RollCallSetupComponent", () => {
       "AttendanceService",
       ["getAvailableEventsForRollCall"],
       {
-        rollCallConfig: {
-          filterConfig: [],
-          extraField: "category",
-          dateField: "date",
-        },
+        featureConfig: {
+          rollCallSetup: {
+            extraField: "category",
+          },
+          recurringActivityTypes: [],
+          eventTypes: [],
+        } as AttendanceFeatureConfig,
       },
     );
     mockAttendanceService.getAvailableEventsForRollCall.and.resolveTo({

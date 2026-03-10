@@ -80,6 +80,14 @@ export class EntityBlockComponent {
     return this.entityResource.value()?.getConstructor()?.icon || "diamond";
   });
 
+  entityColor = computed(() => {
+    const entity = this.entityResource.value();
+    if (!entity) return undefined;
+    const colorConfig = entity.getConstructor().color;
+    if (!colorConfig) return undefined;
+    return Entity.getColorWithConditions(entity);
+  });
+
   showDetailsPage() {
     const entity = this.entityResource.value();
     if (this.linkDisabled() || !entity) {
