@@ -373,7 +373,6 @@ export class Note extends Entity {
     note.schools = [...this.schools];
     note.relatedEntities = [...this.relatedEntities];
     note.authors = [...this.authors];
-    note.childrenAttendance = this.childrenAttendance.map((a) => a.copy());
     return note;
   }
 }
