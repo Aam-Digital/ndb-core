@@ -27,20 +27,30 @@ test("Add a new task record to the list", async ({ page }) => {
   const dialog = page.getByRole("dialog");
 
   // Then a new form is opened with the heading "Adding new Task"
-  await expect(dialog.getByRole("heading", { name: "Adding new Task" })).toBeVisible();
+  await expect(
+    dialog.getByRole("heading", { name: "Adding new Task" }),
+  ).toBeVisible();
 
   // Note: Angular Material floating labels do not expose an accessible name via
   // aria-labelledby in a way Playwright resolves with getByLabel(), so fields
   // are located by their mat-form-field element IDs (id="entity-field__<fieldId>").
 
   // Then I add the subject
-  await page.locator("#entity-field__subject").getByRole("textbox").fill(TASK_SUBJECT);
+  await page
+    .locator("#entity-field__subject")
+    .getByRole("textbox")
+    .fill(TASK_SUBJECT);
 
   // Then I capture the deadline date (31.03.2026)
-  await page.locator("#entity-field__deadline").getByRole("textbox").fill("31.03.2026");
+  await page
+    .locator("#entity-field__deadline")
+    .getByRole("textbox")
+    .fill("31.03.2026");
 
   // And I capture the start date (20.02.2026)
-  const startDateInput = page.locator("#entity-field__startDate").getByRole("textbox");
+  const startDateInput = page
+    .locator("#entity-field__startDate")
+    .getByRole("textbox");
   await startDateInput.fill("20.02.2026");
   await startDateInput.blur();
 
@@ -73,7 +83,9 @@ test("Add a new task record to the list", async ({ page }) => {
   await dialog.getByRole("button", { name: "Save" }).click();
 
   // The heading now changes from "Adding new Task" to <SUBJECT>
-  await expect(dialog.getByRole("heading", { name: TASK_SUBJECT })).toBeVisible();
+  await expect(
+    dialog.getByRole("heading", { name: TASK_SUBJECT }),
+  ).toBeVisible();
 
   // And the form is displayed with the details filled
   await expect(
@@ -102,6 +114,7 @@ test("Edit the related records assigned to the task", async ({ page }) => {
 
   const childToRemove = generateChild({ name: "Anand Trivedi" });
   const childToAdd = generateChild({ name: "Amrita Nayar" });
+  Object.assign(childToAdd, { phone: "+63 98163115" });
   const childOther = generateChild({ name: "Arun Kapoor" });
 
   // Pre-existing task with "Anand Trivedi" as a related record.
@@ -170,4 +183,165 @@ test("Edit the related records assigned to the task", async ({ page }) => {
   const taskRow = page.getByRole("row").filter({ hasText: TASK_SUBJECT });
   await expect(taskRow.getByText("Amrita Nayar")).toBeVisible();
   await expect(taskRow.getByText("Anand Trivedi")).not.toBeVisible();
+
+  // Reopen the task to verify the tooltip on the linked participant chip
+  await page.getByRole("cell", { name: TASK_SUBJECT }).click();
+
+  // Hover over "Amrita Nayar" chip to trigger the tooltip
+  const amritaChip = dialog.locator("span[title='Amrita Nayar']");
+  await amritaChip.hover();
+
+  // The tooltip shows the participant's name and configured block detail (phone)
+  await expect(page.getByText("+63 98163115")).toBeVisible();
+
+  // Click the chip to trigger navigation to the participant's profile
+  await amritaChip.click();
+
+  // Close the dialog first to reveal the child profile page behind it
+  await page.locator("button.overlay-close-button").click();
+
+  // Then the "Basic Information" tab of the participant is displayed by default
+  await expect(
+    page.getByRole("tab", { name: "Basic Information" }),
+  ).toBeVisible();
+
+  // When I click on the "Notes & Tasks" tab
+  await page.getByRole("tab", { name: "Notes & Tasks" }).click();
+
+  // Then the related task is listed under Tasks
+  await expect(page.getByRole("cell", { name: TASK_SUBJECT })).toBeVisible();
+});
+
+test("Logged-in users Tasks list displayed in the Dashboard", async ({
+  page,
+}) => {
+  const users = generateUsers();
+  const [, demoAdmin] = users;
+
+  // Task assigned to demo-admin with deadline 08.03.2026; no startDate so it
+  // passes the dashboard filter (moment(undefined) == today <= today).
+  const taskForAdmin = Todo.create({
+    subject: TASK_SUBJECT,
+    deadline: new Date("2026-03-08"),
+    assignedTo: [demoAdmin.getId()],
+  });
+
+  await loadApp(page, [...users, taskForAdmin]);
+
+  // The Dashboard is the default landing page after login.
+  // The "Tasks due" widget shows only tasks assigned to the logged-in user.
+  const tasksDueWidget = page.locator("app-todos-dashboard");
+  await expect(tasksDueWidget.getByText(TASK_SUBJECT)).toBeVisible();
+
+  // The deadline "08.03.2026" (dd.MM.yyyy format) is displayed next to the task
+  await expect(tasksDueWidget.getByText("08.03.2026")).toBeVisible();
+
+  // When I click on the task name in the widget
+  await tasksDueWidget.getByText(TASK_SUBJECT).click();
+
+  // Then the overview of the task is displayed in a dialog
+  const dialog = page.getByRole("dialog");
+  await expect(
+    dialog.getByRole("heading", { name: TASK_SUBJECT }),
+  ).toBeVisible();
+});
+
+test("Archive a task hides it from the list", async ({ page }) => {
+  const users = generateUsers();
+  const [, demoAdmin] = users;
+
+  // Pre-existing task with no startDate so it is visible under the default filter
+  const taskToArchive = Todo.create({
+    subject: TASK_SUBJECT,
+    deadline: new Date("2025-02-28"),
+    assignedTo: [demoAdmin.getId()],
+  });
+
+  await loadApp(page, [...users, taskToArchive]);
+
+  // When I click on Tasks from the Main Menu
+  await page.getByRole("navigation").getByText("Tasks").click();
+
+  // And I click on the record with the subject
+  await page.getByRole("cell", { name: TASK_SUBJECT }).click();
+
+  const dialog = page.getByRole("dialog");
+
+  // Then the form is displayed and the "Archive" button is shown as a primary
+  // action in the dialog header (primaryAction: true, showExpanded: true)
+  await dialog.getByRole("button", { name: "Archive" }).click();
+
+  // A snackbar confirmation message is shown
+  await expect(page.getByText(`"${TASK_SUBJECT}" archived`)).toBeVisible();
+
+  // The dialog shows the archived info card below the task header
+  await expect(
+    dialog.getByText(
+      "This record is archived and will be hidden from lists and select options by default.",
+    ),
+  ).toBeVisible();
+
+  // A "Reactivate" button is shown to undo the archive
+  await expect(
+    dialog.getByRole("button", { name: "Reactivate" }),
+  ).toBeVisible();
+
+  // Close the dialog and return to the task list
+  await page.locator("button.overlay-close-button").click();
+
+  // The archived task is no longer visible under the default "Currently Active" filter
+  await expect(
+    page.getByRole("cell", { name: TASK_SUBJECT }),
+  ).not.toBeVisible();
+});
+
+test("Complete a task that is related to a child", async ({ page }) => {
+  const users = generateUsers();
+  const [, demoAdmin] = users;
+
+  const child1 = generateChild({ name: "Anand Trivedi" });
+  const child2 = generateChild({ name: "Anand Nehru" });
+  const child3 = generateChild({ name: "Arun Kapoor" });
+
+  // Pre-existing task with three related children; no startDate so it is
+  // visible under the default "Currently Active" filter
+  const taskToComplete = Todo.create({
+    subject: TASK_SUBJECT,
+    deadline: new Date("2025-02-28"),
+    assignedTo: [demoAdmin.getId()],
+    relatedEntities: [child1.getId(), child2.getId(), child3.getId()],
+  });
+
+  await loadApp(page, [...users, child1, child2, child3, taskToComplete]);
+
+  // When I click on Tasks from the Main Menu
+  await page.getByRole("navigation").getByText("Tasks").click();
+
+  // And I click on the record with the subject
+  await page.getByRole("cell", { name: TASK_SUBJECT }).click();
+
+  const dialog = page.getByRole("dialog");
+
+  // Click "Edit" to enter edit mode — the "Complete Task" button requires the
+  // form to be in edit mode before it can be activated
+  await dialog.getByRole("button", { name: "Edit" }).click();
+
+  // Then a "Complete Task" button is displayed at the bottom of the form
+  await expect(
+    dialog.getByRole("button", { name: "Complete Task" }),
+  ).toBeVisible();
+
+  // When I click "Complete Task"
+  // force: true bypasses the mat-form-field wrapper that intercepts pointer events
+  await dialog
+    .getByRole("button", { name: "Complete Task" })
+    .click({ force: true });
+
+  // The dialog closes after completing the task
+  await expect(page.getByRole("dialog")).not.toBeVisible();
+
+  // The completed task is removed from the default "Currently Active" task list
+  await expect(
+    page.getByRole("cell", { name: TASK_SUBJECT }),
+  ).not.toBeVisible();
 });

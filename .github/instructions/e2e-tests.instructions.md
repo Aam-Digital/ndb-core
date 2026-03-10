@@ -192,6 +192,49 @@ Use semantic names for test fixtures: `childToAdd`, `childToKeep`, `childToRemov
 
 Use descriptive titles with angle brackets for test activities (e.g., `"<COACHING CLASS>"`, `"<MATH TUTORING>"`) to distinguish them from real data.
 
+## Angular Material Form Fields
+
+Angular Material **floating labels** are **not** accessible via `getByLabel()` — the `aria-labelledby` wiring is not resolved by Playwright. Use the `mat-form-field`'s `id` attribute instead:
+
+```typescript
+// Fill a text field
+await page.locator("#entity-field__subject").getByRole("textbox").fill("My Task");
+
+// Open an entity-select dropdown
+await page.locator("#entity-field__relatedEntities").locator(".fa-caret-down").click();
+```
+
+The `id` format is always `entity-field__<fieldId>` (matching the field's schema key).
+
+## Dialog Interactions
+
+Tasks and entity records open in **popup dialogs** (not full-page navigation) when `clickMode: "popup-details"` is configured:
+
+```typescript
+const dialog = page.getByRole("dialog");
+
+// Enter edit mode
+await dialog.getByRole("button", { name: "Edit" }).click();
+
+// Save changes
+await dialog.getByRole("button", { name: "Save" }).click();
+
+// Close the dialog
+await page.locator("button.overlay-close-button").click();
+```
+
+**Important:** The background table is `aria-hidden` while a dialog is open. Always close the dialog before querying table rows or cells in the list.
+
+**closeOnNavigation:** Angular Material dialogs close automatically when the router navigates. Clicking a side-nav item while a dialog is open will close the dialog and navigate away.
+
+### mat-form-field Pointer-Events Issue
+
+Some buttons rendered inside a `mat-form-field` (e.g., the "Complete Task" button inside the `completed` field wrapper) may have their pointer events intercepted by the form field overlay. Use `{ force: true }` to bypass this:
+
+```typescript
+await dialog.getByRole("button", { name: "Complete Task" }).click({ force: true });
+```
+
 ## Quirks & Special Cases
 
 - For select options with checkboxes, use `{ checked: true }` not `{ selected: true }`
