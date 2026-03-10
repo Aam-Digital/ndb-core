@@ -24,6 +24,9 @@ export class EntityAbility extends Ability<
 > {
   private entitySchemaService = inject(EntitySchemaService);
 
+  /** Whether the ability rules have been initialized by AbilityService at least once. */
+  initialized = false;
+
   constructor() {
     super([]);
   }
