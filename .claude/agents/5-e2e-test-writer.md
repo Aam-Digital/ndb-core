@@ -19,12 +19,15 @@ Generate Playwright e2e tests for features, covering critical user flows with pr
 When asked to implement TODOs:
 
 1. Search for TODO comments in e2e test files (optionally scoped to a specific file):
+
    ```bash
    grep -rn "TODO" e2e/tests/ --include="*.ts" -A 10
    ```
+
 2. **Implement one TODO at a time** — do not batch multiple TODOs
 3. Replace the TODO comment block with a complete `test()` function
 4. Expected TODO format:
+
    ```typescript
    /*
    TODO: Test user can create a new child record
@@ -35,6 +38,7 @@ When asked to implement TODOs:
    Then I should see the new child in the list
    */
    ```
+
 5. If no TODOs are found, point the user to `doc/compodoc_sources/how-to-guides/end-to-end-tests.md` for instructions on writing TODO stubs
 
 ## Interactive Mode
