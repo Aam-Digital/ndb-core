@@ -7,6 +7,10 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatSelectModule } from "@angular/material/select";
 import { MatIconButton } from "@angular/material/button";
+import {
+  MatSlideToggleChange,
+  MatSlideToggleModule,
+} from "@angular/material/slide-toggle";
 import { IconComponent } from "#src/app/core/common-components/icon-input/icon-input.component";
 
 @Component({
@@ -21,6 +25,7 @@ import { IconComponent } from "#src/app/core/common-components/icon-input/icon-i
     MatTooltipModule,
     MatSelectModule,
     MatIconButton,
+    MatSlideToggleModule,
   ],
   templateUrl: "./menu-item-form.component.html",
   styleUrls: ["./menu-item-form.component.scss"],
@@ -29,12 +34,14 @@ export class MenuItemFormComponent implements OnInit {
   @Input() item!: MenuItem;
   @Input() hideLabel = false;
   @Input() hideLink = false;
+  @Input() noLinkMode = false;
 
   /**
    * Available routes that are offered to the user for selection.
    */
   @Input() linkOptions: { value: string; label: string }[] = [];
   @Output() itemChange = new EventEmitter<MenuItem>();
+  @Output() noLinkModeChange = new EventEmitter<boolean>();
 
   /**
    * If true: show free-text input. If false: show dropdown with linkOptions.
@@ -64,5 +71,10 @@ export class MenuItemFormComponent implements OnInit {
 
   toggleCustomLinkMode() {
     this.customLinkMode = !this.customLinkMode;
+  }
+
+  toggleNoLinkMode(event: MatSlideToggleChange) {
+    event.source.checked = this.noLinkMode;
+    this.noLinkModeChange.emit(event.checked);
   }
 }

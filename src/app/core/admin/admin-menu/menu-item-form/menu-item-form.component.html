@@ -5,7 +5,15 @@
       <input matInput [(ngModel)]="item.label" (ngModelChange)="onChange()" />
     </mat-form-field>
   }
-  @if (!hideLink) {
+
+  <mat-slide-toggle
+    [checked]="noLinkMode"
+    (change)="toggleNoLinkMode($event)"
+    i18n
+    >Add as parent section without link</mat-slide-toggle
+  >
+
+  @if (!hideLink && !noLinkMode) {
     <div class="flex-row align-center gap-small">
       <mat-form-field appearance="fill" class="full-width">
         <mat-label i18n>Link</mat-label>
