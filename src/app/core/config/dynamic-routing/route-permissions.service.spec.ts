@@ -104,6 +104,36 @@ describe("RoutePermissionsService", () => {
 
     expect(filteredItems).toEqual([]);
   });
+
+  it("should include link-less items (section headers) without permission checks", async () => {
+    // A link-less item with no children should be included as a label header
+    const linklessItem: MenuItem = { label: "More", icon: "folder" };
+
+    // A link-less parent with an accessible linked child should be included
+    const linklessParentWithChild: MenuItem = {
+      label: "Section",
+      icon: "folder",
+      subMenu: [{ label: "Allowed", link: "allowed" }],
+    };
+
+    // A link-less parent whose only child is also link-less should be included
+    const linklessParentWithLinklessChild: MenuItem = {
+      label: "Group",
+      icon: "folder",
+      subMenu: [{ label: "Sub Header", icon: "tag" }],
+    };
+
+    const filteredItems: MenuItem[] = await service.filterPermittedRoutes([
+      linklessItem,
+      linklessParentWithChild,
+      linklessParentWithLinklessChild,
+    ]);
+
+    expect(filteredItems.length).toBe(3);
+    expect(filteredItems[0]).toEqual(linklessItem);
+    expect(filteredItems[1].label).toBe("Section");
+    expect(filteredItems[2].label).toBe("Group");
+  });
 });
 
 /*
