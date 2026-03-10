@@ -1,6 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { EntityPermissionGuard } from "../../permissions/permission-guard/entity-permission.guard";
+import { AbstractPermissionGuard } from "../../permissions/permission-guard/abstract-permission.guard";
 import { MenuItem } from "../../ui/navigation/menu-item";
 
 /**
@@ -10,8 +11,17 @@ import { MenuItem } from "../../ui/navigation/menu-item";
   providedIn: "root",
 })
 export class RoutePermissionsService {
-  private roleGuard = inject(UserRoleGuard);
-  private permissionGuard = inject(EntityPermissionGuard);
+  private readonly roleGuard = inject(UserRoleGuard);
+  private readonly permissionGuard = inject(EntityPermissionGuard);
+
+  /**
+   * Feature Modules can register additional custom guards
+   * as a multi provider for `AbstractPermissionGuard`.
+   */
+  private readonly additionalGuards =
+    (inject(AbstractPermissionGuard, { optional: true }) as unknown as
+      | AbstractPermissionGuard[]
+      | null) ?? [];
 
   /**
    * Filters menu items based on the route and entity permissions on the link.
@@ -40,9 +50,11 @@ export class RoutePermissionsService {
   }
 
   private async isAccessibleRouteForUser(path: string): Promise<boolean> {
-    return (
-      (await this.roleGuard.checkRoutePermissions(path)) &&
-      (await this.permissionGuard.checkRoutePermissions(path))
-    );
+    const checks = [
+      this.roleGuard.checkRoutePermissions(path),
+      this.permissionGuard.checkRoutePermissions(path),
+      ...this.additionalGuards.map((g) => g.checkRoutePermissions(path)),
+    ];
+    return (await Promise.all(checks)).every(Boolean);
   }
 }
