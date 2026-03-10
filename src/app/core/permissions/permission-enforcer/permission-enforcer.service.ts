@@ -13,10 +13,19 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 import { Logging } from "../../logging/logging.service";
 
 /**
- * This service checks whether the relevant rules for the current user changed.
- * If it detects a change, all Entity types that have read restrictions are collected.
- * All entities of these entity types are loaded and checked whether the currently logged-in user has read permissions.
- * If one entity is found for which the user does **not** have read permissions, then the local database is destroyed and a new sync has to start.
+ * This service checks whether the relevant rules for the current user changed
+ * and reacts accordingly.
+ *
+ * **`indexeddb` adapter (PouchDB 8+):**
+ * Calls `resetSync()` unconditionally. The next sync cycle will receive a
+ * `lostPermissions` list from the replication proxy and individually purge
+ * each inaccessible document via `SyncedPouchDatabase.purgeDocsWithLostPermissions()`.
+ * No page reload or full-DB destruction occurs.
+ *
+ * **Legacy `idb` adapter (PouchDB < 8, purge not supported):**
+ * Falls back to the classic behaviour — loads all entities of restricted types,
+ * checks CASL rules, and if any violation is found calls `destroyDatabases()` +
+ * `location.reload()` to force a clean re-sync.
  */
 @Injectable({ providedIn: "root" })
 export class PermissionEnforcerService {
@@ -46,25 +55,35 @@ export class PermissionEnforcerService {
       return;
     }
 
-    const subjects = this.getSubjectsWithReadRestrictions(userRules);
-    if (await this.dbHasEntitiesWithoutPermissions(subjects)) {
-      Logging.debug(
-        "Detected changed permissions for user. Destroying local db due to lost permissions ...",
-      );
-      this.analyticsService.eventTrack(
-        "destroying local db due to lost permissions",
-        { category: "Migration" },
-      );
-      // TODO: is it enough to destroy the default DB or could other DBs also be affected?
-      await this.dbResolver.destroyDatabases();
-      this.location.reload();
-    } else {
-      // Rules changed but no lost permissions — the user may have gained access to new data.
-      // Clear sync checkpoints to force a full re-check on the next sync.
+    if (this.dbResolver.isIndexedDbAdapterSupported()) {
+      // indexeddb adapter: sync-time purge handles lost-permission docs automatically.
       Logging.debug(
         "Detected changed permissions for user. Resetting sync ...",
       );
+      this.analyticsService.eventTrack(
+        "re-sync triggered due to changed permissions",
+        { category: "Migration" },
+      );
       await this.dbResolver.resetSync();
+    } else {
+      // Legacy idb adapter: purge() not available — fall back to destroy + reload when needed.
+      const subjects = this.getSubjectsWithReadRestrictions(userRules);
+      if (await this.dbHasEntitiesWithoutPermissions(subjects)) {
+        Logging.debug(
+          "Detected changed permissions for user. Destroying local db due to lost permissions ...",
+        );
+        this.analyticsService.eventTrack(
+          "destroying local db due to lost permissions",
+          { category: "Migration" },
+        );
+        await this.dbResolver.destroyDatabases();
+        this.location.reload();
+      } else {
+        Logging.debug(
+          "Detected changed permissions for user. Resetting sync ...",
+        );
+        await this.dbResolver.resetSync();
+      }
     }
 
     // update stored rules to check for future changes

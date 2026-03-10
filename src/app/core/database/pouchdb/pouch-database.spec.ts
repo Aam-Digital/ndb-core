@@ -342,5 +342,33 @@ describe("PouchDatabase tests", () => {
       expect(rawPurgeSpy.calls.argsFor(0)[0]).toBe("Child:1");
       expect(rawPurgeSpy.calls.argsFor(1)).toEqual(["Child:1", "1-conflict"]);
     });
+
+    it("should return false without calling raw purge when adapter is not 'indexeddb'", async () => {
+      await database.put({ _id: "Child:1", name: "test" });
+
+      const db = database.getPouchDB();
+      const rawPurgeSpy = jasmine.createSpy("purge").and.resolveTo({});
+      (db as any).purge = rawPurgeSpy;
+
+      database.adapter = "idb";
+      const result = await database.purge("Child:1");
+
+      expect(result).toBe(false);
+      expect(rawPurgeSpy).not.toHaveBeenCalled();
+    });
+
+    it("should return false without calling raw purge when adapter is 'memory'", async () => {
+      await database.put({ _id: "Child:1", name: "test" });
+
+      const db = database.getPouchDB();
+      const rawPurgeSpy = jasmine.createSpy("purge").and.resolveTo({});
+      (db as any).purge = rawPurgeSpy;
+
+      database.adapter = "memory";
+      const result = await database.purge("Child:1");
+
+      expect(result).toBe(false);
+      expect(rawPurgeSpy).not.toHaveBeenCalled();
+    });
   });
 });
