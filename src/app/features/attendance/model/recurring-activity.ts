@@ -7,6 +7,12 @@ import {
 } from "#src/app/child-dev-project/notes/model/interaction-type.interface";
 import { asArray } from "#src/app/utils/asArray";
 
+/**
+ * @deprecated The `RecurringActivity` entity type is the default implementation
+ * bundled with the attendance feature. New deployments should configure custom
+ * activity entity types via `AttendanceFeatureConfig.recurringActivityTypes` in
+ * the app config (`"appConfig:attendance"`).
+ */
 @DatabaseEntity("RecurringActivity")
 export class RecurringActivity extends Entity {
   static override route = "attendance/recurring-activity";
@@ -27,7 +33,7 @@ export class RecurringActivity extends Entity {
       required: true,
     },
   })
-  title: string = "";
+  title: string;
 
   /**
    * a category to group and filter activities by.

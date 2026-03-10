@@ -6,10 +6,8 @@ import {
 } from "@storybook/angular";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
-import {
-  ActivityAttendance,
-  generateEventWithAttendance,
-} from "../../model/activity-attendance";
+import { ActivityAttendance } from "../../model/activity-attendance";
+import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import moment from "moment";
@@ -24,11 +22,11 @@ const attendanceRecords = [
   ActivityAttendance.create(
     moment().subtract(1, "month").startOf("month").toDate(),
     [
-      generateEventWithAttendance([
+      TestEventEntity.generateEventWithAttendance([
         ["1", AttendanceLogicalStatus.ABSENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ]),
-      generateEventWithAttendance([
+      TestEventEntity.generateEventWithAttendance([
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ]),
@@ -36,7 +34,7 @@ const attendanceRecords = [
   ),
 
   ActivityAttendance.create(moment().startOf("month").toDate(), [
-    generateEventWithAttendance(
+    TestEventEntity.generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.PRESENT],
@@ -44,21 +42,21 @@ const attendanceRecords = [
       ],
       moment().subtract(5, "days").toDate(),
     ),
-    generateEventWithAttendance(
+    TestEventEntity.generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
       moment().subtract(4, "days").toDate(),
     ),
-    generateEventWithAttendance(
+    TestEventEntity.generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.ABSENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
       moment().subtract(3, "days").toDate(),
     ),
-    generateEventWithAttendance(
+    TestEventEntity.generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.ABSENT],

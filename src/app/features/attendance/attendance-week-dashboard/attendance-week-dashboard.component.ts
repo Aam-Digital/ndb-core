@@ -2,20 +2,19 @@ import { Component, inject, Input, OnInit } from "@angular/core";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceService } from "../attendance.service";
 import { AttendanceItem } from "../model/attendance-item";
-import { ActivityAttendance } from "../model/activity-attendance";
-import { RecurringActivity } from "../model/recurring-activity";
+
 import moment, { Moment } from "moment";
-import { groupBy } from "#src/app/utils/utils";
 import { MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
 import { AttendanceDayBlockComponent } from "./attendance-day-block/attendance-day-block.component";
 import { DashboardWidget } from "#src/app/core/dashboard/dashboard-widget/dashboard-widget";
 import { DashboardListWidgetComponent } from "#src/app/core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
+import { EventWithAttendance } from "../model/event-with-attendance";
 
 interface AttendanceWeekRow {
   participantId: string;
-  activity: RecurringActivity;
+  activityId: string | undefined;
   attendanceDays: (AttendanceItem | undefined)[];
 }
 
@@ -87,64 +86,84 @@ export class AttendanceWeekDashboardComponent
       .add(this.daysOffset, "days");
     const previousSaturday = moment(previousMonday).add(5, "days");
 
-    const activityAttendances =
-      await this.attendanceService.getAllActivityAttendancesForPeriod(
-        previousMonday.toDate(),
-        previousSaturday.toDate(),
-      );
-    const lowAttendanceCases = new Set<string>();
-    const records: AttendanceWeekRow[] = [];
-    for (const att of activityAttendances) {
-      const rows = this.generateRowsFromActivityAttendance(
-        att,
-        moment(previousMonday),
-        moment(previousSaturday),
-      );
-      records.push(...rows);
+    const rawEvents = await this.attendanceService.getEventsOnDate(
+      previousMonday.toDate(),
+      previousSaturday.toDate(),
+    );
 
-      rows
-        .filter((r) => this.filterLowAttendance(r))
-        .forEach((r) => {
-          lowAttendanceCases.add(r.participantId);
-        });
+    const groupedByActivity = new Map<
+      string | undefined,
+      EventWithAttendance[]
+    >();
+    for (const e of rawEvents) {
+      try {
+        const ewa = EventWithAttendance.from(e);
+        const key = ewa.activityId;
+        const arr = groupedByActivity.get(key) ?? [];
+        arr.push(ewa);
+        groupedByActivity.set(key, arr);
+      } catch {
+        // skip entities without attendance fields
+      }
     }
 
-    const groups = groupBy(records, "participantId");
-    this.entries = groups
+    const lowAttendanceCases = new Set<string>();
+    const records: AttendanceWeekRow[] = [];
+    for (const [activityId, activityEvents] of groupedByActivity) {
+      const rows = this.generateRowsFromEvents(
+        activityEvents,
+        previousMonday,
+        previousSaturday,
+        activityId,
+      );
+      records.push(...rows);
+      rows
+        .filter((r) => this.filterLowAttendance(r))
+        .forEach((r) => lowAttendanceCases.add(r.participantId));
+    }
+
+    const groupsMap = new Map<string, AttendanceWeekRow[]>();
+    for (const r of records) {
+      const arr = groupsMap.get(r.participantId) ?? [];
+      arr.push(r);
+      groupsMap.set(r.participantId, arr);
+    }
+    this.entries = Array.from(groupsMap.entries())
       .filter(([participantId]) => lowAttendanceCases.has(participantId))
       .map(([_, attendance]) => attendance);
   }
 
-  private generateRowsFromActivityAttendance(
-    att: ActivityAttendance,
+  private generateRowsFromEvents(
+    events: EventWithAttendance[],
     from: Moment,
     to: Moment,
+    activityId: string | undefined,
   ): AttendanceWeekRow[] {
-    if (!att.activity) {
-      return [];
-    }
+    const participants = [
+      ...new Set(
+        events.flatMap((e) =>
+          e.attendanceItems
+            .map((item) => item.participant)
+            .filter((p): p is string => !!p),
+        ),
+      ),
+    ];
 
     const results: AttendanceWeekRow[] = [];
-    for (const participant of att.participants) {
-      const eventAttendances = [];
+    for (const participant of participants) {
+      const attendanceDays: (AttendanceItem | undefined)[] = [];
 
       let day = moment(from);
       while (day.isSameOrBefore(to, "day")) {
-        const event = att.events.find((e) => day.isSame(e.date, "day"));
-        if (event) {
-          eventAttendances.push(event.getAttendanceForParticipant(participant));
-        } else {
-          // put a "placeholder" into the array for the current day
-          eventAttendances.push(undefined);
-        }
+        const event = events.find((e) => day.isSame(e.date, "day"));
+        // put a "placeholder" into the array if no event occurred on this day
+        attendanceDays.push(
+          event ? event.getAttendanceForParticipant(participant) : undefined,
+        );
         day = day.add(1, "day");
       }
 
-      results.push({
-        participantId: participant,
-        activity: att.activity,
-        attendanceDays: eventAttendances,
-      });
+      results.push({ participantId: participant, activityId, attendanceDays });
     }
 
     return results;

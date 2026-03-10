@@ -8,17 +8,18 @@ import { DatabaseTestingModule } from "#src/app/utils/database-testing.module";
 import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
-import { EventNote } from "../model/event-note";
 import { AttendanceItem } from "../model/attendance-item";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { defaultInteractionTypes } from "#src/app/core/config/default-config/default-interaction-types";
+import { GroupParticipantResolverService } from "./group-participant-resolver";
 
 /**
  * @deprecated Tests for group-based participant resolution (linked schools → participants).
  * This functionality is deprecated; use direct `participants` field on activity entities instead.
  */
-describe("GroupParticipantResolver (deprecated)", () => {
+describe("GroupParticipantResolverService (deprecated)", () => {
   let service: AttendanceService;
+  let resolverService: GroupParticipantResolverService;
   let entityMapper: EntityMapperService;
 
   const meetingInteractionCategory = defaultInteractionTypes.find(
@@ -30,6 +31,7 @@ describe("GroupParticipantResolver (deprecated)", () => {
       imports: [DatabaseTestingModule],
     });
     service = TestBed.inject(AttendanceService);
+    resolverService = TestBed.inject(GroupParticipantResolverService);
     entityMapper = TestBed.inject(EntityMapperService);
   }));
 
@@ -57,21 +59,14 @@ describe("GroupParticipantResolver (deprecated)", () => {
     expect(actualEvents).toHaveSize(1);
   });
 
-  it("should create an event without the excluded participants", async () => {
-    const linkedSchoolId = "test_school";
-    await createChildrenInSchool(linkedSchoolId, ["excluded", "member"]);
-
-    const activity = new RecurringActivity();
-    activity.linkedGroups = [linkedSchoolId];
-    activity.excludedParticipants = ["excluded"];
-    activity.participants = ["direct", "excluded"];
-
-    // After Phase 1 simplification: only direct participants minus excluded are used.
-    // Group members from linkedGroups are no longer resolved automatically.
-    const event = await service.createEventForActivity(activity, new Date());
-    expect(event.attendanceItems.map((a) => a.participant)).toEqual(
-      jasmine.arrayWithExactContents(["direct"]),
+  it("filterExcludedParticipants filters excluded participants from a list", () => {
+    // Previously this filtering was applied automatically in createEventForActivity.
+    // It is now available as an explicit deprecated static helper for callers that still need it.
+    const result = GroupParticipantResolverService.filterExcludedParticipants(
+      ["direct", "excluded"],
+      ["excluded"],
     );
+    expect(result).toEqual(["direct"]);
   });
 
   it("should include children from a linked school for event from activity (legacy behaviour removed)", async () => {

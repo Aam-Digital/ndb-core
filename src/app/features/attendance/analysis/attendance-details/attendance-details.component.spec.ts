@@ -1,10 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceDetailsComponent } from "./attendance-details.component";
-import {
-  ActivityAttendance,
-  generateEventWithAttendance,
-} from "../../model/activity-attendance";
+import { ActivityAttendance } from "../../model/activity-attendance";
+import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -16,7 +14,7 @@ describe("AttendanceDetailsComponent", () => {
 
   beforeEach(waitForAsync(() => {
     const entity = ActivityAttendance.create(new Date(), [
-      generateEventWithAttendance(
+      TestEventEntity.generateEventWithAttendance(
         [
           ["1", AttendanceLogicalStatus.PRESENT],
           ["2", AttendanceLogicalStatus.PRESENT],
@@ -24,7 +22,7 @@ describe("AttendanceDetailsComponent", () => {
         ],
         new Date("2020-01-01"),
       ),
-      generateEventWithAttendance(
+      TestEventEntity.generateEventWithAttendance(
         [
           ["1", AttendanceLogicalStatus.PRESENT],
           ["2", AttendanceLogicalStatus.ABSENT],

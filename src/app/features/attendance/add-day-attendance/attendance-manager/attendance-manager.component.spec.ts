@@ -5,7 +5,6 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { ComingSoonDialogService } from "#src/app/features/coming-soon/coming-soon-dialog.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { AttendanceService } from "../../attendance.service";
-import { AttendanceFeatureConfig } from "../../model/attendance-feature-config";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 
 describe("AttendanceManagerComponent", () => {
@@ -24,10 +23,12 @@ describe("AttendanceManagerComponent", () => {
         {
           provide: AttendanceService,
           useValue: {
-            featureConfig: {
+            featureSettings: {
+              activityTypes: [],
               recurringActivityTypes: [],
               eventTypes: [],
-            } as AttendanceFeatureConfig,
+              filterConfig: [],
+            },
           },
         },
         {

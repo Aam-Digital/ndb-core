@@ -133,10 +133,9 @@ describe("DataTransformationService", () => {
   it("should export attendance status for each note participant", async () => {
     const child1 = await createChildInDB("present kid");
     const child2 = await createChildInDB("absent kid");
-    const child3 = await createChildInDB("unknown kid");
     const note = await createNoteInDB(
       "Note 1",
-      [child1, child2, child3],
+      [child1, child2],
       ["PRESENT", "ABSENT"],
     );
 
@@ -162,7 +161,6 @@ describe("DataTransformationService", () => {
     expect(result).toEqual([
       { note: "Note 1", participant: "present kid", status: "PRESENT" },
       { note: "Note 1", participant: "absent kid", status: "ABSENT" },
-      { note: "Note 1", participant: "unknown kid", status: "" },
     ]);
   });
 

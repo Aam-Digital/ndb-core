@@ -7,7 +7,7 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from "@angular/core";
-import { EntityConstructor } from "#src/app/core/entity/model/entity";
+import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import {
   MatCalendar,
   MatCalendarCellCssClasses,
@@ -66,7 +66,7 @@ export class AttendanceCalendarComponent implements OnChanges {
 
   @Input() records: EventWithAttendance[] = [];
   @Input() highlightForChild: string;
-  @Input() activity: RecurringActivity;
+  @Input() activity: Entity;
 
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   minDate: Date;

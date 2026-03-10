@@ -1,6 +1,5 @@
 import { DemoActivityGeneratorService } from "./demo-activity-generator.service";
 import { DemoDataGenerator } from "#src/app/core/demo-data/demo-data-generator";
-import { RecurringActivity } from "../model/recurring-activity";
 import { DemoChildGenerator } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { DemoUserGeneratorService } from "#src/app/core/user/demo-user-generator.service";
 import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
@@ -8,9 +7,12 @@ import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { TestBed } from "@angular/core/testing";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
+import { AttendanceService } from "../attendance.service";
+import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
+import { AttendanceFeatureSettings } from "../model/attendance-feature-config";
 
 describe("DemoActivityGenerator", () => {
-  let service: DemoDataGenerator<RecurringActivity>;
+  let service: DemoDataGenerator<Entity>;
 
   beforeEach(() => {
     const mockChildGenerator = {
@@ -21,12 +23,36 @@ describe("DemoActivityGenerator", () => {
       entities: [createEntityOfType("User", "test-user")] as Entity[],
     } as DemoUserGeneratorService;
 
+    const mockAttendanceService = {
+      featureSettings: {
+        activityTypes: [
+          {
+            activityType: TestEntity,
+            eventType: TestEventEntity,
+            participantsField: "refMixed",
+            dateField: undefined,
+            relatesToField: "relatesTo",
+            assignedUsersField: "authors",
+            filterConfig: [],
+            extraField: "",
+            fieldMapping: {
+              title: "name",
+            },
+          },
+        ],
+        recurringActivityTypes: [TestEntity],
+        eventTypes: [TestEventEntity],
+        filterConfig: [],
+      } as AttendanceFeatureSettings,
+    };
+
     TestBed.configureTestingModule({
       providers: [
         DemoActivityGeneratorService,
         EntityRegistry,
         { provide: DemoChildGenerator, useValue: mockChildGenerator },
         { provide: DemoUserGeneratorService, useValue: mockUserGenerator },
+        { provide: AttendanceService, useValue: mockAttendanceService },
       ],
     });
     service = TestBed.inject(DemoActivityGeneratorService);
@@ -34,5 +60,6 @@ describe("DemoActivityGenerator", () => {
 
   it("should generate entities", () => {
     expect(service.entities).toBeDefined();
+    expect(service.entities.length).toBeGreaterThan(0);
   });
 });

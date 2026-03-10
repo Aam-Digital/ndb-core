@@ -2,13 +2,12 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AttendanceCalendarComponent } from "./attendance-calendar.component";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { generateEventWithAttendance } from "../../model/activity-attendance";
+import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import { SimpleChange } from "@angular/core";
 import moment from "moment";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { AttendanceItem } from "../../model/attendance-item";
 import { NullAttendanceStatusType } from "../../model/attendance-status";
-import { EventNote } from "../../model/event-note";
 import { AttendanceService } from "../../attendance.service";
 import { AnalyticsService } from "#src/app/core/analytics/analytics.service";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
@@ -27,7 +26,7 @@ describe("AttendanceCalendarComponent", () => {
       "createEventForActivity",
     ]);
     mockAttendanceService.createEventForActivity.and.resolveTo(
-      new EventWithAttendance(new EventNote(), "childrenAttendance", "date"),
+      new EventWithAttendance(new TestEventEntity(), "attendance", "date"),
     );
 
     TestBed.configureTestingModule({
@@ -62,8 +61,8 @@ describe("AttendanceCalendarComponent", () => {
 
   it("sets min and max selectable date based on time range of given records", () => {
     component.records = [
-      generateEventWithAttendance([], new Date("2020-01-05")),
-      generateEventWithAttendance([], new Date("2020-01-20")),
+      TestEventEntity.generateEventWithAttendance([], new Date("2020-01-05")),
+      TestEventEntity.generateEventWithAttendance([], new Date("2020-01-20")),
     ];
 
     component.ngOnChanges({
@@ -88,7 +87,7 @@ describe("AttendanceCalendarComponent", () => {
     const absentAttendance = defaultAttendanceStatusTypes.find(
       (it) => it.id === "ABSENT",
     );
-    const event = Object.assign(new EventNote(), {
+    const event = Object.assign(new TestEventEntity(), {
       date: new Date(),
       attendance: [
         new AttendanceItem(presentAttendance, "", attendedChild.getId()),
@@ -112,7 +111,7 @@ describe("AttendanceCalendarComponent", () => {
   it("should add focused participant on the fly if not part of event already", () => {
     const testDate = new Date();
     const excludedChild = new TestEntity("excluded_child");
-    const event = Object.assign(new EventNote(), { date: testDate });
+    const event = TestEventEntity.create(testDate);
     component.records = [new EventWithAttendance(event, "attendance", "date")];
     component.highlightForChild = excludedChild.getId();
 

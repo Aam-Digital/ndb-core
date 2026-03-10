@@ -19,11 +19,6 @@
           "entityType": "School"
         },
         {
-          "label": "Attendance",
-          "icon": "calendar-check",
-          "link": "/attendance"
-        },
-        {
           "entityType": "Note"
         },
         {
@@ -55,13 +50,6 @@
                 "WARNING",
                 "URGENT"
               ]
-            }
-          },
-          {
-            "component": "AttendanceWeekDashboard",
-            "config": {
-              "daysOffset": 0,
-              "periodLabel": "last week"
             }
           },
           {
@@ -117,71 +105,6 @@
           },
           {
             "id": "authors"
-          }
-        ],
-        "exportConfig": [
-          {
-            "label": "event_id",
-            "query": "_id"
-          },
-          {
-            "label": "date",
-            "query": "date"
-          },
-          {
-            "label": "event title",
-            "query": "subject"
-          },
-          {
-            "label": "event type",
-            "query": "category"
-          },
-          {
-            "label": "event description",
-            "query": "text"
-          },
-          {
-            "query": ":getAttendanceArray(true)",
-            "subQueries": [
-              {
-                "query": ".participant:toEntities(Child)",
-                "subQueries": [
-                  {
-                    "label": "participant_id",
-                    "query": "_id"
-                  },
-                  {
-                    "label": "participant",
-                    "query": "name"
-                  },
-                  {
-                    "label": "gender",
-                    "query": "gender"
-                  },
-                  {
-                    "label": "religion",
-                    "query": "religion"
-                  }
-                ]
-              },
-              {
-                "label": "status",
-                "query": ".status._status.id"
-              },
-              {
-                "query": ".school:toEntities(School)",
-                "subQueries": [
-                  {
-                    "label": "school_name",
-                    "query": "name"
-                  },
-                  {
-                    "label": "school_id",
-                    "query": "entityId"
-                  }
-                ]
-              }
-            ]
           }
         ]
       }
@@ -409,36 +332,6 @@
                 }
               }
             ]
-          },
-          {
-            "title": "Activities",
-            "components": [
-              {
-                "component": "RelatedEntities",
-                "config": {
-                  "entityType": "RecurringActivity",
-                  "columns": [
-                    {
-                      "id": "title",
-                      "editComponent": "EditTextWithAutocomplete",
-                      "additional": {
-                        "entityType": "RecurringActivity",
-                        "relevantProperty": "linkedGroups"
-                      }
-                    },
-                    {
-                      "id": "assignedTo"
-                    },
-                    {
-                      "id": "linkedGroups"
-                    },
-                    {
-                      "id": "excludedParticipants"
-                    }
-                  ]
-                }
-              }
-            ]
           }
         ]
       },
@@ -553,15 +446,6 @@
                     "schoolId"
                   ]
                 }
-              }
-            ]
-          },
-          {
-            "title": "Attendance",
-            "components": [
-              {
-                "title": "",
-                "component": "GroupedChildAttendance"
               }
             ]
           },

@@ -28,9 +28,15 @@ export class EventWithAttendance {
   /**
    * Wrap an entity in an EventWithAttendance by auto-detecting its attendance and date fields.
    *
+   * @param relatesToField Optional override for the field linking the event to its parent activity. Defaults to `"relatesTo"`.
+   * @param authorsField Optional override for the field holding the event's assigned users. Defaults to `"authors"`.
    * Throws if the entity does not have the required fields.
    */
-  static from(entity: Entity): EventWithAttendance {
+  static from(
+    entity: Entity,
+    relatesToField = "relatesTo",
+    authorsField = "authors",
+  ): EventWithAttendance {
     const attendanceField = AttendanceDatatype.detectFieldInEntity(entity);
     const dateField = DateDatatype.detectFieldInEntity(entity);
     if (!attendanceField || !dateField) {
@@ -39,7 +45,13 @@ export class EventWithAttendance {
         `Entity does not have the required attendance and date fields for roll call.`,
       );
     }
-    return new EventWithAttendance(entity, attendanceField, dateField);
+    return new EventWithAttendance(
+      entity,
+      attendanceField,
+      dateField,
+      relatesToField,
+      authorsField,
+    );
   }
 
   constructor(
@@ -47,6 +59,8 @@ export class EventWithAttendance {
     readonly attendanceField: string,
     readonly dateField: string,
     readonly relatesToField: string = "relatesTo",
+    readonly assignedUsersField: string = "authors",
+    readonly extraField: string = "",
   ) {}
 
   get date(): Date | undefined {
@@ -66,12 +80,22 @@ export class EventWithAttendance {
    * Corresponds to the `relatesTo` field (or the configured `relatesToField`).
    */
   get activityId(): string | undefined {
-    return (this.entity[this.relatesToField] as string | undefined) || undefined;
+    return (
+      (this.entity[this.relatesToField] as string | undefined) || undefined
+    );
   }
 
   /** Whether this event belongs to a parent activity. */
   get isActivityEvent(): boolean {
     return !!this.activityId;
+  }
+
+  /**
+   * The users assigned to / responsible for this event.
+   * Corresponds to the `authors` field (or the configured `authorsField`).
+   */
+  get assignedUsers(): string[] {
+    return (this.entity[this.assignedUsersField] as string[]) ?? [];
   }
 
   getAttendanceForParticipant(

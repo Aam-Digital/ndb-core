@@ -7,7 +7,7 @@ import {
   SimpleChanges,
   inject,
 } from "@angular/core";
-import { RecurringActivity } from "../../model/recurring-activity";
+import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
 import { AttendanceService } from "../../attendance.service";
 import { formatPercent } from "@angular/common";
@@ -25,7 +25,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { EntitiesTableComponent } from "#src/app/core/common-components/entities-table/entities-table.component";
 
 /**
- * Displays attendance analysis for a given `RecurringActivity`
+ * Displays attendance analysis for a given "recurring activity"
  * either related to a specific participant or the overall attendance.
  */
 @DynamicComponent("ActivityAttendanceSection")
@@ -47,7 +47,7 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
   private locale = inject(LOCALE_ID);
   private dialog = inject(MatDialog);
 
-  @Input() entity: RecurringActivity;
+  @Input() entity: Entity;
   @Input() forChild?: string;
 
   loading: boolean = true;

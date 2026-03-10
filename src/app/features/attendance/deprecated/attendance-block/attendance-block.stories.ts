@@ -1,8 +1,6 @@
 import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
-import {
-  ActivityAttendance,
-  generateEventWithAttendance,
-} from "../../model/activity-attendance";
+import { ActivityAttendance } from "../../model/activity-attendance";
+import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { AttendanceBlockComponent } from "./attendance-block.component";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
@@ -30,15 +28,15 @@ const Template: StoryFn<AttendanceBlockComponent> = (
 });
 
 const attendanceRecord = ActivityAttendance.create(new Date("2021-01-01"), [
-  generateEventWithAttendance([
+  TestEventEntity.generateEventWithAttendance([
     ["1", AttendanceLogicalStatus.ABSENT],
     ["2", AttendanceLogicalStatus.ABSENT],
   ]),
-  generateEventWithAttendance([
+  TestEventEntity.generateEventWithAttendance([
     ["1", AttendanceLogicalStatus.PRESENT],
     ["2", AttendanceLogicalStatus.ABSENT],
   ]),
-  generateEventWithAttendance([
+  TestEventEntity.generateEventWithAttendance([
     ["1", AttendanceLogicalStatus.IGNORE],
     ["2", AttendanceLogicalStatus.PRESENT],
   ]),
@@ -55,9 +53,15 @@ export const CriticalAttendance = {
 };
 
 const attendanceRecord2 = ActivityAttendance.create(new Date("2021-01-01"), [
-  generateEventWithAttendance([["1", AttendanceLogicalStatus.PRESENT]]),
-  generateEventWithAttendance([["1", AttendanceLogicalStatus.PRESENT]]),
-  generateEventWithAttendance([["1", AttendanceLogicalStatus.ABSENT]]),
+  TestEventEntity.generateEventWithAttendance([
+    ["1", AttendanceLogicalStatus.PRESENT],
+  ]),
+  TestEventEntity.generateEventWithAttendance([
+    ["1", AttendanceLogicalStatus.PRESENT],
+  ]),
+  TestEventEntity.generateEventWithAttendance([
+    ["1", AttendanceLogicalStatus.ABSENT],
+  ]),
 ]);
 attendanceRecord2.activity = RecurringActivity.create("Demo Activity");
 
@@ -71,7 +75,9 @@ export const MediocreAttendance = {
 };
 
 const attendanceRecord3 = ActivityAttendance.create(new Date("2021-01-01"), [
-  generateEventWithAttendance([["1", AttendanceLogicalStatus.PRESENT]]),
+  TestEventEntity.generateEventWithAttendance([
+    ["1", AttendanceLogicalStatus.PRESENT],
+  ]),
 ]);
 attendanceRecord3.activity = RecurringActivity.create("Demo Activity");
 

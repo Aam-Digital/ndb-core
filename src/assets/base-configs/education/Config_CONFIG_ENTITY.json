@@ -5,6 +5,25 @@
       "url": "https://matomo.aam-digital.org",
       "site_id": "8"
     },
+    "appConfig:attendance": {
+      "activityTypes": {
+        "RecurringActivity": {
+          "eventType": "Event",
+          "filterConfig": [
+            {
+              "id": "category"
+            }
+          ],
+          "participantsField": "participants",
+          "assignedUsersField": "assignedTo",
+          "extraField": "category",
+          "fieldMapping": {
+            "subject": "title",
+            "category": "type"
+          }
+        }
+      }
+    },
     "navigationMenu": {
       "items": [
         {
@@ -16,7 +35,12 @@
           "entityType": "Child"
         },
         {
-          "entityType": "RecurringActivity"
+          "entityType": "RecurringActivity",
+          "subMenu": [
+            {
+              "entityType": "Event"
+            }
+          ]
         },
         {
           "label": "Attendance",
@@ -132,19 +156,6 @@
       "labelPlural": "Notes",
       "hasPII": true,
       "attributes": {
-        "children": {
-          "label": "Children",
-          "dataType": "entity",
-          "isArray": true,
-          "additional": "Child",
-          "entityReferenceRole": "composite",
-          "editComponent": "EditAttendance",
-          "anonymize": "retain"
-        },
-        "childrenAttendance": {
-          "dataType": "event-attendance-map",
-          "anonymize": "retain"
-        },
         "date": {
           "label": "Date",
           "dataType": "date-only",
@@ -187,23 +198,15 @@
           "label": "Attachment",
           "dataType": "file"
         },
-        "relatesTo": {
-          "dataType": "entity",
-          "additional": "RecurringActivity",
-          "anonymize": "retain"
-        },
         "relatedEntities": {
           "label": "Related Records",
           "dataType": "entity",
+          "additional": [
+            "Child",
+            "School",
+            "RecurringActivity"
+          ],
           "isArray": true,
-          "anonymize": "retain"
-        },
-        "schools": {
-          "label": "Groups",
-          "dataType": "entity",
-          "isArray": true,
-          "additional": "School",
-          "entityReferenceRole": "composite",
           "anonymize": "retain"
         },
         "warningLevel": {
@@ -218,8 +221,6 @@
       "component": "NotesManager",
       "config": {
         "title": "Notes & Reports",
-        "includeEventNotes": false,
-        "showEventNotesToggle": true,
         "columnGroups": {
           "default": "Standard",
           "mobile": "Mobile",
@@ -231,7 +232,7 @@
                 "subject",
                 "category",
                 "authors",
-                "children"
+                "relatedEntities"
               ]
             },
             {
@@ -239,7 +240,7 @@
               "columns": [
                 "date",
                 "subject",
-                "children"
+                "relatedEntities"
               ]
             }
           ]
@@ -317,67 +318,6 @@
           {
             "id": "authors"
           }
-        ],
-        "exportConfig": [
-          {
-            "label": "event_id",
-            "query": "_id"
-          },
-          {
-            "label": "date",
-            "query": "date"
-          },
-          {
-            "label": "event title",
-            "query": "subject"
-          },
-          {
-            "label": "event type",
-            "query": "category"
-          },
-          {
-            "label": "event description",
-            "query": "text"
-          },
-          {
-            "query": ":getAttendanceArray(true)",
-            "subQueries": [
-              {
-                "query": ".participant:toEntities(Child)",
-                "subQueries": [
-                  {
-                    "label": "participant_id",
-                    "query": "_id"
-                  },
-                  {
-                    "label": "participant",
-                    "query": "name"
-                  },
-                  {
-                    "label": "gender",
-                    "query": "gender"
-                  }
-                ]
-              },
-              {
-                "label": "status",
-                "query": ".status._status.id"
-              },
-              {
-                "query": ".school:toEntities(School)",
-                "subQueries": [
-                  {
-                    "label": "school_name",
-                    "query": "name"
-                  },
-                  {
-                    "label": "school_id",
-                    "query": "entityId"
-                  }
-                ]
-              }
-            ]
-          }
         ]
       },
       "_id": "view:note"
@@ -391,6 +331,9 @@
           "category",
           "authors",
           "attachment"
+        ],
+        "bottomForm": [
+          "relatedEntities"
         ]
       },
       "_id": "view:note/:id"
@@ -757,18 +700,6 @@
           "isArray": true,
           "additional": "Child"
         },
-        "linkedGroups": {
-          "label": "Groups",
-          "dataType": "entity",
-          "isArray": true,
-          "additional": "School"
-        },
-        "excludedParticipants": {
-          "label": "Excluded Participants",
-          "dataType": "entity",
-          "isArray": true,
-          "additional": "Child"
-        },
         "assignedTo": {
           "label": "Assigned user(s)",
           "dataType": "entity",
@@ -846,9 +777,7 @@
                   "fieldGroups": [
                     {
                       "fields": [
-                        "linkedGroups",
-                        "participants",
-                        "excludedParticipants"
+                        "participants"
                       ]
                     }
                   ]
@@ -1348,6 +1277,135 @@
           }
         }
       }
+    },
+    "entity:Event": {
+      "toStringAttributes": [
+        "subject"
+      ],
+      "label": "Event",
+      "labelPlural": "Events",
+      "icon": "calendar-day",
+      "hasPII": true,
+      "attributes": {
+        "date": {
+          "label": "Date",
+          "dataType": "date-only",
+          "defaultValue": {
+            "mode": "dynamic",
+            "config": {
+              "value": "$now"
+            }
+          },
+          "anonymize": "retain"
+        },
+        "childrenAttendance": {
+          "label": "Participants",
+          "dataType": "attendance",
+          "isArray": true,
+          "additional": {
+            "participant": {
+              "dataType": "entity",
+              "additional": [
+                "Child",
+                "User"
+              ]
+            }
+          },
+          "anonymize": "retain"
+        },
+        "subject": {
+          "dataType": "string",
+          "label": "Subject"
+        },
+        "text": {
+          "dataType": "long-text",
+          "label": "Notes"
+        },
+        "authors": {
+          "label": "Team involved",
+          "dataType": "entity",
+          "isArray": true,
+          "additional": "User",
+          "defaultValue": {
+            "mode": "dynamic",
+            "config": {
+              "value": "$current_user"
+            }
+          },
+          "anonymize": "retain"
+        },
+        "category": {
+          "label": "Category",
+          "dataType": "configurable-enum",
+          "additional": "interaction-type",
+          "anonymize": "retain"
+        },
+        "attachment": {
+          "label": "Attachment",
+          "dataType": "file"
+        },
+        "relatesTo": {
+          "dataType": "entity",
+          "additional": "RecurringActivity",
+          "anonymize": "retain"
+        }
+      }
+    },
+    "view:event": {
+      "component": "EntityList",
+      "config": {
+        "entityType": "Event",
+        "columns": [
+          "date",
+          "subject",
+          "category",
+          "authors",
+          "childrenAttendance"
+        ],
+        "filters": [
+          {
+            "id": "category"
+          }
+        ]
+      },
+      "_id": "view:event"
+    },
+    "view:event/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "entityType": "Event",
+        "panels": [
+          {
+            "title": "Details",
+            "components": [
+              {
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "date",
+                        "subject",
+                        "category",
+                        "authors",
+                        "text",
+                        "attachment"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "childrenAttendance",
+                        "relatesTo"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "_id": "view:event/:id"
     }
   }
 }

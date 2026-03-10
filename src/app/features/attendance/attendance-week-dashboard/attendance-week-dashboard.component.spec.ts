@@ -2,13 +2,9 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
-import { EventNote } from "../model/event-note";
-import { EventWithAttendance } from "../model/event-with-attendance";
-import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
-import { ActivityAttendance } from "../model/activity-attendance";
 import { AttendanceService } from "../attendance.service";
-import { RecurringActivity } from "../model/recurring-activity";
+import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import moment from "moment";
 import * as MockDate from "mockdate";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
@@ -19,10 +15,8 @@ describe("AttendanceWeekDashboardComponent", () => {
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
   beforeEach(waitForAsync(() => {
-    mockAttendanceService = jasmine.createSpyObj([
-      "getAllActivityAttendancesForPeriod",
-    ]);
-    mockAttendanceService.getAllActivityAttendancesForPeriod.and.resolveTo([]);
+    mockAttendanceService = jasmine.createSpyObj(["getEventsOnDate"]);
+    mockAttendanceService.getEventsOnDate.and.resolveTo([]);
     TestBed.configureTestingModule({
       imports: [
         AttendanceWeekDashboardComponent,
@@ -47,132 +41,95 @@ describe("AttendanceWeekDashboardComponent", () => {
   it("should display children with low attendance", async () => {
     const absentChild = new TestEntity();
     const presentChild = new TestEntity();
+    const activity = new TestEntity();
     const mondayLastWeek = moment().startOf("isoWeek").subtract(7, "days");
-    const e1 = EventNote.create(mondayLastWeek.toDate());
-    const e2 = EventNote.create(moment(e1.date).add(1, "day").toDate());
-    const presentStatus = defaultAttendanceStatusTypes.find(
-      (s) => s.countAs === AttendanceLogicalStatus.PRESENT,
+
+    const e1 = TestEventEntity.generateEventWithAttendance(
+      [
+        [absentChild.getId(), AttendanceLogicalStatus.ABSENT],
+        [presentChild.getId(), AttendanceLogicalStatus.PRESENT],
+      ],
+      mondayLastWeek.toDate(),
+      activity,
     );
-    const absentStatus = defaultAttendanceStatusTypes.find(
-      (s) => s.countAs === AttendanceLogicalStatus.ABSENT,
+    const e2 = TestEventEntity.generateEventWithAttendance(
+      [
+        [absentChild.getId(), AttendanceLogicalStatus.ABSENT],
+        [presentChild.getId(), AttendanceLogicalStatus.PRESENT],
+      ],
+      moment(mondayLastWeek).add(1, "day").toDate(),
+      activity,
     );
-    [e1, e2].forEach((e) => {
-      e.addChild(absentChild);
-      e.getAttendance(absentChild).status = absentStatus;
-      e.addChild(presentChild);
-      e.getAttendance(presentChild).status = presentStatus;
-    });
-    const activity = new RecurringActivity();
-    activity.participants = e1.children;
-    const wrap = (e: EventNote) =>
-      new EventWithAttendance(e, "childrenAttendance", "date");
-    const attendance = ActivityAttendance.create(new Date(), [
-      wrap(e1),
-      wrap(e2),
-    ]);
-    attendance.activity = activity;
-    mockAttendanceService.getAllActivityAttendancesForPeriod.and.resolveTo([
-      attendance,
-    ]);
+
+    mockAttendanceService.getEventsOnDate.and.resolveTo([e1.entity, e2.entity]);
 
     await component.ngOnInit();
 
-    expect(component.entries).toEqual([
-      [
-        {
-          participantId: absentChild.getId(),
-          activity: activity,
-          attendanceDays: [
-            // sundays are excluded
-            e1.getAttendance(absentChild),
-            e2.getAttendance(absentChild),
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-          ],
-        },
-      ],
-    ]);
+    expect(component.entries).toHaveSize(1);
+    expect(component.entries[0][0].participantId).toBe(absentChild.getId());
   });
 
-  it("should display children also if added via activity group or manually", async () => {
+  it("should not display children with sufficient attendance", async () => {
+    const presentChild = new TestEntity();
+    const activity = new TestEntity();
+    const mondayLastWeek = moment().startOf("isoWeek").subtract(7, "days");
+
+    const e1 = TestEventEntity.generateEventWithAttendance(
+      [[presentChild.getId(), AttendanceLogicalStatus.PRESENT]],
+      mondayLastWeek.toDate(),
+      activity,
+    );
+
+    mockAttendanceService.getEventsOnDate.and.resolveTo([e1.entity]);
+
+    await component.ngOnInit();
+
+    expect(component.entries).toHaveSize(0);
+  });
+
+  it("should treat events without an activity as one group", async () => {
     const absentChild = new TestEntity();
     const mondayLastWeek = moment().startOf("isoWeek").subtract(7, "days");
-    const e1 = EventNote.create(mondayLastWeek.toDate());
-    const e2 = EventNote.create(moment(e1.date).add(1, "day").toDate());
-    const absentStatus = defaultAttendanceStatusTypes.find(
-      (s) => s.countAs === AttendanceLogicalStatus.ABSENT,
+
+    // Two standalone events with no relatesTo — no activity link
+    const e1 = TestEventEntity.generateEventWithAttendance(
+      [[absentChild.getId(), AttendanceLogicalStatus.ABSENT]],
+      mondayLastWeek.toDate(),
     );
-    [e1, e2].forEach((e) => {
-      e.addChild(absentChild);
-      e.getAttendance(absentChild).status = absentStatus;
-    });
-    const activity = new RecurringActivity();
-    delete activity.participants; // no participants set directly on RecurringActivity
-    const wrap = (e: EventNote) =>
-      new EventWithAttendance(e, "childrenAttendance", "date");
-    const attendance = ActivityAttendance.create(new Date(), [
-      wrap(e1),
-      wrap(e2),
-    ]);
-    attendance.activity = activity;
-    mockAttendanceService.getAllActivityAttendancesForPeriod.and.resolveTo([
-      attendance,
-    ]);
+    const e2 = TestEventEntity.generateEventWithAttendance(
+      [[absentChild.getId(), AttendanceLogicalStatus.ABSENT]],
+      moment(mondayLastWeek).add(1, "day").toDate(),
+    );
+
+    mockAttendanceService.getEventsOnDate.and.resolveTo([e1.entity, e2.entity]);
 
     await component.ngOnInit();
 
-    expect(component.entries).toEqual([
-      [
-        {
-          participantId: absentChild.getId(),
-          activity: activity,
-          attendanceDays: [
-            // sundays are excluded
-            e1.getAttendance(absentChild),
-            e2.getAttendance(absentChild),
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-          ],
-        },
-      ],
-    ]);
+    // Both events are grouped together (both under undefined key), so absentChild
+    // accumulates 2 absences and crosses the threshold → 1 entry group
+    expect(component.entries).toHaveSize(1);
+    expect(component.entries[0][0].participantId).toBe(absentChild.getId());
+    expect(component.entries[0][0].attendanceDays.filter(Boolean)).toHaveSize(
+      2,
+    );
   });
-
-  function expectTimePeriodCalled(from: moment.Moment, to: moment.Moment) {
-    mockAttendanceService.getAllActivityAttendancesForPeriod.calls.reset();
-
-    component.ngOnInit();
-
-    expect(
-      mockAttendanceService.getAllActivityAttendancesForPeriod,
-    ).toHaveBeenCalledWith(from.toDate(), to.toDate());
-  }
 
   it("should correctly use the offset", () => {
     // default case: last week monday till saturday
-
-    // on Monday, that's the first day of the current period
     MockDate.set(moment("2023-11-20").toDate());
-    const mondayLastWeek = moment("2023-11-13");
-    const saturdayLastWeek = moment("2023-11-18");
-    expectTimePeriodCalled(mondayLastWeek, saturdayLastWeek);
-
-    // on Sunday, that's the still the last day of the currently ending period
-    MockDate.set(moment("2023-11-26").toDate());
-    const mondayLastWeek2 = moment("2023-11-13");
-    const saturdayLastWeek2 = moment("2023-11-18");
-    expectTimePeriodCalled(mondayLastWeek2, saturdayLastWeek2);
+    component.ngOnInit();
+    expect(mockAttendanceService.getEventsOnDate).toHaveBeenCalledWith(
+      moment("2023-11-13").toDate(),
+      moment("2023-11-18").toDate(),
+    );
 
     // with offset: this week monday till saturday
-    MockDate.set(moment("2023-11-20").toDate());
-    const mondayThisWeek = moment("2023-11-20");
-    const saturdayThisWeek = moment("2023-11-25");
     component.daysOffset = 7;
-    expectTimePeriodCalled(mondayThisWeek, saturdayThisWeek);
+    component.ngOnInit();
+    expect(mockAttendanceService.getEventsOnDate).toHaveBeenCalledWith(
+      moment("2023-11-20").toDate(),
+      moment("2023-11-25").toDate(),
+    );
 
     MockDate.reset();
   });

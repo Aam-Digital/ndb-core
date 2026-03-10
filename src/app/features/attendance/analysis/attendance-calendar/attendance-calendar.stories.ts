@@ -1,5 +1,5 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
-import { generateEventWithAttendance } from "../../model/activity-attendance";
+import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { AttendanceCalendarComponent } from "./attendance-calendar.component";
 import moment from "moment";
@@ -8,7 +8,7 @@ import { importProvidersFrom } from "@angular/core";
 import { EventWithAttendance } from "../../model/event-with-attendance";
 
 const demoEvents: EventWithAttendance[] = [
-  generateEventWithAttendance(
+  TestEventEntity.generateEventWithAttendance(
     [
       ["1", AttendanceLogicalStatus.ABSENT],
       ["2", AttendanceLogicalStatus.PRESENT],
@@ -16,7 +16,7 @@ const demoEvents: EventWithAttendance[] = [
     ],
     new Date(),
   ),
-  generateEventWithAttendance(
+  TestEventEntity.generateEventWithAttendance(
     [
       ["1", AttendanceLogicalStatus.PRESENT],
       ["2", AttendanceLogicalStatus.ABSENT],
@@ -24,14 +24,14 @@ const demoEvents: EventWithAttendance[] = [
     ],
     moment().subtract(1, "day").toDate(),
   ),
-  generateEventWithAttendance(
+  TestEventEntity.generateEventWithAttendance(
     [
       ["1", AttendanceLogicalStatus.IGNORE],
       ["2", AttendanceLogicalStatus.ABSENT],
     ],
     moment().subtract(2, "day").toDate(),
   ),
-  generateEventWithAttendance(
+  TestEventEntity.generateEventWithAttendance(
     [
       ["1", AttendanceLogicalStatus.IGNORE],
       ["2", AttendanceLogicalStatus.ABSENT],

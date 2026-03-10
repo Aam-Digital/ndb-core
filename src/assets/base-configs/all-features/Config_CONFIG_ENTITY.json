@@ -2,22 +2,25 @@
   "_id": "Config:CONFIG_ENTITY",
   "data": {
     "appConfig:attendance": {
-      "recurringActivityTypes": [
-        "RecurringActivity"
-      ],
-      "eventTypes": [
-        "EventNote"
-      ],
-      "rollCallSetup": {
-        "filterConfig": [
-          {
-            "id": "category"
-          },
-          {
-            "id": "schools"
+      "activityTypes": {
+        "RecurringActivity": {
+          "eventType": "EventNote",
+          "filterConfig": [
+            {
+              "id": "category"
+            },
+            {
+              "id": "schools"
+            }
+          ],
+          "participantsField": "participants",
+          "assignedUsersField": "assignedTo",
+          "extraField": "category",
+          "fieldMapping": {
+            "subject": "title",
+            "category": "type"
           }
-        ],
-        "extraField": "category"
+        }
       }
     },
     "appConfig:usage-analytics": {

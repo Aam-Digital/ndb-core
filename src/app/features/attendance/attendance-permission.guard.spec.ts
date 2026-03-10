@@ -16,9 +16,11 @@ describe("AttendancePermissionGuard", () => {
   beforeEach(() => {
     mockAbility = jasmine.createSpyObj(["can"], { rules: [{}] });
     mockAttendanceService = {
-      featureConfig: {
+      featureSettings: {
+        activityTypes: [],
         recurringActivityTypes: [mockActivityType],
         eventTypes: [mockEventType],
+        filterConfig: [],
       },
     } as any;
 

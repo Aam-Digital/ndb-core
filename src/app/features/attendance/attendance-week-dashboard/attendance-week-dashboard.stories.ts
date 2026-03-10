@@ -1,7 +1,7 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
 import { RecurringActivity } from "../model/recurring-activity";
-import { generateEventWithAttendance } from "../model/activity-attendance";
+import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import moment from "moment";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
@@ -19,7 +19,7 @@ const act2 = RecurringActivity.create("Other Activity");
 act1.participants.push(child1.getId());
 
 const events = [
-  generateEventWithAttendance(
+  TestEventEntity.generateEventWithAttendance(
     [
       [child1.getId(), AttendanceLogicalStatus.PRESENT],
       [child2.getId(), AttendanceLogicalStatus.ABSENT],
@@ -27,7 +27,7 @@ const events = [
     new Date(),
     act1,
   ),
-  generateEventWithAttendance(
+  TestEventEntity.generateEventWithAttendance(
     [
       [child1.getId(), AttendanceLogicalStatus.ABSENT],
       [child2.getId(), AttendanceLogicalStatus.ABSENT],
@@ -35,7 +35,7 @@ const events = [
     moment().subtract(1, "day").toDate(),
     act1,
   ),
-  generateEventWithAttendance(
+  TestEventEntity.generateEventWithAttendance(
     [
       [child1.getId(), AttendanceLogicalStatus.ABSENT, "Remark 123"],
       [child2.getId(), AttendanceLogicalStatus.ABSENT],
