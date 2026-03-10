@@ -95,4 +95,31 @@ describe("EntityBlockComponent", () => {
     );
     expect(component.entityResource.value()).toBeUndefined();
   }));
+
+  it("should display configured entity color on the icon", fakeAsync(() => {
+    TestEntity.color = "#ff0000";
+    fixture.componentRef.setInput("entity", testEntity);
+    fixture.detectChanges();
+    flush();
+    fixture.detectChanges();
+
+    const icon: HTMLElement = fixture.nativeElement.querySelector(
+      "app-fa-dynamic-icon",
+    );
+    expect(icon.style.color).toBe("rgb(255, 0, 0)");
+
+    delete (TestEntity as any).color;
+  }));
+
+  it("should not apply icon color when no color is configured", fakeAsync(() => {
+    fixture.componentRef.setInput("entity", testEntity);
+    fixture.detectChanges();
+    flush();
+    fixture.detectChanges();
+
+    const icon: HTMLElement = fixture.nativeElement.querySelector(
+      "app-fa-dynamic-icon",
+    );
+    expect(icon.style.color).toBe("");
+  }));
 });

@@ -13,6 +13,7 @@ import { DisabledWrapperComponent } from "./disabled-wrapper.component";
 import { EntityActionPermission, EntitySubject } from "../permission-types";
 import { EntityAbility } from "../ability/entity-ability";
 import { Unsubscribe } from "@casl/ability";
+import { asArray } from "#src/app/utils/asArray";
 
 /**
  * This directive can be used to disable a element (e.g. button) based on the current users permissions.
@@ -33,10 +34,13 @@ export class DisableEntityOperationDirective
    * These arguments are required to check whether the user has permissions to perform the operation.
    * The operation property defines to what kind of operation an element belongs, e.g. OperationType.CREATE
    * The entity property defines for which kind of entity the operation will be performed, e.g. Child
+   *
+   * If an array of subjects is provided, the element will only be disabled if the user
+   * has permissions for none of them.
    */
   @Input("appDisabledEntityOperation") arguments: {
     operation: EntityActionPermission;
-    entity: EntitySubject;
+    entity: EntitySubject | EntitySubject[];
     field?: string;
   };
 
@@ -75,10 +79,14 @@ export class DisableEntityOperationDirective
       this.arguments?.entity
     ) {
       // Update the disabled property whenever the input values change
-      this.wrapperComponent.instance.elementDisabled = this.ability.cannot(
-        this.arguments.operation,
-        this.arguments.entity,
-        this.arguments.field,
+      const entities = asArray(this.arguments.entity);
+      this.wrapperComponent.instance.elementDisabled = entities.every(
+        (entity) =>
+          this.ability.cannot(
+            this.arguments.operation,
+            entity,
+            this.arguments.field,
+          ),
       );
       this.wrapperComponent.instance.ngAfterViewInit();
     }

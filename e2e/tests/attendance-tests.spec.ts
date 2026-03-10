@@ -126,7 +126,7 @@ test("Recurring activities list", async ({ page }) => {
   await page.getByRole("navigation").getByText("Attendance").click();
   await page
     .getByRole("button", {
-      name: "Manage Activities",
+      name: "Recurring Activities",
     })
     .click();
   await expect(
@@ -181,8 +181,8 @@ test("Edit participants of a recurring activity", async ({ page }) => {
   // When I click on Attendance from the main menu
   await page.getByRole("navigation").getByText("Attendance").click();
 
-  // And I click on "Manage Activities"
-  await page.getByRole("button", { name: "Manage Activities" }).click();
+  // And I click on "Recurring Activities"
+  await page.getByRole("button", { name: "Recurring Activities" }).click();
 
   // And I Click on "<COACHING CLASS>"
   await page.getByRole("cell", { name: "<COACHING CLASS>" }).click();
@@ -270,8 +270,8 @@ test("Assign a recurring activity to a user", async ({ page }) => {
   // When I click on Attendance from the main menu.
   await page.getByRole("navigation").getByText("Attendance").click();
 
-  // And I click on "Manage Activities"
-  await page.getByRole("button", { name: "Manage Activities" }).click();
+  // And I click on "Recurring Activities"
+  await page.getByRole("button", { name: "Recurring Activities" }).click();
 
   // And I Click on "Coaching Class"
   await page.getByRole("cell", { name: "<COACHING CLASS>" }).click();
