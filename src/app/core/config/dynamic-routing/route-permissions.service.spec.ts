@@ -105,34 +105,32 @@ describe("RoutePermissionsService", () => {
     expect(filteredItems).toEqual([]);
   });
 
-  it("should include link-less items (section headers) without permission checks", async () => {
-    // A link-less item with no children should be included as a label header
-    const linklessItem: MenuItem = { label: "More", icon: "folder" };
-
-    // A link-less parent with an accessible linked child should be included
+  it("should include link-less parent items only when they have at least one accessible child", async () => {
+    // Link-less parent with an accessible child → included
     const linklessParentWithChild: MenuItem = {
       label: "Section",
       icon: "folder",
       subMenu: [{ label: "Allowed", link: "allowed" }],
     };
 
-    // A link-less parent whose only child is also link-less should be included
-    const linklessParentWithLinklessChild: MenuItem = {
-      label: "Group",
+    // Link-less parent with no children → excluded (dead row)
+    const linklessLeaf: MenuItem = { label: "More", icon: "folder" };
+
+    // Link-less parent whose only child is blocked → excluded
+    const linklessParentAllBlocked: MenuItem = {
+      label: "Hidden Section",
       icon: "folder",
-      subMenu: [{ label: "Sub Header", icon: "tag" }],
+      subMenu: [{ label: "Blocked", link: "blocked" }],
     };
 
     const filteredItems: MenuItem[] = await service.filterPermittedRoutes([
-      linklessItem,
       linklessParentWithChild,
-      linklessParentWithLinklessChild,
+      linklessLeaf,
+      linklessParentAllBlocked,
     ]);
 
-    expect(filteredItems.length).toBe(3);
-    expect(filteredItems[0]).toEqual(linklessItem);
-    expect(filteredItems[1].label).toBe("Section");
-    expect(filteredItems[2].label).toBe("Group");
+    expect(filteredItems.length).toBe(1);
+    expect(filteredItems[0].label).toBe("Section");
   });
 });
 

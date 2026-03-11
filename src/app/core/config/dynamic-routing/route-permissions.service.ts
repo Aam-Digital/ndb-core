@@ -31,12 +31,9 @@ export class RoutePermissionsService {
 
     for (const item of items) {
       if (!item.link) {
-        // Link-less item (parent section header): no permission check needed.
-        if (!item.subMenu?.length) {
-          // No children — include as a label-only header.
-          accessibleRoutes.push(item);
-        } else {
-          // Has children — recurse, only include parent if at least one child is accessible.
+        // Link-less parent section header: only include if it has accessible children.
+        // A link-less item with no children has no navigation purpose in the live menu.
+        if (item.subMenu?.length) {
           const accessibleSubItems: MenuItem[] =
             await this.filterPermittedRoutes(item.subMenu);
           if (accessibleSubItems.length > 0) {
