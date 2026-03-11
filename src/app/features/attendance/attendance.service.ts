@@ -57,7 +57,6 @@ export class AttendanceService {
 
   private applyConfig(raw?: AttendanceFeatureConfig): void {
     const eventTypesConfig = raw?.eventTypes ?? [];
-    this.groupBasedParticipants = raw?.groupBasedParticipants ?? false;
 
     this.eventTypeSettings = eventTypesConfig
       .map((typeConfig) => {
@@ -102,6 +101,13 @@ export class AttendanceService {
       }
     }
     this.filterConfig.set(Array.from(filterConfigMap.values()));
+
+    this.groupBasedParticipants = this.eventTypeSettings.some(
+      (s) =>
+        s.activityType?.ENTITY_TYPE === "RecurringActivity" &&
+        s.eventType.ENTITY_TYPE === "Event" &&
+        s.fieldMapping["schools"] === "linkedGroups",
+    );
   }
 
   private createIndices() {
@@ -300,7 +306,7 @@ ${byParticipantChecks}
    * Load all activities that list the given participant ID in their `participants` field.
    * Queries all configured recurring activity types (see {@link AttendanceFeatureConfig.recurringActivityTypes}).
    *
-   * When {@link AttendanceFeatureConfig.groupBasedParticipants} is enabled,
+   * When the legacy RecurringActivity/Event + schools→linkedGroups mapping is detected,
    * also includes activities linked via school group membership (legacy).
    *
    * @param participantId The entity ID of the participant to look up.

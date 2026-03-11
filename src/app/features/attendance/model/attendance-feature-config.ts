@@ -134,13 +134,4 @@ export interface AttendanceFeatureConfig {
    * ```
    */
   eventTypes?: EventTypeConfig[];
-
-  /**
-   * Enable legacy group-based participant resolution:
-   * when true, participants linked via schools/groups are included
-   * in the attendance overview in addition to direct participants.
-   *
-   * @deprecated Prefer adding participants directly to the activity.
-   */
-  groupBasedParticipants?: boolean;
 }
