@@ -23,7 +23,10 @@ import {
   InteractionType,
 } from "./interaction-type.interface";
 import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
-import { AttendanceLogicalStatus } from "#src/app/features/attendance/model/attendance-status";
+import {
+  AttendanceLogicalStatus,
+  NullAttendanceStatusType,
+} from "#src/app/features/attendance/model/attendance-status";
 import { getWarningLevelColor, WarningLevel } from "../../warning-level";
 import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
@@ -32,10 +35,10 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
 /**
  * Notes are a special in-built entity type to record free-form information related to other records.
  *
- * Previously, `Note` has also functioned to record an event with an attendance list of participants.
+ * Previously, `Note` and `EventNote` have also functioned to record an event with an attendance list of participants.
  * That functionality is getting generalized and decoupled from this specific entity.
  * Add a "attendance" type field to any entity type instead.
- * Attendance-related fields and methods here are currently kept (deprecated) for backwards compatibility until all existing data is migrated.
+ * Attendance-related fields and methods here are currently kept (deprecated) for backwards compatility until all existing data is migrated.
  */
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -53,7 +56,9 @@ export class Note extends Entity {
     const instance = new Note();
     instance.date = date;
     instance.subject = subject;
-    instance.children = [...children];
+    for (const child of children) {
+      instance.addChild(child);
+    }
     return instance;
   }
 
@@ -95,6 +100,8 @@ export class Note extends Entity {
 
   /**
    * optional additional information about attendance at this event for each of the linked children
+   *
+   * No direct access to change this property. Use the `.getAttendance()` method to have safe access.
    *
    * @deprecated Attendance logic will be decoupled from Note. By default, notes will not include attendance details anymore. Any entity type can add an `attendance` type field.
    */
@@ -238,6 +245,121 @@ export class Note extends Entity {
       return getWarningLevelColor(WarningLevel.URGENT);
     }
     return this.getColor();
+  }
+
+  /**
+   * removes a specific child from this note
+   * @param childId The id of the child to exclude from the notes
+   *
+   * @deprecated Attendance logic will be decoupled from Note and only use the new `attendance` datatype
+   */
+  removeChild(childId: string) {
+    this.children = this.children.filter((c) => c !== childId);
+    this.childrenAttendance = this.childrenAttendance.filter(
+      (item) => item.participant !== childId,
+    );
+  }
+
+  /**
+   * adds a new child to this note
+   * @param child The child or the id of the child to add to the notes
+   *
+   * @deprecated Attendance logic will be decoupled from Note and only use the new `attendance` datatype
+   */
+  addChild(child: Entity | string) {
+    const childId = typeof child === "string" ? child : child?.getId();
+    if (!childId || this.children.includes(childId)) {
+      return;
+    }
+
+    this.children = this.children.concat(childId);
+  }
+
+  /**
+   * adds a new school to this note
+   * @param school The school or its id to be added to the note
+   *
+   * @deprecated Implement duplicate checks at the caller. Special methods will be removed from Note class
+   */
+  addSchool(school: Entity | string) {
+    const schoolId = typeof school === "string" ? school : school.getId();
+    if (this.schools.includes(schoolId)) {
+      return;
+    }
+
+    this.schools = this.schools.concat(schoolId);
+  }
+
+  /**
+   * Returns the event attendance details for the given child.
+   *
+   * This method returns a default object that can be used and updated even if no attendance has been recorded yet.
+   * Returns undefined if the child is not added to this event/note instance.
+   *
+   * @param child: The child or the id of the child to look for
+   *
+   * @deprecated Attendance logic will be decoupled from Note and only use the new `attendance` datatype
+   */
+  getAttendance(child: string | Entity): AttendanceItem {
+    const childId = typeof child === "string" ? child : child.getId();
+    if (!this.children.includes(childId)) {
+      return undefined;
+    }
+
+    let attendance = this.childrenAttendance.find(
+      (item) => item.participant === childId,
+    );
+    if (!attendance) {
+      attendance = new AttendanceItem();
+      attendance.participant = childId;
+      this.childrenAttendance.push(attendance);
+    }
+    if (!(attendance instanceof AttendanceItem)) {
+      attendance = Object.assign(new AttendanceItem(), attendance);
+    }
+    return attendance;
+  }
+
+  /**
+   * Whether the attendance context information available through `getAttendance` is missing data for some children.
+   *
+   * While getAttendance will always set and return at least a default value `hasUnknownAttendances` can be used
+   * to flag events with incomplete data.
+   *
+   * @deprecated Attendance logic will be decoupled from Note and only use the new `attendance` datatype
+   */
+  hasUnknownAttendances(childId?: string): boolean {
+    if (childId) {
+      return (
+        this.getAttendance(childId).status.id === NullAttendanceStatusType.id
+      );
+    }
+
+    if (this.childrenAttendance.length < this.children.length) {
+      return true;
+    } else {
+      for (const v of this.childrenAttendance) {
+        if (v.status.id === NullAttendanceStatusType.id) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Counts how many children have the given attendance status.
+   * The status is counted based on the AttendanceLogicalStatus and the `AttendanceStatusType.countAs` attribute
+   * @param status which should be counted
+   * @returns number of children with this status
+   *
+   * @deprecated Attendance logic will be decoupled from Note and only use the new `attendance` datatype
+   */
+  countWithStatus(status: AttendanceLogicalStatus): number {
+    const attendanceValues = this.childrenAttendance.values();
+    return [...attendanceValues].filter(
+      (attendance) => attendance.status.countAs === status,
+    ).length;
   }
 
   /**

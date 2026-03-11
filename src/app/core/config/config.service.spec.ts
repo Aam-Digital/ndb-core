@@ -572,34 +572,6 @@ describe("ConfigService", () => {
     testConfigMigration(oldConfig, expectedConfig);
   }));
 
-  it("should migrate NotesManager to EntityList and preserve other config properties", fakeAsync(() => {
-    const oldConfig = {
-      "view:child/:id": {
-        component: "NotesManager",
-        config: {
-          includeEventNotes: true,
-          showEventNotesToggle: true,
-          columns: ["date", "subject"],
-          filters: [{ id: "status" }],
-        },
-      },
-    };
-
-    const expectedConfig = {
-      "view:child/:id": {
-        component: "EntityList",
-        config: {
-          entityType: "Note",
-          clickMode: "popup-details",
-          columns: ["date", "subject"],
-          filters: [{ id: "status" }],
-        },
-      },
-    };
-
-    testConfigMigration(oldConfig, expectedConfig);
-  }));
-
   it("should migrate editComponent EditAttendance to EditLegacyAttendance", fakeAsync(() => {
     const oldConfig = {
       "entity:Note": {

@@ -11,7 +11,7 @@ describe("AttendancePermissionGuard", () => {
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
   const mockActivityType = { ENTITY_TYPE: "RecurringActivity" } as any;
-  const mockEventType = { ENTITY_TYPE: "TestEvent" } as any;
+  const mockEventType = { ENTITY_TYPE: "EventNote" } as any;
 
   beforeEach(() => {
     mockAbility = jasmine.createSpyObj(["can"], { initialized: true });
@@ -123,11 +123,11 @@ describe("AttendancePermissionGuard", () => {
 
     const result = await guard.canActivate({
       data: { component: "RollCall" },
-      params: { id: "TestEvent:abc123" },
+      params: { id: "EventNote:abc123" },
     } as Partial<ActivatedRouteSnapshot> as ActivatedRouteSnapshot);
 
     expect(result).toBeTrue();
-    expect(mockAbility.can).toHaveBeenCalledWith("create", "TestEvent");
+    expect(mockAbility.can).toHaveBeenCalledWith("create", "EventNote");
   });
 
   it("should block RollCall if user cannot create the entity type from the :id prefix", async () => {
@@ -137,7 +137,7 @@ describe("AttendancePermissionGuard", () => {
     const route = new ActivatedRouteSnapshot();
     Object.assign(route, {
       data: { component: "RollCall" },
-      params: { id: "TestEvent:abc123" },
+      params: { id: "EventNote:abc123" },
     });
 
     await guard.canActivate(route);

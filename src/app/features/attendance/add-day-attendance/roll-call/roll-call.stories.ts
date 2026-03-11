@@ -10,7 +10,7 @@ import { EventWithAttendance } from "../../model/event-with-attendance";
 const demoEvent = Note.create(new Date(), "coaching");
 const demoChildren = [generateChild(), generateChild(), generateChild()];
 demoChildren.forEach((c) => {
-  demoEvent.children.push(c.getId());
+  demoEvent.addChild(c);
   demoEvent.childrenAttendance.push(
     new AttendanceItem(undefined, "", c.getId()),
   );

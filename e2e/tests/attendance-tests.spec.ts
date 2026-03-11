@@ -1,8 +1,8 @@
 import { times } from "lodash-es";
 
 import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
-import { generateActivity } from "#e2e/generate-activity.js";
 
+import { generateActivity } from "#src/app/features/attendance/demo-data/demo-activity-generator.service.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
 import { faker } from "#src/app/core/demo-data/faker.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
@@ -58,25 +58,19 @@ test("Record attendance for one activity", async ({ page }) => {
   await page.getByRole("button", { name: "Late" }).click();
 
   await page.getByRole("button", { name: "Review Details" }).click();
-  await page.getByRole("button", { name: "Edit" }).click();
 
   const row = page.getByRole("row").filter({ hasText: childWithRemarkName });
   await row.getByLabel("Present").click();
   await page.getByRole("option", { name: "Absent" }).click();
-  await row.getByLabel("Remarks").fill("CUSTOM REMARK");
+  await row.getByPlaceholder("Remarks").fill("CUSTOM REMARK");
 
   await page.getByRole("button", { name: "Save" }).click();
-  await page.locator(".overlay-close-button").click();
 
   await page.getByRole("navigation").getByText("Children").click();
   await page.getByRole("textbox", { name: "Filter" }).fill(childWithRemarkName);
   await page.getByRole("cell", { name: childWithRemarkName }).click();
   await page.getByRole("tab", { name: "Attendance" }).click();
   await page.getByRole("tab", { name: activity.title }).click();
-
-  // need to load older records to see the attendance record for 25.12.2024
-  await page.getByRole("button", { name: "Load all records" }).click();
-
   await page.getByRole("button", { name: "Choose month and year" }).click();
   await page.getByRole("button", { name: "2024" }).click();
   await page.getByRole("button", { name: "December" }).click();

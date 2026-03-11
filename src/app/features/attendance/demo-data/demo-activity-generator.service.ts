@@ -78,10 +78,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
 
     // Detect the field with dataType "entity" and additional "User" on the activity schema
     const assignedUser = faker.helpers.arrayElement(this.demoUser.entities);
-    for (const [
-      fieldId,
-      field,
-    ] of typeSettings.activityType!.schema.entries()) {
+    for (const [fieldId, field] of typeSettings.activityType!.schema.entries()) {
       if (
         field.dataType === "entity" &&
         asArray(field.additional).includes("User")

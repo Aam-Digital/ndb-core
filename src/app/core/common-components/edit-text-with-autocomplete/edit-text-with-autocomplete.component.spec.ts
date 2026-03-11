@@ -2,7 +2,9 @@ import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { FormControl } from "@angular/forms";
 import { By } from "@angular/platform-browser";
+import { RecurringActivity } from "#src/app/features/attendance/model/recurring-activity";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { EntityFormService } from "../entity-form/entity-form.service";
@@ -35,19 +37,27 @@ describe("EditTextWithAutocompleteComponent", () => {
     loadTypeSpy.and.resolveTo([]);
     const entityFormService = TestBed.inject(EntityFormService);
     const entityForm = await entityFormService.createEntityForm(
-      [{ id: "name" }, { id: "other" }, { id: "ref" }, { id: "refMixed" }],
-      new TestEntity(),
+      [
+        { id: "title" },
+        { id: "type" },
+        { id: "assignedTo" },
+        { id: "linkedGroups" },
+      ],
+      new RecurringActivity(),
     );
 
-    const nameControl = entityForm.formGroup.get("name") as FormControl<string>;
+    // Set up the component's ngControl to point to the form control
+    const titleControl = entityForm.formGroup.get(
+      "title",
+    ) as FormControl<string>;
     component.ngControl = {
-      control: nameControl,
+      control: titleControl,
     } as any;
 
     component.formFieldConfig = {
-      id: "name",
+      id: "title",
       additional: {
-        entityType: "TestEntity",
+        entityType: "RecurringActivity",
       },
     };
 
@@ -59,84 +69,80 @@ describe("EditTextWithAutocompleteComponent", () => {
   });
 
   it("should show all entities of the given type", async () => {
-    const e1 = TestEntity.create("First Entity");
-    const e2 = TestEntity.create("Second Entity");
-    const e3 = TestEntity.create("Third Entity");
-    loadTypeSpy.and.resolveTo([e1, e2, e3]);
+    const rA1 = RecurringActivity.create("First Recurring Activity");
+    const rA2 = RecurringActivity.create("Second Recurring Activity");
+    const rA3 = RecurringActivity.create("Third Recurring Activity");
+    loadTypeSpy.and.resolveTo([rA1, rA2, rA3]);
 
     await component.ngOnInit();
 
-    expect(component.entities).toEqual([e1, e2, e3]);
+    expect(component.entities).toEqual([rA1, rA2, rA3]);
   });
 
   it("should filter entities when searching", async () => {
-    const e1 = TestEntity.create("First Entity");
-    const e2 = TestEntity.create("Second Entity");
-    const e3 = TestEntity.create("Third Entity");
-    loadTypeSpy.and.resolveTo([e1, e2, e3]);
+    const rA1 = RecurringActivity.create("First Recurring Activity");
+    const rA2 = RecurringActivity.create("Second Recurring Activity");
+    const rA3 = RecurringActivity.create("Third Recurring Activity");
+    loadTypeSpy.and.resolveTo([rA1, rA2, rA3]);
 
     await component.ngOnInit();
     component.formControl.setValue("Second");
     component.updateAutocomplete();
 
-    expect(component.autocompleteEntities.value).toEqual([e2]);
+    expect(component.autocompleteEntities.value).toEqual([rA2]);
   });
 
   it("should correctly set the form controls to the selected entity's values", async () => {
-    const e1 = TestEntity.create({
-      name: "First Entity",
-      other: "some value",
-      ref: "user1",
-      refMixed: ["group1", "group2"],
-    });
-    loadTypeSpy.and.resolveTo([e1]);
+    const rA1 = RecurringActivity.create("First Recurring Activity");
+    rA1.type = defaultInteractionTypes[0];
+    rA1.assignedTo = ["user1", "user2"];
+    rA1.linkedGroups = ["group1", "group2"];
+    loadTypeSpy.and.resolveTo([rA1]);
     await component.ngOnInit();
 
-    await component.selectEntity(e1);
+    await component.selectEntity(rA1);
 
-    expect(component.formControl.value).toEqual(e1.name);
-    expect(component.parent.get("other").value).toEqual(e1.other);
-    expect(component.parent.get("ref").value).toEqual(e1.ref);
-    expect(component.parent.get("refMixed").value).toEqual(e1.refMixed);
+    expect(component.formControl.value).toEqual(rA1.title);
+    expect(component.parent.get("type").value).toEqual(rA1.type);
+    expect(component.parent.get("assignedTo").value).toEqual(rA1.assignedTo);
+    expect(component.parent.get("linkedGroups").value).toEqual(
+      rA1.linkedGroups,
+    );
   });
 
   it("should correctly reset the form to its original values", async () => {
-    const e1 = TestEntity.create({
-      name: "First Entity",
-      other: "some value",
-      ref: "user1",
-      refMixed: ["group1", "group2"],
-      category: { id: "test", label: "Test" },
-    });
-    loadTypeSpy.and.resolveTo([e1]);
-    component.parent.get("refMixed").setValue(["testgroup1"]);
+    const rA1 = RecurringActivity.create("First Recurring Activity");
+    rA1.type = defaultInteractionTypes[0];
+    rA1.assignedTo = ["user1", "user2"];
+    rA1.linkedGroups = ["group1", "group2"];
+    rA1.participants = ["student1", "student2"];
+    loadTypeSpy.and.resolveTo([rA1]);
+    component.parent.get("linkedGroups").setValue(["testgroup1"]);
     await component.ngOnInit();
-    await component.selectEntity(e1);
+    await component.selectEntity(rA1);
 
     await component.resetForm();
 
     expect(component.formControl.value).toBeFalsy();
-    expect(component.parent.get("other").value).toEqual(null);
-    expect(component.parent.get("ref").value).toEqual(null);
-    expect(component.parent.get("refMixed").value).toEqual(["testgroup1"]);
-    expect(component.parent.get("category")).toBeFalsy();
+    expect(component.parent.get("type").value).toEqual(null);
+    expect(component.parent.get("assignedTo").value).toEqual([]);
+    expect(component.parent.get("linkedGroups").value).toEqual(["testgroup1"]);
+    expect(component.parent.get("participants")).toBeFalsy();
   });
 
   it("should link the given parent entity's ID in the form control of the relevant property", async () => {
     const parentEntity = new TestEntity();
 
-    const e1 = TestEntity.create({
-      name: "First Entity",
-      refMixed: ["group1", "group2"],
-    });
-    loadTypeSpy.and.resolveTo([e1]);
-    component.additional.relevantProperty = "refMixed";
+    const rA1 = RecurringActivity.create("First Recurring Activity");
+    rA1.linkedGroups = ["group1", "group2"];
+    loadTypeSpy.and.resolveTo([rA1]);
+    component.additional.relevantProperty = "linkedGroups";
     component.additional.relatedEntitiesParent = parentEntity;
     await component.ngOnInit();
 
-    await component.selectEntity(e1);
+    await component.selectEntity(rA1);
 
-    expect(component.parent.get("refMixed").value).toContain(
+    expect(component.parent.get("linkedGroups").value).toContain(
       parentEntity.getId(),
     );
   });
@@ -144,26 +150,26 @@ describe("EditTextWithAutocompleteComponent", () => {
   it("should initialize undefined relevantProperty field and add the relevant value", async () => {
     const parentEntity = new TestEntity();
 
-    const e1 = TestEntity.create("First Entity");
-    delete e1.refMixed;
-    loadTypeSpy.and.resolveTo([e1]);
-    component.additional.relevantProperty = "refMixed";
+    const rA1 = RecurringActivity.create("First Recurring Activity");
+    delete rA1.linkedGroups;
+    loadTypeSpy.and.resolveTo([rA1]);
+    component.additional.relevantProperty = "linkedGroups";
     component.additional.relatedEntitiesParent = parentEntity;
     await component.ngOnInit();
 
-    await component.selectEntity(e1);
+    await component.selectEntity(rA1);
 
-    expect(e1.refMixed).toEqual([parentEntity.getId()]);
-    expect(component.parent.get("refMixed").value).toEqual([
+    expect(rA1.linkedGroups).toEqual([parentEntity.getId()]);
+    expect(component.parent.get("linkedGroups").value).toEqual([
       parentEntity.getId(),
     ]);
   });
 
   it("should show name of the selected entity", async () => {
-    const e1 = TestEntity.create("First Entity");
-    const e2 = TestEntity.create("Second Entity");
-    component.formControl.setValue(e1.name);
-    loadTypeSpy.and.resolveTo([e1, e2]);
+    const rA1 = RecurringActivity.create("First Recurring Activity");
+    const rA2 = RecurringActivity.create("Second Recurring Activity");
+    component.formControl.setValue(rA1.title);
+    loadTypeSpy.and.resolveTo([rA1, rA2]);
 
     await component.ngOnInit();
 
@@ -171,27 +177,25 @@ describe("EditTextWithAutocompleteComponent", () => {
     const input: HTMLInputElement = fixture.debugElement.query(
       By.css("input"),
     ).nativeElement;
-    expect(input.value).toEqual("First Entity");
+    expect(input.value).toEqual("First Recurring Activity");
   });
 
   // check if values in the form control have been manually changed after loading the entity
   it("should only load new entity if user confirms to override changes", async () => {
-    const e1 = TestEntity.create({
-      name: "First Entity",
-      other: "some value",
-      ref: "user1",
-      refMixed: ["group1", "group2"],
-    });
-    const e2 = TestEntity.create("Second Entity");
-    loadTypeSpy.and.resolveTo([e1, e2]);
+    const rA1 = RecurringActivity.create("First Recurring Activity");
+    const rA2 = RecurringActivity.create("Second Recurring Activity");
+    rA1.type = defaultInteractionTypes[0];
+    rA1.assignedTo = ["user1", "user2"];
+    rA1.linkedGroups = ["group1", "group2"];
+    loadTypeSpy.and.resolveTo([rA1, rA2]);
     mockConfirmationDialog.getConfirmation.and.resolveTo(true);
 
     await component.ngOnInit();
     component.formControl.setValue("test1");
-    component.parent.get("ref").setValue("user3");
+    component.parent.get("assignedTo").setValue(["user3"]);
 
-    await component.selectEntity(e2);
+    await component.selectEntity(rA2);
 
-    expect(component.selectedEntity).toEqual(e2);
+    expect(component.selectedEntity).toEqual(rA2);
   });
 });

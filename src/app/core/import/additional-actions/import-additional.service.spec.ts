@@ -4,7 +4,10 @@ import { ImportAdditionalService } from "./import-additional.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { Entity } from "../../entity/model/entity";
+import { createEntityOfType } from "../../demo-data/create-entity-of-type";
+import { RecurringActivity } from "#src/app/features/attendance/model/recurring-activity";
 import { ImportMetadata, ImportSettings } from "../import-metadata";
+import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import {
   expectEntitiesToBeInDatabase,
   expectEntitiesToMatch,
@@ -17,7 +20,11 @@ describe("ImportAdditionalService", () => {
   let service: ImportAdditionalService;
 
   let testEntities: Entity[];
-  let testActivity: DirectlyLinkingEntity;
+  let testActivity: RecurringActivity;
+
+  // ensure the "Child" entityType is registered
+  @DatabaseEntity("Child")
+  class Child extends Entity {}
 
   @DatabaseEntity("ImportedEntity")
   class ImportedEntity extends Entity {}
@@ -29,7 +36,7 @@ describe("ImportAdditionalService", () => {
       additional: ImportedEntity.ENTITY_TYPE,
       isArray: true, // this must take multiple values so that a whole import can be linked
     })
-    participants: string[];
+    participant: string;
   }
 
   @DatabaseEntity("RelationshipEntity")
@@ -53,9 +60,11 @@ describe("ImportAdditionalService", () => {
     service = TestBed.inject(ImportAdditionalService);
 
     // set up basic test data:
-    testEntities = [new ImportedEntity("1"), new ImportedEntity("2")];
-    testActivity = new DirectlyLinkingEntity("3");
-    testActivity.participants = [];
+    testEntities = [
+      createEntityOfType("Child", "1"),
+      createEntityOfType("Child", "2"),
+    ];
+    testActivity = new RecurringActivity("3");
     const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.save(testActivity);
   });
@@ -67,7 +76,7 @@ describe("ImportAdditionalService", () => {
         sourceType: ImportedEntity.ENTITY_TYPE,
         mode: "direct",
         targetType: DirectlyLinkingEntity.ENTITY_TYPE,
-        targetProperty: "participants",
+        targetProperty: "participant",
       },
       // the following should be hidden because it's also an indirect/relationship entity
       /* {
@@ -95,7 +104,7 @@ describe("ImportAdditionalService", () => {
     expect(actual).toEqual([
       jasmine.objectContaining({
         sourceType: ImportedEntity.ENTITY_TYPE,
-        targetProperty: "participants",
+        targetProperty: "participant",
         targetType: DirectlyLinkingEntity.ENTITY_TYPE,
       }),
     ]);
@@ -117,119 +126,112 @@ describe("ImportAdditionalService", () => {
 
   it("should add IDs of imported data to other entity with linkDirectly action", async () => {
     const testImportSettings: ImportSettings = {
-      entityType: ImportedEntity.ENTITY_TYPE,
+      entityType: "Child",
       columnMapping: undefined,
       additionalActions: [
         {
           mode: "direct",
-          targetType: DirectlyLinkingEntity.ENTITY_TYPE,
+          targetType: "RecurringActivity",
           targetProperty: "participants",
           targetId: testActivity.getId(),
-          sourceType: ImportedEntity.ENTITY_TYPE,
+          sourceType: "Child",
         },
       ],
     };
     await service.executeImport(testEntities, testImportSettings);
 
     const activityAfter = await TestBed.inject(EntityMapperService).load(
-      DirectlyLinkingEntity,
+      testActivity.getConstructor(),
       testActivity.getId(),
     );
-    expect(activityAfter.participants).toEqual([
-      "ImportedEntity:1",
-      "ImportedEntity:2",
-    ]);
+    expect(activityAfter.participants).toEqual(["Child:1", "Child:2"]);
   });
 
   it("should remove IDs from reference field in other entity with undo", async () => {
     const importMeta = new ImportMetadata();
     importMeta.config = {
-      entityType: ImportedEntity.ENTITY_TYPE,
+      entityType: "Child",
       columnMapping: undefined,
       additionalActions: [
         {
           mode: "direct",
-          targetType: DirectlyLinkingEntity.ENTITY_TYPE,
+          targetType: "RecurringActivity",
           targetProperty: "participants",
           targetId: testActivity.getId(),
-          sourceType: ImportedEntity.ENTITY_TYPE,
+          sourceType: "Child",
         },
       ],
     };
-    importMeta.createdEntities = ["ImportedEntity:1", "ImportedEntity:2"];
-    testActivity.participants = [
-      "ImportedEntity:3",
-      "ImportedEntity:2",
-      "ImportedEntity:1",
-    ];
+    importMeta.createdEntities = ["Child:1", "Child:2"];
+    testActivity.participants = ["Child:3", "Child:2", "Child:1"];
     const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.saveAll([testActivity]);
 
     await service.undoImport(importMeta);
 
     const activityAfter = await TestBed.inject(EntityMapperService).load(
-      DirectlyLinkingEntity,
+      testActivity.getConstructor(),
       testActivity.getId(),
     );
-    expect(activityAfter.participants).toEqual(["ImportedEntity:3"]);
+    expect(activityAfter.participants).toEqual(["Child:3"]);
   });
 
   it("should create relationship entities for imported data with linkIndirectly action", async () => {
     const testEntities: Entity[] = [
-      new ImportedEntity("1"),
-      new ImportedEntity("2"),
+      createEntityOfType("Child", "1"),
+      createEntityOfType("Child", "2"),
     ];
     const entityMapper = TestBed.inject(EntityMapperService);
 
     const testImportSettings: ImportSettings = {
-      entityType: ImportedEntity.ENTITY_TYPE,
+      entityType: "Child",
       columnMapping: undefined,
       additionalActions: [
         {
           mode: "indirect",
-          sourceType: ImportedEntity.ENTITY_TYPE,
-          targetType: "Other",
-          relationshipEntityType: RelationshipEntity.ENTITY_TYPE,
-          relationshipProperty: "participant",
-          relationshipTargetProperty: "group",
-          targetId: "Other:4",
+          sourceType: "Child",
+          targetType: "School",
+          relationshipEntityType: "ChildSchoolRelation",
+          relationshipProperty: "childId",
+          relationshipTargetProperty: "schoolId",
+          targetId: "School:4",
         },
       ],
     };
     await service.executeImport(testEntities, testImportSettings);
 
-    const createRelations = await entityMapper.loadType(RelationshipEntity);
+    const createRelations = await entityMapper.loadType(ChildSchoolRelation);
     const expectedRelations = [
-      { participant: "ImportedEntity:1", group: "Other:4" },
-      { participant: "ImportedEntity:2", group: "Other:4" },
-    ].map((e) => Object.assign(new RelationshipEntity(), e));
+      { childId: "Child:1", schoolId: "School:4" },
+      { childId: "Child:2", schoolId: "School:4" },
+    ].map((e) => Object.assign(new ChildSchoolRelation(), e));
     expectEntitiesToMatch(createRelations, expectedRelations, true);
   });
 
   it("should remove relationship entities with undo", async () => {
     const importMeta = new ImportMetadata();
     importMeta.config = {
-      entityType: ImportedEntity.ENTITY_TYPE,
+      entityType: "Child",
       columnMapping: undefined,
       additionalActions: [
         {
           mode: "indirect",
-          sourceType: ImportedEntity.ENTITY_TYPE,
-          targetType: "Other",
-          relationshipEntityType: RelationshipEntity.ENTITY_TYPE,
-          relationshipProperty: "participant",
-          relationshipTargetProperty: "group",
-          targetId: "Other:4",
+          sourceType: "Child",
+          targetType: "School",
+          relationshipEntityType: "ChildSchoolRelation",
+          relationshipProperty: "childId",
+          relationshipTargetProperty: "schoolId",
+          targetId: "School:4",
         },
       ],
     };
-    importMeta.createdEntities = ["ImportedEntity:1", "ImportedEntity:2"];
+    importMeta.createdEntities = ["Child:1", "Child:2"];
     const relations = [
-      { participant: "ImportedEntity:1", group: "Other:4" },
-      { participant: "ImportedEntity:2", group: "Other:4" },
-      { participant: "ImportedEntity:3", group: "Other:4" }, // Other entity same group -> keep
-      { participant: "ImportedEntity:2", group: "Other:3" }, // Imported entity different group -> remove
-    ].map((e) => Object.assign(new RelationshipEntity(), e));
+      { childId: "Child:1", schoolId: "School:4" },
+      { childId: "Child:2", schoolId: "School:4" },
+      { childId: "Child:3", schoolId: "School:4" }, // Other child same school -> keep
+      { childId: "Child:2", schoolId: "School:3" }, // Imported child different school -> remove
+    ].map((e) => Object.assign(new ChildSchoolRelation(), e));
     const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.saveAll([...relations]);
 
@@ -240,15 +242,12 @@ describe("ImportAdditionalService", () => {
 
   it("should handle array of target types", () => {
     const multiTypeAction: any = {
-      sourceType: ImportedEntity.ENTITY_TYPE,
+      sourceType: "Child",
       mode: "direct",
-      targetType: [
-        ImportedEntity.ENTITY_TYPE,
-        DirectlyLinkingEntity.ENTITY_TYPE,
-      ],
-      targetProperty: "participants",
+      targetType: ["Child", "DirectlyLinkingEntity"],
+      targetProperty: "participant",
     };
     const label = service.createActionLabel(multiTypeAction);
-    expect(label).toContain("ImportedEntity / DirectlyLinkingEntity");
+    expect(label).toContain("Child / DirectlyLinkingEntity");
   });
 });

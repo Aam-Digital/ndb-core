@@ -1,0 +1,173 @@
+import { NotesManagerComponent } from "./notes-manager.component";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { Router } from "@angular/router";
+import { of, Subject } from "rxjs";
+import { Note } from "../model/note";
+import {
+  ConfigurableEnumFilterConfig,
+  EntityListConfig,
+} from "../../../core/entity-list/EntityListConfig";
+import { InteractionType } from "../model/interaction-type.interface";
+import { EventNote } from "#src/app/features/attendance/model/event-note";
+import { UpdatedEntity } from "../../../core/entity/model/entity-update";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
+
+describe("NotesManagerComponent", () => {
+  let component: NotesManagerComponent;
+  let fixture: ComponentFixture<NotesManagerComponent>;
+
+  let entityMapper: EntityMapperService;
+  let mockNoteObservable: Subject<UpdatedEntity<Note>>;
+  let mockEventNoteObservable: Subject<UpdatedEntity<Note>>;
+  const dialogMock: jasmine.SpyObj<FormDialogService> = jasmine.createSpyObj(
+    "dialogMock",
+    ["openView"],
+  );
+
+  const config: EntityListConfig = {
+    title: "Notes List",
+    columns: [],
+    columnGroups: {
+      default: "Standard",
+      mobile: "Standard",
+      groups: [
+        {
+          name: "Standard",
+          columns: ["date", "subject", "children"],
+        },
+      ],
+    },
+    filters: [
+      {
+        id: "status",
+        type: "prebuilt",
+      },
+      {
+        id: "date",
+        type: "prebuilt",
+      },
+      {
+        id: "category",
+        type: "configurable-enum",
+        enumId: "interaction-type",
+      } as ConfigurableEnumFilterConfig<Note>,
+    ],
+  };
+
+  const testInteractionTypes: InteractionType[] = Ordering.imposeTotalOrdering([
+    {
+      id: "HOME_VISIT",
+      label: "Home Visit",
+    },
+    {
+      id: "GUARDIAN_TALK",
+      label: "Talk with Guardians",
+    },
+  ]);
+
+  beforeEach(waitForAsync(() => {
+    mockNoteObservable = new Subject<UpdatedEntity<Note>>();
+    mockEventNoteObservable = new Subject<UpdatedEntity<EventNote>>();
+
+    TestBed.configureTestingModule({
+      imports: [NotesManagerComponent, MockedTestingModule.withState()],
+      providers: [{ provide: FormDialogService, useValue: dialogMock }],
+    }).compileComponents();
+
+    entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "receiveUpdates").and.callFake((entityType) =>
+      (entityType as any) === Note
+        ? (mockNoteObservable as any)
+        : (mockEventNoteObservable as any),
+    );
+  }));
+
+  beforeEach(async () => {
+    fixture = TestBed.createComponent(NotesManagerComponent);
+    component = fixture.componentInstance;
+    const router = fixture.debugElement.injector.get(Router);
+    fixture.ngZone.run(() => router.initialNavigation());
+    fixture.detectChanges();
+    await fixture.whenStable();
+  });
+
+  it("should create", () => {
+    expect(component).toBeTruthy();
+  });
+
+  it("should open the dialog when clicking details", () => {
+    const note = new Note("testNote");
+    component.showDetails(note);
+    expect(dialogMock.openView).toHaveBeenCalledWith(note);
+  });
+
+  it("should open dialog when add note is clicked", fakeAsync(() => {
+    const newNote = new Note("new");
+    const returnValue: any = { afterClosed: () => of(newNote) };
+    dialogMock.openView.and.returnValue(returnValue);
+    component.addNoteClick();
+  }));
+
+  it("will contain a new note when saved by an external component", () => {
+    const newNote = new Note("new");
+    const oldLength = component.notes.length;
+    mockNoteObservable.next({ entity: newNote, type: "new" });
+    expect(component.notes).toHaveSize(oldLength + 1);
+  });
+
+  it("will contain the updated note when updated", async () => {
+    const note = new Note("n1");
+    note.authors = ["A"];
+    mockNoteObservable.next({ entity: note, type: "new" });
+    expect(component.notes).toHaveSize(1);
+    expect(component.notes[0].authors).toEqual(["A"]);
+    note.authors = ["B"];
+    mockNoteObservable.next({ entity: note, type: "update" });
+    expect(component.notes).toHaveSize(1);
+    expect(component.notes[0].authors).toEqual(["B"]);
+  });
+
+  it("displays Notes and Event notes only when toggle is set to true", async () => {
+    component.includeEventNotes = false;
+    const note = Note.create(new Date("2020-01-01"), "test note");
+    note.category = testInteractionTypes[0];
+    const eventNote = EventNote.create(new Date("2020-01-01"), "test event");
+    eventNote.category = testInteractionTypes[0];
+    await entityMapper.save(note);
+    await entityMapper.save(eventNote);
+
+    await component.updateIncludeEvents();
+
+    expect(component.notes).toEqual([note, eventNote]);
+
+    await component.updateIncludeEvents();
+
+    expect(component.notes).toEqual([note]);
+  });
+
+  it("loads initial list including EventNotes if set in config", fakeAsync(() => {
+    const note = Note.create(new Date("2020-01-01"), "test note");
+    note.category = testInteractionTypes[0];
+    const eventNote = EventNote.create(new Date("2020-01-01"), "test event");
+    eventNote.category = testInteractionTypes[0];
+    entityMapper.save(note);
+    entityMapper.save(eventNote);
+    tick();
+
+    component.includeEventNotes = true;
+    Object.assign(component, config);
+    component.ngOnInit();
+    tick();
+
+    expect(component.notes).toEqual([note, eventNote]);
+  }));
+});

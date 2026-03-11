@@ -62,11 +62,12 @@
       }
     },
     "view:note": {
-      "component": "EntityList",
+      "component": "NotesManager",
       "config": {
         "entityType": "Note",
-        "clickMode": "popup-details",
         "title": "Notes & Reports",
+        "includeEventNotes": false,
+        "showEventNotesToggle": true,
         "columnGroups": {
           "default": "Standard",
           "mobile": "Mobile",

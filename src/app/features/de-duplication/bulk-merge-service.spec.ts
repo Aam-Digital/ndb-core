@@ -128,10 +128,10 @@ describe("BulkMergeService", () => {
     const child2 = createEntityOfType("Child", "child2");
 
     const note1 = new Note("note1");
-    note1.children.push(child1.getId());
+    note1.addChild(child1);
 
     const note2 = new Note("note2");
-    note2.children.push(child2.getId());
+    note2.addChild(child2);
 
     const attendance = new AttendanceItem();
     attendance.participant = child2.getId();
@@ -143,9 +143,7 @@ describe("BulkMergeService", () => {
     await service.executeMerge(mergedEntity, [child1, child2]);
 
     const updatedNote = await entityMapper.load(Note, note2.getId());
-    const newAttendance = updatedNote.childrenAttendance.find(
-      (item) => item.participant === child1.getId(),
-    );
+    const newAttendance = updatedNote.getAttendance(child1.getId());
     expect(newAttendance).toBeDefined();
   });
 

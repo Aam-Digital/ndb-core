@@ -68,7 +68,9 @@ export class AttendanceService {
     raw?: AttendanceFeatureConfig,
   ): AttendanceFeatureSettings {
     const eventTypesConfig =
-      raw?.eventTypes ?? AttendanceService.DEFAULT_CONFIG.eventTypes ?? [];
+      raw?.eventTypes ??
+      AttendanceService.DEFAULT_CONFIG.eventTypes ??
+      [];
     const groupBasedParticipants =
       raw?.groupBasedParticipants ??
       AttendanceService.DEFAULT_CONFIG.groupBasedParticipants ??
@@ -106,7 +108,9 @@ export class AttendanceService {
           .map((s) => s.activityType!),
       ),
     ];
-    const eventTypes = [...new Set(eventTypeSettings.map((s) => s.eventType))];
+    const eventTypes = [
+      ...new Set(eventTypeSettings.map((s) => s.eventType)),
+    ];
 
     const filterConfigMap = new Map();
     for (const typeSettings of eventTypeSettings) {

@@ -2,7 +2,7 @@ import { applicationConfig, Meta, StoryObj } from "@storybook/angular";
 import { ActivityCardComponent } from "./activity-card.component";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service";
-import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
+import { RecurringActivity } from "../../model/recurring-activity";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { AttendanceItem } from "../../model/attendance-item";
@@ -22,7 +22,7 @@ const demoChildren = [generateChild(), generateChild(), generateChild()];
 
 const simpleEvent = Note.create(new Date(), "some meeting");
 demoChildren.forEach((c) => {
-  simpleEvent.children.push(c.getId());
+  simpleEvent.addChild(c);
   simpleEvent.childrenAttendance.push(
     new AttendanceItem(undefined, "", c.getId()),
   );
@@ -37,16 +37,16 @@ longEvent.category = {
   isMeeting: true,
 };
 demoChildren.forEach((c) => {
-  longEvent.children.push(c.getId());
+  longEvent.addChild(c);
   longEvent.childrenAttendance.push(
     new AttendanceItem(undefined, "", c.getId()),
   );
 });
 
 const activityEvent = Note.create(new Date(), "Coaching Batch C");
-activityEvent.relatesTo = createEntityOfType("RecurringActivity").getId();
+activityEvent.relatesTo = RecurringActivity.create("Coaching Batch C").getId();
 demoChildren.forEach((c) => {
-  activityEvent.children.push(c.getId());
+  activityEvent.addChild(c);
   activityEvent.childrenAttendance.push(
     new AttendanceItem(undefined, "", c.getId()),
   );

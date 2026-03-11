@@ -70,7 +70,7 @@ describe("NotificationRuleComponent", () => {
 
     component.form.setValue({
       label: "label2",
-      entityType: "TestEntity",
+      entityType: "EventNote",
       changeType: ["created", "updated"],
       notificationType: "entity_change",
       conditions: {},
@@ -80,7 +80,7 @@ describe("NotificationRuleComponent", () => {
     expect(component.valueChange.emit).toHaveBeenCalledWith(
       jasmine.objectContaining({
         label: "label2",
-        entityType: "TestEntity",
+        entityType: "EventNote",
         changeType: ["created", "updated"],
         notificationType: "entity_change",
         conditions: {},

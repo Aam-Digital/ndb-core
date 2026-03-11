@@ -21,7 +21,7 @@ import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-e
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { Validators } from "@angular/forms";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
+import { RecurringActivity } from "#src/app/features/attendance/model/recurring-activity";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
@@ -185,7 +185,7 @@ describe("AdminEntityFieldComponent", () => {
   }));
 
   it("should init 'additional' options for entity datatypes", fakeAsync(() => {
-    const mockEntityTypes = [TestEntity, Note];
+    const mockEntityTypes = [TestEntity, RecurringActivity];
     const entityRegistry = TestBed.inject(EntityRegistry);
     spyOn(entityRegistry, "getEntityTypes").and.returnValue(
       mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
@@ -211,7 +211,7 @@ describe("AdminEntityFieldComponent", () => {
     component.data.entitySchemaField = {
       label: "related records",
       dataType: EntityDatatype.dataType,
-      additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
+      additional: [TestEntity.ENTITY_TYPE, RecurringActivity.ENTITY_TYPE],
     };
     component.ngOnInit();
     tick();
@@ -219,7 +219,7 @@ describe("AdminEntityFieldComponent", () => {
     expect(component.entityAdditionalMultiSelect()).toBeTrue();
     expect(component.additionalForm.value).toEqual([
       TestEntity.ENTITY_TYPE,
-      Note.ENTITY_TYPE,
+      RecurringActivity.ENTITY_TYPE,
     ]);
   }));
 
@@ -248,7 +248,7 @@ describe("AdminEntityFieldComponent", () => {
     component.data.entitySchemaField = {
       label: "related records",
       dataType: EntityDatatype.dataType,
-      additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
+      additional: [TestEntity.ENTITY_TYPE, RecurringActivity.ENTITY_TYPE],
     };
     component.ngOnInit();
     tick();
@@ -270,7 +270,7 @@ describe("AdminEntityFieldComponent", () => {
     component.data.entitySchemaField = {
       label: "related records",
       dataType: EntityDatatype.dataType,
-      additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
+      additional: [TestEntity.ENTITY_TYPE, RecurringActivity.ENTITY_TYPE],
     };
     component.ngOnInit();
     tick();
@@ -286,12 +286,12 @@ describe("AdminEntityFieldComponent", () => {
     expect(mockToggle.checked).toBeTrue();
     expect(component.additionalForm.value).toEqual([
       TestEntity.ENTITY_TYPE,
-      Note.ENTITY_TYPE,
+      RecurringActivity.ENTITY_TYPE,
     ]);
   }));
 
   it("should init 'additional' for attendance datatype from nested format", fakeAsync(() => {
-    const mockEntityTypes = [TestEntity, Note];
+    const mockEntityTypes = [TestEntity, RecurringActivity];
     const entityRegistry = TestBed.inject(EntityRegistry);
     spyOn(entityRegistry, "getEntityTypes").and.returnValue(
       mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
@@ -305,7 +305,7 @@ describe("AdminEntityFieldComponent", () => {
       additional: {
         participant: {
           dataType: "entity",
-          additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
+          additional: [TestEntity.ENTITY_TYPE, RecurringActivity.ENTITY_TYPE],
         },
       },
     };
@@ -314,18 +314,18 @@ describe("AdminEntityFieldComponent", () => {
 
     expect(component.attendanceParticipantTypesForm.value).toEqual([
       TestEntity.ENTITY_TYPE,
-      Note.ENTITY_TYPE,
+      RecurringActivity.ENTITY_TYPE,
     ]);
     expect(component.additionalForm.value).toEqual({
       participant: {
         dataType: "entity",
-        additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
+        additional: [TestEntity.ENTITY_TYPE, RecurringActivity.ENTITY_TYPE],
       },
     });
   }));
 
   it("should sync attendance participant type selection to nested additional format", fakeAsync(() => {
-    const mockEntityTypes = [TestEntity, Note];
+    const mockEntityTypes = [TestEntity, RecurringActivity];
     const entityRegistry = TestBed.inject(EntityRegistry);
     spyOn(entityRegistry, "getEntityTypes").and.returnValue(
       mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),

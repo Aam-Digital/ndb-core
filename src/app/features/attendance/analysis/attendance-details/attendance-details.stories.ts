@@ -4,7 +4,7 @@ import {
   moduleMetadata,
   StoryFn,
 } from "@storybook/angular";
-import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
+import { RecurringActivity } from "../../model/recurring-activity";
 import { ActivityAttendance } from "../../model/activity-attendance";
 import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
@@ -12,9 +12,7 @@ import { AttendanceDetailsComponent } from "./attendance-details.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
-const demoActivity = Object.assign(createEntityOfType("RecurringActivity"), {
-  title: "Coaching Batch C",
-});
+const demoActivity = RecurringActivity.create("Coaching Batch C");
 const activityAttendance = ActivityAttendance.create(new Date("2020-01-01"), [
   TestEventEntity.generateEventWithAttendance(
     [

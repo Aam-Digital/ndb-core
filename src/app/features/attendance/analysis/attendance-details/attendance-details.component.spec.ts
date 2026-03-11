@@ -4,9 +4,9 @@ import { AttendanceDetailsComponent } from "./attendance-details.component";
 import { ActivityAttendance } from "../../model/activity-attendance";
 import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
+import { RecurringActivity } from "../../model/recurring-activity";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
-import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 
 describe("AttendanceDetailsComponent", () => {
   let component: AttendanceDetailsComponent;
@@ -30,7 +30,7 @@ describe("AttendanceDetailsComponent", () => {
         new Date("2020-01-02"),
       ),
     ]);
-    entity.activity = TestEntity.create("Test Activity");
+    entity.activity = RecurringActivity.create("Test Activity");
 
     TestBed.configureTestingModule({
       imports: [AttendanceDetailsComponent, MockedTestingModule.withState()],

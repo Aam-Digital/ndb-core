@@ -18,7 +18,8 @@ function generateTestNote(forChildren: TestEntity[]) {
     isMeeting: true,
   };
   for (const child of forChildren) {
-    testNote.children.push(child.getId());
+    testNote.addChild(child);
+    testNote.getAttendance(child).status = defaultAttendanceStatusTypes[0];
   }
   return testNote;
 }

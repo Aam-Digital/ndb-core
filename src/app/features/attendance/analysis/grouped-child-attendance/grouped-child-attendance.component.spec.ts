@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { GroupedChildAttendanceComponent } from "./grouped-child-attendance.component";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { AttendanceService } from "../../attendance.service";
+import { RecurringActivity } from "../../model/recurring-activity";
 import { expectEntitiesToMatch } from "#src/app/utils/expect-entity-data.spec";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 
@@ -40,7 +41,7 @@ describe("GroupedChildAttendanceComponent", () => {
   });
 
   it("should load activities from attendance service", async () => {
-    const activity = TestEntity.create("test activity");
+    const activity = RecurringActivity.create("test activity");
     mockAttendanceService.getActivitiesForParticipant.and.resolveTo([activity]);
 
     await component.ngOnInit();
@@ -49,9 +50,9 @@ describe("GroupedChildAttendanceComponent", () => {
   });
 
   it("should separate active and archived activities", async () => {
-    const activeActivity = TestEntity.create("active");
+    const activeActivity = RecurringActivity.create("active");
     activeActivity.isActive = true;
-    const archivedActivity = TestEntity.create("archived");
+    const archivedActivity = RecurringActivity.create("archived");
     archivedActivity.isActive = false;
     mockAttendanceService.getActivitiesForParticipant.and.resolveTo([
       activeActivity,

@@ -3,13 +3,12 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
 import { AttendanceService } from "../../attendance.service";
 import { DatePipe, PercentPipe } from "@angular/common";
+import { RecurringActivity } from "../../model/recurring-activity";
 import { ActivityAttendance } from "../../model/activity-attendance";
-import { Entity } from "#src/app/core/entity/model/entity";
 import { EventWithAttendance } from "../../model/event-with-attendance";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
-import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import moment from "moment";
 
 describe("ActivityAttendanceSectionComponent", () => {
@@ -17,11 +16,11 @@ describe("ActivityAttendanceSectionComponent", () => {
   let fixture: ComponentFixture<ActivityAttendanceSectionComponent>;
 
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
-  let testActivity: Entity;
+  let testActivity: RecurringActivity;
   let testRecords: ActivityAttendance[];
 
   beforeEach(waitForAsync(() => {
-    testActivity = TestEntity.create("test act");
+    testActivity = RecurringActivity.create("test act");
     testRecords = [ActivityAttendance.create(new Date(), [])];
 
     mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [

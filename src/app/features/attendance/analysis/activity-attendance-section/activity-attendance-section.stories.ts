@@ -4,7 +4,7 @@ import {
   moduleMetadata,
   StoryFn,
 } from "@storybook/angular";
-import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
+import { RecurringActivity } from "../../model/recurring-activity";
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
 import { ActivityAttendance } from "../../model/activity-attendance";
 import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
@@ -17,9 +17,7 @@ import { of } from "rxjs";
 import { importProvidersFrom } from "@angular/core";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 
-const demoActivity = Object.assign(createEntityOfType("RecurringActivity"), {
-  title: "Coaching Batch C",
-});
+const demoActivity = RecurringActivity.create("Coaching Batch C");
 const attendanceRecords = [
   ActivityAttendance.create(
     moment().subtract(1, "month").startOf("month").toDate(),

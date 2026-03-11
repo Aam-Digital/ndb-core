@@ -2,6 +2,8 @@ import { NgModule, inject } from "@angular/core";
 import { ComponentRegistry } from "#src/app/dynamic-components";
 import { attendanceComponents } from "./attendance-components";
 import { attendanceRoutes } from "./attendance.routing";
+import { RecurringActivity } from "./model/recurring-activity";
+import { EventNote } from "./model/event-note";
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
 import { EventAttendanceMapDatatype } from "./deprecated/event-attendance-map.datatype";
 import { AttendanceDatatype } from "./model/attendance.datatype";
@@ -30,7 +32,7 @@ import { AbstractPermissionGuard } from "#src/app/core/permissions/permission-gu
   ],
 })
 export class AttendanceModule {
-  static databaseEntities = [];
+  static databaseEntities = [RecurringActivity, EventNote];
   static routes = attendanceRoutes;
 
   private readonly widgetRegistry = inject(DashboardWidgetRegistryService);

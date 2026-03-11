@@ -8,7 +8,7 @@ import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { AttendanceItem } from "../../model/attendance-item";
 import { Entity } from "#src/app/core/entity/model/entity";
-import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
+import { RecurringActivity } from "../../model/recurring-activity";
 import { faker } from "#src/app/core/demo-data/faker";
 
 const demoEvents: Note[] = [
@@ -29,7 +29,7 @@ demoEvent.category = { id: "COACHING", label: "Coaching", isMeeting: true };
 
 const demoChildren = [generateChild(), generateChild(), generateChild()];
 demoChildren.forEach((c) => {
-  demoEvent.children.push(c.getId());
+  demoEvent.addChild(c);
   demoEvent.childrenAttendance.push(
     new AttendanceItem(undefined, "", c.getId()),
   );
@@ -71,16 +71,8 @@ function generateActivity({
   participants: Entity[];
   assignedUser?: Entity;
   title?: string;
-}): Entity {
-  const activity = Object.assign(
-    createEntityOfType("RecurringActivity", faker.string.uuid()),
-    {
-      title: "",
-      type: undefined as any,
-      participants: [] as string[],
-      assignedTo: [] as string[],
-    },
-  );
+}): RecurringActivity {
+  const activity = new RecurringActivity(faker.string.uuid());
   const type = faker.helpers.arrayElement(ACTIVITY_TYPES);
 
   activity.title =

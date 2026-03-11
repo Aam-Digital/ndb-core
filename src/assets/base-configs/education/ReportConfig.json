@@ -49,7 +49,7 @@
     "title": "Event Report",
     "aggregationDefinitions": [
       {
-        "query": "Event:toArray[*date >= ? & date <= ?]",
+        "query": "EventNote:toArray[*date >= ? & date <= ?]",
         "groupBy": [
           "category"
         ],
@@ -72,7 +72,7 @@
     "mode": "exporting",
     "aggregationDefinitions": [
       {
-        "query": "Event:toArray[* date >= ? & date <= ?]",
+        "query": "EventNote:toArray[* date >= ? & date <= ?]",
         "groupBy": {
           "label": "Type",
           "property": "category"
