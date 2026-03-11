@@ -9,6 +9,7 @@ import {
   ColumnGroupsConfig,
   FilterConfig,
 } from "../../../core/entity-list/EntityListConfig";
+import { EventNote } from "#src/app/features/attendance/model/event-note";
 import { merge } from "rxjs";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
@@ -75,9 +76,7 @@ export class NotesManagerComponent implements OnInit {
   private async loadEntities(): Promise<Note[]> {
     let notes = await this.entityMapperService.loadType(Note);
     if (this.includeEventNotes) {
-      const eventNotes = (await this.entityMapperService.loadType(
-        "EventNote",
-      )) as Note[];
+      const eventNotes = await this.entityMapperService.loadType(EventNote);
       notes = notes.concat(eventNotes);
     }
     return notes;
@@ -86,19 +85,18 @@ export class NotesManagerComponent implements OnInit {
   private subscribeEntityUpdates() {
     merge(
       this.entityMapperService.receiveUpdates(Note),
-      // for backwards compatibility, we also subscribe to updates of EventNote
-      this.entityMapperService.receiveUpdates("EventNote"),
+      this.entityMapperService.receiveUpdates(EventNote),
     )
       .pipe(untilDestroyed(this))
       .subscribe((updatedNote) => {
         if (
           !this.includeEventNotes &&
-          updatedNote?.entity?.getType() === "EventNote"
+          updatedNote?.entity?.getType() === EventNote.ENTITY_TYPE
         ) {
           return;
         }
 
-        this.notes = applyUpdate(this.notes, updatedNote) as Note[];
+        this.notes = applyUpdate(this.notes, updatedNote);
       });
   }
 
