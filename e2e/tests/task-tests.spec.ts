@@ -171,8 +171,12 @@ test("Edit the related records assigned to the task", async ({ page }) => {
   await page.getByRole("option", { name: "Amrita Nayar" }).click();
   await page.keyboard.press("Escape");
 
-  // Wait for the entity chip to render before clicking Save
-  await expect(dialog.getByText("Amrita Nayar")).toBeVisible();
+  // Wait for the entity chip to render before clicking Save.
+  // Scope to mat-chip-row to avoid strict-mode violation when the dropdown
+  // overlay is still in the DOM after Escape (it also contains "Amrita Nayar").
+  await expect(
+    dialog.locator("mat-chip-row").getByText("Amrita Nayar"),
+  ).toBeVisible();
 
   // And I click on "Save"
   await dialog.getByRole("button", { name: "Save" }).click();
