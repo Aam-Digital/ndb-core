@@ -10,7 +10,6 @@ import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { AttendanceService } from "../attendance.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
-import { AttendanceFeatureSettings } from "../model/attendance-feature-config";
 
 describe("DemoActivityEventsGenerator", () => {
   let service: DemoDataGenerator<Entity>;
@@ -24,26 +23,21 @@ describe("DemoActivityEventsGenerator", () => {
     } as unknown as DemoActivityGeneratorService;
 
     const mockAttendanceService = {
-      featureSettings: {
-        eventTypeSettings: [
-          {
-            activityType: TestEntity,
-            eventType: TestEventEntity,
-            participantsField: "refMixed",
-            dateField: undefined,
-            relatesToField: "relatesTo",
-            assignedUsersField: "authors",
-            filterConfig: [],
-            extraField: "",
-            fieldMapping: {
-              title: "name",
-            },
+      eventTypeSettings: [
+        {
+          activityType: TestEntity,
+          eventType: TestEventEntity,
+          participantsField: "refMixed",
+          dateField: undefined,
+          relatesToField: "relatesTo",
+          assignedUsersField: "authors",
+          filterConfig: [],
+          extraField: "",
+          fieldMapping: {
+            title: "name",
           },
-        ],
-        recurringActivityTypes: [TestEntity],
-        eventTypes: [TestEventEntity],
-        filterConfig: [],
-      } as AttendanceFeatureSettings,
+        },
+      ],
     };
 
     TestBed.configureTestingModule({

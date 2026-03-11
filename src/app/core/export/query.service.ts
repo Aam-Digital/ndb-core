@@ -70,7 +70,7 @@ export class QueryService {
       this.queryStringMap.push([name, entity]),
     );
 
-    for (const eventType of this.attendanceService.featureSettings.eventTypes) {
+    for (const eventType of this.attendanceService.eventTypes()) {
       this.entityInfo[eventType.ENTITY_TYPE] = {
         dataFunction: (from, to) =>
           this.attendanceService

@@ -48,12 +48,11 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<Entity
     const data: Entity[] = [];
 
     for (const activity of this.demoActivities.entities) {
-      const typeSettings =
-        this.attendanceService.featureSettings.eventTypeSettings.find(
-          (s) =>
-            s.activityType !== undefined &&
-            s.activityType.ENTITY_TYPE === activity.getType(),
-        );
+      const typeSettings = this.attendanceService.eventTypeSettings.find(
+        (s) =>
+          s.activityType !== undefined &&
+          s.activityType.ENTITY_TYPE === activity.getType(),
+      );
       if (!typeSettings) {
         continue;
       }

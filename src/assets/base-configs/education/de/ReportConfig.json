@@ -49,7 +49,7 @@
     "title": "Veranstaltungsbericht",
     "aggregationDefinitions": [
       {
-        "query": "Event:toArray[*date >= ? & date <= ?]",
+        "query": "Event:toArray[* date >= ? & date <= ?]",
         "groupBy": [
           "category"
         ],

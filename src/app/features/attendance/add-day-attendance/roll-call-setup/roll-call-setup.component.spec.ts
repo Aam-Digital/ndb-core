@@ -5,6 +5,7 @@ import {
   tick,
   waitForAsync,
 } from "@angular/core/testing";
+import { signal } from "@angular/core";
 
 import { RollCallSetupComponent } from "./roll-call-setup.component";
 import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
@@ -40,9 +41,8 @@ describe("RollCallSetupComponent", () => {
       "AttendanceService",
       ["getAvailableEventsForRollCall"],
       {
-        featureSettings: {
-          filterConfig: [],
-        },
+        eventTypeSettings: [],
+        filterConfig: signal([]),
       },
     );
     mockAttendanceService.getAvailableEventsForRollCall.and.resolveTo({

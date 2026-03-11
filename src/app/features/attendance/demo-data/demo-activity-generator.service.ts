@@ -9,7 +9,6 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
 import { AttendanceService } from "../attendance.service";
 import { EventTypeSettings } from "../model/attendance-feature-config";
-import { asArray } from "#src/app/utils/asArray";
 
 /**
  * Generate activity entities based on the attendance config's eventTypes.
@@ -41,8 +40,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
     const data: Entity[] = [];
     const children = this.demoChildren.entities.filter((c) => c.isActive);
 
-    for (const typeSettings of this.attendanceService.featureSettings
-      .eventTypeSettings) {
+    for (const typeSettings of this.attendanceService.eventTypeSettings) {
       if (!typeSettings.activityType) continue;
       let i = 0;
       while (i < children.length) {
@@ -80,18 +78,9 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
       );
     }
 
-    // Detect the field with dataType "entity" and additional "User" on the activity schema
-    for (const [
-      fieldId,
-      field,
-    ] of typeSettings.activityType!.schema.entries()) {
-      if (
-        field.dataType === "entity" &&
-        asArray(field.additional).includes("User")
-      ) {
-        activity[fieldId] = [assignedUser?.getId()];
-        break;
-      }
+    // Set assigned user via the configured field
+    if (typeSettings.assignedUsersField) {
+      activity[typeSettings.assignedUsersField] = [assignedUser.getId()];
     }
 
     // Set mapped fields on the activity (reverse: event field → activity field)

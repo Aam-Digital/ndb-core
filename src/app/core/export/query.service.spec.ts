@@ -1,4 +1,5 @@
 import { TestBed } from "@angular/core/testing";
+import { signal } from "@angular/core";
 import moment from "moment";
 
 import {
@@ -55,7 +56,7 @@ describe("QueryService", () => {
     mockAttendanceService = jasmine.createSpyObj(
       "AttendanceService",
       ["getEventsOnDate", "wrapEventEntity"],
-      { featureSettings: { eventTypes: [TestEventEntity] } },
+      { eventTypes: signal([TestEventEntity]) },
     );
     mockAttendanceService.getEventsOnDate.and.returnValue(Promise.resolve([]));
     mockAttendanceService.wrapEventEntity.and.callFake(

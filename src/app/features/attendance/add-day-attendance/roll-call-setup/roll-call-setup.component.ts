@@ -73,7 +73,7 @@ export class RollCallSetupComponent {
    * Configuration for the filter UI shown above the events list.
    */
   readonly filterConfig = input<FilterConfig[]>(
-    this.attendanceService.featureSettings.filterConfig ?? [],
+    this.attendanceService.filterConfig(),
   );
 
   date = signal(new Date());

@@ -144,36 +144,3 @@ export interface AttendanceFeatureConfig {
    */
   groupBasedParticipants?: boolean;
 }
-
-/**
- * Runtime shape exposed by {@link AttendanceService.featureSettings}.
- * Entity type names are resolved to constructors via EntityRegistry on service initialisation.
- */
-export interface AttendanceFeatureSettings {
-  /** Full settings for each configured event type. */
-  eventTypeSettings: EventTypeSettings[];
-
-  /**
-   * Entity constructors of all configured activity types (only entries with an activityType).
-   * Derived from `eventTypeSettings` for consumers like permission guards and index creation.
-   */
-  recurringActivityTypes: EntityConstructor[];
-
-  /**
-   * Entity constructors of all configured event types.
-   * Derived from `eventTypeSettings` for consumers like permission guards and index creation.
-   */
-  eventTypes: EntityConstructor[];
-
-  /**
-   * Merged filter configuration from all event type configs.
-   * Used as the default for the roll-call UI filter.
-   */
-  filterConfig: FilterConfig[];
-
-  /**
-   * Whether legacy group-based participant resolution is active.
-   * @see {@link AttendanceFeatureConfig.groupBasedParticipants}
-   */
-  groupBasedParticipants?: boolean;
-}
