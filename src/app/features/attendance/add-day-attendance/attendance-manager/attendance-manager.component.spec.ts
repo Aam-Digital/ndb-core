@@ -4,6 +4,9 @@ import { AttendanceManagerComponent } from "./attendance-manager.component";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ComingSoonDialogService } from "#src/app/features/coming-soon/coming-soon-dialog.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { AttendanceService } from "../../attendance.service";
+import { AttendanceFeatureConfig } from "../../model/attendance-feature-config";
+import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 
 describe("AttendanceManagerComponent", () => {
   let component: AttendanceManagerComponent;
@@ -16,7 +19,26 @@ describe("AttendanceManagerComponent", () => {
         RouterTestingModule,
         FontAwesomeTestingModule,
       ],
-      providers: [{ provide: ComingSoonDialogService, useValue: null }],
+      providers: [
+        { provide: ComingSoonDialogService, useValue: null },
+        {
+          provide: AttendanceService,
+          useValue: {
+            featureConfig: {
+              recurringActivityTypes: [],
+              eventTypes: [],
+            } as AttendanceFeatureConfig,
+          },
+        },
+        {
+          provide: EntityAbility,
+          useValue: {
+            can: () => true,
+            cannot: () => false,
+            on: () => () => null,
+          },
+        },
+      ],
     }).compileComponents();
   }));
 

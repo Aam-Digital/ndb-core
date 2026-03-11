@@ -9,7 +9,7 @@ describe("EntityPermissionGuard", () => {
   let mockAbility: jasmine.SpyObj<EntityAbility>;
 
   beforeEach(() => {
-    mockAbility = jasmine.createSpyObj(["can"], { rules: [{}] });
+    mockAbility = jasmine.createSpyObj(["can"], { initialized: true });
 
     TestBed.configureTestingModule({
       imports: [RouterTestingModule],

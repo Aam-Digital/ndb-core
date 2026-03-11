@@ -10,7 +10,7 @@ import { EventNote } from "./model/event-note";
 import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
 import { AttendanceItem } from "./model/attendance-item";
 import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
-import { RollCallConfig } from "./model/roll-call-config";
+import { AttendanceFeatureConfig } from "./model/attendance-feature-config";
 import { AttendanceDatatype } from "./model/attendance.datatype";
 import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
 import { EventWithAttendance } from "./model/event-with-attendance";
@@ -48,9 +48,13 @@ export class AttendanceService {
    *
    * Will become configurable in the future.
    */
-  readonly rollCallConfig: RollCallConfig = {
-    filterConfig: [{ id: "category" }, { id: "schools" }],
-    extraField: "category",
+  readonly featureConfig: AttendanceFeatureConfig = {
+    rollCallSetup: {
+      filterConfig: [{ id: "category" }, { id: "schools" }],
+      extraField: "category",
+    },
+    recurringActivityTypes: [RecurringActivity],
+    eventTypes: [EventNote],
   };
 
   constructor() {

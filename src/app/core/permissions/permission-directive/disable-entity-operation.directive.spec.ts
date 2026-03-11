@@ -4,6 +4,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Entity } from "../../entity/model/entity";
 import { EntityAbility } from "../ability/entity-ability";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { EntitySubject } from "../permission-types";
 
 describe("DisableEntityOperationDirective", () => {
   let testComponent: ComponentFixture<TestComponent>;
@@ -57,7 +58,7 @@ describe("DisableEntityOperationDirective", () => {
     ).toBeFalse();
 
     (mockAbility.cannot as jasmine.Spy).and.returnValue(true);
-    testComponent.componentInstance.entityConstructor = TestEntity;
+    testComponent.componentInstance.entity = TestEntity;
     testComponent.detectChanges();
 
     expect(
@@ -82,6 +83,29 @@ describe("DisableEntityOperationDirective", () => {
     ).toBeFalse();
   });
 
+  it("should disable when all subjects in array are not permitted", () => {
+    createComponent(true);
+    testComponent.componentInstance.entity = [Entity, TestEntity];
+    testComponent.detectChanges();
+
+    expect(
+      testComponent.componentInstance.buttonRef.nativeElement.disabled,
+    ).toBeTrue();
+  });
+
+  it("should enable when at least one subject in array is permitted", () => {
+    (mockAbility.cannot as jasmine.Spy).and.callFake(
+      (_, subject) => subject !== TestEntity,
+    );
+    testComponent = TestBed.createComponent(TestComponent);
+    testComponent.componentInstance.entity = [Entity, TestEntity];
+    testComponent.detectChanges();
+
+    expect(
+      testComponent.componentInstance.buttonRef.nativeElement.disabled,
+    ).toBeFalse();
+  });
+
   function createComponent(disabled: boolean = true) {
     (mockAbility.cannot as jasmine.Spy).and.returnValue(disabled);
     testComponent = TestBed.createComponent(TestComponent);
@@ -93,7 +117,7 @@ describe("DisableEntityOperationDirective", () => {
   template: ` <button
     *appDisabledEntityOperation="{
       operation: 'create',
-      entity: entityConstructor,
+      entity: entity,
     }"
     #button
   ></button>`,
@@ -101,6 +125,6 @@ describe("DisableEntityOperationDirective", () => {
   standalone: false,
 })
 class TestComponent {
-  public entityConstructor = Entity;
+  public entity: EntitySubject | EntitySubject[] = Entity;
   @ViewChild("button") public buttonRef: ElementRef;
 }
