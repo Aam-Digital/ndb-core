@@ -238,7 +238,7 @@ export class RollCallComponent {
     try {
       const entityType = Entity.extractTypeFromId(id);
       const entity = await this.entityMapper.load(entityType, id);
-      event = EventWithAttendance.from(entity);
+      event = this.attendanceService.wrapEventEntity(entity);
     } catch (e) {
       Logging.warn("Could not load event " + id, e);
       void this.router.navigate(["/404"]);

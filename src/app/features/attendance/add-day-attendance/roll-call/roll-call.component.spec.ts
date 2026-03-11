@@ -126,7 +126,11 @@ describe("RollCallComponent", () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput(
       "eventEntity",
-      EventWithAttendance.from(Note.create(new Date())),
+      new EventWithAttendance(
+        Note.create(new Date()),
+        "childrenAttendance",
+        "date",
+      ),
     );
     fixture.detectChanges();
   }));
@@ -142,7 +146,7 @@ describe("RollCallComponent", () => {
     addParticipant(event, participant1);
     fixture.componentRef.setInput(
       "eventEntity",
-      EventWithAttendance.from(event),
+      new EventWithAttendance(event, "childrenAttendance", "date"),
     );
     stabilize();
 
@@ -158,7 +162,11 @@ describe("RollCallComponent", () => {
 
     fixture.componentRef.setInput(
       "eventEntity",
-      EventWithAttendance.from(noteWithNonExistingChild),
+      new EventWithAttendance(
+        noteWithNonExistingChild,
+        "childrenAttendance",
+        "date",
+      ),
     );
     stabilize();
 
@@ -177,7 +185,7 @@ describe("RollCallComponent", () => {
 
     fixture.componentRef.setInput(
       "eventEntity",
-      EventWithAttendance.from(note),
+      new EventWithAttendance(note, "childrenAttendance", "date"),
     );
     stabilize();
 
@@ -207,7 +215,7 @@ describe("RollCallComponent", () => {
     const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
     fixture.componentRef.setInput(
       "eventEntity",
-      EventWithAttendance.from(note),
+      new EventWithAttendance(note, "childrenAttendance", "date"),
     );
     stabilize();
 
@@ -238,7 +246,7 @@ describe("RollCallComponent", () => {
     event.subject = "test";
     fixture.componentRef.setInput(
       "eventEntity",
-      EventWithAttendance.from(event),
+      new EventWithAttendance(event, "childrenAttendance", "date"),
     );
     stabilize();
 
@@ -256,7 +264,7 @@ describe("RollCallComponent", () => {
     event.subject = "test";
     fixture.componentRef.setInput(
       "eventEntity",
-      EventWithAttendance.from(event),
+      new EventWithAttendance(event, "childrenAttendance", "date"),
     );
     stabilize();
 
@@ -270,7 +278,7 @@ describe("RollCallComponent", () => {
     addParticipant(event, participant1);
     fixture.componentRef.setInput(
       "eventEntity",
-      EventWithAttendance.from(event),
+      new EventWithAttendance(event, "childrenAttendance", "date"),
     );
     stabilize();
 
@@ -292,7 +300,7 @@ describe("RollCallComponent", () => {
     ).status = ABSENT;
     fixture.componentRef.setInput(
       "eventEntity",
-      EventWithAttendance.from(note),
+      new EventWithAttendance(note, "childrenAttendance", "date"),
     );
     stabilize();
 
@@ -348,7 +356,7 @@ describe("RollCallComponent", () => {
     }
     fixture.componentRef.setInput(
       "eventEntity",
-      EventWithAttendance.from(event),
+      new EventWithAttendance(event, "childrenAttendance", "date"),
     );
     stabilize();
 

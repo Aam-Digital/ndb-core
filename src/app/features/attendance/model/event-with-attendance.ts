@@ -4,9 +4,6 @@ import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
 } from "./attendance-status";
-import { AttendanceDatatype } from "./attendance.datatype";
-import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
-import { Logging } from "#src/app/core/logging/logging.service";
 
 export interface AttendanceStats {
   average: number;
@@ -25,35 +22,6 @@ export interface AttendanceStats {
  * through component trees.
  */
 export class EventWithAttendance {
-  /**
-   * Wrap an entity in an EventWithAttendance by auto-detecting its attendance and date fields.
-   *
-   * @param relatesToField Optional override for the field linking the event to its parent activity. Defaults to `"relatesTo"`.
-   * @param authorsField Optional override for the field holding the event's assigned users. Defaults to `"authors"`.
-   * Throws if the entity does not have the required fields.
-   */
-  static from(
-    entity: Entity,
-    relatesToField = "relatesTo",
-    authorsField = "authors",
-  ): EventWithAttendance {
-    const attendanceField = AttendanceDatatype.detectFieldInEntity(entity);
-    const dateField = DateDatatype.detectFieldInEntity(entity);
-    if (!attendanceField || !dateField) {
-      Logging.debug("Entity missing attendance fields", entity.getId());
-      throw new Error(
-        `Entity does not have the required attendance and date fields for roll call.`,
-      );
-    }
-    return new EventWithAttendance(
-      entity,
-      attendanceField,
-      dateField,
-      relatesToField,
-      authorsField,
-    );
-  }
-
   constructor(
     readonly entity: Entity,
     readonly attendanceField: string,

@@ -110,7 +110,8 @@ export class QueryService {
         getRelated: this.getRelated.bind(this),
         filterByObjectAttribute: this.filterByObjectAttribute,
         getIds: this.getIds,
-        getParticipantsWithAttendance: this.getParticipantsWithAttendance,
+        getParticipantsWithAttendance:
+          this.getParticipantsWithAttendance.bind(this),
         getAttendanceArray: this.getAttendanceArray.bind(this),
         getAttendanceReport: this.getAttendanceReport,
         addEntities: this.addEntities.bind(this),
@@ -378,15 +379,12 @@ export class QueryService {
     attendanceStatus: string,
   ): string[] {
     return events.flatMap((e) => {
-      try {
-        return EventWithAttendance.from(e)
-          .attendanceItems.filter(
-            (item) => item.status?.countAs === attendanceStatus,
-          )
-          .map((item) => item.participant);
-      } catch {
-        return [];
-      }
+      return this.attendanceService
+        .wrapEventEntity(e)
+        .attendanceItems.filter(
+          (item) => item.status?.countAs === attendanceStatus,
+        )
+        .map((item) => item.participant);
     });
   }
 
@@ -402,12 +400,7 @@ export class QueryService {
   ): AttendanceInfo[] {
     const attendances: AttendanceInfo[] = [];
     for (const entity of events) {
-      let event: EventWithAttendance;
-      try {
-        event = EventWithAttendance.from(entity);
-      } catch {
-        continue;
-      }
+      const event = this.attendanceService.wrapEventEntity(entity);
 
       const linkedRelations = includeSchool
         ? this.getMembersOfGroupsForEvent(event)

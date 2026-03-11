@@ -12,6 +12,7 @@ import { AttendanceItem } from "#src/app/features/attendance/model/attendance-it
 import { AttendanceStatusType } from "#src/app/features/attendance/model/attendance-status";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "#src/app/features/attendance/attendance.service";
+import { EventWithAttendance } from "#src/app/features/attendance/model/event-with-attendance";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
 import {
@@ -53,10 +54,13 @@ describe("QueryService", () => {
 
     mockAttendanceService = jasmine.createSpyObj(
       "AttendanceService",
-      ["getEventsOnDate"],
+      ["getEventsOnDate", "wrapEventEntity"],
       { featureSettings: { eventTypes: [TestEventEntity] } },
     );
     mockAttendanceService.getEventsOnDate.and.returnValue(Promise.resolve([]));
+    mockAttendanceService.wrapEventEntity.and.callFake(
+      (e) => new EventWithAttendance(e, "attendance", "date"),
+    );
 
     mockEntityRegistry = new EntityRegistry();
     mockEntityRegistry.add(TestEntity.ENTITY_TYPE, TestEntity);

@@ -99,15 +99,11 @@ export class AttendanceWeekDashboardComponent
       EventWithAttendance[]
     >();
     for (const e of rawEvents) {
-      try {
-        const ewa = EventWithAttendance.from(e);
-        const key = ewa.activityId;
-        const arr = groupedByActivity.get(key) ?? [];
-        arr.push(ewa);
-        groupedByActivity.set(key, arr);
-      } catch {
-        // skip entities without attendance fields
-      }
+      const ewa = this.attendanceService.wrapEventEntity(e);
+      const key = ewa.activityId;
+      const arr = groupedByActivity.get(key) ?? [];
+      arr.push(ewa);
+      groupedByActivity.set(key, arr);
     }
 
     const lowAttendanceCases = new Set<string>();

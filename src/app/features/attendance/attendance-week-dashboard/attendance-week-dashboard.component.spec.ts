@@ -8,6 +8,7 @@ import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import moment from "moment";
 import * as MockDate from "mockdate";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
+import { EventWithAttendance } from "../model/event-with-attendance";
 
 describe("AttendanceWeekDashboardComponent", () => {
   let component: AttendanceWeekDashboardComponent;
@@ -15,8 +16,14 @@ describe("AttendanceWeekDashboardComponent", () => {
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
   beforeEach(waitForAsync(() => {
-    mockAttendanceService = jasmine.createSpyObj(["getEventsOnDate"]);
+    mockAttendanceService = jasmine.createSpyObj([
+      "getEventsOnDate",
+      "wrapEventEntity",
+    ]);
     mockAttendanceService.getEventsOnDate.and.resolveTo([]);
+    mockAttendanceService.wrapEventEntity.and.callFake(
+      (e) => new EventWithAttendance(e, "attendance", "date"),
+    );
     TestBed.configureTestingModule({
       imports: [
         AttendanceWeekDashboardComponent,

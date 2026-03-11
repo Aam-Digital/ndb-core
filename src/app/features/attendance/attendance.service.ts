@@ -407,7 +407,7 @@ ${byParticipantChecks}
    * Wrap an event entity with typed attendance/date/relatesTo/authors accessors
    * based on the configured field names for its event type.
    */
-  private wrapEventEntity(entity: Entity): EventWithAttendance {
+  wrapEventEntity(entity: Entity): EventWithAttendance {
     const typeSettings = this.featureSettings.eventTypeSettings.find(
       (s) => s.eventType.ENTITY_TYPE === entity.getType(),
     );
