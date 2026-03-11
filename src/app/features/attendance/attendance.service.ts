@@ -388,9 +388,7 @@ ${byParticipantChecks}
     );
 
     const assignedActivityIds = allActivities
-      .filter((a) =>
-        (a["assignedTo"] as string[] | undefined)?.includes(currentUserId),
-      )
+      .filter((a) => this.getActivityAssignedUsers(a)?.includes(currentUserId))
       .map((a) => a.getId());
 
     const filteredEvents = !currentUserId
@@ -470,9 +468,11 @@ ${byParticipantChecks}
       let score = 0;
 
       const isActivity = event.isActivityEvent;
-      const activityAssignedUsers = isActivity
-        ? ((allActivities.find((a) => a.getId() === event.activityId) as any)
-            ?.assignedTo as string[] | undefined)
+      const matchedActivity = isActivity
+        ? allActivities.find((a) => a.getId() === event.activityId)
+        : undefined;
+      const activityAssignedUsers = matchedActivity
+        ? this.getActivityAssignedUsers(matchedActivity)
         : undefined;
       // use parent activity's assigned users and only fall back to event if necessary
       const assignedUsers: string[] =
@@ -538,7 +538,11 @@ ${byParticipantChecks}
     for (const [evField, actField] of Object.entries(
       typeSettings.fieldMapping,
     )) {
-      instance[evField] = activity[actField];
+      const value = activity[actField];
+      instance[evField] =
+        typeof value === "object" && value !== null
+          ? structuredClone(value)
+          : value;
     }
 
     // Resolve participants
@@ -583,5 +587,22 @@ ${byParticipantChecks}
       typeSettings.assignedUsersField,
       typeSettings.extraField,
     );
+  }
+
+  /**
+   * Get the field name on an activity entity that holds assigned user IDs.
+   * Falls back to "assignedTo" if no matching config is found.
+   */
+  private getActivityAssignedUsers(activity: Entity): string[] | undefined {
+    const actType = activity.getType();
+    for (const s of this.featureSettings.eventTypeSettings) {
+      if (s.activityType?.ENTITY_TYPE === actType) {
+        // try the configured event assignedUsersField on the activity as well
+        const val = activity[s.assignedUsersField];
+        if (Array.isArray(val)) return val;
+      }
+    }
+    // fallback: check common field name
+    return activity["assignedTo"] as string[] | undefined;
   }
 }

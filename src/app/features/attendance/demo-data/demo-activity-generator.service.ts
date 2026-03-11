@@ -4,7 +4,9 @@ import { inject, Injectable } from "@angular/core";
 import { faker } from "#src/app/core/demo-data/faker";
 import { DemoUserGeneratorService } from "#src/app/core/user/demo-user-generator.service";
 import { defaultInteractionTypes } from "#src/app/core/config/default-config/default-interaction-types";
+import { InteractionType } from "#src/app/child-dev-project/notes/model/interaction-type.interface";
 import { Entity } from "#src/app/core/entity/model/entity";
+import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
 import { AttendanceService } from "../attendance.service";
 import { EventTypeSettings } from "../model/attendance-feature-config";
 import { asArray } from "#src/app/utils/asArray";
@@ -63,21 +65,22 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
     typeSettings: EventTypeSettings,
     participants: Entity[],
   ): Entity {
-    const activity = new typeSettings.activityType!(faker.string.uuid());
+    const assignedUser = faker.helpers.arrayElement(this.demoUser.entities);
+    const activity = generateActivity({
+      participants,
+      assignedUser,
+      entityType: typeSettings.activityType!.ENTITY_TYPE,
+    });
 
-    const type = faker.helpers.arrayElement(ACTIVITY_TYPES);
-    const title =
-      type.label +
-      " " +
-      faker.number.int({ min: 1, max: 9 }) +
-      faker.string.alphanumeric(1).toUpperCase();
-
-    activity[typeSettings.participantsField] = participants.map((c) =>
-      c.getId(),
-    );
+    // Override participants field if it differs from the default
+    if (typeSettings.participantsField !== "participants") {
+      delete activity["participants"];
+      activity[typeSettings.participantsField] = participants.map((c) =>
+        c.getId(),
+      );
+    }
 
     // Detect the field with dataType "entity" and additional "User" on the activity schema
-    const assignedUser = faker.helpers.arrayElement(this.demoUser.entities);
     for (const [
       fieldId,
       field,
@@ -96,21 +99,19 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
       typeSettings.fieldMapping,
     )) {
       if (activity[activityField] !== undefined) {
-        // Already set above
         continue;
       }
-      // Populate activity fields that will be mapped to event fields
       if (activityField === "title" || eventField === "subject") {
-        activity[activityField] = title;
+        activity[activityField] = activity["title"] ?? activity.toString();
       } else if (activityField === "type" || eventField === "category") {
-        activity[activityField] = type;
+        activity[activityField] = activity["type"];
       }
     }
 
     // Fallback: set toStringAttributes if nothing was mapped
     const toStringAttrs = activity.getConstructor().toStringAttributes ?? [];
     if (toStringAttrs.length > 0 && activity[toStringAttrs[0]] === undefined) {
-      activity[toStringAttrs[0]] = title;
+      activity[toStringAttrs[0]] = activity["title"] ?? activity.toString();
     }
 
     return activity;
@@ -120,4 +121,41 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
 export const ACTIVITY_TYPES = [
   defaultInteractionTypes.find((t) => t.id === "SCHOOL_CLASS"),
   defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),
-];
+].filter((t): t is InteractionType => t !== undefined);
+
+export interface ActivityEntity extends Entity {
+  title: string;
+  type: InteractionType;
+  participants: string[];
+  assignedTo: string[];
+}
+
+export function generateActivity({
+  participants,
+  assignedUser,
+  title,
+  entityType = "RecurringActivity",
+}: {
+  participants: Entity[];
+  assignedUser?: Entity;
+  title?: string;
+  entityType?: string;
+}): ActivityEntity {
+  const activity = createEntityOfType(
+    entityType,
+    faker.string.uuid(),
+  ) as ActivityEntity;
+  const type = faker.helpers.arrayElement(ACTIVITY_TYPES);
+
+  activity.title =
+    title ??
+    type.label +
+      " " +
+      faker.number.int({ min: 1, max: 9 }) +
+      faker.string.alphanumeric(1).toUpperCase();
+  activity.type = type;
+  activity.participants = participants.map((c) => c.getId());
+  activity.assignedTo = assignedUser ? [assignedUser.getId()] : [];
+
+  return activity;
+}

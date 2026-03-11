@@ -91,6 +91,9 @@ export class AttendanceWeekDashboardComponent
       previousSaturday.toDate(),
     );
 
+    // Standalone events (without a linked activity) are grouped together
+    // under `undefined` so they appear as a combined row in the dashboard.
+    // this means if multiple events are on one day, only one will be displayed
     const groupedByActivity = new Map<
       string | undefined,
       EventWithAttendance[]
@@ -119,7 +122,9 @@ export class AttendanceWeekDashboardComponent
       records.push(...rows);
       rows
         .filter((r) => this.filterLowAttendance(r))
-        .forEach((r) => lowAttendanceCases.add(r.participantId));
+        .forEach((r) => {
+          lowAttendanceCases.add(r.participantId);
+        });
     }
 
     const groupsMap = new Map<string, AttendanceWeekRow[]>();
@@ -155,7 +160,15 @@ export class AttendanceWeekDashboardComponent
 
       let day = moment(from);
       while (day.isSameOrBefore(to, "day")) {
-        const event = events.find((e) => day.isSame(e.date, "day"));
+        const eventsOnDay = events.filter((e) => day.isSame(e.date, "day"));
+        // When multiple events overlap on the same day (e.g. standalone events grouped together),
+        // prefer the first event where the participant is marked absent.
+        const event =
+          eventsOnDay.find(
+            (e) =>
+              e.getAttendanceForParticipant(participant)?.status?.countAs ===
+              AttendanceLogicalStatus.ABSENT,
+          ) ?? eventsOnDay[0];
         // put a "placeholder" into the array if no event occurred on this day
         attendanceDays.push(
           event ? event.getAttendanceForParticipant(participant) : undefined,

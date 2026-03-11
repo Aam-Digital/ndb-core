@@ -1,8 +1,7 @@
 import { times } from "lodash-es";
 
 import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
-import { generateActivity } from "#e2e/generate-activity.js";
-
+import { generateActivity } from "#src/app/features/attendance/demo-data/demo-activity-generator.service.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
 import { faker } from "#src/app/core/demo-data/faker.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";

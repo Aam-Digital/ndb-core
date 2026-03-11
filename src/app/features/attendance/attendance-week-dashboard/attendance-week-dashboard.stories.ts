@@ -14,7 +14,7 @@ const child2 = TestEntity.create("Jane");
 
 const act1 = Object.assign(createEntityOfType("RecurringActivity"), {
   title: "Demo Activity",
-  participants: [child1.getId(), child2.getId(), child1.getId()],
+  participants: [child1.getId(), child2.getId()],
 });
 const act2 = Object.assign(createEntityOfType("RecurringActivity"), {
   title: "Other Activity",
