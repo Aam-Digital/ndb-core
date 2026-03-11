@@ -1,22 +1,23 @@
-import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
+import {
+  argosScreenshot,
+  expect,
+  loadApp,
+  test,
+  waitForDashboardWidgetsToLoad,
+} from "#e2e/fixtures.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
 import { Todo } from "#src/app/features/todos/model/todo.js";
 
-const TASK_SUBJECT = "PLAN CAREER COUNSELLING";
+const TASK_SUBJECT = "<PLAN CAREER COUNSELLING>";
 
 test("Add a new task record to the list", async ({ page }) => {
   const users = generateUsers();
-  const childAnandTrivedi = generateChild({ name: "Anand Trivedi" });
-  const childAnandNehru = generateChild({ name: "Anand Nehru" });
-  const childArunKapoor = generateChild({ name: "Arun Kapoor" });
+  const child1 = generateChild({ name: "Anand Trivedi" });
+  const child2 = generateChild({ name: "Anand Nehru" });
+  const child3 = generateChild({ name: "Arun Kapoor" });
 
-  await loadApp(page, [
-    ...users,
-    childAnandTrivedi,
-    childAnandNehru,
-    childArunKapoor,
-  ]);
+  await loadApp(page, [...users, child1, child2, child3]);
 
   // When I click on Tasks from the Main Menu
   await page.getByRole("navigation").getByText("Tasks").click();
@@ -247,6 +248,9 @@ test("Logged-in users Tasks list displayed in the Dashboard", async ({
   // The deadline "08.03.2026" (dd.MM.yyyy format) is displayed next to the task
   await expect(tasksDueWidget.getByText("08.03.2026")).toBeVisible();
 
+  await waitForDashboardWidgetsToLoad(page);
+  await argosScreenshot(page, "dashboard-tasks-widget");
+
   // When I click on the task name in the widget
   await tasksDueWidget.getByText(TASK_SUBJECT).click();
 
@@ -296,6 +300,8 @@ test("Archive a task hides it from the list", async ({ page }) => {
   await expect(
     dialog.getByRole("button", { name: "Reactivate" }),
   ).toBeVisible();
+
+  await argosScreenshot(page, "task-archived-dialog");
 
   // Close the dialog and return to the task list
   await page.locator("button.overlay-close-button").click();
