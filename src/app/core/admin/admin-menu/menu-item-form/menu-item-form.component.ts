@@ -2,7 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { MenuItem } from "../../../ui/navigation/menu-item";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { FormsModule } from "@angular/forms";
+import { FormControl, FormsModule } from "@angular/forms";
+import { ErrorStateMatcher } from "@angular/material/core";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatSelectModule } from "@angular/material/select";
@@ -35,6 +36,7 @@ export class MenuItemFormComponent implements OnInit {
   @Input() hideLabel = false;
   @Input() hideLink = false;
   @Input() noLinkMode = false;
+  @Input() showLinkError = false;
 
   /**
    * Available routes that are offered to the user for selection.
@@ -47,6 +49,12 @@ export class MenuItemFormComponent implements OnInit {
    * If true: show free-text input. If false: show dropdown with linkOptions.
    */
   customLinkMode = false;
+
+  linkErrorStateMatcher: ErrorStateMatcher = {
+    isErrorState: (_control: FormControl | null): boolean => {
+      return this.showLinkError && !this.item?.link?.trim();
+    },
+  };
 
   ngOnInit() {
     // If no options are available, always start in custom link mode

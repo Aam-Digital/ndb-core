@@ -37,10 +37,11 @@
     @if (!allowEntityLinks || !item?.["entityType"]) {
       <app-menu-item-form
         [item]="item"
-        (itemChange)="item = $event"
+        (itemChange)="item = $event; linkError = false"
         [linkOptions]="availableRoutes"
         [noLinkMode]="noLinkMode"
         (noLinkModeChange)="onNoLinkModeChange($event)"
+        [showLinkError]="linkError"
       ></app-menu-item-form>
     }
   </form>

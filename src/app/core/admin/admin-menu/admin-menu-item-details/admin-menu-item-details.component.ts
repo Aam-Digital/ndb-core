@@ -57,6 +57,7 @@ export class AdminMenuItemDetailsComponent implements OnInit {
 
   /** Whether this item is being saved without a link (parent section only). */
   noLinkMode = false;
+  linkError = false;
 
   constructor() {
     const data = this.data;
@@ -136,6 +137,7 @@ export class AdminMenuItemDetailsComponent implements OnInit {
 
       if (!this.item.link?.trim() && !this.noLinkMode) {
         // Validation: manual items require a link unless noLinkMode is active
+        this.linkError = true;
         return;
       }
 
