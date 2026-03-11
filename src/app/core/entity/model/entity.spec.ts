@@ -177,7 +177,7 @@ export function testEntitySubclass(
     // correct Type
     expect(entity).toBeInstanceOf(entityClass);
     expect(entity).toBeInstanceOf(Entity);
-    expect(entity).toHaveType(entityType);
+    expect(entity.getType()).toBe(entityType);
     // @ts-ignore
     expect(Entity.extractTypeFromId(entity._id)).toBe(entityType);
   });

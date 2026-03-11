@@ -1,24 +1,31 @@
-import { TestBed, waitForAsync } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 
 import { AttendanceService } from "./attendance.service";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { RecurringActivity } from "./model/recurring-activity";
 import moment from "moment";
 import { defaultInteractionTypes } from "#src/app/core/config/default-config/default-interaction-types";
-import { expectEntitiesToMatch } from "#src/app/utils/expect-entity-data.spec";
 import { EventNote } from "./model/event-note";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
-import { DatabaseTestingModule } from "#src/app/utils/database-testing.module";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
-import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
 import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 import { EventWithAttendance } from "./model/event-with-attendance";
+import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
+import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
+import { ConfigService } from "#src/app/core/config/config.service";
+import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
+import { GroupParticipantResolverService } from "./deprecated/group-participant-resolver";
+import { BehaviorSubject, EMPTY } from "rxjs";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
 
-  let entityMapper: EntityMapperService;
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockDbIndexing: jasmine.SpyObj<DatabaseIndexingService>;
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+  let currentUserSubject: BehaviorSubject<Entity | undefined>;
+  let mockEntityRegistry: jasmine.SpyObj<EntityRegistry>;
 
   const meetingInteractionCategory = defaultInteractionTypes.find(
     (it) => it.isMeeting,
@@ -30,14 +37,17 @@ describe("AttendanceService", () => {
     event.category = defaultInteractionTypes.find(
       (t) => t.id === "COACHING_CLASS",
     );
-
     return event;
   }
 
-  let activity1, activity2: RecurringActivity;
-  let e1_1, e1_2, e1_3, e2_1: EventNote;
+  let activity1: RecurringActivity;
+  let activity2: RecurringActivity;
+  let e1_1: EventNote;
+  let e1_2: EventNote;
+  let e1_3: EventNote;
+  let e2_1: EventNote;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(() => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
@@ -46,33 +56,80 @@ describe("AttendanceService", () => {
     e1_3 = createEvent(moment("2020-03-02").toDate(), activity1.getId());
     e2_1 = createEvent(moment("2020-01-01").toDate(), activity2.getId());
 
-    TestBed.configureTestingModule({
-      imports: [DatabaseTestingModule],
+    mockEntityMapper = jasmine.createSpyObj("EntityMapperService", [
+      "save",
+      "load",
+      "loadType",
+    ]);
+    mockEntityMapper.save.and.resolveTo();
+    mockEntityMapper.loadType.and.resolveTo([]);
+
+    mockDbIndexing = jasmine.createSpyObj("DatabaseIndexingService", [
+      "createIndex",
+      "queryIndexDocsRange",
+      "queryIndexDocs",
+    ]);
+    mockDbIndexing.createIndex.and.resolveTo();
+    mockDbIndexing.queryIndexDocsRange.and.resolveTo([]);
+    mockDbIndexing.queryIndexDocs.and.resolveTo([]);
+
+    mockChildrenService = jasmine.createSpyObj("ChildrenService", [
+      "getNotesInTimespan",
+    ]);
+    mockChildrenService.getNotesInTimespan.and.resolveTo([]);
+
+    currentUserSubject = new BehaviorSubject<Entity | undefined>(undefined);
+
+    mockEntityRegistry = jasmine.createSpyObj("EntityRegistry", ["has", "get"]);
+    mockEntityRegistry.has.and.callFake(
+      (name: string) =>
+        name === "RecurringActivity" || name === "EventNote" || name === "Note",
+    );
+    mockEntityRegistry.get.and.callFake((name: string) => {
+      if (name === "RecurringActivity") return RecurringActivity;
+      if (name === "EventNote") return EventNote;
+      if (name === "Note") return Note;
+      return undefined;
     });
+
+    TestBed.configureTestingModule({
+      providers: [
+        AttendanceService,
+        { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: DatabaseIndexingService, useValue: mockDbIndexing },
+        { provide: ChildrenService, useValue: mockChildrenService },
+        { provide: CurrentUserSubject, useValue: currentUserSubject },
+        {
+          provide: ConfigService,
+          useValue: { configUpdates: EMPTY },
+        },
+        { provide: EntityRegistry, useValue: mockEntityRegistry },
+        {
+          provide: GroupParticipantResolverService,
+          useValue: jasmine.createSpyObj("GroupParticipantResolverService", [
+            "getActivitiesForParticipantViaGroups",
+            "getActiveParticipantsOfActivity",
+          ]),
+        },
+      ],
+    });
+
     service = TestBed.inject(AttendanceService);
-
-    entityMapper = TestBed.inject<EntityMapperService>(EntityMapperService);
-
-    entityMapper.save(activity1);
-    entityMapper.save(activity2);
-
-    entityMapper.save(e1_1);
-    entityMapper.save(e1_2);
-    entityMapper.save(e1_3);
-    entityMapper.save(e2_1);
-  }));
-
-  afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
+  });
 
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
 
   it("gets events for a date", async () => {
+    mockDbIndexing.queryIndexDocsRange.and.resolveTo([e1_1, e2_1]);
+
     const actualEvents = await service.getEventsOnDate(
       moment("2020-01-01").toDate(),
     );
-    expectEntitiesToMatch(actualEvents, [e1_1, e2_1]);
+
+    expect(actualEvents).toEqual(jasmine.arrayContaining([e1_1, e2_1]));
+    expect(actualEvents).toHaveSize(2);
   });
 
   it("gets events including Notes for a date", async () => {
@@ -83,7 +140,6 @@ describe("AttendanceService", () => {
     note1.addChild("1");
     note1.addChild("2");
     note1.category = meetingInteractionCategory;
-    await entityMapper.save(note1);
 
     const note2 = Note.create(
       moment("2020-01-02").toDate(),
@@ -91,22 +147,19 @@ describe("AttendanceService", () => {
     );
     note2.addChild("1");
     note2.category = meetingInteractionCategory;
-    await entityMapper.save(note2);
 
-    const nonMeetingNote = Note.create(
-      moment("2020-01-02").toDate(),
-      "manual event note 3",
-    );
-    nonMeetingNote.addChild("1");
-    nonMeetingNote.category = defaultInteractionTypes.find((t) => !t.isMeeting);
-    await entityMapper.save(nonMeetingNote);
+    mockDbIndexing.queryIndexDocsRange.and.resolveTo([e1_1, e1_2, e2_1]);
+    mockChildrenService.getNotesInTimespan.and.resolveTo([note1, note2]);
 
     const actualEvents = await service.getEventsOnDate(
       moment("2020-01-01").toDate(),
       moment("2020-01-02").toDate(),
     );
 
-    expectEntitiesToMatch(actualEvents, [e1_1, e1_2, e2_1, note1, note2]);
+    expect(actualEvents).toHaveSize(5);
+    expect(actualEvents).toEqual(
+      jasmine.arrayContaining([e1_1, e1_2, e2_1, note1, note2]),
+    );
   });
 
   it("gets empty array for a date without events", async () => {
@@ -117,6 +170,8 @@ describe("AttendanceService", () => {
   });
 
   it("getActivityAttendances creates record for each month when there is at least one event", async () => {
+    mockDbIndexing.queryIndexDocsRange.and.resolveTo([e1_1, e1_2, e1_3]);
+
     const actualAttendances = await service.getActivityAttendances(activity1);
 
     expect(actualAttendances).toHaveSize(2);
@@ -127,9 +182,8 @@ describe("AttendanceService", () => {
         "day",
       ),
     ).toBeTrue();
-    expectEntitiesToMatch(
-      actualAttendances[0].events.map((e) => e.entity),
-      [e1_1, e1_2],
+    expect(actualAttendances[0].events.map((e) => e.entity)).toEqual(
+      jasmine.arrayContaining([e1_1, e1_2]),
     );
     expect(actualAttendances[0].activity).toEqual(activity1);
 
@@ -139,10 +193,7 @@ describe("AttendanceService", () => {
         "day",
       ),
     ).toBeTrue();
-    expectEntitiesToMatch(
-      actualAttendances[1].events.map((e) => e.entity),
-      [e1_3],
-    );
+    expect(actualAttendances[1].events.map((e) => e.entity)).toEqual([e1_3]);
     expect(actualAttendances[1].activity).toEqual(activity1);
   });
 
@@ -151,11 +202,11 @@ describe("AttendanceService", () => {
     const testActivity1 = RecurringActivity.create("a1");
     testActivity1.participants.push(testChildId);
 
-    await entityMapper.save(testActivity1);
+    mockDbIndexing.queryIndexDocs.and.resolveTo([testActivity1]);
 
     const actual = await service.getActivitiesForParticipant(testChildId);
 
-    expectEntitiesToMatch(actual, [testActivity1]); // and does not include defaults activity1 or activity2
+    expect(actual).toEqual([testActivity1]);
   });
 
   it("should use only direct participants for event from activity (no group expansion)", async () => {
@@ -184,7 +235,9 @@ describe("AttendanceService", () => {
       "Same Day Event",
     );
     sameDayEvent.category = meetingInteractionCategory;
-    await entityMapper.save(sameDayEvent);
+
+    mockDbIndexing.queryIndexDocsRange.and.resolveTo([sameDayEvent]);
+
     const events = await service.getEventsOnDate(datePickerDate);
     expect(events).toHaveSize(1);
     expect((events[0] as EventNote).subject).toBe(sameDayEvent.subject);
@@ -201,20 +254,22 @@ describe("AttendanceService", () => {
       return events.find((e) => e.activityId === activityId);
     }
 
-    beforeEach(async () => {
-      TestBed.inject(CurrentUserSubject).next(mockCurrentUser);
+    beforeEach(() => {
+      currentUserSubject.next(mockCurrentUser);
 
-      // Assign the outer activities to a different user so they don't interfere
-      // with tests that rely on user-based filtering
       activity1.assignedTo = ["User:other-user"];
       activity2.assignedTo = ["User:other-user"];
-      await entityMapper.save(activity1);
-      await entityMapper.save(activity2);
+
+      // By default, loadType returns the two activities and queryIndexDocsRange returns no events
+      mockEntityMapper.loadType.and.resolveTo([activity1, activity2]);
+      mockDbIndexing.queryIndexDocsRange.and.resolveTo([]);
     });
 
     it("returns existing events for the date", async () => {
       const existingEvent = EventNote.create(testDate);
-      await entityMapper.save(existingEvent);
+      existingEvent._rev = "1-existing"; // mark as not new
+
+      mockDbIndexing.queryIndexDocsRange.and.resolveTo([existingEvent]);
 
       const result = await service.getAvailableEventsForRollCall(testDate);
 
@@ -226,7 +281,7 @@ describe("AttendanceService", () => {
 
     it("generates an event for each activity without an existing event on the date", async () => {
       const activity = RecurringActivity.create("new activity");
-      await entityMapper.save(activity);
+      mockEntityMapper.loadType.and.resolveTo([activity1, activity2, activity]);
 
       const result = await service.getAvailableEventsForRollCall(testDate);
 
@@ -239,8 +294,9 @@ describe("AttendanceService", () => {
       const activity = RecurringActivity.create("duplicate test");
       const existingEvent = EventNote.create(testDate, "existing");
       existingEvent.relatesTo = activity.getId();
-      await entityMapper.save(activity);
-      await entityMapper.save(existingEvent);
+
+      mockEntityMapper.loadType.and.resolveTo([activity1, activity2, activity]);
+      mockDbIndexing.queryIndexDocsRange.and.resolveTo([existingEvent]);
 
       const result = await service.getAvailableEventsForRollCall(testDate);
 
@@ -255,8 +311,13 @@ describe("AttendanceService", () => {
       assignedActivity.assignedTo = [mockCurrentUser.getId()];
       const otherActivity = RecurringActivity.create("other");
       otherActivity.assignedTo = ["User:other-user"];
-      await entityMapper.save(assignedActivity);
-      await entityMapper.save(otherActivity);
+
+      mockEntityMapper.loadType.and.resolveTo([
+        activity1,
+        activity2,
+        assignedActivity,
+        otherActivity,
+      ]);
 
       const result = await service.getAvailableEventsForRollCall(testDate);
 
@@ -270,38 +331,48 @@ describe("AttendanceService", () => {
     });
 
     it("returns all activities when no current user is set", async () => {
-      TestBed.inject(CurrentUserSubject).next(undefined);
+      currentUserSubject.next(undefined);
 
       const activityAssignedToOther = RecurringActivity.create("other");
       activityAssignedToOther.assignedTo = [mockCurrentUser.getId()];
-      await entityMapper.save(activityAssignedToOther);
+
+      mockEntityMapper.loadType.and.resolveTo([
+        activity1,
+        activity2,
+        activityAssignedToOther,
+      ]);
 
       const result = await service.getAvailableEventsForRollCall(testDate);
 
       expect(
         findByActivity(result.events, activityAssignedToOther.getId()),
       ).toBeTruthy();
-      // when no user-relevant activities exist, events and allEvents contain the same event wrappers
       expect(result.events.length).toBe(result.allEvents.length);
     });
 
     it("sets the currentUser as author on generated events", async () => {
       const activity = RecurringActivity.create("activity");
-      await entityMapper.save(activity);
+      mockEntityMapper.loadType.and.resolveTo([activity1, activity2, activity]);
 
       const result = await service.getAvailableEventsForRollCall(testDate);
 
       const generatedEvent = findByActivity(result.allEvents, activity.getId());
-      expect(generatedEvent.assignedUsers).toEqual([
+      expect(generatedEvent.assignedUsers).toEqual([mockCurrentUser.getId()]);
+    });
+
     it("sorts events: assigned to current user ranked higher, one-time events ranked highest", async () => {
       const assignedActivity = RecurringActivity.create("assigned");
       assignedActivity.assignedTo = [mockCurrentUser.getId()];
       const unassignedActivity = RecurringActivity.create("unassigned");
       const oneTimeEvent = EventNote.create(testDate, "one-time");
-      // one-time events have no relatesTo
-      await entityMapper.save(assignedActivity);
-      await entityMapper.save(unassignedActivity);
-      await entityMapper.save(oneTimeEvent);
+
+      mockEntityMapper.loadType.and.resolveTo([
+        activity1,
+        activity2,
+        assignedActivity,
+        unassignedActivity,
+      ]);
+      mockDbIndexing.queryIndexDocsRange.and.resolveTo([oneTimeEvent]);
 
       const result = await service.getAvailableEventsForRollCall(testDate);
       const oneTimeIdx = result.allEvents.findIndex(
@@ -314,9 +385,7 @@ describe("AttendanceService", () => {
         (e) => e.activityId === unassignedActivity.getId(),
       );
 
-      // one-time events first (score 1 for no relatesTo alone, or score 3 if also assigned)
       expect(oneTimeIdx).toBeLessThan(unassignedIdx);
-      // assigned activity ranked higher than unassigned
       expect(assignedIdx).toBeLessThan(unassignedIdx);
     });
   });

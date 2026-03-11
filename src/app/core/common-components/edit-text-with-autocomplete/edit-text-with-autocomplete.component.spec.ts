@@ -106,8 +106,6 @@ describe("EditTextWithAutocompleteComponent", () => {
     expect(component.parent.get("type").value).toEqual(rA1.type);
     expect(component.parent.get("assignedTo").value).toEqual(rA1.assignedTo);
     expect(component.parent.get("linkedGroups").value).toEqual(
-      ,
-    
       rA1.linkedGroups,
     );
   });
