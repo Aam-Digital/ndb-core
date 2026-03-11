@@ -39,7 +39,7 @@ const demoActivities = [
   generateActivity({ participants: demoChildren }),
   generateActivity({ participants: demoChildren }),
 ];
-demoActivities[0].assignedTo = ["demo"];
+demoActivities[0]["assignedTo"] = ["demo"];
 
 export default {
   title: "Features/Attendance/Views/RollCallSetup",
