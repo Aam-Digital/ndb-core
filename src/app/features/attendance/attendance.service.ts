@@ -8,7 +8,7 @@ import { ChildrenService } from "#src/app/child-dev-project/children/children.se
 import { AttendanceItem } from "./model/attendance-item";
 import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 import {
-  ActivityTypeSettings,
+  EventTypeSettings,
   AttendanceFeatureConfig,
   AttendanceFeatureSettings,
 } from "./model/attendance-feature-config";
@@ -26,8 +26,9 @@ export class AttendanceService {
   static readonly CONFIG_KEY = "appConfig:attendance";
 
   private static readonly DEFAULT_CONFIG: AttendanceFeatureConfig = {
-    activityTypes: {
-      RecurringActivity: {
+    eventTypes: [
+      {
+        activityType: "RecurringActivity",
         eventType: "EventNote",
         filterConfig: [{ id: "category" }, { id: "schools" }],
         extraField: "category",
@@ -38,7 +39,7 @@ export class AttendanceService {
           children: "participants",
         },
       },
-    },
+    ],
     groupBasedParticipants: false,
   };
 
@@ -66,24 +67,28 @@ export class AttendanceService {
   private resolveSettings(
     raw?: AttendanceFeatureConfig,
   ): AttendanceFeatureSettings {
-    const activityTypesConfig =
-      raw?.activityTypes ??
-      AttendanceService.DEFAULT_CONFIG.activityTypes ??
-      {};
+    const eventTypesConfig =
+      raw?.eventTypes ??
+      AttendanceService.DEFAULT_CONFIG.eventTypes ??
+      [];
     const groupBasedParticipants =
       raw?.groupBasedParticipants ??
       AttendanceService.DEFAULT_CONFIG.groupBasedParticipants ??
       false;
 
-    const activityTypes: ActivityTypeSettings[] = Object.entries(
-      activityTypesConfig,
-    )
-      .filter(([typeName]) => this.entityRegistry.has(typeName))
-      .map(([typeName, typeConfig]) => {
+    const eventTypeSettings: EventTypeSettings[] = eventTypesConfig
+      .map((typeConfig) => {
         const eventTypeName = typeConfig.eventType;
         if (!this.entityRegistry.has(eventTypeName)) return null;
+
+        const activityTypeName = typeConfig.activityType;
+        if (activityTypeName && !this.entityRegistry.has(activityTypeName))
+          return null;
+
         return {
-          activityType: this.entityRegistry.get(typeName),
+          activityType: activityTypeName
+            ? this.entityRegistry.get(activityTypeName)
+            : undefined,
           eventType: this.entityRegistry.get(eventTypeName),
           participantsField: typeConfig.participantsField ?? "participants",
           dateField: typeConfig.dateField,
@@ -92,24 +97,30 @@ export class AttendanceService {
           filterConfig: typeConfig.filterConfig ?? [],
           extraField: typeConfig.extraField ?? "",
           fieldMapping: typeConfig.fieldMapping ?? {},
-        } as ActivityTypeSettings;
+        } as EventTypeSettings;
       })
-      .filter((s): s is ActivityTypeSettings => s !== null);
+      .filter((s): s is EventTypeSettings => s !== null);
 
     const recurringActivityTypes = [
-      ...new Set(activityTypes.map((s) => s.activityType)),
+      ...new Set(
+        eventTypeSettings
+          .filter((s) => s.activityType !== undefined)
+          .map((s) => s.activityType!),
+      ),
     ];
-    const eventTypes = [...new Set(activityTypes.map((s) => s.eventType))];
+    const eventTypes = [
+      ...new Set(eventTypeSettings.map((s) => s.eventType)),
+    ];
 
     const filterConfigMap = new Map();
-    for (const typeSettings of activityTypes) {
+    for (const typeSettings of eventTypeSettings) {
       for (const f of typeSettings.filterConfig) {
         filterConfigMap.set(f.id, f);
       }
     }
 
     return {
-      activityTypes,
+      eventTypeSettings,
       recurringActivityTypes,
       eventTypes,
       filterConfig: Array.from(filterConfigMap.values()),
@@ -127,7 +138,8 @@ export class AttendanceService {
       .map((t) => `doc._id.startsWith("${t.ENTITY_TYPE}")`)
       .join(" || ");
 
-    const byActivityEmits = this.featureSettings.activityTypes
+    const byActivityEmits = this.featureSettings.eventTypeSettings
+      .filter((s) => s.activityType !== undefined)
       .map(
         ({ eventType, relatesToField }) =>
           `      if (doc._id.startsWith("${eventType.ENTITY_TYPE}") && doc["${relatesToField}"]) {
@@ -171,10 +183,11 @@ ${byActivityEmits}
   }
 
   private createRecurringActivitiesIndex(): Promise<void> {
-    const byParticipantChecks = this.featureSettings.activityTypes
+    const byParticipantChecks = this.featureSettings.eventTypeSettings
+      .filter((s) => s.activityType !== undefined)
       .map(
         ({ activityType, participantsField }) =>
-          `      if (doc._id.startsWith("${activityType.ENTITY_TYPE}")) {
+          `      if (doc._id.startsWith("${activityType!.ENTITY_TYPE}")) {
         for (var p of (doc["${participantsField}"] || [])) {
           emit(p);
         }
@@ -352,9 +365,11 @@ ${byParticipantChecks}
     const existingEvents = await this.getEventsOnDate(date, date);
 
     const allActivitiesNested = await Promise.all(
-      this.featureSettings.activityTypes.map((typeSettings) =>
-        this.entityMapper.loadType(typeSettings.activityType),
-      ),
+      this.featureSettings.eventTypeSettings
+        .filter((s) => s.activityType !== undefined)
+        .map((typeSettings) =>
+          this.entityMapper.loadType(typeSettings.activityType!),
+        ),
     );
     const allActivities = ([] as Entity[])
       .concat(...allActivitiesNested)
@@ -389,7 +404,7 @@ ${byParticipantChecks}
    * based on the configured field names for its event type.
    */
   private wrapEventEntity(entity: Entity): EventWithAttendance {
-    const typeSettings = this.featureSettings.activityTypes.find(
+    const typeSettings = this.featureSettings.eventTypeSettings.find(
       (s) => s.eventType.ENTITY_TYPE === entity.getType(),
     );
     const attendanceField =
@@ -417,8 +432,10 @@ ${byParticipantChecks}
 
     const newWrappedEvents = await Promise.all(
       activities.map(async (activity) => {
-        const typeSettings = this.featureSettings.activityTypes.find(
-          (s) => s.activityType.ENTITY_TYPE === activity.getType(),
+        const typeSettings = this.featureSettings.eventTypeSettings.find(
+          (s) =>
+            s.activityType !== undefined &&
+            s.activityType.ENTITY_TYPE === activity.getType(),
         );
         const relatesToField = typeSettings?.relatesToField ?? "relatesTo";
         if (
@@ -477,8 +494,10 @@ ${byParticipantChecks}
   ): Promise<EventWithAttendance> {
     if (typeof activity === "string") {
       const activityTypeName = activity.split(":")[0];
-      const typeSettings = this.featureSettings.activityTypes.find(
-        (s) => s.activityType.ENTITY_TYPE === activityTypeName,
+      const typeSettings = this.featureSettings.eventTypeSettings.find(
+        (s) =>
+          s.activityType !== undefined &&
+          s.activityType.ENTITY_TYPE === activityTypeName,
       );
       if (!typeSettings) {
         throw new Error(
@@ -486,13 +505,15 @@ ${byParticipantChecks}
         );
       }
       activity = await this.entityMapper.load(
-        typeSettings.activityType,
+        typeSettings.activityType!,
         activity,
       );
     }
 
-    const typeSettings = this.featureSettings.activityTypes.find(
-      (s) => s.activityType.ENTITY_TYPE === activity.getType(),
+    const typeSettings = this.featureSettings.eventTypeSettings.find(
+      (s) =>
+        s.activityType !== undefined &&
+        s.activityType.ENTITY_TYPE === activity.getType(),
     );
     if (!typeSettings) {
       throw new Error(`No config found for activity "${activity.getId()}"`);

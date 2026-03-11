@@ -6,8 +6,9 @@
       "site_id": "8"
     },
     "appConfig:attendance": {
-      "activityTypes": {
-        "RecurringActivity": {
+      "eventTypes": [
+        {
+          "activityType": "RecurringActivity",
           "eventType": "Event",
           "filterConfig": [
             {
@@ -22,7 +23,7 @@
             "category": "type"
           }
         }
-      }
+      ]
     },
     "navigationMenu": {
       "items": [

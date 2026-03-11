@@ -8,7 +8,7 @@ import moment from "moment";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceItem } from "../model/attendance-item";
 import { AttendanceService } from "../attendance.service";
-import { ActivityTypeSettings } from "../model/attendance-feature-config";
+import { EventTypeSettings } from "../model/attendance-feature-config";
 import { AttendanceDatatype } from "../model/attendance.datatype";
 import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
 
@@ -49,8 +49,10 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<Entity
 
     for (const activity of this.demoActivities.entities) {
       const typeSettings =
-        this.attendanceService.featureSettings.activityTypes.find(
-          (s) => s.activityType.ENTITY_TYPE === activity.getType(),
+        this.attendanceService.featureSettings.eventTypeSettings.find(
+          (s) =>
+            s.activityType !== undefined &&
+            s.activityType.ENTITY_TYPE === activity.getType(),
         );
       if (!typeSettings) {
         continue;
@@ -79,7 +81,7 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<Entity
    * Create a specific event for a date based on the given activity config and fill with random attendance.
    */
   private generateEventForActivity(
-    typeSettings: ActivityTypeSettings,
+    typeSettings: EventTypeSettings,
     activity: Entity,
     date: Date,
   ): Entity {

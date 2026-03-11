@@ -6,11 +6,11 @@ import { DemoUserGeneratorService } from "#src/app/core/user/demo-user-generator
 import { defaultInteractionTypes } from "#src/app/core/config/default-config/default-interaction-types";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceService } from "../attendance.service";
-import { ActivityTypeSettings } from "../model/attendance-feature-config";
+import { EventTypeSettings } from "../model/attendance-feature-config";
 import { asArray } from "#src/app/utils/asArray";
 
 /**
- * Generate activity entities based on the attendance config's activityTypes.
+ * Generate activity entities based on the attendance config's eventTypes.
  * Builds upon the generated demo Child entities.
  */
 @Injectable()
@@ -40,7 +40,8 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
     const children = this.demoChildren.entities.filter((c) => c.isActive);
 
     for (const typeSettings of this.attendanceService.featureSettings
-      .activityTypes) {
+      .eventTypeSettings) {
+      if (!typeSettings.activityType) continue;
       let i = 0;
       while (i < children.length) {
         const groupSize = faker.number.int({
@@ -59,10 +60,10 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
   }
 
   private generateActivityOfType(
-    typeSettings: ActivityTypeSettings,
+    typeSettings: EventTypeSettings,
     participants: Entity[],
   ): Entity {
-    const activity = new typeSettings.activityType(faker.string.uuid());
+    const activity = new typeSettings.activityType!(faker.string.uuid());
 
     const type = faker.helpers.arrayElement(ACTIVITY_TYPES);
     const title =
@@ -77,7 +78,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
 
     // Detect the field with dataType "entity" and additional "User" on the activity schema
     const assignedUser = faker.helpers.arrayElement(this.demoUser.entities);
-    for (const [fieldId, field] of typeSettings.activityType.schema.entries()) {
+    for (const [fieldId, field] of typeSettings.activityType!.schema.entries()) {
       if (
         field.dataType === "entity" &&
         asArray(field.additional).includes("User")

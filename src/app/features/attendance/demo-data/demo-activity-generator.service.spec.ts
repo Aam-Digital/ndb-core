@@ -25,7 +25,7 @@ describe("DemoActivityGenerator", () => {
 
     const mockAttendanceService = {
       featureSettings: {
-        activityTypes: [
+        eventTypeSettings: [
           {
             activityType: TestEntity,
             eventType: TestEventEntity,

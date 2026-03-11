@@ -2,8 +2,9 @@
   "_id": "Config:CONFIG_ENTITY",
   "data": {
     "appConfig:attendance": {
-      "activityTypes": {
-        "RecurringActivity": {
+      "eventTypes": [
+        {
+          "activityType": "RecurringActivity",
           "eventType": "Event",
           "participantsField": "participants",
           "assignedUsersField": "authors",
@@ -11,7 +12,8 @@
             "title": "title"
           }
         },
-        "School": {
+        {
+          "activityType": "School",
           "eventType": "ClassSession",
           "participantsField": "entityMultiField",
           "assignedUsersField": "teachers",
@@ -19,7 +21,7 @@
             "title": "name"
           }
         }
-      }
+      ]
     },
     "appConfig:usage-analytics": {
       "url": "https://matomo.aam-digital.org",

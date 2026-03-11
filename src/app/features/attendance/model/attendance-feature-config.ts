@@ -2,15 +2,27 @@ import { FilterConfig } from "#src/app/core/entity-list/EntityListConfig";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
 
 /**
- * Configuration for a single activity-type → event-type mapping.
- * Used inside {@link AttendanceFeatureConfig.activityTypes}.
+ * Configuration for a single event type entry.
+ * When `activityType` is set, events are generated from recurring activities of that type.
+ * When `activityType` is omitted, the event type is standalone — entities are created manually
+ * and appear in the roll-call setup via existing event queries.
+ *
+ * Used inside {@link AttendanceFeatureConfig.eventTypes}.
  */
-export interface ActivityTypeConfig {
+export interface EventTypeConfig {
   /** Entity type name for the event entity to create (e.g. `"EventNote"`). */
   eventType: string;
 
   /**
+   * Entity type name for the activity entity (e.g. `"RecurringActivity"`).
+   * When set, events are auto-generated from activities of this type.
+   * When omitted, this is a standalone event type.
+   */
+  activityType?: string;
+
+  /**
    * Activity entity field holding the participant IDs to include in the event.
+   * Only relevant when `activityType` is set.
    * Defaults to `"participants"`.
    */
   participantsField?: string;
@@ -23,6 +35,7 @@ export interface ActivityTypeConfig {
 
   /**
    * Event entity field name used to link the event back to its parent activity.
+   * Only relevant when `activityType` is set.
    * Defaults to `"relatesTo"`.
    */
   relatesToField?: string;
@@ -41,6 +54,7 @@ export interface ActivityTypeConfig {
 
   /**
    * Field mapping from event fields to activity fields, applied when creating a new event.
+   * Only relevant when `activityType` is set.
    * Keys are event entity field names, values are activity entity field names.
    *
    * Example: `{ "subject": "title", "category": "type" }` means
@@ -50,12 +64,15 @@ export interface ActivityTypeConfig {
 }
 
 /**
- * Resolved runtime shape of a single {@link ActivityTypeConfig} entry.
+ * Resolved runtime shape of a single {@link EventTypeConfig} entry.
  * Type strings are resolved to `EntityConstructor` instances via the `EntityRegistry`.
  */
-export interface ActivityTypeSettings {
-  /** Constructor for the activity entity type. */
-  activityType: EntityConstructor;
+export interface EventTypeSettings {
+  /**
+   * Constructor for the activity entity type.
+   * `undefined` for standalone event types (no linked activity).
+   */
+  activityType: EntityConstructor | undefined;
 
   /** Constructor for the event entity type to create. */
   eventType: EntityConstructor;
@@ -93,23 +110,30 @@ export interface ActivityTypeSettings {
  */
 export interface AttendanceFeatureConfig {
   /**
-   * Map of activity entity type names to their configuration.
-   * Each entry maps an activity type to the event type it generates,
-   * along with field mappings and UI configuration.
+   * Array of event type configurations.
+   * Each entry defines an event type and optionally links it to an activity type.
+   *
+   * Entries with `activityType` generate events from recurring activities.
+   * Entries without `activityType` define standalone event types
+   * whose entities are created manually and appear in the roll-call setup.
    *
    * Example:
    * ```json
-   * {
-   *   "RecurringActivity": {
+   * [
+   *   {
+   *     "activityType": "RecurringActivity",
    *     "eventType": "EventNote",
    *     "filterConfig": [{ "id": "category" }, { "id": "schools" }],
    *     "extraField": "category",
    *     "fieldMapping": { "subject": "title", "category": "type" }
+   *   },
+   *   {
+   *     "eventType": "HomeVisit"
    *   }
-   * }
+   * ]
    * ```
    */
-  activityTypes?: { [activityTypeName: string]: ActivityTypeConfig };
+  eventTypes?: EventTypeConfig[];
 
   /**
    * Enable legacy group-based participant resolution:
@@ -126,23 +150,23 @@ export interface AttendanceFeatureConfig {
  * Entity type names are resolved to constructors via EntityRegistry on service initialisation.
  */
 export interface AttendanceFeatureSettings {
-  /** Full settings for each configured activity type → event type mapping. */
-  activityTypes: ActivityTypeSettings[];
+  /** Full settings for each configured event type. */
+  eventTypeSettings: EventTypeSettings[];
 
   /**
-   * Entity constructors of all configured activity types.
-   * Derived from `activityTypes` for consumers like permission guards and index creation.
+   * Entity constructors of all configured activity types (only entries with an activityType).
+   * Derived from `eventTypeSettings` for consumers like permission guards and index creation.
    */
   recurringActivityTypes: EntityConstructor[];
 
   /**
    * Entity constructors of all configured event types.
-   * Derived from `activityTypes` for consumers like permission guards and index creation.
+   * Derived from `eventTypeSettings` for consumers like permission guards and index creation.
    */
   eventTypes: EntityConstructor[];
 
   /**
-   * Merged filter configuration from all activity type configs.
+   * Merged filter configuration from all event type configs.
    * Used as the default for the roll-call UI filter.
    */
   filterConfig: FilterConfig[];

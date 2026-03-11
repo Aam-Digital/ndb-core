@@ -14,10 +14,10 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
  */
 @DatabaseEntity("TestEventEntity")
 export class TestEventEntity extends Entity {
-  static override ENTITY_TYPE = "TestEventEntity";
-  static override label = "Test Event Entity";
-  static override labelPlural = "Test Event Entities";
-  static override icon: IconName = "calendar";
+  static override readonly ENTITY_TYPE = "TestEventEntity";
+  static override readonly label = "Test Event Entity";
+  static override readonly labelPlural = "Test Event Entities";
+  static override readonly icon: IconName = "calendar";
 
   @DatabaseField({ dataType: "date-only" })
   date: Date;

@@ -10,7 +10,7 @@ import { asArray } from "#src/app/utils/asArray";
 /**
  * @deprecated The `RecurringActivity` entity type is the default implementation
  * bundled with the attendance feature. New deployments should configure custom
- * activity entity types via `AttendanceFeatureConfig.recurringActivityTypes` in
+ * activity entity types via `AttendanceFeatureConfig.eventTypes` in
  * the app config (`"appConfig:attendance"`).
  */
 @DatabaseEntity("RecurringActivity")

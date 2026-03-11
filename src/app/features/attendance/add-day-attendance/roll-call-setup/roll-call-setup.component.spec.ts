@@ -37,7 +37,7 @@ describe("RollCallSetupComponent", () => {
       ["getAvailableEventsForRollCall"],
       {
         featureSettings: {
-          activityTypes: [],
+          eventTypeSettings: [],
           recurringActivityTypes: [],
           eventTypes: [],
           filterConfig: [],

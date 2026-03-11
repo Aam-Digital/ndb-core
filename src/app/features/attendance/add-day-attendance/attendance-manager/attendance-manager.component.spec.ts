@@ -24,7 +24,7 @@ describe("AttendanceManagerComponent", () => {
           provide: AttendanceService,
           useValue: {
             featureSettings: {
-              activityTypes: [],
+              eventTypeSettings: [],
               recurringActivityTypes: [],
               eventTypes: [],
               filterConfig: [],

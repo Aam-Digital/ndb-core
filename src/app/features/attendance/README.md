@@ -28,7 +28,7 @@ Each option is assigned to an abstract status type to define how it is used in a
 
 ## Recurring Activities
 
-A "Recurring Activity" entity represents a longer-term course or programm.
+A "Recurring Activity" entity represents a longer-term course or program.
 Users create multiple "Event" records for such an activity over time.
 
 The Recurring Activity serves as a template to quickly create a new Event for a given date.
