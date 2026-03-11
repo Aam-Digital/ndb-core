@@ -1,6 +1,5 @@
-import { inject, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { CanActivate } from "@angular/router";
-import { EntityAbility } from "../ability/entity-ability";
 import { AbstractPermissionGuard } from "./abstract-permission.guard";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 
@@ -13,8 +12,6 @@ export class EntityPermissionGuard
   extends AbstractPermissionGuard
   implements CanActivate
 {
-  private ability = inject(EntityAbility);
-
   protected async canAccessRoute(
     routeData: DynamicComponentConfig,
   ): Promise<boolean> {
@@ -30,11 +27,7 @@ export class EntityPermissionGuard
       return true;
     }
 
-    if (this.ability.rules.length === 0) {
-      // wait till rules are initialised
-      await new Promise((res) => this.ability.on("updated", res));
-    }
-
+    await this.ensureAbilityInitialized();
     return this.ability.can(operation, primaryEntity);
   }
 }
