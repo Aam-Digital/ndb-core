@@ -73,7 +73,11 @@ export class QueryService {
     for (const eventType of this.attendanceService.featureSettings.eventTypes) {
       this.entityInfo[eventType.ENTITY_TYPE] = {
         dataFunction: (from, to) =>
-          this.attendanceService.getEventsOnDate(from, to),
+          this.attendanceService
+            .getEventsOnDate(from, to)
+            .then((events) =>
+              events.filter((e) => e.getType() === eventType.ENTITY_TYPE),
+            ),
       };
     }
   }

@@ -130,15 +130,19 @@ export class AttendanceService {
   }
 
   private createEventsIndex(): Promise<void> {
+    if (this.featureSettings.eventTypes.length === 0) {
+      return Promise.resolve();
+    }
+
     const eventTypeChecks = this.featureSettings.eventTypes
-      .map((t) => `doc._id.startsWith("${t.ENTITY_TYPE}")`)
+      .map((t) => `doc._id.startsWith("${t.ENTITY_TYPE}:")`)
       .join(" || ");
 
     const byActivityEmits = this.featureSettings.eventTypeSettings
       .filter((s) => s.activityType !== undefined)
       .map(
         ({ eventType, relatesToField }) =>
-          `      if (doc._id.startsWith("${eventType.ENTITY_TYPE}") && doc["${relatesToField}"]) {
+          `      if (doc._id.startsWith("${eventType.ENTITY_TYPE}:") && doc["${relatesToField}"]) {
         emit(doc["${relatesToField}"] + "_" + dString);
       }`,
       )
@@ -179,11 +183,17 @@ ${byActivityEmits}
   }
 
   private createRecurringActivitiesIndex(): Promise<void> {
-    const byParticipantChecks = this.featureSettings.eventTypeSettings
-      .filter((s) => s.activityType !== undefined)
+    const activitySettings = this.featureSettings.eventTypeSettings.filter(
+      (s) => s.activityType !== undefined,
+    );
+    if (activitySettings.length === 0) {
+      return Promise.resolve();
+    }
+
+    const byParticipantChecks = activitySettings
       .map(
         ({ activityType, participantsField }) =>
-          `      if (doc._id.startsWith("${activityType!.ENTITY_TYPE}")) {
+          `      if (doc._id.startsWith("${activityType!.ENTITY_TYPE}:")) {
         for (var p of (doc["${participantsField}"] || [])) {
           emit(p);
         }
