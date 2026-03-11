@@ -73,6 +73,10 @@ test("Add a new task record to the list", async ({ page }) => {
   await page.getByRole("option", { name: "Arun Kapoor" }).click();
   await page.keyboard.press("Escape");
 
+  await expect(dialog.getByText("Anand Trivedi")).toBeVisible();
+  await expect(dialog.getByText("Anand Nehru")).toBeVisible();
+  await expect(dialog.getByText("Arun Kapoor")).toBeVisible();
+
   // The repeat interval defaults to "does not repeat" (no interval),
   // which is already the correct state — no selection needed.
 
@@ -169,7 +173,11 @@ test("Edit the related records assigned to the task", async ({ page }) => {
   // And I click on "Save"
   await dialog.getByRole("button", { name: "Save" }).click();
 
-  // Then the "Related Records" field contains "Amrita Nayar" (dialog stays open in view mode)
+  // Wait for the dialog to return to view mode — the "Edit" button reappearing
+  // confirms the save is complete and the form has re-rendered
+  await expect(dialog.getByRole("button", { name: "Edit" })).toBeVisible();
+
+  // Then the "Related Records" field contains "Amrita Nayar" (entity chip loads async)
   await expect(dialog.getByText("Amrita Nayar")).toBeVisible();
 
   // And the "Related Records" field does not contain "Anand Trivedi"
