@@ -27,7 +27,7 @@ describe("PermissionEnforcerService", () => {
   let mockLocation: jasmine.SpyObj<Location>;
   let destroySpy: jasmine.Spy;
   let resetSyncSpy: jasmine.Spy;
-  let purgeLocalDocSpy: jasmine.Spy;
+  let mockDb: { purge: jasmine.Spy };
   let isIndexedDbAdapterSpy: jasmine.Spy;
 
   beforeEach(waitForAsync(() => {
@@ -49,8 +49,8 @@ describe("PermissionEnforcerService", () => {
     destroySpy = spyOn(dbResolver, "destroyDatabases");
     dbResolver.resetSync = () => Promise.resolve();
     resetSyncSpy = spyOn(dbResolver, "resetSync").and.resolveTo();
-    dbResolver.purgeLocalDoc = () => Promise.resolve(true);
-    purgeLocalDocSpy = spyOn(dbResolver, "purgeLocalDoc").and.resolveTo(true);
+    mockDb = { purge: jasmine.createSpy("purge").and.resolveTo(true) };
+    dbResolver.getDatabase = () => mockDb as any;
     // Default to indexeddb adapter for tests unless overridden
     dbResolver.isIndexedDbAdapterSupported = () => true;
     isIndexedDbAdapterSpy = spyOn(
@@ -121,7 +121,7 @@ describe("PermissionEnforcerService", () => {
 
       // Track call order via a shared sequence log
       const callSequence: string[] = [];
-      purgeLocalDocSpy.and.callFake(() => {
+      mockDb.purge.and.callFake(() => {
         callSequence.push("purge");
         return Promise.resolve(true);
       });
@@ -133,7 +133,7 @@ describe("PermissionEnforcerService", () => {
       updateRulesAndTriggerEnforcer(userRules);
       tick();
 
-      expect(purgeLocalDocSpy).toHaveBeenCalledWith(inaccessible.getId());
+      expect(mockDb.purge).toHaveBeenCalledWith(inaccessible.getId());
       expect(destroySpy).not.toHaveBeenCalled();
       expect(mockLocation.reload).not.toHaveBeenCalled();
 
@@ -150,7 +150,7 @@ describe("PermissionEnforcerService", () => {
       tick();
 
       expect(resetSyncSpy).toHaveBeenCalled();
-      expect(purgeLocalDocSpy).not.toHaveBeenCalled();
+      expect(mockDb.purge).not.toHaveBeenCalled();
       expect(destroySpy).not.toHaveBeenCalled();
       expect(mockLocation.reload).not.toHaveBeenCalled();
     }));

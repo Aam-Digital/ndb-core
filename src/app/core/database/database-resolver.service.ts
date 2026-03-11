@@ -76,24 +76,6 @@ export class DatabaseResolverService {
   }
 
   /**
-   * Permanently remove a single document from the local database without syncing
-   * the deletion to the server.
-   *
-   * Delegates to {@link PouchDatabase.purge}. Returns `false` when the document
-   * does not exist locally or when the active adapter does not support purge.
-   *
-   * @param id Document ID to purge
-   * @param dbName Database to target (defaults to the main app database)
-   */
-  async purgeLocalDoc(
-    id: string,
-    dbName: string = Entity.DATABASE,
-  ): Promise<boolean> {
-    const db = this.getDatabase(dbName);
-    return db.purge(id);
-  }
-
-  /**
    * Clear sync checkpoint documents in all synced databases,
    * forcing a full re-check on the next sync without deleting any data.
    */
