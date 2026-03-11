@@ -218,8 +218,10 @@
       }
     },
     "view:note": {
-      "component": "NotesManager",
+      "component": "EntityList",
       "config": {
+        "entityType": "Note",
+        "clickMode": "popup-details",
         "title": "Notes & Reports",
         "columnGroups": {
           "default": "Standard",

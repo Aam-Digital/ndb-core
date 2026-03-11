@@ -2,7 +2,6 @@ import { DemoChildGenerator } from "#src/app/child-dev-project/children/demo-dat
 import { DemoDataGenerator } from "#src/app/core/demo-data/demo-data-generator";
 import { inject, Injectable } from "@angular/core";
 import { faker } from "#src/app/core/demo-data/faker";
-import { RecurringActivity } from "../model/recurring-activity";
 import { DemoUserGeneratorService } from "#src/app/core/user/demo-user-generator.service";
 import { defaultInteractionTypes } from "#src/app/core/config/default-config/default-interaction-types";
 import { Entity } from "#src/app/core/entity/model/entity";
@@ -114,32 +113,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
   }
 }
 
-const ACTIVITY_TYPES = [
+export const ACTIVITY_TYPES = [
   defaultInteractionTypes.find((t) => t.id === "SCHOOL_CLASS"),
   defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),
 ];
-
-export function generateActivity({
-  participants,
-  assignedUser,
-  title,
-}: {
-  participants: Entity[];
-  assignedUser?: Entity;
-  title?: string;
-}): RecurringActivity {
-  const activity = new RecurringActivity(faker.string.uuid());
-  const type = faker.helpers.arrayElement(ACTIVITY_TYPES);
-
-  activity.title =
-    title ??
-    type.label +
-      " " +
-      faker.number.int({ min: 1, max: 9 }) +
-      faker.string.alphanumeric(1).toUpperCase();
-  activity.type = type;
-  activity.participants = participants.map((c) => c.getId());
-  activity.assignedTo = [assignedUser?.getId()];
-
-  return activity;
-}

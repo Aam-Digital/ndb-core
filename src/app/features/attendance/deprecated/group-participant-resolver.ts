@@ -39,20 +39,20 @@ export class GroupParticipantResolverService {
    * @deprecated Use direct participants field on activity entities.
    */
   async getActiveParticipantsOfActivity(
-    activity: {
-      participants: string[];
-      linkedGroups: string[];
-      excludedParticipants: string[];
+    activity: Entity & {
+      participants?: string[];
+      linkedGroups?: string[];
+      excludedParticipants?: string[];
     },
     date: Date,
   ): Promise<string[]> {
     const schoolParticipants = await this.loadParticipantsOfGroups(
-      activity.linkedGroups,
+      activity.linkedGroups ?? [],
       date,
     );
     return [
-      ...new Set(activity.participants.concat(...schoolParticipants)),
-    ].filter((p) => !activity.excludedParticipants.includes(p));
+      ...new Set(activity.participants?.concat(...schoolParticipants) ?? []),
+    ].filter((p) => !(activity.excludedParticipants ?? []).includes(p));
   }
 
   /**

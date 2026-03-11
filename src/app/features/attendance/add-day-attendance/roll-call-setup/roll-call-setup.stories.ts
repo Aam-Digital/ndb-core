@@ -3,10 +3,13 @@ import { applicationConfig, Meta, StoryObj } from "@storybook/angular";
 import { RollCallSetupComponent } from "./roll-call-setup.component";
 import moment from "moment";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
-import { generateActivity } from "../../demo-data/demo-activity-generator.service";
+import { ACTIVITY_TYPES } from "../../demo-data/demo-activity-generator.service";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { AttendanceItem } from "../../model/attendance-item";
+import { Entity } from "#src/app/core/entity/model/entity";
+import { RecurringActivity } from "../../model/recurring-activity";
+import { faker } from "#src/app/core/demo-data/faker";
 
 const demoEvents: Note[] = [
   Note.create(new Date(), "Class 5a Parents Meeting"),
@@ -59,3 +62,28 @@ export default {
 export const Primary: StoryObj<RollCallSetupComponent> = {
   args: {},
 };
+
+function generateActivity({
+  participants,
+  assignedUser,
+  title,
+}: {
+  participants: Entity[];
+  assignedUser?: Entity;
+  title?: string;
+}): RecurringActivity {
+  const activity = new RecurringActivity(faker.string.uuid());
+  const type = faker.helpers.arrayElement(ACTIVITY_TYPES);
+
+  activity.title =
+    title ??
+    type.label +
+      " " +
+      faker.number.int({ min: 1, max: 9 }) +
+      faker.string.alphanumeric(1).toUpperCase();
+  activity.type = type;
+  activity.participants = participants.map((c) => c.getId());
+  activity.assignedTo = [assignedUser?.getId()];
+
+  return activity;
+}

@@ -2,7 +2,6 @@ import { Injectable, inject } from "@angular/core";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import moment from "moment";
-import { RecurringActivity } from "./model/recurring-activity";
 import { ActivityAttendance } from "./model/activity-attendance";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
 import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
@@ -519,7 +518,7 @@ ${byParticipantChecks}
     let participantIds: string[];
     if (
       this.featureSettings.groupBasedParticipants &&
-      activity instanceof RecurringActivity
+      activity.getType() === "RecurringActivity"
     ) {
       participantIds =
         await this.groupParticipantResolver.getActiveParticipantsOfActivity(
