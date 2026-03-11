@@ -27,6 +27,7 @@ describe("PermissionEnforcerService", () => {
   let mockLocation: jasmine.SpyObj<Location>;
   let destroySpy: jasmine.Spy;
   let resetSyncSpy: jasmine.Spy;
+  let purgeLocalDocSpy: jasmine.Spy;
   let isIndexedDbAdapterSpy: jasmine.Spy;
 
   beforeEach(waitForAsync(() => {
@@ -48,6 +49,8 @@ describe("PermissionEnforcerService", () => {
     destroySpy = spyOn(dbResolver, "destroyDatabases");
     dbResolver.resetSync = () => Promise.resolve();
     resetSyncSpy = spyOn(dbResolver, "resetSync").and.resolveTo();
+    dbResolver.purgeLocalDoc = () => Promise.resolve(true);
+    purgeLocalDocSpy = spyOn(dbResolver, "purgeLocalDoc").and.resolveTo(true);
     // Default to indexeddb adapter for tests unless overridden
     dbResolver.isIndexedDbAdapterSupported = () => true;
     isIndexedDbAdapterSpy = spyOn(
@@ -111,23 +114,43 @@ describe("PermissionEnforcerService", () => {
   describe("indexeddb adapter (purge supported)", () => {
     // isIndexedDbAdapterSpy defaults to true from beforeEach
 
-    it("should call resetSync (not destroyDatabases) when permissions change and entities without permissions exist", fakeAsync(() => {
-      entityMapper.save(new TestEntity());
+    it("should purge inaccessible entities before and after resetSync (to handle push/pull race)", fakeAsync(() => {
+      const inaccessible = new TestEntity();
+      entityMapper.save(inaccessible);
       tick();
+
+      // Track call order via a shared sequence log
+      const callSequence: string[] = [];
+      purgeLocalDocSpy.and.callFake(() => {
+        callSequence.push("purge");
+        return Promise.resolve(true);
+      });
+      resetSyncSpy.and.callFake(() => {
+        callSequence.push("sync");
+        return Promise.resolve();
+      });
 
       updateRulesAndTriggerEnforcer(userRules);
       tick();
 
-      expect(resetSyncSpy).toHaveBeenCalled();
+      expect(purgeLocalDocSpy).toHaveBeenCalledWith(inaccessible.getId());
       expect(destroySpy).not.toHaveBeenCalled();
       expect(mockLocation.reload).not.toHaveBeenCalled();
+
+      // Verify the double-purge pattern: purge → sync → purge (at least once in sequence)
+      const firstPurgeIdx = callSequence.indexOf("purge");
+      const firstSyncIdx = callSequence.indexOf("sync");
+      const lastPurgeIdx = callSequence.lastIndexOf("purge");
+      expect(firstPurgeIdx).toBeLessThan(firstSyncIdx);
+      expect(lastPurgeIdx).toBeGreaterThan(firstSyncIdx);
     }));
 
-    it("should call resetSync when rules change even if no entities lack permissions", fakeAsync(() => {
+    it("should call resetSync even when no entities lack permissions", fakeAsync(() => {
       updateRulesAndTriggerEnforcer([{ subject: "all", action: "manage" }]);
       tick();
 
       expect(resetSyncSpy).toHaveBeenCalled();
+      expect(purgeLocalDocSpy).not.toHaveBeenCalled();
       expect(destroySpy).not.toHaveBeenCalled();
       expect(mockLocation.reload).not.toHaveBeenCalled();
     }));

@@ -244,7 +244,7 @@ export class PouchDatabase extends Database {
    * @returns true if the document was purged, false if it did not exist locally
    *          or if the adapter does not support purge
    */
-  async purge(id: string): Promise<boolean> {
+  override async purge(id: string): Promise<boolean> {
     if (this.adapter !== "indexeddb") {
       Logging.debug(
         `PouchDatabase.purge() skipped: adapter "${this.adapter}" does not support purge (requires "indexeddb")`,

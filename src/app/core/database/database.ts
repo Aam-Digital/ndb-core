@@ -80,6 +80,18 @@ export abstract class Database {
   abstract remove(object: any): Promise<any>;
 
   /**
+   * Permanently remove a document from the local database without syncing the deletion to the server.
+   *
+   * Unlike {@link remove}, purge leaves no tombstone and does not affect the remote database.
+   * Returns `false` when not supported by the current adapter or when the document does not exist locally.
+   *
+   * @param id The document ID to purge
+   */
+  purge(_id: string): Promise<boolean> {
+    return Promise.resolve(false);
+  }
+
+  /**
    * Query data from the database based on a more complex, indexed request.
    *
    * This is directly calling the PouchDB implementation of this function.
