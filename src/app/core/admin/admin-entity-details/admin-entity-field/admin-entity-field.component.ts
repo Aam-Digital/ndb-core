@@ -174,7 +174,7 @@ export class AdminEntityFieldComponent implements OnInit {
               ? keys.filter((k) => k !== this.data.entitySchemaField.id)
               : keys;
           },
-          normalize: false,
+          normalize: true,
           fieldLabel: $localize`:field label:id`,
         }),
       ],
