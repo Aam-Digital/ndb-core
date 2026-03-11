@@ -93,10 +93,10 @@ export interface EventTypeSettings {
   assignedUsersField: string;
 
   /** Filter fields for the roll-call UI. */
-  filterConfig: FilterConfig[];
+  filterConfig?: FilterConfig[];
 
   /** Extra field shown on each event card. */
-  extraField: string;
+  extraField?: string;
 
   /** Field mapping: event field ← activity field. */
   fieldMapping: { [eventField: string]: string };
