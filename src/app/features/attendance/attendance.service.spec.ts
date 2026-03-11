@@ -292,11 +292,7 @@ describe("AttendanceService", () => {
       const result = await service.getAvailableEventsForRollCall(testDate);
 
       const generatedEvent = findByActivity(result.allEvents, activity.getId());
-      expect(generatedEvent.entity["authors"]).toEqual([
-        mockCurrentUser.getId(),
-      ]);
-    });
-
+      expect(generatedEvent.assignedUsers).toEqual([
     it("sorts events: assigned to current user ranked higher, one-time events ranked highest", async () => {
       const assignedActivity = RecurringActivity.create("assigned");
       assignedActivity.assignedTo = [mockCurrentUser.getId()];
