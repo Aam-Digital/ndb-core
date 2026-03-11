@@ -14,7 +14,7 @@ describe("AttendancePermissionGuard", () => {
   const mockEventType = { ENTITY_TYPE: "TestEvent" } as any;
 
   beforeEach(() => {
-    mockAbility = jasmine.createSpyObj(["can"], { rules: [{}] });
+    mockAbility = jasmine.createSpyObj(["can"], { initialized: true });
     mockAttendanceService = {
       featureSettings: {
         eventTypeSettings: [],
@@ -37,6 +37,31 @@ describe("AttendancePermissionGuard", () => {
 
   it("should be created", () => {
     expect(guard).toBeTruthy();
+  });
+
+  it("should complete without hanging when ability is not yet initialized and on('updated') fires immediately", async () => {
+    const uninitializedAbility = {
+      initialized: false,
+      can: jasmine.createSpy("can").and.returnValue(true),
+      on: (_event: string, cb: () => void) => cb(),
+    };
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [RouterTestingModule],
+      providers: [
+        AttendancePermissionGuard,
+        { provide: EntityAbility, useValue: uninitializedAbility },
+        { provide: AttendanceService, useValue: mockAttendanceService },
+      ],
+    });
+    const guardWithEmptyRules = TestBed.inject(AttendancePermissionGuard);
+
+    const result = await guardWithEmptyRules.canActivate({
+      data: { component: "AttendanceManager" },
+      params: {},
+    } as Partial<ActivatedRouteSnapshot> as ActivatedRouteSnapshot);
+
+    expect(result).toBeTrue();
   });
 
   it("should allow AttendanceManager if user can read a recurringActivityType", async () => {

@@ -1,6 +1,7 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { EntityAction } from "./entity-action.interface";
 import { Entity } from "../../entity/model/entity";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 /**
  * Register and access actions that can be performed on an entity
@@ -16,6 +17,7 @@ import { Entity } from "../../entity/model/entity";
 export class EntityActionsMenuService {
   private actions: EntityAction[] = [];
   private actionsFactories: EntityActionsFactory[] = [];
+  private readonly ability = inject(EntityAbility, { optional: true });
 
   getActions(entity?: Entity): EntityAction[] {
     return [
@@ -28,7 +30,7 @@ export class EntityActionsMenuService {
    * Get only actions available for bulk operations.
    */
   async getVisibleActions(
-    entities: Entity | Entity[],
+    entities: Entity | Entity[] | undefined,
     availableFor: "bulk-only" | "individual-only" | "all",
   ): Promise<EntityAction[]> {
     const entity = Array.isArray(entities) ? entities[0] : entities;
@@ -44,7 +46,7 @@ export class EntityActionsMenuService {
       } else {
         isVisible = true;
       }
-      if (isVisible) {
+      if (isVisible && this.hasRequiredPermission(action, entities)) {
         visibleActions.push(action);
       }
     }
@@ -76,6 +78,29 @@ export class EntityActionsMenuService {
    */
   registerActionsFactories(newActions: EntityActionsFactory[]) {
     this.actionsFactories.push(...newActions);
+  }
+
+  private hasRequiredPermission(
+    action: EntityAction,
+    entities: Entity | Entity[] | undefined,
+  ): boolean {
+    if (!action.permission || !this.ability) {
+      return true;
+    }
+
+    const entitiesToCheck = Array.isArray(entities) ? entities : [entities];
+    const validEntities = entitiesToCheck.filter(
+      (entity): entity is Entity => !!entity,
+    );
+
+    // Keep action visibility stable when there is no selected entity yet.
+    if (validEntities.length === 0) {
+      return true;
+    }
+
+    return validEntities.every((entity) =>
+      this.ability.can(action.permission, entity),
+    );
   }
 
   /**

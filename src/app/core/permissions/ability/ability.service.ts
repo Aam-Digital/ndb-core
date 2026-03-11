@@ -44,6 +44,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     } else {
       // as default fallback if no permission object is defined: allow everything
       this.ability.update([{ action: "manage", subject: "all" }]);
+      this.ability.initialized = true;
     }
 
     merge(
@@ -63,6 +64,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
       await this.interpolateUserVariables(rawUserRules);
 
     this.ability.update(userRules);
+    this.ability.initialized = true;
     return this.permissionEnforcer.enforcePermissionsOnLocalData(userRules);
   }
 
