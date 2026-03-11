@@ -6,7 +6,7 @@
     </mat-form-field>
   }
 
-  `@if` (!hideLink) {
+  @if (!hideLink) {
     <mat-slide-toggle
       [checked]="noLinkMode"
       (change)="toggleNoLinkMode($event)"
@@ -15,7 +15,7 @@
     >
   }
 
-  `@if` (!hideLink && !noLinkMode) {
+  @if (!hideLink && !noLinkMode) {
     <div class="flex-row align-center gap-small">
       <mat-form-field appearance="fill" class="full-width">
         <mat-label i18n>Link</mat-label>
