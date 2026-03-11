@@ -17,6 +17,7 @@
           ],
           "participantsField": "participants",
           "assignedUsersField": "assignedTo",
+          "relatesToField": "parentActivity",
           "extraField": "category",
           "fieldMapping": {
             "subject": "title",
@@ -36,17 +37,17 @@
           "entityType": "Child"
         },
         {
-          "entityType": "RecurringActivity",
+          "label": "Attendance",
+          "icon": "calendar-check",
+          "link": "/attendance",
           "subMenu": [
+            {
+              "entityType": "RecurringActivity"
+            },
             {
               "entityType": "Event"
             }
           ]
-        },
-        {
-          "label": "Attendance",
-          "icon": "calendar-check",
-          "link": "/attendance"
         },
         {
           "entityType": "Note"
@@ -1301,7 +1302,7 @@
           },
           "anonymize": "retain"
         },
-        "childrenAttendance": {
+        "participants": {
           "label": "Participants",
           "dataType": "attendance",
           "isArray": true,
@@ -1347,7 +1348,8 @@
           "label": "Attachment",
           "dataType": "file"
         },
-        "relatesTo": {
+        "parentActivity": {
+          "label": "Parent Activity",
           "dataType": "entity",
           "additional": "RecurringActivity",
           "anonymize": "retain"
@@ -1363,7 +1365,7 @@
           "subject",
           "category",
           "authors",
-          "childrenAttendance"
+          "participants"
         ],
         "filters": [
           {
@@ -1397,8 +1399,8 @@
                     },
                     {
                       "fields": [
-                        "childrenAttendance",
-                        "relatesTo"
+                        "participants",
+                        "parentActivity"
                       ]
                     }
                   ]
