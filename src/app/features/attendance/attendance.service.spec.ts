@@ -2,10 +2,8 @@ import { TestBed } from "@angular/core/testing";
 
 import { AttendanceService } from "./attendance.service";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { RecurringActivity } from "./model/recurring-activity";
 import moment from "moment";
 import { defaultInteractionTypes } from "#src/app/core/config/default-config/default-interaction-types";
-import { EventNote } from "./model/event-note";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
@@ -14,9 +12,39 @@ import { EventWithAttendance } from "./model/event-with-attendance";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
 import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
 import { ConfigService } from "#src/app/core/config/config.service";
-import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+} from "#src/app/core/entity/database-entity.decorator";
 import { GroupParticipantResolverService } from "./deprecated/group-participant-resolver";
-import { BehaviorSubject, EMPTY } from "rxjs";
+import { BehaviorSubject } from "rxjs";
+import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
+
+@DatabaseEntity("RecurringActivity")
+class MockRecurringActivity extends Entity {
+  static override ENTITY_TYPE = "RecurringActivity";
+
+  static create(title: string = ""): MockRecurringActivity {
+    const instance = new MockRecurringActivity();
+    instance.title = title;
+    return instance;
+  }
+
+  @DatabaseField() title: string = "";
+
+  @DatabaseField() type: any;
+
+  @DatabaseField({ dataType: "entity", additional: "TestEntity" })
+  participants: string[] = [];
+
+  @DatabaseField() linkedGroups: string[] = [];
+
+  @DatabaseField({ dataType: "entity", additional: "TestEntity" })
+  excludedParticipants: string[] = [];
+
+  @DatabaseField({ dataType: "entity", additional: "TestEntity" })
+  assignedTo: string[] = [];
+}
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -31,8 +59,8 @@ describe("AttendanceService", () => {
     (it) => it.isMeeting,
   );
 
-  function createEvent(date: Date, activityIdWithPrefix: string): EventNote {
-    const event = EventNote.create(date, "generated event");
+  function createEvent(date: Date, activityIdWithPrefix: string): Note {
+    const event = Note.create(date, "generated event");
     event.relatesTo = activityIdWithPrefix;
     event.category = defaultInteractionTypes.find(
       (t) => t.id === "COACHING_CLASS",
@@ -40,16 +68,16 @@ describe("AttendanceService", () => {
     return event;
   }
 
-  let activity1: RecurringActivity;
-  let activity2: RecurringActivity;
-  let e1_1: EventNote;
-  let e1_2: EventNote;
-  let e1_3: EventNote;
-  let e2_1: EventNote;
+  let activity1: MockRecurringActivity;
+  let activity2: MockRecurringActivity;
+  let e1_1: Note;
+  let e1_2: Note;
+  let e1_3: Note;
+  let e2_1: Note;
 
   beforeEach(() => {
-    activity1 = RecurringActivity.create("activity 1");
-    activity2 = RecurringActivity.create("activity 2");
+    activity1 = MockRecurringActivity.create("activity 1");
+    activity2 = MockRecurringActivity.create("activity 2");
 
     e1_1 = createEvent(moment("2020-01-01").toDate(), activity1.getId());
     e1_2 = createEvent(moment("2020-01-02").toDate(), activity1.getId());
@@ -82,12 +110,10 @@ describe("AttendanceService", () => {
 
     mockEntityRegistry = jasmine.createSpyObj("EntityRegistry", ["has", "get"]);
     mockEntityRegistry.has.and.callFake(
-      (name: string) =>
-        name === "RecurringActivity" || name === "EventNote" || name === "Note",
+      (name: string) => name === "RecurringActivity" || name === "Note",
     );
     mockEntityRegistry.get.and.callFake((name: string) => {
-      if (name === "RecurringActivity") return RecurringActivity;
-      if (name === "EventNote") return EventNote;
+      if (name === "RecurringActivity") return MockRecurringActivity;
       if (name === "Note") return Note;
       return undefined;
     });
@@ -101,7 +127,26 @@ describe("AttendanceService", () => {
         { provide: CurrentUserSubject, useValue: currentUserSubject },
         {
           provide: ConfigService,
-          useValue: { configUpdates: EMPTY },
+          useValue: {
+            configUpdates: new BehaviorSubject({
+              data: {
+                "appConfig:attendance": {
+                  eventTypes: [
+                    {
+                      activityType: "RecurringActivity",
+                      eventType: "Note",
+                      filterConfig: [{ id: "category" }],
+                      extraField: "category",
+                      fieldMapping: {
+                        subject: "title",
+                        category: "type",
+                      },
+                    },
+                  ],
+                },
+              },
+            }),
+          },
         },
         { provide: EntityRegistry, useValue: mockEntityRegistry },
         {
@@ -137,15 +182,15 @@ describe("AttendanceService", () => {
       moment("2020-01-01").toDate(),
       "manual event note 1",
     );
-    note1.addChild("1");
-    note1.addChild("2");
+    note1.children.push("1");
+    note1.children.push("2");
     note1.category = meetingInteractionCategory;
 
     const note2 = Note.create(
       moment("2020-01-02").toDate(),
       "manual event note 2",
     );
-    note2.addChild("1");
+    note2.children.push("1");
     note2.category = meetingInteractionCategory;
 
     mockDbIndexing.queryIndexDocsRange.and.resolveTo([e1_1, e1_2, e2_1]);
@@ -199,7 +244,7 @@ describe("AttendanceService", () => {
 
   it("getActivitiesForParticipant gets all existing RecurringActivities where it is a participant", async () => {
     const testChildId = "c1";
-    const testActivity1 = RecurringActivity.create("a1");
+    const testActivity1 = MockRecurringActivity.create("a1");
     testActivity1.participants.push(testChildId);
 
     mockDbIndexing.queryIndexDocs.and.resolveTo([testActivity1]);
@@ -210,7 +255,7 @@ describe("AttendanceService", () => {
   });
 
   it("should use only direct participants for event from activity (no group expansion)", async () => {
-    const activity = new RecurringActivity();
+    const activity = new MockRecurringActivity();
     const directChild1 = new TestEntity();
     const directChild2 = new TestEntity();
     activity.participants.push(directChild1.getId(), directChild2.getId());
@@ -230,7 +275,7 @@ describe("AttendanceService", () => {
     const datePickerDate = new Date(
       moment("2021-04-05").toDate().setHours(0, 0, 0, 0),
     );
-    const sameDayEvent = EventNote.create(
+    const sameDayEvent = Note.create(
       moment("2021-04-05").toDate(),
       "Same Day Event",
     );
@@ -240,7 +285,7 @@ describe("AttendanceService", () => {
 
     const events = await service.getEventsOnDate(datePickerDate);
     expect(events).toHaveSize(1);
-    expect((events[0] as EventNote).subject).toBe(sameDayEvent.subject);
+    expect((events[0] as Note).subject).toBe(sameDayEvent.subject);
   });
 
   describe("getAvailableEventsForRollCall", () => {
@@ -266,7 +311,7 @@ describe("AttendanceService", () => {
     });
 
     it("returns existing events for the date", async () => {
-      const existingEvent = EventNote.create(testDate);
+      const existingEvent = Note.create(testDate);
       existingEvent._rev = "1-existing"; // mark as not new
 
       mockDbIndexing.queryIndexDocsRange.and.resolveTo([existingEvent]);
@@ -280,7 +325,7 @@ describe("AttendanceService", () => {
     });
 
     it("generates an event for each activity without an existing event on the date", async () => {
-      const activity = RecurringActivity.create("new activity");
+      const activity = MockRecurringActivity.create("new activity");
       mockEntityMapper.loadType.and.resolveTo([activity1, activity2, activity]);
 
       const result = await service.getAvailableEventsForRollCall(testDate);
@@ -291,8 +336,8 @@ describe("AttendanceService", () => {
     });
 
     it("does not generate a duplicate event when one already exists for the activity on that date", async () => {
-      const activity = RecurringActivity.create("duplicate test");
-      const existingEvent = EventNote.create(testDate, "existing");
+      const activity = MockRecurringActivity.create("duplicate test");
+      const existingEvent = Note.create(testDate, "existing");
       existingEvent.relatesTo = activity.getId();
 
       mockEntityMapper.loadType.and.resolveTo([activity1, activity2, activity]);
@@ -307,9 +352,9 @@ describe("AttendanceService", () => {
     });
 
     it("filters to activities assigned to currentUserId in events, but allEvents contains all", async () => {
-      const assignedActivity = RecurringActivity.create("assigned");
+      const assignedActivity = MockRecurringActivity.create("assigned");
       assignedActivity.assignedTo = [mockCurrentUser.getId()];
-      const otherActivity = RecurringActivity.create("other");
+      const otherActivity = MockRecurringActivity.create("other");
       otherActivity.assignedTo = ["User:other-user"];
 
       mockEntityMapper.loadType.and.resolveTo([
@@ -333,7 +378,7 @@ describe("AttendanceService", () => {
     it("returns all activities when no current user is set", async () => {
       currentUserSubject.next(undefined);
 
-      const activityAssignedToOther = RecurringActivity.create("other");
+      const activityAssignedToOther = MockRecurringActivity.create("other");
       activityAssignedToOther.assignedTo = [mockCurrentUser.getId()];
 
       mockEntityMapper.loadType.and.resolveTo([
@@ -351,7 +396,7 @@ describe("AttendanceService", () => {
     });
 
     it("sets the currentUser as author on generated events", async () => {
-      const activity = RecurringActivity.create("activity");
+      const activity = MockRecurringActivity.create("activity");
       mockEntityMapper.loadType.and.resolveTo([activity1, activity2, activity]);
 
       const result = await service.getAvailableEventsForRollCall(testDate);
@@ -361,10 +406,10 @@ describe("AttendanceService", () => {
     });
 
     it("sorts events: assigned to current user ranked higher, one-time events ranked highest", async () => {
-      const assignedActivity = RecurringActivity.create("assigned");
+      const assignedActivity = MockRecurringActivity.create("assigned");
       assignedActivity.assignedTo = [mockCurrentUser.getId()];
-      const unassignedActivity = RecurringActivity.create("unassigned");
-      const oneTimeEvent = EventNote.create(testDate, "one-time");
+      const unassignedActivity = MockRecurringActivity.create("unassigned");
+      const oneTimeEvent = Note.create(testDate, "one-time");
 
       mockEntityMapper.loadType.and.resolveTo([
         activity1,

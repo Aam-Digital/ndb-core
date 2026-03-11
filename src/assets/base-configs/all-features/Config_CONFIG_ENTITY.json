@@ -8,6 +8,7 @@
           "eventType": "Event",
           "participantsField": "participants",
           "assignedUsersField": "authors",
+          "relatesToField": "parentActivity",
           "fieldMapping": {
             "title": "title"
           }
@@ -266,11 +267,11 @@
       }
     },
     "view:note": {
-      "component": "NotesManager",
+      "component": "EntityList",
       "config": {
+        "entityType": "Note",
+        "clickMode": "popup-details",
         "title": "Notes & Reports",
-        "includeEventNotes": false,
-        "showEventNotesToggle": true,
         "columnGroups": {
           "default": "Standard",
           "mobile": "Mobile",
@@ -505,6 +506,12 @@
               ]
             }
           }
+        },
+        "parentActivity": {
+          "label": "Parent Activity",
+          "dataType": "entity",
+          "additional": "RecurringActivity",
+          "anonymize": "retain"
         }
       }
     },

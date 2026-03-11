@@ -1,7 +1,7 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
-import { RecurringActivity } from "../model/recurring-activity";
 import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
+import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import moment from "moment";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
@@ -12,11 +12,13 @@ import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 const child1 = TestEntity.create("Jack");
 const child2 = TestEntity.create("Jane");
 
-const act1 = RecurringActivity.create("Demo Activity");
-act1.participants.push(child1.getId());
-act1.participants.push(child2.getId());
-const act2 = RecurringActivity.create("Other Activity");
-act1.participants.push(child1.getId());
+const act1 = Object.assign(createEntityOfType("RecurringActivity"), {
+  title: "Demo Activity",
+  participants: [child1.getId(), child2.getId(), child1.getId()],
+});
+const act2 = Object.assign(createEntityOfType("RecurringActivity"), {
+  title: "Other Activity",
+});
 
 const events = [
   TestEventEntity.generateEventWithAttendance(

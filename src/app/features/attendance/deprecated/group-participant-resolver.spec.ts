@@ -1,7 +1,6 @@
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { AttendanceService } from "../attendance.service";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { RecurringActivity } from "../model/recurring-activity";
 import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
 import { ChildSchoolRelation } from "#src/app/child-dev-project/children/model/childSchoolRelation";
 import { DatabaseTestingModule } from "#src/app/utils/database-testing.module";
@@ -70,7 +69,12 @@ describe("GroupParticipantResolverService (deprecated)", () => {
   });
 
   it("should include children from a linked school for event from activity (legacy behaviour removed)", async () => {
-    const activity = new RecurringActivity();
+    const activity = Object.assign(createEntityOfType("RecurringActivity"), {
+      linkedGroups: [],
+      participants: [],
+      excludedParticipants: [],
+      assignedTo: [],
+    });
     const linkedSchool = createEntityOfType("School");
     activity.linkedGroups.push(linkedSchool.getId());
 

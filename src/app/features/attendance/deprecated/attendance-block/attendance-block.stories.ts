@@ -4,8 +4,8 @@ import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { AttendanceBlockComponent } from "./attendance-block.component";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { RecurringActivity } from "../../model/recurring-activity";
 import { ConfigService } from "#src/app/core/config/config.service";
+import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
 
 export default {
   title: "Features/Attendance/Components/AttendanceBlock",
@@ -41,7 +41,10 @@ const attendanceRecord = ActivityAttendance.create(new Date("2021-01-01"), [
     ["2", AttendanceLogicalStatus.PRESENT],
   ]),
 ]);
-attendanceRecord.activity = RecurringActivity.create("Demo Activity");
+attendanceRecord.activity = Object.assign(
+  createEntityOfType("RecurringActivity"),
+  { title: "Demo Activity" },
+);
 
 export const CriticalAttendance = {
   render: Template,
@@ -63,7 +66,10 @@ const attendanceRecord2 = ActivityAttendance.create(new Date("2021-01-01"), [
     ["1", AttendanceLogicalStatus.ABSENT],
   ]),
 ]);
-attendanceRecord2.activity = RecurringActivity.create("Demo Activity");
+attendanceRecord2.activity = Object.assign(
+  createEntityOfType("RecurringActivity"),
+  { title: "Demo Activity" },
+);
 
 export const MediocreAttendance = {
   render: Template,
@@ -79,7 +85,10 @@ const attendanceRecord3 = ActivityAttendance.create(new Date("2021-01-01"), [
     ["1", AttendanceLogicalStatus.PRESENT],
   ]),
 ]);
-attendanceRecord3.activity = RecurringActivity.create("Demo Activity");
+attendanceRecord3.activity = Object.assign(
+  createEntityOfType("RecurringActivity"),
+  { title: "Demo Activity" },
+);
 
 export const GoodAttendance = {
   render: Template,
@@ -94,7 +103,10 @@ const attendanceRecordEmpty = ActivityAttendance.create(
   new Date("2021-01-01"),
   [],
 );
-attendanceRecordEmpty.activity = RecurringActivity.create("Demo Activity");
+attendanceRecordEmpty.activity = Object.assign(
+  createEntityOfType("RecurringActivity"),
+  { title: "Demo Activity" },
+);
 
 export const PeriodWithoutEvents = {
   render: Template,

@@ -10,11 +10,11 @@ import { EntityConstructor } from "#src/app/core/entity/model/entity";
  * Used inside {@link AttendanceFeatureConfig.eventTypes}.
  */
 export interface EventTypeConfig {
-  /** Entity type name for the event entity to create (e.g. `"EventNote"`). */
+  /** Entity type for the event entity to create */
   eventType: string;
 
   /**
-   * Entity type name for the activity entity (e.g. `"RecurringActivity"`).
+   * Entity type for the activity entity.
    * When set, events are auto-generated from activities of this type.
    * When omitted, this is a standalone event type.
    */
@@ -122,7 +122,7 @@ export interface AttendanceFeatureConfig {
    * [
    *   {
    *     "activityType": "RecurringActivity",
-   *     "eventType": "EventNote",
+   *     "eventType": "Event",
    *     "filterConfig": [{ "id": "category" }, { "id": "schools" }],
    *     "extraField": "category",
    *     "fieldMapping": { "subject": "title", "category": "type" }

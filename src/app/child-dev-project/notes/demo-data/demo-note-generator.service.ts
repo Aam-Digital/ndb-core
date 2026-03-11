@@ -124,7 +124,7 @@ export function generateNote(params: {
   const selectedStory = faker.helpers.arrayElement(noteIndividualStories);
   Object.assign(note, selectedStory);
 
-  note.addChild(params.child.getId());
+  note.children.push(params.child.getId());
   note.authors = [params.author.getId()];
 
   let date = params.date;

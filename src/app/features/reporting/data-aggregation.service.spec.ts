@@ -5,7 +5,7 @@ import {
   DataAggregationService,
 } from "./data-aggregation.service";
 import { QueryService } from "../../core/export/query.service";
-import { EventNote } from "#src/app/features/attendance/model/event-note";
+import { Note } from "#src/app/child-dev-project/notes/model/note";
 import moment from "moment";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { genders } from "../../child-dev-project/children/model/genders";
@@ -61,7 +61,7 @@ describe("DataAggregationService", () => {
   });
 
   it("should add the date to each query", async () => {
-    const baseQueryString = `${EventNote.ENTITY_TYPE}:toArray[*date>=? date<?]`;
+    const baseQueryString = `${Note.ENTITY_TYPE}:toArray[*date>=? date<?]`;
     const firstDate = moment().subtract(1, "month").toDate();
     const secondDate = moment().subtract(1, "week").toDate();
     const subjectQueryString = `[*subject=test]`;

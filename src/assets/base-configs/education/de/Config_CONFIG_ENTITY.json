@@ -209,11 +209,11 @@
       }
     },
     "view:note": {
-      "component": "NotesManager",
+      "component": "EntityList",
       "config": {
+        "entityType": "Note",
+        "clickMode": "popup-details",
         "title": "Notizen",
-        "includeEventNotes": false,
-        "showEventNotesToggle": true,
         "columnGroups": {
           "default": "Standard",
           "mobile": "Mobil",

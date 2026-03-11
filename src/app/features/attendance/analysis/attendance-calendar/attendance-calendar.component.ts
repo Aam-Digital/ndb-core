@@ -19,7 +19,6 @@ import { NullAttendanceStatusType } from "../../model/attendance-status";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import type { AttendanceStats } from "../../model/event-with-attendance";
-import { RecurringActivity } from "../../model/recurring-activity";
 import { applyUpdate } from "#src/app/core/entity/model/entity-update";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { AttendanceService } from "../../attendance.service";

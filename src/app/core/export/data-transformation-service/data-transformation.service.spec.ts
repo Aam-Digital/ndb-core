@@ -7,12 +7,13 @@ import { ChildSchoolRelation } from "../../../child-dev-project/children/model/c
 import { ExportColumnConfig } from "./export-column-config";
 import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
 import moment from "moment";
-import { RecurringActivity } from "#src/app/features/attendance/model/recurring-activity";
+import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { Entity } from "../../entity/model/entity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
+import { TestEventEntity } from "../../../utils/test-utils/TestEventEntity";
 
 describe("DataTransformationService", () => {
   let service: DataTransformationService;
@@ -107,12 +108,15 @@ describe("DataTransformationService", () => {
   });
 
   it("should handle cases where related entity is queried on an empty result set", async () => {
-    const emptyActivity = await createActivityInDB("empty activity", [], []);
+    const emptyEntity = new TestEntity();
+    emptyEntity.name = "empty activity";
+    emptyEntity.refMixed = [];
+    await entityMapper.save(emptyEntity);
 
     const exportConfig: ExportColumnConfig[] = [
-      { label: "activity", query: ".title" },
+      { label: "activity", query: ".name" },
       {
-        query: ".linkedGroups:toEntities(School)",
+        query: ".refMixed:toEntities(TestEntity)",
         subQueries: [
           { label: "school_name", query: "name" },
           {
@@ -123,9 +127,9 @@ describe("DataTransformationService", () => {
         ],
       },
     ];
-    const results = await service.transformData([emptyActivity], exportConfig);
+    const results = await service.transformData([emptyEntity], exportConfig);
     const resultRow = results[0];
-    expect(resultRow["activity"]).toBe(emptyActivity.title);
+    expect(resultRow["activity"]).toBe(emptyEntity.name);
     expect(resultRow["school_name"]).toEqual([]);
     expect(resultRow["related_child"]).toEqual([]);
   });
@@ -321,15 +325,19 @@ describe("DataTransformationService", () => {
   });
 
   it("should work when using the count function", async () => {
-    await createActivityInDB("first", [new TestEntity(), new TestEntity()]);
-    await createActivityInDB("second", [new TestEntity()]);
+    const e1 = TestEventEntity.create({ title: "first" });
+    e1.attendance = [new AttendanceItem(), new AttendanceItem()];
+    await entityMapper.save(e1);
+    const e2 = TestEventEntity.create({ title: "second" });
+    e2.attendance = [new AttendanceItem()];
+    await entityMapper.save(e2);
 
     const result = await service.queryAndTransformData([
       {
-        query: `${RecurringActivity.ENTITY_TYPE}:toArray`,
+        query: `TestEventEntity:toArray`,
         subQueries: [
           { query: "title" },
-          { query: ".participants:count", label: "Participants" },
+          { query: ".attendance:count", label: "Participants" },
         ],
       },
     ]);
@@ -411,8 +419,12 @@ describe("DataTransformationService", () => {
     note.children = children.map((child) => child.getId());
 
     for (let i = 0; i < attendanceStatus.length; i++) {
-      note.getAttendance(note.children[i]).status =
-        defaultAttendanceStatusTypes.find((s) => s.id === attendanceStatus[i]);
+      const attendance = new AttendanceItem();
+      attendance.participant = note.children[i];
+      attendance.status = defaultAttendanceStatusTypes.find(
+        (s) => s.id === attendanceStatus[i],
+      );
+      note.childrenAttendance.push(attendance);
     }
     await entityMapper.save(note);
     return note;
@@ -435,19 +447,5 @@ describe("DataTransformationService", () => {
     }
 
     return school;
-  }
-
-  async function createActivityInDB(
-    activityTitle: string,
-    participants: Entity[] = [],
-    groups: TestEntity[] = [],
-  ): Promise<RecurringActivity> {
-    const activity = new RecurringActivity();
-    activity.title = activityTitle;
-    activity.participants = participants.map((p) => p.getId());
-    activity.linkedGroups = groups.map((g) => g.getId());
-    await entityMapper.save(activity);
-
-    return activity;
   }
 });
