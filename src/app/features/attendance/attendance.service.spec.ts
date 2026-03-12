@@ -10,7 +10,6 @@ import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 import { EventWithAttendance } from "./model/event-with-attendance";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
-import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
 import { ConfigService } from "#src/app/core/config/config.service";
 import {
   DatabaseEntity,
@@ -51,13 +50,8 @@ describe("AttendanceService", () => {
 
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockDbIndexing: jasmine.SpyObj<DatabaseIndexingService>;
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
   let currentUserSubject: BehaviorSubject<Entity | undefined>;
   let mockEntityRegistry: jasmine.SpyObj<EntityRegistry>;
-
-  const meetingInteractionCategory = defaultInteractionTypes.find(
-    (it) => it.isMeeting,
-  );
 
   function createEvent(date: Date, activityIdWithPrefix: string): Note {
     const event = Note.create(date, "generated event");
@@ -101,11 +95,6 @@ describe("AttendanceService", () => {
     mockDbIndexing.queryIndexDocsRange.and.resolveTo([]);
     mockDbIndexing.queryIndexDocs.and.resolveTo([]);
 
-    mockChildrenService = jasmine.createSpyObj("ChildrenService", [
-      "getNotesInTimespan",
-    ]);
-    mockChildrenService.getNotesInTimespan.and.resolveTo([]);
-
     currentUserSubject = new BehaviorSubject<Entity | undefined>(undefined);
 
     mockEntityRegistry = jasmine.createSpyObj("EntityRegistry", ["has", "get"]);
@@ -123,7 +112,6 @@ describe("AttendanceService", () => {
         AttendanceService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: DatabaseIndexingService, useValue: mockDbIndexing },
-        { provide: ChildrenService, useValue: mockChildrenService },
         { provide: CurrentUserSubject, useValue: currentUserSubject },
         {
           provide: ConfigService,
@@ -176,36 +164,6 @@ describe("AttendanceService", () => {
 
     expect(actualEvents).toEqual(jasmine.arrayContaining([e1_1, e2_1]));
     expect(actualEvents).toHaveSize(2);
-  });
-
-  it("gets events including Notes for a date", async () => {
-    const note1 = Note.create(
-      moment("2020-01-01").toDate(),
-      "manual event note 1",
-    );
-    note1.children.push("1");
-    note1.children.push("2");
-    note1.category = meetingInteractionCategory;
-
-    const note2 = Note.create(
-      moment("2020-01-02").toDate(),
-      "manual event note 2",
-    );
-    note2.children.push("1");
-    note2.category = meetingInteractionCategory;
-
-    mockDbIndexing.queryIndexDocsRange.and.resolveTo([e1_1, e1_2, e2_1]);
-    mockChildrenService.getNotesInTimespan.and.resolveTo([note1, note2]);
-
-    const actualEvents = await service.getEventsOnDate(
-      moment("2020-01-01").toDate(),
-      moment("2020-01-02").toDate(),
-    );
-
-    expect(actualEvents).toHaveSize(5);
-    expect(actualEvents).toEqual(
-      jasmine.arrayContaining([e1_1, e1_2, e2_1, note1, note2]),
-    );
   });
 
   it("gets empty array for a date without events", async () => {
@@ -280,7 +238,7 @@ describe("AttendanceService", () => {
       moment("2021-04-05").toDate(),
       "Same Day Event",
     );
-    sameDayEvent.category = meetingInteractionCategory;
+    sameDayEvent.category = defaultInteractionTypes.find((it) => it.isMeeting);
 
     mockDbIndexing.queryIndexDocsRange.and.resolveTo([sameDayEvent]);
 

@@ -51,11 +51,10 @@ describe("GroupParticipantResolverService (deprecated)", () => {
     testNoteWithSchool.category = meetingInteractionCategory;
     await entityMapper.save(testNoteWithSchool);
 
-    // NOTE: getEventsWithUpdatedParticipants no longer expands group participants.
-    // This test documents the old behaviour; the returned events now only contain
-    // their stored participants.
+    // getEventsOnDate no longer returns normal Notes (only configured event types).
+    // This test documents that the old behaviour is fully removed.
     const actualEvents = await service.getEventsOnDate(date, date);
-    expect(actualEvents).toHaveSize(1);
+    expect(actualEvents).toHaveSize(0);
   });
 
   it("filterExcludedParticipants filters excluded participants from a list", () => {
