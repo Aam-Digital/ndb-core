@@ -1,6 +1,5 @@
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceItem } from "./attendance-item";
-import { RecurringActivity } from "./recurring-activity";
 import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
@@ -26,11 +25,14 @@ export class EventWithAttendance {
   constructor(
     readonly entity: Entity,
     readonly attendanceField: string,
-    readonly dateField: string,
-    readonly relatesToField: string = "relatesTo",
+    readonly dateField: string | undefined,
+    readonly relatesToField: string,
+    readonly eventAssignedUsersField: string,
+    readonly extraField: string | undefined,
   ) {}
 
   get date(): Date | undefined {
+    if (!this.dateField) return undefined;
     return this.entity[this.dateField] as Date | undefined;
   }
 
@@ -43,18 +45,26 @@ export class EventWithAttendance {
   }
 
   /**
-   * The ID of the linked {@link RecurringActivity}, if this event belongs to one.
-   *
-   * This will be generalized to any parent entity type in the future.
+   * The ID of the parent activity this event belongs to, if any.
+   * Corresponds to the `relatesTo` field (or the configured `relatesToField`).
    */
   get activityId(): string | undefined {
-    const val = this.entity[this.relatesToField] as string | undefined;
-    return val?.startsWith(RecurringActivity.ENTITY_TYPE) ? val : undefined;
+    return (
+      (this.entity[this.relatesToField] as string | undefined) || undefined
+    );
   }
 
-  /** Whether this event belongs to a {@link RecurringActivity}. */
+  /** Whether this event belongs to a parent activity. */
   get isActivityEvent(): boolean {
     return !!this.activityId;
+  }
+
+  /**
+   * The users assigned to / responsible for this event.
+   * Corresponds to the `authors` field (or the configured `eventAssignedUsersField`).
+   */
+  get assignedUsers(): string[] {
+    return (this.entity[this.eventAssignedUsersField] as string[]) ?? [];
   }
 
   getAttendanceForParticipant(

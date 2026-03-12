@@ -37,7 +37,7 @@ export class ActivityCardComponent {
    * An optional extra entity field to display on the card (e.g. "category").
    * The value's `label` property is shown if available, otherwise the raw value.
    */
-  readonly extraField = input<string>();
+  readonly extraField = computed(() => this.event().extraField);
 
   /**
    * Whether the event or activity is displayed in the style of events generated from a generic recurring activity.

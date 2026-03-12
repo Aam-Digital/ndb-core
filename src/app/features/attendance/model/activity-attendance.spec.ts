@@ -41,7 +41,14 @@ function generateTestEvent(
       item.remarks = att[2];
     }
   }
-  return new EventWithAttendance(event, "attendance", "date");
+  return new EventWithAttendance(
+    event,
+    "attendance",
+    "date",
+    "relatesTo",
+    "authors",
+    undefined,
+  );
 }
 
 describe("ActivityAttendance", () => {

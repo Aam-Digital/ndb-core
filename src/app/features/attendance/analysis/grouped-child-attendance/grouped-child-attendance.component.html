@@ -6,7 +6,7 @@
 
 <mat-tab-group appTabStateMemo class="activity-tab-group">
   @for (activity of activities; track activity) {
-    <mat-tab [label]="activity.title">
+    <mat-tab [label]="activity.toString()">
       <app-activity-attendance-section
         [entity]="activity"
         [forChild]="entity.getId()"
@@ -28,7 +28,7 @@
             track archivedActivity
           ) {
             <mat-option [value]="archivedActivity">
-              {{ archivedActivity.title }}
+              {{ archivedActivity.toString() }}
             </mat-option>
           }
         </mat-select>

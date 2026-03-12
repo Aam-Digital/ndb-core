@@ -7,18 +7,21 @@ import { ChildSchoolRelation } from "../../../child-dev-project/children/model/c
 import { ExportColumnConfig } from "./export-column-config";
 import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
 import moment from "moment";
-import { RecurringActivity } from "#src/app/features/attendance/model/recurring-activity";
+import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { Entity } from "../../entity/model/entity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
+import { TestEventEntity } from "../../../utils/test-utils/TestEventEntity";
+import { AttendanceService } from "#src/app/features/attendance/attendance.service";
+import { EventWithAttendance } from "#src/app/features/attendance/model/event-with-attendance";
 
 describe("DataTransformationService", () => {
   let service: DataTransformationService;
   let entityMapper: EntityMapperService;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(waitForAsync(async () => {
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
     });
@@ -27,6 +30,20 @@ describe("DataTransformationService", () => {
       DataTransformationService,
     );
     entityMapper = TestBed.inject(EntityMapperService);
+
+    const attendanceService = TestBed.inject(AttendanceService);
+    spyOn(attendanceService, "wrapEventEntity").and.callFake(
+      (entity: Entity) => {
+        return new EventWithAttendance(
+          entity,
+          "attendance",
+          "date",
+          "relatesTo",
+          "authors",
+          undefined,
+        );
+      },
+    );
   }));
 
   it("should be created", () => {
@@ -92,27 +109,30 @@ describe("DataTransformationService", () => {
     const exportConfig: ExportColumnConfig[] = [
       { label: "note", query: ".subject" },
       {
-        query: ".children:toEntities(Child)",
-        subQueries: [{ label: "participant", query: ".name" }],
+        query: ".children",
+        subQueries: [{ label: "participant", query: "." }],
       },
     ];
     const result1 = await service.transformData([noteA, noteB], exportConfig);
 
     expect(result1).toEqual([
-      { note: "A", participant: "John" },
-      { note: "A", participant: "Jane" },
-      { note: "B", participant: "John" },
-      { note: "B", participant: "Jack" },
+      { note: "A", participant: child1.getId() },
+      { note: "A", participant: child2.getId() },
+      { note: "B", participant: child1.getId() },
+      { note: "B", participant: child3.getId() },
     ]);
   });
 
   it("should handle cases where related entity is queried on an empty result set", async () => {
-    const emptyActivity = await createActivityInDB("empty activity", [], []);
+    const emptyEntity = new TestEntity();
+    emptyEntity.name = "empty activity";
+    emptyEntity.refMixed = [];
+    await entityMapper.save(emptyEntity);
 
     const exportConfig: ExportColumnConfig[] = [
-      { label: "activity", query: ".title" },
+      { label: "activity", query: ".name" },
       {
-        query: ".linkedGroups:toEntities(School)",
+        query: ".refMixed:toEntities(TestEntity)",
         subQueries: [
           { label: "school_name", query: "name" },
           {
@@ -123,25 +143,24 @@ describe("DataTransformationService", () => {
         ],
       },
     ];
-    const results = await service.transformData([emptyActivity], exportConfig);
+    const results = await service.transformData([emptyEntity], exportConfig);
     const resultRow = results[0];
-    expect(resultRow["activity"]).toBe(emptyActivity.title);
+    expect(resultRow["activity"]).toBe(emptyEntity.name);
     expect(resultRow["school_name"]).toEqual([]);
     expect(resultRow["related_child"]).toEqual([]);
   });
 
-  it("should export attendance status for each note participant", async () => {
+  it("should export attendance status for each event participant", async () => {
     const child1 = await createChildInDB("present kid");
     const child2 = await createChildInDB("absent kid");
-    const child3 = await createChildInDB("unknown kid");
-    const note = await createNoteInDB(
-      "Note 1",
-      [child1, child2, child3],
+    const event = await createEventInDB(
+      "Event 1",
+      [child1, child2],
       ["PRESENT", "ABSENT"],
     );
 
     const exportConfig: ExportColumnConfig[] = [
-      { label: "note", query: ".subject" },
+      { label: "event", query: ".title" },
       {
         query: ":getAttendanceArray",
         subQueries: [
@@ -157,12 +176,11 @@ describe("DataTransformationService", () => {
       },
     ];
 
-    const result = await service.transformData([note], exportConfig);
+    const result = await service.transformData([event], exportConfig);
 
     expect(result).toEqual([
-      { note: "Note 1", participant: "present kid", status: "PRESENT" },
-      { note: "Note 1", participant: "absent kid", status: "ABSENT" },
-      { note: "Note 1", participant: "unknown kid", status: "" },
+      { event: "Event 1", participant: "present kid", status: "PRESENT" },
+      { event: "Event 1", participant: "absent kid", status: "ABSENT" },
     ]);
   });
 
@@ -170,13 +188,13 @@ describe("DataTransformationService", () => {
     const childWithoutSchool = await createChildInDB("child without school");
     const childWithSchool = await createChildInDB("child with school");
     const school = await createTestEntityInDB("test school", [childWithSchool]);
-    const note = await createNoteInDB(
-      "Note",
+    const event = await createEventInDB(
+      "Event",
       [childWithoutSchool, childWithSchool],
       ["PRESENT", "ABSENT"],
     );
-    note.schools = [school.getId()];
-    await entityMapper.save(note);
+    (event as any).schools = [school.getId()];
+    await entityMapper.save(event);
 
     const exportConfig: ExportColumnConfig[] = [
       {
@@ -184,7 +202,7 @@ describe("DataTransformationService", () => {
         subQueries: [
           {
             label: "participant",
-            query: ".participant:toEntities(Child).name",
+            query: ".participant",
           },
           {
             query: ".school:toEntities(TestEntity)",
@@ -197,12 +215,16 @@ describe("DataTransformationService", () => {
       },
     ];
 
-    const result = await service.transformData([note], exportConfig);
+    const result = await service.transformData([event], exportConfig);
 
     expect(result).toEqual([
-      { participant: "child without school", Name: [], school_id: [] },
       {
-        participant: "child with school",
+        participant: childWithoutSchool.getId(),
+        Name: [],
+        school_id: [],
+      },
+      {
+        participant: childWithSchool.getId(),
         Name: school.name,
         school_id: school.getId(true),
       },
@@ -211,17 +233,13 @@ describe("DataTransformationService", () => {
 
   it("should use first level queries to fetch data if no data is provided", async () => {
     const child = await createChildInDB("some child");
-    const note1 = await createNoteInDB("school", [child], ["PRESENT"]);
-    const note2 = await createNoteInDB("school", [child], ["ABSENT"]);
-    const note3 = await createNoteInDB("coaching", [child], ["PRESENT"]);
-
-    const childrenService = TestBed.inject(ChildrenService);
-    const getNotesInTimespan = spyOn(childrenService, "getNotesInTimespan");
-    getNotesInTimespan.and.resolveTo([note1, note2, note3]);
+    await createEventInDB("school", [child], ["PRESENT"]);
+    await createEventInDB("school", [child], ["ABSENT"]);
+    await createEventInDB("coaching", [child], ["PRESENT"]);
 
     const exportConfig: ExportColumnConfig[] = [
       {
-        query: `${Note.ENTITY_TYPE}:toArray[* subject = school]:getAttendanceArray:getAttendanceReport`,
+        query: `${TestEventEntity.ENTITY_TYPE}:toArray[* title = school]:getAttendanceArray:getAttendanceReport`,
         subQueries: [
           {
             label: "Name",
@@ -234,7 +252,7 @@ describe("DataTransformationService", () => {
         ],
       },
       {
-        query: `${Note.ENTITY_TYPE}:toArray[* subject = coaching]:getAttendanceArray:getAttendanceReport`,
+        query: `${TestEventEntity.ENTITY_TYPE}:toArray[* title = coaching]:getAttendanceArray:getAttendanceReport`,
         subQueries: [
           {
             label: "Name",
@@ -323,15 +341,19 @@ describe("DataTransformationService", () => {
   });
 
   it("should work when using the count function", async () => {
-    await createActivityInDB("first", [new TestEntity(), new TestEntity()]);
-    await createActivityInDB("second", [new TestEntity()]);
+    const e1 = TestEventEntity.create({ title: "first" });
+    e1.attendance = [new AttendanceItem(), new AttendanceItem()];
+    await entityMapper.save(e1);
+    const e2 = TestEventEntity.create({ title: "second" });
+    e2.attendance = [new AttendanceItem()];
+    await entityMapper.save(e2);
 
     const result = await service.queryAndTransformData([
       {
-        query: `${RecurringActivity.ENTITY_TYPE}:toArray`,
+        query: `TestEventEntity:toArray`,
         subQueries: [
           { query: "title" },
-          { query: ".participants:count", label: "Participants" },
+          { query: ".attendance:count", label: "Participants" },
         ],
       },
     ]);
@@ -413,11 +435,35 @@ describe("DataTransformationService", () => {
     note.children = children.map((child) => child.getId());
 
     for (let i = 0; i < attendanceStatus.length; i++) {
-      note.getAttendance(note.children[i]).status =
-        defaultAttendanceStatusTypes.find((s) => s.id === attendanceStatus[i]);
+      const attendance = new AttendanceItem();
+      attendance.participant = note.children[i];
+      attendance.status = defaultAttendanceStatusTypes.find(
+        (s) => s.id === attendanceStatus[i],
+      );
+      note.childrenAttendance.push(attendance);
     }
     await entityMapper.save(note);
     return note;
+  }
+
+  async function createEventInDB(
+    title: string,
+    participants: Entity[] = [],
+    attendanceStatus: string[] = [],
+  ): Promise<TestEventEntity> {
+    const event = TestEventEntity.create({ title, date: new Date() });
+
+    for (let i = 0; i < attendanceStatus.length; i++) {
+      const attendance = new AttendanceItem();
+      attendance.participant = participants[i].getId();
+      attendance.status = defaultAttendanceStatusTypes.find(
+        (s) => s.id === attendanceStatus[i],
+      );
+      event.attendance.push(attendance);
+    }
+
+    await entityMapper.save(event);
+    return event;
   }
 
   async function createTestEntityInDB(
@@ -437,19 +483,5 @@ describe("DataTransformationService", () => {
     }
 
     return school;
-  }
-
-  async function createActivityInDB(
-    activityTitle: string,
-    participants: Entity[] = [],
-    groups: TestEntity[] = [],
-  ): Promise<RecurringActivity> {
-    const activity = new RecurringActivity();
-    activity.title = activityTitle;
-    activity.participants = participants.map((p) => p.getId());
-    activity.linkedGroups = groups.map((g) => g.getId());
-    await entityMapper.save(activity);
-
-    return activity;
   }
 });
