@@ -84,7 +84,7 @@ describe("RollCallSetupComponent", () => {
     expect(component.activeEvents()).toEqual([event1, event2]);
   }));
 
-  it("showingAll is true when  there are no events", fakeAsync(() => {
+  it("showingAll is true when there are no events", fakeAsync(() => {
     const event = wrapEvent(TestEventEntity.create());
     mockAttendanceService.getAvailableEventsForRollCall.and.resolveTo({
       events: [],

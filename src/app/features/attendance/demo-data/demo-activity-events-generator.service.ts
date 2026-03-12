@@ -97,7 +97,7 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<Entity
     for (const [evField, actField] of Object.entries(
       typeSettings.fieldMapping,
     )) {
-      event[evField] = activity[actField];
+      event[evField] = structuredClone(activity[actField]);
     }
 
     // Set relatesTo

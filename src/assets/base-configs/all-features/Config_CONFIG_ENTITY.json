@@ -1708,36 +1708,6 @@
                 }
               }
             ]
-          },
-          {
-            "title": "Activities",
-            "components": [
-              {
-                "component": "RelatedEntities",
-                "config": {
-                  "entityType": "RecurringActivity",
-                  "columns": [
-                    {
-                      "id": "title",
-                      "editComponent": "EditTextWithAutocomplete",
-                      "additional": {
-                        "entityType": "RecurringActivity",
-                        "relevantProperty": "linkedGroups"
-                      }
-                    },
-                    {
-                      "id": "assignedTo"
-                    },
-                    {
-                      "id": "linkedGroups"
-                    },
-                    {
-                      "id": "excludedParticipants"
-                    }
-                  ]
-                }
-              }
-            ]
           }
         ]
       },
