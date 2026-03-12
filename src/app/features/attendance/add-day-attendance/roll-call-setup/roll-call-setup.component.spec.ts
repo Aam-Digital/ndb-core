@@ -16,7 +16,14 @@ import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import { EventWithAttendance } from "../../model/event-with-attendance";
 
 function wrapEvent(entity: TestEventEntity): EventWithAttendance {
-  return new EventWithAttendance(entity, "attendance", "date", "relatesTo");
+  return new EventWithAttendance(
+    entity,
+    "attendance",
+    "date",
+    "relatesTo",
+    "authors",
+    undefined,
+  );
 }
 
 describe("RollCallSetupComponent", () => {

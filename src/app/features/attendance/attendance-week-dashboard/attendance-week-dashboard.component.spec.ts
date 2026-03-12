@@ -22,7 +22,15 @@ describe("AttendanceWeekDashboardComponent", () => {
     ]);
     mockAttendanceService.getEventsOnDate.and.resolveTo([]);
     mockAttendanceService.wrapEventEntity.and.callFake(
-      (e) => new EventWithAttendance(e, "attendance", "date"),
+      (e) =>
+        new EventWithAttendance(
+          e,
+          "attendance",
+          "date",
+          "relatesTo",
+          "authors",
+          undefined,
+        ),
     );
     TestBed.configureTestingModule({
       imports: [

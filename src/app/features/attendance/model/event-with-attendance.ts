@@ -25,13 +25,14 @@ export class EventWithAttendance {
   constructor(
     readonly entity: Entity,
     readonly attendanceField: string,
-    readonly dateField: string,
-    readonly relatesToField: string = "relatesTo",
-    readonly assignedUsersField: string = "authors",
-    readonly extraField: string = "",
+    readonly dateField: string | undefined,
+    readonly relatesToField: string,
+    readonly eventAssignedUsersField: string,
+    readonly extraField: string | undefined,
   ) {}
 
   get date(): Date | undefined {
+    if (!this.dateField) return undefined;
     return this.entity[this.dateField] as Date | undefined;
   }
 
@@ -60,10 +61,10 @@ export class EventWithAttendance {
 
   /**
    * The users assigned to / responsible for this event.
-   * Corresponds to the `authors` field (or the configured `authorsField`).
+   * Corresponds to the `authors` field (or the configured `eventAssignedUsersField`).
    */
   get assignedUsers(): string[] {
-    return (this.entity[this.assignedUsersField] as string[]) ?? [];
+    return (this.entity[this.eventAssignedUsersField] as string[]) ?? [];
   }
 
   getAttendanceForParticipant(

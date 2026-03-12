@@ -9,8 +9,6 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceItem } from "../model/attendance-item";
 import { AttendanceService } from "../attendance.service";
 import { EventTypeSettings } from "../model/attendance-feature-config";
-import { AttendanceDatatype } from "../model/attendance.datatype";
-import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
 
 export class DemoEventsConfig {
   forNLastYears: number;
@@ -87,10 +85,8 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<Entity
     const event = new typeSettings.eventType(faker.string.uuid());
 
     // Set date
-    const dateField =
-      typeSettings.dateField ?? DateDatatype.detectFieldInEntity(event);
-    if (dateField) {
-      event[dateField] = date;
+    if (typeSettings.dateField) {
+      event[typeSettings.dateField] = date;
     }
 
     // Apply field mapping (activity[actField] → event[evField])
@@ -108,9 +104,8 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<Entity
       (activity[typeSettings.participantsField] as string[]) ?? [];
 
     // Set attendance items
-    const attendanceField = AttendanceDatatype.detectFieldInEntity(event);
-    if (attendanceField) {
-      event[attendanceField] = participantIds.map((participantId) => {
+    event[typeSettings.attendanceField] = participantIds.map(
+      (participantId) => {
         const eventAtt = new AttendanceItem(undefined, "", participantId);
         eventAtt.status = faker.helpers.arrayElement(
           defaultAttendanceStatusTypes,
@@ -124,8 +119,8 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<Entity
           ]);
         }
         return eventAtt;
-      });
-    }
+      },
+    );
 
     return event;
   }

@@ -70,6 +70,13 @@ export class TestEventEntity extends Entity {
       event.attendance.push(item);
     }
     event.relatesTo = activity?.getId();
-    return new EventWithAttendance(event, "attendance", "date");
+    return new EventWithAttendance(
+      event,
+      "attendance",
+      "date",
+      "relatesTo",
+      "authors",
+      undefined,
+    );
   }
 }

@@ -16,7 +16,8 @@
             }
           ],
           "participantsField": "participants",
-          "assignedUsersField": "assignedTo",
+          "eventAssignedUsersField": "authors",
+          "activityAssignedUsersField": "assignedTo",
           "relatesToField": "parentActivity",
           "extraField": "category",
           "fieldMapping": {

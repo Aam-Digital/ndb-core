@@ -79,8 +79,10 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
     }
 
     // Set assigned user via the configured field
-    if (typeSettings.assignedUsersField) {
-      activity[typeSettings.assignedUsersField] = [assignedUser.getId()];
+    if (typeSettings.activityAssignedUsersField) {
+      activity[typeSettings.activityAssignedUsersField] = [
+        assignedUser.getId(),
+      ];
     }
 
     // Set mapped fields on the activity (reverse: event field → activity field)

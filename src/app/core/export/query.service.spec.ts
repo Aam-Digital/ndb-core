@@ -60,7 +60,15 @@ describe("QueryService", () => {
     );
     mockAttendanceService.getEventsOnDate.and.returnValue(Promise.resolve([]));
     mockAttendanceService.wrapEventEntity.and.callFake(
-      (e) => new EventWithAttendance(e, "attendance", "date"),
+      (e) =>
+        new EventWithAttendance(
+          e,
+          "attendance",
+          "date",
+          "relatesTo",
+          "authors",
+          undefined,
+        ),
     );
 
     mockEntityRegistry = new EntityRegistry();

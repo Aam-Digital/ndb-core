@@ -18,6 +18,7 @@ import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { GroupParticipantResolverService } from "./deprecated/group-participant-resolver";
 import { AttendanceDatatype } from "./model/attendance.datatype";
 import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 @Injectable({
   providedIn: "root",
@@ -67,17 +68,32 @@ export class AttendanceService {
         if (activityTypeName && !this.entityRegistry.has(activityTypeName))
           return null;
 
+        const eventType = this.entityRegistry.get(eventTypeName);
+
+        const resolvedDateField =
+          typeConfig.dateField ?? DateDatatype.detectFieldInEntity(eventType);
+        if (!resolvedDateField) {
+          Logging.warn(
+            `[AttendanceService] No date field found for event type "${eventTypeName}". ` +
+              `Set "dateField" in the attendance config or add a @DatabaseField with dataType "date" to the entity.`,
+          );
+        }
+
         return {
           activityType: activityTypeName
             ? this.entityRegistry.get(activityTypeName)
             : undefined,
-          eventType: this.entityRegistry.get(eventTypeName),
+          eventType,
           participantsField: typeConfig.participantsField ?? "participants",
-          dateField: typeConfig.dateField,
+          attendanceField:
+            typeConfig.attendanceField ??
+            AttendanceDatatype.detectFieldInEntity(eventType),
+          dateField: resolvedDateField,
           relatesToField: typeConfig.relatesToField ?? "relatesTo",
-          assignedUsersField: typeConfig.assignedUsersField ?? "authors",
+          eventAssignedUsersField: typeConfig.eventAssignedUsersField,
+          activityAssignedUsersField: typeConfig.activityAssignedUsersField,
           filterConfig: typeConfig.filterConfig ?? [],
-          extraField: typeConfig.extraField ?? "",
+          extraField: typeConfig.extraField,
           fieldMapping: typeConfig.fieldMapping ?? {},
         } as EventTypeSettings;
       })
@@ -397,19 +413,19 @@ ${byParticipantChecks}
     const typeSettings = this.eventTypeSettings.find(
       (s) => s.eventType.ENTITY_TYPE === entity.getType(),
     );
-    const attendanceField =
-      AttendanceDatatype.detectFieldInEntity(entity) ?? "attendance";
-    const dateField =
-      typeSettings?.dateField ??
-      DateDatatype.detectFieldInEntity(entity) ??
-      "date";
+    if (!typeSettings) {
+      throw new Error(
+        `No attendance event config found for "${entity.getType()}"`,
+      );
+    }
+
     return new EventWithAttendance(
       entity,
-      attendanceField,
-      dateField,
-      typeSettings?.relatesToField ?? "relatesTo",
-      typeSettings?.assignedUsersField ?? "authors",
-      typeSettings?.extraField ?? "",
+      typeSettings.attendanceField,
+      typeSettings.dateField,
+      typeSettings.relatesToField,
+      typeSettings.eventAssignedUsersField,
+      typeSettings.extraField,
     );
   }
 
@@ -427,9 +443,10 @@ ${byParticipantChecks}
             s.activityType !== undefined &&
             s.activityType.ENTITY_TYPE === activity.getType(),
         );
-        const relatesToField = typeSettings?.relatesToField ?? "relatesTo";
         if (
-          existingEvents.find((e) => e[relatesToField] === activity.getId())
+          existingEvents.find(
+            (e) => e[typeSettings?.relatesToField] === activity.getId(),
+          )
         ) {
           return undefined;
         }
@@ -514,10 +531,8 @@ ${byParticipantChecks}
     const instance = new typeSettings.eventType();
 
     // Set date
-    const dateField =
-      typeSettings.dateField ?? DateDatatype.detectFieldInEntity(instance);
-    if (dateField) {
-      instance[dateField] = date;
+    if (typeSettings.dateField) {
+      instance[typeSettings.dateField] = date;
     }
 
     // Apply field mapping (activity[actField] → event[evField])
@@ -548,47 +563,44 @@ ${byParticipantChecks}
     }
 
     // Set attendance items
-    const attendanceField = AttendanceDatatype.detectFieldInEntity(instance);
-    if (attendanceField) {
-      instance[attendanceField] = participantIds.map(
-        (id) => new AttendanceItem(undefined, "", id),
-      );
-    }
+    instance[typeSettings.attendanceField] = participantIds.map(
+      (id) => new AttendanceItem(undefined, "", id),
+    );
 
     // Set relatesTo
     instance[typeSettings.relatesToField] = activity.getId();
 
     // Set authors
     if (this.currentUser.value) {
-      instance[typeSettings.assignedUsersField] = [
+      instance[typeSettings.eventAssignedUsersField] = [
         this.currentUser.value.getId(),
       ];
     }
 
     return new EventWithAttendance(
       instance,
-      attendanceField ?? "attendance",
-      dateField ?? "date",
+      typeSettings.attendanceField,
+      typeSettings.dateField,
       typeSettings.relatesToField,
-      typeSettings.assignedUsersField,
+      typeSettings.eventAssignedUsersField,
       typeSettings.extraField,
     );
   }
 
   /**
-   * Get the field name on an activity entity that holds assigned user IDs.
-   * Falls back to "assignedTo" if no matching config is found.
+   * Get the assigned user IDs from an activity entity using the configured
+   * `activityAssignedUsersField`. Returns `undefined` if no field is configured
+   * or the field is not an array on the entity.
    */
   private getActivityAssignedUsers(activity: Entity): string[] | undefined {
     const actType = activity.getType();
     for (const s of this.eventTypeSettings) {
       if (s.activityType?.ENTITY_TYPE === actType) {
-        // try the configured event assignedUsersField on the activity as well
-        const val = activity[s.assignedUsersField];
+        if (!s.activityAssignedUsersField) continue;
+        const val = activity[s.activityAssignedUsersField];
         if (Array.isArray(val)) return val;
       }
     }
-    // fallback: check common field name
-    return activity["assignedTo"] as string[] | undefined;
+    return undefined;
   }
 }

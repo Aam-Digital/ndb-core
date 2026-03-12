@@ -135,6 +135,7 @@ describe("AttendanceService", () => {
                     {
                       activityType: "RecurringActivity",
                       eventType: "Note",
+                      activityAssignedUsersField: "assignedTo",
                       filterConfig: [{ id: "category" }],
                       extraField: "category",
                       fieldMapping: {

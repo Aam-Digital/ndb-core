@@ -112,7 +112,14 @@ describe("ActivityAttendanceSectionComponent", () => {
     );
     const latestEvent = TestEventEntity.create(new Date());
     const wrap = (e: TestEventEntity) =>
-      new EventWithAttendance(e, "attendance", "date");
+      new EventWithAttendance(
+        e,
+        "attendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      );
     const oldestAttendance = ActivityAttendance.create(oldestEvent.date, [
       wrap(oldestEvent),
     ]);

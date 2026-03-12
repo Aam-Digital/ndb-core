@@ -41,10 +41,23 @@ export interface EventTypeConfig {
   relatesToField?: string;
 
   /**
+   * Override the auto-detected attendance field on the event entity.
+   * If omitted, the attendance field is detected via the `AttendanceDatatype` schema annotation.
+   */
+  attendanceField?: string;
+
+  /**
    * Event entity field name used to stamp the current user onto the created event.
    * Defaults to `"authors"`.
    */
-  assignedUsersField?: string;
+  eventAssignedUsersField?: string;
+
+  /**
+   * Activity entity field holding assigned user IDs.
+   * Used to filter and sort events by the current user's activity assignments.
+   * If omitted, activity-level user assignment is not used.
+   */
+  activityAssignedUsersField?: string;
 
   /** Filter fields shown in the roll-call event selection UI. */
   filterConfig?: FilterConfig[];
@@ -81,8 +94,15 @@ export interface EventTypeSettings {
   participantsField: string;
 
   /**
-   * Override for the date field on the event entity.
-   * `undefined` means auto-detect via `DateDatatype`.
+   * Event entity field holding the attendance data.
+   * Resolved at config time: explicit config > schema detection > `"attendance"` fallback.
+   */
+  attendanceField: string;
+
+  /**
+   * Event entity field holding the date.
+   * Resolved at config time: explicit config > schema detection.
+   * `undefined` if no date field could be determined (a warning is logged).
    */
   dateField: string | undefined;
 
@@ -90,13 +110,19 @@ export interface EventTypeSettings {
   relatesToField: string;
 
   /** Event field for stamping the current user. */
-  assignedUsersField: string;
+  eventAssignedUsersField: string;
+
+  /**
+   * Activity field holding assigned user IDs.
+   * `undefined` means activity-level user assignment is not used.
+   */
+  activityAssignedUsersField: string | undefined;
 
   /** Filter fields for the roll-call UI. */
-  filterConfig?: FilterConfig[];
+  filterConfig: FilterConfig[];
 
-  /** Extra field shown on each event card. */
-  extraField?: string;
+  /** Extra field shown on each event card. `undefined` if not configured. */
+  extraField: string | undefined;
 
   /** Field mapping: event field ← activity field. */
   fieldMapping: { [eventField: string]: string };

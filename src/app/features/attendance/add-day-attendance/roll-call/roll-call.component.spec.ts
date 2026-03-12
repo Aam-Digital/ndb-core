@@ -112,6 +112,9 @@ describe("RollCallComponent", () => {
                   new Note(),
                   "childrenAttendance",
                   "date",
+                  "relatesTo",
+                  "authors",
+                  undefined,
                 ),
               ),
             getEventsOnDate: () => Promise.resolve([]),
@@ -130,6 +133,9 @@ describe("RollCallComponent", () => {
         Note.create(new Date()),
         "childrenAttendance",
         "date",
+        "relatesTo",
+        "authors",
+        undefined,
       ),
     );
     fixture.detectChanges();
@@ -146,7 +152,14 @@ describe("RollCallComponent", () => {
     addParticipant(event, participant1);
     fixture.componentRef.setInput(
       "eventEntity",
-      new EventWithAttendance(event, "childrenAttendance", "date"),
+      new EventWithAttendance(
+        event,
+        "childrenAttendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
     );
     stabilize();
 
@@ -166,6 +179,9 @@ describe("RollCallComponent", () => {
         noteWithNonExistingChild,
         "childrenAttendance",
         "date",
+        "relatesTo",
+        "authors",
+        undefined,
       ),
     );
     stabilize();
@@ -185,7 +201,14 @@ describe("RollCallComponent", () => {
 
     fixture.componentRef.setInput(
       "eventEntity",
-      new EventWithAttendance(note, "childrenAttendance", "date"),
+      new EventWithAttendance(
+        note,
+        "childrenAttendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
     );
     stabilize();
 
@@ -215,7 +238,14 @@ describe("RollCallComponent", () => {
     const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
     fixture.componentRef.setInput(
       "eventEntity",
-      new EventWithAttendance(note, "childrenAttendance", "date"),
+      new EventWithAttendance(
+        note,
+        "childrenAttendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
     );
     stabilize();
 
@@ -246,7 +276,14 @@ describe("RollCallComponent", () => {
     event.subject = "test";
     fixture.componentRef.setInput(
       "eventEntity",
-      new EventWithAttendance(event, "childrenAttendance", "date"),
+      new EventWithAttendance(
+        event,
+        "childrenAttendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
     );
     stabilize();
 
@@ -264,7 +301,14 @@ describe("RollCallComponent", () => {
     event.subject = "test";
     fixture.componentRef.setInput(
       "eventEntity",
-      new EventWithAttendance(event, "childrenAttendance", "date"),
+      new EventWithAttendance(
+        event,
+        "childrenAttendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
     );
     stabilize();
 
@@ -278,7 +322,14 @@ describe("RollCallComponent", () => {
     addParticipant(event, participant1);
     fixture.componentRef.setInput(
       "eventEntity",
-      new EventWithAttendance(event, "childrenAttendance", "date"),
+      new EventWithAttendance(
+        event,
+        "childrenAttendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
     );
     stabilize();
 
@@ -300,7 +351,14 @@ describe("RollCallComponent", () => {
     ).status = ABSENT;
     fixture.componentRef.setInput(
       "eventEntity",
-      new EventWithAttendance(note, "childrenAttendance", "date"),
+      new EventWithAttendance(
+        note,
+        "childrenAttendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
     );
     stabilize();
 
@@ -356,7 +414,14 @@ describe("RollCallComponent", () => {
     }
     fixture.componentRef.setInput(
       "eventEntity",
-      new EventWithAttendance(event, "childrenAttendance", "date"),
+      new EventWithAttendance(
+        event,
+        "childrenAttendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
     );
     stabilize();
 

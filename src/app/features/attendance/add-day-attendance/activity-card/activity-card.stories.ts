@@ -54,18 +54,39 @@ demoChildren.forEach((c) => {
 
 export const OneTimeEvent: StoryObj<ActivityCardComponent> = {
   args: {
-    event: new EventWithAttendance(simpleEvent, "childrenAttendance", "date"),
+    event: new EventWithAttendance(
+      simpleEvent,
+      "childrenAttendance",
+      "date",
+      "relatesTo",
+      "authors",
+      undefined,
+    ),
   },
 };
 
 export const OneTimeEventComplex: StoryObj<ActivityCardComponent> = {
   args: {
-    event: new EventWithAttendance(longEvent, "childrenAttendance", "date"),
+    event: new EventWithAttendance(
+      longEvent,
+      "childrenAttendance",
+      "date",
+      "relatesTo",
+      "authors",
+      undefined,
+    ),
   },
 };
 
 export const RecurringEvent: StoryObj<ActivityCardComponent> = {
   args: {
-    event: new EventWithAttendance(activityEvent, "childrenAttendance", "date"),
+    event: new EventWithAttendance(
+      activityEvent,
+      "childrenAttendance",
+      "date",
+      "relatesTo",
+      "authors",
+      undefined,
+    ),
   },
 };

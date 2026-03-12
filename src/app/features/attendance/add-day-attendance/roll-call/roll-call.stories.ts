@@ -34,6 +34,9 @@ export const Primary: StoryObj<RollCallComponent> = {
       demoEvent,
       "childrenAttendance",
       "date",
+      "relatesTo",
+      "authors",
+      undefined,
     ),
   },
 };
@@ -44,6 +47,9 @@ export const Finished: StoryObj<RollCallComponent> = {
       new Note(),
       "childrenAttendance",
       "date",
+      "relatesTo",
+      "authors",
+      undefined,
     ),
   },
 };

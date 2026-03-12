@@ -7,7 +7,8 @@
           "activityType": "RecurringActivity",
           "eventType": "Event",
           "participantsField": "participants",
-          "assignedUsersField": "authors",
+          "eventAssignedUsersField": "authors",
+          "activityAssignedUsersField": "assignedTo",
           "relatesToField": "parentActivity",
           "fieldMapping": {
             "title": "title"
@@ -17,7 +18,7 @@
           "activityType": "School",
           "eventType": "ClassSession",
           "participantsField": "entityMultiField",
-          "assignedUsersField": "teachers",
+          "eventAssignedUsersField": "teachers",
           "fieldMapping": {
             "title": "name"
           }

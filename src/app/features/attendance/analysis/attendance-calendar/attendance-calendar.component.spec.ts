@@ -26,7 +26,14 @@ describe("AttendanceCalendarComponent", () => {
       "createEventForActivity",
     ]);
     mockAttendanceService.createEventForActivity.and.resolveTo(
-      new EventWithAttendance(new TestEventEntity(), "attendance", "date"),
+      new EventWithAttendance(
+        new TestEventEntity(),
+        "attendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
     );
 
     TestBed.configureTestingModule({
@@ -99,7 +106,16 @@ describe("AttendanceCalendarComponent", () => {
         ),
       ],
     });
-    component.records = [new EventWithAttendance(event, "attendance", "date")];
+    component.records = [
+      new EventWithAttendance(
+        event,
+        "attendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
+    ];
 
     component.selectDay(new Date());
 
@@ -112,7 +128,16 @@ describe("AttendanceCalendarComponent", () => {
     const testDate = new Date();
     const excludedChild = new TestEntity("excluded_child");
     const event = TestEventEntity.create(testDate);
-    component.records = [new EventWithAttendance(event, "attendance", "date")];
+    component.records = [
+      new EventWithAttendance(
+        event,
+        "attendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
+    ];
     component.highlightForChild = excludedChild.getId();
 
     component.selectDay(testDate);
