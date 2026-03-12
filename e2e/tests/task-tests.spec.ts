@@ -69,7 +69,10 @@ test("Add a new task record to the list", async ({ page }) => {
     .locator("#entity-field__relatedEntities")
     .locator(".fa-caret-down")
     .click();
-  await page.getByRole("option", { name: "Anand Trivedi" }).click();
+  // Entity options load asynchronously; use a longer timeout for the first click
+  await page
+    .getByRole("option", { name: "Anand Trivedi" })
+    .click({ timeout: 15_000 });
   await page.getByRole("option", { name: "Anand Nehru" }).click();
   await page.getByRole("option", { name: "Arun Kapoor" }).click();
   // Click the subject field to close the autocomplete via focusout rather than
@@ -158,6 +161,9 @@ test("Edit the related records assigned to the task", async ({ page }) => {
 
   // Then the form is displayed; I click "Edit" and the fields become editable
   await dialog.getByRole("button", { name: "Edit" }).click();
+
+  // Wait for edit mode to fully initialise (Save button appears once form controls are ready)
+  await expect(dialog.getByRole("button", { name: "Save" })).toBeVisible();
 
   // Open the Related Records dropdown
   await page

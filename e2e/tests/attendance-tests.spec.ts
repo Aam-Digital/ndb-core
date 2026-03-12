@@ -198,6 +198,9 @@ test("Edit participants of a recurring activity", async ({ page }) => {
   // And I click on "Edit"
   await page.getByRole("button", { name: "Edit" }).click();
 
+  // Wait for edit mode to fully initialise
+  await expect(page.getByRole("button", { name: "Save" })).toBeVisible();
+
   // And I click on the "Participants" field to open the dropdown
   await page
     .locator("#entity-field__participants")
@@ -284,11 +287,15 @@ test("Assign a recurring activity to a user", async ({ page }) => {
   // When I assign myself
   await page.getByRole("button", { name: "Edit" }).click();
 
+  // Wait for edit mode to fully initialise
+  await expect(page.getByRole("button", { name: "Save" })).toBeVisible();
+
   await page.locator("#entity-field__assignedTo").click();
 
+  // Entity options load asynchronously; use a longer timeout for the first click
   await page
     .getByRole("option", { name: currentUser.name, exact: true })
-    .click();
+    .click({ timeout: 10_000 });
   await page.getByRole("button", { name: "Save" }).click();
 
   // Then I navigate to Record Attendance

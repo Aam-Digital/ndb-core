@@ -34,7 +34,7 @@ export default defineConfig({
     [process.env.CI ? "github" : "null"],
   ],
   retries: process.env.CI ? 2 : undefined,
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
   forbidOnly: process.env.CI ? true : undefined,
 
   use: {
