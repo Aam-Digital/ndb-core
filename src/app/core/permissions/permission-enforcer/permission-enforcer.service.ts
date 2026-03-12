@@ -13,10 +13,20 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 import { Logging } from "../../logging/logging.service";
 
 /**
- * This service checks whether the relevant rules for the current user changed.
- * If it detects a change, all Entity types that have read restrictions are collected.
- * All entities of these entity types are loaded and checked whether the currently logged-in user has read permissions.
- * If one entity is found for which the user does **not** have read permissions, then the local database is destroyed and a new sync has to start.
+ * This service checks whether the relevant rules for the current user changed
+ * and reacts accordingly.
+ *
+ * **`indexeddb` adapter (PouchDB 8+):**
+ * Scans locally-cached entities of restricted types and purges any that the
+ * current CASL rules deny reading. Immediately updates the UI without a page
+ * reload. Also calls `resetSync()` so the next sync cycle can receive a
+ * `lostPermissions` list from the replication proxy for any remaining docs
+ * that haven't been synced yet.
+ *
+ * **Legacy `idb` adapter (PouchDB < 8, purge not supported):**
+ * Falls back to the classic behaviour — if any inaccessible entity is found
+ * locally, calls `destroyDatabases()` + `location.reload()` to force a clean
+ * re-sync.
  */
 @Injectable({ providedIn: "root" })
 export class PermissionEnforcerService {
@@ -46,25 +56,45 @@ export class PermissionEnforcerService {
       return;
     }
 
-    const subjects = this.getSubjectsWithReadRestrictions(userRules);
-    if (await this.dbHasEntitiesWithoutPermissions(subjects)) {
+    if (this.dbResolver.isIndexedDbAdapterSupported()) {
+      // indexeddb adapter: purge inaccessible entities locally first (immediate UI update),
+      // then reset sync so the server-side lostPermissions flow also runs.
       Logging.debug(
-        "Detected changed permissions for user. Destroying local db due to lost permissions ...",
+        "Detected changed permissions for user. Purging inaccessible entities and resetting sync ...",
       );
       this.analyticsService.eventTrack(
-        "destroying local db due to lost permissions",
+        "re-sync triggered due to changed permissions",
         { category: "Migration" },
       );
-      // TODO: is it enough to destroy the default DB or could other DBs also be affected?
-      await this.dbResolver.destroyDatabases();
-      this.location.reload();
-    } else {
-      // Rules changed but no lost permissions — the user may have gained access to new data.
-      // Clear sync checkpoints to force a full re-check on the next sync.
-      Logging.debug(
-        "Detected changed permissions for user. Resetting sync ...",
-      );
+      const subjects = this.getSubjectsWithReadRestrictions(userRules);
+      // First pass: purge immediately so the UI updates without waiting for sync.
+      await this.purgeEntitiesWithoutPermissions(subjects);
+      // Sync so the server can also process access changes and provide lostPermissions.
+      // NOTE: the sync may temporarily re-add entities that were purged above if the
+      // concurrent push (user entity change) hasn't been processed by the server yet.
       await this.dbResolver.resetSync();
+      // Second pass: purge any entities that were re-synced before the server
+      // processed the access change (handles push/pull race condition).
+      await this.purgeEntitiesWithoutPermissions(subjects);
+    } else {
+      // Legacy idb adapter: purge() not available — fall back to destroy + reload when needed.
+      const subjects = this.getSubjectsWithReadRestrictions(userRules);
+      if (await this.dbHasEntitiesWithoutPermissions(subjects)) {
+        Logging.debug(
+          "Detected changed permissions for user. Destroying local db due to lost permissions ...",
+        );
+        this.analyticsService.eventTrack(
+          "destroying local db due to lost permissions",
+          { category: "Migration" },
+        );
+        await this.dbResolver.destroyDatabases();
+        this.location.reload();
+      } else {
+        Logging.debug(
+          "Detected changed permissions for user. Resetting sync ...",
+        );
+        await this.dbResolver.resetSync();
+      }
     }
 
     // update stored rules to check for future changes
@@ -126,6 +156,28 @@ export class PermissionEnforcerService {
     }
     // Only return valid entities
     return subjects.filter((sub) => this.entities.has(sub));
+  }
+
+  private async purgeEntitiesWithoutPermissions(
+    subjects: EntityConstructor[],
+  ): Promise<void> {
+    // wait for config service to be ready before using the entity mapper
+    await firstValueFrom(this.configService.configUpdates);
+    for (const subject of subjects) {
+      const entities = await this.entityMapper.loadType(subject);
+      for (const entity of entities) {
+        if (this.ability.cannot("read", entity)) {
+          try {
+            await this.dbResolver.getDatabase().purge(entity.getId());
+            Logging.debug(
+              `Purged locally inaccessible entity: ${entity.getId()}`,
+            );
+          } catch (err) {
+            Logging.warn(`Error trying to purge entity`, entity.getId(), err);
+          }
+        }
+      }
+    }
   }
 
   private async dbHasEntitiesWithoutPermissions(

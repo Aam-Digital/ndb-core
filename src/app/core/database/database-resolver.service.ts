@@ -66,6 +66,16 @@ export class DatabaseResolverService {
   }
 
   /**
+   * Returns true when the `indexeddb` adapter (PouchDB 8+) is active.
+   * On this adapter, `PouchDatabase.purge()` is supported so targeted document
+   * removal is available. When false (legacy `idb` adapter), callers must fall
+   * back to `destroyDatabases()` for full data hygiene.
+   */
+  isIndexedDbAdapterSupported(): boolean {
+    return this.dbConfig?.adapter === "indexeddb";
+  }
+
+  /**
    * Clear sync checkpoint documents in all synced databases,
    * forcing a full re-check on the next sync without deleting any data.
    */
