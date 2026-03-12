@@ -54,4 +54,17 @@ describe("BulkMergeRecordsComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("should not include internal fields (like _id) in the fields to merge", () => {
+    // _id is an internal field with a label - it must not appear in the merge UI
+    const internalFieldIds = component.fieldsToMerge
+      .map((f) => f.id)
+      .filter((id) => TestEntity.schema.get(id)?.isInternalField);
+    expect(internalFieldIds).toEqual([]);
+  });
+
+  it("should not include _id field in the fields to merge", () => {
+    const fieldIds = component.fieldsToMerge.map((f) => f.id);
+    expect(fieldIds).not.toContain("_id");
+  });
 });
