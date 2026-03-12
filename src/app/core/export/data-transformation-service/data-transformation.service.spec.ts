@@ -34,30 +34,13 @@ describe("DataTransformationService", () => {
     const attendanceService = TestBed.inject(AttendanceService);
     spyOn(attendanceService, "wrapEventEntity").and.callFake(
       (entity: Entity) => {
-        if (entity.getType() === TestEventEntity.ENTITY_TYPE) {
-          return new EventWithAttendance(
-            entity,
-            "attendance",
-            "date",
-            "relatesTo",
-            "authors",
-            undefined,
-          );
-        }
-
-        if (entity.getType() === Note.ENTITY_TYPE) {
-          return new EventWithAttendance(
-            entity,
-            "childrenAttendance",
-            "date",
-            "parentActivity",
-            "authors",
-            undefined,
-          );
-        }
-
-        throw new Error(
-          `Unexpected attendance entity type: ${entity.getType()}`,
+        return new EventWithAttendance(
+          entity,
+          "attendance",
+          "date",
+          "relatesTo",
+          "authors",
+          undefined,
         );
       },
     );
