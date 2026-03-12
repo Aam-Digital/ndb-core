@@ -178,6 +178,9 @@ test("Edit the related records assigned to the task", async ({ page }) => {
     dialog.locator("mat-chip-row").getByText("Amrita Nayar"),
   ).toBeVisible();
 
+  // Wait for the autocomplete dropdown overlay to fully close before clicking
+  await expect(page.getByRole("listbox")).not.toBeVisible();
+
   // And I click on "Save"
   await dialog.getByRole("button", { name: "Save" }).click();
 
@@ -365,4 +368,21 @@ test("Complete a task that is related to a child", async ({ page }) => {
   await expect(
     page.getByRole("cell", { name: TASK_SUBJECT }),
   ).not.toBeVisible();
+
+  // Switch to the "Completed" filter to see completed tasks
+  await page.getByRole("button", { name: "Completed" }).click();
+
+  // The completed task appears in the list with the "completed" column visible
+  await expect(page.getByRole("cell", { name: TASK_SUBJECT })).toBeVisible();
+
+  // [screenshot] table view showing the completed column
+  await argosScreenshot(page, "task-completed-table");
+
+  // Open the task to verify the completed field in the dialog
+  await page.getByRole("cell", { name: TASK_SUBJECT }).click();
+
+  const completedDialog = page.getByRole("dialog");
+  await expect(completedDialog).toBeVisible();
+
+  await argosScreenshot(page, "task-completed-dialog");
 });
