@@ -54,4 +54,5 @@ describe("BulkMergeRecordsComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+  })
   
