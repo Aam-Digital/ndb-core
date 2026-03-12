@@ -167,10 +167,14 @@ export class PermissionEnforcerService {
       const entities = await this.entityMapper.loadType(subject);
       for (const entity of entities) {
         if (this.ability.cannot("read", entity)) {
-          await this.dbResolver.getDatabase().purge(entity.getId());
-          Logging.debug(
-            `Purged locally inaccessible entity: ${entity.getId()}`,
-          );
+          try {
+            await this.dbResolver.getDatabase().purge(entity.getId());
+            Logging.debug(
+              `Purged locally inaccessible entity: ${entity.getId()}`,
+            );
+          } catch (err) {
+            Logging.warn(`Error trying to purge entity`, entity.getId(), err);
+          }
         }
       }
     }

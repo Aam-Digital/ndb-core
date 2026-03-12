@@ -88,7 +88,7 @@ export abstract class Database {
    * @param id The document ID to purge
    */
   purge(_id: string): Promise<boolean> {
-    return Promise.resolve(false);
+    throw new Error("purge() is not supported by this database implementation");
   }
 
   /**
