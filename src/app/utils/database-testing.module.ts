@@ -12,6 +12,7 @@ import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper
 import { getDefaultConfigEntity } from "../core/config/testing-config-service";
 import { getDefaultEnumEntities } from "app/core/basic-datatypes/configurable-enum/configurable-enum-testing";
 import { firstValueFrom } from "rxjs";
+import { AttendanceInitService } from "../features/attendance/attendance-init.service";
 
 /**
  * Utility module that creates a simple environment where a correctly configured database and session is set up.
@@ -29,6 +30,10 @@ import { firstValueFrom } from "rxjs";
     ConfigService,
     ConfigurableEnumService,
     { provide: SwRegistrationOptions, useValue: { enabled: false } },
+    {
+      provide: AttendanceInitService,
+      useValue: { registerDefaultAttendanceStatusEnum: () => {} },
+    },
     provideAppInitializer(async () => {
       const databaseResolver = inject(DatabaseResolverService);
       const components = inject(ComponentRegistry);
