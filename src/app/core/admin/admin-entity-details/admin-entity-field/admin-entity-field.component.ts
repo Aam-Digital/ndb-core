@@ -41,7 +41,7 @@ import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { ConfigureEnumPopupComponent } from "../../../basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component";
 import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
-import { merge } from "rxjs";
+import { firstValueFrom, merge } from "rxjs";
 import { filter } from "rxjs/operators";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { uniquePropertyValidator } from "app/core/common-components/entity-form/unique-property-validator/unique-property-validator";
@@ -164,14 +164,17 @@ export class AdminEntityFieldComponent implements OnInit {
   }
 
   private initSettings() {
-    this.fieldIdForm = this.fb.control(this.data.entitySchemaField.id, {
+    const originalFieldId = this.data.entitySchemaField.id;
+    this.fieldIdForm = this.fb.control(originalFieldId, {
       validators: [Validators.required, Validators.pattern(/^[a-zA-Z0-9_]*$/)],
       asyncValidators: [
         uniquePropertyValidator({
           getExistingValues: async () => {
             const keys = Array.from(this.data.entityType.schema.keys());
-            return this.data.entitySchemaField.id
-              ? keys.filter((k) => k !== this.data.entitySchemaField.id)
+            return originalFieldId
+              ? keys.filter(
+                  (k) => k.toLowerCase() !== originalFieldId.toLowerCase(),
+                )
               : keys;
           },
           normalize: true,
@@ -494,7 +497,14 @@ export class AdminEntityFieldComponent implements OnInit {
   async save() {
     this.form.markAllAsTouched();
     // Recalculates the value and validation status of the control, also updates the value and validity of its ancestors.
-    this.schemaFieldsForm.updateValueAndValidity();
+    this.form.updateValueAndValidity();
+    // Wait for any pending async validators (e.g. duplicate ID check) to complete
+    // before checking validity — form.invalid is false when status is PENDING.
+    if (this.form.pending) {
+      await firstValueFrom(
+        this.form.statusChanges.pipe(filter((s) => s !== "PENDING")),
+      );
+    }
     if (this.form.invalid) return;
     this.data.entitySchemaField.id = this.fieldIdForm.getRawValue();
     this.dialogRef.close(this.data.entitySchemaField);

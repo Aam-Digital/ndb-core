@@ -427,4 +427,46 @@ describe("AdminEntityFieldComponent", () => {
       uniqueProperty: jasmine.any(String),
     });
   }));
+
+  it("should reject a field ID that differs only in capitalization from an existing field ID", fakeAsync(() => {
+    class TestEntityWithFields extends Entity {
+      static override readonly ENTITY_TYPE = "TestEntityWithFields";
+      static override readonly label = "Test Entity";
+      static override readonly schema = new Map<string, EntitySchemaField>([
+        ["testField", { id: "testField", label: "Test Field" }],
+        ["otherField", { id: "otherField", label: "Other Field" }],
+      ]);
+    }
+
+    component.data.entityType = TestEntityWithFields;
+    component.data.entitySchemaField = { label: "New Field", id: undefined };
+    component.ngOnInit();
+    tick();
+
+    // A unique ID should be valid
+    component.fieldIdForm.setValue("brandNewField");
+    tick();
+    expect(component.fieldIdForm.errors).toBeNull();
+
+    // Exact duplicate should be invalid
+    component.fieldIdForm.setValue("testField");
+    tick();
+    expect(component.fieldIdForm.errors).toEqual({
+      uniqueProperty: jasmine.any(String),
+    });
+
+    // Same ID with different capitalization should also be invalid
+    component.fieldIdForm.setValue("TestField");
+    tick();
+    expect(component.fieldIdForm.errors).toEqual({
+      uniqueProperty: jasmine.any(String),
+    });
+
+    // All uppercase should also be invalid
+    component.fieldIdForm.setValue("TESTFIELD");
+    tick();
+    expect(component.fieldIdForm.errors).toEqual({
+      uniqueProperty: jasmine.any(String),
+    });
+  }));
 });
