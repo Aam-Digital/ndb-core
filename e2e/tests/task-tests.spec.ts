@@ -361,6 +361,14 @@ test("Complete a task that is related to a child", async ({ page }) => {
     dialog.getByRole("button", { name: "Complete Task" }),
   ).toBeVisible();
 
+  // Scroll the button into view so the screenshot captures it
+  await dialog
+    .getByRole("button", { name: "Complete Task" })
+    .scrollIntoViewIfNeeded();
+
+  // [screenshot] edit dialog showing the Complete Task button
+  await argosScreenshot(page, "task-complete-task-button");
+
   // When I click "Complete Task"
   // force: true bypasses the mat-form-field wrapper that intercepts pointer events
   await dialog
