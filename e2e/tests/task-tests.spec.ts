@@ -72,11 +72,19 @@ test("Add a new task record to the list", async ({ page }) => {
   await page.getByRole("option", { name: "Anand Trivedi" }).click();
   await page.getByRole("option", { name: "Anand Nehru" }).click();
   await page.getByRole("option", { name: "Arun Kapoor" }).click();
-  await page.keyboard.press("Escape");
+  // Click the subject field to close the autocomplete via focusout rather than
+  await page.locator("#entity-field__subject").click();
+  await expect(page.getByRole("listbox")).not.toBeVisible();
 
-  await expect(dialog.getByText("Anand Trivedi")).toBeVisible();
-  await expect(dialog.getByText("Anand Nehru")).toBeVisible();
-  await expect(dialog.getByText("Arun Kapoor")).toBeVisible();
+  await expect(
+    dialog.locator("mat-chip-row").getByText("Anand Trivedi"),
+  ).toBeVisible();
+  await expect(
+    dialog.locator("mat-chip-row").getByText("Anand Nehru"),
+  ).toBeVisible();
+  await expect(
+    dialog.locator("mat-chip-row").getByText("Arun Kapoor"),
+  ).toBeVisible();
 
   // The repeat interval defaults to "does not repeat" (no interval),
   // which is already the correct state — no selection needed.
@@ -169,17 +177,15 @@ test("Edit the related records assigned to the task", async ({ page }) => {
 
   // And I select "Amrita Nayar"
   await page.getByRole("option", { name: "Amrita Nayar" }).click();
-  await page.keyboard.press("Escape");
+  // Click the subject field to close the autocomplete via focusout rather than
+  // pressing Escape — Escape propagates to the dialog and exits edit mode.
+  await page.locator("#entity-field__subject").click();
+  await expect(page.getByRole("listbox")).not.toBeVisible();
 
   // Wait for the entity chip to render before clicking Save.
-  // Scope to mat-chip-row to avoid strict-mode violation when the dropdown
-  // overlay is still in the DOM after Escape (it also contains "Amrita Nayar").
   await expect(
     dialog.locator("mat-chip-row").getByText("Amrita Nayar"),
   ).toBeVisible();
-
-  // Wait for the autocomplete dropdown overlay to fully close before clicking
-  await expect(page.getByRole("listbox")).not.toBeVisible();
 
   // And I click on "Save"
   await dialog.getByRole("button", { name: "Save" }).click();
