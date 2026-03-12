@@ -2,7 +2,6 @@ import { Component, inject, Input, OnInit } from "@angular/core";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceService } from "../attendance.service";
 import { AttendanceItem } from "../model/attendance-item";
-
 import moment, { Moment } from "moment";
 import { MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
