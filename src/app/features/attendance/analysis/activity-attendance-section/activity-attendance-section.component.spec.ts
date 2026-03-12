@@ -26,8 +26,12 @@ describe("ActivityAttendanceSectionComponent", () => {
 
     mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
       "getActivityAttendances",
+      "wrapEventEntity",
     ]);
     mockAttendanceService.getActivityAttendances.and.resolveTo(testRecords);
+    (mockAttendanceService as any).eventTypes = jasmine
+      .createSpy(")ventTypes")
+      .and.returnValue([]);
     TestBed.configureTestingModule({
       imports: [
         ActivityAttendanceSectionComponent,

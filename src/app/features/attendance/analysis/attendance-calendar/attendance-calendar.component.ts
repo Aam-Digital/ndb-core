@@ -7,7 +7,7 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from "@angular/core";
-import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { Entity } from "#src/app/core/entity/model/entity";
 import {
   MatCalendar,
   MatCalendarCellCssClasses,
@@ -19,11 +19,8 @@ import { NullAttendanceStatusType } from "../../model/attendance-status";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import type { AttendanceStats } from "../../model/event-with-attendance";
-import { applyUpdate } from "#src/app/core/entity/model/entity-update";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { AttendanceService } from "../../attendance.service";
 import { AnalyticsService } from "#src/app/core/analytics/analytics.service";
-import { Subscription } from "rxjs";
 import { PercentPipe } from "@angular/common";
 import { CustomDatePipe } from "#src/app/core/basic-datatypes/date/custom-date.pipe";
 import { AttendanceStatusSelectComponent } from "../../edit-attendance/attendance-status-select/attendance-status-select.component";
@@ -35,6 +32,13 @@ import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EventWithAttendance } from "../../model/event-with-attendance";
 
+/**
+ * Displays a calendar view of attendance events for a given activity,
+ * allowing drill-down into details and editing attendance for individual events.
+ *
+ * This component functions (almost) as a "display component"
+ * and relies on inputs to receive data and updates.
+ */
 @Component({
   selector: "app-attendance-calendar",
   templateUrl: "./attendance-calendar.component.html",
@@ -56,7 +60,6 @@ import { EventWithAttendance } from "../../model/event-with-attendance";
     FontAwesomeModule,
   ],
 })
-@UntilDestroy()
 export class AttendanceCalendarComponent implements OnChanges {
   private entityMapper = inject(EntityMapperService);
   private formDialog = inject(FormDialogService);
@@ -77,9 +80,6 @@ export class AttendanceCalendarComponent implements OnChanges {
   selectedEventAttendanceOriginal: AttendanceItem;
   selectedEventStats: AttendanceStats;
 
-  private updatesSubscription: Subscription;
-  private currentEntityType: EntityConstructor;
-
   private ensureParticipantInAttendance(
     event: EventWithAttendance,
     participantId: string,
@@ -94,34 +94,6 @@ export class AttendanceCalendarComponent implements OnChanges {
 
   get selectedEventParticipantCount(): number {
     return this.selectedEvent ? this.selectedEvent.attendanceItems.length : 0;
-  }
-
-  private subscribeToUpdates() {
-    const firstRecord = this.records[0];
-    const entityType = firstRecord?.entity?.getConstructor();
-    if (entityType === this.currentEntityType) {
-      return;
-    }
-
-    this.updatesSubscription?.unsubscribe();
-    this.currentEntityType = entityType;
-
-    if (!entityType) {
-      return;
-    }
-
-    this.updatesSubscription = this.entityMapper
-      .receiveUpdates(entityType)
-      .pipe(untilDestroyed(this))
-      .subscribe((update) => {
-        const rawEntities = this.records.map((r) => r.entity);
-        const updatedEntities = applyUpdate(rawEntities, update, false);
-        const { attendanceField, dateField } = this.records[0];
-        this.records = updatedEntities.map(
-          (e) => new EventWithAttendance(e, attendanceField, dateField),
-        );
-        this.selectDay(this.selectedDate?.toDate());
-      });
   }
 
   highlightDate = (cellDate: Date): MatCalendarCellCssClasses => {
@@ -167,8 +139,10 @@ export class AttendanceCalendarComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("records")) {
-      this.subscribeToUpdates();
       this.updateDateRange();
+      if (this.selectedDate) {
+        this.selectDay(this.selectedDate.toDate());
+      }
     }
   }
 
