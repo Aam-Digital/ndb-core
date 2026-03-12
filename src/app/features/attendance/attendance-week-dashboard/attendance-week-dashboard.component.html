@@ -27,7 +27,10 @@
 
       <ng-container matColumnDef="attendance">
         <td *matCellDef="let rowGroup">
-          @for (activityRecord of rowGroup; track (activityRecord.activityId ?? '_standalone')) {
+          @for (
+            activityRecord of rowGroup;
+            track activityRecord.activityId ?? "_standalone"
+          ) {
             <div class="activities-record">
               @for (day of activityRecord.attendanceDays; track $index) {
                 <app-attendance-day-block
