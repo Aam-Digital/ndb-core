@@ -105,7 +105,7 @@ export class AttendanceService {
     this.groupBasedParticipants = this.eventTypeSettings.some(
       (s) =>
         s.activityType?.ENTITY_TYPE === "RecurringActivity" &&
-        s.eventType.ENTITY_TYPE === "Event" &&
+        s.eventType.ENTITY_TYPE === "EventNote" &&
         s.fieldMapping["schools"] === "linkedGroups",
     );
   }
