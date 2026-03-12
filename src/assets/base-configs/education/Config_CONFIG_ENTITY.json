@@ -141,8 +141,7 @@
             "component": "BirthdayDashboard",
             "config": {
               "entities": {
-                "Child": "dateOfBirth",
-                "School": "dateOfBirth"
+                "Child": "dateOfBirth"
               }
             }
           }
@@ -1319,7 +1318,7 @@
         },
         "subject": {
           "dataType": "string",
-          "label": "Subject"
+          "label": "Titre"
         },
         "text": {
           "dataType": "long-text",

@@ -141,8 +141,7 @@
             "component": "BirthdayDashboard",
             "config": {
               "entities": {
-                "Child": "dateOfBirth",
-                "School": "dateOfBirth"
+                "Child": "dateOfBirth"
               }
             }
           }
