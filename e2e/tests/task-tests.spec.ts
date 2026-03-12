@@ -369,8 +369,15 @@ test("Complete a task that is related to a child", async ({ page }) => {
     page.getByRole("cell", { name: TASK_SUBJECT }),
   ).not.toBeVisible();
 
-  // Switch to the "Completed" filter to see completed tasks
-  await page.getByRole("button", { name: "Completed" }).click();
+  // Switch to the "Completed" filter — the "Tasks due" filter is an
+  // autocomplete dropdown; click its input to open the panel, then pick the option.
+  await page
+    .locator("mat-form-field")
+    .filter({ hasText: "Tasks due" })
+    .locator("input")
+    .first()
+    .click();
+  await page.getByRole("option", { name: "Completed" }).click();
 
   // The completed task appears in the list with the "completed" column visible
   await expect(page.getByRole("cell", { name: TASK_SUBJECT })).toBeVisible();
