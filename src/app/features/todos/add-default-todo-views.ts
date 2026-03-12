@@ -51,6 +51,7 @@ export const defaultTodoListView = {
       "assignedTo",
       "startDate",
       "relatedEntities",
+      "completed",
     ],
     filters: [
       { id: "assignedTo", default: PLACEHOLDERS.CURRENT_USER },
