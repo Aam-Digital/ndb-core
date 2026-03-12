@@ -1318,7 +1318,7 @@
         },
         "subject": {
           "dataType": "string",
-          "label": "Titre"
+          "label": "Title"
         },
         "text": {
           "dataType": "long-text",
