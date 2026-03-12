@@ -7,26 +7,34 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { ConfigService } from "app/core/config/config.service";
+import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 describe("AdminMenuItemDetailsComponent", () => {
   let component: AdminMenuItemDetailsComponent;
   let fixture: ComponentFixture<AdminMenuItemDetailsComponent>;
 
-  let menuItem: MenuItem;
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockDialogRef: jasmine.SpyObj<
+    MatDialogRef<AdminMenuItemDetailsComponent>
+  >;
+  let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
 
   beforeEach(async () => {
-    menuItem = {
-      label: "Test",
-      icon: "user",
-      link: "",
-    };
-
-    mockConfigService = jasmine.createSpyObj("ConfigService", [
+    const mockConfigService = jasmine.createSpyObj("ConfigService", [
       "getAllConfigs",
     ]);
     mockConfigService.getAllConfigs.and.returnValue([]);
     mockConfigService.configUpdates = NEVER;
+
+    mockDialogRef = jasmine.createSpyObj("MatDialogRef", [
+      "close",
+      "afterClosed",
+    ]);
+    mockDialogRef.afterClosed.and.returnValue(NEVER);
+
+    mockConfirmationDialog = jasmine.createSpyObj("ConfirmationDialogService", [
+      "getConfirmation",
+    ]);
+    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
 
     await TestBed.configureTestingModule({
       imports: [
@@ -35,9 +43,16 @@ describe("AdminMenuItemDetailsComponent", () => {
         MockedTestingModule.withState(),
       ],
       providers: [
-        { provide: MAT_DIALOG_DATA, useValue: { item: menuItem } },
-        { provide: MatDialogRef, useValue: { afterClosed: () => NEVER } },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: { item: { label: "Test", icon: "user", link: "" } },
+        },
+        { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: ConfigService, useValue: mockConfigService },
+        {
+          provide: ConfirmationDialogService,
+          useValue: mockConfirmationDialog,
+        },
         EntityRegistry,
       ],
     }).compileComponents();
@@ -49,5 +64,31 @@ describe("AdminMenuItemDetailsComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should allow saving without a link when noLinkMode is active", () => {
+    component.item = { label: "Section", icon: "folder" } as MenuItem;
+    component.noLinkMode = true;
+
+    component.save();
+
+    expect(mockDialogRef.close).toHaveBeenCalledWith(
+      jasmine.objectContaining({ label: "Section" }),
+    );
+  });
+
+  it("should not change noLinkMode and preserve the link when confirmation is cancelled", async () => {
+    component.item = {
+      label: "Test",
+      icon: "user",
+      link: "/dashboard",
+    } as MenuItem;
+    component.noLinkMode = false;
+    mockConfirmationDialog.getConfirmation.and.resolveTo(false);
+
+    await component.onNoLinkModeChange(true);
+
+    expect(component.noLinkMode).toBe(false);
+    expect(component.item.link).toBe("/dashboard");
   });
 });
