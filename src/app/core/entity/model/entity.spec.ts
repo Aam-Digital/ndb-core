@@ -36,12 +36,27 @@ describe("Entity", () => {
     expect(data.otherText).toBeUndefined();
   });
 
-  it("can perform a shallow copy of itself", () => {
-    const id = "t1";
-    const entity: Entity = new Entity(id);
-    entity["value"] = 1;
-    const otherEntity = entity.copy();
-    expect(otherEntity).toEqual(entity);
+  it("deep-clones schema field values when copying", () => {
+    @DatabaseEntity("TestCopy")
+    class TestCopyEntity extends Entity {
+      @DatabaseField() items: string[] = [];
+      @DatabaseField() nested: { a: number } = { a: 1 };
+    }
+
+    const entity = new TestCopyEntity("t1");
+    entity.items = ["a", "b"];
+    entity.nested = { a: 42 };
+
+    const copied = entity.copy();
+
+    expect(copied).toEqual(entity);
+    expect(copied).toBeInstanceOf(TestCopyEntity);
+
+    // modifying the copy must not affect the original
+    copied.items.push("c");
+    copied.nested.a = 99;
+    expect(entity.items).toEqual(["a", "b"]);
+    expect(entity.nested.a).toBe(42);
   });
 
   it("preserves it's type when copying", () => {

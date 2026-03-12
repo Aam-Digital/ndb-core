@@ -239,18 +239,4 @@ export class Note extends Entity {
     }
     return this.getColor();
   }
-
-  /**
-   * Performs a deep copy of the note copying all simple data
-   * (such as the date, author, e.t.c.) as well as copying the
-   * child-array
-   */
-  override copy(): this {
-    const note = super.copy();
-    note.children = [...this.children];
-    note.schools = [...this.schools];
-    note.relatedEntities = [...this.relatedEntities];
-    note.authors = [...this.authors];
-    return note;
-  }
 }
