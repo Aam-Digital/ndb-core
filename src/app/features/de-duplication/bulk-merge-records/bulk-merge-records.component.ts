@@ -82,7 +82,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
         this.hasDiscardedFileOrPhoto = true;
       }
 
-      if (field.label && hasValue && !isFileField) {
+      if (field.label && hasValue && !isFileField && !field.isInternalField) {
         const formField: FormFieldConfig =
           this.entityFormService.extendFormFieldConfig(
             { id: key },
