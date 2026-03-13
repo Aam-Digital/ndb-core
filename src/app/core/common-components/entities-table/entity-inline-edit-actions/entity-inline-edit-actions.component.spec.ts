@@ -71,19 +71,20 @@ describe("EntityInlineEditActionsComponent", () => {
     expect(formGroup).toBeEnabled();
   });
 
-  it("should correctly save changes to an entity", fakeAsync(async () => {
-    spyOn(TestBed.inject(EntityAbility), "can").and.returnValue(true);
+  it("should correctly save changes to an entity", fakeAsync(() => {
+    vi.spyOn(TestBed.inject(EntityAbility), "can").mockReturnValue(true);
     const entityMapper = TestBed.inject(EntityMapperService);
-    spyOn(entityMapper, "save").and.resolveTo();
+    vi.spyOn(entityMapper, "save").mockResolvedValue(undefined);
     const fb = TestBed.inject(UntypedFormBuilder);
     const child = new InlineEditEntity();
     child.name = "Old Name";
 
     const entityFormService = TestBed.inject(EntityFormService);
-    const entityForm = await entityFormService.createEntityForm(
-      ["name", "gender"],
-      child,
-    );
+    let entityForm: any;
+    entityFormService
+      .createEntityForm(["name", "gender"], child)
+      .then((form) => (entityForm = form));
+    tick();
 
     const formGroup = fb.group({
       name: "New Name",
@@ -103,20 +104,19 @@ describe("EntityInlineEditActionsComponent", () => {
     expect(component.row.formGroup).toBeUndefined();
   }));
 
-  it("should show a error message when saving fails", fakeAsync(() => {
+  it("should show a error message when saving fails", async () => {
     const entityFormService = TestBed.inject(EntityFormService);
-    spyOn(entityFormService, "saveChanges").and.rejectWith(
+    vi.spyOn(entityFormService, "saveChanges").mockRejectedValue(
       new Error("Form invalid"),
     );
     const alertService = TestBed.inject(AlertService);
-    spyOn(alertService, "addDanger");
+    vi.spyOn(alertService, "addDanger");
 
     component.row = { formGroup: null, record: new InlineEditEntity() };
-    component.save();
-    tick();
+    await component.save();
 
     expect(alertService.addDanger).toHaveBeenCalledWith("Form invalid");
-  }));
+  });
 
   it("should clear the form group when resetting", () => {
     component.row = {
@@ -132,8 +132,10 @@ describe("EntityInlineEditActionsComponent", () => {
 
 @DatabaseEntity("InlineEditEntity")
 class InlineEditEntity extends Entity {
-  @DatabaseField() name: string;
-  @DatabaseField() projectNumber: string;
+  @DatabaseField()
+  name: string;
+  @DatabaseField()
+  projectNumber: string;
   @DatabaseField({ dataType: "configurable-enum", additional: "genders" })
   gender: ConfigurableEnumValue;
 }

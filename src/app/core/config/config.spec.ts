@@ -1,4 +1,4 @@
-import { testEntitySubclass } from "../entity/model/entity.spec";
+import { testEntitySubclass } from "../entity/model/entity.test-utils";
 import { Config } from "./config";
 
 describe("Config", () => {

@@ -35,7 +35,7 @@ describe("ChangelogComponent", () => {
   let component: ChangelogComponent;
   let fixture: ComponentFixture<ChangelogComponent>;
 
-  let mockLatestChangesService: jasmine.SpyObj<LatestChangesService>;
+  let mockLatestChangesService: any;
 
   const testChangelog = new Changelog();
   testChangelog.tag_name = "1.0.0";
@@ -44,10 +44,10 @@ describe("ChangelogComponent", () => {
   testChangelog.published_at = "2018-01-01";
 
   beforeEach(waitForAsync(() => {
-    mockLatestChangesService = jasmine.createSpyObj([
-      "getChangelogsBeforeVersion",
-      "getChangelogsBetweenVersions",
-    ]);
+    mockLatestChangesService = {
+      getChangelogsBeforeVersion: vi.fn(),
+      getChangelogsBetweenVersions: vi.fn(),
+    };
 
     TestBed.configureTestingModule({
       imports: [
@@ -59,11 +59,11 @@ describe("ChangelogComponent", () => {
       providers: [
         {
           provide: UpdateManagerService,
-          useValue: jasmine.createSpyObj([
-            "listenToAppUpdates",
-            "regularlyCheckForUpdates",
-            "detectUnrecoverableState",
-          ]),
+          useValue: {
+            listenToAppUpdates: vi.fn(),
+            regularlyCheckForUpdates: vi.fn(),
+            detectUnrecoverableState: vi.fn(),
+          },
         },
         { provide: MatDialogRef, useValue: {} },
         { provide: MAT_DIALOG_DATA, useValue: of([testChangelog]) },
@@ -87,7 +87,7 @@ describe("ChangelogComponent", () => {
   });
 
   it("should add release info to end of array on 'show previous'", () => {
-    mockLatestChangesService.getChangelogsBeforeVersion.and.returnValue(
+    mockLatestChangesService.getChangelogsBeforeVersion.mockReturnValue(
       of([testChangelog]),
     );
     component.loadPreviousRelease();

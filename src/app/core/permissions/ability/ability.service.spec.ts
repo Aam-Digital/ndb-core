@@ -23,7 +23,7 @@ describe("AbilityService", () => {
   let service: AbilityService;
   let ability: EntityAbility;
   let entityUpdates: Subject<UpdatedEntity<Config<DatabaseRules>>>;
-  let entityMapper: jasmine.SpyObj<EntityMapperService>;
+  let entityMapper: any;
   const rules: DatabaseRules = {
     user_app: [
       { subject: TestEntity.ENTITY_TYPE, action: "read" },
@@ -34,10 +34,14 @@ describe("AbilityService", () => {
 
   beforeEach(waitForAsync(() => {
     entityUpdates = new Subject();
-    entityMapper = jasmine.createSpyObj(["receiveUpdates", "load", "loadType"]);
-    entityMapper.receiveUpdates.and.returnValue(entityUpdates);
-    entityMapper.loadType.and.resolveTo([]);
-    entityMapper.load.and.rejectWith();
+    entityMapper = {
+      receiveUpdates: vi.fn(),
+      load: vi.fn(),
+      loadType: vi.fn(),
+    };
+    entityMapper.receiveUpdates.mockReturnValue(entityUpdates);
+    entityMapper.loadType.mockResolvedValue([]);
+    entityMapper.load.mockRejectedValue();
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
@@ -66,7 +70,9 @@ describe("AbilityService", () => {
         },
         {
           provide: PermissionEnforcerService,
-          useValue: jasmine.createSpyObj(["enforcePermissionsOnLocalData"]),
+          useValue: {
+            enforcePermissionsOnLocalData: vi.fn(),
+          },
         },
         { provide: EntityMapperService, useValue: entityMapper },
       ],
@@ -92,7 +98,7 @@ describe("AbilityService", () => {
   });
 
   it("should give all permissions if no rules object can be fetched but not until checking for rules object", fakeAsync(() => {
-    entityMapper.load.and.rejectWith("no initial config");
+    entityMapper.load.mockRejectedValue("no initial config");
 
     // no permissions until rules object has been attempted to fetch initially
     expect(ability.rules).toEqual([]);
@@ -105,7 +111,7 @@ describe("AbilityService", () => {
   }));
 
   it("should update the rules when a change is published", fakeAsync(() => {
-    entityMapper.load.and.rejectWith("no initial config");
+    entityMapper.load.mockRejectedValue("no initial config");
     service.initializeRules();
     tick();
 
@@ -126,7 +132,7 @@ describe("AbilityService", () => {
     service.initializeRules();
     tick();
 
-    spyOn(ability, "update");
+    vi.spyOn(ability, "update");
     entityUpdates.next({
       entity: new Config(Config.PERMISSION_KEY, rules),
       type: "update",
@@ -140,7 +146,7 @@ describe("AbilityService", () => {
     service.initializeRules();
     tick();
 
-    spyOn(ability, "update");
+    vi.spyOn(ability, "update");
     TestBed.inject(SessionSubject).next({
       name: "testAdmin",
       id: "1",
@@ -168,14 +174,14 @@ describe("AbilityService", () => {
     });
     tick();
 
-    expect(ability.can("read", TestEntity)).toBeTrue();
-    expect(ability.can("create", TestEntity)).toBeFalse();
-    expect(ability.can("manage", TestEntity)).toBeFalse();
-    expect(ability.can("read", new TestEntity())).toBeTrue();
-    expect(ability.can("create", new TestEntity())).toBeFalse();
-    expect(ability.can("manage", Note)).toBeFalse();
-    expect(ability.can("manage", new Note())).toBeFalse();
-    expect(ability.can("create", new Note())).toBeFalse();
+    expect(ability.can("read", TestEntity)).toBe(true);
+    expect(ability.can("create", TestEntity)).toBe(false);
+    expect(ability.can("manage", TestEntity)).toBe(false);
+    expect(ability.can("read", new TestEntity())).toBe(true);
+    expect(ability.can("create", new TestEntity())).toBe(false);
+    expect(ability.can("manage", Note)).toBe(false);
+    expect(ability.can("manage", new Note())).toBe(false);
+    expect(ability.can("create", new Note())).toBe(false);
 
     TestBed.inject(SessionSubject).next({
       name: "testAdmin",
@@ -188,10 +194,10 @@ describe("AbilityService", () => {
     entityUpdates.next({ entity: updatedConfig, type: "update" });
     tick();
 
-    expect(ability.can("manage", TestEntity)).toBeTrue();
-    expect(ability.can("manage", new TestEntity())).toBeTrue();
-    expect(ability.can("manage", Note)).toBeTrue();
-    expect(ability.can("manage", new Note())).toBeTrue();
+    expect(ability.can("manage", TestEntity)).toBe(true);
+    expect(ability.can("manage", new TestEntity())).toBe(true);
+    expect(ability.can("manage", Note)).toBe(true);
+    expect(ability.can("manage", new Note())).toBe(true);
   }));
 
   it("should throw an error when checking permissions on a object that is not a Entity", () => {
@@ -238,9 +244,9 @@ describe("AbilityService", () => {
       tick();
 
       const userEntity = new TestEntity(TEST_USER);
-      expect(ability.can("manage", userEntity)).toBeTrue();
+      expect(ability.can("manage", userEntity)).toBe(true);
       const anotherUser = new TestEntity();
-      expect(ability.cannot("manage", anotherUser)).toBeTrue();
+      expect(ability.cannot("manage", anotherUser)).toBe(true);
     }
 
     testPlaceholderCondition("${user.name}");
@@ -260,7 +266,7 @@ describe("AbilityService", () => {
     service.initializeRules();
     tick();
 
-    const debugSpy = spyOn(Logging, "debug");
+    const debugSpy = vi.spyOn(Logging, "debug");
 
     // Create rules that reference the user's entityId
     const config = new Config<DatabaseRules>(Config.PERMISSION_KEY, {
@@ -285,7 +291,7 @@ describe("AbilityService", () => {
     // Verify that permission checks work gracefully (undefined becomes static placeholder in condition)
     const testEntity = new TestEntity(TEST_USER);
     // When entityId is undefined, the condition "_id: <PLACEHOLDER>" won't match any entity
-    expect(ability.cannot("manage", testEntity)).toBeTrue();
+    expect(ability.cannot("manage", testEntity)).toBe(true);
   }));
 
   it("should allow to check conditions with complex data types", fakeAsync(() => {
@@ -308,10 +314,10 @@ describe("AbilityService", () => {
     tick();
 
     const note = new Note();
-    expect(ability.can("read", note)).toBeFalse();
+    expect(ability.can("read", note)).toBe(false);
     note.category = classInteraction;
     tick();
-    expect(ability.can("read", note)).toBeTrue();
+    expect(ability.can("read", note)).toBe(true);
   }));
 
   it("should log a warning if no rules are found for a user", fakeAsync(() => {
@@ -323,7 +329,7 @@ describe("AbilityService", () => {
       id: "1",
       roles: ["invalid_role"],
     });
-    const warnSpy = spyOn(Logging, "warn");
+    const warnSpy = vi.spyOn(Logging, "warn");
     entityUpdates.next({
       entity: new Config(Config.PERMISSION_KEY, rules),
       type: "update",

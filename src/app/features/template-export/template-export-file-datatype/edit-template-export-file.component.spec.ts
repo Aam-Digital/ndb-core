@@ -18,19 +18,21 @@ import { EditTemplateExportFileComponent } from "./edit-template-export-file.com
 describe("EditTemplateExportFileComponent", () => {
   let component: EditTemplateExportFileComponent;
   let fixture: ComponentFixture<EditTemplateExportFileComponent>;
-  let mockFileService: jasmine.SpyObj<FileService>;
-  let mockTemplateExportService: jasmine.SpyObj<TemplateExportService>;
+  let mockFileService: any;
+  let mockTemplateExportService: any;
 
   beforeEach(async () => {
-    mockFileService = jasmine.createSpyObj([
-      "uploadFile",
-      "loadFile",
-      "removeFile",
-    ]);
-    mockFileService.loadFile.and.returnValue(of("success"));
+    mockFileService = {
+      uploadFile: vi.fn(),
+      loadFile: vi.fn(),
+      removeFile: vi.fn(),
+    };
+    mockFileService.loadFile.mockReturnValue(of("success"));
 
-    mockTemplateExportService = jasmine.createSpyObj(["isExportServerEnabled"]);
-    mockTemplateExportService.isExportServerEnabled.and.returnValue(
+    mockTemplateExportService = {
+      isExportServerEnabled: vi.fn(),
+    };
+    mockTemplateExportService.isExportServerEnabled.mockReturnValue(
       Promise.resolve(true),
     );
 

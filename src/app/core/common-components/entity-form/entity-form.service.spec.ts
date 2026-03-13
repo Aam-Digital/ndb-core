@@ -51,15 +51,17 @@ describe("EntityFormService", () => {
   it("should not save invalid entities", async () => {
     const entity = new Entity("initialId");
     const copyEntity = entity.copy();
-    spyOn(entity, "copy").and.returnValue(copyEntity);
-    spyOn(copyEntity, "assertValid").and.throwError(new Error());
+    vi.spyOn(entity, "copy").mockReturnValue(copyEntity);
+    vi.spyOn(copyEntity, "assertValid").mockImplementation(() => {
+      throw new Error();
+    });
 
     const formGroup = new UntypedFormGroup({
       _id: new FormControl("newId"),
     });
     const entityForm = createMockEntityForm(entity, formGroup);
 
-    await expectAsync(service.saveChanges(entityForm, entity)).toBeRejected();
+    await expect(service.saveChanges(entityForm, entity)).rejects.toThrow();
     expect(entity.getId()).not.toBe(`${Entity.ENTITY_TYPE}:newId`);
   });
 
@@ -90,9 +92,9 @@ describe("EntityFormService", () => {
 
     await service.saveChanges(entityForm, entity);
 
-    expect(formGroup.pristine).toBeTrue();
+    expect(formGroup.pristine).toBe(true);
     // form status change is needed for EditFileComponent to start file upload, for example
-    expect(formGroup.disabled).toBeTrue();
+    expect(formGroup.disabled).toBe(true);
   });
 
   it("should throw an error when trying to create a entity with missing permissions", async () => {
@@ -117,7 +119,7 @@ describe("EntityFormService", () => {
 
     formGroup.patchValue({ name: "un-permitted entity" });
     const result = service.saveChanges(entityForm, school);
-    await expectAsync(result).toBeRejected();
+    await expect(result).rejects.toThrow();
     expect(school.name).toBe("normal school");
   });
 
@@ -129,20 +131,20 @@ describe("EntityFormService", () => {
     const formFields = [{ id: "name" }, { id: "result" }];
     const form = await service.createEntityForm(formFields, new TestEntity());
 
-    expect(form.formGroup.valid).toBeFalse();
+    expect(form.formGroup.valid).toBe(false);
 
     // @ts-ignore "result" field was temporarily added for this test
     form.formGroup.patchValue({ result: 100 });
-    expect(form.formGroup.valid).toBeTrue();
+    expect(form.formGroup.valid).toBe(true);
 
     // @ts-ignore "result" field was temporarily added for this test
     form.formGroup.patchValue({ result: 101 });
-    expect(form.formGroup.valid).toBeFalse();
+    expect(form.formGroup.valid).toBe(false);
 
     TestEntity.schema.delete("result");
   });
 
-  it("should use create permissions to disable fields when creating a new entity", fakeAsync(async () => {
+  it("should use create permissions to disable fields when creating a new entity", async () => {
     const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
     TestBed.inject(EntityAbility).update([
       {
@@ -162,11 +164,10 @@ describe("EntityFormService", () => {
       formFields,
       new TestEntity(),
     );
-    tick();
 
-    expect(formGroup.formGroup.get("name").disabled).toBeTrue();
-    expect(formGroup.formGroup.get("dateOfBirth").enabled).toBeTrue();
-  }));
+    expect(formGroup.formGroup.get("name").disabled).toBe(true);
+    expect(formGroup.formGroup.get("dateOfBirth").enabled).toBe(true);
+  });
 
   it("should always keep properties disabled if user does not have 'update' permissions for them", async () => {
     const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
@@ -184,18 +185,18 @@ describe("EntityFormService", () => {
 
     const form = await service.createEntityForm(formFields, child);
 
-    expect(form.formGroup.get("name").enabled).toBeTrue();
-    expect(form.formGroup.get("dateOfBirth").disabled).toBeTrue();
+    expect(form.formGroup.get("name").enabled).toBe(true);
+    expect(form.formGroup.get("dateOfBirth").disabled).toBe(true);
 
     form.formGroup.disable();
 
-    expect(form.formGroup.get("name").disabled).toBeTrue();
-    expect(form.formGroup.get("dateOfBirth").disabled).toBeTrue();
+    expect(form.formGroup.get("name").disabled).toBe(true);
+    expect(form.formGroup.get("dateOfBirth").disabled).toBe(true);
 
     form.formGroup.enable();
 
-    expect(form.formGroup.get("name").enabled).toBeTrue();
-    expect(form.formGroup.get("dateOfBirth").disabled).toBeTrue();
+    expect(form.formGroup.get("name").enabled).toBe(true);
+    expect(form.formGroup.get("dateOfBirth").disabled).toBe(true);
   });
 
   it("should create a error if form is invalid", async () => {
@@ -205,9 +206,9 @@ describe("EntityFormService", () => {
       new ChildSchoolRelation(),
     );
 
-    return expectAsync(
+    return expect(
       service.saveChanges(form, new ChildSchoolRelation()),
-    ).toBeRejectedWith(jasmine.any(InvalidFormFieldError));
+    ).rejects.toEqual(expect.any(InvalidFormFieldError));
   });
 
   it("should set pending changes once a form is edited and reset it once saved or canceled", async () => {
@@ -217,47 +218,48 @@ describe("EntityFormService", () => {
 
     form.formGroup.markAsDirty();
     form.formGroup.get("inactive").setValue(true);
-    expect(unsavedChanges.pending).toBeTrue();
+    expect(unsavedChanges.pending).toBe(true);
 
     TestBed.inject(EntityAbility).update([
       { action: "manage", subject: "all" },
     ]);
     await service.saveChanges(form, new Entity());
 
-    expect(unsavedChanges.pending).toBeFalse();
+    expect(unsavedChanges.pending).toBe(false);
 
     form.formGroup.markAsDirty();
     form.formGroup.get("inactive").setValue(true);
-    expect(unsavedChanges.pending).toBeTrue();
+    expect(unsavedChanges.pending).toBe(true);
 
     service.resetForm(form, new Entity());
 
-    expect(unsavedChanges.pending).toBeFalse();
+    expect(unsavedChanges.pending).toBe(false);
   });
 
-  it("should disable fields that have readonlyAfterSet validator and have a value", fakeAsync(async () => {
+  it("should disable fields that have readonlyAfterSet validator and have a value", async () => {
     const formFields = [{ id: "name", validators: { readonlyAfterSet: true } }];
     const formWithNewEntity = await service.createEntityForm(
       formFields,
       new TestEntity(),
     );
     formWithNewEntity.formGroup.controls["name"].setValue("test");
-    tick();
     // should not disable while still editing the first time
-    expect(formWithNewEntity.formGroup.get("name").disabled).toBeFalse();
+    expect(formWithNewEntity.formGroup.get("name").disabled).toBe(false);
 
     const formWithExistingEntity = await service.createEntityForm(
       formFields,
       TestEntity.create({ name: "existing name", _rev: "1" }),
     );
-    expect(formWithExistingEntity.formGroup.get("name").disabled).toBeTrue();
-  }));
+    expect(formWithExistingEntity.formGroup.get("name").disabled).toBe(true);
+  });
 
   it("should reset form on cancel, including special fields with getter", async () => {
     class MockEntity extends Entity {
-      @DatabaseField() simpleField = "original";
+      @DatabaseField()
+      simpleField = "original";
 
-      @DatabaseField() get getterField(): string {
+      @DatabaseField()
+      get getterField(): string {
         return this._getterValue;
       }
 
@@ -267,7 +269,8 @@ describe("EntityFormService", () => {
 
       private _getterValue: string = "original value";
 
-      @DatabaseField() emptyField;
+      @DatabaseField()
+      emptyField;
     }
 
     const formFields = ["simpleField", "getterField", "emptyField"];
@@ -294,17 +297,17 @@ describe("EntityFormService", () => {
     formGroup.formGroup.markAsDirty();
     formGroup.formGroup.get("inactive").setValue(true);
 
-    expect(unsavedChanged.pending).toBeTrue();
+    expect(unsavedChanged.pending).toBe(true);
 
     await router.navigate(["test"]);
 
-    expect(unsavedChanged.pending).toBeFalse();
+    expect(unsavedChanged.pending).toBe(false);
 
     // Changes are not listened to anymore
     formGroup.formGroup.markAsDirty();
     formGroup.formGroup.get("inactive").setValue(true);
 
-    expect(unsavedChanged.pending).toBeFalse();
+    expect(unsavedChanged.pending).toBe(false);
   });
 
   it("should assign default values", async () => {
@@ -330,7 +333,7 @@ describe("EntityFormService", () => {
     form = await service.createEntityForm([{ id: "test" }], new TestEntity());
     expect(
       moment(form.formGroup.get("test").value).isSame(moment(), "minutes"),
-    ).toBeTrue();
+    ).toBe(true);
 
     schema.defaultValue = {
       mode: "dynamic",
@@ -438,9 +441,10 @@ describe("EntityFormService", () => {
       propertyField: string;
     }
 
-    spyOn(TestBed.inject(EntitySchemaService), "getComponent").and.returnValue(
-      "PredefinedComponent",
-    );
+    vi.spyOn(
+      TestBed.inject(EntitySchemaService),
+      "getComponent",
+    ).mockReturnValue("PredefinedComponent");
     const entity = new Test();
     const field1: FormFieldConfig = {
       id: "fieldWithDefinition",
@@ -491,7 +495,7 @@ describe("EntityFormService", () => {
       entity: entity,
       fieldConfigs: [],
       onFormStateChange: new EventEmitter(),
-      onSave: jasmine.createSpy(),
+      onSave: vi.fn(),
     } as unknown as EntityForm<T>;
   }
 });

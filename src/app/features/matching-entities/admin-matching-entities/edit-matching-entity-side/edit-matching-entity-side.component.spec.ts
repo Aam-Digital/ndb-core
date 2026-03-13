@@ -22,7 +22,7 @@ describe("EditMatchingEntitySideComponent", () => {
         },
         {
           provide: MatDialog,
-          useValue: { open: jasmine.createSpy("open") },
+          useValue: { open: vi.fn() },
         },
       ],
     }).compileComponents();

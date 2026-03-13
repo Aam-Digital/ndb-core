@@ -16,13 +16,13 @@ import { DatabaseResolverService } from "../../../database/database-resolver.ser
 describe("BackgroundProcessingIndicatorComponent", () => {
   let component: BackgroundProcessingIndicatorComponent;
   let fixture: ComponentFixture<BackgroundProcessingIndicatorComponent>;
-  let mockDbResolver: jasmine.SpyObj<DatabaseResolverService>;
+  let mockDbResolver: any;
 
   beforeEach(waitForAsync(() => {
-    mockDbResolver = jasmine.createSpyObj("DatabaseResolverService", [
-      "resetSync",
-    ]);
-    mockDbResolver.resetSync.and.returnValue(Promise.resolve());
+    mockDbResolver = {
+      resetSync: vi.fn().mockName("DatabaseResolverService.resetSync"),
+    };
+    mockDbResolver.resetSync.mockReturnValue(Promise.resolve());
 
     TestBed.configureTestingModule({
       imports: [
@@ -49,7 +49,7 @@ describe("BackgroundProcessingIndicatorComponent", () => {
   });
 
   it("should aggregate process states by title if set to summarize", fakeAsync(() => {
-    spyOn(component.taskListDropdownTrigger, "openMenu");
+    vi.spyOn(component.taskListDropdownTrigger, "openMenu");
     const p1 = { title: "sync", pending: true };
     const p2a = { title: "indexing", details: "A", pending: false };
     const p2b = { title: "indexing", details: "B", pending: true };
@@ -73,7 +73,7 @@ describe("BackgroundProcessingIndicatorComponent", () => {
 
   it("should automatically close details after all processes finished", fakeAsync(() => {
     component.backgroundProcesses = of([{ title: "sync", pending: false }]);
-    spyOn(component.taskListDropdownTrigger, "closeMenu");
+    vi.spyOn(component.taskListDropdownTrigger, "closeMenu");
     component.ngOnInit();
 
     expectObservable(component.taskCounterObservable).first.toBeResolvedTo(0);
@@ -87,7 +87,7 @@ describe("BackgroundProcessingIndicatorComponent", () => {
       { title: "other", pending: true },
       { title: "yet another", pending: true },
     ]);
-    spyOn(component.taskListDropdownTrigger, "openMenu");
+    vi.spyOn(component.taskListDropdownTrigger, "openMenu");
     tick();
     expect(component.taskListDropdownTrigger.openMenu).not.toHaveBeenCalled();
   }));

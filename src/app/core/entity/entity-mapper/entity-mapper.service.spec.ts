@@ -36,8 +36,10 @@ describe("EntityMapperService", () => {
 
   beforeEach(waitForAsync(() => {
     const syncStateSubject = new SyncStateSubject();
-    let dbFactory = jasmine.createSpyObj(["createDatabase"]);
-    dbFactory.createDatabase.and.callFake((dbName) => {
+    let dbFactory = {
+      createDatabase: vi.fn(),
+    };
+    dbFactory.createDatabase.mockImplementation((dbName) => {
       const db = new MemoryPouchDatabase(dbName, syncStateSubject);
       db.init();
       return db;
@@ -83,7 +85,7 @@ describe("EntityMapperService", () => {
 
   it("load multiple entities", async () => {
     const loadedEntities = await entityMapper.loadType<Entity>(Entity);
-    expect(loadedEntities).toHaveSize(2);
+    expect(loadedEntities).toHaveLength(2);
 
     const entity1 = loadedEntities[0];
     const entity2 = loadedEntities[1];
@@ -94,7 +96,7 @@ describe("EntityMapperService", () => {
 
   it("rejects promise when loading nonexistent entity", async () => {
     return entityMapper.load<Entity>(Entity, "nonexistent_id").catch((err) => {
-      expect(err).withContext('"not found" error not defined').toBeDefined();
+      expect(err, '"not found" error not defined').toBeDefined();
     });
   });
 
@@ -121,7 +123,7 @@ describe("EntityMapperService", () => {
     await entityMapper
       .save<Entity>(duplicateEntity)
       .then(() => {
-        fail("unexpectedly succeeded to overwrite existing entity");
+        throw new Error("unexpectedly succeeded to overwrite existing entity");
       })
       .catch(function (error) {
         expect(error).toBeDefined();
@@ -139,9 +141,9 @@ describe("EntityMapperService", () => {
     const loadedEntity = await entityMapper.load(Entity, existingEntity._id);
     await entityMapper.remove<Entity>(loadedEntity);
 
-    await expectAsync(
+    await expect(
       entityMapper.load(Entity, existingEntity._id),
-    ).toBeRejected();
+    ).rejects.toThrow();
   });
 
   it("rejects promise removing nonexistent entity", () => {
@@ -165,7 +167,7 @@ describe("EntityMapperService", () => {
       testEntity.getId(true),
     );
     expect(loadedByShortId).toBeDefined();
-    expect(loadedByShortId.getId().startsWith(Entity.ENTITY_TYPE)).toBeTrue();
+    expect(loadedByShortId.getId().startsWith(Entity.ENTITY_TYPE)).toBe(true);
 
     const loadedByFullId = await entityMapper.load(
       Entity,
@@ -184,7 +186,7 @@ describe("EntityMapperService", () => {
     await entityMapper.save(testEntity);
     expect(await updatePromise).toEqual({
       type: "new",
-      entity: jasmine.objectContaining({ _id: testId }),
+      entity: expect.objectContaining({ _id: testId }),
     });
 
     let existing = await entityMapper.load<TestEntity>(TestEntity, testId);
@@ -193,7 +195,7 @@ describe("EntityMapperService", () => {
     await entityMapper.save(existing);
     expect(await updatePromise).toEqual({
       type: "update",
-      entity: jasmine.objectContaining({ _id: testId }),
+      entity: expect.objectContaining({ _id: testId }),
     });
 
     existing = await entityMapper.load<TestEntity>(TestEntity, testId);
@@ -201,13 +203,13 @@ describe("EntityMapperService", () => {
     await entityMapper.remove(existing);
     expect(await updatePromise).toEqual({
       type: "remove",
-      entity: jasmine.objectContaining({ _id: testId }),
+      entity: expect.objectContaining({ _id: testId }),
     });
   });
 
   it("correctly behaves when en empty array is given to the saveAll function", async () => {
     const result = await entityMapper.saveAll([]);
-    expect(result).toHaveSize(0);
+    expect(result).toHaveLength(0);
   });
 
   it("correctly saves an array of heterogeneous entities", async () => {
@@ -217,15 +219,15 @@ describe("EntityMapperService", () => {
       new MockEntityA("42"),
     ]);
     expect(result).toEqual([
-      jasmine.objectContaining({
+      expect.objectContaining({
         ok: true,
         id: "EntityA:1",
       }),
-      jasmine.objectContaining({
+      expect.objectContaining({
         ok: true,
         id: "EntityA:10",
       }),
-      jasmine.objectContaining({
+      expect.objectContaining({
         ok: true,
         id: "EntityA:42",
       }),
@@ -239,15 +241,15 @@ describe("EntityMapperService", () => {
       new MockEntityA("42"),
     ]);
     expect(result).toEqual([
-      jasmine.objectContaining({
+      expect.objectContaining({
         ok: true,
         id: "EntityA:1",
       }),
-      jasmine.objectContaining({
+      expect.objectContaining({
         ok: true,
         id: "EntityB:10",
       }),
-      jasmine.objectContaining({
+      expect.objectContaining({
         ok: true,
         id: "EntityA:42",
       }),
@@ -255,14 +257,14 @@ describe("EntityMapperService", () => {
   });
 
   it("sets the entityCreated property on save if it is a new entity & entityUpdated on subsequent saves", async () => {
-    jasmine.clock().install();
+    vi.useFakeTimers();
     const currentUser = new Entity(TEST_USER);
     TestBed.inject(CurrentUserSubject).next(currentUser);
     const id = "test_created";
     const entity = new Entity(id);
 
     const mockTime1 = 1;
-    jasmine.clock().mockDate(new Date(mockTime1));
+    vi.setSystemTime(new Date(mockTime1));
     await entityMapper.save(entity);
     const createdEntity = await entityMapper.load(Entity, id);
 
@@ -272,14 +274,14 @@ describe("EntityMapperService", () => {
     expect(createdEntity.updated?.by).toEqual(currentUser.getId());
 
     const mockTime2 = mockTime1 + 1;
-    jasmine.clock().mockDate(new Date(mockTime2));
+    vi.setSystemTime(new Date(mockTime2));
     await entityMapper.save<Entity>(createdEntity);
     const updatedEntity = await entityMapper.load<Entity>(Entity, id);
 
     expect(updatedEntity.created?.at.getTime()).toEqual(mockTime1);
     expect(updatedEntity.updated?.at.getTime()).toEqual(mockTime2);
 
-    jasmine.clock().uninstall();
+    vi.useRealTimers();
   });
 
   @DatabaseEntity("EntityA")

@@ -31,14 +31,20 @@ describe("AbstractEntityDetailsComponent", () => {
     panels: [],
   };
 
-  let mockEntityRemoveService: jasmine.SpyObj<EntityActionsService>;
-  let mockAbility: jasmine.SpyObj<EntityAbility>;
+  let mockEntityRemoveService: any;
+  let mockAbility: any;
 
   beforeEach(waitForAsync(() => {
-    mockEntityRemoveService = jasmine.createSpyObj(["remove"]);
-    mockAbility = jasmine.createSpyObj(["cannot", "update", "on"]);
-    mockAbility.cannot.and.returnValue(false);
-    mockAbility.on.and.returnValue(() => true);
+    mockEntityRemoveService = {
+      remove: vi.fn(),
+    };
+    mockAbility = {
+      cannot: vi.fn(),
+      update: vi.fn(),
+      on: vi.fn(),
+    };
+    mockAbility.cannot.mockReturnValue(false);
+    mockAbility.on.mockReturnValue(() => true);
 
     TestBed.configureTestingModule({
       imports: [TestEntityDetailsComponent, MockedTestingModule.withState()],
@@ -72,11 +78,11 @@ describe("AbstractEntityDetailsComponent", () => {
     const entityMapper = TestBed.inject(EntityMapperService);
     entityMapper.save(testChild);
     tick();
-    spyOn(entityMapper, "load").and.callThrough();
+    vi.spyOn(entityMapper, "load");
 
     component.id = testChild.getId(true);
     component.ngOnChanges(simpleChangesFor(component, "id"));
-    expect(component.isLoading).toBeTrue();
+    expect(component.isLoading).toBe(true);
     tick();
 
     expect(entityMapper.load).toHaveBeenCalledWith(
@@ -84,7 +90,7 @@ describe("AbstractEntityDetailsComponent", () => {
       testChild.getId(true),
     );
     expect(component.entity).toBe(testChild);
-    expect(component.isLoading).toBeFalse();
+    expect(component.isLoading).toBe(false);
   }));
 
   it("should also support the long ID format", fakeAsync(() => {
@@ -92,7 +98,7 @@ describe("AbstractEntityDetailsComponent", () => {
     const entityMapper = TestBed.inject(EntityMapperService);
     entityMapper.save(child);
     tick();
-    spyOn(entityMapper, "load").and.callThrough();
+    vi.spyOn(entityMapper, "load");
 
     component.id = child.getId();
     component.ngOnChanges(simpleChangesFor(component, "id"));
@@ -111,9 +117,9 @@ describe("AbstractEntityDetailsComponent", () => {
   }));
 
   it("should call router when user is not permitted to create entities", () => {
-    mockAbility.cannot.and.returnValue(true);
+    mockAbility.cannot.mockReturnValue(true);
     const router = fixture.debugElement.injector.get(Router);
-    spyOn(router, "navigate");
+    vi.spyOn(router, "navigate");
     component.id = "new";
     component.ngOnChanges(simpleChangesFor(component, "id"));
     expect(router.navigate).toHaveBeenCalled();

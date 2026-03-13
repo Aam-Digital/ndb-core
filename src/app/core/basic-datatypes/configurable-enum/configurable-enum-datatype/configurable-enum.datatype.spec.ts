@@ -39,15 +39,15 @@ describe("Schema data type: configurable-enum", () => {
   }
 
   let entitySchemaService: EntitySchemaService;
-  let enumService: jasmine.SpyObj<ConfigurableEnumService>;
+  let enumService: any;
 
   beforeEach(waitForAsync(() => {
-    enumService = jasmine.createSpyObj([
-      "getEnumValues",
-      "preLoadEnums",
-      "cacheEnum",
-    ]);
-    enumService.getEnumValues.and.returnValue(TEST_CONFIG);
+    enumService = {
+      getEnumValues: vi.fn(),
+      preLoadEnums: vi.fn(),
+      cacheEnum: vi.fn(),
+    };
+    enumService.getEnumValues.mockReturnValue(TEST_CONFIG);
 
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
@@ -122,7 +122,7 @@ describe("Schema data type: configurable-enum", () => {
   });
 
   it("should map values using importMappingFunction", async () => {
-    enumService.getEnumValues.and.returnValue(genders);
+    enumService.getEnumValues.mockReturnValue(genders);
 
     const input = "MALEx";
     const actualMapped = await dataType.importMapFunction(
@@ -138,7 +138,7 @@ describe("Schema data type: configurable-enum", () => {
   });
 
   it("should return undefined for unmapped values when mapping is configured", async () => {
-    enumService.getEnumValues.and.returnValue(genders);
+    enumService.getEnumValues.mockReturnValue(genders);
 
     const input = "unmapped";
     const actualMapped = await dataType.importMapFunction(
@@ -154,7 +154,7 @@ describe("Schema data type: configurable-enum", () => {
   });
 
   it("should create invalid option when mapping dialog is skipped", async () => {
-    enumService.getEnumValues.and.returnValue(genders);
+    enumService.getEnumValues.mockReturnValue(genders);
 
     const input = "unmapped";
     const actualMapped = await dataType.importMapFunction(

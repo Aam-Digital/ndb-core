@@ -49,7 +49,7 @@ describe("BackupService", () => {
     await db.put({ _id: "Test:1", test: 1 });
 
     const res = await db.getAll();
-    expect(res).toHaveSize(1);
+    expect(res).toHaveLength(1);
 
     await service.clearDatabase();
 
@@ -62,7 +62,7 @@ describe("BackupService", () => {
     await db.put({ _id: "Test:2", test: 2 });
 
     const res = await db.getAll();
-    expect(res).toHaveSize(2);
+    expect(res).toHaveLength(2);
 
     const result = await service.getDatabaseExport();
 
@@ -77,19 +77,18 @@ describe("BackupService", () => {
     await db.put({ _id: "Test:2", test: 2 });
 
     const originalData = await db.getAll();
-    expect(originalData).toHaveSize(2);
+    expect(originalData).toHaveLength(2);
 
     const backup = await service.getDatabaseExport();
     await service.clearDatabase();
     await service.restoreData(backup, true);
 
     const res = await db.getAll();
-    expect(res).toHaveSize(2);
-    expect(res.map(ignoreRevProperty))
-      .withContext(
-        "restored records not identical to original records (_rev ignored)",
-      )
-      .toEqual(originalData.map(ignoreRevProperty));
+    expect(res).toHaveLength(2);
+    expect(
+      res.map(ignoreRevProperty),
+      "restored records not identical to original records (_rev ignored)",
+    ).toEqual(originalData.map(ignoreRevProperty));
   });
 
   it("getDatabaseExport should contain an entry for every record", async () => {
@@ -99,7 +98,7 @@ describe("BackupService", () => {
     await db.put(x2);
 
     const res = await db.getAll();
-    expect(res).toHaveSize(2);
+    expect(res).toHaveLength(2);
 
     const result = await service.getDatabaseExport();
 
@@ -113,7 +112,7 @@ describe("BackupService", () => {
     ];
     await service.restoreData(data, true);
     const res = await db.getAll();
-    expect(res).toHaveSize(2);
+    expect(res).toHaveLength(2);
     expect(res.map(ignoreRevProperty)).toEqual([
       { _id: "Test:1", test: 1 },
       { _id: "Test:2", test: 2 },
@@ -125,16 +124,14 @@ describe("BackupService", () => {
     await service.restoreData(data);
 
     const res = await db.getAll();
-    expect(res).toHaveSize(1);
-    expect(res[0].other)
-      .withContext("empty property was added anyway")
-      .toBeUndefined();
+    expect(res).toHaveLength(1);
+    expect(res[0].other, "empty property was added anyway").toBeUndefined();
     expect(res.map(ignoreRevProperty)).toEqual([{ _id: "Test:1", test: 1 }]);
   });
 
   it("should reset the application after confirmation", async () => {
     const confirmationDialog = TestBed.inject(ConfirmationDialogService);
-    spyOn(confirmationDialog, "getConfirmation").and.returnValue({
+    vi.spyOn(confirmationDialog, "getConfirmation").mockReturnValue({
       afterClosed: () => of(true),
     } as any);
     localStorage.setItem("someItem", "someValue");
@@ -154,15 +151,15 @@ describe("BackupService", () => {
 
     // Spy on global APIs used by the static method
     const mockDbs = [{ name: "db1" }, { name: "db2" }];
-    spyOn(indexedDB, "databases").and.resolveTo(mockDbs as any);
+    vi.spyOn(indexedDB, "databases").mockResolvedValue(mockDbs as any);
     const mockDeleteReq = { onsuccess: null as any, onerror: null as any };
-    spyOn(indexedDB, "deleteDatabase").and.callFake(() => {
+    vi.spyOn(indexedDB, "deleteDatabase").mockImplementation(() => {
       const req = { ...mockDeleteReq };
       setTimeout(() => req.onsuccess?.());
       return req as any;
     });
-    const unregisterSpy = jasmine.createSpy().and.resolveTo(true);
-    spyOn(navigator.serviceWorker, "getRegistrations").and.resolveTo([
+    const unregisterSpy = vi.fn().mockResolvedValue(true);
+    vi.spyOn(navigator.serviceWorker, "getRegistrations").mockResolvedValue([
       { unregister: unregisterSpy } as any,
     ]);
 
@@ -176,7 +173,7 @@ describe("BackupService", () => {
 
   it("runPendingReset should do nothing when no reset is pending", async () => {
     sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
-    spyOn(indexedDB, "databases");
+    vi.spyOn(indexedDB, "databases");
 
     await BackupService.runPendingReset();
 

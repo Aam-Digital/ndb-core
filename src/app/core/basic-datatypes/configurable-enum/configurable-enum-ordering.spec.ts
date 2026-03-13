@@ -39,7 +39,7 @@ describe("Configurable Enum Ordering", () => {
         otherField: 2,
       },
     ].forEach((obj) => {
-      expect(Ordering.hasOrdinalValue(obj)).toBeTrue();
+      expect(Ordering.hasOrdinalValue(obj)).toBe(true);
     });
   });
 
@@ -51,7 +51,7 @@ describe("Configurable Enum Ordering", () => {
         notOrdinal: 0,
       },
     ].forEach((thing) => {
-      expect(Ordering.hasOrdinalValue(thing)).toBeFalse();
+      expect(Ordering.hasOrdinalValue(thing)).toBe(false);
     });
   });
 });

@@ -30,11 +30,13 @@ import { PublicFormsService } from "app/features/public-form/public-forms.servic
 describe("EntityAnonymizeService", () => {
   let service: EntityAnonymizeService;
   let entityMapper: MockEntityMapperService;
-  let mockFileService: jasmine.SpyObj<FileService>;
+  let mockFileService: any;
 
   beforeEach(() => {
-    mockFileService = jasmine.createSpyObj(["removeFile"]);
-    mockFileService.removeFile.and.returnValue(of(null));
+    mockFileService = {
+      removeFile: vi.fn(),
+    };
+    mockFileService.removeFile.mockReturnValue(of(null));
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
@@ -61,7 +63,8 @@ describe("EntityAnonymizeService", () => {
   class AnonymizableEntity extends Entity {
     static override hasPII = true;
 
-    @DatabaseField() defaultField: string;
+    @DatabaseField()
+    defaultField: string;
 
     @DatabaseField({ anonymize: "retain" })
     retainedField: string;
@@ -73,7 +76,8 @@ describe("EntityAnonymizeService", () => {
     })
     retainAnonymizedDates: Date[];
 
-    @DatabaseField({ dataType: "file" }) file: string;
+    @DatabaseField({ dataType: "file" })
+    file: string;
 
     @DatabaseField({
       anonymize: "retain-anonymized",
@@ -224,8 +228,8 @@ describe("EntityAnonymizeService", () => {
   });
 
   /*
-    CASCADING ANONYMIZATION
-   */
+      CASCADING ANONYMIZATION
+     */
   function expectAnonymized(
     expectedToGetAnonymized: EntityWithAnonRelations[],
     entityMapper: MockEntityMapperService,

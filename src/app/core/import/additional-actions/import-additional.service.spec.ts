@@ -71,11 +71,11 @@ describe("ImportAdditionalService", () => {
       },
       // the following should be hidden because it's also an indirect/relationship entity
       /* {
-        sourceType: ImportedEntity.ENTITY_TYPE,
-        mode: "direct",
-        targetType: RelationshipEntity.ENTITY_TYPE,
-        targetProperty: "participant",
-      }, */
+              sourceType: ImportedEntity.ENTITY_TYPE,
+              mode: "direct",
+              targetType: RelationshipEntity.ENTITY_TYPE,
+              targetProperty: "participant",
+            }, */
       {
         sourceType: ImportedEntity.ENTITY_TYPE,
         mode: "indirect",
@@ -93,7 +93,7 @@ describe("ImportAdditionalService", () => {
       DirectlyLinkingEntity.ENTITY_TYPE,
     );
     expect(actual).toEqual([
-      jasmine.objectContaining({
+      expect.objectContaining({
         sourceType: ImportedEntity.ENTITY_TYPE,
         targetProperty: "participants",
         targetType: DirectlyLinkingEntity.ENTITY_TYPE,
@@ -104,7 +104,7 @@ describe("ImportAdditionalService", () => {
   it("should  get actions linking imported data to the given type for indirectly linked", async () => {
     const actual = service.getActionsLinkingTo("Other");
     expect(actual).toEqual([
-      jasmine.objectContaining({
+      expect.objectContaining({
         sourceType: ImportedEntity.ENTITY_TYPE,
         mode: "indirect",
         relationshipEntityType: RelationshipEntity.ENTITY_TYPE,

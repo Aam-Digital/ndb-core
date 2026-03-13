@@ -9,22 +9,22 @@ describe("AdminPrimaryActionComponent", () => {
   let fixture: ComponentFixture<AdminPrimaryActionComponent>;
 
   beforeEach(async () => {
-    const configSpy = jasmine.createSpyObj(
-      "ConfigService",
-      ["getConfig", "saveConfig", "exportConfig", "getAllConfigs"],
-      {
-        configUpdates: NEVER,
-      },
-    );
+    const configSpy = {
+      getConfig: vi.fn().mockName("ConfigService.getConfig"),
+      saveConfig: vi.fn().mockName("ConfigService.saveConfig"),
+      exportConfig: vi.fn().mockName("ConfigService.exportConfig"),
+      getAllConfigs: vi.fn().mockName("ConfigService.getAllConfigs"),
+      configUpdates: NEVER,
+    };
 
     // Mock the config data structure
-    configSpy.getConfig.and.returnValue({
+    configSpy.getConfig.mockReturnValue({
       icon: "file-alt",
       actionType: "createEntity",
       entityType: "Note",
     });
 
-    configSpy.exportConfig.and.returnValue({
+    configSpy.exportConfig.mockReturnValue({
       primaryAction: {
         icon: "file-alt",
         actionType: "createEntity",
@@ -32,7 +32,7 @@ describe("AdminPrimaryActionComponent", () => {
       },
     });
 
-    configSpy.getAllConfigs.and.returnValue([]);
+    configSpy.getAllConfigs.mockReturnValue([]);
 
     await TestBed.configureTestingModule({
       imports: [AdminPrimaryActionComponent, MockedTestingModule.withState()],

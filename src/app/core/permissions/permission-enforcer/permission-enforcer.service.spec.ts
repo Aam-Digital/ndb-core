@@ -1,3 +1,4 @@
+import type { Mock, MockedObject } from "vitest";
 import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
 import { PermissionEnforcerService } from "./permission-enforcer.service";
@@ -24,15 +25,19 @@ describe("PermissionEnforcerService", () => {
   ];
   let entityUpdates: Subject<UpdatedEntity<Config>>;
   let entityMapper: EntityMapperService;
-  let mockLocation: jasmine.SpyObj<Location>;
-  let destroySpy: jasmine.Spy;
-  let resetSyncSpy: jasmine.Spy;
-  let mockDb: { purge: jasmine.Spy };
-  let isIndexedDbAdapterSpy: jasmine.Spy;
+  let mockLocation: any;
+  let destroySpy: Mock;
+  let resetSyncSpy: Mock;
+  let mockDb: {
+    purge: Mock;
+  };
+  let isIndexedDbAdapterSpy: Mock;
 
   beforeEach(waitForAsync(() => {
     entityUpdates = new Subject();
-    mockLocation = jasmine.createSpyObj(["reload"]);
+    mockLocation = {
+      reload: vi.fn(),
+    };
 
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
@@ -42,21 +47,20 @@ describe("PermissionEnforcerService", () => {
 
     entityMapper = TestBed.inject(EntityMapperService);
     (entityMapper as MockEntityMapperService).clearAllData();
-    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
+    vi.spyOn(entityMapper, "receiveUpdates").mockReturnValue(entityUpdates);
 
     const dbResolver = TestBed.inject(DatabaseResolverService);
     dbResolver.destroyDatabases = () => null;
-    destroySpy = spyOn(dbResolver, "destroyDatabases");
+    destroySpy = vi.spyOn(dbResolver, "destroyDatabases");
     dbResolver.resetSync = () => Promise.resolve();
-    resetSyncSpy = spyOn(dbResolver, "resetSync").and.resolveTo();
-    mockDb = { purge: jasmine.createSpy("purge").and.resolveTo(true) };
+    resetSyncSpy = vi.spyOn(dbResolver, "resetSync").mockResolvedValue(undefined);
+    mockDb = { purge: vi.fn().mockResolvedValue(true) };
     dbResolver.getDatabase = () => mockDb as any;
     // Default to indexeddb adapter for tests unless overridden
     dbResolver.isIndexedDbAdapterSupported = () => true;
-    isIndexedDbAdapterSpy = spyOn(
-      dbResolver,
-      "isIndexedDbAdapterSupported",
-    ).and.returnValue(true);
+    isIndexedDbAdapterSpy = vi
+      .spyOn(dbResolver, "isIndexedDbAdapterSupported")
+      .mockReturnValue(true);
 
     TestBed.inject(AbilityService).initializeRules();
   }));
@@ -84,7 +88,7 @@ describe("PermissionEnforcerService", () => {
   it("should not reset if roles didnt change since last check", fakeAsync(() => {
     updateRulesAndTriggerEnforcer(userRules);
     tick();
-    resetSyncSpy.calls.reset();
+    resetSyncSpy.mockClear();
 
     entityMapper.save(new TestEntity());
     tick();
@@ -121,11 +125,11 @@ describe("PermissionEnforcerService", () => {
 
       // Track call order via a shared sequence log
       const callSequence: string[] = [];
-      mockDb.purge.and.callFake(() => {
+      mockDb.purge.mockImplementation(() => {
         callSequence.push("purge");
         return Promise.resolve(true);
       });
-      resetSyncSpy.and.callFake(() => {
+      resetSyncSpy.mockImplementation(() => {
         callSequence.push("sync");
         return Promise.resolve();
       });
@@ -156,7 +160,7 @@ describe("PermissionEnforcerService", () => {
     }));
 
     it("should track analytics event 're-sync triggered due to changed permissions' when rules change", fakeAsync(() => {
-      const trackSpy = spyOn(TestBed.inject(AnalyticsService), "eventTrack");
+      const trackSpy = vi.spyOn(TestBed.inject(AnalyticsService), "eventTrack");
 
       entityMapper.save(new TestEntity());
       tick();
@@ -173,7 +177,7 @@ describe("PermissionEnforcerService", () => {
 
   describe("legacy idb adapter (purge not supported)", () => {
     beforeEach(() => {
-      isIndexedDbAdapterSpy.and.returnValue(false);
+      isIndexedDbAdapterSpy.mockReturnValue(false);
     });
 
     it("should reset page if entity with write restriction exists (inverted)", fakeAsync(() => {
@@ -218,8 +222,8 @@ describe("PermissionEnforcerService", () => {
     }));
 
     it("should not reset page if only entities with read permission exist", fakeAsync(() => {
-      destroySpy.calls.reset();
-      mockLocation.reload.calls.reset();
+      destroySpy.mockClear();
+      mockLocation.reload.mockClear();
 
       entityMapper.save(new TestEntity());
       entityMapper.save(new TestEntity());
@@ -278,7 +282,7 @@ describe("PermissionEnforcerService", () => {
     }));
 
     it("should track analytics event 'destroying local db due to lost permissions' when destroying the local db", fakeAsync(() => {
-      const trackSpy = spyOn(TestBed.inject(AnalyticsService), "eventTrack");
+      const trackSpy = vi.spyOn(TestBed.inject(AnalyticsService), "eventTrack");
 
       entityMapper.save(new TestEntity());
       tick();

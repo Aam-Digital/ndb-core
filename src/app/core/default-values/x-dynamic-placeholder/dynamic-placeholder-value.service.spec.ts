@@ -3,7 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";
 import { Entity } from "app/core/entity/model/entity";
 import { CurrentUserSubject } from "app/core/session/current-user-subject";
-import { testDefaultValueCase } from "../default-value-service/default-value.service.spec";
+import { testDefaultValueCase } from "../default-value-service/default-value.service.test-utils";
 import { DefaultValueService } from "../default-value-service/default-value.service";
 import { DefaultValueStrategy } from "../default-value-strategy.interface";
 import { PrebuiltFilterConfig } from "app/core/entity-list/EntityListConfig";
@@ -65,7 +65,7 @@ describe("DynamicPlaceholderValueService", () => {
 
   it("should set current Date, if PLACEHOLDER.NOW is selected", async () => {
     const mockDate = new Date();
-    jasmine.clock().mockDate(mockDate);
+    vi.setSystemTime(mockDate);
 
     await testDefaultValueCase(
       defaultValueService,
@@ -78,7 +78,7 @@ describe("DynamicPlaceholderValueService", () => {
       mockDate,
     );
 
-    jasmine.clock().uninstall();
+    vi.useRealTimers();
   });
 
   it("should return current USER string, if PLACEHOLDER.CURRENT_USER is selected", () => {

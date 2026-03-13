@@ -51,14 +51,12 @@ describe("SupportComponent", () => {
     Object.defineProperty(mockDB, "LAST_SYNC_KEY", {
       value: SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + testDbName,
     });
-    mockDB.getPouchDBOnceReady = jasmine
-      .createSpy("getPouchDBOnceReady")
-      .and.returnValue(
-        Promise.resolve({
-          info: () => Promise.resolve({ doc_count: 1, update_seq: 2 }),
-        } as any),
-      );
-    mockDB.destroy = jasmine.createSpy("destroy");
+    mockDB.getPouchDBOnceReady = vi.fn().mockReturnValue(
+      Promise.resolve({
+        info: () => Promise.resolve({ doc_count: 1, update_seq: 2 }),
+      } as any),
+    );
+    mockDB.destroy = vi.fn();
 
     await TestBed.configureTestingModule({
       imports: [SupportComponent, MatDialogModule, NoopAnimationsModule],
@@ -76,7 +74,9 @@ describe("SupportComponent", () => {
         { provide: WINDOW_TOKEN, useValue: mockWindow },
         {
           provide: BackupService,
-          useValue: jasmine.createSpyObj(["resetApplication"]),
+          useValue: {
+            resetApplication: vi.fn(),
+          },
         },
         { provide: DownloadService, useValue: null },
         {
@@ -126,7 +126,7 @@ describe("SupportComponent", () => {
 
   it("should display the service worker logs after they are available", fakeAsync(() => {
     const exampleLog = "example service worker log";
-    spyOn(TestBed.inject(HttpClient), "get").and.returnValue(of(exampleLog));
+    vi.spyOn(TestBed.inject(HttpClient), "get").mockReturnValue(of(exampleLog));
 
     component.ngOnInit();
     tick();

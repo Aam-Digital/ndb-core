@@ -31,36 +31,38 @@ describe("NotificationSettingComponent", () => {
   let fixture: ComponentFixture<NotificationSettingsComponent>;
   let entityMapper: MockEntityMapperService;
   const testUser: SessionInfo = { name: TEST_USER, id: TEST_USER, roles: [] };
-  let mockNotificationService: jasmine.SpyObj<NotificationService>;
-  let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockNotificationService: any;
+  let mockConfirmationDialog: any;
 
   beforeEach(async () => {
-    mockNotificationService = jasmine.createSpyObj([
-      "isNotificationServerEnabled",
-      "isPushNotificationSupported",
-      "hasNotificationPermissionGranted",
-      "isDeviceRegistered",
-      "loadNotificationConfig",
-      "registerDevice",
-      "unregisterDevice",
-      "testNotification",
-    ]);
-    mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
+    mockNotificationService = {
+      isNotificationServerEnabled: vi.fn(),
+      isPushNotificationSupported: vi.fn(),
+      hasNotificationPermissionGranted: vi.fn(),
+      isDeviceRegistered: vi.fn(),
+      loadNotificationConfig: vi.fn(),
+      registerDevice: vi.fn(),
+      unregisterDevice: vi.fn(),
+      testNotification: vi.fn(),
+    };
+    mockConfirmationDialog = {
+      getConfirmation: vi.fn(),
+    };
 
-    mockNotificationService.isNotificationServerEnabled.and.returnValue(
+    mockNotificationService.isNotificationServerEnabled.mockReturnValue(
       Promise.resolve(true),
     );
-    mockNotificationService.isPushNotificationSupported.and.returnValue(true);
-    mockNotificationService.hasNotificationPermissionGranted.and.returnValue(
+    mockNotificationService.isPushNotificationSupported.mockReturnValue(true);
+    mockNotificationService.hasNotificationPermissionGranted.mockReturnValue(
       true,
     );
-    mockNotificationService.isDeviceRegistered.and.returnValue(
+    mockNotificationService.isDeviceRegistered.mockReturnValue(
       Promise.resolve(true),
     );
 
     const testConfig = new NotificationConfig(TEST_USER);
     testConfig.notificationRules = [];
-    mockNotificationService.loadNotificationConfig.and.returnValue(
+    mockNotificationService.loadNotificationConfig.mockReturnValue(
       Promise.resolve(testConfig),
     );
 
@@ -102,7 +104,7 @@ describe("NotificationSettingComponent", () => {
   });
 
   it("should set isFeatureEnabled to false when notification server is disabled", async () => {
-    mockNotificationService.isNotificationServerEnabled.and.returnValue(
+    mockNotificationService.isNotificationServerEnabled.mockReturnValue(
       Promise.resolve(false),
     );
 
@@ -112,7 +114,7 @@ describe("NotificationSettingComponent", () => {
   });
 
   it("should set isBrowserSupported to false when push notifications are not supported", async () => {
-    mockNotificationService.isPushNotificationSupported.and.returnValue(false);
+    mockNotificationService.isPushNotificationSupported.mockReturnValue(false);
 
     await component.ngOnInit();
 
@@ -151,7 +153,7 @@ describe("NotificationSettingComponent", () => {
     await component.ngOnInit();
     await component.addNewNotificationRule();
     const testRule = component.notificationConfig().notificationRules[0];
-    spyOn(entityMapper, "save").and.returnValue(Promise.resolve());
+    vi.spyOn(entityMapper, "save").mockReturnValue(Promise.resolve());
 
     const updatedRule: NotificationRule = {
       ...testRule,
@@ -169,7 +171,7 @@ describe("NotificationSettingComponent", () => {
     await component.ngOnInit();
     await component.addNewNotificationRule();
     const testRule = component.notificationConfig().notificationRules[0];
-    spyOn(entityMapper, "save").and.returnValue(Promise.resolve());
+    vi.spyOn(entityMapper, "save").mockReturnValue(Promise.resolve());
 
     const updatedRule: NotificationRule = {
       ...testRule,
@@ -187,8 +189,8 @@ describe("NotificationSettingComponent", () => {
     await component.ngOnInit();
     await component.addNewNotificationRule();
     await component.addNewNotificationRule();
-    spyOn(entityMapper, "save").and.returnValue(Promise.resolve());
-    mockConfirmationDialog.getConfirmation.and.returnValue(
+    vi.spyOn(entityMapper, "save").mockReturnValue(Promise.resolve());
+    mockConfirmationDialog.getConfirmation.mockReturnValue(
       Promise.resolve(true),
     );
     const initialLength =
@@ -205,8 +207,8 @@ describe("NotificationSettingComponent", () => {
   it("should save config after removing rule", async () => {
     await component.ngOnInit();
     await component.addNewNotificationRule();
-    spyOn(entityMapper, "save").and.returnValue(Promise.resolve());
-    mockConfirmationDialog.getConfirmation.and.returnValue(
+    vi.spyOn(entityMapper, "save").mockReturnValue(Promise.resolve());
+    mockConfirmationDialog.getConfirmation.mockReturnValue(
       Promise.resolve(true),
     );
 
@@ -216,7 +218,7 @@ describe("NotificationSettingComponent", () => {
   });
 
   it("should call notification service to send test notification", () => {
-    mockNotificationService.testNotification.and.returnValue(
+    mockNotificationService.testNotification.mockReturnValue(
       Promise.resolve({}),
     );
 

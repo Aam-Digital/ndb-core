@@ -115,7 +115,8 @@ describe("BirthdayDashboardComponent", () => {
   it("should support multiple entities types ", fakeAsync(() => {
     @DatabaseEntity("BirthdayEntity")
     class BirthdayEntity extends Entity {
-      @DatabaseField() birthday: DateWithAge;
+      @DatabaseField()
+      birthday: DateWithAge;
     }
 
     const e1 = new BirthdayEntity();

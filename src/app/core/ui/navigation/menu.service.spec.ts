@@ -13,14 +13,16 @@ import { ViewConfig } from "app/core/config/dynamic-routing/view-config.interfac
 describe("MenuService", () => {
   let service: MenuService;
 
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockConfigService: any;
   let mockConfigUpdated: BehaviorSubject<Config>;
 
   beforeEach(() => {
     mockConfigUpdated = new BehaviorSubject<Config>(null);
-    mockConfigService = jasmine.createSpyObj(["getConfig", "getAllConfigs"], {
+    mockConfigService = {
+      getConfig: vi.fn(),
+      getAllConfigs: vi.fn(),
       configUpdates: mockConfigUpdated,
-    });
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -46,7 +48,7 @@ describe("MenuService", () => {
       ],
     };
 
-    mockConfigService.getConfig.and.returnValue(testConfig);
+    mockConfigService.getConfig.mockReturnValue(testConfig);
     mockConfigUpdated.next(null);
     tick();
 
@@ -85,7 +87,7 @@ describe("MenuService", () => {
       config: { widgets: [] },
     };
 
-    mockConfigService.getAllConfigs.and.returnValue([
+    mockConfigService.getAllConfigs.mockReturnValue([
       testView1,
       testView2,
       testView3,

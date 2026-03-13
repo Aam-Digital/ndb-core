@@ -20,23 +20,23 @@ import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 describe("AdminRelatedEntityDetailsComponent", () => {
   let component: AdminRelatedEntityDetailsComponent;
   let fixture: ComponentFixture<AdminRelatedEntityDetailsComponent>;
-  let mockFormService: jasmine.SpyObj<EntityFormService>;
-  let mockDialogRef: jasmine.SpyObj<
-    MatDialogRef<AdminRelatedEntityDetailsComponent>
-  >;
+  let mockFormService: any;
+  let mockDialogRef: any;
   let mockDialogData: AdminRelatedEntityDetailsData;
 
   beforeEach(async () => {
-    mockFormService = jasmine.createSpyObj("EntityFormService", [
-      "createEntityForm",
-    ]);
-    mockFormService.createEntityForm.and.returnValue(
+    mockFormService = {
+      createEntityForm: vi.fn().mockName("EntityFormService.createEntityForm"),
+    };
+    mockFormService.createEntityForm.mockReturnValue(
       Promise.resolve({
         formGroup: new FormGroup({}),
       } as EntityForm<any>),
     );
 
-    mockDialogRef = jasmine.createSpyObj("MatDialogRef", ["close"]);
+    mockDialogRef = {
+      close: vi.fn().mockName("MatDialogRef.close"),
+    };
 
     mockDialogData = {
       entityConstructor: TestEntity,

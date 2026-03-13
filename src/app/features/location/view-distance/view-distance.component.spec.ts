@@ -44,7 +44,7 @@ describe("ViewDistanceComponent", () => {
   });
 
   it("update function and trigger change detection when new coordinates are emitted", () => {
-    const detectChangesSpy = spyOn(
+    const detectChangesSpy = vi.spyOn(
       component["changeDetector"],
       "detectChanges",
     );

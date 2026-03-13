@@ -14,13 +14,17 @@ import { EditConfigurableEnumComponent } from "./edit-configurable-enum.componen
 describe("EditConfigurableEnumComponent", () => {
   let component: EditConfigurableEnumComponent;
   let fixture: ComponentFixture<EditConfigurableEnumComponent>;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
-  let mockAbility: jasmine.SpyObj<EntityAbility>;
+  let mockDialog: any;
+  let mockAbility: any;
 
   beforeEach(async () => {
-    mockDialog = jasmine.createSpyObj(["open"]);
-    mockAbility = jasmine.createSpyObj(["can"]);
-    mockAbility.can.and.returnValue(true);
+    mockDialog = {
+      open: vi.fn(),
+    };
+    mockAbility = {
+      can: vi.fn(),
+    };
+    mockAbility.can.mockReturnValue(true);
 
     await TestBed.configureTestingModule({
       imports: [
@@ -63,7 +67,7 @@ describe("EditConfigurableEnumComponent", () => {
       isArray: true,
     };
     component.ngOnInit();
-    expect(component.multi).toBeTrue();
+    expect(component.multi).toBe(true);
   });
 
   it("should add [invalid option] option from entity if given", () => {
@@ -89,18 +93,18 @@ describe("EditConfigurableEnumComponent", () => {
   });
 
   it("should extend the existing enum with the new option", async () => {
-    const confirmationSpy = spyOn(
+    const confirmationSpy = vi.spyOn(
       TestBed.inject<ConfirmationDialogService>(ConfirmationDialogService),
       "getConfirmation",
     );
-    const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
+    const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
 
     const enumEntity = new ConfigurableEnum();
     enumEntity.values = [{ id: "1", label: "first" }];
     component.enumEntity = enumEntity;
 
     // abort if confirmation dialog declined
-    confirmationSpy.and.resolveTo(false);
+    confirmationSpy.mockResolvedValue(false);
     const resCanceled = await component.addNewOption("second");
 
     expect(confirmationSpy).toHaveBeenCalled();
@@ -108,7 +112,7 @@ describe("EditConfigurableEnumComponent", () => {
     expect(resCanceled).toBeUndefined();
 
     // create and save new upon confirmation
-    confirmationSpy.and.resolveTo(true);
+    confirmationSpy.mockResolvedValue(true);
     const res = await component.addNewOption("second");
 
     expect(confirmationSpy).toHaveBeenCalled();
@@ -136,7 +140,7 @@ describe("EditConfigurableEnumComponent", () => {
       { id: "a", label: "a", isInvalidOption: true },
     ]);
 
-    mockDialog.open.and.returnValue({ afterClosed: () => of({}) } as any);
+    mockDialog.open.mockReturnValue({ afterClosed: () => of({}) } as any);
     component.enumEntity.values.push({ id: "2", label: "2" });
 
     component.openSettings({ stopPropagation: () => {} } as any);
@@ -159,7 +163,7 @@ describe("EditConfigurableEnumComponent", () => {
     component.ngOnChanges();
 
     // simulate removing option "2"
-    mockDialog.open.and.returnValue({ afterClosed: () => of({}) } as any);
+    mockDialog.open.mockReturnValue({ afterClosed: () => of({}) } as any);
     component.enumEntity.values.pop();
     component.openSettings({ stopPropagation: () => {} } as any);
 

@@ -36,7 +36,7 @@ describe("KeycloakAdminService", () => {
   it("should delete user", fakeAsync(() => {
     // when
     service.deleteUser("test-entity-id").subscribe((response) => {
-      expect(response.userDeleted).toBeTrue();
+      expect(response.userDeleted).toBe(true);
     });
 
     // then
@@ -68,7 +68,7 @@ describe("KeycloakAdminService", () => {
       .createUser("test-entity-id", "test@example.com", [])
       .subscribe((user) => {
         expect(user).toEqual(
-          jasmine.objectContaining({ email: "test@example.com" }),
+          expect.objectContaining({ email: "test@example.com" }),
         );
       });
 
@@ -102,10 +102,10 @@ describe("KeycloakAdminService", () => {
   }));
 
   it("should log debug if user does not exist in Keycloak during deletion", fakeAsync(() => {
-    const warnSpy = spyOn(Logging, "debug");
+    const warnSpy = vi.spyOn(Logging, "debug");
 
     service.deleteUser("test-id").subscribe((response) => {
-      expect(response.userDeleted).toBeTrue();
+      expect(response.userDeleted).toBe(true);
     });
 
     const reqGet = httpTestingController.expectOne(

@@ -21,20 +21,26 @@ import { EditFileComponent } from "./edit-file.component";
 describe("EditFileComponent", () => {
   let component: EditFileComponent;
   let fixture: ComponentFixture<EditFileComponent>;
-  let mockFileService: jasmine.SpyObj<FileService>;
-  let mockAlertService: jasmine.SpyObj<AlertService>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockFileService: any;
+  let mockAlertService: any;
+  let mockEntityMapper: any;
 
   const file = new File([], "test.file");
 
   beforeEach(async () => {
-    mockFileService = jasmine.createSpyObj([
-      "uploadFile",
-      "showFile",
-      "removeFile",
-    ]);
-    mockAlertService = jasmine.createSpyObj(["addDanger", "addInfo"]);
-    mockEntityMapper = jasmine.createSpyObj(["save", "load"]);
+    mockFileService = {
+      uploadFile: vi.fn(),
+      showFile: vi.fn(),
+      removeFile: vi.fn(),
+    };
+    mockAlertService = {
+      addDanger: vi.fn(),
+      addInfo: vi.fn(),
+    };
+    mockEntityMapper = {
+      save: vi.fn(),
+      load: vi.fn(),
+    };
     await TestBed.configureTestingModule({
       imports: [
         EditFileComponent,
@@ -119,7 +125,7 @@ describe("EditFileComponent", () => {
 
   it("should upload a file if a new file was selected and the form saved", () => {
     setupComponent();
-    mockFileService.uploadFile.and.returnValue(of({ ok: true }));
+    mockFileService.uploadFile.mockReturnValue(of({ ok: true }));
     component.formControl.enable();
 
     component.onFileSelected(file);
@@ -153,7 +159,7 @@ describe("EditFileComponent", () => {
 
   it("should only upload the last file if a file was selected and then replaced", () => {
     setupComponent();
-    mockFileService.uploadFile.and.returnValue(of({ ok: true }));
+    mockFileService.uploadFile.mockReturnValue(of({ ok: true }));
     component.formControl.enable();
 
     component.onFileSelected(file);
@@ -203,7 +209,7 @@ describe("EditFileComponent", () => {
   });
 
   it("should remove a file if the file input was cleared and saved", () => {
-    mockFileService.removeFile.and.returnValue(of({ ok: true }));
+    mockFileService.removeFile.mockReturnValue(of({ ok: true }));
     setupComponent(file.name);
     component.formControl.enable();
 
@@ -221,7 +227,7 @@ describe("EditFileComponent", () => {
   });
 
   it("should upload the new file if the file was replaced and then saved", () => {
-    mockFileService.uploadFile.and.returnValue(of({ ok: true }));
+    mockFileService.uploadFile.mockReturnValue(of({ ok: true }));
     setupComponent(file.name);
     component.formControl.enable();
 
@@ -241,14 +247,14 @@ describe("EditFileComponent", () => {
 
   it("should show upload errors as an alert and reset entity", fakeAsync(() => {
     setupComponent("old.file");
-    mockEntityMapper.load.and.resolveTo(
+    mockEntityMapper.load.mockResolvedValue(
       Object.assign(new Entity(component.entity.getId()), {
         _rev: "2",
         testProp: "new.file",
       }),
     );
     const subject = new Subject();
-    mockFileService.uploadFile.and.returnValue(subject);
+    mockFileService.uploadFile.mockReturnValue(subject);
     component.formControl.enable();
 
     component.onFileSelected(file);
@@ -266,7 +272,7 @@ describe("EditFileComponent", () => {
     expect(component.formControl).toHaveValue("old.file");
     expect(component.entity[component.formFieldConfig.id]).toBe("old.file");
     expect(mockEntityMapper.save).toHaveBeenCalledWith(
-      jasmine.objectContaining({
+      expect.objectContaining({
         _id: component.entity["_id"],
         _rev: "2",
         testProp: "old.file",

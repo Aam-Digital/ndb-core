@@ -6,11 +6,12 @@ import { UpdatedEntity } from "../model/entity-update";
 import { Provider } from "@angular/core";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import { vi } from "vitest";
 
 export function createEntityMapperSpyObj() {
-  const mock = jasmine.createSpyObj(["receiveUpdates"]);
-  mock.receiveUpdates.and.returnValue(NEVER);
-  return mock;
+  return {
+    receiveUpdates: vi.fn().mockReturnValue(NEVER),
+  };
 }
 
 export function mockEntityMapperProvider(

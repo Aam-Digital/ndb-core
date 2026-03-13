@@ -25,12 +25,14 @@ describe("SkillApiService", () => {
   let service: SkillApiService;
 
   let httpTesting: HttpTestingController;
-  let mockEscoApi: jasmine.SpyObj<EscoApiService>;
+  let mockEscoApi: any;
 
   beforeEach(() => {
-    mockEscoApi = jasmine.createSpyObj("EscoApiService", [
-      "loadOrCreateSkillEntity",
-    ]);
+    mockEscoApi = {
+      loadOrCreateSkillEntity: vi
+        .fn()
+        .mockName("EscoApiService.loadOrCreateSkillEntity"),
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -112,7 +114,7 @@ describe("SkillApiService", () => {
       } as ExternalProfileResponseDto);
 
     expect(await result).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         results: mockResults,
       }),
     );
@@ -141,8 +143,8 @@ describe("SkillApiService", () => {
         results: mockResults,
       } as ExternalProfileResponseDto);
 
-    expectAsync(result).toBeResolvedTo(
-      jasmine.objectContaining({
+    expect(result).resolves.toEqual(
+      expect.objectContaining({
         results: mockResults,
       }),
     );
@@ -158,7 +160,7 @@ describe("SkillApiService", () => {
 
     httpTesting.expectOne("/api/v1/skill/user-profile/1").flush(mockProfile);
 
-    expectAsync(result).toBeResolvedTo(mockProfile);
+    expect(result).resolves.toEqual(mockProfile);
   }));
 
   it("should applyDataFromExternalProfile to target entity (without reloading external profile)", fakeAsync(() => {
@@ -216,8 +218,8 @@ describe("SkillApiService", () => {
     };
     const targetEntity = TestEntity.create({ name: "old" });
 
-    const alertSpy = spyOn(TestBed.inject(AlertService), "addWarning");
-    spyOn(service, "getExternalProfileById").and.returnValue(
+    const alertSpy = vi.spyOn(TestBed.inject(AlertService), "addWarning");
+    vi.spyOn(service, "getExternalProfileById").mockReturnValue(
       throwError(() => "API error"),
     );
     service.applyDataFromExternalProfile("1", testConfig, targetEntity);
@@ -268,9 +270,9 @@ describe("SkillApiService", () => {
     tick();
 
     expect(targetFromGroup.get("name").value).toBe(mockProfile.x1);
-    expect(targetFromGroup.get("name").dirty).toBeTrue();
+    expect(targetFromGroup.get("name").dirty).toBe(true);
     expect(targetFromGroup.get("other").value).toBe(mockProfile.x2);
-    expect(targetFromGroup.get("other").dirty).toBeTrue();
+    expect(targetFromGroup.get("other").dirty).toBe(true);
   }));
 
   it("should applyDataFromExternalProfile using transformation by Esco Service", fakeAsync(() => {
@@ -288,7 +290,7 @@ describe("SkillApiService", () => {
     };
     const targetEntity = TestEntity.create({ other: "old" });
 
-    mockEscoApi.loadOrCreateSkillEntity.and.callFake(async (skill) =>
+    mockEscoApi.loadOrCreateSkillEntity.mockImplementation(async (skill) =>
       Skill.create(skill, skill),
     );
 
@@ -302,12 +304,12 @@ describe("SkillApiService", () => {
     expect(mockEscoApi.loadOrCreateSkillEntity).toHaveBeenCalledWith(
       "https://Angular",
     );
+    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
+
+    expect(targetEntity.other).toHaveLength(2);
 
     expect(targetEntity.other).toEqual(
-      jasmine.arrayWithExactContents([
-        "Skill:https://Java",
-        "Skill:https://Angular",
-      ]),
+      expect.arrayContaining(["Skill:https://Java", "Skill:https://Angular"]),
     );
   }));
 });

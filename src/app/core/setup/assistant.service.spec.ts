@@ -6,12 +6,16 @@ import { of } from "rxjs";
 
 describe("AssistantService", () => {
   let service: AssistantService;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
-  let mockDialogRef: jasmine.SpyObj<MatDialogRef<AssistantDialogComponent>>;
+  let mockDialog: any;
+  let mockDialogRef: any;
 
   beforeEach(() => {
-    mockDialogRef = jasmine.createSpyObj("MatDialogRef", ["afterClosed"]);
-    mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
+    mockDialogRef = {
+      afterClosed: vi.fn().mockName("MatDialogRef.afterClosed"),
+    };
+    mockDialog = {
+      open: vi.fn().mockName("MatDialog.open"),
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -27,14 +31,14 @@ describe("AssistantService", () => {
   });
 
   it("should open the assistant dialog with correct configuration", async () => {
-    mockDialogRef.afterClosed.and.returnValue(of(undefined));
-    mockDialog.open.and.returnValue(mockDialogRef);
+    mockDialogRef.afterClosed.mockReturnValue(of(undefined));
+    mockDialog.open.mockReturnValue(mockDialogRef);
 
     await service.openAssistant();
 
     expect(mockDialog.open).toHaveBeenCalledWith(
       AssistantDialogComponent,
-      jasmine.objectContaining({
+      expect.objectContaining({
         height: AssistantService.ASSISTANT_DIALOG_HEIGHT,
         backdropClass: "backdrop-below-toolbar",
       }),
@@ -42,8 +46,8 @@ describe("AssistantService", () => {
   });
 
   it("should not open dialog if already open", async () => {
-    mockDialogRef.afterClosed.and.returnValue(of(undefined));
-    mockDialog.open.and.returnValue(mockDialogRef);
+    mockDialogRef.afterClosed.mockReturnValue(of(undefined));
+    mockDialog.open.mockReturnValue(mockDialogRef);
 
     // Open the dialog first time
     const firstCall = service.openAssistant();
@@ -61,8 +65,8 @@ describe("AssistantService", () => {
   });
 
   it("should track dialog open state correctly", async () => {
-    mockDialogRef.afterClosed.and.returnValue(of(undefined));
-    mockDialog.open.and.returnValue(mockDialogRef);
+    mockDialogRef.afterClosed.mockReturnValue(of(undefined));
+    mockDialog.open.mockReturnValue(mockDialogRef);
 
     expect(service.isOpen()).toBe(false);
 

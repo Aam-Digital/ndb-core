@@ -22,13 +22,14 @@ describe("AdminEntityDetailsComponent", () => {
   let fixture: ComponentFixture<AdminEntityDetailsComponent>;
 
   let viewConfig: EntityDetailsConfig;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockDialog: any;
 
   @DatabaseEntity("AdminDetailsTest")
   class AdminDetailsTestEntity extends Entity {
     static override readonly ENTITY_TYPE = "AdminDetailsTest";
 
-    @DatabaseField({ label: "Name" }) name: string;
+    @DatabaseField({ label: "Name" })
+    name: string;
   }
 
   beforeEach(() => {
@@ -36,7 +37,9 @@ describe("AdminEntityDetailsComponent", () => {
       entityType: AdminDetailsTestEntity.ENTITY_TYPE,
       panels: [{ title: "Tab 1", components: [] }],
     };
-    mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
+    mockDialog = {
+      open: vi.fn().mockName("MatDialog.open"),
+    };
 
     TestBed.configureTestingModule({
       imports: [
@@ -74,7 +77,7 @@ describe("AdminEntityDetailsComponent", () => {
       component: "Form",
       config: { fieldGroups: [] },
     };
-    mockDialog.open.and.returnValue({
+    mockDialog.open.mockReturnValue({
       afterClosed: () => of(defaultConfig),
     } as any);
 

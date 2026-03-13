@@ -2,7 +2,7 @@ import { ComponentFixture, fakeAsync, TestBed } from "@angular/core/testing";
 import { DialogViewComponent } from "./dialog-view.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { ComponentRegistry } from "../../../dynamic-components";
-import { Component } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { Router } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
@@ -12,7 +12,11 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
 })
-class MockComponent {}
+class MockComponent {
+  @Input() dialogDetail: string;
+  @Input() viewConfig: string;
+  @Input() entity: TestEntity;
+}
 
 describe("DialogViewComponent", () => {
   let component: DialogViewComponent;

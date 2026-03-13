@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { EmailClientService } from "./email-client.service";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
@@ -14,8 +14,8 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
 
 describe("EmailClientService", () => {
   let service: EmailClientService;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
-  let mockWindow: jasmine.SpyObj<Window>;
+  let mockDialog: any;
+  let mockWindow: any;
 
   class EntityWithEmail extends Entity {
     @DatabaseField({ dataType: EmailDatatype.dataType })
@@ -23,10 +23,12 @@ describe("EmailClientService", () => {
   }
 
   beforeEach(() => {
-    mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
-    mockWindow = jasmine.createSpyObj("Window", [], {
+    mockDialog = {
+      open: vi.fn().mockName("MatDialog.open"),
+    };
+    mockWindow = {
       location: { href: "" },
-    });
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -35,13 +37,17 @@ describe("EmailClientService", () => {
         { provide: WINDOW_TOKEN, useValue: mockWindow },
         {
           provide: FormDialogService,
-          useValue: jasmine.createSpyObj("FormDialogService", ["openView"]),
+          useValue: {
+            openView: vi.fn().mockName("FormDialogService.openView"),
+          },
         },
         {
           provide: ConfirmationDialogService,
-          useValue: jasmine.createSpyObj("ConfirmationDialogService", [
-            "getConfirmation",
-          ]),
+          useValue: {
+            getConfirmation: vi
+              .fn()
+              .mockName("ConfirmationDialogService.getConfirmation"),
+          },
         },
       ],
     });
@@ -53,23 +59,23 @@ describe("EmailClientService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should show warning and return false if email field exists but value is missing", waitForAsync(async () => {
+  it("should show warning and return false if email field exists but value is missing", async () => {
     const fakeEntity = new EntityWithEmail();
     fakeEntity.email = undefined;
 
     const mockConfirmation = TestBed.inject(
       ConfirmationDialogService,
-    ) as jasmine.SpyObj<ConfirmationDialogService>;
+    ) as any;
 
-    mockDialog.open.and.returnValue({
+    mockDialog.open.mockReturnValue({
       afterClosed: () => of(undefined),
     } as any);
 
     const result = await service.executeMailto(fakeEntity);
 
-    expect(result).toBeFalse();
+    expect(result).toBe(false);
     expect(mockConfirmation.getConfirmation).toHaveBeenCalled();
-  }));
+  });
 
   it("should generate mailto link with bcc for multiple emails", () => {
     const emails = "test@example.com,john@example.com";
@@ -113,7 +119,7 @@ describe("EmailClientService", () => {
     const entity3 = new EntityWithEmail();
     entity3.email = "jane@example.com";
 
-    mockDialog.open.and.returnValue({
+    mockDialog.open.mockReturnValue({
       afterClosed: () =>
         of({
           template: { subject: "Subject", body: "Body" },
@@ -121,7 +127,7 @@ describe("EmailClientService", () => {
           sendAsBCC: false,
           sendSemicolonSeparated: true,
         }),
-      close: jasmine.createSpy("close"),
+      close: vi.fn(),
     } as any);
 
     service.executeMailto([entity1, entity2, entity3]);
@@ -144,7 +150,7 @@ describe("EmailClientService", () => {
     const entity3 = new EntityWithEmail();
     entity3.email = "jane@example.com";
 
-    mockDialog.open.and.returnValue({
+    mockDialog.open.mockReturnValue({
       afterClosed: () =>
         of({
           template: { subject: "Subject", body: "Body" },
@@ -152,7 +158,7 @@ describe("EmailClientService", () => {
           sendAsBCC: false,
           sendSemicolonSeparated: false,
         }),
-      close: jasmine.createSpy("close"),
+      close: vi.fn(),
     } as any);
 
     service.executeMailto([entity1, entity2, entity3]);

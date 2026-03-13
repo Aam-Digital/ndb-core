@@ -1,3 +1,4 @@
+import type { Mock, MockedObject } from "vitest";
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { CouchdbFileService } from "./couchdb-file.service";
@@ -39,26 +40,36 @@ import { SyncedPouchDatabase } from "../../core/database/pouchdb/synced-pouch-da
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
-  let mockHttp: jasmine.SpyObj<HttpClient>;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
-  let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
-  let dismiss: jasmine.Spy;
+  let mockHttp: any;
+  let mockDialog: any;
+  let mockSnackbar: any;
+  let dismiss: Mock;
   let updates: Subject<UpdatedEntity<Entity>>;
   const attachmentUrlPrefix = `${environment.DB_PROXY_PREFIX}/${Entity.DATABASE}-attachments`;
   let mockNavigator;
 
   beforeEach(() => {
-    mockHttp = jasmine.createSpyObj(["get", "put", "delete"]);
-    mockDialog = jasmine.createSpyObj(["open"]);
+    mockHttp = {
+      get: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn(),
+    };
+    mockDialog = {
+      open: vi.fn(),
+    };
     updates = new Subject();
-    mockSnackbar = jasmine.createSpyObj(["openFromComponent"]);
-    dismiss = jasmine.createSpy();
-    mockSnackbar.openFromComponent.and.returnValue({ dismiss } as any);
+    mockSnackbar = {
+      openFromComponent: vi.fn(),
+    };
+    dismiss = vi.fn();
+    mockSnackbar.openFromComponent.mockReturnValue({ dismiss } as any);
     Entity.schema.set("testProp", {
       dataType: FileDatatype.dataType,
     });
-    let mockDb = jasmine.createSpyObj(["ensureSynced"]);
-    mockDb.ensureSynced.and.resolveTo(undefined);
+    let mockDb = {
+      ensureSynced: vi.fn(),
+    };
+    mockDb.ensureSynced.mockResolvedValue(undefined);
     mockNavigator = { onLine: true };
 
     TestBed.configureTestingModule({
@@ -101,8 +112,8 @@ describe("CouchdbFileService", () => {
   });
 
   it("should add a attachment to a existing document", fakeAsync(() => {
-    mockHttp.get.and.returnValue(of({ _rev: "test_rev" }));
-    mockHttp.put.and.returnValue(of({ ok: true }));
+    mockHttp.get.mockReturnValue(of({ _rev: "test_rev" }));
+    mockHttp.put.mockReturnValue(of({ ok: true }));
     const file = new File([], "file.name", { type: "image/png" });
     const entity = new Entity("testId");
 
@@ -110,22 +121,22 @@ describe("CouchdbFileService", () => {
     tick();
 
     expect(mockHttp.get).toHaveBeenCalledWith(
-      jasmine.stringContaining(`${attachmentUrlPrefix}/Entity:testId`),
+      expect.stringContaining(`${attachmentUrlPrefix}/Entity:testId`),
     );
     expect(mockHttp.put).toHaveBeenCalledWith(
-      jasmine.stringContaining(
+      expect.stringContaining(
         `${attachmentUrlPrefix}/Entity:testId/testProp?rev=test_rev`,
       ),
-      jasmine.anything(),
-      jasmine.anything(),
+      expect.anything(),
+      expect.anything(),
     );
   }));
 
-  it("should create attachment document if it does not exist yet (and complete a sync first)", (done) => {
-    mockHttp.get.and.returnValue(
+  it("should create attachment document if it does not exist yet (and complete a sync first)", async () => {
+    mockHttp.get.mockReturnValue(
       throwError(() => new HttpErrorResponse({ status: 404 })),
     );
-    mockHttp.put.and.returnValue(of({ rev: "newRev" }));
+    mockHttp.put.mockReturnValue(of({ rev: "newRev" }));
     const file = new File([], "file.name", { type: "image/png" });
     const entity = new Entity("testId");
 
@@ -140,22 +151,21 @@ describe("CouchdbFileService", () => {
       ).toHaveBeenCalled();
 
       expect(mockHttp.put).toHaveBeenCalledWith(
-        jasmine.stringContaining(`${attachmentUrlPrefix}/Entity:testId`),
+        expect.stringContaining(`${attachmentUrlPrefix}/Entity:testId`),
         {},
       );
       expect(mockHttp.put).toHaveBeenCalledWith(
-        jasmine.stringContaining(
+        expect.stringContaining(
           `${attachmentUrlPrefix}/Entity:testId/testProp?rev=newRev`,
         ),
-        jasmine.anything(),
-        jasmine.anything(),
+        expect.anything(),
+        expect.anything(),
       );
-      done();
     });
   });
 
-  it("should forward any other errors", (done) => {
-    mockHttp.get.and.returnValue(
+  it("should forward any other errors", async () => {
+    mockHttp.get.mockReturnValue(
       throwError(() => new HttpErrorResponse({ status: 401 })),
     );
 
@@ -165,46 +175,43 @@ describe("CouchdbFileService", () => {
       error: (err) => {
         expect(err).toBeInstanceOf(HttpErrorResponse);
         expect(err.status).toBe(401);
-        done();
       },
     });
   });
 
-  it("should throw NotAvailableOffline error for uploadFile if offline (and not make requests)", (done) => {
+  it("should throw NotAvailableOffline error for uploadFile if offline (and not make requests)", async () => {
     mockNavigator.onLine = false;
 
     service.uploadFile(null, new Entity("testId"), "testProp").subscribe({
       error: (err) => {
         expect(err).toBeInstanceOf(NotAvailableOfflineError);
         expect(mockHttp.put).not.toHaveBeenCalled();
-        done();
       },
     });
   });
-  it("should throw NotAvailableOffline error for removeFile if offline (and not make requests)", (done) => {
+  it("should throw NotAvailableOffline error for removeFile if offline (and not make requests)", async () => {
     mockNavigator.onLine = false;
 
     service.removeFile(new Entity("testId"), "testProp").subscribe({
       error: (err) => {
         expect(err).toBeInstanceOf(NotAvailableOfflineError);
         expect(mockHttp.delete).not.toHaveBeenCalled();
-        done();
       },
     });
   });
 
   it("should remove a file using the latest rev", () => {
-    mockHttp.get.and.returnValue(of({ _rev: "test_rev" }));
-    mockHttp.delete.and.returnValue(of({ ok: true }));
+    mockHttp.get.mockReturnValue(of({ _rev: "test_rev" }));
+    mockHttp.delete.mockReturnValue(of({ ok: true }));
     const entity = new Entity("testId");
 
     service.removeFile(entity, "testProp").subscribe();
 
     expect(mockHttp.get).toHaveBeenCalledWith(
-      jasmine.stringContaining(`${attachmentUrlPrefix}/Entity:testId`),
+      expect.stringContaining(`${attachmentUrlPrefix}/Entity:testId`),
     );
     expect(mockHttp.delete).toHaveBeenCalledWith(
-      jasmine.stringContaining(
+      expect.stringContaining(
         `${attachmentUrlPrefix}/Entity:testId/testProp?rev=test_rev`,
       ),
     );
@@ -212,16 +219,16 @@ describe("CouchdbFileService", () => {
 
   it("should show progress while downloading a file", () => {
     const events = new Subject<HttpEvent<Blob>>();
-    spyOn(URL, "createObjectURL");
-    spyOn(window, "open");
-    mockHttp.get.and.returnValue(events);
+    vi.spyOn(URL, "createObjectURL");
+    vi.spyOn(window, "open");
+    mockHttp.get.mockReturnValue(events);
 
     service.showFile(new Entity("testId"), "testProp");
 
     expect(mockSnackbar.openFromComponent).toHaveBeenCalled();
     // Code is only executed if observable is subscribed
-    const data: any =
-      mockSnackbar.openFromComponent.calls.mostRecent().args[1].data;
+    const data: any = vi.mocked(mockSnackbar.openFromComponent).mock.lastCall[1]
+      .data;
     data.progress.subscribe();
 
     events.next({ type: HttpEventType.DownloadProgress, loaded: 1, total: 10 });
@@ -232,10 +239,10 @@ describe("CouchdbFileService", () => {
   });
 
   it("should show a dialog if the popup couldn't be opened", () => {
-    mockHttp.get.and.returnValue(of({ type: HttpEventType.Response }));
-    spyOn(URL, "createObjectURL").and.returnValue("dataUrl");
+    mockHttp.get.mockReturnValue(of({ type: HttpEventType.Response }));
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("dataUrl");
     // no return value means popup couldn't be opened
-    spyOn(window, "open");
+    vi.spyOn(window, "open");
 
     service.showFile(new Entity("testId"), "testProp");
 
@@ -246,30 +253,30 @@ describe("CouchdbFileService", () => {
 
   it("should delete files document if a entity is deleted", fakeAsync(() => {
     const entity = new Entity();
-    mockHttp.get.and.returnValue(of({ _rev: "someRev" }));
-    mockHttp.delete.and.returnValue(EMPTY);
+    mockHttp.get.mockReturnValue(of({ _rev: "someRev" }));
+    mockHttp.delete.mockReturnValue(EMPTY);
 
     updates.next({ entity, type: "remove" });
     tick();
 
     expect(mockHttp.get).toHaveBeenCalledWith(
-      jasmine.stringContaining(entity.getId()),
+      expect.stringContaining(entity.getId()),
     );
     expect(mockHttp.delete).toHaveBeenCalledWith(
-      jasmine.stringContaining(`/${entity.getId()}?rev=someRev`),
+      expect.stringContaining(`/${entity.getId()}?rev=someRev`),
     );
   }));
 
   it("should not fail if to-be-removed file reference could not be found", () => {
-    mockHttp.get.and.returnValue(
+    mockHttp.get.mockReturnValue(
       throwError(
         () => new HttpErrorResponse({ status: HttpStatusCode.NotFound }),
       ),
     );
 
-    return expectAsync(
+    return expect(
       firstValueFrom(service.removeFile(new Entity(), "testProp")),
-    ).toBeResolved();
+    ).resolves.not.toThrow();
   });
 
   it("should wait for previous request to finish before starting a new one", fakeAsync(() => {
@@ -280,12 +287,14 @@ describe("CouchdbFileService", () => {
     const file2 = new File([], "file2.name", { type: "image/png" });
     const file3 = new File([], "file3.name", { type: "image/png" });
     const entity = new Entity("testId");
-    mockHttp.get.and.returnValues(
-      of({ _rev: "1-rev" }),
-      of({ _rev: "2-rev" }),
-      of({ _rev: "3-rev" }),
-    );
-    mockHttp.put.and.returnValues(firstPut, secondPut, thirdPut);
+    mockHttp.get
+      .mockReturnValueOnce(of({ _rev: "1-rev" }))
+      .mockReturnValueOnce(of({ _rev: "2-rev" }))
+      .mockReturnValueOnce(of({ _rev: "3-rev" }));
+    mockHttp.put
+      .mockReturnValueOnce(firstPut)
+      .mockReturnValueOnce(secondPut)
+      .mockReturnValueOnce(thirdPut);
 
     let file1Done = false;
     let file2Done = false;
@@ -303,52 +312,52 @@ describe("CouchdbFileService", () => {
       .subscribe({ complete: () => (file3Done = true) });
     tick();
 
-    expect(firstPut.observed).toBeTrue();
-    expect(secondPut.observed).toBeFalse();
+    expect(firstPut.observed).toBe(true);
+    expect(secondPut.observed).toBe(false);
     expect(mockHttp.put).toHaveBeenCalledTimes(1);
     expect(mockHttp.put).toHaveBeenCalledWith(
-      jasmine.stringContaining(
+      expect.stringContaining(
         `${attachmentUrlPrefix}/Entity:testId/prop1?rev=1-rev`,
       ),
-      jasmine.anything(),
-      jasmine.anything(),
+      expect.anything(),
+      expect.anything(),
     );
 
     firstPut.complete();
     tick();
 
-    expect(file1Done).toBeTrue();
-    expect(file2Done).toBeFalse();
-    expect(file3Done).toBeFalse();
-    expect(secondPut.observed).toBeTrue();
-    expect(thirdPut.observed).toBeFalse();
+    expect(file1Done).toBe(true);
+    expect(file2Done).toBe(false);
+    expect(file3Done).toBe(false);
+    expect(secondPut.observed).toBe(true);
+    expect(thirdPut.observed).toBe(false);
     expect(mockHttp.put).toHaveBeenCalledTimes(2);
     expect(mockHttp.put).toHaveBeenCalledWith(
-      jasmine.stringContaining(
+      expect.stringContaining(
         `${attachmentUrlPrefix}/Entity:testId/prop2?rev=2-rev`,
       ),
-      jasmine.anything(),
-      jasmine.anything(),
+      expect.anything(),
+      expect.anything(),
     );
 
     secondPut.complete();
     tick();
 
-    expect(file2Done).toBeTrue();
-    expect(file3Done).toBeFalse();
-    expect(thirdPut.observed).toBeTrue();
+    expect(file2Done).toBe(true);
+    expect(file3Done).toBe(false);
+    expect(thirdPut.observed).toBe(true);
     expect(mockHttp.put).toHaveBeenCalledTimes(3);
     expect(mockHttp.put).toHaveBeenCalledWith(
-      jasmine.stringContaining(
+      expect.stringContaining(
         `${attachmentUrlPrefix}/Entity:testId/prop3?rev=3-rev`,
       ),
-      jasmine.anything(),
-      jasmine.anything(),
+      expect.anything(),
+      expect.anything(),
     );
   }));
 
   it("should only request a file once per session", async () => {
-    mockHttp.get.and.returnValue(of(new Blob([])));
+    mockHttp.get.mockReturnValue(of(new Blob([])));
     const entity = new Entity();
     entity["file"] = "file.name";
 
@@ -356,7 +365,7 @@ describe("CouchdbFileService", () => {
 
     expect(mockHttp.get).toHaveBeenCalled();
 
-    mockHttp.get.calls.reset();
+    mockHttp.get.mockClear();
     const second = await firstValueFrom(service.loadFile(entity, "file"));
 
     expect(first).toEqual(second);
@@ -368,10 +377,10 @@ describe("CouchdbFileService", () => {
   it("should cache uploaded files", () => {
     const file = new File([], "file.name", { type: "image/png" });
     const entity = new Entity("testId");
-    mockHttp.get.and.returnValue(of({ _rev: "1-rev" }));
-    mockHttp.put.and.returnValue(of({ type: HttpEventType.Response }));
+    mockHttp.get.mockReturnValue(of({ _rev: "1-rev" }));
+    mockHttp.put.mockReturnValue(of({ type: HttpEventType.Response }));
     service.uploadFile(file, entity, "testProp").subscribe();
-    mockHttp.get.calls.reset();
+    mockHttp.get.mockClear();
 
     service.loadFile(entity, "testProp").subscribe();
 
@@ -379,7 +388,7 @@ describe("CouchdbFileService", () => {
   });
 
   it("should return empty blob on error (without throwErrors flag)", async () => {
-    mockHttp.get.and.returnValue(
+    mockHttp.get.mockReturnValue(
       of({}).pipe(
         map(() => {
           throw new Error("test");

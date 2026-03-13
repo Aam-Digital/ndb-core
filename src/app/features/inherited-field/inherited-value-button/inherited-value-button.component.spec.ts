@@ -13,7 +13,9 @@ describe("InheritedValueButtonComponent", () => {
       providers: [
         {
           provide: DefaultValueService,
-          useValue: jasmine.createSpyObj(["getDefaultValueUiHint"]),
+          useValue: {
+            getDefaultValueUiHint: vi.fn(),
+          },
         },
       ],
     }).compileComponents();

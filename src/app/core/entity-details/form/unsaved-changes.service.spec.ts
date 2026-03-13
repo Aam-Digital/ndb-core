@@ -5,10 +5,12 @@ import { ConfirmationDialogService } from "../../common-components/confirmation-
 
 describe("UnsavedChangesService", () => {
   let service: UnsavedChangesService;
-  let mockConfirmation: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockConfirmation: any;
 
   beforeEach(() => {
-    mockConfirmation = jasmine.createSpyObj(["getDiscardConfirmation"]);
+    mockConfirmation = {
+      getDiscardConfirmation: vi.fn(),
+    };
     TestBed.configureTestingModule({
       providers: [
         { provide: ConfirmationDialogService, useValue: mockConfirmation },
@@ -22,23 +24,23 @@ describe("UnsavedChangesService", () => {
   });
 
   it("should only ask for confirmation if changes are pending", async () => {
-    mockConfirmation.getDiscardConfirmation.and.resolveTo(false);
+    mockConfirmation.getDiscardConfirmation.mockResolvedValue(false);
 
-    await expectAsync(service.checkUnsavedChanges()).toBeResolvedTo(true);
+    await expect(service.checkUnsavedChanges()).resolves.toEqual(true);
     expect(mockConfirmation.getDiscardConfirmation).not.toHaveBeenCalled();
 
     service.pending = true;
 
-    await expectAsync(service.checkUnsavedChanges()).toBeResolvedTo(false);
+    await expect(service.checkUnsavedChanges()).resolves.toEqual(false);
     expect(mockConfirmation.getDiscardConfirmation).toHaveBeenCalled();
 
-    mockConfirmation.getDiscardConfirmation.and.resolveTo(true);
+    mockConfirmation.getDiscardConfirmation.mockResolvedValue(true);
 
-    await expectAsync(service.checkUnsavedChanges()).toBeResolvedTo(true);
+    await expect(service.checkUnsavedChanges()).resolves.toEqual(true);
   });
 
   it("should prevent closing the window if changes are pending", () => {
-    const e = { preventDefault: jasmine.createSpy(), returnValue: undefined };
+    const e = { preventDefault: vi.fn(), returnValue: undefined };
 
     service.pending = false;
     window.onbeforeunload(e as any);

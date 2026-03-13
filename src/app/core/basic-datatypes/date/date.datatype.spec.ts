@@ -1,4 +1,4 @@
-import { testDatatype } from "../../entity/schema/entity-schema.service.spec";
+import { testDatatype } from "../../entity/schema/entity-schema.service.test-utils";
 import { DateDatatype } from "./date.datatype";
 import { Logging } from "../../logging/logging.service";
 import { Entity } from "../../entity/model/entity";
@@ -19,7 +19,7 @@ describe("Schema data type: date", () => {
   });
 
   it("should log (debug) if transformation fails", () => {
-    spyOn(Logging, "debug");
+    vi.spyOn(Logging, "debug");
     const datatype = new DateDatatype();
 
     const result = datatype.transformToObjectFormat("invalidDate", null, {

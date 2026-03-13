@@ -34,16 +34,17 @@ import { of } from "rxjs";
 describe("EntitySchemaService", () => {
   let service: EntitySchemaService;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
     });
     service = TestBed.inject(EntitySchemaService);
-  }));
+  });
 
   it("should use datatype service transform methods to converts values", function () {
     class TestEntity extends Entity {
-      @DatabaseField() aString: string;
+      @DatabaseField()
+      aString: string;
     }
 
     const id = "test1";
@@ -63,7 +64,8 @@ describe("EntitySchemaService", () => {
 
   it("should keep 'null' as value if explicitly set", () => {
     class TestEntity extends Entity {
-      @DatabaseField() aString: string;
+      @DatabaseField()
+      aString: string;
     }
 
     const entity = new TestEntity();
@@ -105,7 +107,8 @@ describe("EntitySchemaService", () => {
 
   it("should return the display component of the datatype if no other is defined", () => {
     class Test extends Entity {
-      @DatabaseField() dateProperty: Date;
+      @DatabaseField()
+      dateProperty: Date;
     }
 
     const displayComponent = service.getComponent(
@@ -136,14 +139,14 @@ export function testDatatype<D extends DefaultDatatype>(
   additionalProviders?: any[],
 ) {
   let entitySchemaService: EntitySchemaService;
-  let mockFileService: jasmine.SpyObj<FileService>;
+  let mockFileService: any;
   describe("test datatype", () => {
-    mockFileService = jasmine.createSpyObj([
-      "uploadFile",
-      "loadFile",
-      "removeFile",
-    ]);
-    mockFileService.loadFile.and.returnValue(of("success"));
+    mockFileService = {
+      uploadFile: vi.fn(),
+      loadFile: vi.fn(),
+      removeFile: vi.fn(),
+    };
+    mockFileService.loadFile.mockReturnValue(of("success"));
     beforeEach(waitForAsync(() => {
       additionalProviders = additionalProviders || [];
       if (dataType instanceof DefaultDatatype) {
@@ -220,10 +223,10 @@ export function testDatatype<D extends DefaultDatatype>(
       TestBed.configureTestingModule({
         imports: [MockedTestingModule.withState()],
       });
-      spyOn(
+      vi.spyOn(
         TestBed.inject(ConfigurableEnumService),
         "getEnumValues",
-      ).and.returnValue(defaultInteractionTypes);
+      ).mockReturnValue(defaultInteractionTypes);
       entitySchemaService = TestBed.inject(EntitySchemaService);
     }));
 
@@ -251,7 +254,7 @@ export function testDatatype<D extends DefaultDatatype>(
       expect(obj).toEqual([defaultInteractionTypes[1]]);
     });
 
-    xit("should transform empty values as an empty array", () => {
+    it.skip("should transform empty values as an empty array", () => {
       // TODO: if removing this behavior (previously part of array.datatype) does not break anything, it seems cleaner not to do special handling for this
       // --> remove test after e2e testing
 

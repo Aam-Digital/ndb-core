@@ -29,14 +29,17 @@ class MockRecurringActivity extends Entity {
     return instance;
   }
 
-  @DatabaseField() title: string = "";
+  @DatabaseField()
+  title: string = "";
 
-  @DatabaseField() type: any;
+  @DatabaseField()
+  type: any;
 
   @DatabaseField({ dataType: "entity", additional: "TestEntity" })
   participants: string[] = [];
 
-  @DatabaseField() linkedGroups: string[] = [];
+  @DatabaseField()
+  linkedGroups: string[] = [];
 
   @DatabaseField({ dataType: "entity", additional: "TestEntity" })
   excludedParticipants: string[] = [];
@@ -48,10 +51,10 @@ class MockRecurringActivity extends Entity {
 describe("AttendanceService", () => {
   let service: AttendanceService;
 
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
-  let mockDbIndexing: jasmine.SpyObj<DatabaseIndexingService>;
+  let mockEntityMapper: any;
+  let mockDbIndexing: any;
   let currentUserSubject: BehaviorSubject<Entity | undefined>;
-  let mockEntityRegistry: jasmine.SpyObj<EntityRegistry>;
+  let mockEntityRegistry: any;
 
   function createEvent(date: Date, activityIdWithPrefix: string): Note {
     const event = Note.create(date, "generated event");
@@ -78,30 +81,37 @@ describe("AttendanceService", () => {
     e1_3 = createEvent(moment("2020-03-02").toDate(), activity1.getId());
     e2_1 = createEvent(moment("2020-01-01").toDate(), activity2.getId());
 
-    mockEntityMapper = jasmine.createSpyObj("EntityMapperService", [
-      "save",
-      "load",
-      "loadType",
-    ]);
-    mockEntityMapper.save.and.resolveTo();
-    mockEntityMapper.loadType.and.resolveTo([]);
+    mockEntityMapper = {
+      save: vi.fn().mockName("EntityMapperService.save"),
+      load: vi.fn().mockName("EntityMapperService.load"),
+      loadType: vi.fn().mockName("EntityMapperService.loadType"),
+    };
+    mockEntityMapper.save.mockResolvedValue(undefined);
+    mockEntityMapper.loadType.mockResolvedValue([]);
 
-    mockDbIndexing = jasmine.createSpyObj("DatabaseIndexingService", [
-      "createIndex",
-      "queryIndexDocsRange",
-      "queryIndexDocs",
-    ]);
-    mockDbIndexing.createIndex.and.resolveTo();
-    mockDbIndexing.queryIndexDocsRange.and.resolveTo([]);
-    mockDbIndexing.queryIndexDocs.and.resolveTo([]);
+    mockDbIndexing = {
+      createIndex: vi.fn().mockName("DatabaseIndexingService.createIndex"),
+      queryIndexDocsRange: vi
+        .fn()
+        .mockName("DatabaseIndexingService.queryIndexDocsRange"),
+      queryIndexDocs: vi
+        .fn()
+        .mockName("DatabaseIndexingService.queryIndexDocs"),
+    };
+    mockDbIndexing.createIndex.mockResolvedValue(undefined);
+    mockDbIndexing.queryIndexDocsRange.mockResolvedValue([]);
+    mockDbIndexing.queryIndexDocs.mockResolvedValue([]);
 
     currentUserSubject = new BehaviorSubject<Entity | undefined>(undefined);
 
-    mockEntityRegistry = jasmine.createSpyObj("EntityRegistry", ["has", "get"]);
-    mockEntityRegistry.has.and.callFake(
+    mockEntityRegistry = {
+      has: vi.fn().mockName("EntityRegistry.has"),
+      get: vi.fn().mockName("EntityRegistry.get"),
+    };
+    mockEntityRegistry.has.mockImplementation(
       (name: string) => name === "RecurringActivity" || name === "Note",
     );
-    mockEntityRegistry.get.and.callFake((name: string) => {
+    mockEntityRegistry.get.mockImplementation((name: string) => {
       if (name === "RecurringActivity") return MockRecurringActivity;
       if (name === "Note") return Note;
       return undefined;
@@ -140,10 +150,18 @@ describe("AttendanceService", () => {
         { provide: EntityRegistry, useValue: mockEntityRegistry },
         {
           provide: GroupParticipantResolverService,
-          useValue: jasmine.createSpyObj("GroupParticipantResolverService", [
-            "getActivitiesForParticipantViaGroups",
-            "getActiveParticipantsOfActivity",
-          ]),
+          useValue: {
+            getActivitiesForParticipantViaGroups: vi
+              .fn()
+              .mockName(
+                "GroupParticipantResolverService.getActivitiesForParticipantViaGroups",
+              ),
+            getActiveParticipantsOfActivity: vi
+              .fn()
+              .mockName(
+                "GroupParticipantResolverService.getActiveParticipantsOfActivity",
+              ),
+          },
         },
       ],
     });
@@ -156,14 +174,14 @@ describe("AttendanceService", () => {
   });
 
   it("gets events for a date", async () => {
-    mockDbIndexing.queryIndexDocsRange.and.resolveTo([e1_1, e2_1]);
+    mockDbIndexing.queryIndexDocsRange.mockResolvedValue([e1_1, e2_1]);
 
     const actualEvents = await service.getEventsOnDate(
       moment("2020-01-01").toDate(),
     );
 
-    expect(actualEvents).toEqual(jasmine.arrayContaining([e1_1, e2_1]));
-    expect(actualEvents).toHaveSize(2);
+    expect(actualEvents).toEqual(expect.arrayContaining([e1_1, e2_1]));
+    expect(actualEvents).toHaveLength(2);
   });
 
   it("gets empty array for a date without events", async () => {
@@ -174,20 +192,20 @@ describe("AttendanceService", () => {
   });
 
   it("getActivityAttendances creates record for each month when there is at least one event", async () => {
-    mockDbIndexing.queryIndexDocsRange.and.resolveTo([e1_1, e1_2, e1_3]);
+    mockDbIndexing.queryIndexDocsRange.mockResolvedValue([e1_1, e1_2, e1_3]);
 
     const actualAttendances = await service.getActivityAttendances(activity1);
 
-    expect(actualAttendances).toHaveSize(2);
+    expect(actualAttendances).toHaveLength(2);
 
     expect(
       moment(actualAttendances[0].periodFrom).isSame(
         moment("2020-01-01"),
         "day",
       ),
-    ).toBeTrue();
+    ).toBe(true);
     expect(actualAttendances[0].events.map((e) => e.entity)).toEqual(
-      jasmine.arrayContaining([e1_1, e1_2]),
+      expect.arrayContaining([e1_1, e1_2]),
     );
     expect(actualAttendances[0].activity).toEqual(activity1);
 
@@ -196,7 +214,7 @@ describe("AttendanceService", () => {
         moment("2020-03-01"),
         "day",
       ),
-    ).toBeTrue();
+    ).toBe(true);
     expect(actualAttendances[1].events.map((e) => e.entity)).toEqual([e1_3]);
     expect(actualAttendances[1].activity).toEqual(activity1);
   });
@@ -206,7 +224,7 @@ describe("AttendanceService", () => {
     const testActivity1 = MockRecurringActivity.create("a1");
     testActivity1.participants.push(testChildId);
 
-    mockDbIndexing.queryIndexDocs.and.resolveTo([testActivity1]);
+    mockDbIndexing.queryIndexDocs.mockResolvedValue([testActivity1]);
 
     const actual = await service.getActivitiesForParticipant(testChildId);
 
@@ -221,7 +239,7 @@ describe("AttendanceService", () => {
 
     const event = await service.createEventForActivity(activity, new Date());
 
-    expect(event.attendanceItems).toHaveSize(2);
+    expect(event.attendanceItems).toHaveLength(2);
     expect(event.attendanceItems.map((a) => a.participant)).toContain(
       directChild1.getId(),
     );
@@ -240,10 +258,10 @@ describe("AttendanceService", () => {
     );
     sameDayEvent.category = defaultInteractionTypes.find((it) => it.isMeeting);
 
-    mockDbIndexing.queryIndexDocsRange.and.resolveTo([sameDayEvent]);
+    mockDbIndexing.queryIndexDocsRange.mockResolvedValue([sameDayEvent]);
 
     const events = await service.getEventsOnDate(datePickerDate);
-    expect(events).toHaveSize(1);
+    expect(events).toHaveLength(1);
     expect((events[0] as Note).subject).toBe(sameDayEvent.subject);
   });
 
@@ -265,33 +283,37 @@ describe("AttendanceService", () => {
       activity2.assignedTo = ["User:other-user"];
 
       // By default, loadType returns the two activities and queryIndexDocsRange returns no events
-      mockEntityMapper.loadType.and.resolveTo([activity1, activity2]);
-      mockDbIndexing.queryIndexDocsRange.and.resolveTo([]);
+      mockEntityMapper.loadType.mockResolvedValue([activity1, activity2]);
+      mockDbIndexing.queryIndexDocsRange.mockResolvedValue([]);
     });
 
     it("returns existing events for the date", async () => {
       const existingEvent = Note.create(testDate);
       existingEvent._rev = "1-existing"; // mark as not new
 
-      mockDbIndexing.queryIndexDocsRange.and.resolveTo([existingEvent]);
+      mockDbIndexing.queryIndexDocsRange.mockResolvedValue([existingEvent]);
 
       const result = await service.getAvailableEventsForRollCall(testDate);
 
       expect(result.allEvents.map((e) => e.entity.getId())).toContain(
         existingEvent.getId(),
       );
-      expect(existingEvent.isNew).toBeFalse();
+      expect(existingEvent.isNew).toBe(false);
     });
 
     it("generates an event for each activity without an existing event on the date", async () => {
       const activity = MockRecurringActivity.create("new activity");
-      mockEntityMapper.loadType.and.resolveTo([activity1, activity2, activity]);
+      mockEntityMapper.loadType.mockResolvedValue([
+        activity1,
+        activity2,
+        activity,
+      ]);
 
       const result = await service.getAvailableEventsForRollCall(testDate);
 
       const generatedEvent = findByActivity(result.allEvents, activity.getId());
       expect(generatedEvent).toBeTruthy();
-      expect(generatedEvent.entity.isNew).toBeTrue();
+      expect(generatedEvent.entity.isNew).toBe(true);
     });
 
     it("does not generate a duplicate event when one already exists for the activity on that date", async () => {
@@ -299,15 +321,19 @@ describe("AttendanceService", () => {
       const existingEvent = Note.create(testDate, "existing");
       existingEvent.relatesTo = activity.getId();
 
-      mockEntityMapper.loadType.and.resolveTo([activity1, activity2, activity]);
-      mockDbIndexing.queryIndexDocsRange.and.resolveTo([existingEvent]);
+      mockEntityMapper.loadType.mockResolvedValue([
+        activity1,
+        activity2,
+        activity,
+      ]);
+      mockDbIndexing.queryIndexDocsRange.mockResolvedValue([existingEvent]);
 
       const result = await service.getAvailableEventsForRollCall(testDate);
 
       const eventsForActivity = result.allEvents.filter(
         (e) => e.activityId === activity.getId(),
       );
-      expect(eventsForActivity).toHaveSize(1);
+      expect(eventsForActivity).toHaveLength(1);
     });
 
     it("filters to activities assigned to currentUserId in events, but allEvents contains all", async () => {
@@ -316,7 +342,7 @@ describe("AttendanceService", () => {
       const otherActivity = MockRecurringActivity.create("other");
       otherActivity.assignedTo = ["User:other-user"];
 
-      mockEntityMapper.loadType.and.resolveTo([
+      mockEntityMapper.loadType.mockResolvedValue([
         activity1,
         activity2,
         assignedActivity,
@@ -340,7 +366,7 @@ describe("AttendanceService", () => {
       const activityAssignedToOther = MockRecurringActivity.create("other");
       activityAssignedToOther.assignedTo = [mockCurrentUser.getId()];
 
-      mockEntityMapper.loadType.and.resolveTo([
+      mockEntityMapper.loadType.mockResolvedValue([
         activity1,
         activity2,
         activityAssignedToOther,
@@ -356,7 +382,11 @@ describe("AttendanceService", () => {
 
     it("sets the currentUser as author on generated events", async () => {
       const activity = MockRecurringActivity.create("activity");
-      mockEntityMapper.loadType.and.resolveTo([activity1, activity2, activity]);
+      mockEntityMapper.loadType.mockResolvedValue([
+        activity1,
+        activity2,
+        activity,
+      ]);
 
       const result = await service.getAvailableEventsForRollCall(testDate);
 
@@ -370,13 +400,13 @@ describe("AttendanceService", () => {
       const unassignedActivity = MockRecurringActivity.create("unassigned");
       const oneTimeEvent = Note.create(testDate, "one-time");
 
-      mockEntityMapper.loadType.and.resolveTo([
+      mockEntityMapper.loadType.mockResolvedValue([
         activity1,
         activity2,
         assignedActivity,
         unassignedActivity,
       ]);
-      mockDbIndexing.queryIndexDocsRange.and.resolveTo([oneTimeEvent]);
+      mockDbIndexing.queryIndexDocsRange.mockResolvedValue([oneTimeEvent]);
 
       const result = await service.getAvailableEventsForRollCall(testDate);
       const oneTimeIdx = result.allEvents.findIndex(

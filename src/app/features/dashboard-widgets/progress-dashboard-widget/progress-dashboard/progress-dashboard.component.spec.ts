@@ -20,8 +20,10 @@ import { SyncStateSubject } from "../../../../core/session/session-type";
 describe("ProgressDashboardComponent", () => {
   let component: ProgressDashboardComponent;
   let fixture: ComponentFixture<ProgressDashboardComponent>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
-  const mockDialog = jasmine.createSpyObj<MatDialog>("matDialog", ["open"]);
+  let mockEntityMapper: any;
+  const mockDialog = {
+    open: vi.fn().mockName("matDialog.open"),
+  };
   let mockSync: SyncStateSubject;
 
   beforeEach(waitForAsync(() => {
@@ -34,7 +36,11 @@ describe("ProgressDashboardComponent", () => {
         { provide: SyncStateSubject, useValue: mockSync },
         {
           provide: AlertService,
-          useValue: jasmine.createSpyObj(["addDebug", "addInfo", "addWarning"]),
+          useValue: {
+            addDebug: vi.fn(),
+            addInfo: vi.fn(),
+            addWarning: vi.fn(),
+          },
         },
       ],
     }).compileComponents();
@@ -42,11 +48,11 @@ describe("ProgressDashboardComponent", () => {
 
   beforeEach(() => {
     mockEntityMapper = TestBed.inject(EntityMapperService) as any;
-    spyOn(mockEntityMapper, "load").and.resolveTo({
+    vi.spyOn(mockEntityMapper, "load").mockResolvedValue({
       title: "test",
       parts: [],
     } as any);
-    spyOn(mockEntityMapper, "save").and.resolveTo();
+    vi.spyOn(mockEntityMapper, "save").mockResolvedValue(undefined);
     fixture = TestBed.createComponent(ProgressDashboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -69,20 +75,20 @@ describe("ProgressDashboardComponent", () => {
   }));
 
   it("should retry loading the config after sync has finished", fakeAsync(() => {
-    mockEntityMapper.load.and.rejectWith();
+    mockEntityMapper.load.mockRejectedValue();
     component.dashboardConfigId = "someId";
     component.ngOnInit();
     tick();
 
     const config = new ProgressDashboardConfig("someId");
-    mockEntityMapper.load.and.resolveTo(config);
+    mockEntityMapper.load.mockResolvedValue(config);
     mockSync.next(SyncState.COMPLETED);
 
     expect(component.data).toEqual(config);
   }));
 
   it("should create a new progress dashboard config if no configuration could be found after initial sync", fakeAsync(() => {
-    mockEntityMapper.load.and.rejectWith();
+    mockEntityMapper.load.mockRejectedValue();
     mockSync.next(SyncState.COMPLETED);
 
     component.dashboardConfigId = "config-id";
@@ -94,7 +100,7 @@ describe("ProgressDashboardComponent", () => {
 
   it("saves data after the dialog was closed", fakeAsync(() => {
     const closeNotifier = new Subject();
-    mockDialog.open.and.returnValue({
+    mockDialog.open.mockReturnValue({
       afterClosed: () => closeNotifier.pipe(take(1)),
     } as any);
     component.showEditComponent();

@@ -1,7 +1,7 @@
 import { ChildrenService } from "./children.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
-import { TestBed, waitForAsync } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import moment from "moment";
 import { Note } from "../notes/model/note";
 import { genders } from "./model/genders";
@@ -13,26 +13,34 @@ import { EntitySchemaService } from "../../core/entity/schema/entity-schema.serv
 import { createEntityOfType } from "../../core/demo-data/create-entity-of-type";
 import { Entity } from "../../core/entity/model/entity";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
+import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
       providers: [EntitySchemaService],
     });
 
-    entityMapper = TestBed.inject(EntityMapperService);
-    generateChildEntities().forEach((c) => entityMapper.save(c));
-    generateSchoolEntities().forEach((s) => entityMapper.save(s));
-    generateChildSchoolRelationEntities().forEach((cs) =>
-      entityMapper.save(cs),
+    await vi.waitFor(
+      () => {
+        const entityRegistry = TestBed.inject(EntityRegistry);
+        expect(entityRegistry.has("Child")).toBe(true);
+        expect(entityRegistry.has("School")).toBe(true);
+      },
+      { timeout: 10_000 },
     );
 
+    entityMapper = TestBed.inject(EntityMapperService);
+    await entityMapper.saveAll(generateChildEntities());
+    await entityMapper.saveAll(generateSchoolEntities());
+    await entityMapper.saveAll(generateChildSchoolRelationEntities());
+
     service = TestBed.inject<ChildrenService>(ChildrenService);
-  }));
+  });
 
   afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
@@ -46,16 +54,16 @@ describe("ChildrenService", () => {
     await entityMapper.save(child);
     const childrenAfter = await service.getChildren();
 
-    expect(childrenBefore.some((x) => x.getId() === child.getId())).toBeFalse();
-    expect(childrenAfter.some((x) => x.getId() === child.getId())).toBeTrue();
-    expect(childrenAfter).toHaveSize(childrenBefore.length + 1);
+    expect(childrenBefore.some((x) => x.getId() === child.getId())).toBe(false);
+    expect(childrenAfter.some((x) => x.getId() === child.getId())).toBe(true);
+    expect(childrenAfter).toHaveLength(childrenBefore.length + 1);
   });
 
   it("should find a newly saved child", async () => {
     const child = createEntityOfType("Child", "10");
     try {
       await service.getChild(child.getId());
-      fail("Child should not be found");
+      throw new Error("Child should not be found");
     } catch (err) {
       expect(err).toBeDefined();
     }
@@ -83,9 +91,9 @@ describe("ChildrenService", () => {
 
     const recentNotesMap = await service.getDaysSinceLastNoteOfEachEntity();
 
-    expect(recentNotesMap).toHaveSize(allChildren.length);
+    expect(recentNotesMap).toHaveLength(allChildren.length);
     expect(recentNotesMap.get(c0)).toBe(5);
-    expect(recentNotesMap.get(c1)).toBePositiveInfinity();
+    expect(recentNotesMap.get(c1)).toBe(Infinity);
   });
 
   it("calculates days since last note as infinity if above cut-off period for better performance", async () => {
@@ -101,7 +109,7 @@ describe("ChildrenService", () => {
       49,
     );
 
-    expect(recentNotesMap.get(c0)).toBePositiveInfinity();
+    expect(recentNotesMap.get(c0)).toBe(Infinity);
   });
 
   it("should calculate days since last note for other entity types", async () => {
@@ -173,7 +181,7 @@ describe("ChildrenService", () => {
   it("should get the relations for a child in sorted order", async () => {
     const relations = await service.queryRelations("Child:3");
 
-    expect(relations).toHaveSize(2);
+    expect(relations).toHaveLength(2);
     expect(relations[0].start.getTime()).toBeGreaterThanOrEqual(
       relations[1].start.getTime(),
     );
@@ -182,7 +190,7 @@ describe("ChildrenService", () => {
   it("should get all relations for a school", async () => {
     const relations = await service.queryRelations("School:1");
 
-    expect(relations).toHaveSize(2);
+    expect(relations).toHaveLength(2);
     const relation1 = relations.find(
       (relation) => relation.getId() === "ChildSchoolRelation:1",
     );
@@ -217,13 +225,13 @@ describe("ChildrenService", () => {
       "School:1",
       new Date("2010-01-01"),
     );
-    expect(relations).toHaveSize(1);
+    expect(relations).toHaveLength(1);
 
     relations = await service.queryActiveRelationsOf(
       "School:1",
       new Date("2016-10-01"),
     );
-    expect(relations).toHaveSize(2);
+    expect(relations).toHaveLength(2);
   });
 
   it("should return related notes", async () => {
@@ -279,8 +287,11 @@ describe("ChildrenService", () => {
       moment("2023-01-02"),
       moment("2023-01-03"),
     );
+    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
 
-    expect(res).toEqual(jasmine.arrayWithExactContents([n2, n3, n4]));
+    expect(res).toHaveLength(3);
+
+    expect(res).toEqual(expect.arrayContaining([n2, n3, n4]));
   });
 });
 

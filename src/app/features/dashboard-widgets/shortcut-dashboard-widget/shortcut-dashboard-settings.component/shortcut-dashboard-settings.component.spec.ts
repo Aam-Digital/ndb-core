@@ -7,13 +7,13 @@ import { MenuService } from "#src/app/core/ui/navigation/menu.service";
 describe("ShortcutDashboardSettingsComponent", () => {
   let component: ShortcutDashboardSettingsComponent;
   let fixture: ComponentFixture<ShortcutDashboardSettingsComponent>;
-  let mockMenuService: jasmine.SpyObj<MenuService>;
+  let mockMenuService: any;
 
   beforeEach(async () => {
-    mockMenuService = jasmine.createSpyObj("MenuService", [
-      "loadAvailableRoutes",
-    ]);
-    mockMenuService.loadAvailableRoutes.and.returnValue([
+    mockMenuService = {
+      loadAvailableRoutes: vi.fn().mockName("MenuService.loadAvailableRoutes"),
+    };
+    mockMenuService.loadAvailableRoutes.mockReturnValue([
       { value: "/child", label: "Child" },
       { value: "/school", label: "School" },
       { value: "/", label: "Dashboard" },

@@ -1,3 +1,4 @@
+import type { Mock } from "vitest";
 import {
   ComponentFixture,
   fakeAsync,
@@ -21,7 +22,7 @@ import { getDefaultConfigEntity } from "../../core/config/testing-config-service
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
   let fixture: ComponentFixture<PublicFormComponent<TestEntity>>;
-  let initRemoteDBSpy: jasmine.Spy;
+  let initRemoteDBSpy: Mock;
   let testFormConfig: PublicFormConfig;
 
   const FORM_ID = "form-id";
@@ -60,7 +61,7 @@ describe("PublicFormComponent", () => {
 
     const dbResolver = TestBed.inject(DatabaseResolverService);
     dbResolver.initDatabasesForAnonymous = () => null;
-    initRemoteDBSpy = spyOn(dbResolver, "initDatabasesForAnonymous");
+    initRemoteDBSpy = vi.spyOn(dbResolver, "initDatabasesForAnonymous");
 
     fixture = TestBed.createComponent(PublicFormComponent<TestEntity>);
     component = fixture.componentInstance;
@@ -93,9 +94,9 @@ describe("PublicFormComponent", () => {
     testFormConfig.showSubmitAnotherButton = true;
     initComponent();
     tick();
-    const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
-    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
-    saveSpy.and.resolveTo();
+    const saveSpy = vi.spyOn(TestBed.inject(EntityFormService), "saveChanges");
+    const navigateSpy = vi.spyOn(TestBed.inject(Router), "navigate");
+    saveSpy.mockResolvedValue(undefined);
     (component.entityFormEntries[0].form.formGroup.get("name") as any).setValue(
       "some name",
     );
@@ -117,9 +118,9 @@ describe("PublicFormComponent", () => {
     testFormConfig.showSubmitAnotherButton = false;
     initComponent();
     tick();
-    const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
-    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
-    saveSpy.and.resolveTo();
+    const saveSpy = vi.spyOn(TestBed.inject(EntityFormService), "saveChanges");
+    const navigateSpy = vi.spyOn(TestBed.inject(Router), "navigate");
+    saveSpy.mockResolvedValue(undefined);
     (component.entityFormEntries[0].form.formGroup.get("name") as any).setValue(
       "some name",
     );
@@ -140,8 +141,10 @@ describe("PublicFormComponent", () => {
   it("should show an inline error and not reset when trying to submit invalid form", fakeAsync(() => {
     initComponent();
     tick();
-    const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
-    saveSpy.and.throwError(new InvalidFormFieldError());
+    const saveSpy = vi.spyOn(TestBed.inject(EntityFormService), "saveChanges");
+    saveSpy.mockImplementation(() => {
+      throw new InvalidFormFieldError();
+    });
     (component.entityFormEntries[0].form.formGroup.get("name") as any).setValue(
       "some name",
     );
@@ -153,7 +156,7 @@ describe("PublicFormComponent", () => {
       component.entityFormEntries[0].entity,
     );
     tick();
-    expect(component.validationError).toBeTrue();
+    expect(component.validationError).toBe(true);
     expect(
       component.entityFormEntries[0].form.formGroup.get("name"),
     ).toHaveValue("some name");
@@ -186,7 +189,9 @@ describe("PublicFormComponent", () => {
         ],
       },
     ];
-    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(config);
+    vi.spyOn(TestBed.inject(EntityMapperService), "load").mockResolvedValue(
+      config,
+    );
 
     initComponent();
     tick();
@@ -204,7 +209,7 @@ describe("PublicFormComponent", () => {
       columns: [["name"]], // string[][];
       prefilled: { name: "default name" }, // { [key in string]: any };
     };
-    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(
+    vi.spyOn(TestBed.inject(EntityMapperService), "load").mockResolvedValue(
       legacyConfig as any,
     );
 
@@ -234,10 +239,9 @@ describe("PublicFormComponent", () => {
   }));
 
   it("should display not found error when config does not exist", fakeAsync(() => {
-    const entityMapperSpy = spyOn(
-      TestBed.inject(EntityMapperService),
-      "loadType",
-    ).and.resolveTo([]);
+    const entityMapperSpy = vi
+      .spyOn(TestBed.inject(EntityMapperService), "loadType")
+      .mockResolvedValue([]);
 
     initComponent();
     tick();
@@ -257,12 +261,14 @@ describe("PublicFormComponent", () => {
     tick();
 
     const lastColumn = component.formConfig.columns.at(-1);
-    expect(lastColumn?.fields).toContain(
-      jasmine.objectContaining({
-        id: "other",
-        defaultValue: { mode: "static", config: { value: "default value" } },
-        hideFromForm: true,
-      }),
+    expect(lastColumn?.fields).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "other",
+          defaultValue: { mode: "static", config: { value: "default value" } },
+          hideFromForm: true,
+        }),
+      ]),
     );
   }));
 

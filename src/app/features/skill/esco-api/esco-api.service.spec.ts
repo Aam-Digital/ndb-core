@@ -19,7 +19,7 @@ describe("EscoApiService", () => {
   let service: EscoApiService;
 
   let httpTesting: HttpTestingController;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockEntityMapper: any;
 
   const mockEscoObject: EscoSkillDto = {
     className: "Skill",
@@ -39,8 +39,11 @@ describe("EscoApiService", () => {
   };
 
   beforeEach(() => {
-    mockEntityMapper = jasmine.createSpyObj(["load", "save"]);
-    mockEntityMapper.save.and.callFake(async (entity) => entity);
+    mockEntityMapper = {
+      load: vi.fn(),
+      save: vi.fn(),
+    };
+    mockEntityMapper.save.mockImplementation(async (entity) => entity);
 
     TestBed.configureTestingModule({
       providers: [
@@ -95,20 +98,20 @@ describe("EscoApiService", () => {
     reqRetry.flush(createApiResponseDto(mockEscoObject));
     tick();
 
-    expectAsync(result).toBeResolvedTo(mockEscoObject);
+    expect(result).resolves.toEqual(mockEscoObject);
   }));
 
   it("should load existing entity instead of making API request", fakeAsync(() => {
     const testSkill: Skill = Skill.create(mockEscoObject.uri, "Test Skill");
-    mockEntityMapper.load.and.resolveTo(testSkill);
+    mockEntityMapper.load.mockResolvedValue(testSkill);
 
     const result = service.loadOrCreateSkillEntity(testSkill.escoUri);
 
-    expectAsync(result).toBeResolvedTo(testSkill);
+    expect(result).resolves.toEqual(testSkill);
   }));
 
   it("should create and save new entity if the Skill doesn't exist yet", fakeAsync(() => {
-    mockEntityMapper.load.and.rejectWith({ status: 404 });
+    mockEntityMapper.load.mockRejectedValue({ status: 404 });
 
     const result = service.loadOrCreateSkillEntity(mockEscoObject.uri);
     tick();
@@ -122,14 +125,15 @@ describe("EscoApiService", () => {
     req.flush(createApiResponseDto(mockEscoObject));
     tick();
 
-    const expectedEntity = jasmine.objectContaining({
+    const expectedEntity = expect.objectContaining({
       _id: Entity.createPrefixedId(Skill.ENTITY_TYPE, mockEscoObject.uri),
       escoUri: mockEscoObject.uri,
       name: mockEscoObject.title,
       description: mockEscoObject.description["en"].literal,
     } as Partial<Skill>);
-    expectAsync(result).toBeResolvedTo(expectedEntity);
-    expect(mockEntityMapper.save).toHaveBeenCalledOnceWith(expectedEntity);
+    expect(result).resolves.toEqual(expectedEntity);
+    expect(mockEntityMapper.save).toHaveBeenCalledTimes(1);
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(expectedEntity);
   }));
 });
 

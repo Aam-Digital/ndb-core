@@ -14,14 +14,18 @@ import { ConfigService } from "../config/config.service";
 import { of } from "rxjs";
 
 describe("DemoDataService", () => {
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
-  let mockDatabase: jasmine.SpyObj<Database>;
+  let mockEntityMapper: any;
+  let mockDatabase: any;
   let mockGeneratorsProviders;
 
   beforeEach(() => {
-    mockEntityMapper = jasmine.createSpyObj(["saveAll"]);
-    mockDatabase = jasmine.createSpyObj(["isEmpty"]);
-    mockDatabase.isEmpty.and.resolveTo(true);
+    mockEntityMapper = {
+      saveAll: vi.fn(),
+    };
+    mockDatabase = {
+      isEmpty: vi.fn(),
+    };
+    mockDatabase.isEmpty.mockResolvedValue(true);
     mockGeneratorsProviders = [
       { provide: DemoChildGenerator, useClass: DemoChildGenerator },
       { provide: DemoChildConfig, useValue: { count: 10 } },
@@ -33,7 +37,9 @@ describe("DemoDataService", () => {
         { provide: EntityMapperService, useValue: mockEntityMapper },
         {
           provide: AlertService,
-          useValue: jasmine.createSpyObj(["addWarning"]),
+          useValue: {
+            addWarning: vi.fn(),
+          },
         },
         {
           provide: DemoDataServiceConfig,
@@ -62,6 +68,6 @@ describe("DemoDataService", () => {
     const service: DemoDataService = TestBed.inject(DemoDataService);
     await service.publishDemoData();
 
-    expect(service.dataGenerators).toHaveSize(1);
+    expect(service.dataGenerators).toHaveLength(1);
   });
 });

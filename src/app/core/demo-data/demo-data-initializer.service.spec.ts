@@ -14,7 +14,6 @@ import { environment } from "../../../environments/environment";
 import { SessionInfo, SessionSubject } from "../session/auth/session-info";
 import { LocalAuthService } from "../session/auth/local/local-auth.service";
 import { SessionManagerService } from "../session/session-service/session-manager.service";
-import { PouchDatabase } from "../database/pouchdb/pouch-database";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { DatabaseResolverService } from "../database/database-resolver.service";
 import { MemoryPouchDatabase } from "../database/pouchdb/memory-pouch-database";
@@ -34,14 +33,14 @@ describe("DemoDataInitializerService", () => {
     roles: ["user_app", "admin_app"],
   };
   let service: DemoDataInitializerService;
-  let mockDemoDataService: jasmine.SpyObj<DemoDataService>;
-  let mockLocalAuth: jasmine.SpyObj<LocalAuthService>;
-  let sessionManager: jasmine.SpyObj<SessionManagerService>;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockDemoDataService: any;
+  let mockLocalAuth: any;
+  let sessionManager: any;
+  let mockDialog: any;
   let demoUserDBName: string;
   let adminDBName: string;
 
-  let database: PouchDatabase;
+  let database: MemoryPouchDatabase;
   let syncStateSubject: SyncStateSubject;
 
   beforeEach(() => {
@@ -49,14 +48,22 @@ describe("DemoDataInitializerService", () => {
     environment.session_type = SessionType.mock;
     demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${Entity.DATABASE}`;
     adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${Entity.DATABASE}`;
-    mockDemoDataService = jasmine.createSpyObj(["publishDemoData"]);
-    mockDemoDataService.publishDemoData.and.resolveTo();
-    mockDialog = jasmine.createSpyObj(["open"]);
-    mockDialog.open.and.returnValue({
+    mockDemoDataService = {
+      publishDemoData: vi.fn(),
+    };
+    mockDemoDataService.publishDemoData.mockResolvedValue(undefined);
+    mockDialog = {
+      open: vi.fn(),
+    };
+    mockDialog.open.mockReturnValue({
       close: () => {},
     } as any);
-    mockLocalAuth = jasmine.createSpyObj(["saveUser"]);
-    sessionManager = jasmine.createSpyObj(["offlineLogin"]);
+    mockLocalAuth = {
+      saveUser: vi.fn(),
+    };
+    sessionManager = {
+      offlineLogin: vi.fn(),
+    };
     database = new MemoryPouchDatabase(demoUserDBName, syncStateSubject);
 
     TestBed.configureTestingModule({
@@ -80,11 +87,11 @@ describe("DemoDataInitializerService", () => {
   afterEach(async () => {
     localStorage.clear();
 
-    const tmpDB = new PouchDatabase(demoUserDBName, syncStateSubject);
+    const tmpDB = new MemoryPouchDatabase(demoUserDBName, syncStateSubject);
     tmpDB.init();
     await tmpDB.destroy();
 
-    const tmpDB2 = new PouchDatabase(adminDBName, syncStateSubject);
+    const tmpDB2 = new MemoryPouchDatabase(adminDBName, syncStateSubject);
     tmpDB2.init();
     await tmpDB2.destroy();
   });
@@ -101,7 +108,7 @@ describe("DemoDataInitializerService", () => {
   });
 
   it("it should publish the demo data after logging in the default user", fakeAsync(() => {
-    spyOn(database, "isEmpty").and.resolveTo(true);
+    vi.spyOn(database, "isEmpty").mockResolvedValue(true);
     service.logInDemoUser();
 
     expect(sessionManager.offlineLogin).toHaveBeenCalledWith(adminUser);
@@ -115,8 +122,8 @@ describe("DemoDataInitializerService", () => {
   }));
 
   it("should show a dialog while generating demo data", fakeAsync(() => {
-    const closeSpy = jasmine.createSpy();
-    mockDialog.open.and.returnValue({ close: closeSpy } as any);
+    const closeSpy = vi.fn();
+    mockDialog.open.mockReturnValue({ close: closeSpy } as any);
     service.generateDemoData();
 
     expect(mockDialog.open).toHaveBeenCalledWith(
@@ -147,7 +154,7 @@ describe("DemoDataInitializerService", () => {
     TestBed.inject(LoginStateSubject).next(LoginState.LOGGED_IN);
     tick();
 
-    expectAsync(database.get(userDoc._id)).toBeResolved();
+    expect(database.get(userDoc._id)).resolves.not.toThrow();
     tick();
 
     const adminDoc1 = { _id: "adminDoc1" };
@@ -157,11 +164,11 @@ describe("DemoDataInitializerService", () => {
     tick();
 
     expect(database.getPouchDB().name).toBe(adminDBName);
-    expectAsync(database.get(adminDoc1._id)).toBeResolved();
-    expectAsync(database.get(adminDoc2._id)).toBeResolved();
-    expectAsync(defaultUserDB.get(adminDoc1._id)).toBeResolved();
-    expectAsync(defaultUserDB.get(adminDoc2._id)).toBeResolved();
-    expectAsync(defaultUserDB.get(userDoc._id)).toBeResolved();
+    expect(database.get(adminDoc1._id)).resolves.not.toThrow();
+    expect(database.get(adminDoc2._id)).resolves.not.toThrow();
+    expect(defaultUserDB.get(adminDoc1._id)).resolves.not.toThrow();
+    expect(defaultUserDB.get(adminDoc2._id)).resolves.not.toThrow();
+    expect(defaultUserDB.get(userDoc._id)).resolves.not.toThrow();
     tick();
   }));
 
@@ -191,8 +198,8 @@ describe("DemoDataInitializerService", () => {
 
     database.init(demoUserDBName);
     const defaultUserDB = database.getPouchDB();
-    expectAsync(defaultUserDB.get(syncedDoc._id)).toBeResolved();
-    expectAsync(defaultUserDB.get(unsyncedDoc._id)).toBeRejected();
+    expect(defaultUserDB.get(syncedDoc._id)).resolves.not.toThrow();
+    expect(defaultUserDB.get(unsyncedDoc._id)).rejects.toThrow();
     tick();
   }));
 });

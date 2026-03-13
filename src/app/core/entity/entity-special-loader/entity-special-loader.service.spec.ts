@@ -11,16 +11,16 @@ import { HistoricalDataService } from "./historical-data/historical-data.service
 describe("EntitySpecialLoaderService", () => {
   let service: EntitySpecialLoaderService;
 
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
-  let mockHistoricalDataService: jasmine.SpyObj<HistoricalDataService>;
+  let mockChildrenService: any;
+  let mockHistoricalDataService: any;
 
   beforeEach(() => {
-    mockChildrenService = jasmine.createSpyObj(ChildrenService, [
-      "getChildren",
-    ]);
-    mockHistoricalDataService = jasmine.createSpyObj(HistoricalDataService, [
-      "getHistoricalDataFor",
-    ]);
+    mockChildrenService = {
+      getChildren: vi.fn(),
+    } as unknown as any;
+    mockHistoricalDataService = {
+      getHistoricalDataFor: vi.fn(),
+    } as unknown as any;
 
     TestBed.configureTestingModule({
       providers: [
@@ -37,7 +37,7 @@ describe("EntitySpecialLoaderService", () => {
 
   it("should load via ChildrenService", async () => {
     const testData = [new TestEntity()] as any[];
-    mockChildrenService.getChildren.and.resolveTo(testData);
+    mockChildrenService.getChildren.mockResolvedValue(testData);
 
     const actual = await service.loadData(LoaderMethod.ChildrenService);
 

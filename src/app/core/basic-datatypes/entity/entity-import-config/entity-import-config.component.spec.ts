@@ -63,7 +63,7 @@ describe("EntityImportConfigComponent", () => {
   });
 
   it("should show confirmation dialog if no property is selected", () => {
-    const confirmationSpy = spyOn(
+    const confirmationSpy = vi.spyOn(
       TestBed.inject(ConfirmationDialogService),
       "getConfirmation",
     );

@@ -37,22 +37,28 @@ describe("NavigationComponent", () => {
   let component: NavigationComponent;
   let fixture: ComponentFixture<NavigationComponent>;
 
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockConfigService: any;
   let mockConfigUpdated: BehaviorSubject<Config>;
-  let mockRoleGuard: jasmine.SpyObj<UserRoleGuard>;
-  let mockEntityGuard: jasmine.SpyObj<EntityPermissionGuard>;
+  let mockRoleGuard: any;
+  let mockEntityGuard: any;
 
   beforeEach(waitForAsync(() => {
     mockConfigUpdated = new BehaviorSubject<Config>(null);
-    mockConfigService = jasmine.createSpyObj(["getConfig", "getAllConfigs"], {
+    mockConfigService = {
+      getConfig: vi.fn(),
+      getAllConfigs: vi.fn(),
       configUpdates: mockConfigUpdated,
-    });
-    mockConfigService.getConfig.and.returnValue({ items: [] });
-    mockConfigService.getAllConfigs.and.returnValue([]);
-    mockRoleGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
-    mockRoleGuard.checkRoutePermissions.and.resolveTo(true);
-    mockEntityGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
-    mockEntityGuard.checkRoutePermissions.and.resolveTo(true);
+    };
+    mockConfigService.getConfig.mockReturnValue({ items: [] });
+    mockConfigService.getAllConfigs.mockReturnValue([]);
+    mockRoleGuard = {
+      checkRoutePermissions: vi.fn(),
+    };
+    mockRoleGuard.checkRoutePermissions.mockResolvedValue(true);
+    mockEntityGuard = {
+      checkRoutePermissions: vi.fn(),
+    };
+    mockEntityGuard.checkRoutePermissions.mockResolvedValue(true);
 
     TestBed.configureTestingModule({
       imports: [NavigationComponent, MockedTestingModule.withState()],
@@ -81,18 +87,20 @@ describe("NavigationComponent", () => {
         { label: "Children", icon: "child", link: "/child" },
       ],
     };
-    mockRoleGuard.checkRoutePermissions.and.callFake(async (route: string) => {
-      switch (route) {
-        case "/dashboard":
-          return false;
-        case "/child":
-          return true;
-        default:
-          return false;
-      }
-    });
+    mockRoleGuard.checkRoutePermissions.mockImplementation(
+      async (route: string) => {
+        switch (route) {
+          case "/dashboard":
+            return false;
+          case "/child":
+            return true;
+          default:
+            return false;
+        }
+      },
+    );
 
-    mockConfigService.getConfig.and.returnValue(testConfig);
+    mockConfigService.getConfig.mockReturnValue(testConfig);
     mockConfigUpdated.next(null);
     tick();
 
@@ -108,18 +116,20 @@ describe("NavigationComponent", () => {
         { label: "Children", icon: "child", link: "/child" },
       ],
     };
-    mockEntityGuard.checkRoutePermissions.and.callFake((route: string) => {
-      switch (route) {
-        case "/dashboard":
-          return Promise.resolve(false);
-        case "/child":
-          return Promise.resolve(true);
-        default:
-          return Promise.resolve(false);
-      }
-    });
+    mockEntityGuard.checkRoutePermissions.mockImplementation(
+      (route: string) => {
+        switch (route) {
+          case "/dashboard":
+            return Promise.resolve(false);
+          case "/child":
+            return Promise.resolve(true);
+          default:
+            return Promise.resolve(false);
+        }
+      },
+    );
 
-    mockConfigService.getConfig.and.returnValue(testConfig);
+    mockConfigService.getConfig.mockReturnValue(testConfig);
     mockConfigUpdated.next(null);
     tick();
 
@@ -136,19 +146,15 @@ describe("NavigationComponent", () => {
     ]);
 
     routerEvents.next(new NavigationEnd(42, "/child/1", "/child/1"));
-    expect(component.activeLink())
-      .withContext("url should match parent menu")
-      .toBe("/child");
+    expect(component.activeLink(), "url should match parent menu").toBe(
+      "/child",
+    );
 
     routerEvents.next(new NavigationEnd(42, "/", "/"));
-    expect(component.activeLink())
-      .withContext("root url should match")
-      .toBe("/");
+    expect(component.activeLink(), "root url should match").toBe("/");
 
     routerEvents.next(new NavigationEnd(42, "/other", "/other"));
-    expect(component.activeLink())
-      .withContext("unknown url should not match")
-      .toBe("");
+    expect(component.activeLink(), "unknown url should not match").toBe("");
   });
 
   it("should correctly highlight nested menu items", () => {

@@ -35,9 +35,9 @@ import { Angulartics2Module } from "angulartics2";
 describe("ReportingComponent", () => {
   let component: ReportingComponent;
   let fixture: ComponentFixture<ReportingComponent>;
-  let mockReportingService: jasmine.SpyObj<DataAggregationService>;
-  let mockDataTransformationService: jasmine.SpyObj<DataTransformationService>;
-  let mockSqlReportService: jasmine.SpyObj<SqlReportService>;
+  let mockReportingService: any;
+  let mockDataTransformationService: any;
+  let mockSqlReportService: any;
 
   const testReport = new ReportEntity();
 
@@ -71,20 +71,22 @@ describe("ReportingComponent", () => {
   };
 
   beforeEach(async () => {
-    mockReportingService = jasmine.createSpyObj(["calculateReport"]);
-    mockDataTransformationService = jasmine.createSpyObj([
-      "queryAndTransformData",
-    ]);
-    mockReportingService.calculateReport.and.resolveTo([]);
-    mockSqlReportService = jasmine.createSpyObj([
-      "query",
-      "getCsvforV2",
-      "flattenData",
-      "fetchReportCalculation",
-      "createReportCalculation",
-      "waitForReportData",
-      "fetchReportCalculationData",
-    ]);
+    mockReportingService = {
+      calculateReport: vi.fn(),
+    };
+    mockDataTransformationService = {
+      queryAndTransformData: vi.fn(),
+    };
+    mockReportingService.calculateReport.mockResolvedValue([]);
+    mockSqlReportService = {
+      query: vi.fn(),
+      getCsvforV2: vi.fn(),
+      flattenData: vi.fn(),
+      fetchReportCalculation: vi.fn(),
+      createReportCalculation: vi.fn(),
+      waitForReportData: vi.fn(),
+      fetchReportCalculationData: vi.fn(),
+    };
     await TestBed.configureTestingModule({
       imports: [
         ReportingComponent,
@@ -108,7 +110,9 @@ describe("ReportingComponent", () => {
         },
         {
           provide: JsonEditorService,
-          useValue: jasmine.createSpyObj(["openJsonEditorDialog"]),
+          useValue: {
+            openJsonEditorDialog: vi.fn(),
+          },
         },
       ],
     }).compileComponents();
@@ -129,14 +133,14 @@ describe("ReportingComponent", () => {
 
     component.calculateResults(testReport, new Date(), new Date());
 
-    expect(component.isLoading).toBeTrue();
+    expect(component.isLoading).toBe(true);
     tick();
-    expect(component.isLoading).toBeFalse();
+    expect(component.isLoading).toBe(false);
 
     expect(mockReportingService.calculateReport).toHaveBeenCalledWith(
       testReport.aggregationDefinitions as Aggregation[],
-      jasmine.any(Date),
-      jasmine.any(Date),
+      expect.any(Date),
+      expect.any(Date),
     );
   }));
 
@@ -147,7 +151,7 @@ describe("ReportingComponent", () => {
         subRows: [],
       },
     ];
-    mockReportingService.calculateReport.and.resolveTo(results);
+    mockReportingService.calculateReport.mockResolvedValue(results);
 
     component.calculateResults(testReport, new Date(), new Date());
 
@@ -162,7 +166,7 @@ describe("ReportingComponent", () => {
     const coachingClass = defaultInteractionTypes.find(
       (it) => it.id === "COACHING_CLASS",
     );
-    mockReportingService.calculateReport.and.resolveTo([
+    mockReportingService.calculateReport.mockResolvedValue([
       {
         header: { label: "Total # of events", groupedBy: [], result: 3 },
         subRows: [
@@ -249,7 +253,7 @@ describe("ReportingComponent", () => {
       { First: 1, Second: 2 },
       { First: 3, Second: 4 },
     ];
-    mockDataTransformationService.queryAndTransformData.and.resolveTo(data);
+    mockDataTransformationService.queryAndTransformData.mockResolvedValue(data);
     const report = new ReportEntity();
     report.mode = "exporting";
     report.aggregationDefinitions = [];
@@ -258,7 +262,7 @@ describe("ReportingComponent", () => {
 
     expect(
       mockDataTransformationService.queryAndTransformData,
-    ).toHaveBeenCalledWith([], jasmine.any(Date), jasmine.any(Date));
+    ).toHaveBeenCalledWith([], expect.any(Date), expect.any(Date));
     expect(component.data).toEqual(data);
     expect(component.mode).toBe("exporting");
   });
@@ -268,11 +272,11 @@ describe("ReportingComponent", () => {
     const report = new ReportEntity() as SqlReport;
     report.mode = "sql";
 
-    mockSqlReportService.query.and.returnValue(
+    mockSqlReportService.query.mockReturnValue(
       Promise.resolve(validReportDataResponse),
     );
 
-    mockSqlReportService.fetchReportCalculation.and.returnValue(
+    mockSqlReportService.fetchReportCalculation.mockReturnValue(
       of(validReportCalculation),
     );
 
@@ -299,11 +303,11 @@ describe("ReportingComponent", () => {
 
     component.reportCalculation = validReportCalculation;
 
-    mockSqlReportService.query.and.returnValue(
+    mockSqlReportService.query.mockReturnValue(
       Promise.resolve(validReportDataResponse),
     );
 
-    mockSqlReportService.fetchReportCalculation.and.returnValue(
+    mockSqlReportService.fetchReportCalculation.mockReturnValue(
       of(validReportCalculation),
     );
 
@@ -328,7 +332,7 @@ describe("ReportingComponent", () => {
     const report = new ReportEntity() as SqlReport;
     report.mode = "sql";
 
-    mockSqlReportService.query.and.returnValue(Promise.reject(Error("foo")));
+    mockSqlReportService.query.mockReturnValue(Promise.reject(Error("foo")));
 
     // When
     await component.calculateResults(
@@ -338,7 +342,7 @@ describe("ReportingComponent", () => {
     );
 
     // Then
-    expect(component.isError).toBeTrue();
+    expect(component.isError).toBe(true);
     expect(component.errorDetails).not.toBeNull();
     expect(component.data).toEqual([]);
   });

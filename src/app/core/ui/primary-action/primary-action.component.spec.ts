@@ -9,7 +9,7 @@ import { NEVER } from "rxjs";
 describe("PrimaryActionComponent", () => {
   let component: PrimaryActionComponent;
   let fixture: ComponentFixture<PrimaryActionComponent>;
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockConfigService: any;
 
   const mockPrimaryActionConfig: PrimaryActionConfig = {
     icon: "file-alt",
@@ -18,12 +18,12 @@ describe("PrimaryActionComponent", () => {
   };
 
   beforeEach(waitForAsync(() => {
-    mockConfigService = jasmine.createSpyObj("ConfigService", [
-      "getConfig",
-      "getAllConfigs",
-    ]);
-    mockConfigService.getConfig.and.returnValue(mockPrimaryActionConfig);
-    mockConfigService.getAllConfigs.and.returnValue([]);
+    mockConfigService = {
+      getConfig: vi.fn().mockName("ConfigService.getConfig"),
+      getAllConfigs: vi.fn().mockName("ConfigService.getAllConfigs"),
+    };
+    mockConfigService.getConfig.mockReturnValue(mockPrimaryActionConfig);
+    mockConfigService.getAllConfigs.mockReturnValue([]);
     mockConfigService.configUpdates = NEVER;
 
     TestBed.configureTestingModule({

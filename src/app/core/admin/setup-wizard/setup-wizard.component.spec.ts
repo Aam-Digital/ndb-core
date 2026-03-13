@@ -28,7 +28,10 @@ describe("SetupWizardComponent", () => {
       providers: [
         {
           provide: EntityMapperService,
-          useValue: jasmine.createSpyObj(["load", "save"]),
+          useValue: {
+            load: vi.fn(),
+            save: vi.fn(),
+          },
         },
         {
           provide: EntityRegistry,
@@ -73,8 +76,8 @@ describe("SetupWizardComponent", () => {
 
     const entityMapper = TestBed.inject(
       EntityMapperService,
-    ) as jasmine.SpyObj<EntityMapperService>;
-    entityMapper.load.and.resolveTo(
+    ) as any;
+    entityMapper.load.mockResolvedValue(
       new Config(CONFIG_SETUP_WIZARD_ID, testConfig),
     );
 
@@ -86,13 +89,16 @@ describe("SetupWizardComponent", () => {
     tick();
 
     expect(entityMapper.save).toHaveBeenCalled();
-    const actualSavedConfig = entityMapper.save.calls.mostRecent()
-      .args[0] as Config<SetupWizardConfig>;
+    const actualSavedConfig = vi.mocked(entityMapper.save).mock
+      .lastCall[0] as Config<SetupWizardConfig>;
     expect(actualSavedConfig.data.finished).toBe(true);
   }));
 
   it("should load local progress/status on init and save to local storage", fakeAsync(() => {
-    const testStatus: { currentStep: number; completedSteps: number[] } = {
+    const testStatus: {
+      currentStep: number;
+      completedSteps: number[];
+    } = {
       currentStep: 2,
       completedSteps: [0, 2],
     };
@@ -108,7 +114,7 @@ describe("SetupWizardComponent", () => {
 
     component.onNextStep(3);
     expect(component.currentStep).toBe(3);
-    expect(component.completedSteps.includes(3)).toBeTrue();
+    expect(component.completedSteps.includes(3)).toBe(true);
     tick();
 
     const storedStatus = JSON.parse(

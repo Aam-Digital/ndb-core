@@ -16,7 +16,7 @@ describe("ActivityAttendanceSectionComponent", () => {
   let component: ActivityAttendanceSectionComponent;
   let fixture: ComponentFixture<ActivityAttendanceSectionComponent>;
 
-  let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
+  let mockAttendanceService: any;
   let testActivity: Entity;
   let testRecords: ActivityAttendance[];
 
@@ -24,14 +24,16 @@ describe("ActivityAttendanceSectionComponent", () => {
     testActivity = TestEntity.create("test act");
     testRecords = [ActivityAttendance.create(new Date(), [])];
 
-    mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
-      "getActivityAttendances",
-      "wrapEventEntity",
-    ]);
-    mockAttendanceService.getActivityAttendances.and.resolveTo(testRecords);
-    (mockAttendanceService as any).eventTypes = jasmine
-      .createSpy(")ventTypes")
-      .and.returnValue([]);
+    mockAttendanceService = {
+      getActivityAttendances: vi
+        .fn()
+        .mockName("mockAttendanceService.getActivityAttendances"),
+      wrapEventEntity: vi
+        .fn()
+        .mockName("mockAttendanceService.wrapEventEntity"),
+    };
+    mockAttendanceService.getActivityAttendances.mockResolvedValue(testRecords);
+    (mockAttendanceService as any).eventTypes = vi.fn().mockReturnValue([]);
     TestBed.configureTestingModule({
       imports: [
         ActivityAttendanceSectionComponent,
@@ -63,7 +65,7 @@ describe("ActivityAttendanceSectionComponent", () => {
 
     expect(mockAttendanceService.getActivityAttendances).toHaveBeenCalledWith(
       testActivity,
-      jasmine.any(Date),
+      expect.any(Date),
     );
     expect(component.allRecords).toEqual(testRecords);
   });
@@ -133,7 +135,7 @@ describe("ActivityAttendanceSectionComponent", () => {
       wrap(latestEvent),
     ]);
     latestAttendance.periodTo = latestEvent.date;
-    mockAttendanceService.getActivityAttendances.and.resolveTo([
+    mockAttendanceService.getActivityAttendances.mockResolvedValue([
       oldestAttendance,
       middleAttendance,
       latestAttendance,
@@ -143,8 +145,12 @@ describe("ActivityAttendanceSectionComponent", () => {
 
     expect(component.combinedAttendance.periodFrom).toBe(oldestEvent.date);
     expect(component.combinedAttendance.periodTo).toBe(latestEvent.date);
+    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
+    expect(
+      component.combinedAttendance.events.map((e) => e.entity),
+    ).toHaveLength(4);
     expect(component.combinedAttendance.events.map((e) => e.entity)).toEqual(
-      jasmine.arrayWithExactContents([
+      expect.arrayContaining([
         oldestEvent,
         someEvent1,
         someEvent2,

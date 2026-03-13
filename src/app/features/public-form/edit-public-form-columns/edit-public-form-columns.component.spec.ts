@@ -14,8 +14,8 @@ describe("EditPublicFormColumnsComponent", () => {
   let component: EditPublicFormColumnsComponent;
   let fixture: ComponentFixture<EditPublicFormColumnsComponent>;
   let formGroup: FormGroup;
-  let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
-  let mockPublicFormsService: jasmine.SpyObj<PublicFormsService>;
+  let mockEntityFormService: any;
+  let mockPublicFormsService: any;
 
   const testColumns = [
     {
@@ -30,13 +30,24 @@ describe("EditPublicFormColumnsComponent", () => {
   ];
 
   beforeEach(() => {
-    mockEntityFormService = jasmine.createSpyObj("EntityFormService", [
-      "createEntityForm",
-      "extendFormFieldConfig",
-    ]);
-    mockPublicFormsService = jasmine.createSpyObj("PublicFormsService", [
-      "initCustomFormActions",
-    ]);
+    mockEntityFormService = {
+      createEntityForm: vi.fn().mockName("EntityFormService.createEntityForm"),
+      extendFormFieldConfig: vi
+        .fn()
+        .mockName("EntityFormService.extendFormFieldConfig"),
+    };
+    mockEntityFormService.createEntityForm.mockResolvedValue({
+      formGroup: new FormGroup({}),
+    });
+    mockPublicFormsService = {
+      initCustomFormActions: vi
+        .fn()
+        .mockName("PublicFormsService.initCustomFormActions"),
+      saveCustomFieldsToEntityConfig: vi
+        .fn()
+        .mockName("PublicFormsService.saveCustomFieldsToEntityConfig")
+        .mockResolvedValue(undefined),
+    };
 
     TestBed.configureTestingModule({
       declarations: [],

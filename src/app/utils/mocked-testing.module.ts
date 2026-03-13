@@ -31,6 +31,9 @@ import {
 import { LoggingService } from "../core/logging/logging.service";
 import { getDefaultConfigEntity } from "app/core/config/testing-config-service";
 import { getDefaultEnumEntities } from "../core/basic-datatypes/configurable-enum/configurable-enum-testing";
+import { vi } from "vitest";
+import { Papa } from "ngx-papaparse";
+import { parse, unparse } from "papaparse";
 
 /**
  * Utility module that can be imported in test files or stories to have mock implementations of the SessionService
@@ -70,6 +73,13 @@ import { getDefaultEnumEntities } from "../core/basic-datatypes/configurable-enu
         queryIndexDocs: () => Promise.resolve([]),
       },
     },
+    {
+      provide: Papa,
+      useValue: {
+        parse: (...args: Parameters<typeof parse>) => parse(...args),
+        unparse: (...args: Parameters<typeof unparse>) => unparse(...args),
+      },
+    },
     provideHttpClient(withInterceptorsFromDi()),
     provideHttpClientTesting(),
   ],
@@ -80,8 +90,9 @@ export class MockedTestingModule {
     data: Entity[] = [createEntityOfType("User", TEST_USER)],
   ): ModuleWithProviders<MockedTestingModule> {
     environment.session_type = SessionType.mock;
-    let mockLoggingService: jasmine.SpyObj<LoggingService>;
-    mockLoggingService = jasmine.createSpyObj(["warn"]);
+    const mockLoggingService: Pick<LoggingService, "warn"> = {
+      warn: vi.fn(),
+    };
 
     return {
       ngModule: MockedTestingModule,

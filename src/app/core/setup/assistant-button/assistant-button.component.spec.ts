@@ -17,12 +17,12 @@ import { AssistantService } from "../assistant.service";
 describe("AssistantButtonComponent", () => {
   let component: AssistantButtonComponent;
   let fixture: ComponentFixture<AssistantButtonComponent>;
-  let mockAssistantService: jasmine.SpyObj<AssistantService>;
+  let mockAssistantService: any;
 
   beforeEach(async () => {
-    mockAssistantService = jasmine.createSpyObj("AssistantService", [
-      "openAssistant",
-    ]);
+    mockAssistantService = {
+      openAssistant: vi.fn().mockName("AssistantService.openAssistant"),
+    };
 
     await TestBed.configureTestingModule({
       imports: [AssistantButtonComponent],
@@ -51,7 +51,7 @@ describe("AssistantButtonComponent", () => {
   });
 
   it("should call AssistantService.openAssistant when openAssistant is called", async () => {
-    mockAssistantService.openAssistant.and.returnValue(Promise.resolve());
+    mockAssistantService.openAssistant.mockReturnValue(Promise.resolve());
 
     await component.openAssistant();
 

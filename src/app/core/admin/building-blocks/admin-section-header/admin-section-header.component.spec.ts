@@ -8,10 +8,12 @@ describe("AdminSectionHeaderComponent", () => {
   let component: AdminSectionHeaderComponent;
   let fixture: ComponentFixture<AdminSectionHeaderComponent>;
 
-  let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockConfirmationDialog: any;
 
   beforeEach(() => {
-    mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
+    mockConfirmationDialog = {
+      getConfirmation: vi.fn(),
+    };
 
     TestBed.configureTestingModule({
       imports: [
@@ -36,20 +38,20 @@ describe("AdminSectionHeaderComponent", () => {
   });
 
   it("should only emit removeSection if user confirms confirmation dialog", async () => {
-    spyOn(component.remove, "emit");
+    vi.spyOn(component.remove, "emit");
 
-    mockConfirmationDialog.getConfirmation.and.resolveTo(false);
+    mockConfirmationDialog.getConfirmation.mockResolvedValue(false);
     await component.removeSection();
     expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
     expect(component.remove.emit).not.toHaveBeenCalled();
 
-    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
+    mockConfirmationDialog.getConfirmation.mockResolvedValue(true);
     await component.removeSection();
     expect(component.remove.emit).toHaveBeenCalled();
   });
 
   it("should not show confirmation dialog if disableConfirmation is set", async () => {
-    spyOn(component.remove, "emit");
+    vi.spyOn(component.remove, "emit");
 
     component.disableConfirmation = true;
     await component.removeSection();

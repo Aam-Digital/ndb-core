@@ -11,9 +11,12 @@ describe("AdminSearchableCheckboxComponent", () => {
   let fixture: ComponentFixture<AdminSearchableCheckboxComponent>;
 
   class TestEntity extends Entity {
-    @DatabaseField() name: string;
-    @DatabaseField() age: number;
-    @DatabaseField() description: string;
+    @DatabaseField()
+    name: string;
+    @DatabaseField()
+    age: number;
+    @DatabaseField()
+    description: string;
 
     static override toStringAttributes = ["name"];
   }

@@ -16,10 +16,13 @@ describe("NotificationComponent", () => {
   let component: NotificationComponent;
   let fixture: ComponentFixture<NotificationComponent>;
 
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockEntityMapper: any;
 
   beforeEach(async () => {
-    mockEntityMapper = jasmine.createSpyObj(["receiveUpdates", "load"]);
+    mockEntityMapper = {
+      receiveUpdates: vi.fn(),
+      load: vi.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -34,14 +37,14 @@ describe("NotificationComponent", () => {
         { provide: EntityRegistry, useValue: entityRegistry },
         {
           provide: DatabaseResolverService,
-          useValue: jasmine.createSpyObj([
-            "initializeNotificationsDatabaseForCurrentUser",
-          ]),
+          useValue: {
+            initializeNotificationsDatabaseForCurrentUser: vi.fn(),
+          },
         },
       ],
     }).compileComponents();
 
-    mockEntityMapper.receiveUpdates.and.returnValue(NEVER);
+    mockEntityMapper.receiveUpdates.mockReturnValue(NEVER);
 
     fixture = TestBed.createComponent(NotificationComponent);
     component = fixture.componentInstance;

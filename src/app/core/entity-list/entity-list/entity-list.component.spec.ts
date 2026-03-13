@@ -74,7 +74,10 @@ describe("EntityListComponent", () => {
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         {
           provide: FormDialogService,
-          useValue: jasmine.createSpyObj(["openFormPopup", "openView"]),
+          useValue: {
+            openFormPopup: vi.fn(),
+            openView: vi.fn(),
+          },
         },
       ],
     }).compileComponents();
@@ -134,7 +137,8 @@ describe("EntityListComponent", () => {
     tick();
 
     class Test extends Entity {
-      @DatabaseField({ label: "Test Property" }) testProperty: string;
+      @DatabaseField({ label: "Test Property" })
+      testProperty: string;
     }
 
     component.entityConstructor = Test;
@@ -160,13 +164,13 @@ describe("EntityListComponent", () => {
 
   it("should not navigate on addNew if clickMode is not 'navigate'", () => {
     createComponent();
-    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
+    const navigateSpy = vi.spyOn(TestBed.inject(Router), "navigate");
 
     component.clickMode = "popup";
     component.addNew();
     expect(navigateSpy).not.toHaveBeenCalled();
 
-    navigateSpy.calls.reset();
+    navigateSpy.mockClear();
     component.clickMode = "navigate";
     component.addNew();
     expect(navigateSpy).toHaveBeenCalled();
@@ -175,7 +179,7 @@ describe("EntityListComponent", () => {
   it("should add a new entity that was created after the initial loading to the table", fakeAsync(() => {
     const entityUpdates = new Subject<UpdatedEntity<Entity>>();
     const entityMapper = TestBed.inject(EntityMapperService);
-    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
+    vi.spyOn(entityMapper, "receiveUpdates").mockReturnValue(entityUpdates);
     createComponent();
     initComponentInputs();
     tick();
@@ -190,7 +194,7 @@ describe("EntityListComponent", () => {
   it("should remove an entity from the table when it has been deleted", fakeAsync(() => {
     const entityUpdates = new Subject<UpdatedEntity<Entity>>();
     const entityMapper = TestBed.inject(EntityMapperService);
-    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
+    vi.spyOn(entityMapper, "receiveUpdates").mockReturnValue(entityUpdates);
     const entity = new TestEntity();
     createComponent();
     initComponentInputs();

@@ -25,17 +25,19 @@ import { NEVER, of } from "rxjs";
 
 describe("LatestChangesDialogService", () => {
   let service: LatestChangesDialogService;
-  let mockLatestChangesService: jasmine.SpyObj<LatestChangesService>;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockLatestChangesService: any;
+  let mockDialog: any;
 
   beforeEach(() => {
-    mockLatestChangesService = jasmine.createSpyObj([
-      "getLatestChangesBeforeVersion",
-      "getChangelogsBetweenVersions",
-    ]);
+    mockLatestChangesService = {
+      getLatestChangesBeforeVersion: vi.fn(),
+      getChangelogsBetweenVersions: vi.fn(),
+    };
 
-    mockDialog = jasmine.createSpyObj("mockDialog", ["open"]);
-    mockDialog.open.and.returnValue({
+    mockDialog = {
+      open: vi.fn().mockName("mockDialog.open"),
+    };
+    mockDialog.open.mockReturnValue({
       afterClosed: () => of(NEVER),
     } as MatDialogRef<void>);
 
@@ -57,7 +59,7 @@ describe("LatestChangesDialogService", () => {
   });
 
   it("should not display changes on first visit (no version)", () => {
-    const getSpy = spyOn(Storage.prototype, "getItem").and.returnValue(null);
+    const getSpy = vi.spyOn(Storage.prototype, "getItem").mockReturnValue(null);
 
     service.showLatestChangesIfUpdated();
 
@@ -66,9 +68,9 @@ describe("LatestChangesDialogService", () => {
   });
 
   it("should display changes if stored version differs", () => {
-    const getSpy = spyOn(Storage.prototype, "getItem").and.returnValue(
-      "1.0-test",
-    );
+    const getSpy = vi
+      .spyOn(Storage.prototype, "getItem")
+      .mockReturnValue("1.0-test");
 
     service.showLatestChangesIfUpdated();
 
@@ -77,7 +79,9 @@ describe("LatestChangesDialogService", () => {
   });
 
   it("should not display changes if stored version matches", () => {
-    spyOn(Storage.prototype, "getItem").and.returnValue(environment.appVersion);
+    vi.spyOn(Storage.prototype, "getItem").mockReturnValue(
+      environment.appVersion,
+    );
 
     service.showLatestChangesIfUpdated();
 
@@ -85,9 +89,9 @@ describe("LatestChangesDialogService", () => {
   });
 
   it("should update stored version after user closes dialog", fakeAsync(() => {
-    spyOn(Storage.prototype, "setItem");
+    vi.spyOn(Storage.prototype, "setItem");
 
-    mockDialog.open.and.returnValue({
+    mockDialog.open.mockReturnValue({
       afterClosed: () => of(true),
     } as MatDialogRef<boolean>);
 

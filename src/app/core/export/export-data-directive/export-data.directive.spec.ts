@@ -3,11 +3,13 @@ import { ExportDataDirective } from "./export-data.directive";
 import { DownloadService } from "../download-service/download.service";
 
 describe("ExportDataDirective", () => {
-  let mockDownloadService: jasmine.SpyObj<DownloadService>;
+  let mockDownloadService: any;
   let directive: ExportDataDirective;
 
   beforeEach(() => {
-    mockDownloadService = jasmine.createSpyObj(["triggerDownload"]);
+    mockDownloadService = {
+      triggerDownload: vi.fn(),
+    };
     TestBed.configureTestingModule({
       providers: [
         { provide: DownloadService, useValue: mockDownloadService },

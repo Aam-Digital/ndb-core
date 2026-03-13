@@ -18,31 +18,33 @@ describe("CompareRevComponent", () => {
   let component: CompareRevComponent;
   let fixture: ComponentFixture<CompareRevComponent>;
 
-  let mockDatabase: jasmine.SpyObj<Database>;
-  let mockResolutionService: jasmine.SpyObj<AutoResolutionService>;
+  let mockDatabase: any;
+  let mockResolutionService: any;
 
   const testDoc = { _id: "abc", _rev: "rev-1a", value: 1 };
   const testConflictDoc = { _id: "abc", _rev: "rev-1b", value: 2 };
 
   beforeEach(waitForAsync(() => {
-    mockDatabase = jasmine.createSpyObj("mockDatabase", [
-      "get",
-      "remove",
-      "put",
-    ]);
-    mockDatabase.get.and.returnValue(Promise.resolve(testConflictDoc));
+    mockDatabase = {
+      get: vi.fn().mockName("mockDatabase.get"),
+      remove: vi.fn().mockName("mockDatabase.remove"),
+      put: vi.fn().mockName("mockDatabase.put"),
+    };
+    mockDatabase.get.mockReturnValue(Promise.resolve(testConflictDoc));
 
-    mockResolutionService = jasmine.createSpyObj("mockResolutionService", [
-      "shouldDeleteConflictingRevision",
-    ]);
-    mockResolutionService.shouldDeleteConflictingRevision.and.returnValue(
+    mockResolutionService = {
+      shouldDeleteConflictingRevision: vi
+        .fn()
+        .mockName("mockResolutionService.shouldDeleteConflictingRevision"),
+    };
+    mockResolutionService.shouldDeleteConflictingRevision.mockReturnValue(
       false,
     );
 
-    const confDialogMock = jasmine.createSpyObj<ConfirmationDialogService>([
-      "getConfirmation",
-    ]);
-    confDialogMock.getConfirmation.and.resolveTo(true);
+    const confDialogMock = {
+      getConfirmation: vi.fn(),
+    };
+    confDialogMock.getConfirmation.mockResolvedValue(true);
 
     TestBed.configureTestingModule({
       imports: [CompareRevComponent, MatSnackBarModule, NoopAnimationsModule],
@@ -82,8 +84,8 @@ describe("CompareRevComponent", () => {
   });
 
   it("should automatically resolve (delete) trivial conflict", async () => {
-    mockDatabase.get.and.returnValue(Promise.resolve(testConflictDoc));
-    mockResolutionService.shouldDeleteConflictingRevision.and.returnValue(true);
+    mockDatabase.get.mockReturnValue(Promise.resolve(testConflictDoc));
+    mockResolutionService.shouldDeleteConflictingRevision.mockReturnValue(true);
 
     await component.loadRev();
 

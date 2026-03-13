@@ -7,27 +7,43 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { ConfigService } from "app/core/config/config.service";
+import type { Mock } from "vitest";
+
+type ConfigServiceMock = {
+  getAllConfigs: Mock;
+  configUpdates: typeof NEVER;
+};
+
+type DialogRefMock = {
+  close: Mock;
+  afterClosed: Mock;
+};
 
 describe("AdminMenuItemDetailsComponent", () => {
   let component: AdminMenuItemDetailsComponent;
   let fixture: ComponentFixture<AdminMenuItemDetailsComponent>;
-
-  let mockDialogRef: jasmine.SpyObj<
-    MatDialogRef<AdminMenuItemDetailsComponent>
-  >;
+  let menuItem: MenuItem;
+  let mockConfigService: ConfigServiceMock;
+  let mockDialogRef: DialogRefMock;
 
   beforeEach(async () => {
-    const mockConfigService = jasmine.createSpyObj("ConfigService", [
-      "getAllConfigs",
-    ]);
-    mockConfigService.getAllConfigs.and.returnValue([]);
-    mockConfigService.configUpdates = NEVER;
+    menuItem = {
+      label: "Test",
+      icon: "user",
+      link: "",
+    };
 
-    mockDialogRef = jasmine.createSpyObj("MatDialogRef", [
-      "close",
-      "afterClosed",
-    ]);
-    mockDialogRef.afterClosed.and.returnValue(NEVER);
+    mockConfigService = {
+      getAllConfigs: vi.fn().mockName("ConfigService.getAllConfigs"),
+      configUpdates: NEVER,
+    };
+    mockConfigService.getAllConfigs.mockReturnValue([]);
+
+    mockDialogRef = {
+      close: vi.fn().mockName("MatDialogRef.close"),
+      afterClosed: vi.fn().mockName("MatDialogRef.afterClosed"),
+    };
+    mockDialogRef.afterClosed.mockReturnValue(NEVER);
 
     await TestBed.configureTestingModule({
       imports: [
@@ -36,10 +52,7 @@ describe("AdminMenuItemDetailsComponent", () => {
         MockedTestingModule.withState(),
       ],
       providers: [
-        {
-          provide: MAT_DIALOG_DATA,
-          useValue: { item: { label: "Test", icon: "user", link: "" } },
-        },
+        { provide: MAT_DIALOG_DATA, useValue: { item: menuItem } },
         { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: ConfigService, useValue: mockConfigService },
         EntityRegistry,
@@ -68,7 +81,7 @@ describe("AdminMenuItemDetailsComponent", () => {
     component.save();
 
     expect(mockDialogRef.close).toHaveBeenCalledWith(
-      jasmine.objectContaining({ label: "Section" }),
+      expect.objectContaining({ label: "Section" }),
     );
   });
 

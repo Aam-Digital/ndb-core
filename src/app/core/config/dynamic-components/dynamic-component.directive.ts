@@ -4,6 +4,7 @@ import {
   Directive,
   Input,
   OnChanges,
+  OnDestroy,
   Type,
   ViewContainerRef,
   inject,
@@ -23,10 +24,12 @@ import { Logging } from "../../logging/logging.service";
   selector: "[appDynamicComponent]",
   standalone: true,
 })
-export class DynamicComponentDirective implements OnChanges {
+export class DynamicComponentDirective implements OnChanges, OnDestroy {
   viewContainerRef = inject(ViewContainerRef);
   private components = inject(ComponentRegistry);
   private changeDetector = inject(ChangeDetectorRef);
+  private isDestroyed = false;
+  private loadSequence = 0;
 
   @Input() appDynamicComponent: DynamicComponentConfig;
 
@@ -34,46 +37,69 @@ export class DynamicComponentDirective implements OnChanges {
     return this.loadDynamicComponent();
   }
 
+  ngOnDestroy(): void {
+    this.isDestroyed = true;
+    this.loadSequence++;
+  }
+
   private async loadDynamicComponent() {
-    if (!this.appDynamicComponent) {
+    const dynamicComponentConfig = this.appDynamicComponent;
+    if (!dynamicComponentConfig) {
       return;
     }
+    const currentLoad = ++this.loadSequence;
 
     let component: Type<any>;
     try {
-      component = await this.components.get(
-        this.appDynamicComponent.component,
-      )();
+      component = await this.components.get(dynamicComponentConfig.component)();
     } catch (e) {
       Logging.error({
-        message: `Failed to load dynamic component ${this.appDynamicComponent?.component} for ${this.appDynamicComponent?.config?.id}`,
+        message: `Failed to load dynamic component ${dynamicComponentConfig.component} for ${dynamicComponentConfig?.config?.id}`,
         error: e,
       });
       // abort if component failed to load
       return;
     }
+    if (this.shouldAbortLoad(currentLoad)) {
+      return;
+    }
 
     this.viewContainerRef.clear();
 
-    const componentRef = this.viewContainerRef.createComponent(component);
+    let componentRef: ComponentRef<any>;
+    try {
+      componentRef = this.viewContainerRef.createComponent(component);
+    } catch (error) {
+      if (this.shouldAbortLoad(currentLoad)) {
+        return;
+      }
+      throw error;
+    }
 
-    if (this.appDynamicComponent.config) {
-      this.setInputProperties(componentRef);
+    if (dynamicComponentConfig.config) {
+      this.setInputProperties(componentRef, dynamicComponentConfig.config);
     }
     // it seems like the asynchronicity of this function requires this
+    if (this.shouldAbortLoad(currentLoad)) {
+      return;
+    }
     this.changeDetector.detectChanges();
   }
 
-  private setInputProperties(componentRef: ComponentRef<any>) {
+  private setInputProperties(
+    componentRef: ComponentRef<any>,
+    componentConfig: Record<string, unknown>,
+  ) {
     const inputs = Object.keys(
       componentRef.componentType.prototype.constructor["ɵcmp"].inputs,
-    ).filter((input) => this.appDynamicComponent.config?.[input] !== undefined);
+    ).filter((input) => componentConfig[input] !== undefined);
 
     for (const inputName of inputs) {
-      componentRef.setInput(
-        inputName,
-        this.appDynamicComponent.config[inputName],
-      );
+      componentRef.setInput(inputName, componentConfig[inputName]);
     }
+  }
+
+  private shouldAbortLoad(currentLoad: number): boolean {
+    return this.isDestroyed || currentLoad !== this.loadSequence;
   }
 }

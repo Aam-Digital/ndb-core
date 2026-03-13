@@ -1,18 +1,25 @@
 import { firstValueFrom, Observable } from "rxjs";
 import { toArray } from "rxjs/operators";
+import { expect } from "vitest";
+
+export interface AsyncMatchers<T> {
+  toBeResolvedTo(expected: T): Promise<void>;
+  toBeRejectedWith(expected: unknown): Promise<void>;
+  toBeRejectedWithError(error?: string | RegExp | Error): Promise<void>;
+}
 
 export interface ObservableMatchers<T> {
   /**
    * only check for the first value if an observable
    * and discard the rest
    */
-  first: jasmine.AsyncMatchers<T, any>;
+  first: AsyncMatchers<T>;
 
   /**
    * check for all observables in the sequence that they
    * arrived
    */
-  inSequence: jasmine.AsyncMatchers<T[], any>;
+  inSequence: AsyncMatchers<T[]>;
 }
 
 export function expectObservable<T>(
@@ -21,14 +28,32 @@ export function expectObservable<T>(
   return new ObservableMatchersImpl(observable);
 }
 
-class ObservableMatchersImpl<T> implements ObservableMatchers<T> {
-  constructor(private observable: Observable<T>) {}
+class PromiseAsyncMatchers<T> implements AsyncMatchers<T> {
+  constructor(private readonly promise: Promise<T>) {}
 
-  get first(): jasmine.AsyncMatchers<T, any> {
-    return expectAsync(firstValueFrom(this.observable));
+  toBeResolvedTo(expected: T): Promise<void> {
+    return expect(this.promise).resolves.toEqual(expected);
   }
 
-  get inSequence(): jasmine.AsyncMatchers<T[], any> {
-    return expectAsync(firstValueFrom(this.observable.pipe(toArray())));
+  toBeRejectedWith(expected: unknown): Promise<void> {
+    return expect(this.promise).rejects.toEqual(expected);
+  }
+
+  toBeRejectedWithError(error?: string | RegExp | Error): Promise<void> {
+    return expect(this.promise).rejects.toThrowError(error);
+  }
+}
+
+class ObservableMatchersImpl<T> implements ObservableMatchers<T> {
+  constructor(private readonly observable: Observable<T>) {}
+
+  get first(): AsyncMatchers<T> {
+    return new PromiseAsyncMatchers(firstValueFrom(this.observable));
+  }
+
+  get inSequence(): AsyncMatchers<T[]> {
+    return new PromiseAsyncMatchers(
+      firstValueFrom(this.observable.pipe(toArray())),
+    );
   }
 }

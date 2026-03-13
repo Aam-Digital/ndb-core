@@ -24,23 +24,24 @@ describe("MockEntityMapperServicer", () => {
     service = TestBed.inject(EntityMapperService) as MockEntityMapperService;
   });
 
-  it("should publish a update for a newly added entity", (done) => {
+  it("should publish a update for a newly added entity", async () => {
     const child = new TestEntity();
-
-    expectObservable(service.receiveUpdates(TestEntity))
+    const nextUpdate = expectObservable(service.receiveUpdates(TestEntity))
       .first.toBeResolvedTo({ type: "new", entity: child })
-      .then(() => done());
+      .then(() => {});
     service.add(child);
+    await nextUpdate;
   });
 
-  it("should publish a update for a already existing entities", (done) => {
+  it("should publish a update for a already existing entities", async () => {
     const child = new TestEntity();
     service.add(child);
 
     child.name = "Updated name";
-    expectObservable(service.receiveUpdates(TestEntity))
+    const nextUpdate = expectObservable(service.receiveUpdates(TestEntity))
       .first.toBeResolvedTo({ type: "update", entity: child })
-      .then(() => done());
+      .then(() => {});
     service.add(child);
+    await nextUpdate;
   });
 });

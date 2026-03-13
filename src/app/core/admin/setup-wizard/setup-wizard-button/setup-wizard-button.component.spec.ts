@@ -46,20 +46,20 @@ describe("SetupWizardButtonComponent", () => {
       steps: [],
       finished: true,
     };
-    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(
+    vi.spyOn(TestBed.inject(EntityMapperService), "load").mockResolvedValue(
       new Config("", testWizardConfig),
     );
 
     component.ngOnInit();
     tick();
 
-    expect(component.showSetupWizard).toBeFalse();
+    expect(component.showSetupWizard).toBe(false);
   }));
 
   it("should auto navigate to setup wizard if configured openOnStart", fakeAsync(() => {
-    const routerSpy = spyOn(TestBed.inject(Router), "navigate");
+    const routerSpy = vi.spyOn(TestBed.inject(Router), "navigate");
     const testWizardConfig: SetupWizardConfig = { steps: [] };
-    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(
+    vi.spyOn(TestBed.inject(EntityMapperService), "load").mockResolvedValue(
       new Config("", testWizardConfig),
     );
 

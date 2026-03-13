@@ -29,15 +29,15 @@ describe("EditEmailComponent", () => {
     component.formControl.setValue("test@example.com");
     fixture.detectChanges();
 
-    expect(component.formControl.valid).toBeTrue();
-    expect(component.formControl.hasError("email")).toBeFalse();
+    expect(component.formControl.valid).toBe(true);
+    expect(component.formControl.hasError("email")).toBe(false);
   });
 
   it("should mark invalid email as invalid", () => {
     component.formControl.setValue("invalid-email");
     fixture.detectChanges();
 
-    expect(component.formControl.valid).toBeFalse();
-    expect(component.formControl.hasError("email")).toBeTrue();
+    expect(component.formControl.valid).toBe(false);
+    expect(component.formControl.hasError("email")).toBe(true);
   });
 });

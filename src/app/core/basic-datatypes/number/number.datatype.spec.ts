@@ -1,4 +1,4 @@
-import { testDatatype } from "../../entity/schema/entity-schema.service.spec";
+import { testDatatype } from "../../entity/schema/entity-schema.service.test-utils";
 import { NumberDatatype } from "./number.datatype";
 
 describe("Schema data type: number", () => {

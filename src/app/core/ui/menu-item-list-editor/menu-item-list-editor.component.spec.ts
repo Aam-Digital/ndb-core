@@ -9,10 +9,12 @@ import { of } from "rxjs";
 describe("MenuItemListEditorComponent", () => {
   let component: MenuItemListEditorComponent;
   let fixture: ComponentFixture<MenuItemListEditorComponent>;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockDialog: any;
 
   beforeEach(async () => {
-    mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
+    mockDialog = {
+      open: vi.fn().mockName("MatDialog.open"),
+    };
     await TestBed.configureTestingModule({
       imports: [
         MenuItemListEditorComponent,
@@ -41,8 +43,8 @@ describe("MenuItemListEditorComponent", () => {
     const mockDialogRef = {
       afterClosed: () => of(mockResult),
     };
-    mockDialog.open.and.returnValue(mockDialogRef as any);
-    spyOn(component.itemsChange, "emit");
+    mockDialog.open.mockReturnValue(mockDialogRef as any);
+    vi.spyOn(component.itemsChange, "emit");
 
     // Act
     component.items = [];
@@ -53,7 +55,7 @@ describe("MenuItemListEditorComponent", () => {
     expect(component.items[0].label).toBe("Test Item");
     expect(component.items[0].uniqueId).toBeDefined();
     expect(component.items[0].subMenu).toEqual([]);
-    expect(component.itemsChange.emit).toHaveBeenCalledWith(jasmine.any(Array));
+    expect(component.itemsChange.emit).toHaveBeenCalledWith(expect.any(Array));
   });
 
   it("should not add item when dialog is cancelled", () => {
@@ -61,8 +63,8 @@ describe("MenuItemListEditorComponent", () => {
     const mockDialogRef = {
       afterClosed: () => of(null),
     };
-    mockDialog.open.and.returnValue(mockDialogRef as any);
-    spyOn(component.itemsChange, "emit");
+    mockDialog.open.mockReturnValue(mockDialogRef as any);
+    vi.spyOn(component.itemsChange, "emit");
 
     // Act
     component.items = [];
@@ -90,7 +92,7 @@ describe("MenuItemListEditorComponent", () => {
       subMenu: [],
     };
     component.items = [item, secondItem];
-    spyOn(component.itemsChange, "emit");
+    vi.spyOn(component.itemsChange, "emit");
 
     // Act
     component.removeItem(item);
@@ -103,7 +105,9 @@ describe("MenuItemListEditorComponent", () => {
 
   it("should convert entity menu item to plain format with toPlainMenuItem", () => {
     // Arrange
-    const entityItem: MenuItemForAdminUi & { entityType: string } = {
+    const entityItem: MenuItemForAdminUi & {
+      entityType: string;
+    } = {
       entityType: "Child",
       label: "Child",
       uniqueId: "test-id",
@@ -115,7 +119,7 @@ describe("MenuItemListEditorComponent", () => {
 
     // Assert
     expect(result).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         entityType: "Child",
       }),
     );
@@ -182,7 +186,9 @@ describe("MenuItemListEditorComponent", () => {
 
   it("should return null for entity item when forceLinkOnly is true in toPlainMenuItem", () => {
     // Arrange
-    const entityItem: MenuItemForAdminUi & { entityType: string } = {
+    const entityItem: MenuItemForAdminUi & {
+      entityType: string;
+    } = {
       entityType: "Child",
       label: "Child",
       uniqueId: "test-id",
@@ -253,19 +259,19 @@ describe("MenuItemListEditorComponent", () => {
     // Assert
     expect(result.length).toBe(2);
     expect(result[0]).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         label: "Test Item",
         icon: "user",
         link: "/test",
-        uniqueId: jasmine.any(String),
+        uniqueId: expect.any(String),
         subMenu: [],
       }),
     );
     expect(result[1]).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         label: "Entity Item",
         entityType: "Child",
-        uniqueId: jasmine.any(String),
+        uniqueId: expect.any(String),
         subMenu: [],
       }),
     );
@@ -297,11 +303,11 @@ describe("MenuItemListEditorComponent", () => {
     // Assert
     expect(result[0].subMenu?.length).toBe(1);
     expect(result[0].subMenu?.[0]).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         label: "Child Item",
         icon: "file",
         link: "/child",
-        uniqueId: jasmine.any(String),
+        uniqueId: expect.any(String),
       }),
     );
   });

@@ -37,7 +37,7 @@ describe("EntityActionsMenuComponent", () => {
       execute: () => null,
       availableFor: "all",
     };
-    spyOn(testAction, "execute").and.resolveTo(true);
+    vi.spyOn(testAction, "execute").mockResolvedValue(true);
 
     const actionsService = TestBed.inject(EntityActionsMenuService);
     actionsService.registerActions([testAction]);
