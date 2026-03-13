@@ -144,7 +144,9 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
     const template = new EmailTemplate();
     template.subject = this.emailContentForm.value.subject;
     template.body = this.emailContentForm.value.body;
-    template.category = this.selectedTemplate?.category;
+    if (this.selectedTemplate) {
+      template.category = this.selectedTemplate.category;
+    }
 
     this.dialogRef.close({
       template,
