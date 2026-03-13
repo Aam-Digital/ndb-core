@@ -4,22 +4,8 @@ on:
 
 permissions:
   contents: write  # needed for semantic-release to create tags/releases
-  packages: write  # needed for pushing to ghcr.io
 
 jobs:
-  pre-releases-cleanup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Delete Previous Pre-Releases
-        # todo: not maintained anymore, needs replacement
-        uses: dev-drprasad/delete-older-releases@v0.3.4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        with:
-          keep_latest: 0
-          delete_tag_pattern: "-master"
-          delete_tags: true
-
   release:
     runs-on: ubuntu-latest
     outputs:
@@ -41,6 +27,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
+          branches: |
+            [{"name": "master", "prerelease": false}]
           extra_plugins: |
             semantic-release-replace-plugin@1.2.6
             @semantic-release/git
