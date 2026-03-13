@@ -82,6 +82,7 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
   EmailTemplate = EmailTemplate;
   excludedEntitiesCount: number = 0;
   isBulkEmail: boolean = false;
+  private selectedTemplate: EmailTemplate | null = null;
 
   private readonly dialogRef = inject(
     MatDialogRef<EmailTemplateSelectionDialogComponent>,
@@ -111,6 +112,7 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe((template: EmailTemplate | null) => {
+        this.selectedTemplate = template;
         if (template) {
           this.emailContentForm.patchValue({
             subject: template.subject,
@@ -142,6 +144,7 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
     const template = new EmailTemplate();
     template.subject = this.emailContentForm.value.subject;
     template.body = this.emailContentForm.value.body;
+    template.category = this.selectedTemplate?.category;
 
     this.dialogRef.close({
       template,
