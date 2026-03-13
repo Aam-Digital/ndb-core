@@ -17,14 +17,19 @@ describe("AddressEditComponent", () => {
   let component: AddressEditComponent;
   let fixture: ComponentFixture<AddressEditComponent>;
 
-  let mockGeoService: jasmine.SpyObj<GeoService>;
-  let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockGeoService: any;
+  let mockConfirmationDialog: any;
 
   beforeEach(async () => {
-    mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
+    mockConfirmationDialog = {
+      getConfirmation: vi.fn(),
+    };
 
-    mockGeoService = jasmine.createSpyObj(["lookup", "reverseLookup"]);
-    mockGeoService.lookup.and.returnValue(of([]));
+    mockGeoService = {
+      lookup: vi.fn(),
+      reverseLookup: vi.fn(),
+    };
+    mockGeoService.lookup.mockReturnValue(of([]));
 
     await TestBed.configureTestingModule({
       imports: [
@@ -53,7 +58,7 @@ describe("AddressEditComponent", () => {
   it("should clear selected location when clicking 'Remove'", async () => {
     component.selectedLocation = { display_name: "some value" } as any;
 
-    spyOn(component.selectedLocationChange, "emit");
+    vi.spyOn(component.selectedLocationChange, "emit");
     component.clearLocation();
 
     expect(component.selectedLocation).toBeUndefined();

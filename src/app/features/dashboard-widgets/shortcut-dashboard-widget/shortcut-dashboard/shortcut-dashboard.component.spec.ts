@@ -14,12 +14,16 @@ import { MenuItem } from "../../../../core/ui/navigation/menu-item";
 describe("ShortcutDashboardComponent", () => {
   let component: ShortcutDashboardComponent;
   let fixture: ComponentFixture<ShortcutDashboardComponent>;
-  let mockRoleGuard: jasmine.SpyObj<UserRoleGuard>;
-  let mockPermissionGuard: jasmine.SpyObj<EntityPermissionGuard>;
+  let mockRoleGuard: any;
+  let mockPermissionGuard: any;
 
   beforeEach(async () => {
-    mockRoleGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
-    mockPermissionGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
+    mockRoleGuard = {
+      checkRoutePermissions: vi.fn(),
+    };
+    mockPermissionGuard = {
+      checkRoutePermissions: vi.fn(),
+    };
     await TestBed.configureTestingModule({
       imports: [ShortcutDashboardComponent, FontAwesomeTestingModule],
       providers: [
@@ -41,7 +45,7 @@ describe("ShortcutDashboardComponent", () => {
   });
 
   it("should only show routes to which the user has access", fakeAsync(() => {
-    mockRoleGuard.checkRoutePermissions.and.callFake(async (route) => {
+    mockRoleGuard.checkRoutePermissions.mockImplementation(async (route) => {
       switch (route) {
         case "/child":
           return true;
@@ -49,7 +53,7 @@ describe("ShortcutDashboardComponent", () => {
           return false;
       }
     });
-    mockPermissionGuard.checkRoutePermissions.and.resolveTo(true);
+    mockPermissionGuard.checkRoutePermissions.mockResolvedValue(true);
     const childItem: MenuItem = {
       label: "Children",
       icon: "child",

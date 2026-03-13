@@ -1,60 +1,34 @@
-declare namespace jasmine {
-  interface Matchers<T> {
-    /**
-     * expects a form to contain a certain error
-     * @param error
-     */
+import "vitest";
+
+declare module "vitest" {
+  interface Assertion<T = any> {
+    toContainFormError(error: string): T;
+    toHaveValue(formValue: unknown): T;
+    toBeValidForm(): T;
+    toBeEnabled(): T;
+    toHaveKey(key: unknown): T;
+    toHaveType(entityType: string): T;
+    toBeEmpty(): T;
+    toBeFinite(): T;
+    toHaveOwnProperty(property: string): T;
+    toBeDate(date: number | string | Date): T;
+  }
+
+  interface AsymmetricMatchersContaining {
     toContainFormError(error: string): void;
-
-    /**
-     * expects a form, form-group or form-array to have a certain value
-     * @param formValue
-     */
-    toHaveValue(formValue: any): void;
-
-    /**
-     * expects a form to be valid
-     */
+    toHaveValue(formValue: unknown): void;
     toBeValidForm(): void;
-
-    /**
-     * expects a form to be enabled
-     */
     toBeEnabled(): void;
-
-    /**
-     * expects a map to contain a key
-     */
-    toHaveKey(key: any): void;
-
-    /**
-     * expects an entity to have a given type
-     * The type of entity is equal to the static `ENTITY_TYPE`.
-     * It is computed via `Entity#getType()`
-     * @param entityType
-     */
+    toHaveKey(key: unknown): void;
     toHaveType(entityType: string): void;
-
-    /**
-     * Expects an array-like object to be empty
-     */
     toBeEmpty(): void;
-
-    /**
-     * expects a number to be finite as defined via `Number#isFinite`
-     */
     toBeFinite(): void;
-
-    /**
-     * expects an object to have an own property
-     * @param property
-     */
     toHaveOwnProperty(property: string): void;
-
-    /**
-     * expects a date to be the same as the given date
-     * @param date
-     */
     toBeDate(date: number | string | Date): void;
   }
+}
+
+declare global {
+  function fail(message?: string): never;
+  type DoneFn = (error?: unknown) => void;
 }

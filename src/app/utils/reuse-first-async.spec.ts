@@ -3,7 +3,7 @@ import { reuseFirstAsync } from "./reuse-first-async";
 describe("reuseFirstAsync", () => {
   it("returns the same promise when called multiple times while pending", async () => {
     let resolvePromise: (value: number) => void;
-    const request = jasmine.createSpy().and.returnValue(
+    const request = vi.fn().mockReturnValue(
       new Promise<number>((resolve) => {
         resolvePromise = resolve;
       }),
@@ -24,7 +24,7 @@ describe("reuseFirstAsync", () => {
 
   it("should start a new operation after the previous one completes", async () => {
     let resolvePromise: (value: number) => void;
-    const request = jasmine.createSpy().and.returnValue(
+    const request = vi.fn().mockReturnValue(
       new Promise<number>((resolve) => {
         resolvePromise = resolve;
       }),
@@ -47,12 +47,10 @@ describe("reuseFirstAsync", () => {
   });
 
   it("should start a new operation after the previous one rejects", async () => {
-    const mockFn = jasmine
-      .createSpy()
-      .and.returnValues(
-        Promise.reject(new Error("first error")),
-        Promise.resolve("success"),
-      );
+    const mockFn = vi
+      .fn()
+      .mockReturnValueOnce(Promise.reject(new Error("first error")))
+      .mockReturnValueOnce(Promise.resolve("success"));
 
     const requestSynced = reuseFirstAsync(mockFn);
 

@@ -30,8 +30,8 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 
 describe("DatabaseIndexingService", () => {
   let service: DatabaseIndexingService;
-  let mockDb: jasmine.SpyObj<Database>;
-  let mockDbResolver: jasmine.SpyObj<DatabaseResolverService>;
+  let mockDb: any;
+  let mockDbResolver: any;
 
   @DatabaseEntity("TestEntityWithRelation")
   class TestEntityWithRelation extends Entity {
@@ -48,14 +48,17 @@ describe("DatabaseIndexingService", () => {
   }
 
   beforeEach(() => {
-    mockDb = jasmine.createSpyObj("mockDb", ["saveDatabaseIndex", "query"]);
-    mockDb.saveDatabaseIndex.and.resolveTo();
-    mockDb.query.and.resolveTo({});
+    mockDb = {
+      saveDatabaseIndex: vi.fn().mockName("mockDb.saveDatabaseIndex"),
+      query: vi.fn().mockName("mockDb.query"),
+    };
+    mockDb.saveDatabaseIndex.mockResolvedValue(undefined);
+    mockDb.query.mockResolvedValue({});
 
-    mockDbResolver = jasmine.createSpyObj("DatabaseResolverService", [
-      "getDatabase",
-    ]);
-    mockDbResolver.getDatabase.and.returnValue(mockDb);
+    mockDbResolver = {
+      getDatabase: vi.fn().mockName("DatabaseResolverService.getDatabase"),
+    };
+    mockDbResolver.getDatabase.mockReturnValue(mockDb);
 
     TestBed.configureTestingModule({
       providers: [
@@ -70,7 +73,7 @@ describe("DatabaseIndexingService", () => {
   it("should pass through any query to the database", async () => {
     const testQueryName = "test_index/test";
     const mockQueryResult = { name: "foo" };
-    mockDb.query.and.resolveTo(mockQueryResult);
+    mockDb.query.mockResolvedValue(mockQueryResult);
 
     const actualResult = await service.queryIndexRaw(testQueryName, {}, true);
 
@@ -91,12 +94,12 @@ describe("DatabaseIndexingService", () => {
       .then(() => (queryCompleted = true));
     tick();
 
-    expect(queryCompleted).toBeFalse();
+    expect(queryCompleted).toBe(false);
 
     service.createIndex(testDesignDoc);
     tick();
 
-    expect(queryCompleted).toBeTrue();
+    expect(queryCompleted).toBe(true);
   }));
 
   it("should emit new indicesRegistered immediately and then emit update on createIndex", async () => {
@@ -105,7 +108,7 @@ describe("DatabaseIndexingService", () => {
       _id: "_design/" + testIndexName,
       views: {},
     };
-    mockDb.saveDatabaseIndex.and.callFake(
+    mockDb.saveDatabaseIndex.mockImplementation(
       () => new Promise((resolve) => setTimeout(resolve, 1)),
     );
 
@@ -142,7 +145,7 @@ describe("DatabaseIndexingService", () => {
       views: {},
     };
     const testErr = { msg: "error" };
-    mockDb.saveDatabaseIndex.and.callFake(
+    mockDb.saveDatabaseIndex.mockImplementation(
       () => new Promise((_, reject) => setTimeout(() => reject(testErr), 1)),
     );
 
@@ -157,7 +160,7 @@ describe("DatabaseIndexingService", () => {
     ]);
 
     // after the index creation failed, registered indices are updated with error state
-    await expectAsync(indexCreationPromise).toBeRejectedWith(testErr);
+    await expect(indexCreationPromise).rejects.toEqual(testErr);
     await expectObservable(service.indicesRegistered).first.toBeResolvedTo([
       {
         title: "Preparing data (Indexing)",
@@ -177,25 +180,25 @@ describe("DatabaseIndexingService", () => {
     await service.createIndex(testDesignDoc);
     let registeredIndices = await firstValueFrom(service.indicesRegistered);
     expect(registeredIndices).toEqual([
-      jasmine.objectContaining({ details: "test-index" }),
+      expect.objectContaining({ details: "test-index" }),
     ]);
 
     await service.createIndex(testDesignDoc);
     registeredIndices = await firstValueFrom(service.indicesRegistered);
     expect(registeredIndices).toEqual([
-      jasmine.objectContaining({ details: "test-index" }),
+      expect.objectContaining({ details: "test-index" }),
     ]);
   });
 
   it("should generate index for entity property", async () => {
-    const call = spyOn(service, "createIndex");
+    const call = vi.spyOn(service, "createIndex");
     await service.generateIndexOnProperty(
       "testIndex",
       TestEntityWithRelation,
       "relatedEntities",
     );
 
-    const actualCreatedDesignDoc = call.calls.argsFor(0)[0];
+    const actualCreatedDesignDoc = vi.mocked(call).mock.calls[0][0];
     expect(cleanedUpStringify(actualCreatedDesignDoc)).toEqual(
       cleanedUpStringify({
         _id: "_design/testIndex",
@@ -215,10 +218,10 @@ describe("DatabaseIndexingService", () => {
   });
 
   it("should generate index for entity property that is not an array", async () => {
-    const call = spyOn(service, "createIndex");
+    const call = vi.spyOn(service, "createIndex");
     await service.generateIndexOnProperty("testIndex", Note, "category");
 
-    const actualCreatedDesignDoc = call.calls.argsFor(0)[0];
+    const actualCreatedDesignDoc = vi.mocked(call).mock.calls[0][0];
     expect(
       cleanedUpStringify(actualCreatedDesignDoc.views.by_category.map),
     ).toEqual(
@@ -231,7 +234,7 @@ describe("DatabaseIndexingService", () => {
   });
 
   it("should generate index for entity property with secondary index", async () => {
-    const call = spyOn(service, "createIndex");
+    const call = vi.spyOn(service, "createIndex");
     await service.generateIndexOnProperty(
       "testIndex",
       TestEntityWithRelation,
@@ -239,7 +242,7 @@ describe("DatabaseIndexingService", () => {
       "deadline",
     );
 
-    const actualCreatedDesignDoc = call.calls.argsFor(0)[0];
+    const actualCreatedDesignDoc = vi.mocked(call).mock.calls[0][0];
     expect(
       cleanedUpStringify(actualCreatedDesignDoc.views.by_relatedEntities.map),
     ).toEqual(

@@ -10,7 +10,7 @@ import { EntityForm } from "../../core/common-components/entity-form/entity-form
 
 describe("PublicFormLinkingService", () => {
   let service: PublicFormLinkingService;
-  let snackbarSpy: jasmine.SpyObj<MatSnackBar>;
+  let snackbarSpy: any;
 
   class TestEntity extends Entity {
     static override ENTITY_TYPE = "Test";
@@ -32,7 +32,9 @@ describe("PublicFormLinkingService", () => {
   }
 
   beforeEach(() => {
-    snackbarSpy = jasmine.createSpyObj("MatSnackBar", ["open"]);
+    snackbarSpy = {
+      open: vi.fn().mockName("MatSnackBar.open"),
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -58,7 +60,7 @@ describe("PublicFormLinkingService", () => {
           form: null,
         },
       ];
-      const applyPrefillSpy = jasmine.createSpy("applyPrefill");
+      const applyPrefillSpy = vi.fn();
 
       service.handleUrlParameterLinking(entries, {}, applyPrefillSpy);
 
@@ -75,7 +77,7 @@ describe("PublicFormLinkingService", () => {
           form: null,
         },
       ];
-      const applyPrefillSpy = jasmine.createSpy("applyPrefill");
+      const applyPrefillSpy = vi.fn();
 
       service.handleUrlParameterLinking(
         entries,
@@ -96,7 +98,7 @@ describe("PublicFormLinkingService", () => {
           form: null,
         },
       ];
-      const applyPrefillSpy = jasmine.createSpy("applyPrefill");
+      const applyPrefillSpy = vi.fn();
 
       service.handleUrlParameterLinking(
         entries,
@@ -129,7 +131,7 @@ describe("PublicFormLinkingService", () => {
           form: null,
         },
       ];
-      const applyPrefillSpy = jasmine.createSpy("applyPrefill");
+      const applyPrefillSpy = vi.fn();
 
       service.handleUrlParameterLinking(
         entries,
@@ -159,7 +161,7 @@ describe("PublicFormLinkingService", () => {
 
       // Snackbar warning should be shown for ignored params
       expect(snackbarSpy.open).toHaveBeenCalledWith(
-        jasmine.stringContaining("hackerId, adminId"),
+        expect.stringContaining("hackerId, adminId"),
         undefined,
         { duration: 5000 },
       );
@@ -182,7 +184,7 @@ describe("PublicFormLinkingService", () => {
           form: null,
         },
       ];
-      const applyPrefillSpy = jasmine.createSpy("applyPrefill");
+      const applyPrefillSpy = vi.fn();
 
       service.handleUrlParameterLinking(
         entries,
@@ -216,8 +218,8 @@ describe("PublicFormLinkingService", () => {
 
     it("should not process when entries are empty or lack required data", () => {
       service.applyLinkedFromForm([]);
-      expect().nothing();
-
+      // TODO: vitest-migration: expect().nothing() has been removed because it is redundant in Vitest. Tests without assertions pass by default.
+      // expect().nothing();
       const entriesWithoutForm: PublicFormEntry[] = [
         {
           config: { linkedFromForm: ["school"] },
@@ -227,7 +229,8 @@ describe("PublicFormLinkingService", () => {
         },
       ];
       service.applyLinkedFromForm(entriesWithoutForm);
-      expect().nothing();
+      // TODO: vitest-migration: expect().nothing() has been removed because it is redundant in Vitest. Tests without assertions pass by default.
+      // expect().nothing();
     });
 
     it("should link fields to entities from other forms based on schema", () => {
@@ -280,7 +283,7 @@ describe("PublicFormLinkingService", () => {
       expect(complexForm.formGroup.get("child")?.value).toBe(
         childEntity.getId(),
       );
-      expect(complexForm.formGroup.get("school")?.dirty).toBeTrue();
+      expect(complexForm.formGroup.get("school")?.dirty).toBe(true);
     });
 
     it("should not overwrite existing field values", () => {

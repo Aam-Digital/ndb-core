@@ -21,9 +21,9 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 describe("UserListComponent", () => {
   let component: UserListComponent;
   let fixture: ComponentFixture<UserListComponent>;
-  let mockUserAdminService: jasmine.SpyObj<UserAdminService>;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
-  let mockDialogRef: jasmine.SpyObj<MatDialogRef<UserDetailsComponent>>;
+  let mockUserAdminService: any;
+  let mockDialog: any;
+  let mockDialogRef: any;
   let mockSessionSubject: BehaviorSubject<any>;
 
   const mockUsers: UserAccount[] = [
@@ -86,24 +86,26 @@ describe("UserListComponent", () => {
   beforeEach(async () => {
     const mockComponentInstance = {
       action: {
-        subscribe: jasmine.createSpy("subscribe"),
+        subscribe: vi.fn(),
       },
     };
 
-    mockDialogRef = jasmine.createSpyObj("MatDialogRef", [
-      "afterClosed",
-      "close",
-    ]);
-    mockDialogRef.afterClosed.and.returnValue(of(true));
+    mockDialogRef = {
+      afterClosed: vi.fn().mockName("MatDialogRef.afterClosed"),
+      close: vi.fn().mockName("MatDialogRef.close"),
+    };
+    mockDialogRef.afterClosed.mockReturnValue(of(true));
     mockDialogRef.componentInstance = mockComponentInstance as any;
 
-    mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
-    mockDialog.open.and.returnValue(mockDialogRef);
+    mockDialog = {
+      open: vi.fn().mockName("MatDialog.open"),
+    };
+    mockDialog.open.mockReturnValue(mockDialogRef);
 
-    mockUserAdminService = jasmine.createSpyObj("UserAdminService", [
-      "getAllUsers",
-    ]);
-    mockUserAdminService.getAllUsers.and.returnValue(of(mockUsers));
+    mockUserAdminService = {
+      getAllUsers: vi.fn().mockName("UserAdminService.getAllUsers"),
+    };
+    mockUserAdminService.getAllUsers.mockReturnValue(of(mockUsers));
 
     mockSessionSubject = new BehaviorSubject({
       name: "test-user",
@@ -142,9 +144,9 @@ describe("UserListComponent", () => {
   });
 
   it("should reload users after dialog is closed with 'created' result", () => {
-    mockUserAdminService.getAllUsers.calls.reset();
-    mockUserAdminService.getAllUsers.and.returnValue(of(updatedMockUsers));
-    mockDialogRef.afterClosed.and.returnValue(
+    mockUserAdminService.getAllUsers.mockClear();
+    mockUserAdminService.getAllUsers.mockReturnValue(of(updatedMockUsers));
+    mockDialogRef.afterClosed.mockReturnValue(
       of({
         type: "accountCreated",
         data: {
@@ -163,9 +165,9 @@ describe("UserListComponent", () => {
 
   it("should reflect updated roles in the table after dialog closes", () => {
     component.users.set(mockUsers);
-    mockUserAdminService.getAllUsers.calls.reset();
-    mockUserAdminService.getAllUsers.and.returnValue(of(updatedMockUsers));
-    mockDialogRef.afterClosed.and.returnValue(
+    mockUserAdminService.getAllUsers.mockClear();
+    mockUserAdminService.getAllUsers.mockReturnValue(of(updatedMockUsers));
+    mockDialogRef.afterClosed.mockReturnValue(
       of({
         type: "accountUpdated",
         data: { user: updatedMockUsers[0] },
@@ -184,9 +186,9 @@ describe("UserListComponent", () => {
 
   it("should reflect updated email in the table after dialog closes", fakeAsync(() => {
     component.users.set(mockUsers);
-    mockUserAdminService.getAllUsers.calls.reset();
-    mockUserAdminService.getAllUsers.and.returnValue(of(updatedMockUsers));
-    mockDialogRef.afterClosed.and.returnValue(
+    mockUserAdminService.getAllUsers.mockClear();
+    mockUserAdminService.getAllUsers.mockReturnValue(of(updatedMockUsers));
+    mockDialogRef.afterClosed.mockReturnValue(
       of({
         type: "accountUpdated",
         data: { user: updatedMockUsers[0] },

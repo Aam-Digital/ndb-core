@@ -72,7 +72,7 @@ describe("FilterGeneratorService", () => {
 
   it("should create a configurable enum filter", async () => {
     const interactionTypes = defaultInteractionTypes.map((it) =>
-      jasmine.objectContaining({ key: it.id, label: it.label }),
+      expect.objectContaining({ key: it.id, label: it.label }),
     );
     const schema = Note.schema.get("category");
 
@@ -85,9 +85,8 @@ describe("FilterGeneratorService", () => {
     let comparableOptions = filterOptions.options.map((option) => {
       return { key: option.key, label: option.label };
     });
-    expect(comparableOptions).toEqual(
-      jasmine.arrayWithExactContents(interactionTypes),
-    );
+    expect(comparableOptions).toHaveLength(interactionTypes.length);
+    expect(comparableOptions).toEqual(expect.arrayContaining(interactionTypes));
 
     // enum name in additional field
     const schemaAdditional = {
@@ -104,9 +103,8 @@ describe("FilterGeneratorService", () => {
     comparableOptions = filterOptions.options.map((option) => {
       return { key: option.key, label: option.label };
     });
-    expect(comparableOptions).toEqual(
-      jasmine.arrayWithExactContents(interactionTypes),
-    );
+    expect(comparableOptions).toHaveLength(interactionTypes.length);
+    expect(comparableOptions).toEqual(expect.arrayContaining(interactionTypes));
 
     // enum as array
     const schemaArray: FormFieldConfig = {
@@ -123,9 +121,8 @@ describe("FilterGeneratorService", () => {
     comparableOptions = filterOptions.options.map((option) => {
       return { key: option.key, label: option.label };
     });
-    expect(comparableOptions).toEqual(
-      jasmine.arrayWithExactContents(interactionTypes),
-    );
+    expect(comparableOptions).toHaveLength(interactionTypes.length);
+    expect(comparableOptions).toEqual(expect.arrayContaining(interactionTypes));
 
     const note = new Note();
     note["otherEnum"] = [
@@ -199,8 +196,10 @@ describe("FilterGeneratorService", () => {
     const comparableOptions = filter.options.map((option) => {
       return { key: option.key, label: option.label };
     });
+    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
+    expect(comparableOptions).toHaveLength(2);
     expect(comparableOptions).toEqual(
-      jasmine.arrayWithExactContents([
+      expect.arrayContaining([
         { key: "muslim", label: "muslim" },
         { key: "christian", label: "christian" },
       ]),
@@ -280,10 +279,10 @@ describe("FilterGeneratorService", () => {
     };
     TestEntity.schema.set("enumField", schema);
 
-    spyOn(
+    vi.spyOn(
       TestBed.inject(FilterGeneratorService)["enumService"],
       "getEnumValues",
-    ).and.returnValue([
+    ).mockReturnValue([
       { id: "A", label: "A" },
       { id: "B", label: "B" },
     ]);
@@ -326,10 +325,10 @@ describe("FilterGeneratorService", () => {
     };
     TestEntity.schema.set("tags", schema);
 
-    spyOn(
+    vi.spyOn(
       TestBed.inject(FilterGeneratorService)["enumService"],
       "getEnumValues",
-    ).and.returnValue([
+    ).mockReturnValue([
       { id: "VALID_A", label: "Valid A" },
       { id: "VALID_B", label: "Valid B" },
     ]);

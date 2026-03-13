@@ -10,16 +10,20 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 describe("LanguageSelectComponent", () => {
   let component: LanguageSelectComponent;
   let fixture: ComponentFixture<LanguageSelectComponent>;
-  let mockLocation: jasmine.SpyObj<Location>;
-  let mockLanguageService: jasmine.SpyObj<LanguageService>;
+  let mockLocation: any;
+  let mockLanguageService: any;
 
   beforeEach(async () => {
-    mockLocation = jasmine.createSpyObj("Location", ["reload"]);
-    mockLanguageService = jasmine.createSpyObj("LanguageService", [
-      "getCurrentLocale",
-      "initDefaultLanguage",
-      "switchLocale",
-    ]);
+    mockLocation = {
+      reload: vi.fn().mockName("Location.reload"),
+    };
+    mockLanguageService = {
+      getCurrentLocale: vi.fn().mockName("LanguageService.getCurrentLocale"),
+      initDefaultLanguage: vi
+        .fn()
+        .mockName("LanguageService.initDefaultLanguage"),
+      switchLocale: vi.fn().mockName("LanguageService.switchLocale"),
+    };
     await TestBed.configureTestingModule({
       imports: [
         LanguageSelectComponent,

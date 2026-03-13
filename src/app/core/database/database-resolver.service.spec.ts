@@ -13,7 +13,7 @@ import {
 describe("DatabaseResolverService", () => {
   let service: DatabaseResolverService;
   let syncStateSubject: SyncStateSubject;
-  let migrationServiceSpy: jasmine.SpyObj<IndexeddbMigrationService>;
+  let migrationServiceSpy: any;
 
   const testDbConfig: DbConfig = {
     dbNames: { app: "test-uuid-app", notifications: "test-uuid-notifications" },
@@ -22,11 +22,15 @@ describe("DatabaseResolverService", () => {
 
   beforeEach(() => {
     syncStateSubject = new SyncStateSubject();
-    migrationServiceSpy = jasmine.createSpyObj("IndexeddbMigrationService", [
-      "resolveDbConfig",
-      "runBackgroundMigration",
-    ]);
-    migrationServiceSpy.resolveDbConfig.and.resolveTo(testDbConfig);
+    migrationServiceSpy = {
+      resolveDbConfig: vi
+        .fn()
+        .mockName("IndexeddbMigrationService.resolveDbConfig"),
+      runBackgroundMigration: vi
+        .fn()
+        .mockName("IndexeddbMigrationService.runBackgroundMigration"),
+    };
+    migrationServiceSpy.resolveDbConfig.mockResolvedValue(testDbConfig);
 
     TestBed.configureTestingModule({
       providers: [
@@ -52,7 +56,7 @@ describe("DatabaseResolverService", () => {
 
   it("should init database with resolved DB name from migration service", async () => {
     const defaultDb = service.getDatabase();
-    spyOn(defaultDb, "init");
+    vi.spyOn(defaultDb, "init");
 
     await service.initDatabasesForSession({
       name: "test-user",
@@ -65,7 +69,7 @@ describe("DatabaseResolverService", () => {
   });
 
   it("should use legacy DB names when migration returns legacy config", async () => {
-    migrationServiceSpy.resolveDbConfig.and.resolveTo({
+    migrationServiceSpy.resolveDbConfig.mockResolvedValue({
       dbNames: {
         app: "test-user-app",
         notifications: "notifications_test-uuid",
@@ -74,7 +78,7 @@ describe("DatabaseResolverService", () => {
     });
 
     const defaultDb = service.getDatabase();
-    spyOn(defaultDb, "init");
+    vi.spyOn(defaultDb, "init");
 
     await service.initDatabasesForSession({
       name: "test-user",

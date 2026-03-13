@@ -30,6 +30,10 @@ describe("DiscreteImportConfigComponent", () => {
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: data },
         { provide: MatDialogRef, useValue: { close: () => undefined } },
+        {
+          provide: ConfirmationDialogService,
+          useValue: { getConfirmation: vi.fn().mockResolvedValue(true) },
+        },
       ],
     }).compileComponents();
 
@@ -52,7 +56,7 @@ describe("DiscreteImportConfigComponent", () => {
   });
 
   it("should ask for confirmation on save if not all values were assigned", async () => {
-    const confirmationSpy = spyOn(
+    const confirmationSpy = vi.spyOn(
       TestBed.inject(ConfirmationDialogService),
       "getConfirmation",
     );
@@ -65,10 +69,10 @@ describe("DiscreteImportConfigComponent", () => {
 
   it("should init with entity format of provided mappings in 'additional'", () => {
     data.col.additional = { values: { male: "M", female: "F" } };
-    spyOn(
+    vi.spyOn(
       TestBed.inject(ConfigurableEnumService),
       "getEnumValues",
-    ).and.returnValue(genders);
+    ).mockReturnValue(genders);
 
     component.ngOnInit();
 
@@ -97,7 +101,7 @@ describe("DiscreteImportConfigComponent", () => {
         label: "[invalid option] other",
       },
     });
-    const closeSpy = spyOn(TestBed.inject(MatDialogRef), "close");
+    const closeSpy = vi.spyOn(TestBed.inject(MatDialogRef), "close");
 
     component.save();
 
@@ -116,10 +120,10 @@ describe("DiscreteImportConfigComponent", () => {
       { id: "1a", label: "1a" },
       { id: "2", label: "2" },
     ];
-    spyOn(
+    vi.spyOn(
       TestBed.inject(ConfigurableEnumService),
       "getEnumValues",
-    ).and.returnValue(numericEnumOptions);
+    ).mockReturnValue(numericEnumOptions);
 
     data.values = ["1a", 2];
     data.col.additional = undefined;

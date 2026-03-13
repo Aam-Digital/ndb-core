@@ -10,17 +10,17 @@ describe("AdminAiAgentComponent", () => {
   let fixture: ComponentFixture<AdminAiAgentComponent>;
 
   beforeEach(waitForAsync(() => {
-    const mockEntityMapper = jasmine.createSpyObj("EntityMapperService", [
-      "loadType",
-      "load",
-    ]);
-    mockEntityMapper.loadType.and.returnValue(Promise.resolve([]));
-    mockEntityMapper.load.and.returnValue(Promise.resolve(null));
+    const mockEntityMapper = {
+      loadType: vi.fn().mockName("EntityMapperService.loadType"),
+      load: vi.fn().mockName("EntityMapperService.load"),
+    };
+    mockEntityMapper.loadType.mockReturnValue(Promise.resolve([]));
+    mockEntityMapper.load.mockReturnValue(Promise.resolve(null));
 
-    const mockDownloadService = jasmine.createSpyObj("DownloadService", [
-      "triggerDownload",
-    ]);
-    mockDownloadService.triggerDownload.and.returnValue(Promise.resolve());
+    const mockDownloadService = {
+      triggerDownload: vi.fn().mockName("DownloadService.triggerDownload"),
+    };
+    mockDownloadService.triggerDownload.mockReturnValue(Promise.resolve());
 
     TestBed.configureTestingModule({
       imports: [

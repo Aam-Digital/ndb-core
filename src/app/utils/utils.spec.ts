@@ -4,17 +4,17 @@ import moment from "moment";
 describe("Utils", () => {
   it("isValidDate for normal Date object", () => {
     const testDate = new Date();
-    expect(isValidDate(testDate)).toBeTrue();
+    expect(isValidDate(testDate)).toBe(true);
   });
 
   it("not isValidDate for some other object", () => {
     const testDate = {};
-    expect(isValidDate(testDate)).toBeFalse();
+    expect(isValidDate(testDate)).toBe(false);
   });
 
   it("not isValidDate for Date object with invalid value", () => {
     const testDate = new Date("foo");
-    expect(isValidDate(testDate)).toBeFalse();
+    expect(isValidDate(testDate)).toBe(false);
   });
 
   it("should calculate age correctly", () => {

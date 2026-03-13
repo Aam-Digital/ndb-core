@@ -19,32 +19,39 @@ import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 
 describe("UpdateManagerService", () => {
   let service: UpdateManagerService;
-  let mockLocation: jasmine.SpyObj<Location>;
-  let swUpdate: jasmine.SpyObj<SwUpdate>;
+  let mockLocation: any;
+  let swUpdate: any;
   let updateSubject: Subject<Partial<VersionEvent>>;
   let unrecoverableSubject: Subject<UnrecoverableStateEvent>;
-  let snackBar: jasmine.SpyObj<MatSnackBar>;
+  let snackBar: any;
   let snackBarAction: Subject<void>;
-  let latestChangesDialog: jasmine.SpyObj<LatestChangesDialogService>;
+  let latestChangesDialog: any;
   let unsavedChanges: Partial<UnsavedChangesService>;
 
   beforeEach(() => {
-    mockLocation = jasmine.createSpyObj(["reload"]);
+    mockLocation = {
+      reload: vi.fn(),
+    };
     updateSubject = new Subject();
     unrecoverableSubject = new Subject();
-    swUpdate = jasmine.createSpyObj(["checkForUpdate"], {
+    swUpdate = {
+      checkForUpdate: vi.fn(),
       versionUpdates: updateSubject,
       unrecoverable: unrecoverableSubject,
       isEnabled: true,
-    });
-    swUpdate.checkForUpdate.and.resolveTo();
-    snackBar = jasmine.createSpyObj(["open"]);
+    };
+    swUpdate.checkForUpdate.mockResolvedValue(undefined);
+    snackBar = {
+      open: vi.fn(),
+    };
     snackBarAction = new Subject();
-    snackBar.open.and.returnValue({
+    snackBar.open.mockReturnValue({
       onAction: () => snackBarAction.asObservable(),
     } as any);
-    latestChangesDialog = jasmine.createSpyObj(["showLatestChangesIfUpdated"]);
-    spyOn(Logging, "error");
+    latestChangesDialog = {
+      showLatestChangesIfUpdated: vi.fn(),
+    };
+    vi.spyOn(Logging, "error");
     unsavedChanges = { pending: true };
 
     service = createService();
@@ -154,7 +161,7 @@ describe("UpdateManagerService", () => {
   }));
 
   it("should trigger the latest changes dialog on startup only if update note is set", () => {
-    latestChangesDialog.showLatestChangesIfUpdated.calls.reset();
+    latestChangesDialog.showLatestChangesIfUpdated.mockClear();
 
     localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
@@ -179,7 +186,7 @@ describe("UpdateManagerService", () => {
     });
 
     expect(Logging.error).toHaveBeenCalledWith(
-      jasmine.stringContaining("ERROR REASON"),
+      expect.stringContaining("ERROR REASON"),
     );
     expect(mockLocation.reload).toHaveBeenCalled();
   });

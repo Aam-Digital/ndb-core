@@ -23,23 +23,35 @@ describe("BulkLinkExternalProfilesComponent", () => {
   let component: BulkLinkExternalProfilesComponent;
   let fixture: ComponentFixture<BulkLinkExternalProfilesComponent>;
 
-  let mockSkillApi: jasmine.SpyObj<SkillApiService>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockSkillApi: any;
+  let mockEntityMapper: any;
 
   beforeEach(async () => {
-    mockSkillApi = jasmine.createSpyObj("SkillApiService", [
-      "generateDefaultSearchParams",
-      "getExternalProfiles",
-      "getExternalProfileById",
-      "applyDataFromExternalProfile",
-    ]);
-    mockSkillApi.generateDefaultSearchParams.and.returnValue({});
-    mockSkillApi.getExternalProfiles.and.returnValue(
+    mockSkillApi = {
+      generateDefaultSearchParams: vi
+        .fn()
+        .mockName("SkillApiService.generateDefaultSearchParams"),
+      getExternalProfiles: vi
+        .fn()
+        .mockName("SkillApiService.getExternalProfiles"),
+      getExternalProfileById: vi
+        .fn()
+        .mockName("SkillApiService.getExternalProfileById"),
+      applyDataFromExternalProfile: vi
+        .fn()
+        .mockName("SkillApiService.applyDataFromExternalProfile"),
+    };
+    mockSkillApi.generateDefaultSearchParams.mockReturnValue({});
+    mockSkillApi.getExternalProfiles.mockReturnValue(
       of(createPaginatedResult([])),
     );
-    mockSkillApi.getExternalProfileById.and.callFake((id) => of({ id } as any));
+    mockSkillApi.getExternalProfileById.mockImplementation((id) =>
+      of({ id } as any),
+    );
 
-    mockEntityMapper = jasmine.createSpyObj(["saveAll"]);
+    mockEntityMapper = {
+      saveAll: vi.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -86,18 +98,19 @@ describe("BulkLinkExternalProfilesComponent", () => {
       possibleMatches: [{ id: "1" }, { id: "2" }],
       possibleMatchesCount: 2,
     };
-    mockSkillApi.getExternalProfiles.and.returnValues(
-      of(createPaginatedResult(expected1.possibleMatches)),
-      of(createPaginatedResult(expected2.possibleMatches)),
-    );
+    mockSkillApi.getExternalProfiles
+      .mockReturnValueOnce(of(createPaginatedResult(expected1.possibleMatches)))
+      .mockReturnValueOnce(
+        of(createPaginatedResult(expected2.possibleMatches)),
+      );
 
     component.ngOnChanges({ entities: true as any });
     tick();
 
     expect(mockSkillApi.getExternalProfiles).toHaveBeenCalledTimes(2);
     expect(component.records.data).toEqual([
-      jasmine.objectContaining(expected1),
-      jasmine.objectContaining(expected2),
+      expect.objectContaining(expected1),
+      expect.objectContaining(expected2),
     ]);
     expect(component.matchedRecordsCount).toBe(0);
   }));
@@ -108,10 +121,13 @@ describe("BulkLinkExternalProfilesComponent", () => {
       possibleMatches: [{ id: "1" }, { id: "2" }],
       possibleMatchesCount: 2,
     };
-    mockSkillApi.getExternalProfiles.and.returnValues(
-      throwError(() => new HttpErrorResponse({ status: 500 })),
-      of(createPaginatedResult(expected2.possibleMatches)),
-    );
+    mockSkillApi.getExternalProfiles
+      .mockReturnValueOnce(
+        throwError(() => new HttpErrorResponse({ status: 500 })),
+      )
+      .mockReturnValueOnce(
+        of(createPaginatedResult(expected2.possibleMatches)),
+      );
 
     component.ngOnChanges({ entities: true as any });
     tick();
@@ -122,25 +138,24 @@ describe("BulkLinkExternalProfilesComponent", () => {
         entity: component.entities[0],
         possibleMatches: [],
         possibleMatchesCount: 0,
-        warning: { possibleMatches: jasmine.any(String) },
+        warning: { possibleMatches: expect.any(String) },
       },
-      jasmine.objectContaining(expected2),
+      expect.objectContaining(expected2),
     ]);
   }));
 
   it("should pre-select the possible match if exactly one result", fakeAsync(() => {
-    mockSkillApi.getExternalProfiles.and.returnValues(
-      of(createPaginatedResult([{ id: "1" }])),
-      of(createPaginatedResult([{ id: "2" }])),
-    );
+    mockSkillApi.getExternalProfiles
+      .mockReturnValueOnce(of(createPaginatedResult([{ id: "1" }])))
+      .mockReturnValueOnce(of(createPaginatedResult([{ id: "2" }])));
 
     component.ngOnChanges({ entities: true as any });
     tick();
 
     expect(mockSkillApi.getExternalProfiles).toHaveBeenCalledTimes(2);
     expect(component.records.data).toEqual([
-      jasmine.objectContaining({ selected: { id: "1" } }),
-      jasmine.objectContaining({ selected: { id: "2" } }),
+      expect.objectContaining({ selected: { id: "1" } }),
+      expect.objectContaining({ selected: { id: "2" } }),
     ]);
     expect(component.matchedRecordsCount).toBe(2);
   }));
@@ -152,17 +167,16 @@ describe("BulkLinkExternalProfilesComponent", () => {
     entity2[component.config.id] = "original-2";
     component.entities = [entity1, entity2];
 
-    mockSkillApi.getExternalProfiles.and.returnValues(
-      of(createPaginatedResult([])),
-      of(createPaginatedResult([{ id: "new-2" }])),
-    );
+    mockSkillApi.getExternalProfiles
+      .mockReturnValueOnce(of(createPaginatedResult([])))
+      .mockReturnValueOnce(of(createPaginatedResult([{ id: "new-2" }])));
 
     component.ngOnChanges({ entities: true as any });
     tick();
 
     expect(component.records.data).toEqual([
-      jasmine.objectContaining({ selected: { id: "original-1" } }),
-      jasmine.objectContaining({
+      expect.objectContaining({ selected: { id: "original-1" } }),
+      expect.objectContaining({
         selected: { id: "original-2" },
         possibleMatches: [{ id: "new-2" }],
       }),
@@ -211,7 +225,7 @@ describe("BulkLinkExternalProfilesComponent", () => {
     } as any);
     component.entities = [entity, TestEntity.create("Test 2")];
 
-    mockSkillApi.getExternalProfileById.and.returnValue(
+    mockSkillApi.getExternalProfileById.mockReturnValue(
       throwError(() => "API error"),
     );
 
@@ -219,7 +233,7 @@ describe("BulkLinkExternalProfilesComponent", () => {
     tick();
 
     expect(component.records.data[0].warning.selected).toEqual(
-      jasmine.any(String),
+      expect.any(String),
     );
     expect(component.records.data[1].warning).toBeUndefined();
   }));
@@ -228,7 +242,7 @@ describe("BulkLinkExternalProfilesComponent", () => {
     component.ngOnChanges({ entities: true as any });
     tick();
     const testRecord = component.records.data[0];
-    spyOn(TestBed.inject(MatDialog), "open").and.returnValue({
+    vi.spyOn(TestBed.inject(MatDialog), "open").mockReturnValue({
       afterClosed: () => of({ id: "new-ext-profile" }),
     } as any);
 
@@ -236,7 +250,7 @@ describe("BulkLinkExternalProfilesComponent", () => {
     tick();
 
     expect(testRecord.selected).toEqual(
-      jasmine.objectContaining({ id: "new-ext-profile" }),
+      expect.objectContaining({ id: "new-ext-profile" }),
     );
     expect(component.matchedRecordsCount).toBe(1);
   }));
@@ -274,7 +288,7 @@ describe("BulkLinkExternalProfilesComponent", () => {
     component.entities = [entity1, entity2, entity3, entity4];
     component.ngOnChanges({ entities: true as any });
     tick();
-    mockSkillApi.applyDataFromExternalProfile.and.callFake(
+    mockSkillApi.applyDataFromExternalProfile.mockImplementation(
       async (x, config, target) => {
         target["skills"] = !!x ? ["skill-1"] : undefined;
       },
@@ -292,35 +306,33 @@ describe("BulkLinkExternalProfilesComponent", () => {
     tick();
 
     expect(mockEntityMapper.saveAll).toHaveBeenCalled();
-    const savedEntities = mockEntityMapper.saveAll.calls.mostRecent().args[0];
+    const savedEntities = vi.mocked(mockEntityMapper.saveAll).mock.lastCall[0];
     expect(savedEntities.length).toBe(3);
-    expect(savedEntities).toContain(
-      jasmine.objectContaining({
-        name: "link to be added",
-        externalProfile: "new-1",
-        skills: ["skill-1"],
-      }),
-    );
-    expect(savedEntities).toContain(
-      jasmine.objectContaining({
-        name: "link to be removed",
-        externalProfile: undefined,
-        skills: ["old-skill"],
-      }),
-    );
-    expect(savedEntities).toContain(
-      jasmine.objectContaining({
-        name: "link to be changed",
-        externalProfile: "new-2",
-        skills: ["skill-1"],
-      }),
+    expect(savedEntities).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: "link to be added",
+          externalProfile: "new-1",
+          skills: ["skill-1"],
+        }),
+        expect.objectContaining({
+          name: "link to be removed",
+          externalProfile: undefined,
+          skills: ["old-skill"],
+        }),
+        expect.objectContaining({
+          name: "link to be changed",
+          externalProfile: "new-2",
+          skills: ["skill-1"],
+        }),
+      ]),
     );
 
     // TODO: should the unchanged entity also receive an update of its skills data or leave unchanged?
   }));
 
   it("should skip record if API throws error and continue with other records without aborting", fakeAsync(() => {
-    mockSkillApi.applyDataFromExternalProfile.and.callFake(
+    mockSkillApi.applyDataFromExternalProfile.mockImplementation(
       async (extProfile, c, target) => {
         if (extProfile === "broken" || extProfile?.["id"] === "broken") {
           throw "API error";
@@ -340,19 +352,18 @@ describe("BulkLinkExternalProfilesComponent", () => {
     tick();
 
     expect(mockEntityMapper.saveAll).toHaveBeenCalled();
-    const savedEntities = mockEntityMapper.saveAll.calls.mostRecent().args[0];
-    expect(savedEntities).toContain(
-      jasmine.objectContaining({
-        externalProfile: "good-link",
-        skills: ["skill-1"],
-      }),
-    );
-
-    expect(savedEntities).toContain(
-      jasmine.objectContaining({
-        externalProfile: "broken",
-        skills: ["old-skill"], // TODO: should previous skills value be removed in case the API request fails?
-      }),
+    const savedEntities = vi.mocked(mockEntityMapper.saveAll).mock.lastCall[0];
+    expect(savedEntities).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          externalProfile: "good-link",
+          skills: ["skill-1"],
+        }),
+        expect.objectContaining({
+          externalProfile: "broken",
+          skills: ["old-skill"], // TODO: should previous skills value be removed in case the API request fails?
+        }),
+      ]),
     );
   }));
 });

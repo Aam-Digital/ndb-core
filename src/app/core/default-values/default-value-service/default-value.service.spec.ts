@@ -88,14 +88,14 @@ export async function testDefaultValueCase(
 
 describe("DefaultValueService", () => {
   let service: DefaultValueService;
-  let mockInheritedValueService: jasmine.SpyObj<InheritedValueService>;
+  let mockInheritedValueService: any;
 
   beforeEach(() => {
-    mockInheritedValueService = jasmine.createSpyObj([
-      "setDefaultValue",
-      "initEntityForm",
-      "onFormValueChanges",
-    ]);
+    mockInheritedValueService = {
+      setDefaultValue: vi.fn(),
+      initEntityForm: vi.fn(),
+      onFormValueChanges: vi.fn(),
+    };
     // @ts-ignore
     mockInheritedValueService["mode"] = "inherited-field";
 
@@ -165,9 +165,9 @@ describe("DefaultValueService", () => {
     const enumId = "genders";
     const testEnumValue = { id: "M", label: "male" };
     const enumService = TestBed.inject(ConfigurableEnumService);
-    spyOn(enumService, "getEnumValues")
-      .withArgs(enumId)
-      .and.returnValue([testEnumValue]);
+    vi.spyOn(enumService, "getEnumValues").mockImplementation((id) =>
+      id === enumId ? [testEnumValue] : [],
+    );
 
     const fieldConfig: EntitySchemaField = {
       dataType: "configurable-enum",
@@ -186,9 +186,9 @@ describe("DefaultValueService", () => {
     const enumId = "genders";
     const testEnumValue = { id: "M", label: "male" };
     const enumService = TestBed.inject(ConfigurableEnumService);
-    spyOn(enumService, "getEnumValues")
-      .withArgs(enumId)
-      .and.returnValue([testEnumValue]);
+    vi.spyOn(enumService, "getEnumValues").mockImplementation((id) =>
+      id === enumId ? [testEnumValue] : [],
+    );
 
     const fieldConfig: EntitySchemaField = {
       dataType: "configurable-enum",
@@ -298,11 +298,11 @@ describe("DefaultValueService", () => {
       DefaultValueStrategy,
     ) as any;
 
-    const dynamicStrategySpy = spyOn(
+    const dynamicStrategySpy = vi.spyOn(
       strategies.find((s) => s instanceof DynamicPlaceholderValueService),
       "setDefaultValue",
     );
-    const staticStrategySpy = spyOn(
+    const staticStrategySpy = vi.spyOn(
       strategies.find((s) => s instanceof StaticDefaultValueService),
       "setDefaultValue",
     );

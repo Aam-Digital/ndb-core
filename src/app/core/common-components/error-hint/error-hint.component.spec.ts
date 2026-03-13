@@ -27,7 +27,7 @@ describe("ErrorHintComponent", () => {
 
   it("should be empty when there are no errors", () => {
     const ellElements = fixture.debugElement.queryAll(By.css("div"));
-    expect(ellElements).toHaveSize(0);
+    expect(ellElements).toHaveLength(0);
   });
 
   it("should contain an entry when there is one error", async () => {
@@ -35,6 +35,6 @@ describe("ErrorHintComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
     const ellElements = fixture.debugElement.queryAll(By.css("div"));
-    expect(ellElements).toHaveSize(1);
+    expect(ellElements).toHaveLength(1);
   });
 });

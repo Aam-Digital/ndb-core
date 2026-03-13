@@ -29,8 +29,8 @@ describe("AdminEntityFormComponent", () => {
   let component: AdminEntityFormComponent;
   let fixture: ComponentFixture<AdminEntityFormComponent>;
 
-  let mockFormService: jasmine.SpyObj<EntityFormService>;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockFormService: any;
+  let mockDialog: any;
 
   let testConfig: FormConfig;
 
@@ -42,24 +42,30 @@ describe("AdminEntityFormComponent", () => {
       ],
     };
 
-    mockFormService = jasmine.createSpyObj("EntityFormService", [
-      "createEntityForm",
-      "extendFormFieldConfig",
-    ]);
-    mockFormService.createEntityForm.and.returnValue(
+    mockFormService = {
+      createEntityForm: vi.fn().mockName("EntityFormService.createEntityForm"),
+      extendFormFieldConfig: vi
+        .fn()
+        .mockName("EntityFormService.extendFormFieldConfig"),
+    };
+    mockFormService.createEntityForm.mockReturnValue(
       Promise.resolve({
         formGroup: new FormGroup({}),
       } as EntityForm<any>),
     );
-    mockFormService.extendFormFieldConfig.and.callFake((field, entityType) => {
-      const fieldConfig = toFormFieldConfig(field);
-      const schemaField = entityType.schema.get(fieldConfig.id);
-      if (schemaField) {
-        return { ...schemaField, ...fieldConfig };
-      }
-      return fieldConfig;
-    });
-    mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
+    mockFormService.extendFormFieldConfig.mockImplementation(
+      (field, entityType) => {
+        const fieldConfig = toFormFieldConfig(field);
+        const schemaField = entityType.schema.get(fieldConfig.id);
+        if (schemaField) {
+          return { ...schemaField, ...fieldConfig };
+        }
+        return fieldConfig;
+      },
+    );
+    mockDialog = {
+      open: vi.fn().mockName("MatDialog.open"),
+    };
 
     TestBed.configureTestingModule({
       imports: [
@@ -79,7 +85,9 @@ describe("AdminEntityFormComponent", () => {
         },
         {
           provide: DefaultValueService,
-          useValue: jasmine.createSpyObj(["getDefaultValueUiHint"]),
+          useValue: {
+            getDefaultValueUiHint: vi.fn(),
+          },
         },
       ],
     });
@@ -143,7 +151,7 @@ describe("AdminEntityFormComponent", () => {
       id: "test",
       label: "Test Field",
     };
-    mockDialog.open.and.returnValue({
+    mockDialog.open.mockReturnValue({
       afterClosed: () => of(newField),
     } as any);
 
@@ -159,7 +167,7 @@ describe("AdminEntityFormComponent", () => {
   }));
 
   it("should not add new field in view if field config dialog is cancelled", fakeAsync(() => {
-    mockDialog.open.and.returnValue({ afterClosed: () => of("") } as any);
+    mockDialog.open.mockReturnValue({ afterClosed: () => of("") } as any);
 
     const targetContainer = component.config.fieldGroups[0].fields;
     component.drop(mockDropNewFieldEvent(targetContainer));
@@ -196,14 +204,14 @@ describe("AdminEntityFormComponent", () => {
     const removedFields = component.config.fieldGroups[0].fields;
     expect(
       removedFields.some((x) => component.availableFields().includes(x)),
-    ).not.toBeTrue();
+    ).not.toBe(true);
 
     component.removeGroup(0);
     tick();
 
     expect(component.config.fieldGroups).toEqual([{ fields: ["category"] }]);
     expect(component.availableFields()).toEqual(
-      jasmine.arrayContaining(removedFields),
+      expect.arrayContaining(removedFields),
     );
   }));
 
@@ -215,13 +223,15 @@ describe("AdminEntityFormComponent", () => {
     expect(component.config.fieldGroups[0].fields).not.toContain(field);
   }));
 
-  it("should update the global schema when updateEntitySchema is true", fakeAsync(async () => {
+  it("should update the global schema when updateEntitySchema is true", fakeAsync(() => {
     component.updateEntitySchema = true;
     const field = { id: "test", label: "Test Field" } as any;
-    spyOn(component, "openFieldConfig").and.returnValue(Promise.resolve(field));
+    vi.spyOn(component, "openFieldConfig").mockReturnValue(
+      Promise.resolve(field),
+    );
     const adminEntityService = TestBed.inject(AdminEntityService);
-    spyOn(adminEntityService, "updateSchemaField");
-    await component.openConfigDetails("category" as any);
+    vi.spyOn(adminEntityService, "updateSchemaField");
+    component.openConfigDetails("category" as any);
     tick();
 
     expect(adminEntityService.updateSchemaField).toHaveBeenCalledWith(
@@ -287,14 +297,14 @@ describe("AdminEntityFormComponent", () => {
 
   it("should prefill label when creating new field with search text", fakeAsync(() => {
     component.searchFilter.setValue("testField");
-    mockDialog.open.and.returnValue({
+    mockDialog.open.mockReturnValue({
       afterClosed: () => of({ id: "testField" }),
     } as any);
 
     component.openFieldConfig(component.createNewFieldPlaceholder);
     tick();
 
-    const dialogData = mockDialog.open.calls.mostRecent().args[1].data as any;
+    const dialogData = vi.mocked(mockDialog.open).mock.lastCall[1].data as any;
     expect(dialogData.entitySchemaField.label).toBe("testField");
     expect(dialogData.entitySchemaField.id).toBeNull();
   }));

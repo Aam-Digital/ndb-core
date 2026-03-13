@@ -27,7 +27,9 @@ describe("Schema data type: entity (advanced functionality)", () => {
         ...mockEntityMapperProvider([]),
         {
           provide: EntityActionsService,
-          useValue: jasmine.createSpyObj(["anonymize"]),
+          useValue: {
+            anonymize: vi.fn(),
+          },
         },
       ],
     });
@@ -47,9 +49,9 @@ describe("Schema data type: entity (advanced functionality)", () => {
     const importContext = createImportContext("456", schema.id, "other");
 
     // "simple" case: imported value is string already
-    await expectAsync(
+    await expect(
       dataType.importMapFunction("456", schema, "other", importContext),
-    ).toBeResolvedTo(c1.getId());
+    ).resolves.toEqual(c1.getId());
   });
 
   it("should importMap by matching numeric value correctly", async () => {
@@ -60,9 +62,9 @@ describe("Schema data type: entity (advanced functionality)", () => {
     const importContext = createImportContext(456, schema.id, "other");
 
     // "advanced" case: imported value is number but should match also
-    await expectAsync(
+    await expect(
       dataType.importMapFunction(456, schema, "other", importContext),
-    ).toBeResolvedTo(c2.getId());
+    ).resolves.toEqual(c2.getId());
   });
 
   it("should importMap by matching multiple fields", async () => {
@@ -142,7 +144,7 @@ describe("Schema data type: entity (advanced functionality)", () => {
     referencedEntity.name = "test";
 
     await entityMapper.saveAll([referencedEntity]);
-    spyOn(entityMapper, "save");
+    vi.spyOn(entityMapper, "save");
     const removeService = TestBed.inject(EntityActionsService);
 
     const testValue = referencedEntity.getId();

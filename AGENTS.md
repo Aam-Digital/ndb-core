@@ -12,7 +12,7 @@ Aam Digital is a comprehensive case management software for social organizations
 - **State Management**: RxJS, Entity system with PouchDB
 - **Authentication**: Keycloak integration
 - **Database**: PouchDB (CouchDB compatible) with offline-first approach
-- **Testing**: Jasmine, Karma for unit tests; Playwright for E2E
+- **Testing**: Vitest for unit tests; Playwright for E2E
 - **Documentation**: Compodoc for API docs
 - **Build & Deploy**: Angular CLI, Docker
 - **Path Aliases**: `#src/` maps to `src/` (used in imports, e.g. `import { Logging } from "#src/app/core/logging/logging.service"`)

@@ -24,23 +24,31 @@ describe("EditExternalProfileLinkComponent", () => {
   let fixture: ComponentFixture<EditExternalProfileLinkComponent>;
   let formGroup: FormGroup;
 
-  let mockSkillApi: jasmine.SpyObj<SkillApiService>;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockSkillApi: any;
+  let mockDialog: any;
   let mockDialogResult: Subject<any>;
   let entity: Entity;
 
   beforeEach(async () => {
     entity = new TestEntity();
 
-    mockSkillApi = jasmine.createSpyObj("SkillApiService", [
-      "getExternalProfiles",
-      "getExternalProfileById",
-      "applyDataFromExternalProfile",
-    ]);
+    mockSkillApi = {
+      getExternalProfiles: vi
+        .fn()
+        .mockName("SkillApiService.getExternalProfiles"),
+      getExternalProfileById: vi
+        .fn()
+        .mockName("SkillApiService.getExternalProfileById"),
+      applyDataFromExternalProfile: vi
+        .fn()
+        .mockName("SkillApiService.applyDataFromExternalProfile"),
+    };
 
-    mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
+    mockDialog = {
+      open: vi.fn().mockName("MatDialog.open"),
+    };
     mockDialogResult = new Subject<any>();
-    mockDialog.open.and.returnValue({
+    mockDialog.open.mockReturnValue({
       afterClosed: () => mockDialogResult.asObservable(),
     } as MatDialogRef<any>);
 
@@ -51,7 +59,9 @@ describe("EditExternalProfileLinkComponent", () => {
         { provide: MatDialog, useValue: mockDialog },
         {
           provide: AlertService,
-          useValue: jasmine.createSpyObj("AlertService", ["addWarning"]),
+          useValue: {
+            addWarning: vi.fn().mockName("AlertService.addWarning"),
+          },
         },
       ],
     }).compileComponents();
@@ -79,7 +89,7 @@ describe("EditExternalProfileLinkComponent", () => {
     expect(mockDialog.open).toHaveBeenCalled();
     expect(component.externalProfile).toEqual(mockMatch);
     expect(component.formControl.value).toEqual(mockMatch.id);
-    expect(component.formControl.dirty).toBeTrue();
+    expect(component.formControl.dirty).toBe(true);
   }));
 
   it("should not change value if dialog is aborted", fakeAsync(() => {
@@ -92,7 +102,7 @@ describe("EditExternalProfileLinkComponent", () => {
 
     expect(mockDialog.open).toHaveBeenCalled();
     expect(component.formControl.value).toEqual("original-id");
-    expect(component.formControl.dirty).toBeFalse();
+    expect(component.formControl.dirty).toBe(false);
   }));
 
   it("should pass the current state if edited form/entity to the search dialog", fakeAsync(() => {
@@ -114,7 +124,7 @@ describe("EditExternalProfileLinkComponent", () => {
     component.searchMatchingProfiles();
     tick();
 
-    const actualDialogData = mockDialog.open.calls.mostRecent().args[1]
+    const actualDialogData = vi.mocked(mockDialog.open).mock.lastCall[1]
       .data as LinkExternalProfileDialogData;
     expect(actualDialogData.config).toEqual(component.additional);
 
@@ -129,13 +139,13 @@ describe("EditExternalProfileLinkComponent", () => {
     component.unlinkExternalProfile();
 
     expect(component.formControl.value).toEqual(null);
-    expect(component.formControl.dirty).toBeTrue();
+    expect(component.formControl.dirty).toBe(true);
   }));
 
   it("should load external profile during init, if already linked", fakeAsync(() => {
     const mockProfile: ExternalProfile = { id: "external-id" } as any;
     component.formControl.setValue(mockProfile.id);
-    mockSkillApi.getExternalProfileById.and.returnValue(of(mockProfile));
+    mockSkillApi.getExternalProfileById.mockReturnValue(of(mockProfile));
 
     component.ngOnInit();
     tick();
@@ -148,7 +158,7 @@ describe("EditExternalProfileLinkComponent", () => {
 
   it("should show warning if linked external profile cannot be loaded", fakeAsync(() => {
     component.formControl.setValue("broken-id");
-    mockSkillApi.getExternalProfileById.and.returnValue(
+    mockSkillApi.getExternalProfileById.mockReturnValue(
       throwError(
         () => new HttpErrorResponse({ status: 504, statusText: "API error" }),
       ),
@@ -159,16 +169,16 @@ describe("EditExternalProfileLinkComponent", () => {
 
     expect(mockSkillApi.getExternalProfileById).toHaveBeenCalled();
     expect(component.externalProfile).toBeUndefined();
-    expect(component.externalProfileError).toBeTrue();
+    expect(component.externalProfileError).toBe(true);
   }));
 
   it("should update external data", fakeAsync(() => {
-    mockSkillApi.applyDataFromExternalProfile.and.resolveTo();
+    mockSkillApi.applyDataFromExternalProfile.mockResolvedValue(undefined);
     component.formControl.setValue("external-id");
 
     component.updateExternalData();
 
-    expect(component.isLoading()).toBeTrue();
+    expect(component.isLoading()).toBe(true);
     tick();
 
     expect(mockSkillApi.applyDataFromExternalProfile).toHaveBeenCalledWith(
@@ -176,6 +186,6 @@ describe("EditExternalProfileLinkComponent", () => {
       component.additional,
       component.formControl.parent as FormGroup,
     );
-    expect(component.isLoading()).toBeFalse();
+    expect(component.isLoading()).toBe(false);
   }));
 });

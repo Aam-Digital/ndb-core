@@ -30,6 +30,10 @@ describe("DateImportConfigComponent", () => {
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: data },
         { provide: MatDialogRef, useValue: { close: () => undefined } },
+        {
+          provide: ConfirmationDialogService,
+          useValue: { getConfirmation: vi.fn().mockResolvedValue(true) },
+        },
       ],
     }).compileComponents();
 
@@ -65,7 +69,7 @@ describe("DateImportConfigComponent", () => {
   }));
 
   it("should ask for confirmation on save if some dates could not be parsed", fakeAsync(() => {
-    const confirmationSpy = spyOn(
+    const confirmationSpy = vi.spyOn(
       TestBed.inject(ConfirmationDialogService),
       "getConfirmation",
     );
@@ -80,7 +84,7 @@ describe("DateImportConfigComponent", () => {
   it("should set the format as additional on save", async () => {
     expect(data.col.additional).toBeUndefined();
     component.format.setValue("D/M/YYYY");
-    const closeSpy = spyOn(TestBed.inject(MatDialogRef), "close");
+    const closeSpy = vi.spyOn(TestBed.inject(MatDialogRef), "close");
 
     await component.save();
 

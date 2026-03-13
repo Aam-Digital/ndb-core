@@ -10,11 +10,14 @@ describe("EntityCreateButtonComponent", () => {
   let component: EntityCreateButtonComponent;
   let fixture: ComponentFixture<EntityCreateButtonComponent>;
 
-  let mockAbility: jasmine.SpyObj<EntityAbility>;
+  let mockAbility: any;
 
   beforeEach(async () => {
-    mockAbility = jasmine.createSpyObj(["cannot", "on"]);
-    mockAbility.on.and.returnValue(() => null);
+    mockAbility = {
+      cannot: vi.fn(),
+      on: vi.fn(),
+    };
+    mockAbility.on.mockReturnValue(() => null);
 
     await TestBed.configureTestingModule({
       imports: [

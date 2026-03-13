@@ -24,11 +24,13 @@ describe("RowDetailsComponent", () => {
   let fixture: ComponentFixture<RowDetailsComponent>;
   let detailsComponentData: DetailsComponentData;
 
-  let mockFormService: jasmine.SpyObj<EntityFormService>;
+  let mockFormService: any;
 
   beforeEach(waitForAsync(() => {
-    mockFormService = jasmine.createSpyObj(["createEntityForm"]);
-    mockFormService.createEntityForm.and.returnValue(
+    mockFormService = {
+      createEntityForm: vi.fn(),
+    };
+    mockFormService.createEntityForm.mockReturnValue(
       Promise.resolve({
         formGroup: new FormBuilder().group({}),
       } as EntityForm<any>),
@@ -48,7 +50,7 @@ describe("RowDetailsComponent", () => {
         },
       ],
     }).compileComponents();
-    spyOn(TestBed.inject(EntityAbility), "cannot").and.returnValue(true);
+    vi.spyOn(TestBed.inject(EntityAbility), "cannot").mockReturnValue(true);
   }));
 
   function initComponent() {

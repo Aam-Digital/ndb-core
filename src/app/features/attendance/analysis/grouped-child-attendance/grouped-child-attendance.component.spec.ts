@@ -9,13 +9,13 @@ import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 describe("GroupedChildAttendanceComponent", () => {
   let component: GroupedChildAttendanceComponent;
   let fixture: ComponentFixture<GroupedChildAttendanceComponent>;
-  let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
+  let mockAttendanceService: any;
 
   beforeEach(waitForAsync(() => {
-    mockAttendanceService = jasmine.createSpyObj([
-      "getActivitiesForParticipant",
-    ]);
-    mockAttendanceService.getActivitiesForParticipant.and.resolveTo([]);
+    mockAttendanceService = {
+      getActivitiesForParticipant: vi.fn(),
+    };
+    mockAttendanceService.getActivitiesForParticipant.mockResolvedValue([]);
 
     TestBed.configureTestingModule({
       imports: [
@@ -41,7 +41,9 @@ describe("GroupedChildAttendanceComponent", () => {
 
   it("should load activities from attendance service", async () => {
     const activity = TestEntity.create("test activity");
-    mockAttendanceService.getActivitiesForParticipant.and.resolveTo([activity]);
+    mockAttendanceService.getActivitiesForParticipant.mockResolvedValue([
+      activity,
+    ]);
 
     await component.ngOnInit();
 
@@ -53,7 +55,7 @@ describe("GroupedChildAttendanceComponent", () => {
     activeActivity.isActive = true;
     const archivedActivity = TestEntity.create("archived");
     archivedActivity.isActive = false;
-    mockAttendanceService.getActivitiesForParticipant.and.resolveTo([
+    mockAttendanceService.getActivitiesForParticipant.mockResolvedValue([
       activeActivity,
       archivedActivity,
     ]);

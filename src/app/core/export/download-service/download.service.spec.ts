@@ -11,20 +11,24 @@ import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { GeoLocation } from "app/features/location/geo-location";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { Papa } from "ngx-papaparse";
+import { unparse } from "papaparse";
 
 describe("DownloadService", () => {
   let service: DownloadService;
-  let mockDataTransformationService: jasmine.SpyObj<DownloadService>;
-  let mockedEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockDataTransformationService: any;
+  let mockedEntityMapper: any;
   const testSchool = TestEntity.create({ name: "Test School" });
   const testChild = TestEntity.create("Test Child");
 
   beforeEach(() => {
-    mockDataTransformationService = jasmine.createSpyObj([
-      "queryAndTransformData",
-    ]);
-    mockedEntityMapper = jasmine.createSpyObj(["load"]);
-    mockedEntityMapper.load.and.callFake(async (entityType, id) => {
+    mockDataTransformationService = {
+      queryAndTransformData: vi.fn(),
+    };
+    mockedEntityMapper = {
+      load: vi.fn(),
+    };
+    mockedEntityMapper.load.mockImplementation(async (entityType, id) => {
       switch (id) {
         case testChild.getId():
           return testChild as any;
@@ -43,6 +47,12 @@ describe("DownloadService", () => {
           useValue: mockDataTransformationService,
         },
         { provide: EntityMapperService, useValue: mockedEntityMapper },
+        {
+          provide: Papa,
+          useValue: {
+            unparse: (...args: Parameters<typeof unparse>) => unparse(...args),
+          },
+        },
       ],
     });
     service = TestBed.inject(DownloadService);
@@ -54,12 +64,10 @@ describe("DownloadService", () => {
 
   it("opens download link when pressing button", async () => {
     const link = document.createElement("a");
-    const clickSpy = spyOn(link, "click");
+    const clickSpy = vi.spyOn(link, "click");
     // Needed to later reset the createElement function, otherwise subsequent calls result in an error
     const oldCreateElement = document.createElement;
-    document.createElement = jasmine
-      .createSpy("HTML Element")
-      .and.returnValue(link);
+    document.createElement = vi.fn().mockReturnValue(link);
 
     expect(clickSpy).not.toHaveBeenCalled();
     await service.triggerDownload([], "json", "someFileName");
@@ -77,8 +85,8 @@ describe("DownloadService", () => {
     const csvExport = await service.createCsv(docs);
 
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
-    expect(rows).toHaveSize(2 + 1); // includes 1 header line
-    expect(rows[0].split(DownloadService.SEPARATOR_COL)).toHaveSize(3);
+    expect(rows).toHaveLength(2 + 1); // includes 1 header line
+    expect(rows[0].split(DownloadService.SEPARATOR_COL)).toHaveLength(3);
   });
 
   it("should create a csv string correctly", async () => {
@@ -96,7 +104,7 @@ describe("DownloadService", () => {
       '"_id","_rev","propOne","propTwo"' +
       DownloadService.SEPARATOR_ROW +
       '"TestForCsvEntity:1","2","first","second"';
-    spyOn(service, "exportFile").and.resolveTo(expected);
+    vi.spyOn(service, "exportFile").mockResolvedValue(expected);
     const result = await service.createCsv([test]);
     expect(result).toEqual(expected);
   });
@@ -112,8 +120,10 @@ describe("DownloadService", () => {
     class ValuesDownloadTestEntity extends Entity {
       @DatabaseField({ label: "test enum" })
       enumProperty: ConfigurableEnumValue;
-      @DatabaseField({ label: "test date" }) dateProperty: Date;
-      @DatabaseField({ label: "test boolean" }) boolProperty: boolean;
+      @DatabaseField({ label: "test date" })
+      dateProperty: Date;
+      @DatabaseField({ label: "test boolean" })
+      boolProperty: boolean;
     }
 
     const testEntity = new ValuesDownloadTestEntity();
@@ -124,9 +134,9 @@ describe("DownloadService", () => {
     const csvExport = await service.createCsv([testEntity]);
 
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
-    expect(rows).toHaveSize(1 + 1); // includes 1 header line
+    expect(rows).toHaveLength(1 + 1); // includes 1 header line
     const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
-    expect(columnValues).toHaveSize(3); // Properties (_id is filter out by default)
+    expect(columnValues).toHaveLength(3); // Properties (_id is filter out by default)
     expect(columnValues).toContain('"' + testEnumValue.label + '"');
     expect(columnValues).toContain('"' + testDate + '"');
     expect(columnValues).toContain('"true"');
@@ -150,9 +160,9 @@ describe("DownloadService", () => {
     const csvExport = await service.createCsv([testEntity]);
 
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
-    expect(rows).toHaveSize(1 + 1); // includes 1 header line
+    expect(rows).toHaveLength(1 + 1); // includes 1 header line
     const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
-    expect(columnValues).toHaveSize(4);
+    expect(columnValues).toHaveLength(4);
     expect(columnValues).toContain('"' + relatedEntity.getId() + '"');
     expect(columnValues).toContain('"' + relatedEntity.toString() + '"');
     expect(columnValues).toContain('"' + relatedEntity2.getId() + '"');
@@ -175,7 +185,7 @@ describe("DownloadService", () => {
     const csvExport = await service.createCsv([testEntity]);
 
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
-    expect(rows).toHaveSize(1 + 1); // includes 1 header line
+    expect(rows).toHaveLength(1 + 1); // includes 1 header line
     expect(rows[1]).toBe(
       `"${testSchool.getId()},${testChild.getId()}","${testSchool.toString()},${testChild.toString()}"`,
     );
@@ -197,7 +207,7 @@ describe("DownloadService", () => {
     const csvExport = await service.createCsv([testEntity]);
 
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
-    expect(rows).toHaveSize(1 + 1); // includes 1 header line
+    expect(rows).toHaveLength(1 + 1); // includes 1 header line
     expect(rows[1]).toBe(
       `"undefined-id,${testChild.getId()}","<not_found>,${testChild.toString()}"`,
     );
@@ -212,12 +222,12 @@ describe("DownloadService", () => {
     const csvExport = await service.createCsv(docs);
 
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
-    expect(rows).toHaveSize(2 + 1); // includes 1 header line
+    expect(rows).toHaveLength(2 + 1); // includes 1 header line
     const columnHeaders = rows[0].split(DownloadService.SEPARATOR_COL);
     const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
 
-    expect(columnValues).toHaveSize(2);
-    expect(columnHeaders).toHaveSize(2);
+    expect(columnValues).toHaveLength(2);
+    expect(columnHeaders).toHaveLength(2);
     expect(columnHeaders).toContain('"_id"');
   });
 
@@ -226,9 +236,12 @@ describe("DownloadService", () => {
 
     @DatabaseEntity("LabelDownloadTestEntity")
     class LabelDownloadTestEntity extends Entity {
-      @DatabaseField({ label: "test string" }) stringProperty: string;
-      @DatabaseField({ label: "test date" }) otherProperty: string;
-      @DatabaseField() boolProperty: boolean;
+      @DatabaseField({ label: "test string" })
+      stringProperty: string;
+      @DatabaseField({ label: "test date" })
+      otherProperty: string;
+      @DatabaseField()
+      boolProperty: boolean;
     }
 
     const labelTestEntity = new LabelDownloadTestEntity();
@@ -245,10 +258,10 @@ describe("DownloadService", () => {
     ]);
 
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
-    expect(rows).toHaveSize(1 + 2); // includes 1 header line
+    expect(rows).toHaveLength(1 + 2); // includes 1 header line
 
     const columnHeaders = rows[0].split(DownloadService.SEPARATOR_COL);
-    expect(columnHeaders).toHaveSize(2);
+    expect(columnHeaders).toHaveLength(2);
     expect(columnHeaders).toContain('"test string"');
     expect(columnHeaders).toContain('"test date"');
 

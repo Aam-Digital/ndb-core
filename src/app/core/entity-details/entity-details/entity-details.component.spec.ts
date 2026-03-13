@@ -42,17 +42,25 @@ describe("EntityDetailsComponent", () => {
     ],
   };
 
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
-  let mockEntityRemoveService: jasmine.SpyObj<EntityActionsService>;
-  let mockAbility: jasmine.SpyObj<EntityAbility>;
+  let mockChildrenService: any;
+  let mockEntityRemoveService: any;
+  let mockAbility: any;
 
   beforeEach(waitForAsync(() => {
-    mockChildrenService = jasmine.createSpyObj(["queryRelations"]);
-    mockEntityRemoveService = jasmine.createSpyObj(["remove"]);
-    mockChildrenService.queryRelations.and.resolveTo([]);
-    mockAbility = jasmine.createSpyObj(["cannot", "update", "on"]);
-    mockAbility.cannot.and.returnValue(false);
-    mockAbility.on.and.returnValue(() => true);
+    mockChildrenService = {
+      queryRelations: vi.fn(),
+    };
+    mockEntityRemoveService = {
+      remove: vi.fn(),
+    };
+    mockChildrenService.queryRelations.mockResolvedValue([]);
+    mockAbility = {
+      cannot: vi.fn(),
+      update: vi.fn(),
+      on: vi.fn(),
+    };
+    mockAbility.cannot.mockReturnValue(false);
+    mockAbility.on.mockReturnValue(() => true);
 
     TestBed.configureTestingModule({
       imports: [EntityDetailsComponent, MockedTestingModule.withState()],
@@ -93,7 +101,7 @@ describe("EntityDetailsComponent", () => {
       p.components.forEach((c) => {
         const panelConfig = c.config as PanelConfig;
         expect(panelConfig.entity).toEqual(testChild);
-        expect(panelConfig.creatingNew).toBeFalse();
+        expect(panelConfig.creatingNew).toBe(false);
       }),
     );
   }));

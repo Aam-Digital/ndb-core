@@ -17,7 +17,10 @@ describe("ImportSelectTypeComponent", () => {
   }
 
   let mockRegistry: EntityRegistry;
-  let testTypes: { key: string; value: EntityConstructor }[] = [
+  let testTypes: {
+    key: string;
+    value: EntityConstructor;
+  }[] = [
     { key: "GeneralType", value: TestEntity },
     { key: "TechnicalType", value: ConfigurableEnum },
   ];

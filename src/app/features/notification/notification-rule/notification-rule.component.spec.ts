@@ -15,8 +15,8 @@ describe("NotificationRuleComponent", () => {
   let component: NotificationRuleComponent;
   let fixture: ComponentFixture<NotificationRuleComponent>;
   let mockValue: NotificationRule;
-  let mockHttp: jasmine.SpyObj<HttpClient>;
-  let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
+  let mockHttp: any;
+  let mockAuthService: any;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -65,7 +65,7 @@ describe("NotificationRuleComponent", () => {
   });
 
   it("should emit valueChange with the correct format when a formControl is updated", () => {
-    spyOn(component.valueChange, "emit");
+    vi.spyOn(component.valueChange, "emit");
     component.initForm();
 
     component.form.setValue({
@@ -78,7 +78,7 @@ describe("NotificationRuleComponent", () => {
     });
 
     expect(component.valueChange.emit).toHaveBeenCalledWith(
-      jasmine.objectContaining({
+      expect.objectContaining({
         label: "label2",
         entityType: "TestEntity",
         changeType: ["created", "updated"],

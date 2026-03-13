@@ -29,10 +29,10 @@ import { DatabaseResolverService } from "./core/database/database-resolver.servi
 describe("AppComponent", () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
-  const intervalBefore = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+  const intervalBefore = 5000;
 
   beforeEach(waitForAsync(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+    vi.setConfig({ testTimeout: 10000 });
     environment.demo_mode = true;
     TestBed.configureTestingModule({
       imports: [AppModule],
@@ -51,7 +51,7 @@ describe("AppComponent", () => {
 
   afterEach(waitForAsync(() => {
     environment.demo_mode = false;
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = intervalBefore;
+    vi.setConfig({ testTimeout: intervalBefore });
     return TestBed.inject(DatabaseResolverService).destroyDatabases();
   }));
 

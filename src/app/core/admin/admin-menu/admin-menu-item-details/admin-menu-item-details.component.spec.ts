@@ -13,7 +13,7 @@ describe("AdminMenuItemDetailsComponent", () => {
   let fixture: ComponentFixture<AdminMenuItemDetailsComponent>;
 
   let menuItem: MenuItem;
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockConfigService: any;
 
   beforeEach(async () => {
     menuItem = {
@@ -22,10 +22,10 @@ describe("AdminMenuItemDetailsComponent", () => {
       link: "",
     };
 
-    mockConfigService = jasmine.createSpyObj("ConfigService", [
-      "getAllConfigs",
-    ]);
-    mockConfigService.getAllConfigs.and.returnValue([]);
+    mockConfigService = {
+      getAllConfigs: vi.fn().mockName("ConfigService.getAllConfigs"),
+    };
+    mockConfigService.getAllConfigs.mockReturnValue([]);
     mockConfigService.configUpdates = NEVER;
 
     await TestBed.configureTestingModule({

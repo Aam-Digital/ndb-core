@@ -34,28 +34,35 @@ describe("TemplateExportSelectionDialogComponent", () => {
   let component: TemplateExportSelectionDialogComponent;
   let fixture: ComponentFixture<TemplateExportSelectionDialogComponent>;
 
-  let mockDialogRef: jasmine.SpyObj<
-    MatDialogRef<TemplateExportSelectionDialogComponent>
-  >;
-  let mockPdfGeneratorApiService: jasmine.SpyObj<TemplateExportApiService>;
-  let mockDownloadService: jasmine.SpyObj<DownloadService>;
-  let mockTemplateExportService: jasmine.SpyObj<TemplateExportService>;
+  let mockDialogRef: any;
+  let mockPdfGeneratorApiService: any;
+  let mockDownloadService: any;
+  let mockTemplateExportService: any;
   let testEntity: Entity;
 
   beforeEach(async () => {
     testEntity = new TestEntity();
 
-    mockPdfGeneratorApiService = jasmine.createSpyObj([
-      "generatePdfFromTemplate",
-    ]);
-    mockDownloadService = jasmine.createSpyObj(["triggerDownload"]);
-    mockDialogRef = jasmine.createSpyObj(["close"]);
-    mockTemplateExportService = jasmine.createSpyObj(["isExportServerEnabled"]);
-    mockTemplateExportService.isExportServerEnabled.and.returnValue(
+    mockPdfGeneratorApiService = {
+      generatePdfFromTemplate: vi.fn(),
+    };
+    mockDownloadService = {
+      triggerDownload: vi.fn(),
+    };
+    mockDialogRef = {
+      close: vi.fn(),
+    };
+    mockTemplateExportService = {
+      isExportServerEnabled: vi.fn(),
+    };
+    mockTemplateExportService.isExportServerEnabled.mockReturnValue(
       Promise.resolve(true),
     );
-    const mockAbility = jasmine.createSpyObj(["cannot", "on"]);
-    mockAbility.on.and.returnValue(() => null);
+    const mockAbility = {
+      cannot: vi.fn(),
+      on: vi.fn(),
+    };
+    mockAbility.on.mockReturnValue(() => null);
 
     await TestBed.configureTestingModule({
       imports: [
@@ -75,12 +82,17 @@ describe("TemplateExportSelectionDialogComponent", () => {
         { provide: EntityAbility, useValue: mockAbility },
         {
           provide: EntityMapperService,
-          useValue: jasmine.createSpyObj(["load", "loadType"]),
+          useValue: {
+            load: vi.fn(),
+            loadType: vi.fn(),
+          },
         },
         { provide: ActivatedRoute, useValue: null },
         {
           provide: AlertService,
-          useValue: jasmine.createSpyObj(["addWarning"]),
+          useValue: {
+            addWarning: vi.fn(),
+          },
         },
         {
           provide: EntityRegistry,
@@ -102,15 +114,15 @@ describe("TemplateExportSelectionDialogComponent", () => {
   it("should only show applicable templates for the entity type", () => {
     const template1 = new TemplateExport();
     template1.applicableForEntityTypes = [TestEntity.ENTITY_TYPE];
-    expect(component.templateEntityFilter(template1)).toBeTrue();
+    expect(component.templateEntityFilter(template1)).toBe(true);
 
     const template2 = new TemplateExport();
     template2.applicableForEntityTypes = ["other type", TestEntity.ENTITY_TYPE];
-    expect(component.templateEntityFilter(template2)).toBeTrue();
+    expect(component.templateEntityFilter(template2)).toBe(true);
 
     const template3 = new TemplateExport();
     template3.applicableForEntityTypes = ["other type"];
-    expect(component.templateEntityFilter(template3)).toBeFalse();
+    expect(component.templateEntityFilter(template3)).toBe(false);
   });
 
   it("should trigger download with API response when requesting file", fakeAsync(() => {
@@ -122,15 +134,15 @@ describe("TemplateExportSelectionDialogComponent", () => {
       filename: "test.pdf",
       file: new ArrayBuffer(10),
     };
-    mockPdfGeneratorApiService.generatePdfFromTemplate.and.returnValue(
+    mockPdfGeneratorApiService.generatePdfFromTemplate.mockReturnValue(
       of(mockResponse).pipe(delay(100)),
     );
 
     component.requestFile();
     tick(1);
-    expect(component.loadingRequestedFile).toBeTrue();
+    expect(component.loadingRequestedFile).toBe(true);
     tick(100);
-    expect(component.loadingRequestedFile).toBeFalse();
+    expect(component.loadingRequestedFile).toBe(false);
 
     expect(
       mockPdfGeneratorApiService.generatePdfFromTemplate,
@@ -144,7 +156,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
   }));
 
   it("should disable loading but not close dialog if API request fails", fakeAsync(() => {
-    mockPdfGeneratorApiService.generatePdfFromTemplate.and.returnValue(
+    mockPdfGeneratorApiService.generatePdfFromTemplate.mockReturnValue(
       of(false).pipe(
         delay(100),
         map(() => {
@@ -155,9 +167,9 @@ describe("TemplateExportSelectionDialogComponent", () => {
 
     component.requestFile();
     tick(1);
-    expect(component.loadingRequestedFile).toBeTrue();
+    expect(component.loadingRequestedFile).toBe(true);
     tick(100);
-    expect(component.loadingRequestedFile).toBeFalse();
+    expect(component.loadingRequestedFile).toBe(false);
 
     expect(mockDownloadService.triggerDownload).not.toHaveBeenCalled();
     expect(mockDialogRef.close).not.toHaveBeenCalled();

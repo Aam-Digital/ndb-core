@@ -20,12 +20,15 @@ describe("MapPopupComponent", () => {
   let fixture: ComponentFixture<MapPopupComponent>;
 
   let mapClick: Subject<Coordinates>;
-  let mockGeoService: jasmine.SpyObj<GeoService>;
+  let mockGeoService: any;
 
   beforeEach(async () => {
     mapClick = new Subject<Coordinates>();
-    mockGeoService = jasmine.createSpyObj(["lookup", "reverseLookup"]);
-    mockGeoService.reverseLookup.and.returnValue(
+    mockGeoService = {
+      lookup: vi.fn(),
+      reverseLookup: vi.fn(),
+    };
+    mockGeoService.reverseLookup.mockReturnValue(
       of({
         error: "Unable to geocode",
       } as any),
@@ -63,7 +66,7 @@ describe("MapPopupComponent", () => {
 
     const mockedClick: Coordinates = { lat: 1, lon: 2 };
 
-    mockGeoService.reverseLookup.and.returnValue(
+    mockGeoService.reverseLookup.mockReturnValue(
       of({
         lat: mockedClick.lat,
         lon: mockedClick.lon,
@@ -99,7 +102,7 @@ describe("MapPopupComponent", () => {
 
     const mockedClick: Coordinates = { lat: 1, lon: 2 };
     const fullLocation = { display_name: "lookup result", ...mockedClick };
-    mockGeoService.reverseLookup.and.returnValue(of(fullLocation));
+    mockGeoService.reverseLookup.mockReturnValue(of(fullLocation));
 
     component.mapClicked(mockedClick);
     tick();

@@ -1,3 +1,4 @@
+import type { Mock, MockedObject } from "vitest";
 import { fakeAsync, flushMicrotasks, TestBed } from "@angular/core/testing";
 import { IndexeddbMigrationService } from "./indexeddb-migration.service";
 import { SessionInfo } from "../session/auth/session-info";
@@ -10,12 +11,19 @@ import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
 
 describe("IndexeddbMigrationService", () => {
   let service: IndexeddbMigrationService;
-  let confirmationDialogSpy: jasmine.SpyObj<ConfirmationDialogService>;
+  let confirmationDialogSpy: any;
   let mockWindow: {
-    location: { reload: jasmine.Spy };
-    indexedDB: { databases: jasmine.Spy; deleteDatabase: jasmine.Spy };
+    location: {
+      reload: Mock;
+    };
+    indexedDB: {
+      databases: Mock;
+      deleteDatabase: Mock;
+    };
   };
-  let mockNavigator: { onLine: boolean };
+  let mockNavigator: {
+    onLine: boolean;
+  };
 
   const session: SessionInfo = {
     id: "abc-123-uuid",
@@ -42,29 +50,30 @@ describe("IndexeddbMigrationService", () => {
     const { mockDb, localSyncState } = createSyncedDbMock();
     const mockNewDb = {
       replicate: {
-        from: jasmine.createSpy("from").and.resolveTo({ ok: true }),
+        from: vi.fn().mockResolvedValue({ ok: true }),
       },
-      close: jasmine.createSpy("close"),
+      close: vi.fn(),
     };
-    const createPouchDbSpy = spyOn<any>(
-      service,
-      "createPouchDb",
-    ).and.returnValue(mockNewDb as any);
+    const createPouchDbSpy = vi
+      .spyOn(service as any, "createPouchDb")
+      .mockReturnValue(mockNewDb as any);
 
     return { mockDb, localSyncState, mockNewDb, createPouchDbSpy };
   };
 
   beforeEach(() => {
     originalUseIndexeddbAdapter = environment.use_indexeddb_adapter;
-    confirmationDialogSpy = jasmine.createSpyObj("ConfirmationDialogService", [
-      "getConfirmation",
-    ]);
-    confirmationDialogSpy.getConfirmation.and.resolveTo(false);
+    confirmationDialogSpy = {
+      getConfirmation: vi
+        .fn()
+        .mockName("ConfirmationDialogService.getConfirmation"),
+    };
+    confirmationDialogSpy.getConfirmation.mockResolvedValue(false);
     mockWindow = {
-      location: { reload: jasmine.createSpy("reload") },
+      location: { reload: vi.fn() },
       indexedDB: {
-        databases: jasmine.createSpy("databases").and.resolveTo([]),
-        deleteDatabase: jasmine.createSpy("deleteDatabase"),
+        databases: vi.fn().mockResolvedValue([]),
+        deleteDatabase: vi.fn(),
       },
     };
     mockNavigator = { onLine: true };
@@ -98,7 +107,7 @@ describe("IndexeddbMigrationService", () => {
       expect(config.adapter).toBe("idb");
       expect(config.dbNames.app).toBe("testuser-app");
       expect(config.dbNames.notifications).toBe("notifications_abc-123-uuid");
-      expect(service.migrationPending).toBeFalse();
+      expect(service.migrationPending).toBe(false);
     });
 
     it("should return new config when migration flag is set", async () => {
@@ -110,12 +119,12 @@ describe("IndexeddbMigrationService", () => {
       expect(config.adapter).toBe("indexeddb");
       expect(config.dbNames.app).toBe("abc-123-uuid-app");
       expect(config.dbNames.notifications).toBe("abc-123-uuid-notifications");
-      expect(service.migrationPending).toBeFalse();
+      expect(service.migrationPending).toBe(false);
     });
 
     it("should return new config for fresh install (no old DB for that user)", async () => {
       environment.use_indexeddb_adapter = true;
-      mockWindow.indexedDB.databases.and.resolveTo([
+      mockWindow.indexedDB.databases.mockResolvedValue([
         { name: "_pouch_otheruser-app", version: 1 },
         { name: "_pouch_notifications_other-user-id", version: 1 },
       ]);
@@ -125,12 +134,12 @@ describe("IndexeddbMigrationService", () => {
       expect(config.adapter).toBe("indexeddb");
       expect(config.dbNames.app).toBe("abc-123-uuid-app");
       expect(config.dbNames.notifications).toBe("abc-123-uuid-notifications");
-      expect(service.migrationPending).toBeFalse();
+      expect(service.migrationPending).toBe(false);
     });
 
     it("should return legacy config with migrationPending when old DB exists", async () => {
       environment.use_indexeddb_adapter = true;
-      mockWindow.indexedDB.databases.and.resolveTo([
+      mockWindow.indexedDB.databases.mockResolvedValue([
         { name: "_pouch_testuser-app", version: 1 },
       ]);
 
@@ -138,7 +147,7 @@ describe("IndexeddbMigrationService", () => {
 
       expect(config.adapter).toBe("idb");
       expect(config.dbNames.app).toBe("testuser-app");
-      expect(service.migrationPending).toBeTrue();
+      expect(service.migrationPending).toBe(true);
     });
   });
 
@@ -184,7 +193,7 @@ describe("IndexeddbMigrationService", () => {
 
     it("should prompt user to reload after migration completes", fakeAsync(() => {
       service.migrationPending = true;
-      confirmationDialogSpy.getConfirmation.and.resolveTo(true);
+      confirmationDialogSpy.getConfirmation.mockResolvedValue(true);
       const { mockDb, localSyncState, mockNewDb, createPouchDbSpy } =
         mockPouchDbCreation();
 
@@ -216,7 +225,7 @@ describe("IndexeddbMigrationService", () => {
 
     it("should delete legacy databases when migrated", async () => {
       localStorage.setItem("DB_MIGRATED_abc-123-uuid", "true");
-      mockWindow.indexedDB.deleteDatabase.and.callFake(() => {
+      mockWindow.indexedDB.deleteDatabase.mockImplementation(() => {
         const req = {
           onsuccess: null as any,
           onerror: null as any,
@@ -224,7 +233,7 @@ describe("IndexeddbMigrationService", () => {
         setTimeout(() => req.onsuccess?.(new Event("success")));
         return req;
       });
-      mockWindow.indexedDB.databases.and.resolveTo([
+      mockWindow.indexedDB.databases.mockResolvedValue([
         { name: "_pouch_testuser-app", version: 1 },
         { name: "_pouch_testuser-app_mrview123", version: 1 },
         { name: "_pouch_notifications_abc-123-uuid", version: 1 },
@@ -252,12 +261,12 @@ describe("IndexeddbMigrationService", () => {
 
     it("should continue if one database deletion fails", async () => {
       localStorage.setItem("DB_MIGRATED_abc-123-uuid", "true");
-      mockWindow.indexedDB.databases.and.resolveTo([
+      mockWindow.indexedDB.databases.mockResolvedValue([
         { name: "_pouch_testuser-app", version: 1 },
         { name: "_pouch_notifications_abc-123-uuid", version: 1 },
       ]);
       let callCount = 0;
-      mockWindow.indexedDB.deleteDatabase.and.callFake(() => {
+      mockWindow.indexedDB.deleteDatabase.mockImplementation(() => {
         callCount++;
         const req = {
           onsuccess: null as any,
@@ -272,7 +281,9 @@ describe("IndexeddbMigrationService", () => {
         return req;
       });
 
-      await expectAsync(service.cleanupLegacyDatabases(session)).toBeResolved();
+      await expect(
+        service.cleanupLegacyDatabases(session),
+      ).resolves.not.toThrow();
       expect(callCount).toBe(2);
     });
   });

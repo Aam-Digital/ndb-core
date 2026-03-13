@@ -15,7 +15,7 @@ import moment from "moment";
 describe("SqlReportService", () => {
   let service: SqlReportService;
 
-  let mockHttpClient: jasmine.SpyObj<HttpClient>;
+  let mockHttpClient: any;
 
   let validReportCalculationsResponse: ReportCalculation[] = [
     {
@@ -77,7 +77,10 @@ describe("SqlReportService", () => {
 
   beforeEach(() => {
     entityRegistry.allowDuplicates();
-    mockHttpClient = jasmine.createSpyObj(["post", "get"]);
+    mockHttpClient = {
+      post: vi.fn(),
+      get: vi.fn(),
+    };
 
     TestBed.configureTestingModule({
       providers: [{ provide: HttpClient, useValue: mockHttpClient }],
@@ -91,12 +94,11 @@ describe("SqlReportService", () => {
 
   it("should create a new report calculation if no one exist", async () => {
     // Given
-    mockHttpClient.get.and.returnValues(
-      of(validReportCalculationsResponse),
-      of(validReportCalculationsResponse[1]),
-      of(validReportDataResponse),
-    );
-    mockHttpClient.post.and.returnValue(
+    mockHttpClient.get
+      .mockReturnValueOnce(of(validReportCalculationsResponse))
+      .mockReturnValueOnce(of(validReportCalculationsResponse[1]))
+      .mockReturnValueOnce(of(validReportDataResponse));
+    mockHttpClient.post.mockReturnValue(
       of({
         id: "calculation-id",
       }),
@@ -113,7 +115,10 @@ describe("SqlReportService", () => {
     );
 
     // Then
-    expect(mockHttpClient.post).toHaveBeenCalledOnceWith(
+    expect(mockHttpClient.post).toHaveBeenCalledTimes(1);
+
+    // Then
+    expect(mockHttpClient.post).toHaveBeenCalledWith(
       `${SqlReportService.API_URL}/report-calculation/report/${report.getId()}`,
       {},
       {
@@ -128,11 +133,10 @@ describe("SqlReportService", () => {
 
   it("should create a new report calculation if forceCalculation is true", async () => {
     // Given
-    mockHttpClient.get.and.returnValues(
-      of(validReportCalculationsResponse[1]),
-      of(validReportDataResponse),
-    );
-    mockHttpClient.post.and.returnValue(
+    mockHttpClient.get
+      .mockReturnValueOnce(of(validReportCalculationsResponse[1]))
+      .mockReturnValueOnce(of(validReportDataResponse));
+    mockHttpClient.post.mockReturnValue(
       of({
         id: "calculation-id",
       }),
@@ -150,7 +154,10 @@ describe("SqlReportService", () => {
     );
 
     // Then
-    expect(mockHttpClient.post).toHaveBeenCalledOnceWith(
+    expect(mockHttpClient.post).toHaveBeenCalledTimes(1);
+
+    // Then
+    expect(mockHttpClient.post).toHaveBeenCalledWith(
       `${SqlReportService.API_URL}/report-calculation/report/${report.getId()}`,
       {},
       {
@@ -165,11 +172,10 @@ describe("SqlReportService", () => {
 
   it("should fetch the existing report calculation data if data exist", async () => {
     // Given
-    mockHttpClient.get.and.returnValues(
-      of(validReportCalculationsResponse),
-      of(validReportDataResponse),
-    );
-    mockHttpClient.post.and.returnValue(
+    mockHttpClient.get
+      .mockReturnValueOnce(of(validReportCalculationsResponse))
+      .mockReturnValueOnce(of(validReportDataResponse));
+    mockHttpClient.post.mockReturnValue(
       of({
         id: "calculation-id",
       }),

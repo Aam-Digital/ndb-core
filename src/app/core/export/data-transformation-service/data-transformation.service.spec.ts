@@ -1,4 +1,4 @@
-import { TestBed, waitForAsync } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 
 import { DataTransformationService } from "./data-transformation.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -21,7 +21,7 @@ describe("DataTransformationService", () => {
   let service: DataTransformationService;
   let entityMapper: EntityMapperService;
 
-  beforeEach(waitForAsync(async () => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
     });
@@ -32,7 +32,7 @@ describe("DataTransformationService", () => {
     entityMapper = TestBed.inject(EntityMapperService);
 
     const attendanceService = TestBed.inject(AttendanceService);
-    spyOn(attendanceService, "wrapEventEntity").and.callFake(
+    vi.spyOn(attendanceService, "wrapEventEntity").mockImplementation(
       (entity: Entity) => {
         return new EventWithAttendance(
           entity,
@@ -44,7 +44,7 @@ describe("DataTransformationService", () => {
         );
       },
     );
-  }));
+  });
 
   it("should be created", () => {
     expect(service).toBeTruthy();
@@ -89,14 +89,22 @@ describe("DataTransformationService", () => {
       [school1, school2, school3],
       exportConfig,
     );
-    expect(result1).toEqual([
-      { school_name: "School with student", child_name: "John" },
-      { school_name: "School without student", child_name: [] },
-      {
+    expect(result1).toHaveLength(3);
+    expect(result1[0]).toEqual({
+      school_name: "School with student",
+      child_name: "John",
+    });
+    expect(result1[1]).toEqual({
+      school_name: "School without student",
+      child_name: [],
+    });
+    expect(result1[2]).toEqual(
+      expect.objectContaining({
         school_name: "School with multiple students",
-        child_name: jasmine.arrayWithExactContents(["Jane", "John"]),
-      },
-    ]);
+      }),
+    );
+    expect(result1[2].child_name).toHaveLength(2);
+    expect(result1[2].child_name).toEqual(expect.arrayContaining(["Jane", "John"]));
   });
 
   it("should roll out export to one row for each related entity", async () => {
@@ -286,9 +294,9 @@ describe("DataTransformationService", () => {
     await entityMapper.save(todayNote);
 
     const childrenService = TestBed.inject(ChildrenService);
-    const getNotesInTimespan = spyOn(childrenService, "getNotesInTimespan");
+    const getNotesInTimespan = vi.spyOn(childrenService, "getNotesInTimespan");
 
-    getNotesInTimespan.and.resolveTo([yesterdayNote, todayNote]);
+    getNotesInTimespan.mockResolvedValue([yesterdayNote, todayNote]);
     const startDate = moment().subtract(5, "days").toDate();
     let result = await service.queryAndTransformData(
       [
@@ -303,10 +311,10 @@ describe("DataTransformationService", () => {
     expect(result.map((x) => x.subject)).toEqual(["yesterday", "today"]);
     expect(getNotesInTimespan).toHaveBeenCalledWith(
       startDate,
-      jasmine.anything(), // today's date as default
+      expect.anything(),
     );
 
-    getNotesInTimespan.calls.reset();
+    getNotesInTimespan.mockClear();
     const query = [
       { query: "name" },
       {
@@ -323,8 +331,8 @@ describe("DataTransformationService", () => {
     // TODO for some reason this spy is sometimes (inexplicably) not called:
     // expect(getNotesInTimespan).toHaveBeenCalledWith(startDate, jasmine.anything() );
 
-    getNotesInTimespan.calls.reset();
-    getNotesInTimespan.and.resolveTo([oneWeekAgoNote, yesterdayNote]);
+    getNotesInTimespan.mockClear();
+    getNotesInTimespan.mockResolvedValue([oneWeekAgoNote, yesterdayNote]);
     const startDate2 = moment()
       .subtract(1, "weeks")
       .subtract(1, "day")
@@ -357,9 +365,12 @@ describe("DataTransformationService", () => {
         ],
       },
     ]);
+    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
+
+    expect(result).toHaveLength(2);
 
     expect(result).toEqual(
-      jasmine.arrayWithExactContents([
+      expect.arrayContaining([
         { title: "first", Participants: 2 },
         { title: "second", Participants: 1 },
       ]),
@@ -378,9 +389,12 @@ describe("DataTransformationService", () => {
         subQueries: [{ query: ":count", label: "Amount" }],
       },
     ]);
+    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
+
+    expect(result).toHaveLength(2);
 
     expect(result).toEqual(
-      jasmine.arrayWithExactContents([
+      expect.arrayContaining([
         { Name: "sameName", Amount: 2 },
         { Name: "otherName", Amount: 1 },
       ]),
@@ -407,9 +421,12 @@ describe("DataTransformationService", () => {
         subQueries: [{ query: ":count", label: "Count" }],
       },
     ]);
+    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
+
+    expect(result).toHaveLength(3);
 
     expect(result).toEqual(
-      jasmine.arrayWithExactContents([
+      expect.arrayContaining([
         { Group: "Total", Count: 3 },
         { Group: "A", Count: 2 },
         { Group: "B", Count: 1 },

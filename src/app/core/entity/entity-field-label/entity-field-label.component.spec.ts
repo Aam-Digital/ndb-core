@@ -50,9 +50,9 @@ describe("EntityFieldLabelComponent", () => {
       providers: [
         {
           provide: AdminEntityService,
-          useValue: jasmine.createSpyObj("AdminEntityService", [], {
+          useValue: {
             entitySchemaUpdated: schemaUpdateSubject.asObservable(),
-          }),
+          },
         },
       ],
     }).compileComponents();
@@ -61,7 +61,7 @@ describe("EntityFieldLabelComponent", () => {
     component = fixture.componentInstance;
     entityRegistry = TestBed.inject(EntityRegistry);
 
-    spyOn(entityRegistry, "get").and.returnValue(TestLabelEntity);
+    vi.spyOn(entityRegistry, "get").mockReturnValue(TestLabelEntity);
   });
 
   afterEach(() => {

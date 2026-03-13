@@ -40,7 +40,7 @@ describe("SiteSettingsService", () => {
   });
 
   it("should only publish changes if property has changed", () => {
-    const titleSpy = spyOn(TestBed.inject(Title), "setTitle");
+    const titleSpy = vi.spyOn(TestBed.inject(Title), "setTitle");
     const settings = new SiteSettings();
     settings.siteName = undefined;
     entityMapper.add(settings);
@@ -57,7 +57,7 @@ describe("SiteSettingsService", () => {
 
     expect(titleSpy).toHaveBeenCalled();
 
-    titleSpy.calls.reset();
+    titleSpy.mockClear();
     settings.displayLanguageSelect = true;
     entityMapper.add(settings);
 
@@ -71,7 +71,7 @@ describe("SiteSettingsService", () => {
   });
 
   function expectStyleSetProperty(siteSettingsProperty, cssVariable, value) {
-    spyOn(document.documentElement.style, "setProperty");
+    vi.spyOn(document.documentElement.style, "setProperty");
 
     entityMapper.add(SiteSettings.create({ [siteSettingsProperty]: value }));
 
@@ -90,7 +90,7 @@ describe("SiteSettingsService", () => {
   });
 
   it("should store any settings update in localStorage", fakeAsync(() => {
-    const localStorageSetItemSpy = spyOn(localStorage, "setItem");
+    const localStorageSetItemSpy = vi.spyOn(Storage.prototype, "setItem");
 
     const settings = SiteSettings.create({
       siteName: "test",
@@ -102,24 +102,25 @@ describe("SiteSettingsService", () => {
 
     expect(localStorageSetItemSpy).toHaveBeenCalledWith(
       service.SITE_SETTINGS_LOCAL_STORAGE_KEY,
-      jasmine.any(String),
+      expect.any(String),
     );
-    expect(localStorageSetItemSpy.calls.mostRecent().args[1]).toMatch(
+    expect(vi.mocked(localStorageSetItemSpy).mock.lastCall[1]).toMatch(
       `"siteName":"${settings.siteName}"`,
     );
-    expect(localStorageSetItemSpy.calls.mostRecent().args[1]).toMatch(
+    expect(vi.mocked(localStorageSetItemSpy).mock.lastCall[1]).toMatch(
       `"defaultLanguage":"${settings.defaultLanguage.id}"`,
     );
   }));
 
   it("should init settings from localStorage during startup", fakeAsync(() => {
     const settings = SiteSettings.create({ siteName: "local storage test" });
-    const localStorageGetItemSpy = spyOn(localStorage, "getItem");
-    localStorageGetItemSpy.and.returnValue(JSON.stringify(settings));
+    const localStorageGetItemSpy = vi.spyOn(Storage.prototype, "getItem");
+    localStorageGetItemSpy.mockReturnValue(JSON.stringify(settings));
 
-    const titleSpy = spyOn(TestBed.inject(Title), "setTitle");
+    const titleSpy = vi.spyOn(TestBed.inject(Title), "setTitle");
 
     service.init();
+    tick();
 
     expect(titleSpy).toHaveBeenCalledWith(settings.siteName);
   }));

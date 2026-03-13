@@ -7,7 +7,9 @@ import { OnChanges, SimpleChange, SimpleChanges } from "@angular/core";
  */
 export function assignInputAndTriggerOnChanges(
   component: OnChanges,
-  newInputValues: { [key: string]: any },
+  newInputValues: {
+    [key: string]: any;
+  },
 ) {
   //const oldValue = component[inputName];
   Object.assign(component, newInputValues);

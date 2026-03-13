@@ -7,14 +7,14 @@ import { BehaviorSubject } from "rxjs";
 
 describe("PublicFormPermissionService", () => {
   let service: PublicFormPermissionService;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockEntityMapper: any;
   let mockSessionSubject: BehaviorSubject<any>;
 
   beforeEach(() => {
-    mockEntityMapper = jasmine.createSpyObj("EntityMapperService", [
-      "load",
-      "save",
-    ]);
+    mockEntityMapper = {
+      load: vi.fn().mockName("EntityMapperService.load"),
+      save: vi.fn().mockName("EntityMapperService.save"),
+    };
     mockSessionSubject = new BehaviorSubject(null);
 
     TestBed.configureTestingModule({
@@ -32,97 +32,97 @@ describe("PublicFormPermissionService", () => {
   });
 
   it("should allow access when permissions config cannot be loaded", async () => {
-    mockEntityMapper.load.and.rejectWith(new Error("Config not found"));
+    mockEntityMapper.load.mockRejectedValue(new Error("Config not found"));
 
     const result = await service.hasPublicCreatePermission("Child");
 
-    expect(result).toBeFalse();
+    expect(result).toBe(false);
   });
 
   it("should allow access when no permissions are configured", async () => {
     const emptyConfig = new Config(Config.PERMISSION_KEY, null);
-    mockEntityMapper.load.and.resolveTo(emptyConfig);
+    mockEntityMapper.load.mockResolvedValue(emptyConfig);
 
     const result = await service.hasPublicCreatePermission("Child");
 
-    expect(result).toBeFalse();
+    expect(result).toBe(false);
   });
 
   it("should allow access when public role has create permission", async () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: "Child", action: "create" }],
     });
-    mockEntityMapper.load.and.resolveTo(permissionsConfig);
+    mockEntityMapper.load.mockResolvedValue(permissionsConfig);
 
     const result = await service.hasPublicCreatePermission("Child");
 
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
   });
 
   it("should allow access when public role has manage permission", async () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: "Child", action: "manage" }],
     });
-    mockEntityMapper.load.and.resolveTo(permissionsConfig);
+    mockEntityMapper.load.mockResolvedValue(permissionsConfig);
 
     const result = await service.hasPublicCreatePermission("Child");
 
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
   });
 
   it("should allow access when public role has create permission with grouped/array subjects", async () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: ["Child", "School"], action: "create" }],
     });
-    mockEntityMapper.load.and.resolveTo(permissionsConfig);
+    mockEntityMapper.load.mockResolvedValue(permissionsConfig);
 
     const result = await service.hasPublicCreatePermission("Child");
 
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
   });
 
   it("should allow access when public role has manage permission with grouped/array subjects", async () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: ["Child", "School"], action: "manage" }],
     });
-    mockEntityMapper.load.and.resolveTo(permissionsConfig);
+    mockEntityMapper.load.mockResolvedValue(permissionsConfig);
 
     const result = await service.hasPublicCreatePermission("School");
 
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
   });
 
   it("should deny access when entity type is not in the grouped subjects array", async () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: ["Child", "School"], action: "create" }],
     });
-    mockEntityMapper.load.and.resolveTo(permissionsConfig);
+    mockEntityMapper.load.mockResolvedValue(permissionsConfig);
 
     const result = await service.hasPublicCreatePermission("Teacher");
 
-    expect(result).toBeFalse();
+    expect(result).toBe(false);
   });
 
   it("should deny access when public role has no permission for the entity type", async () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: "School", action: "create" }],
     });
-    mockEntityMapper.load.and.resolveTo(permissionsConfig);
+    mockEntityMapper.load.mockResolvedValue(permissionsConfig);
 
     const result = await service.hasPublicCreatePermission("Child");
 
-    expect(result).toBeFalse();
+    expect(result).toBe(false);
   });
 
   it("should deny access when public role has read permission but not create permission", async () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: "Child", action: "read" }],
     });
-    mockEntityMapper.load.and.resolveTo(permissionsConfig);
+    mockEntityMapper.load.mockResolvedValue(permissionsConfig);
 
     const result = await service.hasPublicCreatePermission("Child");
 
-    expect(result).toBeFalse();
+    expect(result).toBe(false);
   });
 
   it("should detect admin permission when user has admin_app role", () => {
@@ -130,7 +130,7 @@ describe("PublicFormPermissionService", () => {
 
     const result = service.hasAdminPermission();
 
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
   });
 
   it("should not detect admin permission when user lacks admin_app role", () => {
@@ -138,7 +138,7 @@ describe("PublicFormPermissionService", () => {
 
     const result = service.hasAdminPermission();
 
-    expect(result).toBeFalse();
+    expect(result).toBe(false);
   });
 
   it("should not detect admin permission when no session exists", () => {
@@ -146,17 +146,17 @@ describe("PublicFormPermissionService", () => {
 
     const result = service.hasAdminPermission();
 
-    expect(result).toBeFalse();
+    expect(result).toBe(false);
   });
 
   it("should create new permissions config when none exists", async () => {
-    mockEntityMapper.load.and.rejectWith(new Error("Config not found"));
-    mockEntityMapper.save.and.resolveTo(undefined);
+    mockEntityMapper.load.mockRejectedValue(new Error("Config not found"));
+    mockEntityMapper.save.mockResolvedValue(undefined);
 
     await service.addPublicCreatePermission("Child");
 
     expect(mockEntityMapper.save).toHaveBeenCalledWith(
-      jasmine.objectContaining({
+      expect.objectContaining({
         data: {
           public: [
             {
@@ -195,13 +195,13 @@ describe("PublicFormPermissionService", () => {
         { subject: "School", action: "create" },
       ],
     });
-    mockEntityMapper.load.and.resolveTo(existingConfig);
-    mockEntityMapper.save.and.resolveTo(undefined);
+    mockEntityMapper.load.mockResolvedValue(existingConfig);
+    mockEntityMapper.save.mockResolvedValue(undefined);
 
     await service.addPublicCreatePermission("Child");
 
     expect(mockEntityMapper.save).toHaveBeenCalledWith(
-      jasmine.objectContaining({
+      expect.objectContaining({
         data: {
           public: [
             {
@@ -237,7 +237,7 @@ describe("PublicFormPermissionService", () => {
         },
       ],
     });
-    mockEntityMapper.load.and.resolveTo(existingConfig);
+    mockEntityMapper.load.mockResolvedValue(existingConfig);
 
     await service.addPublicCreatePermission("Child");
 
@@ -259,7 +259,7 @@ describe("PublicFormPermissionService", () => {
         },
       ],
     });
-    mockEntityMapper.load.and.resolveTo(existingConfig);
+    mockEntityMapper.load.mockResolvedValue(existingConfig);
 
     await service.addPublicCreatePermission("Child");
 
@@ -270,13 +270,13 @@ describe("PublicFormPermissionService", () => {
     const existingConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: "Child", action: "read" }],
     });
-    mockEntityMapper.load.and.resolveTo(existingConfig);
-    mockEntityMapper.save.and.resolveTo(undefined);
+    mockEntityMapper.load.mockResolvedValue(existingConfig);
+    mockEntityMapper.save.mockResolvedValue(undefined);
 
     await service.addPublicCreatePermission("Child");
 
     expect(mockEntityMapper.save).toHaveBeenCalledWith(
-      jasmine.objectContaining({
+      expect.objectContaining({
         data: {
           public: [
             { subject: "Child", action: "read" },

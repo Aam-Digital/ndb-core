@@ -29,23 +29,23 @@ describe("EditUrlComponent", () => {
   it("should be invalid for value that is not a complete URL", () => {
     component.formControl.setValue("example");
     fixture.detectChanges();
-    expect(component.formControl.hasError("invalid")).toBeTrue();
+    expect(component.formControl.hasError("invalid")).toBe(true);
   });
 
   it("should be valid for empty value", () => {
     component.formControl.setValue("");
     fixture.detectChanges();
-    expect(component.formControl.valid).toBeTrue();
+    expect(component.formControl.valid).toBe(true);
 
     component.formControl.setValue(null);
     fixture.detectChanges();
-    expect(component.formControl.valid).toBeTrue();
+    expect(component.formControl.valid).toBe(true);
   });
 
   it("should be valid for url-like value", () => {
     component.formControl.setValue("https://test.com");
     fixture.detectChanges();
-    expect(component.formControl.valid).toBeTrue();
+    expect(component.formControl.valid).toBe(true);
   });
 
   it("should open link in a new tab when field is disabled and clicked", () => {
@@ -54,7 +54,7 @@ describe("EditUrlComponent", () => {
     component.formControl.disable();
     fixture.detectChanges();
 
-    spyOn(window, "open");
+    vi.spyOn(window, "open");
 
     fixture.debugElement.query(By.css(".clickable")).nativeElement.click();
 

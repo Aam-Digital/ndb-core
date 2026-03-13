@@ -5,19 +5,23 @@ import { ConfigurableEnumConfig } from "../configurable-enum.types";
 import { TestBed } from "@angular/core/testing";
 
 describe("ConfigurableEnumDirective", () => {
-  let mockTemplateRef: jasmine.SpyObj<TemplateRef<any>>;
-  let mockViewContainerRef: jasmine.SpyObj<ViewContainerRef>;
-  let mockEnumService: jasmine.SpyObj<ConfigurableEnumService>;
+  let mockTemplateRef: any;
+  let mockViewContainerRef: any;
+  let mockEnumService: any;
   let directive: ConfigurableEnumDirective;
 
   beforeEach(() => {
-    mockTemplateRef = jasmine.createSpyObj("TemplateRef", ["elementRef"]);
-    mockViewContainerRef = jasmine.createSpyObj("ViewContainerRef", [
-      "createEmbeddedView",
-    ]);
-    mockEnumService = jasmine.createSpyObj("ConfigurableEnumService", [
-      "getEnumValues",
-    ]);
+    mockTemplateRef = {
+      elementRef: vi.fn().mockName("TemplateRef.elementRef"),
+    };
+    mockViewContainerRef = {
+      createEmbeddedView: vi
+        .fn()
+        .mockName("ViewContainerRef.createEmbeddedView"),
+    };
+    mockEnumService = {
+      getEnumValues: vi.fn().mockName("ConfigurableEnumService.getEnumValues"),
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -41,7 +45,7 @@ describe("ConfigurableEnumDirective", () => {
       { id: "1", label: "A" },
       { id: "2", label: "B" },
     ];
-    mockEnumService.getEnumValues.and.returnValue(testEnumValues);
+    mockEnumService.getEnumValues.mockReturnValue(testEnumValues);
 
     directive.appConfigurableEnumOf = testEnumConfigId;
 

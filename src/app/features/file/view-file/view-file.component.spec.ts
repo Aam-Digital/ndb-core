@@ -10,11 +10,13 @@ import { FileService } from "../file.service";
 describe("ViewFileComponent", () => {
   let component: ViewFileComponent;
   let fixture: ComponentFixture<ViewFileComponent>;
-  let mockFileService: jasmine.SpyObj<FileService>;
+  let mockFileService: any;
   let loader: HarnessLoader;
 
   beforeEach(async () => {
-    mockFileService = jasmine.createSpyObj(["showFile"]);
+    mockFileService = {
+      showFile: vi.fn(),
+    };
     await TestBed.configureTestingModule({
       imports: [ViewFileComponent],
       providers: [{ provide: FileService, useValue: mockFileService }],
@@ -36,7 +38,7 @@ describe("ViewFileComponent", () => {
   it("should show file when clicking the button", async () => {
     const button = await loader.getHarness(MatButtonHarness);
 
-    await expectAsync(button.getText()).toBeResolvedTo("test.file");
+    await expect(button.getText()).resolves.toEqual("test.file");
 
     await button.click();
 
@@ -47,7 +49,7 @@ describe("ViewFileComponent", () => {
   });
 
   it("should prevent event bubbling so click is only captured on button", () => {
-    const event = { stopPropagation: jasmine.createSpy() };
+    const event = { stopPropagation: vi.fn() };
 
     component.showFile(event as any);
 

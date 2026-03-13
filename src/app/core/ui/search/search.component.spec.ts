@@ -8,7 +8,8 @@ import {
 
 import { SearchComponent } from "./search.component";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
-import { Subscription } from "rxjs";
+import { firstValueFrom, Subscription } from "rxjs";
+import { take } from "rxjs/operators";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("SearchComponent", () => {
@@ -17,16 +18,16 @@ describe("SearchComponent", () => {
   let component: SearchComponent;
   let fixture: ComponentFixture<SearchComponent>;
 
-  let mockIndexService: jasmine.SpyObj<DatabaseIndexingService>;
+  let mockIndexService: any;
   let subscription: Subscription;
 
   beforeEach(waitForAsync(() => {
-    mockIndexService = jasmine.createSpyObj("mockIndexService", [
-      "queryIndexRaw",
-      "createIndex",
-    ]);
-    mockIndexService.createIndex.and.resolveTo();
-    mockIndexService.queryIndexRaw.and.resolveTo({ rows: [] });
+    mockIndexService = {
+      queryIndexRaw: vi.fn().mockName("mockIndexService.queryIndexRaw"),
+      createIndex: vi.fn().mockName("mockIndexService.createIndex"),
+    };
+    mockIndexService.createIndex.mockResolvedValue(undefined);
+    mockIndexService.queryIndexRaw.mockResolvedValue({ rows: [] });
 
     TestBed.configureTestingModule({
       imports: [SearchComponent, MockedTestingModule.withState()],
@@ -37,7 +38,7 @@ describe("SearchComponent", () => {
   }));
 
   beforeEach(() => {
-    mockIndexService.createIndex.and.resolveTo();
+    mockIndexService.createIndex.mockResolvedValue(undefined);
     fixture = TestBed.createComponent(SearchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -91,21 +92,21 @@ describe("SearchComponent", () => {
     subscr.unsubscribe();
   }));
 
-  function expectResultToBeEmpty(done: DoneFn) {
-    subscription = component.results.subscribe((next) => {
-      expect(next).toEqual([]);
-      expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
-      done();
-    });
+  async function expectResultToBeEmpty() {
+    const next = await firstValueFrom(component.results.pipe(take(1)));
+    expect(next).toEqual([]);
+    expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
   }
 
-  it("should not search for less than one real character of input", (done) => {
-    expectResultToBeEmpty(done);
+  it("should not search for less than one real character of input", async () => {
+    const assertion = expectResultToBeEmpty();
     component.formControl.setValue("   ");
+    await assertion;
   });
 
-  it("should reset results if a a null search is performed", (done) => {
-    expectResultToBeEmpty(done);
+  it("should reset results if a a null search is performed", async () => {
+    const assertion = expectResultToBeEmpty();
     component.formControl.setValue(null);
+    await assertion;
   });
 });

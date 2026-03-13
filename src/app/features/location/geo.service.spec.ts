@@ -9,17 +9,24 @@ import { environment } from "../../../environments/environment";
 
 describe("GeoService", () => {
   let service: GeoService;
-  let mockAnalytics: jasmine.SpyObj<AnalyticsService>;
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockAnalytics: any;
+  let mockConfigService: any;
   let configUpdates = new Subject();
-  let mockHttp: jasmine.SpyObj<HttpClient>;
+  let mockHttp: any;
 
   beforeEach(() => {
     environment.email = "some@mail.com";
-    mockHttp = jasmine.createSpyObj(["get"]);
-    mockHttp.get.and.returnValue(of(undefined));
-    mockConfigService = jasmine.createSpyObj(["getConfig"], { configUpdates });
-    mockAnalytics = jasmine.createSpyObj(["eventTrack"]);
+    mockHttp = {
+      get: vi.fn(),
+    };
+    mockHttp.get.mockReturnValue(of(undefined));
+    mockConfigService = {
+      getConfig: vi.fn(),
+      configUpdates,
+    };
+    mockAnalytics = {
+      eventTrack: vi.fn(),
+    };
     TestBed.configureTestingModule({
       providers: [
         { provide: AnalyticsService, useValue: mockAnalytics },
@@ -36,7 +43,7 @@ describe("GeoService", () => {
 
   it("should use countrycode from config and email from app config", () => {
     const countrycodes = "de,en";
-    mockConfigService.getConfig.and.returnValue({ countrycodes });
+    mockConfigService.getConfig.mockReturnValue({ countrycodes });
     configUpdates.next(undefined);
 
     service.lookup("someSearch").subscribe();

@@ -53,7 +53,7 @@ describe("EditAgeComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  xit("should transform Date to DateOfBirth", async () => {
+  it.skip("should transform Date to DateOfBirth", async () => {
     // the updated implementation doesn't support this anymore
     // but has a separate age signal
 

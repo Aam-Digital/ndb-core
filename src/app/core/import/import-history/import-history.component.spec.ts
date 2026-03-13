@@ -16,9 +16,9 @@ describe("ImportHistoryComponent", () => {
   let component: ImportHistoryComponent;
   let fixture: ComponentFixture<ImportHistoryComponent>;
 
-  let mockImportService: jasmine.SpyObj<ImportService>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
-  let mockConfirmationDialogService: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockImportService: any;
+  let mockEntityMapper: any;
+  let mockConfirmationDialogService: any;
 
   const testImport1: ImportMetadata = ImportMetadata.create({
     config: null,
@@ -32,11 +32,19 @@ describe("ImportHistoryComponent", () => {
   });
 
   beforeEach(async () => {
-    mockImportService = jasmine.createSpyObj(["executeImport", "undoImport"]);
-    mockEntityMapper = jasmine.createSpyObj(["receiveUpdates", "loadType"]);
-    mockEntityMapper.loadType.and.resolveTo([]);
-    mockEntityMapper.receiveUpdates.and.returnValue(of());
-    mockConfirmationDialogService = jasmine.createSpyObj(["getConfirmation"]);
+    mockImportService = {
+      executeImport: vi.fn(),
+      undoImport: vi.fn(),
+    };
+    mockEntityMapper = {
+      receiveUpdates: vi.fn(),
+      loadType: vi.fn(),
+    };
+    mockEntityMapper.loadType.mockResolvedValue([]);
+    mockEntityMapper.receiveUpdates.mockReturnValue(of());
+    mockConfirmationDialogService = {
+      getConfirmation: vi.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [ImportHistoryComponent],
@@ -56,7 +64,7 @@ describe("ImportHistoryComponent", () => {
   });
 
   it("should load all previous imports, sorted by date", fakeAsync(() => {
-    mockEntityMapper.loadType.and.resolveTo([testImport1, testImport2]);
+    mockEntityMapper.loadType.mockResolvedValue([testImport1, testImport2]);
 
     component.ngOnInit();
     tick();
@@ -65,14 +73,14 @@ describe("ImportHistoryComponent", () => {
   }));
 
   it("should ask for confirmation before undo action", fakeAsync(() => {
-    mockConfirmationDialogService.getConfirmation.and.resolveTo(false);
+    mockConfirmationDialogService.getConfirmation.mockResolvedValue(false);
     component.undoImport(testImport1);
     tick();
 
     expect(mockConfirmationDialogService.getConfirmation).toHaveBeenCalled();
     expect(mockImportService.undoImport).not.toHaveBeenCalled();
 
-    mockConfirmationDialogService.getConfirmation.and.resolveTo(true);
+    mockConfirmationDialogService.getConfirmation.mockResolvedValue(true);
     component.undoImport(testImport1);
     tick();
 

@@ -19,14 +19,14 @@ import { BulkOperationStateService } from "./bulk-operation-state.service";
 
 describe("EntityActionsService", () => {
   let service: EntityActionsService;
-  let mockedEntityMapper: jasmine.SpyObj<EntityMapperService>;
-  let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
-  let mockSnackBarRef: jasmine.SpyObj<MatSnackBarRef<TextOnlySnackBar>>;
-  let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockedEntityMapper: any;
+  let snackBarSpy: any;
+  let mockSnackBarRef: any;
+  let mockConfirmationDialog: any;
   let mockRouter;
-  let mockedEntityDeleteService: jasmine.SpyObj<EntityDeleteService>;
-  let mockedEntityAnonymizeService: jasmine.SpyObj<EntityAnonymizeService>;
-  let mockedBulkOperationState: jasmine.SpyObj<BulkOperationStateService>;
+  let mockedEntityDeleteService: any;
+  let mockedEntityAnonymizeService: any;
+  let mockedBulkOperationState: any;
 
   let singleTestEntity: Entity;
   let severalTestEntities: Entity[] = [];
@@ -37,41 +37,50 @@ describe("EntityActionsService", () => {
     severalTestEntities[1] = new Entity();
     severalTestEntities[2] = new Entity();
 
-    mockedEntityDeleteService = jasmine.createSpyObj(["deleteEntity"]);
-    mockedEntityDeleteService.deleteEntity.and.resolveTo(
+    mockedEntityDeleteService = {
+      deleteEntity: vi.fn(),
+    };
+    mockedEntityDeleteService.deleteEntity.mockResolvedValue(
       new CascadingActionResult([singleTestEntity]),
     );
-    mockedEntityAnonymizeService = jasmine.createSpyObj(["anonymizeEntity"]);
-    mockedEntityAnonymizeService.anonymizeEntity.and.resolveTo(
+    mockedEntityAnonymizeService = {
+      anonymizeEntity: vi.fn(),
+    };
+    mockedEntityAnonymizeService.anonymizeEntity.mockResolvedValue(
       new CascadingActionResult([singleTestEntity]),
     );
-    mockedBulkOperationState = jasmine.createSpyObj([
-      "startBulkOperation",
-      "completeBulkOperation",
-      "waitForBulkOperationToFinish",
-    ]);
-    mockedBulkOperationState.waitForBulkOperationToFinish.and.resolveTo();
-    mockedEntityMapper = jasmine.createSpyObj([
-      "save",
-      "saveAll",
-      "receiveUpdates",
-      "loadType",
-    ]);
-    mockedEntityMapper.receiveUpdates.and.returnValue(of());
+    mockedBulkOperationState = {
+      startBulkOperation: vi.fn(),
+      completeBulkOperation: vi.fn(),
+      waitForBulkOperationToFinish: vi.fn(),
+    };
+    mockedBulkOperationState.waitForBulkOperationToFinish.mockResolvedValue();
+    mockedEntityMapper = {
+      save: vi.fn(),
+      saveAll: vi.fn(),
+      receiveUpdates: vi.fn(),
+      loadType: vi.fn(),
+    };
+    mockedEntityMapper.receiveUpdates.mockReturnValue(of());
 
-    snackBarSpy = jasmine.createSpyObj(["open"]);
-    mockSnackBarRef = jasmine.createSpyObj(["onAction", "afterDismissed"]);
-    mockSnackBarRef.onAction.and.returnValue(of());
-    snackBarSpy.open.and.returnValue(mockSnackBarRef);
+    snackBarSpy = {
+      open: vi.fn(),
+    };
+    mockSnackBarRef = {
+      onAction: vi.fn(),
+      afterDismissed: vi.fn(),
+    };
+    mockSnackBarRef.onAction.mockReturnValue(of());
+    snackBarSpy.open.mockReturnValue(mockSnackBarRef);
 
-    mockConfirmationDialog = jasmine.createSpyObj([
-      "getConfirmation",
-      "showProgressDialog",
-    ]);
-    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
-    mockConfirmationDialog.showProgressDialog.and.returnValue(
-      jasmine.createSpyObj(["close"]),
-    );
+    mockConfirmationDialog = {
+      getConfirmation: vi.fn(),
+      showProgressDialog: vi.fn(),
+    };
+    mockConfirmationDialog.getConfirmation.mockResolvedValue(true);
+    mockConfirmationDialog.showProgressDialog.mockReturnValue({
+      close: vi.fn(),
+    });
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
@@ -91,7 +100,9 @@ describe("EntityActionsService", () => {
         },
         {
           provide: PublicFormsService,
-          useValue: jasmine.createSpyObj(["initCustomFormActions"]),
+          useValue: {
+            initCustomFormActions: vi.fn(),
+          },
         },
         {
           provide: BulkOperationStateService,
@@ -100,13 +111,13 @@ describe("EntityActionsService", () => {
       ],
     });
     mockRouter = TestBed.inject(Router);
-    spyOn(mockRouter, "navigate");
+    vi.spyOn(mockRouter, "navigate").mockResolvedValue(true);
 
     service = TestBed.inject(EntityActionsService);
   });
 
   it("should return false when user cancels confirmation", async () => {
-    mockConfirmationDialog.getConfirmation.and.resolveTo(false);
+    mockConfirmationDialog.getConfirmation.mockResolvedValue(false);
 
     const result = await service.delete(new Entity());
 
@@ -117,8 +128,8 @@ describe("EntityActionsService", () => {
 
   it("should delete a single entity, show snackbar confirmation and navigate back", async () => {
     // onAction is never called
-    mockSnackBarRef.onAction.and.returnValues(NEVER);
-    mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
+    mockSnackBarRef.onAction.mockReturnValueOnce(NEVER);
+    mockSnackBarRef.afterDismissed.mockReturnValue(of(undefined));
 
     const result = await service.delete(singleTestEntity, true);
 
@@ -133,8 +144,8 @@ describe("EntityActionsService", () => {
 
   it("should delete several entities and show snackbar confirmation", async () => {
     // onAction is never called
-    mockSnackBarRef.onAction.and.returnValues(NEVER);
-    mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
+    mockSnackBarRef.onAction.mockReturnValueOnce(NEVER);
+    mockSnackBarRef.afterDismissed.mockReturnValue(of(undefined));
 
     const result = await service.delete(severalTestEntities);
 
@@ -155,9 +166,9 @@ describe("EntityActionsService", () => {
     );
   });
 
-  it("should undo the deletion of several entities", fakeAsync(async () => {
+  it("should undo the deletion of several entities", fakeAsync(() => {
     const otherAffectedEntities = [new Entity(), new Entity()];
-    mockedEntityDeleteService.deleteEntity.and.resolveTo(
+    mockedEntityDeleteService.deleteEntity.mockResolvedValue(
       new CascadingActionResult([
         ...severalTestEntities,
         ...otherAffectedEntities,
@@ -166,14 +177,14 @@ describe("EntityActionsService", () => {
 
     // Mock a snackbar where 'undo' is pressed
     const onSnackbarAction = new Subject<void>();
-    mockSnackBarRef.onAction.and.returnValue(onSnackbarAction.asObservable());
+    mockSnackBarRef.onAction.mockReturnValue(onSnackbarAction.asObservable());
 
-    mockedEntityMapper.save.and.resolveTo();
+    mockedEntityMapper.save.mockResolvedValue(undefined);
 
     service.delete(severalTestEntities, true);
     tick();
 
-    mockRouter.navigate.calls.reset();
+    mockRouter.navigate.mockClear();
     onSnackbarAction.next();
     onSnackbarAction.complete();
     tick();
@@ -188,20 +199,20 @@ describe("EntityActionsService", () => {
 
   it("should re-save all affected entities and navigate back to entity on undo", fakeAsync(() => {
     const anotherAffectedEntity = new Entity();
-    mockedEntityDeleteService.deleteEntity.and.resolveTo(
+    mockedEntityDeleteService.deleteEntity.mockResolvedValue(
       new CascadingActionResult([singleTestEntity, anotherAffectedEntity]),
     );
 
     // Mock a snackbar where 'undo' is pressed
     const onSnackbarAction = new Subject<void>();
-    mockSnackBarRef.onAction.and.returnValue(onSnackbarAction.asObservable());
+    mockSnackBarRef.onAction.mockReturnValue(onSnackbarAction.asObservable());
 
-    mockedEntityMapper.save.and.resolveTo();
+    mockedEntityMapper.save.mockResolvedValue(undefined);
 
     service.delete(singleTestEntity, true);
     tick();
 
-    mockRouter.navigate.calls.reset();
+    mockRouter.navigate.mockClear();
     onSnackbarAction.next();
     onSnackbarAction.complete();
     tick();
@@ -216,8 +227,8 @@ describe("EntityActionsService", () => {
 
   it("should anonymize and save a single entity", async () => {
     // onAction is never called
-    mockSnackBarRef.onAction.and.returnValues(NEVER);
-    mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
+    mockSnackBarRef.onAction.mockReturnValueOnce(NEVER);
+    mockSnackBarRef.afterDismissed.mockReturnValue(of(undefined));
 
     const result = await service.anonymize(singleTestEntity);
 
@@ -230,8 +241,8 @@ describe("EntityActionsService", () => {
 
   it("should anonymize and save several entities and show snackbar confirmation", async () => {
     // onAction is never called
-    mockSnackBarRef.onAction.and.returnValues(NEVER);
-    mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
+    mockSnackBarRef.onAction.mockReturnValueOnce(NEVER);
+    mockSnackBarRef.afterDismissed.mockReturnValue(of(undefined));
 
     const result = await service.anonymize(severalTestEntities);
 
@@ -251,9 +262,9 @@ describe("EntityActionsService", () => {
     );
   });
 
-  it("should undo the anonymization of several entities", fakeAsync(async () => {
+  it("should undo the anonymization of several entities", fakeAsync(() => {
     const otherAffectedEntities = [new Entity(), new Entity()];
-    mockedEntityAnonymizeService.anonymizeEntity.and.resolveTo(
+    mockedEntityAnonymizeService.anonymizeEntity.mockResolvedValue(
       new CascadingActionResult([
         ...severalTestEntities,
         ...otherAffectedEntities,
@@ -262,9 +273,9 @@ describe("EntityActionsService", () => {
 
     // Mock a snackbar where 'undo' is pressed
     const onSnackbarAction = new Subject<void>();
-    mockSnackBarRef.onAction.and.returnValue(onSnackbarAction.asObservable());
+    mockSnackBarRef.onAction.mockReturnValue(onSnackbarAction.asObservable());
 
-    mockedEntityMapper.save.and.resolveTo();
+    mockedEntityMapper.save.mockResolvedValue(undefined);
 
     service.anonymize(severalTestEntities);
     tick();
@@ -282,8 +293,8 @@ describe("EntityActionsService", () => {
 
   it("should archive and save a single entity and show snackbar confirmation", async () => {
     // onAction is never called
-    mockSnackBarRef.onAction.and.returnValues(NEVER);
-    mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
+    mockSnackBarRef.onAction.mockReturnValueOnce(NEVER);
+    mockSnackBarRef.afterDismissed.mockReturnValue(of(undefined));
 
     let expectedSavedEntity = singleTestEntity.copy();
     expectedSavedEntity.inactive = true;
@@ -296,8 +307,8 @@ describe("EntityActionsService", () => {
 
   it("should archive and save several entities and show snackbar confirmation", async () => {
     // onAction is never called
-    mockSnackBarRef.onAction.and.returnValues(NEVER);
-    mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
+    mockSnackBarRef.onAction.mockReturnValueOnce(NEVER);
+    mockSnackBarRef.afterDismissed.mockReturnValue(of(undefined));
 
     let expectedSavedEntities = severalTestEntities.map((e) => e.copy());
     expectedSavedEntities.forEach((e) => (e.inactive = true));
@@ -317,7 +328,7 @@ describe("EntityActionsService", () => {
 
     await service.archive(singleTestEntity);
     expect(mockedEntityMapper.save).toHaveBeenCalledWith(expectedSavedEntity);
-    mockedEntityMapper.save.calls.reset();
+    mockedEntityMapper.save.mockClear();
 
     await service.undoArchive(singleTestEntity);
     expect(mockedEntityMapper.save).toHaveBeenCalledWith(singleTestEntity);
@@ -332,7 +343,7 @@ describe("EntityActionsService", () => {
     expect(mockedEntityMapper.saveAll).toHaveBeenCalledWith(
       expectedSavedEntities,
     );
-    mockedEntityMapper.saveAll.calls.reset();
+    mockedEntityMapper.saveAll.mockClear();
 
     await service.undoArchive(severalTestEntities);
     expect(mockedEntityMapper.save).toHaveBeenCalledWith(

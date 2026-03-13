@@ -19,25 +19,24 @@ import { LoginState } from "../session/session-states/login-state.enum";
 describe("AnalyticsService", () => {
   let service: AnalyticsService;
 
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockConfigService: any;
   const configUpdates = new Subject();
-  let mockMatomo: jasmine.SpyObj<Angulartics2Matomo>;
-  let mockAngulartics: jasmine.SpyObj<Angulartics2>;
+  let mockMatomo: any;
+  let mockAngulartics: any;
   let siteNameSubject = new Subject();
 
   beforeEach(() => {
-    mockConfigService = jasmine.createSpyObj(
-      "mockConfigService",
-      ["getConfig"],
-      { configUpdates: configUpdates },
-    );
-    mockMatomo = jasmine.createSpyObj("mockMatomo", [
-      "setUsername",
-      "startTracking",
-    ]);
-    mockAngulartics = jasmine.createSpyObj([], {
-      setUserProperties: { next: jasmine.createSpy() },
-    });
+    mockConfigService = {
+      getConfig: vi.fn().mockName("mockConfigService.getConfig"),
+      configUpdates: configUpdates,
+    };
+    mockMatomo = {
+      setUsername: vi.fn().mockName("mockMatomo.setUsername"),
+      startTracking: vi.fn().mockName("mockMatomo.startTracking"),
+    };
+    mockAngulartics = {
+      setUserProperties: { next: vi.fn() },
+    };
 
     TestBed.configureTestingModule({
       imports: [Angulartics2Module.forRoot(), RouterTestingModule],
@@ -68,14 +67,14 @@ describe("AnalyticsService", () => {
   });
 
   // TODO these tests currently dont work because init is called before config is loaded
-  xit("should not track if no url or site_id", () => {
-    mockConfigService.getConfig.and.returnValue({});
+  it.skip("should not track if no url or site_id", () => {
+    mockConfigService.getConfig.mockReturnValue({});
     service.init();
     expect(mockMatomo.startTracking).not.toHaveBeenCalled();
   });
 
-  xit("should not track if no usage analytics config", () => {
-    mockConfigService.getConfig.and.returnValue(undefined);
+  it.skip("should not track if no usage analytics config", () => {
+    mockConfigService.getConfig.mockReturnValue(undefined);
     service.init();
     expect(mockMatomo.startTracking).not.toHaveBeenCalled();
   });
@@ -92,12 +91,12 @@ describe("AnalyticsService", () => {
       site_id: "101",
       url: "test-endpoint",
     };
-    mockConfigService.getConfig.and.returnValue(testAnalyticsConfig);
+    mockConfigService.getConfig.mockReturnValue(testAnalyticsConfig);
     service.init();
 
     configUpdates.next(new Config());
 
-    expect(window["_paq"]).toContain([
+    expect(window["_paq"]).toContainEqual([
       "setSiteId",
       testAnalyticsConfig.site_id,
     ]);
@@ -110,10 +109,10 @@ describe("AnalyticsService", () => {
       url: "test-endpoint",
     };
     service.init();
-    mockConfigService.getConfig.and.returnValue(testAnalyticsConfig);
+    mockConfigService.getConfig.mockReturnValue(testAnalyticsConfig);
     configUpdates.next(new Config());
 
-    expect(window["_paq"]).toContain([
+    expect(window["_paq"]).toContainEqual([
       "setTrackerUrl",
       testAnalyticsConfig.url + "/matomo.php",
     ]);
@@ -123,10 +122,10 @@ describe("AnalyticsService", () => {
       site_id: "101",
       url: "test-endpoint/",
     };
-    mockConfigService.getConfig.and.returnValue(testAnalyticsConfig2);
+    mockConfigService.getConfig.mockReturnValue(testAnalyticsConfig2);
     configUpdates.next(new Config());
 
-    expect(window["_paq"]).toContain([
+    expect(window["_paq"]).toContainEqual([
       "setTrackerUrl",
       testAnalyticsConfig2.url + "matomo.php",
     ]);

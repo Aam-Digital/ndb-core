@@ -86,12 +86,12 @@ describe("EditProgressDashboardComponent", () => {
 
   it("should append a new part", () => {
     component.addPart();
-    expect(component.parts).toHaveSize(4);
+    expect(component.parts).toHaveLength(4);
   });
 
   it("should delete a part", () => {
     component.removePart(1);
-    expect(component.parts).toHaveSize(2);
+    expect(component.parts).toHaveLength(2);
     expect(component.parts).toHaveValue([
       mockDialogData.parts[0],
       mockDialogData.parts[2],

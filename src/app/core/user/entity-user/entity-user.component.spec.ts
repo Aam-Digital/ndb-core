@@ -15,8 +15,8 @@ describe("EntityUserComponent", () => {
   let component: EntityUserComponent;
   let fixture: ComponentFixture<EntityUserComponent>;
 
-  let mockUserAdminService: jasmine.SpyObj<UserAdminService>;
-  let mockHttp: jasmine.SpyObj<HttpClient>;
+  let mockUserAdminService: any;
+  let mockHttp: any;
 
   const USER_ID = "test-id";
   const assignedRole: Role = {
@@ -35,21 +35,23 @@ describe("EntityUserComponent", () => {
       enabled: true,
     };
 
-    mockUserAdminService = jasmine.createSpyObj([
-      "getUser",
-      "getAllRoles",
-      "updateUser",
-      "createUser",
-      "deleteUser",
-    ]);
-    mockUserAdminService.getUser.and.returnValue(of(keycloakUser));
-    mockUserAdminService.updateUser.and.returnValue(of({ userUpdated: true }));
-    mockUserAdminService.deleteUser.and.returnValue(of({ userDeleted: true }));
-    mockUserAdminService.createUser.and.returnValue(of(keycloakUser));
-    mockUserAdminService.getAllRoles.and.returnValue(of([assignedRole]));
+    mockUserAdminService = {
+      getUser: vi.fn(),
+      getAllRoles: vi.fn(),
+      updateUser: vi.fn(),
+      createUser: vi.fn(),
+      deleteUser: vi.fn(),
+    };
+    mockUserAdminService.getUser.mockReturnValue(of(keycloakUser));
+    mockUserAdminService.updateUser.mockReturnValue(of({ userUpdated: true }));
+    mockUserAdminService.deleteUser.mockReturnValue(of({ userDeleted: true }));
+    mockUserAdminService.createUser.mockReturnValue(of(keycloakUser));
+    mockUserAdminService.getAllRoles.mockReturnValue(of([assignedRole]));
 
-    mockHttp = jasmine.createSpyObj(["post"]);
-    mockHttp.post.and.returnValue(of({}));
+    mockHttp = {
+      post: vi.fn(),
+    };
+    mockHttp.post.mockReturnValue(of({}));
 
     await TestBed.configureTestingModule({
       imports: [EntityUserComponent],

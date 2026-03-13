@@ -9,14 +9,18 @@ import { ConfigService } from "./config.service";
 
 describe("ConfigService", () => {
   let service: ConfigService;
-  let entityMapper: jasmine.SpyObj<EntityMapperService>;
+  let entityMapper: any;
   const updateSubject = new Subject<UpdatedEntity<Config>>();
 
   beforeEach(waitForAsync(() => {
-    entityMapper = jasmine.createSpyObj(["load", "save", "receiveUpdates"]);
-    entityMapper.receiveUpdates.and.returnValue(updateSubject);
-    entityMapper.load.and.rejectWith();
-    entityMapper.save.and.resolveTo([]);
+    entityMapper = {
+      load: vi.fn(),
+      save: vi.fn(),
+      receiveUpdates: vi.fn(),
+    };
+    entityMapper.receiveUpdates.mockReturnValue(updateSubject);
+    entityMapper.load.mockRejectedValue();
+    entityMapper.save.mockResolvedValue([]);
     TestBed.configureTestingModule({
       providers: [{ provide: EntityMapperService, useValue: entityMapper }],
     });
@@ -58,7 +62,7 @@ describe("ConfigService", () => {
   it("should load the config from the entity mapper", fakeAsync(() => {
     const testConfig = new Config();
     testConfig.data = { testKey: "testValue" };
-    entityMapper.load.and.resolveTo(testConfig);
+    entityMapper.load.mockResolvedValue(testConfig);
 
     service.loadOnce();
     expect(entityMapper.load).toHaveBeenCalled();
@@ -67,7 +71,7 @@ describe("ConfigService", () => {
   }));
 
   it("should emit the config once it is loaded", fakeAsync(() => {
-    entityMapper.load.and.rejectWith("No config found");
+    entityMapper.load.mockRejectedValue("No config found");
     const configLoaded = firstValueFrom(service.configUpdates);
 
     service.loadOnce();
@@ -80,7 +84,7 @@ describe("ConfigService", () => {
     tick();
 
     expect(service.getConfig("testKey")).toBe("testValue");
-    return expectAsync(configLoaded).toBeResolvedTo(testConfig);
+    return expect(configLoaded).resolves.toEqual(testConfig);
   }));
 
   it("should correctly return prefixed fields", fakeAsync(() => {
@@ -90,20 +94,20 @@ describe("ConfigService", () => {
       "other:1": { name: "wrong" },
       "test:2": { name: "second" },
     };
-    entityMapper.load.and.resolveTo(testConfig);
+    entityMapper.load.mockResolvedValue(testConfig);
     service.loadOnce();
     tick();
     const result = service.getAllConfigs<any>("test:");
-    expect(result).toHaveSize(2);
-    expect(result).toContain({ name: "first", _id: "test:1" });
-    expect(result).toContain({ name: "second", _id: "test:2" });
+    expect(result).toHaveLength(2);
+    expect(result).toContainEqual({ name: "first", _id: "test:1" });
+    expect(result).toContainEqual({ name: "second", _id: "test:2" });
     expect(result).not.toContain({ name: "wrong", _id: "other:1" });
   }));
 
   it("should return single field", fakeAsync(() => {
     const testConfig = new Config();
     testConfig.data = { first: "correct", second: "wrong" };
-    entityMapper.load.and.resolveTo(testConfig);
+    entityMapper.load.mockResolvedValue(testConfig);
     service.loadOnce();
     tick();
     const result = service.getConfig<any>("first");
@@ -114,7 +118,7 @@ describe("ConfigService", () => {
     const newConfig = { test: "data" };
     service.saveConfig(newConfig);
     expect(entityMapper.save).toHaveBeenCalled();
-    const lastCall = entityMapper.save.calls.mostRecent().args[0] as Config;
+    const lastCall = vi.mocked(entityMapper.save).mock.lastCall[0] as Config;
     expect(lastCall).toBeInstanceOf(Config);
     expect(lastCall.data).toEqual({ test: "data" });
   });
@@ -123,7 +127,7 @@ describe("ConfigService", () => {
     const config = new Config();
     config.data = { first: "foo", second: "bar" };
     // @ts-ignore disable migrations for this test
-    spyOn(service, "applyMigrations").and.callFake((c) => c);
+    vi.spyOn(service, "applyMigrations").mockImplementation((c) => c);
 
     const expected = JSON.stringify(config.data);
     updateSubject.next({ entity: config, type: "update" });

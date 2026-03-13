@@ -8,15 +8,19 @@ import { MenuItem } from "app/core/ui/navigation/menu-item";
 describe("RoutePermissionsService", () => {
   let service: RoutePermissionsService;
 
-  let mockUserRoleGuard: jasmine.SpyObj<UserRoleGuard>;
-  let mockEntityPermissionGuard: jasmine.SpyObj<EntityPermissionGuard>;
+  let mockUserRoleGuard: any;
+  let mockEntityPermissionGuard: any;
 
   beforeEach(() => {
-    mockEntityPermissionGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
-    mockEntityPermissionGuard.checkRoutePermissions.and.resolveTo(true);
+    mockEntityPermissionGuard = {
+      checkRoutePermissions: vi.fn(),
+    };
+    mockEntityPermissionGuard.checkRoutePermissions.mockResolvedValue(true);
 
-    mockUserRoleGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
-    mockUserRoleGuard.checkRoutePermissions.and.callFake(
+    mockUserRoleGuard = {
+      checkRoutePermissions: vi.fn(),
+    };
+    mockUserRoleGuard.checkRoutePermissions.mockImplementation(
       async (path: string) => {
         if (path === "allowed") {
           return true;
@@ -105,19 +109,3 @@ describe("RoutePermissionsService", () => {
     expect(filteredItems).toEqual([]);
   });
 });
-
-/*
-
-Simple:
-  item 1
-  item 2  x
-
-Nested:
-  item 1
-    1.1
-    1.2   x
-
-  item 2  x
-    2.1   x
-
- */

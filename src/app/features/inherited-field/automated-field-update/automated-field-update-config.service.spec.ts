@@ -113,8 +113,10 @@ describe("AutomatedFieldUpdateConfigService", () => {
     afterClosed: () => mockDialogAfterClosed(),
   } as any;
 
-  const mockDialog = jasmine.createSpyObj<MatDialog>("MatDialog", ["open"]);
-  mockDialog.open.and.callFake((component, config) => {
+  const mockDialog = {
+    open: vi.fn().mockName("MatDialog.open"),
+  };
+  mockDialog.open.mockImplementation((component, config) => {
     mockDialogAfterClosed = () => of(config?.data?.entities || []);
     return mockDialogRef;
   });

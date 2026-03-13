@@ -18,20 +18,26 @@ describe("ImportReviewDataComponent", () => {
   let component: ImportReviewDataComponent;
   let fixture: ComponentFixture<ImportReviewDataComponent>;
 
-  let mockImportService: jasmine.SpyObj<ImportService>;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
-  let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockImportService: any;
+  let mockDialog: any;
+  let mockConfirmationDialog: any;
 
   beforeEach(async () => {
-    mockImportService = jasmine.createSpyObj(["transformRawDataToEntities"]);
-    mockImportService.transformRawDataToEntities.and.resolveTo({
+    mockImportService = {
+      transformRawDataToEntities: vi.fn(),
+    };
+    mockImportService.transformRawDataToEntities.mockResolvedValue({
       entities: [],
       errors: [],
     });
-    mockDialog = jasmine.createSpyObj(["open"]);
-    mockDialog.open.and.returnValue({ afterClosed: () => of({}) } as any);
-    mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
-    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
+    mockDialog = {
+      open: vi.fn(),
+    };
+    mockDialog.open.mockReturnValue({ afterClosed: () => of({}) } as any);
+    mockConfirmationDialog = {
+      getConfirmation: vi.fn(),
+    };
+    mockConfirmationDialog.getConfirmation.mockResolvedValue(true);
 
     await TestBed.configureTestingModule({
       imports: [MockedTestingModule, ImportReviewDataComponent],
@@ -55,7 +61,7 @@ describe("ImportReviewDataComponent", () => {
 
   it("should parse data whenever it changes", fakeAsync(() => {
     const testEntities = [new TestEntity("1")];
-    mockImportService.transformRawDataToEntities.and.resolveTo({
+    mockImportService.transformRawDataToEntities.mockResolvedValue({
       entities: testEntities,
       errors: [],
     });
@@ -86,10 +92,10 @@ describe("ImportReviewDataComponent", () => {
   }));
 
   it("should handle errors from transformRawDataToEntities gracefully", fakeAsync(() => {
-    mockImportService.transformRawDataToEntities.and.rejectWith(
+    mockImportService.transformRawDataToEntities.mockRejectedValue(
       new Error("location lookup failed"),
     );
-    spyOn(Logging, "error");
+    vi.spyOn(Logging, "error");
 
     component.columnMapping = [{ column: "x", propertyName: "name" }];
     component.stepIsFocused = true;
@@ -100,13 +106,13 @@ describe("ImportReviewDataComponent", () => {
     tick();
 
     expect(component.mappedEntities).toEqual([]);
-    expect(component.isLoading).toBeFalse();
+    expect(component.isLoading).toBe(false);
     expect(Logging.error).toHaveBeenCalled();
   }));
 
   it("should show confirmation dialog and keep entities when user continues after transformation errors", fakeAsync(() => {
     const testEntities = [new TestEntity("1")];
-    mockImportService.transformRawDataToEntities.and.resolveTo({
+    mockImportService.transformRawDataToEntities.mockResolvedValue({
       entities: testEntities,
       errors: [
         {
@@ -117,7 +123,7 @@ describe("ImportReviewDataComponent", () => {
         },
       ],
     });
-    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
+    mockConfirmationDialog.getConfirmation.mockResolvedValue(true);
 
     component.columnMapping = [{ column: "x", propertyName: "name" }];
     component.stepIsFocused = true;
@@ -129,12 +135,12 @@ describe("ImportReviewDataComponent", () => {
 
     expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
     expect(component.mappedEntities).toEqual(testEntities);
-    expect(component.isLoading).toBeFalse();
+    expect(component.isLoading).toBe(false);
   }));
 
   it("should continue preview even if transformation dialog resolves false", fakeAsync(() => {
     const testEntities = [new TestEntity("1")];
-    mockImportService.transformRawDataToEntities.and.resolveTo({
+    mockImportService.transformRawDataToEntities.mockResolvedValue({
       entities: testEntities,
       errors: [
         {
@@ -145,7 +151,7 @@ describe("ImportReviewDataComponent", () => {
         },
       ],
     });
-    mockConfirmationDialog.getConfirmation.and.resolveTo(false);
+    mockConfirmationDialog.getConfirmation.mockResolvedValue(false);
 
     component.columnMapping = [{ column: "x", propertyName: "name" }];
     component.stepIsFocused = true;
@@ -157,12 +163,12 @@ describe("ImportReviewDataComponent", () => {
 
     expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
     expect(component.mappedEntities).toEqual(testEntities);
-    expect(component.isLoading).toBeFalse();
+    expect(component.isLoading).toBe(false);
   }));
 
   it("should show confirmation dialog when preview becomes visible with errors", fakeAsync(() => {
     const testEntities = [new TestEntity("1")];
-    mockImportService.transformRawDataToEntities.and.resolveTo({
+    mockImportService.transformRawDataToEntities.mockResolvedValue({
       entities: testEntities,
       errors: [
         {
@@ -197,12 +203,12 @@ describe("ImportReviewDataComponent", () => {
     expect(mockImportService.transformRawDataToEntities).toHaveBeenCalled();
     expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
     expect(component.mappedEntities).toEqual(testEntities);
-    expect(component.isLoading).toBeFalse();
+    expect(component.isLoading).toBe(false);
   }));
 
   it("should delay parsing until preview is visible for performance", fakeAsync(() => {
     const testEntities = [new TestEntity("1")];
-    mockImportService.transformRawDataToEntities.and.resolveTo({
+    mockImportService.transformRawDataToEntities.mockResolvedValue({
       entities: testEntities,
       errors: [],
     });
@@ -232,7 +238,7 @@ describe("ImportReviewDataComponent", () => {
 
   it("should not re-parse when only navigating away and back without data changes", fakeAsync(() => {
     const testEntities = [new TestEntity("1")];
-    mockImportService.transformRawDataToEntities.and.resolveTo({
+    mockImportService.transformRawDataToEntities.mockResolvedValue({
       entities: testEntities,
       errors: [],
     });
@@ -249,7 +255,7 @@ describe("ImportReviewDataComponent", () => {
     expect(mockImportService.transformRawDataToEntities).toHaveBeenCalledTimes(
       1,
     );
-    mockImportService.transformRawDataToEntities.calls.reset();
+    mockImportService.transformRawDataToEntities.mockClear();
 
     // Navigate away from preview
     component.stepIsFocused = false;

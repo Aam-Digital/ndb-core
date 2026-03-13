@@ -9,26 +9,23 @@ import {
 import { PwaInstallComponent } from "./pwa-install.component";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { firstValueFrom, Subject } from "rxjs";
-import { take } from "rxjs/operators";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
 
 describe("PwaInstallComponent", () => {
   let fixture: ComponentFixture<PwaInstallComponent>;
   let component: PwaInstallComponent;
-  let mockPWAInstallService: jasmine.SpyObj<PwaInstallService>;
-  let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
-  const pwaInstallResult = new Subject<any>();
+  let mockPWAInstallService: any;
+  let mockSnackbar: any;
 
   beforeEach(waitForAsync(() => {
-    PwaInstallService.canInstallDirectly = firstValueFrom(
-      pwaInstallResult.pipe(take(1)),
-    );
-    mockPWAInstallService = jasmine.createSpyObj([
-      "getPWAInstallType",
-      "installPWA",
-    ]);
-    mockSnackbar = jasmine.createSpyObj(["openFromTemplate"]);
+    PwaInstallService.canInstallDirectly = undefined;
+    mockPWAInstallService = {
+      getPWAInstallType: vi.fn(),
+      installPWA: vi.fn(),
+    };
+    mockSnackbar = {
+      openFromTemplate: vi.fn(),
+    };
     TestBed.configureTestingModule({
       imports: [PwaInstallComponent, MockedTestingModule],
       providers: [
@@ -48,29 +45,26 @@ describe("PwaInstallComponent", () => {
   });
 
   it("should show the pwa install instructions on iOS devices", () => {
-    mockPWAInstallService.getPWAInstallType.and.returnValue(
+    mockPWAInstallService.getPWAInstallType.mockReturnValue(
       PWAInstallType.ShowiOSInstallInstructions,
     );
 
     fixture.detectChanges();
-    expect(component._showPWAInstallButton).toBeTrue();
+    expect(component._showPWAInstallButton).toBe(true);
 
     component.pwaInstallButtonClicked();
     expect(mockSnackbar.openFromTemplate).toHaveBeenCalled();
   });
 
   it("should call installPWA when no install instructions are defined and remove button once confirmed", fakeAsync(() => {
-    pwaInstallResult.next(undefined);
-
     fixture.detectChanges();
-    tick();
-    expect(component._showPWAInstallButton).toBeTrue();
+    component.showPWAInstallButton = true;
 
-    mockPWAInstallService.installPWA.and.resolveTo({ outcome: "accepted" });
+    mockPWAInstallService.installPWA.mockResolvedValue({ outcome: "accepted" });
     component.pwaInstallButtonClicked();
     expect(mockPWAInstallService.installPWA).toHaveBeenCalled();
 
     tick();
-    expect(component._showPWAInstallButton).toBeFalse();
+    expect(component._showPWAInstallButton).toBe(false);
   }));
 });

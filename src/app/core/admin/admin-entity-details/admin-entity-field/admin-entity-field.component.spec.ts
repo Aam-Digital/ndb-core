@@ -31,18 +31,20 @@ describe("AdminEntityFieldComponent", () => {
   let fixture: ComponentFixture<AdminEntityFieldComponent>;
   let loader: HarnessLoader;
 
-  let mockEnumService: jasmine.SpyObj<ConfigurableEnumService>;
-  let confirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockEnumService: any;
+  let confirmationDialog: any;
 
   beforeEach(() => {
-    mockEnumService = jasmine.createSpyObj([
-      "getEnum",
-      "listEnums",
-      "preLoadEnums",
-    ]);
-    confirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
-    confirmationDialog.getConfirmation.and.resolveTo(true);
-    mockEnumService.listEnums.and.returnValue([]);
+    mockEnumService = {
+      getEnum: vi.fn(),
+      listEnums: vi.fn(),
+      preLoadEnums: vi.fn(),
+    };
+    confirmationDialog = {
+      getConfirmation: vi.fn(),
+    };
+    confirmationDialog.getConfirmation.mockResolvedValue(true);
+    mockEnumService.listEnums.mockReturnValue([]);
 
     TestBed.configureTestingModule({
       imports: [
@@ -86,55 +88,53 @@ describe("AdminEntityFieldComponent", () => {
     expect(component.fieldIdForm.value).toBe("new_id");
   }));
 
-  it("should include 'additional' field only for relevant datatypes", fakeAsync(() => {
+  it("should include 'additional' field only for relevant datatypes", async () => {
     const dataTypeForm = component.schemaFieldsForm.get("dataType");
-    let additionalInput: MatInputHarness;
-
-    function findAdditionalInputComponent() {
-      loader
-        .getHarness(
+    async function findAdditionalInputComponent() {
+      try {
+        const field = await loader.getHarness(
           MatFormFieldHarness.with({
             floatingLabelText: /Type Details.*/,
           }),
-        )
-        .then((field) => field.getControl(MatInputHarness))
-        .then((input) => (additionalInput = input))
-        .catch((err) => {
-          console.error(err);
-          additionalInput = undefined;
-        });
-      tick();
+        );
+        return await field.getControl(MatInputHarness);
+      } catch {
+        return undefined;
+      }
     }
 
     dataTypeForm.setValue(ConfigurableEnumDatatype.dataType);
-    tick();
-    findAdditionalInputComponent();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    let additionalInput = await findAdditionalInputComponent();
     expect(additionalInput).toBeTruthy();
-    expect(
-      component.additionalForm.hasValidator(Validators.required),
-    ).toBeTrue();
+    expect(component.additionalForm.hasValidator(Validators.required)).toBe(
+      true,
+    );
 
     dataTypeForm.setValue(StringDatatype.dataType);
-    tick();
-    findAdditionalInputComponent();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    additionalInput = await findAdditionalInputComponent();
     expect(additionalInput).toBeUndefined();
     expect(component.additionalForm.value).toBeNull();
-    expect(
-      component.additionalForm.hasValidator(Validators.required),
-    ).toBeFalse();
+    expect(component.additionalForm.hasValidator(Validators.required)).toBe(
+      false,
+    );
 
     dataTypeForm.setValue(EntityDatatype.dataType);
-    tick();
-    findAdditionalInputComponent();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    additionalInput = await findAdditionalInputComponent();
     expect(additionalInput).toBeTruthy();
-    expect(
-      component.additionalForm.hasValidator(Validators.required),
-    ).toBeTrue();
-  }));
+    expect(component.additionalForm.hasValidator(Validators.required)).toBe(
+      true,
+    );
+  });
 
   it("should init 'additional' options for configurable-enum", fakeAsync(() => {
     const mockEnumList = ["A", "B"];
-    mockEnumService.listEnums.and.returnValue(mockEnumList);
+    mockEnumService.listEnums.mockReturnValue(mockEnumList);
 
     const dataTypeForm = component.schemaFieldsForm.get("dataType");
     dataTypeForm.setValue(ConfigurableEnumDatatype.dataType);
@@ -187,7 +187,7 @@ describe("AdminEntityFieldComponent", () => {
   it("should init 'additional' options for entity datatypes", fakeAsync(() => {
     const mockEntityTypes = [TestEntity, Note];
     const entityRegistry = TestBed.inject(EntityRegistry);
-    spyOn(entityRegistry, "getEntityTypes").and.returnValue(
+    vi.spyOn(entityRegistry, "getEntityTypes").mockReturnValue(
       mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
     );
 
@@ -216,7 +216,7 @@ describe("AdminEntityFieldComponent", () => {
     component.ngOnInit();
     tick();
 
-    expect(component.entityAdditionalMultiSelect()).toBeTrue();
+    expect(component.entityAdditionalMultiSelect()).toBe(true);
     expect(component.additionalForm.value).toEqual([
       TestEntity.ENTITY_TYPE,
       Note.ENTITY_TYPE,
@@ -239,7 +239,7 @@ describe("AdminEntityFieldComponent", () => {
     } as any);
     tick();
 
-    expect(component.entityAdditionalMultiSelect()).toBeTrue();
+    expect(component.entityAdditionalMultiSelect()).toBe(true);
     expect(component.additionalForm.value).toEqual([TestEntity.ENTITY_TYPE]);
   }));
 
@@ -260,12 +260,12 @@ describe("AdminEntityFieldComponent", () => {
     tick();
 
     expect(confirmationDialog.getConfirmation).toHaveBeenCalled();
-    expect(component.entityAdditionalMultiSelect()).toBeFalse();
+    expect(component.entityAdditionalMultiSelect()).toBe(false);
     expect(component.additionalForm.value).toBeNull();
   }));
 
   it("should keep multi mode when switching to single mode is not confirmed", fakeAsync(() => {
-    confirmationDialog.getConfirmation.and.resolveTo(false);
+    confirmationDialog.getConfirmation.mockResolvedValue(false);
     component.data.entityType = TestEntity;
     component.data.entitySchemaField = {
       label: "related records",
@@ -282,8 +282,8 @@ describe("AdminEntityFieldComponent", () => {
     } as any);
     tick();
 
-    expect(component.entityAdditionalMultiSelect()).toBeTrue();
-    expect(mockToggle.checked).toBeTrue();
+    expect(component.entityAdditionalMultiSelect()).toBe(true);
+    expect(mockToggle.checked).toBe(true);
     expect(component.additionalForm.value).toEqual([
       TestEntity.ENTITY_TYPE,
       Note.ENTITY_TYPE,
@@ -293,7 +293,7 @@ describe("AdminEntityFieldComponent", () => {
   it("should init 'additional' for attendance datatype from nested format", fakeAsync(() => {
     const mockEntityTypes = [TestEntity, Note];
     const entityRegistry = TestBed.inject(EntityRegistry);
-    spyOn(entityRegistry, "getEntityTypes").and.returnValue(
+    vi.spyOn(entityRegistry, "getEntityTypes").mockReturnValue(
       mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
     );
 
@@ -327,7 +327,7 @@ describe("AdminEntityFieldComponent", () => {
   it("should sync attendance participant type selection to nested additional format", fakeAsync(() => {
     const mockEntityTypes = [TestEntity, Note];
     const entityRegistry = TestBed.inject(EntityRegistry);
-    spyOn(entityRegistry, "getEntityTypes").and.returnValue(
+    vi.spyOn(entityRegistry, "getEntityTypes").mockReturnValue(
       mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
     );
 
@@ -384,14 +384,14 @@ describe("AdminEntityFieldComponent", () => {
     labelControl.setValue("Existing Label 1");
     tick();
     expect(labelControl.errors).toEqual({
-      uniqueProperty: jasmine.any(String),
+      uniqueProperty: expect.any(String),
     });
 
     // Case-insensitive duplicate should also be invalid
     labelControl.setValue("existing label 2");
     tick();
     expect(labelControl.errors).toEqual({
-      uniqueProperty: jasmine.any(String),
+      uniqueProperty: expect.any(String),
     });
   }));
 
@@ -424,7 +424,7 @@ describe("AdminEntityFieldComponent", () => {
     labelControl.setValue("Another Label");
     tick();
     expect(labelControl.errors).toEqual({
-      uniqueProperty: jasmine.any(String),
+      uniqueProperty: expect.any(String),
     });
   }));
 });

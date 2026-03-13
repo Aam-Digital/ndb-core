@@ -2,7 +2,7 @@
 applyTo: "**/*.spec.ts"
 ---
 
-# Unit Testing Patterns (Jasmine/Karma)
+# Unit Testing Patterns (Vitest)
 
 ## Test Module Setup
 
@@ -54,15 +54,14 @@ const entity2 = TestEntity.create("Quick Name");
 
 ## Mocking Dependencies
 
-Use `jasmine.createSpyObj` for service mocks:
+Use `vi.fn` and `vi.spyOn` for service mocks:
 
 ```typescript
-const mockService = jasmine.createSpyObj("EntityMapperService", [
-  "load",
-  "save",
-  "remove",
-]);
-mockService.load.and.returnValue(Promise.resolve(testEntity));
+const mockService = {
+  load: vi.fn().mockResolvedValue(testEntity),
+  save: vi.fn(),
+  remove: vi.fn(),
+};
 
 await TestBed.configureTestingModule({
   imports: [MyComponent, MockedTestingModule.withState()],
@@ -83,9 +82,9 @@ await TestBed.configureTestingModule({
 }).compileComponents();
 ```
 
-## Custom Jasmine Matchers
+## Custom Matchers
 
-These matchers are globally registered and available in all spec files:
+Custom matchers are globally registered in test setup and available in all spec files:
 
 ```typescript
 // Entity type checking
@@ -113,17 +112,15 @@ expect(dateValue).toBeDate("2024-01-15");
 
 ## Async Testing Patterns
 
-### fakeAsync / tick / flush
+### async/await and timers
 
 ```typescript
-it("should update after async operation", fakeAsync(() => {
-  component.loadData();
-  tick(); // resolve microtasks (promises)
+it("should update after async operation", async () => {
+  await component.loadData();
   fixture.detectChanges();
 
   expect(component.data()).toBeTruthy();
-  flush(); // resolve all remaining async tasks
-}));
+});
 ```
 
 ### expectObservable

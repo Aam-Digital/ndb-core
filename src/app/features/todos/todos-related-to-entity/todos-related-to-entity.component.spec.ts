@@ -44,10 +44,10 @@ describe("TodosRelatedToEntityComponent", () => {
       relatedTodo,
       unrelatedTodo,
     ]);
-    const indexSpy = spyOn(
+    const indexSpy = vi.spyOn(
       TestBed.inject(DatabaseIndexingService),
       "queryIndexDocs",
-    ).and.callThrough();
+    );
 
     component.entity = child;
     component.property = undefined;
@@ -79,7 +79,7 @@ describe("TodosRelatedToEntityComponent", () => {
     unrelatedTodo.relatedEntities = [new TestEntity().getId()];
     const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.saveAll([relatedTodo, relatedTodo2, unrelatedTodo]);
-    const loadTypeSpy = spyOn(entityMapper, "loadType").and.callThrough();
+    const loadTypeSpy = vi.spyOn(entityMapper, "loadType");
 
     component.entity = user;
     component.property = undefined;
@@ -87,12 +87,10 @@ describe("TodosRelatedToEntityComponent", () => {
     await component.ngOnInit();
 
     expect(loadTypeSpy).toHaveBeenCalledWith(Todo);
+    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
+    expect(component.data).toHaveLength(3);
     expect(component.data).toEqual(
-      jasmine.arrayWithExactContents([
-        relatedTodo,
-        relatedTodo2,
-        unrelatedTodo,
-      ]),
+      expect.arrayContaining([relatedTodo, relatedTodo2, unrelatedTodo]),
     );
     expect(component.filter).toEqual({
       $or: [

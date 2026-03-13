@@ -23,14 +23,18 @@ import { EventEmitter } from "@angular/core";
 describe("DialogButtonsComponent", () => {
   let component: DialogButtonsComponent<Entity>;
   let fixture: ComponentFixture<DialogButtonsComponent<Entity>>;
-  let dialogRef: jasmine.SpyObj<MatDialogRef<any>>;
+  let dialogRef: any;
   let backdropClick = new Subject<any>();
   let closed = new Subject<void>();
 
   beforeEach(waitForAsync(() => {
-    dialogRef = jasmine.createSpyObj(["close", "backdropClick", "afterClosed"]);
-    dialogRef.backdropClick.and.returnValue(backdropClick);
-    dialogRef.afterClosed.and.returnValue(closed);
+    dialogRef = {
+      close: vi.fn(),
+      backdropClick: vi.fn(),
+      afterClosed: vi.fn(),
+    };
+    dialogRef.backdropClick.mockReturnValue(backdropClick);
+    dialogRef.afterClosed.mockReturnValue(closed);
     TestBed.configureTestingModule({
       imports: [DialogButtonsComponent, MockedTestingModule.withState()],
       providers: [{ provide: MatDialogRef, useValue: dialogRef }],
@@ -61,8 +65,8 @@ describe("DialogButtonsComponent", () => {
   it("should close the dialog when saving is successful", fakeAsync(() => {
     const formService = TestBed.inject(EntityFormService);
     const result = new Entity();
-    spyOn(formService, "saveChanges").and.resolveTo(result);
-    const closeSpy = jasmine.createSpy();
+    vi.spyOn(formService, "saveChanges").mockResolvedValue(result);
+    const closeSpy = vi.fn();
     TestBed.inject(MatDialogRef).close = closeSpy;
 
     component.save();
@@ -74,10 +78,10 @@ describe("DialogButtonsComponent", () => {
   it("should show an alert when saving fails", fakeAsync(() => {
     const formService = TestBed.inject(EntityFormService);
     const message = "Error message";
-    spyOn(formService, "saveChanges").and.rejectWith(new Error(message));
-    const alertSpy = jasmine.createSpy();
+    vi.spyOn(formService, "saveChanges").mockRejectedValue(new Error(message));
+    const alertSpy = vi.fn();
     TestBed.inject(AlertService).addDanger = alertSpy;
-    const closeSpy = jasmine.createSpy();
+    const closeSpy = vi.fn();
     TestBed.inject(MatDialogRef).close = closeSpy;
 
     component.save();
@@ -116,10 +120,10 @@ describe("DialogButtonsComponent", () => {
 
   it("should only close the dialog if user confirms to discard changes", fakeAsync(() => {
     const confirmed = new Subject<boolean>();
-    spyOn(
+    vi.spyOn(
       TestBed.inject(UnsavedChangesService),
       "checkUnsavedChanges",
-    ).and.returnValue(firstValueFrom(confirmed));
+    ).mockReturnValue(firstValueFrom(confirmed));
 
     backdropClick.next(undefined);
     tick();
@@ -138,6 +142,6 @@ describe("DialogButtonsComponent", () => {
 
     closed.next();
 
-    expect(unsavedChanges.pending).toBeFalse();
+    expect(unsavedChanges.pending).toBe(false);
   });
 });

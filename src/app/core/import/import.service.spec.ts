@@ -6,7 +6,6 @@ import { Entity } from "../entity/model/entity";
 import { ImportMetadata, ImportSettings } from "./import-metadata";
 import { ColumnMapping } from "./column-mapping";
 import {
-  expectEntitiesToBeInDatabase,
   expectEntitiesToMatch,
 } from "../../utils/expect-entity-data.spec";
 import moment from "moment";
@@ -26,10 +25,14 @@ describe("ImportService", () => {
   let entityMapper: EntityMapperService;
 
   class ImportTestTarget extends Entity {
-    @DatabaseField() name: string;
-    @DatabaseField() counter: number;
-    @DatabaseField() date: Date;
-    @DatabaseField() text: string;
+    @DatabaseField()
+    name: string;
+    @DatabaseField()
+    counter: number;
+    @DatabaseField()
+    date: Date;
+    @DatabaseField()
+    text: string;
     @DatabaseField({
       dataType: EntityDatatype.dataType,
       isArray: true,
@@ -48,21 +51,25 @@ describe("ImportService", () => {
     entityMapper = TestBed.inject(EntityMapperService);
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("should execute import, saving entities and creating history record", async () => {
     const testEntities: Entity[] = [new Entity("1"), new Entity("2")];
     const testImportSettings: ImportSettings = {
       entityType: "Entity",
       columnMapping: undefined,
     };
-    spyOn(entityMapper, "saveAll");
-    spyOn(entityMapper, "save");
+    vi.spyOn(entityMapper, "saveAll");
+    vi.spyOn(entityMapper, "save");
 
     await service.executeImport(testEntities, testImportSettings);
 
     expect(entityMapper.saveAll).toHaveBeenCalledWith(testEntities);
 
     expect(entityMapper.save).toHaveBeenCalledWith(
-      jasmine.objectContaining({
+      expect.objectContaining({
         createdEntities: testEntities.map((e) => e.getId()),
         config: testImportSettings,
       } as Partial<ImportMetadata>),
@@ -70,7 +77,7 @@ describe("ImportService", () => {
   });
 
   it("should transform raw data to mapped entities", async () => {
-    spyOn(TestBed.inject(EntityRegistry), "get").and.callFake(
+    vi.spyOn(TestBed.inject(EntityRegistry), "get").mockImplementation(
       (entityType: string) =>
         entityType === "ImportTestTarget" ? ImportTestTarget : TestEntity,
     );
@@ -129,7 +136,7 @@ describe("ImportService", () => {
   });
 
   it("should map entity reference field with multiple columns mapped as identifiers", async () => {
-    spyOn(TestBed.inject(EntityRegistry), "get").and.callFake(
+    vi.spyOn(TestBed.inject(EntityRegistry), "get").mockImplementation(
       (entityType: string) =>
         entityType === "ImportTestTarget" ? ImportTestTarget : TestEntity,
     );
@@ -186,10 +193,14 @@ describe("ImportService", () => {
 
     await service.undoImport(importMeta);
 
-    await expectEntitiesToBeInDatabase([children[2]], false, true);
-    await expectAsync(
+    await expect(entityMapper.load("Child", "1")).rejects.toThrow();
+    await expect(entityMapper.load("Child", "2")).rejects.toThrow();
+    await expect(entityMapper.load("Child", "3")).resolves.toMatchObject({
+      _id: "Child:3",
+    });
+    await expect(
       entityMapper.load(ImportMetadata, importMeta.getId()),
-    ).toBeRejected();
+    ).rejects.toThrow();
   });
 
   it("should not fail undo if some entities have already been removed", async () => {
@@ -209,25 +220,28 @@ describe("ImportService", () => {
 
     await service.undoImport(importMeta);
 
-    await expectEntitiesToBeInDatabase([children[2]], false, true);
+    await expect(entityMapper.load(TestEntity.ENTITY_TYPE, "1")).rejects.toThrow();
+    await expect(entityMapper.load(TestEntity.ENTITY_TYPE, "2")).rejects.toThrow();
+    await expect(
+      entityMapper.load(TestEntity.ENTITY_TYPE, "3"),
+    ).resolves.toMatchObject({ _id: `${TestEntity.ENTITY_TYPE}:3` });
   });
 
   it("should parse array fields from comma-separated values", async () => {
     class ArrayImportTestEntity extends Entity {
-      @DatabaseField() name: string;
-      @DatabaseField({ isArray: true }) items: string[];
+      @DatabaseField()
+      name: string;
+      @DatabaseField({ isArray: true })
+      items: string[];
     }
 
-    spyOn(TestBed.inject(EntityRegistry), "get").and.returnValue(
+    vi.spyOn(TestBed.inject(EntityRegistry), "get").mockReturnValue(
       ArrayImportTestEntity,
     );
 
     const schemaService = TestBed.inject(EntitySchemaService);
     const mockDatatype = schemaService.getDatatypeOrDefault("string");
-    const importMapFunctionSpy = spyOn(
-      mockDatatype,
-      "importMapFunction",
-    ).and.callThrough();
+    const importMapFunctionSpy = vi.spyOn(mockDatatype, "importMapFunction");
 
     const rawData: any[] = [
       { name: "json array", items: '["one", "two"]' },
@@ -260,11 +274,13 @@ describe("ImportService", () => {
 
   it("should parse array fields using configured separator", async () => {
     class ArrayImportTestEntity extends Entity {
-      @DatabaseField() name: string;
-      @DatabaseField({ isArray: true }) items: string[];
+      @DatabaseField()
+      name: string;
+      @DatabaseField({ isArray: true })
+      items: string[];
     }
 
-    spyOn(TestBed.inject(EntityRegistry), "get").and.returnValue(
+    vi.spyOn(TestBed.inject(EntityRegistry), "get").mockReturnValue(
       ArrayImportTestEntity,
     );
 
@@ -306,11 +322,13 @@ describe("ImportService", () => {
 
   it("should filter duplicate values in array fields", async () => {
     class ArrayImportTestEntity extends Entity {
-      @DatabaseField() name: string;
-      @DatabaseField({ isArray: true }) items: string[];
+      @DatabaseField()
+      name: string;
+      @DatabaseField({ isArray: true })
+      items: string[];
     }
 
-    spyOn(TestBed.inject(EntityRegistry), "get").and.returnValue(
+    vi.spyOn(TestBed.inject(EntityRegistry), "get").mockReturnValue(
       ArrayImportTestEntity,
     );
 
@@ -336,21 +354,23 @@ describe("ImportService", () => {
   });
 
   it("should gracefully skip cell when importMapFunction throws an error", async () => {
-    spyOn(TestBed.inject(EntityRegistry), "get").and.returnValue(
+    vi.spyOn(TestBed.inject(EntityRegistry), "get").mockReturnValue(
       ImportTestTarget,
     );
 
     const schemaService = TestBed.inject(EntitySchemaService);
     const mockDatatype = schemaService.getDatatypeOrDefault("string");
     let callCount = 0;
-    spyOn(mockDatatype, "importMapFunction").and.callFake(async (val: any) => {
-      callCount++;
-      if (val === "fail") {
-        throw new Error("lookup failed");
-      }
-      return val;
-    });
-    spyOn(Logging, "warn");
+    vi.spyOn(mockDatatype, "importMapFunction").mockImplementation(
+      async (val: any) => {
+        callCount++;
+        if (val === "fail") {
+          throw new Error("lookup failed");
+        }
+        return val;
+      },
+    );
+    vi.spyOn(Logging, "warn");
 
     const rawData: any[] = [
       { rawName: "fail", rawText: "ok value" },

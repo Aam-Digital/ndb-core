@@ -33,7 +33,7 @@ describe("MatchingEntitiesComponent", () => {
   let fixture: ComponentFixture<MatchingEntitiesComponent>;
 
   let routeData: Subject<DynamicComponentConfig<MatchingEntitiesConfig>>;
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockConfigService: any;
   let entityRegistry: EntityRegistry;
 
   let testConfig: MatchingEntitiesConfig = {
@@ -57,9 +57,10 @@ describe("MatchingEntitiesComponent", () => {
 
   beforeEach(waitForAsync(() => {
     routeData = new Subject();
-    mockConfigService = jasmine.createSpyObj(["getConfig"], {
+    mockConfigService = {
+      getConfig: vi.fn(),
       configUpdates: NEVER,
-    });
+    };
     entityRegistry = new EntityRegistry();
     entityRegistry.add(TestEntity.ENTITY_TYPE, TestEntity);
     entityRegistry.add(ChildSchoolRelation.ENTITY_TYPE, ChildSchoolRelation);
@@ -90,6 +91,13 @@ describe("MatchingEntitiesComponent", () => {
     component = fixture.componentInstance;
   }));
 
+  async function stabilizeCurrentFixture() {
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await Promise.resolve();
+    fixture.detectChanges();
+  }
+
   it("should create and map dynamic config to inputs", () => {
     Object.assign(component, testConfig);
     component.entity = new Entity();
@@ -107,7 +115,7 @@ describe("MatchingEntitiesComponent", () => {
 
   it("should use central default config and overwrite with dynamic config of the component", () => {
     testConfig.columns = [["defaultA", "defaultB"]];
-    mockConfigService.getConfig.and.returnValue(testConfig);
+    mockConfigService.getConfig.mockReturnValue(testConfig);
 
     fixture = TestBed.createComponent(MatchingEntitiesComponent);
     component = fixture.componentInstance;
@@ -126,25 +134,25 @@ describe("MatchingEntitiesComponent", () => {
     expectConfigToMatch(component, expectedCombinedConfig);
   });
 
-  it("should assign config entity to the selected entity of the side not having a table with select options", fakeAsync(() => {
+  it("should assign config entity to the selected entity of the side not having a table with select options", async () => {
     const testEntity = new TestEntity("1");
     component.entity = testEntity;
     component.rightSide = { entityType: TestEntity.ENTITY_TYPE };
     component.onMatch = testConfig.onMatch;
-    fixture.detectChanges();
-    tick();
+    await stabilizeCurrentFixture();
 
     expect(component.sideDetails[0].selected).toEqual([testEntity]);
 
     component.leftSide = { entityType: TestEntity.ENTITY_TYPE };
     component.rightSide = {};
-    component.ngOnInit();
-    tick();
+    await component.ngOnInit();
+    await fixture.whenStable();
+    fixture.detectChanges();
 
     expect(component.sideDetails[1].selected).toEqual([testEntity]);
-  }));
+  });
 
-  it("should init details for template including available entities table and its columns", fakeAsync(() => {
+  it("should init details for template including available entities table and its columns", async () => {
     const testEntity = new TestEntity();
     component.entity = testEntity;
     component.rightSide = { entityType: TestEntity.ENTITY_TYPE };
@@ -157,11 +165,13 @@ describe("MatchingEntitiesComponent", () => {
       TestEntity.create("1"),
       TestEntity.create("2"),
     ];
-    const loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
-    loadTypeSpy.and.resolveTo(allChildren);
+    const loadTypeSpy = vi.spyOn(
+      TestBed.inject(EntityMapperService),
+      "loadType",
+    );
+    loadTypeSpy.mockResolvedValue(allChildren);
 
-    fixture.detectChanges();
-    tick();
+    await stabilizeCurrentFixture();
 
     expect(component.sideDetails.length).toBe(2);
 
@@ -175,9 +185,9 @@ describe("MatchingEntitiesComponent", () => {
     expect(loadTypeSpy).toHaveBeenCalledWith(TestEntity.ENTITY_TYPE);
     expect(component.sideDetails[1].availableEntities).toEqual(allChildren);
     expect(component.sideDetails[1].columns).toEqual(["name", "phone"]);
-  }));
+  });
 
-  it("should select only one entity at a time in single select mode", fakeAsync(() => {
+  it("should select only one entity at a time in single select mode", async () => {
     const matchedEntity = TestEntity.create("matched child");
     const otherMatchedEntity = TestEntity.create("second matched child");
 
@@ -187,8 +197,7 @@ describe("MatchingEntitiesComponent", () => {
       newEntityMatchPropertyRight: "childId",
       newEntityMatchPropertyLeft: "schoolId",
     };
-    fixture.detectChanges();
-    tick();
+    await stabilizeCurrentFixture();
     const testedSide = component.sideDetails[1];
 
     testedSide.selectMatch(matchedEntity);
@@ -196,9 +205,9 @@ describe("MatchingEntitiesComponent", () => {
 
     testedSide.selectMatch(otherMatchedEntity);
     expect(testedSide.selected).toEqual([otherMatchedEntity]);
-  }));
+  });
 
-  it("should select multiple entities in multiSelect mode", fakeAsync(() => {
+  it("should select multiple entities in multiSelect mode", async () => {
     const matchedEntity = TestEntity.create("matched child");
     const otherMatchedEntity = TestEntity.create("second matched child");
 
@@ -208,8 +217,7 @@ describe("MatchingEntitiesComponent", () => {
       newEntityMatchPropertyRight: "children",
       newEntityMatchPropertyLeft: "schools",
     };
-    fixture.detectChanges();
-    tick();
+    await stabilizeCurrentFixture();
     const testedSide = component.sideDetails[1];
 
     testedSide.selectMatch(matchedEntity);
@@ -218,9 +226,9 @@ describe("MatchingEntitiesComponent", () => {
 
     testedSide.selectMatch(matchedEntity); // deselect by second click
     expect(testedSide.selected).toEqual([otherMatchedEntity]);
-  }));
+  });
 
-  it("should create a new entity onMatch, with single entity property", fakeAsync(() => {
+  it("should create a new entity onMatch, with single entity property", async () => {
     const testEntity = new TestEntity();
     const matchedEntity = TestEntity.create("matched child");
     component.entity = testEntity;
@@ -231,18 +239,17 @@ describe("MatchingEntitiesComponent", () => {
       newEntityMatchPropertyLeft: "schoolId",
     };
     component.columns = [["_id", "name"]];
-    const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
+    const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
 
-    fixture.detectChanges();
-    tick();
+    await stabilizeCurrentFixture();
     component.sideDetails[0].selected = [testEntity];
     component.sideDetails[1].selected = [matchedEntity];
 
-    component.createMatch();
-    tick();
+    await component.createMatch();
+    await fixture.whenStable();
 
     expect(saveSpy).toHaveBeenCalledWith(
-      jasmine.objectContaining({
+      expect.objectContaining({
         schoolId: testEntity.getId(),
         childId: matchedEntity.getId(),
         name:
@@ -252,10 +259,10 @@ describe("MatchingEntitiesComponent", () => {
           " - matched child",
       } as Partial<ChildSchoolRelation>),
     );
-    expect(saveSpy).toHaveBeenCalledWith(jasmine.any(ChildSchoolRelation));
-  }));
+    expect(saveSpy).toHaveBeenCalledWith(expect.any(ChildSchoolRelation));
+  });
 
-  it("should create a new entity onMatch, with multiSelect entity-array property", fakeAsync(() => {
+  it("should create a new entity onMatch, with multiSelect entity-array property", async () => {
     const testEntity = new Entity();
     const child1 = TestEntity.create("matched child 1");
     const child2 = TestEntity.create("matched child 2");
@@ -268,18 +275,17 @@ describe("MatchingEntitiesComponent", () => {
     };
     component.entity = testEntity;
     component.columns = [["_id", "name"]];
-    const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
-    fixture.detectChanges();
-    tick();
+    const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
+    await stabilizeCurrentFixture();
 
     component.sideDetails[0].selected = [testEntity];
     component.sideDetails[1].selected = [child1, child2];
 
-    component.createMatch();
-    tick();
+    await component.createMatch();
+    await fixture.whenStable();
 
     expect(saveSpy).toHaveBeenCalledWith(
-      jasmine.objectContaining({
+      expect.objectContaining({
         schools: [testEntity.getId()],
         children: [child1.getId(), child2.getId()],
         name:
@@ -288,18 +294,17 @@ describe("MatchingEntitiesComponent", () => {
           " - matched child 1, matched child 2",
       } as Partial<ChildSchoolRelation>),
     );
-    expect(saveSpy).toHaveBeenCalledWith(jasmine.any(Note));
-  }));
+    expect(saveSpy).toHaveBeenCalledWith(expect.any(Note));
+  });
 
-  it("should create distance column and publish updates", fakeAsync(() => {
+  it("should create distance column and publish updates", async () => {
     TestEntity.schema.set("address", { dataType: "location" });
     component.entity = new TestEntity();
     component.columns = [[undefined, "distance"]];
     component.leftSide = { entityType: TestEntity.ENTITY_TYPE };
     component.onMatch = testConfig.onMatch;
 
-    fixture.detectChanges();
-    tick();
+    await stabilizeCurrentFixture();
 
     const distanceColumn = component.columns[0][1] as FormFieldConfig;
     expect(distanceColumn).toEqual({
@@ -309,7 +314,7 @@ describe("MatchingEntitiesComponent", () => {
       dataType: "number",
       additional: {
         coordinatesProperties: ["address"],
-        compareCoordinates: jasmine.any(BehaviorSubject),
+        compareCoordinates: expect.any(BehaviorSubject),
       },
     });
 
@@ -328,25 +333,23 @@ describe("MatchingEntitiesComponent", () => {
     ]);
 
     TestEntity.schema.delete("address");
-  }));
+  });
 
-  it("should select an entity if it has been selected in the map", fakeAsync(() => {
+  it("should select an entity if it has been selected in the map", async () => {
     component.entity = new Entity();
     component.rightSide = { entityType: TestEntity.ENTITY_TYPE };
     component.onMatch = testConfig.onMatch;
-    fixture.detectChanges();
-    tick();
+    await stabilizeCurrentFixture();
 
     const child = new TestEntity();
     component.entityInMapClicked(child);
 
     expect(component.sideDetails[1].selected).toEqual([child]);
-  }));
+  });
 
-  it("should not change the provided config object directly", fakeAsync(() => {
+  it("should not change the provided config object directly", async () => {
     Object.assign(component, testConfig);
-    fixture.detectChanges();
-    tick();
+    await stabilizeCurrentFixture();
     const selectedChild = new TestEntity();
     component.sideDetails[1].selectMatch(selectedChild);
     expect(component.sideDetails[1].selected).toEqual([selectedChild]);
@@ -356,12 +359,13 @@ describe("MatchingEntitiesComponent", () => {
     newComponent.entity = new TestEntity();
     Object.assign(newComponent, testConfig);
     newFixture.detectChanges();
-    tick();
+    await newFixture.whenStable();
+    newFixture.detectChanges();
 
     expect(newComponent.sideDetails[1].selected).not.toEqual([selectedChild]);
-  }));
+  });
 
-  it("should update the distance calculation when the selected map properties change", fakeAsync(() => {
+  it("should update the distance calculation when the selected map properties change", async () => {
     Object.assign(component, testConfig);
     TestEntity.schema.set("address", { dataType: "location" });
     TestEntity.schema.set("otherAddress", { dataType: "location" });
@@ -372,10 +376,9 @@ describe("MatchingEntitiesComponent", () => {
     rightEntity1["address"] = LOCATION_1;
     const rightEntity2 = new TestEntity();
     rightEntity2["address"] = LOCATION_2;
-    spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo([
-      rightEntity1,
-      rightEntity2,
-    ]);
+    vi.spyOn(TestBed.inject(EntityMapperService), "loadType").mockResolvedValue(
+      [rightEntity1, rightEntity2],
+    );
     component.entity = leftEntity;
     component.columns = [];
     component.leftSide = {
@@ -385,8 +388,7 @@ describe("MatchingEntitiesComponent", () => {
       columns: ["distance"],
       entityType: TestEntity.ENTITY_TYPE,
     };
-    fixture.detectChanges();
-    tick();
+    await stabilizeCurrentFixture();
     const leftSide = component.sideDetails[0];
     const rightSide = component.sideDetails[1];
     let lastLeftValue: Coordinates[];
@@ -447,13 +449,12 @@ describe("MatchingEntitiesComponent", () => {
     TestEntity.schema.delete("otherAddress");
     TestEntity.schema.delete("address");
     TestEntity.schema.delete("address");
-    flush();
-  }));
+  });
 
   @DatabaseEntity("OtherEntity")
   class OtherEntity extends Entity {}
 
-  it("should only display filtered entities in the map", fakeAsync(() => {
+  it("should only display filtered entities in the map", async () => {
     const c1 = new TestEntity();
     c1.name = "active";
     const c2 = new TestEntity();
@@ -462,8 +463,7 @@ describe("MatchingEntitiesComponent", () => {
     const c3 = new TestEntity();
     c3.name = "inactive";
     const other = new OtherEntity();
-    TestBed.inject(EntityMapperService).saveAll([c1, c2, c3, other]);
-    tick();
+    await TestBed.inject(EntityMapperService).saveAll([c1, c2, c3, other]);
 
     component.leftSide = {
       entityType: TestEntity.ENTITY_TYPE,
@@ -475,8 +475,7 @@ describe("MatchingEntitiesComponent", () => {
       columns: ["_id"],
     };
     component.onMatch = testConfig.onMatch;
-    fixture.detectChanges();
-    tick();
+    await stabilizeCurrentFixture();
 
     expect(component.filteredMapEntities.map((entity) => entity)).toEqual([
       c1,
@@ -492,7 +491,7 @@ describe("MatchingEntitiesComponent", () => {
       c1,
       other,
     ]);
-  }));
+  });
 
   it("should display map if location properties are available", fakeAsync(() => {
     // Clean-up child schema before running test
@@ -509,14 +508,14 @@ describe("MatchingEntitiesComponent", () => {
     fixture.detectChanges();
     tick();
 
-    expect(component.mapVisible).toBeFalse();
+    expect(component.mapVisible).toBe(false);
 
     TestEntity.schema.set("address", { dataType: "location" });
 
     component.ngOnInit();
     tick();
 
-    expect(component.mapVisible).toBeTrue();
+    expect(component.mapVisible).toBe(true);
 
     TestEntity.schema.delete("address");
   }));
@@ -573,8 +572,8 @@ describe("MatchingEntitiesComponent", () => {
     component.ngOnInit();
     tick();
 
-    expect(component.sideDetails[0].multiSelect).toBeTrue();
-    expect(component.sideDetails[1].multiSelect).toBeTrue();
+    expect(component.sideDetails[0].multiSelect).toBe(true);
+    expect(component.sideDetails[1].multiSelect).toBe(true);
   }));
 });
 

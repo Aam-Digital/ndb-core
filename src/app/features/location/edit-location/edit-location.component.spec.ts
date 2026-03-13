@@ -27,22 +27,24 @@ describe("EditLocationComponent", () => {
     display_name: "lookup address",
   };
 
-  let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockDialog: any;
   let mockDialogAfterClosedSubject: Subject<GeoLocation[] | undefined>;
-  let mockNgControl: jasmine.SpyObj<NgControl>;
+  let mockNgControl: any;
   let mockFormControl: FormControl<GeoLocation>;
 
   beforeEach(async () => {
-    mockDialog = jasmine.createSpyObj(["open"]);
+    mockDialog = {
+      open: vi.fn(),
+    };
     mockDialogAfterClosedSubject = new Subject();
-    mockDialog.open.and.returnValue({
+    mockDialog.open.mockReturnValue({
       afterClosed: () => mockDialogAfterClosedSubject,
     } as any);
 
     mockFormControl = new FormControl<GeoLocation>(null);
-    mockNgControl = jasmine.createSpyObj("NgControl", [], {
+    mockNgControl = {
       control: mockFormControl,
-    });
+    };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -81,7 +83,7 @@ describe("EditLocationComponent", () => {
     };
     expect(mockDialog.open).toHaveBeenCalledWith(
       MapPopupComponent,
-      jasmine.objectContaining({
+      expect.objectContaining({
         data: expectedDialogData,
       }),
     );
@@ -97,7 +99,7 @@ describe("EditLocationComponent", () => {
     };
     expect(mockDialog.open).toHaveBeenCalledWith(
       MapPopupComponent,
-      jasmine.objectContaining({
+      expect.objectContaining({
         data: expectedDialogData,
       }),
     );

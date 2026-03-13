@@ -41,13 +41,16 @@ describe("DashboardListWidgetComponent", () => {
   let fixture: ComponentFixture<DashboardWidgetTestComponent>;
   let component: DashboardListWidgetComponent<any>;
 
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockEntityMapper: any;
   let mockEntityUpdates: Subject<UpdatedEntity<any>>;
 
   beforeEach(async () => {
-    mockEntityMapper = jasmine.createSpyObj(["loadType", "receiveUpdates"]);
+    mockEntityMapper = {
+      loadType: vi.fn(),
+      receiveUpdates: vi.fn(),
+    };
     mockEntityUpdates = new Subject<UpdatedEntity<Note>>();
-    mockEntityMapper.receiveUpdates.and.returnValue(mockEntityUpdates);
+    mockEntityMapper.receiveUpdates.mockReturnValue(mockEntityUpdates);
 
     await TestBed.configureTestingModule({
       imports: [DashboardWidgetTestComponent],
@@ -69,13 +72,13 @@ describe("DashboardListWidgetComponent", () => {
 
   it("should automatically switch loading state when entries come as input", fakeAsync(() => {
     const testEntries = [{ name: "x" }];
-    expect(component.isLoading).toBeTrue();
+    expect(component.isLoading).toBe(true);
 
     parentComponent.entries = testEntries;
     fixture.detectChanges();
     tick();
 
-    expect(component.isLoading).toBeFalse();
+    expect(component.isLoading).toBe(false);
   }));
 
   it("should load entities itself if entityType input is given", fakeAsync(() => {
@@ -83,7 +86,7 @@ describe("DashboardListWidgetComponent", () => {
       Note.create(new Date("2022-01-01")),
       Note.create(new Date("2022-05-27")),
     ];
-    mockEntityMapper.loadType.and.resolveTo(testEntries);
+    mockEntityMapper.loadType.mockResolvedValue(testEntries);
 
     parentComponent.entries = [{ name: "ignored direct entry" }];
     parentComponent.entityType = "Note";
@@ -91,12 +94,12 @@ describe("DashboardListWidgetComponent", () => {
     tick();
 
     expect(component.dataSource.data).toEqual(testEntries);
-    expect(component.isLoading).toBeFalse();
+    expect(component.isLoading).toBe(false);
   }));
 
   it("should update loaded entities using entity-mapper's receiveUpdates", fakeAsync(() => {
     const initialEntry = Note.create(new Date("2022-01-01"));
-    mockEntityMapper.loadType.and.resolveTo([initialEntry]);
+    mockEntityMapper.loadType.mockResolvedValue([initialEntry]);
     parentComponent.entityType = "Note";
     component.ngOnInit();
     fixture.detectChanges();
@@ -117,7 +120,7 @@ describe("DashboardListWidgetComponent", () => {
       Note.create(new Date("2021-01-01")), // expected first
       Note.create(new Date("2022-05-27")), // expected filtered out
     ];
-    mockEntityMapper.loadType.and.resolveTo(testEntries);
+    mockEntityMapper.loadType.mockResolvedValue(testEntries);
     component.dataMapper = (data) =>
       data
         .filter((x) => x.date.getFullYear() < 2022)

@@ -8,12 +8,12 @@ import {
 import { ImportComponent } from "./import.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { Papa } from "ngx-papaparse";
 import { ColumnMapping } from "../column-mapping";
 import { ParsedData } from "../../common-components/input-file/input-file.component";
 import { ImportMetadata } from "../import-metadata";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { Router } from "@angular/router";
+import { parse } from "papaparse";
 
 describe("ImportComponent", () => {
   let component: ImportComponent;
@@ -23,7 +23,9 @@ describe("ImportComponent", () => {
   const mockLocation = {} as Location;
 
   beforeEach(async () => {
-    const parseResult = new Papa().parse("x,y\na,1\nb,2", { header: true });
+    vi.useRealTimers();
+
+    const parseResult = parse("x,y\na,1\nb,2", { header: true });
     testDataRaw = {
       data: parseResult.data,
       fields: parseResult.meta.fields,
@@ -41,9 +43,9 @@ describe("ImportComponent", () => {
 
   it("should trigger navigation after executing import", async () => {
     const confirmationDialog = TestBed.inject(ConfirmationDialogService);
-    spyOn(confirmationDialog, "getConfirmation");
-    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
-    navigateSpy.and.resolveTo();
+    vi.spyOn(confirmationDialog, "getConfirmation");
+    const navigateSpy = vi.spyOn(TestBed.inject(Router), "navigate");
+    navigateSpy.mockResolvedValue(undefined);
     mockLocation.pathname = "/import";
     component.rawData = [{ test: "data" }];
     component.importSettings = {
@@ -64,8 +66,8 @@ describe("ImportComponent", () => {
     await component.onImportCompleted();
 
     expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
-    expect(navigateSpy).toHaveBeenCalledWith([""], jasmine.anything());
-    expect(navigateSpy).toHaveBeenCalledWith(["/import"], jasmine.anything());
+    expect(navigateSpy).toHaveBeenCalledWith([""], expect.anything());
+    expect(navigateSpy).toHaveBeenCalledWith(["/import"], expect.anything());
   });
 
   it("should update an empty column mapping upon loading rawData", fakeAsync(() => {

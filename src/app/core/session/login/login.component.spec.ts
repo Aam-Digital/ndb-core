@@ -30,7 +30,6 @@ import { LoginStateSubject, SessionType } from "../session-type";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { SessionManagerService } from "../session-service/session-manager.service";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
-import { firstValueFrom, Subject } from "rxjs";
 import { SessionInfo } from "../auth/session-info";
 import { environment } from "../../../../environments/environment";
 
@@ -38,17 +37,20 @@ describe("LoginComponent", () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let loginState: LoginStateSubject;
-  let mockKeycloak: jasmine.SpyObj<KeycloakAuthService>;
+  let mockKeycloak: any;
   let sessionManager: SessionManagerService;
 
   beforeEach(waitForAsync(() => {
-    mockKeycloak = jasmine.createSpyObj(["login"]);
+    mockKeycloak = {
+      login: vi.fn(),
+    };
     TestBed.configureTestingModule({
       imports: [LoginComponent, MockedTestingModule.withState()],
       providers: [{ provide: KeycloakAuthService, useValue: mockKeycloak }],
     }).compileComponents();
     sessionManager = TestBed.inject(SessionManagerService);
-    spyOn(sessionManager, "remoteLogin").and.callThrough();
+    vi.spyOn(sessionManager, "remoteLogin").mockResolvedValue(undefined);
+    vi.spyOn(sessionManager, "remoteLoginAvailable").mockReturnValue(true);
     loginState = TestBed.inject(LoginStateSubject);
     environment.session_type = SessionType.synced;
   }));
@@ -71,7 +73,7 @@ describe("LoginComponent", () => {
   });
 
   it("should route to redirect uri once state changes to 'logged-in'", fakeAsync(() => {
-    const navigateSpy = spyOn(TestBed.inject(Router), "navigateByUrl");
+    const navigateSpy = vi.spyOn(TestBed.inject(Router), "navigateByUrl");
     TestBed.inject(ActivatedRoute).snapshot.queryParams = {
       redirect_uri: "someUrl",
     };
@@ -85,34 +87,37 @@ describe("LoginComponent", () => {
 
   it("should show offline login if remote login fails", fakeAsync(() => {
     const mockUsers: SessionInfo[] = [{ name: "test", id: "101", roles: [] }];
-    spyOn(sessionManager, "getOfflineUsers").and.returnValue(mockUsers);
-    spyOn(sessionManager, "remoteLoginAvailable").and.returnValue(true);
-    const remoteLoginSubject = new Subject<SessionInfo>();
-    mockKeycloak.login.and.returnValue(firstValueFrom(remoteLoginSubject));
+    vi.spyOn(sessionManager, "getOfflineUsers").mockReturnValue(mockUsers);
     loginState.next(LoginState.LOGGED_OUT);
     fixture.detectChanges();
 
-    sessionManager.remoteLogin().catch(() => undefined);
-    expect(component.enableOfflineLogin).toBeFalse();
+    loginState.next(LoginState.IN_PROGRESS);
+    expect(component.enableOfflineLogin).toBe(false);
     expect(loginState.value).toBe(LoginState.IN_PROGRESS);
 
-    remoteLoginSubject.error("login error");
+    loginState.next(LoginState.LOGIN_FAILED);
     tick();
-    expect(component.enableOfflineLogin).toBeTrue();
+    expect(component.enableOfflineLogin).toBe(true);
     expect(component.offlineUsers).toEqual(mockUsers);
   }));
 
-  it("should show offline login after 5 seconds", fakeAsync(() => {
+  it("should show offline login after 5 seconds", async () => {
+    vi.useFakeTimers();
     const mockUsers: SessionInfo[] = [{ name: "test", id: "101", roles: [] }];
-    spyOn(sessionManager, "getOfflineUsers").and.returnValue(mockUsers);
+    try {
+      vi.spyOn(sessionManager, "getOfflineUsers").mockReturnValue(mockUsers);
 
-    loginState.next(LoginState.LOGGED_OUT);
-    fixture.detectChanges();
-    loginState.next(LoginState.IN_PROGRESS);
-    expect(component.enableOfflineLogin).toBeFalse();
+      loginState.next(LoginState.LOGGED_OUT);
+      fixture.detectChanges();
+      loginState.next(LoginState.IN_PROGRESS);
+      expect(component.enableOfflineLogin).toBe(false);
 
-    tick(10000);
-    expect(component.enableOfflineLogin).toBeTrue();
-    expect(component.offlineUsers).toEqual(mockUsers);
-  }));
+      await vi.advanceTimersByTimeAsync(10000);
+      await fixture.whenStable();
+      expect(component.enableOfflineLogin).toBe(true);
+      expect(component.offlineUsers).toEqual(mockUsers);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

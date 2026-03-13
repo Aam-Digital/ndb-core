@@ -10,21 +10,23 @@ import { BulkMergeRecordsComponent } from "./bulk-merge-records.component";
 describe("BulkMergeRecordsComponent", () => {
   let component: BulkMergeRecordsComponent<TestEntity>;
   let fixture: ComponentFixture<BulkMergeRecordsComponent<TestEntity>>;
-  let mockDialogRef: jasmine.SpyObj<
-    MatDialogRef<BulkMergeRecordsComponent<TestEntity>>
-  >;
-  let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
+  let mockDialogRef: any;
+  let mockEntityFormService: any;
 
   const mergeTestEntity1 = new TestEntity();
 
   const mergeTestEntity2 = new TestEntity();
 
   beforeEach(async () => {
-    mockDialogRef = jasmine.createSpyObj(["close"]);
-    mockEntityFormService = jasmine.createSpyObj("EntityFormService", [
-      "createEntityForm",
-      "extendFormFieldConfig",
-    ]);
+    mockDialogRef = {
+      close: vi.fn(),
+    };
+    mockEntityFormService = {
+      createEntityForm: vi.fn().mockName("EntityFormService.createEntityForm"),
+      extendFormFieldConfig: vi
+        .fn()
+        .mockName("EntityFormService.extendFormFieldConfig"),
+    };
     await TestBed.configureTestingModule({
       imports: [
         CommonModule,

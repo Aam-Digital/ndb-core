@@ -17,13 +17,15 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 describe("AdminDefaultValueComponent", () => {
   let component: AdminDefaultValueComponent;
   let fixture: ComponentFixture<AdminDefaultValueComponent>;
-  let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
+  let mockEntityFormService: any;
 
   beforeEach(async () => {
-    mockEntityFormService = jasmine.createSpyObj("EntityFormService", [
-      "createEntityForm",
-      "extendFormFieldConfig",
-    ]);
+    mockEntityFormService = {
+      createEntityForm: vi.fn().mockName("EntityFormService.createEntityForm"),
+      extendFormFieldConfig: vi
+        .fn()
+        .mockName("EntityFormService.extendFormFieldConfig"),
+    };
     await TestBed.configureTestingModule({
       imports: [
         AdminDefaultValueComponent,
@@ -83,7 +85,7 @@ describe("AdminDefaultValueComponent", () => {
   });
 
   it("should emit valueChange event when changed form is valid", () => {
-    spyOn(component.valueChange, "emit");
+    vi.spyOn(component.valueChange, "emit");
     component.form.setValue({
       mode: "static",
       config: {
@@ -91,7 +93,7 @@ describe("AdminDefaultValueComponent", () => {
       },
     } as DefaultValueConfig);
     expect(component.valueChange.emit).toHaveBeenCalledWith(
-      jasmine.objectContaining({
+      expect.objectContaining({
         mode: "static",
         config: { value: "New value" },
       } as DefaultValueConfig),
@@ -99,7 +101,7 @@ describe("AdminDefaultValueComponent", () => {
   });
 
   it("should not emit valueChange event when changed form is invalid", () => {
-    spyOn(component.valueChange, "emit");
+    vi.spyOn(component.valueChange, "emit");
     component.form.setValue({
       mode: "static",
       config: null,
@@ -116,7 +118,7 @@ describe("AdminDefaultValueComponent", () => {
         field: "y",
       },
     });
-    spyOn(component.valueChange, "emit");
+    vi.spyOn(component.valueChange, "emit");
 
     component.clearDefaultValue();
 

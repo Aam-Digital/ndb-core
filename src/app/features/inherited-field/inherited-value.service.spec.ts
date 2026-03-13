@@ -6,7 +6,7 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import {
   cleanUpTemporarySchemaFields,
   getDefaultInheritedForm,
-} from "../../core/default-values/default-value-service/default-value.service.spec";
+} from "../../core/default-values/default-value-service/default-value.service.test-utils";
 import { FormControl, FormGroup } from "@angular/forms";
 import { EntityForm } from "../../core/common-components/entity-form/entity-form";
 import { DefaultValueService } from "../../core/default-values/default-value-service/default-value.service";
@@ -22,13 +22,16 @@ import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 describe("InheritedValueService", () => {
   let service: InheritedValueService;
   let defaultValueService: DefaultValueService;
-  let mockEntityMapperService: jasmine.SpyObj<EntityMapperService>;
-  let mockAbility: jasmine.SpyObj<EntityAbility>;
+  let mockEntityMapperService: any;
+  let mockAbility: any;
   const updateSubject = new Subject<UpdatedEntity<Config>>();
 
   beforeEach(() => {
-    mockEntityMapperService = jasmine.createSpyObj(["load", "receiveUpdates"]);
-    mockEntityMapperService.receiveUpdates.and.returnValue(updateSubject);
+    mockEntityMapperService = {
+      load: vi.fn(),
+      receiveUpdates: vi.fn(),
+    };
+    mockEntityMapperService.receiveUpdates.mockReturnValue(updateSubject);
     TestBed.configureTestingModule({
       providers: [
         {
@@ -95,16 +98,16 @@ describe("InheritedValueService", () => {
 
     // then
     expect(targetFormControl.value).toBe(undefined);
-    expect(
-      form.watcher.has("sourceFormControlValueChanges_field1"),
-    ).toBeFalse();
+    expect(form.watcher.has("sourceFormControlValueChanges_field1")).toBe(
+      false,
+    );
   });
 
   it("should set default value on FormControl, if target field empty", fakeAsync(() => {
     // given
     let entity = new Entity("Entity:0");
     entity["foo"] = "bar";
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity));
+    mockEntityMapperService.load.mockReturnValue(Promise.resolve(entity));
 
     let form: EntityForm<any> = {
       formGroup: new FormGroup<any>({
@@ -142,7 +145,7 @@ describe("InheritedValueService", () => {
     tick(10); // fetching reference is always async
 
     // then
-    expect(form.watcher.has("sourceFormControlValueChanges_field2")).toBeTrue();
+    expect(form.watcher.has("sourceFormControlValueChanges_field2")).toBe(true);
     expect(targetFormControl.value).toBe("bar");
   }));
 
@@ -150,7 +153,7 @@ describe("InheritedValueService", () => {
     // given
     let entity = new Entity("Entity:0");
     entity["foo"] = ["bar", "doo"];
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity));
+    mockEntityMapperService.load.mockReturnValue(Promise.resolve(entity));
 
     let form: EntityForm<any> = {
       formGroup: new FormGroup<any>({
@@ -188,9 +191,9 @@ describe("InheritedValueService", () => {
     tick(10); // fetching reference is always async
 
     // then
-    expect(
-      form.watcher.has("sourceFormControlValueChanges_newField2"),
-    ).toBeTrue();
+    expect(form.watcher.has("sourceFormControlValueChanges_newField2")).toBe(
+      true,
+    );
     expect(targetFormControl.value).toEqual(["bar", "doo"]);
   }));
 
@@ -211,7 +214,7 @@ describe("InheritedValueService", () => {
 
     let entity0 = new Entity("Entity:0");
     entity0["foo"] = ["bar"];
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
+    mockEntityMapperService.load.mockReturnValue(Promise.resolve(entity0));
 
     // when
     defaultValueService.handleEntityForm(form, form.entity);
@@ -240,7 +243,7 @@ describe("InheritedValueService", () => {
 
     let entity0 = new Entity();
     entity0["foo"] = ["bar", "doo"];
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
+    mockEntityMapperService.load.mockReturnValue(Promise.resolve(entity0));
 
     // when
     defaultValueService.handleEntityForm(form, form.entity);
@@ -269,7 +272,7 @@ describe("InheritedValueService", () => {
 
     let entity0 = new Entity();
     entity0["foo"] = ["bar", "doo"];
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
+    mockEntityMapperService.load.mockReturnValue(Promise.resolve(entity0));
 
     // when
     defaultValueService.handleEntityForm(form, form.entity);
@@ -310,7 +313,7 @@ describe("InheritedValueService", () => {
 
     let entity0 = new Entity();
     entity0["foo"] = "bar";
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
+    mockEntityMapperService.load.mockReturnValue(Promise.resolve(entity0));
 
     // when
     defaultValueService.handleEntityForm(form, form.entity);
@@ -349,7 +352,7 @@ describe("InheritedValueService", () => {
       },
     });
 
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(undefined));
+    mockEntityMapperService.load.mockReturnValue(Promise.resolve(undefined));
 
     // when
     defaultValueService.handleEntityForm(form, form.entity);
@@ -375,7 +378,7 @@ describe("InheritedValueService", () => {
     });
     form.entity = new Entity("Entity:123");
     form.entity["reference-1"] = "User:missing";
-    mockEntityMapperService.load.and.returnValue(
+    mockEntityMapperService.load.mockReturnValue(
       Promise.reject(new Error("forbidden")),
     );
 
@@ -406,7 +409,7 @@ describe("InheritedValueService", () => {
 
     form.formGroup.disable();
 
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(undefined));
+    mockEntityMapperService.load.mockReturnValue(Promise.resolve(undefined));
 
     // when
     defaultValueService.handleEntityForm(form, form.entity);
@@ -436,7 +439,7 @@ describe("InheritedValueService", () => {
 
     let entity0 = new Entity();
     entity0["foo"] = ["bar"];
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
+    mockEntityMapperService.load.mockReturnValue(Promise.resolve(entity0));
     form.entity["reference-1"] = entity0.getId();
 
     // when
@@ -450,7 +453,7 @@ describe("InheritedValueService", () => {
   it("should handle copying single value to array field", fakeAsync(() => {
     let entity = new Entity("User:Test");
     entity["status"] = "ongoing";
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity));
+    mockEntityMapperService.load.mockReturnValue(Promise.resolve(entity));
 
     let form: EntityForm<any> = {
       formGroup: new FormGroup<any>({
@@ -520,7 +523,7 @@ describe("InheritedValueService", () => {
   it("should detect when field is in sync with parent value", fakeAsync(() => {
     const parentEntity = new Entity("Parent:1");
     parentEntity["category"] = "primary";
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(parentEntity));
+    mockEntityMapperService.load.mockReturnValue(Promise.resolve(parentEntity));
 
     const form = getDefaultInheritedForm({
       field: {
@@ -548,7 +551,7 @@ describe("InheritedValueService", () => {
   it("should detect when field is not in sync with parent value", fakeAsync(() => {
     const parentEntity = new Entity("Parent:1");
     parentEntity["category"] = "primary";
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(parentEntity));
+    mockEntityMapperService.load.mockReturnValue(Promise.resolve(parentEntity));
 
     const form = getDefaultInheritedForm({
       field: {
@@ -576,7 +579,7 @@ describe("InheritedValueService", () => {
   it("should sync field value from parent when syncFromParentField is called", fakeAsync(() => {
     const parentEntity = new Entity("Parent:1");
     parentEntity["category"] = "primary";
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(parentEntity));
+    mockEntityMapperService.load.mockReturnValue(Promise.resolve(parentEntity));
 
     const form = getDefaultInheritedForm({
       field: {
@@ -615,7 +618,7 @@ describe("InheritedValueService", () => {
   it("should handle enum values with valueMapping in isInSync check", fakeAsync(() => {
     const parentEntity = new Entity("Parent:1");
     parentEntity["status"] = { id: "active", label: "Active" };
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(parentEntity));
+    mockEntityMapperService.load.mockReturnValue(Promise.resolve(parentEntity));
 
     const form = getDefaultInheritedForm({
       field: {
@@ -647,7 +650,7 @@ describe("InheritedValueService", () => {
   it("should sync enum values with valueMapping when syncFromParentField is called", fakeAsync(() => {
     const parentEntity = new Entity("Parent:1");
     parentEntity["status"] = { id: "active", label: "Active" };
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(parentEntity));
+    mockEntityMapperService.load.mockReturnValue(Promise.resolve(parentEntity));
 
     const form = getDefaultInheritedForm({
       field: {

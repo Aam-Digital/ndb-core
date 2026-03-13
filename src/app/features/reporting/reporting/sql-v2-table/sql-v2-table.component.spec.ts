@@ -8,11 +8,13 @@ import { of } from "rxjs";
 describe("SqlV2TableComponent", () => {
   let component: SqlV2TableComponent;
   let fixture: ComponentFixture<SqlV2TableComponent>;
-  let mockHttp: jasmine.SpyObj<HttpClient>;
+  let mockHttp: any;
 
   beforeEach(async () => {
-    mockHttp = jasmine.createSpyObj(["get"]);
-    mockHttp.get.and.returnValue(of(undefined));
+    mockHttp = {
+      get: vi.fn(),
+    };
+    mockHttp.get.mockReturnValue(of(undefined));
     await TestBed.configureTestingModule({
       imports: [SqlV2TableComponent, CoreTestingModule],
       providers: [{ provide: HttpClient, useValue: mockHttp }],

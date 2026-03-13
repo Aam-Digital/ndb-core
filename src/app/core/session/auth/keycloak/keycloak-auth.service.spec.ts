@@ -26,17 +26,24 @@ const keycloakToken =
 
 describe("KeycloakAuthService", () => {
   let service: KeycloakAuthService;
-  let mockHttpClient: jasmine.SpyObj<HttpClient>;
-  let mockKeycloak: jasmine.SpyObj<KeycloakService>;
+  let mockHttpClient: any;
+  let mockKeycloak: any;
 
   beforeEach(() => {
-    mockHttpClient = jasmine.createSpyObj(["get", "post", "delete"]);
-    mockKeycloak = jasmine.createSpyObj(
-      ["updateToken", "getToken", "login", "init"],
-      { keycloakEvents$: new Subject() },
-    );
-    mockKeycloak.getToken.and.resolveTo(keycloakToken);
-    mockKeycloak.updateToken.and.resolveTo(true);
+    mockHttpClient = {
+      get: vi.fn(),
+      post: vi.fn(),
+      delete: vi.fn(),
+    };
+    mockKeycloak = {
+      updateToken: vi.fn(),
+      getToken: vi.fn(),
+      login: vi.fn(),
+      init: vi.fn(),
+      keycloakEvents$: new Subject(),
+    };
+    mockKeycloak.getToken.mockResolvedValue(keycloakToken);
+    mockKeycloak.updateToken.mockResolvedValue(true);
     let mockActivatedRoute = { snapshot: { queryParams: {} } };
 
     TestBed.configureTestingModule({
@@ -56,7 +63,7 @@ describe("KeycloakAuthService", () => {
   });
 
   it("should return user object after successful login check", () => {
-    return expectAsync(service.login()).toBeResolvedTo({
+    return expect(service.login()).resolves.toEqual({
       name: "test",
       id: "881ba191-0d27-4dff-9bc4-2c9e561ac900",
       roles: ["user_app"],
@@ -68,8 +75,8 @@ describe("KeycloakAuthService", () => {
   it("should use `sub` if `username` is not available", () => {
     const tokenWithoutUsername =
       "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJycVB3eFM4U1hXZ2FGOFBDbDZrYWFkVUxOYWQyaEloX21vQjhmTDdUVnJJIn0.eyJleHAiOjE3MDcyMTk0MTgsImlhdCI6MTcwNzIxNTgxOCwiYXV0aF90aW1lIjoxNzA3MjE1MDQxLCJqdGkiOiI0OWZjMjEyZS0wNGMwLTRmOWItOTAwZi1mYmVlYWE5ZGZmZjUiLCJpc3MiOiJodHRwczovL2tleWNsb2FrLmFhbS1kaWdpdGFsLm5ldC9yZWFsbXMvZGV2Iiwic3ViIjoiODQ0MGFkZDAtOTdhOS00M2VkLWFmMGItMTE2YzBmYWI3ZTkwIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYXBwIiwibm9uY2UiOiI2N2I5N2U1NS1kMTY2LTQ3YjUtYTE4NC0zZDk1ZmIxMDQxM2UiLCJzZXNzaW9uX3N0YXRlIjoiZDZiYzQ2NTMtNmRmMC00M2NmLTliMWItNjgwODVmYTMyMTAzIiwic2NvcGUiOiJvcGVuaWQgZW1haWwiLCJzaWQiOiJkNmJjNDY1My02ZGYwLTQzY2YtOWIxYi02ODA4NWZhMzIxMDMiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIl9jb3VjaGRiLnJvbGVzIjpbInVzZXJfYXBwIl19.AK5qz9keozPFwBMl4xtBVt2T42AfkAdSvX5s6kSdZBdjfqnWazi3RB4YmQ-Rfik7z_uUhXayx2i72S557d3fo1G9YttLkormB2vZ-zM0GJeYXlGmG1jLUc8w3cQARdLBTrBsgWSGo2ZnZJ-eExn8UhwG5d5BUCl-IU-KJHB1C5R3sSTgXOpkED4WRaoxPOZORr40W263tHJjjNcPECUOtmpQvY0sGUbKHGWpqgWZNXE_G75DMHd0lEBeE924sIeEZcw0Y6TpjBwJULe89EVeI6sr4qhFKjNfn_2miB1HyOOM3jxUfUngR0ju0dJpm5Jmmcyr0Pah0QiA8OWVPKEZgQ\n";
-    mockKeycloak.getToken.and.resolveTo(tokenWithoutUsername);
-    return expectAsync(service.login()).toBeResolvedTo({
+    mockKeycloak.getToken.mockResolvedValue(tokenWithoutUsername);
+    return expect(service.login()).resolves.toEqual({
       name: "8440add0-97a9-43ed-af0b-116c0fab7e90",
       id: "8440add0-97a9-43ed-af0b-116c0fab7e90",
       roles: ["user_app"],
@@ -81,7 +88,7 @@ describe("KeycloakAuthService", () => {
     service.changePassword();
 
     expect(mockKeycloak.login).toHaveBeenCalledWith(
-      jasmine.objectContaining({ action: "UPDATE_PASSWORD" }),
+      expect.objectContaining({ action: "UPDATE_PASSWORD" }),
     );
   });
 
@@ -102,8 +109,8 @@ describe("KeycloakAuthService", () => {
     tick();
     expect(mockKeycloak.updateToken).toHaveBeenCalled();
 
-    mockKeycloak.updateToken.calls.reset();
-    mockKeycloak.getToken.calls.reset();
+    mockKeycloak.updateToken.mockClear();
+    mockKeycloak.getToken.mockClear();
 
     mockKeycloak.keycloakEvents$.next({
       type: KeycloakEventTypeLegacy.OnTokenExpired,
@@ -129,10 +136,10 @@ describe("KeycloakAuthService", () => {
 
   it("calls keycloak.init() again if it fails", async () => {
     const initError = new Error("init failed");
-    mockKeycloak.init.and.rejectWith(initError);
-    await expectAsync(service.login()).toBeRejectedWith(initError);
+    mockKeycloak.init.mockRejectedValue(initError);
+    await expect(service.login()).rejects.toEqual(initError);
 
-    mockKeycloak.init.and.resolveTo();
+    mockKeycloak.init.mockResolvedValue(undefined);
     await service.login();
 
     expect(mockKeycloak.init).toHaveBeenCalledTimes(2);
@@ -142,26 +149,26 @@ describe("KeycloakAuthService", () => {
     const timeoutError = new Error(
       "Timeout when waiting for 3rd party check iframe message.",
     );
-    mockKeycloak.init.and.rejectWith(timeoutError);
+    mockKeycloak.init.mockRejectedValue(timeoutError);
 
     try {
       await service.login();
-      fail("Expected login to throw RemoteLoginNotAvailableError");
+      throw new Error("Expected login to throw RemoteLoginNotAvailableError");
     } catch (error) {
       expect(error).toBeInstanceOf(RemoteLoginNotAvailableError);
     }
   });
 
-  xit("should gracefully handle failed re-authorization", fakeAsync(() => {
+  it.skip("should gracefully handle failed re-authorization", fakeAsync(() => {
     // TODO: investigate different updateToken return values in dev and prod setups, see #2318
     service.login();
     tick();
     expect(mockKeycloak.updateToken).toHaveBeenCalled();
 
-    mockKeycloak.updateToken.calls.reset();
-    mockKeycloak.getToken.calls.reset();
+    mockKeycloak.updateToken.mockClear();
+    mockKeycloak.getToken.mockClear();
 
-    mockKeycloak.updateToken.and.resolveTo(false);
+    mockKeycloak.updateToken.mockResolvedValue(false);
     mockKeycloak.keycloakEvents$.next({
       type: KeycloakEventTypeLegacy.OnTokenExpired,
     });

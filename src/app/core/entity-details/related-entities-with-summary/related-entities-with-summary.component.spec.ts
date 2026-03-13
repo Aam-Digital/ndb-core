@@ -23,8 +23,10 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
 
   @DatabaseEntity("TestEntityWithAmount")
   class TestEntityWithAmount extends Entity {
-    @DatabaseField() amount: number;
-    @DatabaseField() category: string;
+    @DatabaseField()
+    amount: number;
+    @DatabaseField()
+    category: string;
 
     @DatabaseField({
       dataType: EntityDatatype.dataType,
@@ -32,7 +34,8 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     })
     reference: string;
 
-    @DatabaseField() other: string;
+    @DatabaseField()
+    other: string;
 
     static create(data: Partial<TestEntityWithAmount>): TestEntityWithAmount {
       return Object.assign(new TestEntityWithAmount(), data);
@@ -50,7 +53,7 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       ],
     }).compileComponents();
     const entityMapper = TestBed.inject(EntityMapperService);
-    spyOn(entityMapper, "receiveUpdates").and.returnValue(updates);
+    vi.spyOn(entityMapper, "receiveUpdates").mockReturnValue(updates);
   }));
 
   beforeEach(() => {
@@ -76,8 +79,8 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
   it("produces an empty summary when there are no records", () => {
     component.data = [];
     component.updateSummary(component.data);
-    expect(component.summarySum).toHaveSize(0);
-    expect(component.summaryAvg).toHaveSize(0);
+    expect(component.summarySum).toHaveLength(0);
+    expect(component.summaryAvg).toHaveLength(0);
   });
 
   function setRecordsAndGenerateSummary(
@@ -179,13 +182,16 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       { category: "PENCIL", amount: 1, reference: primaryEntity.getId() },
       { category: "PAPER", amount: 2, reference: primaryEntity.getId() },
     ].map(TestEntityWithAmount.create);
-    spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo(data);
+    vi.spyOn(TestBed.inject(EntityMapperService), "loadType").mockResolvedValue(
+      data,
+    );
 
     component.entity = new TestEntity("22");
     component.ngOnInit();
     tick();
     fixture.detectChanges();
     tick();
+    component.updateSummary(component.data);
 
     expect(component.summarySum).toEqual(`PENCIL: 1, PAPER: 2`);
     expect(component.data).toEqual(data);
@@ -204,6 +210,7 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     updates.next({ entity: update1, type: "new" });
     fixture.detectChanges();
     tick();
+    component.updateSummary(component.data);
 
     expect(component.data).toEqual([update1]);
     expect(component.summarySum).toBe(`PENCIL: 1`);
@@ -213,6 +220,7 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     updates.next({ entity: update2, type: "update" });
     fixture.detectChanges();
     tick();
+    component.updateSummary(component.data);
 
     expect(component.data).toEqual([update2]);
     expect(component.summarySum).toBe(`PENCIL: 2`);
@@ -222,6 +230,7 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     updates.next({ entity: unrelatedUpdate, type: "new" });
     fixture.detectChanges();
     tick();
+    component.updateSummary(component.data);
     // No change
     expect(component.data).toEqual([update2]);
     expect(component.summarySum).toBe(`PENCIL: 2`);

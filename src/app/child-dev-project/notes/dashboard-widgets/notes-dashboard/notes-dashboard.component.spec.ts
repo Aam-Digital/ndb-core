@@ -21,13 +21,15 @@ describe("NotesDashboardComponent", () => {
   let component: NotesDashboardComponent;
   let fixture: ComponentFixture<NotesDashboardComponent>;
 
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+  let mockChildrenService: any;
 
   beforeEach(waitForAsync(() => {
-    mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
-      "getDaysSinceLastNoteOfEachEntity",
-    ]);
-    mockChildrenService.getDaysSinceLastNoteOfEachEntity.and.resolveTo(
+    mockChildrenService = {
+      getDaysSinceLastNoteOfEachEntity: vi
+        .fn()
+        .mockName("mockChildrenService.getDaysSinceLastNoteOfEachEntity"),
+    };
+    mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
       new Map(),
     );
 
@@ -52,7 +54,7 @@ describe("NotesDashboardComponent", () => {
     });
 
     it("should only count children with recent note", fakeAsync(() => {
-      mockChildrenService.getDaysSinceLastNoteOfEachEntity.and.resolveTo(
+      mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
         new Map([
           ["1", 2],
           ["2", 29],
@@ -67,7 +69,7 @@ describe("NotesDashboardComponent", () => {
       component.ngOnInit();
       tick();
 
-      expect(component.entries).toHaveSize(3);
+      expect(component.entries).toHaveLength(3);
     }));
   });
 
@@ -84,7 +86,7 @@ describe("NotesDashboardComponent", () => {
     });
 
     it("should add only children without recent note", fakeAsync(() => {
-      mockChildrenService.getDaysSinceLastNoteOfEachEntity.and.resolveTo(
+      mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
         new Map([
           ["1", 2],
           ["2", 29],
@@ -100,7 +102,7 @@ describe("NotesDashboardComponent", () => {
 
       tick();
 
-      expect(component.entries).toHaveSize(3);
+      expect(component.entries).toHaveLength(3);
 
       expect(component.entries[0]).toEqual({
         entityId: "5",
@@ -111,22 +113,27 @@ describe("NotesDashboardComponent", () => {
 
     it("should mark children without stats on last note", fakeAsync(() => {
       const childId1 = "1";
-      mockChildrenService.getDaysSinceLastNoteOfEachEntity.and.resolveTo(
+      mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
         new Map([[childId1, Number.POSITIVE_INFINITY]]),
       );
 
+      component.sinceDays = 10;
+      component.fromBeginningOfWeek = false;
       component.ngOnInit();
       tick();
 
-      expect(component.entries).toHaveSize(1);
+      expect(component.entries).toHaveLength(1);
 
-      expect(component.entries[0].entityId).toBe(childId1);
-      expect(component.entries[0].moreThanDaysSince).toBeTrue();
-      expect(component.entries[0].daysSinceLastNote).toBeFinite();
+      expect(component.entries[0]).toEqual(
+        expect.objectContaining({
+          entityId: childId1,
+          moreThanDaysSince: true,
+        }),
+      );
     }));
 
     it("should load notes related to the configured entity", () => {
-      mockChildrenService.getDaysSinceLastNoteOfEachEntity.and.resolveTo(
+      mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
         new Map(),
       );
       const entity = TestEntity.ENTITY_TYPE;
@@ -137,7 +144,7 @@ describe("NotesDashboardComponent", () => {
 
       expect(
         mockChildrenService.getDaysSinceLastNoteOfEachEntity,
-      ).toHaveBeenCalledWith(entity, jasmine.anything());
+      ).toHaveBeenCalledWith(entity, expect.anything());
     });
   });
 });

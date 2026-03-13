@@ -1,3 +1,4 @@
+import type { Mock } from "vitest";
 import { TestBed } from "@angular/core/testing";
 
 import { LanguageService } from "./language.service";
@@ -13,12 +14,12 @@ import { SiteSettings } from "#src/app/core/site-settings/site-settings";
 
 describe("LanguageService", () => {
   let service: LanguageService;
-  let reloadSpy: jasmine.Spy;
+  let reloadSpy: Mock;
   let languageSubject: Subject<ConfigurableEnumValue>;
   let mockEntityMapperUpdates: Subject<UpdatedEntity<SiteSettings>>;
 
   beforeEach(() => {
-    reloadSpy = jasmine.createSpy();
+    reloadSpy = vi.fn();
     const mockWindow: Partial<Window> = {
       localStorage: window.localStorage,
       location: { reload: reloadSpy } as any,

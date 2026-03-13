@@ -88,12 +88,12 @@ describe("EditLegacyAttendanceComponent", () => {
     a1.remarks = "absent";
     a2.remarks = "excused";
 
-    expect(attendanceForm.value).toHaveSize(2);
+    expect(attendanceForm.value).toHaveLength(2);
 
     component.removeChild(childrenEntities[1].getId());
 
     expect(childrenForm.value).toEqual([childrenEntities[0].getId()]);
-    expect(attendanceForm.value).toHaveSize(1);
+    expect(attendanceForm.value).toHaveLength(1);
     expect(
       attendanceForm.value.find(
         (item) => item.participant === childrenEntities[0].getId(),
@@ -115,6 +115,6 @@ describe("EditLegacyAttendanceComponent", () => {
     expect(
       component.getAttendance(childrenEntities[0].getId()).remarks,
     ).toEqual("new remarks");
-    expect(component.formControl.dirty).toBeTrue();
+    expect(component.formControl.dirty).toBe(true);
   });
 });
