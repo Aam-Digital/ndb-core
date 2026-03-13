@@ -24,8 +24,6 @@ docker stop aam-digital
 ## How does the official release process work?
 
 We use [semantic-release](https://github.com/semantic-release/semantic-release) to automatically create new versions.
-Our process roughly follows the [GitFlow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) process,
-where our development branch is `master` and our "main" branch holding stable releases is `official-release`.
 
 1. Commits on the `master` branch are analyzed and a pre-release version is automatically tagged.
-2. To create an "official" release, merge the `master` into the `official-release` branch. This will trigger a regular new version.
+2. To create a stable release, a core team member manually triggers the release GitHub Action (`create-release.yml` workflow dispatch). This creates a regular (non-prerelease) version from `master`.
