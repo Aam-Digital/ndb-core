@@ -20,15 +20,6 @@ export const addDefaultNoteDetailsConfig: ConfigMigration = (
       config: getDefaultNoteDetailsConfig(),
     };
   }
-  if (!configPart?.["data"]["view:eventnote/:id"]) {
-    configPart["data"]["view:eventnote/:id"] = {
-      component: "NoteDetails",
-      config: {
-        entityType: "EventNote",
-      },
-    };
-  }
-
   return configPart;
 };
 

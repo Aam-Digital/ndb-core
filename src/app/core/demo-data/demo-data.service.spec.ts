@@ -10,6 +10,8 @@ import {
 import { Database } from "../database/database";
 import { DatabaseResolverService } from "../database/database-resolver.service";
 import { EntityRegistry } from "../entity/database-entity.decorator";
+import { ConfigService } from "../config/config.service";
+import { of } from "rxjs";
 
 describe("DemoDataService", () => {
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
@@ -40,6 +42,10 @@ describe("DemoDataService", () => {
         {
           provide: DatabaseResolverService,
           useValue: { getDatabase: () => mockDatabase },
+        },
+        {
+          provide: ConfigService,
+          useValue: { configUpdates: of({}) },
         },
         mockGeneratorsProviders,
         EntityRegistry,

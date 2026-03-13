@@ -2,11 +2,11 @@ import { applicationConfig, Meta, StoryObj } from "@storybook/angular";
 import { ActivityCardComponent } from "./activity-card.component";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service";
-import { RecurringActivity } from "../../model/recurring-activity";
+import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { AttendanceItem } from "../../model/attendance-item";
-import { AttendanceService } from "../../attendance.service";
+import { EventWithAttendance } from "../../model/event-with-attendance";
 
 export default {
   title: "Features/Attendance/Components/ActivityCard",
@@ -22,7 +22,7 @@ const demoChildren = [generateChild(), generateChild(), generateChild()];
 
 const simpleEvent = Note.create(new Date(), "some meeting");
 demoChildren.forEach((c) => {
-  simpleEvent.addChild(c);
+  simpleEvent.children.push(c.getId());
   simpleEvent.childrenAttendance.push(
     new AttendanceItem(undefined, "", c.getId()),
   );
@@ -37,16 +37,16 @@ longEvent.category = {
   isMeeting: true,
 };
 demoChildren.forEach((c) => {
-  longEvent.addChild(c);
+  longEvent.children.push(c.getId());
   longEvent.childrenAttendance.push(
     new AttendanceItem(undefined, "", c.getId()),
   );
 });
 
 const activityEvent = Note.create(new Date(), "Coaching Batch C");
-activityEvent.relatesTo = RecurringActivity.create("Coaching Batch C").getId();
+activityEvent.relatesTo = createEntityOfType("RecurringActivity").getId();
 demoChildren.forEach((c) => {
-  activityEvent.addChild(c);
+  activityEvent.children.push(c.getId());
   activityEvent.childrenAttendance.push(
     new AttendanceItem(undefined, "", c.getId()),
   );
@@ -54,18 +54,39 @@ demoChildren.forEach((c) => {
 
 export const OneTimeEvent: StoryObj<ActivityCardComponent> = {
   args: {
-    event: AttendanceService.createEventFromEntity(simpleEvent),
+    event: new EventWithAttendance(
+      simpleEvent,
+      "childrenAttendance",
+      "date",
+      "relatesTo",
+      "authors",
+      undefined,
+    ),
   },
 };
 
 export const OneTimeEventComplex: StoryObj<ActivityCardComponent> = {
   args: {
-    event: AttendanceService.createEventFromEntity(longEvent),
+    event: new EventWithAttendance(
+      longEvent,
+      "childrenAttendance",
+      "date",
+      "relatesTo",
+      "authors",
+      undefined,
+    ),
   },
 };
 
 export const RecurringEvent: StoryObj<ActivityCardComponent> = {
   args: {
-    event: AttendanceService.createEventFromEntity(activityEvent),
+    event: new EventWithAttendance(
+      activityEvent,
+      "childrenAttendance",
+      "date",
+      "relatesTo",
+      "authors",
+      undefined,
+    ),
   },
 };

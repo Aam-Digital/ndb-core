@@ -7,7 +7,6 @@ import {
 } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceService } from "../../attendance.service";
-import { RecurringActivity } from "../../model/recurring-activity";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatTabsModule } from "@angular/material/tabs";
@@ -39,9 +38,9 @@ export class GroupedChildAttendanceComponent implements OnInit {
   @Input() entity: Entity;
 
   loading: boolean = true;
-  selectedActivity: RecurringActivity;
-  activities: RecurringActivity[] = [];
-  archivedActivities: RecurringActivity[] = [];
+  selectedActivity: Entity;
+  activities: Entity[] = [];
+  archivedActivities: Entity[] = [];
 
   ngOnInit() {
     return this.loadActivities();
@@ -49,26 +48,18 @@ export class GroupedChildAttendanceComponent implements OnInit {
 
   private async loadActivities() {
     this.loading = true;
-    const allActivities = await this.attendanceService.getActivitiesForChild(
-      this.entity.getId(),
-    );
+    const allActivities =
+      await this.attendanceService.getActivitiesForParticipant(
+        this.entity.getId(),
+      );
 
-    this.activities = allActivities.filter(
-      (a) =>
-        !a.excludedParticipants.includes(this.entity.getId()) &&
-        a.isActive == true,
-    );
-
-    this.archivedActivities = allActivities.filter(
-      (a) =>
-        !a.excludedParticipants.includes(this.entity.getId()) &&
-        a.isActive == false,
-    );
+    this.activities = allActivities.filter((a) => a.isActive == true);
+    this.archivedActivities = allActivities.filter((a) => a.isActive == false);
 
     this.loading = false;
   }
 
-  onActivityChange(selectedArchivedActivity: RecurringActivity) {
+  onActivityChange(selectedArchivedActivity: Entity) {
     this.selectedActivity = selectedArchivedActivity;
   }
 }

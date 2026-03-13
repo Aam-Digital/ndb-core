@@ -3,13 +3,13 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
 import { AttendanceService } from "../../attendance.service";
 import { DatePipe, PercentPipe } from "@angular/common";
-import { RecurringActivity } from "../../model/recurring-activity";
 import { ActivityAttendance } from "../../model/activity-attendance";
-import { EventNote } from "../../model/event-note";
+import { Entity } from "#src/app/core/entity/model/entity";
 import { EventWithAttendance } from "../../model/event-with-attendance";
-import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
+import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import moment from "moment";
 
 describe("ActivityAttendanceSectionComponent", () => {
@@ -17,17 +17,21 @@ describe("ActivityAttendanceSectionComponent", () => {
   let fixture: ComponentFixture<ActivityAttendanceSectionComponent>;
 
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
-  let testActivity: RecurringActivity;
+  let testActivity: Entity;
   let testRecords: ActivityAttendance[];
 
   beforeEach(waitForAsync(() => {
-    testActivity = RecurringActivity.create("test act");
+    testActivity = TestEntity.create("test act");
     testRecords = [ActivityAttendance.create(new Date(), [])];
 
     mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
       "getActivityAttendances",
+      "wrapEventEntity",
     ]);
     mockAttendanceService.getActivityAttendances.and.resolveTo(testRecords);
+    (mockAttendanceService as any).eventTypes = jasmine
+      .createSpy(")ventTypes")
+      .and.returnValue([]);
     TestBed.configureTestingModule({
       imports: [
         ActivityAttendanceSectionComponent,
@@ -77,29 +81,16 @@ describe("ActivityAttendanceSectionComponent", () => {
     const testChildId = "testChild";
     component.forChild = testChildId;
 
-    const eventParticipatingIn = EventNote.create(new Date(), "participating");
-    eventParticipatingIn.addChild(testChildId);
-    eventParticipatingIn.getAttendance(testChildId).status =
-      defaultAttendanceStatusTypes.find(
-        (s) => s.countAs === AttendanceLogicalStatus.PRESENT,
-      );
+    const eventParticipatingIn = TestEventEntity.generateEventWithAttendance([
+      [testChildId, AttendanceLogicalStatus.PRESENT],
+    ]);
 
     component.allRecords = [
       ActivityAttendance.create(new Date(), []),
       ActivityAttendance.create(new Date(), [
-        new EventWithAttendance(
-          EventNote.create(new Date(), "empty test"),
-          "childrenAttendance",
-          "date",
-        ),
+        TestEventEntity.generateEventWithAttendance([]),
       ]),
-      ActivityAttendance.create(new Date(), [
-        new EventWithAttendance(
-          eventParticipatingIn,
-          "childrenAttendance",
-          "date",
-        ),
-      ]),
+      ActivityAttendance.create(new Date(), [eventParticipatingIn]),
     ];
 
     component.updateDisplayedRecords(false);
@@ -110,18 +101,25 @@ describe("ActivityAttendanceSectionComponent", () => {
   });
 
   it("should combine all activity attendances to have an all-time overview", async () => {
-    const oldestEvent = EventNote.create(
+    const oldestEvent = TestEventEntity.create(
       moment().subtract(2, "months").toDate(),
     );
-    const someEvent1 = EventNote.create(
+    const someEvent1 = TestEventEntity.create(
       moment().subtract(1, "months").toDate(),
     );
-    const someEvent2 = EventNote.create(
+    const someEvent2 = TestEventEntity.create(
       moment().subtract(1, "months").toDate(),
     );
-    const latestEvent = EventNote.create(new Date());
-    const wrap = (e: EventNote) =>
-      new EventWithAttendance(e, "childrenAttendance", "date");
+    const latestEvent = TestEventEntity.create(new Date());
+    const wrap = (e: TestEventEntity) =>
+      new EventWithAttendance(
+        e,
+        "attendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      );
     const oldestAttendance = ActivityAttendance.create(oldestEvent.date, [
       wrap(oldestEvent),
     ]);

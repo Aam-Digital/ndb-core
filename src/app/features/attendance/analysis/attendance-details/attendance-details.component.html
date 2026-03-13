@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>
   <app-dialog-close mat-dialog-close></app-dialog-close>
-  {{ entity()?.activity?.title }}:
+  {{ entity()?.activity?.toString() }}:
   {{ entity().periodFrom | customDate: "shortDate" }} -
   {{ entity().periodTo | customDate: "shortDate" }}
 </h1>

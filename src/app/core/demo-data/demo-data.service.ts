@@ -25,6 +25,8 @@ import {
 } from "@angular/core";
 import { DemoDataGenerator } from "./demo-data-generator";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
+import { ConfigService } from "../config/config.service";
+import { firstValueFrom } from "rxjs";
 
 /**
  * General config object to pass all initially register DemoDataGenerators
@@ -54,6 +56,7 @@ export class DemoDataService {
   private entityMapper = inject(EntityMapperService);
   private injector = inject(Injector);
   private config = inject(DemoDataServiceConfig);
+  private configService = inject(ConfigService);
 
   /** All registered demo data generator services */
   readonly dataGenerators: DemoDataGenerator<any>[] = [];
@@ -73,6 +76,11 @@ export class DemoDataService {
    */
   async publishDemoData() {
     this.registerAllProvidedDemoDataGenerators();
+
+    // Wait for config to be loaded so that generators can access ConfigService and resolved settings
+    await firstValueFrom(this.configService.configUpdates);
+    // Let config subscribers (e.g. EntityConfigService, AttendanceService) process the config
+    await new Promise((resolve) => setTimeout(resolve));
 
     // completely generate all data (i.e. call every generator) before starting to save the data
     // to allow generators to delete unwanted entities of other generators before they are saved

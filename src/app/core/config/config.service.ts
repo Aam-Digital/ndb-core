@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
 import { shareReplay } from "rxjs/operators";
-import { addDefaultRecurringActivityDetailsConfig } from "#src/app/features/attendance/add-default-recurring-activity-views";
 import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
 import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
 import { migrateInheritedFieldConfig } from "../../features/inherited-field/inherited-field-config-migration";
@@ -115,13 +114,13 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateChildSchoolOverviewComponent,
       migrateEditDescriptionOnly,
       migrateEditAttendanceComponent,
+      migrateNotesManagerComponent,
     ];
 
     // default migrations that are not only temporary but will remain in the codebase
     const defaultConfigs: ConfigMigration[] = [
       addDefaultNoteDetailsConfig,
       addDefaultTodoViews,
-      addDefaultRecurringActivityDetailsConfig,
       addDefaultImportViewConfig,
     ];
 
@@ -598,6 +597,23 @@ const migrateEditAttendanceComponent: ConfigMigration = (key, configPart) => {
   }
 
   configPart.editComponent = "EditLegacyAttendance";
+
+  return configPart;
+};
+
+const migrateNotesManagerComponent: ConfigMigration = (key, configPart) => {
+  if (configPart?.component !== "NotesManager") {
+    return configPart;
+  }
+
+  configPart.component = "EntityList";
+  if (!configPart.config) {
+    configPart.config = {};
+  }
+  configPart.config.entityType = "Note";
+  configPart.config.clickMode = "popup-details";
+  delete configPart.config.includeEventNotes;
+  delete configPart.config.showEventNotesToggle;
 
   return configPart;
 };

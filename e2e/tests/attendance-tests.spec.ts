@@ -1,7 +1,6 @@
 import { times } from "lodash-es";
 
 import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
-
 import { generateActivity } from "#src/app/features/attendance/demo-data/demo-activity-generator.service.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
 import { faker } from "#src/app/core/demo-data/faker.js";
@@ -58,19 +57,25 @@ test("Record attendance for one activity", async ({ page }) => {
   await page.getByRole("button", { name: "Late" }).click();
 
   await page.getByRole("button", { name: "Review Details" }).click();
+  await page.getByRole("button", { name: "Edit" }).click();
 
   const row = page.getByRole("row").filter({ hasText: childWithRemarkName });
   await row.getByLabel("Present").click();
   await page.getByRole("option", { name: "Absent" }).click();
-  await row.getByPlaceholder("Remarks").fill("CUSTOM REMARK");
+  await row.getByLabel("Remarks").fill("CUSTOM REMARK");
 
   await page.getByRole("button", { name: "Save" }).click();
+  await page.locator(".overlay-close-button").click();
 
   await page.getByRole("navigation").getByText("Children").click();
   await page.getByRole("textbox", { name: "Filter" }).fill(childWithRemarkName);
   await page.getByRole("cell", { name: childWithRemarkName }).click();
   await page.getByRole("tab", { name: "Attendance" }).click();
   await page.getByRole("tab", { name: activity.title }).click();
+
+  // need to load older records to see the attendance record for 25.12.2024
+  await page.getByRole("button", { name: "Load all records" }).click();
+
   await page.getByRole("button", { name: "Choose month and year" }).click();
   await page.getByRole("button", { name: "2024" }).click();
   await page.getByRole("button", { name: "December" }).click();
@@ -193,6 +198,9 @@ test("Edit participants of a recurring activity", async ({ page }) => {
   // And I click on "Edit"
   await page.getByRole("button", { name: "Edit" }).click();
 
+  // Wait for edit mode to fully initialise
+  await expect(page.getByRole("button", { name: "Save" })).toBeVisible();
+
   // And I click on the "Participants" field to open the dropdown
   await page
     .locator("#entity-field__participants")
@@ -279,11 +287,15 @@ test("Assign a recurring activity to a user", async ({ page }) => {
   // When I assign myself
   await page.getByRole("button", { name: "Edit" }).click();
 
+  // Wait for edit mode to fully initialise
+  await expect(page.getByRole("button", { name: "Save" })).toBeVisible();
+
   await page.locator("#entity-field__assignedTo").click();
 
+  // Entity options load asynchronously; use a longer timeout for the first click
   await page
     .getByRole("option", { name: currentUser.name, exact: true })
-    .click();
+    .click({ timeout: 10_000 });
   await page.getByRole("button", { name: "Save" }).click();
 
   // Then I navigate to Record Attendance

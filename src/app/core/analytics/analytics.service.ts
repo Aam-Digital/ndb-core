@@ -1,4 +1,5 @@
-import { Injectable, inject } from "@angular/core";
+import { DestroyRef, Injectable, inject } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { environment } from "../../../environments/environment";
 import { ConfigService } from "../config/config.service";
 import {
@@ -29,13 +30,16 @@ export class AnalyticsService {
 
   constructor() {
     const loginState = inject(LoginStateSubject);
+    const destroyRef = inject(DestroyRef);
 
     if (environment.production) {
       this.init();
     }
 
     // update the user context for remote error logging and tracking and load config initially
-    loginState.subscribe((s: LoginState) => this.updateSessionInfo(s));
+    loginState
+      .pipe(takeUntilDestroyed(destroyRef))
+      .subscribe((s: LoginState) => this.updateSessionInfo(s));
   }
 
   private updateSessionInfo(newState: LoginState): void {
@@ -53,6 +57,9 @@ export class AnalyticsService {
    * @param username actual username
    */
   public setUser(username: string): void {
+    if (!window["_paq"]) {
+      return;
+    }
     const baseUrl = location.host;
     this.angulartics2Matomo.setUsername(md5(`${baseUrl}${username ?? ""}`));
   }

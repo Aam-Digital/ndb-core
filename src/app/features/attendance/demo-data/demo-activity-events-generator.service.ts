@@ -1,62 +1,28 @@
 import { DemoDataGenerator } from "#src/app/core/demo-data/demo-data-generator";
 import { Injectable, inject } from "@angular/core";
 import { faker } from "#src/app/core/demo-data/faker";
-import { RecurringActivity } from "../model/recurring-activity";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { DemoActivityGeneratorService } from "./demo-activity-generator.service";
 import moment from "moment";
-import { EventNote } from "../model/event-note";
+import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceItem } from "../model/attendance-item";
+import { AttendanceService } from "../attendance.service";
+import { EventTypeSettings } from "../model/attendance-feature-config";
 
 export class DemoEventsConfig {
   forNLastYears: number;
 }
 
 /**
- * Generate Events with participants' attendance details for all RecurringActivities.
+ * Generate Events with participants' attendance details for all activities,
+ * using the attendance config to determine entity types and field mappings.
  */
 @Injectable()
-export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventNote> {
+export class DemoActivityEventsGeneratorService extends DemoDataGenerator<Entity> {
   private config = inject(DemoEventsConfig);
   private demoActivities = inject(DemoActivityGeneratorService);
-
-  /**
-   * Create a specific event for a date based on the given activity and fill with random attendance.
-   * @param activity The activity for which to generate a concrete event instance
-   * @param date The date of the generated event
-   */
-  static generateEventForActivity(
-    activity: RecurringActivity,
-    date: Date,
-  ): EventNote {
-    const eventNote = new EventNote(faker.string.uuid());
-    eventNote.date = date;
-    eventNote.subject = activity.title;
-    eventNote.authors = activity.assignedTo;
-    eventNote.category = activity.type;
-    eventNote.relatesTo = activity.getId();
-    eventNote.children = [...activity.participants];
-
-    for (const participantId of activity.participants) {
-      const eventAtt = new AttendanceItem(undefined, "", participantId);
-      eventAtt.status = faker.helpers.arrayElement(
-        defaultAttendanceStatusTypes,
-      );
-
-      if (eventAtt.status.countAs === AttendanceLogicalStatus.ABSENT) {
-        eventAtt.remarks = faker.helpers.arrayElement([
-          $localize`:Event demo attendance remarks:sick`,
-          $localize`:Event demo attendance remarks:fever`,
-          $localize`:Event demo attendance remarks:no information`,
-        ]);
-      }
-
-      eventNote.childrenAttendance.push(eventAtt);
-    }
-
-    return eventNote;
-  }
+  private attendanceService = inject(AttendanceService);
 
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
@@ -76,10 +42,19 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventN
     ];
   }
 
-  generateEntities(): EventNote[] {
-    const data = [];
+  generateEntities(): Entity[] {
+    const data: Entity[] = [];
 
     for (const activity of this.demoActivities.entities) {
+      const typeSettings = this.attendanceService.eventTypeSettings.find(
+        (s) =>
+          s.activityType !== undefined &&
+          s.activityType.ENTITY_TYPE === activity.getType(),
+      );
+      if (!typeSettings) {
+        continue;
+      }
+
       for (
         let dayOffset = 1;
         dayOffset < this.config.forNLastYears * 365;
@@ -91,14 +66,62 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventN
           continue;
         }
         data.push(
-          DemoActivityEventsGeneratorService.generateEventForActivity(
-            activity,
-            date.toDate(),
-          ),
+          this.generateEventForActivity(typeSettings, activity, date.toDate()),
         );
       }
     }
 
     return data;
+  }
+
+  /**
+   * Create a specific event for a date based on the given activity config and fill with random attendance.
+   */
+  private generateEventForActivity(
+    typeSettings: EventTypeSettings,
+    activity: Entity,
+    date: Date,
+  ): Entity {
+    const event = new typeSettings.eventType(faker.string.uuid());
+
+    // Set date
+    if (typeSettings.dateField) {
+      event[typeSettings.dateField] = date;
+    }
+
+    // Apply field mapping (activity[actField] → event[evField])
+    for (const [evField, actField] of Object.entries(
+      typeSettings.fieldMapping,
+    )) {
+      event[evField] = structuredClone(activity[actField]);
+    }
+
+    // Set relatesTo
+    event[typeSettings.relatesToField] = activity.getId();
+
+    // Resolve participant IDs from the configured field
+    const participantIds: string[] =
+      (activity[typeSettings.participantsField] as string[]) ?? [];
+
+    // Set attendance items
+    event[typeSettings.attendanceField] = participantIds.map(
+      (participantId) => {
+        const eventAtt = new AttendanceItem(undefined, "", participantId);
+        eventAtt.status = faker.helpers.arrayElement(
+          defaultAttendanceStatusTypes,
+        );
+
+        if (eventAtt.status.countAs === AttendanceLogicalStatus.ABSENT) {
+          eventAtt.remarks = faker.helpers.arrayElement([
+            $localize`:Event demo attendance remarks:sick`,
+            $localize`:Event demo attendance remarks:fever`,
+            $localize`:Event demo attendance remarks:no information`,
+          ]);
+        }
+        return eventAtt;
+      },
+    );
+
+    return event;
   }
 }

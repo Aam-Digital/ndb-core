@@ -3,20 +3,19 @@ import { ActivatedRouteSnapshot } from "@angular/router";
 import { AbstractPermissionGuard } from "#src/app/core/permissions/permission-guard/abstract-permission.guard";
 import { DynamicComponentConfig } from "#src/app/core/config/dynamic-components/dynamic-component-config.interface";
 import { AttendanceService } from "./attendance.service";
-import { AttendanceFeatureConfig } from "./model/attendance-feature-config";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EntityActionPermission } from "#src/app/core/permissions/permission-types";
 
-/** Maps component name to the featureConfig property and required operation for permission checks. */
+/** Maps component name to the service signal property and required operation for permission checks. */
 const COMPONENT_PERMISSIONS: Record<
   string,
   {
-    configKey: keyof AttendanceFeatureConfig;
+    configKey: "activityTypes" | "eventTypes";
     operation: EntityActionPermission;
   }
 > = {
   AttendanceManager: {
-    configKey: "recurringActivityTypes",
+    configKey: "activityTypes",
     operation: "read",
   },
   AddDayAttendance: { configKey: "eventTypes", operation: "create" },
@@ -24,11 +23,11 @@ const COMPONENT_PERMISSIONS: Record<
 };
 
 /**
- * Guard that checks route permissions based on the entity types configured in `AttendanceService.featureConfig`.
+ * Guard that checks route permissions based on the entity types configured in `AttendanceService`.
  * The user is granted access if they can perform the required operation on at least one of the configured entity types.
  *
- * For the RollCall route, the entity type is extracted from the `:id` param prefix (e.g. `EventNote:abc` → `EventNote`).
- * If no type can be extracted (e.g. `/new`), falls back to checking the `eventTypes` featureConfig (same as AddDayAttendance).
+ * For the RollCall route, the entity type is extracted from the `:id` param prefix (e.g. `TestEntity:abc` → `TestEntity`).
+ * If no type can be extracted (e.g. `/new`), falls back to checking the `eventTypes` signal (same as AddDayAttendance).
  *
  * Register this guard via `{ provide: AbstractPermissionGuard, useExisting: AttendancePermissionGuard, multi: true }`
  * so it is also evaluated during menu filtering by `RoutePermissionsService`.
@@ -61,9 +60,7 @@ export class AttendancePermissionGuard extends AbstractPermissionGuard {
     if (!permissionConfig) return true;
 
     const entityTypes: EntityConstructor[] =
-      (this.attendanceService.featureConfig[
-        permissionConfig.configKey
-      ] as EntityConstructor[]) ?? [];
+      this.attendanceService[permissionConfig.configKey]() ?? [];
 
     if (entityTypes.length === 0) return true;
 

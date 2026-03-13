@@ -1,4 +1,3 @@
-import { RecurringActivity } from "#src/app/features/attendance/model/recurring-activity";
 import { AdditionalImportAction } from "../additional-actions/additional-import-action";
 import { Entity } from "../../entity/model/entity";
 import { ColumnMapping } from "../column-mapping";
@@ -46,8 +45,12 @@ Object.assign(
 export const IMPORT_SAMPLE_LINKABLE_DATA: Entity[] = [
   Object.assign(createEntityOfType("School"), { name: "Sample School" }),
   Object.assign(createEntityOfType("School"), { name: "ABCD School" }),
-  RecurringActivity.create("Activity X"),
-  RecurringActivity.create("Activity Y"),
+  Object.assign(createEntityOfType("RecurringActivity"), {
+    title: "Activity X",
+  }),
+  Object.assign(createEntityOfType("RecurringActivity"), {
+    title: "Activity Y",
+  }),
 ];
 
 export const IMPORT_SAMPLE_ADDITIONAL_ACTIONS: AdditionalImportAction[] = [

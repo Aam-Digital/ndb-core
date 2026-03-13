@@ -22,8 +22,6 @@ import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-m
 import { Entity } from "#src/app/core/entity/model/entity";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { sortByAttribute } from "#src/app/utils/utils";
-import { AttendanceDatatype } from "../../model/attendance.datatype";
-import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
 import { EventWithAttendance } from "../../model/event-with-attendance";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
@@ -240,7 +238,7 @@ export class RollCallComponent {
     try {
       const entityType = Entity.extractTypeFromId(id);
       const entity = await this.entityMapper.load(entityType, id);
-      event = AttendanceService.createEventFromEntity(entity);
+      event = this.attendanceService.wrapEventEntity(entity);
     } catch (e) {
       Logging.warn("Could not load event " + id, e);
       void this.router.navigate(["/404"]);

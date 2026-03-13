@@ -465,15 +465,30 @@ export class Entity {
   }
 
   /**
-   * Shallow copy of the entity.
+   * Deep copy of the entity.
    * The resulting entity will be of the same type as this
-   * (taking into account subclassing)
+   * (taking into account subclassing).
+   * All schema field values that are objects or arrays are deep-cloned
+   * to avoid shared mutable state between original and copy.
    *
    * @param newId if true, a new entityId will be generated; if a string, that value is used as new entityId
    */
   public copy(newId: string | boolean = false): this {
     const other = new (this.getConstructor())(this._id);
     Object.assign(other, this);
+
+    for (const key of this.getSchema().keys()) {
+      const value = other[key];
+      if (Array.isArray(value)) {
+        other[key] = [...value];
+      } else if (
+        value !== null &&
+        typeof value === "object" &&
+        Object.getPrototypeOf(value) === Object.prototype
+      ) {
+        other[key] = structuredClone(value);
+      }
+    }
 
     if (newId) {
       other.entityId = typeof newId === "string" ? newId : uuid();
