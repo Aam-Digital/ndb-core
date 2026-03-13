@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceManagerComponent } from "./attendance-manager.component";
-import { RouterTestingModule } from "@angular/router/testing";
+import { RouterModule } from "@angular/router";
 import { ComingSoonDialogService } from "#src/app/features/coming-soon/coming-soon-dialog.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { AttendanceService } from "../../attendance.service";
-import { AttendanceFeatureConfig } from "../../model/attendance-feature-config";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
+import { signal } from "@angular/core";
 
 describe("AttendanceManagerComponent", () => {
   let component: AttendanceManagerComponent;
@@ -16,7 +16,7 @@ describe("AttendanceManagerComponent", () => {
     TestBed.configureTestingModule({
       imports: [
         AttendanceManagerComponent,
-        RouterTestingModule,
+        RouterModule.forRoot([]),
         FontAwesomeTestingModule,
       ],
       providers: [
@@ -24,10 +24,9 @@ describe("AttendanceManagerComponent", () => {
         {
           provide: AttendanceService,
           useValue: {
-            featureConfig: {
-              recurringActivityTypes: [],
-              eventTypes: [],
-            } as AttendanceFeatureConfig,
+            eventTypeSettings: [],
+            activityTypes: signal([]),
+            eventTypes: signal([]),
           },
         },
         {

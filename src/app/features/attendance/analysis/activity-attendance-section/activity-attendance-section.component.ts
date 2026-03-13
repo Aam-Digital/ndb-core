@@ -7,7 +7,7 @@ import {
   SimpleChanges,
   inject,
 } from "@angular/core";
-import { RecurringActivity } from "../../model/recurring-activity";
+import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
 import { AttendanceService } from "../../attendance.service";
 import { formatPercent } from "@angular/common";
@@ -15,6 +15,9 @@ import { ActivityAttendance } from "../../model/activity-attendance";
 import moment from "moment";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { debounceTime, merge } from "rxjs";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -25,7 +28,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { EntitiesTableComponent } from "#src/app/core/common-components/entities-table/entities-table.component";
 
 /**
- * Displays attendance analysis for a given `RecurringActivity`
+ * Displays attendance analysis for a given "recurring activity"
  * either related to a specific participant or the overall attendance.
  */
 @DynamicComponent("ActivityAttendanceSection")
@@ -42,12 +45,14 @@ import { EntitiesTableComponent } from "#src/app/core/common-components/entities
     AttendanceSummaryComponent,
   ],
 })
+@UntilDestroy()
 export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
   private attendanceService = inject(AttendanceService);
+  private entityMapper = inject(EntityMapperService);
   private locale = inject(LOCALE_ID);
   private dialog = inject(MatDialog);
 
-  @Input() entity: RecurringActivity;
+  @Input() entity: Entity;
   @Input() forChild?: string;
 
   loading: boolean = true;
@@ -93,7 +98,23 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
   ];
 
   ngOnInit() {
+    this.subscribeToEventUpdates();
     return this.init();
+  }
+
+  private subscribeToEventUpdates() {
+    const eventTypes = this.attendanceService.eventTypes();
+    if (eventTypes.length === 0) {
+      return;
+    }
+    merge(...eventTypes.map((type) => this.entityMapper.receiveUpdates(type)))
+      .pipe(debounceTime(500), untilDestroyed(this))
+      .subscribe((update) => {
+        const wrapped = this.attendanceService.wrapEventEntity(update.entity);
+        if (wrapped.activityId === this.entity?.getId()) {
+          this.init();
+        }
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {

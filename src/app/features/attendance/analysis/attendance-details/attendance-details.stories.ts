@@ -4,21 +4,19 @@ import {
   moduleMetadata,
   StoryFn,
 } from "@storybook/angular";
-import { RecurringActivity } from "../../model/recurring-activity";
-import {
-  ActivityAttendance,
-  generateEventWithAttendance,
-} from "../../model/activity-attendance";
+import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
+import { ActivityAttendance } from "../../model/activity-attendance";
+import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { AttendanceDetailsComponent } from "./attendance-details.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
-import { EventNote } from "../../model/event-note";
-
-const demoActivity = RecurringActivity.create("Coaching Batch C");
+const demoActivity = Object.assign(createEntityOfType("RecurringActivity"), {
+  title: "Coaching Batch C",
+});
 const activityAttendance = ActivityAttendance.create(new Date("2020-01-01"), [
-  generateEventWithAttendance(
+  TestEventEntity.generateEventWithAttendance(
     [
       ["1", AttendanceLogicalStatus.PRESENT],
       ["2", AttendanceLogicalStatus.PRESENT],
@@ -26,21 +24,21 @@ const activityAttendance = ActivityAttendance.create(new Date("2020-01-01"), [
     ],
     new Date("2020-01-01"),
   ),
-  generateEventWithAttendance(
+  TestEventEntity.generateEventWithAttendance(
     [
       ["1", AttendanceLogicalStatus.PRESENT],
       ["2", AttendanceLogicalStatus.ABSENT],
     ],
     new Date("2020-01-02"),
   ),
-  generateEventWithAttendance(
+  TestEventEntity.generateEventWithAttendance(
     [
       ["1", AttendanceLogicalStatus.ABSENT],
       ["2", AttendanceLogicalStatus.ABSENT],
     ],
     new Date("2020-01-03"),
   ),
-  generateEventWithAttendance(
+  TestEventEntity.generateEventWithAttendance(
     [
       ["1", AttendanceLogicalStatus.PRESENT],
       ["2", AttendanceLogicalStatus.ABSENT],
@@ -49,7 +47,7 @@ const activityAttendance = ActivityAttendance.create(new Date("2020-01-01"), [
   ),
 ]);
 activityAttendance.events.forEach((e) => {
-  (e.entity as EventNote).subject = demoActivity.title;
+  (e.entity as TestEventEntity).title = demoActivity.title;
 });
 activityAttendance.periodTo = new Date("2020-01-31");
 activityAttendance.activity = demoActivity;

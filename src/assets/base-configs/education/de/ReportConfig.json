@@ -49,7 +49,7 @@
     "title": "Veranstaltungsbericht",
     "aggregationDefinitions": [
       {
-        "query": "EventNote:toArray[*date >= ? & date <= ?]",
+        "query": "Event:toArray[* date >= ? & date <= ?]",
         "groupBy": [
           "category"
         ],
@@ -72,7 +72,7 @@
     "mode": "exporting",
     "aggregationDefinitions": [
       {
-        "query": "EventNote:toArray[* date >= ? & date <= ?]",
+        "query": "Event:toArray[* date >= ? & date <= ?]",
         "groupBy": {
           "label": "Typ",
           "property": "category"

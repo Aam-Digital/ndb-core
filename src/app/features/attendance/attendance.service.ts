@@ -1,64 +1,127 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable, inject, signal } from "@angular/core";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { Entity } from "#src/app/core/entity/model/entity";
+import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import moment from "moment";
-import { RecurringActivity } from "./model/recurring-activity";
 import { ActivityAttendance } from "./model/activity-attendance";
-import { groupBy } from "#src/app/utils/utils";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
-import { EventNote } from "./model/event-note";
-import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
 import { AttendanceItem } from "./model/attendance-item";
 import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
-import { AttendanceFeatureConfig } from "./model/attendance-feature-config";
+import {
+  EventTypeSettings,
+  AttendanceFeatureConfig,
+} from "./model/attendance-feature-config";
+import { FilterConfig } from "#src/app/core/entity-list/EntityListConfig";
+import { EventWithAttendance } from "./model/event-with-attendance";
+import { ConfigService } from "#src/app/core/config/config.service";
+import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
+import { GroupParticipantResolverService } from "./deprecated/group-participant-resolver";
 import { AttendanceDatatype } from "./model/attendance.datatype";
 import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
-import { EventWithAttendance } from "./model/event-with-attendance";
 import { Logging } from "#src/app/core/logging/logging.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class AttendanceService {
-  /**
-   * Wrap the given entity in an EventWithAttendance,
-   * which provides typed access to attendance and date fields.
-   *
-   * The entity must have at least one attendance field and one date field for this to work, otherwise an error is thrown.
-   */
-  static createEventFromEntity(entity: Entity): EventWithAttendance {
-    const attendanceField = AttendanceDatatype.detectFieldInEntity(entity);
-    const dateField = DateDatatype.detectFieldInEntity(entity);
-    if (!attendanceField || !dateField) {
-      Logging.debug("Entity missing attendance fields", entity.getId());
-      throw new Error(
-        `Entity does not have the required attendance and date fields for roll call.`,
-      );
-    }
-    return new EventWithAttendance(entity, attendanceField, dateField);
-  }
+  static readonly CONFIG_KEY = "appConfig:attendance";
 
   private readonly entityMapper = inject(EntityMapperService);
   private readonly dbIndexing = inject(DatabaseIndexingService);
-  private readonly childrenService = inject(ChildrenService);
   private readonly currentUser = inject(CurrentUserSubject);
+  private readonly configService = inject(ConfigService);
+  private readonly entityRegistry = inject(EntityRegistry);
+  private readonly groupParticipantResolver = inject(
+    GroupParticipantResolverService,
+  );
 
-  /**
-   * Default configuration for the roll-call UI.
-   *
-   * Will become configurable in the future.
-   */
-  readonly featureConfig: AttendanceFeatureConfig = {
-    rollCallSetup: {
-      filterConfig: [{ id: "category" }, { id: "schools" }],
-      extraField: "category",
-    },
-    recurringActivityTypes: [RecurringActivity],
-    eventTypes: [EventNote],
-  };
+  /** Full settings for each configured event type. */
+  eventTypeSettings: EventTypeSettings[] = [];
+  /** Whether legacy group-based participant resolution is active. */
+  private groupBasedParticipants = false;
+
+  /** Unique activity-type constructors derived from the current config. */
+  readonly activityTypes = signal<EntityConstructor[]>([]);
+  /** Unique event-type constructors derived from the current config. */
+  readonly eventTypes = signal<EntityConstructor[]>([]);
+  /** Merged filter config from all event type entries. */
+  readonly filterConfig = signal<FilterConfig[]>([]);
 
   constructor() {
-    this.createIndices();
+    this.applyConfig(undefined);
+    this.configService.configUpdates.subscribe((config) => {
+      this.applyConfig(config?.data?.[AttendanceService.CONFIG_KEY]);
+      this.createIndices();
+    });
+  }
+
+  private applyConfig(raw?: AttendanceFeatureConfig): void {
+    const eventTypesConfig = raw?.eventTypes ?? [];
+
+    this.eventTypeSettings = eventTypesConfig
+      .map((typeConfig) => {
+        const eventTypeName = typeConfig.eventType;
+        if (!this.entityRegistry.has(eventTypeName)) return null;
+
+        const activityTypeName = typeConfig.activityType;
+        if (activityTypeName && !this.entityRegistry.has(activityTypeName))
+          return null;
+
+        const eventType = this.entityRegistry.get(eventTypeName);
+
+        const resolvedDateField =
+          typeConfig.dateField ?? DateDatatype.detectFieldInEntity(eventType);
+        if (!resolvedDateField) {
+          Logging.warn(
+            `[AttendanceService] No date field found for event type "${eventTypeName}". ` +
+              `Set "dateField" in the attendance config or add a @DatabaseField with dataType "date" to the entity.`,
+          );
+        }
+
+        return {
+          activityType: activityTypeName
+            ? this.entityRegistry.get(activityTypeName)
+            : undefined,
+          eventType,
+          participantsField: typeConfig.participantsField ?? "participants",
+          attendanceField:
+            typeConfig.attendanceField ??
+            AttendanceDatatype.detectFieldInEntity(eventType),
+          dateField: resolvedDateField,
+          relatesToField: typeConfig.relatesToField ?? "relatesTo",
+          eventAssignedUsersField: typeConfig.eventAssignedUsersField,
+          activityAssignedUsersField: typeConfig.activityAssignedUsersField,
+          filterConfig: typeConfig.filterConfig ?? [],
+          extraField: typeConfig.extraField,
+          fieldMapping: typeConfig.fieldMapping ?? {},
+        } as EventTypeSettings;
+      })
+      .filter((s): s is EventTypeSettings => s !== null);
+
+    this.activityTypes.set([
+      ...new Set(
+        this.eventTypeSettings
+          .filter((s) => s.activityType !== undefined)
+          .map((s) => s.activityType!),
+      ),
+    ]);
+    this.eventTypes.set([
+      ...new Set(this.eventTypeSettings.map((s) => s.eventType)),
+    ]);
+
+    const filterConfigMap = new Map();
+    for (const ts of this.eventTypeSettings) {
+      for (const f of ts.filterConfig) {
+        filterConfigMap.set(f.id, f);
+      }
+    }
+    this.filterConfig.set(Array.from(filterConfigMap.values()));
+
+    this.groupBasedParticipants = this.eventTypeSettings.some(
+      (s) =>
+        s.activityType?.ENTITY_TYPE === "RecurringActivity" &&
+        s.eventType.ENTITY_TYPE === "EventNote" &&
+        s.fieldMapping["schools"] === "linkedGroups",
+    );
   }
 
   private createIndices() {
@@ -67,12 +130,30 @@ export class AttendanceService {
   }
 
   private createEventsIndex(): Promise<void> {
+    if (this.eventTypes().length === 0) {
+      return Promise.resolve();
+    }
+
+    const eventTypeChecks = this.eventTypes()
+      .map((t) => `doc._id.startsWith("${t.ENTITY_TYPE}:")`)
+      .join(" || ");
+
+    const byActivityEmits = this.eventTypeSettings
+      .filter((s) => s.activityType !== undefined)
+      .map(
+        ({ eventType, relatesToField }) =>
+          `      if (doc._id.startsWith("${eventType.ENTITY_TYPE}:") && doc["${relatesToField}"]) {
+        emit(doc["${relatesToField}"] + "_" + dString);
+      }`,
+      )
+      .join("\n");
+
     const designDoc = {
       _id: "_design/events_index",
       views: {
         by_date: {
           map: `(doc) => {
-            if (doc._id.startsWith("${EventNote.ENTITY_TYPE}")) {
+            if (${eventTypeChecks}) {
               if (doc.date && doc.date.length === 10) {
                 emit(doc.date);
               } else {
@@ -83,19 +164,16 @@ export class AttendanceService {
             }
           }`,
         },
-        // TODO: remove this and use general Note's relatedEntities index?
         by_activity: {
           map: `(doc) => {
-            if (doc._id.startsWith("${EventNote.ENTITY_TYPE}") && doc.relatesTo) {
-              var dString;
-              if (doc.date && doc.date.length === 10) {
-                dString = doc.date;
-              } else {
-                var d = new Date(doc.date || null);
-                dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-              }
-              emit(doc.relatesTo + "_" + dString);
+            var dString;
+            if (doc.date && doc.date.length === 10) {
+              dString = doc.date;
+            } else {
+              var d = new Date(doc.date || null);
+              dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
             }
+${byActivityEmits}
           }`,
         },
       },
@@ -105,25 +183,30 @@ export class AttendanceService {
   }
 
   private createRecurringActivitiesIndex(): Promise<void> {
+    const activitySettings = this.eventTypeSettings.filter(
+      (s) => s.activityType !== undefined,
+    );
+    if (activitySettings.length === 0) {
+      return Promise.resolve();
+    }
+
+    const byParticipantChecks = activitySettings
+      .map(
+        ({ activityType, participantsField }) =>
+          `      if (doc._id.startsWith("${activityType!.ENTITY_TYPE}:")) {
+        for (var p of (doc["${participantsField}"] || [])) {
+          emit(p);
+        }
+      }`,
+      )
+      .join("\n");
+
     const designDoc = {
       _id: "_design/activities_index",
       views: {
         by_participant: {
           map: `(doc) => {
-            if (doc._id.startsWith("${RecurringActivity.ENTITY_TYPE}")) {
-              for (var p of (doc.participants || [])) {
-                emit(p);
-              }
-            }
-          }`,
-        },
-        by_school: {
-          map: `(doc) => {
-            if (doc._id.startsWith("${RecurringActivity.ENTITY_TYPE}")) {
-              for (var g of (doc.linkedGroups || [])) {
-                emit(g);
-              }
-            }
+${byParticipantChecks}
           }`,
         },
       },
@@ -140,61 +223,32 @@ export class AttendanceService {
   async getEventsOnDate(
     startDate: Date,
     endDate: Date = startDate,
-  ): Promise<EventNote[]> {
+  ): Promise<Entity[]> {
     const start = moment(startDate);
     const end = moment(endDate);
 
-    const eventNotes = this.dbIndexing.queryIndexDocsRange(
-      EventNote,
-      "events_index/by_date",
-      start.format("YYYY-MM-DD"),
-      end.format("YYYY-MM-DD"),
+    const eventQueries = this.eventTypes().map((eventType) =>
+      this.dbIndexing.queryIndexDocsRange(
+        eventType,
+        "events_index/by_date",
+        start.format("YYYY-MM-DD"),
+        end.format("YYYY-MM-DD"),
+      ),
     );
 
-    const relevantNormalNotes = this.childrenService
-      .getNotesInTimespan(start, end)
-      .then((notes) => notes.filter((n) => n.category?.isMeeting));
-
-    const allResults = await Promise.all([eventNotes, relevantNormalNotes]);
-    return allResults[0].concat(allResults[1]);
-  }
-
-  async getEventsWithUpdatedParticipants(date: Date) {
-    const events = await this.getEventsOnDate(date, date);
-    for (const event of events) {
-      const participants = await this.loadParticipantsOfGroups(
-        event.schools,
-        date,
-      );
-      for (const newParticipant of participants) {
-        event.addChild(newParticipant);
-        if (
-          !event.childrenAttendance.some(
-            (a) => a.participant === newParticipant,
-          )
-        ) {
-          event.childrenAttendance.push(
-            new AttendanceItem(undefined, "", newParticipant),
-          );
-        }
-      }
-    }
-    return events;
+    const allResults = await Promise.all(eventQueries);
+    return ([] as Entity[]).concat(...allResults);
   }
 
   /**
-   * Load events related to the given recurring activity.
+   * Load events related to the given activity.
    * @param activityId The reference activity the events should relate to.
    * @param sinceDate (Optional) date starting from which events should be considered. Events before this are ignored to improve performance.
    */
-  async getEventsForActivity(
+  private async getEventsForActivity(
     activityId: string,
     sinceDate?: Date,
-  ): Promise<EventNote[]> {
-    if (!activityId.startsWith(RecurringActivity.ENTITY_TYPE)) {
-      activityId = RecurringActivity.ENTITY_TYPE + ":" + activityId;
-    }
-
+  ): Promise<Entity[]> {
     let dateLimit = "";
     if (sinceDate) {
       dateLimit =
@@ -206,26 +260,31 @@ export class AttendanceService {
         String(sinceDate.getDate()).padStart(2, "0");
     }
 
-    return this.dbIndexing.queryIndexDocsRange(
-      EventNote,
-      "events_index/by_activity",
-      activityId + dateLimit,
-      activityId,
+    const eventQueries = this.eventTypes().map((eventType) =>
+      this.dbIndexing.queryIndexDocsRange(
+        eventType,
+        "events_index/by_activity",
+        activityId + dateLimit,
+        activityId,
+      ),
     );
+
+    const results = await Promise.all(eventQueries);
+    return ([] as Entity[]).concat(...results);
   }
 
   /**
-   * Load and calculate activity attendance records.
-   * @param activity To activity for which records are loaded.
-   * @param sinceDate (Optional) date starting from which events should be considered. Events before this are ignored to improve performance.
+   * Load and calculate activity attendance records grouped by month.
+   * @param activity The activity for which records are loaded.
+   * @param from (Optional) date starting from which events should be considered.
    */
   async getActivityAttendances(
-    activity: RecurringActivity,
-    sinceDate?: Date,
+    activity: Entity,
+    from?: Date,
   ): Promise<ActivityAttendance[]> {
     const periods = new Map<number, ActivityAttendance>();
 
-    const events = await this.getEventsForActivity(activity.getId(), sinceDate);
+    const events = await this.getEventsForActivity(activity.getId(), from);
 
     const getOrCreateAttendancePeriod = (event: EventWithAttendance) => {
       const month = new Date(event.date.getFullYear(), event.date.getMonth());
@@ -240,7 +299,7 @@ export class AttendanceService {
     };
 
     for (const event of events) {
-      const wrapped = AttendanceService.createEventFromEntity(event);
+      const wrapped = this.wrapEventEntity(event);
       const record = getOrCreateAttendancePeriod(wrapped);
       record.events.push(wrapped);
     }
@@ -250,57 +309,42 @@ export class AttendanceService {
     );
   }
 
-  async getAllActivityAttendancesForPeriod(
-    from: Date,
-    until: Date,
-  ): Promise<ActivityAttendance[]> {
-    const matchingEvents = await this.getEventsOnDate(from, until);
-    const groupedEvents = groupBy(matchingEvents, "relatesTo");
-
-    const records = [];
-    for (const [activityId, activityEvents] of groupedEvents) {
-      const activityRecord = ActivityAttendance.create(
-        from,
-        activityEvents.map((e) => AttendanceService.createEventFromEntity(e)),
-      );
-      activityRecord.periodTo = until;
-      if (activityId) {
-        activityRecord.activity = await this.entityMapper
-          .load<RecurringActivity>(RecurringActivity, activityId)
-          .catch(() => undefined);
-      }
-
-      records.push(activityRecord);
-    }
-
-    return records;
-  }
-
-  async getActivitiesForChild(childId: string): Promise<RecurringActivity[]> {
-    const activities = await this.dbIndexing.queryIndexDocs(
-      RecurringActivity,
-      "activities_index/by_participant",
-      childId,
+  /**
+   * Load all activities that list the given participant ID in their `participants` field.
+   * Queries all configured recurring activity types (see {@link AttendanceFeatureConfig.recurringActivityTypes}).
+   *
+   * When the legacy RecurringActivity/Event + schools→linkedGroups mapping is detected,
+   * also includes activities linked via school group membership (legacy).
+   *
+   * @param participantId The entity ID of the participant to look up.
+   */
+  async getActivitiesForParticipant(participantId: string): Promise<Entity[]> {
+    const directActivities = await Promise.all(
+      this.activityTypes().map((activityType) =>
+        this.dbIndexing.queryIndexDocs(
+          activityType,
+          "activities_index/by_participant",
+          participantId,
+        ),
+      ),
     );
+    const results = ([] as Entity[]).concat(...directActivities);
 
-    const visitedSchools =
-      await this.childrenService.queryActiveRelationsOf(childId);
-    for (const currentRelation of visitedSchools) {
-      const activitiesThroughRelation = await this.dbIndexing.queryIndexDocs(
-        RecurringActivity,
-        "activities_index/by_school",
-        currentRelation.schoolId,
-      );
-      for (const activityThroughRelation of activitiesThroughRelation) {
-        if (
-          !activities.some((a) => a.getId() === activityThroughRelation.getId())
-        ) {
-          activities.push(activityThroughRelation);
-        }
-      }
+    if (!this.groupBasedParticipants) {
+      return results;
     }
 
-    return activities;
+    const groupActivities =
+      await this.groupParticipantResolver.getActivitiesForParticipantViaGroups(
+        participantId,
+        this.activityTypes(),
+      );
+
+    const merged = new Map<string, Entity>();
+    for (const a of [...results, ...groupActivities]) {
+      merged.set(a.getId(), a);
+    }
+    return Array.from(merged.values());
   }
 
   /**
@@ -317,30 +361,33 @@ export class AttendanceService {
     allEvents: EventWithAttendance[];
   }> {
     const currentUserId = this.currentUser.value?.getId();
-    const existingEvents = await this.getEventsWithUpdatedParticipants(date);
+    const existingEvents = await this.getEventsOnDate(date, date);
 
-    const allActivities = (
-      await this.entityMapper.loadType(RecurringActivity)
-    ).filter((a) => a.isActive);
+    const allActivitiesNested = await Promise.all(
+      this.eventTypeSettings
+        .filter((s) => s.activityType !== undefined)
+        .map((typeSettings) =>
+          this.entityMapper.loadType(typeSettings.activityType!),
+        ),
+    );
+    const allActivities = ([] as Entity[])
+      .concat(...allActivitiesNested)
+      .filter((a) => a.isActive);
 
-    const allEvents: EventWithAttendance[] = (
-      await this.buildEventsFromActivities(
-        allActivities,
-        existingEvents,
-        currentUserId,
-        date,
-      )
-    ).map((e) => AttendanceService.createEventFromEntity(e));
+    const allEvents = await this.buildEventsFromActivities(
+      allActivities,
+      existingEvents,
+      date,
+    );
 
-    let assignedActivityIds = allActivities
-      .filter((a) => a.isAssignedTo(currentUserId))
+    const assignedActivityIds = allActivities
+      .filter((a) => this.getActivityAssignedUsers(a)?.includes(currentUserId))
       .map((a) => a.getId());
 
     const filteredEvents = !currentUserId
       ? allEvents
       : allEvents.filter(
-          (e) =>
-            !e.isActivityEvent || assignedActivityIds.includes(e.activityId),
+          (e) => !e.activityId || assignedActivityIds.includes(e.activityId),
         );
 
     return {
@@ -349,47 +396,81 @@ export class AttendanceService {
     };
   }
 
+  /**
+   * Wrap an event entity with typed attendance/date/relatesTo/authors accessors
+   * based on the configured field names for its event type.
+   */
+  wrapEventEntity(entity: Entity): EventWithAttendance {
+    const typeSettings = this.eventTypeSettings.find(
+      (s) => s.eventType.ENTITY_TYPE === entity.getType(),
+    );
+    if (!typeSettings) {
+      throw new Error(
+        `No attendance event config found for "${entity.getType()}"`,
+      );
+    }
+
+    return new EventWithAttendance(
+      entity,
+      typeSettings.attendanceField,
+      typeSettings.dateField,
+      typeSettings.relatesToField,
+      typeSettings.eventAssignedUsersField,
+      typeSettings.extraField,
+    );
+  }
+
   private async buildEventsFromActivities(
-    activities: RecurringActivity[],
-    existingEvents: EventNote[],
-    currentUserId: string | undefined,
+    activities: Entity[],
+    existingEvents: Entity[],
     date: Date,
-  ): Promise<Entity[]> {
-    const newEvents = await Promise.all(
+  ): Promise<EventWithAttendance[]> {
+    const wrappedExisting = existingEvents.map((e) => this.wrapEventEntity(e));
+
+    const newWrappedEvents = await Promise.all(
       activities.map(async (activity) => {
-        if (existingEvents.find((e) => e.relatesTo === activity.getId())) {
+        const typeSettings = this.eventTypeSettings.find(
+          (s) =>
+            s.activityType !== undefined &&
+            s.activityType.ENTITY_TYPE === activity.getType(),
+        );
+        if (
+          existingEvents.find(
+            (e) => e[typeSettings?.relatesToField] === activity.getId(),
+          )
+        ) {
           return undefined;
         }
-        const event = await this.createEventForActivity(activity, date);
-        if (currentUserId) {
-          (event.entity as EventNote).authors = [currentUserId];
-        }
-        return event.entity as EventNote;
+        return this.createEventForActivity(activity, date);
       }),
     );
-    const events: Entity[] = existingEvents.concat(
-      newEvents.filter((e): e is EventNote => !!e),
-    );
 
-    this.sortEventsByRelevance(events, activities);
-    return events;
+    const allEvents = [
+      ...wrappedExisting,
+      ...newWrappedEvents.filter((e): e is EventWithAttendance => !!e),
+    ];
+
+    this.sortEventsByRelevance(allEvents, activities);
+    return allEvents;
   }
 
   private sortEventsByRelevance(
-    events: Entity[],
-    allActivities: RecurringActivity[],
+    events: EventWithAttendance[],
+    allActivities: Entity[],
   ): void {
-    const calculatePriority = (event: Entity): number => {
+    const calculatePriority = (event: EventWithAttendance): number => {
       let score = 0;
 
-      const relatesTo = event["relatesTo"] as string | undefined;
-      const isActivity = event["relatesTo"]?.length > 0;
-      const activityAssignedUsers = isActivity
-        ? allActivities.find((a) => a.getId() === relatesTo)?.assignedTo
+      const isActivity = event.isActivityEvent;
+      const matchedActivity = isActivity
+        ? allActivities.find((a) => a.getId() === event.activityId)
+        : undefined;
+      const activityAssignedUsers = matchedActivity
+        ? this.getActivityAssignedUsers(matchedActivity)
         : undefined;
       // use parent activity's assigned users and only fall back to event if necessary
       const assignedUsers: string[] =
-        activityAssignedUsers ?? event["authors"] ?? [];
+        activityAssignedUsers ?? event.assignedUsers;
 
       if (!isActivity) {
         // show one-time events first
@@ -408,67 +489,109 @@ export class AttendanceService {
   }
 
   async createEventForActivity(
-    activity: RecurringActivity | string,
+    activity: Entity | string,
     date: Date,
   ): Promise<EventWithAttendance> {
     if (typeof activity === "string") {
-      activity = await this.entityMapper.load(RecurringActivity, activity);
+      const activityTypeName = activity.split(":")[0];
+      const typeSettings = this.eventTypeSettings.find(
+        (s) =>
+          s.activityType !== undefined &&
+          s.activityType.ENTITY_TYPE === activityTypeName,
+      );
+      if (!typeSettings) {
+        throw new Error(
+          `No config found for activity type "${activityTypeName}"`,
+        );
+      }
+      activity = await this.entityMapper.load(
+        typeSettings.activityType!,
+        activity,
+      );
     }
 
-    const instance = new EventNote();
-    instance.date = date;
-    instance.subject = activity.title;
-    const participantIds = await this.getActiveParticipantsOfActivity(
-      activity,
-      date,
+    const typeSettings = this.eventTypeSettings.find(
+      (s) =>
+        s.activityType !== undefined &&
+        s.activityType.ENTITY_TYPE === activity.getType(),
     );
-    instance.children = participantIds;
-    instance.childrenAttendance = participantIds.map(
+    if (!typeSettings) {
+      throw new Error(`No config found for activity "${activity.getId()}"`);
+    }
+
+    const instance = new typeSettings.eventType();
+
+    // Set date
+    if (typeSettings.dateField) {
+      instance[typeSettings.dateField] = date;
+    }
+
+    // Apply field mapping (activity[actField] → event[evField])
+    for (const [evField, actField] of Object.entries(
+      typeSettings.fieldMapping,
+    )) {
+      const value = activity[actField];
+      instance[evField] =
+        typeof value === "object" && value !== null
+          ? structuredClone(value)
+          : value;
+    }
+
+    // Resolve participants
+    let participantIds: string[];
+    if (
+      this.groupBasedParticipants &&
+      activity.getType() === "RecurringActivity"
+    ) {
+      participantIds =
+        await this.groupParticipantResolver.getActiveParticipantsOfActivity(
+          activity,
+          date,
+        );
+    } else {
+      participantIds =
+        (activity[typeSettings.participantsField] as string[]) ?? [];
+    }
+
+    // Set attendance items
+    instance[typeSettings.attendanceField] = participantIds.map(
       (id) => new AttendanceItem(undefined, "", id),
     );
-    instance.schools = activity.linkedGroups;
-    instance.relatesTo = activity.getId();
-    instance.category = activity.type;
 
+    // Set relatesTo
+    instance[typeSettings.relatesToField] = activity.getId();
+
+    // Set authors
     if (this.currentUser.value) {
-      instance.authors = [this.currentUser.value.getId()];
+      instance[typeSettings.eventAssignedUsersField] = [
+        this.currentUser.value.getId(),
+      ];
     }
 
-    return AttendanceService.createEventFromEntity(instance);
-  }
-
-  private async getActiveParticipantsOfActivity(
-    activity: RecurringActivity,
-    date: Date,
-  ): Promise<string[]> {
-    const schoolParticipants = await this.loadParticipantsOfGroups(
-      activity.linkedGroups,
-      date,
+    return new EventWithAttendance(
+      instance,
+      typeSettings.attendanceField,
+      typeSettings.dateField,
+      typeSettings.relatesToField,
+      typeSettings.eventAssignedUsersField,
+      typeSettings.extraField,
     );
-
-    return [
-      ...new Set(activity.participants.concat(...schoolParticipants)), //  remove duplicates
-    ].filter((p) => !activity.excludedParticipants.includes(p));
   }
 
   /**
-   * Load all participants' ids for the given list of groups
-   * @param linkedGroups
-   * @param date on which the participants should be part of the group
+   * Get the assigned user IDs from an activity entity using the configured
+   * `activityAssignedUsersField`. Returns `undefined` if no field is configured
+   * or the field is not an array on the entity.
    */
-  private async loadParticipantsOfGroups(
-    linkedGroups: string[],
-    date: Date,
-  ): Promise<string[]> {
-    const childIdPromises = linkedGroups.map((groupId) =>
-      this.childrenService
-        .queryActiveRelationsOf(groupId, date)
-        .then((relations) =>
-          relations.map((r) => r.childId).filter((id) => !!id),
-        ),
-    );
-    const allParticipants = await Promise.all(childIdPromises);
-    // flatten and remove duplicates
-    return Array.from(new Set([].concat(...allParticipants)));
+  private getActivityAssignedUsers(activity: Entity): string[] | undefined {
+    const actType = activity.getType();
+    for (const s of this.eventTypeSettings) {
+      if (s.activityType?.ENTITY_TYPE === actType) {
+        if (!s.activityAssignedUsersField) continue;
+        const val = activity[s.activityAssignedUsersField];
+        if (Array.isArray(val)) return val;
+      }
+    }
+    return undefined;
   }
 }

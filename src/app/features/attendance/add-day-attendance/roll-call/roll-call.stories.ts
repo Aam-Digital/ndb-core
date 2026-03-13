@@ -5,12 +5,12 @@ import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { AttendanceItem } from "../../model/attendance-item";
-import { AttendanceService } from "../../attendance.service";
+import { EventWithAttendance } from "../../model/event-with-attendance";
 
 const demoEvent = Note.create(new Date(), "coaching");
 const demoChildren = [generateChild(), generateChild(), generateChild()];
 demoChildren.forEach((c) => {
-  demoEvent.addChild(c);
+  demoEvent.children.push(c.getId());
   demoEvent.childrenAttendance.push(
     new AttendanceItem(undefined, "", c.getId()),
   );
@@ -30,12 +30,26 @@ export default {
 
 export const Primary: StoryObj<RollCallComponent> = {
   args: {
-    eventEntity: AttendanceService.createEventFromEntity(demoEvent),
+    eventEntity: new EventWithAttendance(
+      demoEvent,
+      "childrenAttendance",
+      "date",
+      "relatesTo",
+      "authors",
+      undefined,
+    ),
   },
 };
 
 export const Finished: StoryObj<RollCallComponent> = {
   args: {
-    eventEntity: AttendanceService.createEventFromEntity(new Note()),
+    eventEntity: new EventWithAttendance(
+      new Note(),
+      "childrenAttendance",
+      "date",
+      "relatesTo",
+      "authors",
+      undefined,
+    ),
   },
 };

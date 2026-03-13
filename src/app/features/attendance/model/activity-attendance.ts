@@ -2,9 +2,6 @@ import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
 } from "./attendance-status";
-import { RecurringActivity } from "./recurring-activity";
-import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
-import { EventNote } from "./event-note";
 import {
   getWarningLevelColor,
   WarningLevel,
@@ -13,7 +10,7 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { EventWithAttendance } from "./event-with-attendance";
 
 /**
- * Aggregate information about all events for a {@link RecurringActivity} within a given time period.
+ * Aggregate information about all events for a "recurring activity" within a given time period.
  *
  * This object is not saved in the database but instead generated dynamically from stored Events
  * to avoid problems keeping all information in sync in the database.
@@ -60,7 +57,7 @@ export class ActivityAttendance extends Entity {
   /**
    * The general, recurring activity for which this instance aggregates actual events that took place within a limited time period.
    */
-  activity: RecurringActivity;
+  activity: Entity;
 
   /**
    * List of (actual, recorded in at least one event) participants.
@@ -264,35 +261,4 @@ export class ActivityAttendance extends Entity {
   public override getColor(forChildId?: string): string {
     return getWarningLevelColor(this.getWarningLevel(forChildId));
   }
-}
-
-/**
- * Generate a event with children for the given AttendanceStatus array.
- *
- * This is particularly useful to generate simple data for demo or test purposes.
- *
- * @param participating Object where keys are string childId and values are its attendance status
- * @param date (Optional) date of the event; if not given today's date is used
- * @param activity (Optional) reference to the connected activity entity
- */
-export function generateEventWithAttendance(
-  participating: (
-    | [string, AttendanceLogicalStatus]
-    | [string, AttendanceLogicalStatus, string]
-  )[],
-  date = new Date(),
-  activity?: RecurringActivity,
-): EventWithAttendance {
-  const event = EventNote.create(date);
-  for (const att of participating) {
-    event.addChild(att[0]);
-    event.getAttendance(att[0]).status = defaultAttendanceStatusTypes.find(
-      (t) => t.countAs === att[1],
-    );
-    if (att.length === 3) {
-      event.getAttendance(att[0]).remarks = att[2];
-    }
-  }
-  event.relatesTo = activity?.getId();
-  return new EventWithAttendance(event, "childrenAttendance", "date");
 }

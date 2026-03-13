@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  signal,
   Signal,
 } from "@angular/core";
 import { ComingSoonDialogService } from "#src/app/features/coming-soon/coming-soon-dialog.service";
@@ -33,11 +32,8 @@ export class AttendanceManagerComponent {
   protected readonly comingSoonDialog = inject(ComingSoonDialogService);
   private readonly attendanceService = inject(AttendanceService);
 
-  activityTypes: Signal<EntityConstructor[]> = signal(
-    this.attendanceService.featureConfig.recurringActivityTypes,
-  );
+  activityTypes: Signal<EntityConstructor[]> =
+    this.attendanceService.activityTypes;
 
-  eventTypes: Signal<EntityConstructor[]> = signal(
-    this.attendanceService.featureConfig.eventTypes,
-  );
+  eventTypes: Signal<EntityConstructor[]> = this.attendanceService.eventTypes;
 }

@@ -19,7 +19,14 @@ const PRESENT: AttendanceStatusType = {
 };
 
 function wrap(note: Note): EventWithAttendance {
-  return new EventWithAttendance(note, "childrenAttendance", "date");
+  return new EventWithAttendance(
+    note,
+    "childrenAttendance",
+    "date",
+    "relatesTo",
+    "authors",
+    undefined,
+  );
 }
 
 describe("ActivityCardComponent", () => {

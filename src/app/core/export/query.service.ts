@@ -1,12 +1,11 @@
 import { inject, Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "../entity/model/entity";
-import { Note } from "../../child-dev-project/notes/model/note";
-import { EventNote } from "#src/app/features/attendance/model/event-note";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "#src/app/features/attendance/attendance.service";
 import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
+import { EventWithAttendance } from "#src/app/features/attendance/model/event-with-attendance";
 import jsonQuery from "json-query";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 
@@ -53,10 +52,6 @@ export class QueryService {
       dataFunction: (from, to) =>
         this.childrenService.getNotesInTimespan(from, to),
     },
-    EventNote: {
-      dataFunction: (from, to) =>
-        this.attendanceService.getEventsOnDate(from, to),
-    },
   };
 
   /**
@@ -74,6 +69,17 @@ export class QueryService {
     entityRegistry.forEach((entity, name) =>
       this.queryStringMap.push([name, entity]),
     );
+
+    for (const eventType of this.attendanceService.eventTypes()) {
+      this.entityInfo[eventType.ENTITY_TYPE] = {
+        dataFunction: (from, to) =>
+          this.attendanceService
+            .getEventsOnDate(from, to)
+            .then((events) =>
+              events.filter((e) => e.getType() === eventType.ENTITY_TYPE),
+            ),
+      };
+    }
   }
 
   /**
@@ -104,7 +110,8 @@ export class QueryService {
         getRelated: this.getRelated.bind(this),
         filterByObjectAttribute: this.filterByObjectAttribute,
         getIds: this.getIds,
-        getParticipantsWithAttendance: this.getParticipantsWithAttendance,
+        getParticipantsWithAttendance:
+          this.getParticipantsWithAttendance.bind(this),
         getAttendanceArray: this.getAttendanceArray.bind(this),
         getAttendanceReport: this.getAttendanceReport,
         addEntities: this.addEntities.bind(this),
@@ -368,43 +375,46 @@ export class QueryService {
    * @returns the ids of children which have the specified attendance in an event
    */
   private getParticipantsWithAttendance(
-    events: EventNote[],
+    events: Entity[],
     attendanceStatus: string,
   ): string[] {
-    const attendedChildren: string[] = [];
-    events.forEach((e) =>
-      e.children.forEach((childId) => {
-        if (e.getAttendance(childId).status.countAs === attendanceStatus) {
-          attendedChildren.push(childId);
-        }
-      }),
-    );
-    return attendedChildren;
+    return events.flatMap((e) => {
+      return this.attendanceService
+        .wrapEventEntity(e)
+        .attendanceItems.filter(
+          (item) => item.status?.countAs === attendanceStatus,
+        )
+        .map((item) => item.participant);
+    });
   }
 
   /**
-   * Transforms a list of notes or event-notes into a flattened list of participants and their attendance for each event.
-   * @param events the input list of type Note or EventNote
+   * Transforms a list of entities with attendance data into a flattened list of participants and their attendance for each event.
+   * @param events the input list of entities that have attendance fields
    * @param includeSchool (optional) also include the school to which a participant belongs
    * @returns AttendanceInfo[] a list holding information about the attendance of a single participant
    */
   private getAttendanceArray(
-    events: Note[],
+    events: Entity[],
     includeSchool = false,
   ): AttendanceInfo[] {
     const attendances: AttendanceInfo[] = [];
-    for (const event of events) {
+    for (const entity of events) {
+      const event = this.attendanceService.wrapEventEntity(entity);
+
       const linkedRelations = includeSchool
         ? this.getMembersOfGroupsForEvent(event)
         : [];
 
-      for (const child of event.children) {
+      for (const item of event.attendanceItems) {
         const attendance: AttendanceInfo = {
-          participant: child,
-          status: event.getAttendance(child),
+          participant: item.participant,
+          status: item,
         };
 
-        const relation = linkedRelations.find((rel) => rel.childId === child);
+        const relation = linkedRelations.find(
+          (rel) => rel.childId === item.participant,
+        );
         if (relation) {
           attendance.school = relation.schoolId;
         }
@@ -415,11 +425,12 @@ export class QueryService {
     return attendances;
   }
 
-  private getMembersOfGroupsForEvent(event: Note) {
+  /** @deprecated groups functionality is no longer supported and will be removed */
+  private getMembersOfGroupsForEvent(event: EventWithAttendance) {
+    const schools: string[] = (event.entity as any).schools ?? [];
     return this.toArray(this.entities[ChildSchoolRelation.ENTITY_TYPE]).filter(
       (relation) =>
-        event.schools.includes(relation.schoolId) &&
-        relation.isActiveAt(event.date),
+        schools.includes(relation.schoolId) && relation.isActiveAt(event.date),
     );
   }
 

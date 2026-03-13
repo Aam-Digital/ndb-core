@@ -1,6 +1,30 @@
 {
   "_id": "Config:CONFIG_ENTITY",
   "data": {
+    "appConfig:attendance": {
+      "eventTypes": [
+        {
+          "activityType": "RecurringActivity",
+          "eventType": "Event",
+          "participantsField": "participants",
+          "eventAssignedUsersField": "authors",
+          "activityAssignedUsersField": "assignedTo",
+          "relatesToField": "parentActivity",
+          "fieldMapping": {
+            "title": "title"
+          }
+        },
+        {
+          "activityType": "School",
+          "eventType": "ClassSession",
+          "participantsField": "entityMultiField",
+          "eventAssignedUsersField": "teachers",
+          "fieldMapping": {
+            "title": "name"
+          }
+        }
+      ]
+    },
     "appConfig:usage-analytics": {
       "url": "https://matomo.aam-digital.org",
       "site_id": "8"
@@ -172,21 +196,7 @@
           "isArray": true,
           "additional": "Child",
           "entityReferenceRole": "composite",
-          "editComponent": "EditLegacyAttendance",
           "anonymize": "retain"
-        },
-        "childrenAttendance": {
-          "dataType": "event-attendance-map",
-          "anonymize": "retain",
-          "additional": {
-            "participant": {
-              "dataType": "entity",
-              "additional": [
-                "Child",
-                "User"
-              ]
-            }
-          }
         },
         "date": {
           "label": "Date",
@@ -258,11 +268,11 @@
       }
     },
     "view:note": {
-      "component": "NotesManager",
+      "component": "EntityList",
       "config": {
+        "entityType": "Note",
+        "clickMode": "popup-details",
         "title": "Notes & Reports",
-        "includeEventNotes": false,
-        "showEventNotesToggle": true,
         "columnGroups": {
           "default": "Standard",
           "mobile": "Mobile",
@@ -360,71 +370,6 @@
           {
             "id": "authors"
           }
-        ],
-        "exportConfig": [
-          {
-            "label": "event_id",
-            "query": "_id"
-          },
-          {
-            "label": "date",
-            "query": "date"
-          },
-          {
-            "label": "event title",
-            "query": "subject"
-          },
-          {
-            "label": "event type",
-            "query": "category"
-          },
-          {
-            "label": "event description",
-            "query": "text"
-          },
-          {
-            "query": ":getAttendanceArray(true)",
-            "subQueries": [
-              {
-                "query": ".participant:toEntities(Child)",
-                "subQueries": [
-                  {
-                    "label": "participant_id",
-                    "query": "_id"
-                  },
-                  {
-                    "label": "participant",
-                    "query": "name"
-                  },
-                  {
-                    "label": "gender",
-                    "query": "gender"
-                  },
-                  {
-                    "label": "religion",
-                    "query": "religion"
-                  }
-                ]
-              },
-              {
-                "label": "status",
-                "query": ".status._status.id"
-              },
-              {
-                "query": ".school:toEntities(School)",
-                "subQueries": [
-                  {
-                    "label": "school_name",
-                    "query": "name"
-                  },
-                  {
-                    "label": "school_id",
-                    "query": "entityId"
-                  }
-                ]
-              }
-            ]
-          }
         ]
       },
       "_id": "view:note"
@@ -497,6 +442,12 @@
               ]
             }
           }
+        },
+        "parentActivity": {
+          "label": "Parent Activity",
+          "dataType": "entity",
+          "additional": "RecurringActivity",
+          "anonymize": "retain"
         }
       }
     },
@@ -546,6 +497,110 @@
         ]
       },
       "_id": "view:event/:id"
+    },
+    "entity:ClassSession": {
+      "label": "Class Session",
+      "labelPlural": "Class Sessions",
+      "icon": "chalkboard-teacher",
+      "toStringAttributes": [
+        "title"
+      ],
+      "route": "class-session",
+      "attributes": {
+        "date": {
+          "label": "Date",
+          "dataType": "date-only",
+          "defaultValue": {
+            "mode": "dynamic",
+            "config": {
+              "value": "$now"
+            }
+          }
+        },
+        "title": {
+          "label": "Title",
+          "dataType": "string",
+          "validators": {
+            "required": true
+          }
+        },
+        "description": {
+          "label": "Description",
+          "dataType": "long-text"
+        },
+        "teachers": {
+          "label": "Teachers",
+          "dataType": "entity",
+          "isArray": true,
+          "additional": "User",
+          "defaultValue": {
+            "mode": "dynamic",
+            "config": {
+              "value": "$current_user"
+            }
+          }
+        },
+        "attendance": {
+          "label": "Attendance",
+          "dataType": "attendance",
+          "isArray": true,
+          "additional": {
+            "participant": {
+              "dataType": "entity",
+              "additional": [
+                "Child"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "view:class-session": {
+      "component": "EntityList",
+      "config": {
+        "entityType": "ClassSession",
+        "columns": [
+          "date",
+          "title",
+          "teachers",
+          "attendance"
+        ]
+      },
+      "_id": "view:class-session"
+    },
+    "view:class-session/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "entityType": "ClassSession",
+        "panels": [
+          {
+            "title": "Class Session Details",
+            "components": [
+              {
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "date",
+                        "title",
+                        "description",
+                        "teachers"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "attendance"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "_id": "view:class-session/:id"
     },
     "view:import": {
       "component": "Import",
@@ -1150,18 +1205,6 @@
           "isArray": true,
           "additional": "Child"
         },
-        "linkedGroups": {
-          "label": "Groups",
-          "dataType": "entity",
-          "isArray": true,
-          "additional": "School"
-        },
-        "excludedParticipants": {
-          "label": "Excluded Participants",
-          "dataType": "entity",
-          "isArray": true,
-          "additional": "Child"
-        },
         "assignedTo": {
           "label": "Assigned user(s)",
           "dataType": "entity",
@@ -1239,9 +1282,7 @@
                   "fieldGroups": [
                     {
                       "fields": [
-                        "linkedGroups",
-                        "participants",
-                        "excludedParticipants"
+                        "participants"
                       ]
                     }
                   ]
@@ -1485,6 +1526,13 @@
           "dataType": "entity",
           "additional": "Child"
         },
+        "entityMultiField": {
+          "id": "entityMultiField",
+          "label": "Entity Multi Field",
+          "dataType": "entity",
+          "isArray": true,
+          "additional": "Child"
+        },
         "percentageField": {
           "id": "percentageField",
           "label": "Percentage Field",
@@ -1615,6 +1663,7 @@
                     {
                       "fields": [
                         "entityField",
+                        "entityMultiField",
                         "locationField",
                         "fileField",
                         "photoField",
@@ -1657,36 +1706,6 @@
                     }
                   ],
                   "loaderMethod": "ChildrenServiceQueryRelations"
-                }
-              }
-            ]
-          },
-          {
-            "title": "Activities",
-            "components": [
-              {
-                "component": "RelatedEntities",
-                "config": {
-                  "entityType": "RecurringActivity",
-                  "columns": [
-                    {
-                      "id": "title",
-                      "editComponent": "EditTextWithAutocomplete",
-                      "additional": {
-                        "entityType": "RecurringActivity",
-                        "relevantProperty": "linkedGroups"
-                      }
-                    },
-                    {
-                      "id": "assignedTo"
-                    },
-                    {
-                      "id": "linkedGroups"
-                    },
-                    {
-                      "id": "excludedParticipants"
-                    }
-                  ]
                 }
               }
             ]
