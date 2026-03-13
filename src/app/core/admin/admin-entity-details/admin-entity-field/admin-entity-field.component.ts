@@ -487,7 +487,7 @@ export class AdminEntityFieldComponent implements OnInit {
     }
   }
 
-  save() {
+  async save() {
     this.form.markAllAsTouched();
     // Recalculates the value and validation status of the control, also updates the value and validity of its ancestors.
     this.schemaFieldsForm.updateValueAndValidity();
