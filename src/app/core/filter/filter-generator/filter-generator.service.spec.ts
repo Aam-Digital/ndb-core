@@ -196,14 +196,10 @@ describe("FilterGeneratorService", () => {
     const comparableOptions = filter.options.map((option) => {
       return { key: option.key, label: option.label };
     });
-    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
-    expect(comparableOptions).toHaveLength(2);
-    expect(comparableOptions).toEqual(
-      expect.arrayContaining([
-        { key: "muslim", label: "muslim" },
-        { key: "christian", label: "christian" },
-      ]),
-    );
+    expect(comparableOptions).toEqualArrayWithExactContents([
+      { key: "muslim", label: "muslim" },
+      { key: "christian", label: "christian" },
+    ]);
   });
 
   it("should use values from a prebuilt filter", async () => {

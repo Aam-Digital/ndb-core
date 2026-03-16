@@ -304,12 +304,9 @@ describe("SkillApiService", () => {
     expect(mockEscoApi.loadOrCreateSkillEntity).toHaveBeenCalledWith(
       "https://Angular",
     );
-    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
-
-    expect(targetEntity.other).toHaveLength(2);
-
-    expect(targetEntity.other).toEqual(
-      expect.arrayContaining(["Skill:https://Java", "Skill:https://Angular"]),
-    );
+    expect(targetEntity.other).toEqualArrayWithExactContents([
+      "Skill:https://Java",
+      "Skill:https://Angular",
+    ]);
   }));
 });

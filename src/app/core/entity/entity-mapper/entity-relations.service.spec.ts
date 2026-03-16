@@ -132,32 +132,26 @@ describe("EntityRelationsService", () => {
 
     // Act
     const result = await service.loadAllLinkingToEntity(primaryEntity);
-    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
 
     // Assert
-    expect(result).toHaveLength(4);
-
-    // Assert
-    expect(result).toEqual(
-      expect.arrayContaining([
-        {
-          entity: eSingleRef,
-          fields: [expect.objectContaining({ id: "refSingle" })],
-        },
-        {
-          entity: eMultiRef,
-          fields: [expect.objectContaining({ id: "refMulti" })],
-        },
-        {
-          entity: eDoubleRef,
-          fields: [
-            expect.objectContaining({ id: "refSingle" }),
-            expect.objectContaining({ id: "refMulti" }),
-          ],
-        },
-        { entity: eTestRef, fields: [expect.objectContaining({ id: "ref" })] },
-      ]),
-    );
+    expect(result).toEqualArrayWithExactContents([
+      {
+        entity: eSingleRef,
+        fields: [expect.objectContaining({ id: "refSingle" })],
+      },
+      {
+        entity: eMultiRef,
+        fields: [expect.objectContaining({ id: "refMulti" })],
+      },
+      {
+        entity: eDoubleRef,
+        fields: [
+          expect.objectContaining({ id: "refSingle" }),
+          expect.objectContaining({ id: "refMulti" }),
+        ],
+      },
+      { entity: eTestRef, fields: [expect.objectContaining({ id: "ref" })] },
+    ]);
   });
 });
 

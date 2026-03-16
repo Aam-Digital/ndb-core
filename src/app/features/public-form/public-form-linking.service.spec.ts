@@ -217,9 +217,7 @@ describe("PublicFormLinkingService", () => {
     }
 
     it("should not process when entries are empty or lack required data", () => {
-      service.applyLinkedFromForm([]);
-      // TODO: vitest-migration: expect().nothing() has been removed because it is redundant in Vitest. Tests without assertions pass by default.
-      // expect().nothing();
+      expect(() => service.applyLinkedFromForm([])).not.toThrow();
       const entriesWithoutForm: PublicFormEntry[] = [
         {
           config: { linkedFromForm: ["school"] },
@@ -228,9 +226,9 @@ describe("PublicFormLinkingService", () => {
           form: null,
         },
       ];
-      service.applyLinkedFromForm(entriesWithoutForm);
-      // TODO: vitest-migration: expect().nothing() has been removed because it is redundant in Vitest. Tests without assertions pass by default.
-      // expect().nothing();
+      expect(() =>
+        service.applyLinkedFromForm(entriesWithoutForm),
+      ).not.toThrow();
     });
 
     it("should link fields to entities from other forms based on schema", () => {

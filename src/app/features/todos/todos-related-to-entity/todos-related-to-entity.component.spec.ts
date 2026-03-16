@@ -87,11 +87,11 @@ describe("TodosRelatedToEntityComponent", () => {
     await component.ngOnInit();
 
     expect(loadTypeSpy).toHaveBeenCalledWith(Todo);
-    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
-    expect(component.data).toHaveLength(3);
-    expect(component.data).toEqual(
-      expect.arrayContaining([relatedTodo, relatedTodo2, unrelatedTodo]),
-    );
+    expect(component.data).toEqualArrayWithExactContents([
+      relatedTodo,
+      relatedTodo2,
+      unrelatedTodo,
+    ]);
     expect(component.filter).toEqual({
       $or: [
         {

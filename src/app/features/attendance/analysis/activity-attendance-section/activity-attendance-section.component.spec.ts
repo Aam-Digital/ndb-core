@@ -145,17 +145,13 @@ describe("ActivityAttendanceSectionComponent", () => {
 
     expect(component.combinedAttendance.periodFrom).toBe(oldestEvent.date);
     expect(component.combinedAttendance.periodTo).toBe(latestEvent.date);
-    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
     expect(
       component.combinedAttendance.events.map((e) => e.entity),
-    ).toHaveLength(4);
-    expect(component.combinedAttendance.events.map((e) => e.entity)).toEqual(
-      expect.arrayContaining([
-        oldestEvent,
-        someEvent1,
-        someEvent2,
-        latestEvent,
-      ]),
-    );
+    ).toEqualArrayWithExactContents([
+      oldestEvent,
+      someEvent1,
+      someEvent2,
+      latestEvent,
+    ]);
   });
 });

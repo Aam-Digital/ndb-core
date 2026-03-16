@@ -287,11 +287,7 @@ describe("ChildrenService", () => {
       moment("2023-01-02"),
       moment("2023-01-03"),
     );
-    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
-
-    expect(res).toHaveLength(3);
-
-    expect(res).toEqual(expect.arrayContaining([n2, n3, n4]));
+    expect(res).toEqualArrayWithExactContents([n2, n3, n4]);
   });
 });
 

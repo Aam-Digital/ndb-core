@@ -367,16 +367,10 @@ describe("DataTransformationService", () => {
         ],
       },
     ]);
-    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
-
-    expect(result).toHaveLength(2);
-
-    expect(result).toEqual(
-      expect.arrayContaining([
-        { title: "first", Participants: 2 },
-        { title: "second", Participants: 1 },
-      ]),
-    );
+    expect(result).toEqualArrayWithExactContents([
+      { title: "first", Participants: 2 },
+      { title: "second", Participants: 1 },
+    ]);
   });
 
   it("should allow to group results", async () => {
@@ -391,16 +385,10 @@ describe("DataTransformationService", () => {
         subQueries: [{ query: ":count", label: "Amount" }],
       },
     ]);
-    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
-
-    expect(result).toHaveLength(2);
-
-    expect(result).toEqual(
-      expect.arrayContaining([
-        { Name: "sameName", Amount: 2 },
-        { Name: "otherName", Amount: 1 },
-      ]),
-    );
+    expect(result).toEqualArrayWithExactContents([
+      { Name: "sameName", Amount: 2 },
+      { Name: "otherName", Amount: 1 },
+    ]);
   });
 
   it("should allow results for top level (un-nested) queries", async () => {
@@ -423,17 +411,11 @@ describe("DataTransformationService", () => {
         subQueries: [{ query: ":count", label: "Count" }],
       },
     ]);
-    // TODO: vitest-migration: Verify this matches strict array content (multiset equality). Vitest's arrayContaining is a subset check.
-
-    expect(result).toHaveLength(3);
-
-    expect(result).toEqual(
-      expect.arrayContaining([
-        { Group: "Total", Count: 3 },
-        { Group: "A", Count: 2 },
-        { Group: "B", Count: 1 },
-      ]),
-    );
+    expect(result).toEqualArrayWithExactContents([
+      { Group: "Total", Count: 3 },
+      { Group: "A", Count: 2 },
+      { Group: "B", Count: 1 },
+    ]);
   });
 
   async function createChildInDB(name: string): Promise<Entity> {
