@@ -452,21 +452,21 @@ describe("AdminEntityFieldComponent", () => {
     component.fieldIdForm.setValue("testField");
     tick();
     expect(component.fieldIdForm.errors).toEqual({
-      uniqueProperty: jasmine.any(String),
+      uniqueProperty: expect.any(String),
     });
 
     // Same ID with different capitalization should also be invalid
     component.fieldIdForm.setValue("TestField");
     tick();
     expect(component.fieldIdForm.errors).toEqual({
-      uniqueProperty: jasmine.any(String),
+      uniqueProperty: expect.any(String),
     });
 
     // All uppercase should also be invalid
     component.fieldIdForm.setValue("TESTFIELD");
     tick();
     expect(component.fieldIdForm.errors).toEqual({
-      uniqueProperty: jasmine.any(String),
+      uniqueProperty: expect.any(String),
     });
   }));
 });
