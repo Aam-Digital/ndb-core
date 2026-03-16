@@ -31,9 +31,9 @@ describe("ActivityAttendanceSectionComponent", () => {
       wrapEventEntity: vi
         .fn()
         .mockName("mockAttendanceService.wrapEventEntity"),
+      eventTypes: vi.fn().mockReturnValue([]),
     };
     mockAttendanceService.getActivityAttendances.mockResolvedValue(testRecords);
-    (mockAttendanceService as any).eventTypes = vi.fn().mockReturnValue([]);
     TestBed.configureTestingModule({
       imports: [
         ActivityAttendanceSectionComponent,

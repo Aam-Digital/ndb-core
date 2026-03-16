@@ -1,6 +1,5 @@
 import { EventEmitter } from "@angular/core";
 import { FormBuilder, FormControl } from "@angular/forms";
-import { TestBed } from "@angular/core/testing";
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { Entity } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";

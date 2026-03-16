@@ -52,7 +52,7 @@ function patchCallable(target: Record<string, unknown>, key: string): void {
     return original.apply(this, args);
   } as TestFunction & { __proxyZonePatched?: boolean };
 
-  // Preserve non-enumerable properties such as `skip`, `only`, `todo`, etc.
+  // Preserve non-enumerable properties such as `skip`, `only`, and `todo`.
   for (const propertyKey of Reflect.ownKeys(original)) {
     if (
       propertyKey === "length" ||

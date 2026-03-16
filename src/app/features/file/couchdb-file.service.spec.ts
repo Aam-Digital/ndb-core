@@ -1,4 +1,4 @@
-import type { Mock, MockedObject } from "vitest";
+import type { Mock } from "vitest";
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { CouchdbFileService } from "./couchdb-file.service";

@@ -70,7 +70,9 @@ function mockFileReader(
       addEventListener(_str: string, fun: () => any) {
         fun();
       }
-      readAsText() {}
+      readAsText() {
+        return undefined;
+      }
     },
   );
 }

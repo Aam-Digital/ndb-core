@@ -1,4 +1,4 @@
-import type { Mock, MockedObject } from "vitest";
+import type { Mock } from "vitest";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EditImportColumnMappingComponent } from "./edit-import-column-mapping.component";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";

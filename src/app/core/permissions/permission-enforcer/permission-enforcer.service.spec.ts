@@ -1,4 +1,4 @@
-import type { Mock, MockedObject } from "vitest";
+import type { Mock } from "vitest";
 import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
 import { PermissionEnforcerService } from "./permission-enforcer.service";

@@ -93,7 +93,7 @@ export const genericMatchers = {
     obj: object,
     value: string,
   ): MatcherResult {
-    const pass = Object.prototype.hasOwnProperty.call(obj, value);
+    const pass = Object.hasOwn(obj, value);
 
     return {
       pass,

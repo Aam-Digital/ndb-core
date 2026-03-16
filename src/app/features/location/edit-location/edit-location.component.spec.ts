@@ -8,7 +8,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { Subject } from "rxjs";
-import { FormControl, NgControl } from "@angular/forms";
+import { FormControl } from "@angular/forms";
 import { GeoLocation } from "../geo-location";
 import { GeoResult } from "../geo.service";
 import {
@@ -29,7 +29,6 @@ describe("EditLocationComponent", () => {
 
   let mockDialog: any;
   let mockDialogAfterClosedSubject: Subject<GeoLocation[] | undefined>;
-  let mockNgControl: any;
   let mockFormControl: FormControl<GeoLocation>;
 
   beforeEach(async () => {
@@ -42,10 +41,6 @@ describe("EditLocationComponent", () => {
     } as any);
 
     mockFormControl = new FormControl<GeoLocation>(null);
-    mockNgControl = {
-      control: mockFormControl,
-    };
-
     await TestBed.configureTestingModule({
       imports: [
         EditLocationComponent,

@@ -20,7 +20,7 @@ describe("DuplicateRecordsService", () => {
   class DuplicateTestEntity extends Entity {
     static override toStringAttributes = ["name"];
     @DatabaseField()
-    name: String;
+    name: string;
     @DatabaseField()
     boolProperty: boolean;
     @DatabaseField()

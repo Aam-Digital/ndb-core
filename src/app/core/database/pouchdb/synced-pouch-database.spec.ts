@@ -1,4 +1,4 @@
-import type { Mock, MockedObject } from "vitest";
+import type { Mock } from "vitest";
 import { fakeAsync, tick } from "@angular/core/testing";
 
 import { PouchDatabase } from "./pouch-database";

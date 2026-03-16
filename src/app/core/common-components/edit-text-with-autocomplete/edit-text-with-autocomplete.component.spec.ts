@@ -1,4 +1,4 @@
-import type { Mock, MockedObject } from "vitest";
+import type { Mock } from "vitest";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormControl } from "@angular/forms";

@@ -23,9 +23,15 @@ if (!window.matchMedia) {
 
 if (!globalThis.ResizeObserver) {
   class ResizeObserverMock {
-    observe() {}
-    unobserve() {}
-    disconnect() {}
+    observe() {
+      return undefined;
+    }
+    unobserve() {
+      return undefined;
+    }
+    disconnect() {
+      return undefined;
+    }
   }
 
   Object.defineProperty(globalThis, "ResizeObserver", {
