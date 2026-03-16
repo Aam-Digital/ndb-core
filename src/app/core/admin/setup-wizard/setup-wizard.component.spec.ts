@@ -74,9 +74,7 @@ describe("SetupWizardComponent", () => {
       ],
     };
 
-    const entityMapper = TestBed.inject(
-      EntityMapperService,
-    ) as any;
+    const entityMapper = TestBed.inject(EntityMapperService) as any;
     entityMapper.load.mockResolvedValue(
       new Config(CONFIG_SETUP_WIZARD_ID, testConfig),
     );

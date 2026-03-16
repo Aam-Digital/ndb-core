@@ -104,7 +104,9 @@ describe("DataTransformationService", () => {
       }),
     );
     expect(result1[2].child_name).toHaveLength(2);
-    expect(result1[2].child_name).toEqual(expect.arrayContaining(["Jane", "John"]));
+    expect(result1[2].child_name).toEqual(
+      expect.arrayContaining(["Jane", "John"]),
+    );
   });
 
   it("should roll out export to one row for each related entity", async () => {

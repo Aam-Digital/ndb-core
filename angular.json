@@ -83,7 +83,9 @@
             "development": {},
             "testing": {
               "aot": false,
-              "polyfills": ["src/polyfills.test.ts"],
+              "polyfills": [
+                "src/polyfills.test.ts"
+              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -165,7 +167,9 @@
             "development": {},
             "testing": {
               "aot": false,
-              "polyfills": ["src/polyfills.test.ts"],
+              "polyfills": [
+                "src/polyfills.test.ts"
+              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -202,13 +206,17 @@
             "tsConfig": "tsconfig.spec.json",
             "runner": "vitest",
             "runnerConfig": true,
-            "setupFiles": ["src/test-setup.ts"]
+            "setupFiles": [
+              "src/test-setup.ts"
+            ]
           },
           "configurations": {
             "ci": {
               "watch": false,
               "coverage": true,
-              "coverageReporters": ["lcovonly"]
+              "coverageReporters": [
+                "lcovonly"
+              ]
             }
           }
         },

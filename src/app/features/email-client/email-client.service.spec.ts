@@ -63,9 +63,7 @@ describe("EmailClientService", () => {
     const fakeEntity = new EntityWithEmail();
     fakeEntity.email = undefined;
 
-    const mockConfirmation = TestBed.inject(
-      ConfirmationDialogService,
-    ) as any;
+    const mockConfirmation = TestBed.inject(ConfirmationDialogService) as any;
 
     mockDialog.open.mockReturnValue({
       afterClosed: () => of(undefined),

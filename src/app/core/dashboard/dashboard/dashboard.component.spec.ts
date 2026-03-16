@@ -1,8 +1,5 @@
 import { Component } from "@angular/core";
-import {
-  ComponentFixture,
-  TestBed,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DashboardComponent } from "./dashboard.component";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
@@ -11,7 +8,11 @@ import { SessionSubject } from "../../session/auth/session-info";
 import { EntityCountDashboardConfig } from "app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component";
 import { ComponentRegistry } from "../../../dynamic-components";
 
-@Component({ selector: "mock-todos-dashboard", template: "", standalone: true })
+@Component({
+  selector: "app-mock-todos-dashboard",
+  template: "",
+  standalone: true,
+})
 class MockTodosDashboardComponent {
   static getRequiredEntities(): string {
     return "Todo";
@@ -19,7 +20,7 @@ class MockTodosDashboardComponent {
 }
 
 @Component({
-  selector: "mock-entity-count-dashboard",
+  selector: "app-mock-entity-count-dashboard",
   template: "",
   standalone: true,
 })
@@ -30,17 +31,23 @@ class MockEntityCountDashboardComponent {
 }
 
 @Component({
-  selector: "mock-birthday-dashboard",
+  selector: "app-mock-birthday-dashboard",
   template: "",
   standalone: true,
 })
 class MockBirthdayDashboardComponent {
-  static getRequiredEntities(config?: { entities?: Record<string, string> }): string[] {
+  static getRequiredEntities(config?: {
+    entities?: Record<string, string>;
+  }): string[] {
     return config?.entities ? Object.keys(config.entities) : ["Child"];
   }
 }
 
-@Component({ selector: "mock-notes-dashboard", template: "", standalone: true })
+@Component({
+  selector: "app-mock-notes-dashboard",
+  template: "",
+  standalone: true,
+})
 class MockNotesDashboardComponent {
   static getRequiredEntities(): string {
     return "Note";
@@ -48,13 +55,17 @@ class MockNotesDashboardComponent {
 }
 
 @Component({
-  selector: "mock-shortcut-dashboard",
+  selector: "app-mock-shortcut-dashboard",
   template: "",
   standalone: true,
 })
 class MockShortcutDashboardComponent {}
 
-@Component({ selector: "mock-generic-dashboard", template: "", standalone: true })
+@Component({
+  selector: "app-mock-generic-dashboard",
+  template: "",
+  standalone: true,
+})
 class MockGenericDashboardComponent {}
 
 describe("DashboardComponent", () => {
@@ -75,21 +86,25 @@ describe("DashboardComponent", () => {
       ShortcutDashboard: async () => MockShortcutDashboardComponent,
     };
 
-    vi.spyOn(mockComponentRegistry, "get").mockImplementation((name: string) => {
-      if (mockedWidgets[name]) {
-        return mockedWidgets[name];
-      }
+    vi.spyOn(mockComponentRegistry, "get").mockImplementation(
+      (name: string) => {
+        if (mockedWidgets[name]) {
+          return mockedWidgets[name];
+        }
 
-      try {
-        return originalGet(name);
-      } catch {
-        return async () => MockGenericDashboardComponent;
-      }
-    });
+        try {
+          return originalGet(name);
+        } catch {
+          return async () => MockGenericDashboardComponent;
+        }
+      },
+    );
 
     TestBed.configureTestingModule({
       imports: [DashboardComponent, MockedTestingModule.withState()],
-      providers: [{ provide: ComponentRegistry, useValue: mockComponentRegistry }],
+      providers: [
+        { provide: ComponentRegistry, useValue: mockComponentRegistry },
+      ],
     }).compileComponents();
     ability = TestBed.inject(EntityAbility);
   });

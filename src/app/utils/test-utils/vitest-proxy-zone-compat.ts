@@ -54,7 +54,11 @@ function patchCallable(target: Record<string, unknown>, key: string): void {
 
   // Preserve non-enumerable properties such as `skip`, `only`, `todo`, etc.
   for (const propertyKey of Reflect.ownKeys(original)) {
-    if (propertyKey === "length" || propertyKey === "name" || propertyKey === "prototype") {
+    if (
+      propertyKey === "length" ||
+      propertyKey === "name" ||
+      propertyKey === "prototype"
+    ) {
       continue;
     }
     const descriptor = Object.getOwnPropertyDescriptor(original, propertyKey);
@@ -65,7 +69,6 @@ function patchCallable(target: Record<string, unknown>, key: string): void {
 
   patched.__proxyZonePatched = true;
   target[key] = patched;
-
 }
 
 export function enableVitestProxyZoneCompat(): void {

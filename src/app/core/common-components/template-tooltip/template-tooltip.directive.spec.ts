@@ -1,8 +1,5 @@
 import { TemplateTooltipDirective } from "./template-tooltip.directive";
-import {
-  ComponentFixture,
-  TestBed,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Component } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 

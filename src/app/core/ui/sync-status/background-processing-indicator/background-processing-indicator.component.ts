@@ -40,7 +40,9 @@ import { DatabaseResolverService } from "../../../database/database-resolver.ser
     MatDividerModule,
   ],
 })
-export class BackgroundProcessingIndicatorComponent implements OnInit, OnDestroy {
+export class BackgroundProcessingIndicatorComponent
+  implements OnInit, OnDestroy
+{
   /** details on current background processes to be displayed to user */
   @Input() backgroundProcesses: Observable<BackgroundProcessState[]>;
   filteredProcesses: Observable<BackgroundProcessState[]>;

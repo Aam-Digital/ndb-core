@@ -5,9 +5,7 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { Entity } from "../entity/model/entity";
 import { ImportMetadata, ImportSettings } from "./import-metadata";
 import { ColumnMapping } from "./column-mapping";
-import {
-  expectEntitiesToMatch,
-} from "../../utils/expect-entity-data.spec";
+import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import moment from "moment";
 import { mockEntityMapperProvider } from "../entity/entity-mapper/mock-entity-mapper-service";
 import { CoreTestingModule } from "../../utils/core-testing.module";
@@ -220,8 +218,12 @@ describe("ImportService", () => {
 
     await service.undoImport(importMeta);
 
-    await expect(entityMapper.load(TestEntity.ENTITY_TYPE, "1")).rejects.toThrow();
-    await expect(entityMapper.load(TestEntity.ENTITY_TYPE, "2")).rejects.toThrow();
+    await expect(
+      entityMapper.load(TestEntity.ENTITY_TYPE, "1"),
+    ).rejects.toThrow();
+    await expect(
+      entityMapper.load(TestEntity.ENTITY_TYPE, "2"),
+    ).rejects.toThrow();
     await expect(
       entityMapper.load(TestEntity.ENTITY_TYPE, "3"),
     ).resolves.toMatchObject({ _id: `${TestEntity.ENTITY_TYPE}:3` });

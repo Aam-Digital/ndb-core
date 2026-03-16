@@ -263,11 +263,15 @@ describe("EditEntityComponent", () => {
 
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
     fixture.detectChanges();
-    await vi.waitFor(() => expect(component.currentlyMatchingInactive()).toBe(3));
+    await vi.waitFor(() =>
+      expect(component.currentlyMatchingInactive()).toBe(3),
+    );
     expect(component.currentlyMatchingInactive()).toBe(3);
 
     component.recalculateMatchingInactive((o) => o["name"].startsWith("A"));
-    await vi.waitFor(() => expect(component.currentlyMatchingInactive()).toBe(2));
+    await vi.waitFor(() =>
+      expect(component.currentlyMatchingInactive()).toBe(2),
+    );
     expect(component.currentlyMatchingInactive()).toBe(2);
   });
 

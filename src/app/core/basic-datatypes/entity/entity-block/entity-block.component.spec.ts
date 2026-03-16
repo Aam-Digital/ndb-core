@@ -74,7 +74,9 @@ describe("EntityBlockComponent", () => {
   it("should navigate to the details page of the entity", async () => {
     fixture.componentRef.setInput("entity", new TestEntity("1"));
     fixture.detectChanges();
-    await vi.waitFor(() => expect(component.entityResource.value()).toBeTruthy());
+    await vi.waitFor(() =>
+      expect(component.entityResource.value()).toBeTruthy(),
+    );
 
     component.showDetailsPage();
 

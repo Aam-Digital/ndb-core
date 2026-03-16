@@ -1,7 +1,4 @@
-import {
-  ComponentFixture,
-  TestBed,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AddressSearchComponent } from "./address-search.component";
 import { GeoResult, GeoService } from "../geo.service";

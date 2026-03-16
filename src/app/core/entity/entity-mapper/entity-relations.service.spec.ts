@@ -84,8 +84,8 @@ describe("EntityRelationsService", () => {
 
     // mock entityRegistry result to only have the ones given here without other types registered across the codebase
     const entityRegistry = TestBed.inject(EntityRegistry);
-    vi.spyOn(entityRegistry, "values").mockImplementation(
-      () => [ReferencingEntity, Entity][Symbol.iterator](),
+    vi.spyOn(entityRegistry, "values").mockImplementation(() =>
+      [ReferencingEntity, Entity][Symbol.iterator](),
     );
 
     const result = service.getEntityTypesReferencingType("Child");

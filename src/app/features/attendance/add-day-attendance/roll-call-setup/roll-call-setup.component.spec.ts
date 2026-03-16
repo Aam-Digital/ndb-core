@@ -1,8 +1,4 @@
-import {
-  ComponentFixture,
-  TestBed,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { signal } from "@angular/core";
 
 import { RollCallSetupComponent } from "./roll-call-setup.component";

@@ -53,7 +53,9 @@ describe("PermissionEnforcerService", () => {
     dbResolver.destroyDatabases = () => null;
     destroySpy = vi.spyOn(dbResolver, "destroyDatabases");
     dbResolver.resetSync = () => Promise.resolve();
-    resetSyncSpy = vi.spyOn(dbResolver, "resetSync").mockResolvedValue(undefined);
+    resetSyncSpy = vi
+      .spyOn(dbResolver, "resetSync")
+      .mockResolvedValue(undefined);
     mockDb = { purge: vi.fn().mockResolvedValue(true) };
     dbResolver.getDatabase = () => mockDb as any;
     // Default to indexeddb adapter for tests unless overridden

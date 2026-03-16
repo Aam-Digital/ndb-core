@@ -1,8 +1,4 @@
-import {
-  ComponentFixture,
-  TestBed,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { RollCallComponent } from "./roll-call.component";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { EventWithAttendance } from "../../model/event-with-attendance";

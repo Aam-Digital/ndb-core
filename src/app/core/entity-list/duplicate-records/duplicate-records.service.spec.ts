@@ -57,10 +57,10 @@ describe("DuplicateRecordsService", () => {
     });
     service = TestBed.inject(DuplicateRecordService);
     entityMapperService = TestBed.inject(EntityMapperService);
-    const bulkOperationState = TestBed.inject(
-      BulkOperationStateService,
-    ) as any;
-    bulkOperationState.waitForBulkOperationToFinish.mockResolvedValue(undefined);
+    const bulkOperationState = TestBed.inject(BulkOperationStateService) as any;
+    bulkOperationState.waitForBulkOperationToFinish.mockResolvedValue(
+      undefined,
+    );
   });
 
   it("should be created", () => {
