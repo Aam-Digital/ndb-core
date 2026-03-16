@@ -21,7 +21,7 @@ jobs:
       build_name: ${{ github.ref_name }}
       # - tag with git tag name
       # - tag with `:master` on pre-release tag builds (tag contains "-master")
-      # stable releases are handled in create-release.yml (manual workflow_dispatch)
+      # - tag with `:stable` for release tags (created via create-release.yml)
       docker_tags: |
         type=ref,event=tag
         type=raw,value=master,enabled=${{ contains(github.ref_name, '-master') }}

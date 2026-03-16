@@ -21,7 +21,7 @@ docker run -p=80:80 --name aam-digital aam/digital:latest
 docker stop aam-digital
 ```
 
-## How does the official release process work?
+## How does the release process work?
 
 We use [semantic-release](https://github.com/semantic-release/semantic-release) to automatically create new versions.
 

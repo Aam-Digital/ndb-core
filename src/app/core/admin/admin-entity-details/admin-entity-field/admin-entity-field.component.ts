@@ -168,13 +168,9 @@ export class AdminEntityFieldComponent implements OnInit {
       validators: [Validators.required, Validators.pattern(/^[a-zA-Z0-9_]*$/)],
       asyncValidators: [
         uniquePropertyValidator({
-          getExistingValues: async () => {
-            const keys = Array.from(this.data.entityType.schema.keys());
-            return this.data.entitySchemaField.id
-              ? keys.filter((k) => k !== this.data.entitySchemaField.id)
-              : keys;
-          },
-          normalize: false,
+          getExistingValues: async () =>
+            Array.from(this.data.entityType.schema.keys()),
+          normalize: true,
           fieldLabel: $localize`:field label:id`,
         }),
       ],
