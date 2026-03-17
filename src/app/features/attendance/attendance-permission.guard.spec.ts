@@ -1,9 +1,10 @@
 import { TestBed } from "@angular/core/testing";
-import { RouterTestingModule } from "@angular/router/testing";
-import { ActivatedRouteSnapshot, Router } from "@angular/router";
+import { ActivatedRouteSnapshot, Router, RouterModule } from "@angular/router";
 import { AttendancePermissionGuard } from "./attendance-permission.guard";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 import { AttendanceService } from "./attendance.service";
+import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
+import { signal } from "@angular/core";
 
 describe("AttendancePermissionGuard", () => {
   let guard: AttendancePermissionGuard;
@@ -11,19 +12,18 @@ describe("AttendancePermissionGuard", () => {
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
   const mockActivityType = { ENTITY_TYPE: "RecurringActivity" } as any;
-  const mockEventType = { ENTITY_TYPE: "EventNote" } as any;
+  const mockEventType = TestEventEntity;
 
   beforeEach(() => {
     mockAbility = jasmine.createSpyObj(["can"], { initialized: true });
     mockAttendanceService = {
-      featureConfig: {
-        recurringActivityTypes: [mockActivityType],
-        eventTypes: [mockEventType],
-      },
+      eventTypeSettings: [],
+      activityTypes: signal([mockActivityType]),
+      eventTypes: signal([mockEventType]),
     } as any;
 
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
+      imports: [RouterModule.forRoot([])],
       providers: [
         AttendancePermissionGuard,
         { provide: EntityAbility, useValue: mockAbility },
@@ -45,7 +45,7 @@ describe("AttendancePermissionGuard", () => {
     };
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
+      imports: [RouterModule.forRoot([])],
       providers: [
         AttendancePermissionGuard,
         { provide: EntityAbility, useValue: uninitializedAbility },
@@ -121,11 +121,14 @@ describe("AttendancePermissionGuard", () => {
 
     const result = await guard.canActivate({
       data: { component: "RollCall" },
-      params: { id: "EventNote:abc123" },
+      params: { id: `${mockEventType.ENTITY_TYPE}:abc123` },
     } as Partial<ActivatedRouteSnapshot> as ActivatedRouteSnapshot);
 
     expect(result).toBeTrue();
-    expect(mockAbility.can).toHaveBeenCalledWith("create", "EventNote");
+    expect(mockAbility.can).toHaveBeenCalledWith(
+      "create",
+      mockEventType.ENTITY_TYPE,
+    );
   });
 
   it("should block RollCall if user cannot create the entity type from the :id prefix", async () => {
@@ -135,7 +138,7 @@ describe("AttendancePermissionGuard", () => {
     const route = new ActivatedRouteSnapshot();
     Object.assign(route, {
       data: { component: "RollCall" },
-      params: { id: "EventNote:abc123" },
+      params: { id: `${mockEventType.ENTITY_TYPE}:abc123` },
     });
 
     await guard.canActivate(route);

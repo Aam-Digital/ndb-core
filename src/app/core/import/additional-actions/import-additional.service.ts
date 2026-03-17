@@ -12,7 +12,6 @@ import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { ConfigService } from "../../config/config.service";
 import { Note } from "../../../child-dev-project/notes/model/note";
-import { EventNote } from "#src/app/features/attendance/model/event-note";
 import { Todo } from "../../../features/todos/model/todo";
 import { EntityRelationsService } from "../../entity/entity-mapper/entity-relations.service";
 import { asArray } from "../../../utils/asArray";
@@ -117,9 +116,7 @@ export class ImportAdditionalService {
         targetType: field2.additional,
         expertOnly:
           targetType === sourceType ||
-          [Note.ENTITY_TYPE, EventNote.ENTITY_TYPE, Todo.ENTITY_TYPE].includes(
-            targetType,
-          ),
+          [Note.ENTITY_TYPE, Todo.ENTITY_TYPE].includes(targetType),
       });
     }
 

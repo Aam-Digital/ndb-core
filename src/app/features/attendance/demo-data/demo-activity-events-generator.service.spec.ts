@@ -1,7 +1,5 @@
 import { DemoActivityGeneratorService } from "./demo-activity-generator.service";
 import { DemoDataGenerator } from "#src/app/core/demo-data/demo-data-generator";
-import { RecurringActivity } from "../model/recurring-activity";
-import { EventNote } from "../model/event-note";
 import {
   DemoActivityEventsGeneratorService,
   DemoEventsConfig,
@@ -9,17 +7,38 @@ import {
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { TestBed } from "@angular/core/testing";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
+import { AttendanceService } from "../attendance.service";
+import { Entity } from "#src/app/core/entity/model/entity";
+import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 
 describe("DemoActivityEventsGenerator", () => {
-  let service: DemoDataGenerator<EventNote>;
+  let service: DemoDataGenerator<Entity>;
 
   beforeEach(() => {
-    const testActivity = RecurringActivity.create("test-activity");
-    testActivity.participants.push(TestEntity.create("John Doe").getId());
+    const testActivity = TestEntity.create({ name: "test-activity" });
+    testActivity.refMixed = [TestEntity.create("John Doe").getId()];
 
     const mockActivityGenerator = {
       entities: [testActivity],
-    } as DemoActivityGeneratorService;
+    } as unknown as DemoActivityGeneratorService;
+
+    const mockAttendanceService = {
+      eventTypeSettings: [
+        {
+          activityType: TestEntity,
+          eventType: TestEventEntity,
+          participantsField: "refMixed",
+          dateField: undefined,
+          relatesToField: "relatesTo",
+          assignedUsersField: "authors",
+          filterConfig: [],
+          extraField: "",
+          fieldMapping: {
+            title: "name",
+          },
+        },
+      ],
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -30,6 +49,7 @@ describe("DemoActivityEventsGenerator", () => {
           provide: DemoActivityGeneratorService,
           useValue: mockActivityGenerator,
         },
+        { provide: AttendanceService, useValue: mockAttendanceService },
       ],
     });
     service = TestBed.inject(DemoActivityEventsGeneratorService);

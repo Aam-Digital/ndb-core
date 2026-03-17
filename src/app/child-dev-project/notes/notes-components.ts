@@ -2,13 +2,6 @@ import { ComponentTuple } from "../../dynamic-components";
 
 export const notesComponents: ComponentTuple[] = [
   [
-    "NotesManager",
-    () =>
-      import("./notes-manager/notes-manager.component").then(
-        (c) => c.NotesManagerComponent,
-      ),
-  ],
-  [
     "NotesDashboard",
     () =>
       import("./dashboard-widgets/notes-dashboard/notes-dashboard.component").then(

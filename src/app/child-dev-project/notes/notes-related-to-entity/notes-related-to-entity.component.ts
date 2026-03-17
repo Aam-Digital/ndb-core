@@ -79,7 +79,7 @@ export class NotesRelatedToEntityComponent
       (this.entity as ChildSchoolRelation).childId,
     )) {
       if (childId) {
-        newNote.addChild(childId);
+        newNote.children.push(childId);
       }
     }
 
@@ -87,7 +87,7 @@ export class NotesRelatedToEntityComponent
       (this.entity as ChildSchoolRelation).schoolId,
     )) {
       if (schooldId) {
-        newNote.addSchool(schooldId);
+        newNote.schools.push(schooldId);
       }
     }
   }

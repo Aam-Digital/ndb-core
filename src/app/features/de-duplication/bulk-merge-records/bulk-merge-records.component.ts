@@ -16,6 +16,7 @@ import { FormFieldConfig } from "app/core/common-components/entity-form/FormConf
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { MergeFieldsComponent } from "./merge-fields/merge-fields.component";
+import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
 
 @Component({
   selector: "app-bulk-merge-records",
@@ -29,6 +30,7 @@ import { MergeFieldsComponent } from "./merge-fields/merge-fields.component";
     MatError,
     MatDialogClose,
     MergeFieldsComponent,
+    WarningNotOptimizedForSmallScreenComponent,
   ],
   templateUrl: "./bulk-merge-records.component.html",
   styleUrls: ["./bulk-merge-records.component.scss"],
@@ -80,7 +82,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
         this.hasDiscardedFileOrPhoto = true;
       }
 
-      if (field.label && hasValue && !isFileField) {
+      if (field.label && hasValue && !isFileField && !field.isInternalField) {
         const formField: FormFieldConfig =
           this.entityFormService.extendFormFieldConfig(
             { id: key },

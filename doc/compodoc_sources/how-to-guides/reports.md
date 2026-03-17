@@ -103,7 +103,7 @@ The following example shows the structure of an aggregation.
 ```json
 {
   "label": "Events",
-  "query": "EventNote:toArray[*date >= ? & date <= ?]",
+  "query": "Event:toArray[*date >= ? & date <= ?]",
   "groupBy": ["category"],
   "aggregations": [
     {

@@ -1,4 +1,5 @@
 import { TestBed } from "@angular/core/testing";
+import { signal } from "@angular/core";
 import moment from "moment";
 
 import {
@@ -6,13 +7,13 @@ import {
   AttendanceReport,
   QueryService,
 } from "./query.service";
-import { EventNote } from "#src/app/features/attendance/model/event-note";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import { AttendanceStatusType } from "#src/app/features/attendance/model/attendance-status";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "#src/app/features/attendance/attendance.service";
+import { EventWithAttendance } from "#src/app/features/attendance/model/event-with-attendance";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
 import {
@@ -20,6 +21,7 @@ import {
   MockEntityMapperService,
 } from "../entity/entity-mapper/mock-entity-mapper-service";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
+import { TestEventEntity } from "../../utils/test-utils/TestEventEntity";
 import { defaultAttendanceStatusTypes } from "../config/default-config/default-attendance-status-types";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 
@@ -51,15 +53,28 @@ describe("QueryService", () => {
     ]);
     mockChildrenService.getNotesInTimespan.and.returnValue(Promise.resolve([]));
 
-    mockAttendanceService = jasmine.createSpyObj("AttendanceService", [
-      "getEventsOnDate",
-    ]);
+    mockAttendanceService = jasmine.createSpyObj(
+      "AttendanceService",
+      ["getEventsOnDate", "wrapEventEntity"],
+      { eventTypes: signal([TestEventEntity]) },
+    );
     mockAttendanceService.getEventsOnDate.and.returnValue(Promise.resolve([]));
+    mockAttendanceService.wrapEventEntity.and.callFake(
+      (e) =>
+        new EventWithAttendance(
+          e,
+          "attendance",
+          "date",
+          "relatesTo",
+          "authors",
+          undefined,
+        ),
+    );
 
     mockEntityRegistry = new EntityRegistry();
     mockEntityRegistry.add(TestEntity.ENTITY_TYPE, TestEntity);
     mockEntityRegistry.add("Note", Note);
-    mockEntityRegistry.add("EventNote", EventNote);
+    mockEntityRegistry.add("TestEventEntity", TestEventEntity);
     mockEntityRegistry.add("ChildSchoolRelation", ChildSchoolRelation);
 
     TestBed.configureTestingModule({
@@ -122,7 +137,7 @@ describe("QueryService", () => {
 
   describe("cacheRequiredData", () => {
     it("should load Note entities using dataFunction", async () => {
-      const note = createNote(new Date());
+      const note = Note.create(new Date());
       mockChildrenService.getNotesInTimespan.and.resolveTo([note]);
 
       const from = moment().subtract(1, "week").toDate();
@@ -138,19 +153,19 @@ describe("QueryService", () => {
       expect(result[0].getId()).toBe(note.getId());
     });
 
-    it("should load EventNote entities using dataFunction", async () => {
-      const event = createNote(new Date());
+    it("should load event entities using dataFunction", async () => {
+      const event = createEvent(new Date());
       mockAttendanceService.getEventsOnDate.and.resolveTo([event]);
 
       const from = moment().subtract(1, "week").toDate();
       const to = new Date();
-      await service.cacheRequiredData("EventNote:toArray", from, to);
+      await service.cacheRequiredData("TestEventEntity:toArray", from, to);
 
       expect(mockAttendanceService.getEventsOnDate).toHaveBeenCalledWith(
         from,
         to,
       );
-      const result = service.queryData("EventNote:toArray");
+      const result = service.queryData("TestEventEntity:toArray");
       expect(result.length).toBe(1);
     });
 
@@ -468,12 +483,12 @@ describe("QueryService", () => {
 
     describe(":getParticipantsWithAttendance", () => {
       it("should return participants with specified attendance status", () => {
-        const event1 = createNote(new Date(), [
+        const event1 = createEvent(new Date(), [
           { child: "child1", status: presentAttendanceStatus },
           { child: "child2", status: absentAttendanceStatus },
           { child: "child3", status: presentAttendanceStatus },
         ]);
-        const event2 = createNote(new Date(), [
+        const event2 = createEvent(new Date(), [
           { child: "child1", status: absentAttendanceStatus },
           { child: "child4", status: presentAttendanceStatus },
         ]);
@@ -489,7 +504,7 @@ describe("QueryService", () => {
       });
 
       it("should filter by ABSENT status", () => {
-        const event = createNote(new Date(), [
+        const event = createEvent(new Date(), [
           { child: "child1", status: presentAttendanceStatus },
           { child: "child2", status: absentAttendanceStatus },
           { child: "child3", status: absentAttendanceStatus },
@@ -506,7 +521,7 @@ describe("QueryService", () => {
       });
 
       it("should return empty array when no participants match status", () => {
-        const event = createNote(new Date(), [
+        const event = createEvent(new Date(), [
           { child: "child1", status: presentAttendanceStatus },
           { child: "child2", status: presentAttendanceStatus },
         ]);
@@ -694,8 +709,8 @@ describe("QueryService", () => {
     });
 
     it("should work with date parameters in queries", async () => {
-      const oldNote = createNote(moment().subtract(2, "weeks").toDate());
-      const recentNote = createNote(moment().subtract(2, "days").toDate());
+      const oldNote = createEvent(moment().subtract(2, "weeks").toDate());
+      const recentNote = createEvent(moment().subtract(2, "days").toDate());
       mockAttendanceService.getEventsOnDate.and.resolveTo([
         oldNote,
         recentNote,
@@ -703,10 +718,10 @@ describe("QueryService", () => {
 
       const from = moment().subtract(1, "week").toDate();
       const to = new Date();
-      await service.cacheRequiredData("EventNote", from, to);
+      await service.cacheRequiredData("TestEventEntity", from, to);
 
       const result = service.queryData(
-        "EventNote:toArray[* date >= ? & date < ?]",
+        "TestEventEntity:toArray[* date >= ? & date < ?]",
         from,
         to,
       );
@@ -717,18 +732,17 @@ describe("QueryService", () => {
   });
 
   // Helper functions
-  function createNote(
+  function createEvent(
     date: Date,
     children: { child: string; status: AttendanceStatusType }[] = [],
-  ): EventNote {
-    const note = new EventNote();
-    note.date = date;
-    note.children = children.map((c) => c.child);
-
-    children.forEach(({ child, status }) => {
-      note.getAttendance(child).status = status;
+  ): TestEventEntity {
+    const event = TestEventEntity.create({ date });
+    event.attendance = children.map(({ child, status }) => {
+      const item = new AttendanceItem();
+      item.participant = child;
+      item.status = status;
+      return item;
     });
-
-    return note;
+    return event;
   }
 });
