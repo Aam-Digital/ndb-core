@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import type { Mock } from "vitest";
 import { AdminMenuItemDetailsComponent } from "./admin-menu-item-details.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { NEVER } from "rxjs";
@@ -7,7 +8,6 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { ConfigService } from "app/core/config/config.service";
-import type { Mock } from "vitest";
 
 type ConfigServiceMock = {
   getAllConfigs: Mock;
@@ -97,7 +97,7 @@ describe("AdminMenuItemDetailsComponent", () => {
 
     component.save();
 
-    expect(component.linkError).toBeTrue();
+    expect(component.linkError).toBe(true);
     expect(mockDialogRef.close).not.toHaveBeenCalled();
   });
 });
