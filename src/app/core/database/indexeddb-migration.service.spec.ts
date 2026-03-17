@@ -7,10 +7,12 @@ import { environment } from "../../../environments/environment";
 import { SyncStateSubject } from "../session/session-type";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
+import { AnalyticsService } from "../analytics/analytics.service";
 
 describe("IndexeddbMigrationService", () => {
   let service: IndexeddbMigrationService;
   let confirmationDialogSpy: jasmine.SpyObj<ConfirmationDialogService>;
+  let analyticsServiceSpy: jasmine.SpyObj<AnalyticsService>;
   let mockWindow: {
     location: { reload: jasmine.Spy };
     indexedDB: { databases: jasmine.Spy; deleteDatabase: jasmine.Spy };
@@ -59,6 +61,9 @@ describe("IndexeddbMigrationService", () => {
     confirmationDialogSpy = jasmine.createSpyObj("ConfirmationDialogService", [
       "getConfirmation",
     ]);
+    analyticsServiceSpy = jasmine.createSpyObj("AnalyticsService", [
+      "eventTrack",
+    ]);
     confirmationDialogSpy.getConfirmation.and.resolveTo(false);
     mockWindow = {
       location: { reload: jasmine.createSpy("reload") },
@@ -76,6 +81,7 @@ describe("IndexeddbMigrationService", () => {
           provide: ConfirmationDialogService,
           useValue: confirmationDialogSpy,
         },
+        { provide: AnalyticsService, useValue: analyticsServiceSpy },
         { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
         { provide: WINDOW_TOKEN, useValue: mockWindow },
       ],
@@ -99,6 +105,14 @@ describe("IndexeddbMigrationService", () => {
       expect(config.dbNames.app).toBe("testuser-app");
       expect(config.dbNames.notifications).toBe("notifications_abc-123-uuid");
       expect(service.migrationPending).toBeFalse();
+      expect(analyticsServiceSpy.eventTrack).toHaveBeenCalledWith(
+        "indexeddb_migration_resolve_db_config",
+        jasmine.objectContaining({
+          category: "indexeddb_migration",
+          label: "indexeddb_disabled_config",
+          value: 0,
+        }),
+      );
     });
 
     it("should return new config when migration flag is set", async () => {
@@ -111,6 +125,14 @@ describe("IndexeddbMigrationService", () => {
       expect(config.dbNames.app).toBe("abc-123-uuid-app");
       expect(config.dbNames.notifications).toBe("abc-123-uuid-notifications");
       expect(service.migrationPending).toBeFalse();
+      expect(analyticsServiceSpy.eventTrack).toHaveBeenCalledWith(
+        "indexeddb_migration_resolve_db_config",
+        jasmine.objectContaining({
+          category: "indexeddb_migration",
+          label: "migrated_flag_present",
+          value: 0,
+        }),
+      );
     });
 
     it("should return new config for fresh install (no old DB for that user)", async () => {
@@ -126,6 +148,22 @@ describe("IndexeddbMigrationService", () => {
       expect(config.dbNames.app).toBe("abc-123-uuid-app");
       expect(config.dbNames.notifications).toBe("abc-123-uuid-notifications");
       expect(service.migrationPending).toBeFalse();
+      expect(analyticsServiceSpy.eventTrack).toHaveBeenCalledWith(
+        "indexeddb_migration_resolve_db_config",
+        jasmine.objectContaining({
+          category: "indexeddb_migration",
+          label: "fresh_install_no_legacy_db",
+          value: 0,
+        }),
+      );
+      expect(analyticsServiceSpy.eventTrack).toHaveBeenCalledWith(
+        "indexeddb_migration_resolve_db_config",
+        jasmine.objectContaining({
+          category: "indexeddb_migration",
+          label: "migrated_flag_present",
+          value: 0,
+        }),
+      );
     });
 
     it("should return legacy config with migrationPending when old DB exists", async () => {
@@ -139,6 +177,14 @@ describe("IndexeddbMigrationService", () => {
       expect(config.adapter).toBe("idb");
       expect(config.dbNames.app).toBe("testuser-app");
       expect(service.migrationPending).toBeTrue();
+      expect(analyticsServiceSpy.eventTrack).toHaveBeenCalledWith(
+        "indexeddb_migration_resolve_db_config",
+        jasmine.objectContaining({
+          category: "indexeddb_migration",
+          label: "migration_pending_legacy_exists",
+          value: 1,
+        }),
+      );
     });
   });
 

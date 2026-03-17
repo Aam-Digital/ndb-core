@@ -1,4 +1,4 @@
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable, Injector } from "@angular/core";
 import { SessionInfo, SessionSubject } from "../session/auth/session-info";
 import { SyncStateSubject } from "../session/session-type";
 import { SyncState } from "../session/session-states/sync-state.enum";
@@ -11,6 +11,7 @@ import PouchDB from "pouchdb-browser";
 import { environment } from "../../../environments/environment";
 import { Database } from "./database";
 import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
+import { AnalyticsService } from "../analytics/analytics.service";
 
 export interface DbConfig {
   dbNames: { app: string; notifications: string };
@@ -35,6 +36,8 @@ export class IndexeddbMigrationService {
   });
   private readonly window = inject<Window>(WINDOW_TOKEN, { optional: true });
   private readonly session = inject(SessionSubject, { optional: true });
+  private readonly injector = inject(Injector);
+  private analyticsService: AnalyticsService | null | undefined;
 
   /** Whether the last resolveDbConfig() determined migration is needed. */
   migrationPending = false;
@@ -52,6 +55,7 @@ export class IndexeddbMigrationService {
     this.migrationPending = false; // reset pending flag on each resolve attempt
 
     if (!environment.use_indexeddb_adapter) {
+      this.trackResolveScenario("indexeddb_disabled_config", "idb", false);
       Logging.debug(
         "IndexeddbMigration: use_indexeddb_adapter disabled; using legacy DB config",
       );
@@ -64,6 +68,11 @@ export class IndexeddbMigrationService {
     const oldDbExists = await this.legacyDbExists(session);
     if (!oldDbExists) {
       localStorage.setItem(DB_MIGRATED_PREFIX + session.id, "true");
+      this.trackResolveScenario(
+        "fresh_install_no_legacy_db",
+        "indexeddb",
+        false,
+      );
       Logging.debug(
         "IndexeddbMigration: no legacy DB found; assuming fresh install and setting 'migrated' flag",
       );
@@ -71,6 +80,7 @@ export class IndexeddbMigrationService {
 
     // Already migrated or fresh install (no old DB exists)
     if (this.isMigrated(session)) {
+      this.trackResolveScenario("migrated_flag_present", "indexeddb", false);
       Logging.debug(
         "IndexeddbMigration: using new DB config (migration flag set)",
       );
@@ -82,6 +92,7 @@ export class IndexeddbMigrationService {
 
     // Old DB exists, not yet migrated → use old DB, migration pending
     this.migrationPending = true;
+    this.trackResolveScenario("migration_pending_legacy_exists", "idb", true);
     Logging.debug(
       "IndexeddbMigration: using legacy DB config (migration pending)",
     );
@@ -211,6 +222,38 @@ export class IndexeddbMigrationService {
     Logging.debug(
       `IndexeddbMigration: migration flag set for user ${session.id}`,
     );
+  }
+
+  private trackResolveScenario(
+    scenario: string,
+    adapter: string,
+    migrationPending: boolean,
+  ): void {
+    const analytics = this.getAnalyticsService();
+
+    analytics?.eventTrack("indexeddb_migration_resolve_db_config", {
+      category: "indexeddb_migration",
+      label: scenario,
+      value: migrationPending ? 1 : 0,
+    });
+
+    Logging.debug(
+      `IndexeddbMigration analytics: scenario=${scenario} adapter=${adapter} migrationPending=${migrationPending}`,
+    );
+  }
+
+  private getAnalyticsService(): AnalyticsService | null {
+    if (this.analyticsService !== undefined) {
+      return this.analyticsService;
+    }
+
+    try {
+      this.analyticsService = this.injector.get(AnalyticsService, null);
+    } catch {
+      this.analyticsService = null;
+    }
+
+    return this.analyticsService;
   }
 
   /**
