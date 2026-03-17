@@ -71,7 +71,7 @@ export class SetupService {
       for (const doc of asArray(docs)) {
         const entity = this.parseObjectToEntity(doc);
         if (entity) {
-          await this.entityMapper.save(entity);
+          await this.entityMapper.save(entity, true);
         } else {
           Logging.warn(
             "Invalid record file. SetupService is skipping to import this.",
