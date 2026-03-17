@@ -19,12 +19,15 @@ Generate Playwright e2e tests for features, covering critical user flows with pr
 When asked to implement TODOs:
 
 1. Search for TODO comments in e2e test files (optionally scoped to a specific file):
+
    ```bash
    grep -rn "TODO" e2e/tests/ --include="*.ts" -A 10
    ```
+
 2. **Implement one TODO at a time** — do not batch multiple TODOs
 3. Replace the TODO comment block with a complete `test()` function
 4. Expected TODO format:
+
    ```typescript
    /*
    TODO: Test user can create a new child record
@@ -35,6 +38,7 @@ When asked to implement TODOs:
    Then I should see the new child in the list
    */
    ```
+
 5. If no TODOs are found, point the user to `doc/compodoc_sources/how-to-guides/end-to-end-tests.md` for instructions on writing TODO stubs
 
 ## Interactive Mode
@@ -81,8 +85,13 @@ All detailed patterns, locator strategies, helper utilities, form interactions, 
 
 Key highlights:
 
-- **Fixtures**: Use `app` from custom fixtures for navigation helpers
+- **Fixtures**: Import from `#e2e/fixtures.js`; use `loadApp(page, entities)` for setup
 - **Screenshots**: Use `argosScreenshot(page, "descriptive-name")` for visual regression
 - **Locators**: Prefer `getByRole()`, `getByLabel()`, `getByText()` — avoid CSS selectors
 - **Test data cleanup**: Tests should be independent; generate fresh data per test
-- **Accessibility**: All interactive elements should be findable by role/label
+- **Angular Material form fields**: Use `#entity-field__<fieldId>` locator (floating labels not resolved by `getByLabel()`)
+- **Dialogs**: Scope with `page.getByRole("dialog")`; close with `button.overlay-close-button`; table is `aria-hidden` while dialog is open
+- **mat-form-field pointer-events**: Use `click({ force: true })` when a form field wrapper intercepts clicks
+- **Entity profile navigation**: Side menu → filter (`getByRole("textbox", { name: "Filter" })`) → cell click; prefer this over `page.goto()`
+- **Date format**: Display is `dd.MM.yyyy` (e.g., `"08.03.2026"`); `E2E_REF_DATE = "2025-01-23"`
+- **Dashboard widgets**: Scope with `page.locator("app-<widget-selector>")` (e.g., `app-todos-dashboard`)

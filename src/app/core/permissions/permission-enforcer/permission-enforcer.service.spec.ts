@@ -27,6 +27,8 @@ describe("PermissionEnforcerService", () => {
   let mockLocation: jasmine.SpyObj<Location>;
   let destroySpy: jasmine.Spy;
   let resetSyncSpy: jasmine.Spy;
+  let mockDb: { purge: jasmine.Spy };
+  let isIndexedDbAdapterSpy: jasmine.Spy;
 
   beforeEach(waitForAsync(() => {
     entityUpdates = new Subject();
@@ -47,6 +49,14 @@ describe("PermissionEnforcerService", () => {
     destroySpy = spyOn(dbResolver, "destroyDatabases");
     dbResolver.resetSync = () => Promise.resolve();
     resetSyncSpy = spyOn(dbResolver, "resetSync").and.resolveTo();
+    mockDb = { purge: jasmine.createSpy("purge").and.resolveTo(true) };
+    dbResolver.getDatabase = () => mockDb as any;
+    // Default to indexeddb adapter for tests unless overridden
+    dbResolver.isIndexedDbAdapterSupported = () => true;
+    isIndexedDbAdapterSpy = spyOn(
+      dbResolver,
+      "isIndexedDbAdapterSupported",
+    ).and.returnValue(true);
 
     TestBed.inject(AbilityService).initializeRules();
   }));
@@ -71,66 +81,6 @@ describe("PermissionEnforcerService", () => {
     expect(JSON.parse(storedRules)).toEqual(userRules);
   }));
 
-  it("should reset page if entity with write restriction exists (inverted)", fakeAsync(() => {
-    entityMapper.save(new TestEntity());
-    tick();
-
-    updateRulesAndTriggerEnforcer(userRules);
-    tick();
-
-    expect(destroySpy).toHaveBeenCalled();
-    expect(mockLocation.reload).toHaveBeenCalled();
-  }));
-
-  it("should reset page if entity without read permission exists (non-inverted)", fakeAsync(() => {
-    entityMapper.save(new TestEntity());
-    tick();
-
-    updateRulesAndTriggerEnforcer([{ subject: "School", action: "manage" }]);
-    tick();
-
-    expect(destroySpy).toHaveBeenCalled();
-    expect(mockLocation.reload).toHaveBeenCalled();
-  }));
-
-  it("should reset page if entity exists for which relevant rule is a read restriction ", fakeAsync(() => {
-    entityMapper.save(new TestEntity());
-    tick();
-
-    updateRulesAndTriggerEnforcer([
-      { subject: "all", action: "manage" },
-      {
-        subject: [TestEntity.ENTITY_TYPE, "School"],
-        action: ["read", "update"],
-        inverted: true,
-      },
-      { subject: "Note", action: "create", inverted: true },
-    ]);
-    tick();
-
-    expect(destroySpy).toHaveBeenCalled();
-    expect(mockLocation.reload).toHaveBeenCalled();
-  }));
-
-  it("should not reset page if only entities with read permission exist", fakeAsync(() => {
-    destroySpy.calls.reset();
-    mockLocation.reload.calls.reset();
-
-    entityMapper.save(new TestEntity());
-    entityMapper.save(new TestEntity());
-    tick();
-
-    updateRulesAndTriggerEnforcer([
-      { subject: TestEntity.ENTITY_TYPE, action: ["read", "update"] },
-      { subject: "all", action: "delete", inverted: true },
-      { subject: ["Note"], action: "read" },
-    ]);
-    tick();
-
-    expect(destroySpy).not.toHaveBeenCalled();
-    expect(mockLocation.reload).not.toHaveBeenCalled();
-  }));
-
   it("should not reset if roles didnt change since last check", fakeAsync(() => {
     updateRulesAndTriggerEnforcer(userRules);
     tick();
@@ -147,64 +97,6 @@ describe("PermissionEnforcerService", () => {
     expect(resetSyncSpy).not.toHaveBeenCalled();
   }));
 
-  it("should reset if roles changed since last check and entities without permissions exist", fakeAsync(() => {
-    const entityCurrentlyAccessible = createEntityOfType("School");
-    entityMapper.save(entityCurrentlyAccessible);
-    tick();
-
-    updateRulesAndTriggerEnforcer(userRules);
-    tick();
-
-    expect(destroySpy).not.toHaveBeenCalled();
-    expect(mockLocation.reload).not.toHaveBeenCalled();
-
-    const extendedRules = userRules.concat({
-      subject: entityCurrentlyAccessible.getType(),
-      action: "manage",
-      inverted: true,
-    });
-
-    updateRulesAndTriggerEnforcer(extendedRules);
-    tick();
-
-    expect(destroySpy).toHaveBeenCalled();
-    expect(mockLocation.reload).toHaveBeenCalled();
-  }));
-
-  it("should reset if read rule with condition is added", fakeAsync(() => {
-    entityMapper.save(TestEntity.create("permitted"));
-    entityMapper.save(TestEntity.create("not-permitted"));
-
-    updateRulesAndTriggerEnforcer([
-      {
-        subject: TestEntity.ENTITY_TYPE,
-        action: "read",
-        conditions: { name: "permitted" },
-      },
-    ]);
-    tick();
-
-    expect(destroySpy).toHaveBeenCalled();
-    expect(mockLocation.reload).toHaveBeenCalled();
-  }));
-
-  it("should track a migration event in analytics service when destroying the local db", fakeAsync(() => {
-    const trackSpy = spyOn(TestBed.inject(AnalyticsService), "eventTrack");
-
-    entityMapper.save(new TestEntity());
-    tick();
-
-    updateRulesAndTriggerEnforcer(userRules);
-    tick();
-
-    expect(trackSpy).toHaveBeenCalledWith(
-      "destroying local db due to lost permissions",
-      {
-        category: "Migration",
-      },
-    );
-  }));
-
   it("should not fail if a non-entity rule exists", fakeAsync(() => {
     const rules: DatabaseRule[] = [
       { subject: TestEntity.ENTITY_TYPE, action: "manage" },
@@ -219,15 +111,199 @@ describe("PermissionEnforcerService", () => {
     expect(JSON.parse(storedRules)).toEqual(rules);
   }));
 
-  it("should call resetSync if rules changed but no entities lack permissions", fakeAsync(() => {
-    // No entities saved, so no permissions violations
-    updateRulesAndTriggerEnforcer([{ subject: "all", action: "manage" }]);
-    tick();
+  describe("indexeddb adapter (purge supported)", () => {
+    // isIndexedDbAdapterSpy defaults to true from beforeEach
 
-    expect(destroySpy).not.toHaveBeenCalled();
-    expect(mockLocation.reload).not.toHaveBeenCalled();
-    expect(resetSyncSpy).toHaveBeenCalled();
-  }));
+    it("should purge inaccessible entities before and after resetSync (to handle push/pull race)", fakeAsync(() => {
+      const inaccessible = new TestEntity();
+      entityMapper.save(inaccessible);
+      tick();
+
+      // Track call order via a shared sequence log
+      const callSequence: string[] = [];
+      mockDb.purge.and.callFake(() => {
+        callSequence.push("purge");
+        return Promise.resolve(true);
+      });
+      resetSyncSpy.and.callFake(() => {
+        callSequence.push("sync");
+        return Promise.resolve();
+      });
+
+      updateRulesAndTriggerEnforcer(userRules);
+      tick();
+
+      expect(mockDb.purge).toHaveBeenCalledWith(inaccessible.getId());
+      expect(destroySpy).not.toHaveBeenCalled();
+      expect(mockLocation.reload).not.toHaveBeenCalled();
+
+      // Verify the double-purge pattern: purge → sync → purge (at least once in sequence)
+      const firstPurgeIdx = callSequence.indexOf("purge");
+      const firstSyncIdx = callSequence.indexOf("sync");
+      const lastPurgeIdx = callSequence.lastIndexOf("purge");
+      expect(firstPurgeIdx).toBeLessThan(firstSyncIdx);
+      expect(lastPurgeIdx).toBeGreaterThan(firstSyncIdx);
+    }));
+
+    it("should call resetSync even when no entities lack permissions", fakeAsync(() => {
+      updateRulesAndTriggerEnforcer([{ subject: "all", action: "manage" }]);
+      tick();
+
+      expect(resetSyncSpy).toHaveBeenCalled();
+      expect(mockDb.purge).not.toHaveBeenCalled();
+      expect(destroySpy).not.toHaveBeenCalled();
+      expect(mockLocation.reload).not.toHaveBeenCalled();
+    }));
+
+    it("should track analytics event 're-sync triggered due to changed permissions' when rules change", fakeAsync(() => {
+      const trackSpy = spyOn(TestBed.inject(AnalyticsService), "eventTrack");
+
+      entityMapper.save(new TestEntity());
+      tick();
+
+      updateRulesAndTriggerEnforcer(userRules);
+      tick();
+
+      expect(trackSpy).toHaveBeenCalledWith(
+        "re-sync triggered due to changed permissions",
+        { category: "Migration" },
+      );
+    }));
+  });
+
+  describe("legacy idb adapter (purge not supported)", () => {
+    beforeEach(() => {
+      isIndexedDbAdapterSpy.and.returnValue(false);
+    });
+
+    it("should reset page if entity with write restriction exists (inverted)", fakeAsync(() => {
+      entityMapper.save(new TestEntity());
+      tick();
+
+      updateRulesAndTriggerEnforcer(userRules);
+      tick();
+
+      expect(destroySpy).toHaveBeenCalled();
+      expect(mockLocation.reload).toHaveBeenCalled();
+    }));
+
+    it("should reset page if entity without read permission exists (non-inverted)", fakeAsync(() => {
+      entityMapper.save(new TestEntity());
+      tick();
+
+      updateRulesAndTriggerEnforcer([{ subject: "School", action: "manage" }]);
+      tick();
+
+      expect(destroySpy).toHaveBeenCalled();
+      expect(mockLocation.reload).toHaveBeenCalled();
+    }));
+
+    it("should reset page if entity exists for which relevant rule is a read restriction", fakeAsync(() => {
+      entityMapper.save(new TestEntity());
+      tick();
+
+      updateRulesAndTriggerEnforcer([
+        { subject: "all", action: "manage" },
+        {
+          subject: [TestEntity.ENTITY_TYPE, "School"],
+          action: ["read", "update"],
+          inverted: true,
+        },
+        { subject: "Note", action: "create", inverted: true },
+      ]);
+      tick();
+
+      expect(destroySpy).toHaveBeenCalled();
+      expect(mockLocation.reload).toHaveBeenCalled();
+    }));
+
+    it("should not reset page if only entities with read permission exist", fakeAsync(() => {
+      destroySpy.calls.reset();
+      mockLocation.reload.calls.reset();
+
+      entityMapper.save(new TestEntity());
+      entityMapper.save(new TestEntity());
+      tick();
+
+      updateRulesAndTriggerEnforcer([
+        { subject: TestEntity.ENTITY_TYPE, action: ["read", "update"] },
+        { subject: "all", action: "delete", inverted: true },
+        { subject: ["Note"], action: "read" },
+      ]);
+      tick();
+
+      expect(destroySpy).not.toHaveBeenCalled();
+      expect(mockLocation.reload).not.toHaveBeenCalled();
+    }));
+
+    it("should destroy and reload when roles changed and entities without permissions now exist", fakeAsync(() => {
+      const entityCurrentlyAccessible = createEntityOfType("School");
+      entityMapper.save(entityCurrentlyAccessible);
+      tick();
+
+      updateRulesAndTriggerEnforcer(userRules);
+      tick();
+
+      expect(destroySpy).not.toHaveBeenCalled();
+      expect(mockLocation.reload).not.toHaveBeenCalled();
+
+      const extendedRules = userRules.concat({
+        subject: entityCurrentlyAccessible.getType(),
+        action: "manage",
+        inverted: true,
+      });
+
+      updateRulesAndTriggerEnforcer(extendedRules);
+      tick();
+
+      expect(destroySpy).toHaveBeenCalled();
+      expect(mockLocation.reload).toHaveBeenCalled();
+    }));
+
+    it("should reset if read rule with condition is added", fakeAsync(() => {
+      entityMapper.save(TestEntity.create("permitted"));
+      entityMapper.save(TestEntity.create("not-permitted"));
+
+      updateRulesAndTriggerEnforcer([
+        {
+          subject: TestEntity.ENTITY_TYPE,
+          action: "read",
+          conditions: { name: "permitted" },
+        },
+      ]);
+      tick();
+
+      expect(destroySpy).toHaveBeenCalled();
+      expect(mockLocation.reload).toHaveBeenCalled();
+    }));
+
+    it("should track analytics event 'destroying local db due to lost permissions' when destroying the local db", fakeAsync(() => {
+      const trackSpy = spyOn(TestBed.inject(AnalyticsService), "eventTrack");
+
+      entityMapper.save(new TestEntity());
+      tick();
+
+      updateRulesAndTriggerEnforcer(userRules);
+      tick();
+
+      expect(trackSpy).toHaveBeenCalledWith(
+        "destroying local db due to lost permissions",
+        {
+          category: "Migration",
+        },
+      );
+    }));
+
+    it("should call resetSync if rules changed but no entities lack permissions", fakeAsync(() => {
+      // No entities saved, so no permission violations
+      updateRulesAndTriggerEnforcer([{ subject: "all", action: "manage" }]);
+      tick();
+
+      expect(destroySpy).not.toHaveBeenCalled();
+      expect(mockLocation.reload).not.toHaveBeenCalled();
+      expect(resetSyncSpy).toHaveBeenCalled();
+    }));
+  });
 
   function updateRulesAndTriggerEnforcer(rules: DatabaseRule[]) {
     const config = new Config(Config.PERMISSION_KEY, { ["user_app"]: rules });

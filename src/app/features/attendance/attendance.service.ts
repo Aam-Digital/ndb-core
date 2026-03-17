@@ -4,7 +4,6 @@ import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import moment from "moment";
 import { ActivityAttendance } from "./model/activity-attendance";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
-import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
 import { AttendanceItem } from "./model/attendance-item";
 import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 import {
@@ -28,7 +27,6 @@ export class AttendanceService {
 
   private readonly entityMapper = inject(EntityMapperService);
   private readonly dbIndexing = inject(DatabaseIndexingService);
-  private readonly childrenService = inject(ChildrenService);
   private readonly currentUser = inject(CurrentUserSubject);
   private readonly configService = inject(ConfigService);
   private readonly entityRegistry = inject(EntityRegistry);
@@ -238,14 +236,7 @@ ${byParticipantChecks}
       ),
     );
 
-    const relevantNormalNotes = this.childrenService
-      .getNotesInTimespan(start, end)
-      .then((notes) => notes.filter((n) => n.category?.isMeeting));
-
-    const allResults = await Promise.all([
-      ...eventQueries,
-      relevantNormalNotes,
-    ]);
+    const allResults = await Promise.all(eventQueries);
     return ([] as Entity[]).concat(...allResults);
   }
 

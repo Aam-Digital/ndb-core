@@ -235,10 +235,15 @@ export class PouchDatabase extends Database {
    * This also emits a synthetic deletion event via the changes feed so that
    * in-memory caches (entity stores) drop the purged entity.
    *
+   * **Adapter limitation:** The underlying PouchDB `purge()` API is only available
+   * on the `indexeddb` adapter (PouchDB 8+). On unsupported adapters PouchDB will
+   * throw its own error, which callers should handle (e.g. via try/catch + logging).
+   *
    * @param id The document ID to purge
-   * @returns true if the document was purged, false if it did not exist locally
+   * @returns true if the document was purged,
+   *          false if the document did not exist locally (benign — desired state already achieved)
    */
-  async purge(id: string): Promise<boolean> {
+  override async purge(id: string): Promise<boolean> {
     const db = await this.getPouchDBOnceReady();
     let localDoc: PouchDB.Core.IdMeta & PouchDB.Core.GetMeta;
     try {
