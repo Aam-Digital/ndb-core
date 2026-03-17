@@ -26,6 +26,8 @@ import { UpdateMetadata } from "../model/update-metadata";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { DatabaseDocChange } from "../../database/database";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { EntityPermissionError } from "./entity-permission-error";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -43,6 +45,7 @@ export class EntityMapperService {
   private entitySchemaService = inject(EntitySchemaService);
   private currentUser = inject(CurrentUserSubject);
   private registry = inject(EntityRegistry);
+  private ability = inject(EntityAbility, { optional: true });
 
   /**
    * Load an Entity from the database with the given id or the registered name of that class.
@@ -143,6 +146,7 @@ export class EntityMapperService {
     entity: T,
     forceUpdate: boolean = false,
   ): Promise<any> {
+    this.assertPermission(entity);
     this.setEntityMetadata(entity);
     const rawData =
       this.entitySchemaService.transformEntityToDatabaseFormat(entity);
@@ -168,6 +172,7 @@ export class EntityMapperService {
     entities: Entity[],
     forceUpdate: boolean = false,
   ): Promise<any[]> {
+    entities.forEach((e) => this.assertPermission(e));
     entities.forEach((e) => this.setEntityMetadata(e));
 
     // group entities by their DATABASE
@@ -216,6 +221,16 @@ export class EntityMapperService {
       return this.registry.get(constructible) as EntityConstructor<T>;
     } else {
       return constructible;
+    }
+  }
+
+  private assertPermission(entity: Entity) {
+    if (!this.ability) {
+      return;
+    }
+    const action = entity.isNew ? "create" : "update";
+    if (this.ability.cannot(action, entity)) {
+      throw new EntityPermissionError(action, entity);
     }
   }
 
