@@ -19,7 +19,6 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { throwError } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 import { UserAdminService } from "../../user/user-admin-service/user-admin.service";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
@@ -122,15 +121,16 @@ describe("EntityDeleteService", () => {
     mockUserAdminService.deleteUser.and.returnValue(
       throwError(() => new Error()),
     );
-    const userEntity = createEntityOfType("User");
-    const entityConstructor = userEntity.getConstructor();
-    entityConstructor.enableUserAccounts = true;
+    const userEntity = new TestEntity();
+    TestEntity.enableUserAccounts = true;
 
     // when
     await service.deleteEntity(userEntity, true);
 
     // then
     expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalledTimes(1);
+
+    TestEntity.enableUserAccounts = false;
   });
 
   it("should not cascade delete the 'composite'-type entity that still references additional other entities but remove id", async () => {
