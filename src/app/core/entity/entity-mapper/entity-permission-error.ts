@@ -5,7 +5,7 @@ export class EntityPermissionError extends Error {
     public readonly entityType: string,
   ) {
     super(
-      `Current user is not permitted to "${action}" entity "${entityId}" (${entityType})`
+      `Current user is not permitted to "${action}" entity "${entityId}" (${entityType})`,
     );
     this.name = "EntityPermissionError";
   }
