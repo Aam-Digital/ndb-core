@@ -104,6 +104,34 @@ describe("RoutePermissionsService", () => {
 
     expect(filteredItems).toEqual([]);
   });
+
+  it("should include link-less parent items only when they have at least one accessible child", async () => {
+    // Link-less parent with an accessible child → included
+    const linklessParentWithChild: MenuItem = {
+      label: "Section",
+      icon: "folder",
+      subMenu: [{ label: "Allowed", link: "allowed" }],
+    };
+
+    // Link-less parent with no children → excluded (dead row)
+    const linklessLeaf: MenuItem = { label: "More", icon: "folder" };
+
+    // Link-less parent whose only child is blocked → excluded
+    const linklessParentAllBlocked: MenuItem = {
+      label: "Hidden Section",
+      icon: "folder",
+      subMenu: [{ label: "Blocked", link: "blocked" }],
+    };
+
+    const filteredItems: MenuItem[] = await service.filterPermittedRoutes([
+      linklessParentWithChild,
+      linklessLeaf,
+      linklessParentAllBlocked,
+    ]);
+
+    expect(filteredItems.length).toBe(1);
+    expect(filteredItems[0].label).toBe("Section");
+  });
 });
 
 /*

@@ -5,13 +5,27 @@
       <input matInput [(ngModel)]="item.label" (ngModelChange)="onChange()" />
     </mat-form-field>
   }
+
   @if (!hideLink) {
+    <mat-slide-toggle
+      [checked]="noLinkMode"
+      (change)="toggleNoLinkMode($event)"
+      i18n
+      >Add as parent section without link</mat-slide-toggle
+    >
+  }
+
+  @if (!hideLink && !noLinkMode) {
     <div class="flex-row align-center gap-small">
       <mat-form-field appearance="fill" class="full-width">
         <mat-label i18n>Link</mat-label>
 
         @if (linkOptions?.length && !customLinkMode) {
-          <mat-select [(ngModel)]="item.link" (ngModelChange)="onChange()">
+          <mat-select
+            [(ngModel)]="item.link"
+            (ngModelChange)="onChange()"
+            [errorStateMatcher]="linkErrorStateMatcher"
+          >
             @for (option of linkOptions; track option.value) {
               <mat-option [value]="option.value">
                 {{ option.label }}
@@ -23,8 +37,11 @@
             matInput
             [(ngModel)]="item.link"
             (ngModelChange)="onChange()"
+            [errorStateMatcher]="linkErrorStateMatcher"
           />
         }
+
+        <mat-error i18n>This field is required</mat-error>
 
         @if (customLinkMode) {
           <mat-hint align="start" i18n>

@@ -20,6 +20,15 @@
         ></app-menu-item>
 
         <div class="menu-actions flex-row gap-small align-center">
+          @if (hasNoLinkWarning) {
+            <fa-icon
+              icon="triangle-exclamation"
+              class="color-error"
+              i18n-matTooltip
+              matTooltip="This item has no link and no sub-items — it will not be accessible by users"
+            ></fa-icon>
+          }
+
           <button
             mat-icon-button
             color="accent"
