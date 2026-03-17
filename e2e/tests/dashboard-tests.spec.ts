@@ -13,6 +13,7 @@ import { generateChild } from "#src/app/child-dev-project/children/demo-data-gen
 import { generateNote } from "#src/app/child-dev-project/notes/demo-data/demo-note-generator.service.js";
 import { generateTodo } from "#src/app/features/todos/model/demo-todo-generator.service.js";
 import { faker } from "#src/app/core/demo-data/faker.js";
+import { WarningLevel } from "#src/app/child-dev-project/warning-level.js";
 
 test("Dashboard widgets and actions", async ({ page }) => {
   const users = generateUsers();
@@ -22,13 +23,23 @@ test("Dashboard widgets and actions", async ({ page }) => {
     generateNote({
       child: faker.helpers.arrayElement(children),
       author: faker.helpers.arrayElement(users),
+      warningLevel: WarningLevel.OK,
     }),
   );
-  const notesRecent = range(3).map(() =>
+  const notesFollowUp = range(2).map((i) =>
     generateNote({
-      child: faker.helpers.arrayElement(children),
+      child: children[i],
       author: faker.helpers.arrayElement(users),
       date: faker.date.recent({ days: 10 }),
+      warningLevel: WarningLevel.WARNING,
+    }),
+  );
+  const notesRecent = range(3).map((i) =>
+    generateNote({
+      child: children[i],
+      author: faker.helpers.arrayElement(users),
+      date: faker.date.recent({ days: 10 }),
+      warningLevel: WarningLevel.OK,
     }),
   );
   const todos = range(0, 5).map(() =>
@@ -43,6 +54,7 @@ test("Dashboard widgets and actions", async ({ page }) => {
     ...users,
     ...children,
     ...notes,
+    ...notesFollowUp,
     ...notesRecent,
     ...todos,
   ]);
