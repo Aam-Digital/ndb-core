@@ -34,22 +34,11 @@ export class RoutePermissionsService {
         ? await this.filterPermittedRoutes(item.subMenu)
         : [];
 
-      if (!item.link) {
-        // Link-less parent section header: only include if it has accessible children.
-        // A link-less item with no children has no navigation purpose in the live menu.
-        if (accessibleSubItems.length > 0) {
-          accessibleRoutes.push({
-            ...item,
-            subMenu: accessibleSubItems,
-          });
-        }
-      } else if (await this.isAccessibleRouteForUser(item.link)) {
+      if (item.link && (await this.isAccessibleRouteForUser(item.link))) {
         accessibleRoutes.push(item);
       } else if (accessibleSubItems.length > 0) {
-        // only adding the item if there is at least one accessible subMenu item
-        const filteredParentItem: MenuItem = Object.assign({}, item);
-        filteredParentItem.subMenu = accessibleSubItems;
-        accessibleRoutes.push(filteredParentItem);
+        // include parent (even without own link/permission) if it has accessible children
+        accessibleRoutes.push({ ...item, subMenu: accessibleSubItems });
       }
     }
 
