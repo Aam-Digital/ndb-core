@@ -14,8 +14,8 @@ import { Logging } from "#src/app/core/logging/logging.service";
  */
 @Injectable()
 export class AttendanceInitService {
-  private syncState = inject(SyncStateSubject);
-  private entityMapper = inject(EntityMapperService);
+  private readonly syncState = inject(SyncStateSubject);
+  private readonly entityMapper = inject(EntityMapperService);
 
   registerDefaultAttendanceStatusEnum() {
     this.syncState
@@ -57,7 +57,7 @@ export class AttendanceInitService {
     try {
       await this.entityMapper.save(existing);
     } catch (e) {
-      Logging.warn("Could not save default attendance-status enum", e);
+      Logging.debug("Could not save default attendance-status enum", e);
     }
   }
 }
