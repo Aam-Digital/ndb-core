@@ -56,6 +56,7 @@ export class AttendanceInitService {
     }
     try {
       await this.entityMapper.save(existing);
+      Logging.debug("Default attendance-status enum created/updated");
     } catch (e) {
       Logging.debug("Could not save default attendance-status enum", e);
     }
