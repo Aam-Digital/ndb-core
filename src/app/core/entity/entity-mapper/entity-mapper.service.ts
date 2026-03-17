@@ -216,7 +216,6 @@ export class EntityMapperService {
       .getDatabase(entity.getConstructor().DATABASE)
       .remove(entity);
   }
-  }
 
   protected resolveConstructor<T extends Entity>(
     constructible: EntityConstructor<T> | string,

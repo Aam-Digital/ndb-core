@@ -357,13 +357,13 @@ describe("EntityMapperService permission checks", () => {
     ).toBeRejectedWithError(EntityPermissionError);
   });
 
-  it("should throw EntityPermissionError when removing an entity without delete permission", () => {
+  it("should throw EntityPermissionError when removing an entity without delete permission", async () => {
     mockAbility.cannot.and.callFake((action: string) => action === "delete");
     const entity = new Entity("test-no-delete");
     entity._rev = "1-abc";
 
-    expect(() => entityMapper.remove(entity)).toThrowError(
-      EntityPermissionError as any,
+    await expectAsync(entityMapper.remove(entity)).toBeRejectedWithError(
+      EntityPermissionError,
     );
     expect(mockAbility.cannot).toHaveBeenCalledWith("delete", entity);
   });
