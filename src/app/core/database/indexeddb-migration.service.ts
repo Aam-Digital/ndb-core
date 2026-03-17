@@ -53,6 +53,7 @@ export class IndexeddbMigrationService {
    */
   async resolveDbConfig(session: SessionInfo): Promise<DbConfig> {
     this.migrationPending = false; // reset pending flag on each resolve attempt
+    const wasMigratedBefore = this.isMigrated(session);
 
     if (!environment.use_indexeddb_adapter) {
       await this.trackResolveScenario(
@@ -70,7 +71,7 @@ export class IndexeddbMigrationService {
     }
 
     const oldDbExists = await this.legacyDbExists(session);
-    if (!oldDbExists) {
+    if (!oldDbExists && !wasMigratedBefore) {
       localStorage.setItem(DB_MIGRATED_PREFIX + session.id, "true");
       await this.trackResolveScenario(
         "fresh_install_no_legacy_db",
@@ -254,7 +255,7 @@ export class IndexeddbMigrationService {
   }
 
   private getAnalyticsService(): Promise<AnalyticsService | null> {
-    if (!this.analyticsServicePromise) {
+    if (this.analyticsServicePromise === undefined) {
       // Keep analytics loading lazy to avoid triggering module initialization cycles
       this.analyticsServicePromise = import("../analytics/analytics.service")
         .then(({ AnalyticsService }) =>
