@@ -303,6 +303,7 @@ describe("EntityMapperService permission checks", () => {
       putAll: jasmine
         .createSpy("putAll")
         .and.resolveTo([{ ok: true, rev: "1-x" }]),
+      remove: jasmine.createSpy("remove").and.resolveTo({ ok: true }),
     };
     const mockDbResolver = jasmine.createSpyObj("DatabaseResolverService", [
       "getDatabase",
@@ -354,5 +355,16 @@ describe("EntityMapperService permission checks", () => {
     await expectAsync(
       entityMapper.saveAll([allowed, denied]),
     ).toBeRejectedWithError(EntityPermissionError);
+  });
+
+  it("should throw EntityPermissionError when removing an entity without delete permission", () => {
+    mockAbility.cannot.and.callFake((action: string) => action === "delete");
+    const entity = new Entity("test-no-delete");
+    entity._rev = "1-abc";
+
+    expect(() => entityMapper.remove(entity)).toThrowError(
+      EntityPermissionError as any,
+    );
+    expect(mockAbility.cannot).toHaveBeenCalledWith("delete", entity);
   });
 });

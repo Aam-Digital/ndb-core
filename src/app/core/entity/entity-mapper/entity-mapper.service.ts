@@ -29,6 +29,7 @@ import { DatabaseDocChange } from "../../database/database";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "./entity-permission-error";
 import { Logging } from "../../logging/logging.service";
+import { EntityActionPermission } from "../../permissions/permission-types";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -210,6 +211,7 @@ export class EntityMapperService {
    * @param entity The entity to be deleted
    */
   public remove<T extends Entity>(entity: T): Promise<any> {
+    this.assertPermission(entity, "delete");
     return this.dbResolver
       .getDatabase(entity.getConstructor().DATABASE)
       .remove(entity);
@@ -225,7 +227,7 @@ export class EntityMapperService {
     }
   }
 
-  private assertPermission(entity: Entity) {
+  private assertPermission(entity: Entity, action?: EntityActionPermission) {
     if (!this.ability) {
       return;
     }
@@ -235,9 +237,13 @@ export class EntityMapperService {
       );
       return;
     }
-    const action = entity.isNew ? "create" : "update";
-    if (this.ability.cannot(action, entity)) {
-      throw new EntityPermissionError(action, entity);
+    const checkedAction = action ?? (entity.isNew ? "create" : "update");
+    if (this.ability.cannot(checkedAction, entity)) {
+      throw new EntityPermissionError(
+        checkedAction,
+        entity.getId(),
+        entity.getType(),
+      );
     }
   }
 
