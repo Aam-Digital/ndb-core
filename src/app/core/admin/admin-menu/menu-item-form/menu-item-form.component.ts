@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from "@angular/core";
 import { MenuItem } from "../../../ui/navigation/menu-item";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -13,6 +20,7 @@ import {
   MatSlideToggleModule,
 } from "@angular/material/slide-toggle";
 import { IconComponent } from "#src/app/core/common-components/icon-input/icon-input.component";
+import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 @Component({
   selector: "app-menu-item-form",
@@ -32,10 +40,12 @@ import { IconComponent } from "#src/app/core/common-components/icon-input/icon-i
   styleUrls: ["./menu-item-form.component.scss"],
 })
 export class MenuItemFormComponent implements OnInit {
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
+
   @Input() item!: MenuItem;
   @Input() hideLabel = false;
   @Input() hideLink = false;
-  @Input() noLinkMode = false;
+  @Input() isNew = false;
   @Input() showLinkError = false;
 
   /**
@@ -43,12 +53,16 @@ export class MenuItemFormComponent implements OnInit {
    */
   @Input() linkOptions: { value: string; label: string }[] = [];
   @Output() itemChange = new EventEmitter<MenuItem>();
-  @Output() noLinkModeChange = new EventEmitter<boolean>();
 
   /**
    * If true: show free-text input. If false: show dropdown with linkOptions.
    */
   customLinkMode = false;
+
+  /**
+   * Whether this item is intentionally configured as a parent section without a link.
+   */
+  noLinkMode = false;
 
   linkErrorStateMatcher: ErrorStateMatcher = {
     isErrorState: (_control: FormControl | null): boolean => {
@@ -57,6 +71,11 @@ export class MenuItemFormComponent implements OnInit {
   };
 
   ngOnInit() {
+    // For existing manual items with no link, default the toggle to ON.
+    if (!this.isNew && !this.item?.link?.trim()) {
+      this.noLinkMode = true;
+    }
+
     // If no options are available, always start in custom link mode
     if (!this.linkOptions || this.linkOptions.length === 0) {
       this.customLinkMode = true;
@@ -81,8 +100,27 @@ export class MenuItemFormComponent implements OnInit {
     this.customLinkMode = !this.customLinkMode;
   }
 
-  toggleNoLinkMode(event: MatSlideToggleChange) {
-    event.source.checked = this.noLinkMode;
-    this.noLinkModeChange.emit(event.checked);
+  isNoLinkModeEnabled(): boolean {
+    return this.noLinkMode;
+  }
+
+  async toggleNoLinkMode(event: MatSlideToggleChange) {
+    if (event.checked && this.item.link?.trim()) {
+      // Warn before removing an existing link.
+      const confirmed = await this.confirmationDialog.getConfirmation(
+        $localize`:Confirmation title for removing link from menu item:Remove link?`,
+        $localize`:Confirmation message for removing link from menu item:This item currently has a link. Turning this on will remove it. Do you still want to proceed?`,
+      );
+
+      if (!confirmed) {
+        event.source.checked = false;
+        return;
+      }
+
+      delete this.item.link;
+      this.onChange();
+    }
+
+    this.noLinkMode = event.checked;
   }
 }

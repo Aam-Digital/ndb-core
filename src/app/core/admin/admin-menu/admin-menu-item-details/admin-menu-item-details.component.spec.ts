@@ -7,7 +7,6 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { ConfigService } from "app/core/config/config.service";
-import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 describe("AdminMenuItemDetailsComponent", () => {
   let component: AdminMenuItemDetailsComponent;
@@ -16,7 +15,6 @@ describe("AdminMenuItemDetailsComponent", () => {
   let mockDialogRef: jasmine.SpyObj<
     MatDialogRef<AdminMenuItemDetailsComponent>
   >;
-  let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
 
   beforeEach(async () => {
     const mockConfigService = jasmine.createSpyObj("ConfigService", [
@@ -31,11 +29,6 @@ describe("AdminMenuItemDetailsComponent", () => {
     ]);
     mockDialogRef.afterClosed.and.returnValue(NEVER);
 
-    mockConfirmationDialog = jasmine.createSpyObj("ConfirmationDialogService", [
-      "getConfirmation",
-    ]);
-    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
-
     await TestBed.configureTestingModule({
       imports: [
         AdminMenuItemDetailsComponent,
@@ -49,10 +42,6 @@ describe("AdminMenuItemDetailsComponent", () => {
         },
         { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: ConfigService, useValue: mockConfigService },
-        {
-          provide: ConfirmationDialogService,
-          useValue: mockConfirmationDialog,
-        },
         EntityRegistry,
       ],
     }).compileComponents();
@@ -68,7 +57,13 @@ describe("AdminMenuItemDetailsComponent", () => {
 
   it("should allow saving without a link when noLinkMode is active", () => {
     component.item = { label: "Section", icon: "folder" } as MenuItem;
-    component.noLinkMode = true;
+    (
+      component as unknown as {
+        menuItemForm: { isNoLinkModeEnabled: () => boolean };
+      }
+    ).menuItemForm = {
+      isNoLinkModeEnabled: () => true,
+    };
 
     component.save();
 
@@ -77,18 +72,19 @@ describe("AdminMenuItemDetailsComponent", () => {
     );
   });
 
-  it("should not change noLinkMode and preserve the link when confirmation is cancelled", async () => {
-    component.item = {
-      label: "Test",
-      icon: "user",
-      link: "/dashboard",
-    } as MenuItem;
-    component.noLinkMode = false;
-    mockConfirmationDialog.getConfirmation.and.resolveTo(false);
+  it("should not save and should show validation error when noLinkMode is inactive and link is empty", () => {
+    component.item = { label: "Section", icon: "folder" } as MenuItem;
+    (
+      component as unknown as {
+        menuItemForm: { isNoLinkModeEnabled: () => boolean };
+      }
+    ).menuItemForm = {
+      isNoLinkModeEnabled: () => false,
+    };
 
-    await component.onNoLinkModeChange(true);
+    component.save();
 
-    expect(component.noLinkMode).toBe(false);
-    expect(component.item.link).toBe("/dashboard");
+    expect(component.linkError).toBeTrue();
+    expect(mockDialogRef.close).not.toHaveBeenCalled();
   });
 });

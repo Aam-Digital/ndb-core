@@ -30,32 +30,26 @@ export class RoutePermissionsService {
     const accessibleRoutes: MenuItem[] = [];
 
     for (const item of items) {
+      const accessibleSubItems: MenuItem[] = item.subMenu?.length
+        ? await this.filterPermittedRoutes(item.subMenu)
+        : [];
+
       if (!item.link) {
         // Link-less parent section header: only include if it has accessible children.
         // A link-less item with no children has no navigation purpose in the live menu.
-        if (item.subMenu?.length) {
-          const accessibleSubItems: MenuItem[] =
-            await this.filterPermittedRoutes(item.subMenu);
-          if (accessibleSubItems.length > 0) {
-            accessibleRoutes.push({
-              ...item,
-              subMenu: accessibleSubItems,
-            });
-          }
+        if (accessibleSubItems.length > 0) {
+          accessibleRoutes.push({
+            ...item,
+            subMenu: accessibleSubItems,
+          });
         }
       } else if (await this.isAccessibleRouteForUser(item.link)) {
         accessibleRoutes.push(item);
-      } else if (item.subMenu) {
-        const accessibleSubItems: MenuItem[] = await this.filterPermittedRoutes(
-          item.subMenu,
-        );
-
-        if (accessibleSubItems.length > 0) {
-          // only adding the item if there is at least one accessible subMenu item
-          const filteredParentItem: MenuItem = Object.assign({}, item);
-          filteredParentItem.subMenu = accessibleSubItems;
-          accessibleRoutes.push(filteredParentItem);
-        }
+      } else if (accessibleSubItems.length > 0) {
+        // only adding the item if there is at least one accessible subMenu item
+        const filteredParentItem: MenuItem = Object.assign({}, item);
+        filteredParentItem.subMenu = accessibleSubItems;
+        accessibleRoutes.push(filteredParentItem);
       }
     }
 

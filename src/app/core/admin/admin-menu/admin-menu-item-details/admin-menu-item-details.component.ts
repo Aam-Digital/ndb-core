@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, ViewChild, inject, OnInit } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -17,7 +17,7 @@ import {
   ViewConfig,
 } from "#src/app/core/config/dynamic-routing/view-config.interface";
 import { ConfigService } from "#src/app/core/config/config.service";
-import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { isManualItemWithoutLink } from "../menu-item-for-admin-ui";
 
 /**
  * Dialog component to edit a single menu item's details.
@@ -41,7 +41,9 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
 })
 export class AdminMenuItemDetailsComponent implements OnInit {
   private readonly configService = inject(ConfigService);
-  private readonly confirmationDialog = inject(ConfirmationDialogService);
+  @ViewChild(MenuItemFormComponent)
+  private menuItemForm?: MenuItemFormComponent;
+
   dialogRef = inject<MatDialogRef<AdminMenuItemDetailsComponent>>(MatDialogRef);
   data = inject<{
     item: MenuItem;
@@ -54,9 +56,6 @@ export class AdminMenuItemDetailsComponent implements OnInit {
   isNew: boolean;
   /** Whether entity type links are allowed (false for shortcuts, true for admin menu) */
   allowEntityLinks: boolean;
-
-  /** Whether this item is being saved without a link (parent section only). */
-  noLinkMode = false;
   linkError = false;
 
   constructor() {
@@ -65,15 +64,6 @@ export class AdminMenuItemDetailsComponent implements OnInit {
     this.item = data.item;
     this.isNew = data.isNew;
     this.allowEntityLinks = data.allowEntityLinks ?? true;
-
-    // For existing items that already have no link, default the toggle to ON
-    if (
-      !this.isNew &&
-      !this.item.link &&
-      !(this.item as EntityMenuItem).entityType
-    ) {
-      this.noLinkMode = true;
-    }
   }
 
   ngOnInit(): void {
@@ -106,24 +96,11 @@ export class AdminMenuItemDetailsComponent implements OnInit {
     }
   }
 
-  async onNoLinkModeChange(enable: boolean) {
-    if (enable && this.item.link?.trim()) {
-      // Warn before removing an existing link
-      const confirmed = await this.confirmationDialog.getConfirmation(
-        $localize`:Confirmation title for removing link from menu item:Remove link?`,
-        $localize`:Confirmation message for removing link from menu item:This item currently has a link. Turning this on will remove it. Do you still want to proceed?`,
-      );
-      if (!confirmed) {
-        return;
-      }
-      delete this.item.link;
-    }
-    this.noLinkMode = enable;
-  }
-
   save() {
     const entityMenuItem = this.item as EntityMenuItem;
     const hasValidEntityType = entityMenuItem.entityType?.trim();
+    const isNoLinkModeActive =
+      this.menuItemForm?.isNoLinkModeEnabled() ?? false;
 
     if (hasValidEntityType) {
       // For entity type items, remove manual properties
@@ -135,13 +112,13 @@ export class AdminMenuItemDetailsComponent implements OnInit {
       // For manual items, remove entity type property
       delete entityMenuItem.entityType;
 
-      if (!this.item.link?.trim() && !this.noLinkMode) {
+      if (isManualItemWithoutLink(this.item) && !isNoLinkModeActive) {
         // Validation: manual items require a link unless noLinkMode is active
         this.linkError = true;
         return;
       }
 
-      if (this.noLinkMode) {
+      if (isNoLinkModeActive) {
         // Ensure link is fully absent (not an empty string)
         delete this.item.link;
       }

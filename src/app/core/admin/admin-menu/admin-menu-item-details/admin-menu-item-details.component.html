@@ -39,8 +39,7 @@
         [item]="item"
         (itemChange)="item = $event; linkError = false"
         [linkOptions]="availableRoutes"
-        [noLinkMode]="noLinkMode"
-        (noLinkModeChange)="onNoLinkModeChange($event)"
+        [isNew]="isNew"
         [showLinkError]="linkError"
       ></app-menu-item-form>
     }

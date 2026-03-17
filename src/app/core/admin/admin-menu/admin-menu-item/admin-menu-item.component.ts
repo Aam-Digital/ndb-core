@@ -10,6 +10,7 @@ import { MenuService } from "app/core/ui/navigation/menu.service";
 import { firstValueFrom } from "rxjs";
 import { AdminMenuItemDetailsComponent } from "../admin-menu-item-details/admin-menu-item-details.component";
 import {
+  hasNoLinkAndNoSubItems,
   MenuItemForAdminUi,
   MenuItemForAdminUiNew,
 } from "../menu-item-for-admin-ui";
@@ -68,11 +69,7 @@ export class AdminMenuItemComponent {
    * meaning clicking it will have no visible effect.
    */
   get hasNoLinkWarning(): boolean {
-    return (
-      !this._item?.link &&
-      !(this._item as unknown as EntityMenuItem)?.entityType &&
-      (!this._item?.subMenu || this._item.subMenu.length === 0)
-    );
+    return this._item ? hasNoLinkAndNoSubItems(this._item) : false;
   }
 
   private _item: MenuItemForAdminUi;
