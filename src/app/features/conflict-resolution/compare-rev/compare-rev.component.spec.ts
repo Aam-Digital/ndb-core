@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { CompareRevComponent } from "./compare-rev.component";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
@@ -96,27 +90,37 @@ describe("CompareRevComponent", () => {
     expect(component.resolution).toBeTruthy();
   });
 
-  it("should resolveByDelete, deleting giving doc", fakeAsync(() => {
-    component.loadRev();
-    tick();
+  it("should resolveByDelete, deleting giving doc", async () => {
+    vi.useFakeTimers();
+    try {
+      component.loadRev();
+      await vi.advanceTimersByTimeAsync(0);
 
-    component.resolveByDelete(testConflictDoc);
-    tick();
+      component.resolveByDelete(testConflictDoc);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockDatabase.remove).toHaveBeenCalledWith(testConflictDoc);
-    expect(mockDatabase.put).not.toHaveBeenCalled();
-    expect(component.resolution).toBeTruthy();
-  }));
+      expect(mockDatabase.remove).toHaveBeenCalledWith(testConflictDoc);
+      expect(mockDatabase.put).not.toHaveBeenCalled();
+      expect(component.resolution).toBeTruthy();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should resolveByManualEdit, saving new version and removing conflict", fakeAsync(() => {
-    component.loadRev();
-    tick();
+  it("should resolveByManualEdit, saving new version and removing conflict", async () => {
+    vi.useFakeTimers();
+    try {
+      component.loadRev();
+      await vi.advanceTimersByTimeAsync(0);
 
-    component.resolveByManualEdit(component.diffsCustom);
-    tick();
+      component.resolveByManualEdit(component.diffsCustom);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockDatabase.remove).toHaveBeenCalledWith(testConflictDoc);
-    expect(mockDatabase.put).toHaveBeenCalled();
-    expect(component.resolution).toBeTruthy();
-  }));
+      expect(mockDatabase.remove).toHaveBeenCalledWith(testConflictDoc);
+      expect(mockDatabase.put).toHaveBeenCalled();
+      expect(component.resolution).toBeTruthy();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

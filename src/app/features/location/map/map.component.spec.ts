@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { MapComponent } from "./map.component";
 import { ConfigService } from "../../../core/config/config.service";
@@ -56,21 +51,26 @@ describe("MapComponent", () => {
     expect(map.getCenter()).toEqual(new L.LatLng(...config.start));
   });
 
-  it("should not emit double clicks on the map", fakeAsync(() => {
-    let clicked: Coordinates;
-    component.mapClick.subscribe((res) => (clicked = res));
+  it("should not emit double clicks on the map", async () => {
+    vi.useFakeTimers();
+    try {
+      let clicked: Coordinates;
+      component.mapClick.subscribe((res) => (clicked = res));
 
-    tick(1000);
-    map.fireEvent("click", { latlng: new L.LatLng(1, 1) });
-    tick(300);
-    map.fireEvent("click", { latlng: new L.LatLng(1, 2) });
-    tick(400);
-    expect(clicked).toBeUndefined();
+      await vi.advanceTimersByTimeAsync(1000);
+      map.fireEvent("click", { latlng: new L.LatLng(1, 1) });
+      await vi.advanceTimersByTimeAsync(300);
+      map.fireEvent("click", { latlng: new L.LatLng(1, 2) });
+      await vi.advanceTimersByTimeAsync(400);
+      expect(clicked).toBeUndefined();
 
-    map.fireEvent("click", { latlng: new L.LatLng(1, 3) });
-    tick(400);
-    expect(clicked).toEqual({ lat: 1, lon: 3 });
-  }));
+      map.fireEvent("click", { latlng: new L.LatLng(1, 3) });
+      await vi.advanceTimersByTimeAsync(400);
+      expect(clicked).toEqual({ lat: 1, lon: 3 });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should center map around markers and keep zoom", () => {
     component.marked = [

@@ -22,6 +22,7 @@ describe("NotificationComponent", () => {
     mockEntityMapper = {
       receiveUpdates: vi.fn(),
       load: vi.fn(),
+      loadType: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
@@ -39,12 +40,17 @@ describe("NotificationComponent", () => {
           provide: DatabaseResolverService,
           useValue: {
             initializeNotificationsDatabaseForCurrentUser: vi.fn(),
+            getCurrentUserDatabase: vi.fn().mockResolvedValue(undefined),
           },
         },
       ],
     }).compileComponents();
 
     mockEntityMapper.receiveUpdates.mockReturnValue(NEVER);
+    mockEntityMapper.load.mockRejectedValue(
+      new Error("No notification config"),
+    );
+    mockEntityMapper.loadType.mockResolvedValue([]);
 
     fixture = TestBed.createComponent(NotificationComponent);
     component = fixture.componentInstance;

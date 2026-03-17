@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { UserDetailsComponent } from "./user-details.component";
 import { Role, UserAccount } from "../user-admin-service/user-account";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
@@ -165,29 +160,34 @@ describe("UserDetailsComponent", () => {
     expect(component.form.get("email")?.hasError("email")).toBe(false);
   });
 
-  it("should close dialog with accountUpdated result when form is valid", fakeAsync(() => {
-    fixture.componentRef.setInput("isInDialog", false);
-    fixture.componentRef.setInput("userAccount", mockUserAccount);
-    fixture.detectChanges();
+  it("should close dialog with accountUpdated result when form is valid", async () => {
+    vi.useFakeTimers();
+    try {
+      fixture.componentRef.setInput("isInDialog", false);
+      fixture.componentRef.setInput("userAccount", mockUserAccount);
+      fixture.detectChanges();
 
-    component.editMode();
-    fixture.detectChanges();
+      component.editMode();
+      fixture.detectChanges();
 
-    component.form.patchValue({
-      email: "updated@example.com",
-      roles: [mockRole],
-    });
+      component.form.patchValue({
+        email: "updated@example.com",
+        roles: [mockRole],
+      });
 
-    component.save();
-    tick();
+      component.save();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockDialogRef.close).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: "accountUpdated",
-        data: expect.anything(),
-      }),
-    );
-  }));
+      expect(mockDialogRef.close).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "accountUpdated",
+          data: expect.anything(),
+        }),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should not close dialog when form is invalid", () => {
     fixture.componentRef.setInput("isInDialog", false);

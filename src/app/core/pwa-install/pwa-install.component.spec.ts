@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { PwaInstallComponent } from "./pwa-install.component";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
@@ -56,15 +50,22 @@ describe("PwaInstallComponent", () => {
     expect(mockSnackbar.openFromTemplate).toHaveBeenCalled();
   });
 
-  it("should call installPWA when no install instructions are defined and remove button once confirmed", fakeAsync(() => {
-    fixture.detectChanges();
-    component.showPWAInstallButton = true;
+  it("should call installPWA when no install instructions are defined and remove button once confirmed", async () => {
+    vi.useFakeTimers();
+    try {
+      fixture.detectChanges();
+      component.showPWAInstallButton = true;
 
-    mockPWAInstallService.installPWA.mockResolvedValue({ outcome: "accepted" });
-    component.pwaInstallButtonClicked();
-    expect(mockPWAInstallService.installPWA).toHaveBeenCalled();
+      mockPWAInstallService.installPWA.mockResolvedValue({
+        outcome: "accepted",
+      });
+      component.pwaInstallButtonClicked();
+      expect(mockPWAInstallService.installPWA).toHaveBeenCalled();
 
-    tick();
-    expect(component._showPWAInstallButton).toBe(false);
-  }));
+      await vi.advanceTimersByTimeAsync(0);
+      expect(component._showPWAInstallButton).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

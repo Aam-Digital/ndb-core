@@ -1,5 +1,4 @@
 import type { Mock } from "vitest";
-import { fakeAsync, tick } from "@angular/core/testing";
 
 import { PouchDatabase } from "./pouch-database";
 import {
@@ -43,9 +42,9 @@ describe("SyncedPouchDatabase", () => {
    * ensure the interval for sync is stopped at end of test to avoid errors.
    * Somehow this does not work in afterEach().
    */
-  function stopPeriodicTimer() {
+  async function stopPeriodicTimer() {
     service.liveSyncEnabled = false;
-    tick(service.SYNC_INTERVAL + 500);
+    await vi.advanceTimersByTimeAsync(service.SYNC_INTERVAL + 500);
   }
 
   it("should be created", () => {
@@ -70,116 +69,141 @@ describe("SyncedPouchDatabase", () => {
     return { mockLocalDb, db };
   }
 
-  it("should restart the sync if it fails at one point", fakeAsync(() => {
-    const { mockLocalDb } = mockPouchDatabaseService();
+  it("should restart the sync if it fails at one point", async () => {
+    vi.useFakeTimers();
+    try {
+      const { mockLocalDb } = mockPouchDatabaseService();
 
-    loginState.next(LoginState.LOGGED_IN);
+      loginState.next(LoginState.LOGGED_IN);
 
-    tick(1000);
-    expect(mockLocalDb.sync).toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(mockLocalDb.sync).toHaveBeenCalled();
 
-    mockLocalDb.sync.mockClear();
-    mockLocalDb.sync.mockRejectedValue("sync request server error");
-    tick(service.SYNC_INTERVAL);
-    expect(mockLocalDb.sync).toHaveBeenCalled();
-    // expect no errors thrown in service
+      mockLocalDb.sync.mockClear();
+      mockLocalDb.sync.mockRejectedValue("sync request server error");
+      await vi.advanceTimersByTimeAsync(service.SYNC_INTERVAL);
+      expect(mockLocalDb.sync).toHaveBeenCalled();
+      // expect no errors thrown in service
 
-    // continue sync intervals
-    mockLocalDb.sync.mockClear();
-    mockLocalDb.sync.mockResolvedValue({});
-    tick(service.SYNC_INTERVAL);
-    expect(mockLocalDb.sync).toHaveBeenCalled();
+      // continue sync intervals
+      mockLocalDb.sync.mockClear();
+      mockLocalDb.sync.mockResolvedValue({});
+      await vi.advanceTimersByTimeAsync(service.SYNC_INTERVAL);
+      expect(mockLocalDb.sync).toHaveBeenCalled();
 
-    stopPeriodicTimer();
-  }));
+      await stopPeriodicTimer();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should sync immediately when local db has changes", fakeAsync(() => {
-    const { mockLocalDb, db } = mockPouchDatabaseService();
-    const mockChanges = new Subject();
-    vi.spyOn(db, "changes").mockReturnValue(mockChanges);
+  it("should sync immediately when local db has changes", async () => {
+    vi.useFakeTimers();
+    try {
+      const { mockLocalDb, db } = mockPouchDatabaseService();
+      const mockChanges = new Subject();
+      vi.spyOn(db, "changes").mockReturnValue(mockChanges);
 
-    loginState.next(LoginState.LOGGED_IN);
+      loginState.next(LoginState.LOGGED_IN);
 
-    service.liveSync();
+      service.liveSync();
 
-    tick(1000);
-    expect(mockLocalDb.sync).toHaveBeenCalled();
-    mockLocalDb.sync.mockClear();
-    expect(mockLocalDb.sync).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(mockLocalDb.sync).toHaveBeenCalled();
+      mockLocalDb.sync.mockClear();
+      expect(mockLocalDb.sync).not.toHaveBeenCalled();
 
-    // simulate local doc written
-    mockChanges.next({});
-    tick(500); // sync has a short debounce time
-    expect(mockLocalDb.sync).toHaveBeenCalled();
+      // simulate local doc written
+      mockChanges.next({});
+      await vi.advanceTimersByTimeAsync(500); // sync has a short debounce time
+      expect(mockLocalDb.sync).toHaveBeenCalled();
 
-    stopPeriodicTimer();
-  }));
+      await stopPeriodicTimer();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should skip sync calls when offline", fakeAsync(() => {
-    const { mockLocalDb } = mockPouchDatabaseService();
+  it("should skip sync calls when offline", async () => {
+    vi.useFakeTimers();
+    try {
+      const { mockLocalDb } = mockPouchDatabaseService();
 
-    mockNavigator.onLine = false;
+      mockNavigator.onLine = false;
 
-    service.liveSync();
+      service.liveSync();
 
-    tick(1000);
-    expect(mockLocalDb.sync).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(mockLocalDb.sync).not.toHaveBeenCalled();
 
-    mockNavigator.onLine = true;
-    tick(service.SYNC_INTERVAL);
-    expect(mockLocalDb.sync).toHaveBeenCalled();
+      mockNavigator.onLine = true;
+      await vi.advanceTimersByTimeAsync(service.SYNC_INTERVAL);
+      expect(mockLocalDb.sync).toHaveBeenCalled();
 
-    stopPeriodicTimer();
-  }));
+      await stopPeriodicTimer();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should not start additional syncs while a previous sync is still running", fakeAsync(() => {
-    const LONG_SYNC_TIME = 100000;
+  it("should not start additional syncs while a previous sync is still running", async () => {
+    vi.useFakeTimers();
+    try {
+      const LONG_SYNC_TIME = 100000;
 
-    const { mockLocalDb } = mockPouchDatabaseService();
-    mockLocalDb.sync.mockImplementation(
-      // @ts-ignore
-      async () => await new Promise((r) => setTimeout(r, LONG_SYNC_TIME)),
-    );
+      const { mockLocalDb } = mockPouchDatabaseService();
+      mockLocalDb.sync.mockImplementation(
+        // @ts-ignore
+        async () => await new Promise((r) => setTimeout(r, LONG_SYNC_TIME)),
+      );
 
-    service.liveSync();
+      service.liveSync();
 
-    tick(service.SYNC_INTERVAL);
-    expect(mockLocalDb.sync).toHaveBeenCalledTimes(1);
+      await vi.advanceTimersByTimeAsync(service.SYNC_INTERVAL);
+      expect(mockLocalDb.sync).toHaveBeenCalledTimes(1);
 
-    tick(service.SYNC_INTERVAL);
-    expect(mockLocalDb.sync).toHaveBeenCalledTimes(1);
+      await vi.advanceTimersByTimeAsync(service.SYNC_INTERVAL);
+      expect(mockLocalDb.sync).toHaveBeenCalledTimes(1);
 
-    tick(LONG_SYNC_TIME);
-    expect(mockLocalDb.sync).toHaveBeenCalledTimes(2);
+      await vi.advanceTimersByTimeAsync(LONG_SYNC_TIME);
+      expect(mockLocalDb.sync).toHaveBeenCalledTimes(2);
 
-    // stop periodic timer:
-    service.liveSyncEnabled = false;
-    tick(LONG_SYNC_TIME);
-  }));
+      // stop periodic timer:
+      service.liveSyncEnabled = false;
+      await vi.advanceTimersByTimeAsync(LONG_SYNC_TIME);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should emit changes from the remoteDatabase changes feed if in remote-only mode", fakeAsync(() => {
-    // Initialize service in remote-only mode by passing null as dbName
-    service.init(null);
-    tick();
+  it("should emit changes from the remoteDatabase changes feed if in remote-only mode", async () => {
+    vi.useFakeTimers();
+    try {
+      // Initialize service in remote-only mode by passing null as dbName
+      service.init(null);
+      await vi.advanceTimersByTimeAsync(0);
 
-    // Create a spy on the remoteDatabase to simulate changes
-    const remoteChanges = new Subject();
-    const remoteDatabase = service["remoteDatabase"];
-    vi.spyOn(remoteDatabase, "changes").mockReturnValue(remoteChanges);
+      // Create a spy on the remoteDatabase to simulate changes
+      const remoteChanges = new Subject();
+      const remoteDatabase = service["remoteDatabase"];
+      vi.spyOn(remoteDatabase, "changes").mockReturnValue(remoteChanges);
 
-    // Set up a spy to capture emitted changes
-    const changesSpy = vi.fn();
-    service.changes().subscribe(changesSpy);
-    tick();
+      // Set up a spy to capture emitted changes
+      const changesSpy = vi.fn();
+      service.changes().subscribe(changesSpy);
+      await vi.advanceTimersByTimeAsync(0);
 
-    // Emit a change from the remote database
-    const mockChange = { id: "test-doc", seq: 1 };
-    remoteChanges.next(mockChange);
-    tick();
+      // Emit a change from the remote database
+      const mockChange = { id: "test-doc", seq: 1 };
+      remoteChanges.next(mockChange);
+      await vi.advanceTimersByTimeAsync(0);
 
-    // Verify the change was forwarded to the service's changes feed
-    expect(changesSpy).toHaveBeenCalledWith(mockChange);
-  }));
+      // Verify the change was forwarded to the service's changes feed
+      expect(changesSpy).toHaveBeenCalledWith(mockChange);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should trigger one full sync run without checkpoints", async () => {
     const syncSpy = vi.spyOn(service, "sync").mockResolvedValue({} as any);

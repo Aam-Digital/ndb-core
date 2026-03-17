@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { MatchingEntitiesComponent } from "./matching-entities.component";
 import { MatchingEntitiesConfig } from "./matching-entities-config";
@@ -492,88 +486,103 @@ describe("MatchingEntitiesComponent", () => {
     ]);
   });
 
-  it("should display map if location properties are available", fakeAsync(() => {
-    // Clean-up child schema before running test
-    TestEntity.schema.forEach((schema, name) => {
-      if (schema.dataType === "location") {
-        TestEntity.schema.delete(name);
-      }
-    });
-    component.mapVisible = false;
-    component.entity = new TestEntity();
-    component.leftSide = { entityType: TestEntity.ENTITY_TYPE };
-    component.onMatch = testConfig.onMatch;
+  it("should display map if location properties are available", async () => {
+    vi.useFakeTimers();
+    try {
+      // Clean-up child schema before running test
+      TestEntity.schema.forEach((schema, name) => {
+        if (schema.dataType === "location") {
+          TestEntity.schema.delete(name);
+        }
+      });
+      component.mapVisible = false;
+      component.entity = new TestEntity();
+      component.leftSide = { entityType: TestEntity.ENTITY_TYPE };
+      component.onMatch = testConfig.onMatch;
 
-    fixture.detectChanges();
-    tick();
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.mapVisible).toBe(false);
+      expect(component.mapVisible).toBe(false);
 
-    TestEntity.schema.set("address", { dataType: "location" });
+      TestEntity.schema.set("address", { dataType: "location" });
 
-    component.ngOnInit();
-    tick();
+      component.ngOnInit();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.mapVisible).toBe(true);
+      expect(component.mapVisible).toBe(true);
 
-    TestEntity.schema.delete("address");
-  }));
+      TestEntity.schema.delete("address");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should not alter the config object", fakeAsync(() => {
-    const config: MatchingEntitiesConfig = {
-      columns: [
-        ["name", "name"],
-        ["projectNumber", "distance"],
-      ],
-      rightSide: {
-        entityType: TestEntity.ENTITY_TYPE,
-        columns: ["name", "distance"],
-      },
-      leftSide: {
-        entityType: TestEntity.ENTITY_TYPE,
-        columns: ["name", "distance"],
-      },
-      onMatch: testConfig.onMatch,
-    };
-    TestEntity.schema.set("address1", { dataType: "location" });
-    TestEntity.schema.set("address2", { dataType: "location" });
+  it("should not alter the config object", async () => {
+    vi.useFakeTimers();
+    try {
+      const config: MatchingEntitiesConfig = {
+        columns: [
+          ["name", "name"],
+          ["projectNumber", "distance"],
+        ],
+        rightSide: {
+          entityType: TestEntity.ENTITY_TYPE,
+          columns: ["name", "distance"],
+        },
+        leftSide: {
+          entityType: TestEntity.ENTITY_TYPE,
+          columns: ["name", "distance"],
+        },
+        onMatch: testConfig.onMatch,
+      };
+      TestEntity.schema.set("address1", { dataType: "location" });
+      TestEntity.schema.set("address2", { dataType: "location" });
 
-    const configCopy = JSON.parse(JSON.stringify(config));
-    routeData.next({ config: configCopy });
+      const configCopy = JSON.parse(JSON.stringify(config));
+      routeData.next({ config: configCopy });
 
-    fixture.detectChanges();
-    tick();
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(configCopy).toEqual(config);
+      expect(configCopy).toEqual(config);
 
-    TestEntity.schema.delete("address1");
-    TestEntity.schema.delete("address2");
-  }));
+      TestEntity.schema.delete("address1");
+      TestEntity.schema.delete("address2");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should infer multiSelect mode from onMatch's entity schema", fakeAsync(() => {
-    Object.assign(component, testConfig);
-    component.onMatch = {
-      newEntityType: ChildSchoolRelation.ENTITY_TYPE,
-      newEntityMatchPropertyLeft: "childId",
-      newEntityMatchPropertyRight: "schoolId",
-    };
-    component.ngOnInit();
-    tick();
+  it("should infer multiSelect mode from onMatch's entity schema", async () => {
+    vi.useFakeTimers();
+    try {
+      Object.assign(component, testConfig);
+      component.onMatch = {
+        newEntityType: ChildSchoolRelation.ENTITY_TYPE,
+        newEntityMatchPropertyLeft: "childId",
+        newEntityMatchPropertyRight: "schoolId",
+      };
+      component.ngOnInit();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.sideDetails[0].multiSelect).toBeFalsy();
-    expect(component.sideDetails[1].multiSelect).toBeFalsy();
+      expect(component.sideDetails[0].multiSelect).toBeFalsy();
+      expect(component.sideDetails[1].multiSelect).toBeFalsy();
 
-    component.onMatch = {
-      newEntityType: Note.ENTITY_TYPE,
-      newEntityMatchPropertyLeft: "children",
-      newEntityMatchPropertyRight: "schools",
-    };
-    component.ngOnInit();
-    tick();
+      component.onMatch = {
+        newEntityType: Note.ENTITY_TYPE,
+        newEntityMatchPropertyLeft: "children",
+        newEntityMatchPropertyRight: "schools",
+      };
+      component.ngOnInit();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.sideDetails[0].multiSelect).toBe(true);
-    expect(component.sideDetails[1].multiSelect).toBe(true);
-  }));
+      expect(component.sideDetails[0].multiSelect).toBe(true);
+      expect(component.sideDetails[1].multiSelect).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
 
 function expectConfigToMatch(

@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ImportConfirmSummaryComponent } from "./import-confirm-summary.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -61,24 +56,29 @@ describe("ImportConfirmSummaryComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should execute import via service, display toast message and close dialog upon success", fakeAsync(() => {
-    const testImportResult: ImportMetadata = ImportMetadata.create({
-      createdEntities: ["1", "2"],
-      config: null,
-    });
-    mockImportService.executeImport.mockResolvedValue(testImportResult);
+  it("should execute import via service, display toast message and close dialog upon success", async () => {
+    vi.useFakeTimers();
+    try {
+      const testImportResult: ImportMetadata = ImportMetadata.create({
+        createdEntities: ["1", "2"],
+        config: null,
+      });
+      mockImportService.executeImport.mockResolvedValue(testImportResult);
 
-    component.executeImport();
-    tick();
+      component.executeImport();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockImportService.executeImport).toHaveBeenCalled();
-    expect(mockSnackbar.open).toHaveBeenCalled();
-    expect(mockDialogRef.close).toHaveBeenCalledWith({
-      completedImport: testImportResult,
-    });
-    expect(component.importInProgress).toBe(false);
-    expect(mockDialogRef.disableClose).toBe(false);
-  }));
+      expect(mockImportService.executeImport).toHaveBeenCalled();
+      expect(mockSnackbar.open).toHaveBeenCalled();
+      expect(mockDialogRef.close).toHaveBeenCalledWith({
+        completedImport: testImportResult,
+      });
+      expect(component.importInProgress).toBe(false);
+      expect(mockDialogRef.disableClose).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should close dialog with error flag for putAll conflict errors", async () => {
     const putAllConflictError = [{ status: 409, name: "conflict" }];

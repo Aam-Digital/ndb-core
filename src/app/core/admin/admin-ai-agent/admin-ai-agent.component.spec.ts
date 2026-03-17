@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AdminAiAgentComponent } from "./admin-ai-agent.component";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { DownloadService } from "../../export/download-service/download.service";
@@ -9,7 +9,7 @@ describe("AdminAiAgentComponent", () => {
   let component: AdminAiAgentComponent;
   let fixture: ComponentFixture<AdminAiAgentComponent>;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     const mockEntityMapper = {
       loadType: vi.fn().mockName("EntityMapperService.loadType"),
       load: vi.fn().mockName("EntityMapperService.load"),
@@ -33,7 +33,7 @@ describe("AdminAiAgentComponent", () => {
         { provide: DownloadService, useValue: mockDownloadService },
       ],
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AdminAiAgentComponent);

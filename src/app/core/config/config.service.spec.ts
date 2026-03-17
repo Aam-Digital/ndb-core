@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import { firstValueFrom, Subject } from "rxjs";
 import { DefaultValueConfig } from "../default-values/default-value-config";
 import { EntityConfig } from "../entity/entity-config";
@@ -12,7 +12,7 @@ describe("ConfigService", () => {
   let entityMapper: any;
   const updateSubject = new Subject<UpdatedEntity<Config>>();
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(() => {
     entityMapper = {
       load: vi.fn(),
       save: vi.fn(),
@@ -25,24 +25,27 @@ describe("ConfigService", () => {
       providers: [{ provide: EntityMapperService, useValue: entityMapper }],
     });
     service = TestBed.inject(ConfigService);
-  }));
+  });
 
   /**
    * Check that config is migrated as expected (and doesn't destroy new config)
    * @param oldFormat Config.data object to test
    * @param expectedNewFormat Config.data object expected after migration
    */
-  function testConfigMigration(oldFormat: Object, expectedNewFormat: Object) {
+  async function testConfigMigration(
+    oldFormat: Object,
+    expectedNewFormat: Object,
+  ) {
     const config = new Config();
 
     config.data = JSON.parse(JSON.stringify(oldFormat));
     updateSubject.next({ entity: config, type: "update" });
-    tick();
+    await Promise.resolve();
     expectConfigToMatch(expectedNewFormat);
 
     config.data = JSON.parse(JSON.stringify(expectedNewFormat));
     updateSubject.next({ entity: config, type: "update" });
-    tick();
+    await Promise.resolve();
     expectConfigToMatch(expectedNewFormat);
 
     function expectConfigToMatch(expectedConfigData: Object) {
@@ -59,60 +62,80 @@ describe("ConfigService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should load the config from the entity mapper", fakeAsync(() => {
-    const testConfig = new Config();
-    testConfig.data = { testKey: "testValue" };
-    entityMapper.load.mockResolvedValue(testConfig);
+  it("should load the config from the entity mapper", async () => {
+    vi.useFakeTimers();
+    try {
+      const testConfig = new Config();
+      testConfig.data = { testKey: "testValue" };
+      entityMapper.load.mockResolvedValue(testConfig);
 
-    service.loadOnce();
-    expect(entityMapper.load).toHaveBeenCalled();
-    tick();
-    expect(service.getConfig("testKey")).toEqual("testValue");
-  }));
+      service.loadOnce();
+      expect(entityMapper.load).toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(service.getConfig("testKey")).toEqual("testValue");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should emit the config once it is loaded", fakeAsync(() => {
-    entityMapper.load.mockRejectedValue("No config found");
-    const configLoaded = firstValueFrom(service.configUpdates);
+  it("should emit the config once it is loaded", async () => {
+    vi.useFakeTimers();
+    try {
+      entityMapper.load.mockRejectedValue("No config found");
+      const configLoaded = firstValueFrom(service.configUpdates);
 
-    service.loadOnce();
-    tick();
-    expect(() => service.getConfig("testKey")).toThrowError();
+      service.loadOnce();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(() => service.getConfig("testKey")).toThrowError();
 
-    const testConfig = new Config();
-    testConfig.data = { testKey: "testValue" };
-    updateSubject.next({ type: "new", entity: testConfig });
-    tick();
+      const testConfig = new Config();
+      testConfig.data = { testKey: "testValue" };
+      updateSubject.next({ type: "new", entity: testConfig });
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(service.getConfig("testKey")).toBe("testValue");
-    return expect(configLoaded).resolves.toEqual(testConfig);
-  }));
+      expect(service.getConfig("testKey")).toBe("testValue");
+      return expect(configLoaded).resolves.toEqual(testConfig);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should correctly return prefixed fields", fakeAsync(() => {
-    const testConfig = new Config();
-    testConfig.data = {
-      "test:1": { name: "first" },
-      "other:1": { name: "wrong" },
-      "test:2": { name: "second" },
-    };
-    entityMapper.load.mockResolvedValue(testConfig);
-    service.loadOnce();
-    tick();
-    const result = service.getAllConfigs<any>("test:");
-    expect(result).toHaveLength(2);
-    expect(result).toContainEqual({ name: "first", _id: "test:1" });
-    expect(result).toContainEqual({ name: "second", _id: "test:2" });
-    expect(result).not.toContain({ name: "wrong", _id: "other:1" });
-  }));
+  it("should correctly return prefixed fields", async () => {
+    vi.useFakeTimers();
+    try {
+      const testConfig = new Config();
+      testConfig.data = {
+        "test:1": { name: "first" },
+        "other:1": { name: "wrong" },
+        "test:2": { name: "second" },
+      };
+      entityMapper.load.mockResolvedValue(testConfig);
+      service.loadOnce();
+      await vi.advanceTimersByTimeAsync(0);
+      const result = service.getAllConfigs<any>("test:");
+      expect(result).toHaveLength(2);
+      expect(result).toContainEqual({ name: "first", _id: "test:1" });
+      expect(result).toContainEqual({ name: "second", _id: "test:2" });
+      expect(result).not.toContain({ name: "wrong", _id: "other:1" });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should return single field", fakeAsync(() => {
-    const testConfig = new Config();
-    testConfig.data = { first: "correct", second: "wrong" };
-    entityMapper.load.mockResolvedValue(testConfig);
-    service.loadOnce();
-    tick();
-    const result = service.getConfig<any>("first");
-    expect(result).toBe("correct");
-  }));
+  it("should return single field", async () => {
+    vi.useFakeTimers();
+    try {
+      const testConfig = new Config();
+      testConfig.data = { first: "correct", second: "wrong" };
+      entityMapper.load.mockResolvedValue(testConfig);
+      service.loadOnce();
+      await vi.advanceTimersByTimeAsync(0);
+      const result = service.getConfig<any>("first");
+      expect(result).toBe("correct");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should save a new config", () => {
     const newConfig = { test: "data" };
@@ -123,91 +146,101 @@ describe("ConfigService", () => {
     expect(lastCall.data).toEqual({ test: "data" });
   });
 
-  it("should create export config string", fakeAsync(() => {
-    const config = new Config();
-    config.data = { first: "foo", second: "bar" };
-    // @ts-ignore disable migrations for this test
-    vi.spyOn(service, "applyMigrations").mockImplementation((c) => c);
+  it("should create export config string", async () => {
+    vi.useFakeTimers();
+    try {
+      const config = new Config();
+      config.data = { first: "foo", second: "bar" };
+      // @ts-ignore disable migrations for this test
+      vi.spyOn(service, "applyMigrations").mockImplementation((c) => c);
 
-    const expected = JSON.stringify(config.data);
-    updateSubject.next({ entity: config, type: "update" });
-    tick();
-    const result = service.exportConfig();
-    expect(result).toEqual(expected);
-  }));
+      const expected = JSON.stringify(config.data);
+      updateSubject.next({ entity: config, type: "update" });
+      await vi.advanceTimersByTimeAsync(0);
+      const result = service.exportConfig();
+      expect(result).toEqual(expected);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should migrate entity-array dataType", fakeAsync(() => {
-    const config = new Config();
-    const oldFormat = {
-      attributes: {
-        entityarray_update: {
-          dataType: "entity-array",
+  it("should migrate entity-array dataType", async () => {
+    vi.useFakeTimers();
+    try {
+      const config = new Config();
+      const oldFormat = {
+        attributes: {
+          entityarray_update: {
+            dataType: "entity-array",
+          },
+          array_update: {
+            dataType: "array",
+            innerDataType: "entity",
+          },
+          array_update2: {
+            dataType: "array",
+            innerDataType: "configurable-enum",
+            additional: "foo-enum",
+          },
+          enum_additional_update: {
+            dataType: "configurable-enum",
+            innerDataType: "foo-enum",
+          },
+          keep1: {
+            dataType: "entity",
+          },
+          keep2: {
+            dataType: "entity",
+            isArray: true,
+          },
         },
-        array_update: {
-          dataType: "array",
-          innerDataType: "entity",
+      };
+      const newFormat: EntityConfig = {
+        attributes: {
+          entityarray_update: {
+            dataType: "entity",
+            isArray: true,
+          },
+          array_update: {
+            dataType: "entity",
+            isArray: true,
+          },
+          array_update2: {
+            dataType: "configurable-enum",
+            isArray: true,
+            additional: "foo-enum",
+          },
+          enum_additional_update: {
+            dataType: "configurable-enum",
+            additional: "foo-enum",
+          },
+          keep1: {
+            dataType: "entity",
+          },
+          keep2: {
+            dataType: "entity",
+            isArray: true,
+          },
         },
-        array_update2: {
-          dataType: "array",
-          innerDataType: "configurable-enum",
-          additional: "foo-enum",
-        },
-        enum_additional_update: {
-          dataType: "configurable-enum",
-          innerDataType: "foo-enum",
-        },
-        keep1: {
-          dataType: "entity",
-        },
-        keep2: {
-          dataType: "entity",
-          isArray: true,
-        },
-      },
-    };
-    const newFormat: EntityConfig = {
-      attributes: {
-        entityarray_update: {
-          dataType: "entity",
-          isArray: true,
-        },
-        array_update: {
-          dataType: "entity",
-          isArray: true,
-        },
-        array_update2: {
-          dataType: "configurable-enum",
-          isArray: true,
-          additional: "foo-enum",
-        },
-        enum_additional_update: {
-          dataType: "configurable-enum",
-          additional: "foo-enum",
-        },
-        keep1: {
-          dataType: "entity",
-        },
-        keep2: {
-          dataType: "entity",
-          isArray: true,
-        },
-      },
-    };
-    config.data = { "entity:X": oldFormat };
-    updateSubject.next({ entity: config, type: "update" });
-    tick();
+      };
+      config.data = { "entity:X": oldFormat };
+      updateSubject.next({ entity: config, type: "update" });
+      await vi.advanceTimersByTimeAsync(0);
 
-    const actualFromOld = service.getConfig<EntityConfig>("entity:X");
-    expect(actualFromOld).toEqual(newFormat);
+      const actualFromOld = service.getConfig<EntityConfig>("entity:X");
+      expect(actualFromOld).toEqual(newFormat);
 
-    config.data = { "entity:X": newFormat };
-    updateSubject.next({ entity: config, type: "update" });
-    tick();
-    const actualFromNew = service.getConfig<EntityConfig>("entity:X");
-    expect(actualFromNew).toEqual(newFormat);
-  }));
+      config.data = { "entity:X": newFormat };
+      updateSubject.next({ entity: config, type: "update" });
+      await vi.advanceTimersByTimeAsync(0);
+      const actualFromNew = service.getConfig<EntityConfig>("entity:X");
+      expect(actualFromNew).toEqual(newFormat);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should migrate ChildrenList", fakeAsync(() => {
+  it("should migrate ChildrenList", async () => {
     const oldFormat = {
       component: "ChildrenList",
       config: {},
@@ -220,10 +253,10 @@ describe("ConfigService", () => {
       },
     };
 
-    testConfigMigration({ "view:X": oldFormat }, { "view:X": newFormat });
-  }));
+    await testConfigMigration({ "view:X": oldFormat }, { "view:X": newFormat });
+  });
 
-  it("should migrate legacy .id OR filters to new format", fakeAsync(() => {
+  it("should migrate legacy .id OR filters to new format", async () => {
     const oldFormat = {
       "appConfig:matching-entities": {
         leftSide: {
@@ -256,95 +289,105 @@ describe("ConfigService", () => {
       },
     };
 
-    testConfigMigration(oldFormat, newFormat);
-  }));
+    await testConfigMigration(oldFormat, newFormat);
+  });
 
-  it("should migrate to new photo dataType", fakeAsync(() => {
-    const config = new Config();
-    const oldFormat = {
-      attributes: {
-        myPhoto: {
-          dataType: "file",
-          editComponent: "EditPhoto",
-          label: "My Photo",
+  it("should migrate to new photo dataType", async () => {
+    vi.useFakeTimers();
+    try {
+      const config = new Config();
+      const oldFormat = {
+        attributes: {
+          myPhoto: {
+            dataType: "file",
+            editComponent: "EditPhoto",
+            label: "My Photo",
+          },
+          simpleFile: {
+            dataType: "file",
+            label: "Simple File attachment",
+          },
         },
-        simpleFile: {
-          dataType: "file",
-          label: "Simple File attachment",
+      };
+
+      const newFormat: EntityConfig = {
+        attributes: {
+          myPhoto: {
+            dataType: "photo",
+            label: "My Photo",
+          },
+          simpleFile: {
+            dataType: "file",
+            label: "Simple File attachment",
+          },
         },
-      },
-    };
+      };
 
-    const newFormat: EntityConfig = {
-      attributes: {
-        myPhoto: {
-          dataType: "photo",
-          label: "My Photo",
+      config.data = { "entity:X": oldFormat };
+      updateSubject.next({ entity: config, type: "update" });
+      await vi.advanceTimersByTimeAsync(0);
+      const actualFromOld = service.getConfig<EntityConfig>("entity:X");
+      expect(actualFromOld).toEqual(newFormat);
+
+      config.data = { "entity:X": newFormat };
+      updateSubject.next({ entity: config, type: "update" });
+      await vi.advanceTimersByTimeAsync(0);
+      const actualFromNew = service.getConfig<EntityConfig>("entity:X");
+      expect(actualFromNew).toEqual(newFormat);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should migrate to Percentage dataType", async () => {
+    vi.useFakeTimers();
+    try {
+      const config = new Config();
+      const oldFormat = {
+        attributes: {
+          myPercentage: {
+            dataType: "number",
+            viewComponent: "DisplayPercentage",
+            editComponent: "EditNumber",
+            label: "My Percentage",
+          },
+          simpleNumber: {
+            dataType: "number",
+            label: "Simple Number",
+          },
         },
-        simpleFile: {
-          dataType: "file",
-          label: "Simple File attachment",
+      };
+
+      const newFormat: EntityConfig = {
+        attributes: {
+          myPercentage: {
+            dataType: "percentage",
+            label: "My Percentage",
+          },
+          simpleNumber: {
+            dataType: "number",
+            label: "Simple Number",
+          },
         },
-      },
-    };
+      };
 
-    config.data = { "entity:X": oldFormat };
-    updateSubject.next({ entity: config, type: "update" });
-    tick();
-    const actualFromOld = service.getConfig<EntityConfig>("entity:X");
-    expect(actualFromOld).toEqual(newFormat);
+      config.data = { "entity:X": oldFormat };
+      updateSubject.next({ entity: config, type: "update" });
+      await vi.advanceTimersByTimeAsync(0);
+      const actualFromOld = service.getConfig<EntityConfig>("entity:X");
+      expect(actualFromOld).toEqual(newFormat);
 
-    config.data = { "entity:X": newFormat };
-    updateSubject.next({ entity: config, type: "update" });
-    tick();
-    const actualFromNew = service.getConfig<EntityConfig>("entity:X");
-    expect(actualFromNew).toEqual(newFormat);
-  }));
+      config.data = { "entity:X": newFormat };
+      updateSubject.next({ entity: config, type: "update" });
+      await vi.advanceTimersByTimeAsync(0);
+      const actualFromNew = service.getConfig<EntityConfig>("entity:X");
+      expect(actualFromNew).toEqual(newFormat);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should migrate to Percentage dataType", fakeAsync(() => {
-    const config = new Config();
-    const oldFormat = {
-      attributes: {
-        myPercentage: {
-          dataType: "number",
-          viewComponent: "DisplayPercentage",
-          editComponent: "EditNumber",
-          label: "My Percentage",
-        },
-        simpleNumber: {
-          dataType: "number",
-          label: "Simple Number",
-        },
-      },
-    };
-
-    const newFormat: EntityConfig = {
-      attributes: {
-        myPercentage: {
-          dataType: "percentage",
-          label: "My Percentage",
-        },
-        simpleNumber: {
-          dataType: "number",
-          label: "Simple Number",
-        },
-      },
-    };
-
-    config.data = { "entity:X": oldFormat };
-    updateSubject.next({ entity: config, type: "update" });
-    tick();
-    const actualFromOld = service.getConfig<EntityConfig>("entity:X");
-    expect(actualFromOld).toEqual(newFormat);
-
-    config.data = { "entity:X": newFormat };
-    updateSubject.next({ entity: config, type: "update" });
-    tick();
-    const actualFromNew = service.getConfig<EntityConfig>("entity:X");
-    expect(actualFromNew).toEqual(newFormat);
-  }));
-
-  it("should migrate ChildBlock config", fakeAsync(() => {
+  it("should migrate ChildBlock config", async () => {
     testConfigMigration(
       {
         "entity:ChildX": {
@@ -363,9 +406,9 @@ describe("ConfigService", () => {
         },
       },
     );
-  }));
+  });
 
-  it("should wrap groupBy as an array if it is a string", fakeAsync(() => {
+  it("should wrap groupBy as an array if it is a string", async () => {
     const oldConfig = {
       component: "EntityCountDashboard",
       config: {
@@ -395,83 +438,93 @@ describe("ConfigService", () => {
       },
     };
     testConfigMigration(otherConfig, otherConfig);
-  }));
+  });
 
-  it("should migrate defaultValue mode 'inherited' to 'inherited-field'", fakeAsync(() => {
-    const previousDefaultValueConfig = {
-      mode: "inherited",
-      localAttribute: "localAttribute",
-      field: "field",
-    };
+  it("should migrate defaultValue mode 'inherited' to 'inherited-field'", async () => {
+    vi.useFakeTimers();
+    try {
+      const previousDefaultValueConfig = {
+        mode: "inherited",
+        localAttribute: "localAttribute",
+        field: "field",
+      };
 
-    const expectedDefaultValueConfig: DefaultValueConfig = {
-      mode: "inherited-field",
-      config: {
-        sourceReferenceField: "localAttribute",
-        sourceValueField: "field",
-      },
-    };
+      const expectedDefaultValueConfig: DefaultValueConfig = {
+        mode: "inherited-field",
+        config: {
+          sourceReferenceField: "localAttribute",
+          sourceValueField: "field",
+        },
+      };
 
-    let testEntity = "entity:old-format";
-    updateSubject.next({
-      entity: Object.assign(new Config(), {
-        data: {
-          [testEntity]: {
-            attributes: {
-              fieldName: {
-                defaultValue: previousDefaultValueConfig,
+      let testEntity = "entity:old-format";
+      updateSubject.next({
+        entity: Object.assign(new Config(), {
+          data: {
+            [testEntity]: {
+              attributes: {
+                fieldName: {
+                  defaultValue: previousDefaultValueConfig,
+                },
               },
             },
           },
-        },
-      }),
-      type: "update",
-    });
-    tick();
+        }),
+        type: "update",
+      });
+      await vi.advanceTimersByTimeAsync(0);
 
-    const config = service.getConfig(testEntity);
-    expect(config["attributes"].fieldName.defaultValue).toEqual(
-      expectedDefaultValueConfig,
-    );
-  }));
+      const config = service.getConfig(testEntity);
+      expect(config["attributes"].fieldName.defaultValue).toEqual(
+        expectedDefaultValueConfig,
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should migrate defaultValue mode 'dynamic' new config format", fakeAsync(() => {
-    const previousDefaultValueConfig = {
-      mode: "dynamic",
-      value: "$now",
-    };
-
-    const expectedDefaultValueConfig: DefaultValueConfig = {
-      mode: "dynamic",
-      config: {
+  it("should migrate defaultValue mode 'dynamic' new config format", async () => {
+    vi.useFakeTimers();
+    try {
+      const previousDefaultValueConfig = {
+        mode: "dynamic",
         value: "$now",
-      },
-    };
+      };
 
-    let testEntity = "entity:old-format";
-    updateSubject.next({
-      entity: Object.assign(new Config(), {
-        data: {
-          [testEntity]: {
-            attributes: {
-              fieldName: {
-                defaultValue: previousDefaultValueConfig,
+      const expectedDefaultValueConfig: DefaultValueConfig = {
+        mode: "dynamic",
+        config: {
+          value: "$now",
+        },
+      };
+
+      let testEntity = "entity:old-format";
+      updateSubject.next({
+        entity: Object.assign(new Config(), {
+          data: {
+            [testEntity]: {
+              attributes: {
+                fieldName: {
+                  defaultValue: previousDefaultValueConfig,
+                },
               },
             },
           },
-        },
-      }),
-      type: "update",
-    });
-    tick();
+        }),
+        type: "update",
+      });
+      await vi.advanceTimersByTimeAsync(0);
 
-    const config = service.getConfig(testEntity);
-    expect(config["attributes"].fieldName.defaultValue).toEqual(
-      expectedDefaultValueConfig,
-    );
-  }));
+      const config = service.getConfig(testEntity);
+      expect(config["attributes"].fieldName.defaultValue).toEqual(
+        expectedDefaultValueConfig,
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should migrate deprecated ChildSchoolOverview components", fakeAsync(() => {
+  it("should migrate deprecated ChildSchoolOverview components", async () => {
     const oldConfig = {
       "view:child/:id": {
         entityType: "Child",
@@ -550,9 +603,9 @@ describe("ConfigService", () => {
     };
 
     testConfigMigration(oldConfig, expectedConfig);
-  }));
+  });
 
-  it("should migrate EditDescriptionOnly fields", fakeAsync(() => {
+  it("should migrate EditDescriptionOnly fields", async () => {
     const oldConfig = {
       fields: [
         {
@@ -574,9 +627,9 @@ describe("ConfigService", () => {
     };
 
     testConfigMigration(oldConfig, expectedConfig);
-  }));
+  });
 
-  it("should migrate NotesManager to EntityList and preserve other config properties", fakeAsync(() => {
+  it("should migrate NotesManager to EntityList and preserve other config properties", async () => {
     const oldConfig = {
       "view:child/:id": {
         component: "NotesManager",
@@ -602,9 +655,9 @@ describe("ConfigService", () => {
     };
 
     testConfigMigration(oldConfig, expectedConfig);
-  }));
+  });
 
-  it("should migrate editComponent EditAttendance to EditLegacyAttendance", fakeAsync(() => {
+  it("should migrate editComponent EditAttendance to EditLegacyAttendance", async () => {
     const oldConfig = {
       "entity:Note": {
         attributes: {
@@ -632,5 +685,5 @@ describe("ConfigService", () => {
     };
 
     testConfigMigration(oldConfig, expectedConfig);
-  }));
+  });
 });

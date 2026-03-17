@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import { EntityActionsService } from "./entity-actions.service";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import {
@@ -166,64 +166,74 @@ describe("EntityActionsService", () => {
     );
   });
 
-  it("should undo the deletion of several entities", fakeAsync(() => {
-    const otherAffectedEntities = [new Entity(), new Entity()];
-    mockedEntityDeleteService.deleteEntity.mockResolvedValue(
-      new CascadingActionResult([
-        ...severalTestEntities,
-        ...otherAffectedEntities,
-      ]),
-    );
+  it("should undo the deletion of several entities", async () => {
+    vi.useFakeTimers();
+    try {
+      const otherAffectedEntities = [new Entity(), new Entity()];
+      mockedEntityDeleteService.deleteEntity.mockResolvedValue(
+        new CascadingActionResult([
+          ...severalTestEntities,
+          ...otherAffectedEntities,
+        ]),
+      );
 
-    // Mock a snackbar where 'undo' is pressed
-    const onSnackbarAction = new Subject<void>();
-    mockSnackBarRef.onAction.mockReturnValue(onSnackbarAction.asObservable());
+      // Mock a snackbar where 'undo' is pressed
+      const onSnackbarAction = new Subject<void>();
+      mockSnackBarRef.onAction.mockReturnValue(onSnackbarAction.asObservable());
 
-    mockedEntityMapper.save.mockResolvedValue(undefined);
+      mockedEntityMapper.save.mockResolvedValue(undefined);
 
-    service.delete(severalTestEntities, true);
-    tick();
+      service.delete(severalTestEntities, true);
+      await vi.advanceTimersByTimeAsync(0);
 
-    mockRouter.navigate.mockClear();
-    onSnackbarAction.next();
-    onSnackbarAction.complete();
-    tick();
+      mockRouter.navigate.mockClear();
+      onSnackbarAction.next();
+      onSnackbarAction.complete();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalled();
-    expect(mockedEntityMapper.saveAll).toHaveBeenCalledWith(
-      [...severalTestEntities, ...otherAffectedEntities],
-      true,
-    );
-    expect(mockRouter.navigate).toHaveBeenCalled();
-  }));
+      expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalled();
+      expect(mockedEntityMapper.saveAll).toHaveBeenCalledWith(
+        [...severalTestEntities, ...otherAffectedEntities],
+        true,
+      );
+      expect(mockRouter.navigate).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should re-save all affected entities and navigate back to entity on undo", fakeAsync(() => {
-    const anotherAffectedEntity = new Entity();
-    mockedEntityDeleteService.deleteEntity.mockResolvedValue(
-      new CascadingActionResult([singleTestEntity, anotherAffectedEntity]),
-    );
+  it("should re-save all affected entities and navigate back to entity on undo", async () => {
+    vi.useFakeTimers();
+    try {
+      const anotherAffectedEntity = new Entity();
+      mockedEntityDeleteService.deleteEntity.mockResolvedValue(
+        new CascadingActionResult([singleTestEntity, anotherAffectedEntity]),
+      );
 
-    // Mock a snackbar where 'undo' is pressed
-    const onSnackbarAction = new Subject<void>();
-    mockSnackBarRef.onAction.mockReturnValue(onSnackbarAction.asObservable());
+      // Mock a snackbar where 'undo' is pressed
+      const onSnackbarAction = new Subject<void>();
+      mockSnackBarRef.onAction.mockReturnValue(onSnackbarAction.asObservable());
 
-    mockedEntityMapper.save.mockResolvedValue(undefined);
+      mockedEntityMapper.save.mockResolvedValue(undefined);
 
-    service.delete(singleTestEntity, true);
-    tick();
+      service.delete(singleTestEntity, true);
+      await vi.advanceTimersByTimeAsync(0);
 
-    mockRouter.navigate.mockClear();
-    onSnackbarAction.next();
-    onSnackbarAction.complete();
-    tick();
+      mockRouter.navigate.mockClear();
+      onSnackbarAction.next();
+      onSnackbarAction.complete();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalled();
-    expect(mockedEntityMapper.saveAll).toHaveBeenCalledWith(
-      [singleTestEntity, anotherAffectedEntity],
-      true,
-    );
-    expect(mockRouter.navigate).toHaveBeenCalled();
-  }));
+      expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalled();
+      expect(mockedEntityMapper.saveAll).toHaveBeenCalledWith(
+        [singleTestEntity, anotherAffectedEntity],
+        true,
+      );
+      expect(mockRouter.navigate).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should anonymize and save a single entity", async () => {
     // onAction is never called
@@ -262,34 +272,39 @@ describe("EntityActionsService", () => {
     );
   });
 
-  it("should undo the anonymization of several entities", fakeAsync(() => {
-    const otherAffectedEntities = [new Entity(), new Entity()];
-    mockedEntityAnonymizeService.anonymizeEntity.mockResolvedValue(
-      new CascadingActionResult([
-        ...severalTestEntities,
-        ...otherAffectedEntities,
-      ]),
-    );
+  it("should undo the anonymization of several entities", async () => {
+    vi.useFakeTimers();
+    try {
+      const otherAffectedEntities = [new Entity(), new Entity()];
+      mockedEntityAnonymizeService.anonymizeEntity.mockResolvedValue(
+        new CascadingActionResult([
+          ...severalTestEntities,
+          ...otherAffectedEntities,
+        ]),
+      );
 
-    // Mock a snackbar where 'undo' is pressed
-    const onSnackbarAction = new Subject<void>();
-    mockSnackBarRef.onAction.mockReturnValue(onSnackbarAction.asObservable());
+      // Mock a snackbar where 'undo' is pressed
+      const onSnackbarAction = new Subject<void>();
+      mockSnackBarRef.onAction.mockReturnValue(onSnackbarAction.asObservable());
 
-    mockedEntityMapper.save.mockResolvedValue(undefined);
+      mockedEntityMapper.save.mockResolvedValue(undefined);
 
-    service.anonymize(severalTestEntities);
-    tick();
+      service.anonymize(severalTestEntities);
+      await vi.advanceTimersByTimeAsync(0);
 
-    onSnackbarAction.next();
-    onSnackbarAction.complete();
-    tick();
+      onSnackbarAction.next();
+      onSnackbarAction.complete();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockedEntityAnonymizeService.anonymizeEntity).toHaveBeenCalled();
-    expect(mockedEntityMapper.saveAll).toHaveBeenCalledWith(
-      [...severalTestEntities, ...otherAffectedEntities],
-      true,
-    );
-  }));
+      expect(mockedEntityAnonymizeService.anonymizeEntity).toHaveBeenCalled();
+      expect(mockedEntityMapper.saveAll).toHaveBeenCalledWith(
+        [...severalTestEntities, ...otherAffectedEntities],
+        true,
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should archive and save a single entity and show snackbar confirmation", async () => {
     // onAction is never called

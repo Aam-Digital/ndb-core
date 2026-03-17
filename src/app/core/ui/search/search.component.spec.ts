@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { SearchComponent } from "./search.component";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
@@ -52,45 +46,68 @@ describe("SearchComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should not search for less than MIN_CHARACTERS_FOR_SEARCH character of input", fakeAsync(() => {
-    const subscr = component.results.subscribe();
+  it("should not search for less than MIN_CHARACTERS_FOR_SEARCH character of input", async () => {
+    vi.useFakeTimers();
+    try {
+      const subscr = component.results.subscribe();
 
-    component.formControl.setValue("A");
-    tick(SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2);
-    expect(component.state).toBe(component.TOO_FEW_CHARACTERS);
-    expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
+      component.formControl.setValue("A");
+      await vi.advanceTimersByTimeAsync(
+        SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2,
+      );
+      expect(component.state).toBe(component.TOO_FEW_CHARACTERS);
+      expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
 
-    component.formControl.setValue("AB");
-    tick(SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2);
-    expect(component.state).toBe(component.NO_RESULTS);
-    expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
+      component.formControl.setValue("AB");
+      await vi.advanceTimersByTimeAsync(
+        SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2,
+      );
+      expect(component.state).toBe(component.NO_RESULTS);
+      expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
 
-    subscr.unsubscribe();
-  }));
+      subscr.unsubscribe();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should search for mixed alphanumeric input", fakeAsync(() => {
-    const subscr = component.results.subscribe();
+  it("should search for mixed alphanumeric input", async () => {
+    vi.useFakeTimers();
+    try {
+      const subscr = component.results.subscribe();
 
-    component.formControl.setValue("10012bcfg");
-    tick(SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2);
+      component.formControl.setValue("10012bcfg");
+      await vi.advanceTimersByTimeAsync(
+        SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2,
+      );
 
-    expect(component.state).toBe(component.NO_RESULTS);
-    expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
+      expect(component.state).toBe(component.NO_RESULTS);
+      expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
 
-    subscr.unsubscribe();
-  }));
+      subscr.unsubscribe();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should trim leading and trailing spaces before searching", fakeAsync(() => {
-    const subscr = component.results.subscribe();
+  it("should trim leading and trailing spaces before searching", async () => {
+    vi.useFakeTimers();
+    try {
+      const subscr = component.results.subscribe();
 
-    component.formControl.setValue("  AB  ");
-    tick(SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2);
+      component.formControl.setValue("  AB  ");
+      await vi.advanceTimersByTimeAsync(
+        SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2,
+      );
 
-    expect(component.state).toBe(component.NO_RESULTS);
-    expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
+      expect(component.state).toBe(component.NO_RESULTS);
+      expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
 
-    subscr.unsubscribe();
-  }));
+      subscr.unsubscribe();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   async function expectResultToBeEmpty() {
     const next = await firstValueFrom(component.results.pipe(take(1)));

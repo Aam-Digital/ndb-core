@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions.component";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
@@ -71,38 +66,43 @@ describe("EntityInlineEditActionsComponent", () => {
     expect(formGroup).toBeEnabled();
   });
 
-  it("should correctly save changes to an entity", fakeAsync(() => {
-    vi.spyOn(TestBed.inject(EntityAbility), "can").mockReturnValue(true);
-    const entityMapper = TestBed.inject(EntityMapperService);
-    vi.spyOn(entityMapper, "save").mockResolvedValue(undefined);
-    const fb = TestBed.inject(UntypedFormBuilder);
-    const child = new InlineEditEntity();
-    child.name = "Old Name";
+  it("should correctly save changes to an entity", async () => {
+    vi.useFakeTimers();
+    try {
+      vi.spyOn(TestBed.inject(EntityAbility), "can").mockReturnValue(true);
+      const entityMapper = TestBed.inject(EntityMapperService);
+      vi.spyOn(entityMapper, "save").mockResolvedValue(undefined);
+      const fb = TestBed.inject(UntypedFormBuilder);
+      const child = new InlineEditEntity();
+      child.name = "Old Name";
 
-    const entityFormService = TestBed.inject(EntityFormService);
-    let entityForm: any;
-    entityFormService
-      .createEntityForm(["name", "gender"], child)
-      .then((form) => (entityForm = form));
-    tick();
+      const entityFormService = TestBed.inject(EntityFormService);
+      let entityForm: any;
+      entityFormService
+        .createEntityForm(["name", "gender"], child)
+        .then((form) => (entityForm = form));
+      await vi.advanceTimersByTimeAsync(0);
 
-    const formGroup = fb.group({
-      name: "New Name",
-      gender: genders[2],
-    });
-    entityForm.formGroup = formGroup;
+      const formGroup = fb.group({
+        name: "New Name",
+        gender: genders[2],
+      });
+      entityForm.formGroup = formGroup;
 
-    component.form = entityForm;
-    component.row = { record: child, formGroup: formGroup };
+      component.form = entityForm;
+      component.row = { record: child, formGroup: formGroup };
 
-    component.save();
-    tick();
+      component.save();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(entityMapper.save).toHaveBeenCalledWith(component.row.record);
-    expect(component.row.record.name).toBe("New Name");
-    expect(component.row.record.gender).toBe(genders[2]);
-    expect(component.row.formGroup).toBeUndefined();
-  }));
+      expect(entityMapper.save).toHaveBeenCalledWith(component.row.record);
+      expect(component.row.record.name).toBe("New Name");
+      expect(component.row.record.gender).toBe(genders[2]);
+      expect(component.row.formGroup).toBeUndefined();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should show a error message when saving fails", async () => {
     const entityFormService = TestBed.inject(EntityFormService);

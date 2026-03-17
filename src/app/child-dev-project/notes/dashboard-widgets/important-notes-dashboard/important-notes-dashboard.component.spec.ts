@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ImportantNotesDashboardComponent } from "./important-notes-dashboard.component";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
@@ -54,16 +48,21 @@ describe("ImportantNotesDashboardComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("shows notes that have a high warning level", fakeAsync(() => {
-    const expectedNotes = mockNotes
-      .filter((note) => ["WARNING", "URGENT"].includes(note.warningLevel.id))
-      .reverse();
+  it("shows notes that have a high warning level", async () => {
+    vi.useFakeTimers();
+    try {
+      const expectedNotes = mockNotes
+        .filter((note) => ["WARNING", "URGENT"].includes(note.warningLevel.id))
+        .reverse();
 
-    let actualNotes;
-    of(mockNotes)
-      .pipe(map((d) => component.dataMapper(d)))
-      .subscribe((data) => (actualNotes = data));
-    tick();
-    expect(actualNotes).toEqual(expectedNotes);
-  }));
+      let actualNotes;
+      of(mockNotes)
+        .pipe(map((d) => component.dataMapper(d)))
+        .subscribe((data) => (actualNotes = data));
+      await vi.advanceTimersByTimeAsync(0);
+      expect(actualNotes).toEqual(expectedNotes);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

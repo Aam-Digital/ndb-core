@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { EntityListComponent } from "./entity-list.component";
 import { BooleanFilterConfig, EntityListConfig } from "../EntityListConfig";
 import { Entity } from "../../entity/model/entity";
@@ -89,27 +83,37 @@ describe("EntityListComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should create columns from config", fakeAsync(() => {
-    createComponent();
-    initComponentInputs();
-    tick();
-    expect(component.columns).toEqual([...testConfig.columns]);
-  }));
+  it("should create columns from config", async () => {
+    vi.useFakeTimers();
+    try {
+      createComponent();
+      initComponentInputs();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(component.columns).toEqual([...testConfig.columns]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should create column groups from config and set correct one", fakeAsync(() => {
-    createComponent();
-    initComponentInputs();
-    tick();
+  it("should create column groups from config and set correct one", async () => {
+    vi.useFakeTimers();
+    try {
+      createComponent();
+      initComponentInputs();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.groups).toEqual(testConfig.columnGroups.groups);
-    const defaultGroup = testConfig.columnGroups.groups.findIndex(
-      (g) => g.name === testConfig.columnGroups.default,
-    );
-    expect(component.selectedColumnGroupIndex).toEqual(defaultGroup);
-    expect(component.columnsToDisplay).toEqual(
-      testConfig.columnGroups.groups[defaultGroup].columns,
-    );
-  }));
+      expect(component.groups).toEqual(testConfig.columnGroups.groups);
+      const defaultGroup = testConfig.columnGroups.groups.findIndex(
+        (g) => g.name === testConfig.columnGroups.default,
+      );
+      expect(component.selectedColumnGroupIndex).toEqual(defaultGroup);
+      expect(component.columnsToDisplay).toEqual(
+        testConfig.columnGroups.groups[defaultGroup].columns,
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should set the clicked column group", async () => {
     createComponent();
@@ -131,36 +135,41 @@ describe("EntityListComponent", () => {
     expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
   });
 
-  it("should allow to use entity fields which are only mentioned in the columnGroups", fakeAsync(() => {
-    createComponent();
-    initComponentInputs();
-    tick();
+  it("should allow to use entity fields which are only mentioned in the columnGroups", async () => {
+    vi.useFakeTimers();
+    try {
+      createComponent();
+      initComponentInputs();
+      await vi.advanceTimersByTimeAsync(0);
 
-    class Test extends Entity {
-      @DatabaseField({ label: "Test Property" })
-      testProperty: string;
+      class Test extends Entity {
+        @DatabaseField({ label: "Test Property" })
+        testProperty: string;
+      }
+
+      component.entityConstructor = Test;
+      component.columns = [
+        {
+          id: "anotherColumn",
+          label: "Predefined Title",
+          viewComponent: "DisplayDate",
+        },
+      ];
+      component.columnGroups = {
+        groups: [{ name: "Both", columns: ["testProperty", "anotherColumn"] }],
+      };
+
+      component.ngOnChanges({ listConfig: null });
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(component.columnsToDisplay).toEqual([
+        "testProperty",
+        "anotherColumn",
+      ]);
+    } finally {
+      vi.useRealTimers();
     }
-
-    component.entityConstructor = Test;
-    component.columns = [
-      {
-        id: "anotherColumn",
-        label: "Predefined Title",
-        viewComponent: "DisplayDate",
-      },
-    ];
-    component.columnGroups = {
-      groups: [{ name: "Both", columns: ["testProperty", "anotherColumn"] }],
-    };
-
-    component.ngOnChanges({ listConfig: null });
-    tick();
-
-    expect(component.columnsToDisplay).toEqual([
-      "testProperty",
-      "anotherColumn",
-    ]);
-  }));
+  });
 
   it("should not navigate on addNew if clickMode is not 'navigate'", () => {
     createComponent();
@@ -176,54 +185,69 @@ describe("EntityListComponent", () => {
     expect(navigateSpy).toHaveBeenCalled();
   });
 
-  it("should add a new entity that was created after the initial loading to the table", fakeAsync(() => {
-    const entityUpdates = new Subject<UpdatedEntity<Entity>>();
-    const entityMapper = TestBed.inject(EntityMapperService);
-    vi.spyOn(entityMapper, "receiveUpdates").mockReturnValue(entityUpdates);
-    createComponent();
-    initComponentInputs();
-    tick();
+  it("should add a new entity that was created after the initial loading to the table", async () => {
+    vi.useFakeTimers();
+    try {
+      const entityUpdates = new Subject<UpdatedEntity<Entity>>();
+      const entityMapper = TestBed.inject(EntityMapperService);
+      vi.spyOn(entityMapper, "receiveUpdates").mockReturnValue(entityUpdates);
+      createComponent();
+      initComponentInputs();
+      await vi.advanceTimersByTimeAsync(0);
 
-    const entity = new TestEntity();
-    entityUpdates.next({ entity: entity, type: "new" });
-    tick();
+      const entity = new TestEntity();
+      entityUpdates.next({ entity: entity, type: "new" });
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.allEntities).toEqual([entity]);
-  }));
+      expect(component.allEntities).toEqual([entity]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should remove an entity from the table when it has been deleted", fakeAsync(() => {
-    const entityUpdates = new Subject<UpdatedEntity<Entity>>();
-    const entityMapper = TestBed.inject(EntityMapperService);
-    vi.spyOn(entityMapper, "receiveUpdates").mockReturnValue(entityUpdates);
-    const entity = new TestEntity();
-    createComponent();
-    initComponentInputs();
-    tick();
+  it("should remove an entity from the table when it has been deleted", async () => {
+    vi.useFakeTimers();
+    try {
+      const entityUpdates = new Subject<UpdatedEntity<Entity>>();
+      const entityMapper = TestBed.inject(EntityMapperService);
+      vi.spyOn(entityMapper, "receiveUpdates").mockReturnValue(entityUpdates);
+      const entity = new TestEntity();
+      createComponent();
+      initComponentInputs();
+      await vi.advanceTimersByTimeAsync(0);
 
-    component.allEntities = [entity];
-    entityUpdates.next({ entity: entity, type: "remove" });
-    tick();
+      component.allEntities = [entity];
+      entityUpdates.next({ entity: entity, type: "remove" });
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.allEntities).toEqual([]);
-  }));
+      expect(component.allEntities).toEqual([]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should fallback to the first group if default and mobile group does not exist", fakeAsync(() => {
-    createComponent();
-    component.columnGroups = {
-      default: "Overview",
-      mobile: "Overview",
-      groups: [
-        { name: "Basic Info", columns: ["name", "age", "category"] },
-        { name: "School Info", columns: ["name", "age", "other"] },
-      ],
-    };
+  it("should fallback to the first group if default and mobile group does not exist", async () => {
+    vi.useFakeTimers();
+    try {
+      createComponent();
+      component.columnGroups = {
+        default: "Overview",
+        mobile: "Overview",
+        groups: [
+          { name: "Basic Info", columns: ["name", "age", "category"] },
+          { name: "School Info", columns: ["name", "age", "other"] },
+        ],
+      };
 
-    component.ngOnChanges({ listConfig: null });
-    tick();
+      component.ngOnChanges({ listConfig: null });
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.defaultColumnGroup).toEqual("Basic Info");
-    expect(component.mobileColumnGroup).toEqual("Basic Info");
-  }));
+      expect(component.defaultColumnGroup).toEqual("Basic Info");
+      expect(component.mobileColumnGroup).toEqual("Basic Info");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   function createComponent() {
     fixture = TestBed.createComponent(EntityListComponent);

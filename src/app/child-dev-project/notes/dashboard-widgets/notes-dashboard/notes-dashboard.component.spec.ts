@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ChildrenService } from "../../../children/children.service";
 import { NotesDashboardComponent } from "./notes-dashboard.component";
@@ -53,24 +47,29 @@ describe("NotesDashboardComponent", () => {
       expect(component).toBeTruthy();
     });
 
-    it("should only count children with recent note", fakeAsync(() => {
-      mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
-        new Map([
-          ["1", 2],
-          ["2", 29],
-          ["3", 30],
-          ["4", 31],
-          ["5", Number.POSITIVE_INFINITY],
-        ]),
-      );
+    it("should only count children with recent note", async () => {
+      vi.useFakeTimers();
+      try {
+        mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
+          new Map([
+            ["1", 2],
+            ["2", 29],
+            ["3", 30],
+            ["4", 31],
+            ["5", Number.POSITIVE_INFINITY],
+          ]),
+        );
 
-      component.sinceDays = 30;
-      component.fromBeginningOfWeek = false;
-      component.ngOnInit();
-      tick();
+        component.sinceDays = 30;
+        component.fromBeginningOfWeek = false;
+        component.ngOnInit();
+        await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.entries).toHaveLength(3);
-    }));
+        expect(component.entries).toHaveLength(3);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
   });
 
   describe("without recent notes", () => {
@@ -85,52 +84,62 @@ describe("NotesDashboardComponent", () => {
       expect(component).toBeTruthy();
     });
 
-    it("should add only children without recent note", fakeAsync(() => {
-      mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
-        new Map([
-          ["1", 2],
-          ["2", 29],
-          ["3", 30],
-          ["4", 31],
-          ["5", 50],
-        ]),
-      );
+    it("should add only children without recent note", async () => {
+      vi.useFakeTimers();
+      try {
+        mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
+          new Map([
+            ["1", 2],
+            ["2", 29],
+            ["3", 30],
+            ["4", 31],
+            ["5", 50],
+          ]),
+        );
 
-      component.sinceDays = 30;
-      component.fromBeginningOfWeek = false;
-      component.ngOnInit();
+        component.sinceDays = 30;
+        component.fromBeginningOfWeek = false;
+        component.ngOnInit();
 
-      tick();
+        await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.entries).toHaveLength(3);
+        expect(component.entries).toHaveLength(3);
 
-      expect(component.entries[0]).toEqual({
-        entityId: "5",
-        daysSinceLastNote: 50,
-        moreThanDaysSince: false,
-      });
-    }));
+        expect(component.entries[0]).toEqual({
+          entityId: "5",
+          daysSinceLastNote: 50,
+          moreThanDaysSince: false,
+        });
+      } finally {
+        vi.useRealTimers();
+      }
+    });
 
-    it("should mark children without stats on last note", fakeAsync(() => {
-      const childId1 = "1";
-      mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
-        new Map([[childId1, Number.POSITIVE_INFINITY]]),
-      );
+    it("should mark children without stats on last note", async () => {
+      vi.useFakeTimers();
+      try {
+        const childId1 = "1";
+        mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
+          new Map([[childId1, Number.POSITIVE_INFINITY]]),
+        );
 
-      component.sinceDays = 10;
-      component.fromBeginningOfWeek = false;
-      component.ngOnInit();
-      tick();
+        component.sinceDays = 10;
+        component.fromBeginningOfWeek = false;
+        component.ngOnInit();
+        await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.entries).toHaveLength(1);
+        expect(component.entries).toHaveLength(1);
 
-      expect(component.entries[0]).toEqual(
-        expect.objectContaining({
-          entityId: childId1,
-          moreThanDaysSince: true,
-        }),
-      );
-    }));
+        expect(component.entries[0]).toEqual(
+          expect.objectContaining({
+            entityId: childId1,
+            moreThanDaysSince: true,
+          }),
+        );
+      } finally {
+        vi.useRealTimers();
+      }
+    });
 
     it("should load notes related to the configured entity", () => {
       mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(

@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 
 import {
   EscoApiService,
@@ -73,57 +73,60 @@ describe("EscoApiService", () => {
   it("should get ESCO skill", async () => {
     const result = firstValueFrom(service.fetchSkill(mockEscoObject.uri));
 
-    const req = httpTesting.expectOne({
-      method: "GET",
-      url:
-        "https://ec.europa.eu/esco/api/resource/skill?uris=" +
-        mockEscoObject.uri,
-    });
+    const req = httpTesting.expectOne(
+      (request) =>
+        request.method === "GET" &&
+        request.url === "https://ec.europa.eu/esco/api/resource/skill" &&
+        request.params.get("uris") === mockEscoObject.uri,
+    );
     req.flush(createApiResponseDto(mockEscoObject));
 
     expect(await result).toEqual(mockEscoObject);
   });
 
-  it("should retry in case of connection issues", fakeAsync(() => {
-    const result = firstValueFrom(service.fetchSkill(mockEscoObject.uri));
+  it("should retry in case of connection issues", async () => {
+    vi.useFakeTimers();
+    try {
+      const result = firstValueFrom(service.fetchSkill(mockEscoObject.uri));
 
-    const req = httpTesting.expectOne({});
-    req.flush("Http failure", {
-      status: 504,
-      statusText: "Gateway Timeout",
-    });
-    tick(1000);
+      const req = httpTesting.expectOne({});
+      req.flush("Http failure", {
+        status: 504,
+        statusText: "Gateway Timeout",
+      });
+      await vi.runAllTimersAsync();
 
-    const reqRetry = httpTesting.expectOne({});
-    reqRetry.flush(createApiResponseDto(mockEscoObject));
-    tick();
+      const reqRetry = httpTesting.expectOne({});
+      reqRetry.flush(createApiResponseDto(mockEscoObject));
 
-    expect(result).resolves.toEqual(mockEscoObject);
-  }));
+      await expect(result).resolves.toEqual(mockEscoObject);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should load existing entity instead of making API request", fakeAsync(() => {
+  it("should load existing entity instead of making API request", async () => {
     const testSkill: Skill = Skill.create(mockEscoObject.uri, "Test Skill");
     mockEntityMapper.load.mockResolvedValue(testSkill);
 
     const result = service.loadOrCreateSkillEntity(testSkill.escoUri);
 
-    expect(result).resolves.toEqual(testSkill);
-  }));
+    await expect(result).resolves.toEqual(testSkill);
+  });
 
-  it("should create and save new entity if the Skill doesn't exist yet", fakeAsync(() => {
-    mockEntityMapper.load.mockRejectedValue({ status: 404 });
+  it("should create and save new entity if the Skill doesn't exist yet", async () => {
+    mockEntityMapper.load.mockResolvedValue(undefined);
 
     const result = service.loadOrCreateSkillEntity(mockEscoObject.uri);
-    tick();
+    await new Promise((resolve) => setTimeout(resolve, 0));
 
-    const req = httpTesting.expectOne({
-      method: "GET",
-      url:
-        "https://ec.europa.eu/esco/api/resource/skill?uris=" +
-        mockEscoObject.uri,
-    });
+    const req = httpTesting.expectOne(
+      (request) =>
+        request.method === "GET" &&
+        request.url === "https://ec.europa.eu/esco/api/resource/skill" &&
+        request.params.get("uris") === mockEscoObject.uri,
+    );
     req.flush(createApiResponseDto(mockEscoObject));
-    tick();
 
     const expectedEntity = expect.objectContaining({
       _id: Entity.createPrefixedId(Skill.ENTITY_TYPE, mockEscoObject.uri),
@@ -131,10 +134,10 @@ describe("EscoApiService", () => {
       name: mockEscoObject.title,
       description: mockEscoObject.description["en"].literal,
     } as Partial<Skill>);
-    expect(result).resolves.toEqual(expectedEntity);
+    await expect(result).resolves.toEqual(expectedEntity);
     expect(mockEntityMapper.save).toHaveBeenCalledTimes(1);
     expect(mockEntityMapper.save).toHaveBeenCalledWith(expectedEntity);
-  }));
+  });
 });
 
 function createApiResponseDto(result: EscoSkillDto): EscoSkillResponseDto {

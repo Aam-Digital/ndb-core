@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ShortcutDashboardComponent } from "./shortcut-dashboard.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
@@ -44,30 +39,35 @@ describe("ShortcutDashboardComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should only show routes to which the user has access", fakeAsync(() => {
-    mockRoleGuard.checkRoutePermissions.mockImplementation(async (route) => {
-      switch (route) {
-        case "/child":
-          return true;
-        case "/school":
-          return false;
-      }
-    });
-    mockPermissionGuard.checkRoutePermissions.mockResolvedValue(true);
-    const childItem: MenuItem = {
-      label: "Children",
-      icon: "child",
-      link: "/child",
-    };
-    const schoolItem: MenuItem = {
-      label: "School",
-      icon: "building",
-      link: "/school",
-    };
+  it("should only show routes to which the user has access", async () => {
+    vi.useFakeTimers();
+    try {
+      mockRoleGuard.checkRoutePermissions.mockImplementation(async (route) => {
+        switch (route) {
+          case "/child":
+            return true;
+          case "/school":
+            return false;
+        }
+      });
+      mockPermissionGuard.checkRoutePermissions.mockResolvedValue(true);
+      const childItem: MenuItem = {
+        label: "Children",
+        icon: "child",
+        link: "/child",
+      };
+      const schoolItem: MenuItem = {
+        label: "School",
+        icon: "building",
+        link: "/school",
+      };
 
-    component.shortcuts = [childItem, schoolItem];
-    tick();
+      component.shortcuts = [childItem, schoolItem];
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.shortcuts).toEqual([childItem]);
-  }));
+      expect(component.shortcuts).toEqual([childItem]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

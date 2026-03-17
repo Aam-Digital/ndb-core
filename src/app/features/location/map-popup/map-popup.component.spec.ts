@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { MapPopupComponent } from "./map-popup.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -60,79 +55,94 @@ describe("MapPopupComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should set new location upon map clicks (if enabled)", fakeAsync(() => {
-    let updatedLocations: GeoResult[];
-    component.markedLocations.subscribe((res) => (updatedLocations = res));
+  it("should set new location upon map clicks (if enabled)", async () => {
+    vi.useFakeTimers();
+    try {
+      let updatedLocations: GeoResult[];
+      component.markedLocations.subscribe((res) => (updatedLocations = res));
 
-    const mockedClick: Coordinates = { lat: 1, lon: 2 };
+      const mockedClick: Coordinates = { lat: 1, lon: 2 };
 
-    mockGeoService.reverseLookup.mockReturnValue(
-      of({
-        lat: mockedClick.lat,
-        lon: mockedClick.lon,
-        display_name: `[selected on map: ${mockedClick.lat} - ${mockedClick.lon}]`,
-      }),
-    );
+      mockGeoService.reverseLookup.mockReturnValue(
+        of({
+          lat: mockedClick.lat,
+          lon: mockedClick.lon,
+          display_name: `[selected on map: ${mockedClick.lat} - ${mockedClick.lon}]`,
+        }),
+      );
 
-    component.mapClicked(mockedClick);
-    tick();
+      component.mapClicked(mockedClick);
+      await vi.advanceTimersByTimeAsync(0);
 
-    const expectedAfterFirstClick: GeoResult = {
-      ...mockedClick,
-      display_name: "[selected on map: 1 - 2]",
-    };
-    expect(updatedLocations).toEqual([expectedAfterFirstClick]);
-    expect(component.selectedLocation).toEqual({
-      geoLookup: expectedAfterFirstClick,
-      locationString: expectedAfterFirstClick.display_name,
-    });
+      const expectedAfterFirstClick: GeoResult = {
+        ...mockedClick,
+        display_name: "[selected on map: 1 - 2]",
+      };
+      expect(updatedLocations).toEqual([expectedAfterFirstClick]);
+      expect(component.selectedLocation).toEqual({
+        geoLookup: expectedAfterFirstClick,
+        locationString: expectedAfterFirstClick.display_name,
+      });
 
-    // expect this to be prevented when disabled
-    component.data.disabled = true;
-    const mockedClickOnDisabled: Coordinates = { lat: 99, lon: 99 };
-    component.mapClicked(mockedClickOnDisabled);
-    tick();
+      // expect this to be prevented when disabled
+      component.data.disabled = true;
+      const mockedClickOnDisabled: Coordinates = { lat: 99, lon: 99 };
+      component.mapClicked(mockedClickOnDisabled);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(updatedLocations).toEqual([expectedAfterFirstClick]);
-  }));
+      expect(updatedLocations).toEqual([expectedAfterFirstClick]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should set new location upon map clicks with reverse-lookup of address", fakeAsync(() => {
-    let updatedLocations: GeoResult[];
-    component.markedLocations.subscribe((res) => (updatedLocations = res));
+  it("should set new location upon map clicks with reverse-lookup of address", async () => {
+    vi.useFakeTimers();
+    try {
+      let updatedLocations: GeoResult[];
+      component.markedLocations.subscribe((res) => (updatedLocations = res));
 
-    const mockedClick: Coordinates = { lat: 1, lon: 2 };
-    const fullLocation = { display_name: "lookup result", ...mockedClick };
-    mockGeoService.reverseLookup.mockReturnValue(of(fullLocation));
+      const mockedClick: Coordinates = { lat: 1, lon: 2 };
+      const fullLocation = { display_name: "lookup result", ...mockedClick };
+      mockGeoService.reverseLookup.mockReturnValue(of(fullLocation));
 
-    component.mapClicked(mockedClick);
-    tick();
+      component.mapClicked(mockedClick);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockGeoService.reverseLookup).toHaveBeenCalledWith(mockedClick);
-    expect(updatedLocations).toEqual([fullLocation]);
-    expect(component.selectedLocation).toEqual({
-      geoLookup: fullLocation,
-      locationString: fullLocation.display_name,
-    });
-  }));
+      expect(mockGeoService.reverseLookup).toHaveBeenCalledWith(mockedClick);
+      expect(updatedLocations).toEqual([fullLocation]);
+      expect(component.selectedLocation).toEqual({
+        geoLookup: fullLocation,
+        locationString: fullLocation.display_name,
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should update location if received from address search", fakeAsync(() => {
-    let updatedMarkedLocations: GeoResult[];
-    component.markedLocations.subscribe(
-      (res) => (updatedMarkedLocations = res),
-    );
+  it("should update location if received from address search", async () => {
+    vi.useFakeTimers();
+    try {
+      let updatedMarkedLocations: GeoResult[];
+      component.markedLocations.subscribe(
+        (res) => (updatedMarkedLocations = res),
+      );
 
-    const newLocation: GeoLocation = {
-      geoLookup: { lat: 1, lon: 2, display_name: "x" },
-      locationString: "x",
-    };
-    component.updateLocation(newLocation);
-    tick();
-    expect(component.selectedLocation).toEqual(newLocation);
-    expect(updatedMarkedLocations).toEqual([newLocation.geoLookup]);
+      const newLocation: GeoLocation = {
+        geoLookup: { lat: 1, lon: 2, display_name: "x" },
+        locationString: "x",
+      };
+      component.updateLocation(newLocation);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(component.selectedLocation).toEqual(newLocation);
+      expect(updatedMarkedLocations).toEqual([newLocation.geoLookup]);
 
-    component.updateLocation(undefined);
-    tick();
-    expect(component.selectedLocation).toBeUndefined();
-    expect(updatedMarkedLocations).toEqual([]); // TODO: this is maybe not the best interface/logic
-  }));
+      component.updateLocation(undefined);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(component.selectedLocation).toBeUndefined();
+      expect(updatedMarkedLocations).toEqual([]); // TODO: this is maybe not the best interface/logic
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

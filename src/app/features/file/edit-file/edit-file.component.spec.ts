@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { FormControl } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -245,40 +240,45 @@ describe("EditFileComponent", () => {
     );
   });
 
-  it("should show upload errors as an alert and reset entity", fakeAsync(() => {
-    setupComponent("old.file");
-    mockEntityMapper.load.mockResolvedValue(
-      Object.assign(new Entity(component.entity.getId()), {
-        _rev: "2",
-        testProp: "new.file",
-      }),
-    );
-    const subject = new Subject();
-    mockFileService.uploadFile.mockReturnValue(subject);
-    component.formControl.enable();
+  it("should show upload errors as an alert and reset entity", async () => {
+    vi.useFakeTimers();
+    try {
+      setupComponent("old.file");
+      mockEntityMapper.load.mockResolvedValue(
+        Object.assign(new Entity(component.entity.getId()), {
+          _rev: "2",
+          testProp: "new.file",
+        }),
+      );
+      const subject = new Subject();
+      mockFileService.uploadFile.mockReturnValue(subject);
+      component.formControl.enable();
 
-    component.onFileSelected(file);
+      component.onFileSelected(file);
 
-    component.entity[component.formFieldConfig.id] = file.name;
-    component.formControl.disable();
+      component.entity[component.formFieldConfig.id] = file.name;
+      component.formControl.disable();
 
-    expect(component.formControl).toHaveValue(file.name);
-    expect(component.entity[component.formFieldConfig.id]).toBe(file.name);
+      expect(component.formControl).toHaveValue(file.name);
+      expect(component.entity[component.formFieldConfig.id]).toBe(file.name);
 
-    subject.error(new Error());
-    tick();
+      subject.error(new Error());
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockAlertService.addDanger).toHaveBeenCalled();
-    expect(component.formControl).toHaveValue("old.file");
-    expect(component.entity[component.formFieldConfig.id]).toBe("old.file");
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(
-      expect.objectContaining({
-        _id: component.entity["_id"],
-        _rev: "2",
-        testProp: "old.file",
-      }),
-    );
-  }));
+      expect(mockAlertService.addDanger).toHaveBeenCalled();
+      expect(component.formControl).toHaveValue("old.file");
+      expect(component.entity[component.formFieldConfig.id]).toBe("old.file");
+      expect(mockEntityMapper.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          _id: component.entity["_id"],
+          _rev: "2",
+          testProp: "old.file",
+        }),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should show a file when clicking on the form element", () => {
     setupComponent("existing.file");

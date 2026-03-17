@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 
 import { EmailClientService } from "./email-client.service";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
@@ -109,65 +109,75 @@ describe("EmailClientService", () => {
     expect(mailto).toBe("mailto:test%40example.com?subject=Subject&body=Body");
   });
 
-  it("should generate mailto link with semicolon-separated recipients when sendSemicolonSeparated is true", fakeAsync(() => {
-    const entity1 = new EntityWithEmail();
-    entity1.email = "test@example.com";
-    const entity2 = new EntityWithEmail();
-    entity2.email = "john@example.com";
-    const entity3 = new EntityWithEmail();
-    entity3.email = "jane@example.com";
+  it("should generate mailto link with semicolon-separated recipients when sendSemicolonSeparated is true", async () => {
+    vi.useFakeTimers();
+    try {
+      const entity1 = new EntityWithEmail();
+      entity1.email = "test@example.com";
+      const entity2 = new EntityWithEmail();
+      entity2.email = "john@example.com";
+      const entity3 = new EntityWithEmail();
+      entity3.email = "jane@example.com";
 
-    mockDialog.open.mockReturnValue({
-      afterClosed: () =>
-        of({
-          template: { subject: "Subject", body: "Body" },
-          createNote: false,
-          sendAsBCC: false,
-          sendSemicolonSeparated: true,
-        }),
-      close: vi.fn(),
-    } as any);
+      mockDialog.open.mockReturnValue({
+        afterClosed: () =>
+          of({
+            template: { subject: "Subject", body: "Body" },
+            createNote: false,
+            sendAsBCC: false,
+            sendSemicolonSeparated: true,
+          }),
+        close: vi.fn(),
+      } as any);
 
-    service.executeMailto([entity1, entity2, entity3]);
-    tick(5000); // Fast-forward through the setTimeout
+      service.executeMailto([entity1, entity2, entity3]);
+      await vi.advanceTimersByTimeAsync(5000); // Fast-forward through the setTimeout
 
-    const mailtoCall = mockWindow.location.href;
+      const mailtoCall = mockWindow.location.href;
 
-    expect(mailtoCall).toContain("%3B"); // %3B is the encoded semicolon
-    expect(mailtoCall).not.toContain("%2C"); // %2C is the encoded comma
-    expect(mailtoCall).toBe(
-      "mailto:test%40example.com%3Bjohn%40example.com%3Bjane%40example.com?subject=Subject&body=Body",
-    );
-  }));
+      expect(mailtoCall).toContain("%3B"); // %3B is the encoded semicolon
+      expect(mailtoCall).not.toContain("%2C"); // %2C is the encoded comma
+      expect(mailtoCall).toBe(
+        "mailto:test%40example.com%3Bjohn%40example.com%3Bjane%40example.com?subject=Subject&body=Body",
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should generate mailto link with comma-separated recipients when sendSemicolonSeparated is false", fakeAsync(() => {
-    const entity1 = new EntityWithEmail();
-    entity1.email = "test@example.com";
-    const entity2 = new EntityWithEmail();
-    entity2.email = "john@example.com";
-    const entity3 = new EntityWithEmail();
-    entity3.email = "jane@example.com";
+  it("should generate mailto link with comma-separated recipients when sendSemicolonSeparated is false", async () => {
+    vi.useFakeTimers();
+    try {
+      const entity1 = new EntityWithEmail();
+      entity1.email = "test@example.com";
+      const entity2 = new EntityWithEmail();
+      entity2.email = "john@example.com";
+      const entity3 = new EntityWithEmail();
+      entity3.email = "jane@example.com";
 
-    mockDialog.open.mockReturnValue({
-      afterClosed: () =>
-        of({
-          template: { subject: "Subject", body: "Body" },
-          createNote: false,
-          sendAsBCC: false,
-          sendSemicolonSeparated: false,
-        }),
-      close: vi.fn(),
-    } as any);
+      mockDialog.open.mockReturnValue({
+        afterClosed: () =>
+          of({
+            template: { subject: "Subject", body: "Body" },
+            createNote: false,
+            sendAsBCC: false,
+            sendSemicolonSeparated: false,
+          }),
+        close: vi.fn(),
+      } as any);
 
-    service.executeMailto([entity1, entity2, entity3]);
-    tick(5000); // Fast-forward through the setTimeout
+      service.executeMailto([entity1, entity2, entity3]);
+      await vi.advanceTimersByTimeAsync(5000); // Fast-forward through the setTimeout
 
-    const mailtoCall = mockWindow.location.href;
+      const mailtoCall = mockWindow.location.href;
 
-    expect(mailtoCall).toContain("%2C"); // %2C is the encoded comma
-    expect(mailtoCall).not.toContain("%3B"); // %3B is the encoded semicolon
-    expect(mailtoCall).toBe(
-      "mailto:test%40example.com%2Cjohn%40example.com%2Cjane%40example.com?subject=Subject&body=Body",
-    );
-  }));
+      expect(mailtoCall).toContain("%2C"); // %2C is the encoded comma
+      expect(mailtoCall).not.toContain("%3B"); // %3B is the encoded semicolon
+      expect(mailtoCall).toBe(
+        "mailto:test%40example.com%2Cjohn%40example.com%2Cjane%40example.com?subject=Subject&body=Body",
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { SupportComponent } from "./support.component";
 import { BehaviorSubject, of } from "rxjs";
@@ -124,13 +118,20 @@ describe("SupportComponent", () => {
     localStorage.clear();
   });
 
-  it("should display the service worker logs after they are available", fakeAsync(() => {
-    const exampleLog = "example service worker log";
-    vi.spyOn(TestBed.inject(HttpClient), "get").mockReturnValue(of(exampleLog));
+  it("should display the service worker logs after they are available", async () => {
+    vi.useFakeTimers();
+    try {
+      const exampleLog = "example service worker log";
+      vi.spyOn(TestBed.inject(HttpClient), "get").mockReturnValue(
+        of(exampleLog),
+      );
 
-    component.ngOnInit();
-    tick();
+      component.ngOnInit();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.swLog).toBe(exampleLog);
-  }));
+      expect(component.swLog).toBe(exampleLog);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

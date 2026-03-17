@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  flush,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
@@ -128,7 +122,7 @@ describe("BasicAutocompleteComponent", () => {
     expect(component.value).toBe(child1.getId());
   });
 
-  it("should reset if leaving empty autocomplete", fakeAsync(() => {
+  it("should reset if leaving empty autocomplete", () => {
     const first = TestEntity.create("First");
     const second = TestEntity.create("Second");
     component.options = [first, second];
@@ -139,11 +133,9 @@ describe("BasicAutocompleteComponent", () => {
 
     component.autocompleteForm.setValue("");
     component.onFocusOut({} as any);
-    tick(200);
 
     expect(component.value).toBe(undefined);
-    flush();
-  }));
+  });
 
   it("should disable the form if the control is disabled", () => {
     component.disabled = false;
@@ -177,23 +169,28 @@ describe("BasicAutocompleteComponent", () => {
     expect(component.value).toEqual([0, 2]);
   });
 
-  it("should switch the input when focusing in multi select mode", fakeAsync(() => {
-    component.multi = true;
-    component.options = ["some", "values", "and", "other", "options"];
-    component.value = ["some", "values"];
-    component.ngOnChanges({ value: true, options: true });
-    expect(component.displayText).toBe("some, values");
+  it("should switch the input when focusing in multi select mode", () => {
+    vi.useFakeTimers();
+    try {
+      component.multi = true;
+      component.options = ["some", "values", "and", "other", "options"];
+      component.value = ["some", "values"];
+      component.ngOnChanges({ value: true, options: true });
+      expect(component.displayText).toBe("some, values");
 
-    component.showAutocomplete();
-    expect(component.autocompleteForm.value).toBe("some, values");
-    expect(component.isInSearchMode()).toBe(true);
+      component.showAutocomplete();
+      expect(component.autocompleteForm.value).toBe("some, values");
+      expect(component.isInSearchMode()).toBe(true);
 
-    component.onFocusOut({} as any);
-    tick(200);
+      component.onFocusOut({} as any);
+      vi.runAllTimers();
 
-    expect(component.displayText).toBe("some, values");
-    expect(component.isInSearchMode()).toBe(false);
-  }));
+      expect(component.displayText).toBe("some, values");
+      expect(component.isInSearchMode()).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should update the error state if the form is invalid", () => {
     testControl.setValidators([Validators.required]);
@@ -208,7 +205,7 @@ describe("BasicAutocompleteComponent", () => {
     expect(component.errorState).toBe(true);
   });
 
-  it("should create new option", fakeAsync(() => {
+  it("should create new option", async () => {
     const createOptionMock = vi.fn();
 
     component.createOption = createOptionMock;
@@ -227,7 +224,7 @@ describe("BasicAutocompleteComponent", () => {
     createOptionMock.mockResolvedValue(undefined);
     component.select(newOption);
 
-    tick();
+    await fixture.whenStable();
     expect(createOptionMock).toHaveBeenCalled();
     expect(component.value).toEqual(initialValue);
 
@@ -236,8 +233,8 @@ describe("BasicAutocompleteComponent", () => {
     createOptionMock.mockResolvedValue({ id: newOption, label: newOption });
     component.select(newOption);
 
-    tick();
+    await fixture.whenStable();
     expect(createOptionMock).toHaveBeenCalled();
     expect(component.value).toEqual(newOption);
-  }));
+  });
 });

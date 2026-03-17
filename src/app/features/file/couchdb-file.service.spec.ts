@@ -1,5 +1,5 @@
 import type { Mock } from "vitest";
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 
 import { CouchdbFileService } from "./couchdb-file.service";
 import {
@@ -111,26 +111,31 @@ describe("CouchdbFileService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should add a attachment to a existing document", fakeAsync(() => {
-    mockHttp.get.mockReturnValue(of({ _rev: "test_rev" }));
-    mockHttp.put.mockReturnValue(of({ ok: true }));
-    const file = new File([], "file.name", { type: "image/png" });
-    const entity = new Entity("testId");
+  it("should add a attachment to a existing document", async () => {
+    vi.useFakeTimers();
+    try {
+      mockHttp.get.mockReturnValue(of({ _rev: "test_rev" }));
+      mockHttp.put.mockReturnValue(of({ ok: true }));
+      const file = new File([], "file.name", { type: "image/png" });
+      const entity = new Entity("testId");
 
-    service.uploadFile(file, entity, "testProp").subscribe();
-    tick();
+      service.uploadFile(file, entity, "testProp").subscribe();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockHttp.get).toHaveBeenCalledWith(
-      expect.stringContaining(`${attachmentUrlPrefix}/Entity:testId`),
-    );
-    expect(mockHttp.put).toHaveBeenCalledWith(
-      expect.stringContaining(
-        `${attachmentUrlPrefix}/Entity:testId/testProp?rev=test_rev`,
-      ),
-      expect.anything(),
-      expect.anything(),
-    );
-  }));
+      expect(mockHttp.get).toHaveBeenCalledWith(
+        expect.stringContaining(`${attachmentUrlPrefix}/Entity:testId`),
+      );
+      expect(mockHttp.put).toHaveBeenCalledWith(
+        expect.stringContaining(
+          `${attachmentUrlPrefix}/Entity:testId/testProp?rev=test_rev`,
+        ),
+        expect.anything(),
+        expect.anything(),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should create attachment document if it does not exist yet (and complete a sync first)", async () => {
     mockHttp.get.mockReturnValue(
@@ -251,21 +256,26 @@ describe("CouchdbFileService", () => {
     });
   });
 
-  it("should delete files document if a entity is deleted", fakeAsync(() => {
-    const entity = new Entity();
-    mockHttp.get.mockReturnValue(of({ _rev: "someRev" }));
-    mockHttp.delete.mockReturnValue(EMPTY);
+  it("should delete files document if a entity is deleted", async () => {
+    vi.useFakeTimers();
+    try {
+      const entity = new Entity();
+      mockHttp.get.mockReturnValue(of({ _rev: "someRev" }));
+      mockHttp.delete.mockReturnValue(EMPTY);
 
-    updates.next({ entity, type: "remove" });
-    tick();
+      updates.next({ entity, type: "remove" });
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockHttp.get).toHaveBeenCalledWith(
-      expect.stringContaining(entity.getId()),
-    );
-    expect(mockHttp.delete).toHaveBeenCalledWith(
-      expect.stringContaining(`/${entity.getId()}?rev=someRev`),
-    );
-  }));
+      expect(mockHttp.get).toHaveBeenCalledWith(
+        expect.stringContaining(entity.getId()),
+      );
+      expect(mockHttp.delete).toHaveBeenCalledWith(
+        expect.stringContaining(`/${entity.getId()}?rev=someRev`),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should not fail if to-be-removed file reference could not be found", () => {
     mockHttp.get.mockReturnValue(
@@ -279,82 +289,87 @@ describe("CouchdbFileService", () => {
     ).resolves.not.toThrow();
   });
 
-  it("should wait for previous request to finish before starting a new one", fakeAsync(() => {
-    const firstPut = new BehaviorSubject({ ok: true });
-    const secondPut = new BehaviorSubject({ ok: true });
-    const thirdPut = new BehaviorSubject({ ok: true });
-    const file1 = new File([], "file1.name", { type: "image/png" });
-    const file2 = new File([], "file2.name", { type: "image/png" });
-    const file3 = new File([], "file3.name", { type: "image/png" });
-    const entity = new Entity("testId");
-    mockHttp.get
-      .mockReturnValueOnce(of({ _rev: "1-rev" }))
-      .mockReturnValueOnce(of({ _rev: "2-rev" }))
-      .mockReturnValueOnce(of({ _rev: "3-rev" }));
-    mockHttp.put
-      .mockReturnValueOnce(firstPut)
-      .mockReturnValueOnce(secondPut)
-      .mockReturnValueOnce(thirdPut);
+  it("should wait for previous request to finish before starting a new one", async () => {
+    vi.useFakeTimers();
+    try {
+      const firstPut = new BehaviorSubject({ ok: true });
+      const secondPut = new BehaviorSubject({ ok: true });
+      const thirdPut = new BehaviorSubject({ ok: true });
+      const file1 = new File([], "file1.name", { type: "image/png" });
+      const file2 = new File([], "file2.name", { type: "image/png" });
+      const file3 = new File([], "file3.name", { type: "image/png" });
+      const entity = new Entity("testId");
+      mockHttp.get
+        .mockReturnValueOnce(of({ _rev: "1-rev" }))
+        .mockReturnValueOnce(of({ _rev: "2-rev" }))
+        .mockReturnValueOnce(of({ _rev: "3-rev" }));
+      mockHttp.put
+        .mockReturnValueOnce(firstPut)
+        .mockReturnValueOnce(secondPut)
+        .mockReturnValueOnce(thirdPut);
 
-    let file1Done = false;
-    let file2Done = false;
-    let file3Done = false;
-    service
-      .uploadFile(file1, entity, "prop1")
-      .subscribe({ complete: () => (file1Done = true) });
-    tick();
-    service
-      .uploadFile(file2, entity, "prop2")
-      .subscribe({ complete: () => (file2Done = true) });
-    tick();
-    service
-      .uploadFile(file3, entity, "prop3")
-      .subscribe({ complete: () => (file3Done = true) });
-    tick();
+      let file1Done = false;
+      let file2Done = false;
+      let file3Done = false;
+      service
+        .uploadFile(file1, entity, "prop1")
+        .subscribe({ complete: () => (file1Done = true) });
+      await vi.advanceTimersByTimeAsync(0);
+      service
+        .uploadFile(file2, entity, "prop2")
+        .subscribe({ complete: () => (file2Done = true) });
+      await vi.advanceTimersByTimeAsync(0);
+      service
+        .uploadFile(file3, entity, "prop3")
+        .subscribe({ complete: () => (file3Done = true) });
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(firstPut.observed).toBe(true);
-    expect(secondPut.observed).toBe(false);
-    expect(mockHttp.put).toHaveBeenCalledTimes(1);
-    expect(mockHttp.put).toHaveBeenCalledWith(
-      expect.stringContaining(
-        `${attachmentUrlPrefix}/Entity:testId/prop1?rev=1-rev`,
-      ),
-      expect.anything(),
-      expect.anything(),
-    );
+      expect(firstPut.observed).toBe(true);
+      expect(secondPut.observed).toBe(false);
+      expect(mockHttp.put).toHaveBeenCalledTimes(1);
+      expect(mockHttp.put).toHaveBeenCalledWith(
+        expect.stringContaining(
+          `${attachmentUrlPrefix}/Entity:testId/prop1?rev=1-rev`,
+        ),
+        expect.anything(),
+        expect.anything(),
+      );
 
-    firstPut.complete();
-    tick();
+      firstPut.complete();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(file1Done).toBe(true);
-    expect(file2Done).toBe(false);
-    expect(file3Done).toBe(false);
-    expect(secondPut.observed).toBe(true);
-    expect(thirdPut.observed).toBe(false);
-    expect(mockHttp.put).toHaveBeenCalledTimes(2);
-    expect(mockHttp.put).toHaveBeenCalledWith(
-      expect.stringContaining(
-        `${attachmentUrlPrefix}/Entity:testId/prop2?rev=2-rev`,
-      ),
-      expect.anything(),
-      expect.anything(),
-    );
+      expect(file1Done).toBe(true);
+      expect(file2Done).toBe(false);
+      expect(file3Done).toBe(false);
+      expect(secondPut.observed).toBe(true);
+      expect(thirdPut.observed).toBe(false);
+      expect(mockHttp.put).toHaveBeenCalledTimes(2);
+      expect(mockHttp.put).toHaveBeenCalledWith(
+        expect.stringContaining(
+          `${attachmentUrlPrefix}/Entity:testId/prop2?rev=2-rev`,
+        ),
+        expect.anything(),
+        expect.anything(),
+      );
 
-    secondPut.complete();
-    tick();
+      secondPut.complete();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(file2Done).toBe(true);
-    expect(file3Done).toBe(false);
-    expect(thirdPut.observed).toBe(true);
-    expect(mockHttp.put).toHaveBeenCalledTimes(3);
-    expect(mockHttp.put).toHaveBeenCalledWith(
-      expect.stringContaining(
-        `${attachmentUrlPrefix}/Entity:testId/prop3?rev=3-rev`,
-      ),
-      expect.anything(),
-      expect.anything(),
-    );
-  }));
+      expect(file2Done).toBe(true);
+      expect(file3Done).toBe(false);
+      expect(thirdPut.observed).toBe(true);
+      expect(mockHttp.put).toHaveBeenCalledTimes(3);
+      expect(mockHttp.put).toHaveBeenCalledWith(
+        expect.stringContaining(
+          `${attachmentUrlPrefix}/Entity:testId/prop3?rev=3-rev`,
+        ),
+        expect.anything(),
+        expect.anything(),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should only request a file once per session", async () => {
     mockHttp.get.mockReturnValue(of(new Blob([])));

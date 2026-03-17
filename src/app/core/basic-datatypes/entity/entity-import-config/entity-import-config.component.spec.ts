@@ -14,6 +14,7 @@ import { HarnessLoader } from "@angular/cdk/testing";
 import { MatSelectHarness } from "@angular/material/select/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { MarkdownModule } from "ngx-markdown";
 
 describe("EntityImportConfigComponent", () => {
   let component: EntityImportConfigComponent;
@@ -32,6 +33,7 @@ describe("EntityImportConfigComponent", () => {
         EntityImportConfigComponent,
         NoopAnimationsModule,
         FontAwesomeTestingModule,
+        MarkdownModule.forRoot(),
       ],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: data },

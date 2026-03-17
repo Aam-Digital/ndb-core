@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 
 import { LatestChangesService } from "./latest-changes.service";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
@@ -88,19 +88,24 @@ describe("LatestChangesDialogService", () => {
     expect(mockDialog.open).not.toHaveBeenCalled();
   });
 
-  it("should update stored version after user closes dialog", fakeAsync(() => {
-    vi.spyOn(Storage.prototype, "setItem");
+  it("should update stored version after user closes dialog", async () => {
+    vi.useFakeTimers();
+    try {
+      vi.spyOn(Storage.prototype, "setItem");
 
-    mockDialog.open.mockReturnValue({
-      afterClosed: () => of(true),
-    } as MatDialogRef<boolean>);
+      mockDialog.open.mockReturnValue({
+        afterClosed: () => of(true),
+      } as MatDialogRef<boolean>);
 
-    service.showLatestChanges();
-    tick();
+      service.showLatestChanges();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(Storage.prototype.setItem).toHaveBeenCalledWith(
-      LatestChangesDialogService.VERSION_KEY,
-      environment.appVersion,
-    );
-  }));
+      expect(Storage.prototype.setItem).toHaveBeenCalledWith(
+        LatestChangesDialogService.VERSION_KEY,
+        environment.appVersion,
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

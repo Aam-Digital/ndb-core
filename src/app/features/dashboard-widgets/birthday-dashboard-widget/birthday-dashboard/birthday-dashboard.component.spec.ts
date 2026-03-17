@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { BirthdayDashboardComponent } from "./birthday-dashboard.component";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
@@ -60,102 +55,125 @@ describe("BirthdayDashboardComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should only show birthdays in the next 31 days", fakeAsync(() => {
-    // add days before subtracting years to avoid landing on Feb 29 of a leap year,
-    // which moment and JS Date handle differently when mapping back to a non-leap year
-    const birthdaySoon = moment()
-      .add(5, "days")
-      .subtract(10, "years")
-      .startOf("day");
-    const child1 = new TestEntity();
-    child1.dateOfBirth = new DateWithAge(birthdaySoon.toDate());
-    const birthdayFarAway = moment()
-      .add(5, "weeks")
-      .subtract(15, "years")
-      .startOf("day");
-    const child2 = new TestEntity();
-    child2.dateOfBirth = new DateWithAge(birthdayFarAway.toDate());
-    entityMapper.saveAll([child1, child2]);
+  it("should only show birthdays in the next 31 days", async () => {
+    vi.useFakeTimers();
+    try {
+      // add days before subtracting years to avoid landing on Feb 29 of a leap year,
+      // which moment and JS Date handle differently when mapping back to a non-leap year
+      const birthdaySoon = moment()
+        .add(5, "days")
+        .subtract(10, "years")
+        .startOf("day");
+      const child1 = new TestEntity();
+      child1.dateOfBirth = new DateWithAge(birthdaySoon.toDate());
+      const birthdayFarAway = moment()
+        .add(5, "weeks")
+        .subtract(15, "years")
+        .startOf("day");
+      const child2 = new TestEntity();
+      child2.dateOfBirth = new DateWithAge(birthdayFarAway.toDate());
+      entityMapper.saveAll([child1, child2]);
 
-    component.ngOnInit();
-    tick();
+      component.ngOnInit();
+      await vi.advanceTimersByTimeAsync(0);
 
-    const expectedNextBirthday = birthdaySoon.add(10, "years");
-    expect(component.entries).toEqual([
-      { entity: child1, birthday: expectedNextBirthday.toDate(), newAge: 10 },
-    ]);
-  }));
-
-  it("should sort birthdays correctly", fakeAsync(() => {
-    const firstBirthday = moment()
-      .add(5, "days")
-      .subtract(12, "years")
-      .startOf("day");
-    const child1 = new TestEntity();
-    child1.dateOfBirth = new DateWithAge(firstBirthday.toDate());
-    const secondBirthday = moment()
-      .add(2, "weeks")
-      .subtract(15, "years")
-      .startOf("day");
-    const child2 = new TestEntity();
-    child2.dateOfBirth = new DateWithAge(secondBirthday.toDate());
-    entityMapper.saveAll([child1, child2]);
-
-    component.ngOnInit();
-    tick();
-
-    const expectedFirstBirthday = firstBirthday.add(12, "years");
-    const expectedSecondBirthday = secondBirthday.add(15, "years");
-    expect(component.entries).toEqual([
-      { entity: child1, birthday: expectedFirstBirthday.toDate(), newAge: 12 },
-      { entity: child2, birthday: expectedSecondBirthday.toDate(), newAge: 15 },
-    ]);
-  }));
-
-  it("should support multiple entities types ", fakeAsync(() => {
-    @DatabaseEntity("BirthdayEntity")
-    class BirthdayEntity extends Entity {
-      @DatabaseField()
-      birthday: DateWithAge;
+      const expectedNextBirthday = birthdaySoon.add(10, "years");
+      expect(component.entries).toEqual([
+        { entity: child1, birthday: expectedNextBirthday.toDate(), newAge: 10 },
+      ]);
+    } finally {
+      vi.useRealTimers();
     }
+  });
 
-    const e1 = new BirthdayEntity();
-    e1.birthday = new DateWithAge(
-      moment().add(1, "day").subtract(4, "year").toDate(),
-    );
-    const e2 = new BirthdayEntity();
-    e2.birthday = new DateWithAge(
-      moment().add(3, "day").subtract(12, "year").toDate(),
-    );
-    const e3 = new TestEntity();
-    e3.dateOfBirth = new DateWithAge(
-      moment().add(2, "day").subtract(8, "year").toDate(),
-    );
-    entityMapper.saveAll([e1, e2, e3]);
+  it("should sort birthdays correctly", async () => {
+    vi.useFakeTimers();
+    try {
+      const firstBirthday = moment()
+        .add(5, "days")
+        .subtract(12, "years")
+        .startOf("day");
+      const child1 = new TestEntity();
+      child1.dateOfBirth = new DateWithAge(firstBirthday.toDate());
+      const secondBirthday = moment()
+        .add(2, "weeks")
+        .subtract(15, "years")
+        .startOf("day");
+      const child2 = new TestEntity();
+      child2.dateOfBirth = new DateWithAge(secondBirthday.toDate());
+      entityMapper.saveAll([child1, child2]);
 
-    component.entities = {
-      BirthdayEntity: "birthday",
-      [TestEntity.ENTITY_TYPE]: "dateOfBirth",
-    };
-    component.ngOnInit();
-    tick();
+      component.ngOnInit();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.entries).toEqual([
-      {
-        entity: e1,
-        birthday: moment().add(1, "day").startOf("day").toDate(),
-        newAge: 4,
-      },
-      {
-        entity: e3,
-        birthday: moment().add(2, "day").startOf("day").toDate(),
-        newAge: 8,
-      },
-      {
-        entity: e2,
-        birthday: moment().add(3, "day").startOf("day").toDate(),
-        newAge: 12,
-      },
-    ]);
-  }));
+      const expectedFirstBirthday = firstBirthday.add(12, "years");
+      const expectedSecondBirthday = secondBirthday.add(15, "years");
+      expect(component.entries).toEqual([
+        {
+          entity: child1,
+          birthday: expectedFirstBirthday.toDate(),
+          newAge: 12,
+        },
+        {
+          entity: child2,
+          birthday: expectedSecondBirthday.toDate(),
+          newAge: 15,
+        },
+      ]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should support multiple entities types ", async () => {
+    vi.useFakeTimers();
+    try {
+      @DatabaseEntity("BirthdayEntity")
+      class BirthdayEntity extends Entity {
+        @DatabaseField()
+        birthday: DateWithAge;
+      }
+
+      const e1 = new BirthdayEntity();
+      e1.birthday = new DateWithAge(
+        moment().add(1, "day").subtract(4, "year").toDate(),
+      );
+      const e2 = new BirthdayEntity();
+      e2.birthday = new DateWithAge(
+        moment().add(3, "day").subtract(12, "year").toDate(),
+      );
+      const e3 = new TestEntity();
+      e3.dateOfBirth = new DateWithAge(
+        moment().add(2, "day").subtract(8, "year").toDate(),
+      );
+      entityMapper.saveAll([e1, e2, e3]);
+
+      component.entities = {
+        BirthdayEntity: "birthday",
+        [TestEntity.ENTITY_TYPE]: "dateOfBirth",
+      };
+      component.ngOnInit();
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(component.entries).toEqual([
+        {
+          entity: e1,
+          birthday: moment().add(1, "day").startOf("day").toDate(),
+          newAge: 4,
+        },
+        {
+          entity: e3,
+          birthday: moment().add(2, "day").startOf("day").toDate(),
+          newAge: 8,
+        },
+        {
+          entity: e2,
+          birthday: moment().add(3, "day").startOf("day").toDate(),
+          newAge: 12,
+        },
+      ]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

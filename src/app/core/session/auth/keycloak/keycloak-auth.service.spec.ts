@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import { KeycloakAuthService } from "./keycloak-auth.service";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakEventTypeLegacy, KeycloakService } from "keycloak-angular";
@@ -104,21 +104,26 @@ describe("KeycloakAuthService", () => {
     expect(objHeaders["Authorization"]).toBe(`Bearer ${keycloakToken}`);
   });
 
-  it("should re-authorize (login) when access token expires", fakeAsync(() => {
-    service.login();
-    tick();
-    expect(mockKeycloak.updateToken).toHaveBeenCalled();
+  it("should re-authorize (login) when access token expires", async () => {
+    vi.useFakeTimers();
+    try {
+      service.login();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(mockKeycloak.updateToken).toHaveBeenCalled();
 
-    mockKeycloak.updateToken.mockClear();
-    mockKeycloak.getToken.mockClear();
+      mockKeycloak.updateToken.mockClear();
+      mockKeycloak.getToken.mockClear();
 
-    mockKeycloak.keycloakEvents$.next({
-      type: KeycloakEventTypeLegacy.OnTokenExpired,
-    });
-    tick();
-    expect(mockKeycloak.updateToken).toHaveBeenCalled();
-    expect(mockKeycloak.getToken).toHaveBeenCalled();
-  }));
+      mockKeycloak.keycloakEvents$.next({
+        type: KeycloakEventTypeLegacy.OnTokenExpired,
+      });
+      await vi.advanceTimersByTimeAsync(0);
+      expect(mockKeycloak.updateToken).toHaveBeenCalled();
+      expect(mockKeycloak.getToken).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("does not call updateToken() and init() twice concurrently", async () => {
     const sessionPromise1 = service.login();
@@ -159,22 +164,27 @@ describe("KeycloakAuthService", () => {
     }
   });
 
-  it.skip("should gracefully handle failed re-authorization", fakeAsync(() => {
-    // TODO: investigate different updateToken return values in dev and prod setups, see #2318
-    service.login();
-    tick();
-    expect(mockKeycloak.updateToken).toHaveBeenCalled();
+  it.skip("should gracefully handle failed re-authorization", async () => {
+    vi.useFakeTimers();
+    try {
+      // TODO: investigate different updateToken return values in dev and prod setups, see #2318
+      service.login();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(mockKeycloak.updateToken).toHaveBeenCalled();
 
-    mockKeycloak.updateToken.mockClear();
-    mockKeycloak.getToken.mockClear();
+      mockKeycloak.updateToken.mockClear();
+      mockKeycloak.getToken.mockClear();
 
-    mockKeycloak.updateToken.mockResolvedValue(false);
-    mockKeycloak.keycloakEvents$.next({
-      type: KeycloakEventTypeLegacy.OnTokenExpired,
-    });
-    tick();
-    expect(mockKeycloak.updateToken).toHaveBeenCalled();
-    // do not getToken if updateToken failed
-    expect(mockKeycloak.getToken).not.toHaveBeenCalled();
-  }));
+      mockKeycloak.updateToken.mockResolvedValue(false);
+      mockKeycloak.keycloakEvents$.next({
+        type: KeycloakEventTypeLegacy.OnTokenExpired,
+      });
+      await vi.advanceTimersByTimeAsync(0);
+      expect(mockKeycloak.updateToken).toHaveBeenCalled();
+      // do not getToken if updateToken failed
+      expect(mockKeycloak.getToken).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

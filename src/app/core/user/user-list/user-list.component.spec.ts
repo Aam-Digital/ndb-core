@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { UserListComponent } from "./user-list.component";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
@@ -184,24 +179,29 @@ describe("UserListComponent", () => {
     );
   });
 
-  it("should reflect updated email in the table after dialog closes", fakeAsync(() => {
-    component.users.set(mockUsers);
-    mockUserAdminService.getAllUsers.mockClear();
-    mockUserAdminService.getAllUsers.mockReturnValue(of(updatedMockUsers));
-    mockDialogRef.afterClosed.mockReturnValue(
-      of({
-        type: "accountUpdated",
-        data: { user: updatedMockUsers[0] },
-      }),
-    );
+  it("should reflect updated email in the table after dialog closes", async () => {
+    vi.useFakeTimers();
+    try {
+      component.users.set(mockUsers);
+      mockUserAdminService.getAllUsers.mockClear();
+      mockUserAdminService.getAllUsers.mockReturnValue(of(updatedMockUsers));
+      mockDialogRef.afterClosed.mockReturnValue(
+        of({
+          type: "accountUpdated",
+          data: { user: updatedMockUsers[0] },
+        }),
+      );
 
-    const user = mockUsers[0];
-    const originalEmail = user.email;
-    component.openUserDetails(user);
-    tick();
+      const user = mockUsers[0];
+      const originalEmail = user.email;
+      component.openUserDetails(user);
+      await vi.advanceTimersByTimeAsync(0);
 
-    const updatedUser = component.users()[0];
-    expect(updatedUser.email).not.toBe(originalEmail);
-    expect(updatedUser.email).toBe("updated@example.com");
-  }));
+      const updatedUser = component.users()[0];
+      expect(updatedUser.email).not.toBe(originalEmail);
+      expect(updatedUser.email).toBe("updated@example.com");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

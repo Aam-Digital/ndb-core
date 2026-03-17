@@ -5,7 +5,7 @@ import {
   SessionType,
   SyncStateSubject,
 } from "../session-type";
-import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 import { environment } from "../../../../environments/environment";
 import { SessionInfo, SessionSubject } from "../auth/session-info";
 import { LocalAuthService } from "../auth/local/local-auth.service";
@@ -107,78 +107,88 @@ describe("SessionManagerService", () => {
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
   });
 
-  it("should initialize current user as the entity to which a login is connected", fakeAsync(() => {
-    const loggedInUser = new TestEntity(TEST_USER);
-    mockedEntityMapper.load.mockResolvedValue(loggedInUser);
-    const currentUser = TestBed.inject(CurrentUserSubject);
+  it("should initialize current user as the entity to which a login is connected", async () => {
+    vi.useFakeTimers();
+    try {
+      const loggedInUser = new TestEntity(TEST_USER);
+      mockedEntityMapper.load.mockResolvedValue(loggedInUser);
+      const currentUser = TestBed.inject(CurrentUserSubject);
 
-    // first login with existing user entity
-    mockKeycloak.login.mockResolvedValue({
-      name: TEST_USER,
-      id: "101",
-      roles: [],
-      entityId: loggedInUser.getId(),
-    });
-    service.remoteLogin();
-    tick();
+      // first login with existing user entity
+      mockKeycloak.login.mockResolvedValue({
+        name: TEST_USER,
+        id: "101",
+        roles: [],
+        entityId: loggedInUser.getId(),
+      });
+      service.remoteLogin();
+      await vi.advanceTimersByTimeAsync(0);
 
-    // we somehow need this in the Test as the replay doesn't trigger
-    TestBed.inject(ConfigService).entityUpdated.next(new Config());
-    tick();
+      // we somehow need this in the Test as the replay doesn't trigger
+      TestBed.inject(ConfigService).entityUpdated.next(new Config());
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(currentUser.value).toEqual(loggedInUser);
-    expect(mockedEntityMapper.load).toHaveBeenCalledWith(
-      TestEntity.ENTITY_TYPE,
-      loggedInUser.getId(),
-    );
+      expect(currentUser.value).toEqual(loggedInUser);
+      expect(mockedEntityMapper.load).toHaveBeenCalledWith(
+        TestEntity.ENTITY_TYPE,
+        loggedInUser.getId(),
+      );
 
-    // logout -> user should reset
-    service.logout();
-    tick();
-    expect(currentUser.value).toBeUndefined();
+      // logout -> user should reset
+      service.logout();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(currentUser.value).toBeUndefined();
 
-    const adminUser = new TestEntity("admin-user");
-    // login, user entity not available yet
-    mockedEntityMapper.load.mockRejectedValue();
-    mockKeycloak.login.mockResolvedValue({
-      name: "admin-user",
-      id: "101",
-      roles: ["admin"],
-      entityId: adminUser.getId(),
-    });
-    service.remoteLogin();
-    tick();
+      const adminUser = new TestEntity("admin-user");
+      // login, user entity not available yet
+      mockedEntityMapper.load.mockRejectedValue();
+      mockKeycloak.login.mockResolvedValue({
+        name: "admin-user",
+        id: "101",
+        roles: ["admin"],
+        entityId: adminUser.getId(),
+      });
+      service.remoteLogin();
+      await vi.advanceTimersByTimeAsync(0);
 
-    // user entity available -> user should be set
-    mockedEntityMapper.load.mockResolvedValue(adminUser);
-    mockedEntityMapperUpdates.next({ entity: adminUser, type: "new" });
-    tick();
-    expect(currentUser.value).toEqual(adminUser);
-    expect(mockedEntityMapper.load).toHaveBeenCalledWith(
-      TestEntity.ENTITY_TYPE,
-      adminUser.getId(),
-    );
-  }));
+      // user entity available -> user should be set
+      mockedEntityMapper.load.mockResolvedValue(adminUser);
+      mockedEntityMapperUpdates.next({ entity: adminUser, type: "new" });
+      await vi.advanceTimersByTimeAsync(0);
+      expect(currentUser.value).toEqual(adminUser);
+      expect(mockedEntityMapper.load).toHaveBeenCalledWith(
+        TestEntity.ENTITY_TYPE,
+        adminUser.getId(),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should not initialize the user entity if no entityId is set", fakeAsync(() => {
-    mockKeycloak.login.mockResolvedValue({
-      name: "some-user",
-      id: "101",
-      roles: [],
-    });
-    mockedEntityMapper.load.mockClear();
+  it("should not initialize the user entity if no entityId is set", async () => {
+    vi.useFakeTimers();
+    try {
+      mockKeycloak.login.mockResolvedValue({
+        name: "some-user",
+        id: "101",
+        roles: [],
+      });
+      mockedEntityMapper.load.mockClear();
 
-    service.remoteLogin();
-    tick();
+      service.remoteLogin();
+      await vi.advanceTimersByTimeAsync(0);
 
-    // we somehow need this in the Test as the replay doesn't trigger
-    TestBed.inject(ConfigService).entityUpdated.next(new Config());
-    tick();
+      // we somehow need this in the Test as the replay doesn't trigger
+      TestBed.inject(ConfigService).entityUpdated.next(new Config());
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockedEntityMapper.load).not.toHaveBeenCalled();
-    expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
-    expect(TestBed.inject(CurrentUserSubject).value).toBeNull();
-  }));
+      expect(mockedEntityMapper.load).not.toHaveBeenCalled();
+      expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
+      expect(TestBed.inject(CurrentUserSubject).value).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should automatically login, if the session is still valid", async () => {
     await service.remoteLogin();

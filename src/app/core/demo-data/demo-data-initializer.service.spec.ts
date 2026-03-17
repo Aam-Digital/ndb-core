@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 
 import { DemoDataInitializerService } from "./demo-data-initializer.service";
 import { DemoDataService } from "./demo-data.service";
@@ -107,43 +107,52 @@ describe("DemoDataInitializerService", () => {
     expect(mockLocalAuth.saveUser).toHaveBeenCalledWith(adminUser);
   });
 
-  it("it should publish the demo data after logging in the default user", fakeAsync(() => {
-    vi.spyOn(database, "isEmpty").mockResolvedValue(true);
-    service.logInDemoUser();
+  it("it should publish the demo data after logging in the default user", async () => {
+    vi.useFakeTimers();
+    try {
+      vi.spyOn(database, "isEmpty").mockResolvedValue(true);
+      service.logInDemoUser();
 
-    expect(sessionManager.offlineLogin).toHaveBeenCalledWith(adminUser);
-    expect(mockDemoDataService.publishDemoData).not.toHaveBeenCalled();
-    tick();
+      expect(sessionManager.offlineLogin).toHaveBeenCalledWith(adminUser);
+      expect(mockDemoDataService.publishDemoData).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(0);
 
-    service.generateDemoData();
-    tick();
+      service.generateDemoData();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockDemoDataService.publishDemoData).toHaveBeenCalled();
-  }));
+      expect(mockDemoDataService.publishDemoData).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should show a dialog while generating demo data", fakeAsync(() => {
-    const closeSpy = vi.fn();
-    mockDialog.open.mockReturnValue({ close: closeSpy } as any);
-    service.generateDemoData();
+  it("should show a dialog while generating demo data", async () => {
+    vi.useFakeTimers();
+    try {
+      const closeSpy = vi.fn();
+      mockDialog.open.mockReturnValue({ close: closeSpy } as any);
+      service.generateDemoData();
 
-    expect(mockDialog.open).toHaveBeenCalledWith(
-      DemoDataGeneratingProgressDialogComponent,
-    );
-    expect(closeSpy).not.toHaveBeenCalled();
+      expect(mockDialog.open).toHaveBeenCalledWith(
+        DemoDataGeneratingProgressDialogComponent,
+      );
+      expect(closeSpy).not.toHaveBeenCalled();
 
-    tick();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(closeSpy).toHaveBeenCalled();
-  }));
+      expect(closeSpy).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should sync with existing demo data when another user logs in", fakeAsync(() => {
-    service.logInDemoUser();
+  it("should sync with existing demo data when another user logs in", async () => {
+    await service.logInDemoUser();
     database.init(demoUserDBName);
     const defaultUserDB = database.getPouchDB();
 
     const userDoc = { _id: "userDoc" };
-    database.put(userDoc);
-    tick();
+    await database.put(userDoc);
 
     TestBed.inject(SessionSubject).next({
       name: adminUser.name,
@@ -152,29 +161,38 @@ describe("DemoDataInitializerService", () => {
     });
     database.init(adminDBName);
     TestBed.inject(LoginStateSubject).next(LoginState.LOGGED_IN);
-    tick();
 
-    expect(database.get(userDoc._id)).resolves.not.toThrow();
-    tick();
+    await vi.waitFor(async () => {
+      await expect(database.get(userDoc._id)).resolves.toMatchObject(userDoc);
+    });
 
     const adminDoc1 = { _id: "adminDoc1" };
     const adminDoc2 = { _id: "adminDoc2" };
-    database.put(adminDoc1);
-    database.put(adminDoc2);
-    tick();
+    await database.put(adminDoc1);
+    await database.put(adminDoc2);
 
-    expect(database.getPouchDB().name).toBe(adminDBName);
-    expect(database.get(adminDoc1._id)).resolves.not.toThrow();
-    expect(database.get(adminDoc2._id)).resolves.not.toThrow();
-    expect(defaultUserDB.get(adminDoc1._id)).resolves.not.toThrow();
-    expect(defaultUserDB.get(adminDoc2._id)).resolves.not.toThrow();
-    expect(defaultUserDB.get(userDoc._id)).resolves.not.toThrow();
-    tick();
-  }));
+    await vi.waitFor(async () => {
+      expect(database.getPouchDB().name).toBe(adminDBName);
+      await expect(database.get(adminDoc1._id)).resolves.toMatchObject(
+        adminDoc1,
+      );
+      await expect(database.get(adminDoc2._id)).resolves.toMatchObject(
+        adminDoc2,
+      );
+      await expect(defaultUserDB.get(adminDoc1._id)).resolves.toMatchObject(
+        adminDoc1,
+      );
+      await expect(defaultUserDB.get(adminDoc2._id)).resolves.toMatchObject(
+        adminDoc2,
+      );
+      await expect(defaultUserDB.get(userDoc._id)).resolves.toMatchObject(
+        userDoc,
+      );
+    });
+  });
 
-  it("should stop syncing after logout", fakeAsync(() => {
-    service.logInDemoUser();
-    tick();
+  it("should stop syncing after logout", async () => {
+    await service.logInDemoUser();
 
     TestBed.inject(SessionSubject).next({
       name: adminUser.name,
@@ -184,22 +202,24 @@ describe("DemoDataInitializerService", () => {
     database.init(adminDBName);
     TestBed.inject(LoginStateSubject).next(LoginState.LOGGED_IN);
     const adminUserDB = database.getPouchDB();
-    tick();
 
     const syncedDoc = { _id: "syncedDoc" };
-    adminUserDB.put(syncedDoc);
-    tick();
-
-    TestBed.inject(LoginStateSubject).next(LoginState.LOGGED_OUT);
-
-    const unsyncedDoc = { _id: "unsyncedDoc" };
-    adminUserDB.put(unsyncedDoc);
-    tick();
+    await adminUserDB.put(syncedDoc);
 
     database.init(demoUserDBName);
     const defaultUserDB = database.getPouchDB();
-    expect(defaultUserDB.get(syncedDoc._id)).resolves.not.toThrow();
-    expect(defaultUserDB.get(unsyncedDoc._id)).rejects.toThrow();
-    tick();
-  }));
+    await vi.waitFor(async () => {
+      await expect(defaultUserDB.get(syncedDoc._id)).resolves.toMatchObject(
+        syncedDoc,
+      );
+    });
+
+    TestBed.inject(LoginStateSubject).next(LoginState.LOGGED_OUT);
+    await vi.waitFor(() => expect((service as any).liveSyncHandle).toBeFalsy());
+
+    const unsyncedDoc = { _id: "unsyncedDoc" };
+    await adminUserDB.put(unsyncedDoc);
+
+    await expect(defaultUserDB.get(unsyncedDoc._id)).rejects.toThrow();
+  });
 });

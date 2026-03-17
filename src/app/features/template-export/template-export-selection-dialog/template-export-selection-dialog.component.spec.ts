@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { TemplateExportSelectionDialogComponent } from "./template-export-selection-dialog.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -125,53 +120,63 @@ describe("TemplateExportSelectionDialogComponent", () => {
     expect(component.templateEntityFilter(template3)).toBe(false);
   });
 
-  it("should trigger download with API response when requesting file", fakeAsync(() => {
-    const entity = new TestEntity();
-    entity.name = "test entity";
-    component.entity = entity;
+  it("should trigger download with API response when requesting file", async () => {
+    vi.useFakeTimers();
+    try {
+      const entity = new TestEntity();
+      entity.name = "test entity";
+      component.entity = entity;
 
-    const mockResponse: TemplateExportResult = {
-      filename: "test.pdf",
-      file: new ArrayBuffer(10),
-    };
-    mockPdfGeneratorApiService.generatePdfFromTemplate.mockReturnValue(
-      of(mockResponse).pipe(delay(100)),
-    );
+      const mockResponse: TemplateExportResult = {
+        filename: "test.pdf",
+        file: new ArrayBuffer(10),
+      };
+      mockPdfGeneratorApiService.generatePdfFromTemplate.mockReturnValue(
+        of(mockResponse).pipe(delay(100)),
+      );
 
-    component.requestFile();
-    tick(1);
-    expect(component.loadingRequestedFile).toBe(true);
-    tick(100);
-    expect(component.loadingRequestedFile).toBe(false);
+      component.requestFile();
+      await vi.advanceTimersByTimeAsync(1);
+      expect(component.loadingRequestedFile).toBe(true);
+      await vi.advanceTimersByTimeAsync(100);
+      expect(component.loadingRequestedFile).toBe(false);
 
-    expect(
-      mockPdfGeneratorApiService.generatePdfFromTemplate,
-    ).toHaveBeenCalled();
-    expect(mockDownloadService.triggerDownload).toHaveBeenCalledWith(
-      mockResponse.file,
-      "pdf",
-      mockResponse.filename,
-    );
-    expect(mockDialogRef.close).toHaveBeenCalled();
-  }));
+      expect(
+        mockPdfGeneratorApiService.generatePdfFromTemplate,
+      ).toHaveBeenCalled();
+      expect(mockDownloadService.triggerDownload).toHaveBeenCalledWith(
+        mockResponse.file,
+        "pdf",
+        mockResponse.filename,
+      );
+      expect(mockDialogRef.close).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should disable loading but not close dialog if API request fails", fakeAsync(() => {
-    mockPdfGeneratorApiService.generatePdfFromTemplate.mockReturnValue(
-      of(false).pipe(
-        delay(100),
-        map(() => {
-          throw new Error();
-        }),
-      ),
-    );
+  it("should disable loading but not close dialog if API request fails", async () => {
+    vi.useFakeTimers();
+    try {
+      mockPdfGeneratorApiService.generatePdfFromTemplate.mockReturnValue(
+        of(false).pipe(
+          delay(100),
+          map(() => {
+            throw new Error();
+          }),
+        ),
+      );
 
-    component.requestFile();
-    tick(1);
-    expect(component.loadingRequestedFile).toBe(true);
-    tick(100);
-    expect(component.loadingRequestedFile).toBe(false);
+      component.requestFile();
+      await vi.advanceTimersByTimeAsync(1);
+      expect(component.loadingRequestedFile).toBe(true);
+      await vi.advanceTimersByTimeAsync(100);
+      expect(component.loadingRequestedFile).toBe(false);
 
-    expect(mockDownloadService.triggerDownload).not.toHaveBeenCalled();
-    expect(mockDialogRef.close).not.toHaveBeenCalled();
-  }));
+      expect(mockDownloadService.triggerDownload).not.toHaveBeenCalled();
+      expect(mockDialogRef.close).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ImportReviewDataComponent } from "./import-review-data.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -59,219 +54,265 @@ describe("ImportReviewDataComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should parse data whenever it changes", fakeAsync(() => {
-    const testEntities = [new TestEntity("1")];
-    mockImportService.transformRawDataToEntities.mockResolvedValue({
-      entities: testEntities,
-      errors: [],
-    });
-    component.columnMapping = [
-      { column: "x", propertyName: "name" },
-      { column: "y", propertyName: undefined }, // unmapped property => not displayed
-    ];
-    component.stepIsFocused = true;
+  it("should parse data whenever it changes", async () => {
+    vi.useFakeTimers();
+    try {
+      const testEntities = [new TestEntity("1")];
+      mockImportService.transformRawDataToEntities.mockResolvedValue({
+        entities: testEntities,
+        errors: [],
+      });
+      component.columnMapping = [
+        { column: "x", propertyName: "name" },
+        { column: "y", propertyName: undefined }, // unmapped property => not displayed
+      ];
+      component.stepIsFocused = true;
 
-    component.ngOnChanges({
-      columnMapping: {} as any,
-      showErrorDialog: {} as any,
-    });
-    tick();
+      component.ngOnChanges({
+        columnMapping: {} as any,
+        showErrorDialog: {} as any,
+      });
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.mappedEntities).toEqual(testEntities);
-    expect(component.displayColumns).toEqual([
-      component.IMPORT_STATUS_COLUMN,
-      "name",
-    ]);
-  }));
+      expect(component.mappedEntities).toEqual(testEntities);
+      expect(component.displayColumns).toEqual([
+        component.IMPORT_STATUS_COLUMN,
+        "name",
+      ]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should open Summary Confirmation when clicking to start import", fakeAsync(() => {
-    component.startImport();
-    tick();
+  it("should open Summary Confirmation when clicking to start import", async () => {
+    vi.useFakeTimers();
+    try {
+      component.startImport();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockDialog.open).toHaveBeenCalled();
-  }));
+      expect(mockDialog.open).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should handle errors from transformRawDataToEntities gracefully", fakeAsync(() => {
-    mockImportService.transformRawDataToEntities.mockRejectedValue(
-      new Error("location lookup failed"),
-    );
-    vi.spyOn(Logging, "error");
+  it("should handle errors from transformRawDataToEntities gracefully", async () => {
+    vi.useFakeTimers();
+    try {
+      mockImportService.transformRawDataToEntities.mockRejectedValue(
+        new Error("location lookup failed"),
+      );
+      vi.spyOn(Logging, "error");
 
-    component.columnMapping = [{ column: "x", propertyName: "name" }];
-    component.stepIsFocused = true;
-    component.ngOnChanges({
-      columnMapping: {} as any,
-      showErrorDialog: {} as any,
-    });
-    tick();
+      component.columnMapping = [{ column: "x", propertyName: "name" }];
+      component.stepIsFocused = true;
+      component.ngOnChanges({
+        columnMapping: {} as any,
+        showErrorDialog: {} as any,
+      });
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.mappedEntities).toEqual([]);
-    expect(component.isLoading).toBe(false);
-    expect(Logging.error).toHaveBeenCalled();
-  }));
+      expect(component.mappedEntities).toEqual([]);
+      expect(component.isLoading).toBe(false);
+      expect(Logging.error).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should show confirmation dialog and keep entities when user continues after transformation errors", fakeAsync(() => {
-    const testEntities = [new TestEntity("1")];
-    mockImportService.transformRawDataToEntities.mockResolvedValue({
-      entities: testEntities,
-      errors: [
-        {
-          column: "address",
-          propertyName: "location",
-          rowIndex: 0,
-          error: new Error("lookup failed"),
-        },
-      ],
-    });
-    mockConfirmationDialog.getConfirmation.mockResolvedValue(true);
+  it("should show confirmation dialog and keep entities when user continues after transformation errors", async () => {
+    vi.useFakeTimers();
+    try {
+      const testEntities = [new TestEntity("1")];
+      mockImportService.transformRawDataToEntities.mockResolvedValue({
+        entities: testEntities,
+        errors: [
+          {
+            column: "address",
+            propertyName: "location",
+            rowIndex: 0,
+            error: new Error("lookup failed"),
+          },
+        ],
+      });
+      mockConfirmationDialog.getConfirmation.mockResolvedValue(true);
 
-    component.columnMapping = [{ column: "x", propertyName: "name" }];
-    component.stepIsFocused = true;
-    component.ngOnChanges({
-      columnMapping: {} as any,
-      showErrorDialog: {} as any,
-    });
-    tick();
+      component.columnMapping = [{ column: "x", propertyName: "name" }];
+      component.stepIsFocused = true;
+      component.ngOnChanges({
+        columnMapping: {} as any,
+        showErrorDialog: {} as any,
+      });
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
-    expect(component.mappedEntities).toEqual(testEntities);
-    expect(component.isLoading).toBe(false);
-  }));
+      expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
+      expect(component.mappedEntities).toEqual(testEntities);
+      expect(component.isLoading).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should continue preview even if transformation dialog resolves false", fakeAsync(() => {
-    const testEntities = [new TestEntity("1")];
-    mockImportService.transformRawDataToEntities.mockResolvedValue({
-      entities: testEntities,
-      errors: [
-        {
-          column: "address",
-          propertyName: "location",
-          rowIndex: 0,
-          error: new Error("lookup failed"),
-        },
-      ],
-    });
-    mockConfirmationDialog.getConfirmation.mockResolvedValue(false);
+  it("should continue preview even if transformation dialog resolves false", async () => {
+    vi.useFakeTimers();
+    try {
+      const testEntities = [new TestEntity("1")];
+      mockImportService.transformRawDataToEntities.mockResolvedValue({
+        entities: testEntities,
+        errors: [
+          {
+            column: "address",
+            propertyName: "location",
+            rowIndex: 0,
+            error: new Error("lookup failed"),
+          },
+        ],
+      });
+      mockConfirmationDialog.getConfirmation.mockResolvedValue(false);
 
-    component.columnMapping = [{ column: "x", propertyName: "name" }];
-    component.stepIsFocused = true;
-    component.ngOnChanges({
-      columnMapping: {} as any,
-      showErrorDialog: {} as any,
-    });
-    tick();
+      component.columnMapping = [{ column: "x", propertyName: "name" }];
+      component.stepIsFocused = true;
+      component.ngOnChanges({
+        columnMapping: {} as any,
+        showErrorDialog: {} as any,
+      });
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
-    expect(component.mappedEntities).toEqual(testEntities);
-    expect(component.isLoading).toBe(false);
-  }));
+      expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
+      expect(component.mappedEntities).toEqual(testEntities);
+      expect(component.isLoading).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should show confirmation dialog when preview becomes visible with errors", fakeAsync(() => {
-    const testEntities = [new TestEntity("1")];
-    mockImportService.transformRawDataToEntities.mockResolvedValue({
-      entities: testEntities,
-      errors: [
-        {
-          column: "address",
-          propertyName: "location",
-          rowIndex: 0,
-          error: new Error("lookup failed"),
-        },
-      ],
-    });
-    component.stepIsFocused = false;
+  it("should show confirmation dialog when preview becomes visible with errors", async () => {
+    vi.useFakeTimers();
+    try {
+      const testEntities = [new TestEntity("1")];
+      mockImportService.transformRawDataToEntities.mockResolvedValue({
+        entities: testEntities,
+        errors: [
+          {
+            column: "address",
+            propertyName: "location",
+            rowIndex: 0,
+            error: new Error("lookup failed"),
+          },
+        ],
+      });
+      component.stepIsFocused = false;
 
-    component.columnMapping = [{ column: "x", propertyName: "name" }];
-    // Simulate data change and then making preview visible
-    component.ngOnChanges({
-      columnMapping: {} as any,
-    });
-    tick();
+      component.columnMapping = [{ column: "x", propertyName: "name" }];
+      // Simulate data change and then making preview visible
+      component.ngOnChanges({
+        columnMapping: {} as any,
+      });
+      await vi.advanceTimersByTimeAsync(0);
 
-    // Data changed but preview not visible yet - should NOT parse yet
-    expect(mockImportService.transformRawDataToEntities).not.toHaveBeenCalled();
-    expect(component.mappedEntities).toEqual([]);
+      // Data changed but preview not visible yet - should NOT parse yet
+      expect(
+        mockImportService.transformRawDataToEntities,
+      ).not.toHaveBeenCalled();
+      expect(component.mappedEntities).toEqual([]);
 
-    // Now show the preview
-    component.stepIsFocused = true;
-    component.ngOnChanges({
-      showErrorDialog: {} as any,
-    });
-    tick();
+      // Now show the preview
+      component.stepIsFocused = true;
+      component.ngOnChanges({
+        showErrorDialog: {} as any,
+      });
+      await vi.advanceTimersByTimeAsync(0);
 
-    // Should parse now and show the confirmation dialog for errors
-    expect(mockImportService.transformRawDataToEntities).toHaveBeenCalled();
-    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
-    expect(component.mappedEntities).toEqual(testEntities);
-    expect(component.isLoading).toBe(false);
-  }));
+      // Should parse now and show the confirmation dialog for errors
+      expect(mockImportService.transformRawDataToEntities).toHaveBeenCalled();
+      expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
+      expect(component.mappedEntities).toEqual(testEntities);
+      expect(component.isLoading).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should delay parsing until preview is visible for performance", fakeAsync(() => {
-    const testEntities = [new TestEntity("1")];
-    mockImportService.transformRawDataToEntities.mockResolvedValue({
-      entities: testEntities,
-      errors: [],
-    });
-    component.stepIsFocused = false;
+  it("should delay parsing until preview is visible for performance", async () => {
+    vi.useFakeTimers();
+    try {
+      const testEntities = [new TestEntity("1")];
+      mockImportService.transformRawDataToEntities.mockResolvedValue({
+        entities: testEntities,
+        errors: [],
+      });
+      component.stepIsFocused = false;
 
-    // Change data while preview is not visible
-    component.columnMapping = [{ column: "x", propertyName: "name" }];
-    component.ngOnChanges({
-      columnMapping: {} as any,
-    });
-    tick();
+      // Change data while preview is not visible
+      component.columnMapping = [{ column: "x", propertyName: "name" }];
+      component.ngOnChanges({
+        columnMapping: {} as any,
+      });
+      await vi.advanceTimersByTimeAsync(0);
 
-    // Should NOT parse yet
-    expect(mockImportService.transformRawDataToEntities).not.toHaveBeenCalled();
-    expect(component.mappedEntities).toEqual([]);
+      // Should NOT parse yet
+      expect(
+        mockImportService.transformRawDataToEntities,
+      ).not.toHaveBeenCalled();
+      expect(component.mappedEntities).toEqual([]);
 
-    // Make preview visible
-    component.stepIsFocused = true;
-    component.ngOnChanges({
-      showErrorDialog: {} as any,
-    });
-    tick();
+      // Make preview visible
+      component.stepIsFocused = true;
+      component.ngOnChanges({
+        showErrorDialog: {} as any,
+      });
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockImportService.transformRawDataToEntities).toHaveBeenCalled();
-    expect(component.mappedEntities).toEqual(testEntities);
-  }));
+      expect(mockImportService.transformRawDataToEntities).toHaveBeenCalled();
+      expect(component.mappedEntities).toEqual(testEntities);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should not re-parse when only navigating away and back without data changes", fakeAsync(() => {
-    const testEntities = [new TestEntity("1")];
-    mockImportService.transformRawDataToEntities.mockResolvedValue({
-      entities: testEntities,
-      errors: [],
-    });
-    component.stepIsFocused = true;
-    component.columnMapping = [{ column: "x", propertyName: "name" }];
+  it("should not re-parse when only navigating away and back without data changes", async () => {
+    vi.useFakeTimers();
+    try {
+      const testEntities = [new TestEntity("1")];
+      mockImportService.transformRawDataToEntities.mockResolvedValue({
+        entities: testEntities,
+        errors: [],
+      });
+      component.stepIsFocused = true;
+      component.columnMapping = [{ column: "x", propertyName: "name" }];
 
-    // Initial parse when data changes and preview is visible
-    component.ngOnChanges({
-      columnMapping: {} as any,
-      showErrorDialog: {} as any,
-    });
-    tick();
+      // Initial parse when data changes and preview is visible
+      component.ngOnChanges({
+        columnMapping: {} as any,
+        showErrorDialog: {} as any,
+      });
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockImportService.transformRawDataToEntities).toHaveBeenCalledTimes(
-      1,
-    );
-    mockImportService.transformRawDataToEntities.mockClear();
+      expect(
+        mockImportService.transformRawDataToEntities,
+      ).toHaveBeenCalledTimes(1);
+      mockImportService.transformRawDataToEntities.mockClear();
 
-    // Navigate away from preview
-    component.stepIsFocused = false;
-    component.ngOnChanges({
-      showErrorDialog: {} as any,
-    });
-    tick();
+      // Navigate away from preview
+      component.stepIsFocused = false;
+      component.ngOnChanges({
+        showErrorDialog: {} as any,
+      });
+      await vi.advanceTimersByTimeAsync(0);
 
-    // Navigate back to preview (no data changes)
-    component.stepIsFocused = true;
-    component.ngOnChanges({
-      showErrorDialog: {} as any,
-    });
-    tick();
+      // Navigate back to preview (no data changes)
+      component.stepIsFocused = true;
+      component.ngOnChanges({
+        showErrorDialog: {} as any,
+      });
+      await vi.advanceTimersByTimeAsync(0);
 
-    // Should NOT re-parse since data hasn't changed
-    expect(mockImportService.transformRawDataToEntities).not.toHaveBeenCalled();
-  }));
+      // Should NOT re-parse since data hasn't changed
+      expect(
+        mockImportService.transformRawDataToEntities,
+      ).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

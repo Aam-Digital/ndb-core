@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { EntityDetailsComponent } from "./entity-details.component";
 import { EntityDetailsConfig, PanelConfig } from "../EntityDetailsConfig";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
@@ -55,10 +49,12 @@ describe("EntityDetailsComponent", () => {
     };
     mockChildrenService.queryRelations.mockResolvedValue([]);
     mockAbility = {
+      can: vi.fn(),
       cannot: vi.fn(),
       update: vi.fn(),
       on: vi.fn(),
     };
+    mockAbility.can.mockReturnValue(true);
     mockAbility.cannot.mockReturnValue(false);
     mockAbility.on.mockReturnValue(() => true);
 
@@ -88,60 +84,70 @@ describe("EntityDetailsComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("sets the panels config with child and creating status", fakeAsync(() => {
-    const testChild = new TestEntity("Test-Child");
-    testChild["_rev"] = "1"; // mark as "not new"
-    TestBed.inject(EntityMapperService).save(testChild);
-    tick();
-    component.id = testChild.getId(true);
-    component.ngOnChanges(simpleChangesFor(component, "id"));
-    tick();
+  it("sets the panels config with child and creating status", async () => {
+    vi.useFakeTimers();
+    try {
+      const testChild = new TestEntity("Test-Child");
+      testChild["_rev"] = "1"; // mark as "not new"
+      TestBed.inject(EntityMapperService).save(testChild);
+      await vi.advanceTimersByTimeAsync(0);
+      component.id = testChild.getId(true);
+      component.ngOnChanges(simpleChangesFor(component, "id"));
+      await vi.advanceTimersByTimeAsync(0);
 
-    component.panels.forEach((p) =>
-      p.components.forEach((c) => {
-        const panelConfig = c.config as PanelConfig;
-        expect(panelConfig.entity).toEqual(testChild);
-        expect(panelConfig.creatingNew).toBe(false);
-      }),
-    );
-  }));
+      component.panels.forEach((p) =>
+        p.components.forEach((c) => {
+          const panelConfig = c.config as PanelConfig;
+          expect(panelConfig.entity).toEqual(testChild);
+          expect(panelConfig.creatingNew).toBe(false);
+        }),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("filters out panels not permitted for the current user role", fakeAsync(() => {
-    const testChild = new TestEntity("Role-Test");
-    testChild.getConstructor().enableUserAccounts = false;
+  it("filters out panels not permitted for the current user role", async () => {
+    vi.useFakeTimers();
+    try {
+      const testChild = new TestEntity("Role-Test");
+      testChild.getConstructor().enableUserAccounts = false;
 
-    TestBed.inject(EntityMapperService).save(testChild);
-    tick();
-    component.id = testChild.getId(true);
+      TestBed.inject(EntityMapperService).save(testChild);
+      await vi.advanceTimersByTimeAsync(0);
+      component.id = testChild.getId(true);
 
-    component.panels = [
-      {
-        title: "Visible Panel",
-        components: [
-          { title: "Component A", component: "TestComponent", config: {} },
-        ],
-        permittedUserRoles: ["user_app"],
-      },
-      {
-        title: "Hidden Panel",
-        components: [
-          { title: "Component B", component: "TestComponent", config: {} },
-        ],
-        permittedUserRoles: ["admin_app"],
-      },
-      {
-        title: "Default Panel (without stating permitted roles)",
-        components: [
-          { title: "Component C", component: "TestComponent", config: {} },
-        ],
-      },
-    ];
-    component.ngOnChanges(simpleChangesFor(component, "id", "panels"));
-    tick();
+      component.panels = [
+        {
+          title: "Visible Panel",
+          components: [
+            { title: "Component A", component: "TestComponent", config: {} },
+          ],
+          permittedUserRoles: ["user_app"],
+        },
+        {
+          title: "Hidden Panel",
+          components: [
+            { title: "Component B", component: "TestComponent", config: {} },
+          ],
+          permittedUserRoles: ["admin_app"],
+        },
+        {
+          title: "Default Panel (without stating permitted roles)",
+          components: [
+            { title: "Component C", component: "TestComponent", config: {} },
+          ],
+        },
+      ];
+      component.ngOnChanges(simpleChangesFor(component, "id", "panels"));
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.panels.length).toBe(2);
-    expect(component.panels[0].title).toBe("Visible Panel");
-  }));
+      expect(component.panels.length).toBe(2);
+      expect(component.panels[0].title).toBe("Visible Panel");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
 
 function simpleChangesFor(component, ...properties: string[]) {

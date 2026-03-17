@@ -1,10 +1,6 @@
 import { UpdateManagerService } from "./update-manager.service";
-import {
-  discardPeriodicTasks,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ApplicationRef } from "@angular/core";
+import { TestBed } from "@angular/core/testing";
 import {
   SwUpdate,
   UnrecoverableStateEvent,
@@ -13,6 +9,7 @@ import {
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { Subject } from "rxjs";
+import { of } from "rxjs";
 import { Logging } from "../../logging/logging.service";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
@@ -67,6 +64,7 @@ describe("UpdateManagerService", () => {
         { provide: LatestChangesDialogService, useValue: latestChangesDialog },
         { provide: UnsavedChangesService, useValue: unsavedChanges },
         { provide: LOCATION_TOKEN, useValue: mockLocation },
+        { provide: ApplicationRef, useValue: { isStable: of(true) } },
       ],
     });
 
@@ -142,23 +140,26 @@ describe("UpdateManagerService", () => {
     );
   });
 
-  it("should check for updates once on startup and then every hour", fakeAsync(() => {
-    service.regularlyCheckForUpdates();
-    tick();
+  it("should check for updates once on startup and then every hour", async () => {
+    vi.useFakeTimers();
+    try {
+      service.regularlyCheckForUpdates();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(1);
+      expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(1);
 
-    // One hour later
-    tick(1000 * 60 * 60);
+      // One hour later
+      await vi.advanceTimersByTimeAsync(1000 * 60 * 60);
 
-    expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(2);
+      expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(2);
 
-    tick(1000 * 60 * 60);
+      await vi.advanceTimersByTimeAsync(1000 * 60 * 60);
 
-    expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(3);
-
-    discardPeriodicTasks();
-  }));
+      expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(3);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should trigger the latest changes dialog on startup only if update note is set", () => {
     latestChangesDialog.showLatestChangesIfUpdated.mockClear();

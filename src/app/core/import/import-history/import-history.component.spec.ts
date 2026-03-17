@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ImportHistoryComponent } from "./import-history.component";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -63,28 +58,38 @@ describe("ImportHistoryComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should load all previous imports, sorted by date", fakeAsync(() => {
-    mockEntityMapper.loadType.mockResolvedValue([testImport1, testImport2]);
+  it("should load all previous imports, sorted by date", async () => {
+    vi.useFakeTimers();
+    try {
+      mockEntityMapper.loadType.mockResolvedValue([testImport1, testImport2]);
 
-    component.ngOnInit();
-    tick();
+      component.ngOnInit();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.previousImports).toEqual([testImport2, testImport1]);
-  }));
+      expect(component.previousImports).toEqual([testImport2, testImport1]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should ask for confirmation before undo action", fakeAsync(() => {
-    mockConfirmationDialogService.getConfirmation.mockResolvedValue(false);
-    component.undoImport(testImport1);
-    tick();
+  it("should ask for confirmation before undo action", async () => {
+    vi.useFakeTimers();
+    try {
+      mockConfirmationDialogService.getConfirmation.mockResolvedValue(false);
+      component.undoImport(testImport1);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockConfirmationDialogService.getConfirmation).toHaveBeenCalled();
-    expect(mockImportService.undoImport).not.toHaveBeenCalled();
+      expect(mockConfirmationDialogService.getConfirmation).toHaveBeenCalled();
+      expect(mockImportService.undoImport).not.toHaveBeenCalled();
 
-    mockConfirmationDialogService.getConfirmation.mockResolvedValue(true);
-    component.undoImport(testImport1);
-    tick();
+      mockConfirmationDialogService.getConfirmation.mockResolvedValue(true);
+      component.undoImport(testImport1);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockConfirmationDialogService.getConfirmation).toHaveBeenCalled();
-    expect(mockImportService.undoImport).toHaveBeenCalled();
-  }));
+      expect(mockConfirmationDialogService.getConfirmation).toHaveBeenCalled();
+      expect(mockImportService.undoImport).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AppComponent } from "./app.component";
 import { AppModule } from "./app.module";
 import { environment } from "../environments/environment";
@@ -31,29 +31,29 @@ describe("AppComponent", () => {
   let fixture: ComponentFixture<AppComponent>;
   const intervalBefore = 5000;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     vi.setConfig({ testTimeout: 10000 });
     environment.demo_mode = true;
-    TestBed.configureTestingModule({
+    await TestBed.configureTestingModule({
       imports: [AppModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
       ],
     }).compileComponents();
-  }));
+  });
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
-  afterEach(waitForAsync(() => {
+  afterEach(async () => {
     environment.demo_mode = false;
     vi.setConfig({ testTimeout: intervalBefore });
     return TestBed.inject(DatabaseResolverService).destroyDatabases();
-  }));
+  });
 
   it("should be created", () => {
     expect(component).toBeTruthy();

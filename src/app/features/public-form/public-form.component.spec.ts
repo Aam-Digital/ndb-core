@@ -1,10 +1,5 @@
 import type { Mock } from "vitest";
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { PublicFormComponent } from "./public-form.component";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
@@ -76,225 +71,298 @@ describe("PublicFormComponent", () => {
     expect(initRemoteDBSpy).toHaveBeenCalled();
   });
 
-  it("should initialize component with values from PublicFormConfig once config is ready", fakeAsync(() => {
-    expect(component.entityFormEntries.length).toBe(0);
-    testFormConfig.title = "Some test title";
-    testFormConfig.entity = "TestEntity";
+  it("should initialize component with values from PublicFormConfig once config is ready", async () => {
+    vi.useFakeTimers();
+    try {
+      expect(component.entityFormEntries.length).toBe(0);
+      testFormConfig.title = "Some test title";
+      testFormConfig.entity = "TestEntity";
 
-    initComponent();
-    tick();
+      initComponent();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.entityFormEntries[0].entity.getConstructor()).toBe(
-      TestEntity,
-    );
-    expect(component.formConfig.title).toBe("Some test title");
-  }));
+      expect(component.entityFormEntries[0].entity.getConstructor()).toBe(
+        TestEntity,
+      );
+      expect(component.formConfig.title).toBe("Some test title");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should navigate to the success page and show the button if enabled", fakeAsync(() => {
-    testFormConfig.showSubmitAnotherButton = true;
-    initComponent();
-    tick();
-    const saveSpy = vi.spyOn(TestBed.inject(EntityFormService), "saveChanges");
-    const navigateSpy = vi.spyOn(TestBed.inject(Router), "navigate");
-    saveSpy.mockResolvedValue(undefined);
-    (component.entityFormEntries[0].form.formGroup.get("name") as any).setValue(
-      "some name",
-    );
+  it("should navigate to the success page and show the button if enabled", async () => {
+    vi.useFakeTimers();
+    try {
+      testFormConfig.showSubmitAnotherButton = true;
+      initComponent();
+      await vi.advanceTimersByTimeAsync(0);
+      const saveSpy = vi.spyOn(
+        TestBed.inject(EntityFormService),
+        "saveChanges",
+      );
+      const navigateSpy = vi.spyOn(TestBed.inject(Router), "navigate");
+      saveSpy.mockResolvedValue(undefined);
+      (
+        component.entityFormEntries[0].form.formGroup.get("name") as any
+      ).setValue("some name");
 
-    component.submit();
+      component.submit();
 
-    expect(saveSpy).toHaveBeenCalledWith(
-      component.entityFormEntries[0].form,
-      component.entityFormEntries[0].entity,
-    );
-    tick();
-    expect(navigateSpy).toHaveBeenCalledWith(
-      ["/public-form/submission-success"],
-      { queryParams: { showSubmitAnotherButton: true } },
-    );
-  }));
+      expect(saveSpy).toHaveBeenCalledWith(
+        component.entityFormEntries[0].form,
+        component.entityFormEntries[0].entity,
+      );
+      await vi.advanceTimersByTimeAsync(0);
+      expect(navigateSpy).toHaveBeenCalledWith(
+        ["/public-form/submission-success"],
+        { queryParams: { showSubmitAnotherButton: true } },
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should navigate to the success page and hide the button if disabled", fakeAsync(() => {
-    testFormConfig.showSubmitAnotherButton = false;
-    initComponent();
-    tick();
-    const saveSpy = vi.spyOn(TestBed.inject(EntityFormService), "saveChanges");
-    const navigateSpy = vi.spyOn(TestBed.inject(Router), "navigate");
-    saveSpy.mockResolvedValue(undefined);
-    (component.entityFormEntries[0].form.formGroup.get("name") as any).setValue(
-      "some name",
-    );
+  it("should navigate to the success page and hide the button if disabled", async () => {
+    vi.useFakeTimers();
+    try {
+      testFormConfig.showSubmitAnotherButton = false;
+      initComponent();
+      await vi.advanceTimersByTimeAsync(0);
+      const saveSpy = vi.spyOn(
+        TestBed.inject(EntityFormService),
+        "saveChanges",
+      );
+      const navigateSpy = vi.spyOn(TestBed.inject(Router), "navigate");
+      saveSpy.mockResolvedValue(undefined);
+      (
+        component.entityFormEntries[0].form.formGroup.get("name") as any
+      ).setValue("some name");
 
-    component.submit();
+      component.submit();
 
-    expect(saveSpy).toHaveBeenCalledWith(
-      component.entityFormEntries[0].form,
-      component.entityFormEntries[0].entity,
-    );
-    tick();
-    expect(navigateSpy).toHaveBeenCalledWith(
-      ["/public-form/submission-success"],
-      { queryParams: { showSubmitAnotherButton: false } },
-    );
-  }));
+      expect(saveSpy).toHaveBeenCalledWith(
+        component.entityFormEntries[0].form,
+        component.entityFormEntries[0].entity,
+      );
+      await vi.advanceTimersByTimeAsync(0);
+      expect(navigateSpy).toHaveBeenCalledWith(
+        ["/public-form/submission-success"],
+        { queryParams: { showSubmitAnotherButton: false } },
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should show an inline error and not reset when trying to submit invalid form", fakeAsync(() => {
-    initComponent();
-    tick();
-    const saveSpy = vi.spyOn(TestBed.inject(EntityFormService), "saveChanges");
-    saveSpy.mockImplementation(() => {
-      throw new InvalidFormFieldError();
-    });
-    (component.entityFormEntries[0].form.formGroup.get("name") as any).setValue(
-      "some name",
-    );
+  it("should show an inline error and not reset when trying to submit invalid form", async () => {
+    vi.useFakeTimers();
+    try {
+      initComponent();
+      await vi.advanceTimersByTimeAsync(0);
+      const saveSpy = vi.spyOn(
+        TestBed.inject(EntityFormService),
+        "saveChanges",
+      );
+      saveSpy.mockImplementation(() => {
+        throw new InvalidFormFieldError();
+      });
+      (
+        component.entityFormEntries[0].form.formGroup.get("name") as any
+      ).setValue("some name");
 
-    component.submit();
+      component.submit();
 
-    expect(saveSpy).toHaveBeenCalledWith(
-      component.entityFormEntries[0].form,
-      component.entityFormEntries[0].entity,
-    );
-    tick();
-    expect(component.validationError).toBe(true);
-    expect(
-      component.entityFormEntries[0].form.formGroup.get("name"),
-    ).toHaveValue("some name");
-  }));
+      expect(saveSpy).toHaveBeenCalledWith(
+        component.entityFormEntries[0].form,
+        component.entityFormEntries[0].entity,
+      );
+      await vi.advanceTimersByTimeAsync(0);
+      expect(component.validationError).toBe(true);
+      expect(
+        component.entityFormEntries[0].form.formGroup.get("name"),
+      ).toHaveValue("some name");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should reset the form when clicking reset", fakeAsync(() => {
-    initComponent();
-    tick();
-    (component.entityFormEntries[0].form.formGroup.get("name") as any).setValue(
-      "some name",
-    );
-    expect(
-      component.entityFormEntries[0].form.formGroup.get("name"),
-    ).toHaveValue("some name");
+  it("should reset the form when clicking reset", async () => {
+    vi.useFakeTimers();
+    try {
+      initComponent();
+      await vi.advanceTimersByTimeAsync(0);
+      (
+        component.entityFormEntries[0].form.formGroup.get("name") as any
+      ).setValue("some name");
+      expect(
+        component.entityFormEntries[0].form.formGroup.get("name"),
+      ).toHaveValue("some name");
 
-    component.reset();
-    tick();
-  }));
+      component.reset();
+      await vi.advanceTimersByTimeAsync(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should set default value for field", fakeAsync(() => {
-    const config = new PublicFormConfig();
-    config.entity = TestEntity.ENTITY_TYPE;
-    config.columns = [
-      {
-        fields: [
-          {
-            id: "name",
-            defaultValue: { mode: "static", config: { value: "default name" } },
-          },
-        ],
-      },
-    ];
-    vi.spyOn(TestBed.inject(EntityMapperService), "load").mockResolvedValue(
-      config,
-    );
+  it("should set default value for field", async () => {
+    vi.useFakeTimers();
+    try {
+      const config = new PublicFormConfig();
+      config.entity = TestEntity.ENTITY_TYPE;
+      config.columns = [
+        {
+          fields: [
+            {
+              id: "name",
+              defaultValue: {
+                mode: "static",
+                config: { value: "default name" },
+              },
+            },
+          ],
+        },
+      ];
+      vi.spyOn(TestBed.inject(EntityMapperService), "load").mockResolvedValue(
+        config,
+      );
 
-    initComponent();
-    tick();
+      initComponent();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(
-      component.entityFormEntries[0].form.formGroup.get("name"),
-    ).toHaveValue("default name");
-  }));
+      expect(
+        component.entityFormEntries[0].form.formGroup.get("name"),
+      ).toHaveValue("default name");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should migrate old PublicFormConfig format to be backwards compatible", fakeAsync(() => {
-    const legacyConfig = {
-      _id: "PublicFormConfig:old-form",
-      title: "Old Form",
-      entity: TestEntity.ENTITY_TYPE,
-      columns: [["name"]], // string[][];
-      prefilled: { name: "default name" }, // { [key in string]: any };
-    };
-    vi.spyOn(TestBed.inject(EntityMapperService), "load").mockResolvedValue(
-      legacyConfig as any,
-    );
+  it("should migrate old PublicFormConfig format to be backwards compatible", async () => {
+    vi.useFakeTimers();
+    try {
+      const legacyConfig = {
+        _id: "PublicFormConfig:old-form",
+        title: "Old Form",
+        entity: TestEntity.ENTITY_TYPE,
+        columns: [["name"]], // string[][];
+        prefilled: { name: "default name" }, // { [key in string]: any };
+      };
+      vi.spyOn(TestBed.inject(EntityMapperService), "load").mockResolvedValue(
+        legacyConfig as any,
+      );
 
-    initComponent();
-    tick();
+      initComponent();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(
-      component.entityFormEntries[0].form.formGroup.get("name"),
-    ).toHaveValue("default name");
-  }));
+      expect(
+        component.entityFormEntries[0].form.formGroup.get("name"),
+      ).toHaveValue("default name");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should throw an error when do not have permissions to submit the form", fakeAsync(() => {
-    TestBed.inject(EntityAbility).update([
-      {
-        subject: "Child",
-        action: "create",
-      },
-    ]);
-    testFormConfig.entity = "School";
-    testFormConfig.title = "Some test title";
+  it("should throw an error when do not have permissions to submit the form", async () => {
+    vi.useFakeTimers();
+    try {
+      TestBed.inject(EntityAbility).update([
+        {
+          subject: "Child",
+          action: "create",
+        },
+      ]);
+      testFormConfig.entity = "School";
+      testFormConfig.title = "Some test title";
 
-    initComponent();
-    tick();
+      initComponent();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component).toBeDefined();
-    expect(component.error).toBe("no_permissions");
-  }));
+      expect(component).toBeDefined();
+      expect(component.error).toBe("no_permissions");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should display not found error when config does not exist", fakeAsync(() => {
-    const entityMapperSpy = vi
-      .spyOn(TestBed.inject(EntityMapperService), "loadType")
-      .mockResolvedValue([]);
+  it("should display not found error when config does not exist", async () => {
+    vi.useFakeTimers();
+    try {
+      const entityMapperSpy = vi
+        .spyOn(TestBed.inject(EntityMapperService), "loadType")
+        .mockResolvedValue([]);
 
-    initComponent();
-    tick();
+      initComponent();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(entityMapperSpy).toHaveBeenCalledWith(PublicFormConfig);
-    expect(component.error).toBe("not_found");
-  }));
+      expect(entityMapperSpy).toHaveBeenCalledWith(PublicFormConfig);
+      expect(component.error).toBe("not_found");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should add a hidden field when a field in prefilled is not part of visible fields", fakeAsync(() => {
-    const config = new PublicFormConfig();
-    config.columns = [{ fields: [] }];
-    config.prefilled = {
-      other: { mode: "static", config: { value: "default value" } },
-    };
+  it("should add a hidden field when a field in prefilled is not part of visible fields", async () => {
+    vi.useFakeTimers();
+    try {
+      const config = new PublicFormConfig();
+      config.columns = [{ fields: [] }];
+      config.prefilled = {
+        other: { mode: "static", config: { value: "default value" } },
+      };
 
-    initComponent(config);
-    tick();
+      initComponent(config);
+      await vi.advanceTimersByTimeAsync(0);
 
-    const lastColumn = component.formConfig.columns.at(-1);
-    expect(lastColumn?.fields).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          id: "other",
-          defaultValue: { mode: "static", config: { value: "default value" } },
-          hideFromForm: true,
-        }),
-      ]),
-    );
-  }));
-
-  it("should update defaultValue for a field in prefilled that is already visible", fakeAsync(() => {
-    const config = new PublicFormConfig();
-    config.columns = [
-      {
-        fields: [
-          {
+      const lastColumn = component.formConfig.columns.at(-1);
+      expect(lastColumn?.fields).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
             id: "other",
-            defaultValue: { mode: "static", config: { value: "base default" } },
-          },
-        ],
-      },
-    ];
-    config.prefilled = {
-      other: { mode: "static", config: { value: "prefilled default" } },
-    };
+            defaultValue: {
+              mode: "static",
+              config: { value: "default value" },
+            },
+            hideFromForm: true,
+          }),
+        ]),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-    initComponent(config);
-    tick();
+  it("should update defaultValue for a field in prefilled that is already visible", async () => {
+    vi.useFakeTimers();
+    try {
+      const config = new PublicFormConfig();
+      config.columns = [
+        {
+          fields: [
+            {
+              id: "other",
+              defaultValue: {
+                mode: "static",
+                config: { value: "base default" },
+              },
+            },
+          ],
+        },
+      ];
+      config.prefilled = {
+        other: { mode: "static", config: { value: "prefilled default" } },
+      };
 
-    expect(
-      component.entityFormEntries[0].form.formGroup.get("other"),
-    ).toHaveValue("prefilled default");
-  }));
+      initComponent(config);
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(
+        component.entityFormEntries[0].form.formGroup.get("other"),
+      ).toHaveValue("prefilled default");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should migrate linkedEntities from old FormFieldConfig[] format to string[] format", () => {
     const { migratePublicFormConfig } = require("./public-form.component");

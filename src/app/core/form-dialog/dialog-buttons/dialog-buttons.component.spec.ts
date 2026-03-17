@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { DialogButtonsComponent } from "./dialog-buttons.component";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
@@ -62,34 +56,46 @@ describe("DialogButtonsComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should close the dialog when saving is successful", fakeAsync(() => {
-    const formService = TestBed.inject(EntityFormService);
-    const result = new Entity();
-    vi.spyOn(formService, "saveChanges").mockResolvedValue(result);
-    const closeSpy = vi.fn();
-    TestBed.inject(MatDialogRef).close = closeSpy;
+  it("should close the dialog when saving is successful", async () => {
+    vi.useFakeTimers();
+    try {
+      const formService = TestBed.inject(EntityFormService);
+      const result = new Entity();
+      vi.spyOn(formService, "saveChanges").mockResolvedValue(result);
+      const closeSpy = vi.fn();
+      TestBed.inject(MatDialogRef).close = closeSpy;
 
-    component.save();
-    tick();
+      component.save();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(closeSpy).toHaveBeenCalledWith(result);
-  }));
+      expect(closeSpy).toHaveBeenCalledWith(result);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should show an alert when saving fails", fakeAsync(() => {
-    const formService = TestBed.inject(EntityFormService);
-    const message = "Error message";
-    vi.spyOn(formService, "saveChanges").mockRejectedValue(new Error(message));
-    const alertSpy = vi.fn();
-    TestBed.inject(AlertService).addDanger = alertSpy;
-    const closeSpy = vi.fn();
-    TestBed.inject(MatDialogRef).close = closeSpy;
+  it("should show an alert when saving fails", async () => {
+    vi.useFakeTimers();
+    try {
+      const formService = TestBed.inject(EntityFormService);
+      const message = "Error message";
+      vi.spyOn(formService, "saveChanges").mockRejectedValue(
+        new Error(message),
+      );
+      const alertSpy = vi.fn();
+      TestBed.inject(AlertService).addDanger = alertSpy;
+      const closeSpy = vi.fn();
+      TestBed.inject(MatDialogRef).close = closeSpy;
 
-    component.save();
-    tick();
+      component.save();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(alertSpy).toHaveBeenCalledWith(message);
-    expect(closeSpy).not.toHaveBeenCalled();
-  }));
+      expect(alertSpy).toHaveBeenCalledWith(message);
+      expect(closeSpy).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should not disable the form when creating a new entity", () => {
     expect(component.form.formGroup.disabled).toBeFalsy();
@@ -118,23 +124,28 @@ describe("DialogButtonsComponent", () => {
     expect(dialogRef.close).toHaveBeenCalled();
   });
 
-  it("should only close the dialog if user confirms to discard changes", fakeAsync(() => {
-    const confirmed = new Subject<boolean>();
-    vi.spyOn(
-      TestBed.inject(UnsavedChangesService),
-      "checkUnsavedChanges",
-    ).mockReturnValue(firstValueFrom(confirmed));
+  it("should only close the dialog if user confirms to discard changes", async () => {
+    vi.useFakeTimers();
+    try {
+      const confirmed = new Subject<boolean>();
+      vi.spyOn(
+        TestBed.inject(UnsavedChangesService),
+        "checkUnsavedChanges",
+      ).mockReturnValue(firstValueFrom(confirmed));
 
-    backdropClick.next(undefined);
-    tick();
+      backdropClick.next(undefined);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(dialogRef.close).not.toHaveBeenCalled();
+      expect(dialogRef.close).not.toHaveBeenCalled();
 
-    confirmed.next(true);
-    tick();
+      confirmed.next(true);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(dialogRef.close).toHaveBeenCalled();
-  }));
+      expect(dialogRef.close).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should reset pending changes when dialog is closed", () => {
     const unsavedChanges = TestBed.inject(UnsavedChangesService);

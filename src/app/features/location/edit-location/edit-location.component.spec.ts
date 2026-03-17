@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -100,51 +95,66 @@ describe("EditLocationComponent", () => {
     );
   });
 
-  it("should update value if location is selected in Map Dialog", fakeAsync(() => {
-    component.value = {
-      locationString: undefined,
-      geoLookup: undefined,
-    };
+  it("should update value if location is selected in Map Dialog", async () => {
+    vi.useFakeTimers();
+    try {
+      component.value = {
+        locationString: undefined,
+        geoLookup: undefined,
+      };
 
-    component.openMap();
-    const selected: GeoLocation = {
-      geoLookup: SAMPLE_GEO_RESULT,
-      locationString: SAMPLE_GEO_RESULT.display_name,
-    };
-    mockDialogAfterClosedSubject.next([selected]);
-    tick();
+      component.openMap();
+      const selected: GeoLocation = {
+        geoLookup: SAMPLE_GEO_RESULT,
+        locationString: SAMPLE_GEO_RESULT.display_name,
+      };
+      mockDialogAfterClosedSubject.next([selected]);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.value).toEqual({
-      locationString: SAMPLE_GEO_RESULT.display_name,
-      geoLookup: SAMPLE_GEO_RESULT,
-    });
-  }));
+      expect(component.value).toEqual({
+        locationString: SAMPLE_GEO_RESULT.display_name,
+        geoLookup: SAMPLE_GEO_RESULT,
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should update value if location is removed in Map Dialog", fakeAsync(() => {
-    component.value = {
-      locationString: SAMPLE_GEO_RESULT.display_name,
-      geoLookup: SAMPLE_GEO_RESULT,
-    };
+  it("should update value if location is removed in Map Dialog", async () => {
+    vi.useFakeTimers();
+    try {
+      component.value = {
+        locationString: SAMPLE_GEO_RESULT.display_name,
+        geoLookup: SAMPLE_GEO_RESULT,
+      };
 
-    component.openMap();
-    mockDialogAfterClosedSubject.next([undefined]);
-    tick();
+      component.openMap();
+      mockDialogAfterClosedSubject.next([undefined]);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.value).toEqual(undefined);
-  }));
+      expect(component.value).toEqual(undefined);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should not change value if Map Dialog was dismissed without selecting new location", fakeAsync(() => {
-    const existingValue = {
-      locationString: "manual address",
-      geoLookup: SAMPLE_GEO_RESULT,
-    };
-    component.value = existingValue;
+  it("should not change value if Map Dialog was dismissed without selecting new location", async () => {
+    vi.useFakeTimers();
+    try {
+      const existingValue = {
+        locationString: "manual address",
+        geoLookup: SAMPLE_GEO_RESULT,
+      };
+      component.value = existingValue;
 
-    component.openMap();
-    // close without return value (explicit return value is always an array)
-    mockDialogAfterClosedSubject.next(undefined);
-    tick();
+      component.openMap();
+      // close without return value (explicit return value is always an array)
+      mockDialogAfterClosedSubject.next(undefined);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.value).toEqual(existingValue);
-  }));
+      expect(component.value).toEqual(existingValue);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

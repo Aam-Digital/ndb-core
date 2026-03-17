@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EntitiesTableComponent } from "./entities-table.component";
 import { Entity } from "../../entity/model/entity";
@@ -198,7 +198,7 @@ describe("EntitiesTableComponent", () => {
     ]);
   });
 
-  it("should remove an entity if it does not pass the filter anymore", fakeAsync(() => {
+  it("should remove an entity if it does not pass the filter anymore", async () => {
     const child = new TestEntity();
     child.category = genders[1];
     component.records = [child];
@@ -210,7 +210,7 @@ describe("EntitiesTableComponent", () => {
     component.records = [child]; // parent component has to update the records Input array
 
     expect(component.recordsDataSource.data).toEqual([]);
-  }));
+  });
 
   it("should only show active relations by default", async () => {
     const active1 = new Entity();

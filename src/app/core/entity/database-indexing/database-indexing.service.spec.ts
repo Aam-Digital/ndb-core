@@ -18,7 +18,7 @@
 import { DatabaseIndexingService } from "./database-indexing.service";
 import { Database } from "../../database/database";
 import { expectObservable } from "../../../utils/test-utils/observable-utils";
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import { firstValueFrom, of } from "rxjs";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { Entity } from "../model/entity";
@@ -81,26 +81,31 @@ describe("DatabaseIndexingService", () => {
     expect(mockDb.query).toHaveBeenCalledWith(testQueryName, {});
   });
 
-  it("should wait until index exists before running a query", fakeAsync(() => {
-    const testQueryName = "test_index/test";
-    const testDesignDoc = {
-      _id: "_design/" + testQueryName,
-      views: {},
-    };
+  it("should wait until index exists before running a query", async () => {
+    vi.useFakeTimers();
+    try {
+      const testQueryName = "test_index/test";
+      const testDesignDoc = {
+        _id: "_design/" + testQueryName,
+        views: {},
+      };
 
-    let queryCompleted = false;
-    service
-      .queryIndexRaw(testQueryName, {})
-      .then(() => (queryCompleted = true));
-    tick();
+      let queryCompleted = false;
+      service
+        .queryIndexRaw(testQueryName, {})
+        .then(() => (queryCompleted = true));
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(queryCompleted).toBe(false);
+      expect(queryCompleted).toBe(false);
 
-    service.createIndex(testDesignDoc);
-    tick();
+      service.createIndex(testDesignDoc);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(queryCompleted).toBe(true);
-  }));
+      expect(queryCompleted).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should emit new indicesRegistered immediately and then emit update on createIndex", async () => {
     const testIndexName = "test_index";

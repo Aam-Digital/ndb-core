@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { FormComponent } from "./form.component";
 import { Router } from "@angular/router";
@@ -25,14 +19,19 @@ describe("FormComponent", () => {
     }).compileComponents();
   }));
 
-  beforeEach(fakeAsync(() => {
-    fixture = TestBed.createComponent(FormComponent<TestEntity>);
-    component = fixture.componentInstance;
-    component.entity = new TestEntity();
-    component.fieldGroups = [{ fields: [{ id: "name" }] }];
-    fixture.detectChanges();
-    tick();
-  }));
+  beforeEach(async () => {
+    vi.useFakeTimers();
+    try {
+      fixture = TestBed.createComponent(FormComponent<TestEntity>);
+      component = fixture.componentInstance;
+      component.entity = new TestEntity();
+      component.fieldGroups = [{ fields: [{ id: "name" }] }];
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should create", () => {
     expect(component).toBeTruthy();

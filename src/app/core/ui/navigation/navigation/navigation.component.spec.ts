@@ -15,13 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { NavigationComponent } from "./navigation.component";
 import { ConfigService } from "../../../config/config.service";
@@ -80,63 +74,73 @@ describe("NavigationComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("marks items that require admin rights", fakeAsync(() => {
-    const testConfig: NavigationMenuConfig = {
-      items: [
-        { label: "Dashboard", icon: "home", link: "/dashboard" },
+  it("marks items that require admin rights", async () => {
+    vi.useFakeTimers();
+    try {
+      const testConfig: NavigationMenuConfig = {
+        items: [
+          { label: "Dashboard", icon: "home", link: "/dashboard" },
+          { label: "Children", icon: "child", link: "/child" },
+        ],
+      };
+      mockRoleGuard.checkRoutePermissions.mockImplementation(
+        async (route: string) => {
+          switch (route) {
+            case "/dashboard":
+              return false;
+            case "/child":
+              return true;
+            default:
+              return false;
+          }
+        },
+      );
+
+      mockConfigService.getConfig.mockReturnValue(testConfig);
+      mockConfigUpdated.next(null);
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(component.menuItems()).toEqual([
         { label: "Children", icon: "child", link: "/child" },
-      ],
-    };
-    mockRoleGuard.checkRoutePermissions.mockImplementation(
-      async (route: string) => {
-        switch (route) {
-          case "/dashboard":
-            return false;
-          case "/child":
-            return true;
-          default:
-            return false;
-        }
-      },
-    );
+      ]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-    mockConfigService.getConfig.mockReturnValue(testConfig);
-    mockConfigUpdated.next(null);
-    tick();
+  it("should add menu items where entity permissions are missing", async () => {
+    vi.useFakeTimers();
+    try {
+      const testConfig: NavigationMenuConfig = {
+        items: [
+          { label: "Dashboard", icon: "home", link: "/dashboard" },
+          { label: "Children", icon: "child", link: "/child" },
+        ],
+      };
+      mockEntityGuard.checkRoutePermissions.mockImplementation(
+        (route: string) => {
+          switch (route) {
+            case "/dashboard":
+              return Promise.resolve(false);
+            case "/child":
+              return Promise.resolve(true);
+            default:
+              return Promise.resolve(false);
+          }
+        },
+      );
 
-    expect(component.menuItems()).toEqual([
-      { label: "Children", icon: "child", link: "/child" },
-    ]);
-  }));
+      mockConfigService.getConfig.mockReturnValue(testConfig);
+      mockConfigUpdated.next(null);
+      await vi.advanceTimersByTimeAsync(0);
 
-  it("should add menu items where entity permissions are missing", fakeAsync(() => {
-    const testConfig: NavigationMenuConfig = {
-      items: [
-        { label: "Dashboard", icon: "home", link: "/dashboard" },
+      expect(component.menuItems()).toEqual([
         { label: "Children", icon: "child", link: "/child" },
-      ],
-    };
-    mockEntityGuard.checkRoutePermissions.mockImplementation(
-      (route: string) => {
-        switch (route) {
-          case "/dashboard":
-            return Promise.resolve(false);
-          case "/child":
-            return Promise.resolve(true);
-          default:
-            return Promise.resolve(false);
-        }
-      },
-    );
-
-    mockConfigService.getConfig.mockReturnValue(testConfig);
-    mockConfigUpdated.next(null);
-    tick();
-
-    expect(component.menuItems()).toEqual([
-      { label: "Children", icon: "child", link: "/child" },
-    ]);
-  }));
+      ]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should highlight active menu item", () => {
     const routerEvents = TestBed.inject(Router).events as Subject<Event>;

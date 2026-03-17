@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import {
   DetailsComponentData,
@@ -59,9 +53,14 @@ describe("RowDetailsComponent", () => {
     fixture.detectChanges();
   }
 
-  it("should create", fakeAsync(() => {
-    initComponent();
-    tick();
-    expect(component).toBeTruthy();
-  }));
+  it("should create", async () => {
+    vi.useFakeTimers();
+    try {
+      initComponent();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(component).toBeTruthy();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
