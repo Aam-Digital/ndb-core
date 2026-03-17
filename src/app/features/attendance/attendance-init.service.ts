@@ -51,7 +51,10 @@ export class AttendanceInitService {
     } else {
       existing = new ConfigurableEnum(
         ATTENDANCE_STATUS_CONFIG_ID,
-        defaultAttendanceStatusTypes,
+        // clone values to avoid mutating default object:
+        defaultAttendanceStatusTypes.map((value) => ({
+          ...value,
+        })),
       );
     }
     try {
