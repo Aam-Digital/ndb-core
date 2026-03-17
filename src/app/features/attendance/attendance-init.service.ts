@@ -27,26 +27,37 @@ export class AttendanceInitService {
   }
 
   private async createDefaultEnumIfMissing() {
+    let existing: ConfigurableEnum | undefined;
     try {
-      const existing = await this.entityMapper.load(
+      existing = await this.entityMapper.load(
         ConfigurableEnum,
         ATTENDANCE_STATUS_CONFIG_ID,
       );
       if (existing.values.length > 0) {
         return;
       }
-    } catch (e) {
-      // entity not found in DB — proceed to create
+    } catch (e: unknown) {
+      const error = e as { status?: number; name?: string } | null;
+      const isNotFound =
+        !!error && (error.status === 404 || error.name === "not_found");
+      if (!isNotFound) {
+        Logging.debug("Failed to load attendance-status enum", e);
+        return;
+      }
     }
 
-    const defaultEnum = new ConfigurableEnum(
-      ATTENDANCE_STATUS_CONFIG_ID,
-      defaultAttendanceStatusTypes,
-    );
+    if (existing) {
+      existing.values = defaultAttendanceStatusTypes;
+    } else {
+      existing = new ConfigurableEnum(
+        ATTENDANCE_STATUS_CONFIG_ID,
+        defaultAttendanceStatusTypes,
+      );
+    }
     try {
-      await this.entityMapper.save(defaultEnum);
+      await this.entityMapper.save(existing);
     } catch (e) {
-      Logging.debug("Could not save default attendance-status enum", e);
+      Logging.warn("Could not save default attendance-status enum", e);
     }
   }
 }

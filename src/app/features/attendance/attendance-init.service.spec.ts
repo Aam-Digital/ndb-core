@@ -33,7 +33,7 @@ describe("AttendanceInitService", () => {
   });
 
   it("should save default attendance-status enum if none exists after sync completes", fakeAsync(() => {
-    mockEntityMapper.load.and.rejectWith(new Error("not found"));
+    mockEntityMapper.load.and.rejectWith({ status: 404, name: "not_found" });
 
     service.registerDefaultAttendanceStatusEnum();
     syncState.next(SyncState.COMPLETED);
@@ -69,14 +69,25 @@ describe("AttendanceInitService", () => {
     syncState.next(SyncState.COMPLETED);
     tick();
 
-    expect(mockEntityMapper.save).toHaveBeenCalled();
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(emptyEnum);
+    expect(emptyEnum.values).toEqual(defaultAttendanceStatusTypes);
   }));
 
   it("should not register defaults before sync completes", fakeAsync(() => {
-    mockEntityMapper.load.and.rejectWith(new Error("not found"));
+    mockEntityMapper.load.and.rejectWith({ status: 404, name: "not_found" });
 
     service.registerDefaultAttendanceStatusEnum();
     syncState.next(SyncState.STARTED);
+    tick();
+
+    expect(mockEntityMapper.save).not.toHaveBeenCalled();
+  }));
+
+  it("should abort if load fails with a non-404 error", fakeAsync(() => {
+    mockEntityMapper.load.and.rejectWith(new Error("DB unavailable"));
+
+    service.registerDefaultAttendanceStatusEnum();
+    syncState.next(SyncState.COMPLETED);
     tick();
 
     expect(mockEntityMapper.save).not.toHaveBeenCalled();
