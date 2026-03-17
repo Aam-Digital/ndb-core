@@ -8,7 +8,6 @@ declare module "vitest" {
     toBeEnabled(): T;
     toHaveKey(key: unknown): T;
     toHaveType(entityType: string): T;
-    toEqualArrayWithExactContents(expected: unknown[]): T;
     toBeEmpty(): T;
     toBeFinite(): T;
     toHaveOwnProperty(property: string): T;
@@ -22,7 +21,6 @@ declare module "vitest" {
     toBeEnabled(): void;
     toHaveKey(key: unknown): void;
     toHaveType(entityType: string): void;
-    toEqualArrayWithExactContents(expected: unknown[]): void;
     toBeEmpty(): void;
     toBeFinite(): void;
     toHaveOwnProperty(property: string): void;

@@ -1,5 +1,14 @@
 type TestFunction = (...args: any[]) => unknown;
 
+/**
+ * Wraps Vitest lifecycle and test callbacks in Angular's ProxyZone when it is
+ * available.
+ *
+ * Angular test utilities such as `waitForAsync()` and `fakeAsync()` still rely
+ * on Zone context even when the test runner is Vitest. This patch keeps those
+ * helpers working without rewriting every existing spec immediately.
+ */
+
 function isFunction(value: unknown): value is TestFunction {
   return typeof value === "function";
 }

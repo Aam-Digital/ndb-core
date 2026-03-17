@@ -24,6 +24,7 @@ import {
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
 import { CurrentUserSubject } from "app/core/session/current-user-subject";
+import { expectArrayWithExactContents } from "../../../utils/test-utils/array-test-utils";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
@@ -196,7 +197,7 @@ describe("FilterGeneratorService", () => {
     const comparableOptions = filter.options.map((option) => {
       return { key: option.key, label: option.label };
     });
-    expect(comparableOptions).toEqualArrayWithExactContents([
+    expectArrayWithExactContents(comparableOptions, [
       { key: "muslim", label: "muslim" },
       { key: "christian", label: "christian" },
     ]);

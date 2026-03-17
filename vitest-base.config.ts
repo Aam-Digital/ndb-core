@@ -12,7 +12,6 @@ export default defineConfig({
       "src/polyfills.test.ts",
       "src/environments/environment.spec.ts",
       "src/app/utils/expect-entity-data.spec.ts",
-      "src/app/utils/test-utils/mock-ng-on-changes.spec.ts",
       "src/app/core/entity/entity-actions/cascading-entity-action.spec.ts",
     ],
   },

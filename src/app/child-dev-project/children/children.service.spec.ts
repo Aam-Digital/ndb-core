@@ -14,6 +14,7 @@ import { createEntityOfType } from "../../core/demo-data/create-entity-of-type";
 import { Entity } from "../../core/entity/model/entity";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
+import { expectArrayWithExactContents } from "../../utils/test-utils/array-test-utils";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
@@ -287,7 +288,7 @@ describe("ChildrenService", () => {
       moment("2023-01-02"),
       moment("2023-01-03"),
     );
-    expect(res).toEqualArrayWithExactContents([n2, n3, n4]);
+    expectArrayWithExactContents(res, [n2, n3, n4]);
   });
 });
 

@@ -11,6 +11,7 @@ import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import moment from "moment";
+import { expectArrayWithExactContents } from "#src/app/utils/test-utils/array-test-utils";
 
 describe("ActivityAttendanceSectionComponent", () => {
   let component: ActivityAttendanceSectionComponent;
@@ -145,13 +146,9 @@ describe("ActivityAttendanceSectionComponent", () => {
 
     expect(component.combinedAttendance.periodFrom).toBe(oldestEvent.date);
     expect(component.combinedAttendance.periodTo).toBe(latestEvent.date);
-    expect(
+    expectArrayWithExactContents(
       component.combinedAttendance.events.map((e) => e.entity),
-    ).toEqualArrayWithExactContents([
-      oldestEvent,
-      someEvent1,
-      someEvent2,
-      latestEvent,
-    ]);
+      [oldestEvent, someEvent1, someEvent2, latestEvent],
+    );
   });
 });

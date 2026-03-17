@@ -9,17 +9,6 @@ import { EntityCountDashboardConfig } from "app/features/dashboard-widgets/entit
 import { ComponentRegistry } from "../../../dynamic-components";
 
 @Component({
-  selector: "app-mock-todos-dashboard",
-  template: "",
-  standalone: true,
-})
-class MockTodosDashboardComponent {
-  static getRequiredEntities(): string {
-    return "Todo";
-  }
-}
-
-@Component({
   selector: "app-mock-entity-count-dashboard",
   template: "",
   standalone: true,
@@ -44,22 +33,11 @@ class MockBirthdayDashboardComponent {
 }
 
 @Component({
-  selector: "app-mock-notes-dashboard",
+  selector: "app-mock-no-entity-dashboard",
   template: "",
   standalone: true,
 })
-class MockNotesDashboardComponent {
-  static getRequiredEntities(): string {
-    return "Note";
-  }
-}
-
-@Component({
-  selector: "app-mock-shortcut-dashboard",
-  template: "",
-  standalone: true,
-})
-class MockShortcutDashboardComponent {}
+class MockNoEntityDashboardComponent {}
 
 @Component({
   selector: "app-mock-generic-dashboard",
@@ -79,11 +57,9 @@ describe("DashboardComponent", () => {
     mockComponentRegistry.allowDuplicates();
     const originalGet = mockComponentRegistry.get.bind(mockComponentRegistry);
     const mockedWidgets: Record<string, () => Promise<any>> = {
-      TodosDashboard: async () => MockTodosDashboardComponent,
       EntityCountDashboard: async () => MockEntityCountDashboardComponent,
       BirthdayDashboard: async () => MockBirthdayDashboardComponent,
-      NotesDashboard: async () => MockNotesDashboardComponent,
-      ShortcutDashboard: async () => MockShortcutDashboardComponent,
+      ShortcutDashboard: async () => MockNoEntityDashboardComponent,
     };
 
     vi.spyOn(mockComponentRegistry, "get").mockImplementation(
@@ -129,7 +105,10 @@ describe("DashboardComponent", () => {
 
   it("should only display widgets for which a user has permissions", async () => {
     const widgets: DynamicComponentConfig[] = [
-      { component: "TodosDashboard" },
+      {
+        component: "EntityCountDashboard",
+        config: { entityType: "Todo" } as EntityCountDashboardConfig,
+      },
       { component: "EntityCountDashboard" },
       {
         component: "EntityCountDashboard",
@@ -186,13 +165,23 @@ describe("DashboardComponent", () => {
 
   it("should show widget if user only have access to some entities", async () => {
     ability.update([]);
-    await setWidgetsAndStabilize([{ component: "NotesDashboard" }]);
+    await setWidgetsAndStabilize([
+      {
+        component: "EntityCountDashboard",
+        config: { entityType: "Note" } as EntityCountDashboardConfig,
+      },
+    ]);
     await vi.waitFor(() => expect(component.widgets).toHaveLength(0));
 
     ability.update([
       { subject: "Note", action: "manage", conditions: { category: "VISIT" } },
     ]);
-    await setWidgetsAndStabilize([{ component: "NotesDashboard" }]);
+    await setWidgetsAndStabilize([
+      {
+        component: "EntityCountDashboard",
+        config: { entityType: "Note" } as EntityCountDashboardConfig,
+      },
+    ]);
     await vi.waitFor(() => expect(component.widgets).toHaveLength(1));
   });
 
@@ -200,7 +189,11 @@ describe("DashboardComponent", () => {
     ability.update([{ subject: "all", action: "manage" }]);
     const session = TestBed.inject(SessionSubject);
     const widgets = [
-      { component: "TodosDashboard", permittedUserRoles: ["admin_app"] },
+      {
+        component: "EntityCountDashboard",
+        config: { entityType: "Todo" } as EntityCountDashboardConfig,
+        permittedUserRoles: ["admin_app"],
+      },
       { component: "EntityCountDashboard" },
     ];
 

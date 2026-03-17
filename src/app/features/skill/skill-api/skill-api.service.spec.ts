@@ -1,4 +1,9 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import {
+  fakeAsync,
+  flushMicrotasks,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import {
   ExternalProfileResponseDto,
@@ -20,6 +25,7 @@ import { ExternalProfile } from "./external-profile";
 import { FormControl, FormGroup } from "@angular/forms";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { Skill } from "../skill";
+import { expectArrayWithExactContents } from "../../../utils/test-utils/array-test-utils";
 
 describe("SkillApiService", () => {
   let service: SkillApiService;
@@ -129,6 +135,10 @@ describe("SkillApiService", () => {
     ];
 
     const result = firstValueFrom(service.getExternalProfiles(searchParams));
+    let actualResult: ExternalProfileResponseDto | undefined;
+    result.then((value) => {
+      actualResult = value;
+    });
     tick(1000);
 
     httpTesting
@@ -142,8 +152,9 @@ describe("SkillApiService", () => {
         pagination: {},
         results: mockResults,
       } as ExternalProfileResponseDto);
+    flushMicrotasks();
 
-    expect(result).resolves.toEqual(
+    expect(actualResult).toEqual(
       expect.objectContaining({
         results: mockResults,
       }),
@@ -157,10 +168,15 @@ describe("SkillApiService", () => {
     } as ExternalProfile;
 
     const result = firstValueFrom(service.getExternalProfileById("1"));
+    let actualResult: ExternalProfile | undefined;
+    result.then((value) => {
+      actualResult = value;
+    });
 
     httpTesting.expectOne("/api/v1/skill/user-profile/1").flush(mockProfile);
+    flushMicrotasks();
 
-    expect(result).resolves.toEqual(mockProfile);
+    expect(actualResult).toEqual(mockProfile);
   }));
 
   it("should applyDataFromExternalProfile to target entity (without reloading external profile)", fakeAsync(() => {
@@ -304,7 +320,7 @@ describe("SkillApiService", () => {
     expect(mockEscoApi.loadOrCreateSkillEntity).toHaveBeenCalledWith(
       "https://Angular",
     );
-    expect(targetEntity.other).toEqualArrayWithExactContents([
+    expectArrayWithExactContents(targetEntity.other as unknown as string[], [
       "Skill:https://Java",
       "Skill:https://Angular",
     ]);

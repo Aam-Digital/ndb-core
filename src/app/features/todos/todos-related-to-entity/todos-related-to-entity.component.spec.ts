@@ -8,6 +8,7 @@ import { DatabaseIndexingService } from "../../../core/entity/database-indexing/
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 import { DatabaseResolverService } from "../../../core/database/database-resolver.service";
+import { expectArrayWithExactContents } from "../../../utils/test-utils/array-test-utils";
 
 describe("TodosRelatedToEntityComponent", () => {
   let component: TodosRelatedToEntityComponent;
@@ -87,7 +88,7 @@ describe("TodosRelatedToEntityComponent", () => {
     await component.ngOnInit();
 
     expect(loadTypeSpy).toHaveBeenCalledWith(Todo);
-    expect(component.data).toEqualArrayWithExactContents([
+    expectArrayWithExactContents(component.data, [
       relatedTodo,
       relatedTodo2,
       unrelatedTodo,

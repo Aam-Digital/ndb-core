@@ -16,6 +16,7 @@ import { ChildrenService } from "../../../child-dev-project/children/children.se
 import { TestEventEntity } from "../../../utils/test-utils/TestEventEntity";
 import { AttendanceService } from "#src/app/features/attendance/attendance.service";
 import { EventWithAttendance } from "#src/app/features/attendance/model/event-with-attendance";
+import { expectArrayWithExactContents } from "../../../utils/test-utils/array-test-utils";
 
 describe("DataTransformationService", () => {
   let service: DataTransformationService;
@@ -367,7 +368,7 @@ describe("DataTransformationService", () => {
         ],
       },
     ]);
-    expect(result).toEqualArrayWithExactContents([
+    expectArrayWithExactContents(result, [
       { title: "first", Participants: 2 },
       { title: "second", Participants: 1 },
     ]);
@@ -385,7 +386,7 @@ describe("DataTransformationService", () => {
         subQueries: [{ query: ":count", label: "Amount" }],
       },
     ]);
-    expect(result).toEqualArrayWithExactContents([
+    expectArrayWithExactContents(result, [
       { Name: "sameName", Amount: 2 },
       { Name: "otherName", Amount: 1 },
     ]);
@@ -411,7 +412,7 @@ describe("DataTransformationService", () => {
         subQueries: [{ query: ":count", label: "Count" }],
       },
     ]);
-    expect(result).toEqualArrayWithExactContents([
+    expectArrayWithExactContents(result, [
       { Group: "Total", Count: 3 },
       { Group: "A", Count: 2 },
       { Group: "B", Count: 1 },

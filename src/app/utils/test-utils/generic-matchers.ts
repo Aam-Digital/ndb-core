@@ -1,6 +1,5 @@
 type MatcherResult = { pass: boolean; message: () => string };
 type MatcherContext = {
-  equals?: (received: unknown, expected: unknown) => boolean;
   utils?: { printReceived?: (value: unknown) => string };
 };
 
@@ -17,53 +16,6 @@ function pp(context: MatcherContext, value: unknown): string {
 }
 
 export const genericMatchers = {
-  toEqualArrayWithExactContents(
-    this: MatcherContext,
-    actual: unknown[],
-    expected: unknown[],
-  ): MatcherResult {
-    if (!Array.isArray(actual) || !Array.isArray(expected)) {
-      return {
-        pass: false,
-        message: () =>
-          `Expected both values to be arrays but received ${pp(this, actual)} and ${pp(this, expected)}`,
-      };
-    }
-
-    if (actual.length !== expected.length) {
-      return {
-        pass: false,
-        message: () =>
-          `Expected array ${pp(this, actual)} to have the exact contents of ${pp(this, expected)}`,
-      };
-    }
-
-    const equals = this.equals ?? Object.is;
-    const unmatchedIndexes = new Set(actual.map((_value, index) => index));
-
-    for (const expectedItem of expected) {
-      const matchingIndex = [...unmatchedIndexes].find((index) =>
-        equals(actual[index], expectedItem),
-      );
-
-      if (matchingIndex === undefined) {
-        return {
-          pass: false,
-          message: () =>
-            `Expected array ${pp(this, actual)} to have the exact contents of ${pp(this, expected)}`,
-        };
-      }
-
-      unmatchedIndexes.delete(matchingIndex);
-    }
-
-    return {
-      pass: true,
-      message: () =>
-        `Expected array ${pp(this, actual)} not to have the exact contents of ${pp(this, expected)}`,
-    };
-  },
-
   toBeEmpty(this: MatcherContext, value: ArrayLike<unknown>): MatcherResult {
     const pass = value.length === 0;
 

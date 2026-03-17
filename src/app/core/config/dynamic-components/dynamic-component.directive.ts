@@ -29,6 +29,12 @@ export class DynamicComponentDirective implements OnChanges, OnDestroy {
   private components = inject(ComponentRegistry);
   private changeDetector = inject(ChangeDetectorRef);
   private isDestroyed = false;
+  /**
+   * Tracks the latest async load request.
+   *
+   * This prevents outdated dynamic imports from creating a component after the
+   * input changed again or the directive was already destroyed.
+   */
   private loadSequence = 0;
 
   @Input() appDynamicComponent: DynamicComponentConfig;
@@ -42,6 +48,12 @@ export class DynamicComponentDirective implements OnChanges, OnDestroy {
     this.loadSequence++;
   }
 
+  /**
+   * Loads the configured dynamic component and ignores stale async results.
+   *
+   * The extra sequencing is needed because config changes can trigger multiple
+   * overlapping dynamic imports. Only the most recent load should render.
+   */
   private async loadDynamicComponent() {
     const dynamicComponentConfig = this.appDynamicComponent;
     if (!dynamicComponentConfig) {

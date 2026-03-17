@@ -4,12 +4,17 @@ import { DisplayParticipantsCountComponent } from "./display-participants-count.
 import { ChildrenService } from "../children.service";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
+import type { Mock } from "vitest";
+
+type ChildrenServiceMock = Pick<ChildrenService, "queryActiveRelationsOf"> & {
+  queryActiveRelationsOf: Mock<ChildrenService["queryActiveRelationsOf"]>;
+};
 
 describe("DisplayParticipantsCountComponent", () => {
   let component: DisplayParticipantsCountComponent;
   let fixture: ComponentFixture<DisplayParticipantsCountComponent>;
 
-  let mockChildrenService: any;
+  let mockChildrenService: ChildrenServiceMock;
 
   const childSchoolRelations: ChildSchoolRelation[] = [
     new ChildSchoolRelation("r-1"),

@@ -15,6 +15,7 @@ import { DatabaseField } from "../database-field.decorator";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntityMapperService } from "./entity-mapper.service";
 import { EntitySchemaField } from "../schema/entity-schema-field";
+import { expectArrayWithExactContents } from "../../../utils/test-utils/array-test-utils";
 
 describe("EntityRelationsService", () => {
   let service: EntityRelationsService;
@@ -134,7 +135,7 @@ describe("EntityRelationsService", () => {
     const result = await service.loadAllLinkingToEntity(primaryEntity);
 
     // Assert
-    expect(result).toEqualArrayWithExactContents([
+    expectArrayWithExactContents(result, [
       {
         entity: eSingleRef,
         fields: [expect.objectContaining({ id: "refSingle" })],
