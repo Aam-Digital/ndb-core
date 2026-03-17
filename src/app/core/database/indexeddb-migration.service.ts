@@ -81,6 +81,11 @@ export class IndexeddbMigrationService {
       Logging.debug(
         "IndexeddbMigration: no legacy DB found; assuming fresh install and setting 'migrated' flag",
       );
+
+      return {
+        dbNames: computeDbNames(session),
+        adapter: "indexeddb",
+      };
     }
 
     // Already migrated or fresh install (no old DB exists)

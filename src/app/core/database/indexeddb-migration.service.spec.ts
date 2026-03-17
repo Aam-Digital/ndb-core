@@ -165,7 +165,7 @@ describe("IndexeddbMigrationService", () => {
           value: 0,
         }),
       );
-      expect(eventTrackSpy).toHaveBeenCalledWith(
+      expect(eventTrackSpy).not.toHaveBeenCalledWith(
         "indexeddb_migration_resolve_db_config",
         jasmine.objectContaining({
           category: "indexeddb_migration",
