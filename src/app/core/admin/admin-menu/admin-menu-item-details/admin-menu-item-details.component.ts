@@ -42,7 +42,7 @@ import { isManualItemWithoutLink } from "../menu-item-for-admin-ui";
 export class AdminMenuItemDetailsComponent implements OnInit {
   private readonly configService = inject(ConfigService);
   @ViewChild(MenuItemFormComponent)
-  private menuItemForm?: MenuItemFormComponent;
+  private readonly menuItemForm?: MenuItemFormComponent;
 
   dialogRef = inject<MatDialogRef<AdminMenuItemDetailsComponent>>(MatDialogRef);
   data = inject<{
