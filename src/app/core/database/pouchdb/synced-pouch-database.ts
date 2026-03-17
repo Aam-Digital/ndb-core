@@ -313,6 +313,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
         }),
         retry({ delay: this.SYNC_INTERVAL }),
         takeWhile(() => this.liveSyncEnabled),
+        takeUntil(this.destroy$),
       )
       .subscribe();
   }
