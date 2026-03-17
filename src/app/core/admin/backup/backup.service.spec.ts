@@ -42,7 +42,10 @@ describe("BackupService", () => {
         { provide: DataTransformationService, useValue: {} },
         {
           provide: DatabaseResolverService,
-          useValue: { getDatabase: () => db },
+          useValue: {
+            getDatabase: () => db,
+            resetDatabases: jasmine.createSpy().and.resolveTo(undefined),
+          },
         },
         { provide: WINDOW_TOKEN, useValue: mockWindow },
         { provide: LOCATION_TOKEN, useValue: {} },

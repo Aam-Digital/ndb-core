@@ -39,6 +39,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   private remoteDatabase: RemotePouchDatabase;
   private syncState: SyncStateSubject = new SyncStateSubject();
+  private currentSync: PouchDB.Replication.Sync<any> | null = null;
 
   /**
    * Get the internal sync state subject for this database (not the global one).
@@ -162,19 +163,27 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
     this.syncState.next(SyncState.STARTED);
 
-    return this.getPouchDB()
-      .sync(this.remoteDatabase.getPouchDB(), {
+    this.currentSync = this.getPouchDB().sync(
+      this.remoteDatabase.getPouchDB(),
+      {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
         ...options,
-      })
+      },
+    );
+
+    return this.currentSync
       .then(async (res) => {
+        this.currentSync = null;
         if (res) res["dbName"] = this.dbName; // add for debugging information
         Logging.debug("sync completed", res);
-        await this.purgeDocsWithLostPermissions();
+        if (this.getPouchDB()) {
+          await this.purgeDocsWithLostPermissions();
+        }
         this.syncState.next(SyncState.COMPLETED);
         return res as SyncResult;
       })
       .catch((err) => {
+        this.currentSync = null;
         // Handle 404 errors for notifications database (may not exist yet if no event was triggered)
         if (this.isNotificationsDatabase() && err?.status === 404) {
           Logging.debug(
@@ -252,6 +261,29 @@ export class SyncedPouchDatabase extends PouchDatabase {
         "Failed to ensure synced. SyncState still reported as UNSYNCED.",
       );
     }
+  }
+
+  /**
+   * Cancels any in-progress sync before destroying the database
+   */
+  override async destroy(): Promise<any> {
+    this.currentSync?.cancel();
+    this.currentSync = null;
+    this.liveSyncEnabled = false;
+    return super.destroy();
+  }
+
+  /**
+   * Cancels any in-progress sync and stops live syncing before resetting the database state.
+   * Use this (via {@link DatabaseResolverService.resetDatabases}) before wiping local storage
+   * (e.g. "Reset Application") to avoid triggering PouchDB checkpoint cleanup requests against
+   * the remote while the local database is being torn down.
+   */
+  override async reset(): Promise<void> {
+    this.currentSync?.cancel();
+    this.currentSync = null;
+    this.liveSyncEnabled = false;
+    return super.reset();
   }
 
   /**

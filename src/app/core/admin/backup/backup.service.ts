@@ -73,6 +73,9 @@ export class BackupService {
       return;
     }
 
+    // Cancel any ongoing sync before deleting databases
+    await this.dbResolver.resetDatabases();
+
     const dbs = await this.window.indexedDB.databases();
     await Promise.all(dbs.map(({ name }) => this.destroyDatabase(name)));
 
