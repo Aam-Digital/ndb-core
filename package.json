@@ -27,6 +27,9 @@
   "imports": {
     "#e2e/*": "./e2e/*"
   },
+  "overrides": {
+    "@babel/helper-define-polyfill-provider": "0.6.6"
+  },
   "dependencies": {
     "@angular/animations": "^21.2.0",
     "@angular/cdk": "^21.2.0",
