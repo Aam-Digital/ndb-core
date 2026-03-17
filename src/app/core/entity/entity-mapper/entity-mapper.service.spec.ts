@@ -106,7 +106,7 @@ describe("EntityMapperService", () => {
     }
 
     const result = await entityMapper.loadType<TempTestEntity>(TempTestEntity);
-    expect(result).toBeEmpty();
+    expect(result).toHaveLength(0);
   });
 
   it("saves new entity and loads it", async () => {

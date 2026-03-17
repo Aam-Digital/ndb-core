@@ -137,7 +137,7 @@ describe("ChildrenService", () => {
     // no active relation
     const child2 = await service.getChild("Child:2");
     expect(child2["schoolClass"]).toBeUndefined();
-    expect(child2["schoolId"]).toBeEmpty();
+    expect(child2["schoolId"]).toHaveLength(0);
 
     // one active relation
     let child1 = await service.getChild("Child:1");
@@ -173,7 +173,7 @@ describe("ChildrenService", () => {
     expect(child1["schoolId"]).toEqual(["School:1"]);
     const child2 = children.find((child) => child.getId() === "Child:2");
     expect(child2["schoolClass"]).toBeUndefined();
-    expect(child2["schoolId"]).toBeEmpty();
+    expect(child2["schoolId"]).toHaveLength(0);
     const child3 = children.find((child) => child.getId() === "Child:3");
     expect(child3["schoolClass"]).toBe("2");
     expect(child3["schoolId"]).toEqual(["School:1"]);

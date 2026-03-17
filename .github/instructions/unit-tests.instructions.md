@@ -82,32 +82,17 @@ await TestBed.configureTestingModule({
 }).compileComponents();
 ```
 
-## Custom Matchers
+## Assertions
 
-Custom matchers are globally registered in test setup and available in all spec files:
+Prefer plain Vitest assertions over project-specific helpers:
 
 ```typescript
-// Entity type checking
-expect(entity).toHaveType("Child");
-
-// Form validation
-expect(form).toContainFormError("required");
-expect(form).toHaveValue({ name: "Test" });
-expect(form).toBeValidForm();
-expect(form).toBeEnabled();
-
-// Collection matchers
-expect(map).toHaveKey("someKey");
-expect(array).toBeEmpty();
-
-// Number matchers
-expect(value).toBeFinite();
-
-// Object matchers
-expect(obj).toHaveOwnProperty("name");
-
-// Date matchers
-expect(dateValue).toBeDate("2024-01-15");
+expect(formControl.value).toEqual({ name: "Test" });
+expect(formControl.hasError("required")).toBe(true);
+expect(formGroup.valid).toBe(true);
+expect(formGroup.enabled).toBe(true);
+expect(items).toHaveLength(0);
+expect(dateValue?.getTime()).toBe(new Date(2024, 0, 15).getTime());
 ```
 
 ## Async Testing Patterns
@@ -123,18 +108,19 @@ it("should update after async operation", async () => {
 });
 ```
 
-### expectObservable
-
-Use `expectObservable()` from `src/app/utils/test-utils/observable-utils.ts`:
+Use `vi.useFakeTimers()` and `vi.advanceTimersByTimeAsync()` when the implementation relies on timers:
 
 ```typescript
-import { expectObservable } from "../../utils/test-utils/observable-utils";
-
-// Assert first emitted value
-await expectObservable(myObservable$).first.toBeResolvedTo(expectedValue);
-
-// Assert full sequence
-await expectObservable(myObservable$).inSequence.toBeResolvedTo([val1, val2]);
+it("debounces search requests", async () => {
+  vi.useFakeTimers();
+  try {
+    component.search("test");
+    await vi.advanceTimersByTimeAsync(300);
+    expect(service.load).toHaveBeenCalledWith("test");
+  } finally {
+    vi.useRealTimers();
+  }
+});
 ```
 
 ## Test File Structure
@@ -175,6 +161,9 @@ describe("MyComponent", () => {
 ```bash
 # Run specific test file
 npm run test -- --watch=false --include='**/my-component.spec.ts'
+
+# Run CI-style suite with coverage
+npm run test-ci
 
 # Run all tests
 npm run test -- --watch=false

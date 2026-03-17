@@ -66,8 +66,12 @@ describe("DateImportConfigComponent", () => {
 
       expect(component.values[0].value).toBe("5/4/2023");
       expect(component.values[0].parsed).toBeUndefined();
-      expect(component.values[1].parsed).toBeDate("2023-02-01");
-      expect(component.values[2].parsed).toBeDate("2023-04-14");
+      expect(component.values[1].parsed?.getTime()).toBe(
+        new Date(2023, 1, 1).getTime(),
+      );
+      expect(component.values[2].parsed?.getTime()).toBe(
+        new Date(2023, 3, 14).getTime(),
+      );
     } finally {
       vi.useRealTimers();
     }

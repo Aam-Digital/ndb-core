@@ -237,7 +237,7 @@ describe("EntityFormComponent", () => {
     for (const [key, value] of Object.entries(expectedFormValues)) {
       const form = component.form.formGroup.get(key);
       if (form) {
-        expect(form).toHaveValue(value);
+        expect(form.value).toEqual(value);
       }
       expect(entityAfterSave[key]).toEqual(value);
     }

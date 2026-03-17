@@ -179,8 +179,8 @@ describe("PublicFormComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
       expect(component.validationError).toBe(true);
       expect(
-        component.entityFormEntries[0].form.formGroup.get("name"),
-      ).toHaveValue("some name");
+        component.entityFormEntries[0].form.formGroup.get("name").value,
+      ).toEqual("some name");
     } finally {
       vi.useRealTimers();
     }
@@ -195,8 +195,8 @@ describe("PublicFormComponent", () => {
         component.entityFormEntries[0].form.formGroup.get("name") as any
       ).setValue("some name");
       expect(
-        component.entityFormEntries[0].form.formGroup.get("name"),
-      ).toHaveValue("some name");
+        component.entityFormEntries[0].form.formGroup.get("name").value,
+      ).toEqual("some name");
 
       component.reset();
       await vi.advanceTimersByTimeAsync(0);
@@ -231,8 +231,8 @@ describe("PublicFormComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(
-        component.entityFormEntries[0].form.formGroup.get("name"),
-      ).toHaveValue("default name");
+        component.entityFormEntries[0].form.formGroup.get("name").value,
+      ).toEqual("default name");
     } finally {
       vi.useRealTimers();
     }
@@ -256,8 +256,8 @@ describe("PublicFormComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(
-        component.entityFormEntries[0].form.formGroup.get("name"),
-      ).toHaveValue("default name");
+        component.entityFormEntries[0].form.formGroup.get("name").value,
+      ).toEqual("default name");
     } finally {
       vi.useRealTimers();
     }
@@ -357,8 +357,8 @@ describe("PublicFormComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(
-        component.entityFormEntries[0].form.formGroup.get("other"),
-      ).toHaveValue("prefilled default");
+        component.entityFormEntries[0].form.formGroup.get("other").value,
+      ).toEqual("prefilled default");
     } finally {
       vi.useRealTimers();
     }

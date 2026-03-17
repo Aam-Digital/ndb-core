@@ -17,7 +17,6 @@
 
 import { DatabaseIndexingService } from "./database-indexing.service";
 import { Database } from "../../database/database";
-import { expectObservable } from "../../../utils/test-utils/observable-utils";
 import { TestBed } from "@angular/core/testing";
 import { firstValueFrom, of } from "rxjs";
 import { Note } from "../../../child-dev-project/notes/model/note";
@@ -118,11 +117,13 @@ describe("DatabaseIndexingService", () => {
     );
 
     // initially no registered indices
-    await expectObservable(service.indicesRegistered).first.toBeResolvedTo([]);
+    await expect(firstValueFrom(service.indicesRegistered)).resolves.toEqual(
+      [],
+    );
 
     // calling `createIndex` triggers a pending index state immediately
     const indexCreationPromise = service.createIndex(testDesignDoc);
-    await expectObservable(service.indicesRegistered).first.toBeResolvedTo([
+    await expect(firstValueFrom(service.indicesRegistered)).resolves.toEqual([
       {
         title: "Preparing data (Indexing)",
         details: testIndexName,
@@ -132,7 +133,7 @@ describe("DatabaseIndexingService", () => {
 
     // after the index creation is done, registered indices are updated
     await indexCreationPromise;
-    await expectObservable(service.indicesRegistered).first.toBeResolvedTo([
+    await expect(firstValueFrom(service.indicesRegistered)).resolves.toEqual([
       {
         title: "Preparing data (Indexing)",
         details: testIndexName,
@@ -156,7 +157,7 @@ describe("DatabaseIndexingService", () => {
 
     // calling `createIndex` triggers a pending index state immediately
     const indexCreationPromise = service.createIndex(testDesignDoc);
-    await expectObservable(service.indicesRegistered).first.toBeResolvedTo([
+    await expect(firstValueFrom(service.indicesRegistered)).resolves.toEqual([
       {
         title: "Preparing data (Indexing)",
         details: testIndexName,
@@ -166,7 +167,7 @@ describe("DatabaseIndexingService", () => {
 
     // after the index creation failed, registered indices are updated with error state
     await expect(indexCreationPromise).rejects.toEqual(testErr);
-    await expectObservable(service.indicesRegistered).first.toBeResolvedTo([
+    await expect(firstValueFrom(service.indicesRegistered)).resolves.toEqual([
       {
         title: "Preparing data (Indexing)",
         details: testIndexName,

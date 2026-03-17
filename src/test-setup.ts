@@ -1,8 +1,6 @@
-import { registerCustomMatchers } from "./app/utils/test-utils/register-custom-matchers";
 import { enableVitestProxyZoneCompat } from "./app/utils/test-utils/vitest-proxy-zone-compat";
 
 enableVitestProxyZoneCompat();
-registerCustomMatchers();
 
 if (!window.matchMedia) {
   Object.defineProperty(window, "matchMedia", {

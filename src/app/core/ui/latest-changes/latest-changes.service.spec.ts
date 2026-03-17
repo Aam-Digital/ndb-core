@@ -110,7 +110,7 @@ describe("LatestChangesService", () => {
     vi.spyOn(http, "get").mockReturnValue(of([]));
 
     service.getChangelogsBetweenVersions("1.0").subscribe((result) => {
-      expect(result).toBeEmpty();
+      expect(result).toHaveLength(0);
     });
   });
 

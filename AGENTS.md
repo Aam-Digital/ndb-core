@@ -118,7 +118,7 @@ export class ExampleComponent {
 - Write maintainable, performant, and accessible code
 - Use _ESLint_ for linting (`npm run lint`)
 - Use _prettier_ for code formatting
-- Maintain a comprehensive test suite with Karma and Playwright
+- Maintain a comprehensive test suite with Vitest and Playwright
 
 ### Additional Resources
 
@@ -201,10 +201,11 @@ When developing new functionality:
 
 ## Testing Guidelines
 
-### Unit Testing (Jasmine/Karma)
+### Unit Testing (Vitest)
 
 - Write unit tests for all new components and services
 - Run tests: `npm run test -- --watch=false --include='**/relevant-file.spec.ts'`
+- Run the full CI-style unit test suite with coverage: `npm run test-ci`
 - See [`.github/instructions/unit-tests.instructions.md`](.github/instructions/unit-tests.instructions.md) for detailed patterns and examples
 
 ### End-to-End Testing (Playwright)

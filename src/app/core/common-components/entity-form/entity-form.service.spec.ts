@@ -323,7 +323,7 @@ describe("EntityFormService", () => {
       [{ id: "test" }],
       new TestEntity(),
     );
-    expect(form.formGroup.get("test")).toHaveValue(1);
+    expect(form.formGroup.get("test").value).toEqual(1);
 
     schema.defaultValue = {
       mode: "dynamic",
@@ -340,14 +340,14 @@ describe("EntityFormService", () => {
       config: { value: PLACEHOLDERS.CURRENT_USER },
     };
     form = await service.createEntityForm([{ id: "test" }], new TestEntity());
-    expect(form.formGroup.get("test")).toHaveValue(
+    expect(form.formGroup.get("test").value).toEqual(
       `${TestEntity.ENTITY_TYPE}:${TEST_USER}`,
     );
 
     schema.dataType = EntityDatatype.dataType;
     schema.isArray = true;
     form = await service.createEntityForm([{ id: "test" }], new TestEntity());
-    expect(form.formGroup.get("test")).toHaveValue([
+    expect(form.formGroup.get("test").value).toEqual([
       `${TestEntity.ENTITY_TYPE}:${TEST_USER}`,
     ]);
 
@@ -368,13 +368,13 @@ describe("EntityFormService", () => {
       [{ id: "user" }],
       new TestEntity(),
     );
-    expect(form.formGroup.get("user")).toHaveValue(null);
+    expect(form.formGroup.get("user").value).toEqual(null);
 
     // array property
     TestEntity.schema.get("user").dataType = EntityDatatype.dataType;
     TestEntity.schema.get("user").isArray = true;
     form = await service.createEntityForm([{ id: "user" }], new TestEntity());
-    expect(form.formGroup.get("user")).toHaveValue(null);
+    expect(form.formGroup.get("user").value).toEqual(null);
 
     TestEntity.schema.delete("user");
   });
@@ -390,7 +390,7 @@ describe("EntityFormService", () => {
     const entity = new TestEntity();
     entity._rev = "1-existing_entity";
     const form = await service.createEntityForm([{ id: "test" }], entity);
-    expect(form.formGroup.get("test")).toHaveValue(null);
+    expect(form.formGroup.get("test").value).toEqual(null);
 
     TestEntity.schema.delete("test");
   });
@@ -406,7 +406,7 @@ describe("EntityFormService", () => {
     const entity = new TestEntity();
     entity["test"] = 2;
     const form = await service.createEntityForm([{ id: "test" }], entity);
-    expect(form.formGroup.get("test")).toHaveValue(2);
+    expect(form.formGroup.get("test").value).toEqual(2);
 
     TestEntity.schema.delete("test");
   });

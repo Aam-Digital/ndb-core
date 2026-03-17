@@ -54,7 +54,7 @@ describe("BackupService", () => {
     await service.clearDatabase();
 
     const resAfter = await db.getAll();
-    expect(resAfter).toBeEmpty();
+    expect(resAfter).toHaveLength(0);
   });
 
   it("getDatabaseExport should return all records", async () => {

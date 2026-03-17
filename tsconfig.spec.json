@@ -14,8 +14,6 @@
     "src/**/*.spec.ts",
     "src/**/*.d.ts",
     "src/test-setup.ts",
-    "src/polyfills.test.ts",
-    "src/app/utils/test-utils/*matchers.ts",
-    "src/app/utils/test-utils/register-custom-matchers.ts"
+    "src/polyfills.test.ts"
   ]
 }

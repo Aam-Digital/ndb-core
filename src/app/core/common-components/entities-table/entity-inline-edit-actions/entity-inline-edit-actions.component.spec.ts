@@ -61,9 +61,9 @@ describe("EntityInlineEditActionsComponent", () => {
     await component.edit();
 
     const formGroup = component.row.formGroup;
-    expect(formGroup.get("name")).toHaveValue("Child Name");
-    expect(formGroup.get("projectNumber")).toHaveValue("01");
-    expect(formGroup).toBeEnabled();
+    expect(formGroup.get("name").value).toEqual("Child Name");
+    expect(formGroup.get("projectNumber").value).toEqual("01");
+    expect(formGroup.enabled).toBe(true);
   });
 
   it("should correctly save changes to an entity", async () => {

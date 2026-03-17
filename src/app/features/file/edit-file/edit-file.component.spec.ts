@@ -77,10 +77,10 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.onFileSelected(file);
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
     cancelForm();
 
-    expect(component.formControl).toHaveValue(null);
+    expect(component.formControl.value).toEqual(null);
     expect(mockFileService.uploadFile).not.toHaveBeenCalled();
   });
 
@@ -89,13 +89,13 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.onFileSelected(file);
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
 
     component.delete();
 
     cancelForm();
 
-    expect(component.formControl).toHaveValue(null);
+    expect(component.formControl.value).toEqual(null);
     expect(mockFileService.uploadFile).not.toHaveBeenCalled();
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
   });
@@ -105,15 +105,15 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.onFileSelected(file);
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
 
     const otherFile = new File([], "other.file");
     component.onFileSelected(otherFile);
-    expect(component.formControl).toHaveValue("other.file");
+    expect(component.formControl.value).toEqual("other.file");
 
     cancelForm();
 
-    expect(component.formControl).toHaveValue(null);
+    expect(component.formControl.value).toEqual(null);
     expect(mockFileService.uploadFile).not.toHaveBeenCalled();
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
   });
@@ -124,11 +124,11 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.onFileSelected(file);
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
 
     component.formControl.disable();
 
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       file,
       component.entity,
@@ -141,13 +141,13 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.onFileSelected(file);
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
 
     component.delete();
 
     component.formControl.disable();
 
-    expect(component.formControl).toHaveValue(undefined);
+    expect(component.formControl.value).toEqual(undefined);
     expect(mockFileService.uploadFile).not.toHaveBeenCalled();
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
   });
@@ -158,15 +158,15 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.onFileSelected(file);
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
 
     const otherFile = new File([], "other.file");
     component.onFileSelected(otherFile);
-    expect(component.formControl).toHaveValue(otherFile.name);
+    expect(component.formControl.value).toEqual(otherFile.name);
 
     component.formControl.disable();
 
-    expect(component.formControl).toHaveValue(otherFile.name);
+    expect(component.formControl.value).toEqual(otherFile.name);
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       otherFile,
@@ -180,11 +180,11 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.delete();
-    expect(component.formControl).toHaveValue(undefined);
+    expect(component.formControl.value).toEqual(undefined);
 
     cancelForm();
 
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
   });
 
@@ -194,11 +194,11 @@ describe("EditFileComponent", () => {
 
     const otherFile = new File([], "other.file");
     component.onFileSelected(otherFile);
-    expect(component.formControl).toHaveValue("other.file");
+    expect(component.formControl.value).toEqual("other.file");
 
     cancelForm();
 
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
     expect(mockFileService.uploadFile).not.toHaveBeenCalled();
   });
@@ -209,11 +209,11 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.delete();
-    expect(component.formControl).toHaveValue(undefined);
+    expect(component.formControl.value).toEqual(undefined);
 
     component.formControl.disable();
 
-    expect(component.formControl).toHaveValue(undefined);
+    expect(component.formControl.value).toEqual(undefined);
     expect(mockFileService.removeFile).toHaveBeenCalledWith(
       component.entity,
       component.formFieldConfig.id,
@@ -231,7 +231,7 @@ describe("EditFileComponent", () => {
 
     component.formControl.disable();
 
-    expect(component.formControl).toHaveValue(otherFile.name);
+    expect(component.formControl.value).toEqual(otherFile.name);
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       otherFile,
@@ -259,14 +259,14 @@ describe("EditFileComponent", () => {
       component.entity[component.formFieldConfig.id] = file.name;
       component.formControl.disable();
 
-      expect(component.formControl).toHaveValue(file.name);
+      expect(component.formControl.value).toEqual(file.name);
       expect(component.entity[component.formFieldConfig.id]).toBe(file.name);
 
       subject.error(new Error());
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockAlertService.addDanger).toHaveBeenCalled();
-      expect(component.formControl).toHaveValue("old.file");
+      expect(component.formControl.value).toEqual("old.file");
       expect(component.entity[component.formFieldConfig.id]).toBe("old.file");
       expect(mockEntityMapper.save).toHaveBeenCalledWith(
         expect.objectContaining({

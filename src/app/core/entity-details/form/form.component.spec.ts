@@ -86,7 +86,7 @@ describe("FormComponent", () => {
     component.cancelClicked();
 
     expect(component.form.formGroup.disabled).toBe(true);
-    expect(component.form.formGroup.get("name")).toHaveValue("test child");
+    expect(component.form.formGroup.get("name").value).toEqual("test child");
   });
 
   it("should also reset form values which where not set before", () => {

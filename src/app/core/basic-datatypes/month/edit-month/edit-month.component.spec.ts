@@ -30,7 +30,7 @@ describe("EditMonthComponent", () => {
 
     component.setMonthAndYear(moment(selected), { close: closeSpy } as any);
 
-    expect(component.formControl).toHaveValue(selected);
+    expect(component.formControl.value).toEqual(selected);
     expect(closeSpy).toHaveBeenCalled();
   });
 });

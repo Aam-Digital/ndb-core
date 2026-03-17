@@ -2,9 +2,8 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { BackgroundProcessingIndicatorComponent } from "./background-processing-indicator.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { EMPTY, of } from "rxjs";
+import { EMPTY, firstValueFrom, of } from "rxjs";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { expectObservable } from "../../../../utils/test-utils/observable-utils";
 import { DatabaseResolverService } from "../../../database/database-resolver.service";
 
 describe("BackgroundProcessingIndicatorComponent", () => {
@@ -56,15 +55,13 @@ describe("BackgroundProcessingIndicatorComponent", () => {
       component.summarize = true;
       component.ngOnInit();
 
-      await expectObservable(
-        component.taskCounterObservable,
-      ).first.toBeResolvedTo(2);
+      await expect(
+        firstValueFrom(component.taskCounterObservable),
+      ).resolves.toBe(2);
       await vi.advanceTimersByTimeAsync(0);
-      await expectObservable(component.filteredProcesses).first.toBeResolvedTo([
-        p1,
-        { title: p2a.title, pending: true },
-        p3,
-      ]);
+      await expect(
+        firstValueFrom(component.filteredProcesses),
+      ).resolves.toEqual([p1, { title: p2a.title, pending: true }, p3]);
       await vi.advanceTimersByTimeAsync(0);
       expect(component.taskListDropdownTrigger.openMenu).toHaveBeenCalled();
     } finally {
@@ -79,9 +76,9 @@ describe("BackgroundProcessingIndicatorComponent", () => {
       vi.spyOn(component.taskListDropdownTrigger, "closeMenu");
       component.ngOnInit();
 
-      await expectObservable(
-        component.taskCounterObservable,
-      ).first.toBeResolvedTo(0);
+      await expect(
+        firstValueFrom(component.taskCounterObservable),
+      ).resolves.toBe(0);
       await vi.advanceTimersByTimeAsync(0);
       expect(component.taskListDropdownTrigger.closeMenu).toHaveBeenCalled();
     } finally {
