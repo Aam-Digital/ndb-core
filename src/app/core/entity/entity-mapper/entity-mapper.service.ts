@@ -28,6 +28,7 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 import { DatabaseDocChange } from "../../database/database";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "./entity-permission-error";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -226,6 +227,12 @@ export class EntityMapperService {
 
   private assertPermission(entity: Entity) {
     if (!this.ability) {
+      return;
+    }
+    if (!this.ability.initialized) {
+      Logging.warn(
+        `Permission check skipped for "${entity.getId()}": ability not yet initialized`,
+      );
       return;
     }
     const action = entity.isNew ? "create" : "update";
