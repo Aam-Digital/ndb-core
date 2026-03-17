@@ -8,8 +8,7 @@ import {
 } from "@angular/service-worker";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
-import { Subject } from "rxjs";
-import { of } from "rxjs";
+import { Subject, of } from "rxjs";
 import { Logging } from "../../logging/logging.service";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
