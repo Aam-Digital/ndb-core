@@ -210,11 +210,12 @@ export class EntityMapperService {
    * Delete an entity from the database.
    * @param entity The entity to be deleted
    */
-  public remove<T extends Entity>(entity: T): Promise<any> {
+  public async remove<T extends Entity>(entity: T): Promise<any> {
     this.assertPermission(entity, "delete");
     return this.dbResolver
       .getDatabase(entity.getConstructor().DATABASE)
       .remove(entity);
+  }
   }
 
   protected resolveConstructor<T extends Entity>(
