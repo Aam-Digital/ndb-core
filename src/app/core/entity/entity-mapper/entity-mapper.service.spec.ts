@@ -1,25 +1,12 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import { EntityMapperService } from "./entity-mapper.service";
 import { Entity } from "../model/entity";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../../database/pouchdb/pouch-database";
-import { DatabaseEntity, EntityRegistry } from "../database-entity.decorator";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+  entityRegistry,
+} from "../database-entity.decorator";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { TEST_USER } from "../../user/demo-user-generator.service";
@@ -32,7 +19,6 @@ import { firstValueFrom } from "rxjs";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "./entity-permission-error";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { entityRegistry } from "../database-entity.decorator";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;

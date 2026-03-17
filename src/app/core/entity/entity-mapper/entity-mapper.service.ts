@@ -46,7 +46,7 @@ export class EntityMapperService {
   private entitySchemaService = inject(EntitySchemaService);
   private currentUser = inject(CurrentUserSubject);
   private registry = inject(EntityRegistry);
-  private ability = inject(EntityAbility, { optional: true });
+  private readonly ability = inject(EntityAbility, { optional: true });
 
   /**
    * Load an Entity from the database with the given id or the registered name of that class.
