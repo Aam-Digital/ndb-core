@@ -112,7 +112,9 @@ export class BackupService {
     );
 
     // Unregister all service workers
-    const registrations = await navigator.serviceWorker.getRegistrations();
-    await Promise.all(registrations.map((reg) => reg.unregister()));
+    if (navigator.serviceWorker) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map((reg) => reg.unregister()));
+    }
   }
 }
