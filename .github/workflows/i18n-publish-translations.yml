@@ -1,0 +1,64 @@
+name: i18n - Publish translations to GitHub Pages CDN
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag to publish translations for (defaults to latest release)"
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  publish-translations:
+    runs-on: ubuntu-latest
+    env:
+      LANGUAGES: "fr de"
+
+    steps:
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            echo "tag=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
+          elif [ -n "${{ github.event.inputs.version }}" ]; then
+            echo "tag=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            tag=$(gh release view --repo "${{ github.repository }}" --json tagName -q .tagName)
+            echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Export translations from POEditor
+        run: |
+          mkdir -p locale/${{ steps.version.outputs.tag }}
+          for lang in $LANGUAGES; do
+            echo "Exporting translations for language $lang"
+            response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
+              -d "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
+              -d "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
+              -d "language=$lang" \
+              -d "type=key_value_json" \
+              -d "fallback_language=en")
+
+            status=$(echo "$response" | jq -r '.response.status')
+            if [ "$status" != "success" ]; then
+              echo "Error exporting translations for $lang: $response"
+              exit 1
+            fi
+
+            url=$(echo "$response" | jq -r '.result.url')
+            echo "Downloading translations for $lang from $url"
+            curl -s -o "locale/${{ steps.version.outputs.tag }}/messages.$lang.json" "$url"
+          done
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: locale
+          destination_dir: locale/${{ steps.version.outputs.tag }}

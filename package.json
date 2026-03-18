@@ -136,7 +136,6 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.57.1",
-    "xliff": "^6.3.0"
+    "typescript-eslint": "^8.57.1"
   }
 }
