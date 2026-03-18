@@ -49,9 +49,18 @@ export class SiteSettings extends Entity {
   })
   logo: string;
 
-  @DatabaseField({ label: $localize`Primary color` }) primary: string;
-  @DatabaseField({ label: $localize`Secondary color` }) secondary: string;
-  @DatabaseField({ label: $localize`Error color` }) error: string;
+  @DatabaseField({
+    label: $localize`Primary color`,
+    editComponent: "EditColor",
+  })
+  primary: string;
+  @DatabaseField({
+    label: $localize`Secondary color`,
+    editComponent: "EditColor",
+  })
+  secondary: string;
+  @DatabaseField({ label: $localize`Error color`, editComponent: "EditColor" })
+  error: string;
   @DatabaseField({ label: $localize`Text font` }) font: string;
 
   constructor() {
