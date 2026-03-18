@@ -85,7 +85,7 @@ export class PouchDatabase extends Database {
   }
 
   override isInitialized(): boolean {
-    return !!this.pouchDB;
+    return !!this.getPouchDB();
   }
 
   async getPouchDBOnceReady(): Promise<PouchDB.Database> {

@@ -155,6 +155,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * Execute a (one-time) sync between the local and server database.
    */
   sync(options: PouchDB.Replication.SyncOptions = {}): Promise<SyncResult> {
+    if (!this.isInitialized()) {
+      Logging.debug("Not syncing: database not initialized");
+      return Promise.resolve({});
+    }
+
     if (!this.navigator.onLine) {
       Logging.debug("Not syncing because offline");
       this.syncState.next(SyncState.UNSYNCED);
