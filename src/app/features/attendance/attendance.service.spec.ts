@@ -17,6 +17,7 @@ import {
 } from "#src/app/core/entity/database-entity.decorator";
 import { GroupParticipantResolverService } from "./deprecated/group-participant-resolver";
 import { BehaviorSubject } from "rxjs";
+import type { Mock } from "vitest";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 
 @DatabaseEntity("RecurringActivity")
@@ -51,10 +52,14 @@ class MockRecurringActivity extends Entity {
 describe("AttendanceService", () => {
   let service: AttendanceService;
 
-  let mockEntityMapper: any;
-  let mockDbIndexing: any;
+  let mockEntityMapper: { save: Mock; load: Mock; loadType: Mock };
+  let mockDbIndexing: {
+    createIndex: Mock;
+    queryIndexDocsRange: Mock;
+    queryIndexDocs: Mock;
+  };
   let currentUserSubject: BehaviorSubject<Entity | undefined>;
-  let mockEntityRegistry: any;
+  let mockEntityRegistry: { has: Mock; get: Mock };
 
   function createEvent(date: Date, activityIdWithPrefix: string): Note {
     const event = Note.create(date, "generated event");

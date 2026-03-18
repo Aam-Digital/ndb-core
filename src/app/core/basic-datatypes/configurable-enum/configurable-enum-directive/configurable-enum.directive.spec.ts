@@ -3,11 +3,24 @@ import { TemplateRef, ViewContainerRef } from "@angular/core";
 import { ConfigurableEnumService } from "../configurable-enum.service";
 import { ConfigurableEnumConfig } from "../configurable-enum.types";
 import { TestBed } from "@angular/core/testing";
+import type { Mock } from "vitest";
+
+type TemplateRefMock = {
+  elementRef: Mock;
+};
+
+type ViewContainerRefMock = {
+  createEmbeddedView: Mock;
+};
+
+type ConfigurableEnumServiceMock = {
+  getEnumValues: Mock;
+};
 
 describe("ConfigurableEnumDirective", () => {
-  let mockTemplateRef: any;
-  let mockViewContainerRef: any;
-  let mockEnumService: any;
+  let mockTemplateRef: TemplateRefMock;
+  let mockViewContainerRef: ViewContainerRefMock;
+  let mockEnumService: ConfigurableEnumServiceMock;
   let directive: ConfigurableEnumDirective;
 
   beforeEach(() => {

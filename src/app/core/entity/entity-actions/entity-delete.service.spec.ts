@@ -25,16 +25,23 @@ import { DefaultDatatype } from "../default-datatype/default.datatype";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
 import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import { EventAttendanceMapDatatype } from "#src/app/features/attendance/deprecated/event-attendance-map.datatype";
+import type { Mock } from "vitest";
 
 describe("EntityDeleteService", () => {
   let service: EntityDeleteService;
   let entityMapper: MockEntityMapperService;
 
-  let snackBarSpy: any;
-  let mockConfirmationDialog: any;
-  let mockUserAdminService: any;
+  let snackBarSpy: { open: Mock };
+  let mockConfirmationDialog: {
+    getConfirmation: Mock;
+    showProgressDialog: Mock;
+  };
+  let mockUserAdminService: { deleteUser: Mock };
 
   beforeEach(() => {
+    snackBarSpy = {
+      open: vi.fn(),
+    };
     mockUserAdminService = {
       deleteUser: vi.fn(),
     };

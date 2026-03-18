@@ -26,13 +26,32 @@ import {
 } from "app/core/entity/database-entity.decorator";
 import { JsonEditorService } from "#src/app/core/admin/json-editor/json-editor.service";
 import { Angulartics2Module } from "angulartics2";
+import type { Mock } from "vitest";
+
+type ReportingServiceMock = {
+  calculateReport: Mock;
+};
+
+type DataTransformationServiceMock = {
+  queryAndTransformData: Mock;
+};
+
+type SqlReportServiceMock = {
+  query: Mock;
+  getCsvforV2: Mock;
+  flattenData: Mock;
+  fetchReportCalculation: Mock;
+  createReportCalculation: Mock;
+  waitForReportData: Mock;
+  fetchReportCalculationData: Mock;
+};
 
 describe("ReportingComponent", () => {
   let component: ReportingComponent;
   let fixture: ComponentFixture<ReportingComponent>;
-  let mockReportingService: any;
-  let mockDataTransformationService: any;
-  let mockSqlReportService: any;
+  let mockReportingService: ReportingServiceMock;
+  let mockDataTransformationService: DataTransformationServiceMock;
+  let mockSqlReportService: SqlReportServiceMock;
 
   const testReport = new ReportEntity();
 

@@ -8,7 +8,7 @@ import {
 } from "@angular/material/snack-bar";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { Entity } from "../model/entity";
-import { NEVER, of, Subject } from "rxjs";
+import { NEVER, Observable, of, Subject } from "rxjs";
 import { Router } from "@angular/router";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { EntityDeleteService } from "./entity-delete.service";
@@ -16,17 +16,57 @@ import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { CascadingActionResult } from "./cascading-entity-action";
 import { PublicFormsService } from "app/features/public-form/public-forms.service";
 import { BulkOperationStateService } from "./bulk-operation-state.service";
+import type { Mock } from "vitest";
+
+type EntityMapperMock = {
+  save: Mock;
+  saveAll: Mock;
+  receiveUpdates: Mock;
+  loadType: Mock;
+};
+
+type SnackBarRefMock = Pick<
+  MatSnackBarRef<TextOnlySnackBar>,
+  "onAction" | "afterDismissed"
+> & {
+  onAction: Mock<() => Observable<void>>;
+  afterDismissed: Mock;
+};
+
+type MatSnackBarMock = {
+  open: Mock;
+};
+
+type ConfirmationDialogMock = {
+  getConfirmation: Mock;
+  showProgressDialog: Mock;
+};
+
+type EntityDeleteServiceMock = {
+  deleteEntity: Mock;
+};
+
+type EntityAnonymizeServiceMock = {
+  anonymizeEntity: Mock;
+};
+
+type BulkOperationStateServiceMock = {
+  startBulkOperation: Mock;
+  completeBulkOperation: Mock;
+  waitForBulkOperationToFinish: Mock;
+};
 
 describe("EntityActionsService", () => {
   let service: EntityActionsService;
-  let mockedEntityMapper: any;
-  let snackBarSpy: any;
-  let mockSnackBarRef: any;
-  let mockConfirmationDialog: any;
-  let mockRouter;
-  let mockedEntityDeleteService: any;
-  let mockedEntityAnonymizeService: any;
-  let mockedBulkOperationState: any;
+  let mockedEntityMapper: EntityMapperMock;
+  let snackBarSpy: MatSnackBarMock;
+  let mockSnackBarRef: SnackBarRefMock;
+  let mockConfirmationDialog: ConfirmationDialogMock;
+  let mockRouter: Router;
+  let navigateSpy: ReturnType<typeof vi.spyOn>;
+  let mockedEntityDeleteService: EntityDeleteServiceMock;
+  let mockedEntityAnonymizeService: EntityAnonymizeServiceMock;
+  let mockedBulkOperationState: BulkOperationStateServiceMock;
 
   let singleTestEntity: Entity;
   let severalTestEntities: Entity[] = [];
@@ -54,7 +94,9 @@ describe("EntityActionsService", () => {
       completeBulkOperation: vi.fn(),
       waitForBulkOperationToFinish: vi.fn(),
     };
-    mockedBulkOperationState.waitForBulkOperationToFinish.mockResolvedValue();
+    mockedBulkOperationState.waitForBulkOperationToFinish.mockResolvedValue(
+      undefined,
+    );
     mockedEntityMapper = {
       save: vi.fn(),
       saveAll: vi.fn(),
@@ -111,7 +153,7 @@ describe("EntityActionsService", () => {
       ],
     });
     mockRouter = TestBed.inject(Router);
-    vi.spyOn(mockRouter, "navigate").mockResolvedValue(true);
+    navigateSpy = vi.spyOn(mockRouter, "navigate").mockResolvedValue(true);
 
     service = TestBed.inject(EntityActionsService);
   });
@@ -186,7 +228,7 @@ describe("EntityActionsService", () => {
       service.delete(severalTestEntities, true);
       await vi.advanceTimersByTimeAsync(0);
 
-      mockRouter.navigate.mockClear();
+      navigateSpy.mockClear();
       onSnackbarAction.next();
       onSnackbarAction.complete();
       await vi.advanceTimersByTimeAsync(0);
@@ -219,7 +261,7 @@ describe("EntityActionsService", () => {
       service.delete(singleTestEntity, true);
       await vi.advanceTimersByTimeAsync(0);
 
-      mockRouter.navigate.mockClear();
+      navigateSpy.mockClear();
       onSnackbarAction.next();
       onSnackbarAction.complete();
       await vi.advanceTimersByTimeAsync(0);

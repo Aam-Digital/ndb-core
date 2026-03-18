@@ -10,13 +10,27 @@ import { SyncStateSubject } from "../../session/session-type";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
+import type { SessionInfo } from "../../session/auth/session-info";
+import type { Mock } from "vitest";
+
+type UserAdminServiceMock = {
+  getUser: Mock;
+  getAllRoles: Mock;
+  updateUser: Mock;
+  createUser: Mock;
+  deleteUser: Mock;
+};
+
+type HttpClientMock = {
+  post: Mock;
+};
 
 describe("EntityUserComponent", () => {
   let component: EntityUserComponent;
   let fixture: ComponentFixture<EntityUserComponent>;
 
-  let mockUserAdminService: any;
-  let mockHttp: any;
+  let mockUserAdminService: UserAdminServiceMock;
+  let mockHttp: HttpClientMock;
 
   const USER_ID = "test-id";
   const assignedRole: Role = {
@@ -60,7 +74,8 @@ describe("EntityUserComponent", () => {
         { provide: HttpClient, useValue: mockHttp },
         {
           provide: SessionSubject,
-          useValue: new BehaviorSubject({
+          useValue: new BehaviorSubject<SessionInfo>({
+            id: user.getId(true),
             name: user.getId(true),
             roles: [UserAdminService.ACCOUNT_MANAGER_ROLE],
           }),

@@ -15,20 +15,35 @@ import { SiteSettingsService } from "../site-settings/site-settings.service";
 import { LoginStateSubject } from "../session/session-type";
 import { SessionSubject } from "../session/auth/session-info";
 import { LoginState } from "../session/session-states/login-state.enum";
+import type { Mock } from "vitest";
+
+type ConfigServiceMock = {
+  getConfig: Mock;
+  configUpdates: Subject<Config>;
+};
+
+type MatomoMock = {
+  setUsername: Mock;
+  startTracking: Mock;
+};
+
+type AngularticsMock = {
+  setUserProperties: { next: Mock };
+};
 
 describe("AnalyticsService", () => {
   let service: AnalyticsService;
 
-  let mockConfigService: any;
-  const configUpdates = new Subject();
-  let mockMatomo: any;
-  let mockAngulartics: any;
-  let siteNameSubject = new Subject();
+  let mockConfigService: ConfigServiceMock;
+  const configUpdates = new Subject<Config>();
+  let mockMatomo: MatomoMock;
+  let mockAngulartics: AngularticsMock;
+  const siteNameSubject = new Subject<string>();
 
   beforeEach(() => {
     mockConfigService = {
       getConfig: vi.fn().mockName("mockConfigService.getConfig"),
-      configUpdates: configUpdates,
+      configUpdates,
     };
     mockMatomo = {
       setUsername: vi.fn().mockName("mockMatomo.setUsername"),

@@ -8,6 +8,22 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { SimpleChange } from "@angular/core";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import type { Mock } from "vitest";
+
+type ChildrenServiceMock = {
+  queryRelations: Mock;
+};
+
+type EntityActionsServiceMock = {
+  remove: Mock;
+};
+
+type EntityAbilityMock = {
+  can: Mock;
+  cannot: Mock;
+  update: Mock;
+  on: Mock;
+};
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
@@ -36,9 +52,9 @@ describe("EntityDetailsComponent", () => {
     ],
   };
 
-  let mockChildrenService: any;
-  let mockEntityRemoveService: any;
-  let mockAbility: any;
+  let mockChildrenService: ChildrenServiceMock;
+  let mockEntityRemoveService: EntityActionsServiceMock;
+  let mockAbility: EntityAbilityMock;
 
   beforeEach(waitForAsync(() => {
     mockChildrenService = {

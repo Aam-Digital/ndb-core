@@ -6,14 +6,29 @@ import { ImportService } from "../import.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { of } from "rxjs";
 import { ImportMetadata } from "../import-metadata";
+import type { Mock } from "vitest";
+
+type ImportServiceMock = {
+  executeImport: Mock;
+  undoImport: Mock;
+};
+
+type EntityMapperMock = {
+  receiveUpdates: Mock;
+  loadType: Mock;
+};
+
+type ConfirmationDialogServiceMock = {
+  getConfirmation: Mock;
+};
 
 describe("ImportHistoryComponent", () => {
   let component: ImportHistoryComponent;
   let fixture: ComponentFixture<ImportHistoryComponent>;
 
-  let mockImportService: any;
-  let mockEntityMapper: any;
-  let mockConfirmationDialogService: any;
+  let mockImportService: ImportServiceMock;
+  let mockEntityMapper: EntityMapperMock;
+  let mockConfirmationDialogService: ConfirmationDialogServiceMock;
 
   const testImport1: ImportMetadata = ImportMetadata.create({
     config: null,

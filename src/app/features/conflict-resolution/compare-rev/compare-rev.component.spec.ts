@@ -7,13 +7,24 @@ import { AutoResolutionService } from "../auto-resolution/auto-resolution.servic
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DatabaseResolverService } from "../../../core/database/database-resolver.service";
+import type { Mock } from "vitest";
+
+type DatabaseMock = {
+  get: Mock;
+  remove: Mock;
+  put: Mock;
+};
+
+type AutoResolutionServiceMock = {
+  shouldDeleteConflictingRevision: Mock;
+};
 
 describe("CompareRevComponent", () => {
   let component: CompareRevComponent;
   let fixture: ComponentFixture<CompareRevComponent>;
 
-  let mockDatabase: any;
-  let mockResolutionService: any;
+  let mockDatabase: DatabaseMock;
+  let mockResolutionService: AutoResolutionServiceMock;
 
   const testDoc = { _id: "abc", _rev: "rev-1a", value: 1 };
   const testConflictDoc = { _id: "abc", _rev: "rev-1b", value: 2 };

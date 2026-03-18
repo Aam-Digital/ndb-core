@@ -5,6 +5,25 @@ import { KeycloakEventTypeLegacy, KeycloakService } from "keycloak-angular";
 import { Subject } from "rxjs";
 import { ActivatedRoute } from "@angular/router";
 import { RemoteLoginNotAvailableError } from "./remote-login-not-available.error";
+import type { Mock } from "vitest";
+
+type HttpClientMock = {
+  get: Mock;
+  post: Mock;
+  delete: Mock;
+};
+
+type KeycloakEvent = {
+  type: KeycloakEventTypeLegacy;
+};
+
+type KeycloakServiceMock = {
+  updateToken: Mock;
+  getToken: Mock;
+  login: Mock;
+  init: Mock;
+  keycloakEvents$: Subject<KeycloakEvent>;
+};
 
 /**
  * Check {@link https://jwt.io} to decode the token.
@@ -26,8 +45,8 @@ const keycloakToken =
 
 describe("KeycloakAuthService", () => {
   let service: KeycloakAuthService;
-  let mockHttpClient: any;
-  let mockKeycloak: any;
+  let mockHttpClient: HttpClientMock;
+  let mockKeycloak: KeycloakServiceMock;
 
   beforeEach(() => {
     mockHttpClient = {
@@ -44,7 +63,7 @@ describe("KeycloakAuthService", () => {
     };
     mockKeycloak.getToken.mockResolvedValue(keycloakToken);
     mockKeycloak.updateToken.mockResolvedValue(true);
-    let mockActivatedRoute = { snapshot: { queryParams: {} } };
+    const mockActivatedRoute = { snapshot: { queryParams: {} } };
 
     TestBed.configureTestingModule({
       providers: [

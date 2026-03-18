@@ -24,6 +24,17 @@ import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { TestEventEntity } from "../../utils/test-utils/TestEventEntity";
 import { defaultAttendanceStatusTypes } from "../config/default-config/default-attendance-status-types";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
+import type { Mock } from "vitest";
+
+type ChildrenServiceMock = {
+  getNotesInTimespan: Mock;
+};
+
+type AttendanceServiceMock = {
+  getEventsOnDate: Mock;
+  wrapEventEntity: Mock;
+  eventTypes: ReturnType<typeof signal>;
+};
 
 // Note that we used to have more realistic tests here using the DatabaseTestingModule.
 // These have been replace with more focused, isolated unit tests using mocked services.
@@ -33,8 +44,8 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 describe("QueryService", () => {
   let service: QueryService;
   let mockEntityMapper: MockEntityMapperService;
-  let mockChildrenService: any;
-  let mockAttendanceService: any;
+  let mockChildrenService: ChildrenServiceMock;
+  let mockAttendanceService: AttendanceServiceMock;
   let mockEntityRegistry: EntityRegistry;
 
   const presentAttendanceStatus = defaultAttendanceStatusTypes.find(

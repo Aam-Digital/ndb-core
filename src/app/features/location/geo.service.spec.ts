@@ -1,18 +1,52 @@
 import { TestBed } from "@angular/core/testing";
 
-import { GeoService } from "./geo.service";
+import { GeoResult, GeoService } from "./geo.service";
 import { AnalyticsService } from "../../core/analytics/analytics.service";
 import { ConfigService } from "../../core/config/config.service";
 import { of, Subject } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
+import type { Mock } from "vitest";
+
+type AnalyticsServiceMock = {
+  eventTrack: Mock;
+};
+
+type ConfigServiceMock = {
+  getConfig: Mock;
+  configUpdates: Subject<undefined>;
+};
+
+type HttpClientMock = {
+  get: Mock;
+};
+
+type SearchResult = GeoResult & {
+  address: {
+    amenity?: string;
+    office?: string;
+    road?: string;
+    house_number?: string;
+    postcode?: number;
+    city?: string;
+  };
+};
+
+function createSearchResult(address: SearchResult["address"]): SearchResult {
+  return {
+    display_name: "",
+    lat: 0,
+    lon: 0,
+    address,
+  };
+}
 
 describe("GeoService", () => {
   let service: GeoService;
-  let mockAnalytics: any;
-  let mockConfigService: any;
-  let configUpdates = new Subject();
-  let mockHttp: any;
+  let mockAnalytics: AnalyticsServiceMock;
+  let mockConfigService: ConfigServiceMock;
+  const configUpdates = new Subject<undefined>();
+  let mockHttp: HttpClientMock;
 
   beforeEach(() => {
     environment.email = "some@mail.com";
@@ -75,44 +109,41 @@ describe("GeoService", () => {
   });
 
   it("should format with amenity, street, postcode and city", () => {
-    const testResult: any = {
-      address: {
-        amenity: "Cafe",
-        road: "Main St",
-        house_number: "42",
-        postcode: "12345",
-        city: "Berlin",
-      },
-    };
+    const testResult = createSearchResult({
+      amenity: "Cafe",
+      road: "Main St",
+      house_number: "42",
+      postcode: 12345,
+      city: "Berlin",
+    });
     const formatted = service.reformatDisplayName(testResult);
     expect(formatted.display_name).toBe("Cafe, Main St 42, 12345 Berlin");
   });
 
   it("should format with office and city only", () => {
-    const testResult: any = {
-      address: {
-        office: "Company HQ",
-        city: "Munich",
-      },
-    };
+    const testResult = createSearchResult({
+      office: "Company HQ",
+      city: "Munich",
+    });
     const formatted = service.reformatDisplayName(testResult);
     expect(formatted.display_name).toBe("Company HQ, Munich");
   });
 
   it("should handle missing address gracefully", () => {
-    const testResult: any = {};
+    const testResult = {
+      display_name: "",
+      lat: 0,
+      lon: 0,
+    } as unknown as SearchResult;
     const formatted = service.reformatDisplayName(testResult);
-    expect(formatted.display_name).toBeUndefined();
+    expect(formatted.display_name).toBe("");
   });
 
   it("should not include 'undefined' in the result", () => {
-    const testResult: any = {
-      address: {
-        amenity: "Library",
-        road: undefined,
-        city: "Hamburg",
-      },
-    };
+    const testResult = createSearchResult({
+      amenity: "Library",
+      city: "Hamburg",
+    });
     const formatted = service.reformatDisplayName(testResult);
     expect(formatted.display_name).toBe("Library, Hamburg");
   });

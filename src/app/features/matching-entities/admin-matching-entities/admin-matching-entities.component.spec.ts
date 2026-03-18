@@ -11,6 +11,23 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { FormBuilder } from "@angular/forms";
 import { SyncStateSubject } from "#src/app/core/session/session-type";
 import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
+import type { Mock } from "vitest";
+
+type ConfigServiceMock = {
+  saveConfig: Mock;
+  getAllConfigs: Mock;
+  exportConfig: Mock;
+  getConfig: Mock;
+  configUpdates: BehaviorSubject<Config>;
+};
+
+type EntityRelationsServiceMock = {
+  getEntityTypesReferencingType: Mock;
+};
+
+type EntityFormServiceMock = {
+  createEntityForm: Mock;
+};
 
 const MOCK_ENTITY_TYPES = [TestEntity];
 
@@ -27,10 +44,10 @@ const MOCK_CONFIG = {
 describe("AdminMatchingEntitiesComponent", () => {
   let component: AdminMatchingEntitiesComponent;
   let fixture: ComponentFixture<AdminMatchingEntitiesComponent>;
-  let mockConfigService: any;
+  let mockConfigService: ConfigServiceMock;
   let mockConfigUpdated: BehaviorSubject<Config>;
-  let mockEntityRelationsService: any;
-  let mockEntityFormService: any;
+  let mockEntityRelationsService: EntityRelationsServiceMock;
+  let mockEntityFormService: EntityFormServiceMock;
 
   beforeEach(async () => {
     mockConfigUpdated = new BehaviorSubject<Config>(null);

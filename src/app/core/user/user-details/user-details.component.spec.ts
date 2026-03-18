@@ -10,17 +10,43 @@ import { SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { BehaviorSubject, of } from "rxjs";
 import { CoreTestingModule } from "#src/app/utils/core-testing.module";
+import type { SessionInfo } from "../../session/auth/session-info";
+import type { Mock } from "vitest";
+
+type UserAdminServiceMock = {
+  getAllRoles: Mock;
+  createUser: Mock;
+  updateUser: Mock;
+};
+
+type AlertServiceMock = {
+  addInfo: Mock;
+  addAlert: Mock;
+  addDanger: Mock;
+};
+
+type KeycloakAuthServiceMock = {
+  changePassword: Mock;
+};
+
+type HttpClientMock = {
+  post: Mock;
+};
+
+type DialogRefMock = {
+  close: Mock;
+};
 
 describe("UserDetailsComponent", () => {
   let component: UserDetailsComponent;
   let fixture: ComponentFixture<UserDetailsComponent>;
-  let mockUserAdminService: any;
-  let mockAlertService: any;
-  let mockKeycloakService: any;
-  let mockHttpClient: any;
-  let mockSessionSubject: BehaviorSubject<any>;
-  let mockCurrentUserSubject: BehaviorSubject<any>;
-  let mockDialogRef: any;
+  let mockUserAdminService: UserAdminServiceMock;
+  let mockAlertService: AlertServiceMock;
+  let mockKeycloakService: KeycloakAuthServiceMock;
+  let mockHttpClient: HttpClientMock;
+  let mockSessionSubject: BehaviorSubject<SessionInfo | null>;
+  let mockCurrentUserSubject: BehaviorSubject<UserAccount | null>;
+  let mockDialogRef: DialogRefMock;
 
   const mockRole: Role = {
     id: "test-role",
@@ -58,13 +84,14 @@ describe("UserDetailsComponent", () => {
     };
     mockHttpClient.post.mockReturnValue(of({}));
 
-    mockSessionSubject = new BehaviorSubject({
+    mockSessionSubject = new BehaviorSubject<SessionInfo | null>({
+      id: "session-user-id",
       name: "test-user",
       email: "test@example.com",
       roles: ["user_app"],
     });
 
-    mockCurrentUserSubject = new BehaviorSubject(null);
+    mockCurrentUserSubject = new BehaviorSubject<UserAccount | null>(null);
 
     mockDialogRef = {
       close: vi.fn().mockName("MatDialogRef.close"),

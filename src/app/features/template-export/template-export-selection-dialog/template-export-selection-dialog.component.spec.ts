@@ -24,15 +24,32 @@ import { AlertService } from "../../../core/alerts/alert.service";
 import { TemplateExport } from "../template-export.entity";
 import { TemplateExportService } from "../template-export-service/template-export.service";
 import { NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
+import type { Mock } from "vitest";
+
+type DialogRefMock = {
+  close: Mock;
+};
+
+type TemplateExportApiServiceMock = {
+  generatePdfFromTemplate: Mock;
+};
+
+type DownloadServiceMock = {
+  triggerDownload: Mock;
+};
+
+type TemplateExportServiceMock = {
+  isExportServerEnabled: Mock;
+};
 
 describe("TemplateExportSelectionDialogComponent", () => {
   let component: TemplateExportSelectionDialogComponent;
   let fixture: ComponentFixture<TemplateExportSelectionDialogComponent>;
 
-  let mockDialogRef: any;
-  let mockPdfGeneratorApiService: any;
-  let mockDownloadService: any;
-  let mockTemplateExportService: any;
+  let mockDialogRef: DialogRefMock;
+  let mockPdfGeneratorApiService: TemplateExportApiServiceMock;
+  let mockDownloadService: DownloadServiceMock;
+  let mockTemplateExportService: TemplateExportServiceMock;
   let testEntity: Entity;
 
   beforeEach(async () => {

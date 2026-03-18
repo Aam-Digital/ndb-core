@@ -7,15 +7,33 @@ import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
+import type { Mock } from "vitest";
+
+type EntityRegistryMock = {
+  get: Mock;
+};
+
+type EntityConfigServiceMock = {
+  getEntityConfig: Mock;
+};
+
+type AdminEntityServiceMock = {
+  setAndSaveEntityConfig: Mock;
+};
+
+type MockSchemaField = {
+  dataType: string;
+  additional?: string;
+};
 
 describe("PublicFormsService", () => {
   let service: PublicFormsService;
-  let mockEntityRegistry: any;
-  let mockEntityConfigService: any;
-  let mockAdminEntityService: any;
+  let mockEntityRegistry: EntityRegistryMock;
+  let mockEntityConfigService: EntityConfigServiceMock;
+  let mockAdminEntityService: AdminEntityServiceMock;
 
   function createMockEntityConstructor(
-    schemaEntries: [string, any][],
+    schemaEntries: [string, MockSchemaField][],
   ): EntityConstructor {
     return {
       schema: new Map(schemaEntries),

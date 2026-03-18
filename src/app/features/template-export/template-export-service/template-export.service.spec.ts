@@ -6,11 +6,22 @@ import { TemplateExportService } from "./template-export.service";
 import { MatDialog } from "@angular/material/dialog";
 import { TemplateExportSelectionDialogComponent } from "../template-export-selection-dialog/template-export-selection-dialog.component";
 import { environment } from "#src/environments/environment";
+import type { Mock } from "vitest";
+
+type MatDialogMock = {
+  open: Mock;
+};
+
+type HttpClientMock = {
+  get: Mock;
+  post: Mock;
+  delete: Mock;
+};
 
 describe("TemplateExportService", () => {
   let service: TemplateExportService;
-  let mockDialog: any;
-  let mockHttpClient: any;
+  let mockDialog: MatDialogMock;
+  let mockHttpClient: HttpClientMock;
   const baseUrl = environment.API_PROXY_PREFIX + "/actuator/features";
 
   beforeEach(() => {
