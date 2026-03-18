@@ -12,10 +12,19 @@ import { DatabaseResolverService } from "../database/database-resolver.service";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { ConfigService } from "../config/config.service";
 import { of } from "rxjs";
+import type { Mock } from "vitest";
+
+type EntityMapperMock = Pick<EntityMapperService, "saveAll"> & {
+  saveAll: Mock;
+};
+
+type DatabaseMock = Pick<Database, "isEmpty"> & {
+  isEmpty: Mock;
+};
 
 describe("DemoDataService", () => {
-  let mockEntityMapper: any;
-  let mockDatabase: any;
+  let mockEntityMapper: EntityMapperMock;
+  let mockDatabase: DatabaseMock;
   let mockGeneratorsProviders;
 
   beforeEach(() => {

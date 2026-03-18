@@ -11,12 +11,22 @@ import {
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
+import type { Mock } from "vitest";
+
+type EntityMapperMock = Pick<
+  EntityMapperService,
+  "receiveUpdates" | "load" | "loadType"
+> & {
+  receiveUpdates: Mock;
+  load: Mock;
+  loadType: Mock;
+};
 
 describe("NotificationComponent", () => {
   let component: NotificationComponent;
   let fixture: ComponentFixture<NotificationComponent>;
 
-  let mockEntityMapper: any;
+  let mockEntityMapper: EntityMapperMock;
 
   beforeEach(async () => {
     mockEntityMapper = {

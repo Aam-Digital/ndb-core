@@ -30,12 +30,21 @@ import { LatestChangesModule } from "../latest-changes.module";
 import { UpdateManagerService } from "../update-manager.service";
 import { MarkdownModule } from "ngx-markdown";
 import { ActivatedRoute } from "@angular/router";
+import type { Mock } from "vitest";
+
+type LatestChangesServiceMock = Pick<
+  LatestChangesService,
+  "getChangelogsBeforeVersion" | "getChangelogsBetweenVersions"
+> & {
+  getChangelogsBeforeVersion: Mock;
+  getChangelogsBetweenVersions: Mock;
+};
 
 describe("ChangelogComponent", () => {
   let component: ChangelogComponent;
   let fixture: ComponentFixture<ChangelogComponent>;
 
-  let mockLatestChangesService: any;
+  let mockLatestChangesService: LatestChangesServiceMock;
 
   const testChangelog = new Changelog();
   testChangelog.tag_name = "1.0.0";

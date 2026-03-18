@@ -3,11 +3,23 @@ import { AssistantService } from "./assistant.service";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { AssistantDialogComponent } from "./assistant-dialog/assistant-dialog.component";
 import { of } from "rxjs";
+import type { Mock } from "vitest";
+
+type AssistantDialogRefMock = Pick<
+  MatDialogRef<AssistantDialogComponent>,
+  "afterClosed"
+> & {
+  afterClosed: Mock;
+};
+
+type MatDialogMock = Pick<MatDialog, "open"> & {
+  open: Mock;
+};
 
 describe("AssistantService", () => {
   let service: AssistantService;
-  let mockDialog: any;
-  let mockDialogRef: any;
+  let mockDialog: MatDialogMock;
+  let mockDialogRef: AssistantDialogRefMock;
 
   beforeEach(() => {
     mockDialogRef = {

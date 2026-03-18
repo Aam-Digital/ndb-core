@@ -22,15 +22,32 @@ import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { environment } from "../../../../environments/environment";
 import { NEVER, of } from "rxjs";
+import type { Mock } from "vitest";
+
+type LatestChangesServiceMock = Pick<
+  LatestChangesService,
+  "getChangelogsBeforeVersion" | "getChangelogsBetweenVersions"
+> & {
+  getChangelogsBeforeVersion: Mock;
+  getChangelogsBetweenVersions: Mock;
+};
+
+type LatestChangesDialogRefMock<T> = Pick<MatDialogRef<T>, "afterClosed"> & {
+  afterClosed: () => ReturnType<typeof of>;
+};
+
+type MatDialogMock = Pick<MatDialog, "open"> & {
+  open: Mock;
+};
 
 describe("LatestChangesDialogService", () => {
   let service: LatestChangesDialogService;
-  let mockLatestChangesService: any;
-  let mockDialog: any;
+  let mockLatestChangesService: LatestChangesServiceMock;
+  let mockDialog: MatDialogMock;
 
   beforeEach(() => {
     mockLatestChangesService = {
-      getLatestChangesBeforeVersion: vi.fn(),
+      getChangelogsBeforeVersion: vi.fn(),
       getChangelogsBetweenVersions: vi.fn(),
     };
 
@@ -39,7 +56,7 @@ describe("LatestChangesDialogService", () => {
     };
     mockDialog.open.mockReturnValue({
       afterClosed: () => of(NEVER),
-    } as MatDialogRef<void>);
+    } as LatestChangesDialogRefMock<void>);
 
     TestBed.configureTestingModule({
       providers: [
@@ -95,7 +112,7 @@ describe("LatestChangesDialogService", () => {
 
       mockDialog.open.mockReturnValue({
         afterClosed: () => of(true),
-      } as MatDialogRef<boolean>);
+      } as LatestChangesDialogRefMock<boolean>);
 
       service.showLatestChanges();
       await vi.advanceTimersByTimeAsync(0);

@@ -26,12 +26,17 @@ import { SessionManagerService } from "../session-service/session-manager.servic
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { SessionInfo } from "../auth/session-info";
 import { environment } from "../../../../environments/environment";
+import type { Mock } from "vitest";
+
+type KeycloakAuthServiceMock = Pick<KeycloakAuthService, "login"> & {
+  login: Mock<KeycloakAuthService["login"]>;
+};
 
 describe("LoginComponent", () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let loginState: LoginStateSubject;
-  let mockKeycloak: any;
+  let mockKeycloak: KeycloakAuthServiceMock;
   let sessionManager: SessionManagerService;
 
   beforeEach(waitForAsync(() => {

@@ -7,13 +7,26 @@ import { ConfirmationDialogService } from "../../../core/common-components/confi
 import { of } from "rxjs";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { GeoLocation } from "../geo-location";
+import type { Mock } from "vitest";
+
+type GeoServiceMock = Pick<GeoService, "lookup" | "reverseLookup"> & {
+  lookup: Mock;
+  reverseLookup: Mock;
+};
+
+type ConfirmationDialogMock = Pick<
+  ConfirmationDialogService,
+  "getConfirmation"
+> & {
+  getConfirmation: Mock;
+};
 
 describe("AddressEditComponent", () => {
   let component: AddressEditComponent;
   let fixture: ComponentFixture<AddressEditComponent>;
 
-  let mockGeoService: any;
-  let mockConfirmationDialog: any;
+  let mockGeoService: GeoServiceMock;
+  let mockConfirmationDialog: ConfirmationDialogMock;
 
   beforeEach(async () => {
     mockConfirmationDialog = {
@@ -33,7 +46,7 @@ describe("AddressEditComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: GeoService, useValue: {} },
+        { provide: GeoService, useValue: mockGeoService },
         {
           provide: ConfirmationDialogService,
           useValue: mockConfirmationDialog,
@@ -51,7 +64,9 @@ describe("AddressEditComponent", () => {
   });
 
   it("should clear selected location when clicking 'Remove'", async () => {
-    component.selectedLocation = { display_name: "some value" } as any;
+    component.selectedLocation = {
+      locationString: "some value",
+    };
 
     vi.spyOn(component.selectedLocationChange, "emit");
     component.clearLocation();

@@ -18,6 +18,27 @@ import { LoginState } from "../session/session-states/login-state.enum";
 import { DatabaseResolverService } from "../database/database-resolver.service";
 import { MemoryPouchDatabase } from "../database/pouchdb/memory-pouch-database";
 import { Entity } from "../entity/model/entity";
+import type { Mock } from "vitest";
+
+type DemoDataServiceMock = Pick<DemoDataService, "publishDemoData"> & {
+  publishDemoData: Mock;
+};
+
+type DialogRefMock = {
+  close: Mock;
+};
+
+type MatDialogMock = Pick<MatDialog, "open"> & {
+  open: Mock;
+};
+
+type LocalAuthServiceMock = Pick<LocalAuthService, "saveUser"> & {
+  saveUser: Mock;
+};
+
+type SessionManagerMock = Pick<SessionManagerService, "offlineLogin"> & {
+  offlineLogin: Mock;
+};
 
 describe("DemoDataInitializerService", () => {
   const normalUser: SessionInfo = {
@@ -33,10 +54,10 @@ describe("DemoDataInitializerService", () => {
     roles: ["user_app", "admin_app"],
   };
   let service: DemoDataInitializerService;
-  let mockDemoDataService: any;
-  let mockLocalAuth: any;
-  let sessionManager: any;
-  let mockDialog: any;
+  let mockDemoDataService: DemoDataServiceMock;
+  let mockLocalAuth: LocalAuthServiceMock;
+  let sessionManager: SessionManagerMock;
+  let mockDialog: MatDialogMock;
   let demoUserDBName: string;
   let adminDBName: string;
 
@@ -56,8 +77,8 @@ describe("DemoDataInitializerService", () => {
       open: vi.fn(),
     };
     mockDialog.open.mockReturnValue({
-      close: () => {},
-    } as any);
+      close: vi.fn(),
+    } as DialogRefMock);
     mockLocalAuth = {
       saveUser: vi.fn(),
     };
@@ -130,7 +151,7 @@ describe("DemoDataInitializerService", () => {
     vi.useFakeTimers();
     try {
       const closeSpy = vi.fn();
-      mockDialog.open.mockReturnValue({ close: closeSpy } as any);
+      mockDialog.open.mockReturnValue({ close: closeSpy } as DialogRefMock);
       service.generateDemoData();
 
       expect(mockDialog.open).toHaveBeenCalledWith(

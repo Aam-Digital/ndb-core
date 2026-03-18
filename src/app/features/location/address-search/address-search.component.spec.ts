@@ -9,12 +9,18 @@ import { MatInputHarness } from "@angular/material/input/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { HttpErrorResponse } from "@angular/common/http";
+import type { Mock } from "vitest";
+
+type GeoServiceMock = Pick<GeoService, "lookup" | "reverseLookup"> & {
+  lookup: Mock;
+  reverseLookup: Mock;
+};
 
 describe("AddressSearchComponent", () => {
   let component: AddressSearchComponent;
   let fixture: ComponentFixture<AddressSearchComponent>;
 
-  let mockGeoService: any;
+  let mockGeoService: GeoServiceMock;
   let loader: HarnessLoader;
 
   beforeEach(async () => {

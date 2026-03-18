@@ -4,12 +4,25 @@ import { PwaInstallComponent } from "./pwa-install.component";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
+import type { Mock } from "vitest";
+
+type PwaInstallServiceMock = Pick<
+  PwaInstallService,
+  "getPWAInstallType" | "installPWA"
+> & {
+  getPWAInstallType: Mock;
+  installPWA: Mock;
+};
+
+type SnackBarMock = Pick<MatSnackBar, "openFromTemplate"> & {
+  openFromTemplate: Mock;
+};
 
 describe("PwaInstallComponent", () => {
   let fixture: ComponentFixture<PwaInstallComponent>;
   let component: PwaInstallComponent;
-  let mockPWAInstallService: any;
-  let mockSnackbar: any;
+  let mockPWAInstallService: PwaInstallServiceMock;
+  let mockSnackbar: SnackBarMock;
 
   beforeEach(waitForAsync(() => {
     PwaInstallService.canInstallDirectly = undefined;

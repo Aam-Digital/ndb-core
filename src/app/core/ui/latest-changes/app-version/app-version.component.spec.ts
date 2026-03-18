@@ -20,12 +20,21 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { AppVersionComponent } from "./app-version.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { LatestChangesDialogService } from "../latest-changes-dialog.service";
+import type { Mock } from "vitest";
+
+type LatestChangesDialogServiceMock = Pick<
+  LatestChangesDialogService,
+  "getCurrentVersion" | "showLatestChanges"
+> & {
+  getCurrentVersion: Mock;
+  showLatestChanges: Mock;
+};
 
 describe("AppVersionComponent", () => {
   let component: AppVersionComponent;
   let fixture: ComponentFixture<AppVersionComponent>;
 
-  let latestChangesDialogService: any;
+  let latestChangesDialogService: LatestChangesDialogServiceMock;
 
   beforeEach(waitForAsync(() => {
     latestChangesDialogService = {

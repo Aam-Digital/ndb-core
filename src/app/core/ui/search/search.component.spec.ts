@@ -5,6 +5,15 @@ import { DatabaseIndexingService } from "../../entity/database-indexing/database
 import { firstValueFrom, Subscription } from "rxjs";
 import { take } from "rxjs/operators";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import type { Mock } from "vitest";
+
+type DatabaseIndexingServiceMock = Pick<
+  DatabaseIndexingService,
+  "queryIndexRaw" | "createIndex"
+> & {
+  queryIndexRaw: Mock;
+  createIndex: Mock;
+};
 
 describe("SearchComponent", () => {
   SearchComponent.INPUT_DEBOUNCE_TIME_MS = 4;
@@ -12,7 +21,7 @@ describe("SearchComponent", () => {
   let component: SearchComponent;
   let fixture: ComponentFixture<SearchComponent>;
 
-  let mockIndexService: any;
+  let mockIndexService: DatabaseIndexingServiceMock;
   let subscription: Subscription;
 
   beforeEach(waitForAsync(() => {

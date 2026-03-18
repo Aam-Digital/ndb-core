@@ -25,14 +25,43 @@ import {
   NotificationRule,
 } from "../model/notification-config";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
+import type { Mock } from "vitest";
+
+type NotificationServiceMock = Pick<
+  NotificationService,
+  | "isNotificationServerEnabled"
+  | "isPushNotificationSupported"
+  | "hasNotificationPermissionGranted"
+  | "isDeviceRegistered"
+  | "loadNotificationConfig"
+  | "registerDevice"
+  | "unregisterDevice"
+  | "testNotification"
+> & {
+  isNotificationServerEnabled: Mock;
+  isPushNotificationSupported: Mock;
+  hasNotificationPermissionGranted: Mock;
+  isDeviceRegistered: Mock;
+  loadNotificationConfig: Mock;
+  registerDevice: Mock;
+  unregisterDevice: Mock;
+  testNotification: Mock;
+};
+
+type ConfirmationDialogMock = Pick<
+  ConfirmationDialogService,
+  "getConfirmation"
+> & {
+  getConfirmation: Mock;
+};
 
 describe("NotificationSettingComponent", () => {
   let component: NotificationSettingsComponent;
   let fixture: ComponentFixture<NotificationSettingsComponent>;
   let entityMapper: MockEntityMapperService;
   const testUser: SessionInfo = { name: TEST_USER, id: TEST_USER, roles: [] };
-  let mockNotificationService: any;
-  let mockConfirmationDialog: any;
+  let mockNotificationService: NotificationServiceMock;
+  let mockConfirmationDialog: ConfirmationDialogMock;
 
   beforeEach(async () => {
     mockNotificationService = {

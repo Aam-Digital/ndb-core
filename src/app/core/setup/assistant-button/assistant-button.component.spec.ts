@@ -13,11 +13,16 @@ import {
 } from "app/core/entity/database-entity.decorator";
 import { SetupService } from "../setup.service";
 import { AssistantService } from "../assistant.service";
+import type { Mock } from "vitest";
+
+type AssistantServiceMock = Pick<AssistantService, "openAssistant"> & {
+  openAssistant: Mock;
+};
 
 describe("AssistantButtonComponent", () => {
   let component: AssistantButtonComponent;
   let fixture: ComponentFixture<AssistantButtonComponent>;
-  let mockAssistantService: any;
+  let mockAssistantService: AssistantServiceMock;
 
   beforeEach(async () => {
     mockAssistantService = {

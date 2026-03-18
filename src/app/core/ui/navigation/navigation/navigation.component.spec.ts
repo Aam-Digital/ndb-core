@@ -26,15 +26,26 @@ import { Event, NavigationEnd, Router } from "@angular/router";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EntityPermissionGuard } from "../../../permissions/permission-guard/entity-permission.guard";
 import { NavigationMenuConfig } from "../menu-item";
+import type { Mock } from "vitest";
+
+type ConfigServiceMock = Pick<ConfigService, "getConfig" | "getAllConfigs"> & {
+  getConfig: Mock;
+  getAllConfigs: Mock;
+  configUpdates: BehaviorSubject<Config>;
+};
+
+type RoutePermissionGuardMock = {
+  checkRoutePermissions: Mock;
+};
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
   let fixture: ComponentFixture<NavigationComponent>;
 
-  let mockConfigService: any;
+  let mockConfigService: ConfigServiceMock;
   let mockConfigUpdated: BehaviorSubject<Config>;
-  let mockRoleGuard: any;
-  let mockEntityGuard: any;
+  let mockRoleGuard: RoutePermissionGuardMock;
+  let mockEntityGuard: RoutePermissionGuardMock;
 
   beforeEach(waitForAsync(() => {
     mockConfigUpdated = new BehaviorSubject<Config>(null);

@@ -21,18 +21,41 @@ import { Config } from "../../config/config";
 import { ConfigService } from "../../config/config.service";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../entity/model/entity-update";
+import type { Mock } from "vitest";
+
+type KeycloakAuthServiceMock = Pick<
+  KeycloakAuthService,
+  "login" | "logout" | "addAuthHeader"
+> & {
+  login: Mock;
+  logout: Mock;
+  addAuthHeader: Mock;
+};
+
+type DatabaseResolverMock = Pick<
+  DatabaseResolverService,
+  "initDatabasesForSession" | "resetDatabases"
+> & {
+  initDatabasesForSession: Mock;
+  resetDatabases: Mock;
+};
+
+type EntityMapperMock = Pick<EntityMapperService, "load" | "receiveUpdates"> & {
+  load: Mock;
+  receiveUpdates: Mock;
+};
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;
   let loginStateSubject: LoginStateSubject;
   let sessionInfo: SessionSubject;
-  let mockKeycloak: any;
+  let mockKeycloak: KeycloakAuthServiceMock;
   let mockNavigator: {
     onLine: boolean;
   };
   let dbUser: SessionInfo;
-  let mockDatabaseResolver: any;
-  let mockedEntityMapper: any;
+  let mockDatabaseResolver: DatabaseResolverMock;
+  let mockedEntityMapper: EntityMapperMock;
   let mockedEntityMapperUpdates: Subject<UpdatedEntity<any>>;
 
   beforeEach(waitForAsync(() => {
@@ -141,7 +164,7 @@ describe("SessionManagerService", () => {
 
       const adminUser = new TestEntity("admin-user");
       // login, user entity not available yet
-      mockedEntityMapper.load.mockRejectedValue();
+      mockedEntityMapper.load.mockRejectedValue(new Error());
       mockKeycloak.login.mockResolvedValue({
         name: "admin-user",
         id: "101",

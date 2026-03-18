@@ -21,11 +21,16 @@ import { LatestChangesService } from "./latest-changes.service";
 import { AlertService } from "../../alerts/alert.service";
 import { HttpClient } from "@angular/common/http";
 import { of, throwError } from "rxjs";
+import type { Mock } from "vitest";
+
+type AlertServiceMock = Pick<AlertService, "addWarning"> & {
+  addWarning: Mock;
+};
 
 describe("LatestChangesService", () => {
   let service: LatestChangesService;
 
-  let alertService: any;
+  let alertService: AlertServiceMock;
   let http: HttpClient;
 
   const testReleases = [

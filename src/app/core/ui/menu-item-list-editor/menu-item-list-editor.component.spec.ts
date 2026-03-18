@@ -5,11 +5,21 @@ import { MenuItemForAdminUi } from "../../admin/admin-menu/menu-item-for-admin-u
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { of } from "rxjs";
+import type { Mock } from "vitest";
+import { EntityMenuItem } from "../../ui/navigation/menu-item";
+
+type MatDialogMock = Pick<MatDialog, "open"> & {
+  open: Mock;
+};
+
+type DialogRefMock = {
+  afterClosed: () => ReturnType<typeof of>;
+};
 
 describe("MenuItemListEditorComponent", () => {
   let component: MenuItemListEditorComponent;
   let fixture: ComponentFixture<MenuItemListEditorComponent>;
-  let mockDialog: any;
+  let mockDialog: MatDialogMock;
 
   beforeEach(async () => {
     mockDialog = {
@@ -43,7 +53,7 @@ describe("MenuItemListEditorComponent", () => {
     const mockDialogRef = {
       afterClosed: () => of(mockResult),
     };
-    mockDialog.open.mockReturnValue(mockDialogRef as any);
+    mockDialog.open.mockReturnValue(mockDialogRef as DialogRefMock);
     vi.spyOn(component.itemsChange, "emit");
 
     // Act
@@ -63,7 +73,7 @@ describe("MenuItemListEditorComponent", () => {
     const mockDialogRef = {
       afterClosed: () => of(null),
     };
-    mockDialog.open.mockReturnValue(mockDialogRef as any);
+    mockDialog.open.mockReturnValue(mockDialogRef as DialogRefMock);
     vi.spyOn(component.itemsChange, "emit");
 
     // Act
@@ -250,7 +260,7 @@ describe("MenuItemListEditorComponent", () => {
       {
         label: "Entity Item",
         entityType: "Child",
-      } as any, // Cast to handle EntityMenuItem type
+      } satisfies EntityMenuItem,
     ];
 
     // Act

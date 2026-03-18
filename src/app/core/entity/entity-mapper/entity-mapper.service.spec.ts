@@ -299,6 +299,9 @@ describe("EntityMapperService permission checks", () => {
     cannot: Mock;
     initialized: boolean;
   };
+  let mockDbResolver: {
+    getDatabase: Mock;
+  };
 
   beforeEach(() => {
     mockAbility = {
@@ -317,10 +320,10 @@ describe("EntityMapperService permission checks", () => {
         .mockResolvedValue([{ ok: true, rev: "1-x" }]),
       remove: vi.fn().mockName("remove").mockResolvedValue({ ok: true }),
     };
-    const mockDbResolver = {
+    mockDbResolver = {
       getDatabase: vi.fn().mockName("DatabaseResolverService.getDatabase"),
     };
-    mockDbResolver.getDatabase.mockReturnValue(mockDb as any);
+    mockDbResolver.getDatabase.mockReturnValue(mockDb);
 
     TestBed.configureTestingModule({
       providers: [

@@ -6,6 +6,16 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../../core/entity/model/entity";
+import type { Mock } from "vitest";
+
+type ChildrenServiceMock = Pick<
+  ChildrenService,
+  "getDaysSinceLastNoteOfEachEntity"
+> & {
+  getDaysSinceLastNoteOfEachEntity: Mock<
+    ChildrenService["getDaysSinceLastNoteOfEachEntity"]
+  >;
+};
 
 class Child extends Entity {
   static override ENTITY_TYPE = "Child";
@@ -15,7 +25,7 @@ describe("NotesDashboardComponent", () => {
   let component: NotesDashboardComponent;
   let fixture: ComponentFixture<NotesDashboardComponent>;
 
-  let mockChildrenService: any;
+  let mockChildrenService: ChildrenServiceMock;
 
   beforeEach(waitForAsync(() => {
     mockChildrenService = {

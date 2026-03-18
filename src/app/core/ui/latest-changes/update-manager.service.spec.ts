@@ -5,6 +5,7 @@ import {
   SwUpdate,
   UnrecoverableStateEvent,
   VersionEvent,
+  VersionReadyEvent,
 } from "@angular/service-worker";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
@@ -12,16 +13,57 @@ import { Subject, of } from "rxjs";
 import { Logging } from "../../logging/logging.service";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import type { Mock } from "vitest";
+
+type LocationMock = {
+  reload: Mock;
+};
+
+type SwUpdateMock = Pick<
+  SwUpdate,
+  "versionUpdates" | "unrecoverable" | "isEnabled"
+> & {
+  checkForUpdate: Mock;
+};
+
+type SnackBarRefMock = {
+  onAction: () => Subject<void>;
+};
+
+type SnackBarMock = {
+  open: Mock<(...args: unknown[]) => SnackBarRefMock>;
+};
+
+type LatestChangesDialogMock = Pick<
+  LatestChangesDialogService,
+  "showLatestChangesIfUpdated"
+> & {
+  showLatestChangesIfUpdated: Mock;
+};
+
+function createVersionReadyEvent(): VersionReadyEvent {
+  return {
+    type: "VERSION_READY",
+    currentVersion: {
+      hash: "old-version",
+      appData: undefined,
+    },
+    latestVersion: {
+      hash: "new-version",
+      appData: undefined,
+    },
+  };
+}
 
 describe("UpdateManagerService", () => {
   let service: UpdateManagerService;
-  let mockLocation: any;
-  let swUpdate: any;
-  let updateSubject: Subject<Partial<VersionEvent>>;
+  let mockLocation: LocationMock;
+  let swUpdate: SwUpdateMock;
+  let updateSubject: Subject<VersionEvent>;
   let unrecoverableSubject: Subject<UnrecoverableStateEvent>;
-  let snackBar: any;
+  let snackBar: SnackBarMock;
   let snackBarAction: Subject<void>;
-  let latestChangesDialog: any;
+  let latestChangesDialog: LatestChangesDialogMock;
   let unsavedChanges: Partial<UnsavedChangesService>;
 
   beforeEach(() => {
@@ -42,8 +84,8 @@ describe("UpdateManagerService", () => {
     };
     snackBarAction = new Subject();
     snackBar.open.mockReturnValue({
-      onAction: () => snackBarAction.asObservable(),
-    } as any);
+      onAction: () => snackBarAction,
+    });
     latestChangesDialog = {
       showLatestChangesIfUpdated: vi.fn(),
     };
@@ -79,7 +121,7 @@ describe("UpdateManagerService", () => {
   it("should show a snackBar that allows to reload the page when an update is available", () => {
     service.listenToAppUpdates();
     // notify about new update
-    updateSubject.next({ type: "VERSION_READY" });
+    updateSubject.next(createVersionReadyEvent());
 
     expect(snackBar.open).toHaveBeenCalled();
 
@@ -93,7 +135,7 @@ describe("UpdateManagerService", () => {
     service.listenToAppUpdates();
     unsavedChanges.pending = true;
 
-    updateSubject.next({ type: "VERSION_READY" });
+    updateSubject.next(createVersionReadyEvent());
 
     expect(mockLocation.reload).not.toHaveBeenCalled();
     expect(snackBar.open).toHaveBeenCalled();
@@ -101,7 +143,7 @@ describe("UpdateManagerService", () => {
     createService();
     unsavedChanges.pending = false;
 
-    updateSubject.next({ type: "VERSION_READY" });
+    updateSubject.next(createVersionReadyEvent());
 
     expect(mockLocation.reload).toHaveBeenCalled();
   });
@@ -125,7 +167,7 @@ describe("UpdateManagerService", () => {
     const version = "1.1.1";
     localStorage.setItem(LatestChangesDialogService.VERSION_KEY, version);
     service.listenToAppUpdates();
-    updateSubject.next({ type: "VERSION_READY" });
+    updateSubject.next(createVersionReadyEvent());
 
     expect(localStorage.getItem(LatestChangesDialogService.VERSION_KEY)).toBe(
       "update-" + version,

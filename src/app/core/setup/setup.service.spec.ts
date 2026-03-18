@@ -12,11 +12,19 @@ import {
   provideHttpClientTesting,
 } from "@angular/common/http/testing";
 import { BaseConfig } from "./base-config";
+import type { Mock } from "vitest";
+
+type DemoDataInitializerMock = Pick<
+  DemoDataInitializerService,
+  "logInDemoUser"
+> & {
+  logInDemoUser: Mock;
+};
 
 describe("SetupService", () => {
   let service: SetupService;
 
-  let mockDemoDataInitializer: any;
+  let mockDemoDataInitializer: DemoDataInitializerMock;
   let httpTesting: HttpTestingController;
 
   beforeEach(() => {
