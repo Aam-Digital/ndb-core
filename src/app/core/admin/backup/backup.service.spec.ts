@@ -9,31 +9,17 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 import { SyncStateSubject } from "app/core/session/session-type";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { of } from "rxjs";
-import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
+import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 
 describe("BackupService", () => {
   let db: PouchDatabase;
   let service: BackupService;
   let syncStateSubject: SyncStateSubject;
 
-  let mockWindow;
-
   beforeEach(() => {
     syncStateSubject = new SyncStateSubject();
     db = new MemoryPouchDatabase("unit-test-db", syncStateSubject);
     db.init();
-
-    mockWindow = {
-      indexedDB: {
-        databases: jasmine.createSpy(),
-        deleteDatabase: jasmine
-          .createSpy()
-          .and.callFake(() => new MockDeleteRequest()),
-      },
-      navigator: {
-        serviceWorker: { getRegistrations: () => [], ready: Promise.resolve() },
-      },
-    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -44,7 +30,6 @@ describe("BackupService", () => {
           provide: DatabaseResolverService,
           useValue: { getDatabase: () => db },
         },
-        { provide: WINDOW_TOKEN, useValue: mockWindow },
         { provide: LOCATION_TOKEN, useValue: {} },
       ],
     });
@@ -153,22 +138,49 @@ describe("BackupService", () => {
       afterClosed: () => of(true),
     } as any);
     localStorage.setItem("someItem", "someValue");
-    const unregisterSpy = jasmine.createSpy();
-    mockWindow.navigator.serviceWorker.getRegistrations = () => [
-      { unregister: unregisterSpy },
-    ];
-    mockWindow.indexedDB.databases.and.resolveTo([
-      { name: "db1" },
-      { name: "db2" },
-    ]);
 
     await service.resetApplication();
 
-    expect(unregisterSpy).toHaveBeenCalled();
     expect(localStorage.getItem("someItem")).toBeNull();
+    expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBe("1");
     expect(TestBed.inject(LOCATION_TOKEN).pathname).toBe("");
-    expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith("db1");
-    expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith("db2");
+
+    // Clean up sessionStorage
+    sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
+  });
+
+  it("runPendingReset should delete all databases and unregister service workers", async () => {
+    sessionStorage.setItem(BackupService.RESET_PENDING_KEY, "1");
+
+    // Spy on global APIs used by the static method
+    const mockDbs = [{ name: "db1" }, { name: "db2" }];
+    spyOn(indexedDB, "databases").and.resolveTo(mockDbs as any);
+    const mockDeleteReq = { onsuccess: null as any, onerror: null as any };
+    spyOn(indexedDB, "deleteDatabase").and.callFake(() => {
+      const req = { ...mockDeleteReq };
+      setTimeout(() => req.onsuccess?.());
+      return req as any;
+    });
+    const unregisterSpy = jasmine.createSpy().and.resolveTo(true);
+    spyOn(navigator.serviceWorker, "getRegistrations").and.resolveTo([
+      { unregister: unregisterSpy } as any,
+    ]);
+
+    await BackupService.runPendingReset();
+
+    expect(indexedDB.deleteDatabase).toHaveBeenCalledWith("db1");
+    expect(indexedDB.deleteDatabase).toHaveBeenCalledWith("db2");
+    expect(unregisterSpy).toHaveBeenCalled();
+    expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBeNull();
+  });
+
+  it("runPendingReset should do nothing when no reset is pending", async () => {
+    sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
+    spyOn(indexedDB, "databases");
+
+    await BackupService.runPendingReset();
+
+    expect(indexedDB.databases).not.toHaveBeenCalled();
   });
 
   function ignoreRevProperty(x) {
@@ -176,11 +188,3 @@ describe("BackupService", () => {
     return x;
   }
 });
-
-class MockDeleteRequest {
-  onsuccess: () => {};
-
-  constructor() {
-    setTimeout(() => this.onsuccess());
-  }
-}

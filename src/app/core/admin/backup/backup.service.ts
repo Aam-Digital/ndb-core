@@ -3,7 +3,7 @@ import { Database } from "../../database/database";
 import { Config } from "../../config/config";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
+import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 
 /**
  * Create and load backups of the database.
@@ -17,7 +17,6 @@ export class BackupService {
   private db: Database;
 
   private readonly confirmationDialog = inject(ConfirmationDialogService);
-  private readonly window = inject(WINDOW_TOKEN);
   private readonly location = inject(LOCATION_TOKEN);
 
   constructor() {
@@ -64,6 +63,12 @@ export class BackupService {
     }
   }
 
+  /**
+   * sessionStorage key used to signal that a reset is pending.
+   * Set before page reload; checked on next bootstrap in {@link runPendingReset}.
+   */
+  static readonly RESET_PENDING_KEY = "__RESET_PENDING";
+
   async resetApplication() {
     const choice = await this.confirmationDialog.getConfirmation(
       $localize`:Reset Application Confirmation:Reset Application`,
@@ -73,22 +78,43 @@ export class BackupService {
       return;
     }
 
-    const dbs = await this.window.indexedDB.databases();
-    await Promise.all(dbs.map(({ name }) => this.destroyDatabase(name)));
-
-    const registrations =
-      await this.window.navigator.serviceWorker.getRegistrations();
-    const unregisterPromises = registrations.map((reg) => reg.unregister());
-    await Promise.all(unregisterPromises);
+    // Reload the page first to kill all PouchDB connections, in-flight sync,
+    // view indexing, and other async operations. IDB databases are deleted on
+    // the fresh page (before Angular bootstraps) where no connections exist,
+    // avoiding race conditions with PouchDB's internal IDB transactions.
     localStorage.clear();
+    sessionStorage.setItem(BackupService.RESET_PENDING_KEY, "1");
     this.location.pathname = "";
   }
 
-  private destroyDatabase(name: string) {
-    return new Promise((resolve, reject) => {
-      const del = this.window.indexedDB.deleteDatabase(name);
-      del.onsuccess = resolve;
-      del.onerror = reject;
-    });
+  /**
+   * Run pending reset cleanup before Angular bootstraps.
+   * Called from main.ts so that IndexedDB databases are deleted while
+   * no PouchDB connections are open (eliminating race conditions).
+   */
+  static async runPendingReset(): Promise<void> {
+    if (!sessionStorage.getItem(BackupService.RESET_PENDING_KEY)) {
+      return;
+    }
+    sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
+
+    // Delete all IndexedDB databases
+    const dbs = await indexedDB.databases();
+    await Promise.all(
+      dbs.map(
+        ({ name }) =>
+          new Promise<void>((resolve, reject) => {
+            const del = indexedDB.deleteDatabase(name);
+            del.onsuccess = () => resolve();
+            del.onerror = () => reject(del.error);
+          }),
+      ),
+    );
+
+    // Unregister all service workers
+    if (navigator.serviceWorker) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map((reg) => reg.unregister()));
+    }
   }
 }
