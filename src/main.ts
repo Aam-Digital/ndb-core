@@ -5,12 +5,16 @@ import { initEnvironmentConfig } from "./bootstrap-environment";
 import { Logging } from "./app/core/logging/logging.service";
 import { PwaInstallService } from "./app/core/pwa-install/pwa-install.service";
 import { initLanguage } from "./bootstrap-i18n";
+import { BackupService } from "./app/core/admin/backup/backup.service";
 
 bootstrap().catch((reason) => {
   Logging.error("Application Bootstrap failed", reason);
 }); // top-level await not possible here yet, therefore wrapped in `bootstrap()` function
 
 async function bootstrap() {
+  // If a reset was requested, delete all databases before PouchDB opens any connections.
+  await BackupService.runPendingReset();
+
   await initEnvironmentConfig();
 
   if (environment.production) {
