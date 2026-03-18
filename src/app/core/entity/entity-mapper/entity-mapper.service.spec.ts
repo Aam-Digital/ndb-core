@@ -19,6 +19,7 @@ import { firstValueFrom } from "rxjs";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "./entity-permission-error";
 import { EntitySchemaService } from "../schema/entity-schema.service";
+import type { Mock } from "vitest";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -293,24 +294,33 @@ describe("EntityMapperService", () => {
 
 describe("EntityMapperService permission checks", () => {
   let entityMapper: EntityMapperService;
-  let mockAbility: jasmine.SpyObj<EntityAbility>;
+  let mockAbility: {
+    can: Mock;
+    cannot: Mock;
+    initialized: boolean;
+  };
 
   beforeEach(() => {
-    mockAbility = jasmine.createSpyObj("EntityAbility", ["can", "cannot"]);
-    mockAbility.cannot.and.returnValue(false);
+    mockAbility = {
+      can: vi.fn().mockName("EntityAbility.can"),
+      cannot: vi.fn().mockName("EntityAbility.cannot"),
+      initialized: true,
+    };
+    mockAbility.cannot.mockReturnValue(false);
     mockAbility.initialized = true;
 
     const mockDb = {
-      put: jasmine.createSpy("put").and.resolveTo({ ok: true, rev: "1-x" }),
-      putAll: jasmine
-        .createSpy("putAll")
-        .and.resolveTo([{ ok: true, rev: "1-x" }]),
-      remove: jasmine.createSpy("remove").and.resolveTo({ ok: true }),
+      put: vi.fn().mockName("put").mockResolvedValue({ ok: true, rev: "1-x" }),
+      putAll: vi
+        .fn()
+        .mockName("putAll")
+        .mockResolvedValue([{ ok: true, rev: "1-x" }]),
+      remove: vi.fn().mockName("remove").mockResolvedValue({ ok: true }),
     };
-    const mockDbResolver = jasmine.createSpyObj("DatabaseResolverService", [
-      "getDatabase",
-    ]);
-    mockDbResolver.getDatabase.and.returnValue(mockDb as any);
+    const mockDbResolver = {
+      getDatabase: vi.fn().mockName("DatabaseResolverService.getDatabase"),
+    };
+    mockDbResolver.getDatabase.mockReturnValue(mockDb as any);
 
     TestBed.configureTestingModule({
       providers: [
@@ -326,22 +336,24 @@ describe("EntityMapperService permission checks", () => {
   });
 
   it("should throw EntityPermissionError when saving a new entity without create permission", async () => {
-    mockAbility.cannot.and.returnValue(true);
+    mockAbility.cannot.mockReturnValue(true);
     const entity = new Entity("test-no-create");
 
-    await expectAsync(entityMapper.save(entity)).toBeRejectedWithError(
+    await expect(entityMapper.save(entity)).rejects.toBeInstanceOf(
       EntityPermissionError,
     );
     expect(mockAbility.cannot).toHaveBeenCalledWith("create", entity);
   });
 
   it("should throw EntityPermissionError when saving an existing entity without update permission", async () => {
-    mockAbility.cannot.and.callFake((action: string) => action === "update");
+    mockAbility.cannot.mockImplementation(
+      (action: string) => action === "update",
+    );
     const entity = new Entity("test-no-update");
     // simulate existing entity (not new)
     entity._rev = "1-abc";
 
-    await expectAsync(entityMapper.save(entity)).toBeRejectedWithError(
+    await expect(entityMapper.save(entity)).rejects.toBeInstanceOf(
       EntityPermissionError,
     );
     expect(mockAbility.cannot).toHaveBeenCalledWith("update", entity);
@@ -350,21 +362,23 @@ describe("EntityMapperService permission checks", () => {
   it("should throw EntityPermissionError in saveAll when any entity lacks permission", async () => {
     const allowed = new Entity("allowed");
     const denied = new Entity("denied");
-    mockAbility.cannot.and.callFake(
+    mockAbility.cannot.mockImplementation(
       (_action: string, e: Entity) => e === denied,
     );
 
-    await expectAsync(
+    await expect(
       entityMapper.saveAll([allowed, denied]),
-    ).toBeRejectedWithError(EntityPermissionError);
+    ).rejects.toBeInstanceOf(EntityPermissionError);
   });
 
   it("should throw EntityPermissionError when removing an entity without delete permission", async () => {
-    mockAbility.cannot.and.callFake((action: string) => action === "delete");
+    mockAbility.cannot.mockImplementation(
+      (action: string) => action === "delete",
+    );
     const entity = new Entity("test-no-delete");
     entity._rev = "1-abc";
 
-    await expectAsync(entityMapper.remove(entity)).toBeRejectedWithError(
+    await expect(entityMapper.remove(entity)).rejects.toBeInstanceOf(
       EntityPermissionError,
     );
     expect(mockAbility.cannot).toHaveBeenCalledWith("delete", entity);
