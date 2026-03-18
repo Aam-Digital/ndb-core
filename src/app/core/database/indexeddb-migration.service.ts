@@ -57,7 +57,7 @@ export class IndexeddbMigrationService {
 
     if (!environment.use_indexeddb_adapter) {
       await this.trackResolveScenario(
-        "indexeddb_disabled_config",
+        "idb_indexeddb-disabled-config",
         "idb",
         false,
       );
