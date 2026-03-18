@@ -115,15 +115,26 @@ describe("DynamicValidatorsService", () => {
 
   it("should build uniqueId async validator", async () => {
     const config: FormValidatorConfig = {
-      uniqueId: "Entity",
+      uniqueId: true,
     };
-    mockedEntityMapper.loadType.and.resolveTo([new Entity("existing id")]);
+    mockedEntityMapper.loadType.and.resolveTo([
+      TestEntity.create({ name: "existing id" }),
+    ]);
 
     const validators = service.buildValidators(
       config,
       new TestEntity(),
+      "name",
     ).asyncValidators;
-    await testValidator(validators[0], "Entity:new id", "Entity:existing id");
+    await testValidator(validators[0], "new id", "existing id");
+
+    const duplicateControl = new UntypedFormControl("existing id");
+    duplicateControl.markAsDirty();
+    const validationErrors = await validators[0](duplicateControl);
+    expect(validationErrors.uniqueId.errorMessage).toContain("already exists");
+    expect(validationErrors.uniqueProperty).toBeUndefined();
+
+    expect(mockedEntityMapper.loadType).toHaveBeenCalledWith("TestEntity");
   });
 });
 

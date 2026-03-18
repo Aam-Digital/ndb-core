@@ -9,7 +9,7 @@ export type DynamicValidator =
   | "max"
   /** type: boolean */
   | "required"
-  /** type: string = EntityType; check against existing ids of the entity type */
+  /** type: boolean; validate field value is unique among entities of same type */
   | "uniqueId"
   /** type: boolean */
   | "readonlyAfterSet"

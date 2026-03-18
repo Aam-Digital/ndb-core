@@ -206,6 +206,7 @@ export class EntityFormService {
       const validators = this.dynamicValidator.buildValidators(
         field.validators,
         entity,
+        field.id,
       );
       Object.assign(controlOptions, validators);
     }
