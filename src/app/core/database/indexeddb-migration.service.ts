@@ -56,11 +56,7 @@ export class IndexeddbMigrationService {
     const wasMigratedBefore = this.isMigrated(session);
 
     if (!environment.use_indexeddb_adapter) {
-      await this.trackResolveScenario(
-        "idb_indexeddb-disabled-config",
-        "idb",
-        false,
-      );
+      await this.trackResolveScenario("idb_indexeddb-disabled-config");
       Logging.debug(
         "IndexeddbMigration: use_indexeddb_adapter disabled; using legacy DB config",
       );
@@ -73,11 +69,7 @@ export class IndexeddbMigrationService {
     const oldDbExists = await this.legacyDbExists(session);
     if (!oldDbExists && !wasMigratedBefore) {
       localStorage.setItem(DB_MIGRATED_PREFIX + session.id, "true");
-      await this.trackResolveScenario(
-        "indexeddb_fresh-install",
-        "indexeddb",
-        false,
-      );
+      await this.trackResolveScenario("indexeddb_fresh-install");
       Logging.debug(
         "IndexeddbMigration: no legacy DB found; assuming fresh install and setting 'migrated' flag",
       );
@@ -90,11 +82,7 @@ export class IndexeddbMigrationService {
 
     // Already migrated or fresh install (no old DB exists)
     if (this.isMigrated(session)) {
-      await this.trackResolveScenario(
-        "indexeddb_after-migration",
-        "indexeddb",
-        false,
-      );
+      await this.trackResolveScenario("indexeddb_after-migration");
       Logging.debug(
         "IndexeddbMigration: using new DB config (migration flag set)",
       );
@@ -106,7 +94,7 @@ export class IndexeddbMigrationService {
 
     // Old DB exists, not yet migrated → use old DB, migration pending
     this.migrationPending = true;
-    await this.trackResolveScenario("idb_migration-pending", "idb", true);
+    await this.trackResolveScenario("idb_migration-pending");
     Logging.debug(
       "IndexeddbMigration: using legacy DB config (migration pending)",
     );
@@ -238,20 +226,12 @@ export class IndexeddbMigrationService {
     );
   }
 
-  private async trackResolveScenario(
-    scenario: string,
-    adapter: string,
-    migrationPending: boolean,
-  ): Promise<void> {
+  private async trackResolveScenario(scenario: string): Promise<void> {
     const analytics = await this.getAnalyticsService();
     analytics?.eventTrack("indexeddb_migration_resolve_db_config", {
       category: "indexeddb_adapter_migration",
       label: scenario,
     });
-
-    Logging.debug(
-      `IndexeddbMigration analytics: scenario=${scenario} adapter=${adapter} migrationPending=${migrationPending}`,
-    );
   }
 
   /**
