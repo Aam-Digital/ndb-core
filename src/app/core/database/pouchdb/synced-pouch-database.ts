@@ -39,6 +39,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   private remoteDatabase: RemotePouchDatabase;
   private syncState: SyncStateSubject = new SyncStateSubject();
+  private activeSync: PouchDB.Replication.Sync<any> | undefined;
 
   /**
    * Get the internal sync state subject for this database (not the global one).
@@ -162,11 +163,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
     this.syncState.next(SyncState.STARTED);
 
-    return this.getPouchDB()
-      .sync(this.remoteDatabase.getPouchDB(), {
+    const replication = this.getPouchDB().sync(
+      this.remoteDatabase.getPouchDB(),
+      {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
         ...options,
-      })
+      },
+    );
+    this.activeSync = replication;
+
+    return replication
       .then(async (res) => {
         if (res) res["dbName"] = this.dbName; // add for debugging information
         Logging.debug("sync completed", res);
@@ -188,6 +194,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
         Logging.debug("sync error", err);
         this.syncState.next(SyncState.FAILED);
         throw err;
+      })
+      .finally(() => {
+        this.activeSync = undefined;
       });
   }
 
@@ -259,6 +268,24 @@ export class SyncedPouchDatabase extends PouchDatabase {
    */
   liveSyncEnabled: boolean;
 
+  override async reset() {
+    this.liveSyncEnabled = false;
+    if (this.activeSync) {
+      this.activeSync.cancel();
+      this.activeSync = undefined;
+    }
+    return super.reset();
+  }
+
+  override async destroy(): Promise<any> {
+    this.liveSyncEnabled = false;
+    if (this.activeSync) {
+      this.activeSync.cancel();
+      this.activeSync = undefined;
+    }
+    return super.destroy();
+  }
+
   liveSync() {
     this.liveSyncEnabled = true;
 
@@ -281,6 +308,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
         }),
         retry({ delay: this.SYNC_INTERVAL }),
         takeWhile(() => this.liveSyncEnabled),
+        takeUntil(this.destroy$),
       )
       .subscribe();
   }
