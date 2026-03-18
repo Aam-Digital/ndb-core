@@ -74,7 +74,7 @@ export class IndexeddbMigrationService {
     if (!oldDbExists && !wasMigratedBefore) {
       localStorage.setItem(DB_MIGRATED_PREFIX + session.id, "true");
       await this.trackResolveScenario(
-        "fresh_install_no_legacy_db",
+        "indexeddb_fresh-install",
         "indexeddb",
         false,
       );
