@@ -109,7 +109,7 @@ describe("IndexeddbMigrationService", () => {
       expect(eventTrackSpy).toHaveBeenCalledWith(
         "indexeddb_migration_resolve_db_config",
         jasmine.objectContaining({
-          category: "indexeddb_migration",
+          category: "indexeddb_adapter_migration",
           label: "idb_indexeddb-disabled-config",
         }),
       );
@@ -128,14 +128,14 @@ describe("IndexeddbMigrationService", () => {
       expect(eventTrackSpy).toHaveBeenCalledWith(
         "indexeddb_migration_resolve_db_config",
         jasmine.objectContaining({
-          category: "indexeddb_migration",
+          category: "indexeddb_adapter_migration",
           label: "indexeddb_after-migration",
         }),
       );
       expect(eventTrackSpy).not.toHaveBeenCalledWith(
         "indexeddb_migration_resolve_db_config",
         jasmine.objectContaining({
-          category: "indexeddb_migration",
+          category: "indexeddb_adapter_migration",
           label: "indexeddb_fresh-install",
         }),
       );
@@ -157,14 +157,14 @@ describe("IndexeddbMigrationService", () => {
       expect(eventTrackSpy).toHaveBeenCalledWith(
         "indexeddb_migration_resolve_db_config",
         jasmine.objectContaining({
-          category: "indexeddb_migration",
+          category: "indexeddb_adapter_migration",
           label: "indexeddb_fresh-install",
         }),
       );
       expect(eventTrackSpy).not.toHaveBeenCalledWith(
         "indexeddb_migration_resolve_db_config",
         jasmine.objectContaining({
-          category: "indexeddb_migration",
+          category: "indexeddb_adapter_migration",
           label: "indexeddb_after-migration",
         }),
       );
@@ -184,7 +184,7 @@ describe("IndexeddbMigrationService", () => {
       expect(eventTrackSpy).toHaveBeenCalledWith(
         "indexeddb_migration_resolve_db_config",
         jasmine.objectContaining({
-          category: "indexeddb_migration",
+          category: "indexeddb_adapter_migration",
           label: "idb_migration-pending",
         }),
       );

@@ -245,7 +245,7 @@ export class IndexeddbMigrationService {
   ): Promise<void> {
     const analytics = await this.getAnalyticsService();
     analytics?.eventTrack("indexeddb_migration_resolve_db_config", {
-      category: "indexeddb_migration",
+      category: "indexeddb_adapter_migration",
       label: scenario,
     });
 
@@ -254,9 +254,12 @@ export class IndexeddbMigrationService {
     );
   }
 
+  /**
+   * Lazily resolves AnalyticsService to avoid circular module initialization issues.
+   * Direct inject() would trigger a ConfigService → EntityMapperService cycle during tests.
+   */
   private getAnalyticsService(): Promise<AnalyticsService | null> {
     if (this.analyticsServicePromise === undefined) {
-      // Keep analytics loading lazy to avoid triggering module initialization cycles
       this.analyticsServicePromise = import("../analytics/analytics.service")
         .then(({ AnalyticsService }) =>
           this.injector.get<AnalyticsService | null>(AnalyticsService, null),
