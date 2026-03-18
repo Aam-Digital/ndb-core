@@ -53,7 +53,6 @@ export class IndexeddbMigrationService {
    */
   async resolveDbConfig(session: SessionInfo): Promise<DbConfig> {
     this.migrationPending = false; // reset pending flag on each resolve attempt
-    const wasMigratedBefore = this.isMigrated(session);
 
     if (!environment.use_indexeddb_adapter) {
       await this.trackResolveScenario("idb_indexeddb-disabled-config");
@@ -67,7 +66,7 @@ export class IndexeddbMigrationService {
     }
 
     const oldDbExists = await this.legacyDbExists(session);
-    if (!oldDbExists && !wasMigratedBefore) {
+    if (!oldDbExists && !this.isMigrated(session)) {
       localStorage.setItem(DB_MIGRATED_PREFIX + session.id, "true");
       await this.trackResolveScenario("indexeddb_fresh-install");
       Logging.debug(
