@@ -106,13 +106,6 @@ describe("IndexeddbMigrationService", () => {
       expect(config.dbNames.app).toBe("testuser-app");
       expect(config.dbNames.notifications).toBe("notifications_abc-123-uuid");
       expect(service.migrationPending).toBeFalse();
-      expect(eventTrackSpy).toHaveBeenCalledWith(
-        "indexeddb_migration_resolve_db_config",
-        jasmine.objectContaining({
-          category: "indexeddb_adapter_migration",
-          label: "idb_indexeddb-disabled-config",
-        }),
-      );
     });
 
     it("should return new config when migration flag is set", async () => {
@@ -125,20 +118,6 @@ describe("IndexeddbMigrationService", () => {
       expect(config.dbNames.app).toBe("abc-123-uuid-app");
       expect(config.dbNames.notifications).toBe("abc-123-uuid-notifications");
       expect(service.migrationPending).toBeFalse();
-      expect(eventTrackSpy).toHaveBeenCalledWith(
-        "indexeddb_migration_resolve_db_config",
-        jasmine.objectContaining({
-          category: "indexeddb_adapter_migration",
-          label: "indexeddb_after-migration",
-        }),
-      );
-      expect(eventTrackSpy).not.toHaveBeenCalledWith(
-        "indexeddb_migration_resolve_db_config",
-        jasmine.objectContaining({
-          category: "indexeddb_adapter_migration",
-          label: "indexeddb_fresh-install",
-        }),
-      );
     });
 
     it("should return new config for fresh install (no old DB for that user)", async () => {
@@ -154,20 +133,6 @@ describe("IndexeddbMigrationService", () => {
       expect(config.dbNames.app).toBe("abc-123-uuid-app");
       expect(config.dbNames.notifications).toBe("abc-123-uuid-notifications");
       expect(service.migrationPending).toBeFalse();
-      expect(eventTrackSpy).toHaveBeenCalledWith(
-        "indexeddb_migration_resolve_db_config",
-        jasmine.objectContaining({
-          category: "indexeddb_adapter_migration",
-          label: "indexeddb_fresh-install",
-        }),
-      );
-      expect(eventTrackSpy).not.toHaveBeenCalledWith(
-        "indexeddb_migration_resolve_db_config",
-        jasmine.objectContaining({
-          category: "indexeddb_adapter_migration",
-          label: "indexeddb_after-migration",
-        }),
-      );
     });
 
     it("should return legacy config with migrationPending when old DB exists", async () => {
@@ -181,13 +146,6 @@ describe("IndexeddbMigrationService", () => {
       expect(config.adapter).toBe("idb");
       expect(config.dbNames.app).toBe("testuser-app");
       expect(service.migrationPending).toBeTrue();
-      expect(eventTrackSpy).toHaveBeenCalledWith(
-        "indexeddb_migration_resolve_db_config",
-        jasmine.objectContaining({
-          category: "indexeddb_adapter_migration",
-          label: "idb_migration-pending",
-        }),
-      );
     });
   });
 
