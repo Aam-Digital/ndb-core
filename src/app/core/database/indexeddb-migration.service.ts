@@ -227,9 +227,8 @@ export class IndexeddbMigrationService {
 
   private async trackResolveScenario(scenario: string): Promise<void> {
     const analytics = await this.getAnalyticsService();
-    analytics?.eventTrack("indexeddb_migration_resolve_db_config", {
+    analytics?.eventTrack(scenario, {
       category: "indexeddb_adapter_migration",
-      label: scenario,
     });
   }
 
