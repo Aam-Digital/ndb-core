@@ -11,7 +11,6 @@ import {
   ValidatorFn,
 } from "@angular/forms";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
-import { Entity } from "../../../entity/model/entity";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("DynamicValidatorsService", () => {
