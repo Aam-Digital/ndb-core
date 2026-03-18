@@ -12,21 +12,22 @@ describe("AdminMenuItemDetailsComponent", () => {
   let component: AdminMenuItemDetailsComponent;
   let fixture: ComponentFixture<AdminMenuItemDetailsComponent>;
 
-  let menuItem: MenuItem;
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockDialogRef: jasmine.SpyObj<
+    MatDialogRef<AdminMenuItemDetailsComponent>
+  >;
 
   beforeEach(async () => {
-    menuItem = {
-      label: "Test",
-      icon: "user",
-      link: "",
-    };
-
-    mockConfigService = jasmine.createSpyObj("ConfigService", [
+    const mockConfigService = jasmine.createSpyObj("ConfigService", [
       "getAllConfigs",
     ]);
     mockConfigService.getAllConfigs.and.returnValue([]);
     mockConfigService.configUpdates = NEVER;
+
+    mockDialogRef = jasmine.createSpyObj("MatDialogRef", [
+      "close",
+      "afterClosed",
+    ]);
+    mockDialogRef.afterClosed.and.returnValue(NEVER);
 
     await TestBed.configureTestingModule({
       imports: [
@@ -35,8 +36,11 @@ describe("AdminMenuItemDetailsComponent", () => {
         MockedTestingModule.withState(),
       ],
       providers: [
-        { provide: MAT_DIALOG_DATA, useValue: { item: menuItem } },
-        { provide: MatDialogRef, useValue: { afterClosed: () => NEVER } },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: { item: { label: "Test", icon: "user", link: "" } },
+        },
+        { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: ConfigService, useValue: mockConfigService },
         EntityRegistry,
       ],
@@ -49,5 +53,38 @@ describe("AdminMenuItemDetailsComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should allow saving without a link when noLinkMode is active", () => {
+    component.item = { label: "Section", icon: "folder" } as MenuItem;
+    (
+      component as unknown as {
+        menuItemForm: { isNoLinkModeEnabled: () => boolean };
+      }
+    ).menuItemForm = {
+      isNoLinkModeEnabled: () => true,
+    };
+
+    component.save();
+
+    expect(mockDialogRef.close).toHaveBeenCalledWith(
+      jasmine.objectContaining({ label: "Section" }),
+    );
+  });
+
+  it("should not save and should show validation error when noLinkMode is inactive and link is empty", () => {
+    component.item = { label: "Section", icon: "folder" } as MenuItem;
+    (
+      component as unknown as {
+        menuItemForm: { isNoLinkModeEnabled: () => boolean };
+      }
+    ).menuItemForm = {
+      isNoLinkModeEnabled: () => false,
+    };
+
+    component.save();
+
+    expect(component.linkError).toBeTrue();
+    expect(mockDialogRef.close).not.toHaveBeenCalled();
   });
 });

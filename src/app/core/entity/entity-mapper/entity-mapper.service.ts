@@ -26,6 +26,10 @@ import { UpdateMetadata } from "../model/update-metadata";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { DatabaseDocChange } from "../../database/database";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { EntityPermissionError } from "./entity-permission-error";
+import { Logging } from "../../logging/logging.service";
+import { EntityActionPermission } from "../../permissions/permission-types";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -43,6 +47,7 @@ export class EntityMapperService {
   private entitySchemaService = inject(EntitySchemaService);
   private currentUser = inject(CurrentUserSubject);
   private registry = inject(EntityRegistry);
+  private readonly ability = inject(EntityAbility, { optional: true });
 
   /**
    * Load an Entity from the database with the given id or the registered name of that class.
@@ -143,6 +148,7 @@ export class EntityMapperService {
     entity: T,
     forceUpdate: boolean = false,
   ): Promise<any> {
+    this.assertPermission(entity);
     this.setEntityMetadata(entity);
     const rawData =
       this.entitySchemaService.transformEntityToDatabaseFormat(entity);
@@ -168,6 +174,7 @@ export class EntityMapperService {
     entities: Entity[],
     forceUpdate: boolean = false,
   ): Promise<any[]> {
+    entities.forEach((e) => this.assertPermission(e));
     entities.forEach((e) => this.setEntityMetadata(e));
 
     // group entities by their DATABASE
@@ -203,7 +210,8 @@ export class EntityMapperService {
    * Delete an entity from the database.
    * @param entity The entity to be deleted
    */
-  public remove<T extends Entity>(entity: T): Promise<any> {
+  public async remove<T extends Entity>(entity: T): Promise<any> {
+    this.assertPermission(entity, "delete");
     return this.dbResolver
       .getDatabase(entity.getConstructor().DATABASE)
       .remove(entity);
@@ -216,6 +224,26 @@ export class EntityMapperService {
       return this.registry.get(constructible) as EntityConstructor<T>;
     } else {
       return constructible;
+    }
+  }
+
+  private assertPermission(entity: Entity, action?: EntityActionPermission) {
+    if (!this.ability) {
+      return;
+    }
+    if (!this.ability.initialized) {
+      Logging.warn(
+        `Permission check skipped for "${entity.getId()}": ability not yet initialized`,
+      );
+      return;
+    }
+    const checkedAction = action ?? (entity.isNew ? "create" : "update");
+    if (this.ability.cannot(checkedAction, entity)) {
+      throw new EntityPermissionError(
+        checkedAction,
+        entity.getId(),
+        entity.getType(),
+      );
     }
   }
 

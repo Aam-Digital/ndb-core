@@ -1,25 +1,12 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import { EntityMapperService } from "./entity-mapper.service";
 import { Entity } from "../model/entity";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../../database/pouchdb/pouch-database";
-import { DatabaseEntity } from "../database-entity.decorator";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+  entityRegistry,
+} from "../database-entity.decorator";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { TEST_USER } from "../../user/demo-user-generator.service";
@@ -29,6 +16,9 @@ import { SyncStateSubject } from "app/core/session/session-type";
 import { DatabaseFactoryService } from "../../database/database-factory.service";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { firstValueFrom } from "rxjs";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { EntityPermissionError } from "./entity-permission-error";
+import { EntitySchemaService } from "../schema/entity-schema.service";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -297,4 +287,84 @@ describe("EntityMapperService", () => {
 
   @DatabaseEntity("EntityB")
   class MockEntityB extends Entity {}
+});
+
+describe("EntityMapperService permission checks", () => {
+  let entityMapper: EntityMapperService;
+  let mockAbility: jasmine.SpyObj<EntityAbility>;
+
+  beforeEach(() => {
+    mockAbility = jasmine.createSpyObj("EntityAbility", ["can", "cannot"]);
+    mockAbility.cannot.and.returnValue(false);
+    mockAbility.initialized = true;
+
+    const mockDb = {
+      put: jasmine.createSpy("put").and.resolveTo({ ok: true, rev: "1-x" }),
+      putAll: jasmine
+        .createSpy("putAll")
+        .and.resolveTo([{ ok: true, rev: "1-x" }]),
+      remove: jasmine.createSpy("remove").and.resolveTo({ ok: true }),
+    };
+    const mockDbResolver = jasmine.createSpyObj("DatabaseResolverService", [
+      "getDatabase",
+    ]);
+    mockDbResolver.getDatabase.and.returnValue(mockDb as any);
+
+    TestBed.configureTestingModule({
+      providers: [
+        EntityMapperService,
+        EntitySchemaService,
+        { provide: EntityRegistry, useValue: entityRegistry },
+        { provide: DatabaseResolverService, useValue: mockDbResolver },
+        { provide: EntityAbility, useValue: mockAbility },
+        CurrentUserSubject,
+      ],
+    });
+    entityMapper = TestBed.inject(EntityMapperService);
+  });
+
+  it("should throw EntityPermissionError when saving a new entity without create permission", async () => {
+    mockAbility.cannot.and.returnValue(true);
+    const entity = new Entity("test-no-create");
+
+    await expectAsync(entityMapper.save(entity)).toBeRejectedWithError(
+      EntityPermissionError,
+    );
+    expect(mockAbility.cannot).toHaveBeenCalledWith("create", entity);
+  });
+
+  it("should throw EntityPermissionError when saving an existing entity without update permission", async () => {
+    mockAbility.cannot.and.callFake((action: string) => action === "update");
+    const entity = new Entity("test-no-update");
+    // simulate existing entity (not new)
+    entity._rev = "1-abc";
+
+    await expectAsync(entityMapper.save(entity)).toBeRejectedWithError(
+      EntityPermissionError,
+    );
+    expect(mockAbility.cannot).toHaveBeenCalledWith("update", entity);
+  });
+
+  it("should throw EntityPermissionError in saveAll when any entity lacks permission", async () => {
+    const allowed = new Entity("allowed");
+    const denied = new Entity("denied");
+    mockAbility.cannot.and.callFake(
+      (_action: string, e: Entity) => e === denied,
+    );
+
+    await expectAsync(
+      entityMapper.saveAll([allowed, denied]),
+    ).toBeRejectedWithError(EntityPermissionError);
+  });
+
+  it("should throw EntityPermissionError when removing an entity without delete permission", async () => {
+    mockAbility.cannot.and.callFake((action: string) => action === "delete");
+    const entity = new Entity("test-no-delete");
+    entity._rev = "1-abc";
+
+    await expectAsync(entityMapper.remove(entity)).toBeRejectedWithError(
+      EntityPermissionError,
+    );
+    expect(mockAbility.cannot).toHaveBeenCalledWith("delete", entity);
+  });
 });

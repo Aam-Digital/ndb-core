@@ -30,19 +30,15 @@ export class RoutePermissionsService {
     const accessibleRoutes: MenuItem[] = [];
 
     for (const item of items) {
+      const accessibleSubItems: MenuItem[] = item.subMenu?.length
+        ? await this.filterPermittedRoutes(item.subMenu)
+        : [];
+
       if (item.link && (await this.isAccessibleRouteForUser(item.link))) {
         accessibleRoutes.push(item);
-      } else if (item.subMenu) {
-        const accessibleSubItems: MenuItem[] = await this.filterPermittedRoutes(
-          item.subMenu,
-        );
-
-        if (accessibleSubItems.length > 0) {
-          // only adding the item if there is at least one accessible subMenu item
-          const filteredParentItem: MenuItem = Object.assign({}, item);
-          filteredParentItem.subMenu = accessibleSubItems;
-          accessibleRoutes.push(filteredParentItem);
-        }
+      } else if (accessibleSubItems.length > 0) {
+        // include parent (even without own link/permission) if it has accessible children
+        accessibleRoutes.push({ ...item, subMenu: accessibleSubItems });
       }
     }
 

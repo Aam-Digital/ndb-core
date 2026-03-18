@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, ViewChild, inject, OnInit } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -17,6 +17,7 @@ import {
   ViewConfig,
 } from "#src/app/core/config/dynamic-routing/view-config.interface";
 import { ConfigService } from "#src/app/core/config/config.service";
+import { isManualItemWithoutLink } from "../menu-item-for-admin-ui";
 
 /**
  * Dialog component to edit a single menu item's details.
@@ -40,6 +41,9 @@ import { ConfigService } from "#src/app/core/config/config.service";
 })
 export class AdminMenuItemDetailsComponent implements OnInit {
   private readonly configService = inject(ConfigService);
+  @ViewChild(MenuItemFormComponent)
+  private readonly menuItemForm?: MenuItemFormComponent;
+
   dialogRef = inject<MatDialogRef<AdminMenuItemDetailsComponent>>(MatDialogRef);
   data = inject<{
     item: MenuItem;
@@ -52,6 +56,7 @@ export class AdminMenuItemDetailsComponent implements OnInit {
   isNew: boolean;
   /** Whether entity type links are allowed (false for shortcuts, true for admin menu) */
   allowEntityLinks: boolean;
+  linkError = false;
 
   constructor() {
     const data = this.data;
@@ -94,6 +99,8 @@ export class AdminMenuItemDetailsComponent implements OnInit {
   save() {
     const entityMenuItem = this.item as EntityMenuItem;
     const hasValidEntityType = entityMenuItem.entityType?.trim();
+    const isNoLinkModeActive =
+      this.menuItemForm?.isNoLinkModeEnabled() ?? false;
 
     if (hasValidEntityType) {
       // For entity type items, remove manual properties
@@ -105,9 +112,15 @@ export class AdminMenuItemDetailsComponent implements OnInit {
       // For manual items, remove entity type property
       delete entityMenuItem.entityType;
 
-      if (!this.item.link?.trim()) {
-        // Validation: manual items require a link
+      if (isManualItemWithoutLink(this.item) && !isNoLinkModeActive) {
+        // Validation: manual items require a link unless noLinkMode is active
+        this.linkError = true;
         return;
+      }
+
+      if (isNoLinkModeActive) {
+        // Ensure link is fully absent (not an empty string)
+        delete this.item.link;
       }
     }
 

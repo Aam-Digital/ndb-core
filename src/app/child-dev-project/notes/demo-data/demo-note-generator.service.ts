@@ -11,7 +11,7 @@ import { AttendanceLogicalStatus } from "#src/app/features/attendance/model/atte
 import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
-import { warningLevels } from "../../warning-level";
+import { warningLevels, WarningLevel } from "../../warning-level";
 import { Entity } from "../../../core/entity/model/entity";
 
 export class DemoNoteConfig {
@@ -118,6 +118,7 @@ export function generateNote(params: {
   child: Entity;
   author: Entity;
   date?: Date;
+  warningLevel?: WarningLevel;
 }): Note {
   const note = new Note(faker.string.uuid());
 
@@ -136,7 +137,11 @@ export function generateNote(params: {
   }
   note.date = date;
 
-  removeFollowUpMarkerForOldNotes(note);
+  if (params.warningLevel) {
+    note.warningLevel = warningLevels.find((l) => l.id === params.warningLevel);
+  } else {
+    removeFollowUpMarkerForOldNotes(note);
+  }
 
   return note;
 }

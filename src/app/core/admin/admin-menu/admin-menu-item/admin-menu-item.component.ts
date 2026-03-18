@@ -10,11 +10,13 @@ import { MenuService } from "app/core/ui/navigation/menu.service";
 import { firstValueFrom } from "rxjs";
 import { AdminMenuItemDetailsComponent } from "../admin-menu-item-details/admin-menu-item-details.component";
 import {
+  hasNoLinkAndNoSubItems,
   MenuItemForAdminUi,
   MenuItemForAdminUiNew,
 } from "../menu-item-for-admin-ui";
 import { MatNavList } from "@angular/material/list";
 import { MatIconButton } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * Display and edit a menu item in the admin interface,
@@ -31,6 +33,7 @@ import { MatIconButton } from "@angular/material/button";
     MatFormFieldModule,
     FormsModule,
     MatIconButton,
+    MatTooltipModule,
   ],
   templateUrl: "./admin-menu-item.component.html",
   styleUrls: [
@@ -59,6 +62,14 @@ export class AdminMenuItemComponent {
 
   get item(): MenuItemForAdminUi {
     return this._item;
+  }
+
+  /**
+   * True when the item has no link and no sub-items,
+   * meaning clicking it will have no visible effect.
+   */
+  get hasNoLinkWarning(): boolean {
+    return this._item ? hasNoLinkAndNoSubItems(this._item) : false;
   }
 
   private _item: MenuItemForAdminUi;
@@ -109,6 +120,11 @@ export class AdminMenuItemComponent {
       const mergedItem = { ...item, ...updatedItem };
       if ("entityType" in item && !("entityType" in updatedItem)) {
         delete (mergedItem as unknown as EntityMenuItem).entityType;
+      }
+      // If link was explicitly removed in the dialog (noLinkMode), ensure it is
+      // not re-introduced from the original item by the spread above.
+      if ("link" in item && !("link" in updatedItem)) {
+        delete mergedItem.link;
       }
 
       this.item = mergedItem;
