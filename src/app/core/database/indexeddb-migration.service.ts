@@ -107,7 +107,7 @@ export class IndexeddbMigrationService {
     // Old DB exists, not yet migrated → use old DB, migration pending
     this.migrationPending = true;
     await this.trackResolveScenario(
-      "migration_pending_legacy_exists",
+      "idb_migration-pending",
       "idb",
       true,
     );
