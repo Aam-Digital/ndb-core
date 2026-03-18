@@ -11,6 +11,7 @@ import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
 describe("IndexeddbMigrationService", () => {
   let service: IndexeddbMigrationService;
   let confirmationDialogSpy: jasmine.SpyObj<ConfirmationDialogService>;
+  let eventTrackSpy: jasmine.Spy;
   let mockWindow: {
     location: { reload: jasmine.Spy };
     indexedDB: { databases: jasmine.Spy; deleteDatabase: jasmine.Spy };
@@ -59,6 +60,7 @@ describe("IndexeddbMigrationService", () => {
     confirmationDialogSpy = jasmine.createSpyObj("ConfirmationDialogService", [
       "getConfirmation",
     ]);
+    eventTrackSpy = jasmine.createSpy("eventTrack");
     confirmationDialogSpy.getConfirmation.and.resolveTo(false);
     mockWindow = {
       location: { reload: jasmine.createSpy("reload") },
@@ -81,6 +83,11 @@ describe("IndexeddbMigrationService", () => {
       ],
     });
     service = TestBed.inject(IndexeddbMigrationService);
+    // Avoid importing/providing AnalyticsService directly here to keep this unit test
+    // isolated from broader module initialization chains in full-suite runs.
+    spyOn<any>(service, "getAnalyticsService").and.resolveTo({
+      eventTrack: eventTrackSpy,
+    });
     localStorage.removeItem("DB_MIGRATED_abc-123-uuid");
   });
 
