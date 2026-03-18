@@ -110,8 +110,7 @@ describe("IndexeddbMigrationService", () => {
         "indexeddb_migration_resolve_db_config",
         jasmine.objectContaining({
           category: "indexeddb_migration",
-          label: "indexeddb_disabled_config",
-          value: 0,
+          label: "idb_indexeddb-disabled-config",
         }),
       );
     });
@@ -130,16 +129,14 @@ describe("IndexeddbMigrationService", () => {
         "indexeddb_migration_resolve_db_config",
         jasmine.objectContaining({
           category: "indexeddb_migration",
-          label: "migrated_flag_present",
-          value: 0,
+          label: "indexeddb_after-migration",
         }),
       );
       expect(eventTrackSpy).not.toHaveBeenCalledWith(
         "indexeddb_migration_resolve_db_config",
         jasmine.objectContaining({
           category: "indexeddb_migration",
-          label: "fresh_install_no_legacy_db",
-          value: 0,
+          label: "indexeddb_fresh-install",
         }),
       );
     });
@@ -161,16 +158,14 @@ describe("IndexeddbMigrationService", () => {
         "indexeddb_migration_resolve_db_config",
         jasmine.objectContaining({
           category: "indexeddb_migration",
-          label: "fresh_install_no_legacy_db",
-          value: 0,
+          label: "indexeddb_fresh-install",
         }),
       );
       expect(eventTrackSpy).not.toHaveBeenCalledWith(
         "indexeddb_migration_resolve_db_config",
         jasmine.objectContaining({
           category: "indexeddb_migration",
-          label: "migrated_flag_present",
-          value: 0,
+          label: "indexeddb_after-migration",
         }),
       );
     });
@@ -190,8 +185,7 @@ describe("IndexeddbMigrationService", () => {
         "indexeddb_migration_resolve_db_config",
         jasmine.objectContaining({
           category: "indexeddb_migration",
-          label: "migration_pending_legacy_exists",
-          value: 1,
+          label: "idb_migration-pending",
         }),
       );
     });

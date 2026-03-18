@@ -247,7 +247,6 @@ export class IndexeddbMigrationService {
     analytics?.eventTrack("indexeddb_migration_resolve_db_config", {
       category: "indexeddb_migration",
       label: scenario,
-      value: migrationPending ? 1 : 0,
     });
 
     Logging.debug(
