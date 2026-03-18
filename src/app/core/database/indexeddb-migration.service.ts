@@ -91,7 +91,7 @@ export class IndexeddbMigrationService {
     // Already migrated or fresh install (no old DB exists)
     if (this.isMigrated(session)) {
       await this.trackResolveScenario(
-        "migrated_flag_present",
+        "indexeddb_after-migration",
         "indexeddb",
         false,
       );
