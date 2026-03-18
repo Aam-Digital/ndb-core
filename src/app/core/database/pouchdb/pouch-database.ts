@@ -46,9 +46,6 @@ export class PouchDatabase extends Database {
   /** trigger to unsubscribe any internal subscriptions */
   protected readonly destroy$ = new Subject<void>();
 
-  /** Handle to the live PouchDB changes feed, so it can be cancelled on shutdown. */
-  private liveChangesFeed: PouchDB.Core.Changes<any> | undefined;
-
   /**
    * The PouchDB adapter to use for local storage.
    * Set by the factory/resolver before calling init().
@@ -310,12 +307,11 @@ export class PouchDatabase extends Database {
   protected async subscribeChanges() {
     const runSubscription = async () => {
       const db = await this.getPouchDBOnceReady();
-      this.liveChangesFeed = db.changes({
+      db.changes({
         live: true,
         since: "now",
         include_docs: true,
-      });
-      this.liveChangesFeed
+      })
         .addListener("change", (change) => {
           // Emit changes inside Angular zone to trigger change detection
           if (this.ngZone) {
@@ -353,11 +349,6 @@ export class PouchDatabase extends Database {
   async destroy(): Promise<any> {
     this.destroy$.next();
 
-    if (this.liveChangesFeed) {
-      this.liveChangesFeed.cancel();
-      this.liveChangesFeed = undefined;
-    }
-
     await Promise.all(this.indexPromises);
     if (this.pouchDB) {
       return this.pouchDB.destroy();
@@ -369,11 +360,6 @@ export class PouchDatabase extends Database {
    */
   async reset() {
     this.destroy$.next();
-
-    if (this.liveChangesFeed) {
-      this.liveChangesFeed.cancel();
-      this.liveChangesFeed = undefined;
-    }
 
     this.pouchDB = undefined;
     // keep this.changesFeed because some services are already subscribed to this reference
