@@ -4,12 +4,21 @@ import { RoutePermissionsService } from "./route-permissions.service";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { EntityPermissionGuard } from "../../permissions/permission-guard/entity-permission.guard";
 import { MenuItem } from "app/core/ui/navigation/menu-item";
+import type { Mock } from "vitest";
+
+type UserRoleGuardMock = {
+  checkRoutePermissions: Mock;
+};
+
+type EntityPermissionGuardMock = {
+  checkRoutePermissions: Mock;
+};
 
 describe("RoutePermissionsService", () => {
   let service: RoutePermissionsService;
 
-  let mockUserRoleGuard: any;
-  let mockEntityPermissionGuard: any;
+  let mockUserRoleGuard: UserRoleGuardMock;
+  let mockEntityPermissionGuard: EntityPermissionGuardMock;
 
   beforeEach(() => {
     mockEntityPermissionGuard = {

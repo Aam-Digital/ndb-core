@@ -9,6 +9,17 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { Component, SimpleChange } from "@angular/core";
 import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import type { Mock } from "vitest";
+
+type EntityActionsServiceMock = {
+  remove: Mock;
+};
+
+type EntityAbilityMock = {
+  cannot: Mock;
+  update: Mock;
+  on: Mock;
+};
 
 @Component({
   template: ``,
@@ -25,8 +36,8 @@ describe("AbstractEntityDetailsComponent", () => {
     panels: [],
   };
 
-  let mockEntityRemoveService: any;
-  let mockAbility: any;
+  let mockEntityRemoveService: EntityActionsServiceMock;
+  let mockAbility: EntityAbilityMock;
 
   beforeEach(waitForAsync(() => {
     mockEntityRemoveService = {

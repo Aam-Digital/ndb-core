@@ -10,12 +10,22 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "../../database-entity.decorator";
+import type { Mock } from "vitest";
+
+type DialogRefMock = {
+  close: Mock;
+};
+
+type EntityFormServiceMock = {
+  createEntityForm: Mock;
+  extendFormFieldConfig: Mock;
+};
 
 describe("EntityBulkEditComponent", () => {
   let component: EntityBulkEditComponent<any>;
   let fixture: ComponentFixture<EntityBulkEditComponent<any>>;
-  let mockDialogRef: any;
-  let mockEntityFormService: any;
+  let mockDialogRef: DialogRefMock;
+  let mockEntityFormService: EntityFormServiceMock;
 
   const mockEntityConstructor = {
     schema: new Map([

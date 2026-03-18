@@ -11,11 +11,31 @@ import { of } from "rxjs";
 import { WINDOW_TOKEN } from "#src/app/utils/di-tokens";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import type { Observable } from "rxjs";
+import type { Mock } from "vitest";
+
+type DialogRefMock = {
+  afterClosed: () => Observable<unknown>;
+  close?: Mock;
+};
+
+type MatDialogMock = {
+  open: Mock;
+};
+
+type WindowMock = {
+  location: { href: string };
+};
+
+type ConfirmationDialogServiceMock = {
+  getConfirmation: Mock;
+};
 
 describe("EmailClientService", () => {
   let service: EmailClientService;
-  let mockDialog: any;
-  let mockWindow: any;
+  let mockDialog: MatDialogMock;
+  let mockWindow: WindowMock;
+  let mockConfirmationDialog: ConfirmationDialogServiceMock;
 
   class EntityWithEmail extends Entity {
     @DatabaseField({ dataType: EmailDatatype.dataType })
@@ -28,6 +48,11 @@ describe("EmailClientService", () => {
     };
     mockWindow = {
       location: { href: "" },
+    };
+    mockConfirmationDialog = {
+      getConfirmation: vi
+        .fn()
+        .mockName("ConfirmationDialogService.getConfirmation"),
     };
 
     TestBed.configureTestingModule({
@@ -43,11 +68,7 @@ describe("EmailClientService", () => {
         },
         {
           provide: ConfirmationDialogService,
-          useValue: {
-            getConfirmation: vi
-              .fn()
-              .mockName("ConfirmationDialogService.getConfirmation"),
-          },
+          useValue: mockConfirmationDialog,
         },
       ],
     });
@@ -63,16 +84,14 @@ describe("EmailClientService", () => {
     const fakeEntity = new EntityWithEmail();
     fakeEntity.email = undefined;
 
-    const mockConfirmation = TestBed.inject(ConfirmationDialogService) as any;
-
     mockDialog.open.mockReturnValue({
       afterClosed: () => of(undefined),
-    } as any);
+    } satisfies DialogRefMock);
 
     const result = await service.executeMailto(fakeEntity);
 
     expect(result).toBe(false);
-    expect(mockConfirmation.getConfirmation).toHaveBeenCalled();
+    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
   });
 
   it("should generate mailto link with bcc for multiple emails", () => {
@@ -128,7 +147,7 @@ describe("EmailClientService", () => {
             sendSemicolonSeparated: true,
           }),
         close: vi.fn(),
-      } as any);
+      } satisfies DialogRefMock);
 
       service.executeMailto([entity1, entity2, entity3]);
       await vi.advanceTimersByTimeAsync(5000); // Fast-forward through the setTimeout
@@ -164,7 +183,7 @@ describe("EmailClientService", () => {
             sendSemicolonSeparated: false,
           }),
         close: vi.fn(),
-      } as any);
+      } satisfies DialogRefMock);
 
       service.executeMailto([entity1, entity2, entity3]);
       await vi.advanceTimersByTimeAsync(5000); // Fast-forward through the setTimeout

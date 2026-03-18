@@ -15,6 +15,12 @@ import { EntityConfig } from "./entity-config";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { DefaultDatatype } from "./default-datatype/default.datatype";
+import type { Mock } from "vitest";
+
+type ConfigServiceMock = {
+  getConfig: Mock;
+  getAllConfigs: Mock;
+};
 
 class ForceArrayDatatype extends DefaultDatatype {
   static override readonly dataType = "force-array-test";
@@ -28,7 +34,7 @@ class ForceArrayDatatype extends DefaultDatatype {
 
 describe("EntityConfigService", () => {
   let service: EntityConfigService;
-  let mockConfigService: any;
+  let mockConfigService: ConfigServiceMock;
   const testConfig: EntityConfig = {
     attributes: { testAttribute: { dataType: "string" } },
   };
@@ -174,9 +180,12 @@ describe("EntityConfigService", () => {
 
     expect(Test.color).toBeDefined();
     expect(Array.isArray(Test.color)).toBe(true);
-    expect((Test.color as any).length).toBe(2);
-    expect((Test.color as any)[0].color).toBe("#00FF00");
-    expect((Test.color as any)[1].color).toBe("#FF0000");
+    if (!Array.isArray(Test.color)) {
+      throw new Error("Expected Test.color to be an array");
+    }
+    expect(Test.color).toHaveLength(2);
+    expect(Test.color[0].color).toBe("#00FF00");
+    expect(Test.color[1].color).toBe("#FF0000");
   });
 
   it("should create a new subclass with the schema of the extended", () => {

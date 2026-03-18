@@ -26,11 +26,21 @@ import { DatabaseEntity } from "../database-entity.decorator";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { SyncState } from "app/core/session/session-states/sync-state.enum";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
+import type { Mock } from "vitest";
+
+type DatabaseMock = {
+  saveDatabaseIndex: Mock;
+  query: Mock;
+};
+
+type DatabaseResolverServiceMock = {
+  getDatabase: Mock;
+};
 
 describe("DatabaseIndexingService", () => {
   let service: DatabaseIndexingService;
-  let mockDb: any;
-  let mockDbResolver: any;
+  let mockDb: DatabaseMock;
+  let mockDbResolver: DatabaseResolverServiceMock;
 
   @DatabaseEntity("TestEntityWithRelation")
   class TestEntityWithRelation extends Entity {

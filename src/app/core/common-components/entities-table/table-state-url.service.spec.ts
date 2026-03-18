@@ -1,14 +1,35 @@
 import { TestBed } from "@angular/core/testing";
 import { Router, ActivatedRoute } from "@angular/router";
 import { TableStateUrlService } from "./table-state-url.service";
+import type { Mock } from "vitest";
+
+type RouterMock = {
+  navigate: Mock;
+  createUrlTree: Mock;
+};
+
+type UrlTreeLike = {
+  root: object;
+  queryParams: Record<string, string>;
+  fragment: string | null;
+  queryParamMap: null;
+  toString: () => string;
+};
+
+type QueryParamMapMock = {
+  get: (key: string) => string | null;
+};
+
+type ActivatedRouteSnapshotStub = {
+  queryParams: Record<string, string>;
+  readonly queryParamMap: QueryParamMapMock;
+};
 
 describe("TableStateUrlService", () => {
   let service: TableStateUrlService;
-  let routerSpy: any;
-  let activatedRouteStub: Partial<ActivatedRoute>;
-  let queryParamMapMock: {
-    get: (key: string) => string | null;
-  };
+  let routerSpy: RouterMock;
+  let activatedRouteStub: { snapshot: ActivatedRouteSnapshotStub };
+  let queryParamMapMock: QueryParamMapMock;
 
   beforeEach(() => {
     routerSpy = {
@@ -22,7 +43,7 @@ describe("TableStateUrlService", () => {
       fragment: null,
       queryParamMap: null,
       toString: () => "/?foo=bar",
-    } as any);
+    } satisfies UrlTreeLike);
     queryParamMapMock = { get: (_: string) => null };
     activatedRouteStub = {
       snapshot: {
@@ -30,14 +51,17 @@ describe("TableStateUrlService", () => {
         get queryParamMap() {
           return queryParamMapMock;
         },
-      } as any,
+      },
     };
 
     TestBed.configureTestingModule({
       providers: [
         TableStateUrlService,
         { provide: Router, useValue: routerSpy },
-        { provide: ActivatedRoute, useValue: activatedRouteStub },
+        {
+          provide: ActivatedRoute,
+          useValue: activatedRouteStub as ActivatedRoute,
+        },
       ],
     });
     service = TestBed.inject(TableStateUrlService);
@@ -130,7 +154,7 @@ describe("TableStateUrlService", () => {
           fragment: null,
           queryParamMap: null,
           toString: () => "/?filter1=" + longValue + "&filter2=" + shortValue,
-        } as any;
+        } satisfies UrlTreeLike;
       }
       // If the long param is removed, return a short string
       return {
@@ -139,7 +163,7 @@ describe("TableStateUrlService", () => {
         fragment: null,
         queryParamMap: null,
         toString: () => "/?filter2=" + shortValue,
-      } as any;
+      } satisfies UrlTreeLike;
     });
     service.updateUrlParams({ filter1: longValue, filter2: shortValue });
     // Should call router.navigate with only the short param left

@@ -5,17 +5,29 @@ import { EntityMapperService } from "../../../../core/entity/entity-mapper/entit
 import { AlertService } from "../../../../core/alerts/alert.service";
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
 import { MatDialog } from "@angular/material/dialog";
-import { Subject } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { take } from "rxjs/operators";
 import { SyncState } from "../../../../core/session/session-states/sync-state.enum";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { SyncStateSubject } from "../../../../core/session/session-type";
+import type { Mock } from "vitest";
+
+type MatDialogMock = {
+  open: Mock;
+};
+
+type EntityMapperMock = Pick<EntityMapperService, "load" | "save">;
+
+type DialogRefMock = {
+  afterClosed: () => Observable<unknown>;
+};
 
 describe("ProgressDashboardComponent", () => {
   let component: ProgressDashboardComponent;
   let fixture: ComponentFixture<ProgressDashboardComponent>;
-  let mockEntityMapper: any;
-  const mockDialog = {
+  let mockEntityMapper: EntityMapperMock;
+  let loadSpy: ReturnType<typeof vi.spyOn>;
+  const mockDialog: MatDialogMock = {
     open: vi.fn().mockName("matDialog.open"),
   };
   let mockSync: SyncStateSubject;
@@ -41,11 +53,11 @@ describe("ProgressDashboardComponent", () => {
   }));
 
   beforeEach(() => {
-    mockEntityMapper = TestBed.inject(EntityMapperService) as any;
-    vi.spyOn(mockEntityMapper, "load").mockResolvedValue({
+    mockEntityMapper = TestBed.inject(EntityMapperService);
+    loadSpy = vi.spyOn(mockEntityMapper, "load").mockResolvedValue({
       title: "test",
       parts: [],
-    } as any);
+    } as ProgressDashboardConfig);
     vi.spyOn(mockEntityMapper, "save").mockResolvedValue(undefined);
     fixture = TestBed.createComponent(ProgressDashboardComponent);
     component = fixture.componentInstance;
@@ -76,13 +88,13 @@ describe("ProgressDashboardComponent", () => {
   it("should retry loading the config after sync has finished", async () => {
     vi.useFakeTimers();
     try {
-      mockEntityMapper.load.mockRejectedValue();
+      loadSpy.mockRejectedValue(new Error());
       component.dashboardConfigId = "someId";
       component.ngOnInit();
       await vi.advanceTimersByTimeAsync(0);
 
       const config = new ProgressDashboardConfig("someId");
-      mockEntityMapper.load.mockResolvedValue(config);
+      loadSpy.mockResolvedValue(config);
       mockSync.next(SyncState.COMPLETED);
 
       expect(component.data).toEqual(config);
@@ -94,7 +106,7 @@ describe("ProgressDashboardComponent", () => {
   it("should create a new progress dashboard config if no configuration could be found after initial sync", async () => {
     vi.useFakeTimers();
     try {
-      mockEntityMapper.load.mockRejectedValue();
+      loadSpy.mockRejectedValue(new Error());
       mockSync.next(SyncState.COMPLETED);
 
       component.dashboardConfigId = "config-id";
@@ -108,10 +120,10 @@ describe("ProgressDashboardComponent", () => {
   });
 
   it("saves data after the dialog was closed", async () => {
-    const closeNotifier = new Subject();
+    const closeNotifier = new Subject<unknown>();
     mockDialog.open.mockReturnValue({
       afterClosed: () => closeNotifier.pipe(take(1)),
-    } as any);
+    } satisfies DialogRefMock);
     component.showEditComponent();
     closeNotifier.next({});
     expect(mockEntityMapper.save).toHaveBeenCalled();

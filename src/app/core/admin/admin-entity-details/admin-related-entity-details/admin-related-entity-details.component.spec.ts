@@ -16,12 +16,21 @@ import { CurrentUserSubject } from "../../../session/current-user-subject";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
+import type { Mock } from "vitest";
+
+type EntityFormServiceMock = {
+  createEntityForm: Mock;
+};
+
+type DialogRefMock = {
+  close: Mock;
+};
 
 describe("AdminRelatedEntityDetailsComponent", () => {
   let component: AdminRelatedEntityDetailsComponent;
   let fixture: ComponentFixture<AdminRelatedEntityDetailsComponent>;
-  let mockFormService: any;
-  let mockDialogRef: any;
+  let mockFormService: EntityFormServiceMock;
+  let mockDialogRef: DialogRefMock;
   let mockDialogData: AdminRelatedEntityDetailsData;
 
   beforeEach(async () => {

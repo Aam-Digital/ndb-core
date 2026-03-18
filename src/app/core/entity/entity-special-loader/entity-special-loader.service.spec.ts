@@ -7,20 +7,29 @@ import {
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { HistoricalDataService } from "./historical-data/historical-data.service";
+import type { Mock } from "vitest";
+
+type ChildrenServiceMock = {
+  getChildren: Mock;
+};
+
+type HistoricalDataServiceMock = {
+  getHistoricalDataFor: Mock;
+};
 
 describe("EntitySpecialLoaderService", () => {
   let service: EntitySpecialLoaderService;
 
-  let mockChildrenService: any;
-  let mockHistoricalDataService: any;
+  let mockChildrenService: ChildrenServiceMock;
+  let mockHistoricalDataService: HistoricalDataServiceMock;
 
   beforeEach(() => {
     mockChildrenService = {
       getChildren: vi.fn(),
-    } as unknown as any;
+    };
     mockHistoricalDataService = {
       getHistoricalDataFor: vi.fn(),
-    } as unknown as any;
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -36,7 +45,7 @@ describe("EntitySpecialLoaderService", () => {
   });
 
   it("should load via ChildrenService", async () => {
-    const testData = [new TestEntity()] as any[];
+    const testData = [new TestEntity()];
     mockChildrenService.getChildren.mockResolvedValue(testData);
 
     const actual = await service.loadData(LoaderMethod.ChildrenService);
