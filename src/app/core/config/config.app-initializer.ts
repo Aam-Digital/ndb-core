@@ -36,9 +36,15 @@ export const APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES = provideAppInitializer(
  * are cached by the service worker and available offline even before the user
  * has visited every page.
  *
- * Runs in an idle callback to avoid blocking the main thread after login.
+ * Runs once in an idle callback to avoid blocking the main thread after login.
  */
+let preloadScheduled = false;
 function preloadDynamicComponents(registry: ComponentRegistry) {
+  if (preloadScheduled) {
+    return;
+  }
+  preloadScheduled = true;
+
   const load = () => {
     for (const loadFn of registry.values()) {
       loadFn().catch((e) =>
