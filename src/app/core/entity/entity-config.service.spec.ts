@@ -15,6 +15,12 @@ import { EntityConfig } from "./entity-config";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { DefaultDatatype } from "./default-datatype/default.datatype";
+import type { Mock } from "vitest";
+
+type ConfigServiceMock = {
+  getConfig: Mock;
+  getAllConfigs: Mock;
+};
 
 class ForceArrayDatatype extends DefaultDatatype {
   static override readonly dataType = "force-array-test";
@@ -28,14 +34,17 @@ class ForceArrayDatatype extends DefaultDatatype {
 
 describe("EntityConfigService", () => {
   let service: EntityConfigService;
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockConfigService: ConfigServiceMock;
   const testConfig: EntityConfig = {
     attributes: { testAttribute: { dataType: "string" } },
   };
 
   beforeEach(() => {
-    mockConfigService = jasmine.createSpyObj(["getConfig", "getAllConfigs"]);
-    mockConfigService.getConfig.and.returnValue(testConfig);
+    mockConfigService = {
+      getConfig: vi.fn(),
+      getAllConfigs: vi.fn(),
+    };
+    mockConfigService.getConfig.mockReturnValue(testConfig);
     TestBed.configureTestingModule({
       providers: [
         { provide: ConfigService, useValue: mockConfigService },
@@ -60,10 +69,10 @@ describe("EntityConfigService", () => {
   });
 
   it("should add attributes to a entity class schema", () => {
-    expect(Test.schema.has("name")).toBeTrue();
+    expect(Test.schema.has("name")).toBe(true);
     service.addConfigAttributes<Test>(Test);
-    expect(Test.schema.has("testAttribute")).toBeTrue();
-    expect(Test.schema.has("name")).toBeTrue();
+    expect(Test.schema.has("testAttribute")).toBe(true);
+    expect(Test.schema.has("name")).toBe(true);
   });
 
   it("should assign the correct schema", () => {
@@ -73,7 +82,7 @@ describe("EntityConfigService", () => {
 
   it("should load a given EntityType", () => {
     const config: EntityConfig = {};
-    mockConfigService.getConfig.and.returnValue(config);
+    mockConfigService.getConfig.mockReturnValue(config);
     const result = service.getEntityConfig(Test);
     expect(mockConfigService.getConfig).toHaveBeenCalledWith("entity:Test");
     expect(result).toBe(config);
@@ -82,7 +91,9 @@ describe("EntityConfigService", () => {
   it("appends custom definitions for each entity from the config", () => {
     const ATTRIBUTE_1_NAME = "test1Attribute";
     const ATTRIBUTE_2_NAME = "test2Attribute";
-    const mockEntityConfigs: (EntityConfig & { _id: string })[] = [
+    const mockEntityConfigs: (EntityConfig & {
+      _id: string;
+    })[] = [
       {
         _id: "entity:Test",
         attributes: { [ATTRIBUTE_1_NAME]: { dataType: "string" } },
@@ -92,27 +103,29 @@ describe("EntityConfigService", () => {
         attributes: { [ATTRIBUTE_2_NAME]: { dataType: "number" } },
       },
     ];
-    mockConfigService.getAllConfigs.and.returnValue(mockEntityConfigs);
+    mockConfigService.getAllConfigs.mockReturnValue(mockEntityConfigs);
     service.setupEntitiesFromConfig();
-    expect(Test.schema.has(ATTRIBUTE_1_NAME)).toBeTrue();
-    expect(Test2.schema.has(ATTRIBUTE_2_NAME)).toBeTrue();
+    expect(Test.schema.has(ATTRIBUTE_1_NAME)).toBe(true);
+    expect(Test2.schema.has(ATTRIBUTE_2_NAME)).toBe(true);
   });
 
   it("should reset attribute to basic class config if custom attribute disappears from config doc", () => {
     const originalLabel = TestEntity.schema.get("name").label;
     const customLabel = "custom label";
 
-    const mockEntityConfigs: (EntityConfig & { _id: string })[] = [
+    const mockEntityConfigs: (EntityConfig & {
+      _id: string;
+    })[] = [
       {
         _id: "entity:" + TestEntity.ENTITY_TYPE,
         attributes: { name: { label: customLabel } },
       },
     ];
-    mockConfigService.getAllConfigs.and.returnValue(mockEntityConfigs);
+    mockConfigService.getAllConfigs.mockReturnValue(mockEntityConfigs);
     service.setupEntitiesFromConfig();
     expect(TestEntity.schema.get("name").label).toEqual(customLabel);
 
-    mockConfigService.getAllConfigs.and.returnValue([
+    mockConfigService.getAllConfigs.mockReturnValue([
       {
         _id: "entity:" + TestEntity.ENTITY_TYPE,
         attributes: {
@@ -125,7 +138,7 @@ describe("EntityConfigService", () => {
   });
 
   it("should allow to configure the `.toString` method", () => {
-    mockConfigService.getAllConfigs.and.returnValue([
+    mockConfigService.getAllConfigs.mockReturnValue([
       { _id: "entity:Test", toStringAttributes: ["name", "entityId"] },
     ]);
     service.setupEntitiesFromConfig();
@@ -136,7 +149,7 @@ describe("EntityConfigService", () => {
   });
 
   it("should allow to configure the label and icon for entity", () => {
-    mockConfigService.getAllConfigs.and.returnValue([
+    mockConfigService.getAllConfigs.mockReturnValue([
       {
         _id: "entity:Test",
         label: "test",
@@ -154,7 +167,7 @@ describe("EntityConfigService", () => {
   });
 
   it("should allow to configure color as an array of ColorMappings for entity", () => {
-    mockConfigService.getAllConfigs.and.returnValue([
+    mockConfigService.getAllConfigs.mockReturnValue([
       {
         _id: "entity:Test",
         color: [
@@ -166,10 +179,13 @@ describe("EntityConfigService", () => {
     service.setupEntitiesFromConfig();
 
     expect(Test.color).toBeDefined();
-    expect(Array.isArray(Test.color)).toBeTrue();
-    expect((Test.color as any).length).toBe(2);
-    expect((Test.color as any)[0].color).toBe("#00FF00");
-    expect((Test.color as any)[1].color).toBe("#FF0000");
+    expect(Array.isArray(Test.color)).toBe(true);
+    if (!Array.isArray(Test.color)) {
+      throw new Error("Expected Test.color to be an array");
+    }
+    expect(Test.color).toHaveLength(2);
+    expect(Test.color[0].color).toBe("#00FF00");
+    expect(Test.color[1].color).toBe("#FF0000");
   });
 
   it("should create a new subclass with the schema of the extended", () => {
@@ -177,7 +193,7 @@ describe("EntityConfigService", () => {
       dataType: "string",
       label: "Dynamic Property",
     };
-    mockConfigService.getAllConfigs.and.returnValue([
+    mockConfigService.getAllConfigs.mockReturnValue([
       {
         _id: "entity:DynamicTest",
         label: "Dynamic Test Entity",
@@ -191,21 +207,21 @@ describe("EntityConfigService", () => {
     const dynamicEntity = entityRegistry.get("DynamicTest");
     expect(dynamicEntity.ENTITY_TYPE).toBe("DynamicTest");
     expect([...dynamicEntity.schema.entries()]).toEqual(
-      jasmine.arrayContaining([...Test.schema.entries()]),
+      expect.arrayContaining([...Test.schema.entries()]),
     );
     expect(dynamicEntity.schema.get("dynamicProperty")).toEqual(schema);
     const dynamicInstance = new dynamicEntity("someId");
-    expect(dynamicInstance instanceof Test).toBeTrue();
+    expect(dynamicInstance instanceof Test).toBe(true);
     expect(dynamicInstance.getId()).toBe("DynamicTest:someId");
 
     // it should overwrite anything in the extended entity
-    expect(Test.schema.has("dynamicProperty")).toBeFalse();
+    expect(Test.schema.has("dynamicProperty")).toBe(false);
     const parentInstance = new Test("otherId");
     expect(parentInstance.getId()).toBe("Test:otherId");
   });
 
   it("should subclass entity if no extension is specified", () => {
-    mockConfigService.getAllConfigs.and.returnValue([
+    mockConfigService.getAllConfigs.mockReturnValue([
       {
         _id: "entity:NoExtends",
         label: "DynamicTest",
@@ -225,7 +241,7 @@ describe("EntityConfigService", () => {
       ...Entity.schema.entries(),
     ]);
     const dynamicInstance = new dynamicEntity("someId");
-    expect(dynamicInstance instanceof Entity).toBeTrue();
+    expect(dynamicInstance instanceof Entity).toBe(true);
     expect(dynamicInstance.getId()).toBe("NoExtends:someId");
   });
 
@@ -237,13 +253,14 @@ describe("EntityConfigService", () => {
     });
 
     const field = Test.schema.get("forcedArrayField");
-    expect(field.isArray).toBeTrue();
+    expect(field.isArray).toBe(true);
   });
 });
 
 @DatabaseEntity("Test")
 class Test extends Entity {
-  @DatabaseField() name: string;
+  @DatabaseField()
+  name: string;
 }
 
 @DatabaseEntity("Test2")

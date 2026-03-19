@@ -39,7 +39,7 @@ describe("PouchDatabase tests", () => {
     await database.put(testData);
     const resultData = await database.get(id);
     expect(resultData).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         _id: id,
         name: name,
         count: count,
@@ -59,7 +59,7 @@ describe("PouchDatabase tests", () => {
   });
 
   it("fails to get by not existing _id", () => {
-    return expectAsync(database.get("some_id")).toBeRejected();
+    return expect(database.get("some_id")).rejects.toThrow();
   });
 
   it("rejects putting new object with existing _id and no _rev with forceOverwrite being false", async () => {
@@ -68,7 +68,7 @@ describe("PouchDatabase tests", () => {
     await database.put(testData);
     const result = await database.get(testData._id);
     expect(result._id).toBe(testData._id);
-    await expectAsync(database.put(duplicateData)).toBeRejected();
+    await expect(database.put(duplicateData)).rejects.toThrow();
     const result2 = await database.get(testData._id);
     expect(result2.name).toBe(testData.name);
   });
@@ -79,7 +79,7 @@ describe("PouchDatabase tests", () => {
     await database.put(testData);
     const result = await database.get(testData._id);
     expect(result._id).toBe(testData._id);
-    await expectAsync(database.put(duplicateData, true)).toBeResolved();
+    await expect(database.put(duplicateData, true)).resolves.not.toThrow();
     const result2 = await database.get(testData._id);
     expect(result2.name).toBe(duplicateData.name);
   });
@@ -94,14 +94,14 @@ describe("PouchDatabase tests", () => {
     await database.put(testData);
     const result = await database.get(testData._id);
     expect(result._id).toBe(testData._id);
-    await expectAsync(database.put(duplicateData, true)).toBeResolved();
+    await expect(database.put(duplicateData, true)).resolves.not.toThrow();
     const result2 = await database.get(testData._id);
     expect(result2.name).toBe(duplicateData.name);
   });
 
   it("allows saving a new object even when the _rev field is set with forceOverwrite being true", async () => {
     const testData = { _id: "test_id", name: "test", _rev: "1234blabla" };
-    await expectAsync(database.put(testData, true)).toBeResolved();
+    await expect(database.put(testData, true)).resolves.not.toThrow();
     const result2 = await database.get(testData._id);
     expect(result2.name).toBe(testData.name);
   });
@@ -112,10 +112,10 @@ describe("PouchDatabase tests", () => {
     const count = 42;
     const testData = { _id: id, name: name, count: count };
     await database.put(testData);
-    await expectAsync(database.get(testData._id)).toBeResolved();
+    await expect(database.get(testData._id)).resolves.not.toThrow();
     const savedDocument = await database.get(testData._id);
     await database.remove(savedDocument);
-    await expectAsync(database.get(testData._id)).toBeRejected();
+    await expect(database.get(testData._id)).rejects.toThrow();
   });
 
   it("returns undefined on get by not existing entityId with returnUndefined parameter", async () => {
@@ -131,7 +131,7 @@ describe("PouchDatabase tests", () => {
     const result = await database.getAll();
     expect(result.map((el) => el._id)).toContain(testData1._id);
     expect(result.map((el) => el._id)).toContain(testData2._id);
-    expect(result).toHaveSize(2);
+    expect(result).toHaveLength(2);
   });
 
   it("getAll returns prefixed objects", async () => {
@@ -141,14 +141,14 @@ describe("PouchDatabase tests", () => {
     await database.put(testData1);
     await database.put(testData2);
     const result = await database.getAll(prefix);
-    expect(result).toHaveSize(1);
+    expect(result).toHaveLength(1);
     expect(result.map((el) => el._id)).toContain(testData1._id);
     expect(result.map((el) => el._id)).not.toContain(testData2._id);
   });
 
   it("saveDatabaseIndex creates new index", async () => {
     const testIndex = { _id: "_design/test_index", views: { a: {}, b: {} } };
-    spyOn(database, "put").and.resolveTo();
+    vi.spyOn(database, "put").mockResolvedValue(undefined);
 
     await database.saveDatabaseIndex(testIndex);
     expect(database.put).toHaveBeenCalledWith(testIndex, true);
@@ -161,7 +161,7 @@ describe("PouchDatabase tests", () => {
       views: { a: {} },
     });
     const existingIndex = await database.get(testIndex._id);
-    spyOn(database, "put").and.resolveTo();
+    vi.spyOn(database, "put").mockResolvedValue(undefined);
 
     await database.saveDatabaseIndex(testIndex);
     expect(database.put).toHaveBeenCalledWith(
@@ -181,7 +181,7 @@ describe("PouchDatabase tests", () => {
       views: testIndex.views,
     };
     await database.put(existingIndex);
-    spyOn(database, "put").and.resolveTo();
+    vi.spyOn(database, "put").mockResolvedValue(undefined);
 
     await database.saveDatabaseIndex(testIndex);
     expect(database.put).not.toHaveBeenCalled();
@@ -191,7 +191,7 @@ describe("PouchDatabase tests", () => {
     const testQuery = "testquery";
     const testQueryResults = { rows: [] } as any;
     const pouchDB = database.getPouchDB();
-    spyOn(pouchDB, "query").and.resolveTo(testQueryResults);
+    vi.spyOn(pouchDB, "query").mockResolvedValue(testQueryResults);
 
     const result = await database.query(testQuery, {});
     expect(result).toEqual(testQueryResults);
@@ -210,14 +210,14 @@ describe("PouchDatabase tests", () => {
       },
     ]);
 
-    await expectAsync(database.get("5")).toBeResolvedTo(
-      jasmine.objectContaining({
+    await expect(database.get("5")).resolves.toEqual(
+      expect.objectContaining({
         _id: "5",
         name: "The Grinch",
       }),
     );
-    await expectAsync(database.get("8")).toBeResolvedTo(
-      jasmine.objectContaining({
+    await expect(database.get("8")).resolves.toEqual(
+      expect.objectContaining({
         _id: "8",
         name: "Santa Claus",
       }),
@@ -225,9 +225,9 @@ describe("PouchDatabase tests", () => {
   });
 
   it("Throws errors for each conflict individually", async () => {
-    const resolveConflictSpy = spyOn<any>(database, "resolveConflict");
+    const resolveConflictSpy = vi.spyOn(database as any, "resolveConflict");
     const conflictError = new Error();
-    resolveConflictSpy.and.rejectWith(conflictError);
+    resolveConflictSpy.mockRejectedValue(conflictError);
     await database.put({
       _id: "3",
       name: "Rudolph, the Red-Nosed Reindeer",
@@ -248,12 +248,12 @@ describe("PouchDatabase tests", () => {
       },
     ];
 
-    await expectAsync(database.putAll(dataWithConflicts)).toBeRejectedWith([
-      conflictError,
-      jasmine.objectContaining({ id: "4", ok: true }),
-      jasmine.objectContaining({ id: "5", ok: true }),
+    await expect(database.putAll(dataWithConflicts)).rejects.toEqual([
+      expect.any(Error),
+      expect.objectContaining({ id: "4", ok: true }),
+      expect.objectContaining({ id: "5", ok: true }),
     ]);
-    expect(resolveConflictSpy.calls.allArgs()).toEqual([
+    expect(vi.mocked(resolveConflictSpy).mock.calls).toEqual([
       [
         {
           _id: "3",
@@ -261,17 +261,17 @@ describe("PouchDatabase tests", () => {
           _rev: "1-invalid_rev",
         },
         false,
-        jasmine.objectContaining({ status: 409 }),
+        expect.objectContaining({ status: 409 }),
       ],
     ]);
   });
 
   it("should correctly determine if database is empty", async () => {
-    await expectAsync(database.isEmpty()).toBeResolvedTo(true);
+    await expect(database.isEmpty()).resolves.toEqual(true);
 
     await database.put({ _id: "User:test" });
 
-    await expectAsync(database.isEmpty()).toBeResolvedTo(false);
+    await expect(database.isEmpty()).resolves.toEqual(false);
   });
 
   describe("purge", () => {
@@ -279,7 +279,7 @@ describe("PouchDatabase tests", () => {
       await database.put({ _id: "Child:2", name: "test" });
 
       const db = database.getPouchDB();
-      const rawPurgeSpy = jasmine.createSpy("purge").and.resolveTo({});
+      const rawPurgeSpy = vi.fn().mockResolvedValue({});
       (db as any).purge = rawPurgeSpy;
 
       const emittedChanges: any[] = [];
@@ -289,9 +289,11 @@ describe("PouchDatabase tests", () => {
 
       expect(result).toBe(true);
       expect(rawPurgeSpy).toHaveBeenCalledTimes(1);
-      expect(rawPurgeSpy.calls.argsFor(0)[0]).toBe("Child:2");
-      expect(emittedChanges).toContain(
-        jasmine.objectContaining({ _id: "Child:2", _deleted: true }),
+      expect(vi.mocked(rawPurgeSpy).mock.calls[0][0]).toBe("Child:2");
+      expect(emittedChanges).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ _id: "Child:2", _deleted: true }),
+        ]),
       );
     });
 
@@ -305,12 +307,12 @@ describe("PouchDatabase tests", () => {
       await database.put({ _id: "Child:1", name: "test" });
 
       const db = database.getPouchDB();
-      (db as any).purge = jasmine
-        .createSpy("purge")
-        .and.rejectWith({ status: 500, message: "server error" });
+      (db as any).purge = vi
+        .fn()
+        .mockRejectedValue({ status: 500, message: "server error" });
 
-      await expectAsync(database.purge("Child:1")).toBeRejectedWith(
-        jasmine.objectContaining({ status: 500 }),
+      await expect(database.purge("Child:1")).rejects.toEqual(
+        expect.objectContaining({ status: 500 }),
       );
     });
 
@@ -318,12 +320,12 @@ describe("PouchDatabase tests", () => {
       await database.put({ _id: "Child:1", name: "test" });
 
       const db = database.getPouchDB();
-      const rawPurgeSpy = jasmine.createSpy("purge").and.resolveTo({});
+      const rawPurgeSpy = vi.fn().mockResolvedValue({});
       (db as any).purge = rawPurgeSpy;
 
       // Simulate a doc with one conflict
       const realGet = db.get.bind(db);
-      spyOn(db, "get").and.callFake(async (id: string, opts?: any) => {
+      vi.spyOn(db, "get").mockImplementation(async (id: string, opts?: any) => {
         const doc = await realGet(id, opts);
         if (opts?.conflicts) {
           (doc as any)._conflicts = ["1-conflict"];
@@ -336,11 +338,14 @@ describe("PouchDatabase tests", () => {
       expect(result).toBe(true);
       expect(db.get).toHaveBeenCalledWith(
         "Child:1",
-        jasmine.objectContaining({ conflicts: true }),
+        expect.objectContaining({ conflicts: true }),
       );
       expect(rawPurgeSpy).toHaveBeenCalledTimes(2);
-      expect(rawPurgeSpy.calls.argsFor(0)[0]).toBe("Child:1");
-      expect(rawPurgeSpy.calls.argsFor(1)).toEqual(["Child:1", "1-conflict"]);
+      expect(vi.mocked(rawPurgeSpy).mock.calls[0][0]).toBe("Child:1");
+      expect(vi.mocked(rawPurgeSpy).mock.calls[1]).toEqual([
+        "Child:1",
+        "1-conflict",
+      ]);
     });
   });
 });

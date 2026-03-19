@@ -19,11 +19,13 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
 describe("AdminEntityListComponent", () => {
   let component: AdminEntityListComponent;
   let fixture: ComponentFixture<AdminEntityListComponent>;
-  let mockFormService: jasmine.SpyObj<EntityFormService>;
+  let mockFormService: any;
 
   beforeEach(async () => {
-    mockFormService = jasmine.createSpyObj(["extendFormFieldConfig"]);
-    mockFormService.extendFormFieldConfig.and.callFake((c) =>
+    mockFormService = {
+      extendFormFieldConfig: vi.fn(),
+    };
+    mockFormService.extendFormFieldConfig.mockImplementation((c) =>
       toFormFieldConfig(c),
     );
     await TestBed.configureTestingModule({

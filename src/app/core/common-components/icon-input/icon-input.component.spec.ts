@@ -32,6 +32,6 @@ describe("IconInputComponent", () => {
     component.iconControl.setValue("not-a-real-icon");
     component.iconControl.updateValueAndValidity();
 
-    expect(component.iconControl.hasError("invalidIcon")).toBeTrue();
+    expect(component.iconControl.hasError("invalidIcon")).toBe(true);
   });
 });

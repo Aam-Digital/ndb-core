@@ -217,6 +217,9 @@ export class EditNewMatchActionComponent implements OnInit, OnChanges {
       return;
     }
     this.updateMatchOptions(selectedEntityType, true);
+    if (!this.value) {
+      return;
+    }
     this.value.newEntityType = selectedEntityType;
   }
 
@@ -229,7 +232,27 @@ export class EditNewMatchActionComponent implements OnInit, OnChanges {
     entityType: string,
     clearExisting: boolean = false,
   ): void {
-    this.entityConstructor = this.entityRegistry.get(entityType) ?? null;
+    if (!entityType) {
+      this.entityConstructor = null;
+      this.availableFields = Array.from(new Set(this.activeFields ?? []));
+      this.matchPropertyLeftOptions = [];
+      this.matchPropertyRightOptions = [];
+      if (clearExisting) {
+        this.form.patchValue({
+          newEntityMatchPropertyLeft: "",
+          newEntityMatchPropertyRight: "",
+        });
+        this.activeFields = [];
+      }
+      return;
+    }
+
+    try {
+      this.entityConstructor = this.entityRegistry.get(entityType) ?? null;
+    } catch {
+      this.entityConstructor = null;
+    }
+
     const targetEntitySchemaFields = Array.from(
       this.entityConstructor?.schema.keys() ?? [],
     );

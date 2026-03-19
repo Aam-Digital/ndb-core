@@ -4,12 +4,17 @@ import { DisplayParticipantsCountComponent } from "./display-participants-count.
 import { ChildrenService } from "../children.service";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
+import type { Mock } from "vitest";
+
+type ChildrenServiceMock = Pick<ChildrenService, "queryActiveRelationsOf"> & {
+  queryActiveRelationsOf: Mock<ChildrenService["queryActiveRelationsOf"]>;
+};
 
 describe("DisplayParticipantsCountComponent", () => {
   let component: DisplayParticipantsCountComponent;
   let fixture: ComponentFixture<DisplayParticipantsCountComponent>;
 
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+  let mockChildrenService: ChildrenServiceMock;
 
   const childSchoolRelations: ChildSchoolRelation[] = [
     new ChildSchoolRelation("r-1"),
@@ -18,8 +23,10 @@ describe("DisplayParticipantsCountComponent", () => {
   ];
 
   beforeEach(async () => {
-    mockChildrenService = jasmine.createSpyObj(["queryActiveRelationsOf"]);
-    mockChildrenService.queryActiveRelationsOf.and.resolveTo(
+    mockChildrenService = {
+      queryActiveRelationsOf: vi.fn(),
+    };
+    mockChildrenService.queryActiveRelationsOf.mockResolvedValue(
       childSchoolRelations,
     );
 
@@ -46,7 +53,7 @@ describe("DisplayParticipantsCountComponent", () => {
   });
 
   it("should handle empty response from ChildrenService", async () => {
-    mockChildrenService.queryActiveRelationsOf.and.resolveTo([]);
+    mockChildrenService.queryActiveRelationsOf.mockResolvedValue([]);
     expect(component.participantRelationsCount()).toBeNull();
     await component.ngOnChanges();
     expect(component.participantRelationsCount()).toBeDefined();
@@ -54,7 +61,7 @@ describe("DisplayParticipantsCountComponent", () => {
   });
 
   it("should handle error response from ChildrenService", async () => {
-    mockChildrenService.queryActiveRelationsOf.and.rejectWith(new Error());
+    mockChildrenService.queryActiveRelationsOf.mockRejectedValue(new Error());
     expect(component.participantRelationsCount()).toBeNull();
     await component.ngOnChanges();
     expect(component.participantRelationsCount()).toBeNull();

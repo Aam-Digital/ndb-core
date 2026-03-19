@@ -1,24 +1,86 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { Component } from "@angular/core";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DashboardComponent } from "./dashboard.component";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { SessionSubject } from "../../session/auth/session-info";
 import { EntityCountDashboardConfig } from "app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component";
+import { ComponentRegistry } from "../../../dynamic-components";
+
+@Component({
+  selector: "app-mock-entity-count-dashboard",
+  template: "",
+  standalone: true,
+})
+class MockEntityCountDashboardComponent {
+  static getRequiredEntities(config?: EntityCountDashboardConfig): string {
+    return config?.entityType ?? "Child";
+  }
+}
+
+@Component({
+  selector: "app-mock-birthday-dashboard",
+  template: "",
+  standalone: true,
+})
+class MockBirthdayDashboardComponent {
+  static getRequiredEntities(config?: {
+    entities?: Record<string, string>;
+  }): string[] {
+    return config?.entities ? Object.keys(config.entities) : ["Child"];
+  }
+}
+
+@Component({
+  selector: "app-mock-no-entity-dashboard",
+  template: "",
+  standalone: true,
+})
+class MockNoEntityDashboardComponent {}
+
+@Component({
+  selector: "app-mock-generic-dashboard",
+  template: "",
+  standalone: true,
+})
+class MockGenericDashboardComponent {}
 
 describe("DashboardComponent", () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
   let ability: EntityAbility;
+  let mockComponentRegistry: ComponentRegistry;
 
   beforeEach(() => {
+    mockComponentRegistry = new ComponentRegistry();
+    mockComponentRegistry.allowDuplicates();
+    const originalGet = mockComponentRegistry.get.bind(mockComponentRegistry);
+    const mockedWidgets: Record<string, () => Promise<any>> = {
+      EntityCountDashboard: async () => MockEntityCountDashboardComponent,
+      BirthdayDashboard: async () => MockBirthdayDashboardComponent,
+      ShortcutDashboard: async () => MockNoEntityDashboardComponent,
+    };
+
+    vi.spyOn(mockComponentRegistry, "get").mockImplementation(
+      (name: string) => {
+        if (mockedWidgets[name]) {
+          return mockedWidgets[name];
+        }
+
+        try {
+          return originalGet(name);
+        } catch {
+          return async () => MockGenericDashboardComponent;
+        }
+      },
+    );
+
     TestBed.configureTestingModule({
       imports: [DashboardComponent, MockedTestingModule.withState()],
+      providers: [
+        { provide: ComponentRegistry, useValue: mockComponentRegistry },
+      ],
     }).compileComponents();
     ability = TestBed.inject(EntityAbility);
   });
@@ -29,13 +91,24 @@ describe("DashboardComponent", () => {
     fixture.detectChanges();
   });
 
+  async function setWidgetsAndStabilize(widgets: DynamicComponentConfig[]) {
+    component.widgets = widgets;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await Promise.resolve();
+    fixture.detectChanges();
+  }
+
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should only display widgets for which a user has permissions", fakeAsync(() => {
+  it("should only display widgets for which a user has permissions", async () => {
     const widgets: DynamicComponentConfig[] = [
-      { component: "TodosDashboard" },
+      {
+        component: "EntityCountDashboard",
+        config: { entityType: "Todo" } as EntityCountDashboardConfig,
+      },
       { component: "EntityCountDashboard" },
       {
         component: "EntityCountDashboard",
@@ -52,78 +125,84 @@ describe("DashboardComponent", () => {
       { subject: "Child", action: "manage" },
       { subject: "Todo", action: ["update", "read"] },
     ]);
-    component.widgets = widgets;
-    tick();
-    expect(component.widgets).toEqual([widgets[0], widgets[1], widgets[3]]);
+    await setWidgetsAndStabilize(widgets);
+    await vi.waitFor(() =>
+      expect(component.widgets).toEqual([widgets[0], widgets[1], widgets[3]]),
+    );
 
     // No read permissions
     ability.update([{ subject: "all", action: "update" }]);
-    component.widgets = widgets;
-    tick();
-    expect(component.widgets).toEqual([widgets[3]]);
+    await setWidgetsAndStabilize(widgets);
+    await vi.waitFor(() => expect(component.widgets).toEqual([widgets[3]]));
 
     // All read permissions
     ability.update([{ subject: "all", action: "manage" }]);
-    component.widgets = widgets;
-    tick();
-    expect(component.widgets).toEqual(widgets);
-  }));
+    await setWidgetsAndStabilize(widgets);
+    await vi.waitFor(() => expect(component.widgets).toEqual(widgets));
+  });
 
-  it("should show birthday widget if user has access to any provided entity", fakeAsync(() => {
+  it("should show birthday widget if user has access to any provided entity", async () => {
     ability.update([{ subject: "Child", action: "read" }]);
-    component.widgets = [{ component: "BirthdayDashboard" }];
-    tick();
-    expect(component.widgets).toHaveSize(1);
+    await setWidgetsAndStabilize([{ component: "BirthdayDashboard" }]);
+    await vi.waitFor(() => expect(component.widgets).toHaveLength(1));
 
-    component.widgets = [
+    await setWidgetsAndStabilize([
       {
         component: "BirthdayDashboard",
         config: { entities: { User: "birthday" } },
       },
-    ];
-    tick();
-    expect(component.widgets).toHaveSize(0);
+    ]);
+    await vi.waitFor(() => expect(component.widgets).toHaveLength(0));
 
-    component.widgets = [
+    await setWidgetsAndStabilize([
       {
         component: "BirthdayDashboard",
         config: { entities: { User: "birthday", Child: "dateOfBirth" } },
       },
-    ];
-    tick();
-    expect(component.widgets).toHaveSize(1);
-  }));
+    ]);
+    await vi.waitFor(() => expect(component.widgets).toHaveLength(1));
+  });
 
-  it("should show widget if user only have access to some entities", fakeAsync(() => {
+  it("should show widget if user only have access to some entities", async () => {
     ability.update([]);
-    component.widgets = [{ component: "NotesDashboard" }];
-    tick();
-    expect(component.widgets).toHaveSize(0);
+    await setWidgetsAndStabilize([
+      {
+        component: "EntityCountDashboard",
+        config: { entityType: "Note" } as EntityCountDashboardConfig,
+      },
+    ]);
+    await vi.waitFor(() => expect(component.widgets).toHaveLength(0));
 
     ability.update([
       { subject: "Note", action: "manage", conditions: { category: "VISIT" } },
     ]);
-    component.widgets = [{ component: "NotesDashboard" }];
-    tick();
-    expect(component.widgets).toHaveSize(1);
-  }));
+    await setWidgetsAndStabilize([
+      {
+        component: "EntityCountDashboard",
+        config: { entityType: "Note" } as EntityCountDashboardConfig,
+      },
+    ]);
+    await vi.waitFor(() => expect(component.widgets).toHaveLength(1));
+  });
 
-  it("should hide widgets if the user is missing the required role", fakeAsync(() => {
+  it("should hide widgets if the user is missing the required role", async () => {
     ability.update([{ subject: "all", action: "manage" }]);
     const session = TestBed.inject(SessionSubject);
     const widgets = [
-      { component: "TodosDashboard", permittedUserRoles: ["admin_app"] },
+      {
+        component: "EntityCountDashboard",
+        config: { entityType: "Todo" } as EntityCountDashboardConfig,
+        permittedUserRoles: ["admin_app"],
+      },
       { component: "EntityCountDashboard" },
     ];
 
     session.next({ name: "not_admin", id: "1", roles: ["user_app"] });
-    component.widgets = widgets;
-    tick();
-    expect(component.widgets).toEqual([widgets[1]]);
+    await setWidgetsAndStabilize(widgets);
+    await vi.waitFor(() => expect(component.widgets).toEqual([widgets[1]]));
 
     session.next({ name: "admin", id: "2", roles: ["user_app", "admin_app"] });
-    component.widgets = widgets;
-    tick();
-    expect(component.widgets).toEqual(widgets);
-  }));
+    await setWidgetsAndStabilize(widgets);
+    await vi.waitFor(() => expect(component.widgets).toEqual(widgets));
+  });
 });

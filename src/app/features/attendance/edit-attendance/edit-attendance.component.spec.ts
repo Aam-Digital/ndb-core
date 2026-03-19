@@ -56,18 +56,18 @@ describe("EditAttendanceComponent", () => {
     const elements = fixture.debugElement.queryAll(
       By.directive(AttendanceStatusSelectComponent),
     );
-    expect(elements).toHaveSize(2);
+    expect(elements).toHaveLength(2);
   });
 
   it("should add a participant when addParticipant is called", () => {
     component.addParticipant("child3");
-    expect(attendanceForm.value).toHaveSize(3);
+    expect(attendanceForm.value).toHaveLength(3);
     expect(attendanceForm.value[2].participant).toBe("child3");
   });
 
   it("should not add duplicate participant", () => {
     component.addParticipant(childrenEntities[0].getId());
-    expect(attendanceForm.value).toHaveSize(2);
+    expect(attendanceForm.value).toHaveLength(2);
   });
 
   it("should remove a participant from the attendance array", () => {
@@ -76,7 +76,7 @@ describe("EditAttendanceComponent", () => {
 
     component.removeParticipant(childrenEntities[1].getId());
 
-    expect(attendanceForm.value).toHaveSize(1);
+    expect(attendanceForm.value).toHaveLength(1);
     expect(attendanceForm.value[0].participant).toBe(
       childrenEntities[0].getId(),
     );
@@ -93,7 +93,7 @@ describe("EditAttendanceComponent", () => {
     expect(
       component.getAttendanceItem(childrenEntities[0].getId()).remarks,
     ).toEqual("new remarks");
-    expect(component.formControl.dirty).toBeTrue();
+    expect(component.formControl.dirty).toBe(true);
   });
 
   it("should exclude already-added participants from the filter", () => {
@@ -101,16 +101,16 @@ describe("EditAttendanceComponent", () => {
     const newEntity = new TestEntity("child3");
 
     const filter = component.participantFilter();
-    expect(filter(existingEntity)).toBeFalse();
-    expect(filter(newEntity)).toBeTrue();
+    expect(filter(existingEntity)).toBe(false);
+    expect(filter(newEntity)).toBe(true);
   });
 
   it("should update the participant filter after adding a participant", () => {
     const newEntity = new TestEntity("child3");
-    expect(component.participantFilter()(newEntity)).toBeTrue();
+    expect(component.participantFilter()(newEntity)).toBe(true);
 
     component.addParticipant(newEntity.getId());
 
-    expect(component.participantFilter()(newEntity)).toBeFalse();
+    expect(component.participantFilter()(newEntity)).toBe(false);
   });
 });

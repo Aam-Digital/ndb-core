@@ -10,7 +10,7 @@ describe("EntityLoadPipe", () => {
         {
           provide: EntityMapperService,
           useValue: {
-            load: jasmine.createSpy("load"),
+            load: vi.fn(),
           },
         },
       ],

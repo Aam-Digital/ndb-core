@@ -34,7 +34,9 @@ describe("PwaInstallService", () => {
   });
 
   it("should detect standalone mode", () => {
-    spyOn(mockWindow, "matchMedia").and.returnValue({ matches: true } as any);
+    vi.spyOn(mockWindow, "matchMedia").mockReturnValue({
+      matches: true,
+    } as any);
     expect(service.getPWAInstallType()).toBe(PWAInstallType.RunningAsPWA);
   });
 
@@ -44,25 +46,25 @@ describe("PwaInstallService", () => {
   });
 
   it("should execute install event when calling install", async () => {
-    const installSpy = jasmine.createSpy();
-    spyOn(window, "addEventListener").and.callFake((_, callback) =>
-      callback({
+    const installSpy = vi.fn();
+    vi.spyOn(window, "addEventListener").mockImplementation((_, callback) => {
+      (callback as EventListener)({
         prompt: installSpy,
         preventDefault: () => {},
         userChoice: Promise.resolve({ outcome: "accepted" }),
-      }),
-    );
+      } as any);
+    });
 
     PwaInstallService.registerPWAInstallListener();
     expect(window.addEventListener).toHaveBeenCalledWith(
       "beforeinstallprompt",
-      jasmine.anything(),
+      expect.anything(),
     );
-    await expectAsync(PwaInstallService.canInstallDirectly).toBeResolved();
+    await expect(PwaInstallService.canInstallDirectly).resolves.not.toThrow();
 
     const installPromise = service.installPWA();
     expect(installSpy).toHaveBeenCalled();
-    await expectAsync(installPromise).toBeResolvedTo({ outcome: "accepted" });
+    await expect(installPromise).resolves.toEqual({ outcome: "accepted" });
 
     // reset static property
     PwaInstallService["deferredInstallPrompt"] = undefined;

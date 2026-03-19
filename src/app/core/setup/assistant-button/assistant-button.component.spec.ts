@@ -13,16 +13,21 @@ import {
 } from "app/core/entity/database-entity.decorator";
 import { SetupService } from "../setup.service";
 import { AssistantService } from "../assistant.service";
+import type { Mock } from "vitest";
+
+type AssistantServiceMock = Pick<AssistantService, "openAssistant"> & {
+  openAssistant: Mock;
+};
 
 describe("AssistantButtonComponent", () => {
   let component: AssistantButtonComponent;
   let fixture: ComponentFixture<AssistantButtonComponent>;
-  let mockAssistantService: jasmine.SpyObj<AssistantService>;
+  let mockAssistantService: AssistantServiceMock;
 
   beforeEach(async () => {
-    mockAssistantService = jasmine.createSpyObj("AssistantService", [
-      "openAssistant",
-    ]);
+    mockAssistantService = {
+      openAssistant: vi.fn().mockName("AssistantService.openAssistant"),
+    };
 
     await TestBed.configureTestingModule({
       imports: [AssistantButtonComponent],
@@ -51,7 +56,7 @@ describe("AssistantButtonComponent", () => {
   });
 
   it("should call AssistantService.openAssistant when openAssistant is called", async () => {
-    mockAssistantService.openAssistant.and.returnValue(Promise.resolve());
+    mockAssistantService.openAssistant.mockReturnValue(Promise.resolve());
 
     await component.openAssistant();
 

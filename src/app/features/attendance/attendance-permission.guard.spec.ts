@@ -8,14 +8,17 @@ import { signal } from "@angular/core";
 
 describe("AttendancePermissionGuard", () => {
   let guard: AttendancePermissionGuard;
-  let mockAbility: jasmine.SpyObj<EntityAbility>;
-  let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
+  let mockAbility: any;
+  let mockAttendanceService: any;
 
   const mockActivityType = { ENTITY_TYPE: "RecurringActivity" } as any;
   const mockEventType = TestEventEntity;
 
   beforeEach(() => {
-    mockAbility = jasmine.createSpyObj(["can"], { initialized: true });
+    mockAbility = {
+      can: vi.fn(),
+      initialized: true,
+    };
     mockAttendanceService = {
       eventTypeSettings: [],
       activityTypes: signal([mockActivityType]),
@@ -40,7 +43,7 @@ describe("AttendancePermissionGuard", () => {
   it("should complete without hanging when ability is not yet initialized and on('updated') fires immediately", async () => {
     const uninitializedAbility = {
       initialized: false,
-      can: jasmine.createSpy("can").and.returnValue(true),
+      can: vi.fn().mockReturnValue(true),
       on: (_event: string, cb: () => void) => cb(),
     };
     TestBed.resetTestingModule();
@@ -59,25 +62,25 @@ describe("AttendancePermissionGuard", () => {
       params: {},
     } as Partial<ActivatedRouteSnapshot> as ActivatedRouteSnapshot);
 
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
   });
 
   it("should allow AttendanceManager if user can read a recurringActivityType", async () => {
-    mockAbility.can.and.returnValue(true);
+    mockAbility.can.mockReturnValue(true);
 
     const result = await guard.canActivate({
       data: { component: "AttendanceManager" },
       params: {},
     } as Partial<ActivatedRouteSnapshot> as ActivatedRouteSnapshot);
 
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
     expect(mockAbility.can).toHaveBeenCalledWith("read", mockActivityType);
   });
 
   it("should block AttendanceManager if user cannot read any recurringActivityType", async () => {
     const router = TestBed.inject(Router);
-    spyOn(router, "navigate");
-    mockAbility.can.and.returnValue(false);
+    vi.spyOn(router, "navigate");
+    mockAbility.can.mockReturnValue(false);
     const route = new ActivatedRouteSnapshot();
     Object.assign(route, {
       data: { component: "AttendanceManager" },
@@ -90,21 +93,21 @@ describe("AttendancePermissionGuard", () => {
   });
 
   it("should allow AddDayAttendance if user can create an eventType", async () => {
-    mockAbility.can.and.returnValue(true);
+    mockAbility.can.mockReturnValue(true);
 
     const result = await guard.canActivate({
       data: { component: "AddDayAttendance" },
       params: {},
     } as Partial<ActivatedRouteSnapshot> as ActivatedRouteSnapshot);
 
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
     expect(mockAbility.can).toHaveBeenCalledWith("create", mockEventType);
   });
 
   it("should block AddDayAttendance if user cannot create any eventType", async () => {
     const router = TestBed.inject(Router);
-    spyOn(router, "navigate");
-    mockAbility.can.and.returnValue(false);
+    vi.spyOn(router, "navigate");
+    mockAbility.can.mockReturnValue(false);
     const route = new ActivatedRouteSnapshot();
     Object.assign(route, {
       data: { component: "AddDayAttendance" },
@@ -117,14 +120,14 @@ describe("AttendancePermissionGuard", () => {
   });
 
   it("should allow RollCall if user can create the entity type from the :id prefix", async () => {
-    mockAbility.can.and.returnValue(true);
+    mockAbility.can.mockReturnValue(true);
 
     const result = await guard.canActivate({
       data: { component: "RollCall" },
       params: { id: `${mockEventType.ENTITY_TYPE}:abc123` },
     } as Partial<ActivatedRouteSnapshot> as ActivatedRouteSnapshot);
 
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
     expect(mockAbility.can).toHaveBeenCalledWith(
       "create",
       mockEventType.ENTITY_TYPE,
@@ -133,8 +136,8 @@ describe("AttendancePermissionGuard", () => {
 
   it("should block RollCall if user cannot create the entity type from the :id prefix", async () => {
     const router = TestBed.inject(Router);
-    spyOn(router, "navigate");
-    mockAbility.can.and.returnValue(false);
+    vi.spyOn(router, "navigate");
+    mockAbility.can.mockReturnValue(false);
     const route = new ActivatedRouteSnapshot();
     Object.assign(route, {
       data: { component: "RollCall" },
@@ -147,21 +150,21 @@ describe("AttendancePermissionGuard", () => {
   });
 
   it("should fall back to eventTypes check for RollCall when no entity type in :id (e.g. /new)", async () => {
-    mockAbility.can.and.returnValue(true);
+    mockAbility.can.mockReturnValue(true);
 
     const result = await guard.canActivate({
       data: { component: "RollCall" },
       params: { id: "new" },
     } as Partial<ActivatedRouteSnapshot> as ActivatedRouteSnapshot);
 
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
     expect(mockAbility.can).toHaveBeenCalledWith("create", mockEventType);
   });
 
   it("should block RollCall fallback if user cannot create any eventType", async () => {
     const router = TestBed.inject(Router);
-    spyOn(router, "navigate");
-    mockAbility.can.and.returnValue(false);
+    vi.spyOn(router, "navigate");
+    mockAbility.can.mockReturnValue(false);
     const route = new ActivatedRouteSnapshot();
     Object.assign(route, {
       data: { component: "RollCall" },
@@ -179,12 +182,12 @@ describe("AttendancePermissionGuard", () => {
       params: {},
     } as Partial<ActivatedRouteSnapshot> as ActivatedRouteSnapshot);
 
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
     expect(mockAbility.can).not.toHaveBeenCalled();
   });
 
   it("should check AttendanceManager route permissions in pre-check (checkRoutePermissions)", async () => {
-    mockAbility.can.and.returnValue(true);
+    mockAbility.can.mockReturnValue(true);
     TestBed.inject(Router).config.push({
       path: "attendance",
       data: { component: "AttendanceManager" },
@@ -192,7 +195,7 @@ describe("AttendancePermissionGuard", () => {
 
     const result = await guard.checkRoutePermissions("attendance");
 
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
     expect(mockAbility.can).toHaveBeenCalledWith("read", mockActivityType);
   });
 });

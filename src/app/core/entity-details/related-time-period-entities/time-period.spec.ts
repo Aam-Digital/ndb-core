@@ -16,7 +16,7 @@
  */
 
 import moment from "moment";
-import { testEntitySubclass } from "../../entity/model/entity.spec";
+import { testEntitySubclass } from "../../entity/model/entity.test-utils";
 import { TimePeriod } from "./time-period";
 
 describe("TimePeriod Entity", () => {
@@ -30,34 +30,34 @@ describe("TimePeriod Entity", () => {
   it("should mark relations without end date as active", () => {
     const relation = new TimePeriod();
     relation.start = new Date();
-    expect(relation.isActive).toBeTrue();
+    expect(relation.isActive).toBe(true);
   });
 
   it("should mark relation starting in the future as inactive", () => {
     const relation = new TimePeriod();
     relation.start = moment().add(1, "day").toDate();
-    expect(relation.isActive).toBeFalse();
+    expect(relation.isActive).toBe(false);
   });
 
   it("should mark relation with end date in the past as inactive", () => {
     const relation = new TimePeriod();
     relation.start = moment().subtract(1, "week").toDate();
     relation.end = moment().subtract(1, "day").toDate();
-    expect(relation.isActive).toBeFalse();
+    expect(relation.isActive).toBe(false);
   });
 
   it("should mark relation with end date in the future as active", () => {
     const relation = new TimePeriod();
     relation.start = moment().subtract(1, "week").toDate();
     relation.end = moment().add(1, "day").toDate();
-    expect(relation.isActive).toBeTrue();
+    expect(relation.isActive).toBe(true);
   });
 
   it("should mark relation with end date being today as active", () => {
     const relation = new TimePeriod();
     relation.start = moment().subtract(1, "week").toDate();
     relation.end = new Date();
-    expect(relation.isActive).toBeTrue();
+    expect(relation.isActive).toBe(true);
   });
 
   it("should fail validation when end date but no start date is defined", () => {

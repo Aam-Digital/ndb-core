@@ -69,9 +69,9 @@ describe("TemplateExportApiService", () => {
     const entity = new TemplateExport();
     const mockFile = new File([""], "filename");
 
-    const mockPOST = spyOn(TestBed.inject(HttpClient), "post").and.returnValue(
-      of({ templateId: "TEST_ID" }),
-    );
+    const mockPOST = vi
+      .spyOn(TestBed.inject(HttpClient), "post")
+      .mockReturnValue(of({ templateId: "TEST_ID" }));
 
     const result = await lastValueFrom(
       service.uploadFile(mockFile, entity, "templateId"),
@@ -80,7 +80,7 @@ describe("TemplateExportApiService", () => {
     expect(result).toBe("TEST_ID");
     expect(mockPOST).toHaveBeenCalledWith(
       service.API_URL + "/template",
-      jasmine.any(FormData),
+      expect.any(FormData),
     );
 
     const finalEntity = entityMapper.get(
@@ -96,11 +96,11 @@ describe("TemplateExportApiService", () => {
 
     // @ts-ignore
     TestBed.inject(NAVIGATOR_TOKEN).onLine = false;
-    const mockPOST = spyOn(TestBed.inject(HttpClient), "post");
+    const mockPOST = vi.spyOn(TestBed.inject(HttpClient), "post");
 
-    await expectAsync(
+    await expect(
       lastValueFrom(service.uploadFile(mockFile, entity, "templateId")),
-    ).toBeRejectedWithError();
+    ).rejects.toThrowError();
     expect(mockPOST).not.toHaveBeenCalled();
   });
 
@@ -115,10 +115,9 @@ describe("TemplateExportApiService", () => {
       }),
       status: 200,
     });
-    const mockApiResponse = spyOn(
-      TestBed.inject(HttpClient),
-      "post",
-    ).and.returnValue(of(mockResponse));
+    const mockApiResponse = vi
+      .spyOn(TestBed.inject(HttpClient), "post")
+      .mockReturnValue(of(mockResponse));
 
     const result = await lastValueFrom(
       service.generatePdfFromTemplate(templateEntity.getId(), dataEntity),
@@ -134,7 +133,7 @@ describe("TemplateExportApiService", () => {
         convertTo: "pdf",
         data: dataEntity,
       },
-      jasmine.any(Object),
+      expect.any(Object),
     );
   });
 
@@ -146,10 +145,9 @@ describe("TemplateExportApiService", () => {
       body: new ArrayBuffer(10),
       status: 200,
     });
-    const mockApiResponse = spyOn(
-      TestBed.inject(HttpClient),
-      "post",
-    ).and.returnValue(of(mockResponse));
+    const mockApiResponse = vi
+      .spyOn(TestBed.inject(HttpClient), "post")
+      .mockReturnValue(of(mockResponse));
 
     const result = await lastValueFrom(
       service.generatePdfFromTemplate(templateEntity.getId(), dataEntity),
@@ -165,7 +163,7 @@ describe("TemplateExportApiService", () => {
         convertTo: "pdf",
         data: dataEntity,
       },
-      jasmine.any(Object),
+      expect.any(Object),
     );
   });
 });

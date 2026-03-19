@@ -8,13 +8,14 @@ import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entit
 describe("WidgetComponentSelectComponent", () => {
   let component: WidgetComponentSelectComponent;
   let fixture: ComponentFixture<WidgetComponentSelectComponent>;
-  let mockEntityRelationsService: jasmine.SpyObj<EntityRelationsService>;
+  let mockEntityRelationsService: any;
 
   beforeEach(async () => {
-    mockEntityRelationsService = jasmine.createSpyObj(
-      "EntityRelationsService",
-      ["getEntityTypesReferencingType"],
-    );
+    mockEntityRelationsService = {
+      getEntityTypesReferencingType: vi
+        .fn()
+        .mockName("EntityRelationsService.getEntityTypesReferencingType"),
+    };
     await TestBed.configureTestingModule({
       imports: [WidgetComponentSelectComponent, FontAwesomeTestingModule],
       providers: [

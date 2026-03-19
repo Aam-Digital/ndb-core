@@ -14,9 +14,12 @@ import { TestEntity } from "../../utils/test-utils/TestEntity";
 
 describe("DataAggregationService", () => {
   let service: DataAggregationService;
-  let mockQueryService: jasmine.SpyObj<QueryService>;
+  let mockQueryService: any;
   beforeEach(() => {
-    mockQueryService = jasmine.createSpyObj(["queryData", "cacheRequiredData"]);
+    mockQueryService = {
+      queryData: vi.fn(),
+      cacheRequiredData: vi.fn(),
+    };
     TestBed.configureTestingModule({
       providers: [{ provide: QueryService, useValue: mockQueryService }],
     });
@@ -39,14 +42,16 @@ describe("DataAggregationService", () => {
       ],
     };
     const baseData = [createEntityOfType("School")];
-    mockQueryService.queryData.and.returnValues(
-      baseData,
-      [createEntityOfType("School")],
-      [createEntityOfType("School"), createEntityOfType("School")],
-    );
+    mockQueryService.queryData
+      .mockReturnValueOnce(baseData)
+      .mockReturnValueOnce([createEntityOfType("School")])
+      .mockReturnValueOnce([
+        createEntityOfType("School"),
+        createEntityOfType("School"),
+      ]);
 
     const report = await service.calculateReport([childDisaggregation]);
-    expect(mockQueryService.queryData.calls.allArgs()).toEqual([
+    expect(vi.mocked(mockQueryService.queryData).mock.calls).toEqual([
       [baseQuery, undefined, undefined, undefined],
       [christiansQuery, undefined, undefined, baseData],
       [muslimsQuery, undefined, undefined, baseData],
@@ -71,7 +76,7 @@ describe("DataAggregationService", () => {
     };
 
     await service.calculateReport([disaggregation], firstDate, secondDate);
-    expect(mockQueryService.queryData.calls.allArgs()).toEqual([
+    expect(vi.mocked(mockQueryService.queryData).mock.calls).toEqual([
       [baseQueryString, firstDate, secondDate, undefined],
       [subjectQueryString, firstDate, secondDate, undefined],
     ]);
@@ -109,7 +114,7 @@ describe("DataAggregationService", () => {
       createEntityOfType("School"),
     ];
     const nestedData = [new ChildSchoolRelation()];
-    mockQueryService.queryData.and.callFake((query) => {
+    mockQueryService.queryData.mockImplementation((query) => {
       switch (query) {
         case baseQuery:
           return baseData;
@@ -120,7 +125,7 @@ describe("DataAggregationService", () => {
       }
     });
     const result = await service.calculateReport([aggregation]);
-    expect(mockQueryService.queryData.calls.allArgs()).toEqual([
+    expect(vi.mocked(mockQueryService.queryData).mock.calls).toEqual([
       [baseQuery, undefined, undefined, undefined],
       [nestedBaseQuery, undefined, undefined, baseData],
       [firstNestedAggregation, undefined, undefined, nestedData],
@@ -165,7 +170,7 @@ describe("DataAggregationService", () => {
     maleChild.category = genders[1];
     const femaleChild = new TestEntity();
     femaleChild.category = genders[2];
-    mockQueryService.queryData.and.returnValue([
+    mockQueryService.queryData.mockReturnValue([
       femaleChild,
       maleChild,
       maleChild,
@@ -208,7 +213,7 @@ describe("DataAggregationService", () => {
     maleChild.category = genders[1];
     const femaleChild = new TestEntity();
     femaleChild.category = genders[2];
-    mockQueryService.queryData.and.returnValue([
+    mockQueryService.queryData.mockReturnValue([
       maleChild,
       femaleChild,
       maleChild,
@@ -290,7 +295,7 @@ describe("DataAggregationService", () => {
     const female1b = new TestEntity();
     female1b.category = genders[2];
     female1b.name = n1;
-    mockQueryService.queryData.and.returnValue([
+    mockQueryService.queryData.mockReturnValue([
       female1b,
       male1,
       female1,
@@ -431,7 +436,7 @@ describe("DataAggregationService", () => {
     const maleMuslim = new TestEntity();
     maleMuslim.category = genders[1];
     maleMuslim.name = "muslim";
-    mockQueryService.queryData.and.returnValue([
+    mockQueryService.queryData.mockReturnValue([
       femaleChristian,
       femaleMuslim,
       maleMuslim,
@@ -571,7 +576,7 @@ describe("DataAggregationService", () => {
     const c1 = new TestEntity();
     c1.name = "1";
 
-    mockQueryService.queryData.and.callFake((query) => {
+    mockQueryService.queryData.mockImplementation((query) => {
       if (query === "TestEntity:toArray.name") return [c1];
       if (query === "OtherEntity:toArray") return [];
       return [];

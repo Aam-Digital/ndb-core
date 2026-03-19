@@ -13,14 +13,16 @@ describe("EntityFormComponent", () => {
   let component: EntityFormComponent<TestEntity>;
   let fixture: ComponentFixture<EntityFormComponent<TestEntity>>;
 
-  let mockConfirmation: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockConfirmation: any;
 
   const testColumns = [
     [{ id: "name" }, { id: "other" }, { id: "photo" }, { id: "dateOfBirth" }],
   ];
 
   beforeEach(() => {
-    mockConfirmation = jasmine.createSpyObj(["getConfirmation"]);
+    mockConfirmation = {
+      getConfirmation: vi.fn(),
+    };
 
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState(), EntityFormComponent],
@@ -216,7 +218,7 @@ describe("EntityFormComponent", () => {
       testColumns,
     );
 
-    mockConfirmation.getConfirmation.and.resolveTo(popupAction === "yes");
+    mockConfirmation.getConfirmation.mockResolvedValue(popupAction === "yes");
     for (const c in formChanges) {
       component.form.formGroup.get(c).setValue(formChanges[c]);
       component.form.formGroup.get(c).markAsDirty();
@@ -235,12 +237,12 @@ describe("EntityFormComponent", () => {
     for (const [key, value] of Object.entries(expectedFormValues)) {
       const form = component.form.formGroup.get(key);
       if (form) {
-        expect(form).toHaveValue(value);
+        expect(form.value).toEqual(value);
       }
       expect(entityAfterSave[key]).toEqual(value);
     }
-    expect(mockConfirmation.getConfirmation.calls.any()).toBe(
-      popupAction !== "not-shown",
-    );
+    expect(
+      vi.mocked(mockConfirmation.getConfirmation).mock.calls.length > 0,
+    ).toBe(popupAction !== "not-shown");
   }
 });

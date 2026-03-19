@@ -15,7 +15,9 @@ describe("AdminMenuComponent", () => {
       providers: [
         {
           provide: EntityMapperService,
-          useValue: jasmine.createSpyObj(["load"]),
+          useValue: {
+            load: vi.fn(),
+          },
         },
         { provide: MenuService, useValue: null },
       ],

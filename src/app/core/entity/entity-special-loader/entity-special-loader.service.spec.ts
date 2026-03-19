@@ -7,20 +7,29 @@ import {
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { HistoricalDataService } from "./historical-data/historical-data.service";
+import type { Mock } from "vitest";
+
+type ChildrenServiceMock = {
+  getChildren: Mock;
+};
+
+type HistoricalDataServiceMock = {
+  getHistoricalDataFor: Mock;
+};
 
 describe("EntitySpecialLoaderService", () => {
   let service: EntitySpecialLoaderService;
 
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
-  let mockHistoricalDataService: jasmine.SpyObj<HistoricalDataService>;
+  let mockChildrenService: ChildrenServiceMock;
+  let mockHistoricalDataService: HistoricalDataServiceMock;
 
   beforeEach(() => {
-    mockChildrenService = jasmine.createSpyObj(ChildrenService, [
-      "getChildren",
-    ]);
-    mockHistoricalDataService = jasmine.createSpyObj(HistoricalDataService, [
-      "getHistoricalDataFor",
-    ]);
+    mockChildrenService = {
+      getChildren: vi.fn(),
+    };
+    mockHistoricalDataService = {
+      getHistoricalDataFor: vi.fn(),
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -36,8 +45,8 @@ describe("EntitySpecialLoaderService", () => {
   });
 
   it("should load via ChildrenService", async () => {
-    const testData = [new TestEntity()] as any[];
-    mockChildrenService.getChildren.and.resolveTo(testData);
+    const testData = [new TestEntity()];
+    mockChildrenService.getChildren.mockResolvedValue(testData);
 
     const actual = await service.loadData(LoaderMethod.ChildrenService);
 

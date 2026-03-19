@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { MapComponent } from "./map.component";
 import { ConfigService } from "../../../core/config/config.service";
@@ -20,7 +15,7 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 describe("MapComponent", () => {
   let component: MapComponent;
   let fixture: ComponentFixture<MapComponent>;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockDialog: any;
   const config: MapConfig = { start: [52, 13] };
   let map: L.Map;
 
@@ -30,8 +25,10 @@ describe("MapComponent", () => {
   };
 
   beforeEach(async () => {
-    mockDialog = jasmine.createSpyObj(["open"]);
-    mockDialog.open.and.returnValue({ afterClosed: () => EMPTY } as any);
+    mockDialog = {
+      open: vi.fn(),
+    };
+    mockDialog.open.mockReturnValue({ afterClosed: () => EMPTY } as any);
     await TestBed.configureTestingModule({
       imports: [MapComponent, FontAwesomeTestingModule],
       providers: [
@@ -54,21 +51,26 @@ describe("MapComponent", () => {
     expect(map.getCenter()).toEqual(new L.LatLng(...config.start));
   });
 
-  it("should not emit double clicks on the map", fakeAsync(() => {
-    let clicked: Coordinates;
-    component.mapClick.subscribe((res) => (clicked = res));
+  it("should not emit double clicks on the map", async () => {
+    vi.useFakeTimers();
+    try {
+      let clicked: Coordinates;
+      component.mapClick.subscribe((res) => (clicked = res));
 
-    tick(1000);
-    map.fireEvent("click", { latlng: new L.LatLng(1, 1) });
-    tick(300);
-    map.fireEvent("click", { latlng: new L.LatLng(1, 2) });
-    tick(400);
-    expect(clicked).toBeUndefined();
+      await vi.advanceTimersByTimeAsync(1000);
+      map.fireEvent("click", { latlng: new L.LatLng(1, 1) });
+      await vi.advanceTimersByTimeAsync(300);
+      map.fireEvent("click", { latlng: new L.LatLng(1, 2) });
+      await vi.advanceTimersByTimeAsync(400);
+      expect(clicked).toBeUndefined();
 
-    map.fireEvent("click", { latlng: new L.LatLng(1, 3) });
-    tick(400);
-    expect(clicked).toEqual({ lat: 1, lon: 3 });
-  }));
+      map.fireEvent("click", { latlng: new L.LatLng(1, 3) });
+      await vi.advanceTimersByTimeAsync(400);
+      expect(clicked).toEqual({ lat: 1, lon: 3 });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should center map around markers and keep zoom", () => {
     component.marked = [
@@ -81,7 +83,7 @@ describe("MapComponent", () => {
     expect(center.lng).toBeCloseTo(2);
   });
 
-  it("should create markers for entities and emit entity when marker is clicked", (done) => {
+  it("should create markers for entities and emit entity when marker is clicked", async () => {
     TestEntity.schema.set("address", { dataType: "location" });
     const child = new TestEntity();
     child["address"] = TEST_LOCATION;
@@ -94,7 +96,6 @@ describe("MapComponent", () => {
 
     component.entityClick.subscribe((res) => {
       expect(res).toBe(child);
-      done();
     });
 
     marker.fireEvent("click");
@@ -106,14 +107,14 @@ describe("MapComponent", () => {
     component.marked = [marked];
 
     await component.openMapInPopup();
-    const dialogData: MapPopupConfig =
-      mockDialog.open.calls.mostRecent().args[1].data;
+    const dialogData: MapPopupConfig = vi.mocked(mockDialog.open).mock
+      .lastCall[1].data;
 
     expect(dialogData.marked).toEqual([marked]);
   });
 
   it("should open a popup that allows to change the properties displayed in the map", () => {
-    const emitSpy = spyOn(component.displayedPropertiesChange, "emit");
+    const emitSpy = vi.spyOn(component.displayedPropertiesChange, "emit");
     TestEntity.schema.set("address", { dataType: "location" });
     TestEntity.schema.set("otherAddress", { dataType: "location" });
     const child = new TestEntity();
@@ -128,17 +129,17 @@ describe("MapComponent", () => {
     expect(emitSpy).toHaveBeenCalledWith({
       [TestEntity.ENTITY_TYPE]: ["address", "otherAddress"],
     });
-    expect(getEntityMarkers()).toHaveSize(2);
+    expect(getEntityMarkers()).toHaveLength(2);
 
     const dialogResult = { [TestEntity.ENTITY_TYPE]: ["address"] };
-    mockDialog.open.and.returnValue({
+    mockDialog.open.mockReturnValue({
       afterClosed: () => of(dialogResult),
     } as any);
     component.openMapPropertiesPopup();
 
     // only selected location property is now displayed
     expect(emitSpy).toHaveBeenCalledWith(dialogResult);
-    expect(getEntityMarkers()).toHaveSize(1);
+    expect(getEntityMarkers()).toHaveLength(1);
 
     TestEntity.schema.delete("address");
     TestEntity.schema.delete("otherAddress");
@@ -146,16 +147,16 @@ describe("MapComponent", () => {
 
   it("should only show the button to select properties if entities have been set", () => {
     component.displayedProperties = {};
-    expect(component.showPropertySelection).toBeFalse();
+    expect(component.showPropertySelection).toBe(false);
 
     component.displayedProperties = { [TestEntity.ENTITY_TYPE]: ["address"] };
-    expect(component.showPropertySelection).toBeTrue();
+    expect(component.showPropertySelection).toBe(true);
 
     component.displayedProperties = {};
     component.showPropertySelection = false;
     component.entities = [new TestEntity()];
 
-    expect(component.showPropertySelection).toBeTrue();
+    expect(component.showPropertySelection).toBe(true);
   });
 
   it("should trigger an update for the markers, once the map popup has been closed", async () => {
@@ -163,11 +164,11 @@ describe("MapComponent", () => {
       [TestEntity.ENTITY_TYPE]: ["address", "otherAddress"],
     };
     const dialogClosed = new Subject<void>();
-    mockDialog.open.and.returnValue({ afterClosed: () => dialogClosed } as any);
-    const emitSpy = spyOn(component.displayedPropertiesChange, "emit");
+    mockDialog.open.mockReturnValue({ afterClosed: () => dialogClosed } as any);
+    const emitSpy = vi.spyOn(component.displayedPropertiesChange, "emit");
 
     await component.openMapInPopup();
-    const popupData = mockDialog.open.calls.mostRecent().args[1]
+    const popupData = vi.mocked(mockDialog.open).mock.lastCall[1]
       .data as MapPopupConfig;
     const properties = popupData.displayedProperties;
     properties[TestEntity.ENTITY_TYPE] = ["otherAddress"];
@@ -194,14 +195,14 @@ describe("MapComponent", () => {
     component.entities = [School1, School2];
 
     const markers = getEntityMarkers();
-    expect(markers).toHaveSize(2);
+    expect(markers).toHaveLength(2);
     const marker1 = markers[0].getLatLng();
     const marker2 = markers[1].getLatLng();
 
     // both entities should have diff in their markers location
-    expect(
-      marker1.lat === marker2.lat && marker1.lng === marker2.lng,
-    ).toBeFalse();
+    expect(marker1.lat === marker2.lat && marker1.lng === marker2.lng).toBe(
+      false,
+    );
 
     TestEntity.schema.delete("address");
   });
@@ -239,7 +240,7 @@ describe("MapComponent", () => {
     expect(
       marker1LatLng.lat === marker2LatLng.lat &&
         marker1LatLng.lng === marker2LatLng.lng,
-    ).toBeFalse();
+    ).toBe(false);
 
     TestEntity.schema.delete("address");
   });

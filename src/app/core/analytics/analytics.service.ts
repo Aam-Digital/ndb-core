@@ -114,7 +114,11 @@ export class AnalyticsService {
       g.async = true;
       g.defer = true;
       g.src = u + "matomo.js";
-      s.parentNode.insertBefore(g, s);
+      if (s?.parentNode) {
+        s.parentNode.insertBefore(g, s);
+      } else {
+        (document.head || document.body).appendChild(g);
+      }
       this.angulartics2Matomo.startTracking();
       this.isInitialized = true;
     }

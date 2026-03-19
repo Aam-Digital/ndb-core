@@ -46,7 +46,7 @@ describe("Filters", () => {
     const keys: string[] = ["x", "y"];
     filter.options = SelectableFilter.generateOptions(keys, "category");
 
-    expect(filter.options).toHaveSize(keys.length);
+    expect(filter.options).toHaveLength(keys.length);
 
     filter.selectedOptionValues = ["x"];
 
@@ -89,7 +89,7 @@ describe("Filters", () => {
     const keys = [1, 4, 7];
     filter.options = SelectableFilter.generateOptions(keys, "category");
 
-    expect(filter.options).toHaveSize(keys.length);
+    expect(filter.options).toHaveLength(keys.length);
 
     filter.selectedOptionValues = ["1"];
 

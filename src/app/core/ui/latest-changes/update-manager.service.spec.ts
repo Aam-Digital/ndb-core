@@ -1,50 +1,95 @@
 import { UpdateManagerService } from "./update-manager.service";
-import {
-  discardPeriodicTasks,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ApplicationRef } from "@angular/core";
+import { TestBed } from "@angular/core/testing";
 import {
   SwUpdate,
   UnrecoverableStateEvent,
   VersionEvent,
+  VersionReadyEvent,
 } from "@angular/service-worker";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
-import { Subject } from "rxjs";
+import { Subject, of } from "rxjs";
 import { Logging } from "../../logging/logging.service";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import type { Mock } from "vitest";
+
+type LocationMock = {
+  reload: Mock;
+};
+
+type SwUpdateMock = Pick<
+  SwUpdate,
+  "versionUpdates" | "unrecoverable" | "isEnabled"
+> & {
+  checkForUpdate: Mock;
+};
+
+type SnackBarRefMock = {
+  onAction: () => Subject<void>;
+};
+
+type SnackBarMock = {
+  open: Mock<(...args: unknown[]) => SnackBarRefMock>;
+};
+
+type LatestChangesDialogMock = Pick<
+  LatestChangesDialogService,
+  "showLatestChangesIfUpdated"
+> & {
+  showLatestChangesIfUpdated: Mock;
+};
+
+function createVersionReadyEvent(): VersionReadyEvent {
+  return {
+    type: "VERSION_READY",
+    currentVersion: {
+      hash: "old-version",
+      appData: undefined,
+    },
+    latestVersion: {
+      hash: "new-version",
+      appData: undefined,
+    },
+  };
+}
 
 describe("UpdateManagerService", () => {
   let service: UpdateManagerService;
-  let mockLocation: jasmine.SpyObj<Location>;
-  let swUpdate: jasmine.SpyObj<SwUpdate>;
-  let updateSubject: Subject<Partial<VersionEvent>>;
+  let mockLocation: LocationMock;
+  let swUpdate: SwUpdateMock;
+  let updateSubject: Subject<VersionEvent>;
   let unrecoverableSubject: Subject<UnrecoverableStateEvent>;
-  let snackBar: jasmine.SpyObj<MatSnackBar>;
+  let snackBar: SnackBarMock;
   let snackBarAction: Subject<void>;
-  let latestChangesDialog: jasmine.SpyObj<LatestChangesDialogService>;
+  let latestChangesDialog: LatestChangesDialogMock;
   let unsavedChanges: Partial<UnsavedChangesService>;
 
   beforeEach(() => {
-    mockLocation = jasmine.createSpyObj(["reload"]);
+    mockLocation = {
+      reload: vi.fn(),
+    };
     updateSubject = new Subject();
     unrecoverableSubject = new Subject();
-    swUpdate = jasmine.createSpyObj(["checkForUpdate"], {
+    swUpdate = {
+      checkForUpdate: vi.fn(),
       versionUpdates: updateSubject,
       unrecoverable: unrecoverableSubject,
       isEnabled: true,
-    });
-    swUpdate.checkForUpdate.and.resolveTo();
-    snackBar = jasmine.createSpyObj(["open"]);
+    };
+    swUpdate.checkForUpdate.mockResolvedValue(undefined);
+    snackBar = {
+      open: vi.fn(),
+    };
     snackBarAction = new Subject();
-    snackBar.open.and.returnValue({
-      onAction: () => snackBarAction.asObservable(),
-    } as any);
-    latestChangesDialog = jasmine.createSpyObj(["showLatestChangesIfUpdated"]);
-    spyOn(Logging, "error");
+    snackBar.open.mockReturnValue({
+      onAction: () => snackBarAction,
+    });
+    latestChangesDialog = {
+      showLatestChangesIfUpdated: vi.fn(),
+    };
+    vi.spyOn(Logging, "error");
     unsavedChanges = { pending: true };
 
     service = createService();
@@ -60,6 +105,7 @@ describe("UpdateManagerService", () => {
         { provide: LatestChangesDialogService, useValue: latestChangesDialog },
         { provide: UnsavedChangesService, useValue: unsavedChanges },
         { provide: LOCATION_TOKEN, useValue: mockLocation },
+        { provide: ApplicationRef, useValue: { isStable: of(true) } },
       ],
     });
 
@@ -75,7 +121,7 @@ describe("UpdateManagerService", () => {
   it("should show a snackBar that allows to reload the page when an update is available", () => {
     service.listenToAppUpdates();
     // notify about new update
-    updateSubject.next({ type: "VERSION_READY" });
+    updateSubject.next(createVersionReadyEvent());
 
     expect(snackBar.open).toHaveBeenCalled();
 
@@ -89,7 +135,7 @@ describe("UpdateManagerService", () => {
     service.listenToAppUpdates();
     unsavedChanges.pending = true;
 
-    updateSubject.next({ type: "VERSION_READY" });
+    updateSubject.next(createVersionReadyEvent());
 
     expect(mockLocation.reload).not.toHaveBeenCalled();
     expect(snackBar.open).toHaveBeenCalled();
@@ -97,7 +143,7 @@ describe("UpdateManagerService", () => {
     createService();
     unsavedChanges.pending = false;
 
-    updateSubject.next({ type: "VERSION_READY" });
+    updateSubject.next(createVersionReadyEvent());
 
     expect(mockLocation.reload).toHaveBeenCalled();
   });
@@ -121,7 +167,7 @@ describe("UpdateManagerService", () => {
     const version = "1.1.1";
     localStorage.setItem(LatestChangesDialogService.VERSION_KEY, version);
     service.listenToAppUpdates();
-    updateSubject.next({ type: "VERSION_READY" });
+    updateSubject.next(createVersionReadyEvent());
 
     expect(localStorage.getItem(LatestChangesDialogService.VERSION_KEY)).toBe(
       "update-" + version,
@@ -135,26 +181,29 @@ describe("UpdateManagerService", () => {
     );
   });
 
-  it("should check for updates once on startup and then every hour", fakeAsync(() => {
-    service.regularlyCheckForUpdates();
-    tick();
+  it("should check for updates once on startup and then every hour", async () => {
+    vi.useFakeTimers();
+    try {
+      service.regularlyCheckForUpdates();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(1);
+      expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(1);
 
-    // One hour later
-    tick(1000 * 60 * 60);
+      // One hour later
+      await vi.advanceTimersByTimeAsync(1000 * 60 * 60);
 
-    expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(2);
+      expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(2);
 
-    tick(1000 * 60 * 60);
+      await vi.advanceTimersByTimeAsync(1000 * 60 * 60);
 
-    expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(3);
-
-    discardPeriodicTasks();
-  }));
+      expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(3);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should trigger the latest changes dialog on startup only if update note is set", () => {
-    latestChangesDialog.showLatestChangesIfUpdated.calls.reset();
+    latestChangesDialog.showLatestChangesIfUpdated.mockClear();
 
     localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
@@ -179,7 +228,7 @@ describe("UpdateManagerService", () => {
     });
 
     expect(Logging.error).toHaveBeenCalledWith(
-      jasmine.stringContaining("ERROR REASON"),
+      expect.stringContaining("ERROR REASON"),
     );
     expect(mockLocation.reload).toHaveBeenCalled();
   });

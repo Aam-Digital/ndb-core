@@ -6,10 +6,12 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 describe("JsonEditorDialogComponent", () => {
   let component: JsonEditorDialogComponent;
   let fixture: ComponentFixture<JsonEditorDialogComponent>;
-  let dialogRef: jasmine.SpyObj<MatDialogRef<JsonEditorDialogComponent>>;
+  let dialogRef: any;
 
   beforeEach(async () => {
-    const dialogRefSpy = jasmine.createSpyObj("MatDialogRef", ["close"]);
+    const dialogRefSpy = {
+      close: vi.fn().mockName("MatDialogRef.close"),
+    };
 
     await TestBed.configureTestingModule({
       imports: [JsonEditorDialogComponent, MockedTestingModule.withState()],
@@ -21,9 +23,7 @@ describe("JsonEditorDialogComponent", () => {
 
     fixture = TestBed.createComponent(JsonEditorDialogComponent);
     component = fixture.componentInstance;
-    dialogRef = TestBed.inject(MatDialogRef) as jasmine.SpyObj<
-      MatDialogRef<JsonEditorDialogComponent>
-    >;
+    dialogRef = TestBed.inject(MatDialogRef) as any;
     fixture.detectChanges();
   });
 

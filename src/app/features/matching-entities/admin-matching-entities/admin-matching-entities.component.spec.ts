@@ -11,6 +11,23 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { FormBuilder } from "@angular/forms";
 import { SyncStateSubject } from "#src/app/core/session/session-type";
 import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
+import type { Mock } from "vitest";
+
+type ConfigServiceMock = {
+  saveConfig: Mock;
+  getAllConfigs: Mock;
+  exportConfig: Mock;
+  getConfig: Mock;
+  configUpdates: BehaviorSubject<Config>;
+};
+
+type EntityRelationsServiceMock = {
+  getEntityTypesReferencingType: Mock;
+};
+
+type EntityFormServiceMock = {
+  createEntityForm: Mock;
+};
 
 const MOCK_ENTITY_TYPES = [TestEntity];
 
@@ -27,41 +44,44 @@ const MOCK_CONFIG = {
 describe("AdminMatchingEntitiesComponent", () => {
   let component: AdminMatchingEntitiesComponent;
   let fixture: ComponentFixture<AdminMatchingEntitiesComponent>;
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockConfigService: ConfigServiceMock;
   let mockConfigUpdated: BehaviorSubject<Config>;
-  let mockEntityRelationsService: jasmine.SpyObj<EntityRelationsService>;
-  let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
+  let mockEntityRelationsService: EntityRelationsServiceMock;
+  let mockEntityFormService: EntityFormServiceMock;
 
   beforeEach(async () => {
     mockConfigUpdated = new BehaviorSubject<Config>(null);
-    mockConfigService = jasmine.createSpyObj(
-      "ConfigService",
-      ["saveConfig", "getAllConfigs", "exportConfig", "getConfig"],
-      { configUpdates: mockConfigUpdated },
-    );
+    mockConfigService = {
+      saveConfig: vi.fn().mockName("ConfigService.saveConfig"),
+      getAllConfigs: vi.fn().mockName("ConfigService.getAllConfigs"),
+      exportConfig: vi.fn().mockName("ConfigService.exportConfig"),
+      getConfig: vi.fn().mockName("ConfigService.getConfig"),
+      configUpdates: mockConfigUpdated,
+    };
 
-    mockConfigService.getConfig.and.returnValue(MOCK_CONFIG);
+    mockConfigService.getConfig.mockReturnValue(MOCK_CONFIG);
 
-    mockEntityRelationsService = jasmine.createSpyObj(
-      "EntityRelationsService",
-      ["getEntityTypesReferencingType"],
-    );
-    mockEntityRelationsService.getEntityTypesReferencingType.and.returnValue(
+    mockEntityRelationsService = {
+      getEntityTypesReferencingType: vi
+        .fn()
+        .mockName("EntityRelationsService.getEntityTypesReferencingType"),
+    };
+    mockEntityRelationsService.getEntityTypesReferencingType.mockReturnValue(
       [],
     );
 
-    mockEntityFormService = jasmine.createSpyObj("EntityFormService", [
-      "createEntityForm",
-    ]);
+    mockEntityFormService = {
+      createEntityForm: vi.fn().mockName("EntityFormService.createEntityForm"),
+    };
 
-    const mockEntityRegistry = jasmine.createSpyObj("EntityRegistry", [
-      "getEntityTypes",
-      "get",
-    ]);
-    mockEntityRegistry.getEntityTypes.and.returnValue(
+    const mockEntityRegistry = {
+      getEntityTypes: vi.fn().mockName("EntityRegistry.getEntityTypes"),
+      get: vi.fn().mockName("EntityRegistry.get"),
+    };
+    mockEntityRegistry.getEntityTypes.mockReturnValue(
       MOCK_ENTITY_TYPES.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
     );
-    mockEntityRegistry.get.and.callFake((type) =>
+    mockEntityRegistry.get.mockImplementation((type) =>
       MOCK_ENTITY_TYPES.find((e) => e.ENTITY_TYPE === type),
     );
 

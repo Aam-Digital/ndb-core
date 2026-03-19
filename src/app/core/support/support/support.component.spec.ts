@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { SupportComponent } from "./support.component";
 import { BehaviorSubject, of } from "rxjs";
@@ -51,14 +45,12 @@ describe("SupportComponent", () => {
     Object.defineProperty(mockDB, "LAST_SYNC_KEY", {
       value: SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + testDbName,
     });
-    mockDB.getPouchDBOnceReady = jasmine
-      .createSpy("getPouchDBOnceReady")
-      .and.returnValue(
-        Promise.resolve({
-          info: () => Promise.resolve({ doc_count: 1, update_seq: 2 }),
-        } as any),
-      );
-    mockDB.destroy = jasmine.createSpy("destroy");
+    mockDB.getPouchDBOnceReady = vi.fn().mockReturnValue(
+      Promise.resolve({
+        info: () => Promise.resolve({ doc_count: 1, update_seq: 2 }),
+      } as any),
+    );
+    mockDB.destroy = vi.fn();
 
     await TestBed.configureTestingModule({
       imports: [SupportComponent, MatDialogModule, NoopAnimationsModule],
@@ -76,7 +68,9 @@ describe("SupportComponent", () => {
         { provide: WINDOW_TOKEN, useValue: mockWindow },
         {
           provide: BackupService,
-          useValue: jasmine.createSpyObj(["resetApplication"]),
+          useValue: {
+            resetApplication: vi.fn(),
+          },
         },
         { provide: DownloadService, useValue: null },
         {
@@ -124,13 +118,20 @@ describe("SupportComponent", () => {
     localStorage.clear();
   });
 
-  it("should display the service worker logs after they are available", fakeAsync(() => {
-    const exampleLog = "example service worker log";
-    spyOn(TestBed.inject(HttpClient), "get").and.returnValue(of(exampleLog));
+  it("should display the service worker logs after they are available", async () => {
+    vi.useFakeTimers();
+    try {
+      const exampleLog = "example service worker log";
+      vi.spyOn(TestBed.inject(HttpClient), "get").mockReturnValue(
+        of(exampleLog),
+      );
 
-    component.ngOnInit();
-    tick();
+      component.ngOnInit();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.swLog).toBe(exampleLog);
-  }));
+      expect(component.swLog).toBe(exampleLog);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

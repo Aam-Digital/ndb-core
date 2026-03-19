@@ -18,14 +18,21 @@ class TestSignalInputComponent {
 
 describe("DynamicComponentDirective", () => {
   let directive: DynamicComponentDirective;
-  let mockContainer: jasmine.SpyObj<ViewContainerRef>;
-  let mockDetector: jasmine.SpyObj<ChangeDetectorRef>;
-  let mockRegistry: jasmine.SpyObj<ComponentRegistry>;
+  let mockContainer: any;
+  let mockDetector: any;
+  let mockRegistry: any;
 
   beforeEach(() => {
-    mockContainer = jasmine.createSpyObj(["clear", "createComponent"]);
-    mockDetector = jasmine.createSpyObj(["detectChanges"]);
-    mockRegistry = jasmine.createSpyObj(["get"]);
+    mockContainer = {
+      clear: vi.fn(),
+      createComponent: vi.fn(),
+    };
+    mockDetector = {
+      detectChanges: vi.fn(),
+    };
+    mockRegistry = {
+      get: vi.fn(),
+    };
     TestBed.configureTestingModule({
       providers: [
         { provide: ViewContainerRef, useValue: mockContainer },
@@ -40,7 +47,7 @@ describe("DynamicComponentDirective", () => {
   it("should create the configured component", async () => {
     directive.appDynamicComponent = { component: "TestComp" };
     const comp = {} as any;
-    mockRegistry.get.and.returnValue(() => Promise.resolve(comp));
+    mockRegistry.get.mockReturnValue(() => Promise.resolve(comp));
 
     await directive.ngOnChanges();
 
@@ -66,13 +73,13 @@ describe("DynamicComponentDirective", () => {
         },
       },
     };
-    const setInputSpy = jasmine.createSpy("setInput");
+    const setInputSpy = vi.fn();
     const compRef: any = {
       componentType: comp,
       setInput: setInputSpy,
     };
-    mockRegistry.get.and.returnValue(() => Promise.resolve(comp));
-    mockContainer.createComponent.and.returnValue(compRef);
+    mockRegistry.get.mockReturnValue(() => Promise.resolve(comp));
+    mockContainer.createComponent.mockReturnValue(compRef);
 
     await directive.ngOnChanges();
 
@@ -80,11 +87,11 @@ describe("DynamicComponentDirective", () => {
     expect(setInputSpy).toHaveBeenCalledWith("stringProp", "should exist");
     expect(setInputSpy).not.toHaveBeenCalledWith(
       "missingProp",
-      jasmine.anything(),
+      expect.anything(),
     );
     expect(setInputSpy).not.toHaveBeenCalledWith(
       "otherProp",
-      jasmine.anything(),
+      expect.anything(),
     );
   });
 
@@ -98,17 +105,36 @@ describe("DynamicComponentDirective", () => {
 
     const fixture = TestBed.createComponent(TestSignalInputComponent);
     const componentRef = fixture.componentRef;
-    const setInputSpy = spyOn(componentRef, "setInput").and.callThrough();
+    const setInputSpy = vi.spyOn(componentRef, "setInput");
 
-    mockRegistry.get.and.returnValue(() =>
+    mockRegistry.get.mockReturnValue(() =>
       Promise.resolve(TestSignalInputComponent),
     );
-    mockContainer.createComponent.and.returnValue(componentRef);
+    mockContainer.createComponent.mockReturnValue(componentRef);
 
     await directive.ngOnChanges();
 
     expect(setInputSpy).toHaveBeenCalledWith("signalInput", 42);
     expect(typeof componentRef.instance.signalInput).toBe("function");
     expect(componentRef.instance.signalInput).not.toBe(42);
+  });
+
+  it("should skip component creation if destroyed before async load resolves", async () => {
+    directive.appDynamicComponent = { component: "TestComp" };
+
+    let resolveComponent: (component: any) => void;
+    const componentPromise = new Promise<any>((resolve) => {
+      resolveComponent = resolve;
+    });
+    mockRegistry.get.mockReturnValue(() => componentPromise);
+
+    const loadPromise = directive.ngOnChanges();
+    directive.ngOnDestroy();
+    resolveComponent({} as any);
+
+    await loadPromise;
+
+    expect(mockContainer.createComponent).not.toHaveBeenCalled();
+    expect(mockDetector.detectChanges).not.toHaveBeenCalled();
   });
 });

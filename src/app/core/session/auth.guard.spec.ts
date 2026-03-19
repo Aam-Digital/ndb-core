@@ -26,7 +26,7 @@ describe("AuthGuard", () => {
     const res = TestBed.runInInjectionContext(() =>
       AuthGuard(undefined, undefined),
     );
-    expect(res).toBeTrue();
+    expect(res).toBe(true);
   });
 
   it("should navigate to login page with redirect url if not logged in", () => {

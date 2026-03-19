@@ -46,13 +46,17 @@ describe("SystemInitAssistantComponent", () => {
         { provide: KeycloakAuthService, useValue: {} },
         {
           provide: MatDialogRef,
-          useValue: jasmine.createSpyObj(["updateSize"]),
+          useValue: {
+            updateSize: vi.fn(),
+          },
         },
         { provide: NAVIGATOR_TOKEN, useValue: {} },
         { provide: ActivatedRoute, useValue: {} },
         {
           provide: LanguageService,
-          useValue: jasmine.createSpyObj(["getCurrentLocale"]),
+          useValue: {
+            getCurrentLocale: vi.fn(),
+          },
         },
         { provide: LOCATION_TOKEN, useValue: mockLocation },
         { provide: EntityAbility, useValue: { can: () => true } },
@@ -73,10 +77,11 @@ describe("SystemInitAssistantComponent", () => {
 
   it("should preselect use case from route param and initialize system", async () => {
     const mockConfigs = [{ id: "basic_setup" }] as any;
-    spyOn(component["setupService"], "getAvailableBaseConfig").and.resolveTo(
-      mockConfigs,
-    );
-    spyOn(component, "initializeSystem");
+    vi.spyOn(
+      component["setupService"],
+      "getAvailableBaseConfig",
+    ).mockResolvedValue(mockConfigs);
+    vi.spyOn(component, "initializeSystem");
 
     (TestBed.inject(ActivatedRoute) as any).snapshot = {
       queryParamMap: new Map([["useCase", "basic_setup"]]),

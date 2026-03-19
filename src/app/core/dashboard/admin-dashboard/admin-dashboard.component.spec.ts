@@ -12,13 +12,15 @@ import { WidgetComponentSelectComponent } from "../../admin/admin-entity-details
 describe("AdminDashboardComponent", () => {
   let component: AdminDashboardComponent;
   let fixture: ComponentFixture<AdminDashboardComponent>;
-  const mockConfigService = jasmine.createSpyObj("ConfigService", [
-    "getConfig",
-  ]);
-  const mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
+  const mockConfigService = {
+    getConfig: vi.fn().mockName("ConfigService.getConfig"),
+  };
+  const mockDialog = {
+    open: vi.fn().mockName("MatDialog.open"),
+  };
 
   beforeEach(async () => {
-    mockConfigService.getConfig.and.returnValue({
+    mockConfigService.getConfig.mockReturnValue({
       config: {
         widgets: [],
       },
@@ -50,7 +52,7 @@ describe("AdminDashboardComponent", () => {
 
   it("should add a new widget", async () => {
     const newWidget = { component: "ShortcutDashboard", config: {} };
-    mockDialog.open.and.returnValue({
+    mockDialog.open.mockReturnValue({
       afterClosed: () => of(newWidget),
     } as any);
 

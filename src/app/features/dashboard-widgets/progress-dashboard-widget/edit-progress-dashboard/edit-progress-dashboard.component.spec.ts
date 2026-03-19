@@ -69,30 +69,30 @@ describe("EditProgressDashboardComponent", () => {
   });
 
   it("should contain the initial state from the data", () => {
-    expect(component.parts).toHaveValue(mockDialogData.parts);
-    expect(component.parts).toBeValidForm();
+    expect(component.parts.value).toEqual(mockDialogData.parts);
+    expect(component.parts.valid).toBe(true);
 
-    expect(component.title).toHaveValue(mockDialogData.title);
-    expect(component.title).toBeValidForm();
+    expect(component.title.value).toEqual(mockDialogData.title);
+    expect(component.title.valid).toBe(true);
   });
 
   it("should mark form as invalid when title is empty", () => {
     component.title.setValue("");
-    expect(component.title).toHaveValue("");
-    expect(component.title).toContainFormError("required");
+    expect(component.title.value).toEqual("");
+    expect(component.title.hasError("required")).toBe(true);
 
-    expect(component.title).not.toBeValidForm();
+    expect(component.title.valid).toBe(false);
   });
 
   it("should append a new part", () => {
     component.addPart();
-    expect(component.parts).toHaveSize(4);
+    expect(component.parts).toHaveLength(4);
   });
 
   it("should delete a part", () => {
     component.removePart(1);
-    expect(component.parts).toHaveSize(2);
-    expect(component.parts).toHaveValue([
+    expect(component.parts).toHaveLength(2);
+    expect(component.parts.value).toEqual([
       mockDialogData.parts[0],
       mockDialogData.parts[2],
     ]);
@@ -101,50 +101,50 @@ describe("EditProgressDashboardComponent", () => {
   it("should mark the form as invalid when current or target is not present", () => {
     const firstForm = getGroup(0);
     firstForm.get("currentValue").setValue("");
-    expect(firstForm.get("currentValue")).toContainFormError("required");
+    expect(firstForm.get("currentValue").hasError("required")).toBe(true);
     firstForm.get("targetValue").setValue("");
-    expect(firstForm.get("targetValue")).toContainFormError("required");
+    expect(firstForm.get("targetValue").hasError("required")).toBe(true);
 
-    expect(firstForm).not.toBeValidForm();
+    expect(firstForm.valid).toBe(false);
   });
 
   it("should mark the form as invalid when the current or target value is negative", () => {
     const group = getGroup(1);
     group.get("currentValue").setValue(-1);
-    expect(group.get("currentValue")).toContainFormError("min");
+    expect(group.get("currentValue").hasError("min")).toBe(true);
     group.get("targetValue").setValue(-3);
-    expect(group.get("targetValue")).toContainFormError("min");
+    expect(group.get("targetValue").hasError("min")).toBe(true);
 
-    expect(group).not.toBeValidForm();
+    expect(group.valid).toBe(false);
   });
 
   it("should mark the form as invalid when the current value is greater than the target value", () => {
     const group = getGroup(2);
     group.get("currentValue").setValue(3);
     group.get("targetValue").setValue(2);
-    expect(group).not.toBeValidForm();
-    expect(group).toContainFormError("currentGtTarget");
+    expect(group.valid).toBe(false);
+    expect(group.hasError("currentGtTarget")).toBe(true);
   });
 
   it("should clear only one error when only one is resolved", () => {
     const group = getGroup(1);
     group.get("currentValue").setValue(-2);
     group.get("targetValue").setValue(-5);
-    expect(group).not.toBeValidForm();
-    expect(group).toContainFormError("currentGtTarget");
-    expect(group.get("currentValue")).toContainFormError("min");
-    expect(group.get("targetValue")).toContainFormError("min");
+    expect(group.valid).toBe(false);
+    expect(group.hasError("currentGtTarget")).toBe(true);
+    expect(group.get("currentValue").hasError("min")).toBe(true);
+    expect(group.get("targetValue").hasError("min")).toBe(true);
     group.get("targetValue").setValue(5);
-    expect(group).not.toBeValidForm();
-    expect(group).not.toContainFormError("currentGtTarget");
-    expect(group.get("currentValue")).toContainFormError("min");
-    expect(group.get("targetValue")).not.toContainFormError("min");
+    expect(group.valid).toBe(false);
+    expect(group.hasError("currentGtTarget")).toBe(false);
+    expect(group.get("currentValue").hasError("min")).toBe(true);
+    expect(group.get("targetValue").hasError("min")).toBe(false);
   });
 
   it("correctly sets errors when the target is 0", () => {
     const group = getGroup(0);
     group.get("currentValue").setValue(1);
     group.get("targetValue").setValue(0);
-    expect(group).not.toBeValidForm();
+    expect(group.valid).toBe(false);
   });
 });

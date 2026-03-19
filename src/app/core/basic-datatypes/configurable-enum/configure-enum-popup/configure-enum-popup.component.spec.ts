@@ -36,6 +36,10 @@ describe("ConfigureEnumPopupComponent", () => {
         { provide: MatDialogRef, useValue: { afterClosed: () => EMPTY } },
         ...mockEntityMapperProvider(),
         { provide: EntityRegistry, useValue: entityRegistry },
+        {
+          provide: ConfirmationDialogService,
+          useValue: { getConfirmation: vi.fn().mockResolvedValue(true) },
+        },
       ],
     }).compileComponents();
 
@@ -65,7 +69,7 @@ describe("ConfigureEnumPopupComponent", () => {
     f1.category = female;
     const other = new TestEntity();
     entityMapper.addAll([m1, m2, f1, other]);
-    const confirmationSpy = spyOn(
+    const confirmationSpy = vi.spyOn(
       TestBed.inject(ConfirmationDialogService),
       "getConfirmation",
     );
@@ -74,10 +78,10 @@ describe("ConfigureEnumPopupComponent", () => {
 
     expect(confirmationSpy).toHaveBeenCalledWith(
       "Delete option",
-      jasmine.stringContaining(
+      expect.stringContaining(
         `The option is still used in 2 ${TestEntity.label} records.`,
       ),
-      jasmine.any(Array),
+      expect.any(Array),
     );
 
     entityMapper.delete(m1);
@@ -88,7 +92,7 @@ describe("ConfigureEnumPopupComponent", () => {
     expect(confirmationSpy).toHaveBeenCalledWith(
       "Delete option",
       `Are you sure that you want to delete the option "${male.label}"?`,
-      jasmine.any(Array),
+      expect.any(Array),
     );
   });
 
@@ -96,10 +100,10 @@ describe("ConfigureEnumPopupComponent", () => {
     const pastedText = "Option A\nOption B\nOption C\nOption B";
 
     const clipboardData = {
-      getData: jasmine.createSpy("getData").and.returnValue(pastedText),
+      getData: vi.fn().mockReturnValue(pastedText),
     };
 
-    const preventDefaultSpy = jasmine.createSpy("preventDefault");
+    const preventDefaultSpy = vi.fn();
 
     const fakeEvent = {
       clipboardData: clipboardData,
@@ -124,7 +128,7 @@ describe("ConfigureEnumPopupComponent", () => {
 
     const fakeEvent = {
       clipboardData: clipboardData,
-      preventDefault: jasmine.createSpy("preventDefault"),
+      preventDefault: vi.fn(),
     } as unknown as ClipboardEvent;
 
     const initialCount = component.localEnum.values.length;
@@ -197,7 +201,7 @@ describe("ConfigureEnumPopupComponent", () => {
     component.localEnum.addOption("Apple");
     component.localEnum.addOption("Banana");
 
-    const snackSpy = spyOn(component["snackBar"], "open");
+    const snackSpy = vi.spyOn(component["snackBar"], "open");
 
     // Simulate user pasting with only 2 duplicates and 2 new items
     component.newOptionInput = `
@@ -217,9 +221,9 @@ describe("ConfigureEnumPopupComponent", () => {
     expect(labels.length).toBe(4);
 
     expect(snackSpy).toHaveBeenCalledWith(
-      jasmine.stringMatching(/Skipped 2 duplicate/),
+      expect.stringMatching(/Skipped 2 duplicate/),
       undefined,
-      jasmine.any(Object),
+      expect.any(Object),
     );
   });
 });

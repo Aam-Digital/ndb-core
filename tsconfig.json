@@ -22,7 +22,7 @@
       "dom"
     ],
     "types": [
-      "jasmine",
+      "vitest/globals",
       "node"
     ],
     "paths": {

@@ -16,7 +16,7 @@
  */
 
 import { ChildSchoolRelation } from "./childSchoolRelation";
-import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
+import { testEntitySubclass } from "../../../core/entity/model/entity.test-utils";
 
 describe("ChildSchoolRelation Entity", () => {
   testEntitySubclass("ChildSchoolRelation", ChildSchoolRelation, {

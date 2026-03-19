@@ -10,14 +10,14 @@ describe("ConflictResolutionListComponent", () => {
   let component: ConflictResolutionListComponent;
   let fixture: ComponentFixture<ConflictResolutionListComponent>;
 
-  let mockDatabase: jasmine.SpyObj<Database>;
+  let mockDatabase: any;
 
   beforeEach(waitForAsync(() => {
-    mockDatabase = jasmine.createSpyObj("mockDatabase", [
-      "saveDatabaseIndex",
-      "query",
-    ]);
-    mockDatabase.query.and.returnValue(
+    mockDatabase = {
+      saveDatabaseIndex: vi.fn().mockName("mockDatabase.saveDatabaseIndex"),
+      query: vi.fn().mockName("mockDatabase.query"),
+    };
+    mockDatabase.query.mockReturnValue(
       Promise.resolve({ total_rows: 0, rows: [] }),
     );
 

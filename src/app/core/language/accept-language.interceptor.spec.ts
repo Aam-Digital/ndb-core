@@ -20,12 +20,12 @@ describe("AcceptLanguageInterceptor", () => {
   });
 
   it("should add the Accept-Language header with the given locale", () => {
-    const handleSpy = jasmine.createSpy();
+    const handleSpy = vi.fn();
     const request = new HttpRequest("GET", "https://some.url/");
     const interceptor = TestBed.inject(AcceptLanguageInterceptor);
 
     interceptor.intercept(request, { handle: handleSpy });
-    const res = handleSpy.calls.mostRecent().args[0];
+    const res = vi.mocked(handleSpy).mock.lastCall[0];
 
     expect(res.headers.get("Accept-Language")).toBe("de");
   });

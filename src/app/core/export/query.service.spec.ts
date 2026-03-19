@@ -24,6 +24,17 @@ import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { TestEventEntity } from "../../utils/test-utils/TestEventEntity";
 import { defaultAttendanceStatusTypes } from "../config/default-config/default-attendance-status-types";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
+import type { Mock } from "vitest";
+
+type ChildrenServiceMock = {
+  getNotesInTimespan: Mock;
+};
+
+type AttendanceServiceMock = {
+  getEventsOnDate: Mock;
+  wrapEventEntity: Mock;
+  eventTypes: ReturnType<typeof signal>;
+};
 
 // Note that we used to have more realistic tests here using the DatabaseTestingModule.
 // These have been replace with more focused, isolated unit tests using mocked services.
@@ -33,8 +44,8 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 describe("QueryService", () => {
   let service: QueryService;
   let mockEntityMapper: MockEntityMapperService;
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
-  let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
+  let mockChildrenService: ChildrenServiceMock;
+  let mockAttendanceService: AttendanceServiceMock;
   let mockEntityRegistry: EntityRegistry;
 
   const presentAttendanceStatus = defaultAttendanceStatusTypes.find(
@@ -48,18 +59,20 @@ describe("QueryService", () => {
   );
 
   beforeEach(() => {
-    mockChildrenService = jasmine.createSpyObj("ChildrenService", [
-      "getNotesInTimespan",
-    ]);
-    mockChildrenService.getNotesInTimespan.and.returnValue(Promise.resolve([]));
+    mockChildrenService = {
+      getNotesInTimespan: vi
+        .fn()
+        .mockName("ChildrenService.getNotesInTimespan"),
+    };
+    mockChildrenService.getNotesInTimespan.mockReturnValue(Promise.resolve([]));
 
-    mockAttendanceService = jasmine.createSpyObj(
-      "AttendanceService",
-      ["getEventsOnDate", "wrapEventEntity"],
-      { eventTypes: signal([TestEventEntity]) },
-    );
-    mockAttendanceService.getEventsOnDate.and.returnValue(Promise.resolve([]));
-    mockAttendanceService.wrapEventEntity.and.callFake(
+    mockAttendanceService = {
+      getEventsOnDate: vi.fn().mockName("AttendanceService.getEventsOnDate"),
+      wrapEventEntity: vi.fn().mockName("AttendanceService.wrapEventEntity"),
+      eventTypes: signal([TestEventEntity]),
+    };
+    mockAttendanceService.getEventsOnDate.mockReturnValue(Promise.resolve([]));
+    mockAttendanceService.wrapEventEntity.mockImplementation(
       (e) =>
         new EventWithAttendance(
           e,
@@ -138,7 +151,7 @@ describe("QueryService", () => {
   describe("cacheRequiredData", () => {
     it("should load Note entities using dataFunction", async () => {
       const note = Note.create(new Date());
-      mockChildrenService.getNotesInTimespan.and.resolveTo([note]);
+      mockChildrenService.getNotesInTimespan.mockResolvedValue([note]);
 
       const from = moment().subtract(1, "week").toDate();
       const to = new Date();
@@ -155,7 +168,7 @@ describe("QueryService", () => {
 
     it("should load event entities using dataFunction", async () => {
       const event = createEvent(new Date());
-      mockAttendanceService.getEventsOnDate.and.resolveTo([event]);
+      mockAttendanceService.getEventsOnDate.mockResolvedValue([event]);
 
       const from = moment().subtract(1, "week").toDate();
       const to = new Date();
@@ -170,7 +183,7 @@ describe("QueryService", () => {
     });
 
     it("should not reload entities when requested range is within cached range", async () => {
-      mockChildrenService.getNotesInTimespan.and.resolveTo([]);
+      mockChildrenService.getNotesInTimespan.mockResolvedValue([]);
 
       const from = moment().subtract(2, "weeks").toDate();
       const to = new Date();
@@ -184,7 +197,7 @@ describe("QueryService", () => {
     });
 
     it("should reload entities when requested range extends beyond cached range", async () => {
-      mockChildrenService.getNotesInTimespan.and.resolveTo([]);
+      mockChildrenService.getNotesInTimespan.mockResolvedValue([]);
 
       const from = moment().subtract(1, "week").toDate();
       const to = new Date();
@@ -711,7 +724,7 @@ describe("QueryService", () => {
     it("should work with date parameters in queries", async () => {
       const oldNote = createEvent(moment().subtract(2, "weeks").toDate());
       const recentNote = createEvent(moment().subtract(2, "days").toDate());
-      mockAttendanceService.getEventsOnDate.and.resolveTo([
+      mockAttendanceService.getEventsOnDate.mockResolvedValue([
         oldNote,
         recentNote,
       ]);
@@ -734,7 +747,10 @@ describe("QueryService", () => {
   // Helper functions
   function createEvent(
     date: Date,
-    children: { child: string; status: AttendanceStatusType }[] = [],
+    children: {
+      child: string;
+      status: AttendanceStatusType;
+    }[] = [],
   ): TestEventEntity {
     const event = TestEventEntity.create({ date });
     event.attendance = children.map(({ child, status }) => {

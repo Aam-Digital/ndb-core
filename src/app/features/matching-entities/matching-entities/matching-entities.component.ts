@@ -226,11 +226,18 @@ export class MatchingEntitiesComponent implements OnInit {
     onMatchEntityType: string,
     onMatchProperty: string,
   ) {
-    const schemaField = this.entityRegistry
-      .get(onMatchEntityType)
-      .schema.get(onMatchProperty);
+    if (!onMatchEntityType || !onMatchProperty) {
+      return false;
+    }
 
-    return schemaField.isArray;
+    try {
+      const schemaField = this.entityRegistry
+        .get(onMatchEntityType)
+        .schema.get(onMatchProperty);
+      return !!schemaField?.isArray;
+    } catch {
+      return false;
+    }
   }
 
   private getMultiSelectFunction(newSide: MatchingSide) {

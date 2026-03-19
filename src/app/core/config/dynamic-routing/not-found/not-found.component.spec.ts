@@ -20,7 +20,7 @@ describe("NotFoundComponent", () => {
   let fixture: ComponentFixture<NotFoundComponent>;
 
   beforeEach(async () => {
-    spyOn(Logging, "debug");
+    vi.spyOn(Logging, "debug");
     await TestBed.configureTestingModule({
       imports: [NotFoundComponent, RouterTestingModule],
       providers: [

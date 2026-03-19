@@ -15,6 +15,7 @@ import { DatabaseField } from "../database-field.decorator";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntityMapperService } from "./entity-mapper.service";
 import { EntitySchemaField } from "../schema/entity-schema-field";
+import { expectArrayWithExactContents } from "../../../utils/test-utils/array-test-utils";
 
 describe("EntityRelationsService", () => {
   let service: EntityRelationsService;
@@ -46,6 +47,10 @@ describe("EntityRelationsService", () => {
       providers: [...mockEntityMapperProvider([primaryEntity])],
     });
     service = TestBed.inject(EntityRelationsService);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it("should getEntityTypesReferencingType with all entity types having schema fields referencing the given type", () => {
@@ -80,7 +85,7 @@ describe("EntityRelationsService", () => {
 
     // mock entityRegistry result to only have the ones given here without other types registered across the codebase
     const entityRegistry = TestBed.inject(EntityRegistry);
-    spyOn(entityRegistry, "values").and.returnValue(
+    vi.spyOn(entityRegistry, "values").mockImplementation(() =>
       [ReferencingEntity, Entity][Symbol.iterator](),
     );
 
@@ -130,33 +135,31 @@ describe("EntityRelationsService", () => {
     const result = await service.loadAllLinkingToEntity(primaryEntity);
 
     // Assert
-    expect(result).toEqual(
-      jasmine.arrayWithExactContents([
-        {
-          entity: eSingleRef,
-          fields: [jasmine.objectContaining({ id: "refSingle" })],
-        },
-        {
-          entity: eMultiRef,
-          fields: [jasmine.objectContaining({ id: "refMulti" })],
-        },
-        {
-          entity: eDoubleRef,
-          fields: [
-            jasmine.objectContaining({ id: "refSingle" }),
-            jasmine.objectContaining({ id: "refMulti" }),
-          ],
-        },
-        { entity: eTestRef, fields: [jasmine.objectContaining({ id: "ref" })] },
-      ]),
-    );
+    expectArrayWithExactContents(result, [
+      {
+        entity: eSingleRef,
+        fields: [expect.objectContaining({ id: "refSingle" })],
+      },
+      {
+        entity: eMultiRef,
+        fields: [expect.objectContaining({ id: "refMulti" })],
+      },
+      {
+        entity: eDoubleRef,
+        fields: [
+          expect.objectContaining({ id: "refSingle" }),
+          expect.objectContaining({ id: "refMulti" }),
+        ],
+      },
+      { entity: eTestRef, fields: [expect.objectContaining({ id: "ref" })] },
+    ]);
   });
 });
 
 describe("itemReferencesId", () => {
   it("should match a plain string ID", () => {
-    expect(itemReferencesId("Child:1", "Child:1")).toBeTrue();
-    expect(itemReferencesId("Child:2", "Child:1")).toBeFalse();
+    expect(itemReferencesId("Child:1", "Child:1")).toBe(true);
+    expect(itemReferencesId("Child:2", "Child:1")).toBe(false);
   });
 
   it("should match an embedded object by checking only declared entity-reference keys", () => {
@@ -169,7 +172,7 @@ describe("itemReferencesId", () => {
     };
 
     const item = { participant: "Child:1", status: "PRESENT", remarks: "" };
-    expect(itemReferencesId(item, "Child:1", field)).toBeTrue();
+    expect(itemReferencesId(item, "Child:1", field)).toBe(true);
   });
 
   it("should NOT match when a non-reference property happens to equal the ID", () => {
@@ -181,12 +184,12 @@ describe("itemReferencesId", () => {
     };
 
     const item = { participant: "Child:2", remarks: "Child:1" };
-    expect(itemReferencesId(item, "Child:1", field)).toBeFalse();
+    expect(itemReferencesId(item, "Child:1", field)).toBe(false);
   });
 
   it("should fall back to checking all values when no schema field is provided", () => {
     const item = { participant: "Child:1", remarks: "some text" };
-    expect(itemReferencesId(item, "Child:1")).toBeTrue();
+    expect(itemReferencesId(item, "Child:1")).toBe(true);
   });
 
   it("should fall back to checking all values when field has no embedded schema", () => {
@@ -196,6 +199,6 @@ describe("itemReferencesId", () => {
     };
 
     const item = { participant: "Child:1", remarks: "text" };
-    expect(itemReferencesId(item, "Child:1", field)).toBeTrue();
+    expect(itemReferencesId(item, "Child:1", field)).toBe(true);
   });
 });

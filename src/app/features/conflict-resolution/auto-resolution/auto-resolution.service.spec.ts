@@ -9,12 +9,14 @@ import {
 describe("AutoResolutionService", () => {
   let service: AutoResolutionService;
 
-  let mockResolutionStrategy: jasmine.SpyObj<ConflictResolutionStrategy>;
+  let mockResolutionStrategy: any;
 
   beforeEach(() => {
-    mockResolutionStrategy = jasmine.createSpyObj("mockResolutionStrategy", [
-      "autoDeleteConflictingRevision",
-    ]);
+    mockResolutionStrategy = {
+      autoDeleteConflictingRevision: vi
+        .fn()
+        .mockName("mockResolutionStrategy.autoDeleteConflictingRevision"),
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -36,7 +38,7 @@ describe("AutoResolutionService", () => {
     const testDoc = { _id: "abc", _rev: "rev-1a", value: 1 };
     const testConflictDoc = { _id: "abc", _rev: "rev-1b", value: 2 };
 
-    mockResolutionStrategy.autoDeleteConflictingRevision.and.returnValue(true);
+    mockResolutionStrategy.autoDeleteConflictingRevision.mockReturnValue(true);
 
     const result = service.shouldDeleteConflictingRevision(
       testDoc,
@@ -46,14 +48,14 @@ describe("AutoResolutionService", () => {
     expect(
       mockResolutionStrategy.autoDeleteConflictingRevision,
     ).toHaveBeenCalled();
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
   });
 
   it("should not suggest auto delete conflicts if no strategy applies", () => {
     const testDoc = { _id: "abc", _rev: "rev-1a", value: 1 };
     const testConflictDoc = { _id: "abc", _rev: "rev-1b", value: 2 };
 
-    mockResolutionStrategy.autoDeleteConflictingRevision.and.returnValue(false);
+    mockResolutionStrategy.autoDeleteConflictingRevision.mockReturnValue(false);
 
     const result = service.shouldDeleteConflictingRevision(
       testDoc,
@@ -63,6 +65,6 @@ describe("AutoResolutionService", () => {
     expect(
       mockResolutionStrategy.autoDeleteConflictingRevision,
     ).toHaveBeenCalled();
-    expect(result).toBeFalse();
+    expect(result).toBe(false);
   });
 });

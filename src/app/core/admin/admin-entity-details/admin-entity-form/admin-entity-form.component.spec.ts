@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
@@ -29,8 +24,8 @@ describe("AdminEntityFormComponent", () => {
   let component: AdminEntityFormComponent;
   let fixture: ComponentFixture<AdminEntityFormComponent>;
 
-  let mockFormService: jasmine.SpyObj<EntityFormService>;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockFormService: any;
+  let mockDialog: any;
 
   let testConfig: FormConfig;
 
@@ -42,24 +37,30 @@ describe("AdminEntityFormComponent", () => {
       ],
     };
 
-    mockFormService = jasmine.createSpyObj("EntityFormService", [
-      "createEntityForm",
-      "extendFormFieldConfig",
-    ]);
-    mockFormService.createEntityForm.and.returnValue(
+    mockFormService = {
+      createEntityForm: vi.fn().mockName("EntityFormService.createEntityForm"),
+      extendFormFieldConfig: vi
+        .fn()
+        .mockName("EntityFormService.extendFormFieldConfig"),
+    };
+    mockFormService.createEntityForm.mockReturnValue(
       Promise.resolve({
         formGroup: new FormGroup({}),
       } as EntityForm<any>),
     );
-    mockFormService.extendFormFieldConfig.and.callFake((field, entityType) => {
-      const fieldConfig = toFormFieldConfig(field);
-      const schemaField = entityType.schema.get(fieldConfig.id);
-      if (schemaField) {
-        return { ...schemaField, ...fieldConfig };
-      }
-      return fieldConfig;
-    });
-    mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
+    mockFormService.extendFormFieldConfig.mockImplementation(
+      (field, entityType) => {
+        const fieldConfig = toFormFieldConfig(field);
+        const schemaField = entityType.schema.get(fieldConfig.id);
+        if (schemaField) {
+          return { ...schemaField, ...fieldConfig };
+        }
+        return fieldConfig;
+      },
+    );
+    mockDialog = {
+      open: vi.fn().mockName("MatDialog.open"),
+    };
 
     TestBed.configureTestingModule({
       imports: [
@@ -79,7 +80,9 @@ describe("AdminEntityFormComponent", () => {
         },
         {
           provide: DefaultValueService,
-          useValue: jasmine.createSpyObj(["getDefaultValueUiHint"]),
+          useValue: {
+            getDefaultValueUiHint: vi.fn(),
+          },
         },
       ],
     });
@@ -138,98 +141,130 @@ describe("AdminEntityFormComponent", () => {
     >;
   }
 
-  it("should add new field in view if field config dialog succeeds", fakeAsync(() => {
-    const newField = {
-      id: "test",
-      label: "Test Field",
-    };
-    mockDialog.open.and.returnValue({
-      afterClosed: () => of(newField),
-    } as any);
+  it("should add new field in view if field config dialog succeeds", async () => {
+    vi.useFakeTimers();
+    try {
+      const newField = {
+        id: "test",
+        label: "Test Field",
+      };
+      mockDialog.open.mockReturnValue({
+        afterClosed: () => of(newField),
+      } as any);
 
-    const targetContainer = component.config.fieldGroups[0].fields;
-    component.drop(mockDropNewFieldEvent(targetContainer));
-    tick();
+      const targetContainer = component.config.fieldGroups[0].fields;
+      component.drop(mockDropNewFieldEvent(targetContainer));
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockDialog.open).toHaveBeenCalled();
-    expect(targetContainer).toEqual(["name", newField.id, "other"]);
-    expect(component.availableFields()).toContain(
-      component.createNewFieldPlaceholder,
-    );
-  }));
+      expect(mockDialog.open).toHaveBeenCalled();
+      expect(targetContainer).toEqual(["name", newField.id, "other"]);
+      expect(component.availableFields()).toContain(
+        component.createNewFieldPlaceholder,
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should not add new field in view if field config dialog is cancelled", fakeAsync(() => {
-    mockDialog.open.and.returnValue({ afterClosed: () => of("") } as any);
+  it("should not add new field in view if field config dialog is cancelled", async () => {
+    vi.useFakeTimers();
+    try {
+      mockDialog.open.mockReturnValue({ afterClosed: () => of("") } as any);
 
-    const targetContainer = component.config.fieldGroups[0].fields;
-    component.drop(mockDropNewFieldEvent(targetContainer));
-    tick();
+      const targetContainer = component.config.fieldGroups[0].fields;
+      component.drop(mockDropNewFieldEvent(targetContainer));
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(targetContainer).toEqual(["name", "other"]);
-    expect(mockDialog.open).toHaveBeenCalled();
-    expect(component.availableFields()).toContain(
-      component.createNewFieldPlaceholder,
-    );
-  }));
+      expect(targetContainer).toEqual(["name", "other"]);
+      expect(mockDialog.open).toHaveBeenCalled();
+      expect(component.availableFields()).toContain(
+        component.createNewFieldPlaceholder,
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should not create field (show dialog) if new field is dropped on toolbar (available fields)", fakeAsync(() => {
-    component.drop(mockDropNewFieldEvent(component.availableFields()));
-    tick();
+  it("should not create field (show dialog) if new field is dropped on toolbar (available fields)", async () => {
+    vi.useFakeTimers();
+    try {
+      component.drop(mockDropNewFieldEvent(component.availableFields()));
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockDialog.open).not.toHaveBeenCalled();
-  }));
+      expect(mockDialog.open).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should create a new fieldGroup in config on dropping field in new-group drop area", fakeAsync(() => {
-    const field = component.config.fieldGroups[0].fields[0];
-    const dropEvent = mockDropNewFieldEvent(
-      null,
-      component.config.fieldGroups[0].fields,
-      0,
-    );
-    component.dropNewGroup(dropEvent);
-    tick();
+  it("should create a new fieldGroup in config on dropping field in new-group drop area", async () => {
+    vi.useFakeTimers();
+    try {
+      const field = component.config.fieldGroups[0].fields[0];
+      const dropEvent = mockDropNewFieldEvent(
+        null,
+        component.config.fieldGroups[0].fields,
+        0,
+      );
+      component.dropNewGroup(dropEvent);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.config.fieldGroups[2]).toEqual({ fields: [field] });
-  }));
+      expect(component.config.fieldGroups[2]).toEqual({ fields: [field] });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should move all fields from removed group to availableFields toolbar", fakeAsync(() => {
-    const removedFields = component.config.fieldGroups[0].fields;
-    expect(
-      removedFields.some((x) => component.availableFields().includes(x)),
-    ).not.toBeTrue();
+  it("should move all fields from removed group to availableFields toolbar", async () => {
+    vi.useFakeTimers();
+    try {
+      const removedFields = component.config.fieldGroups[0].fields;
+      expect(
+        removedFields.some((x) => component.availableFields().includes(x)),
+      ).not.toBe(true);
 
-    component.removeGroup(0);
-    tick();
+      component.removeGroup(0);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.config.fieldGroups).toEqual([{ fields: ["category"] }]);
-    expect(component.availableFields()).toEqual(
-      jasmine.arrayContaining(removedFields),
-    );
-  }));
+      expect(component.config.fieldGroups).toEqual([{ fields: ["category"] }]);
+      expect(component.availableFields()).toEqual(
+        expect.arrayContaining(removedFields),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should hide a single field", fakeAsync(() => {
+  it("should hide a single field", async () => {
     const field = "subject";
     const group = component.config.fieldGroups[0];
     component.hideField(field, group);
 
     expect(component.config.fieldGroups[0].fields).not.toContain(field);
-  }));
+  });
 
-  it("should update the global schema when updateEntitySchema is true", fakeAsync(async () => {
-    component.updateEntitySchema = true;
-    const field = { id: "test", label: "Test Field" } as any;
-    spyOn(component, "openFieldConfig").and.returnValue(Promise.resolve(field));
-    const adminEntityService = TestBed.inject(AdminEntityService);
-    spyOn(adminEntityService, "updateSchemaField");
-    await component.openConfigDetails("category" as any);
-    tick();
+  it("should update the global schema when updateEntitySchema is true", async () => {
+    vi.useFakeTimers();
+    try {
+      component.updateEntitySchema = true;
+      const field = { id: "test", label: "Test Field" } as any;
+      vi.spyOn(component, "openFieldConfig").mockReturnValue(
+        Promise.resolve(field),
+      );
+      const adminEntityService = TestBed.inject(AdminEntityService);
+      vi.spyOn(adminEntityService, "updateSchemaField");
+      component.openConfigDetails("category" as any);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(adminEntityService.updateSchemaField).toHaveBeenCalledWith(
-      TestEntity,
-      "test",
-      field,
-    );
-  }));
+      expect(adminEntityService.updateSchemaField).toHaveBeenCalledWith(
+        TestEntity,
+        "test",
+        field,
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should filter fields by field ID and label when searching", async () => {
     TestEntity.schema.set("uniqueTestFieldId", {
@@ -285,17 +320,23 @@ describe("AdminEntityFormComponent", () => {
     }
   });
 
-  it("should prefill label when creating new field with search text", fakeAsync(() => {
-    component.searchFilter.setValue("testField");
-    mockDialog.open.and.returnValue({
-      afterClosed: () => of({ id: "testField" }),
-    } as any);
+  it("should prefill label when creating new field with search text", async () => {
+    vi.useFakeTimers();
+    try {
+      component.searchFilter.setValue("testField");
+      mockDialog.open.mockReturnValue({
+        afterClosed: () => of({ id: "testField" }),
+      } as any);
 
-    component.openFieldConfig(component.createNewFieldPlaceholder);
-    tick();
+      component.openFieldConfig(component.createNewFieldPlaceholder);
+      await vi.advanceTimersByTimeAsync(0);
 
-    const dialogData = mockDialog.open.calls.mostRecent().args[1].data as any;
-    expect(dialogData.entitySchemaField.label).toBe("testField");
-    expect(dialogData.entitySchemaField.id).toBeNull();
-  }));
+      const dialogData = vi.mocked(mockDialog.open).mock.lastCall[1]
+        .data as any;
+      expect(dialogData.entitySchemaField.label).toBe("testField");
+      expect(dialogData.entitySchemaField.id).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

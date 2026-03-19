@@ -39,6 +39,7 @@ describe("BackupService", () => {
 
   afterEach(async () => {
     await db.destroy();
+    vi.unstubAllGlobals();
   });
 
   it("should be created", () => {
@@ -49,12 +50,12 @@ describe("BackupService", () => {
     await db.put({ _id: "Test:1", test: 1 });
 
     const res = await db.getAll();
-    expect(res).toHaveSize(1);
+    expect(res).toHaveLength(1);
 
     await service.clearDatabase();
 
     const resAfter = await db.getAll();
-    expect(resAfter).toBeEmpty();
+    expect(resAfter).toHaveLength(0);
   });
 
   it("getDatabaseExport should return all records", async () => {
@@ -62,7 +63,7 @@ describe("BackupService", () => {
     await db.put({ _id: "Test:2", test: 2 });
 
     const res = await db.getAll();
-    expect(res).toHaveSize(2);
+    expect(res).toHaveLength(2);
 
     const result = await service.getDatabaseExport();
 
@@ -77,19 +78,18 @@ describe("BackupService", () => {
     await db.put({ _id: "Test:2", test: 2 });
 
     const originalData = await db.getAll();
-    expect(originalData).toHaveSize(2);
+    expect(originalData).toHaveLength(2);
 
     const backup = await service.getDatabaseExport();
     await service.clearDatabase();
     await service.restoreData(backup, true);
 
     const res = await db.getAll();
-    expect(res).toHaveSize(2);
-    expect(res.map(ignoreRevProperty))
-      .withContext(
-        "restored records not identical to original records (_rev ignored)",
-      )
-      .toEqual(originalData.map(ignoreRevProperty));
+    expect(res).toHaveLength(2);
+    expect(
+      res.map(ignoreRevProperty),
+      "restored records not identical to original records (_rev ignored)",
+    ).toEqual(originalData.map(ignoreRevProperty));
   });
 
   it("getDatabaseExport should contain an entry for every record", async () => {
@@ -99,7 +99,7 @@ describe("BackupService", () => {
     await db.put(x2);
 
     const res = await db.getAll();
-    expect(res).toHaveSize(2);
+    expect(res).toHaveLength(2);
 
     const result = await service.getDatabaseExport();
 
@@ -113,7 +113,7 @@ describe("BackupService", () => {
     ];
     await service.restoreData(data, true);
     const res = await db.getAll();
-    expect(res).toHaveSize(2);
+    expect(res).toHaveLength(2);
     expect(res.map(ignoreRevProperty)).toEqual([
       { _id: "Test:1", test: 1 },
       { _id: "Test:2", test: 2 },
@@ -125,16 +125,14 @@ describe("BackupService", () => {
     await service.restoreData(data);
 
     const res = await db.getAll();
-    expect(res).toHaveSize(1);
-    expect(res[0].other)
-      .withContext("empty property was added anyway")
-      .toBeUndefined();
+    expect(res).toHaveLength(1);
+    expect(res[0].other, "empty property was added anyway").toBeUndefined();
     expect(res.map(ignoreRevProperty)).toEqual([{ _id: "Test:1", test: 1 }]);
   });
 
   it("should reset the application after confirmation", async () => {
     const confirmationDialog = TestBed.inject(ConfirmationDialogService);
-    spyOn(confirmationDialog, "getConfirmation").and.returnValue({
+    vi.spyOn(confirmationDialog, "getConfirmation").mockReturnValue({
       afterClosed: () => of(true),
     } as any);
     localStorage.setItem("someItem", "someValue");
@@ -152,35 +150,42 @@ describe("BackupService", () => {
   it("runPendingReset should delete all databases and unregister service workers", async () => {
     sessionStorage.setItem(BackupService.RESET_PENDING_KEY, "1");
 
-    // Spy on global APIs used by the static method
+    // Stub global indexedDB (not available in jsdom)
     const mockDbs = [{ name: "db1" }, { name: "db2" }];
-    spyOn(indexedDB, "databases").and.resolveTo(mockDbs as any);
-    const mockDeleteReq = { onsuccess: null as any, onerror: null as any };
-    spyOn(indexedDB, "deleteDatabase").and.callFake(() => {
-      const req = { ...mockDeleteReq };
+    const deleteDatabase = vi.fn().mockImplementation(() => {
+      const req = { onsuccess: null as any, onerror: null as any };
       setTimeout(() => req.onsuccess?.());
       return req as any;
     });
-    const unregisterSpy = jasmine.createSpy().and.resolveTo(true);
-    spyOn(navigator.serviceWorker, "getRegistrations").and.resolveTo([
-      { unregister: unregisterSpy } as any,
-    ]);
+    const databases = vi.fn().mockResolvedValue(mockDbs as any);
+    vi.stubGlobal("indexedDB", { databases, deleteDatabase });
+    const unregisterSpy = vi.fn().mockResolvedValue(true);
+    Object.defineProperty(navigator, "serviceWorker", {
+      value: {
+        getRegistrations: vi
+          .fn()
+          .mockResolvedValue([{ unregister: unregisterSpy } as any]),
+      },
+      configurable: true,
+      writable: true,
+    });
 
     await BackupService.runPendingReset();
 
-    expect(indexedDB.deleteDatabase).toHaveBeenCalledWith("db1");
-    expect(indexedDB.deleteDatabase).toHaveBeenCalledWith("db2");
+    expect(deleteDatabase).toHaveBeenCalledWith("db1");
+    expect(deleteDatabase).toHaveBeenCalledWith("db2");
     expect(unregisterSpy).toHaveBeenCalled();
     expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBeNull();
   });
 
   it("runPendingReset should do nothing when no reset is pending", async () => {
     sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
-    spyOn(indexedDB, "databases");
+    const databases = vi.fn();
+    vi.stubGlobal("indexedDB", { databases });
 
     await BackupService.runPendingReset();
 
-    expect(indexedDB.databases).not.toHaveBeenCalled();
+    expect(databases).not.toHaveBeenCalled();
   });
 
   function ignoreRevProperty(x) {

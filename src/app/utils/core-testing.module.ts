@@ -13,6 +13,7 @@ import { EntityAbility } from "../core/permissions/ability/entity-ability";
 import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
 import { defaultValueStrategyProviders } from "../core/default-values/standard-default-value-strategies";
 import { SyncStateSubject } from "../core/session/session-type";
+import { vi } from "vitest";
 
 /**
  * A basic module that can be imported in unit tests to provide default datatypes.
@@ -27,7 +28,7 @@ import { SyncStateSubject } from "../core/session/session-type";
     ConfigurableEnumService,
     {
       provide: EntityActionsService,
-      useValue: jasmine.createSpyObj(["anonymize"]),
+      useValue: { anonymize: vi.fn() },
     },
     EntitySchemaService,
     EntityAbility,

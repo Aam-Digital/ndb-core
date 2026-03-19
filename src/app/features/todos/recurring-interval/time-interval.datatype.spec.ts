@@ -1,5 +1,5 @@
 import { TimeIntervalDatatype } from "./time-interval.datatype";
-import { testDatatype } from "../../../core/entity/schema/entity-schema.service.spec";
+import { testDatatype } from "../../../core/entity/schema/entity-schema.service.test-utils";
 
 describe("Schema data type: time-interval", () => {
   testDatatype(

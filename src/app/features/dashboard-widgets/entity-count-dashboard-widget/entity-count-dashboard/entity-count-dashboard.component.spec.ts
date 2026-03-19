@@ -90,14 +90,14 @@ describe("EntityCountDashboardComponent", () => {
         value: 2,
         id: c1.id,
         fieldName: "test",
-        entity: jasmine.any(TestEntity),
+        entity: expect.any(TestEntity),
       },
       {
         label: c2.label,
         value: 1,
         id: c2.id,
         fieldName: "test",
-        entity: jasmine.any(TestEntity),
+        entity: expect.any(TestEntity),
       },
     ]);
 
@@ -153,7 +153,7 @@ describe("EntityCountDashboardComponent", () => {
         value: 1,
         id: "01",
         fieldName: "test",
-        entity: jasmine.any(TestEntity),
+        entity: expect.any(TestEntity),
       },
     ]);
 
@@ -179,20 +179,24 @@ describe("EntityCountDashboardComponent", () => {
         component.groupBy[component.currentGroupIndex]
       ];
 
-    expect(currentlyShownGroupCounts).toHaveSize(2);
-    expect(currentlyShownGroupCounts).toContain({
-      label: undefined,
-      value: 1,
-      id: "",
-      fieldName: "ref",
-    });
-    expect(currentlyShownGroupCounts).toContain({
-      label: c1.getId(),
-      value: 1,
-      id: c1.getId(),
-      fieldName: "ref",
-      entity: jasmine.any(TestEntity),
-    });
+    expect(currentlyShownGroupCounts).toHaveLength(2);
+    expect(currentlyShownGroupCounts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          label: undefined,
+          value: 1,
+          id: "",
+          fieldName: "ref",
+        }),
+        expect.objectContaining({
+          label: c1.getId(),
+          value: 1,
+          id: c1.getId(),
+          fieldName: "ref",
+          entity: expect.any(TestEntity),
+        }),
+      ]),
+    );
   });
 
   it("should groupBy arrays, split and summarized for individual array elements", async () => {
@@ -215,26 +219,30 @@ describe("EntityCountDashboardComponent", () => {
         component.groupBy[component.currentGroupIndex]
       ];
 
-    expect(currentlyShownGroupCounts).toHaveSize(3);
-    expect(currentlyShownGroupCounts).toContain({
-      label: undefined,
-      value: 1,
-      id: "",
-      fieldName: "children",
-    });
-    expect(currentlyShownGroupCounts).toContain({
-      label: "link-1",
-      value: 2,
-      id: "link-1",
-      fieldName: "children",
-      entity: jasmine.any(Note),
-    });
-    expect(currentlyShownGroupCounts).toContain({
-      label: "link-2",
-      value: 1,
-      id: "link-2",
-      fieldName: "children",
-      entity: jasmine.any(Note),
-    });
+    expect(currentlyShownGroupCounts).toHaveLength(3);
+    expect(currentlyShownGroupCounts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          label: undefined,
+          value: 1,
+          id: "",
+          fieldName: "children",
+        }),
+        expect.objectContaining({
+          label: "link-1",
+          value: 2,
+          id: "link-1",
+          fieldName: "children",
+          entity: expect.any(Note),
+        }),
+        expect.objectContaining({
+          label: "link-2",
+          value: 1,
+          id: "link-2",
+          fieldName: "children",
+          entity: expect.any(Note),
+        }),
+      ]),
+    );
   });
 });

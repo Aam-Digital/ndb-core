@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import {
   DetailsComponentData,
@@ -24,11 +18,13 @@ describe("RowDetailsComponent", () => {
   let fixture: ComponentFixture<RowDetailsComponent>;
   let detailsComponentData: DetailsComponentData;
 
-  let mockFormService: jasmine.SpyObj<EntityFormService>;
+  let mockFormService: any;
 
   beforeEach(waitForAsync(() => {
-    mockFormService = jasmine.createSpyObj(["createEntityForm"]);
-    mockFormService.createEntityForm.and.returnValue(
+    mockFormService = {
+      createEntityForm: vi.fn(),
+    };
+    mockFormService.createEntityForm.mockReturnValue(
       Promise.resolve({
         formGroup: new FormBuilder().group({}),
       } as EntityForm<any>),
@@ -48,7 +44,7 @@ describe("RowDetailsComponent", () => {
         },
       ],
     }).compileComponents();
-    spyOn(TestBed.inject(EntityAbility), "cannot").and.returnValue(true);
+    vi.spyOn(TestBed.inject(EntityAbility), "cannot").mockReturnValue(true);
   }));
 
   function initComponent() {
@@ -57,9 +53,14 @@ describe("RowDetailsComponent", () => {
     fixture.detectChanges();
   }
 
-  it("should create", fakeAsync(() => {
-    initComponent();
-    tick();
-    expect(component).toBeTruthy();
-  }));
+  it("should create", async () => {
+    vi.useFakeTimers();
+    try {
+      initComponent();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(component).toBeTruthy();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

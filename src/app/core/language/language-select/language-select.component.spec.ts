@@ -6,20 +6,30 @@ import { LanguageService } from "../language.service";
 import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { availableLocales } from "../languages";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import type { Mock } from "vitest";
+
+type LanguageServiceMock = Pick<
+  LanguageService,
+  "getCurrentLocale" | "initDefaultLanguage" | "switchLocale"
+> & {
+  getCurrentLocale: Mock;
+  initDefaultLanguage: Mock;
+  switchLocale: Mock;
+};
 
 describe("LanguageSelectComponent", () => {
   let component: LanguageSelectComponent;
   let fixture: ComponentFixture<LanguageSelectComponent>;
-  let mockLocation: jasmine.SpyObj<Location>;
-  let mockLanguageService: jasmine.SpyObj<LanguageService>;
+  let mockLanguageService: LanguageServiceMock;
 
   beforeEach(async () => {
-    mockLocation = jasmine.createSpyObj("Location", ["reload"]);
-    mockLanguageService = jasmine.createSpyObj("LanguageService", [
-      "getCurrentLocale",
-      "initDefaultLanguage",
-      "switchLocale",
-    ]);
+    mockLanguageService = {
+      getCurrentLocale: vi.fn().mockName("LanguageService.getCurrentLocale"),
+      initDefaultLanguage: vi
+        .fn()
+        .mockName("LanguageService.initDefaultLanguage"),
+      switchLocale: vi.fn().mockName("LanguageService.switchLocale"),
+    };
     await TestBed.configureTestingModule({
       imports: [
         LanguageSelectComponent,
