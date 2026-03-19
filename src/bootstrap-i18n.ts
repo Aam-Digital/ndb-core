@@ -47,14 +47,18 @@ async function fetchTranslations(
 ): Promise<Record<string, string> | undefined> {
   const cdnUrl = environment.translationsCdnUrl;
   if (cdnUrl) {
-    try {
-      const url = `${cdnUrl}/${environment.appVersion}/messages.${locale}.json`;
-      const response = await fetch(url);
-      if (response.ok) {
-        return await response.json();
+    const versionedUrl = `${cdnUrl}/${environment.appVersion}/messages.${locale}.json`;
+    const latestUrl = `${cdnUrl}/latest/messages.${locale}.json`;
+
+    for (const url of [versionedUrl, latestUrl]) {
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          return await response.json();
+        }
+      } catch (e) {
+        Logging.debug(`CDN fetch failed for '${url}':`, e);
       }
-    } catch (e) {
-      Logging.debug(`CDN fetch failed for locale '${locale}':`, e);
     }
   }
 

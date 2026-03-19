@@ -65,12 +65,19 @@ jobs:
               | with_entries(.value |= gsub("<x id=\"(?<id>[^\"]*)\"[^/]*/>"; "{$\(.id)}"))' "$outfile" > "$outfile.tmp" && mv "$outfile.tmp" "$outfile"
           done
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy versioned translations to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: locale/${{ steps.version.outputs.tag }}
           destination_dir: locale/${{ steps.version.outputs.tag }}
+
+      - name: Deploy latest translations to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: locale/${{ steps.version.outputs.tag }}
+          destination_dir: locale/latest
 
       - name: Clean up pre-release translations on stable release
         if: github.event_name == 'release' && !github.event.release.prerelease
