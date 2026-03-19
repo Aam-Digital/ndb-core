@@ -7,6 +7,56 @@
         <div class="header" i18n>Record A</div>
         <div class="header" i18n>Record B</div>
         <div class="header" i18n>Merge Preview</div>
+        @if (hasAnyUserAccount) {
+          <!-- Account Email row -->
+          <div class="label-cell">
+            <strong i18n>Account Email</strong>
+          </div>
+          <div>{{ entityAccounts[0]?.email ?? "-" }}</div>
+          <div>{{ entityAccounts[1]?.email ?? "-" }}</div>
+          <div class="preview-cell">
+            @if (accountForm) {
+              <mat-form-field class="full-width">
+                <mat-label i18n>Email</mat-label>
+                <input
+                  matInput
+                  type="email"
+                  [formControl]="accountEmailControl"
+                />
+                @if (accountEmailControl?.hasError("email")) {
+                  <mat-error i18n>Please enter a valid email</mat-error>
+                }
+              </mat-form-field>
+            } @else {
+              {{ entityAccounts[0]?.email ?? "-" }}
+            }
+          </div>
+          <!-- Account Roles row -->
+          <div class="label-cell">
+            <strong i18n>Account Roles</strong>
+          </div>
+          <div>{{ formatRoles(entityAccounts[0]) }}</div>
+          <div>{{ formatRoles(entityAccounts[1]) }}</div>
+          <div class="preview-cell">
+            @if (accountForm) {
+              <mat-form-field class="full-width">
+                <mat-label i18n>Roles</mat-label>
+                <mat-select [formControl]="accountRolesControl" multiple>
+                  <mat-select-trigger>
+                    @for (role of accountRolesControl?.value; track role.id) {
+                      <span>{{ role.name }} </span>
+                    }
+                  </mat-select-trigger>
+                  @for (role of availableRoles; track role.id) {
+                    <mat-option [value]="role">{{ role.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            } @else {
+              {{ formatRoles(entityAccounts[0]) }}
+            }
+          </div>
+        }
         @for (field of fieldsToMerge; track field.id) {
           <div class="label-cell">
             <strong>{{ field.label }}</strong>

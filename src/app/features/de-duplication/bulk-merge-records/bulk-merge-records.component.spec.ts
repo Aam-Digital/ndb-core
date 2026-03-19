@@ -6,6 +6,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
 import { BulkMergeRecordsComponent } from "./bulk-merge-records.component";
+import { UserAdminService } from "app/core/user/user-admin-service/user-admin.service";
+import { of } from "rxjs";
 
 describe("BulkMergeRecordsComponent", () => {
   let component: BulkMergeRecordsComponent<TestEntity>;
@@ -44,6 +46,10 @@ describe("BulkMergeRecordsComponent", () => {
           },
         },
         { provide: EntityFormService, useValue: mockEntityFormService },
+        {
+          provide: UserAdminService,
+          useValue: { getAllRoles: vi.fn().mockReturnValue(of([])) },
+        },
       ],
     }).compileComponents();
 

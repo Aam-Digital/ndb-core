@@ -12,9 +12,19 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
 import { Entity } from "app/core/entity/model/entity";
 import { DatabaseField } from "app/core/entity/database-field.decorator";
-import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
+import { AttendanceItem } from "app/features/attendance/model/attendance-item";
 import { Note } from "app/child-dev-project/notes/model/note";
 import { createEntityOfType } from "app/core/demo-data/create-entity-of-type";
+import { UserAdminService } from "app/core/user/user-admin-service/user-admin.service";
+import { MatDialog } from "@angular/material/dialog";
+import { of, throwError } from "rxjs";
+import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import type { Mock } from "vitest";
+
+@DatabaseEntity("TestEntityWithAccounts")
+class TestEntityWithAccounts extends Entity {
+  static override enableUserAccounts = true;
+}
 
 @DatabaseEntity("EntityWithMergedRelations")
 class EntityWithMergedRelations extends Entity {
@@ -54,14 +64,36 @@ describe("BulkMergeService", () => {
   let service: BulkMergeService;
 
   let entityMapper: MockEntityMapperService;
+  let mockUserAdminService: { getUser: Mock; deleteUser: Mock };
+  let mockMatDialog: { open: Mock };
+  let mockConfirmationDialog: { getConfirmation: Mock };
 
   let recordA: TestEntity;
   let recordB: TestEntity;
 
   beforeEach(() => {
+    mockUserAdminService = {
+      getUser: vi.fn().mockReturnValue(throwError(() => ({ status: 404 }))),
+      deleteUser: vi.fn().mockReturnValue(of({ userDeleted: true })),
+    };
+    mockMatDialog = {
+      open: vi.fn().mockReturnValue({ afterClosed: () => of(undefined) }),
+    };
+    mockConfirmationDialog = {
+      getConfirmation: vi.fn().mockResolvedValue(true),
+    };
+
     TestBed.configureTestingModule({
       imports: [CoreTestingModule, NoopAnimationsModule],
-      providers: [...mockEntityMapperProvider()],
+      providers: [
+        ...mockEntityMapperProvider(),
+        { provide: UserAdminService, useValue: mockUserAdminService },
+        { provide: MatDialog, useValue: mockMatDialog },
+        {
+          provide: ConfirmationDialogService,
+          useValue: mockConfirmationDialog,
+        },
+      ],
     });
 
     service = TestBed.inject(BulkMergeService);
@@ -171,5 +203,86 @@ describe("BulkMergeService", () => {
     expect(
       updated.attendance.every((a) => a.participant === recordA.getId()),
     ).toBe(true);
+  });
+
+  describe("user account handling", () => {
+    let entityA: TestEntityWithAccounts;
+    let entityB: TestEntityWithAccounts;
+    const mockUserAccount = { id: "kc-1", email: "b@test.com", enabled: true };
+
+    beforeEach(() => {
+      entityA = new TestEntityWithAccounts();
+      entityB = new TestEntityWithAccounts();
+      entityMapper.addAll([entityA, entityB]);
+    });
+
+    it("should delete the user account of the discarded entity on executeMerge", async () => {
+      const mergedEntity = Object.assign(new TestEntityWithAccounts(), entityA);
+      mergedEntity["_id"] = entityA.getId();
+
+      await service.executeMerge(mergedEntity, [entityA, entityB]);
+
+      expect(mockUserAdminService.deleteUser).toHaveBeenCalledWith(
+        entityB.getId(),
+      );
+      expect(mockUserAdminService.deleteUser).not.toHaveBeenCalledWith(
+        entityA.getId(),
+      );
+    });
+
+    it("should not call deleteUser when entity type does not have enableUserAccounts", async () => {
+      const mergedEntity = TestEntity.create({ ...recordA, name: "A1" });
+      await service.executeMerge(mergedEntity, [recordA, recordB]);
+
+      expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
+    });
+
+    it("should reorder entities in showMergeDialog so account-holder is primary (index 0)", async () => {
+      // Only entityB has an account
+      mockUserAdminService.getUser.mockImplementation((entityId: string) => {
+        if (entityId === entityB.getId()) return of(mockUserAccount);
+        return throwError(() => ({ status: 404 }));
+      });
+
+      await service.showMergeDialog([entityA, entityB], TestEntityWithAccounts);
+
+      const dialogData = mockMatDialog.open.mock.calls[0][1].data;
+      expect(dialogData.entitiesToMerge[0].getId()).toBe(entityB.getId());
+      expect(dialogData.entityAccounts[0]).toEqual(mockUserAccount);
+      expect(dialogData.entityAccounts[1]).toBeNull();
+    });
+
+    it("should warn and abort showMergeDialog if user cancels when both entities have accounts", async () => {
+      const mockAccountA = { id: "kc-a", email: "a@test.com", enabled: true };
+      mockUserAdminService.getUser.mockImplementation((entityId: string) => {
+        if (entityId === entityA.getId()) return of(mockAccountA);
+        return of(mockUserAccount);
+      });
+      mockConfirmationDialog.getConfirmation.mockResolvedValue(false);
+
+      const result = await service.showMergeDialog(
+        [entityA, entityB],
+        TestEntityWithAccounts,
+      );
+
+      expect(result).toBe(false);
+      expect(mockMatDialog.open).not.toHaveBeenCalled();
+    });
+
+    it("should pass both accounts to dialog and proceed when user confirms both-account warning", async () => {
+      const mockAccountA = { id: "kc-a", email: "a@test.com", enabled: true };
+      mockUserAdminService.getUser.mockImplementation((entityId: string) => {
+        if (entityId === entityA.getId()) return of(mockAccountA);
+        return of(mockUserAccount);
+      });
+      mockConfirmationDialog.getConfirmation.mockResolvedValue(true);
+
+      await service.showMergeDialog([entityA, entityB], TestEntityWithAccounts);
+
+      expect(mockMatDialog.open).toHaveBeenCalled();
+      const dialogData = mockMatDialog.open.mock.calls[0][1].data;
+      expect(dialogData.entityAccounts[0]).toEqual(mockAccountA);
+      expect(dialogData.entityAccounts[1]).toEqual(mockUserAccount);
+    });
   });
 });

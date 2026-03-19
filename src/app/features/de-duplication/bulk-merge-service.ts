@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { MatDialog } from "@angular/material/dialog";
-import { lastValueFrom } from "rxjs";
+import { catchError, lastValueFrom, of } from "rxjs";
 import { BulkMergeRecordsComponent } from "app/features/de-duplication/bulk-merge-records/bulk-merge-records.component";
 import { AlertService } from "app/core/alerts/alert.service";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
@@ -13,6 +13,8 @@ import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-rel
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { AttendanceDatatype } from "../attendance/model/attendance.datatype";
 import { EventAttendanceMapDatatype } from "../attendance/deprecated/event-attendance-map.datatype";
+import { UserAdminService } from "app/core/user/user-admin-service/user-admin.service";
+import { UserAccount } from "app/core/user/user-admin-service/user-account";
 
 @Injectable({
   providedIn: "root",
@@ -24,6 +26,7 @@ export class BulkMergeService {
   private readonly alert = inject(AlertService);
   private readonly unsavedChangesService = inject(UnsavedChangesService);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
+  private readonly userAdminService = inject(UserAdminService);
 
   /**
    * Validates selection and opens the merge dialog for the given entities.
@@ -46,6 +49,8 @@ export class BulkMergeService {
 
   /**
    * Opens the merge popup with the selected entities details.
+   * Checks for linked user accounts, ensures the account-holder is the primary
+   * entity (whose ID is retained), and warns if both entities have accounts.
    *
    * @param entitiesToMerge The entities to merge.
    * @param entityType The type of the entities.
@@ -54,9 +59,32 @@ export class BulkMergeService {
     entitiesToMerge: E[],
     entityType: EntityConstructor,
   ): Promise<boolean> {
+    const entityAccounts = await Promise.all(
+      entitiesToMerge.map((e) => this.getUserAccount(e)),
+    );
+
+    // Ensure the entity with a user account is at index 0 (primary, whose ID is retained)
+    if (!entityAccounts[0] && entityAccounts[1]) {
+      entitiesToMerge = [entitiesToMerge[1], entitiesToMerge[0]];
+      entityAccounts.reverse();
+    }
+
+    // Warn if both entities have accounts — one will be deleted
+    if (entityAccounts[0] && entityAccounts[1]) {
+      const confirmed = await this.confirmationDialog.getConfirmation(
+        $localize`:merge account warning title:Warning! Both records have user accounts`,
+        $localize`:merge account warning:Both records have linked user accounts. Merging will delete the user account of "Record B". This cannot be undone.\nAre you sure you want to continue?`,
+      );
+      if (!confirmed) return false;
+    }
+
     const dialogRef = this.matDialog.open(BulkMergeRecordsComponent, {
       maxHeight: "90vh",
-      data: { entityConstructor: entityType, entitiesToMerge: entitiesToMerge },
+      data: {
+        entityConstructor: entityType,
+        entitiesToMerge: entitiesToMerge,
+        entityAccounts: entityAccounts,
+      },
     });
     const mergedEntity: E | undefined = await lastValueFrom(
       dialogRef.afterClosed(),
@@ -68,6 +96,21 @@ export class BulkMergeService {
     this.unsavedChangesService.pending = false;
     this.alert.addInfo($localize`Records merged successfully.`);
     return true;
+  }
+
+  /**
+   * Get the user account linked to the given entity, or null if none exists.
+   */
+  private async getUserAccount(entity: Entity): Promise<UserAccount | null> {
+    if (!entity.getConstructor()?.enableUserAccounts) return null;
+    return lastValueFrom(
+      this.userAdminService.getUser(entity.getId()).pipe(
+        catchError((err) => {
+          if (err?.status === 404) return of(null);
+          throw err;
+        }),
+      ),
+    );
   }
 
   /**
@@ -86,6 +129,14 @@ export class BulkMergeService {
     // Process all entities to be deleted
     for (let e of entitiesToMerge) {
       if (e.getId() === mergedEntity.getId()) continue;
+
+      // Delete any linked user account for the entity being discarded
+      if (e.getConstructor()?.enableUserAccounts) {
+        this.userAdminService.deleteUser(e.getId()).subscribe({
+          next: () => {},
+          error: () => {},
+        });
+      }
 
       await this.updateRelatedRefId(e, mergedEntity);
 

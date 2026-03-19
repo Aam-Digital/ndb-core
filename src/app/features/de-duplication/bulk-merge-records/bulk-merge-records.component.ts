@@ -1,7 +1,18 @@
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
-import { Component, inject, OnInit } from "@angular/core";
-import { ReactiveFormsModule } from "@angular/forms";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from "@angular/core";
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -10,17 +21,25 @@ import {
   MatDialogContent,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { MatError } from "@angular/material/form-field";
+import { MatError, MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { MergeFieldsComponent } from "./merge-fields/merge-fields.component";
+import { UserAdminService } from "app/core/user/user-admin-service/user-admin.service";
+import {
+  Role,
+  UserAccount,
+} from "app/core/user/user-admin-service/user-account";
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
+import { lastValueFrom } from "rxjs";
 
 @Component({
   selector: "app-bulk-merge-records",
-  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogActions,
     MatDialogContent,
@@ -31,6 +50,9 @@ import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common
     MatDialogClose,
     MergeFieldsComponent,
     WarningNotOptimizedForSmallScreenComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
   ],
   templateUrl: "./bulk-merge-records.component.html",
   styleUrls: ["./bulk-merge-records.component.scss"],
@@ -40,25 +62,53 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     inject<MatDialogRef<BulkMergeRecordsComponent<E>>>(MatDialogRef);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly entityFormService = inject(EntityFormService);
+  private readonly userAdminService = inject(UserAdminService);
+  private readonly fb = inject(FormBuilder);
 
   entityConstructor: EntityConstructor;
   entitiesToMerge: E[];
   mergedEntity: E;
   fieldsToMerge: FormFieldConfig[] = [];
   mergeForm: EntityForm<E>;
+  entityAccounts: (UserAccount | null)[] = [];
+
+  /** Reactive form for editing the surviving account's email and roles */
+  accountForm: FormGroup | null = null;
+  availableRoles: Role[] = [];
 
   /** whether the entitiesToMerge contain some file attachments that would be lost during a merge */
   hasDiscardedFileOrPhoto: boolean = false;
+
+  get hasAnyUserAccount(): boolean {
+    return this.entityAccounts.some((a) => a != null);
+  }
+
+  get accountEmailControl(): FormControl {
+    return this.accountForm?.get("email") as FormControl;
+  }
+
+  get accountRolesControl(): FormControl {
+    return this.accountForm?.get("roles") as FormControl;
+  }
+
+  formatRoles(account: UserAccount | null | undefined): string {
+    if (!account?.roles?.length) return "-";
+    return account.roles.map((r) => r.name).join(", ");
+  }
 
   constructor() {
     const data = inject<{
       entityConstructor: EntityConstructor;
       entitiesToMerge: E[];
+      entityAccounts?: (UserAccount | null)[];
     }>(MAT_DIALOG_DATA);
 
     this.entityConstructor = data.entityConstructor;
     this.entitiesToMerge = data.entitiesToMerge;
-    this.mergedEntity = new this.entityConstructor() as E;
+    this.entityAccounts = data.entityAccounts ?? [];
+    // Use the primary entity's values as the base so form validators (e.g. uniqueness)
+    // treat existing values as the "default" and don't incorrectly flag them as duplicates.
+    this.mergedEntity = this.entitiesToMerge[0].copy() as E;
   }
 
   async ngOnInit(): Promise<void> {
@@ -67,6 +117,32 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       this.fieldsToMerge,
       this.mergedEntity,
     );
+
+    if (this.hasAnyUserAccount) {
+      await this.initAccountForm();
+    }
+  }
+
+  private async initAccountForm(): Promise<void> {
+    const primaryAccount = this.entityAccounts[0];
+
+    try {
+      this.availableRoles = await lastValueFrom(
+        this.userAdminService.getAllRoles(),
+      );
+    } catch {
+      this.availableRoles = primaryAccount?.roles ?? [];
+    }
+
+    // Map the current roles to available role objects to ensure reference equality for mat-select
+    const currentRoles = (primaryAccount?.roles ?? [])
+      .map((r) => this.availableRoles.find((ar) => ar.id === r.id))
+      .filter((r): r is Role => r !== undefined);
+
+    this.accountForm = this.fb.group({
+      email: [primaryAccount?.email ?? "", [Validators.email]],
+      roles: new FormControl<Role[]>(currentRoles),
+    });
   }
 
   private initFieldsToMerge(): void {
@@ -132,11 +208,39 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       return false;
     }
 
+    await this.applyAccountUpdate();
+
     this.dialogRef.close(
       Object.assign(
         this.entitiesToMerge[0].copy(),
         this.mergeForm.formGroup.value,
       ),
     );
+  }
+
+  /**
+   * Applies any edits made to the surviving account's email/roles via userAdminService.
+   */
+  private async applyAccountUpdate(): Promise<void> {
+    const primaryAccount = this.entityAccounts[0];
+    if (!primaryAccount?.id || !this.accountForm?.dirty) return;
+
+    const formValue = this.accountForm.getRawValue();
+    const update: Partial<UserAccount> = {};
+
+    if (formValue.email !== primaryAccount.email) {
+      update.email = formValue.email;
+    }
+    if (
+      JSON.stringify(formValue.roles) !== JSON.stringify(primaryAccount.roles)
+    ) {
+      update.roles = formValue.roles;
+    }
+
+    if (Object.keys(update).length > 0) {
+      await lastValueFrom(
+        this.userAdminService.updateUser(primaryAccount.id, update),
+      );
+    }
   }
 }
