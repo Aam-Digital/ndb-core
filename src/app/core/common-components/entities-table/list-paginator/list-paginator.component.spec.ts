@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ListPaginatorComponent } from "./list-paginator.component";
 import { MatTableDataSource } from "@angular/material/table";
@@ -9,11 +9,11 @@ describe("ListPaginatorComponent", () => {
   let component: ListPaginatorComponent<any>;
   let fixture: ComponentFixture<ListPaginatorComponent<any>>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [ListPaginatorComponent, NoopAnimationsModule],
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ListPaginatorComponent);
@@ -42,15 +42,13 @@ describe("ListPaginatorComponent", () => {
     localStorage.setItem(component.LOCAL_STORAGE_KEY + "c1", "11");
     localStorage.setItem(component.LOCAL_STORAGE_KEY + "c2", "12");
 
-    component.idForSavingPagination = "c1";
-    component.ngOnChanges({ idForSavingPagination: undefined });
+    fixture.componentRef.setInput("idForSavingPagination", "c1");
     fixture.detectChanges();
 
     expect(component.pageSize).toBe(11);
     expect(component.paginator.pageSize).toBe(11);
 
-    component.idForSavingPagination = "c2";
-    component.ngOnChanges({ idForSavingPagination: undefined });
+    fixture.componentRef.setInput("idForSavingPagination", "c2");
     fixture.detectChanges();
 
     expect(component.pageSize).toBe(12);

@@ -37,6 +37,6 @@ describe("EntityPermissionGuard", () => {
   it("should get route config also for '**' path", async () => {
     const result = await guard.checkRoutePermissions("url");
 
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
   });
 });

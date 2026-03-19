@@ -25,6 +25,10 @@ describe("InputFileComponent", () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it("should create", () => {
     expect(component).toBeTruthy();
   });
@@ -33,38 +37,42 @@ describe("InputFileComponent", () => {
     mockFileReader();
 
     await component.loadFile(mockFileEvent({ name: "wrong_extension.xlsx" }));
-    expect(component.formControl.invalid).toBeTrue();
+    expect(component.formControl.invalid).toBe(true);
 
     await component.loadFile(mockFileEvent({ name: "good_extension.csv" }));
-    expect(component.formControl.valid).toBeTrue();
+    expect(component.formControl.valid).toBe(true);
   });
 
   it("should show error if file cannot be parsed", async () => {
     mockFileReader();
     const papa = TestBed.inject(Papa);
-    spyOn(papa, "parse").and.returnValue(undefined);
+    vi.spyOn(papa, "parse").mockReturnValue(undefined);
 
     await component.loadFile(mockFileEvent({ name: "file.csv" }));
-    expect(component.formControl.invalid).toBeTrue();
+    expect(component.formControl.invalid).toBe(true);
   });
 
   it("should show error if file is empty", async () => {
     mockFileReader("");
 
     await component.loadFile(mockFileEvent({ name: "file.csv" }));
-    expect(component.formControl.invalid).toBeTrue();
+    expect(component.formControl.invalid).toBe(true);
   });
 });
 
 function mockFileReader(
   result = '_id,name,projectNumber\nChild:1,"John Doe",123',
 ) {
-  const fileReader: any = {
-    result: result,
-    addEventListener: (_str: string, fun: () => any) => fun(),
-    readAsText: () => {},
-  };
-  // mock FileReader constructor
-  spyOn(window, "FileReader").and.returnValue(fileReader);
-  return fileReader;
+  vi.stubGlobal(
+    "FileReader",
+    class {
+      result = result;
+      addEventListener(_str: string, fun: () => any) {
+        fun();
+      }
+      readAsText() {
+        return undefined;
+      }
+    },
+  );
 }

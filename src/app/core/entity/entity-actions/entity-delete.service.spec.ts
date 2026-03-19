@@ -25,31 +25,40 @@ import { DefaultDatatype } from "../default-datatype/default.datatype";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
 import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import { EventAttendanceMapDatatype } from "#src/app/features/attendance/deprecated/event-attendance-map.datatype";
+import type { Mock } from "vitest";
 
 describe("EntityDeleteService", () => {
   let service: EntityDeleteService;
   let entityMapper: MockEntityMapperService;
 
-  let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
-  let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
-  let mockUserAdminService: jasmine.SpyObj<UserAdminService>;
+  let snackBarSpy: { open: Mock };
+  let mockConfirmationDialog: {
+    getConfirmation: Mock;
+    showProgressDialog: Mock;
+  };
+  let mockUserAdminService: { deleteUser: Mock };
 
   beforeEach(() => {
-    mockUserAdminService = jasmine.createSpyObj(["deleteUser"]);
-    mockUserAdminService.deleteUser.and.returnValue(
+    snackBarSpy = {
+      open: vi.fn(),
+    };
+    mockUserAdminService = {
+      deleteUser: vi.fn(),
+    };
+    mockUserAdminService.deleteUser.mockReturnValue(
       throwError(() => {
         new Error();
       }),
     );
 
-    mockConfirmationDialog = jasmine.createSpyObj([
-      "getConfirmation",
-      "showProgressDialog",
-    ]);
-    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
-    mockConfirmationDialog.showProgressDialog.and.returnValue(
-      jasmine.createSpyObj(["close"]),
-    );
+    mockConfirmationDialog = {
+      getConfirmation: vi.fn(),
+      showProgressDialog: vi.fn(),
+    };
+    mockConfirmationDialog.getConfirmation.mockResolvedValue(true);
+    mockConfirmationDialog.showProgressDialog.mockReturnValue({
+      close: vi.fn(),
+    });
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
@@ -118,7 +127,7 @@ describe("EntityDeleteService", () => {
 
   it("should delete several entities and show dialog if keycloak deletion fails", async () => {
     // given
-    mockUserAdminService.deleteUser.and.returnValue(
+    mockUserAdminService.deleteUser.mockReturnValue(
       throwError(() => new Error()),
     );
     const userEntity = new TestEntity();

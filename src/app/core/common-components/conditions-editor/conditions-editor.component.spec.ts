@@ -9,7 +9,8 @@ import { DatabaseField } from "app/core/entity/database-field.decorator";
 
 @DatabaseEntity("ConditionsEditorTestEntity")
 class ConditionsEditorTestEntity extends Entity {
-  @DatabaseField() name: string;
+  @DatabaseField()
+  name: string;
   @DatabaseField({
     dataType: "configurable-enum",
     additional: "genders",
@@ -26,17 +27,25 @@ class ConditionsEditorTestEntity extends Entity {
 describe("ConditionsEditorComponent", () => {
   let component: ConditionsEditorComponent;
   let fixture: ComponentFixture<ConditionsEditorComponent>;
-  let mockEntitySchemaService: jasmine.SpyObj<EntitySchemaService>;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockEntitySchemaService: any;
+  let mockDialog: any;
 
   beforeEach(async () => {
-    mockEntitySchemaService = jasmine.createSpyObj("EntitySchemaService", [
-      "valueToEntityFormat",
-      "valueToDatabaseFormat",
-      "getComponent",
-      "getDatatypeOrDefault",
-    ]);
-    mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
+    mockEntitySchemaService = {
+      valueToEntityFormat: vi
+        .fn()
+        .mockName("EntitySchemaService.valueToEntityFormat"),
+      valueToDatabaseFormat: vi
+        .fn()
+        .mockName("EntitySchemaService.valueToDatabaseFormat"),
+      getComponent: vi.fn().mockName("EntitySchemaService.getComponent"),
+      getDatatypeOrDefault: vi
+        .fn()
+        .mockName("EntitySchemaService.getDatatypeOrDefault"),
+    };
+    mockDialog = {
+      open: vi.fn().mockName("MatDialog.open"),
+    };
 
     await TestBed.configureTestingModule({
       imports: [ConditionsEditorComponent, MockedTestingModule.withState()],
@@ -50,7 +59,7 @@ describe("ConditionsEditorComponent", () => {
     component = fixture.componentInstance;
     component.entityConstructor = ConditionsEditorTestEntity;
     component.conditions = { $or: [] };
-    mockEntitySchemaService.getComponent.and.callFake(
+    mockEntitySchemaService.getComponent.mockImplementation(
       (fieldConfig: { dataType?: string }) =>
         fieldConfig?.dataType === "configurable-enum"
           ? "EditConfigurableEnum"
@@ -83,7 +92,7 @@ describe("ConditionsEditorComponent", () => {
   });
 
   it("should emit conditionsChange when conditions are modified", () => {
-    spyOn(component.conditionsChange, "emit");
+    vi.spyOn(component.conditionsChange, "emit");
     component.addCondition();
     expect(component.conditionsChange.emit).toHaveBeenCalledWith({
       $or: [{}],
@@ -104,9 +113,11 @@ describe("ConditionsEditorComponent", () => {
   });
 
   it("should open JSON editor dialog", () => {
-    const dialogRef = jasmine.createSpyObj("MatDialogRef", ["afterClosed"]);
-    dialogRef.afterClosed.and.returnValue({ subscribe: () => {} } as any);
-    mockDialog.open.and.returnValue(dialogRef);
+    const dialogRef = {
+      afterClosed: vi.fn().mockName("MatDialogRef.afterClosed"),
+    };
+    dialogRef.afterClosed.mockReturnValue({ subscribe: () => {} } as any);
+    mockDialog.open.mockReturnValue(dialogRef);
 
     component.openJsonEditor();
 
@@ -114,7 +125,7 @@ describe("ConditionsEditorComponent", () => {
   });
 
   it("should rebuild form configs on init with existing conditions", () => {
-    mockEntitySchemaService.valueToEntityFormat.and.returnValue("Test Value");
+    mockEntitySchemaService.valueToEntityFormat.mockReturnValue("Test Value");
 
     component.conditions = { $or: [{ name: "Test" }] };
     component.ngOnInit();
@@ -125,8 +136,8 @@ describe("ConditionsEditorComponent", () => {
 
   it("should wrap array field values in $elemMatch", () => {
     component.addCondition();
-    mockEntitySchemaService.valueToEntityFormat.and.returnValue(null);
-    mockEntitySchemaService.valueToDatabaseFormat.and.returnValue(["X"]);
+    mockEntitySchemaService.valueToEntityFormat.mockReturnValue(null);
+    mockEntitySchemaService.valueToDatabaseFormat.mockReturnValue(["X"]);
 
     component.onConditionFieldChange(0, "gender");
 
@@ -139,7 +150,7 @@ describe("ConditionsEditorComponent", () => {
   });
 
   it("should extract value from $elemMatch when loading array field conditions", () => {
-    mockEntitySchemaService.valueToEntityFormat.and.callFake(
+    mockEntitySchemaService.valueToEntityFormat.mockImplementation(
       (val) => val || [],
     );
 
@@ -150,14 +161,14 @@ describe("ConditionsEditorComponent", () => {
 
     expect(mockEntitySchemaService.valueToEntityFormat).toHaveBeenCalledWith(
       ["X"],
-      jasmine.objectContaining({ isArray: true }),
+      expect.objectContaining({ isArray: true }),
     );
   });
 
   it("should handle non-array fields normally", () => {
     component.addCondition();
-    mockEntitySchemaService.valueToEntityFormat.and.returnValue(null);
-    mockEntitySchemaService.valueToDatabaseFormat.and.returnValue("John");
+    mockEntitySchemaService.valueToEntityFormat.mockReturnValue(null);
+    mockEntitySchemaService.valueToDatabaseFormat.mockReturnValue("John");
 
     component.onConditionFieldChange(0, "name");
 
@@ -169,8 +180,8 @@ describe("ConditionsEditorComponent", () => {
 
   it("should wrap non-array enum field multi-selection in $in", () => {
     component.addCondition();
-    mockEntitySchemaService.valueToEntityFormat.and.returnValue(null);
-    mockEntitySchemaService.valueToDatabaseFormat.and.returnValue(["X", "Y"]);
+    mockEntitySchemaService.valueToEntityFormat.mockReturnValue(null);
+    mockEntitySchemaService.valueToDatabaseFormat.mockReturnValue(["X", "Y"]);
 
     component.onConditionFieldChange(0, "genderSingle");
 
@@ -183,7 +194,7 @@ describe("ConditionsEditorComponent", () => {
   });
 
   it("should extract value from $in when loading non-array enum field conditions", () => {
-    mockEntitySchemaService.valueToEntityFormat.and.callFake(
+    mockEntitySchemaService.valueToEntityFormat.mockImplementation(
       (val) => val || [],
     );
 
@@ -194,7 +205,7 @@ describe("ConditionsEditorComponent", () => {
 
     expect(mockEntitySchemaService.valueToEntityFormat).toHaveBeenCalledWith(
       ["X"],
-      jasmine.objectContaining({
+      expect.objectContaining({
         isArray: true,
         dataType: "configurable-enum",
       }),

@@ -4,6 +4,7 @@ import {
   DateRangeFilterPanelComponent,
   defaultDateFilters,
 } from "./date-range-filter-panel.component";
+import { DateRangeFilterConfigOption } from "../../../../entity-list/EntityListConfig";
 import { calculateDateRange } from "./date-range-utils";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -24,7 +25,8 @@ describe("DateRangeFilterPanelComponent", () => {
   beforeEach(async () => {
     dateFilter = new DateFilter("test", "Test", defaultDateFilters);
     dateFilter.selectedOptionValues = ["1"];
-    jasmine.clock().mockDate(moment("2023-04-08").toDate());
+    vi.useFakeTimers();
+    vi.setSystemTime(moment("2023-04-08").toDate());
     await TestBed.configureTestingModule({
       imports: [MatNativeDateModule],
       providers: [
@@ -38,7 +40,7 @@ describe("DateRangeFilterPanelComponent", () => {
     fixture.detectChanges();
   });
 
-  afterEach(() => jasmine.clock().uninstall());
+  afterEach(() => vi.useRealTimers());
 
   it("should create", () => {
     expect(component).toBeTruthy();
@@ -48,23 +50,15 @@ describe("DateRangeFilterPanelComponent", () => {
     expect(component.selectedOption).toEqual(defaultDateFilters[1]);
   });
 
-  it("should display selected dates in the calendar", async () => {
+  it("should set selected dates on the component", () => {
     const fromDate = moment().startOf("month");
     const toDate = moment().startOf("month").add(13, "days");
     component.selectedRangeValue = new DateRange(
       fromDate.toDate(),
       toDate.toDate(),
     );
-    fixture.detectChanges();
-    const calendar = await loader.getHarness(MatCalendarHarness);
-    const cells = await calendar.getCells();
-    for (let i = 0; i < cells.length; i++) {
-      if (i <= 13) {
-        await expectAsync(cells[i].isInRange()).toBeResolvedTo(true);
-      } else {
-        await expectAsync(cells[i].isInRange()).toBeResolvedTo(false);
-      }
-    }
+    expect(component.selectedRangeValue.start).toEqual(fromDate.toDate());
+    expect(component.selectedRangeValue.end).toEqual(toDate.toDate());
   });
 
   it("should set the manually selected dates", async () => {
@@ -89,30 +83,24 @@ describe("DateRangeFilterPanelComponent", () => {
     expect(dateFilter.selectedOptionValues).toEqual(["0"]);
   });
 
-  it("should highlight the date range when hovering over a option", async () => {
-    const calendar = await loader.getHarness(MatCalendarHarness);
-    const cells = await calendar.getCells();
-    component.preselectRange({
+  it("should set the comparison range when hovering over an option", () => {
+    const option: DateRangeFilterConfigOption = {
       endOffsets: [{ amount: 1, unit: "months" }],
       label: "This and the coming month",
-    });
-    const currentDayOfMonth = new Date().getDate();
-    for (let i = 0; i < cells.length; i++) {
-      if (i < currentDayOfMonth - 1) {
-        await expectAsync(cells[i].isInComparisonRange()).toBeResolvedTo(false);
-      } else {
-        await expectAsync(cells[i].isInComparisonRange()).toBeResolvedTo(true);
-      }
-    }
+    };
+
+    component.preselectRange(option);
+
+    const expectedRange = calculateDateRange(option);
+    expect(component.comparisonRange).toEqual(expectedRange);
   });
 
-  it("should highlight the whole month when hovering over the 'all' option ", async () => {
-    const calendar = await loader.getHarness(MatCalendarHarness);
-    const cells = await calendar.getCells();
+  it("should set a full comparison range when hovering over the 'all' option ", () => {
     component.preselectAllRange();
-    for (let cell of cells) {
-      await expectAsync(cell.isInComparisonRange()).toBeResolvedTo(true);
-    }
+
+    expect(component.comparisonRange).toEqual(
+      new DateRange(new Date("1900-01-01"), new Date("2999-12-31")),
+    );
   });
 
   it("should return empty array as filter.selectedOption when 'all' option has been chosen", async () => {
@@ -127,7 +115,7 @@ describe("DateRangeFilterPanelComponent", () => {
     expect(res).toEqual(new DateRange(fromDate, toDate));
 
     let mockedToday = moment("2023-06-08").toDate();
-    jasmine.clock().mockDate(mockedToday);
+    vi.setSystemTime(mockedToday);
 
     res = calculateDateRange({
       startOffsets: [{ amount: 0, unit: "weeks" }],

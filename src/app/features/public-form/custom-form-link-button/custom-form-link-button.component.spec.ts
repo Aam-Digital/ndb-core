@@ -15,15 +15,21 @@ describe("CustomFormLinkButtonComponent", () => {
       providers: [
         {
           provide: EntityMapperService,
-          useValue: jasmine.createSpyObj(["load"]),
+          useValue: {
+            load: vi.fn(),
+          },
         },
         {
           provide: EntityRegistry,
-          useValue: jasmine.createSpyObj(["get"]),
+          useValue: {
+            get: vi.fn(),
+          },
         },
         {
           provide: EntityConfigService,
-          useValue: jasmine.createSpyObj(["getEntityConfig"]),
+          useValue: {
+            getEntityConfig: vi.fn(),
+          },
         },
       ],
     }).compileComponents();

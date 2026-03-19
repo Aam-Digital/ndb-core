@@ -1,5 +1,5 @@
 import { DateWithAgeDatatype } from "./date-with-age.datatype";
-import { testDatatype } from "../../entity/schema/entity-schema.service.spec";
+import { testDatatype } from "../../entity/schema/entity-schema.service.test-utils";
 import moment from "moment";
 import { DateWithAge } from "./dateWithAge";
 

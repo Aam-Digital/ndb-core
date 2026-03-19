@@ -16,27 +16,36 @@ import { CurrentUserSubject } from "../../../session/current-user-subject";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
+import type { Mock } from "vitest";
+
+type EntityFormServiceMock = {
+  createEntityForm: Mock;
+};
+
+type DialogRefMock = {
+  close: Mock;
+};
 
 describe("AdminRelatedEntityDetailsComponent", () => {
   let component: AdminRelatedEntityDetailsComponent;
   let fixture: ComponentFixture<AdminRelatedEntityDetailsComponent>;
-  let mockFormService: jasmine.SpyObj<EntityFormService>;
-  let mockDialogRef: jasmine.SpyObj<
-    MatDialogRef<AdminRelatedEntityDetailsComponent>
-  >;
+  let mockFormService: EntityFormServiceMock;
+  let mockDialogRef: DialogRefMock;
   let mockDialogData: AdminRelatedEntityDetailsData;
 
   beforeEach(async () => {
-    mockFormService = jasmine.createSpyObj("EntityFormService", [
-      "createEntityForm",
-    ]);
-    mockFormService.createEntityForm.and.returnValue(
+    mockFormService = {
+      createEntityForm: vi.fn().mockName("EntityFormService.createEntityForm"),
+    };
+    mockFormService.createEntityForm.mockReturnValue(
       Promise.resolve({
         formGroup: new FormGroup({}),
       } as EntityForm<any>),
     );
 
-    mockDialogRef = jasmine.createSpyObj("MatDialogRef", ["close"]);
+    mockDialogRef = {
+      close: vi.fn().mockName("MatDialogRef.close"),
+    };
 
     mockDialogData = {
       entityConstructor: TestEntity,

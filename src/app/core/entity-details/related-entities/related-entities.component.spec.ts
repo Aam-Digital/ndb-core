@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { RelatedEntitiesComponent } from "./related-entities.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -13,7 +8,6 @@ import { UpdatedEntity } from "../../entity/model/entity-update";
 import { Entity } from "../../entity/model/entity";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
-import { DatabaseField } from "../../entity/database-field.decorator";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 import {
@@ -24,12 +18,12 @@ import {
 describe("RelatedEntitiesComponent", () => {
   let component: RelatedEntitiesComponent<any>;
   let fixture: ComponentFixture<RelatedEntitiesComponent<any>>;
-  let mockLoaderService: jasmine.SpyObj<EntitySpecialLoaderService>;
+  let mockLoaderService: any;
 
   beforeEach(async () => {
-    mockLoaderService = jasmine.createSpyObj("EntitySpecialLoaderService", [
-      "loadDataFor",
-    ]);
+    mockLoaderService = {
+      loadDataFor: vi.fn().mockName("EntitySpecialLoaderService.loadDataFor"),
+    };
     await TestBed.configureTestingModule({
       imports: [RelatedEntitiesComponent, MockedTestingModule.withState()],
       providers: [
@@ -41,112 +35,108 @@ describe("RelatedEntitiesComponent", () => {
     component = fixture.componentInstance;
   });
 
+  async function initComponent() {
+    await component.ngOnInit();
+  }
+
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should create a filter for the passed entity", fakeAsync(() => {
+  it("should create a filter for the passed entity", async () => {
     const entity = new TestEntity();
     const columns = ["name"];
     component.entity = entity;
     component.entityType = TestEntity.ENTITY_TYPE;
+    component.property = "ref";
     component.columns = columns;
-    component.ngOnInit();
-    tick();
+    await initComponent();
 
     expect(component.filter).toEqual({ ref: entity.getId() });
-  }));
+  });
 
-  it("should also include the provided filter", fakeAsync(() => {
+  it("should also include the provided filter", async () => {
     const entity = new TestEntity();
     const filter = { start: { $exists: true } };
 
     component.entity = entity;
     component.entityType = TestEntity.ENTITY_TYPE;
+    component.property = "ref";
     component.filter = { ...filter };
-    fixture.detectChanges();
-    tick();
+    await initComponent();
 
     expect(component.filter).toEqual({
       ...filter,
       ref: entity.getId(),
-      // added by table
-      isActive: true,
     });
-  }));
+  });
 
-  it("should create a new entity that references the related one", fakeAsync(() => {
+  it("should create a new entity that references the related one", async () => {
     const related = new TestEntity();
     component.entity = related;
     component.entityType = TestEntity.ENTITY_TYPE;
+    component.property = "ref";
     component.columns = [];
-    fixture.detectChanges();
-    tick();
+    await initComponent();
 
     const newEntity = component.createNewRecordFactory()();
 
-    expect(newEntity instanceof TestEntity).toBeTrue();
+    expect(newEntity instanceof TestEntity).toBe(true);
     expect(newEntity["ref"]).toBe(related.getId());
-  }));
+  });
 
-  it("should add a new entity that was created after the initial loading to the table", fakeAsync(() => {
+  it("should add a new entity that was created after the initial loading to the table", async () => {
     const entityUpdates = new Subject<UpdatedEntity<Entity>>();
     const entityMapper = TestBed.inject(EntityMapperService);
-    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
+    vi.spyOn(entityMapper, "receiveUpdates").mockReturnValue(entityUpdates);
     component.entity = new TestEntity();
     component.entityType = TestEntity.ENTITY_TYPE;
-    fixture.detectChanges();
-    tick();
+    component.property = "ref";
+    await initComponent();
 
     const entity = new TestEntity();
     entityUpdates.next({ entity: entity, type: "new" });
-    tick();
 
     expect(component.data).toEqual([entity]);
-  }));
+  });
 
-  it("should remove an entity from the table when it has been deleted", fakeAsync(() => {
+  it("should remove an entity from the table when it has been deleted", async () => {
     const entityUpdates = new Subject<UpdatedEntity<Entity>>();
     const entityMapper = TestBed.inject(EntityMapperService);
-    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
+    vi.spyOn(entityMapper, "receiveUpdates").mockReturnValue(entityUpdates);
 
     const entity = new TestEntity();
     component.entity = new TestEntity();
     component.entityType = entity.getType();
+    component.property = "ref";
     component.data = [entity];
-    fixture.detectChanges();
-    tick();
+    await initComponent();
 
     entityUpdates.next({ entity: entity, type: "remove" });
-    tick();
 
     expect(component.data).toEqual([]);
-  }));
+  });
 
-  it("should support multiple related properties", fakeAsync(() => {
+  it("should support multiple related properties", async () => {
     @DatabaseEntity("MultiPropTest")
-    class MultiPropTest extends Entity {
-      @DatabaseField({
-        dataType: EntityDatatype.dataType,
-        additional: TestEntity.ENTITY_TYPE,
-      })
-      singleChild: string;
+    class MultiPropTest extends Entity {}
 
-      @DatabaseField({
-        dataType: EntityDatatype.dataType,
-        isArray: true,
-        additional: [TestEntity.ENTITY_TYPE, "OtherType"],
-      })
-      multiEntities: string;
-    }
+    MultiPropTest.schema.set("singleChild", {
+      dataType: EntityDatatype.dataType,
+      additional: TestEntity.ENTITY_TYPE,
+    });
+    MultiPropTest.schema.set("multiEntities", {
+      dataType: EntityDatatype.dataType,
+      isArray: true,
+      additional: [TestEntity.ENTITY_TYPE, "OtherType"],
+    });
 
     const entity = new TestEntity();
     component.entity = entity;
     component.entityType = MultiPropTest.ENTITY_TYPE;
     component.filter = {};
 
-    fixture.detectChanges();
-    tick();
+    await initComponent();
 
     // filter matching relations at any of the available props
     expect(component.filter).toEqual({
@@ -154,14 +144,12 @@ describe("RelatedEntitiesComponent", () => {
         { singleChild: entity.getId() },
         { multiEntities: { $elemMatch: { $eq: entity.getId() } } },
       ],
-      // is added inside table
-      isActive: true,
     });
     // all matching properties set when creating a new entity
     const newEntity = component.createNewRecordFactory()();
     expect(newEntity.singleChild).toBe(entity.getId());
     expect(newEntity.multiEntities).toEqual([entity.getId()]);
-  }));
+  });
 
   it("should align the filter with the related properties", async () => {
     @DatabaseEntity("PropTest")
@@ -334,20 +322,19 @@ describe("RelatedEntitiesComponent", () => {
     });
   });
 
-  it("it calls children service with id from passed child", fakeAsync(() => {
+  it("it calls children service with id from passed child", async () => {
     const child = createEntityOfType("Child");
-    mockLoaderService.loadDataFor.and.resolveTo([]);
+    mockLoaderService.loadDataFor.mockResolvedValue([]);
 
     component.entity = child;
     component.entityType = "ChildSchoolRelation";
     component.columns = [];
     component.loaderMethod = LoaderMethod.ChildrenServiceQueryRelations;
-    fixture.detectChanges();
-    tick();
+    await initComponent();
 
     expect(mockLoaderService.loadDataFor).toHaveBeenCalledWith(
       LoaderMethod.ChildrenServiceQueryRelations,
       child,
     );
-  }));
+  });
 });

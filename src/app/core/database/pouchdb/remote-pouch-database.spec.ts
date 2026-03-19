@@ -1,5 +1,5 @@
+import type { Mock } from "vitest";
 import { PouchDatabase } from "./pouch-database";
-import { fakeAsync, tick } from "@angular/core/testing";
 import PouchDB from "pouchdb-browser";
 import { HttpStatusCode } from "@angular/common/http";
 import { RemotePouchDatabase } from "./remote-pouch-database";
@@ -9,15 +9,18 @@ import { environment } from "environments/environment";
 describe("RemotePouchDatabase tests", () => {
   let database: PouchDatabase;
 
-  let mockAuthService: jasmine.SpyObj<any>;
+  let mockAuthService: any;
   let syncStateSubject: SyncStateSubject;
 
   beforeEach(() => {
     syncStateSubject = new SyncStateSubject();
-    mockAuthService = jasmine.createSpyObj(["login", "addAuthHeader"]);
-    mockAuthService.addAuthHeader.and.callFake(() => {});
+    mockAuthService = {
+      login: vi.fn(),
+      addAuthHeader: vi.fn(),
+    };
+    mockAuthService.addAuthHeader.mockImplementation(() => {});
     // Prevent real HTTP requests from PouchDB during tests
-    spyOn(PouchDB, "fetch").and.returnValue(
+    vi.spyOn(PouchDB, "fetch").mockReturnValue(
       Promise.resolve(new Response("{}", { status: HttpStatusCode.Ok })),
     );
     database = new RemotePouchDatabase(
@@ -29,16 +32,16 @@ describe("RemotePouchDatabase tests", () => {
 
   afterEach(() => database.destroy());
 
-  it("should try auto-login if fetch fails and fetch again", fakeAsync(() => {
+  it("should try auto-login if fetch fails and fetch again", async () => {
     database.init("");
 
-    mockAuthService.login.and.resolveTo();
+    mockAuthService.login.mockResolvedValue(undefined);
     // providing "valid" token on second call
     let calls = 0;
-    mockAuthService.addAuthHeader.and.callFake((headers) => {
+    mockAuthService.addAuthHeader.mockImplementation((headers) => {
       headers.Authorization = calls % 2 === 1 ? "valid" : "invalid";
     });
-    (PouchDB.fetch as jasmine.Spy).and.callFake(async (url, opts) => {
+    (PouchDB.fetch as Mock).mockImplementation(async (url, opts) => {
       calls++;
       if (opts.headers["Authorization"] === "valid") {
         return new Response('{ "_id": "foo" }', { status: HttpStatusCode.Ok });
@@ -50,129 +53,145 @@ describe("RemotePouchDatabase tests", () => {
       }
     });
 
-    database.get("Entity:ABC");
-    tick();
-    tick();
+    await (database as any).defaultFetch(
+      `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
+      { headers: {} },
+    );
 
     expect(PouchDB.fetch).toHaveBeenCalledTimes(2);
     expect(mockAuthService.login).toHaveBeenCalled();
     expect(mockAuthService.addAuthHeader).toHaveBeenCalledTimes(2);
-  }));
+  });
 
-  it("should use periodic polling for changes feed instead of live long-polling", fakeAsync(() => {
-    database.init("");
+  it("should use periodic polling for changes feed instead of live long-polling", async () => {
+    vi.useFakeTimers();
+    try {
+      database.init("");
 
-    const mockChangesResult = {
-      results: [
-        { doc: { _id: "Entity:1", name: "Test Doc 1" }, seq: 1 },
-        { doc: { _id: "Entity:2", name: "Test Doc 2" }, seq: 2 },
-      ],
-      last_seq: 2,
-    };
+      const mockChangesResult = {
+        results: [
+          { doc: { _id: "Entity:1", name: "Test Doc 1" }, seq: 1 },
+          { doc: { _id: "Entity:2", name: "Test Doc 2" }, seq: 2 },
+        ],
+        last_seq: 2,
+      };
 
-    const pouchDB = (database as any).pouchDB;
-    spyOn(pouchDB, "changes").and.returnValue(
-      Promise.resolve(mockChangesResult),
-    );
+      const pouchDB = (database as any).pouchDB;
+      vi.spyOn(pouchDB, "changes").mockReturnValue(
+        Promise.resolve(mockChangesResult),
+      );
 
-    const receivedDocs: any[] = [];
-    const subscription = database.changes().subscribe((doc) => {
-      receivedDocs.push(doc);
-    });
-
-    // Should not call changes immediately (waits for interval)
-    expect(pouchDB.changes).not.toHaveBeenCalled();
-
-    // Advance time by polling interval (10 seconds)
-    tick();
-
-    // Now changes should have been polled
-    expect(pouchDB.changes).toHaveBeenCalledWith({
-      since: "now",
-      include_docs: true,
-    });
-    expect(receivedDocs.length).toBe(2);
-    expect(receivedDocs[0]._id).toBe("Entity:1");
-    expect(receivedDocs[1]._id).toBe("Entity:2");
-
-    // Advance time for second poll
-    (pouchDB.changes as jasmine.Spy).calls.reset();
-    mockChangesResult.results = [
-      { doc: { _id: "Entity:3", name: "Test Doc 3" }, seq: 3 },
-    ];
-    mockChangesResult.last_seq = 3;
-
-    tick(10_000);
-
-    // Should poll again with last_seq from previous result
-    expect(pouchDB.changes).toHaveBeenCalledWith({
-      since: 2,
-      include_docs: true,
-    });
-    expect(receivedDocs.length).toBe(3);
-    expect(receivedDocs[2]._id).toBe("Entity:3");
-
-    subscription.unsubscribe();
-  }));
-
-  it("should handle errors in periodic changes polling gracefully", fakeAsync(() => {
-    database.init("");
-
-    const pouchDB = (database as any).pouchDB;
-    let callCount = 0;
-    spyOn(pouchDB, "changes").and.callFake(() => {
-      callCount++;
-      if (callCount === 1) {
-        return Promise.reject(new Error("Network error"));
-      }
-      return Promise.resolve({
-        results: [{ doc: { _id: "Entity:1" }, seq: 1 }],
-        last_seq: 1,
+      const receivedDocs: any[] = [];
+      const subscription = database.changes().subscribe((doc) => {
+        receivedDocs.push(doc);
       });
-    });
 
-    const receivedDocs: any[] = [];
-    const subscription = database.changes().subscribe((doc) => {
-      receivedDocs.push(doc);
-    });
+      // Should not call changes immediately (waits for interval)
+      expect(pouchDB.changes).not.toHaveBeenCalled();
 
-    // First poll fails
-    tick(500);
-    expect(pouchDB.changes).toHaveBeenCalledTimes(1);
-    expect(receivedDocs.length).toBe(0);
+      // Advance time by the first polling cycle.
+      await vi.advanceTimersByTimeAsync(0);
 
-    // Second poll succeeds
-    tick(10_000);
-    expect(pouchDB.changes).toHaveBeenCalledTimes(2);
-    expect(receivedDocs.length).toBe(1);
-    expect(receivedDocs[0]._id).toBe("Entity:1");
+      // Now changes should have been polled
+      expect(pouchDB.changes).toHaveBeenCalledWith({
+        since: "now",
+        include_docs: true,
+      });
+      expect(receivedDocs.length).toBe(2);
+      expect(receivedDocs[0]._id).toBe("Entity:1");
+      expect(receivedDocs[1]._id).toBe("Entity:2");
 
-    subscription.unsubscribe();
-  }));
+      // Advance time for second poll
+      (pouchDB.changes as Mock).mockClear();
+      mockChangesResult.results = [
+        { doc: { _id: "Entity:3", name: "Test Doc 3" }, seq: 3 },
+      ];
+      mockChangesResult.last_seq = 3;
 
-  it("should stop polling when database is destroyed", fakeAsync(() => {
-    database.init("");
+      await vi.advanceTimersByTimeAsync(10000);
 
-    const pouchDB = (database as any).pouchDB;
-    spyOn(pouchDB, "changes").and.returnValue(
-      Promise.resolve({ results: [], last_seq: 0 }),
-    );
-    spyOn(pouchDB, "destroy").and.returnValue(Promise.resolve());
+      // Should poll again with last_seq from previous result
+      expect(pouchDB.changes).toHaveBeenCalledWith({
+        since: 2,
+        include_docs: true,
+      });
+      expect(receivedDocs.length).toBe(3);
+      expect(receivedDocs[2]._id).toBe("Entity:3");
 
-    database.changes().subscribe();
+      subscription.unsubscribe();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-    tick();
-    expect(pouchDB.changes).toHaveBeenCalledTimes(1);
+  it("should handle errors in periodic changes polling gracefully", async () => {
+    vi.useFakeTimers();
+    try {
+      database.init("");
 
-    // Destroy the database
-    database.destroy();
-    tick();
+      const pouchDB = (database as any).pouchDB;
+      let callCount = 0;
+      vi.spyOn(pouchDB, "changes").mockImplementation(() => {
+        callCount++;
+        if (callCount === 1) {
+          return Promise.reject(new Error("Network error"));
+        }
+        return Promise.resolve({
+          results: [{ doc: { _id: "Entity:1" }, seq: 1 }],
+          last_seq: 1,
+        });
+      });
 
-    // Advance time - should not poll anymore
-    (pouchDB.changes as jasmine.Spy).calls.reset();
-    tick(10000);
-    expect(pouchDB.changes).not.toHaveBeenCalled();
-  }));
+      const receivedDocs: any[] = [];
+      const subscription = database.changes().subscribe((doc) => {
+        receivedDocs.push(doc);
+      });
+
+      // First poll fails
+      await vi.advanceTimersByTimeAsync(500);
+      expect(pouchDB.changes).toHaveBeenCalledTimes(1);
+      expect(receivedDocs.length).toBe(0);
+
+      // Second poll succeeds
+      await vi.advanceTimersByTimeAsync(10000);
+      expect(pouchDB.changes).toHaveBeenCalledTimes(2);
+      expect(receivedDocs.length).toBe(1);
+      expect(receivedDocs[0]._id).toBe("Entity:1");
+
+      subscription.unsubscribe();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should stop polling when database is destroyed", async () => {
+    vi.useFakeTimers();
+    try {
+      database.init("");
+
+      const pouchDB = (database as any).pouchDB;
+      vi.spyOn(pouchDB, "changes").mockReturnValue(
+        Promise.resolve({ results: [], last_seq: 0 }),
+      );
+      vi.spyOn(pouchDB, "destroy").mockReturnValue(Promise.resolve());
+
+      database.changes().subscribe();
+
+      await vi.advanceTimersByTimeAsync(0);
+      expect(pouchDB.changes).toHaveBeenCalledTimes(1);
+
+      // Destroy the database
+      database.destroy();
+      await vi.advanceTimersByTimeAsync(0);
+
+      // Advance time - should not poll anymore
+      (pouchDB.changes as Mock).mockClear();
+      await vi.advanceTimersByTimeAsync(10000);
+      expect(pouchDB.changes).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   describe("lostPermissions interception", () => {
     it("should accumulate lostPermissions from _changes responses intercepted in defaultFetch", async () => {
@@ -228,8 +247,8 @@ describe("RemotePouchDatabase tests", () => {
 
     it("should call extractLostPermissions for _changes URLs with 200 response", async () => {
       database.init("", { trackLostPermissions: true });
-      spyOn(database as any, "extractLostPermissions");
-      (PouchDB.fetch as jasmine.Spy).and.returnValue(
+      vi.spyOn(database as any, "extractLostPermissions");
+      (PouchDB.fetch as Mock).mockReturnValue(
         Promise.resolve(
           new Response(JSON.stringify({ results: [] }), {
             status: HttpStatusCode.Ok,
@@ -248,8 +267,8 @@ describe("RemotePouchDatabase tests", () => {
 
     it("should not call extractLostPermissions for non-_changes URLs", async () => {
       database.init("");
-      spyOn(database as any, "extractLostPermissions");
-      (PouchDB.fetch as jasmine.Spy).and.returnValue(
+      vi.spyOn(database as any, "extractLostPermissions");
+      (PouchDB.fetch as Mock).mockReturnValue(
         Promise.resolve(
           new Response(JSON.stringify({ _id: "Entity:1" }), {
             status: HttpStatusCode.Ok,

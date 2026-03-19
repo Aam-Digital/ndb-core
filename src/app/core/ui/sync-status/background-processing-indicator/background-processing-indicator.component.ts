@@ -1,4 +1,11 @@
-import { Component, inject, Input, OnInit, ViewChild } from "@angular/core";
+import {
+  Component,
+  inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { BackgroundProcessState } from "../background-process-state.interface";
 import { Observable } from "rxjs";
@@ -33,7 +40,9 @@ import { DatabaseResolverService } from "../../../database/database-resolver.ser
     MatDividerModule,
   ],
 })
-export class BackgroundProcessingIndicatorComponent implements OnInit {
+export class BackgroundProcessingIndicatorComponent
+  implements OnInit, OnDestroy
+{
   /** details on current background processes to be displayed to user */
   @Input() backgroundProcesses: Observable<BackgroundProcessState[]>;
   filteredProcesses: Observable<BackgroundProcessState[]>;
@@ -48,6 +57,7 @@ export class BackgroundProcessingIndicatorComponent implements OnInit {
 
   /** handle to programmatically open/close the details dropdown */
   @ViewChild(MatMenuTrigger) taskListDropdownTrigger: MatMenuTrigger;
+  private openMenuTimeout: ReturnType<typeof setTimeout> | undefined;
 
   /**
    * Clear sync checkpoints and trigger a full re-sync.
@@ -71,14 +81,28 @@ export class BackgroundProcessingIndicatorComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((amount) => {
         if (amount === 0) {
-          this.taskListDropdownTrigger.closeMenu();
+          if (this.openMenuTimeout) {
+            clearTimeout(this.openMenuTimeout);
+          }
+          this.taskListDropdownTrigger?.closeMenu();
         } else {
           if (!this.wasClosed) {
             // need to wait for change cycle that shows sync button
-            setTimeout(() => this.taskListDropdownTrigger.openMenu());
+            if (this.openMenuTimeout) {
+              clearTimeout(this.openMenuTimeout);
+            }
+            this.openMenuTimeout = setTimeout(() =>
+              this.taskListDropdownTrigger?.openMenu(),
+            );
           }
         }
       });
+  }
+
+  ngOnDestroy() {
+    if (this.openMenuTimeout) {
+      clearTimeout(this.openMenuTimeout);
+    }
   }
 
   private combineProcesses(

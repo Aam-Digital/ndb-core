@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { CompareRevComponent } from "./compare-rev.component";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
@@ -13,36 +7,49 @@ import { AutoResolutionService } from "../auto-resolution/auto-resolution.servic
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DatabaseResolverService } from "../../../core/database/database-resolver.service";
+import type { Mock } from "vitest";
+
+type DatabaseMock = {
+  get: Mock;
+  remove: Mock;
+  put: Mock;
+};
+
+type AutoResolutionServiceMock = {
+  shouldDeleteConflictingRevision: Mock;
+};
 
 describe("CompareRevComponent", () => {
   let component: CompareRevComponent;
   let fixture: ComponentFixture<CompareRevComponent>;
 
-  let mockDatabase: jasmine.SpyObj<Database>;
-  let mockResolutionService: jasmine.SpyObj<AutoResolutionService>;
+  let mockDatabase: DatabaseMock;
+  let mockResolutionService: AutoResolutionServiceMock;
 
   const testDoc = { _id: "abc", _rev: "rev-1a", value: 1 };
   const testConflictDoc = { _id: "abc", _rev: "rev-1b", value: 2 };
 
   beforeEach(waitForAsync(() => {
-    mockDatabase = jasmine.createSpyObj("mockDatabase", [
-      "get",
-      "remove",
-      "put",
-    ]);
-    mockDatabase.get.and.returnValue(Promise.resolve(testConflictDoc));
+    mockDatabase = {
+      get: vi.fn().mockName("mockDatabase.get"),
+      remove: vi.fn().mockName("mockDatabase.remove"),
+      put: vi.fn().mockName("mockDatabase.put"),
+    };
+    mockDatabase.get.mockReturnValue(Promise.resolve(testConflictDoc));
 
-    mockResolutionService = jasmine.createSpyObj("mockResolutionService", [
-      "shouldDeleteConflictingRevision",
-    ]);
-    mockResolutionService.shouldDeleteConflictingRevision.and.returnValue(
+    mockResolutionService = {
+      shouldDeleteConflictingRevision: vi
+        .fn()
+        .mockName("mockResolutionService.shouldDeleteConflictingRevision"),
+    };
+    mockResolutionService.shouldDeleteConflictingRevision.mockReturnValue(
       false,
     );
 
-    const confDialogMock = jasmine.createSpyObj<ConfirmationDialogService>([
-      "getConfirmation",
-    ]);
-    confDialogMock.getConfirmation.and.resolveTo(true);
+    const confDialogMock = {
+      getConfirmation: vi.fn(),
+    };
+    confDialogMock.getConfirmation.mockResolvedValue(true);
 
     TestBed.configureTestingModule({
       imports: [CompareRevComponent, MatSnackBarModule, NoopAnimationsModule],
@@ -82,8 +89,8 @@ describe("CompareRevComponent", () => {
   });
 
   it("should automatically resolve (delete) trivial conflict", async () => {
-    mockDatabase.get.and.returnValue(Promise.resolve(testConflictDoc));
-    mockResolutionService.shouldDeleteConflictingRevision.and.returnValue(true);
+    mockDatabase.get.mockReturnValue(Promise.resolve(testConflictDoc));
+    mockResolutionService.shouldDeleteConflictingRevision.mockReturnValue(true);
 
     await component.loadRev();
 
@@ -94,27 +101,37 @@ describe("CompareRevComponent", () => {
     expect(component.resolution).toBeTruthy();
   });
 
-  it("should resolveByDelete, deleting giving doc", fakeAsync(() => {
-    component.loadRev();
-    tick();
+  it("should resolveByDelete, deleting giving doc", async () => {
+    vi.useFakeTimers();
+    try {
+      component.loadRev();
+      await vi.advanceTimersByTimeAsync(0);
 
-    component.resolveByDelete(testConflictDoc);
-    tick();
+      component.resolveByDelete(testConflictDoc);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockDatabase.remove).toHaveBeenCalledWith(testConflictDoc);
-    expect(mockDatabase.put).not.toHaveBeenCalled();
-    expect(component.resolution).toBeTruthy();
-  }));
+      expect(mockDatabase.remove).toHaveBeenCalledWith(testConflictDoc);
+      expect(mockDatabase.put).not.toHaveBeenCalled();
+      expect(component.resolution).toBeTruthy();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should resolveByManualEdit, saving new version and removing conflict", fakeAsync(() => {
-    component.loadRev();
-    tick();
+  it("should resolveByManualEdit, saving new version and removing conflict", async () => {
+    vi.useFakeTimers();
+    try {
+      component.loadRev();
+      await vi.advanceTimersByTimeAsync(0);
 
-    component.resolveByManualEdit(component.diffsCustom);
-    tick();
+      component.resolveByManualEdit(component.diffsCustom);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockDatabase.remove).toHaveBeenCalledWith(testConflictDoc);
-    expect(mockDatabase.put).toHaveBeenCalled();
-    expect(component.resolution).toBeTruthy();
-  }));
+      expect(mockDatabase.remove).toHaveBeenCalledWith(testConflictDoc);
+      expect(mockDatabase.put).toHaveBeenCalled();
+      expect(component.resolution).toBeTruthy();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

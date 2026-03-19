@@ -21,7 +21,7 @@ describe("RouterService", () => {
   let service: RouterService;
 
   beforeEach(waitForAsync(() => {
-    spyOn(Logging, "warn");
+    vi.spyOn(Logging, "warn");
 
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
@@ -37,7 +37,7 @@ describe("RouterService", () => {
   it("should keep additional routes when reloading router config", () => {
     const testRoutes = [{ path: "user", component: TestComponent }];
     const router = TestBed.inject<Router>(Router);
-    spyOn(router, "resetConfig");
+    vi.spyOn(router, "resetConfig");
 
     service.reloadRouting([], testRoutes);
 
@@ -64,14 +64,14 @@ describe("RouterService", () => {
         path: "child",
         component: RoutedViewComponent,
         data: { component: "ChildrenList" },
-        canDeactivate: [jasmine.any(Function)],
+        canDeactivate: [expect.any(Function)],
         canActivate: [AuthGuard, EntityPermissionGuard],
       },
       {
         path: "child/:id",
         component: RoutedViewComponent,
         data: { component: "EntityDetails", config: testViewConfig },
-        canDeactivate: [jasmine.any(Function)],
+        canDeactivate: [expect.any(Function)],
         canActivate: [AuthGuard, EntityPermissionGuard],
       },
       {
@@ -79,12 +79,12 @@ describe("RouterService", () => {
         component: RoutedViewComponent,
         data: { component: "EntityList", permittedUserRoles: ["user_app"] },
         canActivate: [AuthGuard, EntityPermissionGuard, UserRoleGuard],
-        canDeactivate: [jasmine.any(Function)],
+        canDeactivate: [expect.any(Function)],
       },
     ];
 
     const router = TestBed.inject<Router>(Router);
-    spyOn(router, "resetConfig");
+    vi.spyOn(router, "resetConfig");
 
     service.reloadRouting(testViewConfigs);
 
@@ -108,14 +108,14 @@ describe("RouterService", () => {
         path: "other",
         component: TestComponent,
         canActivate: [AuthGuard, EntityPermissionGuard, UserRoleGuard],
-        canDeactivate: [jasmine.any(Function) as any],
+        canDeactivate: [expect.any(Function) as any],
         data: { permittedUserRoles: ["admin_app"] },
       },
       { path: "child", component: EntityListComponent },
     ];
 
     const router = TestBed.inject(Router);
-    spyOn(router, "resetConfig");
+    vi.spyOn(router, "resetConfig");
 
     service.reloadRouting(testViewConfigs, existingRoutes);
 
@@ -131,14 +131,14 @@ describe("RouterService", () => {
       { _id: "view:child", component: "ChildrenList", config: { foo: 1 } },
       { _id: "view:child2", component: "ChildrenList", config: { foo: 2 } },
     ];
-    const getAllConfigSpy = spyOn(
+    const getAllConfigSpy = vi.spyOn(
       TestBed.inject(ConfigService),
       "getAllConfigs",
     );
-    getAllConfigSpy.and.returnValue(routeConfigs1);
+    getAllConfigSpy.mockReturnValue(routeConfigs1);
     service.initRouting();
 
-    getAllConfigSpy.and.returnValue(routeConfigs2);
+    getAllConfigSpy.mockReturnValue(routeConfigs2);
     service.initRouting();
 
     const router = TestBed.inject<Router>(Router);
@@ -166,11 +166,11 @@ describe("RouterService", () => {
         component: RoutedViewComponent,
         data: { component: "EntityList", permittedUserRoles: ["admin"] },
         canActivate: [AuthGuard, EntityPermissionGuard, UserRoleGuard],
-        canDeactivate: [jasmine.any(Function)],
+        canDeactivate: [expect.any(Function)],
       },
     ];
     const router = TestBed.inject<Router>(Router);
-    spyOn(router, "resetConfig");
+    vi.spyOn(router, "resetConfig");
 
     service.reloadRouting(testViewConfigs);
 

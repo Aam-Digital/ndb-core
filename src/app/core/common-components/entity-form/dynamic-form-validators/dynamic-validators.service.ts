@@ -63,6 +63,7 @@ export class DynamicValidatorsService {
     key: DynamicValidator,
     value: any,
     entity: Entity,
+    fieldId?: string,
   ):
     | { async?: false; fn: ValidatorFn }
     | {
@@ -82,7 +83,18 @@ export class DynamicValidatorsService {
           return { fn: Validators.pattern(value as string) };
         }
       case "uniqueId":
-        return value ? this.buildUniqueIdValidator(value) : null;
+        if (!value) {
+          return null;
+        }
+
+        if (!fieldId) {
+          Logging.warn(
+            "Trying to generate uniqueId validator without fieldId context",
+          );
+          return null;
+        }
+
+        return this.buildUniqueIdValidator(entity, fieldId);
       case "required":
         return value ? { fn: Validators.required } : null;
       case "readonlyAfterSet":
@@ -110,6 +122,7 @@ export class DynamicValidatorsService {
   public buildValidators(
     config: FormValidatorConfig,
     entity: Entity,
+    fieldId?: string,
   ): FormControlOptions {
     const formControlOptions = {
       validators: [],
@@ -121,6 +134,7 @@ export class DynamicValidatorsService {
         key as DynamicValidator,
         config[key],
         entity,
+        fieldId,
       );
 
       if (validatorFn?.async) {
@@ -152,6 +166,17 @@ export class DynamicValidatorsService {
   ): ValidationErrors {
     if (!validationResult) {
       return validationResult;
+    }
+
+    // uniquePropertyValidator returns `uniqueProperty`, but this pipeline expects
+    // the validator key (`uniqueId`). Normalize once so generic error rendering works.
+    if (
+      validatorType === "uniqueId" &&
+      validationResult.uniqueId === undefined &&
+      validationResult.uniqueProperty !== undefined
+    ) {
+      validationResult.uniqueId = validationResult.uniqueProperty;
+      delete validationResult.uniqueProperty;
     }
 
     validationResult[validatorType] = {
@@ -194,7 +219,10 @@ export class DynamicValidatorsService {
       case "isNumber":
         return $localize`Please enter a valid number`;
       case "uniqueId":
-        return validationValue;
+        if (typeof validationValue === "string") {
+          return validationValue;
+        }
+        return validationValue?.errorMessage;
       case "readonlyAfterSet":
         return validationValue;
       default:
@@ -207,7 +235,10 @@ export class DynamicValidatorsService {
     }
   }
 
-  private buildUniqueIdValidator(value: string): {
+  private buildUniqueIdValidator(
+    entity: Entity,
+    fieldId: string,
+  ): {
     async: true;
     fn: AsyncPromiseValidatorFn;
   } {
@@ -215,8 +246,12 @@ export class DynamicValidatorsService {
       fn: uniquePropertyValidator({
         getExistingValues: () =>
           this.entityMapper
-            .loadType(value)
-            .then((entities) => entities.map((entity) => entity.getId())),
+            .loadType(entity.getType())
+            .then((entities) =>
+              entities
+                .map((existingEntity) => Reflect.get(existingEntity, fieldId))
+                .filter((existingValue) => existingValue !== undefined),
+            ),
         normalize: false,
         fieldLabel: $localize`:field label:id`,
       }),

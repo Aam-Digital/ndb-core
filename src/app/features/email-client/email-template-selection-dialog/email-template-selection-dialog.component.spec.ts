@@ -16,8 +16,11 @@ describe("EmailTemplateSelectionDialogComponent", () => {
   let fixture: ComponentFixture<EmailTemplateSelectionDialogComponent>;
 
   beforeEach(async () => {
-    const mockAbility = jasmine.createSpyObj(["cannot", "on"]);
-    mockAbility.on.and.returnValue(() => null);
+    const mockAbility = {
+      cannot: vi.fn(),
+      on: vi.fn(),
+    };
+    mockAbility.on.mockReturnValue(() => null);
     await TestBed.configureTestingModule({
       imports: [
         EmailTemplateSelectionDialogComponent,
@@ -26,7 +29,7 @@ describe("EmailTemplateSelectionDialogComponent", () => {
       providers: [
         {
           provide: MatDialogRef,
-          useValue: { close: jasmine.createSpy("close") },
+          useValue: { close: vi.fn() },
         },
         { provide: MAT_DIALOG_DATA, useValue: {} },
         { provide: EntityRegistry, useValue: entityRegistry },

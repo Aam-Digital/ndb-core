@@ -22,10 +22,10 @@ describe("AttendanceCalendarComponent", () => {
   let fixture: ComponentFixture<AttendanceCalendarComponent>;
 
   beforeEach(() => {
-    const mockAttendanceService = jasmine.createSpyObj([
-      "createEventForActivity",
-    ]);
-    mockAttendanceService.createEventForActivity.and.resolveTo(
+    const mockAttendanceService = {
+      createEventForActivity: vi.fn(),
+    };
+    mockAttendanceService.createEventForActivity.mockResolvedValue(
       new EventWithAttendance(
         new TestEventEntity(),
         "attendance",
@@ -42,7 +42,9 @@ describe("AttendanceCalendarComponent", () => {
         { provide: EntityMapperService, useValue: createEntityMapperSpyObj() },
         {
           provide: AnalyticsService,
-          useValue: jasmine.createSpyObj(["eventTrack"]),
+          useValue: {
+            eventTrack: vi.fn(),
+          },
         },
         {
           provide: AttendanceService,
@@ -50,7 +52,9 @@ describe("AttendanceCalendarComponent", () => {
         },
         {
           provide: EntityAbility,
-          useValue: jasmine.createSpyObj(["cannot"]),
+          useValue: {
+            cannot: vi.fn(),
+          },
         },
         { provide: FormDialogService, useValue: null },
       ],
@@ -76,12 +80,12 @@ describe("AttendanceCalendarComponent", () => {
       records: new SimpleChange(undefined, component.records, true),
     });
 
-    expect(
-      moment(component.minDate).isSame(moment("2020-01-01"), "day"),
-    ).toBeTrue();
-    expect(
-      moment(component.maxDate).isSame(moment("2020-01-31"), "day"),
-    ).toBeTrue();
+    expect(moment(component.minDate).isSame(moment("2020-01-01"), "day")).toBe(
+      true,
+    );
+    expect(moment(component.maxDate).isSame(moment("2020-01-31"), "day")).toBe(
+      true,
+    );
   });
 
   it("should correctly compute the average attendance", () => {

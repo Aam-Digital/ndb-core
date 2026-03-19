@@ -1,3 +1,4 @@
+import type { Mock } from "vitest";
 import { DisableEntityOperationDirective } from "./disable-entity-operation.directive";
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
@@ -14,12 +15,12 @@ describe("DisableEntityOperationDirective", () => {
 
   beforeEach(() => {
     mockAbility = {
-      cannot: jasmine.createSpy("cannot"),
-      on: jasmine.createSpy("on").and.callFake((_, callback) => {
+      cannot: vi.fn(),
+      on: vi.fn().mockImplementation((_, callback) => {
         callbackOnAbilityUpdate = callback;
         return () => {};
       }),
-      update: jasmine.createSpy("update"),
+      update: vi.fn(),
     } as Partial<EntityAbility> as EntityAbility;
 
     TestBed.configureTestingModule({
@@ -39,7 +40,7 @@ describe("DisableEntityOperationDirective", () => {
 
     expect(
       testComponent.componentInstance.buttonRef.nativeElement.disabled,
-    ).toBeTrue();
+    ).toBe(true);
   });
 
   it("should enable a component when operation is permitted", () => {
@@ -47,7 +48,7 @@ describe("DisableEntityOperationDirective", () => {
 
     expect(
       testComponent.componentInstance.buttonRef.nativeElement.disabled,
-    ).toBeFalse();
+    ).toBe(false);
   });
 
   it("should re-rest the disabled property when a new value arrives", () => {
@@ -55,15 +56,14 @@ describe("DisableEntityOperationDirective", () => {
 
     expect(
       testComponent.componentInstance.buttonRef.nativeElement.disabled,
-    ).toBeFalse();
+    ).toBe(false);
 
-    (mockAbility.cannot as jasmine.Spy).and.returnValue(true);
-    testComponent.componentInstance.entity = TestEntity;
-    testComponent.detectChanges();
+    (mockAbility.cannot as Mock).mockReturnValue(true);
+    callbackOnAbilityUpdate();
 
     expect(
       testComponent.componentInstance.buttonRef.nativeElement.disabled,
-    ).toBeTrue();
+    ).toBe(true);
   });
 
   it("should re-evaluate the ability whenever it is updated", () => {
@@ -71,30 +71,30 @@ describe("DisableEntityOperationDirective", () => {
 
     expect(
       testComponent.componentInstance.buttonRef.nativeElement.disabled,
-    ).toBeTrue();
+    ).toBe(true);
 
-    (mockAbility.cannot as jasmine.Spy).and.returnValue(false);
+    (mockAbility.cannot as Mock).mockReturnValue(false);
     mockAbility.update([{ action: "manage", subject: "all" }]);
     callbackOnAbilityUpdate(); // Simulate the ability update callback
-    testComponent.detectChanges();
 
     expect(
       testComponent.componentInstance.buttonRef.nativeElement.disabled,
-    ).toBeFalse();
+    ).toBe(false);
   });
 
   it("should disable when all subjects in array are not permitted", () => {
-    createComponent(true);
+    (mockAbility.cannot as Mock).mockReturnValue(true);
+    testComponent = TestBed.createComponent(TestComponent);
     testComponent.componentInstance.entity = [Entity, TestEntity];
     testComponent.detectChanges();
 
     expect(
       testComponent.componentInstance.buttonRef.nativeElement.disabled,
-    ).toBeTrue();
+    ).toBe(true);
   });
 
   it("should enable when at least one subject in array is permitted", () => {
-    (mockAbility.cannot as jasmine.Spy).and.callFake(
+    (mockAbility.cannot as Mock).mockImplementation(
       (_, subject) => subject !== TestEntity,
     );
     testComponent = TestBed.createComponent(TestComponent);
@@ -103,11 +103,11 @@ describe("DisableEntityOperationDirective", () => {
 
     expect(
       testComponent.componentInstance.buttonRef.nativeElement.disabled,
-    ).toBeFalse();
+    ).toBe(false);
   });
 
   function createComponent(disabled: boolean = true) {
-    (mockAbility.cannot as jasmine.Spy).and.returnValue(disabled);
+    (mockAbility.cannot as Mock).mockReturnValue(disabled);
     testComponent = TestBed.createComponent(TestComponent);
     testComponent.detectChanges();
   }
@@ -126,5 +126,6 @@ describe("DisableEntityOperationDirective", () => {
 })
 class TestComponent {
   public entity: EntitySubject | EntitySubject[] = Entity;
-  @ViewChild("button") public buttonRef: ElementRef;
+  @ViewChild("button")
+  public buttonRef: ElementRef;
 }

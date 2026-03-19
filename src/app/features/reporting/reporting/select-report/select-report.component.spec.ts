@@ -40,7 +40,7 @@ describe("SelectReportComponent", () => {
     component.ngOnChanges({ reports: undefined });
 
     expect(component.selectedReport).toBe(report);
-    expect(component.isDateRangeReport).toBeTrue();
+    expect(component.isDateRangeReport).toBe(true);
   });
 
   it("should display date range filter when sql report supports it", () => {
@@ -52,7 +52,7 @@ describe("SelectReportComponent", () => {
     component.ngOnChanges({ reports: undefined });
 
     expect(component.selectedReport).toBe(report);
-    expect(component.isDateRangeReport).toBeTrue();
+    expect(component.isDateRangeReport).toBe(true);
   });
 
   it("should hide date range filter when sql report does not have these args", () => {
@@ -63,7 +63,7 @@ describe("SelectReportComponent", () => {
     component.ngOnChanges({ reports: undefined });
 
     expect(component.selectedReport).toBe(report);
-    expect(component.isDateRangeReport).toBeFalse();
+    expect(component.isDateRangeReport).toBe(false);
   });
 
   it("should reset dates before calculation when sql report is not a DateRangeReport", () => {
@@ -78,7 +78,7 @@ describe("SelectReportComponent", () => {
     component.calculate();
 
     expect(component.selectedReport).toBe(report);
-    expect(component.isDateRangeReport).toBeFalse();
+    expect(component.isDateRangeReport).toBe(false);
     expect(component.fromDate).toBeUndefined();
     expect(component.toDate).toBeUndefined();
   });
@@ -96,7 +96,7 @@ describe("SelectReportComponent", () => {
     component.calculate();
 
     expect(component.selectedReport).toBe(report);
-    expect(component.isDateRangeReport).toBeTrue();
+    expect(component.isDateRangeReport).toBe(true);
     expect(component.fromDate).toBeDefined();
     expect(component.toDate).toBeDefined();
   });

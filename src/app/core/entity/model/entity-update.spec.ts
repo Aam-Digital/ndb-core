@@ -28,7 +28,7 @@ describe("entity-update", () => {
       entity: new TestUpdateEntity("n6", 1),
       type: "new",
     });
-    expect(newEntities).toHaveSize(existingEntities.length + 1);
+    expect(newEntities).toHaveLength(existingEntities.length + 1);
     expect(newEntities.find((e) => e.getId(true) === "n6")).toBeDefined();
   });
 
@@ -38,7 +38,7 @@ describe("entity-update", () => {
       entity: new TestUpdateEntity("n2", 2),
       type: "update",
     });
-    expect(newEntities).toHaveSize(existingEntities.length);
+    expect(newEntities).toHaveLength(existingEntities.length);
     expect(newEntities[indexOfN2].value).toBe(2);
   });
 
@@ -48,7 +48,7 @@ describe("entity-update", () => {
       entity: new TestUpdateEntity("n2", 3),
       type: "remove",
     });
-    expect(newEntities).toHaveSize(oldLength - 1);
+    expect(newEntities).toHaveLength(oldLength - 1);
     expect(newEntities.findIndex((e) => e.getId(true) === "n2")).toBe(-1);
   });
 

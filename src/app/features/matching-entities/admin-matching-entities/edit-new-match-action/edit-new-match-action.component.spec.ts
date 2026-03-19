@@ -15,18 +15,21 @@ import { EntityFormService } from "#src/app/core/common-components/entity-form/e
 describe("EditNewMatchActionComponent", () => {
   let component: EditNewMatchActionComponent;
   let fixture: ComponentFixture<EditNewMatchActionComponent>;
-  let mockEntityRelationsService: jasmine.SpyObj<EntityRelationsService>;
-  let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
+  let mockEntityRelationsService: any;
+  let mockEntityFormService: any;
 
   beforeEach(async () => {
-    mockEntityRelationsService = jasmine.createSpyObj(
-      "EntityRelationsService",
-      ["getEntityTypesReferencingType"],
-    );
-    mockEntityFormService = jasmine.createSpyObj("EntityFormService", [
-      "createEntityForm",
-      "extendFormFieldConfig",
-    ]);
+    mockEntityRelationsService = {
+      getEntityTypesReferencingType: vi
+        .fn()
+        .mockName("EntityRelationsService.getEntityTypesReferencingType"),
+    };
+    mockEntityFormService = {
+      createEntityForm: vi.fn().mockName("EntityFormService.createEntityForm"),
+      extendFormFieldConfig: vi
+        .fn()
+        .mockName("EntityFormService.extendFormFieldConfig"),
+    };
     await TestBed.configureTestingModule({
       imports: [
         EditNewMatchActionComponent,

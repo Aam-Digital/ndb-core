@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AdminEntityComponent } from "./admin-entity.component";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
@@ -32,7 +32,7 @@ describe("AdminEntityComponent", () => {
   let component: AdminEntityComponent;
   let fixture: ComponentFixture<AdminEntityComponent>;
 
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockConfigService: any;
   let entityMapper: MockEntityMapperService;
 
   let config;
@@ -45,7 +45,8 @@ describe("AdminEntityComponent", () => {
     static override label = "Admin Test";
     static override enableUserAccounts = false;
 
-    @DatabaseField({ label: "Name" }) name: string;
+    @DatabaseField({ label: "Name" })
+    name: string;
   }
 
   beforeEach(() => {
@@ -65,8 +66,10 @@ describe("AdminEntityComponent", () => {
     const mockActivatedRoute = {
       queryParams: of({ mode: "list" }),
     };
-    mockConfigService = jasmine.createSpyObj(["getConfig"]);
-    mockConfigService.getConfig.and.returnValue(config[viewConfigId]);
+    mockConfigService = {
+      getConfig: vi.fn(),
+    };
+    mockConfigService.getConfig.mockReturnValue(config[viewConfigId]);
 
     TestBed.configureTestingModule({
       imports: [
@@ -86,7 +89,9 @@ describe("AdminEntityComponent", () => {
         },
         {
           provide: EntityActionsService,
-          useValue: jasmine.createSpyObj(["showSnackbarConfirmationWithUndo"]),
+          useValue: {
+            showSnackbarConfirmationWithUndo: vi.fn(),
+          },
         },
         {
           provide: ActivatedRoute,
@@ -119,7 +124,7 @@ describe("AdminEntityComponent", () => {
 
     component.cancel();
 
-    expect(AdminTestEntity.schema.has("testCancelField")).toBeFalse();
+    expect(AdminTestEntity.schema.has("testCancelField")).toBe(false);
     expect(AdminTestEntity.schema.get("name").label).toBe(
       originalLabelOfExisting,
     );
@@ -129,7 +134,7 @@ describe("AdminEntityComponent", () => {
     AdminTestEntity.schema.delete("testCancelField");
   });
 
-  it("should save schema and view config", waitForAsync(async () => {
+  it("should save schema and view config", async () => {
     const newSchemaField: EntitySchemaField = {
       label: "New field",
     };
@@ -159,7 +164,7 @@ describe("AdminEntityComponent", () => {
       color: undefined,
       toStringAttributes: ["entityId"],
       hasPII: false,
-      attributes: jasmine.objectContaining({
+      attributes: expect.objectContaining({
         testSaveField: newSchemaField,
       }),
       enableUserAccounts: false,
@@ -177,9 +182,9 @@ describe("AdminEntityComponent", () => {
 
     // cleanup:
     AdminTestEntity.schema.delete("testSaveField");
-  }));
+  });
 
-  it("should not save internal default fields to config attributes", waitForAsync(async () => {
+  it("should not save internal default fields to config attributes", async () => {
     const userDefinedField: EntitySchemaField = {
       label: "testField",
       dataType: "string",
@@ -208,5 +213,5 @@ describe("AdminEntityComponent", () => {
 
     // cleanup:
     AdminTestEntity.schema.delete("testField");
-  }));
+  });
 });

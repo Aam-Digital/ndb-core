@@ -61,7 +61,7 @@ describe("HistoricalDataService", () => {
 
     const result = await service.getHistoricalDataFor(entity.getId());
 
-    expect(result).toHaveSize(3);
+    expect(result).toHaveLength(3);
     expect(result.map((res) => res.getId())).toEqual([
       firstData.getId(),
       secondData.getId(),

@@ -11,18 +11,17 @@ import {
   ValidatorFn,
 } from "@angular/forms";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
-import { Entity } from "../../../entity/model/entity";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("DynamicValidatorsService", () => {
   let service: DynamicValidatorsService;
 
-  let mockedEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockedEntityMapper: any;
 
   beforeEach(() => {
-    mockedEntityMapper = jasmine.createSpyObj("EntityMapperService", [
-      "loadType",
-    ]);
+    mockedEntityMapper = {
+      loadType: vi.fn().mockName("EntityMapperService.loadType"),
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -48,14 +47,12 @@ describe("DynamicValidatorsService", () => {
     }
 
     const resultSuccess = await validator(dummyFormControl(successState));
-    expect(resultSuccess)
-      .withContext("Expected validator not to have errors")
-      .toBeNull();
+    expect(resultSuccess, "Expected validator not to have errors").toBeNull();
 
     const resultFailure = await validator(dummyFormControl(failureState));
-    expect(resultFailure)
-      .withContext("Expected validator to have errors")
-      .toEqual(jasmine.any(Object));
+    expect(resultFailure, "Expected validator to have errors").toEqual(
+      expect.any(Object),
+    );
   }
 
   it("should load validators from the config", () => {
@@ -67,7 +64,7 @@ describe("DynamicValidatorsService", () => {
       config,
       new TestEntity(),
     ).validators;
-    expect(validators).toHaveSize(2);
+    expect(validators).toHaveLength(2);
     testValidator(validators[0], 10, 8);
     testValidator(validators[1], "ab", "1");
   });
@@ -103,11 +100,11 @@ describe("DynamicValidatorsService", () => {
       },
       new TestEntity(),
     ).validators;
-    expect(validators).toHaveSize(1);
+    expect(validators).toHaveLength(1);
     const invalidForm = new UntypedFormControl("09");
     const validationErrors = validators[0](invalidForm);
     expect(validationErrors.pattern).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         message: "M",
       }),
     );
@@ -115,15 +112,26 @@ describe("DynamicValidatorsService", () => {
 
   it("should build uniqueId async validator", async () => {
     const config: FormValidatorConfig = {
-      uniqueId: "Entity",
+      uniqueId: true,
     };
-    mockedEntityMapper.loadType.and.resolveTo([new Entity("existing id")]);
+    mockedEntityMapper.loadType.mockResolvedValue([
+      TestEntity.create({ name: "existing id" }),
+    ]);
 
     const validators = service.buildValidators(
       config,
       new TestEntity(),
+      "name",
     ).asyncValidators;
-    await testValidator(validators[0], "Entity:new id", "Entity:existing id");
+    await testValidator(validators[0], "new id", "existing id");
+
+    const duplicateControl = new UntypedFormControl("existing id");
+    duplicateControl.markAsDirty();
+    const validationErrors = await validators[0](duplicateControl);
+    expect(validationErrors.uniqueId.errorMessage).toContain("already exists");
+    expect(validationErrors.uniqueProperty).toBeUndefined();
+
+    expect(mockedEntityMapper.loadType).toHaveBeenCalledWith("TestEntity");
   });
 });
 
@@ -135,7 +143,7 @@ describe("patternWithMessage", () => {
     const invalidFormControl = new UntypedFormControl("ab");
     const validationErrors = validationFn(invalidFormControl);
     expect(validationErrors.pattern).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         message: CUSTOM_MESSAGE,
       }),
     );

@@ -26,7 +26,7 @@ describe("ThirdPartyAuthenticationService", () => {
   });
 
   it("should not make API request if no session was found", async () => {
-    spyOn(localStorage, "getItem").and.returnValue(null);
+    vi.spyOn(localStorage, "getItem").mockReturnValue(null);
     TestBed.inject(HttpClient);
 
     httpTesting.expectNone(() => true);

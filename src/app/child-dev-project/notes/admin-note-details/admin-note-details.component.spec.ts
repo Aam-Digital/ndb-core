@@ -17,7 +17,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 describe("AdminNoteDetailsComponent", () => {
   let component: AdminNoteDetailsComponent;
   let fixture: ComponentFixture<AdminNoteDetailsComponent>;
-  let mockFormService: jasmine.SpyObj<EntityFormService>;
+  let mockFormService: any;
 
   @DatabaseEntity("TestNote")
   class TestNote extends Entity {
@@ -25,10 +25,10 @@ describe("AdminNoteDetailsComponent", () => {
   }
 
   beforeEach(async () => {
-    mockFormService = jasmine.createSpyObj("EntityFormService", [
-      "createEntityForm",
-    ]);
-    mockFormService.createEntityForm.and.returnValue(
+    mockFormService = {
+      createEntityForm: vi.fn().mockName("EntityFormService.createEntityForm"),
+    };
+    mockFormService.createEntityForm.mockReturnValue(
       Promise.resolve({
         formGroup: new FormGroup({}),
       } as EntityForm<any>),

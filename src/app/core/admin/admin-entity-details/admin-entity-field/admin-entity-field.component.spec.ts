@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AdminEntityFieldComponent } from "./admin-entity-field.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { CoreTestingModule } from "../../../../utils/core-testing.module";
@@ -25,24 +20,37 @@ import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
+import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
+import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
 
 describe("AdminEntityFieldComponent", () => {
   let component: AdminEntityFieldComponent;
   let fixture: ComponentFixture<AdminEntityFieldComponent>;
   let loader: HarnessLoader;
+  let dialogData: {
+    entitySchemaField: EntitySchemaField;
+    entityType: typeof Entity;
+    overwriteLocally?: boolean;
+  };
 
-  let mockEnumService: jasmine.SpyObj<ConfigurableEnumService>;
-  let confirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockEnumService: any;
+  let confirmationDialog: any;
 
   beforeEach(() => {
-    mockEnumService = jasmine.createSpyObj([
-      "getEnum",
-      "listEnums",
-      "preLoadEnums",
-    ]);
-    confirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
-    confirmationDialog.getConfirmation.and.resolveTo(true);
-    mockEnumService.listEnums.and.returnValue([]);
+    mockEnumService = {
+      getEnum: vi.fn(),
+      listEnums: vi.fn(),
+      preLoadEnums: vi.fn(),
+    };
+    confirmationDialog = {
+      getConfirmation: vi.fn(),
+    };
+    confirmationDialog.getConfirmation.mockResolvedValue(true);
+    mockEnumService.listEnums.mockReturnValue([]);
+    dialogData = {
+      entitySchemaField: { datatype: "" } as unknown as EntitySchemaField,
+      entityType: Entity,
+    };
 
     TestBed.configureTestingModule({
       imports: [
@@ -54,14 +62,12 @@ describe("AdminEntityFieldComponent", () => {
       providers: [
         {
           provide: MAT_DIALOG_DATA,
-          useValue: {
-            entitySchemaField: { datatype: "" },
-            entityType: Entity,
-          },
+          useValue: dialogData,
         },
         { provide: MatDialogRef, useValue: { close: () => null } },
         { provide: ConfigurableEnumService, useValue: mockEnumService },
         { provide: ConfirmationDialogService, useValue: confirmationDialog },
+        { provide: DefaultDatatype, useClass: AttendanceDatatype, multi: true },
       ],
     });
     fixture = TestBed.createComponent(AdminEntityFieldComponent);
@@ -70,235 +76,233 @@ describe("AdminEntityFieldComponent", () => {
     fixture.detectChanges();
   });
 
+  async function recreateComponentWithData(
+    entitySchemaField: EntitySchemaField,
+    entityType: typeof Entity = TestEntity,
+  ) {
+    dialogData.entitySchemaField = entitySchemaField;
+    dialogData.entityType = entityType;
+    fixture.destroy();
+    fixture = TestBed.createComponent(AdminEntityFieldComponent);
+    loader = TestbedHarnessEnvironment.loader(fixture);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+  }
+
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should generate id (if new field) from label", fakeAsync(() => {
-    // Initially ID is automatically generated from label
+  it("should generate id (if new field) from label", async () => {
     component.schemaFieldsForm.get("label").setValue("New Label");
-    tick();
+    await fixture.whenStable();
     expect(component.fieldIdForm.value).toBe(generateIdFromLabel("New Label"));
 
-    // manual edit of ID field stops auto generation of ID
     component.fieldIdForm.setValue("new_id");
     component.schemaFieldsForm.get("label").setValue("Changed Label");
+    await fixture.whenStable();
     expect(component.fieldIdForm.value).toBe("new_id");
-  }));
+  });
 
-  it("should include 'additional' field only for relevant datatypes", fakeAsync(() => {
+  it("should include 'additional' field only for relevant datatypes", async () => {
     const dataTypeForm = component.schemaFieldsForm.get("dataType");
-    let additionalInput: MatInputHarness;
-
-    function findAdditionalInputComponent() {
-      loader
-        .getHarness(
+    async function findAdditionalInputComponent() {
+      try {
+        const field = await loader.getHarness(
           MatFormFieldHarness.with({
             floatingLabelText: /Type Details.*/,
           }),
-        )
-        .then((field) => field.getControl(MatInputHarness))
-        .then((input) => (additionalInput = input))
-        .catch((err) => {
-          console.error(err);
-          additionalInput = undefined;
-        });
-      tick();
+        );
+        return await field.getControl(MatInputHarness);
+      } catch {
+        return undefined;
+      }
     }
 
     dataTypeForm.setValue(ConfigurableEnumDatatype.dataType);
-    tick();
-    findAdditionalInputComponent();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    let additionalInput = await findAdditionalInputComponent();
     expect(additionalInput).toBeTruthy();
-    expect(
-      component.additionalForm.hasValidator(Validators.required),
-    ).toBeTrue();
+    expect(component.additionalForm.hasValidator(Validators.required)).toBe(
+      true,
+    );
 
     dataTypeForm.setValue(StringDatatype.dataType);
-    tick();
-    findAdditionalInputComponent();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    additionalInput = await findAdditionalInputComponent();
     expect(additionalInput).toBeUndefined();
     expect(component.additionalForm.value).toBeNull();
-    expect(
-      component.additionalForm.hasValidator(Validators.required),
-    ).toBeFalse();
+    expect(component.additionalForm.hasValidator(Validators.required)).toBe(
+      false,
+    );
 
     dataTypeForm.setValue(EntityDatatype.dataType);
-    tick();
-    findAdditionalInputComponent();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    additionalInput = await findAdditionalInputComponent();
     expect(additionalInput).toBeTruthy();
-    expect(
-      component.additionalForm.hasValidator(Validators.required),
-    ).toBeTrue();
-  }));
+    expect(component.additionalForm.hasValidator(Validators.required)).toBe(
+      true,
+    );
+  });
 
-  it("should init 'additional' options for configurable-enum", fakeAsync(() => {
+  it("should init 'additional' options for configurable-enum", async () => {
     const mockEnumList = ["A", "B"];
-    mockEnumService.listEnums.and.returnValue(mockEnumList);
+    mockEnumService.listEnums.mockReturnValue(mockEnumList);
 
     const dataTypeForm = component.schemaFieldsForm.get("dataType");
     dataTypeForm.setValue(ConfigurableEnumDatatype.dataType);
-    tick();
+    await fixture.whenStable();
 
     expect(component.typeAdditionalOptions).toEqual(
       mockEnumList.map((x) => ({ value: x, label: x })),
     );
-  }));
+  });
 
-  it("should init 'additional' value from schema field for configurable-enum", fakeAsync(() => {
-    component.data.entityType = TestEntity;
-    component.data.entitySchemaField = {
+  it("should init 'additional' value from schema field for configurable-enum", async () => {
+    await recreateComponentWithData({
       label: "Category",
       dataType: ConfigurableEnumDatatype.dataType,
       additional: "genders",
-    };
-    component.ngOnInit();
+    } as EntitySchemaField);
 
     expect(component.additionalForm.value).toBe("genders");
-  }));
-  it("should generate 'additional' value from label for configurable-enum", fakeAsync(() => {
+  });
+  it("should generate 'additional' value from label for configurable-enum", async () => {
     component.schemaFieldsForm.get("label").setValue("test label");
-    tick();
+    await fixture.whenStable();
 
     const dataTypeForm = component.schemaFieldsForm.get("dataType");
     dataTypeForm.setValue(ConfigurableEnumDatatype.dataType);
-    tick();
+    await fixture.whenStable();
     expect(component.additionalForm.value).toBe(
       generateIdFromLabel("test label"),
     );
-  }));
-  it("should generate manually created 'additional' value for configurable-enum", fakeAsync(() => {
+  });
+  it("should generate manually created 'additional' value for configurable-enum", async () => {
     const dataTypeForm = component.schemaFieldsForm.get("dataType");
     dataTypeForm.setValue(ConfigurableEnumDatatype.dataType);
-    tick();
+    await fixture.whenStable();
 
     let newAdditional;
     component
       .createNewAdditionalOptionAsync("newEnumId")
       .then((result) => (newAdditional = result));
-    tick();
+    await fixture.whenStable();
 
     expect(newAdditional).toEqual({
       label: "newEnumId",
       value: "newEnumId",
     });
-  }));
+  });
 
-  it("should init 'additional' options for entity datatypes", fakeAsync(() => {
+  it("should init 'additional' options for entity datatypes", async () => {
     const mockEntityTypes = [TestEntity, Note];
     const entityRegistry = TestBed.inject(EntityRegistry);
-    spyOn(entityRegistry, "getEntityTypes").and.returnValue(
+    vi.spyOn(entityRegistry, "getEntityTypes").mockReturnValue(
       mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
     );
 
-    component.data.entityType = TestEntity;
-    component.data.entitySchemaField = {
+    await recreateComponentWithData({
       label: "ref",
       dataType: EntityDatatype.dataType,
       additional: TestEntity.ENTITY_TYPE,
-    };
-    component.ngOnInit();
+    } as EntitySchemaField);
 
     const dataTypeForm = component.schemaFieldsForm.get("dataType");
     dataTypeForm.setValue(EntityDatatype.dataType);
-    tick();
+    await fixture.whenStable();
 
     expect(component.additionalForm.value).toBe(TestEntity.ENTITY_TYPE);
-  }));
+  });
 
-  it("should support array values for entity type additional", fakeAsync(() => {
-    component.data.entityType = TestEntity;
-    component.data.entitySchemaField = {
+  it("should support array values for entity type additional", async () => {
+    await recreateComponentWithData({
       label: "related records",
       dataType: EntityDatatype.dataType,
       additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
-    };
-    component.ngOnInit();
-    tick();
+    } as EntitySchemaField);
+    await fixture.whenStable();
 
-    expect(component.entityAdditionalMultiSelect()).toBeTrue();
+    expect(component.entityAdditionalMultiSelect()).toBe(true);
     expect(component.additionalForm.value).toEqual([
       TestEntity.ENTITY_TYPE,
       Note.ENTITY_TYPE,
     ]);
-  }));
+  });
 
-  it("should convert entity additional from single to multi mode", fakeAsync(() => {
-    component.data.entityType = TestEntity;
-    component.data.entitySchemaField = {
+  it("should convert entity additional from single to multi mode", async () => {
+    await recreateComponentWithData({
       label: "ref",
       dataType: EntityDatatype.dataType,
       additional: TestEntity.ENTITY_TYPE,
-    };
-    component.ngOnInit();
-    tick();
+    } as EntitySchemaField);
+    await fixture.whenStable();
 
-    void component.onEntityAdditionalSelectionModeChange({
+    await component.onEntityAdditionalSelectionModeChange({
       checked: true,
       source: { checked: true } as any,
     } as any);
-    tick();
+    await fixture.whenStable();
 
-    expect(component.entityAdditionalMultiSelect()).toBeTrue();
+    expect(component.entityAdditionalMultiSelect()).toBe(true);
     expect(component.additionalForm.value).toEqual([TestEntity.ENTITY_TYPE]);
-  }));
+  });
 
-  it("should ask confirmation and clear value when switching to single mode with multiple selections", fakeAsync(() => {
-    component.data.entityType = TestEntity;
-    component.data.entitySchemaField = {
+  it("should ask confirmation and clear value when switching to single mode with multiple selections", async () => {
+    await recreateComponentWithData({
       label: "related records",
       dataType: EntityDatatype.dataType,
       additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
-    };
-    component.ngOnInit();
-    tick();
+    } as EntitySchemaField);
+    await fixture.whenStable();
 
-    void component.onEntityAdditionalSelectionModeChange({
+    await component.onEntityAdditionalSelectionModeChange({
       checked: false,
       source: { checked: false } as any,
     } as any);
-    tick();
+    await fixture.whenStable();
 
     expect(confirmationDialog.getConfirmation).toHaveBeenCalled();
-    expect(component.entityAdditionalMultiSelect()).toBeFalse();
+    expect(component.entityAdditionalMultiSelect()).toBe(false);
     expect(component.additionalForm.value).toBeNull();
-  }));
+  });
 
-  it("should keep multi mode when switching to single mode is not confirmed", fakeAsync(() => {
-    confirmationDialog.getConfirmation.and.resolveTo(false);
-    component.data.entityType = TestEntity;
-    component.data.entitySchemaField = {
+  it("should keep multi mode when switching to single mode is not confirmed", async () => {
+    confirmationDialog.getConfirmation.mockResolvedValue(false);
+    await recreateComponentWithData({
       label: "related records",
       dataType: EntityDatatype.dataType,
       additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
-    };
-    component.ngOnInit();
-    tick();
+    } as EntitySchemaField);
+    await fixture.whenStable();
 
     const mockToggle = { checked: false };
-    void component.onEntityAdditionalSelectionModeChange({
+    await component.onEntityAdditionalSelectionModeChange({
       checked: false,
       source: mockToggle as any,
     } as any);
-    tick();
+    await fixture.whenStable();
 
-    expect(component.entityAdditionalMultiSelect()).toBeTrue();
-    expect(mockToggle.checked).toBeTrue();
+    expect(component.entityAdditionalMultiSelect()).toBe(true);
+    expect(mockToggle.checked).toBe(true);
     expect(component.additionalForm.value).toEqual([
       TestEntity.ENTITY_TYPE,
       Note.ENTITY_TYPE,
     ]);
-  }));
+  });
 
-  it("should init 'additional' for attendance datatype from nested format", fakeAsync(() => {
+  it("should init 'additional' for attendance datatype from nested format", async () => {
     const mockEntityTypes = [TestEntity, Note];
     const entityRegistry = TestBed.inject(EntityRegistry);
-    spyOn(entityRegistry, "getEntityTypes").and.returnValue(
+    vi.spyOn(entityRegistry, "getEntityTypes").mockReturnValue(
       mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
     );
 
-    component.data.entityType = TestEntity;
-    component.data.entitySchemaField = {
+    await recreateComponentWithData({
       label: "Attendance",
       dataType: "attendance",
       isArray: true,
@@ -308,9 +312,8 @@ describe("AdminEntityFieldComponent", () => {
           additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
         },
       },
-    };
-    component.ngOnInit();
-    tick();
+    } as EntitySchemaField);
+    await fixture.whenStable();
 
     expect(component.attendanceParticipantTypesForm.value).toEqual([
       TestEntity.ENTITY_TYPE,
@@ -322,26 +325,24 @@ describe("AdminEntityFieldComponent", () => {
         additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
       },
     });
-  }));
+  });
 
-  it("should sync attendance participant type selection to nested additional format", fakeAsync(() => {
+  it("should sync attendance participant type selection to nested additional format", async () => {
     const mockEntityTypes = [TestEntity, Note];
     const entityRegistry = TestBed.inject(EntityRegistry);
-    spyOn(entityRegistry, "getEntityTypes").and.returnValue(
+    vi.spyOn(entityRegistry, "getEntityTypes").mockReturnValue(
       mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
     );
 
-    component.data.entityType = TestEntity;
-    component.data.entitySchemaField = {
+    await recreateComponentWithData({
       label: "Attendance",
       dataType: "attendance",
       isArray: true,
-    };
-    component.ngOnInit();
-    tick();
+    } as EntitySchemaField);
+    await fixture.whenStable();
 
     component.attendanceParticipantTypesForm.setValue([TestEntity.ENTITY_TYPE]);
-    tick();
+    await fixture.whenStable();
 
     expect(component.additionalForm.value).toEqual({
       participant: {
@@ -350,14 +351,12 @@ describe("AdminEntityFieldComponent", () => {
       },
     });
 
-    // Clearing selection sets additional to null
     component.attendanceParticipantTypesForm.setValue([]);
-    tick();
+    await fixture.whenStable();
     expect(component.additionalForm.value).toBeNull();
-  }));
+  });
 
-  it("should validate that label is unique", fakeAsync(() => {
-    // Create a simple entity type with existing fields
+  it("should validate that label is unique", async () => {
     class TestEntityWithFields extends Entity {
       static override readonly ENTITY_TYPE = "TestEntityWithFields";
       static override readonly label = "Test Entity";
@@ -368,34 +367,32 @@ describe("AdminEntityFieldComponent", () => {
       ]);
     }
 
-    component.data.entityType = TestEntityWithFields;
-    component.data.entitySchemaField = { label: "New Label", id: undefined };
-    component.ngOnInit();
-    tick();
+    await recreateComponentWithData(
+      { label: "New Label", id: undefined } as EntitySchemaField,
+      TestEntityWithFields,
+    );
+    await fixture.whenStable();
 
     const labelControl = component.schemaFieldsForm.get("label");
 
-    // New unique label should be valid
     labelControl.setValue("Unique New Label");
-    tick();
+    await fixture.whenStable();
     expect(labelControl.errors).toBeNull();
 
-    // Exact duplicate label should be invalid
     labelControl.setValue("Existing Label 1");
-    tick();
+    await fixture.whenStable();
     expect(labelControl.errors).toEqual({
-      uniqueProperty: jasmine.any(String),
+      uniqueProperty: expect.any(String),
     });
 
-    // Case-insensitive duplicate should also be invalid
     labelControl.setValue("existing label 2");
-    tick();
+    await fixture.whenStable();
     expect(labelControl.errors).toEqual({
-      uniqueProperty: jasmine.any(String),
+      uniqueProperty: expect.any(String),
     });
-  }));
+  });
 
-  it("should allow keeping the same label when editing existing field", fakeAsync(() => {
+  it("should allow keeping the same label when editing existing field", async () => {
     class TestEntityWithFields extends Entity {
       static override readonly ENTITY_TYPE = "TestEntityWithFields";
       static override readonly label = "Test Entity";
@@ -405,30 +402,29 @@ describe("AdminEntityFieldComponent", () => {
       ]);
     }
 
-    component.data.entityType = TestEntityWithFields;
-    component.data.entitySchemaField = {
-      id: "field1",
-      label: "Existing Label",
-    };
-    component.ngOnInit();
-    tick();
+    await recreateComponentWithData(
+      {
+        id: "field1",
+        label: "Existing Label",
+      } as EntitySchemaField,
+      TestEntityWithFields,
+    );
+    await fixture.whenStable();
 
     const labelControl = component.schemaFieldsForm.get("label");
 
-    // Keeping the same label should be valid
     expect(labelControl.value).toBe("Existing Label");
-    tick();
+    await fixture.whenStable();
     expect(labelControl.errors).toBeNull();
 
-    // Changing to another existing label should be invalid
     labelControl.setValue("Another Label");
-    tick();
+    await fixture.whenStable();
     expect(labelControl.errors).toEqual({
-      uniqueProperty: jasmine.any(String),
+      uniqueProperty: expect.any(String),
     });
-  }));
+  });
 
-  it("should reject a field ID that differs only in capitalization from an existing field ID", fakeAsync(() => {
+  it("should reject a field ID that differs only in capitalization from an existing field ID", async () => {
     class TestEntityWithFields extends Entity {
       static override readonly ENTITY_TYPE = "TestEntityWithFields";
       static override readonly label = "Test Entity";
@@ -438,35 +434,32 @@ describe("AdminEntityFieldComponent", () => {
       ]);
     }
 
-    component.data.entityType = TestEntityWithFields;
-    component.data.entitySchemaField = { label: "New Field", id: undefined };
-    component.ngOnInit();
-    tick();
+    await recreateComponentWithData(
+      { label: "New Field", id: undefined } as EntitySchemaField,
+      TestEntityWithFields,
+    );
+    await fixture.whenStable();
 
-    // A unique ID should be valid
     component.fieldIdForm.setValue("brandNewField");
-    tick();
+    await fixture.whenStable();
     expect(component.fieldIdForm.errors).toBeNull();
 
-    // Exact duplicate should be invalid
     component.fieldIdForm.setValue("testField");
-    tick();
+    await fixture.whenStable();
     expect(component.fieldIdForm.errors).toEqual({
-      uniqueProperty: jasmine.any(String),
+      uniqueProperty: expect.any(String),
     });
 
-    // Same ID with different capitalization should also be invalid
     component.fieldIdForm.setValue("TestField");
-    tick();
+    await fixture.whenStable();
     expect(component.fieldIdForm.errors).toEqual({
-      uniqueProperty: jasmine.any(String),
+      uniqueProperty: expect.any(String),
     });
 
-    // All uppercase should also be invalid
     component.fieldIdForm.setValue("TESTFIELD");
-    tick();
+    await fixture.whenStable();
     expect(component.fieldIdForm.errors).toEqual({
-      uniqueProperty: jasmine.any(String),
+      uniqueProperty: expect.any(String),
     });
-  }));
+  });
 });

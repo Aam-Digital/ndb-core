@@ -26,14 +26,14 @@ describe("EditNumberComponent", () => {
 
   it("should only allow valid numbers", () => {
     component.formControl.setValue("one" as any);
-    expect(formGroup).not.toBeValidForm();
+    expect(formGroup.valid).toBe(false);
 
     component.formControl.setValue("1" as any);
-    expect(formGroup).toBeValidForm();
+    expect(formGroup.valid).toBe(true);
   });
 
   it("should allow decimal numbers", () => {
     component.formControl.setValue(1.1);
-    expect(formGroup).toBeValidForm();
+    expect(formGroup.valid).toBe(true);
   });
 });

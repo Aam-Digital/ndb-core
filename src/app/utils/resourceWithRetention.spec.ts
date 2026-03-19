@@ -1,10 +1,10 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import { signal } from "@angular/core";
 import { resourceWithRetention } from "./resourceWithRetention";
 
 describe("resourceWithRetention", () => {
-  it("retains previous value during loading", fakeAsync(() => {
-    let resolvePromise: (value: string) => void;
+  it("retains previous value during loading", async () => {
+    const resolvers: Array<(value: string) => void> = [];
 
     const params = signal("initial");
     const resource = TestBed.runInInjectionContext(() =>
@@ -12,32 +12,34 @@ describe("resourceWithRetention", () => {
         params,
         loader: () => {
           return new Promise<string>((resolve) => {
-            resolvePromise = resolve;
+            resolvers.push(resolve);
           });
         },
       }),
     );
-    tick();
+    await Promise.resolve();
     expect(resource.value()).toBe(undefined);
     expect(resource.isLoading()).toBe(true);
     expect(resource.status()).toBe("loading");
 
-    resolvePromise("first-value");
-    tick();
+    await vi.waitFor(() => expect(resolvers).toHaveLength(1));
+    resolvers[0]("first-value");
+    await vi.waitFor(() => expect(resource.status()).toBe("resolved"));
     expect(resource.value()).toBe("first-value");
     expect(resource.isLoading()).toBe(false);
     expect(resource.status()).toBe("resolved");
 
     params.set("updated");
-    tick();
+    await Promise.resolve();
     expect(resource.value()).toBe("first-value");
     expect(resource.isLoading()).toBe(true);
     expect(resource.status()).toBe("loading");
 
-    resolvePromise("second-value");
-    tick();
+    await vi.waitFor(() => expect(resolvers).toHaveLength(2));
+    resolvers[1]("second-value");
+    await vi.waitFor(() => expect(resource.status()).toBe("resolved"));
     expect(resource.value()).toBe("second-value");
     expect(resource.isLoading()).toBe(false);
     expect(resource.status()).toBe("resolved");
-  }));
+  });
 });

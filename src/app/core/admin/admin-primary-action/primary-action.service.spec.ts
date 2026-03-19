@@ -5,10 +5,12 @@ import { PrimaryActionConfig } from "./primary-action-config";
 
 describe("PrimaryActionService", () => {
   let service: PrimaryActionService;
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockConfigService: any;
 
   beforeEach(() => {
-    mockConfigService = jasmine.createSpyObj("ConfigService", ["getConfig"]);
+    mockConfigService = {
+      getConfig: vi.fn().mockName("ConfigService.getConfig"),
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -31,7 +33,7 @@ describe("PrimaryActionService", () => {
       entityType: "Child",
       route: "",
     };
-    mockConfigService.getConfig.and.returnValue(mockConfig);
+    mockConfigService.getConfig.mockReturnValue(mockConfig);
 
     const result = service.getCurrentConfig();
 
@@ -40,7 +42,7 @@ describe("PrimaryActionService", () => {
   });
 
   it("should return default config if ConfigService returns undefined", () => {
-    mockConfigService.getConfig.and.returnValue(undefined);
+    mockConfigService.getConfig.mockReturnValue(undefined);
 
     const result = service.getCurrentConfig();
 

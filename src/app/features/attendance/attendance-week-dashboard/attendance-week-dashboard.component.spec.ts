@@ -13,15 +13,15 @@ import { EventWithAttendance } from "../model/event-with-attendance";
 describe("AttendanceWeekDashboardComponent", () => {
   let component: AttendanceWeekDashboardComponent;
   let fixture: ComponentFixture<AttendanceWeekDashboardComponent>;
-  let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
+  let mockAttendanceService: any;
 
   beforeEach(waitForAsync(() => {
-    mockAttendanceService = jasmine.createSpyObj([
-      "getEventsOnDate",
-      "wrapEventEntity",
-    ]);
-    mockAttendanceService.getEventsOnDate.and.resolveTo([]);
-    mockAttendanceService.wrapEventEntity.and.callFake(
+    mockAttendanceService = {
+      getEventsOnDate: vi.fn(),
+      wrapEventEntity: vi.fn(),
+    };
+    mockAttendanceService.getEventsOnDate.mockResolvedValue([]);
+    mockAttendanceService.wrapEventEntity.mockImplementation(
       (e) =>
         new EventWithAttendance(
           e,
@@ -76,11 +76,14 @@ describe("AttendanceWeekDashboardComponent", () => {
       activity,
     );
 
-    mockAttendanceService.getEventsOnDate.and.resolveTo([e1.entity, e2.entity]);
+    mockAttendanceService.getEventsOnDate.mockResolvedValue([
+      e1.entity,
+      e2.entity,
+    ]);
 
     await component.ngOnInit();
 
-    expect(component.entries).toHaveSize(1);
+    expect(component.entries).toHaveLength(1);
     expect(component.entries[0][0].participantId).toBe(absentChild.getId());
   });
 
@@ -95,11 +98,11 @@ describe("AttendanceWeekDashboardComponent", () => {
       activity,
     );
 
-    mockAttendanceService.getEventsOnDate.and.resolveTo([e1.entity]);
+    mockAttendanceService.getEventsOnDate.mockResolvedValue([e1.entity]);
 
     await component.ngOnInit();
 
-    expect(component.entries).toHaveSize(0);
+    expect(component.entries).toHaveLength(0);
   });
 
   it("should treat events without an activity as one group", async () => {
@@ -116,15 +119,18 @@ describe("AttendanceWeekDashboardComponent", () => {
       moment(mondayLastWeek).add(1, "day").toDate(),
     );
 
-    mockAttendanceService.getEventsOnDate.and.resolveTo([e1.entity, e2.entity]);
+    mockAttendanceService.getEventsOnDate.mockResolvedValue([
+      e1.entity,
+      e2.entity,
+    ]);
 
     await component.ngOnInit();
 
     // Both events are grouped together (both under undefined key), so absentChild
     // accumulates 2 absences and crosses the threshold → 1 entry group
-    expect(component.entries).toHaveSize(1);
+    expect(component.entries).toHaveLength(1);
     expect(component.entries[0][0].participantId).toBe(absentChild.getId());
-    expect(component.entries[0][0].attendanceDays.filter(Boolean)).toHaveSize(
+    expect(component.entries[0][0].attendanceDays.filter(Boolean)).toHaveLength(
       2,
     );
   });

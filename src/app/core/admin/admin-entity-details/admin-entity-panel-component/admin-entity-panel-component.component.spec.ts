@@ -8,13 +8,14 @@ import { MatDialogModule } from "@angular/material/dialog";
 describe("AdminEntityPanelComponentComponent", () => {
   let component: AdminEntityPanelComponentComponent;
   let fixture: ComponentFixture<AdminEntityPanelComponentComponent>;
-  let mockEntityRelationsService: jasmine.SpyObj<EntityRelationsService>;
+  let mockEntityRelationsService: any;
 
   beforeEach(async () => {
-    mockEntityRelationsService = jasmine.createSpyObj(
-      "EntityRelationsService",
-      ["getEntityTypesReferencingType"],
-    );
+    mockEntityRelationsService = {
+      getEntityTypesReferencingType: vi
+        .fn()
+        .mockName("EntityRelationsService.getEntityTypesReferencingType"),
+    };
     await TestBed.configureTestingModule({
       imports: [AdminEntityPanelComponentComponent, MatDialogModule],
       providers: [

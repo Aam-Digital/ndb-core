@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { SetupWizardButtonComponent } from "./setup-wizard-button.component";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
@@ -41,46 +36,56 @@ describe("SetupWizardButtonComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should hide if SetupWizardConfig completed", fakeAsync(() => {
-    const testWizardConfig: SetupWizardConfig = {
-      steps: [],
-      finished: true,
-    };
-    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(
-      new Config("", testWizardConfig),
-    );
+  it("should hide if SetupWizardConfig completed", async () => {
+    vi.useFakeTimers();
+    try {
+      const testWizardConfig: SetupWizardConfig = {
+        steps: [],
+        finished: true,
+      };
+      vi.spyOn(TestBed.inject(EntityMapperService), "load").mockResolvedValue(
+        new Config("", testWizardConfig),
+      );
 
-    component.ngOnInit();
-    tick();
+      component.ngOnInit();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.showSetupWizard).toBeFalse();
-  }));
+      expect(component.showSetupWizard).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should auto navigate to setup wizard if configured openOnStart", fakeAsync(() => {
-    const routerSpy = spyOn(TestBed.inject(Router), "navigate");
-    const testWizardConfig: SetupWizardConfig = { steps: [] };
-    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(
-      new Config("", testWizardConfig),
-    );
+  it("should auto navigate to setup wizard if configured openOnStart", async () => {
+    vi.useFakeTimers();
+    try {
+      const routerSpy = vi.spyOn(TestBed.inject(Router), "navigate");
+      const testWizardConfig: SetupWizardConfig = { steps: [] };
+      vi.spyOn(TestBed.inject(EntityMapperService), "load").mockResolvedValue(
+        new Config("", testWizardConfig),
+      );
 
-    // don't re-route if disabled in config
-    testWizardConfig.openOnStart = false;
-    component.ngOnInit();
-    tick();
-    expect(routerSpy).not.toHaveBeenCalled();
+      // don't re-route if disabled in config
+      testWizardConfig.openOnStart = false;
+      component.ngOnInit();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(routerSpy).not.toHaveBeenCalled();
 
-    // don't re-route if finished
-    testWizardConfig.finished = true;
-    testWizardConfig.openOnStart = true;
-    component.ngOnInit();
-    tick();
-    expect(routerSpy).not.toHaveBeenCalled();
+      // don't re-route if finished
+      testWizardConfig.finished = true;
+      testWizardConfig.openOnStart = true;
+      component.ngOnInit();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(routerSpy).not.toHaveBeenCalled();
 
-    // re-route automatically if configured
-    testWizardConfig.openOnStart = true;
-    testWizardConfig.finished = false;
-    component.ngOnInit();
-    tick();
-    expect(routerSpy).toHaveBeenCalled();
-  }));
+      // re-route automatically if configured
+      testWizardConfig.openOnStart = true;
+      testWizardConfig.finished = false;
+      component.ngOnInit();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(routerSpy).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

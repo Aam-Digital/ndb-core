@@ -2,7 +2,7 @@
 applyTo: "**/*.spec.ts"
 ---
 
-# Unit Testing Patterns (Jasmine/Karma)
+# Unit Testing Patterns (Vitest)
 
 ## Test Module Setup
 
@@ -54,15 +54,14 @@ const entity2 = TestEntity.create("Quick Name");
 
 ## Mocking Dependencies
 
-Use `jasmine.createSpyObj` for service mocks:
+Use `vi.fn` and `vi.spyOn` for service mocks:
 
 ```typescript
-const mockService = jasmine.createSpyObj("EntityMapperService", [
-  "load",
-  "save",
-  "remove",
-]);
-mockService.load.and.returnValue(Promise.resolve(testEntity));
+const mockService = {
+  load: vi.fn().mockResolvedValue(testEntity),
+  save: vi.fn(),
+  remove: vi.fn(),
+};
 
 await TestBed.configureTestingModule({
   imports: [MyComponent, MockedTestingModule.withState()],
@@ -83,61 +82,45 @@ await TestBed.configureTestingModule({
 }).compileComponents();
 ```
 
-## Custom Jasmine Matchers
+## Assertions
 
-These matchers are globally registered and available in all spec files:
+Prefer plain Vitest assertions over project-specific helpers:
 
 ```typescript
-// Entity type checking
-expect(entity).toHaveType("Child");
-
-// Form validation
-expect(form).toContainFormError("required");
-expect(form).toHaveValue({ name: "Test" });
-expect(form).toBeValidForm();
-expect(form).toBeEnabled();
-
-// Collection matchers
-expect(map).toHaveKey("someKey");
-expect(array).toBeEmpty();
-
-// Number matchers
-expect(value).toBeFinite();
-
-// Object matchers
-expect(obj).toHaveOwnProperty("name");
-
-// Date matchers
-expect(dateValue).toBeDate("2024-01-15");
+expect(formControl.value).toEqual({ name: "Test" });
+expect(formControl.hasError("required")).toBe(true);
+expect(formGroup.valid).toBe(true);
+expect(formGroup.enabled).toBe(true);
+expect(items).toHaveLength(0);
+expect(dateValue?.getTime()).toBe(new Date(2024, 0, 15).getTime());
 ```
 
 ## Async Testing Patterns
 
-### fakeAsync / tick / flush
+### async/await and timers
 
 ```typescript
-it("should update after async operation", fakeAsync(() => {
-  component.loadData();
-  tick(); // resolve microtasks (promises)
+it("should update after async operation", async () => {
+  await component.loadData();
   fixture.detectChanges();
 
   expect(component.data()).toBeTruthy();
-  flush(); // resolve all remaining async tasks
-}));
+});
 ```
 
-### expectObservable
-
-Use `expectObservable()` from `src/app/utils/test-utils/observable-utils.ts`:
+Use `vi.useFakeTimers()` and `vi.advanceTimersByTimeAsync()` when the implementation relies on timers:
 
 ```typescript
-import { expectObservable } from "../../utils/test-utils/observable-utils";
-
-// Assert first emitted value
-await expectObservable(myObservable$).first.toBeResolvedTo(expectedValue);
-
-// Assert full sequence
-await expectObservable(myObservable$).inSequence.toBeResolvedTo([val1, val2]);
+it("debounces search requests", async () => {
+  vi.useFakeTimers();
+  try {
+    component.search("test");
+    await vi.advanceTimersByTimeAsync(300);
+    expect(service.load).toHaveBeenCalledWith("test");
+  } finally {
+    vi.useRealTimers();
+  }
+});
 ```
 
 ## Test File Structure
@@ -178,6 +161,9 @@ describe("MyComponent", () => {
 ```bash
 # Run specific test file
 npm run test -- --watch=false --include='**/my-component.spec.ts'
+
+# Run CI-style suite with coverage
+npm run test-ci
 
 # Run all tests
 npm run test -- --watch=false

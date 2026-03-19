@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import { MenuService } from "./menu.service";
 import { ConfigService } from "app/core/config/config.service";
 import { Config } from "@playwright/test";
@@ -13,14 +13,16 @@ import { ViewConfig } from "app/core/config/dynamic-routing/view-config.interfac
 describe("MenuService", () => {
   let service: MenuService;
 
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockConfigService: any;
   let mockConfigUpdated: BehaviorSubject<Config>;
 
   beforeEach(() => {
     mockConfigUpdated = new BehaviorSubject<Config>(null);
-    mockConfigService = jasmine.createSpyObj(["getConfig", "getAllConfigs"], {
+    mockConfigService = {
+      getConfig: vi.fn(),
+      getAllConfigs: vi.fn(),
       configUpdates: mockConfigUpdated,
-    });
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -35,33 +37,38 @@ describe("MenuService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should parse EntityMenuItem and keep simple MenuItem unchanged", fakeAsync(() => {
-    const testConfig: NavigationMenuConfig = {
-      items: [
+  it("should parse EntityMenuItem and keep simple MenuItem unchanged", async () => {
+    vi.useFakeTimers();
+    try {
+      const testConfig: NavigationMenuConfig = {
+        items: [
+          { label: "Home", icon: "home", link: "/" },
+          {
+            entityType: "TestEntity",
+            subMenu: [{ label: "submenu label", entityType: "TestEntity" }],
+          } as EntityMenuItem,
+        ],
+      };
+
+      mockConfigService.getConfig.mockReturnValue(testConfig);
+      mockConfigUpdated.next(null);
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(service.menuItems.value).toEqual([
         { label: "Home", icon: "home", link: "/" },
         {
-          entityType: "TestEntity",
-          subMenu: [{ label: "submenu label", entityType: "TestEntity" }],
-        } as EntityMenuItem,
-      ],
-    };
-
-    mockConfigService.getConfig.and.returnValue(testConfig);
-    mockConfigUpdated.next(null);
-    tick();
-
-    expect(service.menuItems.value).toEqual([
-      { label: "Home", icon: "home", link: "/" },
-      {
-        label: "Test Entities",
-        icon: "child",
-        link: "/test-entity",
-        subMenu: [
-          { label: "submenu label", icon: "child", link: "/test-entity" },
-        ],
-      },
-    ]);
-  }));
+          label: "Test Entities",
+          icon: "child",
+          link: "/test-entity",
+          subMenu: [
+            { label: "submenu label", icon: "child", link: "/test-entity" },
+          ],
+        },
+      ]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should load availableRoutes from config service and skip routes with /:id", () => {
     const testView1: ViewConfig = {
@@ -85,7 +92,7 @@ describe("MenuService", () => {
       config: { widgets: [] },
     };
 
-    mockConfigService.getAllConfigs.and.returnValue([
+    mockConfigService.getAllConfigs.mockReturnValue([
       testView1,
       testView2,
       testView3,

@@ -20,7 +20,7 @@ describe("MapPropertiesPopupComponent", () => {
   let component: MapPropertiesPopupComponent;
   let fixture: ComponentFixture<MapPropertiesPopupComponent>;
   let properties: LocationProperties = {};
-  let mockDialogRef: jasmine.SpyObj<MatDialogRef<MapPropertiesPopupComponent>>;
+  let mockDialogRef: any;
 
   @DatabaseEntity("TestEntityWithAddress")
   class TestEntityWithAddress extends Entity {
@@ -44,7 +44,9 @@ describe("MapPropertiesPopupComponent", () => {
       dataType: "location",
     });
     properties[TestEntity.ENTITY_TYPE] = ["address"];
-    mockDialogRef = jasmine.createSpyObj(["close"]);
+    mockDialogRef = {
+      close: vi.fn(),
+    };
     await TestBed.configureTestingModule({
       imports: [
         MapPropertiesPopupComponent,

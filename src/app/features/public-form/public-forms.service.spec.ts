@@ -7,15 +7,33 @@ import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
+import type { Mock } from "vitest";
+
+type EntityRegistryMock = {
+  get: Mock;
+};
+
+type EntityConfigServiceMock = {
+  getEntityConfig: Mock;
+};
+
+type AdminEntityServiceMock = {
+  setAndSaveEntityConfig: Mock;
+};
+
+type MockSchemaField = {
+  dataType: string;
+  additional?: string;
+};
 
 describe("PublicFormsService", () => {
   let service: PublicFormsService;
-  let mockEntityRegistry: jasmine.SpyObj<EntityRegistry>;
-  let mockEntityConfigService: jasmine.SpyObj<EntityConfigService>;
-  let mockAdminEntityService: jasmine.SpyObj<AdminEntityService>;
+  let mockEntityRegistry: EntityRegistryMock;
+  let mockEntityConfigService: EntityConfigServiceMock;
+  let mockAdminEntityService: AdminEntityServiceMock;
 
   function createMockEntityConstructor(
-    schemaEntries: [string, any][],
+    schemaEntries: [string, MockSchemaField][],
   ): EntityConstructor {
     return {
       schema: new Map(schemaEntries),
@@ -23,19 +41,25 @@ describe("PublicFormsService", () => {
   }
 
   beforeEach(() => {
-    mockEntityRegistry = jasmine.createSpyObj("EntityRegistry", ["get"]);
-    mockEntityConfigService = jasmine.createSpyObj("EntityConfigService", [
-      "getEntityConfig",
-    ]);
-    mockAdminEntityService = jasmine.createSpyObj("AdminEntityService", [
-      "setAndSaveEntityConfig",
-    ]);
+    mockEntityRegistry = {
+      get: vi.fn().mockName("EntityRegistry.get"),
+    };
+    mockEntityConfigService = {
+      getEntityConfig: vi.fn().mockName("EntityConfigService.getEntityConfig"),
+    };
+    mockAdminEntityService = {
+      setAndSaveEntityConfig: vi
+        .fn()
+        .mockName("AdminEntityService.setAndSaveEntityConfig"),
+    };
 
     TestBed.configureTestingModule({
       providers: [
         {
           provide: EntityMapperService,
-          useValue: jasmine.createSpyObj(["load"]),
+          useValue: {
+            load: vi.fn(),
+          },
         },
         {
           provide: EntityRegistry,
@@ -55,9 +79,7 @@ describe("PublicFormsService", () => {
     // Mock clipboard API for tests using Object.defineProperty
     Object.defineProperty(navigator, "clipboard", {
       value: {
-        writeText: jasmine
-          .createSpy("writeText")
-          .and.returnValue(Promise.resolve()),
+        writeText: vi.fn().mockReturnValue(Promise.resolve()),
       },
       writable: true,
     });
@@ -75,7 +97,7 @@ describe("PublicFormsService", () => {
     config.entity = "TestEntity";
     config.linkedEntities = ["children"];
 
-    mockEntityRegistry.get.and.returnValue(
+    mockEntityRegistry.get.mockReturnValue(
       createMockEntityConstructor([
         ["children", { dataType: "entity", additional: "Child" }],
       ]),
@@ -94,14 +116,14 @@ describe("PublicFormsService", () => {
     config.entity = "TestEntity";
     config.linkedEntities = ["children"];
 
-    mockEntityRegistry.get.and.returnValue(
+    mockEntityRegistry.get.mockReturnValue(
       createMockEntityConstructor([
         ["children", { dataType: "entity", additional: "Child" }],
       ]),
     );
 
     const entity = new Entity();
-    entity.getConstructor = jasmine.createSpy().and.returnValue({
+    entity.getConstructor = vi.fn().mockReturnValue({
       ENTITY_TYPE: "School", // Entity type does not match "Child"
     });
 
@@ -119,7 +141,7 @@ describe("PublicFormsService", () => {
     config.linkedEntities = [];
 
     const entity = new Entity();
-    entity.getConstructor = jasmine.createSpy().and.returnValue({
+    entity.getConstructor = vi.fn().mockReturnValue({
       ENTITY_TYPE: "Child",
     });
 
@@ -136,7 +158,7 @@ describe("PublicFormsService", () => {
     config.entity = "TestEntity";
     config.linkedEntities = ["children", "schools"];
 
-    mockEntityRegistry.get.and.returnValue(
+    mockEntityRegistry.get.mockReturnValue(
       createMockEntityConstructor([
         ["children", { dataType: "entity", additional: "Child" }],
         ["schools", { dataType: "entity", additional: "School" }],
@@ -144,10 +166,10 @@ describe("PublicFormsService", () => {
     );
 
     const entity = new Entity();
-    entity.getConstructor = jasmine.createSpy().and.returnValue({
+    entity.getConstructor = vi.fn().mockReturnValue({
       ENTITY_TYPE: "Child",
     });
-    entity.getId = jasmine.createSpy().and.returnValue("Child:123");
+    entity.getId = vi.fn().mockReturnValue("Child:123");
 
     const result = await service.copyPublicFormLinkFromConfig(config, entity);
     expect(result).toBe(true);
@@ -162,7 +184,7 @@ describe("PublicFormsService", () => {
     config.entity = "TestEntity";
     config.linkedEntities = ["children", "schools"];
 
-    mockEntityRegistry.get.and.returnValue(
+    mockEntityRegistry.get.mockReturnValue(
       createMockEntityConstructor([
         ["children", { dataType: "entity", additional: "Child" }],
         ["schools", { dataType: "entity", additional: "Child" }],
@@ -170,10 +192,10 @@ describe("PublicFormsService", () => {
     );
 
     const entity = new Entity();
-    entity.getConstructor = jasmine.createSpy().and.returnValue({
+    entity.getConstructor = vi.fn().mockReturnValue({
       ENTITY_TYPE: "Child",
     });
-    entity.getId = jasmine.createSpy().and.returnValue("Child:123");
+    entity.getId = vi.fn().mockReturnValue("Child:123");
 
     const result = await service.copyPublicFormLinkFromConfig(config, entity);
     expect(result).toBe(true);
@@ -188,7 +210,7 @@ describe("PublicFormsService", () => {
     config.entity = "TestEntity";
     config.linkedEntities = ["children", "schools"];
 
-    mockEntityRegistry.get.and.returnValue(
+    mockEntityRegistry.get.mockReturnValue(
       createMockEntityConstructor([
         ["children", { dataType: "entity", additional: "Child" }],
         ["schools", { dataType: "entity", additional: "School" }],
@@ -196,7 +218,7 @@ describe("PublicFormsService", () => {
     );
 
     const entity = new Entity();
-    entity.getConstructor = jasmine.createSpy().and.returnValue({
+    entity.getConstructor = vi.fn().mockReturnValue({
       ENTITY_TYPE: "Note", // Entity type does not match any
     });
 
@@ -226,7 +248,7 @@ describe("PublicFormsService", () => {
     config.linkedEntities = [];
 
     const entity = new Entity();
-    entity.getConstructor = jasmine.createSpy().and.returnValue({
+    entity.getConstructor = vi.fn().mockReturnValue({
       ENTITY_TYPE: "Child",
     });
 
@@ -239,14 +261,14 @@ describe("PublicFormsService", () => {
     config.entity = "TestEntity";
     config.linkedEntities = ["children"];
 
-    mockEntityRegistry.get.and.returnValue(
+    mockEntityRegistry.get.mockReturnValue(
       createMockEntityConstructor([
         ["children", { dataType: "entity", additional: "Child" }],
       ]),
     );
 
     const entity = new Entity();
-    entity.getConstructor = jasmine.createSpy().and.returnValue({
+    entity.getConstructor = vi.fn().mockReturnValue({
       ENTITY_TYPE: "Child",
     });
 
@@ -259,14 +281,14 @@ describe("PublicFormsService", () => {
     config.entity = "TestEntity";
     config.linkedEntities = ["children"];
 
-    mockEntityRegistry.get.and.returnValue(
+    mockEntityRegistry.get.mockReturnValue(
       createMockEntityConstructor([
         ["children", { dataType: "entity", additional: "Child" }],
       ]),
     );
 
     const entity = new Entity();
-    entity.getConstructor = jasmine.createSpy().and.returnValue({
+    entity.getConstructor = vi.fn().mockReturnValue({
       ENTITY_TYPE: "School",
     });
 
@@ -279,7 +301,7 @@ describe("PublicFormsService", () => {
     config.entity = "TestEntity";
     config.linkedEntities = ["children", "schools"];
 
-    mockEntityRegistry.get.and.returnValue(
+    mockEntityRegistry.get.mockReturnValue(
       createMockEntityConstructor([
         ["children", { dataType: "entity", additional: "Child" }],
         ["schools", { dataType: "entity", additional: "School" }],
@@ -287,7 +309,7 @@ describe("PublicFormsService", () => {
     );
 
     const entity = new Entity();
-    entity.getConstructor = jasmine.createSpy().and.returnValue({
+    entity.getConstructor = vi.fn().mockReturnValue({
       ENTITY_TYPE: "School",
     });
 
@@ -306,9 +328,9 @@ describe("PublicFormsService", () => {
       dataType: "string",
     });
 
-    mockEntityRegistry.get.and.returnValue(TestEntity);
+    mockEntityRegistry.get.mockReturnValue(TestEntity);
     // Global config only has the original TestEntity fields (name, other) but is missing our new testField
-    mockEntityConfigService.getEntityConfig.and.returnValue({
+    mockEntityConfigService.getEntityConfig.mockReturnValue({
       attributes: {
         name: { label: "Name" },
         other: { label: "Other" },
@@ -329,12 +351,12 @@ describe("PublicFormsService", () => {
     const config = new PublicFormConfig();
     config.entity = TestEntity.ENTITY_TYPE;
 
-    mockEntityRegistry.get.and.returnValue(TestEntity);
+    mockEntityRegistry.get.mockReturnValue(TestEntity);
     const attributes = {};
     for (const [fieldId, fieldDef] of TestEntity.schema.entries()) {
       attributes[fieldId] = { label: fieldDef.label };
     }
-    mockEntityConfigService.getEntityConfig.and.returnValue({
+    mockEntityConfigService.getEntityConfig.mockReturnValue({
       attributes: attributes,
     });
 
@@ -361,17 +383,17 @@ describe("PublicFormsService", () => {
       },
     ];
 
-    mockEntityRegistry.get.and.returnValue(
+    mockEntityRegistry.get.mockReturnValue(
       createMockEntityConstructor([
         ["assignedTo", { dataType: "entity", additional: "Child" }],
       ]),
     );
 
     const entity = new Entity();
-    entity.getConstructor = jasmine.createSpy().and.returnValue({
+    entity.getConstructor = vi.fn().mockReturnValue({
       ENTITY_TYPE: "Child",
     });
-    entity.getId = jasmine.createSpy().and.returnValue("Child:123");
+    entity.getId = vi.fn().mockReturnValue("Child:123");
 
     const result = await service.copyPublicFormLinkFromConfig(config, entity);
     expect(result).toBe(true);

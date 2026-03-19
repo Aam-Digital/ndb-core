@@ -19,7 +19,8 @@ import { MockEntityMapperService } from "../entity-mapper/mock-entity-mapper-ser
 export class EntityWithAnonRelations extends Entity {
   static override hasPII = true;
 
-  @DatabaseField() name: string;
+  @DatabaseField()
+  name: string;
 
   @DatabaseField({
     dataType: "entity",

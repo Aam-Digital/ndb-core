@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { RelatedTimePeriodEntitiesComponent } from "./related-time-period-entities.component";
 import moment from "moment";
@@ -97,7 +91,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
 
     columnNames = component._columns.map((column) => column.label);
     expect(columnNames).toEqual(
-      jasmine.arrayContaining(["Team", "From", "To", "Class", "Result"]),
+      expect.arrayContaining(["Team", "From", "To", "Class", "Result"]),
     );
   });
 
@@ -117,8 +111,8 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     existingRelation.start = moment().subtract(1, "year").toDate();
     existingRelation.end = moment().subtract(1, "week").toDate();
     existingRelation.childId = child.getId();
-    const loadType = spyOn(entityMapper, "loadType");
-    loadType.and.resolveTo([existingRelation]);
+    const loadType = vi.spyOn(entityMapper, "loadType");
+    loadType.mockResolvedValue([existingRelation]);
 
     component.entity = child;
     await component.ngOnInit();
@@ -129,18 +123,23 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
       moment(existingRelation.end)
         .add(1, "day")
         .isSame(newRelation.start, "day"),
-    ).toBeTrue();
+    ).toBe(true);
   });
 
-  it("should show all relations if configured; with active ones being highlighted", fakeAsync(() => {
-    const loadType = spyOn(entityMapper, "loadType");
-    loadType.and.resolveTo([active1, active2, inactive]);
+  it("should show all relations if configured; with active ones being highlighted", async () => {
+    vi.useFakeTimers();
+    try {
+      const loadType = vi.spyOn(entityMapper, "loadType");
+      loadType.mockResolvedValue([active1, active2, inactive]);
 
-    component.showInactive = true;
-    component.ngOnInit();
-    tick();
+      component.showInactive = true;
+      component.ngOnInit();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.backgroundColorFn(active1)).not.toEqual("");
-    expect(component.backgroundColorFn(inactive)).toEqual("");
-  }));
+      expect(component.backgroundColorFn(active1)).not.toEqual("");
+      expect(component.backgroundColorFn(inactive)).toEqual("");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

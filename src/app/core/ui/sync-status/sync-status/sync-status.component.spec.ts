@@ -21,14 +21,13 @@ import { SyncStatusComponent } from "./sync-status.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { SyncState } from "../../../session/session-states/sync-state.enum";
 import { DatabaseIndexingService } from "../../../entity/database-indexing/database-indexing.service";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, firstValueFrom } from "rxjs";
 import { BackgroundProcessState } from "../background-process-state.interface";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import {
   EntityRegistry,
   entityRegistry,
 } from "../../../entity/database-entity.decorator";
-import { expectObservable } from "../../../../utils/test-utils/observable-utils";
 import { SyncStateSubject } from "../../../session/session-type";
 
 describe("SyncStatusComponent", () => {
@@ -82,17 +81,17 @@ describe("SyncStatusComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    await expectObservable(component.backgroundProcesses).first.toBeResolvedTo([
-      DATABASE_SYNCING_STATE,
-    ]);
+    await expect(
+      firstValueFrom(component.backgroundProcesses),
+    ).resolves.toEqual([DATABASE_SYNCING_STATE]);
 
     syncState.next(SyncState.COMPLETED);
     fixture.detectChanges();
     await fixture.whenStable();
 
-    await expectObservable(component.backgroundProcesses).first.toBeResolvedTo([
-      DATABASE_SYNCED_STATE,
-    ]);
+    await expect(
+      firstValueFrom(component.backgroundProcesses),
+    ).resolves.toEqual([DATABASE_SYNCED_STATE]);
   });
 
   it("should update backgroundProcesses with indexing", async () => {
@@ -104,9 +103,8 @@ describe("SyncStatusComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    await expectObservable(component.backgroundProcesses).first.toBeResolvedTo([
-      DATABASE_SYNCED_STATE,
-      testIndexState,
-    ]);
+    await expect(
+      firstValueFrom(component.backgroundProcesses),
+    ).resolves.toEqual([DATABASE_SYNCED_STATE, testIndexState]);
   });
 });

@@ -7,7 +7,7 @@ export interface UniquePropertyValidatorConfig {
   /**
    * Function to get existing values to compare against
    */
-  getExistingValues: () => Promise<string[]>;
+  getExistingValues: () => Promise<unknown[]>;
   /**
    * Whether to normalize values (trim and lowercase) before comparison
    */
@@ -19,13 +19,17 @@ export interface UniquePropertyValidatorConfig {
   fieldLabel: string;
 }
 
-function normalizeValue(value: string): string {
+function normalizeValue(value: unknown): unknown {
+  if (typeof value !== "string") {
+    return value;
+  }
+
   return value.trim().toLowerCase();
 }
 
 function isDuplicate(
-  currentValue: string,
-  existingValues: string[],
+  currentValue: unknown,
+  existingValues: unknown[],
   shouldNormalize: boolean,
 ): boolean {
   if (shouldNormalize) {
@@ -47,7 +51,11 @@ export function uniquePropertyValidator(
   config: UniquePropertyValidatorConfig,
 ): AsyncPromiseValidatorFn {
   return async (control: FormControl): Promise<ValidationErrors | null> => {
-    if (!control.value || control.value === control.defaultValue) {
+    const isEmptyValue =
+      control.value === null ||
+      control.value === undefined ||
+      control.value === "";
+    if (isEmptyValue || control.value === control.defaultValue) {
       return null;
     }
 

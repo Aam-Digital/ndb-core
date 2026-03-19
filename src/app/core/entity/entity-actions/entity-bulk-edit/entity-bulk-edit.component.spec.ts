@@ -10,12 +10,22 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "../../database-entity.decorator";
+import type { Mock } from "vitest";
+
+type DialogRefMock = {
+  close: Mock;
+};
+
+type EntityFormServiceMock = {
+  createEntityForm: Mock;
+  extendFormFieldConfig: Mock;
+};
 
 describe("EntityBulkEditComponent", () => {
   let component: EntityBulkEditComponent<any>;
   let fixture: ComponentFixture<EntityBulkEditComponent<any>>;
-  let mockDialogRef: jasmine.SpyObj<MatDialogRef<EntityBulkEditComponent<any>>>;
-  let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
+  let mockDialogRef: DialogRefMock;
+  let mockEntityFormService: EntityFormServiceMock;
 
   const mockEntityConstructor = {
     schema: new Map([
@@ -33,11 +43,15 @@ describe("EntityBulkEditComponent", () => {
   };
 
   beforeEach(async () => {
-    mockDialogRef = jasmine.createSpyObj("MatDialogRef", ["close"]);
-    mockEntityFormService = jasmine.createSpyObj("EntityFormService", [
-      "createEntityForm",
-      "extendFormFieldConfig",
-    ]);
+    mockDialogRef = {
+      close: vi.fn().mockName("MatDialogRef.close"),
+    };
+    mockEntityFormService = {
+      createEntityForm: vi.fn().mockName("EntityFormService.createEntityForm"),
+      extendFormFieldConfig: vi
+        .fn()
+        .mockName("EntityFormService.extendFormFieldConfig"),
+    };
 
     await TestBed.configureTestingModule({
       imports: [

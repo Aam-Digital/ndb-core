@@ -1,4 +1,4 @@
-import { testDatatype } from "../schema/entity-schema.service.spec";
+import { testDatatype } from "../schema/entity-schema.service.test-utils";
 import { UpdateMetadataDatatype } from "./update-metadata.datatype";
 import { UpdateMetadata } from "./update-metadata";
 import moment from "moment";

@@ -6,11 +6,13 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("EntityActionsMenuService", () => {
   let service: EntityActionsMenuService;
-  let ability: jasmine.SpyObj<EntityAbility>;
+  let ability: any;
 
   beforeEach(() => {
-    ability = jasmine.createSpyObj<EntityAbility>("EntityAbility", ["can"]);
-    ability.can.and.returnValue(true);
+    ability = {
+      can: vi.fn().mockName("EntityAbility.can"),
+    };
+    ability.can.mockReturnValue(true);
 
     TestBed.configureTestingModule({
       providers: [{ provide: EntityAbility, useValue: ability }],
@@ -24,7 +26,7 @@ describe("EntityActionsMenuService", () => {
 
   it("should filter out single actions if required permission is missing", async () => {
     const entity = TestEntity.create("Record A");
-    ability.can.and.returnValue(false);
+    ability.can.mockReturnValue(false);
 
     service.registerActions([
       {
@@ -53,7 +55,7 @@ describe("EntityActionsMenuService", () => {
   it("should filter out bulk actions if one selected entity is missing permission", async () => {
     const entityA = TestEntity.create("Record A");
     const entityB = TestEntity.create("Record B");
-    ability.can.and.callFake((_action, entity) => entity !== entityB);
+    ability.can.mockImplementation((_action, entity) => entity !== entityB);
 
     service.registerActions([
       {

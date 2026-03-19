@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { UserDetailsComponent } from "./user-details.component";
 import { Role, UserAccount } from "../user-admin-service/user-account";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
@@ -15,17 +10,43 @@ import { SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { BehaviorSubject, of } from "rxjs";
 import { CoreTestingModule } from "#src/app/utils/core-testing.module";
+import type { SessionInfo } from "../../session/auth/session-info";
+import type { Mock } from "vitest";
+
+type UserAdminServiceMock = {
+  getAllRoles: Mock;
+  createUser: Mock;
+  updateUser: Mock;
+};
+
+type AlertServiceMock = {
+  addInfo: Mock;
+  addAlert: Mock;
+  addDanger: Mock;
+};
+
+type KeycloakAuthServiceMock = {
+  changePassword: Mock;
+};
+
+type HttpClientMock = {
+  post: Mock;
+};
+
+type DialogRefMock = {
+  close: Mock;
+};
 
 describe("UserDetailsComponent", () => {
   let component: UserDetailsComponent;
   let fixture: ComponentFixture<UserDetailsComponent>;
-  let mockUserAdminService: jasmine.SpyObj<UserAdminService>;
-  let mockAlertService: jasmine.SpyObj<AlertService>;
-  let mockKeycloakService: jasmine.SpyObj<KeycloakAuthService>;
-  let mockHttpClient: jasmine.SpyObj<HttpClient>;
-  let mockSessionSubject: BehaviorSubject<any>;
-  let mockCurrentUserSubject: BehaviorSubject<any>;
-  let mockDialogRef: jasmine.SpyObj<MatDialogRef<UserDetailsComponent>>;
+  let mockUserAdminService: UserAdminServiceMock;
+  let mockAlertService: AlertServiceMock;
+  let mockKeycloakService: KeycloakAuthServiceMock;
+  let mockHttpClient: HttpClientMock;
+  let mockSessionSubject: BehaviorSubject<SessionInfo | null>;
+  let mockCurrentUserSubject: BehaviorSubject<UserAccount | null>;
+  let mockDialogRef: DialogRefMock;
 
   const mockRole: Role = {
     id: "test-role",
@@ -42,34 +63,39 @@ describe("UserDetailsComponent", () => {
   };
 
   beforeEach(async () => {
-    mockUserAdminService = jasmine.createSpyObj("UserAdminService", [
-      "getAllRoles",
-      "createUser",
-      "updateUser",
-    ]);
-    mockUserAdminService.getAllRoles.and.returnValue(of([mockRole]));
-    mockUserAdminService.updateUser.and.returnValue(of({ userUpdated: true }));
+    mockUserAdminService = {
+      getAllRoles: vi.fn().mockName("UserAdminService.getAllRoles"),
+      createUser: vi.fn().mockName("UserAdminService.createUser"),
+      updateUser: vi.fn().mockName("UserAdminService.updateUser"),
+    };
+    mockUserAdminService.getAllRoles.mockReturnValue(of([mockRole]));
+    mockUserAdminService.updateUser.mockReturnValue(of({ userUpdated: true }));
 
-    mockAlertService = jasmine.createSpyObj("AlertService", [
-      "addInfo",
-      "addAlert",
-      "addDanger",
-    ]);
-    mockKeycloakService = jasmine.createSpyObj("KeycloakAuthService", [
-      "changePassword",
-    ]);
-    mockHttpClient = jasmine.createSpyObj("HttpClient", ["post"]);
-    mockHttpClient.post.and.returnValue(of({}));
+    mockAlertService = {
+      addInfo: vi.fn().mockName("AlertService.addInfo"),
+      addAlert: vi.fn().mockName("AlertService.addAlert"),
+      addDanger: vi.fn().mockName("AlertService.addDanger"),
+    };
+    mockKeycloakService = {
+      changePassword: vi.fn().mockName("KeycloakAuthService.changePassword"),
+    };
+    mockHttpClient = {
+      post: vi.fn().mockName("HttpClient.post"),
+    };
+    mockHttpClient.post.mockReturnValue(of({}));
 
-    mockSessionSubject = new BehaviorSubject({
+    mockSessionSubject = new BehaviorSubject<SessionInfo | null>({
+      id: "session-user-id",
       name: "test-user",
       email: "test@example.com",
       roles: ["user_app"],
     });
 
-    mockCurrentUserSubject = new BehaviorSubject(null);
+    mockCurrentUserSubject = new BehaviorSubject<UserAccount | null>(null);
 
-    mockDialogRef = jasmine.createSpyObj("MatDialogRef", ["close"]);
+    mockDialogRef = {
+      close: vi.fn().mockName("MatDialogRef.close"),
+    };
 
     await TestBed.configureTestingModule({
       imports: [UserDetailsComponent, CoreTestingModule],
@@ -161,29 +187,34 @@ describe("UserDetailsComponent", () => {
     expect(component.form.get("email")?.hasError("email")).toBe(false);
   });
 
-  it("should close dialog with accountUpdated result when form is valid", fakeAsync(() => {
-    fixture.componentRef.setInput("isInDialog", false);
-    fixture.componentRef.setInput("userAccount", mockUserAccount);
-    fixture.detectChanges();
+  it("should close dialog with accountUpdated result when form is valid", async () => {
+    vi.useFakeTimers();
+    try {
+      fixture.componentRef.setInput("isInDialog", false);
+      fixture.componentRef.setInput("userAccount", mockUserAccount);
+      fixture.detectChanges();
 
-    component.editMode();
-    fixture.detectChanges();
+      component.editMode();
+      fixture.detectChanges();
 
-    component.form.patchValue({
-      email: "updated@example.com",
-      roles: [mockRole],
-    });
+      component.form.patchValue({
+        email: "updated@example.com",
+        roles: [mockRole],
+      });
 
-    component.save();
-    tick();
+      component.save();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockDialogRef.close).toHaveBeenCalledWith(
-      jasmine.objectContaining({
-        type: "accountUpdated",
-        data: jasmine.anything(),
-      }),
-    );
-  }));
+      expect(mockDialogRef.close).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "accountUpdated",
+          data: expect.anything(),
+        }),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should not close dialog when form is invalid", () => {
     fixture.componentRef.setInput("isInDialog", false);
@@ -224,7 +255,7 @@ describe("UserDetailsComponent", () => {
       name: "admin",
       description: "Admin role",
     };
-    mockUserAdminService.getAllRoles.and.returnValue(of([mockRole, newRole]));
+    mockUserAdminService.getAllRoles.mockReturnValue(of([mockRole, newRole]));
 
     component.form.patchValue({
       roles: [mockRole, newRole],
@@ -233,7 +264,7 @@ describe("UserDetailsComponent", () => {
     component.save();
 
     expect(mockHttpClient.post).toHaveBeenCalledWith(
-      jasmine.stringContaining("/admin/clear_local/"),
+      expect.stringContaining("/admin/clear_local/"),
       undefined,
     );
   });

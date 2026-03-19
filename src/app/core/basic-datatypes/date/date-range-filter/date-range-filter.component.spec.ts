@@ -37,7 +37,7 @@ describe("DateRangeFilterComponent", () => {
     component.filterConfig = dateFilter;
     expect(component.filterConfig.getFilter()).toEqual({});
 
-    jasmine.clock().mockDate(moment("2023-05-18").toDate());
+    vi.setSystemTime(moment("2023-05-18").toDate());
     dateFilter.selectedOptionValues = ["0"];
     component.filterConfig = dateFilter;
     let expectedDataFilter = {
@@ -61,7 +61,7 @@ describe("DateRangeFilterComponent", () => {
     dateFilter.selectedOptionValues = [];
     component.filterConfig = dateFilter;
     expect(component.filterConfig.getFilter()).toEqual({});
-    jasmine.clock().uninstall();
+    vi.useRealTimers();
   });
 
   it("should set the correct date filter when inputting a specific date range via the URL", () => {
@@ -77,7 +77,10 @@ describe("DateRangeFilterComponent", () => {
 
     dateFilter.selectedOptionValues = ["2022-9-18", ""];
     component.filterConfig = dateFilter;
-    let testFilter: { $gte?: string; $lte?: string } = { $gte: "2022-09-18" };
+    let testFilter: {
+      $gte?: string;
+      $lte?: string;
+    } = { $gte: "2022-09-18" };
     let expectedDateFilter = {
       test: testFilter,
     };

@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { FormComponent } from "./form.component";
 import { Router } from "@angular/router";
@@ -25,36 +19,41 @@ describe("FormComponent", () => {
     }).compileComponents();
   }));
 
-  beforeEach(fakeAsync(() => {
-    fixture = TestBed.createComponent(FormComponent<TestEntity>);
-    component = fixture.componentInstance;
-    component.entity = new TestEntity();
-    component.fieldGroups = [{ fields: [{ id: "name" }] }];
-    fixture.detectChanges();
-    tick();
-  }));
+  beforeEach(async () => {
+    vi.useFakeTimers();
+    try {
+      fixture = TestBed.createComponent(FormComponent<TestEntity>);
+      component = fixture.componentInstance;
+      component.entity = new TestEntity();
+      component.fieldGroups = [{ fields: [{ id: "name" }] }];
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
   it("should change the creating state", () => {
-    expect(component.creatingNew).toBeFalse();
+    expect(component.creatingNew).toBe(false);
 
     component.entity = new TestEntity();
     component.fieldGroups = [];
     component.creatingNew = true;
 
-    expect(component.creatingNew).toBeTrue();
+    expect(component.creatingNew).toBe(true);
   });
 
   it("calls router once a new child is saved", async () => {
     const entityFormService = TestBed.inject(EntityFormService);
-    spyOn(entityFormService, "saveChanges").and.resolveTo();
+    vi.spyOn(entityFormService, "saveChanges").mockResolvedValue(undefined);
 
     const testChild = new TestEntity();
     const router = fixture.debugElement.injector.get(Router);
-    spyOn(router, "navigate");
+    vi.spyOn(router, "navigate");
 
     component.creatingNew = true;
     component.entity = testChild;
@@ -66,9 +65,9 @@ describe("FormComponent", () => {
 
   it("should show an alert when form service rejects saving", async () => {
     const alertService = TestBed.inject(AlertService);
-    spyOn(alertService, "addDanger");
+    vi.spyOn(alertService, "addDanger");
     const entityFormService = TestBed.inject(EntityFormService);
-    spyOn(entityFormService, "saveChanges").and.rejectWith(
+    vi.spyOn(entityFormService, "saveChanges").mockRejectedValue(
       new Error("error message"),
     );
 
@@ -86,8 +85,8 @@ describe("FormComponent", () => {
 
     component.cancelClicked();
 
-    expect(component.form.formGroup.disabled).toBeTrue();
-    expect(component.form.formGroup.get("name")).toHaveValue("test child");
+    expect(component.form.formGroup.disabled).toBe(true);
+    expect(component.form.formGroup.get("name").value).toEqual("test child");
   });
 
   it("should also reset form values which where not set before", () => {
