@@ -6,6 +6,33 @@ permissions:
   contents: write  # needed for semantic-release to create tags/releases
 
 jobs:
+  pre-releases-cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Delete previous pre-release releases and tags
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          # Delete all releases with "-master" in the tag (pre-releases) and their tags
+          gh release list --repo "$GITHUB_REPOSITORY" --limit 1000 --json tagName --jq '.[].tagName' \
+            | grep '\-master' \
+            | while read -r tag; do
+                echo "Deleting release and tag: $tag"
+                gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag
+              done
+
+          # Delete any remaining orphaned pre-release git tags
+          git fetch --tags
+          git tag -l '*-master*' | while read -r tag; do
+            echo "Deleting orphaned tag: $tag"
+            git push --delete origin "$tag" || true
+          done
+
   release:
     runs-on: ubuntu-latest
     outputs:
