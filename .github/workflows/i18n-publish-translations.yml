@@ -27,7 +27,10 @@ jobs:
           elif [ -n "${{ github.event.inputs.version }}" ]; then
             echo "tag=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
           else
-            tag=$(gh release view --repo "${{ github.repository }}" --json tagName -q .tagName)
+            tag=$(gh release view --repo "${{ github.repository }}" --json tagName -q .tagName) || {
+              echo "Error: No releases found and no version specified"
+              exit 1
+            }
             echo "tag=$tag" >> "$GITHUB_OUTPUT"
           fi
         env:
