@@ -57,7 +57,9 @@ jobs:
             curl -s -o "$outfile" "$url"
 
             # Flatten nested context groups into a flat {id: translation} map
-            jq '[to_entries[] | if (.value | type) == "object" then (.value | to_entries[]) else . end] | from_entries' "$outfile" > "$outfile.tmp" && mv "$outfile.tmp" "$outfile"
+            # and convert XLIFF placeholders <x id="NAME" .../> to Angular runtime format {$NAME}
+            jq '[to_entries[] | if (.value | type) == "object" then (.value | to_entries[]) else . end] | from_entries
+              | with_entries(.value |= gsub("<x id=\"(?<id>[^\"]*)\"[^/]*/>"; "{$\(.id)}"))' "$outfile" > "$outfile.tmp" && mv "$outfile.tmp" "$outfile"
           done
 
       - name: Deploy to GitHub Pages
