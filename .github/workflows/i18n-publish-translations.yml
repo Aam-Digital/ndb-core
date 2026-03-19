@@ -60,5 +60,33 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: locale
+          publish_dir: locale/${{ steps.version.outputs.tag }}
           destination_dir: locale/${{ steps.version.outputs.tag }}
+
+      - name: Clean up pre-release translations on stable release
+        if: github.event_name == 'release' && !github.event.release.prerelease
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+
+      - name: Remove pre-release locale directories
+        if: github.event_name == 'release' && !github.event.release.prerelease
+        run: |
+          changed=false
+          for dir in locale/*-*; do
+            if [ -d "$dir" ]; then
+              echo "Removing pre-release translations: $dir"
+              git rm -rf "$dir"
+              changed=true
+            fi
+          done
+
+          if [ "$changed" = true ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git commit -m "chore: clean up pre-release translation directories"
+            git push origin gh-pages
+          else
+            echo "No pre-release translation directories to clean up"
+          fi
+          destination_dir: locale
