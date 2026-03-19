@@ -53,7 +53,11 @@ jobs:
 
             url=$(echo "$response" | jq -r '.result.url')
             echo "Downloading translations for $lang from $url"
-            curl -s -o "locale/${{ steps.version.outputs.tag }}/messages.$lang.json" "$url"
+            outfile="locale/${{ steps.version.outputs.tag }}/messages.$lang.json"
+            curl -s -o "$outfile" "$url"
+
+            # Flatten nested context groups into a flat {id: translation} map
+            jq '[to_entries[] | if (.value | type) == "object" then (.value | to_entries[]) else . end] | from_entries' "$outfile" > "$outfile.tmp" && mv "$outfile.tmp" "$outfile"
           done
 
       - name: Deploy to GitHub Pages
