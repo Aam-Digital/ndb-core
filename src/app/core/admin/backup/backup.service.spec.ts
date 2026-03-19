@@ -39,6 +39,7 @@ describe("BackupService", () => {
 
   afterEach(async () => {
     await db.destroy();
+    vi.unstubAllGlobals();
   });
 
   it("should be created", () => {
@@ -149,35 +150,42 @@ describe("BackupService", () => {
   it("runPendingReset should delete all databases and unregister service workers", async () => {
     sessionStorage.setItem(BackupService.RESET_PENDING_KEY, "1");
 
-    // Spy on global APIs used by the static method
+    // Stub global indexedDB (not available in jsdom)
     const mockDbs = [{ name: "db1" }, { name: "db2" }];
-    vi.spyOn(indexedDB, "databases").mockResolvedValue(mockDbs as any);
-    const mockDeleteReq = { onsuccess: null as any, onerror: null as any };
-    vi.spyOn(indexedDB, "deleteDatabase").mockImplementation(() => {
-      const req = { ...mockDeleteReq };
+    const deleteDatabase = vi.fn().mockImplementation(() => {
+      const req = { onsuccess: null as any, onerror: null as any };
       setTimeout(() => req.onsuccess?.());
       return req as any;
     });
+    const databases = vi.fn().mockResolvedValue(mockDbs as any);
+    vi.stubGlobal("indexedDB", { databases, deleteDatabase });
     const unregisterSpy = vi.fn().mockResolvedValue(true);
-    vi.spyOn(navigator.serviceWorker, "getRegistrations").mockResolvedValue([
-      { unregister: unregisterSpy } as any,
-    ]);
+    Object.defineProperty(navigator, "serviceWorker", {
+      value: {
+        getRegistrations: vi.fn().mockResolvedValue([
+          { unregister: unregisterSpy } as any,
+        ]),
+      },
+      configurable: true,
+      writable: true,
+    });
 
     await BackupService.runPendingReset();
 
-    expect(indexedDB.deleteDatabase).toHaveBeenCalledWith("db1");
-    expect(indexedDB.deleteDatabase).toHaveBeenCalledWith("db2");
+    expect(deleteDatabase).toHaveBeenCalledWith("db1");
+    expect(deleteDatabase).toHaveBeenCalledWith("db2");
     expect(unregisterSpy).toHaveBeenCalled();
     expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBeNull();
   });
 
   it("runPendingReset should do nothing when no reset is pending", async () => {
     sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
-    vi.spyOn(indexedDB, "databases");
+    const databases = vi.fn();
+    vi.stubGlobal("indexedDB", { databases });
 
     await BackupService.runPendingReset();
 
-    expect(indexedDB.databases).not.toHaveBeenCalled();
+    expect(databases).not.toHaveBeenCalled();
   });
 
   function ignoreRevProperty(x) {
