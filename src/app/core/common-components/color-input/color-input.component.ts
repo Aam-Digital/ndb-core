@@ -14,8 +14,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgTemplateOutlet } from "@angular/common";
-
-const HEX_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}$/;
+import { HEX_COLOR_PATTERN } from "./color-validation.constants";
 
 @Component({
   selector: "app-color-input",

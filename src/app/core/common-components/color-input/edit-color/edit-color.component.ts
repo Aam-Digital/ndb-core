@@ -17,6 +17,7 @@ import { CustomFormControlDirective } from "#src/app/core/common-components/basi
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { HEX_COLOR_PATTERN } from "../color-validation.constants";
 
 /**
  * Edit component for color fields.
@@ -44,8 +45,6 @@ export class EditColorComponent
   extends CustomFormControlDirective<string>
   implements EditComponent, OnInit
 {
-  private static readonly HEX_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}$/;
-
   @Input() formFieldConfig?: FormFieldConfig;
 
   private readonly destroyRef = inject(DestroyRef);
@@ -71,7 +70,7 @@ export class EditColorComponent
       this.formControl?.setErrors(null);
       return;
     }
-    if (!EditColorComponent.HEX_COLOR_PATTERN.test(value)) {
+    if (!HEX_COLOR_PATTERN.test(value)) {
       this.formControl?.setErrors({
         invalidHex: {
           errorMessage: $localize`Please enter a valid hex color code (e.g. #ff0000)`,
@@ -85,8 +84,6 @@ export class EditColorComponent
   /** Safe getter for the current color value for display in the picker. */
   get colorPickerValue(): string {
     const val = this.formControl?.value;
-    return val && EditColorComponent.HEX_COLOR_PATTERN.test(val)
-      ? val
-      : "#000000";
+    return val && HEX_COLOR_PATTERN.test(val) ? val : "#000000";
   }
 }
