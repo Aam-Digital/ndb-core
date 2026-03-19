@@ -7,13 +7,15 @@ import {
   OnChanges,
   SimpleChanges,
 } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgTemplateOutlet } from "@angular/common";
+
+const HEX_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}$/;
 
 @Component({
   selector: "app-color-input",
@@ -45,7 +47,7 @@ export class ColorInputComponent implements OnInit, OnChanges {
    */
   @Input() label: string = $localize`Color`;
 
-  colorControl = new FormControl("");
+  colorControl = new FormControl("", [Validators.pattern(HEX_COLOR_PATTERN)]);
 
   ngOnInit() {
     this.colorControl.setValue(this.color || "");
@@ -65,6 +67,15 @@ export class ColorInputComponent implements OnInit, OnChanges {
   onColorChange(value: string) {
     this.color = value;
     this.colorControl.setValue(value, { emitEvent: false });
-    this.colorChange.emit(value);
+    if (HEX_COLOR_PATTERN.test(value) || !value) {
+      this.colorChange.emit(value);
+    }
+  }
+
+  /** Safe getter for the current color value for display in the picker. */
+  get colorPickerValue(): string {
+    return this.color && HEX_COLOR_PATTERN.test(this.color)
+      ? this.color
+      : "#000000";
   }
 }

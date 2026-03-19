@@ -30,35 +30,38 @@ describe("EditColorComponent", () => {
   it("should be valid for a valid hex color", () => {
     component.formControl.setValue("#ff0000");
     fixture.detectChanges();
-    expect(component.formControl.valid).toBeTrue();
+    expect(component.formControl.valid).toBe(true);
   });
 
   it("should be valid for an empty value", () => {
     component.formControl.setValue("");
     fixture.detectChanges();
-    expect(component.formControl.valid).toBeTrue();
+    expect(component.formControl.valid).toBe(true);
 
     component.formControl.setValue(null);
     fixture.detectChanges();
-    expect(component.formControl.valid).toBeTrue();
+    expect(component.formControl.valid).toBe(true);
   });
 
   it("should be invalid for a named color like 'red'", () => {
     component.formControl.setValue("red");
     fixture.detectChanges();
-    expect(component.formControl.hasError("invalidHex")).toBeTrue();
+    expect(component.formControl.hasError("invalidHex")).toBe(true);
+    expect(
+      component.formControl.getError("invalidHex")?.errorMessage,
+    ).toBeTruthy();
   });
 
   it("should be invalid for an incomplete hex value", () => {
     component.formControl.setValue("#fff");
     fixture.detectChanges();
-    expect(component.formControl.hasError("invalidHex")).toBeTrue();
+    expect(component.formControl.hasError("invalidHex")).toBe(true);
   });
 
   it("should be invalid for a hex value without # prefix", () => {
     component.formControl.setValue("ff0000");
     fixture.detectChanges();
-    expect(component.formControl.hasError("invalidHex")).toBeTrue();
+    expect(component.formControl.hasError("invalidHex")).toBe(true);
   });
 
   it("should update value when color picker changes", () => {

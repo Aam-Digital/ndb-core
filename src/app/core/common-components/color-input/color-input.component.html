@@ -14,7 +14,7 @@
     #colorInput
     type="color"
     class="color-input-overlay"
-    [value]="color"
+    [value]="colorPickerValue"
     (input)="onColorChange($event.target.value)"
     (click)="$event.stopPropagation()"
   />
@@ -45,5 +45,10 @@
     <span matSuffix>
       <ng-container *ngTemplateOutlet="colorPicker"></ng-container>
     </span>
+    @if (colorControl.hasError("pattern")) {
+      <mat-error i18n
+        >Please enter a valid hex color code (e.g. #ff0000)</mat-error
+      >
+    }
   </mat-form-field>
 }

@@ -72,7 +72,11 @@ export class EditColorComponent
       return;
     }
     if (!EditColorComponent.HEX_COLOR_PATTERN.test(value)) {
-      this.formControl?.setErrors({ invalidHex: true });
+      this.formControl?.setErrors({
+        invalidHex: {
+          errorMessage: $localize`Please enter a valid hex color code (e.g. #ff0000)`,
+        },
+      });
     } else {
       this.formControl?.setErrors(null);
     }
