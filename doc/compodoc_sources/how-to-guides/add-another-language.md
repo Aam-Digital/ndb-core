@@ -3,7 +3,7 @@
 ## Abstract
 
 This guide depicts the workflow one needs to go through to add another language
-(such as _hindi_, _bengali_, _french_ e.t.c.) to the project.
+(such as _hindi_, _bengali_, _french_ etc.) to the project.
 
 Translations are managed through [POEditor](https://poeditor.com/join/project/CGn4IA7Ilz)
 and published automatically to a GitHub Pages CDN at release time.

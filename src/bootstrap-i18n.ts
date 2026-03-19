@@ -54,7 +54,7 @@ async function fetchTranslations(
         return await response.json();
       }
     } catch (e) {
-      // CDN fetch failed
+      Logging.debug(`CDN fetch failed for locale '${locale}':`, e);
     }
   }
 

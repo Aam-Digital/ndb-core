@@ -54,7 +54,10 @@ jobs:
             url=$(echo "$response" | jq -r '.result.url')
             echo "Downloading translations for $lang from $url"
             outfile="locale/${{ steps.version.outputs.tag }}/messages.$lang.json"
-            curl -s -o "$outfile" "$url"
+            if ! curl -sf -o "$outfile" "$url"; then
+              echo "Error downloading translations for $lang from $url"
+              exit 1
+            fi
 
             # Flatten nested context groups into a flat {id: translation} map
             # and convert XLIFF placeholders <x id="NAME" .../> to Angular runtime format {$NAME}
@@ -95,4 +98,3 @@ jobs:
           else
             echo "No pre-release translation directories to clean up"
           fi
-          destination_dir: locale
