@@ -34,8 +34,10 @@ describe("ConfigurableEnum", () => {
     const newOption: string = "three";
     const returnedOption = testEnum.addOption(newOption);
     expect(returnedOption.label).toEqual(newOption);
-    expect(testEnum.values).toContain(
-      jasmine.objectContaining({ id: "THREE", label: "three" }),
+    expect(testEnum.values).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "THREE", label: "three" }),
+      ]),
     );
     expect(testEnum.values.length).toBe(sampleValues.length + 1);
   });

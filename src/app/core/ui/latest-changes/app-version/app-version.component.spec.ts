@@ -20,18 +20,27 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { AppVersionComponent } from "./app-version.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { LatestChangesDialogService } from "../latest-changes-dialog.service";
+import type { Mock } from "vitest";
+
+type LatestChangesDialogServiceMock = Pick<
+  LatestChangesDialogService,
+  "getCurrentVersion" | "showLatestChanges"
+> & {
+  getCurrentVersion: Mock;
+  showLatestChanges: Mock;
+};
 
 describe("AppVersionComponent", () => {
   let component: AppVersionComponent;
   let fixture: ComponentFixture<AppVersionComponent>;
 
-  let latestChangesDialogService: jasmine.SpyObj<LatestChangesDialogService>;
+  let latestChangesDialogService: LatestChangesDialogServiceMock;
 
   beforeEach(waitForAsync(() => {
-    latestChangesDialogService = jasmine.createSpyObj([
-      "getCurrentVersion",
-      "showLatestChanges",
-    ]);
+    latestChangesDialogService = {
+      getCurrentVersion: vi.fn(),
+      showLatestChanges: vi.fn(),
+    };
 
     TestBed.configureTestingModule({
       imports: [AppVersionComponent, NoopAnimationsModule],
@@ -58,7 +67,7 @@ describe("AppVersionComponent", () => {
 
   it("should load currentVersion", () => {
     const testVersion = "1.9.9";
-    latestChangesDialogService.getCurrentVersion.and.returnValue(testVersion);
+    latestChangesDialogService.getCurrentVersion.mockReturnValue(testVersion);
 
     component.ngOnInit();
 

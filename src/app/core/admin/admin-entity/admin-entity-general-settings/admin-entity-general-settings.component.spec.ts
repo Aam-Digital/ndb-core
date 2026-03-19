@@ -46,7 +46,9 @@ describe("AdminEntityGeneralSettingsComponent", () => {
       providers: [
         {
           provide: EntityMapperService,
-          useValue: jasmine.createSpyObj(["load"]),
+          useValue: {
+            load: vi.fn(),
+          },
         },
         EntityRegistry,
       ],

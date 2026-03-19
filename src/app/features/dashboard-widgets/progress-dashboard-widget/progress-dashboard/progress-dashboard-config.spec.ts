@@ -16,7 +16,7 @@
  */
 
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
-import { testEntitySubclass } from "../../../../core/entity/model/entity.spec";
+import { testEntitySubclass } from "../../../../core/entity/model/entity.test-utils";
 
 describe("ProgressDashboardConfig Entity", () => {
   testEntitySubclass("ProgressDashboardConfig", ProgressDashboardConfig, {

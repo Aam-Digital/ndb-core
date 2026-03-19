@@ -37,8 +37,8 @@ describe("MockFileService", () => {
   });
 
   it("should allow to open a file that has been uploaded before", async () => {
-    spyOn(URL, "createObjectURL").and.returnValue("object.url");
-    spyOn(window, "open");
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("object.url");
+    vi.spyOn(window, "open");
     const entity = new Entity();
     const prop = "fileProp";
     const file = { name: "test.file " } as File;

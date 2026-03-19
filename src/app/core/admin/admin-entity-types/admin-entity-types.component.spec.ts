@@ -7,6 +7,7 @@ import {
 } from "../../entity/database-entity.decorator";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { provideRouter } from "@angular/router";
 
 describe("AdminEntityTypesComponent", () => {
   let component: AdminEntityTypesComponent;
@@ -16,10 +17,13 @@ describe("AdminEntityTypesComponent", () => {
     await TestBed.configureTestingModule({
       imports: [AdminEntityTypesComponent, FontAwesomeTestingModule],
       providers: [
+        provideRouter([]),
         { provide: EntityRegistry, useValue: entityRegistry },
         {
           provide: EntityMapperService,
-          useValue: jasmine.createSpyObj(["load"]),
+          useValue: {
+            load: vi.fn(),
+          },
         },
       ],
     }).compileComponents();

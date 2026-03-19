@@ -49,26 +49,26 @@ describe("PerformanceAnalysisLogging Util Tests", () => {
 
   it("should log performance measure including function and params", async () => {
     const instance = new TestClass();
-    const consoleLogSpy = spyOn(console, "log");
+    const consoleLogSpy = vi.spyOn(console, "log");
 
     await instance.testFun(99, 1);
     expect(consoleLogSpy).toHaveBeenCalledWith(
       "duration [s] for TestClass.testFun(99, 1)",
-      jasmine.any(Number),
+      expect.any(Number),
     );
 
-    consoleLogSpy.calls.reset();
+    consoleLogSpy.mockClear();
     await instance.other();
     expect(consoleLogSpy).toHaveBeenCalledWith(
       "duration [s] for TestClass.other()",
-      jasmine.any(Number),
+      expect.any(Number),
     );
 
-    consoleLogSpy.calls.reset();
+    consoleLogSpy.mockClear();
     await instance.other({ _id: "ID:1", foo: "bar" });
     expect(consoleLogSpy).toHaveBeenCalledWith(
       'duration [s] for TestClass.other("ID:1")',
-      jasmine.any(Number),
+      expect.any(Number),
     );
   });
 });

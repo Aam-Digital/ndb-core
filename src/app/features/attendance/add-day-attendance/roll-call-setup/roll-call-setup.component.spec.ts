@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { signal } from "@angular/core";
 
 import { RollCallSetupComponent } from "./roll-call-setup.component";
@@ -30,29 +24,30 @@ describe("RollCallSetupComponent", () => {
   let component: RollCallSetupComponent;
   let fixture: ComponentFixture<RollCallSetupComponent>;
 
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
-  let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
+  let mockChildrenService: any;
+  let mockAttendanceService: any;
 
-  function stabilize() {
+  async function stabilize() {
     for (let i = 0; i < 5; i++) {
       fixture.detectChanges();
-      tick(); // microtasks (Promises from resource loader, etc.)
-      TestBed.tick(); // flush Angular effects and change detection
+      await fixture.whenStable();
+      await Promise.resolve();
     }
   }
 
   beforeEach(waitForAsync(() => {
-    mockChildrenService = jasmine.createSpyObj(["queryActiveRelationsOf"]);
-    mockChildrenService.queryActiveRelationsOf.and.resolveTo([]);
-    mockAttendanceService = jasmine.createSpyObj(
-      "AttendanceService",
-      ["getAvailableEventsForRollCall"],
-      {
-        eventTypeSettings: [],
-        filterConfig: signal([]),
-      },
-    );
-    mockAttendanceService.getAvailableEventsForRollCall.and.resolveTo({
+    mockChildrenService = {
+      queryActiveRelationsOf: vi.fn(),
+    };
+    mockChildrenService.queryActiveRelationsOf.mockResolvedValue([]);
+    mockAttendanceService = {
+      getAvailableEventsForRollCall: vi
+        .fn()
+        .mockName("AttendanceService.getAvailableEventsForRollCall"),
+      eventTypeSettings: [],
+      filterConfig: signal([]),
+    };
+    mockAttendanceService.getAvailableEventsForRollCall.mockResolvedValue({
       events: [],
       allEvents: [],
     });
@@ -76,78 +71,78 @@ describe("RollCallSetupComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("shows events returned by the service", fakeAsync(() => {
+  it("shows events returned by the service", async () => {
     const event1 = wrapEvent(TestEventEntity.create());
     const event2 = wrapEvent(TestEventEntity.create());
-    mockAttendanceService.getAvailableEventsForRollCall.and.resolveTo({
+    mockAttendanceService.getAvailableEventsForRollCall.mockResolvedValue({
       events: [event1, event2],
       allEvents: [event1, event2],
     });
 
     (component as any).eventsResource.reload();
-    stabilize();
+    await stabilize();
 
     expect(component.filteredEvents()).toEqual([event1, event2]);
     expect(component.activeEvents()).toEqual([event1, event2]);
-  }));
+  });
 
-  it("showingAll is true when there are no events", fakeAsync(() => {
+  it("showingAll is true when there are no events", async () => {
     const event = wrapEvent(TestEventEntity.create());
-    mockAttendanceService.getAvailableEventsForRollCall.and.resolveTo({
+    mockAttendanceService.getAvailableEventsForRollCall.mockResolvedValue({
       events: [],
       allEvents: [event],
     });
 
     (component as any).eventsResource.reload();
-    stabilize();
+    await stabilize();
 
-    expect(component.showingAll()).toBeTrue();
-  }));
+    expect(component.showingAll()).toBe(true);
+  });
 
-  it("showMore() switches to allEvents without re-fetching", fakeAsync(() => {
+  it("showMore() switches to allEvents without re-fetching", async () => {
     const userEvent = wrapEvent(TestEventEntity.create());
     const otherEvent = wrapEvent(TestEventEntity.create());
-    mockAttendanceService.getAvailableEventsForRollCall.and.resolveTo({
+    mockAttendanceService.getAvailableEventsForRollCall.mockResolvedValue({
       events: [userEvent],
       allEvents: [userEvent, otherEvent],
     });
     (component as any).eventsResource.reload();
-    stabilize();
-    mockAttendanceService.getAvailableEventsForRollCall.calls.reset();
+    await stabilize();
+    mockAttendanceService.getAvailableEventsForRollCall.mockClear();
 
     component.showMore();
 
-    expect(component.showingAll()).toBeTrue();
+    expect(component.showingAll()).toBe(true);
     expect(component.filteredEvents()).toEqual([userEvent, otherEvent]);
     expect(
       mockAttendanceService.getAvailableEventsForRollCall,
     ).not.toHaveBeenCalled();
-  }));
+  });
 
-  it("showLess() switches back to user events without re-fetching", fakeAsync(() => {
+  it("showLess() switches back to user events without re-fetching", async () => {
     const userEvent = wrapEvent(TestEventEntity.create());
     const otherEvent = wrapEvent(TestEventEntity.create());
-    mockAttendanceService.getAvailableEventsForRollCall.and.resolveTo({
+    mockAttendanceService.getAvailableEventsForRollCall.mockResolvedValue({
       events: [userEvent],
       allEvents: [userEvent, otherEvent],
     });
     (component as any).eventsResource.reload();
-    stabilize();
+    await stabilize();
     component.showMore();
-    mockAttendanceService.getAvailableEventsForRollCall.calls.reset();
+    mockAttendanceService.getAvailableEventsForRollCall.mockClear();
 
     component.showLess();
 
-    expect(component.showingAll()).toBeFalse();
+    expect(component.showingAll()).toBe(false);
     expect(component.filteredEvents()).toEqual([userEvent]);
     expect(
       mockAttendanceService.getAvailableEventsForRollCall,
     ).not.toHaveBeenCalled();
-  }));
+  });
 
   it("should navigate to roll call with event ID for existing events", () => {
     const router = TestBed.inject(Router);
-    spyOn(router, "navigate");
+    vi.spyOn(router, "navigate");
     (component as any).dateField = { valid: true };
 
     const entity = TestEventEntity.create();
@@ -164,7 +159,7 @@ describe("RollCallSetupComponent", () => {
 
   it("should navigate to new roll call with activity query params for new-from-activity events", () => {
     const router = TestBed.inject(Router);
-    spyOn(router, "navigate");
+    vi.spyOn(router, "navigate");
     (component as any).dateField = { valid: true };
 
     const entity = TestEventEntity.create();
@@ -185,18 +180,18 @@ describe("RollCallSetupComponent", () => {
     );
   });
 
-  it("derives entityType from the first loaded event", fakeAsync(() => {
+  it("derives entityType from the first loaded event", async () => {
     const event = wrapEvent(TestEventEntity.create());
-    mockAttendanceService.getAvailableEventsForRollCall.and.resolveTo({
+    mockAttendanceService.getAvailableEventsForRollCall.mockResolvedValue({
       events: [event],
       allEvents: [event],
     });
 
     (component as any).eventsResource.reload();
-    stabilize();
+    await stabilize();
 
     expect(component.entityType()).toBe(TestEventEntity);
-  }));
+  });
 
   it("returns undefined entityType when no events are loaded", () => {
     expect(component.entityType()).toBeUndefined();

@@ -1,34 +1,38 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { PwaInstallComponent } from "./pwa-install.component";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { firstValueFrom, Subject } from "rxjs";
-import { take } from "rxjs/operators";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
+import type { Mock } from "vitest";
+
+type PwaInstallServiceMock = Pick<
+  PwaInstallService,
+  "getPWAInstallType" | "installPWA"
+> & {
+  getPWAInstallType: Mock;
+  installPWA: Mock;
+};
+
+type SnackBarMock = Pick<MatSnackBar, "openFromTemplate"> & {
+  openFromTemplate: Mock;
+};
 
 describe("PwaInstallComponent", () => {
   let fixture: ComponentFixture<PwaInstallComponent>;
   let component: PwaInstallComponent;
-  let mockPWAInstallService: jasmine.SpyObj<PwaInstallService>;
-  let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
-  const pwaInstallResult = new Subject<any>();
+  let mockPWAInstallService: PwaInstallServiceMock;
+  let mockSnackbar: SnackBarMock;
 
   beforeEach(waitForAsync(() => {
-    PwaInstallService.canInstallDirectly = firstValueFrom(
-      pwaInstallResult.pipe(take(1)),
-    );
-    mockPWAInstallService = jasmine.createSpyObj([
-      "getPWAInstallType",
-      "installPWA",
-    ]);
-    mockSnackbar = jasmine.createSpyObj(["openFromTemplate"]);
+    PwaInstallService.canInstallDirectly = undefined;
+    mockPWAInstallService = {
+      getPWAInstallType: vi.fn(),
+      installPWA: vi.fn(),
+    };
+    mockSnackbar = {
+      openFromTemplate: vi.fn(),
+    };
     TestBed.configureTestingModule({
       imports: [PwaInstallComponent, MockedTestingModule],
       providers: [
@@ -48,29 +52,33 @@ describe("PwaInstallComponent", () => {
   });
 
   it("should show the pwa install instructions on iOS devices", () => {
-    mockPWAInstallService.getPWAInstallType.and.returnValue(
+    mockPWAInstallService.getPWAInstallType.mockReturnValue(
       PWAInstallType.ShowiOSInstallInstructions,
     );
 
     fixture.detectChanges();
-    expect(component._showPWAInstallButton).toBeTrue();
+    expect(component._showPWAInstallButton).toBe(true);
 
     component.pwaInstallButtonClicked();
     expect(mockSnackbar.openFromTemplate).toHaveBeenCalled();
   });
 
-  it("should call installPWA when no install instructions are defined and remove button once confirmed", fakeAsync(() => {
-    pwaInstallResult.next(undefined);
+  it("should call installPWA when no install instructions are defined and remove button once confirmed", async () => {
+    vi.useFakeTimers();
+    try {
+      fixture.detectChanges();
+      component.showPWAInstallButton = true;
 
-    fixture.detectChanges();
-    tick();
-    expect(component._showPWAInstallButton).toBeTrue();
+      mockPWAInstallService.installPWA.mockResolvedValue({
+        outcome: "accepted",
+      });
+      component.pwaInstallButtonClicked();
+      expect(mockPWAInstallService.installPWA).toHaveBeenCalled();
 
-    mockPWAInstallService.installPWA.and.resolveTo({ outcome: "accepted" });
-    component.pwaInstallButtonClicked();
-    expect(mockPWAInstallService.installPWA).toHaveBeenCalled();
-
-    tick();
-    expect(component._showPWAInstallButton).toBeFalse();
-  }));
+      await vi.advanceTimersByTimeAsync(0);
+      expect(component._showPWAInstallButton).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

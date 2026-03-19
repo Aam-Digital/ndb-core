@@ -8,6 +8,6 @@ describe("filterPredicate", () => {
     note.category = defaultInteractionTypes.find((it) => it.id === "VISIT");
 
     const match = entityFilterPredicate(note, "home");
-    expect(match).toBeTrue();
+    expect(match).toBe(true);
   });
 });

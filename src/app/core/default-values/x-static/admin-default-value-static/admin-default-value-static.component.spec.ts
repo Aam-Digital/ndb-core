@@ -8,7 +8,7 @@ import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 describe("AdminDefaultValueStaticComponent", () => {
   let component: AdminDefaultValueStaticComponent;
   let fixture: ComponentFixture<AdminDefaultValueStaticComponent>;
-  let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
+  let mockEntityFormService: any;
 
   let testEntitySchemaField: EntitySchemaField;
 
@@ -17,9 +17,9 @@ describe("AdminDefaultValueStaticComponent", () => {
       dataType: "string",
     };
 
-    mockEntityFormService = jasmine.createSpyObj("EntityFormService", [
-      "createEntityForm",
-    ]);
+    mockEntityFormService = {
+      createEntityForm: vi.fn().mockName("EntityFormService.createEntityForm"),
+    };
     await TestBed.configureTestingModule({
       imports: [AdminDefaultValueStaticComponent],
       providers: [

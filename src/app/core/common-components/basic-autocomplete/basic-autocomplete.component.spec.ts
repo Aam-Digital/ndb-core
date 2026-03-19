@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  flush,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
@@ -104,12 +98,12 @@ describe("BasicAutocompleteComponent", () => {
 
     // @ts-ignore
     expect(component._options).toEqual([
-      jasmine.objectContaining({
+      expect.objectContaining({
         asValue: "1",
         asString: "First",
         initial: option1,
       }),
-      jasmine.objectContaining({
+      expect.objectContaining({
         asValue: "2",
         asString: "Second",
         initial: option2,
@@ -128,7 +122,7 @@ describe("BasicAutocompleteComponent", () => {
     expect(component.value).toBe(child1.getId());
   });
 
-  it("should reset if leaving empty autocomplete", fakeAsync(() => {
+  it("should reset if leaving empty autocomplete", () => {
     const first = TestEntity.create("First");
     const second = TestEntity.create("Second");
     component.options = [first, second];
@@ -139,17 +133,15 @@ describe("BasicAutocompleteComponent", () => {
 
     component.autocompleteForm.setValue("");
     component.onFocusOut({} as any);
-    tick(200);
 
     expect(component.value).toBe(undefined);
-    flush();
-  }));
+  });
 
   it("should disable the form if the control is disabled", () => {
     component.disabled = false;
-    expect(component.autocompleteForm.disabled).toBeFalse();
+    expect(component.autocompleteForm.disabled).toBe(false);
     component.disabled = true;
-    expect(component.autocompleteForm.disabled).toBeTrue();
+    expect(component.autocompleteForm.disabled).toBe(true);
   });
 
   it("should initialize the options in multi select mode", async () => {
@@ -162,7 +154,7 @@ describe("BasicAutocompleteComponent", () => {
     component.showAutocomplete();
     component.autocomplete.openPanel();
     const options = await autocomplete.getOptions();
-    expect(options).toHaveSize(
+    expect(options).toHaveLength(
       3 +
         // includes a hidden option to enable footer display within the autocomplete panel
         1,
@@ -177,39 +169,44 @@ describe("BasicAutocompleteComponent", () => {
     expect(component.value).toEqual([0, 2]);
   });
 
-  it("should switch the input when focusing in multi select mode", fakeAsync(() => {
-    component.multi = true;
-    component.options = ["some", "values", "and", "other", "options"];
-    component.value = ["some", "values"];
-    component.ngOnChanges({ value: true, options: true });
-    expect(component.displayText).toBe("some, values");
+  it("should switch the input when focusing in multi select mode", () => {
+    vi.useFakeTimers();
+    try {
+      component.multi = true;
+      component.options = ["some", "values", "and", "other", "options"];
+      component.value = ["some", "values"];
+      component.ngOnChanges({ value: true, options: true });
+      expect(component.displayText).toBe("some, values");
 
-    component.showAutocomplete();
-    expect(component.autocompleteForm.value).toBe("some, values");
-    expect(component.isInSearchMode()).toBeTrue();
+      component.showAutocomplete();
+      expect(component.autocompleteForm.value).toBe("some, values");
+      expect(component.isInSearchMode()).toBe(true);
 
-    component.onFocusOut({} as any);
-    tick(200);
+      component.onFocusOut({} as any);
+      vi.runAllTimers();
 
-    expect(component.displayText).toBe("some, values");
-    expect(component.isInSearchMode()).toBeFalse();
-  }));
+      expect(component.displayText).toBe("some, values");
+      expect(component.isInSearchMode()).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should update the error state if the form is invalid", () => {
     testControl.setValidators([Validators.required]);
     testControl.setValue(null);
     component.ngDoCheck();
 
-    expect(component.errorState).toBeFalse();
+    expect(component.errorState).toBe(false);
 
     testControl.markAsTouched();
     component.ngDoCheck();
 
-    expect(component.errorState).toBeTrue();
+    expect(component.errorState).toBe(true);
   });
 
-  it("should create new option", fakeAsync(() => {
-    const createOptionMock = jasmine.createSpy();
+  it("should create new option", async () => {
+    const createOptionMock = vi.fn();
 
     component.createOption = createOptionMock;
     const newOption = "new option";
@@ -224,20 +221,20 @@ describe("BasicAutocompleteComponent", () => {
     component.autocompleteForm.setValue(newOption);
 
     // decline creating new option
-    createOptionMock.and.resolveTo(undefined);
+    createOptionMock.mockResolvedValue(undefined);
     component.select(newOption);
 
-    tick();
+    await fixture.whenStable();
     expect(createOptionMock).toHaveBeenCalled();
     expect(component.value).toEqual(initialValue);
 
     // successfully add new option
-    createOptionMock.calls.reset();
-    createOptionMock.and.resolveTo({ id: newOption, label: newOption });
+    createOptionMock.mockClear();
+    createOptionMock.mockResolvedValue({ id: newOption, label: newOption });
     component.select(newOption);
 
-    tick();
+    await fixture.whenStable();
     expect(createOptionMock).toHaveBeenCalled();
     expect(component.value).toEqual(newOption);
-  }));
+  });
 });

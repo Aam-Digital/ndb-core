@@ -1,7 +1,7 @@
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { Entity } from "../../entity/model/entity";
 import { FormBuilder, FormControl } from "@angular/forms";
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "./default-value.service";
@@ -88,14 +88,14 @@ export async function testDefaultValueCase(
 
 describe("DefaultValueService", () => {
   let service: DefaultValueService;
-  let mockInheritedValueService: jasmine.SpyObj<InheritedValueService>;
+  let mockInheritedValueService: any;
 
   beforeEach(() => {
-    mockInheritedValueService = jasmine.createSpyObj([
-      "setDefaultValue",
-      "initEntityForm",
-      "onFormValueChanges",
-    ]);
+    mockInheritedValueService = {
+      setDefaultValue: vi.fn(),
+      initEntityForm: vi.fn(),
+      onFormValueChanges: vi.fn(),
+    };
     // @ts-ignore
     mockInheritedValueService["mode"] = "inherited-field";
 
@@ -142,143 +142,173 @@ describe("DefaultValueService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should do nothing, if targetFormControl is missing", fakeAsync(() => {
-    // given
-    let form = getDefaultInheritedForm({
-      undefinedField: {
+  it("should do nothing, if targetFormControl is missing", async () => {
+    vi.useFakeTimers();
+    try {
+      // given
+      let form = getDefaultInheritedForm({
+        undefinedField: {
+          defaultValue: {
+            mode: "static",
+            config: { value: "default_value" },
+          },
+        },
+      });
+
+      // when
+      service.handleEntityForm(form, form.entity);
+      await vi.advanceTimersByTimeAsync(0);
+
+      // then
+      expect(form.formGroup.get("field").value).toEqual(null);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should transform configurable-enum and set the default value", async () => {
+    vi.useFakeTimers();
+    try {
+      const enumId = "genders";
+      const testEnumValue = { id: "M", label: "male" };
+      const enumService = TestBed.inject(ConfigurableEnumService);
+      vi.spyOn(enumService, "getEnumValues").mockImplementation((id) =>
+        id === enumId ? [testEnumValue] : [],
+      );
+
+      const fieldConfig: EntitySchemaField = {
+        dataType: "configurable-enum",
+        additional: enumId,
         defaultValue: {
           mode: "static",
-          config: { value: "default_value" },
+          config: { value: "M" },
         },
-      },
-    });
+      };
 
-    // when
-    service.handleEntityForm(form, form.entity);
-    tick();
+      testDefaultValueCase(service, fieldConfig, testEnumValue);
+      await vi.advanceTimersByTimeAsync(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-    // then
-    expect(form.formGroup.get("field").value).toEqual(null);
-  }));
+  it("should transform configurable-enum array and set the default value", async () => {
+    vi.useFakeTimers();
+    try {
+      const enumId = "genders";
+      const testEnumValue = { id: "M", label: "male" };
+      const enumService = TestBed.inject(ConfigurableEnumService);
+      vi.spyOn(enumService, "getEnumValues").mockImplementation((id) =>
+        id === enumId ? [testEnumValue] : [],
+      );
 
-  it("should transform configurable-enum and set the default value", fakeAsync(() => {
-    const enumId = "genders";
-    const testEnumValue = { id: "M", label: "male" };
-    const enumService = TestBed.inject(ConfigurableEnumService);
-    spyOn(enumService, "getEnumValues")
-      .withArgs(enumId)
-      .and.returnValue([testEnumValue]);
-
-    const fieldConfig: EntitySchemaField = {
-      dataType: "configurable-enum",
-      additional: enumId,
-      defaultValue: {
-        mode: "static",
-        config: { value: "M" },
-      },
-    };
-
-    testDefaultValueCase(service, fieldConfig, testEnumValue);
-    tick();
-  }));
-
-  it("should transform configurable-enum array and set the default value", fakeAsync(() => {
-    const enumId = "genders";
-    const testEnumValue = { id: "M", label: "male" };
-    const enumService = TestBed.inject(ConfigurableEnumService);
-    spyOn(enumService, "getEnumValues")
-      .withArgs(enumId)
-      .and.returnValue([testEnumValue]);
-
-    const fieldConfig: EntitySchemaField = {
-      dataType: "configurable-enum",
-      additional: enumId,
-      isArray: true,
-      defaultValue: {
-        mode: "static",
-        config: { value: [testEnumValue.id] },
-      },
-    };
-    testDefaultValueCase(service, fieldConfig, [testEnumValue]);
-    tick();
-
-    const fieldConfig2: EntitySchemaField = {
-      dataType: "configurable-enum",
-      additional: enumId,
-      isArray: true,
-      defaultValue: {
-        mode: "static",
-        config: { value: testEnumValue.id }, // should also work with single value
-      },
-    };
-    testDefaultValueCase(service, fieldConfig2, [testEnumValue]);
-    tick();
-  }));
-
-  it("should not set default value on FormControl, if target field is dirty and not empty", fakeAsync(() => {
-    // given
-    let form = getDefaultInheritedForm({
-      field: {
+      const fieldConfig: EntitySchemaField = {
+        dataType: "configurable-enum",
+        additional: enumId,
+        isArray: true,
         defaultValue: {
           mode: "static",
-          config: { value: "default_value" },
+          config: { value: [testEnumValue.id] },
         },
-      },
-    });
+      };
+      testDefaultValueCase(service, fieldConfig, [testEnumValue]);
+      await vi.advanceTimersByTimeAsync(0);
 
-    form.formGroup.get("field").setValue("pre-filled");
-    form.formGroup.get("field").markAsDirty();
-
-    // when
-    service.handleEntityForm(form, form.entity);
-    tick();
-
-    // then
-    expect(form.formGroup.get("field").value).toBe("pre-filled");
-  }));
-
-  it("should not set default value on FormControl, if target field is not empty", fakeAsync(() => {
-    // given
-    let form = getDefaultInheritedForm({
-      field: {
+      const fieldConfig2: EntitySchemaField = {
+        dataType: "configurable-enum",
+        additional: enumId,
+        isArray: true,
         defaultValue: {
           mode: "static",
-          config: { value: "default_value" },
+          config: { value: testEnumValue.id }, // should also work with single value
         },
-      },
-    });
+      };
+      testDefaultValueCase(service, fieldConfig2, [testEnumValue]);
+      await vi.advanceTimersByTimeAsync(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-    form.formGroup.get("field").setValue("pre-filled");
-
-    // when
-    service.handleEntityForm(form, form.entity);
-    tick();
-
-    // then
-    expect(form.formGroup.get("field").value).toBe("pre-filled");
-  }));
-
-  it("should do nothing, if entity is not new", fakeAsync(() => {
-    // given
-    let form = getDefaultInheritedForm({
-      field: {
-        defaultValue: {
-          mode: "static",
-          config: { value: "default_value" },
+  it("should not set default value on FormControl, if target field is dirty and not empty", async () => {
+    vi.useFakeTimers();
+    try {
+      // given
+      let form = getDefaultInheritedForm({
+        field: {
+          defaultValue: {
+            mode: "static",
+            config: { value: "default_value" },
+          },
         },
-      },
-    });
+      });
 
-    form.entity = new Entity();
-    form.entity["_rev"] = "1"; // mark as "not new"
+      form.formGroup.get("field").setValue("pre-filled");
+      form.formGroup.get("field").markAsDirty();
 
-    // when
-    service.handleEntityForm(form, form.entity);
-    tick();
+      // when
+      service.handleEntityForm(form, form.entity);
+      await vi.advanceTimersByTimeAsync(0);
 
-    // then
-    expect(form.formGroup.get("field").value).toBe(null);
-  }));
+      // then
+      expect(form.formGroup.get("field").value).toBe("pre-filled");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should not set default value on FormControl, if target field is not empty", async () => {
+    vi.useFakeTimers();
+    try {
+      // given
+      let form = getDefaultInheritedForm({
+        field: {
+          defaultValue: {
+            mode: "static",
+            config: { value: "default_value" },
+          },
+        },
+      });
+
+      form.formGroup.get("field").setValue("pre-filled");
+
+      // when
+      service.handleEntityForm(form, form.entity);
+      await vi.advanceTimersByTimeAsync(0);
+
+      // then
+      expect(form.formGroup.get("field").value).toBe("pre-filled");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should do nothing, if entity is not new", async () => {
+    vi.useFakeTimers();
+    try {
+      // given
+      let form = getDefaultInheritedForm({
+        field: {
+          defaultValue: {
+            mode: "static",
+            config: { value: "default_value" },
+          },
+        },
+      });
+
+      form.entity = new Entity();
+      form.entity["_rev"] = "1"; // mark as "not new"
+
+      // when
+      service.handleEntityForm(form, form.entity);
+      await vi.advanceTimersByTimeAsync(0);
+
+      // then
+      expect(form.formGroup.get("field").value).toBe(null);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should set 'static' default value on FormControl", () => {
     return testDefaultValueCase(
@@ -293,55 +323,65 @@ describe("DefaultValueService", () => {
     );
   });
 
-  it("should call service on dynamic mode", fakeAsync(() => {
-    const strategies: DefaultValueStrategy[] = TestBed.inject(
-      DefaultValueStrategy,
-    ) as any;
+  it("should call service on dynamic mode", async () => {
+    vi.useFakeTimers();
+    try {
+      const strategies: DefaultValueStrategy[] = TestBed.inject(
+        DefaultValueStrategy,
+      ) as any;
 
-    const dynamicStrategySpy = spyOn(
-      strategies.find((s) => s instanceof DynamicPlaceholderValueService),
-      "setDefaultValue",
-    );
-    const staticStrategySpy = spyOn(
-      strategies.find((s) => s instanceof StaticDefaultValueService),
-      "setDefaultValue",
-    );
+      const dynamicStrategySpy = vi.spyOn(
+        strategies.find((s) => s instanceof DynamicPlaceholderValueService),
+        "setDefaultValue",
+      );
+      const staticStrategySpy = vi.spyOn(
+        strategies.find((s) => s instanceof StaticDefaultValueService),
+        "setDefaultValue",
+      );
 
-    testDefaultValueCase(
-      service,
-      {
-        defaultValue: {
-          mode: "dynamic",
-          config: { value: "x" },
-        },
-      },
-      null,
-    );
-    tick();
-
-    // then
-    expect(dynamicStrategySpy).toHaveBeenCalled();
-    expect(staticStrategySpy).not.toHaveBeenCalled();
-  }));
-
-  it("should call service on inherited mode", fakeAsync(() => {
-    testDefaultValueCase(
-      service,
-      {
-        defaultValue: {
-          mode: "inherited-field",
-          config: {
-            sourceValueField: "foo",
-            sourceReferenceField: "reference-1",
+      testDefaultValueCase(
+        service,
+        {
+          defaultValue: {
+            mode: "dynamic",
+            config: { value: "x" },
           },
         },
-      },
-      null,
-    );
-    tick();
+        null,
+      );
+      await vi.advanceTimersByTimeAsync(0);
 
-    // then
-    expect(mockInheritedValueService.initEntityForm).toHaveBeenCalled();
-    expect(mockInheritedValueService.setDefaultValue).toHaveBeenCalled();
-  }));
+      // then
+      expect(dynamicStrategySpy).toHaveBeenCalled();
+      expect(staticStrategySpy).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should call service on inherited mode", async () => {
+    vi.useFakeTimers();
+    try {
+      testDefaultValueCase(
+        service,
+        {
+          defaultValue: {
+            mode: "inherited-field",
+            config: {
+              sourceValueField: "foo",
+              sourceReferenceField: "reference-1",
+            },
+          },
+        },
+        null,
+      );
+      await vi.advanceTimersByTimeAsync(0);
+
+      // then
+      expect(mockInheritedValueService.initEntityForm).toHaveBeenCalled();
+      expect(mockInheritedValueService.setDefaultValue).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

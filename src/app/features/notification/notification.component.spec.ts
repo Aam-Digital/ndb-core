@@ -11,15 +11,29 @@ import {
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
+import type { Mock } from "vitest";
+
+type EntityMapperMock = Pick<
+  EntityMapperService,
+  "receiveUpdates" | "load" | "loadType"
+> & {
+  receiveUpdates: Mock;
+  load: Mock;
+  loadType: Mock;
+};
 
 describe("NotificationComponent", () => {
   let component: NotificationComponent;
   let fixture: ComponentFixture<NotificationComponent>;
 
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockEntityMapper: EntityMapperMock;
 
   beforeEach(async () => {
-    mockEntityMapper = jasmine.createSpyObj(["receiveUpdates", "load"]);
+    mockEntityMapper = {
+      receiveUpdates: vi.fn(),
+      load: vi.fn(),
+      loadType: vi.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -34,14 +48,19 @@ describe("NotificationComponent", () => {
         { provide: EntityRegistry, useValue: entityRegistry },
         {
           provide: DatabaseResolverService,
-          useValue: jasmine.createSpyObj([
-            "initializeNotificationsDatabaseForCurrentUser",
-          ]),
+          useValue: {
+            initializeNotificationsDatabaseForCurrentUser: vi.fn(),
+            getCurrentUserDatabase: vi.fn().mockResolvedValue(undefined),
+          },
         },
       ],
     }).compileComponents();
 
-    mockEntityMapper.receiveUpdates.and.returnValue(NEVER);
+    mockEntityMapper.receiveUpdates.mockReturnValue(NEVER);
+    mockEntityMapper.load.mockRejectedValue(
+      new Error("No notification config"),
+    );
+    mockEntityMapper.loadType.mockResolvedValue([]);
 
     fixture = TestBed.createComponent(NotificationComponent);
     component = fixture.componentInstance;

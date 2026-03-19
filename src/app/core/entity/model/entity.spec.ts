@@ -1,11 +1,11 @@
-import { Entity, EntityConstructor } from "./entity";
+import { Entity } from "./entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { DatabaseEntity } from "../database-entity.decorator";
-import { fakeAsync, TestBed, waitForAsync } from "@angular/core/testing";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { TestBed } from "@angular/core/testing";
 import { genders } from "app/child-dev-project/children/model/genders";
 import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.types";
+import { testEntitySubclass } from "./entity.test-utils";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
@@ -20,8 +20,10 @@ describe("Entity", () => {
   it("rawData() returns only data matching the schema", function () {
     @DatabaseEntity("TestWithIgnoredFieldEntity")
     class TestWithIgnoredFieldEntity extends Entity {
-      @DatabaseField() text: string = "text";
-      @DatabaseField() defaultText: string = "default";
+      @DatabaseField()
+      text: string = "text";
+      @DatabaseField()
+      defaultText: string = "default";
       otherText: string = "other Text";
     }
 
@@ -39,8 +41,12 @@ describe("Entity", () => {
   it("deep-clones schema field values when copying", () => {
     @DatabaseEntity("TestCopy")
     class TestCopyEntity extends Entity {
-      @DatabaseField() items: string[] = [];
-      @DatabaseField() nested: { a: number } = { a: 1 };
+      @DatabaseField()
+      items: string[] = [];
+      @DatabaseField()
+      nested: {
+        a: number;
+      } = { a: 1 };
     }
 
     const entity = new TestCopyEntity("t1");
@@ -98,26 +104,26 @@ describe("Entity", () => {
 
   it("should determine isActive based on active or inactive property", () => {
     const testEntity1 = new Entity();
-    expect(testEntity1.isActive).withContext("default value").toBeTrue();
+    expect(testEntity1.isActive, "default value").toBe(true);
 
     testEntity1["active"] = false;
-    expect(testEntity1.isActive).withContext("setting 'active'").toBeFalse();
+    expect(testEntity1.isActive, "setting 'active'").toBe(false);
 
     const testEntity2 = new Entity();
     testEntity2["inactive"] = true;
-    expect(testEntity2.isActive).withContext("setting 'inactive'").toBeFalse();
+    expect(testEntity2.isActive, "setting 'inactive'").toBe(false);
 
     const testEntity3 = new Entity();
     testEntity3.isActive = false;
-    expect(testEntity3.isActive).withContext("setting 'isActive'").toBeFalse();
+    expect(testEntity3.isActive, "setting 'isActive'").toBe(false);
   });
 
   it("should be 'isNew' if newly created before save", () => {
     const entity = new Entity();
-    expect(entity.isNew).toBeTrue();
+    expect(entity.isNew).toBe(true);
 
     entity._rev = "123";
-    expect(entity.isNew).toBeFalse();
+    expect(entity.isNew).toBe(false);
   });
 
   it("should convert toString using toStringAttributes config or special [anonymized] label", () => {
@@ -157,54 +163,3 @@ describe("Entity", () => {
     );
   });
 });
-
-/**
- *
- * @param entityType
- * @param entityClass
- * @param expectedDatabaseFormat
- * @param skipTestbedConfiguration do not run TestBed.configureTestingModule because it has been run in the parent test file already
- */
-export function testEntitySubclass(
-  entityType: string,
-  entityClass: EntityConstructor,
-  expectedDatabaseFormat: any,
-  skipTestbedConfiguration = false,
-) {
-  let schemaService: EntitySchemaService;
-  beforeEach(waitForAsync(() => {
-    if (!skipTestbedConfiguration) {
-      TestBed.configureTestingModule({
-        imports: [MockedTestingModule.withState()],
-      });
-    }
-    schemaService = TestBed.inject(EntitySchemaService);
-  }));
-
-  it("should be a valid entity subclass", () => {
-    const id = "test1";
-    const entity = new entityClass(id);
-
-    // correct ID
-    expect(entity.getId()).toEqual(`${entityType}:${id}`);
-    expect(Entity.extractEntityIdFromId(entity.getId())).toBe(id);
-
-    // correct Type
-    expect(entity).toBeInstanceOf(entityClass);
-    expect(entity).toBeInstanceOf(Entity);
-    expect(entity.getType()).toBe(entityType);
-    // @ts-ignore
-    expect(Entity.extractTypeFromId(entity._id)).toBe(entityType);
-  });
-
-  it("should only load and store properties defined in the schema", fakeAsync(() => {
-    const entity = new entityClass();
-
-    schemaService.loadDataIntoEntity(
-      entity,
-      JSON.parse(JSON.stringify(expectedDatabaseFormat)),
-    );
-    const rawData = schemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData).toEqual(expectedDatabaseFormat);
-  }));
-}

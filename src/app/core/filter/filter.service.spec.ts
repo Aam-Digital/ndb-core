@@ -12,11 +12,13 @@ import { TestEntity } from "../../utils/test-utils/TestEntity";
 describe("FilterService", () => {
   let service: FilterService;
 
-  let mockEnumService: jasmine.SpyObj<ConfigurableEnumService>;
+  let mockEnumService: any;
 
   beforeEach(() => {
-    mockEnumService = jasmine.createSpyObj(["getEnumValues"]);
-    mockEnumService.getEnumValues.and.returnValue(defaultInteractionTypes);
+    mockEnumService = {
+      getEnumValues: vi.fn(),
+    };
+    mockEnumService.getEnumValues.mockReturnValue(defaultInteractionTypes);
 
     TestBed.configureTestingModule({
       providers: [
@@ -62,12 +64,12 @@ describe("FilterService", () => {
     const predicate = service.getFilterPredicate(filter);
     const note = new Note();
 
-    expect(predicate(note)).toBeFalse();
+    expect(predicate(note)).toBe(false);
 
     service.alignEntityWithFilter(note, filter);
 
     expect(note.date).toBeInstanceOf(Date);
-    expect(predicate(note)).toBeTrue();
+    expect(predicate(note)).toBe(true);
   });
 
   it("should support patching with array values", () => {
@@ -92,7 +94,7 @@ describe("FilterService", () => {
     service.alignEntityWithFilter(relation, filter);
 
     expect(relation.childId).toEqual(`${TestEntity.ENTITY_TYPE}:some-id`);
-    expect(relation.isActive).toBeTrue();
+    expect(relation.isActive).toBe(true);
   });
 
   it("should support filtering dates with day granularity", () => {

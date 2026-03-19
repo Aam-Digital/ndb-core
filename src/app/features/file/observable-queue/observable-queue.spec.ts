@@ -20,40 +20,40 @@ describe("ObservableQueue", () => {
     queue.add(job2).subscribe(() => (job2Done = true));
     queue.add(job3).subscribe(() => (job3Done = true));
 
-    expect(job1.observed).toBeTrue();
-    expect(job1Done).toBeFalse();
-    expect(job2.observed).toBeFalse();
-    expect(job2Done).toBeFalse();
-    expect(job3.observed).toBeFalse();
-    expect(job3Done).toBeFalse();
+    expect(job1.observed).toBe(true);
+    expect(job1Done).toBe(false);
+    expect(job2.observed).toBe(false);
+    expect(job2Done).toBe(false);
+    expect(job3.observed).toBe(false);
+    expect(job3Done).toBe(false);
 
     job1.next(undefined);
     job1.complete();
 
-    expect(job1Done).toBeTrue();
-    expect(job2.observed).toBeTrue();
-    expect(job2Done).toBeFalse();
-    expect(job3.observed).toBeFalse();
-    expect(job3Done).toBeFalse();
+    expect(job1Done).toBe(true);
+    expect(job2.observed).toBe(true);
+    expect(job2Done).toBe(false);
+    expect(job3.observed).toBe(false);
+    expect(job3Done).toBe(false);
 
     job2.next(undefined);
     job2.complete();
 
-    expect(job1Done).toBeTrue();
-    expect(job2Done).toBeTrue();
+    expect(job1Done).toBe(true);
+    expect(job2Done).toBe(true);
     // Job 3 is executed once 2 is done
-    expect(job3Done).toBeTrue();
+    expect(job3Done).toBe(true);
   });
 
   it("should directly run a job if the previous one is already done", () => {
     let job1done = false;
     queue.add(of(1)).subscribe(() => (job1done = true));
 
-    expect(job1done).toBeTrue();
+    expect(job1done).toBe(true);
 
     let job2done = true;
     queue.add(of(1)).subscribe(() => (job2done = true));
-    expect(job2done).toBeTrue();
+    expect(job2done).toBe(true);
   });
 
   it("should not run the same observable multiple times", () => {
@@ -85,28 +85,28 @@ describe("ObservableQueue", () => {
       error: () => (normalJobFailed = true),
     });
 
-    expect(errorJob.observed).toBeTrue();
-    expect(normalJob.observed).toBeFalse();
-    expect(errorJobFailed).toBeFalse();
-    expect(errorJobDone).toBeFalse();
-    expect(normalJobFailed).toBeFalse();
-    expect(normalJobDone).toBeFalse();
+    expect(errorJob.observed).toBe(true);
+    expect(normalJob.observed).toBe(false);
+    expect(errorJobFailed).toBe(false);
+    expect(errorJobDone).toBe(false);
+    expect(normalJobFailed).toBe(false);
+    expect(normalJobDone).toBe(false);
 
     errorJob.error(new Error());
 
-    expect(normalJob.observed).toBeTrue();
-    expect(errorJobFailed).toBeTrue();
-    expect(errorJobDone).toBeFalse();
-    expect(normalJobFailed).toBeFalse();
-    expect(normalJobDone).toBeFalse();
+    expect(normalJob.observed).toBe(true);
+    expect(errorJobFailed).toBe(true);
+    expect(errorJobDone).toBe(false);
+    expect(normalJobFailed).toBe(false);
+    expect(normalJobDone).toBe(false);
 
     normalJob.next(undefined);
     normalJob.complete();
 
-    expect(errorJobFailed).toBeTrue();
-    expect(errorJobDone).toBeFalse();
-    expect(normalJobFailed).toBeFalse();
-    expect(normalJobDone).toBeTrue();
+    expect(errorJobFailed).toBe(true);
+    expect(errorJobDone).toBe(false);
+    expect(normalJobFailed).toBe(false);
+    expect(normalJobDone).toBe(true);
   });
 
   it("should return the result of the correct observable", () => {
@@ -139,10 +139,10 @@ describe("ObservableQueue", () => {
     });
     queue.add(job2).subscribe({ complete: () => (job2done = true) });
 
-    expect(job1.observed).toBeTrue();
-    expect(job2.observed).toBeFalse();
-    expect(job1done).toBeFalse();
-    expect(job2done).toBeFalse();
+    expect(job1.observed).toBe(true);
+    expect(job2.observed).toBe(false);
+    expect(job1done).toBe(false);
+    expect(job2done).toBe(false);
 
     job1.next("some");
     expect(job1res).toBe("some");
@@ -151,16 +151,16 @@ describe("ObservableQueue", () => {
     job1.next("emitted");
     expect(job1res).toBe("emitted");
 
-    expect(job1.observed).toBeTrue();
-    expect(job2.observed).toBeFalse();
-    expect(job1done).toBeFalse();
-    expect(job2done).toBeFalse();
+    expect(job1.observed).toBe(true);
+    expect(job2.observed).toBe(false);
+    expect(job1done).toBe(false);
+    expect(job2done).toBe(false);
 
     job1.complete();
 
     expect(job1res).toBe("emitted");
-    expect(job2.observed).toBeTrue();
-    expect(job1done).toBeTrue();
-    expect(job2done).toBeFalse();
+    expect(job2.observed).toBe(true);
+    expect(job1done).toBe(true);
+    expect(job2done).toBe(false);
   });
 });

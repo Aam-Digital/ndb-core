@@ -8,11 +8,13 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 describe("DisplayImgComponent", () => {
   let component: DisplayImgComponent;
   let fixture: ComponentFixture<DisplayImgComponent>;
-  let mockFileService: jasmine.SpyObj<FileService>;
+  let mockFileService: any;
 
   beforeEach(() => {
-    mockFileService = jasmine.createSpyObj(["loadFile"]);
-    mockFileService.loadFile.and.returnValue(of("success"));
+    mockFileService = {
+      loadFile: vi.fn(),
+    };
+    mockFileService.loadFile.mockReturnValue(of("success"));
     TestBed.configureTestingModule({
       imports: [DisplayImgComponent],
       providers: [{ provide: FileService, useValue: mockFileService }],
@@ -37,7 +39,7 @@ describe("DisplayImgComponent", () => {
     expect(mockFileService.loadFile).toHaveBeenCalled();
     expect(component.imgSrc).toBeDefined();
 
-    mockFileService.loadFile.calls.reset();
+    mockFileService.loadFile.mockClear();
     // without picture
     component.entity = new TestEntity();
 

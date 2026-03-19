@@ -6,10 +6,12 @@ import { LocationDatatype } from "./location.datatype";
 
 describe("Schema data type: location", () => {
   let service: LocationDatatype;
-  let mockGeoService: jasmine.SpyObj<GeoService>;
+  let mockGeoService: any;
 
   beforeEach(() => {
-    mockGeoService = jasmine.createSpyObj(["lookup"]);
+    mockGeoService = {
+      lookup: vi.fn(),
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -63,7 +65,7 @@ describe("Schema data type: location", () => {
     mockedLookup: GeoResult[],
     expectedResult: GeoLocation,
   ) {
-    mockGeoService.lookup.and.returnValue(of(mockedLookup));
+    mockGeoService.lookup.mockReturnValue(of(mockedLookup));
 
     const actualResult = await service.importMapFunction(importedValue);
 

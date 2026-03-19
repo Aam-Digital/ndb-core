@@ -19,11 +19,16 @@ describe("DuplicateRecordsService", () => {
   @DatabaseEntity("DuplicateTestEntity")
   class DuplicateTestEntity extends Entity {
     static override toStringAttributes = ["name"];
-    @DatabaseField() name: String;
-    @DatabaseField() boolProperty: boolean;
-    @DatabaseField() override created: UpdateMetadata;
-    @DatabaseField() override updated: UpdateMetadata;
-    @DatabaseField() override inactive: boolean;
+    @DatabaseField()
+    name: string;
+    @DatabaseField()
+    boolProperty: boolean;
+    @DatabaseField()
+    override created: UpdateMetadata;
+    @DatabaseField()
+    override updated: UpdateMetadata;
+    @DatabaseField()
+    override inactive: boolean;
   }
 
   beforeEach(() => {
@@ -33,14 +38,16 @@ describe("DuplicateRecordsService", () => {
         DuplicateRecordService,
         {
           provide: EntityMapperService,
-          useValue: jasmine.createSpyObj(["saveAll"]),
+          useValue: {
+            saveAll: vi.fn(),
+          },
         },
         {
           provide: BulkOperationStateService,
-          useValue: jasmine.createSpyObj([
-            "startBulkOperation",
-            "waitForBulkOperationToFinish",
-          ]),
+          useValue: {
+            startBulkOperation: vi.fn(),
+            waitForBulkOperationToFinish: vi.fn(),
+          },
         },
         EntitySchemaService,
         { provide: DefaultDatatype, useClass: DefaultDatatype, multi: true },
@@ -50,10 +57,10 @@ describe("DuplicateRecordsService", () => {
     });
     service = TestBed.inject(DuplicateRecordService);
     entityMapperService = TestBed.inject(EntityMapperService);
-    const bulkOperationState = TestBed.inject(
-      BulkOperationStateService,
-    ) as jasmine.SpyObj<BulkOperationStateService>;
-    bulkOperationState.waitForBulkOperationToFinish.and.resolveTo();
+    const bulkOperationState = TestBed.inject(BulkOperationStateService) as any;
+    bulkOperationState.waitForBulkOperationToFinish.mockResolvedValue(
+      undefined,
+    );
   });
 
   it("should be created", () => {
@@ -82,7 +89,7 @@ describe("DuplicateRecordsService", () => {
     duplicateTestEntity.inactive = false;
 
     const originalData = [duplicateTestEntity];
-    const cloneSpy = spyOn(service, "clone").and.callThrough();
+    const cloneSpy = vi.spyOn(service, "clone");
 
     await service.duplicateRecord(originalData);
 

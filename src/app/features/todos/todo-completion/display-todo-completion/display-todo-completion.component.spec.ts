@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DisplayTodoCompletionComponent } from "./display-todo-completion.component";
 import {
@@ -47,18 +42,23 @@ describe("DisplayTodoCompletionComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load the entity in completedBy when it has full ID", fakeAsync(() => {
-    const completingChild = new TestEntity("1");
-    const otherChild = new TestEntity("2");
-    entityMapper.addAll([completingChild, otherChild]);
+  it("should load the entity in completedBy when it has full ID", async () => {
+    vi.useFakeTimers();
+    try {
+      const completingChild = new TestEntity("1");
+      const otherChild = new TestEntity("2");
+      entityMapper.addAll([completingChild, otherChild]);
 
-    component.value = {
-      completedBy: completingChild.getId(),
-      completedAt: new Date(),
-    };
-    component.ngOnInit();
-    tick();
+      component.value = {
+        completedBy: completingChild.getId(),
+        completedAt: new Date(),
+      };
+      component.ngOnInit();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.completedBy).toEqual(completingChild);
-  }));
+      expect(component.completedBy).toEqual(completingChild);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

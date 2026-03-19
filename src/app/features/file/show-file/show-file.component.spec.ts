@@ -28,7 +28,7 @@ describe("ShowFileComponent", () => {
   });
 
   it("should open link in new tab when clicking the button", async () => {
-    spyOn(window, "open");
+    vi.spyOn(window, "open");
     const button = await loader.getHarness(MatButtonHarness);
 
     await button.click();

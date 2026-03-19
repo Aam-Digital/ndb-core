@@ -28,7 +28,9 @@ describe("MarkdownPageComponent", () => {
         { provide: ActivatedRoute, useValue: { data: mockRouteData } },
         {
           provide: EntityMapperService,
-          useValue: jasmine.createSpyObj(["load"]),
+          useValue: {
+            load: vi.fn(),
+          },
         },
         ComponentRegistry,
       ],

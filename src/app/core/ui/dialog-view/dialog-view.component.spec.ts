@@ -1,8 +1,8 @@
-import { ComponentFixture, fakeAsync, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DialogViewComponent } from "./dialog-view.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { ComponentRegistry } from "../../../dynamic-components";
-import { Component } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { Router } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
@@ -12,7 +12,11 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
 })
-class MockComponent {}
+class MockComponent {
+  @Input() dialogDetail: string;
+  @Input() viewConfig: string;
+  @Input() entity: TestEntity;
+}
 
 describe("DialogViewComponent", () => {
   let component: DialogViewComponent;
@@ -50,21 +54,21 @@ describe("DialogViewComponent", () => {
     fixture.detectChanges();
   }
 
-  it("should take component from dialog data and use it for dynamic component directive", fakeAsync(() => {
+  it("should take component from dialog data and use it for dynamic component directive", async () => {
     mockDialogData.component = "TestComponent";
     createComponent();
 
     expect(component.component).toEqual("TestComponent");
-  }));
+  });
 
-  it("should pass dialog config data on as config", fakeAsync(() => {
+  it("should pass dialog config data on as config", async () => {
     mockDialogData.config = { dialogDetail: "1" };
     createComponent();
 
     expect(component.config).toEqual({ dialogDetail: "1" });
-  }));
+  });
 
-  it("should add view config for given entity type as config", fakeAsync(() => {
+  it("should add view config for given entity type as config", async () => {
     const testEntity = new TestEntity();
     mockDialogData.config = { dialogDetail: "1" };
     mockDialogData.entity = testEntity;
@@ -80,5 +84,5 @@ describe("DialogViewComponent", () => {
       viewConfig: "2",
       entity: testEntity,
     });
-  }));
+  });
 });

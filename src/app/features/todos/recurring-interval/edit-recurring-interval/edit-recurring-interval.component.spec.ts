@@ -10,14 +10,16 @@ import { CustomIntervalComponent } from "../custom-interval/custom-interval.comp
 import { TimeInterval } from "../time-interval";
 import { EditRecurringIntervalComponent } from "./edit-recurring-interval.component";
 
-xdescribe("EditRecurringIntervalComponent", () => {
+describe.skip("EditRecurringIntervalComponent", () => {
   let component: EditRecurringIntervalComponent;
   let fixture: ComponentFixture<EditRecurringIntervalComponent>;
 
-  let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockDialog: any;
 
   beforeEach(async () => {
-    mockDialog = jasmine.createSpyObj(["open"]);
+    mockDialog = {
+      open: vi.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -53,7 +55,7 @@ xdescribe("EditRecurringIntervalComponent", () => {
 
   it("should open dialog for custom interval and select the result", () => {
     const customIntervalResult: TimeInterval = { amount: 88, unit: "days" };
-    mockDialog.open.and.returnValue({
+    mockDialog.open.mockReturnValue({
       afterClosed: () => of(customIntervalResult),
     } as MatDialogRef<CustomIntervalComponent>);
 
@@ -63,7 +65,7 @@ xdescribe("EditRecurringIntervalComponent", () => {
     });
 
     expect(component.predefinedIntervals).toContain({
-      label: jasmine.any(String),
+      label: expect.any(String),
       interval: customIntervalResult,
     });
     expect(component.formControl.value).toBe(customIntervalResult);
@@ -74,7 +76,7 @@ xdescribe("EditRecurringIntervalComponent", () => {
     component.formControl.setValue(previousInterval);
     component.ngOnInit();
 
-    mockDialog.open.and.returnValue({
+    mockDialog.open.mockReturnValue({
       afterClosed: () => of(undefined),
     } as MatDialogRef<CustomIntervalComponent>);
 

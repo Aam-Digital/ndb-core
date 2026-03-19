@@ -22,11 +22,18 @@ describe("AdminInheritedFieldComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: MatDialog, useValue: jasmine.createSpyObj(["open"]) },
+        {
+          provide: MatDialog,
+          useValue: {
+            open: vi.fn(),
+          },
+        },
         { provide: EntityRegistry, useValue: entityRegistry },
         {
           provide: EntityRelationsService,
-          useValue: jasmine.createSpyObj(["getEntityTypesReferencingType"]),
+          useValue: {
+            getEntityTypesReferencingType: vi.fn(),
+          },
         },
       ],
     }).compileComponents();

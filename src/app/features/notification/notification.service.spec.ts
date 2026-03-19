@@ -18,12 +18,16 @@ class MockAngularFireMessaging {
 
 describe("NotificationService", () => {
   let service: NotificationService;
-  let mockHttpClient: jasmine.SpyObj<HttpClient>;
+  let mockHttpClient: any;
   let mockFireMessaging: MockAngularFireMessaging;
 
   beforeEach(() => {
     mockFireMessaging = new MockAngularFireMessaging();
-    mockHttpClient = jasmine.createSpyObj(["get", "post", "delete"]);
+    mockHttpClient = {
+      get: vi.fn(),
+      post: vi.fn(),
+      delete: vi.fn(),
+    };
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
       providers: [
@@ -42,23 +46,23 @@ describe("NotificationService", () => {
   it("isDeviceRegistered should return false when firebase is not configured", async () => {
     mockFireMessaging.getToken = of(throwError(() => "API error"));
     const result = await service.isDeviceRegistered();
-    expect(result).toBeFalse();
+    expect(result).toBe(false);
   });
 
   it("isDeviceRegistered should return false when device is not registered (firebase)", async () => {
     mockFireMessaging.getToken = of({});
     let result = await service.isDeviceRegistered();
-    expect(result).toBeFalse();
+    expect(result).toBe(false);
 
     mockFireMessaging.getToken = of(null);
     result = await service.isDeviceRegistered();
-    expect(result).toBeFalse();
+    expect(result).toBe(false);
   });
 
   it("isDeviceRegistered should return true when device is registered (backend)", async () => {
     // given
     mockFireMessaging.getToken = of({});
-    mockHttpClient.get.and.returnValue(
+    mockHttpClient.get.mockReturnValue(
       of({
         deviceName: "device-id",
         deviceToken: "device-token",
@@ -69,30 +73,32 @@ describe("NotificationService", () => {
     const result = await service.isDeviceRegistered();
 
     // then
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
   });
 
   it("isDeviceRegistered should return false when device is not registered (backend)", async () => {
     // given
     mockFireMessaging.getToken = of({});
-    mockHttpClient.get.and.returnValue(of(null));
+    mockHttpClient.get.mockReturnValue(of(null));
 
     // when
     const result = await service.isDeviceRegistered();
 
     // then
-    expect(result).toBeFalse();
+    expect(result).toBe(false);
   });
 
   it("isDeviceRegistered should return false when backend throws error", async () => {
     // given
     mockFireMessaging.getToken = of({});
-    mockHttpClient.get.and.throwError("API error");
+    mockHttpClient.get.mockImplementation(() => {
+      throw new Error("API error");
+    });
 
     // when
     const result = await service.isDeviceRegistered();
 
     // then
-    expect(result).toBeFalse();
+    expect(result).toBe(false);
   });
 });

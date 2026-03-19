@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { AbstractEntityDetailsComponent } from "./abstract-entity-details.component";
 import { Router } from "@angular/router";
 import { EntityDetailsConfig } from "../EntityDetailsConfig";
@@ -15,6 +9,17 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { Component, SimpleChange } from "@angular/core";
 import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import type { Mock } from "vitest";
+
+type EntityActionsServiceMock = {
+  remove: Mock;
+};
+
+type EntityAbilityMock = {
+  cannot: Mock;
+  update: Mock;
+  on: Mock;
+};
 
 @Component({
   template: ``,
@@ -31,14 +36,20 @@ describe("AbstractEntityDetailsComponent", () => {
     panels: [],
   };
 
-  let mockEntityRemoveService: jasmine.SpyObj<EntityActionsService>;
-  let mockAbility: jasmine.SpyObj<EntityAbility>;
+  let mockEntityRemoveService: EntityActionsServiceMock;
+  let mockAbility: EntityAbilityMock;
 
   beforeEach(waitForAsync(() => {
-    mockEntityRemoveService = jasmine.createSpyObj(["remove"]);
-    mockAbility = jasmine.createSpyObj(["cannot", "update", "on"]);
-    mockAbility.cannot.and.returnValue(false);
-    mockAbility.on.and.returnValue(() => true);
+    mockEntityRemoveService = {
+      remove: vi.fn(),
+    };
+    mockAbility = {
+      cannot: vi.fn(),
+      update: vi.fn(),
+      on: vi.fn(),
+    };
+    mockAbility.cannot.mockReturnValue(false);
+    mockAbility.on.mockReturnValue(() => true);
 
     TestBed.configureTestingModule({
       imports: [TestEntityDetailsComponent, MockedTestingModule.withState()],
@@ -66,54 +77,64 @@ describe("AbstractEntityDetailsComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load the correct entity on init", fakeAsync(() => {
-    component.isLoading = true;
-    const testChild = new TestEntity("Test-Child");
-    const entityMapper = TestBed.inject(EntityMapperService);
-    entityMapper.save(testChild);
-    tick();
-    spyOn(entityMapper, "load").and.callThrough();
+  it("should load the correct entity on init", async () => {
+    vi.useFakeTimers();
+    try {
+      component.isLoading = true;
+      const testChild = new TestEntity("Test-Child");
+      const entityMapper = TestBed.inject(EntityMapperService);
+      entityMapper.save(testChild);
+      await vi.advanceTimersByTimeAsync(0);
+      vi.spyOn(entityMapper, "load");
 
-    component.id = testChild.getId(true);
-    component.ngOnChanges(simpleChangesFor(component, "id"));
-    expect(component.isLoading).toBeTrue();
-    tick();
+      component.id = testChild.getId(true);
+      component.ngOnChanges(simpleChangesFor(component, "id"));
+      expect(component.isLoading).toBe(true);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(entityMapper.load).toHaveBeenCalledWith(
-      TestEntity,
-      testChild.getId(true),
-    );
-    expect(component.entity).toBe(testChild);
-    expect(component.isLoading).toBeFalse();
-  }));
+      expect(entityMapper.load).toHaveBeenCalledWith(
+        TestEntity,
+        testChild.getId(true),
+      );
+      expect(component.entity).toBe(testChild);
+      expect(component.isLoading).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should also support the long ID format", fakeAsync(() => {
-    const child = new TestEntity();
-    const entityMapper = TestBed.inject(EntityMapperService);
-    entityMapper.save(child);
-    tick();
-    spyOn(entityMapper, "load").and.callThrough();
+  it("should also support the long ID format", async () => {
+    vi.useFakeTimers();
+    try {
+      const child = new TestEntity();
+      const entityMapper = TestBed.inject(EntityMapperService);
+      entityMapper.save(child);
+      await vi.advanceTimersByTimeAsync(0);
+      vi.spyOn(entityMapper, "load");
 
-    component.id = child.getId();
-    component.ngOnChanges(simpleChangesFor(component, "id"));
-    tick();
+      component.id = child.getId();
+      component.ngOnChanges(simpleChangesFor(component, "id"));
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(entityMapper.load).toHaveBeenCalledWith(TestEntity, child.getId());
-    expect(component.entity).toEqual(child);
+      expect(entityMapper.load).toHaveBeenCalledWith(TestEntity, child.getId());
+      expect(component.entity).toEqual(child);
 
-    // entity is updated
-    const childUpdate = child.copy();
-    childUpdate.name = "update";
-    entityMapper.save(childUpdate);
-    tick();
+      // entity is updated
+      const childUpdate = child.copy();
+      childUpdate.name = "update";
+      entityMapper.save(childUpdate);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.entity).toEqual(childUpdate);
-  }));
+      expect(component.entity).toEqual(childUpdate);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should call router when user is not permitted to create entities", () => {
-    mockAbility.cannot.and.returnValue(true);
+    mockAbility.cannot.mockReturnValue(true);
     const router = fixture.debugElement.injector.get(Router);
-    spyOn(router, "navigate");
+    vi.spyOn(router, "navigate");
     component.id = "new";
     component.ngOnChanges(simpleChangesFor(component, "id"));
     expect(router.navigate).toHaveBeenCalled();

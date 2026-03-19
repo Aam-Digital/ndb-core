@@ -39,7 +39,7 @@ describe("NotesRelatedToEntityComponent", () => {
 
   it("should use the attendance color function when passing a child", () => {
     const note = new Note();
-    spyOn(note, "getColorForId");
+    vi.spyOn(note, "getColorForId");
     const entity = createEntityOfType("Child");
     component.entity = entity;
     component.ngOnInit();

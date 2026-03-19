@@ -26,11 +26,11 @@ describe("EditMonthComponent", () => {
 
   it("should save the selected moment on the form control", () => {
     const selected = new Date("2021-05-01");
-    const closeSpy = jasmine.createSpy();
+    const closeSpy = vi.fn();
 
     component.setMonthAndYear(moment(selected), { close: closeSpy } as any);
 
-    expect(component.formControl).toHaveValue(selected);
+    expect(component.formControl.value).toEqual(selected);
     expect(closeSpy).toHaveBeenCalled();
   });
 });

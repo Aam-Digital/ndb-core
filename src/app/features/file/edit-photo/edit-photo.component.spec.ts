@@ -16,21 +16,28 @@ import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 describe("EditPhotoComponent", () => {
   let component: EditPhotoComponent;
   let fixture: ComponentFixture<EditPhotoComponent>;
-  let mockFileService: jasmine.SpyObj<FileService>;
-  let mockAlertService: jasmine.SpyObj<AlertService>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockFileService: any;
+  let mockAlertService: any;
+  let mockEntityMapper: any;
+  let mockDialog: any;
 
   beforeEach(async () => {
-    mockFileService = jasmine.createSpyObj([
-      "uploadFile",
-      "loadFile",
-      "removeFile",
-    ]);
-    mockFileService.removeFile.and.returnValue(of(undefined));
-    mockAlertService = jasmine.createSpyObj(["addDanger", "addInfo"]);
-    mockEntityMapper = jasmine.createSpyObj(["save"]);
-    mockDialog = jasmine.createSpyObj(["open"]);
+    mockFileService = {
+      uploadFile: vi.fn(),
+      loadFile: vi.fn(),
+      removeFile: vi.fn(),
+    };
+    mockFileService.removeFile.mockReturnValue(of(undefined));
+    mockAlertService = {
+      addDanger: vi.fn(),
+      addInfo: vi.fn(),
+    };
+    mockEntityMapper = {
+      save: vi.fn(),
+    };
+    mockDialog = {
+      open: vi.fn(),
+    };
     await TestBed.configureTestingModule({
       imports: [
         EditPhotoComponent,
@@ -67,18 +74,77 @@ describe("EditPhotoComponent", () => {
   });
 
   it("should show the image once it is selected", async () => {
-    const blob = await fetch("assets/child.png").then((res) => res.blob());
-    const realFile = new File([blob], "image");
+    const mockedCanvas = {
+      width: 0,
+      height: 0,
+      getContext: vi.fn().mockReturnValue({ drawImage: vi.fn() }),
+      toDataURL: vi.fn().mockReturnValue("data:image/png;base64,mocked"),
+      toBlob: (cb: (blob: Blob) => void) =>
+        cb(new Blob(["reduced-image"], { type: "image/png" })),
+    } as unknown as HTMLCanvasElement;
 
-    await component.onFileSelected(realFile);
+    const originalCreateElement = document.createElement.bind(document);
+    const createElementSpy = vi
+      .spyOn(document, "createElement")
+      .mockImplementation((tagName: string) => {
+        if (tagName === "canvas") {
+          return mockedCanvas;
+        }
+        return originalCreateElement(tagName as any);
+      });
+    const createObjectURLSpy = vi
+      .spyOn(URL, "createObjectURL")
+      .mockReturnValue("blob:test-file");
+    const revokeObjectURLSpy = vi
+      .spyOn(URL, "revokeObjectURL")
+      .mockImplementation(() => undefined);
+    const OriginalImage = window.Image;
+    Object.defineProperty(window, "Image", {
+      configurable: true,
+      value: class {
+        width = 500;
+        height = 300;
+        private _src: string | undefined;
+        private _onload: (() => void) | undefined;
+        set src(value: string) {
+          this._src = value;
+          if (this._onload) {
+            queueMicrotask(() => this._onload?.());
+          }
+        }
+        get onload() {
+          return this._onload;
+        }
+        set onload(handler: (() => void) | undefined) {
+          this._onload = handler;
+          if (this._src && handler) {
+            queueMicrotask(() => handler());
+          }
+        }
+      },
+    });
 
-    expect(component.imgPath).toEqual(
-      jasmine.stringContaining("data:image/png;base64,"),
-    );
+    try {
+      const realFile = new File(["raw-image"], "image.png", {
+        type: "image/png",
+      });
+
+      await component.onFileSelected(realFile);
+
+      expect(component.imgPath).toEqual("data:image/png;base64,mocked");
+    } finally {
+      createElementSpy.mockRestore();
+      createObjectURLSpy.mockRestore();
+      revokeObjectURLSpy.mockRestore();
+      Object.defineProperty(window, "Image", {
+        configurable: true,
+        value: OriginalImage,
+      });
+    }
   });
 
   it("should load the picture on initialisation", () => {
-    mockFileService.loadFile.and.returnValue(of("some.path"));
+    mockFileService.loadFile.mockReturnValue(of("some.path"));
     component.formControl.setValue("file.name");
 
     component.ngOnInit();
@@ -95,7 +161,7 @@ describe("EditPhotoComponent", () => {
   });
 
   it("should reset the shown image when pressing cancel", () => {
-    mockFileService.loadFile.and.returnValue(of("initial.path"));
+    mockFileService.loadFile.mockReturnValue(of("initial.path"));
     component.formControl.setValue("initial.image");
     component.ngOnInit();
 
@@ -106,7 +172,7 @@ describe("EditPhotoComponent", () => {
   });
 
   it("should revoke initial image if file is deleted", () => {
-    mockFileService.loadFile.and.returnValue(of("initial.path"));
+    mockFileService.loadFile.mockReturnValue(of("initial.path"));
     component.formControl.setValue("initial.image");
     component.ngOnInit();
 
@@ -121,7 +187,7 @@ describe("EditPhotoComponent", () => {
 
     component.openPopup();
 
-    expect(mockDialog.open).toHaveBeenCalledWith(jasmine.anything(), {
+    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), {
       data: { url: "some.image" },
     });
   });
