@@ -34,13 +34,16 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Export translations from POEditor
+        env:
+          POEDITOR_API_TOKEN: ${{ secrets.POEDITOR_API_TOKEN }}
+          POEDITOR_PROJECT_ID: ${{ secrets.POEDITOR_PROJECT_ID }}
         run: |
           mkdir -p locale/${{ steps.version.outputs.tag }}
           for lang in $LANGUAGES; do
             echo "Exporting translations for language $lang"
             response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
-              -d "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
-              -d "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
+              -d "api_token=$POEDITOR_API_TOKEN" \
+              -d "id=$POEDITOR_PROJECT_ID" \
               -d "language=$lang" \
               -d "type=key_value_json" \
               -d "fallback_language=en")
