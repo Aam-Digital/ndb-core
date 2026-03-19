@@ -213,6 +213,16 @@ When developing new functionality:
 - Run tests: `npm run e2e`
 - See [`.github/instructions/e2e-tests.instructions.md`](.github/instructions/e2e-tests.instructions.md) for detailed patterns and examples
 
+### Working with Test Results
+
+To avoid re-running tests for further analysis, pipe console output to a file:
+
+```bash
+npm run test -- --watch=false --include='**/relevant-file.spec.ts' 2>&1 | tee test-results/test-output.log
+```
+
+For CI-style runs with coverage, results are written to `coverage/` (lcov format).
+
 ### Demo Data & Development
 
 - Provide demo data generators for new entities
