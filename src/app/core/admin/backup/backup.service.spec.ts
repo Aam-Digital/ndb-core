@@ -162,9 +162,9 @@ describe("BackupService", () => {
     const unregisterSpy = vi.fn().mockResolvedValue(true);
     Object.defineProperty(navigator, "serviceWorker", {
       value: {
-        getRegistrations: vi.fn().mockResolvedValue([
-          { unregister: unregisterSpy } as any,
-        ]),
+        getRegistrations: vi
+          .fn()
+          .mockResolvedValue([{ unregister: unregisterSpy } as any]),
       },
       configurable: true,
       writable: true,
