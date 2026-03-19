@@ -18,22 +18,24 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          # Delete all releases with "-master" in the tag (pre-releases) and their tags
-          gh release list --repo "$GITHUB_REPOSITORY" --limit 1000 --json tagName --jq '.[].tagName' \
-            | grep '\-master' \
+          # Delete all pre-release releases and their tags
+          gh release list --repo "$GITHUB_REPOSITORY" --limit 1000 \
+            --json tagName,isPrerelease \
+            --jq '.[] | select(.isPrerelease) | .tagName' \
             | while read -r tag; do
                 echo "Deleting release and tag: $tag"
                 gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag
               done
 
-          # Delete any remaining orphaned pre-release git tags
+          # Delete any remaining orphaned pre-release git tags (semantic-release format: x.y.z-master.n)
           git fetch --tags
-          git tag -l '*-master*' | while read -r tag; do
+          git tag -l '*-master.*' | while read -r tag; do
             echo "Deleting orphaned tag: $tag"
             git push --delete origin "$tag" || true
           done
 
   release:
+    needs: pre-releases-cleanup
     runs-on: ubuntu-latest
     outputs:
       new_release_version: ${{ steps.semantic.outputs.new_release_version }}
