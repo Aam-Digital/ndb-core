@@ -1,0 +1,1625 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >AttendanceService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/attendance/attendance.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#activityTypes" >activityTypes</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#CONFIG_KEY" >CONFIG_KEY</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#eventTypes" >eventTypes</a>
+                            </li>
+                            <li>
+                                <a href="#eventTypeSettings" >eventTypeSettings</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#filterConfig" >filterConfig</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createEventForActivity" >createEventForActivity</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getActivitiesForParticipant" >getActivitiesForParticipant</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getActivityAttendances" >getActivityAttendances</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAvailableEventsForRollCall" >getAvailableEventsForRollCall</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getEventsOnDate" >getEventsOnDate</a>
+                            </li>
+                            <li>
+                                <a href="#wrapEventEntity" >wrapEventEntity</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/features/attendance/attendance.service.ts:47</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createEventForActivity"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createEventForActivity</b></span>
+                        <a href="#createEventForActivity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createEventForActivity(activity: <a href="../classes/Entity.html" target="_self">Entity | string</a>, date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="491"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:491</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>activity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity | string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/EventWithAttendance.html" target="_self" >Promise&lt;EventWithAttendance&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getActivitiesForParticipant"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getActivitiesForParticipant</b></span>
+                        <a href="#getActivitiesForParticipant"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getActivitiesForParticipant(participantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="321"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:321</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load all activities that list the given participant ID in their <code>participants</code> field.
+Queries all configured recurring activity types (see <a href="AttendanceFeatureConfig.recurringActivityTypes">AttendanceFeatureConfig.recurringActivityTypes</a>).</p>
+<p>When the legacy RecurringActivity/Event + schools→linkedGroups mapping is detected,
+also includes activities linked via school group membership (legacy).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>participantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The entity ID of the participant to look up.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Promise&lt;Entity[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getActivityAttendances"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getActivityAttendances</b></span>
+                        <a href="#getActivityAttendances"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getActivityAttendances(activity: <a href="../classes/Entity.html" target="_self">Entity</a>, from?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="281"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:281</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load and calculate activity attendance records grouped by month.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>activity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The activity for which records are loaded.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>from</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>(Optional) date starting from which events should be considered.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ActivityAttendance.html" target="_self" >Promise&lt;ActivityAttendance[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAvailableEventsForRollCall"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAvailableEventsForRollCall</b></span>
+                        <a href="#getAvailableEventsForRollCall"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAvailableEventsForRollCall(date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="359"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:359</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load all events available for a roll call on the given date,
+merging existing events with new (unsaved) events generated from recurring activities.</p>
+<p>Returns two lists: <code>events</code> contains only events relevant to the current user
+(assigned activities), while <code>allEvents</code> contains everything.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The date for which to load events.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;literal type&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getEventsOnDate"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getEventsOnDate</b></span>
+                        <a href="#getEventsOnDate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getEventsOnDate(startDate: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, endDate: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="223"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:223</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Return all events on the given date or date range.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>startDate</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The date (or start date of a range)</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>endDate</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>startDate</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>(Optional) end date of the period to be queried; if not given, defaults to the start date</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Promise&lt;Entity[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="wrapEventEntity"></a>
+                    <span class="name">
+                        <span ><b>wrapEventEntity</b></span>
+                        <a href="#wrapEventEntity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>wrapEventEntity(entity: <a href="../classes/Entity.html" target="_self">Entity</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="403"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:403</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Wrap an event entity with typed attendance/date/relatesTo/authors accessors
+based on the configured field names for its event type.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/EventWithAttendance.html" target="_self" >EventWithAttendance</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="activityTypes"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>activityTypes</b></span>
+                        <a href="#activityTypes"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;EntityConstructor[]&gt;([])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/features/attendance/attendance.service.ts:43</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Unique activity-type constructors derived from the current config.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="CONFIG_KEY"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>CONFIG_KEY</b></span>
+                        <a href="#CONFIG_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;appConfig:attendance&quot;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/features/attendance/attendance.service.ts:26</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="eventTypes"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>eventTypes</b></span>
+                        <a href="#eventTypes"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;EntityConstructor[]&gt;([])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/features/attendance/attendance.service.ts:45</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Unique event-type constructors derived from the current config.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="eventTypeSettings"></a>
+                    <span class="name">
+                        <span ><b>eventTypeSettings</b></span>
+                        <a href="#eventTypeSettings"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/EventTypeSettings.html" target="_self" >EventTypeSettings[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/features/attendance/attendance.service.ts:38</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Full settings for each configured event type.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="filterConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>filterConfig</b></span>
+                        <a href="#filterConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;FilterConfig[]&gt;([])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/features/attendance/attendance.service.ts:47</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Merged filter config from all event type entries.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject, signal } from &quot;@angular/core&quot;;
+import { EntityMapperService } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
+import moment from &quot;moment&quot;;
+import { ActivityAttendance } from &quot;./model/activity-attendance&quot;;
+import { DatabaseIndexingService } from &quot;#src/app/core/entity/database-indexing/database-indexing.service&quot;;
+import { AttendanceItem } from &quot;./model/attendance-item&quot;;
+import { CurrentUserSubject } from &quot;#src/app/core/session/current-user-subject&quot;;
+import {
+  EventTypeSettings,
+  AttendanceFeatureConfig,
+} from &quot;./model/attendance-feature-config&quot;;
+import { FilterConfig } from &quot;#src/app/core/entity-list/EntityListConfig&quot;;
+import { EventWithAttendance } from &quot;./model/event-with-attendance&quot;;
+import { ConfigService } from &quot;#src/app/core/config/config.service&quot;;
+import { EntityRegistry } from &quot;#src/app/core/entity/database-entity.decorator&quot;;
+import { GroupParticipantResolverService } from &quot;./deprecated/group-participant-resolver&quot;;
+import { AttendanceDatatype } from &quot;./model/attendance.datatype&quot;;
+import { DateDatatype } from &quot;#src/app/core/basic-datatypes/date/date.datatype&quot;;
+import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
+
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class AttendanceService {
+  static readonly CONFIG_KEY &#x3D; &quot;appConfig:attendance&quot;;
+
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly dbIndexing &#x3D; inject(DatabaseIndexingService);
+  private readonly currentUser &#x3D; inject(CurrentUserSubject);
+  private readonly configService &#x3D; inject(ConfigService);
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
+  private readonly groupParticipantResolver &#x3D; inject(
+    GroupParticipantResolverService,
+  );
+
+  /** Full settings for each configured event type. */
+  eventTypeSettings: EventTypeSettings[] &#x3D; [];
+  /** Whether legacy group-based participant resolution is active. */
+  private groupBasedParticipants &#x3D; false;
+
+  /** Unique activity-type constructors derived from the current config. */
+  readonly activityTypes &#x3D; signal&lt;EntityConstructor[]&gt;([]);
+  /** Unique event-type constructors derived from the current config. */
+  readonly eventTypes &#x3D; signal&lt;EntityConstructor[]&gt;([]);
+  /** Merged filter config from all event type entries. */
+  readonly filterConfig &#x3D; signal&lt;FilterConfig[]&gt;([]);
+
+  constructor() {
+    this.applyConfig(undefined);
+    this.configService.configUpdates.subscribe((config) &#x3D;&gt; {
+      this.applyConfig(config?.data?.[AttendanceService.CONFIG_KEY]);
+      this.createIndices();
+    });
+  }
+
+  private applyConfig(raw?: AttendanceFeatureConfig): void {
+    const eventTypesConfig &#x3D; raw?.eventTypes ?? [];
+
+    this.eventTypeSettings &#x3D; eventTypesConfig
+      .map((typeConfig) &#x3D;&gt; {
+        const eventTypeName &#x3D; typeConfig.eventType;
+        if (!this.entityRegistry.has(eventTypeName)) return null;
+
+        const activityTypeName &#x3D; typeConfig.activityType;
+        if (activityTypeName &amp;&amp; !this.entityRegistry.has(activityTypeName))
+          return null;
+
+        const eventType &#x3D; this.entityRegistry.get(eventTypeName);
+
+        const resolvedDateField &#x3D;
+          typeConfig.dateField ?? DateDatatype.detectFieldInEntity(eventType);
+        if (!resolvedDateField) {
+          Logging.warn(
+            &#x60;[AttendanceService] No date field found for event type &quot;${eventTypeName}&quot;. &#x60; +
+              &#x60;Set &quot;dateField&quot; in the attendance config or add a @DatabaseField with dataType &quot;date&quot; to the entity.&#x60;,
+          );
+        }
+
+        return {
+          activityType: activityTypeName
+            ? this.entityRegistry.get(activityTypeName)
+            : undefined,
+          eventType,
+          participantsField: typeConfig.participantsField ?? &quot;participants&quot;,
+          attendanceField:
+            typeConfig.attendanceField ??
+            AttendanceDatatype.detectFieldInEntity(eventType),
+          dateField: resolvedDateField,
+          relatesToField: typeConfig.relatesToField ?? &quot;relatesTo&quot;,
+          eventAssignedUsersField: typeConfig.eventAssignedUsersField,
+          activityAssignedUsersField: typeConfig.activityAssignedUsersField,
+          filterConfig: typeConfig.filterConfig ?? [],
+          extraField: typeConfig.extraField,
+          fieldMapping: typeConfig.fieldMapping ?? {},
+        } as EventTypeSettings;
+      })
+      .filter((s): s is EventTypeSettings &#x3D;&gt; s !&#x3D;&#x3D; null);
+
+    this.activityTypes.set([
+      ...new Set(
+        this.eventTypeSettings
+          .filter((s) &#x3D;&gt; s.activityType !&#x3D;&#x3D; undefined)
+          .map((s) &#x3D;&gt; s.activityType!),
+      ),
+    ]);
+    this.eventTypes.set([
+      ...new Set(this.eventTypeSettings.map((s) &#x3D;&gt; s.eventType)),
+    ]);
+
+    const filterConfigMap &#x3D; new Map();
+    for (const ts of this.eventTypeSettings) {
+      for (const f of ts.filterConfig) {
+        filterConfigMap.set(f.id, f);
+      }
+    }
+    this.filterConfig.set(Array.from(filterConfigMap.values()));
+
+    this.groupBasedParticipants &#x3D; this.eventTypeSettings.some(
+      (s) &#x3D;&gt;
+        s.activityType?.ENTITY_TYPE &#x3D;&#x3D;&#x3D; &quot;RecurringActivity&quot; &amp;&amp;
+        s.eventType.ENTITY_TYPE &#x3D;&#x3D;&#x3D; &quot;EventNote&quot; &amp;&amp;
+        s.fieldMapping[&quot;schools&quot;] &#x3D;&#x3D;&#x3D; &quot;linkedGroups&quot;,
+    );
+  }
+
+  private createIndices() {
+    this.createEventsIndex();
+    this.createRecurringActivitiesIndex();
+  }
+
+  private createEventsIndex(): Promise&lt;void&gt; {
+    if (this.eventTypes().length &#x3D;&#x3D;&#x3D; 0) {
+      return Promise.resolve();
+    }
+
+    const eventTypeChecks &#x3D; this.eventTypes()
+      .map((t) &#x3D;&gt; &#x60;doc._id.startsWith(&quot;${t.ENTITY_TYPE}:&quot;)&#x60;)
+      .join(&quot; || &quot;);
+
+    const byActivityEmits &#x3D; this.eventTypeSettings
+      .filter((s) &#x3D;&gt; s.activityType !&#x3D;&#x3D; undefined)
+      .map(
+        ({ eventType, relatesToField }) &#x3D;&gt;
+          &#x60;      if (doc._id.startsWith(&quot;${eventType.ENTITY_TYPE}:&quot;) &amp;&amp; doc[&quot;${relatesToField}&quot;]) {
+        emit(doc[&quot;${relatesToField}&quot;] + &quot;_&quot; + dString);
+      }&#x60;,
+      )
+      .join(&quot;\n&quot;);
+
+    const designDoc &#x3D; {
+      _id: &quot;_design/events_index&quot;,
+      views: {
+        by_date: {
+          map: &#x60;(doc) &#x3D;&gt; {
+            if (${eventTypeChecks}) {
+              if (doc.date &amp;&amp; doc.date.length &#x3D;&#x3D;&#x3D; 10) {
+                emit(doc.date);
+              } else {
+                var d &#x3D; new Date(doc.date || null);
+                var dString &#x3D; d.getFullYear() + &quot;-&quot; + String(d.getMonth()+1).padStart(2, &quot;0&quot;) + &quot;-&quot; + String(d.getDate()).padStart(2, &quot;0&quot;);
+                emit(dString);
+              }
+            }
+          }&#x60;,
+        },
+        by_activity: {
+          map: &#x60;(doc) &#x3D;&gt; {
+            var dString;
+            if (doc.date &amp;&amp; doc.date.length &#x3D;&#x3D;&#x3D; 10) {
+              dString &#x3D; doc.date;
+            } else {
+              var d &#x3D; new Date(doc.date || null);
+              dString &#x3D; d.getFullYear() + &quot;-&quot; + String(d.getMonth()+1).padStart(2, &quot;0&quot;) + &quot;-&quot; + String(d.getDate()).padStart(2, &quot;0&quot;);
+            }
+${byActivityEmits}
+          }&#x60;,
+        },
+      },
+    };
+
+    return this.dbIndexing.createIndex(designDoc);
+  }
+
+  private createRecurringActivitiesIndex(): Promise&lt;void&gt; {
+    const activitySettings &#x3D; this.eventTypeSettings.filter(
+      (s) &#x3D;&gt; s.activityType !&#x3D;&#x3D; undefined,
+    );
+    if (activitySettings.length &#x3D;&#x3D;&#x3D; 0) {
+      return Promise.resolve();
+    }
+
+    const byParticipantChecks &#x3D; activitySettings
+      .map(
+        ({ activityType, participantsField }) &#x3D;&gt;
+          &#x60;      if (doc._id.startsWith(&quot;${activityType!.ENTITY_TYPE}:&quot;)) {
+        for (var p of (doc[&quot;${participantsField}&quot;] || [])) {
+          emit(p);
+        }
+      }&#x60;,
+      )
+      .join(&quot;\n&quot;);
+
+    const designDoc &#x3D; {
+      _id: &quot;_design/activities_index&quot;,
+      views: {
+        by_participant: {
+          map: &#x60;(doc) &#x3D;&gt; {
+${byParticipantChecks}
+          }&#x60;,
+        },
+      },
+    };
+
+    return this.dbIndexing.createIndex(designDoc);
+  }
+
+  /**
+   * Return all events on the given date or date range.
+   * @param startDate The date (or start date of a range)
+   * @param endDate (Optional) end date of the period to be queried; if not given, defaults to the start date
+   */
+  async getEventsOnDate(
+    startDate: Date,
+    endDate: Date &#x3D; startDate,
+  ): Promise&lt;Entity[]&gt; {
+    const start &#x3D; moment(startDate);
+    const end &#x3D; moment(endDate);
+
+    const eventQueries &#x3D; this.eventTypes().map((eventType) &#x3D;&gt;
+      this.dbIndexing.queryIndexDocsRange(
+        eventType,
+        &quot;events_index/by_date&quot;,
+        start.format(&quot;YYYY-MM-DD&quot;),
+        end.format(&quot;YYYY-MM-DD&quot;),
+      ),
+    );
+
+    const allResults &#x3D; await Promise.all(eventQueries);
+    return ([] as Entity[]).concat(...allResults);
+  }
+
+  /**
+   * Load events related to the given activity.
+   * @param activityId The reference activity the events should relate to.
+   * @param sinceDate (Optional) date starting from which events should be considered. Events before this are ignored to improve performance.
+   */
+  private async getEventsForActivity(
+    activityId: string,
+    sinceDate?: Date,
+  ): Promise&lt;Entity[]&gt; {
+    let dateLimit &#x3D; &quot;&quot;;
+    if (sinceDate) {
+      dateLimit &#x3D;
+        &quot;_&quot; +
+        sinceDate.getFullYear() +
+        &quot;-&quot; +
+        String(sinceDate.getMonth() + 1).padStart(2, &quot;0&quot;) +
+        &quot;-&quot; +
+        String(sinceDate.getDate()).padStart(2, &quot;0&quot;);
+    }
+
+    const eventQueries &#x3D; this.eventTypes().map((eventType) &#x3D;&gt;
+      this.dbIndexing.queryIndexDocsRange(
+        eventType,
+        &quot;events_index/by_activity&quot;,
+        activityId + dateLimit,
+        activityId,
+      ),
+    );
+
+    const results &#x3D; await Promise.all(eventQueries);
+    return ([] as Entity[]).concat(...results);
+  }
+
+  /**
+   * Load and calculate activity attendance records grouped by month.
+   * @param activity The activity for which records are loaded.
+   * @param from (Optional) date starting from which events should be considered.
+   */
+  async getActivityAttendances(
+    activity: Entity,
+    from?: Date,
+  ): Promise&lt;ActivityAttendance[]&gt; {
+    const periods &#x3D; new Map&lt;number, ActivityAttendance&gt;();
+
+    const events &#x3D; await this.getEventsForActivity(activity.getId(), from);
+
+    const getOrCreateAttendancePeriod &#x3D; (event: EventWithAttendance) &#x3D;&gt; {
+      const month &#x3D; new Date(event.date.getFullYear(), event.date.getMonth());
+      let attMonth &#x3D; periods.get(month.getTime());
+      if (!attMonth) {
+        attMonth &#x3D; ActivityAttendance.create(month, []);
+        attMonth.periodTo &#x3D; moment(month).endOf(&quot;month&quot;).toDate();
+        attMonth.activity &#x3D; activity;
+        periods.set(month.getTime(), attMonth);
+      }
+      return attMonth;
+    };
+
+    for (const event of events) {
+      const wrapped &#x3D; this.wrapEventEntity(event);
+      const record &#x3D; getOrCreateAttendancePeriod(wrapped);
+      record.events.push(wrapped);
+    }
+
+    return Array.from(periods.values()).sort(
+      (a, b) &#x3D;&gt; a.periodFrom.getTime() - b.periodFrom.getTime(),
+    );
+  }
+
+  /**
+   * Load all activities that list the given participant ID in their &#x60;participants&#x60; field.
+   * Queries all configured recurring activity types (see {@link AttendanceFeatureConfig.recurringActivityTypes}).
+   *
+   * When the legacy RecurringActivity/Event + schools→linkedGroups mapping is detected,
+   * also includes activities linked via school group membership (legacy).
+   *
+   * @param participantId The entity ID of the participant to look up.
+   */
+  async getActivitiesForParticipant(participantId: string): Promise&lt;Entity[]&gt; {
+    const directActivities &#x3D; await Promise.all(
+      this.activityTypes().map((activityType) &#x3D;&gt;
+        this.dbIndexing.queryIndexDocs(
+          activityType,
+          &quot;activities_index/by_participant&quot;,
+          participantId,
+        ),
+      ),
+    );
+    const results &#x3D; ([] as Entity[]).concat(...directActivities);
+
+    if (!this.groupBasedParticipants) {
+      return results;
+    }
+
+    const groupActivities &#x3D;
+      await this.groupParticipantResolver.getActivitiesForParticipantViaGroups(
+        participantId,
+        this.activityTypes(),
+      );
+
+    const merged &#x3D; new Map&lt;string, Entity&gt;();
+    for (const a of [...results, ...groupActivities]) {
+      merged.set(a.getId(), a);
+    }
+    return Array.from(merged.values());
+  }
+
+  /**
+   * Load all events available for a roll call on the given date,
+   * merging existing events with new (unsaved) events generated from recurring activities.
+   *
+   * Returns two lists: &#x60;events&#x60; contains only events relevant to the current user
+   * (assigned activities), while &#x60;allEvents&#x60; contains everything.
+   *
+   * @param date The date for which to load events.
+   */
+  async getAvailableEventsForRollCall(date: Date): Promise&lt;{
+    events: EventWithAttendance[];
+    allEvents: EventWithAttendance[];
+  }&gt; {
+    const currentUserId &#x3D; this.currentUser.value?.getId();
+    const existingEvents &#x3D; await this.getEventsOnDate(date, date);
+
+    const allActivitiesNested &#x3D; await Promise.all(
+      this.eventTypeSettings
+        .filter((s) &#x3D;&gt; s.activityType !&#x3D;&#x3D; undefined)
+        .map((typeSettings) &#x3D;&gt;
+          this.entityMapper.loadType(typeSettings.activityType!),
+        ),
+    );
+    const allActivities &#x3D; ([] as Entity[])
+      .concat(...allActivitiesNested)
+      .filter((a) &#x3D;&gt; a.isActive);
+
+    const allEvents &#x3D; await this.buildEventsFromActivities(
+      allActivities,
+      existingEvents,
+      date,
+    );
+
+    const assignedActivityIds &#x3D; allActivities
+      .filter((a) &#x3D;&gt; this.getActivityAssignedUsers(a)?.includes(currentUserId))
+      .map((a) &#x3D;&gt; a.getId());
+
+    const filteredEvents &#x3D; !currentUserId
+      ? allEvents
+      : allEvents.filter(
+          (e) &#x3D;&gt; !e.activityId || assignedActivityIds.includes(e.activityId),
+        );
+
+    return {
+      events: filteredEvents,
+      allEvents: allEvents,
+    };
+  }
+
+  /**
+   * Wrap an event entity with typed attendance/date/relatesTo/authors accessors
+   * based on the configured field names for its event type.
+   */
+  wrapEventEntity(entity: Entity): EventWithAttendance {
+    const typeSettings &#x3D; this.eventTypeSettings.find(
+      (s) &#x3D;&gt; s.eventType.ENTITY_TYPE &#x3D;&#x3D;&#x3D; entity.getType(),
+    );
+    if (!typeSettings) {
+      throw new Error(
+        &#x60;No attendance event config found for &quot;${entity.getType()}&quot;&#x60;,
+      );
+    }
+
+    return new EventWithAttendance(
+      entity,
+      typeSettings.attendanceField,
+      typeSettings.dateField,
+      typeSettings.relatesToField,
+      typeSettings.eventAssignedUsersField,
+      typeSettings.extraField,
+    );
+  }
+
+  private async buildEventsFromActivities(
+    activities: Entity[],
+    existingEvents: Entity[],
+    date: Date,
+  ): Promise&lt;EventWithAttendance[]&gt; {
+    const wrappedExisting &#x3D; existingEvents.map((e) &#x3D;&gt; this.wrapEventEntity(e));
+
+    const newWrappedEvents &#x3D; await Promise.all(
+      activities.map(async (activity) &#x3D;&gt; {
+        const typeSettings &#x3D; this.eventTypeSettings.find(
+          (s) &#x3D;&gt;
+            s.activityType !&#x3D;&#x3D; undefined &amp;&amp;
+            s.activityType.ENTITY_TYPE &#x3D;&#x3D;&#x3D; activity.getType(),
+        );
+        if (
+          existingEvents.find(
+            (e) &#x3D;&gt; e[typeSettings?.relatesToField] &#x3D;&#x3D;&#x3D; activity.getId(),
+          )
+        ) {
+          return undefined;
+        }
+        return this.createEventForActivity(activity, date);
+      }),
+    );
+
+    const allEvents &#x3D; [
+      ...wrappedExisting,
+      ...newWrappedEvents.filter((e): e is EventWithAttendance &#x3D;&gt; !!e),
+    ];
+
+    this.sortEventsByRelevance(allEvents, activities);
+    return allEvents;
+  }
+
+  private sortEventsByRelevance(
+    events: EventWithAttendance[],
+    allActivities: Entity[],
+  ): void {
+    const calculatePriority &#x3D; (event: EventWithAttendance): number &#x3D;&gt; {
+      let score &#x3D; 0;
+
+      const isActivity &#x3D; event.isActivityEvent;
+      const matchedActivity &#x3D; isActivity
+        ? allActivities.find((a) &#x3D;&gt; a.getId() &#x3D;&#x3D;&#x3D; event.activityId)
+        : undefined;
+      const activityAssignedUsers &#x3D; matchedActivity
+        ? this.getActivityAssignedUsers(matchedActivity)
+        : undefined;
+      // use parent activity&#x27;s assigned users and only fall back to event if necessary
+      const assignedUsers: string[] &#x3D;
+        activityAssignedUsers ?? event.assignedUsers;
+
+      if (!isActivity) {
+        // show one-time events first
+        score +&#x3D; 1;
+      }
+
+      const currentUserId &#x3D; this.currentUser.value?.getId();
+      if (currentUserId &amp;&amp; assignedUsers.includes(currentUserId)) {
+        score +&#x3D; 2;
+      }
+
+      return score;
+    };
+
+    events.sort((a, b) &#x3D;&gt; calculatePriority(b) - calculatePriority(a));
+  }
+
+  async createEventForActivity(
+    activity: Entity | string,
+    date: Date,
+  ): Promise&lt;EventWithAttendance&gt; {
+    if (typeof activity &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
+      const activityTypeName &#x3D; activity.split(&quot;:&quot;)[0];
+      const typeSettings &#x3D; this.eventTypeSettings.find(
+        (s) &#x3D;&gt;
+          s.activityType !&#x3D;&#x3D; undefined &amp;&amp;
+          s.activityType.ENTITY_TYPE &#x3D;&#x3D;&#x3D; activityTypeName,
+      );
+      if (!typeSettings) {
+        throw new Error(
+          &#x60;No config found for activity type &quot;${activityTypeName}&quot;&#x60;,
+        );
+      }
+      activity &#x3D; await this.entityMapper.load(
+        typeSettings.activityType!,
+        activity,
+      );
+    }
+
+    const typeSettings &#x3D; this.eventTypeSettings.find(
+      (s) &#x3D;&gt;
+        s.activityType !&#x3D;&#x3D; undefined &amp;&amp;
+        s.activityType.ENTITY_TYPE &#x3D;&#x3D;&#x3D; activity.getType(),
+    );
+    if (!typeSettings) {
+      throw new Error(&#x60;No config found for activity &quot;${activity.getId()}&quot;&#x60;);
+    }
+
+    const instance &#x3D; new typeSettings.eventType();
+
+    // Set date
+    if (typeSettings.dateField) {
+      instance[typeSettings.dateField] &#x3D; date;
+    }
+
+    // Apply field mapping (activity[actField] → event[evField])
+    for (const [evField, actField] of Object.entries(
+      typeSettings.fieldMapping,
+    )) {
+      const value &#x3D; activity[actField];
+      instance[evField] &#x3D;
+        typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; value !&#x3D;&#x3D; null
+          ? structuredClone(value)
+          : value;
+    }
+
+    // Resolve participants
+    let participantIds: string[];
+    if (
+      this.groupBasedParticipants &amp;&amp;
+      activity.getType() &#x3D;&#x3D;&#x3D; &quot;RecurringActivity&quot;
+    ) {
+      participantIds &#x3D;
+        await this.groupParticipantResolver.getActiveParticipantsOfActivity(
+          activity,
+          date,
+        );
+    } else {
+      participantIds &#x3D;
+        (activity[typeSettings.participantsField] as string[]) ?? [];
+    }
+
+    // Set attendance items
+    instance[typeSettings.attendanceField] &#x3D; participantIds.map(
+      (id) &#x3D;&gt; new AttendanceItem(undefined, &quot;&quot;, id),
+    );
+
+    // Set relatesTo
+    instance[typeSettings.relatesToField] &#x3D; activity.getId();
+
+    // Set authors
+    if (this.currentUser.value) {
+      instance[typeSettings.eventAssignedUsersField] &#x3D; [
+        this.currentUser.value.getId(),
+      ];
+    }
+
+    return new EventWithAttendance(
+      instance,
+      typeSettings.attendanceField,
+      typeSettings.dateField,
+      typeSettings.relatesToField,
+      typeSettings.eventAssignedUsersField,
+      typeSettings.extraField,
+    );
+  }
+
+  /**
+   * Get the assigned user IDs from an activity entity using the configured
+   * &#x60;activityAssignedUsersField&#x60;. Returns &#x60;undefined&#x60; if no field is configured
+   * or the field is not an array on the entity.
+   */
+  private getActivityAssignedUsers(activity: Entity): string[] | undefined {
+    const actType &#x3D; activity.getType();
+    for (const s of this.eventTypeSettings) {
+      if (s.activityType?.ENTITY_TYPE &#x3D;&#x3D;&#x3D; actType) {
+        if (!s.activityAssignedUsersField) continue;
+        const val &#x3D; activity[s.activityAssignedUsersField];
+        if (Array.isArray(val)) return val;
+      }
+    }
+    return undefined;
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'AttendanceService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

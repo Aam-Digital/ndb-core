@@ -1,0 +1,948 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >PublicFormsService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/public-form/public-forms.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#copyPublicFormLinkFromConfig" >copyPublicFormLinkFromConfig</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllPublicFormConfigs" >getAllPublicFormConfigs</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#hasLinkedEntities" >hasLinkedEntities</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#initCustomFormActions" >initCustomFormActions</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#isEntityTypeLinkedToConfig" >isEntityTypeLinkedToConfig</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#saveCustomFieldsToEntityConfig" >saveCustomFieldsToEntityConfig</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="copyPublicFormLinkFromConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>copyPublicFormLinkFromConfig</b></span>
+                        <a href="#copyPublicFormLinkFromConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>copyPublicFormLinkFromConfig(config: <a href="../classes/PublicFormConfig.html" target="_self">PublicFormConfig</a>, entity?: <a href="../classes/Entity.html" target="_self">Entity</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="74"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:74</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Copies a public form link to the clipboard for a given config and (optionally) an entity.</p>
+<ul>
+<li>If an entity is provided and its type matches any linkedEntities in the config,
+generates a URL with the entity ID as a query parameter (e.g. ?children=Child:123).</li>
+<li>If no entity is provided, or if the entity type does not match any linkedEntities,
+generates the base public form URL (list-level) without any query parameters.</li>
+</ul>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>config</td>
+                                            <td>
+                                                            <code><a href="../classes/PublicFormConfig.html" target="_self" >PublicFormConfig</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllPublicFormConfigs"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllPublicFormConfigs</b></span>
+                        <a href="#getAllPublicFormConfigs"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllPublicFormConfigs()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="137"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:137</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Returns all public form configs.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/FormConfig.html" target="_self" >Promise&lt;PublicFormConfig[]&gt;</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasLinkedEntities"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>hasLinkedEntities</b></span>
+                        <a href="#hasLinkedEntities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>hasLinkedEntities(config: <a href="../classes/PublicFormConfig.html" target="_self">PublicFormConfig</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="151"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:151</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Checks if a PublicFormConfig has any linked entities configured.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>config</td>
+                                            <td>
+                                                            <code><a href="../classes/PublicFormConfig.html" target="_self" >PublicFormConfig</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="initCustomFormActions"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>initCustomFormActions</b></span>
+                        <a href="#initCustomFormActions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>initCustomFormActions()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="37"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:37</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Initializes and registers custom form actions for entities.</p>
+<ul>
+<li>Loads all PublicFormConfig entries from the EntityMapper.</li>
+<li>Filters configs to those with linkedEntities configured.</li>
+<li>For each matching config, registers a &quot;copy-form-<route>&quot; action that:
+• Executes copying a prebuilt form URL based on the config.
+• Is only visible when matching configs exist for the given entity.</li>
+</ul>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isEntityTypeLinkedToConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>isEntityTypeLinkedToConfig</b></span>
+                        <a href="#isEntityTypeLinkedToConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>isEntityTypeLinkedToConfig(config: <a href="../classes/PublicFormConfig.html" target="_self">PublicFormConfig</a>, entity: <a href="../classes/Entity.html" target="_self">Entity</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="141"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:141</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>config</td>
+                                            <td>
+                                                            <code><a href="../classes/PublicFormConfig.html" target="_self" >PublicFormConfig</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="saveCustomFieldsToEntityConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>saveCustomFieldsToEntityConfig</b></span>
+                        <a href="#saveCustomFieldsToEntityConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>saveCustomFieldsToEntityConfig(publicFormConfig: <a href="../classes/PublicFormConfig.html" target="_self">PublicFormConfig</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="215"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:215</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Save new custom fields to entity config for a PublicFormConfig.
+When fields are created in the public form columns editor, they&#39;re added to the in-memory schema
+but not persisted to the config. This method persists them.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>publicFormConfig</td>
+                                            <td>
+                                                            <code><a href="../classes/PublicFormConfig.html" target="_self" >PublicFormConfig</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The PublicFormConfig entity being saved</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
+import { inject, Injectable } from &quot;@angular/core&quot;;
+import { AlertService } from &quot;app/core/alerts/alert.service&quot;;
+import { EntityActionsMenuService } from &quot;app/core/entity-details/entity-actions-menu/entity-actions-menu.service&quot;;
+import { EntityMapperService } from &quot;app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import { Entity } from &quot;app/core/entity/model/entity&quot;;
+import {
+  PublicFormConfig,
+  PublicFormEntityFormConfig,
+} from &quot;./public-form-config&quot;;
+import { asArray } from &quot;#src/app/utils/asArray&quot;;
+import { AdminEntityService } from &quot;app/core/admin/admin-entity.service&quot;;
+import { EntityRegistry } from &quot;app/core/entity/database-entity.decorator&quot;;
+import { EntityConfigService } from &quot;app/core/entity/entity-config.service&quot;;
+import { UnsavedChangesService } from &quot;#src/app/core/entity-details/form/unsaved-changes.service&quot;;
+
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class PublicFormsService {
+  private entityMapper &#x3D; inject(EntityMapperService);
+  private alertService &#x3D; inject(AlertService);
+  private entityActionsMenuService &#x3D; inject(EntityActionsMenuService);
+  private readonly adminEntityService &#x3D; inject(AdminEntityService);
+  private readonly entities &#x3D; inject(EntityRegistry);
+  private readonly entityConfigService &#x3D; inject(EntityConfigService);
+  private readonly unsavedChangesService &#x3D; inject(UnsavedChangesService);
+
+  /**
+   * Initializes and registers custom form actions for entities.
+   * - Loads all PublicFormConfig entries from the EntityMapper.
+   * - Filters configs to those with linkedEntities configured.
+   * - For each matching config, registers a &quot;copy-form-&lt;route&gt;&quot; action that:
+   *   • Executes copying a prebuilt form URL based on the config.
+   *   • Is only visible when matching configs exist for the given entity.
+   */
+  public async initCustomFormActions() {
+    const allForms &#x3D; await this.entityMapper.loadType(PublicFormConfig);
+    const matchingForms &#x3D; allForms.filter((config) &#x3D;&gt;
+      this.hasLinkedEntities(config),
+    );
+    // Unregister any previously registered actions for these form configs
+    const actionKeys &#x3D; matchingForms.map(
+      (config) &#x3D;&gt; &#x60;copy-form-${config.getId()}&#x60;,
+    );
+    this.entityActionsMenuService.unregisterActions(actionKeys);
+    for (const config of matchingForms) {
+      this.entityActionsMenuService.registerActions([
+        {
+          action: &#x60;copy-form-${config.getId()}&#x60;,
+          execute: (entity) &#x3D;&gt; {
+            const singleEntity &#x3D; Array.isArray(entity) ? entity[0] : entity;
+            return this.copyPublicFormLinkFromConfig(config, singleEntity);
+          },
+          permission: &quot;read&quot;,
+          icon: &quot;link&quot;,
+          label: $localize&#x60;Copy Custom Form (${config.title})&#x60;,
+          tooltip: $localize&#x60;Copy link to public form &quot;${config.title}&quot; that will connect submissions to this individual record.&#x60;,
+          visible: (entity) &#x3D;&gt;
+            this.isEntityTypeLinkedToConfig(config, asArray(entity)[0]),
+          availableFor: &quot;individual-only&quot;,
+        },
+      ]);
+    }
+  }
+
+  /**
+   * Copies a public form link to the clipboard for a given config and (optionally) an entity.
+   * - If an entity is provided and its type matches any linkedEntities in the config,
+   *   generates a URL with the entity ID as a query parameter (e.g. ?children&#x3D;Child:123).
+   * - If no entity is provided, or if the entity type does not match any linkedEntities,
+   *   generates the base public form URL (list-level) without any query parameters.
+   */
+  public async copyPublicFormLinkFromConfig(
+    config: PublicFormConfig,
+    entity?: Entity,
+  ): Promise&lt;boolean&gt; {
+    const relevantForm &#x3D; entity
+      ? this.getRelevantFormForEntity(config, entity)
+      : undefined;
+    const formConfig &#x3D; relevantForm ?? this.getFormConfigs(config)[0];
+
+    return this.copyPublicFormLinkFromEntityFormConfig(
+      config.route,
+      formConfig,
+      entity,
+    );
+  }
+
+  private async copyPublicFormLinkFromEntityFormConfig(
+    route: string,
+    formConfig: PublicFormEntityFormConfig,
+    entity?: Entity,
+  ): Promise&lt;boolean&gt; {
+    let url &#x3D; &#x60;${window.location.origin}/public-form/form/${route}&#x60;;
+
+    const matchingFieldIds &#x3D; entity
+      ? this.findMatchingLinkedFieldIds(formConfig, entity)
+      : [];
+
+    if (matchingFieldIds.length) {
+      const params &#x3D; new URLSearchParams();
+      matchingFieldIds.forEach((fieldId) &#x3D;&gt;
+        params.set(fieldId, entity.getId()),
+      );
+      url +&#x3D; &#x60;?${params.toString()}&#x60;;
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // Clipboard access might fail in tests or unsupported browsers
+      Logging.warn(
+        &quot;PublicFormsService.copyPublicFormLinkFromConfig write to clipboard failed.&quot;,
+      );
+    }
+    this.alertService.addInfo(&quot;Link copied: &quot; + url);
+    return matchingFieldIds.length &gt; 0;
+  }
+
+  /**
+   * Gets the relevant form configuration for a given entity from a PublicFormConfig.
+   * Handles both OLD format (entity/linkedEntities at top level) and NEW format (forms array).
+   */
+  private getRelevantFormForEntity(
+    config: PublicFormConfig,
+    entity: Entity,
+  ): PublicFormEntityFormConfig | undefined {
+    return this.getFormConfigs(config).find(
+      (form) &#x3D;&gt; this.findMatchingLinkedFieldIds(form, entity).length &gt; 0,
+    );
+  }
+
+  /**
+   * Returns all public form configs.
+   */
+  public async getAllPublicFormConfigs(): Promise&lt;PublicFormConfig[]&gt; {
+    return this.entityMapper.loadType(PublicFormConfig);
+  }
+
+  public async isEntityTypeLinkedToConfig(
+    config: PublicFormConfig,
+    entity: Entity,
+  ): Promise&lt;boolean&gt; {
+    return this.getRelevantFormForEntity(config, entity) !&#x3D;&#x3D; undefined;
+  }
+
+  /**
+   * Checks if a PublicFormConfig has any linked entities configured.
+   */
+  public hasLinkedEntities(config: PublicFormConfig): boolean {
+    if (config.linkedEntities?.length) {
+      return true;
+    }
+
+    if (!config.forms?.length) {
+      return false;
+    }
+
+    return config.forms.some((form) &#x3D;&gt; form.linkedEntities?.length);
+  }
+
+  /**
+   * Returns the normalized list of form configs, supporting both
+   * the new &#x60;forms&#x60; array and legacy top-level config.
+   */
+  private getFormConfigs(
+    config: PublicFormConfig,
+  ): PublicFormEntityFormConfig[] {
+    if (config.forms?.length) {
+      return config.forms;
+    }
+    return [
+      {
+        entity: config.entity,
+        columns: config.columns ?? [],
+        prefilled: config.prefilled,
+        linkedEntities: config.linkedEntities,
+      },
+    ];
+  }
+
+  /**
+   * Finds linked field IDs in a form config whose schema references the given entity&#x27;s type.
+   */
+  private findMatchingLinkedFieldIds(
+    formConfig: PublicFormEntityFormConfig,
+    entity: Entity,
+  ): string[] {
+    const entityType &#x3D; entity.getConstructor?.()?.ENTITY_TYPE?.toLowerCase();
+    if (
+      !entityType ||
+      !formConfig.entity ||
+      !formConfig.linkedEntities?.length
+    ) {
+      return [];
+    }
+
+    const entityConstructor &#x3D; this.entities.get(formConfig.entity);
+    if (!entityConstructor) return [];
+
+    return formConfig.linkedEntities.filter((fieldId) &#x3D;&gt; {
+      const fieldSchema &#x3D; entityConstructor.schema.get(fieldId);
+      return fieldSchema?.additional?.toLowerCase() &#x3D;&#x3D;&#x3D; entityType;
+    });
+  }
+
+  /**
+   * Save new custom fields to entity config for a PublicFormConfig.
+   * When fields are created in the public form columns editor, they&#x27;re added to the in-memory schema
+   * but not persisted to the config. This method persists them.
+   *
+   * @param publicFormConfig The PublicFormConfig entity being saved
+   */
+  async saveCustomFieldsToEntityConfig(
+    publicFormConfig: PublicFormConfig,
+  ): Promise&lt;void&gt; {
+    if (!publicFormConfig.entity) {
+      return;
+    }
+
+    const entityConstructor &#x3D; this.entities.get(publicFormConfig.entity);
+    const entityConfig &#x3D;
+      this.entityConfigService.getEntityConfig(entityConstructor) || {};
+    const existingAttributes &#x3D; entityConfig.attributes || {};
+
+    // Check if there are any fields in schema that aren&#x27;t in global config yet
+    let hasNewFields &#x3D; false;
+    for (const [fieldId] of entityConstructor.schema.entries()) {
+      if (!Object.hasOwn(existingAttributes, fieldId)) {
+        hasNewFields &#x3D; true;
+        break;
+      }
+    }
+
+    if (hasNewFields) {
+      this.unsavedChangesService.pending &#x3D; false;
+      await this.adminEntityService.setAndSaveEntityConfig(entityConstructor);
+    }
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'PublicFormsService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
