@@ -9,12 +9,14 @@ describe("EntityFieldEditComponent", () => {
   let component: EntityFieldEditComponent;
   let fixture: ComponentFixture<EntityFieldEditComponent>;
 
-  let mockFormService: jasmine.SpyObj<EntityFormService>;
+  let mockFormService: any;
   const mockField = { id: "testField" };
 
   beforeEach(() => {
-    mockFormService = jasmine.createSpyObj(["extendFormFieldConfig"]);
-    mockFormService.extendFormFieldConfig.and.returnValue(mockField);
+    mockFormService = {
+      extendFormFieldConfig: vi.fn(),
+    };
+    mockFormService.extendFormFieldConfig.mockReturnValue(mockField);
 
     TestBed.configureTestingModule({
       imports: [EntityFieldEditComponent],

@@ -40,27 +40,27 @@ describe("UserRoleGuard", () => {
       data: { permittedUserRoles: ["admin"] },
     } as any);
 
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
   });
 
   it("should return false for a user without permissions", async () => {
     sessionInfo.next(normalUser);
     const router = TestBed.inject(Router);
-    spyOn(router, "navigate");
+    vi.spyOn(router, "navigate");
 
     const result = await guard.canActivate({
       routeConfig: { path: "url" },
       data: { permittedUserRoles: ["admin"] },
     } as any);
 
-    expect(result).toBeFalse();
+    expect(result).toBe(false);
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
   it("should navigate to 404 for real navigation requests without permissions", async () => {
     sessionInfo.next(normalUser);
     const router = TestBed.inject(Router);
-    spyOn(router, "navigate");
+    vi.spyOn(router, "navigate");
     const route = new ActivatedRouteSnapshot();
     Object.assign(route, {
       routeConfig: { path: "url" },
@@ -77,7 +77,7 @@ describe("UserRoleGuard", () => {
       routeConfig: { path: "url" },
     } as any);
 
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
   });
 
   it("should check permissions of a given route (checkRoutePermissions)", async () => {
@@ -94,34 +94,24 @@ describe("UserRoleGuard", () => {
     });
 
     sessionInfo.next(normalUser);
-    await expectAsync(guard.checkRoutePermissions("free")).toBeResolvedTo(true);
-    await expectAsync(guard.checkRoutePermissions("/free")).toBeResolvedTo(
-      true,
-    );
-    await expectAsync(guard.checkRoutePermissions("restricted")).toBeResolvedTo(
+    await expect(guard.checkRoutePermissions("free")).resolves.toEqual(true);
+    await expect(guard.checkRoutePermissions("/free")).resolves.toEqual(true);
+    await expect(guard.checkRoutePermissions("restricted")).resolves.toEqual(
       false,
     );
-    await expectAsync(guard.checkRoutePermissions("pathA")).toBeResolvedTo(
-      true,
-    );
-    await expectAsync(guard.checkRoutePermissions("/pathA")).toBeResolvedTo(
-      true,
-    );
-    await expectAsync(guard.checkRoutePermissions("pathA/1")).toBeResolvedTo(
+    await expect(guard.checkRoutePermissions("pathA")).resolves.toEqual(true);
+    await expect(guard.checkRoutePermissions("/pathA")).resolves.toEqual(true);
+    await expect(guard.checkRoutePermissions("pathA/1")).resolves.toEqual(
       false,
     );
 
     sessionInfo.next(adminUser);
-    await expectAsync(guard.checkRoutePermissions("free")).toBeResolvedTo(true);
-    await expectAsync(guard.checkRoutePermissions("restricted")).toBeResolvedTo(
+    await expect(guard.checkRoutePermissions("free")).resolves.toEqual(true);
+    await expect(guard.checkRoutePermissions("restricted")).resolves.toEqual(
       true,
     );
-    await expectAsync(guard.checkRoutePermissions("pathA")).toBeResolvedTo(
-      true,
-    );
-    await expectAsync(guard.checkRoutePermissions("pathA/1")).toBeResolvedTo(
-      true,
-    );
+    await expect(guard.checkRoutePermissions("pathA")).resolves.toEqual(true);
+    await expect(guard.checkRoutePermissions("pathA/1")).resolves.toEqual(true);
   });
 
   it("should checkRoutePermissions considering nested child routes", async () => {
@@ -143,31 +133,27 @@ describe("UserRoleGuard", () => {
     router.config.push(onParentRoute);
 
     sessionInfo.next(normalUser);
-    await expectAsync(guard.checkRoutePermissions("nested")).toBeResolvedTo(
-      false,
-    );
-    await expectAsync(guard.checkRoutePermissions("nested/X")).toBeResolvedTo(
+    await expect(guard.checkRoutePermissions("nested")).resolves.toEqual(false);
+    await expect(guard.checkRoutePermissions("nested/X")).resolves.toEqual(
       true,
     );
-    await expectAsync(guard.checkRoutePermissions("on-parent")).toBeResolvedTo(
+    await expect(guard.checkRoutePermissions("on-parent")).resolves.toEqual(
       false,
     );
-    await expectAsync(
-      guard.checkRoutePermissions("on-parent/X"),
-    ).toBeResolvedTo(false);
+    await expect(guard.checkRoutePermissions("on-parent/X")).resolves.toEqual(
+      false,
+    );
 
     sessionInfo.next(adminUser);
-    await expectAsync(guard.checkRoutePermissions("nested")).toBeResolvedTo(
+    await expect(guard.checkRoutePermissions("nested")).resolves.toEqual(true);
+    await expect(guard.checkRoutePermissions("nested/X")).resolves.toEqual(
       true,
     );
-    await expectAsync(guard.checkRoutePermissions("nested/X")).toBeResolvedTo(
+    await expect(guard.checkRoutePermissions("on-parent")).resolves.toEqual(
       true,
     );
-    await expectAsync(guard.checkRoutePermissions("on-parent")).toBeResolvedTo(
+    await expect(guard.checkRoutePermissions("on-parent/X")).resolves.toEqual(
       true,
     );
-    await expectAsync(
-      guard.checkRoutePermissions("on-parent/X"),
-    ).toBeResolvedTo(true);
   });
 });

@@ -1,11 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  flush,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { RollCallComponent } from "./roll-call.component";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { EventWithAttendance } from "../../model/event-with-attendance";
@@ -53,7 +46,7 @@ describe("RollCallComponent", () => {
     participant2: TestEntity,
     participant3: TestEntity;
 
-  let mockEnumService: jasmine.SpyObj<ConfigurableEnumService>;
+  let mockEnumService: any;
 
   function addParticipant(note: Note, participant: Entity | string) {
     const id =
@@ -62,11 +55,11 @@ describe("RollCallComponent", () => {
     note.childrenAttendance.push(new AttendanceItem(undefined, "", id));
   }
 
-  function stabilize() {
+  async function stabilize() {
     for (let i = 0; i < 5; i++) {
       fixture.detectChanges();
-      tick(); // microtasks (Promises from resource loader, etc.)
-      TestBed.tick(); // flush Angular effects and change detection
+      await fixture.whenStable();
+      await Promise.resolve();
     }
   }
 
@@ -75,9 +68,12 @@ describe("RollCallComponent", () => {
     participant2 = new TestEntity("child2");
     participant3 = new TestEntity("child3");
 
-    mockEnumService = jasmine.createSpyObj("ConfigurableEnumService", {
-      getEnumValues: [],
-    });
+    mockEnumService = {
+      getEnumValues: vi
+        .fn()
+        .mockName("ConfigurableEnumService.getEnumValues")
+        .mockReturnValue([]),
+    };
 
     TestBed.configureTestingModule({
       imports: [
@@ -93,14 +89,20 @@ describe("RollCallComponent", () => {
         { provide: ConfigurableEnumService, useValue: mockEnumService },
         {
           provide: FormDialogService,
-          useValue: jasmine.createSpyObj("FormDialogService", ["openView"]),
+          useValue: {
+            openView: vi.fn().mockName("FormDialogService.openView"),
+          },
         },
         {
           provide: ConfirmationDialogService,
-          useValue: jasmine.createSpyObj("ConfirmationDialogService", [
-            "getConfirmation",
-            "getDiscardConfirmation",
-          ]),
+          useValue: {
+            getConfirmation: vi
+              .fn()
+              .mockName("ConfirmationDialogService.getConfirmation"),
+            getDiscardConfirmation: vi
+              .fn()
+              .mockName("ConfirmationDialogService.getDiscardConfirmation"),
+          },
         },
         { provide: UnsavedChangesService, useValue: { pending: false } },
         {
@@ -145,9 +147,9 @@ describe("RollCallComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should display all available attendance status to select", fakeAsync(() => {
+  it("should display all available attendance status to select", async () => {
     const options = [PRESENT, ABSENT];
-    mockEnumService.getEnumValues.and.returnValue(options);
+    mockEnumService.getEnumValues.mockReturnValue(options);
     const event = Note.create(new Date());
     addParticipant(event, participant1);
     fixture.componentRef.setInput(
@@ -161,13 +163,12 @@ describe("RollCallComponent", () => {
         undefined,
       ),
     );
-    stabilize();
+    await stabilize();
 
-    expect(component.availableStatus()).toHaveSize(options.length);
-    flush();
-  }));
+    expect(component.availableStatus()).toHaveLength(options.length);
+  });
 
-  it("should not record attendance if childId does not exist", fakeAsync(() => {
+  it("should not record attendance if childId does not exist", async () => {
     const nonExistingChildId = "TestEntity:notExistingChild";
     const noteWithNonExistingChild = new Note();
     addParticipant(noteWithNonExistingChild, participant1);
@@ -184,17 +185,16 @@ describe("RollCallComponent", () => {
         undefined,
       ),
     );
-    stabilize();
+    await stabilize();
 
     expect(component.participants()).toEqual([participant1]);
     const note = component.event()?.entity as Note;
     expect(
       note.childrenAttendance.some((a) => a.participant === nonExistingChildId),
-    ).toBeFalse();
-    flush();
-  }));
+    ).toBe(false);
+  });
 
-  it("should correctly assign the attendance", fakeAsync(() => {
+  it("should correctly assign the attendance", async () => {
     const note = new Note("noteWithAttendance");
     addParticipant(note, participant1);
     addParticipant(note, participant2);
@@ -210,10 +210,9 @@ describe("RollCallComponent", () => {
         undefined,
       ),
     );
-    stabilize();
+    await stabilize();
 
     component.markAttendance(PRESENT);
-    tick(1000);
     component.markAttendance(ABSENT);
 
     expect(
@@ -226,16 +225,15 @@ describe("RollCallComponent", () => {
         (a) => a.participant === participant2.getId(),
       ).status,
     ).toEqual(ABSENT);
-    flush();
-  }));
+  });
 
-  it("should save event when all existing children are finished", fakeAsync(() => {
+  it("should save event when all existing children are finished", async () => {
     const note = new Note();
     addParticipant(note, participant1);
     addParticipant(note, "notExistingChild");
     addParticipant(note, participant2);
 
-    const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
+    const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
     fixture.componentRef.setInput(
       "eventEntity",
       new EventWithAttendance(
@@ -247,17 +245,17 @@ describe("RollCallComponent", () => {
         undefined,
       ),
     );
-    stabilize();
+    await stabilize();
 
     component.goToParticipantWithIndex(component.currentIndex() + 1);
     component.goToParticipantWithIndex(component.currentIndex() + 1);
 
     expect(saveSpy).toHaveBeenCalledWith(note);
-  }));
+  });
 
   it("should navigate back to overview when finish is called", () => {
     const location = TestBed.inject(Location);
-    spyOn(location, "back");
+    vi.spyOn(location, "back");
 
     component.finish();
 
@@ -265,10 +263,10 @@ describe("RollCallComponent", () => {
   });
 
   it("isn't dirty initially", () => {
-    expect(component.isDirty()).toBeFalse();
+    expect(component.isDirty()).toBe(false);
   });
 
-  it("isn't dirty when the user has skipped participants", fakeAsync(() => {
+  it("isn't dirty when the user has skipped participants", async () => {
     const event = new Note();
     addParticipant(event, participant1.getId());
     addParticipant(event, participant2.getId());
@@ -285,16 +283,15 @@ describe("RollCallComponent", () => {
         undefined,
       ),
     );
-    stabilize();
+    await stabilize();
 
     component.goToParticipantWithIndex(component.currentIndex() + 1);
     component.goToParticipantWithIndex(component.currentIndex() + 1);
     component.goToParticipantWithIndex(component.currentIndex() - 1);
-    expect(component.isDirty()).toBeFalse();
-    flush();
-  }));
+    expect(component.isDirty()).toBe(false);
+  });
 
-  it("is dirty when the user has entered some attendance", fakeAsync(() => {
+  it("is dirty when the user has entered some attendance", async () => {
     const event = new Note();
     addParticipant(event, participant1.getId());
     event.date = new Date();
@@ -310,14 +307,13 @@ describe("RollCallComponent", () => {
         undefined,
       ),
     );
-    stabilize();
+    await stabilize();
 
     component.markAttendance(undefined);
-    expect(component.isDirty()).toBeTrue();
-    flush();
-  }));
+    expect(component.isDirty()).toBe(true);
+  });
 
-  it("starts with the initial child if no attendance has been registered", fakeAsync(() => {
+  it("starts with the initial child if no attendance has been registered", async () => {
     const event = Note.create(new Date());
     addParticipant(event, participant1);
     fixture.componentRef.setInput(
@@ -331,14 +327,13 @@ describe("RollCallComponent", () => {
         undefined,
       ),
     );
-    stabilize();
+    await stabilize();
 
     expect(component.currentIndex()).toBe(0);
     expect(component.currentParticipant()).toBe(participant1);
-    flush();
-  }));
+  });
 
-  it("starts with the first child that doesn't have an attendance status set", fakeAsync(() => {
+  it("starts with the first child that doesn't have an attendance status set", async () => {
     const note = Note.create(new Date());
     for (const child of [participant1, participant2, participant3]) {
       addParticipant(note, child);
@@ -360,50 +355,49 @@ describe("RollCallComponent", () => {
         undefined,
       ),
     );
-    stabilize();
+    await stabilize();
 
     expect(component.currentParticipant()).toBe(participant2);
     expect(component.currentIndex()).toBe(1);
-    flush();
-  }));
+  });
 
-  it("should not sort participants without sortParticipantsBy configured", fakeAsync(() => {
+  it("should not sort participants without sortParticipantsBy configured", async () => {
     participant1.name = "Zoey";
     participant2.name = "Adam";
 
-    testParticipantsAreSorted(
+    await testParticipantsAreSorted(
       [participant1, participant2],
       [participant1, participant2],
       undefined,
     );
-  }));
+  });
 
-  it("should sort participants alphabetically for sortParticipantsBy", fakeAsync(() => {
+  it("should sort participants alphabetically for sortParticipantsBy", async () => {
     participant1.name = "Zoey";
     participant2.name = undefined;
     participant3.name = "Adam";
 
-    testParticipantsAreSorted(
+    await testParticipantsAreSorted(
       [participant1, participant2, participant3],
       [participant3, participant1, participant2],
       "name",
     );
-  }));
+  });
 
-  it("should sort participants numerically for sortParticipantsBy", fakeAsync(() => {
+  it("should sort participants numerically for sortParticipantsBy", async () => {
     // @ts-ignore
     participant1.priority = 99;
     // @ts-ignore
     participant2.priority = 1;
 
-    testParticipantsAreSorted(
+    await testParticipantsAreSorted(
       [participant1, participant2],
       [participant2, participant1],
       "priority",
     );
-  }));
+  });
 
-  function testParticipantsAreSorted(
+  async function testParticipantsAreSorted(
     participantsInput: TestEntity[],
     expectedParticipantsOrder: TestEntity[],
     sortParticipantsBy: string,
@@ -423,15 +417,14 @@ describe("RollCallComponent", () => {
         undefined,
       ),
     );
-    stabilize();
+    await stabilize();
 
     fixture.componentRef.setInput("sortParticipantsBy", sortParticipantsBy);
-    stabilize();
+    await stabilize();
 
     expect(component.participants()).toEqual(expectedParticipantsOrder);
     expect(event.childrenAttendance.map((a) => a.participant)).toEqual(
       expectedParticipantsOrder.map((p) => p.getId()),
     );
-    flush();
   }
 });

@@ -67,7 +67,7 @@ describe("Schema data type: date-only", () => {
     for (const test of testCases) {
       const obj = dataType.transformToObjectFormat(test.input);
       const actualString = dataType.transformToDatabaseFormat(obj);
-      expect(actualString).withContext(test.input).toEqual(test.expected);
+      expect(actualString, test.input).toEqual(test.expected);
     }
   });
 

@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ImportConfirmSummaryComponent } from "./import-confirm-summary.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -17,18 +12,27 @@ describe("ImportConfirmSummaryComponent", () => {
   let component: ImportConfirmSummaryComponent;
   let fixture: ComponentFixture<ImportConfirmSummaryComponent>;
 
-  let mockImportService: jasmine.SpyObj<ImportService>;
-  let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
-  let mockDialogRef: jasmine.SpyObj<MatDialogRef<any>>;
-  let mockConfirmationService: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockImportService: any;
+  let mockSnackbar: any;
+  let mockDialogRef: any;
+  let mockConfirmationService: any;
 
   beforeEach(async () => {
-    mockImportService = jasmine.createSpyObj(["executeImport", "undoImport"]);
-    mockSnackbar = jasmine.createSpyObj(["open"]);
-    mockSnackbar.open.and.returnValue({ onAction: () => of(null) } as any);
-    mockDialogRef = jasmine.createSpyObj(["close"]);
-    mockConfirmationService = jasmine.createSpyObj(["getConfirmation"]);
-    mockConfirmationService.getConfirmation.and.resolveTo(true);
+    mockImportService = {
+      executeImport: vi.fn(),
+      undoImport: vi.fn(),
+    };
+    mockSnackbar = {
+      open: vi.fn(),
+    };
+    mockSnackbar.open.mockReturnValue({ onAction: () => of(null) } as any);
+    mockDialogRef = {
+      close: vi.fn(),
+    };
+    mockConfirmationService = {
+      getConfirmation: vi.fn(),
+    };
+    mockConfirmationService.getConfirmation.mockResolvedValue(true);
 
     await TestBed.configureTestingModule({
       imports: [ImportConfirmSummaryComponent],
@@ -52,33 +56,38 @@ describe("ImportConfirmSummaryComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should execute import via service, display toast message and close dialog upon success", fakeAsync(() => {
-    const testImportResult: ImportMetadata = ImportMetadata.create({
-      createdEntities: ["1", "2"],
-      config: null,
-    });
-    mockImportService.executeImport.and.resolveTo(testImportResult);
+  it("should execute import via service, display toast message and close dialog upon success", async () => {
+    vi.useFakeTimers();
+    try {
+      const testImportResult: ImportMetadata = ImportMetadata.create({
+        createdEntities: ["1", "2"],
+        config: null,
+      });
+      mockImportService.executeImport.mockResolvedValue(testImportResult);
 
-    component.executeImport();
-    tick();
+      component.executeImport();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockImportService.executeImport).toHaveBeenCalled();
-    expect(mockSnackbar.open).toHaveBeenCalled();
-    expect(mockDialogRef.close).toHaveBeenCalledWith({
-      completedImport: testImportResult,
-    });
-    expect(component.importInProgress).toBeFalse();
-    expect(mockDialogRef.disableClose).toBeFalse();
-  }));
+      expect(mockImportService.executeImport).toHaveBeenCalled();
+      expect(mockSnackbar.open).toHaveBeenCalled();
+      expect(mockDialogRef.close).toHaveBeenCalledWith({
+        completedImport: testImportResult,
+      });
+      expect(component.importInProgress).toBe(false);
+      expect(mockDialogRef.disableClose).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should close dialog with error flag for putAll conflict errors", async () => {
     const putAllConflictError = [{ status: 409, name: "conflict" }];
-    mockImportService.executeImport.and.rejectWith(putAllConflictError);
+    mockImportService.executeImport.mockRejectedValue(putAllConflictError);
 
     await component.executeImport();
 
-    expect(component.importInProgress).toBeFalse();
-    expect(mockDialogRef.disableClose).toBeFalse();
+    expect(component.importInProgress).toBe(false);
+    expect(mockDialogRef.disableClose).toBe(false);
     expect(mockConfirmationService.getConfirmation).toHaveBeenCalled();
     expect(mockDialogRef.close).toHaveBeenCalledWith({
       errorOccured: true,
@@ -87,12 +96,12 @@ describe("ImportConfirmSummaryComponent", () => {
 
   it("should handle general errors with confirmation dialog and close dialog", async () => {
     const generalError = new Error("Network error");
-    mockImportService.executeImport.and.rejectWith(generalError);
+    mockImportService.executeImport.mockRejectedValue(generalError);
 
     await component.executeImport();
 
-    expect(component.importInProgress).toBeFalse();
-    expect(mockDialogRef.disableClose).toBeFalse();
+    expect(component.importInProgress).toBe(false);
+    expect(mockDialogRef.disableClose).toBe(false);
     expect(mockConfirmationService.getConfirmation).toHaveBeenCalled();
     expect(mockDialogRef.close).toHaveBeenCalledWith({
       errorOccured: true,

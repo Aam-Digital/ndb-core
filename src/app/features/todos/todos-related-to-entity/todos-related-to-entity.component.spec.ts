@@ -8,6 +8,7 @@ import { DatabaseIndexingService } from "../../../core/entity/database-indexing/
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 import { DatabaseResolverService } from "../../../core/database/database-resolver.service";
+import { expectArrayWithExactContents } from "../../../utils/test-utils/array-test-utils";
 
 describe("TodosRelatedToEntityComponent", () => {
   let component: TodosRelatedToEntityComponent;
@@ -44,10 +45,10 @@ describe("TodosRelatedToEntityComponent", () => {
       relatedTodo,
       unrelatedTodo,
     ]);
-    const indexSpy = spyOn(
+    const indexSpy = vi.spyOn(
       TestBed.inject(DatabaseIndexingService),
       "queryIndexDocs",
-    ).and.callThrough();
+    );
 
     component.entity = child;
     component.property = undefined;
@@ -79,7 +80,7 @@ describe("TodosRelatedToEntityComponent", () => {
     unrelatedTodo.relatedEntities = [new TestEntity().getId()];
     const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.saveAll([relatedTodo, relatedTodo2, unrelatedTodo]);
-    const loadTypeSpy = spyOn(entityMapper, "loadType").and.callThrough();
+    const loadTypeSpy = vi.spyOn(entityMapper, "loadType");
 
     component.entity = user;
     component.property = undefined;
@@ -87,13 +88,11 @@ describe("TodosRelatedToEntityComponent", () => {
     await component.ngOnInit();
 
     expect(loadTypeSpy).toHaveBeenCalledWith(Todo);
-    expect(component.data).toEqual(
-      jasmine.arrayWithExactContents([
-        relatedTodo,
-        relatedTodo2,
-        unrelatedTodo,
-      ]),
-    );
+    expectArrayWithExactContents(component.data, [
+      relatedTodo,
+      relatedTodo2,
+      unrelatedTodo,
+    ]);
     expect(component.filter).toEqual({
       $or: [
         {

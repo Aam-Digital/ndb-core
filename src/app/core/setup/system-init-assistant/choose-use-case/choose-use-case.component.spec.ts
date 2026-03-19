@@ -6,14 +6,14 @@ import { BaseConfig } from "../../base-config";
 describe("ChooseUseCaseComponent", () => {
   let component: ChooseUseCaseComponent;
   let fixture: ComponentFixture<ChooseUseCaseComponent>;
-  let mockLanguageService: jasmine.SpyObj<LanguageService>;
+  let mockLanguageService: any;
 
   beforeEach(async () => {
-    mockLanguageService = jasmine.createSpyObj("LanguageService", [
-      "getCurrentLocale",
-      "switchLocale",
-    ]);
-    mockLanguageService.getCurrentLocale.and.returnValue("en");
+    mockLanguageService = {
+      getCurrentLocale: vi.fn().mockName("LanguageService.getCurrentLocale"),
+      switchLocale: vi.fn().mockName("LanguageService.switchLocale"),
+    };
+    mockLanguageService.getCurrentLocale.mockReturnValue("en");
 
     await TestBed.configureTestingModule({
       imports: [ChooseUseCaseComponent],
@@ -41,7 +41,7 @@ describe("ChooseUseCaseComponent", () => {
         { locale: "fr", label: "French 1" } as unknown as BaseConfig,
         { locale: "de", label: "German 1" } as unknown as BaseConfig,
       ];
-      mockLanguageService.getCurrentLocale.and.returnValue("en");
+      mockLanguageService.getCurrentLocale.mockReturnValue("en");
 
       // Act
       fixture.componentRef.setInput("useCases", useCasesInDifferentLocales);
@@ -57,7 +57,7 @@ describe("ChooseUseCaseComponent", () => {
         { locale: "en", label: "English 1" } as unknown as BaseConfig,
         { locale: "de", label: "German 1" } as unknown as BaseConfig,
       ];
-      mockLanguageService.getCurrentLocale.and.returnValue("en");
+      mockLanguageService.getCurrentLocale.mockReturnValue("en");
 
       // Act
       fixture.componentRef.setInput("useCases", useCasesInCurrentLocale);
@@ -70,7 +70,7 @@ describe("ChooseUseCaseComponent", () => {
     it("should not switch locale when there are no use cases at all", () => {
       // Arrange
       const emptyUseCases: BaseConfig[] = [];
-      mockLanguageService.getCurrentLocale.and.returnValue("en");
+      mockLanguageService.getCurrentLocale.mockReturnValue("en");
 
       // Act
       fixture.componentRef.setInput("useCases", emptyUseCases);

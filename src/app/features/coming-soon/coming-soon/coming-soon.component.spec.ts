@@ -16,7 +16,9 @@ describe("ComingSoonComponent", () => {
   let mockActivatedRoute;
 
   beforeEach(waitForAsync(() => {
-    mockAnalytics = jasmine.createSpyObj("mockAnalytics", ["eventTrack"]);
+    mockAnalytics = {
+      eventTrack: vi.fn().mockName("mockAnalytics.eventTrack"),
+    };
     mockActivatedRoute = {
       paramMap: new BehaviorSubject(
         convertToParamMap({
@@ -66,7 +68,7 @@ describe("ComingSoonComponent", () => {
       category: "feature_request",
       label: "request",
     });
-    expect(component.requested).toBeTrue();
+    expect(component.requested).toBe(true);
   });
 
   it("should remember previously requested feature", () => {
@@ -76,6 +78,6 @@ describe("ComingSoonComponent", () => {
     const component2 = fixture2.componentInstance;
     fixture2.detectChanges();
 
-    expect(component2.requested).toBeTrue();
+    expect(component2.requested).toBe(true);
   });
 });

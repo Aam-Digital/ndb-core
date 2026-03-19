@@ -6,20 +6,33 @@ import { TemplateExportService } from "./template-export.service";
 import { MatDialog } from "@angular/material/dialog";
 import { TemplateExportSelectionDialogComponent } from "../template-export-selection-dialog/template-export-selection-dialog.component";
 import { environment } from "#src/environments/environment";
+import type { Mock } from "vitest";
+
+type MatDialogMock = {
+  open: Mock;
+};
+
+type HttpClientMock = {
+  get: Mock;
+  post: Mock;
+  delete: Mock;
+};
 
 describe("TemplateExportService", () => {
   let service: TemplateExportService;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
-  let mockHttpClient: jasmine.SpyObj<HttpClient>;
+  let mockDialog: MatDialogMock;
+  let mockHttpClient: HttpClientMock;
   const baseUrl = environment.API_PROXY_PREFIX + "/actuator/features";
 
   beforeEach(() => {
-    mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
-    mockHttpClient = jasmine.createSpyObj("HttpClient", [
-      "get",
-      "post",
-      "delete",
-    ]);
+    mockDialog = {
+      open: vi.fn().mockName("MatDialog.open"),
+    };
+    mockHttpClient = {
+      get: vi.fn().mockName("HttpClient.get"),
+      post: vi.fn().mockName("HttpClient.post"),
+      delete: vi.fn().mockName("HttpClient.delete"),
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -40,9 +53,9 @@ describe("TemplateExportService", () => {
 
     expect(mockDialog.open).toHaveBeenCalledWith(
       TemplateExportSelectionDialogComponent,
-      jasmine.objectContaining({ data: data }),
+      expect.objectContaining({ data: data }),
     );
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
   });
 
   it("should return true when API is reachable and export feature flag is enabled", async () => {
@@ -50,7 +63,7 @@ describe("TemplateExportService", () => {
       export: { enabled: true },
       notification: { enabled: false },
     };
-    mockHttpClient.get.and.returnValue(of(mockResponse));
+    mockHttpClient.get.mockReturnValue(of(mockResponse));
 
     const result = await service.isExportServerEnabled();
     expect(mockHttpClient.get).toHaveBeenCalledWith(baseUrl);
@@ -62,7 +75,7 @@ describe("TemplateExportService", () => {
       export: { enabled: false },
       notification: { enabled: true },
     };
-    mockHttpClient.get.and.returnValue(of(mockResponse));
+    mockHttpClient.get.mockReturnValue(of(mockResponse));
 
     const result = await service.isExportServerEnabled();
     expect(mockHttpClient.get).toHaveBeenCalledWith(baseUrl);
@@ -74,7 +87,7 @@ describe("TemplateExportService", () => {
       notification: { enabled: true },
       health: { enabled: true },
     };
-    mockHttpClient.get.and.returnValue(of(mockResponse));
+    mockHttpClient.get.mockReturnValue(of(mockResponse));
 
     const result = await service.isExportServerEnabled();
     expect(mockHttpClient.get).toHaveBeenCalledWith(baseUrl);
@@ -87,7 +100,7 @@ describe("TemplateExportService", () => {
       status: 504,
       statusText: "Gateway Timeout",
     });
-    mockHttpClient.get.and.returnValue(throwError(() => errorResponse));
+    mockHttpClient.get.mockReturnValue(throwError(() => errorResponse));
 
     const result = await service.isExportServerEnabled();
     expect(mockHttpClient.get).toHaveBeenCalledWith(baseUrl);

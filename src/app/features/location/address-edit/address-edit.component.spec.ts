@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AddressEditComponent } from "./address-edit.component";
 import { GeoResult, GeoService } from "../geo.service";
@@ -12,19 +7,37 @@ import { ConfirmationDialogService } from "../../../core/common-components/confi
 import { of } from "rxjs";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { GeoLocation } from "../geo-location";
+import type { Mock } from "vitest";
+
+type GeoServiceMock = Pick<GeoService, "lookup" | "reverseLookup"> & {
+  lookup: Mock;
+  reverseLookup: Mock;
+};
+
+type ConfirmationDialogMock = Pick<
+  ConfirmationDialogService,
+  "getConfirmation"
+> & {
+  getConfirmation: Mock;
+};
 
 describe("AddressEditComponent", () => {
   let component: AddressEditComponent;
   let fixture: ComponentFixture<AddressEditComponent>;
 
-  let mockGeoService: jasmine.SpyObj<GeoService>;
-  let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockGeoService: GeoServiceMock;
+  let mockConfirmationDialog: ConfirmationDialogMock;
 
   beforeEach(async () => {
-    mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
+    mockConfirmationDialog = {
+      getConfirmation: vi.fn(),
+    };
 
-    mockGeoService = jasmine.createSpyObj(["lookup", "reverseLookup"]);
-    mockGeoService.lookup.and.returnValue(of([]));
+    mockGeoService = {
+      lookup: vi.fn(),
+      reverseLookup: vi.fn(),
+    };
+    mockGeoService.lookup.mockReturnValue(of([]));
 
     await TestBed.configureTestingModule({
       imports: [
@@ -33,7 +46,7 @@ describe("AddressEditComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: GeoService, useValue: {} },
+        { provide: GeoService, useValue: mockGeoService },
         {
           provide: ConfirmationDialogService,
           useValue: mockConfirmationDialog,
@@ -51,9 +64,11 @@ describe("AddressEditComponent", () => {
   });
 
   it("should clear selected location when clicking 'Remove'", async () => {
-    component.selectedLocation = { display_name: "some value" } as any;
+    component.selectedLocation = {
+      locationString: "some value",
+    };
 
-    spyOn(component.selectedLocationChange, "emit");
+    vi.spyOn(component.selectedLocationChange, "emit");
     component.clearLocation();
 
     expect(component.selectedLocation).toBeUndefined();
@@ -79,50 +94,55 @@ describe("AddressEditComponent", () => {
     expect(component.selectedLocation).toBeUndefined();
   });
 
-  it("should update manual address with suggested address and append extra details if present", fakeAsync(() => {
-    const SAMPLE_GEO_RESULT: GeoResult = {
-      lat: 1,
-      lon: 1,
-      display_name: "lookup address",
-    };
+  it("should update manual address with suggested address and append extra details if present", async () => {
+    vi.useFakeTimers();
+    try {
+      const SAMPLE_GEO_RESULT: GeoResult = {
+        lat: 1,
+        lon: 1,
+        display_name: "lookup address",
+      };
 
-    // Case 1: Extra details present
-    const selectedWithExtra: GeoLocation = {
-      locationString: SAMPLE_GEO_RESULT.display_name,
-      geoLookup: SAMPLE_GEO_RESULT,
-    };
+      // Case 1: Extra details present
+      const selectedWithExtra: GeoLocation = {
+        locationString: SAMPLE_GEO_RESULT.display_name,
+        geoLookup: SAMPLE_GEO_RESULT,
+      };
 
-    component.selectedLocation = {
-      locationString: "manual address",
-      geoLookup: undefined,
-    };
+      component.selectedLocation = {
+        locationString: "manual address",
+        geoLookup: undefined,
+      };
 
-    component.updateFromAddressSearch({
-      location: selectedWithExtra,
-      userInput: "lookup address Manual",
-    });
-    tick();
+      component.updateFromAddressSearch({
+        location: selectedWithExtra,
+        userInput: "lookup address Manual",
+      });
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.selectedLocation).toEqual({
-      locationString: "lookup address\nManual",
-      geoLookup: SAMPLE_GEO_RESULT,
-    });
+      expect(component.selectedLocation).toEqual({
+        locationString: "lookup address\nManual",
+        geoLookup: SAMPLE_GEO_RESULT,
+      });
 
-    // Case 2: No extra details, user input matches suggestion
-    component.selectedLocation = {
-      locationString: "lookup address",
-      geoLookup: undefined,
-    };
+      // Case 2: No extra details, user input matches suggestion
+      component.selectedLocation = {
+        locationString: "lookup address",
+        geoLookup: undefined,
+      };
 
-    component.updateFromAddressSearch({
-      location: selectedWithExtra,
-      userInput: "lookup address",
-    });
-    tick();
+      component.updateFromAddressSearch({
+        location: selectedWithExtra,
+        userInput: "lookup address",
+      });
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.selectedLocation).toEqual({
-      locationString: "lookup address",
-      geoLookup: SAMPLE_GEO_RESULT,
-    });
-  }));
+      expect(component.selectedLocation).toEqual({
+        locationString: "lookup address",
+        geoLookup: SAMPLE_GEO_RESULT,
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

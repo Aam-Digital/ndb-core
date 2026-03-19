@@ -170,6 +170,6 @@ describe("BulkMergeService", () => {
     expect(updated.attendance.length).toBe(2);
     expect(
       updated.attendance.every((a) => a.participant === recordA.getId()),
-    ).toBeTrue();
+    ).toBe(true);
   });
 });

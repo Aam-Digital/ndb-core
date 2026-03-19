@@ -1,23 +1,49 @@
 import { TestBed } from "@angular/core/testing";
 import { Router, ActivatedRoute } from "@angular/router";
 import { TableStateUrlService } from "./table-state-url.service";
+import type { Mock } from "vitest";
+
+type RouterMock = {
+  navigate: Mock;
+  createUrlTree: Mock;
+};
+
+type UrlTreeLike = {
+  root: object;
+  queryParams: Record<string, string>;
+  fragment: string | null;
+  queryParamMap: null;
+  toString: () => string;
+};
+
+type QueryParamMapMock = {
+  get: (key: string) => string | null;
+};
+
+type ActivatedRouteSnapshotStub = {
+  queryParams: Record<string, string>;
+  readonly queryParamMap: QueryParamMapMock;
+};
 
 describe("TableStateUrlService", () => {
   let service: TableStateUrlService;
-  let routerSpy: jasmine.SpyObj<Router>;
-  let activatedRouteStub: Partial<ActivatedRoute>;
-  let queryParamMapMock: { get: (key: string) => string | null };
+  let routerSpy: RouterMock;
+  let activatedRouteStub: { snapshot: ActivatedRouteSnapshotStub };
+  let queryParamMapMock: QueryParamMapMock;
 
   beforeEach(() => {
-    routerSpy = jasmine.createSpyObj("Router", ["navigate", "createUrlTree"]);
+    routerSpy = {
+      navigate: vi.fn().mockName("Router.navigate"),
+      createUrlTree: vi.fn().mockName("Router.createUrlTree"),
+    };
     // Default: createUrlTree returns a minimal UrlTree-like object
-    routerSpy.createUrlTree.and.returnValue({
+    routerSpy.createUrlTree.mockReturnValue({
       root: {},
       queryParams: {},
       fragment: null,
       queryParamMap: null,
       toString: () => "/?foo=bar",
-    } as any);
+    } satisfies UrlTreeLike);
     queryParamMapMock = { get: (_: string) => null };
     activatedRouteStub = {
       snapshot: {
@@ -25,14 +51,17 @@ describe("TableStateUrlService", () => {
         get queryParamMap() {
           return queryParamMapMock;
         },
-      } as any,
+      },
     };
 
     TestBed.configureTestingModule({
       providers: [
         TableStateUrlService,
         { provide: Router, useValue: routerSpy },
-        { provide: ActivatedRoute, useValue: activatedRouteStub },
+        {
+          provide: ActivatedRoute,
+          useValue: activatedRouteStub as ActivatedRoute,
+        },
       ],
     });
     service = TestBed.inject(TableStateUrlService);
@@ -43,7 +72,7 @@ describe("TableStateUrlService", () => {
     service.updateUrlParams({ foo: "baz", newParam: "val" });
     expect(routerSpy.navigate).toHaveBeenCalledWith(
       [],
-      jasmine.objectContaining({
+      expect.objectContaining({
         queryParams: { foo: "baz", newParam: "val" },
         replaceUrl: true,
       }),
@@ -55,7 +84,7 @@ describe("TableStateUrlService", () => {
     service.updateUrlParams({ removeMe: null });
     expect(routerSpy.navigate).toHaveBeenCalledWith(
       [],
-      jasmine.objectContaining({
+      expect.objectContaining({
         queryParams: { foo: "bar" },
       }),
     );
@@ -73,7 +102,7 @@ describe("TableStateUrlService", () => {
   });
 
   it("should call updateUrlParams with replaceUrl false for updateFilterParam", () => {
-    spyOn(service, "updateUrlParams");
+    vi.spyOn(service, "updateUrlParams");
     service.updateFilterParam("filter", "val");
     expect(service.updateUrlParams).toHaveBeenCalledWith(
       { filter: "val" },
@@ -100,7 +129,7 @@ describe("TableStateUrlService", () => {
     service.clearFilterParams(["filter1", "filter2"]);
     expect(routerSpy.navigate).toHaveBeenCalledWith(
       [],
-      jasmine.objectContaining({
+      expect.objectContaining({
         queryParams: { foo: "bar" },
       }),
     );
@@ -115,7 +144,7 @@ describe("TableStateUrlService", () => {
       filter2: shortValue,
     };
     // Use .and.callFake on the existing spy
-    routerSpy.createUrlTree.and.callFake((_, opts) => {
+    routerSpy.createUrlTree.mockImplementation((_, opts) => {
       const params = opts?.queryParams || {};
       // If the long param is present, return a long string
       if (params["filter1"]) {
@@ -125,7 +154,7 @@ describe("TableStateUrlService", () => {
           fragment: null,
           queryParamMap: null,
           toString: () => "/?filter1=" + longValue + "&filter2=" + shortValue,
-        } as any;
+        } satisfies UrlTreeLike;
       }
       // If the long param is removed, return a short string
       return {
@@ -134,13 +163,13 @@ describe("TableStateUrlService", () => {
         fragment: null,
         queryParamMap: null,
         toString: () => "/?filter2=" + shortValue,
-      } as any;
+      } satisfies UrlTreeLike;
     });
     service.updateUrlParams({ filter1: longValue, filter2: shortValue });
     // Should call router.navigate with only the short param left
     expect(routerSpy.navigate).toHaveBeenCalledWith(
       [],
-      jasmine.objectContaining({
+      expect.objectContaining({
         queryParams: { filter2: shortValue },
         replaceUrl: true,
       }),

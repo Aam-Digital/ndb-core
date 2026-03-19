@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 
 import { SetupService } from "./setup.service";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
@@ -12,18 +12,27 @@ import {
   provideHttpClientTesting,
 } from "@angular/common/http/testing";
 import { BaseConfig } from "./base-config";
+import type { Mock } from "vitest";
+
+type DemoDataInitializerMock = Pick<
+  DemoDataInitializerService,
+  "logInDemoUser"
+> & {
+  logInDemoUser: Mock;
+};
 
 describe("SetupService", () => {
   let service: SetupService;
 
-  let mockDemoDataInitializer: jasmine.SpyObj<DemoDataInitializerService>;
+  let mockDemoDataInitializer: DemoDataInitializerMock;
   let httpTesting: HttpTestingController;
 
   beforeEach(() => {
-    mockDemoDataInitializer = jasmine.createSpyObj(
-      "DemoDataInitializerService",
-      ["logInDemoUser"],
-    );
+    mockDemoDataInitializer = {
+      logInDemoUser: vi
+        .fn()
+        .mockName("DemoDataInitializerService.logInDemoUser"),
+    };
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
@@ -79,7 +88,7 @@ describe("SetupService", () => {
     expect(await baseConfigsPromise).toEqual([]);
   });
 
-  it("should init multiple config files during init", fakeAsync(async () => {
+  it("should init multiple config files during init", async () => {
     const testBaseConfig: BaseConfig = {
       id: "basic_setup",
       name: "Basic Setup",
@@ -96,10 +105,13 @@ describe("SetupService", () => {
     httpTesting
       .expectOne("assets/base-configs/" + testBaseConfig.entitiesToImport[0])
       .flush(testEntityToImport);
-    tick();
-    httpTesting
-      .expectOne("assets/base-configs/" + testBaseConfig.entitiesToImport[1])
-      .flush(testEntityToImport);
+    await Promise.resolve();
+    await Promise.resolve();
+    const secondImportRequests = httpTesting.match(
+      "assets/base-configs/" + testBaseConfig.entitiesToImport[1],
+    );
+    expect(secondImportRequests).toHaveLength(1);
+    secondImportRequests[0].flush(testEntityToImport);
 
     await result;
 
@@ -108,5 +120,5 @@ describe("SetupService", () => {
       Config.CONFIG_KEY,
     );
     expect(actualConfig).toBeTruthy();
-  }));
+  });
 });

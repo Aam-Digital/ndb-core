@@ -7,8 +7,8 @@ describe("LoggingService", () => {
   let loggingService: LoggingService;
   beforeEach(() => {
     loggingService = new LoggingService();
-    spyOn<any>(loggingService, "logToConsole");
-    spyOn<any>(loggingService, "logToRemoteMonitoring");
+    vi.spyOn(loggingService as any, "logToConsole");
+    vi.spyOn(loggingService as any, "logToRemoteMonitoring");
   });
 
   it("should be created", () => {

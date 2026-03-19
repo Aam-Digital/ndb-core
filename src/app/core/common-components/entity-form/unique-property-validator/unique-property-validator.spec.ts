@@ -30,7 +30,7 @@ describe("UniquePropertyValidator", () => {
     formControl.markAsDirty();
     const validationResult = await validator(formControl);
 
-    expect(validationResult).toEqual({ uniqueProperty: jasmine.any(String) });
+    expect(validationResult).toEqual({ uniqueProperty: expect.any(String) });
   });
 
   it("should allow to keep unchanged value (to not refuse saving an existing entity with unchanged value)", async () => {
@@ -38,7 +38,7 @@ describe("UniquePropertyValidator", () => {
     formControl.markAsDirty();
     const validationResult = await validator(formControl);
 
-    expect(formControl.pristine).toBeFalse();
+    expect(formControl.pristine).toBe(false);
     expect(validationResult).toBeNull();
   });
 
@@ -52,7 +52,7 @@ describe("UniquePropertyValidator", () => {
     formControl.setValue("existing label"); // lowercase
     const validationResult = await validator(formControl);
 
-    expect(validationResult).toEqual({ uniqueProperty: jasmine.any(String) });
+    expect(validationResult).toEqual({ uniqueProperty: expect.any(String) });
   });
 
   it("should allow keeping unchanged value via defaultValue", async () => {
@@ -71,6 +71,6 @@ describe("UniquePropertyValidator", () => {
     // Should still reject other duplicates
     formControl.setValue("Another Label");
     validationResult = await validator(formControl);
-    expect(validationResult).toEqual({ uniqueProperty: jasmine.any(String) });
+    expect(validationResult).toEqual({ uniqueProperty: expect.any(String) });
   });
 });

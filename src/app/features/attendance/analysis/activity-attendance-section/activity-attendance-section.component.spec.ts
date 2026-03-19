@@ -11,12 +11,13 @@ import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import moment from "moment";
+import { expectArrayWithExactContents } from "#src/app/utils/test-utils/array-test-utils";
 
 describe("ActivityAttendanceSectionComponent", () => {
   let component: ActivityAttendanceSectionComponent;
   let fixture: ComponentFixture<ActivityAttendanceSectionComponent>;
 
-  let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
+  let mockAttendanceService: any;
   let testActivity: Entity;
   let testRecords: ActivityAttendance[];
 
@@ -24,14 +25,16 @@ describe("ActivityAttendanceSectionComponent", () => {
     testActivity = TestEntity.create("test act");
     testRecords = [ActivityAttendance.create(new Date(), [])];
 
-    mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
-      "getActivityAttendances",
-      "wrapEventEntity",
-    ]);
-    mockAttendanceService.getActivityAttendances.and.resolveTo(testRecords);
-    (mockAttendanceService as any).eventTypes = jasmine
-      .createSpy(")ventTypes")
-      .and.returnValue([]);
+    mockAttendanceService = {
+      getActivityAttendances: vi
+        .fn()
+        .mockName("mockAttendanceService.getActivityAttendances"),
+      wrapEventEntity: vi
+        .fn()
+        .mockName("mockAttendanceService.wrapEventEntity"),
+      eventTypes: vi.fn().mockReturnValue([]),
+    };
+    mockAttendanceService.getActivityAttendances.mockResolvedValue(testRecords);
     TestBed.configureTestingModule({
       imports: [
         ActivityAttendanceSectionComponent,
@@ -63,7 +66,7 @@ describe("ActivityAttendanceSectionComponent", () => {
 
     expect(mockAttendanceService.getActivityAttendances).toHaveBeenCalledWith(
       testActivity,
-      jasmine.any(Date),
+      expect.any(Date),
     );
     expect(component.allRecords).toEqual(testRecords);
   });
@@ -133,7 +136,7 @@ describe("ActivityAttendanceSectionComponent", () => {
       wrap(latestEvent),
     ]);
     latestAttendance.periodTo = latestEvent.date;
-    mockAttendanceService.getActivityAttendances.and.resolveTo([
+    mockAttendanceService.getActivityAttendances.mockResolvedValue([
       oldestAttendance,
       middleAttendance,
       latestAttendance,
@@ -143,13 +146,9 @@ describe("ActivityAttendanceSectionComponent", () => {
 
     expect(component.combinedAttendance.periodFrom).toBe(oldestEvent.date);
     expect(component.combinedAttendance.periodTo).toBe(latestEvent.date);
-    expect(component.combinedAttendance.events.map((e) => e.entity)).toEqual(
-      jasmine.arrayWithExactContents([
-        oldestEvent,
-        someEvent1,
-        someEvent2,
-        latestEvent,
-      ]),
+    expectArrayWithExactContents(
+      component.combinedAttendance.events.map((e) => e.entity),
+      [oldestEvent, someEvent1, someEvent2, latestEvent],
     );
   });
 });

@@ -1,4 +1,4 @@
-import { TestBed, waitForAsync } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import { AttendanceService } from "../attendance.service";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
@@ -25,14 +25,23 @@ describe("GroupParticipantResolverService (deprecated)", () => {
     (it) => it.isMeeting,
   );
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
     });
     service = TestBed.inject(AttendanceService);
     resolverService = TestBed.inject(GroupParticipantResolverService);
     entityMapper = TestBed.inject(EntityMapperService);
-  }));
+    await vi.waitFor(
+      () => {
+        const hasRecurringActivityConfig = service["eventTypeSettings"]?.some(
+          (s) => s.activityType?.ENTITY_TYPE === "RecurringActivity",
+        );
+        expect(hasRecurringActivityConfig).toBe(true);
+      },
+      { timeout: 10_000 },
+    );
+  });
 
   afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
@@ -54,7 +63,7 @@ describe("GroupParticipantResolverService (deprecated)", () => {
     // getEventsOnDate no longer returns normal Notes (only configured event types).
     // This test documents that the old behaviour is fully removed.
     const actualEvents = await service.getEventsOnDate(date, date);
-    expect(actualEvents).toHaveSize(0);
+    expect(actualEvents).toHaveLength(0);
   });
 
   it("filterExcludedParticipants filters excluded participants from a list", () => {
@@ -77,10 +86,9 @@ describe("GroupParticipantResolverService (deprecated)", () => {
     const linkedSchool = createEntityOfType("School");
     activity.linkedGroups.push(linkedSchool.getId());
 
-    const mockQueryRelations = spyOn(
-      TestBed.inject(ChildrenService),
-      "queryActiveRelationsOf",
-    ).and.resolveTo([]);
+    const mockQueryRelations = vi
+      .spyOn(TestBed.inject(ChildrenService), "queryActiveRelationsOf")
+      .mockResolvedValue([]);
 
     const directlyAddedChild = new TestEntity();
     activity.participants.push(directlyAddedChild.getId());
@@ -88,9 +96,9 @@ describe("GroupParticipantResolverService (deprecated)", () => {
 
     const event = await service.createEventForActivity(activity, date);
 
-    // After Phase 1: linkedGroups are no longer resolved; only direct participants are used.
+    // After Phase 1: linkedGroups are no longer resolved in this legacy flow.
     expect(mockQueryRelations).not.toHaveBeenCalled();
-    expect(event.attendanceItems).toHaveSize(1);
+    expect(event.attendanceItems).toHaveLength(1);
     expect(event.attendanceItems.map((a) => a.participant)).toContain(
       directlyAddedChild.getId(),
     );

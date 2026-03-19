@@ -98,21 +98,21 @@ describe("ImportExistingService", () => {
         ref: "existing_link", // not touched from existing entity
       },
       {
-        _id: jasmine.any(String), // not matched
+        _id: expect.any(String), // not matched
         name: "A2",
         category: genders[1].id,
       },
       {
-        _id: jasmine.any(String), // not matched (existing B has no category, so can't match)
+        _id: expect.any(String), // not matched (existing B has no category, so can't match)
         name: "B",
         category: "O1",
       },
       {
-        _id: jasmine.any(String), // not matched (import row C has no category, so can't match)
+        _id: expect.any(String), // not matched (import row C has no category, so can't match)
         name: "C",
       },
       {
-        _id: jasmine.any(String), // not matched
+        _id: expect.any(String), // not matched
         name: "XXX",
       },
     ];
@@ -124,7 +124,9 @@ describe("ImportExistingService", () => {
         e["category"] = e["category"].id;
       });
     for (const expected of expectedEntities) {
-      expect(parsedEntities).toContain(jasmine.objectContaining(expected));
+      expect(parsedEntities).toEqual(
+        expect.arrayContaining([expect.objectContaining(expected)]),
+      );
     }
   });
 
@@ -292,7 +294,7 @@ describe("ImportExistingService", () => {
         // Note: both other and category become undefined after import transformation
       },
       {
-        _id: jasmine.any(String), // not matched - new entity
+        _id: expect.any(String), // not matched - new entity
         name: "Person D",
         // Note: empty strings become undefined after import transformation
       },
@@ -305,7 +307,9 @@ describe("ImportExistingService", () => {
         e["category"] = e["category"].id;
       });
     for (const expected of expectedEntities) {
-      expect(parsedEntities).toContain(jasmine.objectContaining(expected));
+      expect(parsedEntities).toEqual(
+        expect.arrayContaining([expect.objectContaining(expected)]),
+      );
     }
   });
 

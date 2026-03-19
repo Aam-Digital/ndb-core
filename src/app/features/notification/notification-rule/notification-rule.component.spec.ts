@@ -10,15 +10,36 @@ import {
 } from "app/core/entity/database-entity.decorator";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
+import { SimpleChange } from "@angular/core";
+import type { Mock } from "vitest";
+
+type HttpClientMock = {
+  get: Mock;
+  post: Mock;
+  delete: Mock;
+};
+
+type KeycloakAuthServiceMock = {
+  login: Mock;
+};
 
 describe("NotificationRuleComponent", () => {
   let component: NotificationRuleComponent;
   let fixture: ComponentFixture<NotificationRuleComponent>;
   let mockValue: NotificationRule;
-  let mockHttp: jasmine.SpyObj<HttpClient>;
-  let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
+  let mockHttp: HttpClientMock;
+  let mockAuthService: KeycloakAuthServiceMock;
 
   beforeEach(async () => {
+    mockHttp = {
+      get: vi.fn(),
+      post: vi.fn(),
+      delete: vi.fn(),
+    };
+    mockAuthService = {
+      login: vi.fn(),
+    };
+
     await TestBed.configureTestingModule({
       imports: [
         NotificationRuleComponent,
@@ -52,7 +73,9 @@ describe("NotificationRuleComponent", () => {
 
   it("should parse component.value into formControls on ngOnChanges", () => {
     component.value = mockValue;
-    component.ngOnChanges({ value: { currentValue: mockValue } } as any);
+    component.ngOnChanges({
+      value: new SimpleChange(null, mockValue, true),
+    });
 
     expect(component.form.getRawValue()).toEqual({
       label: "label1",
@@ -65,7 +88,7 @@ describe("NotificationRuleComponent", () => {
   });
 
   it("should emit valueChange with the correct format when a formControl is updated", () => {
-    spyOn(component.valueChange, "emit");
+    vi.spyOn(component.valueChange, "emit");
     component.initForm();
 
     component.form.setValue({
@@ -78,7 +101,7 @@ describe("NotificationRuleComponent", () => {
     });
 
     expect(component.valueChange.emit).toHaveBeenCalledWith(
-      jasmine.objectContaining({
+      expect.objectContaining({
         label: "label2",
         entityType: "TestEntity",
         changeType: ["created", "updated"],

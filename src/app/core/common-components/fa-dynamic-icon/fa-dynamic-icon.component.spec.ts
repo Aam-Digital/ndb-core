@@ -13,13 +13,13 @@ import { faAddressBook } from "@fortawesome/free-regular-svg-icons";
 describe("FaDynamicIconComponent", () => {
   let component: FaDynamicIconComponent;
   let fixture: ComponentFixture<FaDynamicIconComponent>;
-  let mockIconLibrary: jasmine.SpyObj<FaIconLibrary>;
+  let mockIconLibrary: any;
 
   beforeEach(async () => {
-    mockIconLibrary = jasmine.createSpyObj<FaIconLibrary>([
-      "getIconDefinition",
-    ]);
-    mockIconLibrary.getIconDefinition.and.callFake((prefix, icon) => {
+    mockIconLibrary = {
+      getIconDefinition: vi.fn(),
+    };
+    mockIconLibrary.getIconDefinition.mockImplementation((prefix, icon) => {
       if (icon === "coffee") {
         return faCoffee;
       } else {
@@ -54,14 +54,14 @@ describe("FaDynamicIconComponent", () => {
   });
 
   it("should show the fallback icon and warn when it is neither in the map nor exists as icon definition", () => {
-    spyOn(Logging, "warn");
+    vi.spyOn(Logging, "warn");
     component.icon = "I do not exist";
     expect(component._icon).toEqual(FaDynamicIconComponent.fallbackIcon);
     expect(Logging.warn).toHaveBeenCalled();
   });
 
   it("should set an icon if a different prefix is specified", () => {
-    mockIconLibrary.getIconDefinition.and.callFake((prefix, name) => {
+    mockIconLibrary.getIconDefinition.mockImplementation((prefix, name) => {
       if (prefix === "far" && name === "address-book") {
         return faAddressBook;
       } else {

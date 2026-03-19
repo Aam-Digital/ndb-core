@@ -19,7 +19,7 @@ describe("EditPrefilledValuesComponent", () => {
 
   beforeEach(async () => {
     mockEntityRegistry = {
-      get: jasmine.createSpy("get").and.returnValue(Entity),
+      get: vi.fn().mockReturnValue(Entity),
     };
 
     await TestBed.configureTestingModule({

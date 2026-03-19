@@ -7,13 +7,13 @@ describe("GotoThirdPartySystemComponent", () => {
   let component: GotoThirdPartySystemComponent;
   let fixture: ComponentFixture<GotoThirdPartySystemComponent>;
 
-  let mockTPAService: jasmine.SpyObj<ThirdPartyAuthenticationService>;
+  let mockTPAService: any;
 
   beforeEach(async () => {
-    mockTPAService = jasmine.createSpyObj<ThirdPartyAuthenticationService>([
-      "getSessionId",
-      "getRedirectUrl",
-    ]);
+    mockTPAService = {
+      getSessionId: vi.fn(),
+      getRedirectUrl: vi.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [GotoThirdPartySystemComponent],

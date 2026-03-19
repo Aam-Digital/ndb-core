@@ -5,11 +5,18 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ConfigService } from "../../config/config.service";
 import { PrimaryActionConfig } from "../../admin/admin-primary-action/primary-action-config";
 import { NEVER } from "rxjs";
+import type { Mock } from "vitest";
+
+type ConfigServiceMock = Pick<ConfigService, "getConfig" | "getAllConfigs"> & {
+  getConfig: Mock<ConfigService["getConfig"]>;
+  getAllConfigs: Mock<ConfigService["getAllConfigs"]>;
+  configUpdates: typeof NEVER;
+};
 
 describe("PrimaryActionComponent", () => {
   let component: PrimaryActionComponent;
   let fixture: ComponentFixture<PrimaryActionComponent>;
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockConfigService: ConfigServiceMock;
 
   const mockPrimaryActionConfig: PrimaryActionConfig = {
     icon: "file-alt",
@@ -18,13 +25,13 @@ describe("PrimaryActionComponent", () => {
   };
 
   beforeEach(waitForAsync(() => {
-    mockConfigService = jasmine.createSpyObj("ConfigService", [
-      "getConfig",
-      "getAllConfigs",
-    ]);
-    mockConfigService.getConfig.and.returnValue(mockPrimaryActionConfig);
-    mockConfigService.getAllConfigs.and.returnValue([]);
-    mockConfigService.configUpdates = NEVER;
+    mockConfigService = {
+      getConfig: vi.fn().mockName("ConfigService.getConfig"),
+      getAllConfigs: vi.fn().mockName("ConfigService.getAllConfigs"),
+      configUpdates: NEVER,
+    };
+    mockConfigService.getConfig.mockReturnValue(mockPrimaryActionConfig);
+    mockConfigService.getAllConfigs.mockReturnValue([]);
 
     TestBed.configureTestingModule({
       imports: [PrimaryActionComponent, MockedTestingModule.withState()],

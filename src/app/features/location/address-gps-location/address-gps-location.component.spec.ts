@@ -9,11 +9,14 @@ describe("AddressGpsLocationComponent", () => {
   let component: AddressGpsLocationComponent;
   let fixture: ComponentFixture<AddressGpsLocationComponent>;
 
-  let mockGeoService: jasmine.SpyObj<GeoService>;
+  let mockGeoService: any;
 
   beforeEach(async () => {
-    mockGeoService = jasmine.createSpyObj(["lookup", "reverseLookup"]);
-    mockGeoService.reverseLookup.and.returnValue(
+    mockGeoService = {
+      lookup: vi.fn(),
+      reverseLookup: vi.fn(),
+    };
+    mockGeoService.reverseLookup.mockReturnValue(
       of({
         error: "Unable to geocode",
       } as any),

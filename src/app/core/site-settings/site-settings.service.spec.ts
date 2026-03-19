@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { SiteSettingsService } from "./site-settings.service";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
@@ -40,7 +40,7 @@ describe("SiteSettingsService", () => {
   });
 
   it("should only publish changes if property has changed", () => {
-    const titleSpy = spyOn(TestBed.inject(Title), "setTitle");
+    const titleSpy = vi.spyOn(TestBed.inject(Title), "setTitle");
     const settings = new SiteSettings();
     settings.siteName = undefined;
     entityMapper.add(settings);
@@ -57,7 +57,7 @@ describe("SiteSettingsService", () => {
 
     expect(titleSpy).toHaveBeenCalled();
 
-    titleSpy.calls.reset();
+    titleSpy.mockClear();
     settings.displayLanguageSelect = true;
     entityMapper.add(settings);
 
@@ -71,7 +71,7 @@ describe("SiteSettingsService", () => {
   });
 
   function expectStyleSetProperty(siteSettingsProperty, cssVariable, value) {
-    spyOn(document.documentElement.style, "setProperty");
+    vi.spyOn(document.documentElement.style, "setProperty");
 
     entityMapper.add(SiteSettings.create({ [siteSettingsProperty]: value }));
 
@@ -89,38 +89,49 @@ describe("SiteSettingsService", () => {
     expectStyleSetProperty("primary", "--primary-50", "#ffffff");
   });
 
-  it("should store any settings update in localStorage", fakeAsync(() => {
-    const localStorageSetItemSpy = spyOn(localStorage, "setItem");
+  it("should store any settings update in localStorage", async () => {
+    vi.useFakeTimers();
+    try {
+      const localStorageSetItemSpy = vi.spyOn(Storage.prototype, "setItem");
 
-    const settings = SiteSettings.create({
-      siteName: "test",
-      defaultLanguage: availableLocales.values[0],
-    });
+      const settings = SiteSettings.create({
+        siteName: "test",
+        defaultLanguage: availableLocales.values[0],
+      });
 
-    entityMapper.save(settings);
-    tick();
+      entityMapper.save(settings);
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(localStorageSetItemSpy).toHaveBeenCalledWith(
-      service.SITE_SETTINGS_LOCAL_STORAGE_KEY,
-      jasmine.any(String),
-    );
-    expect(localStorageSetItemSpy.calls.mostRecent().args[1]).toMatch(
-      `"siteName":"${settings.siteName}"`,
-    );
-    expect(localStorageSetItemSpy.calls.mostRecent().args[1]).toMatch(
-      `"defaultLanguage":"${settings.defaultLanguage.id}"`,
-    );
-  }));
+      expect(localStorageSetItemSpy).toHaveBeenCalledWith(
+        service.SITE_SETTINGS_LOCAL_STORAGE_KEY,
+        expect.any(String),
+      );
+      expect(vi.mocked(localStorageSetItemSpy).mock.lastCall[1]).toMatch(
+        `"siteName":"${settings.siteName}"`,
+      );
+      expect(vi.mocked(localStorageSetItemSpy).mock.lastCall[1]).toMatch(
+        `"defaultLanguage":"${settings.defaultLanguage.id}"`,
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should init settings from localStorage during startup", fakeAsync(() => {
-    const settings = SiteSettings.create({ siteName: "local storage test" });
-    const localStorageGetItemSpy = spyOn(localStorage, "getItem");
-    localStorageGetItemSpy.and.returnValue(JSON.stringify(settings));
+  it("should init settings from localStorage during startup", async () => {
+    vi.useFakeTimers();
+    try {
+      const settings = SiteSettings.create({ siteName: "local storage test" });
+      const localStorageGetItemSpy = vi.spyOn(Storage.prototype, "getItem");
+      localStorageGetItemSpy.mockReturnValue(JSON.stringify(settings));
 
-    const titleSpy = spyOn(TestBed.inject(Title), "setTitle");
+      const titleSpy = vi.spyOn(TestBed.inject(Title), "setTitle");
 
-    service.init();
+      service.init();
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(titleSpy).toHaveBeenCalledWith(settings.siteName);
-  }));
+      expect(titleSpy).toHaveBeenCalledWith(settings.siteName);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

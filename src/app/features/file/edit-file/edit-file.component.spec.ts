@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { FormControl } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -21,20 +16,26 @@ import { EditFileComponent } from "./edit-file.component";
 describe("EditFileComponent", () => {
   let component: EditFileComponent;
   let fixture: ComponentFixture<EditFileComponent>;
-  let mockFileService: jasmine.SpyObj<FileService>;
-  let mockAlertService: jasmine.SpyObj<AlertService>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockFileService: any;
+  let mockAlertService: any;
+  let mockEntityMapper: any;
 
   const file = new File([], "test.file");
 
   beforeEach(async () => {
-    mockFileService = jasmine.createSpyObj([
-      "uploadFile",
-      "showFile",
-      "removeFile",
-    ]);
-    mockAlertService = jasmine.createSpyObj(["addDanger", "addInfo"]);
-    mockEntityMapper = jasmine.createSpyObj(["save", "load"]);
+    mockFileService = {
+      uploadFile: vi.fn(),
+      showFile: vi.fn(),
+      removeFile: vi.fn(),
+    };
+    mockAlertService = {
+      addDanger: vi.fn(),
+      addInfo: vi.fn(),
+    };
+    mockEntityMapper = {
+      save: vi.fn(),
+      load: vi.fn(),
+    };
     await TestBed.configureTestingModule({
       imports: [
         EditFileComponent,
@@ -76,10 +77,10 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.onFileSelected(file);
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
     cancelForm();
 
-    expect(component.formControl).toHaveValue(null);
+    expect(component.formControl.value).toEqual(null);
     expect(mockFileService.uploadFile).not.toHaveBeenCalled();
   });
 
@@ -88,13 +89,13 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.onFileSelected(file);
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
 
     component.delete();
 
     cancelForm();
 
-    expect(component.formControl).toHaveValue(null);
+    expect(component.formControl.value).toEqual(null);
     expect(mockFileService.uploadFile).not.toHaveBeenCalled();
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
   });
@@ -104,30 +105,30 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.onFileSelected(file);
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
 
     const otherFile = new File([], "other.file");
     component.onFileSelected(otherFile);
-    expect(component.formControl).toHaveValue("other.file");
+    expect(component.formControl.value).toEqual("other.file");
 
     cancelForm();
 
-    expect(component.formControl).toHaveValue(null);
+    expect(component.formControl.value).toEqual(null);
     expect(mockFileService.uploadFile).not.toHaveBeenCalled();
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
   });
 
   it("should upload a file if a new file was selected and the form saved", () => {
     setupComponent();
-    mockFileService.uploadFile.and.returnValue(of({ ok: true }));
+    mockFileService.uploadFile.mockReturnValue(of({ ok: true }));
     component.formControl.enable();
 
     component.onFileSelected(file);
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
 
     component.formControl.disable();
 
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       file,
       component.entity,
@@ -140,32 +141,32 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.onFileSelected(file);
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
 
     component.delete();
 
     component.formControl.disable();
 
-    expect(component.formControl).toHaveValue(undefined);
+    expect(component.formControl.value).toEqual(undefined);
     expect(mockFileService.uploadFile).not.toHaveBeenCalled();
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
   });
 
   it("should only upload the last file if a file was selected and then replaced", () => {
     setupComponent();
-    mockFileService.uploadFile.and.returnValue(of({ ok: true }));
+    mockFileService.uploadFile.mockReturnValue(of({ ok: true }));
     component.formControl.enable();
 
     component.onFileSelected(file);
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
 
     const otherFile = new File([], "other.file");
     component.onFileSelected(otherFile);
-    expect(component.formControl).toHaveValue(otherFile.name);
+    expect(component.formControl.value).toEqual(otherFile.name);
 
     component.formControl.disable();
 
-    expect(component.formControl).toHaveValue(otherFile.name);
+    expect(component.formControl.value).toEqual(otherFile.name);
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       otherFile,
@@ -179,11 +180,11 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.delete();
-    expect(component.formControl).toHaveValue(undefined);
+    expect(component.formControl.value).toEqual(undefined);
 
     cancelForm();
 
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
   });
 
@@ -193,26 +194,26 @@ describe("EditFileComponent", () => {
 
     const otherFile = new File([], "other.file");
     component.onFileSelected(otherFile);
-    expect(component.formControl).toHaveValue("other.file");
+    expect(component.formControl.value).toEqual("other.file");
 
     cancelForm();
 
-    expect(component.formControl).toHaveValue(file.name);
+    expect(component.formControl.value).toEqual(file.name);
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
     expect(mockFileService.uploadFile).not.toHaveBeenCalled();
   });
 
   it("should remove a file if the file input was cleared and saved", () => {
-    mockFileService.removeFile.and.returnValue(of({ ok: true }));
+    mockFileService.removeFile.mockReturnValue(of({ ok: true }));
     setupComponent(file.name);
     component.formControl.enable();
 
     component.delete();
-    expect(component.formControl).toHaveValue(undefined);
+    expect(component.formControl.value).toEqual(undefined);
 
     component.formControl.disable();
 
-    expect(component.formControl).toHaveValue(undefined);
+    expect(component.formControl.value).toEqual(undefined);
     expect(mockFileService.removeFile).toHaveBeenCalledWith(
       component.entity,
       component.formFieldConfig.id,
@@ -221,7 +222,7 @@ describe("EditFileComponent", () => {
   });
 
   it("should upload the new file if the file was replaced and then saved", () => {
-    mockFileService.uploadFile.and.returnValue(of({ ok: true }));
+    mockFileService.uploadFile.mockReturnValue(of({ ok: true }));
     setupComponent(file.name);
     component.formControl.enable();
 
@@ -230,7 +231,7 @@ describe("EditFileComponent", () => {
 
     component.formControl.disable();
 
-    expect(component.formControl).toHaveValue(otherFile.name);
+    expect(component.formControl.value).toEqual(otherFile.name);
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       otherFile,
@@ -239,40 +240,45 @@ describe("EditFileComponent", () => {
     );
   });
 
-  it("should show upload errors as an alert and reset entity", fakeAsync(() => {
-    setupComponent("old.file");
-    mockEntityMapper.load.and.resolveTo(
-      Object.assign(new Entity(component.entity.getId()), {
-        _rev: "2",
-        testProp: "new.file",
-      }),
-    );
-    const subject = new Subject();
-    mockFileService.uploadFile.and.returnValue(subject);
-    component.formControl.enable();
+  it("should show upload errors as an alert and reset entity", async () => {
+    vi.useFakeTimers();
+    try {
+      setupComponent("old.file");
+      mockEntityMapper.load.mockResolvedValue(
+        Object.assign(new Entity(component.entity.getId()), {
+          _rev: "2",
+          testProp: "new.file",
+        }),
+      );
+      const subject = new Subject();
+      mockFileService.uploadFile.mockReturnValue(subject);
+      component.formControl.enable();
 
-    component.onFileSelected(file);
+      component.onFileSelected(file);
 
-    component.entity[component.formFieldConfig.id] = file.name;
-    component.formControl.disable();
+      component.entity[component.formFieldConfig.id] = file.name;
+      component.formControl.disable();
 
-    expect(component.formControl).toHaveValue(file.name);
-    expect(component.entity[component.formFieldConfig.id]).toBe(file.name);
+      expect(component.formControl.value).toEqual(file.name);
+      expect(component.entity[component.formFieldConfig.id]).toBe(file.name);
 
-    subject.error(new Error());
-    tick();
+      subject.error(new Error());
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(mockAlertService.addDanger).toHaveBeenCalled();
-    expect(component.formControl).toHaveValue("old.file");
-    expect(component.entity[component.formFieldConfig.id]).toBe("old.file");
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(
-      jasmine.objectContaining({
-        _id: component.entity["_id"],
-        _rev: "2",
-        testProp: "old.file",
-      }),
-    );
-  }));
+      expect(mockAlertService.addDanger).toHaveBeenCalled();
+      expect(component.formControl.value).toEqual("old.file");
+      expect(component.entity[component.formFieldConfig.id]).toBe("old.file");
+      expect(mockEntityMapper.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          _id: component.entity["_id"],
+          _rev: "2",
+          testProp: "old.file",
+        }),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   it("should show a file when clicking on the form element", () => {
     setupComponent("existing.file");

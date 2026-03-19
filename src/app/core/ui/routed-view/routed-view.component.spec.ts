@@ -1,22 +1,21 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { RoutedViewComponent } from "./routed-view.component";
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject } from "rxjs";
 import { ComponentRegistry } from "../../../dynamic-components";
-import { Component } from "@angular/core";
+import { Component, input } from "@angular/core";
 
 @Component({
   template: ``,
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
 })
-class MockComponent {}
+class MockComponent {
+  testFlag = input<boolean>();
+  testDetail = input<string>();
+  id = input<string>();
+}
 
 describe("RoutedViewComponent", () => {
   let component: RoutedViewComponent;
@@ -55,24 +54,39 @@ describe("RoutedViewComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should take component from route data and use it for dynamic component directive", fakeAsync(() => {
-    mockActivatedRoute.data.next({ component: "TestComponent" });
-    tick();
+  it("should take component from route data and use it for dynamic component directive", async () => {
+    vi.useFakeTimers();
+    try {
+      mockActivatedRoute.data.next({ component: "TestComponent" });
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.component).toEqual("TestComponent");
-  }));
+      expect(component.component).toEqual("TestComponent");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should pass config route data on as config", fakeAsync(() => {
-    mockActivatedRoute.data.next({ config: { testDetail: "test" } });
-    tick();
+  it("should pass config route data on as config", async () => {
+    vi.useFakeTimers();
+    try {
+      mockActivatedRoute.data.next({ config: { testDetail: "test" } });
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.config).toEqual({ testDetail: "test" });
-  }));
+      expect(component.config).toEqual({ testDetail: "test" });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should add route param '/:id' to config", fakeAsync(() => {
-    mockActivatedRoute.paramMap.next(mockParamMap({ id: "123" }));
-    tick();
+  it("should add route param '/:id' to config", async () => {
+    vi.useFakeTimers();
+    try {
+      mockActivatedRoute.paramMap.next(mockParamMap({ id: "123" }));
+      await vi.advanceTimersByTimeAsync(0);
 
-    expect(component.config.id).toEqual("123");
-  }));
+      expect(component.config.id).toEqual("123");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

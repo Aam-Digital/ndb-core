@@ -80,7 +80,103 @@
               "serviceWorker": true,
               "ngswConfigPath": "ngsw-config.json"
             },
-            "development": {}
+            "development": {},
+            "testing": {
+              "aot": false,
+              "polyfills": [
+                "src/polyfills.test.ts"
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.spec.ts"
+                }
+              ]
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "build-test": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": {
+              "base": "dist-test"
+            },
+            "index": "src/index.html",
+            "browser": "src/main.ts",
+            "tsConfig": "tsconfig.app.json",
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
+            "i18nMissingTranslation": "warning",
+            "assets": [
+              "src/assets",
+              "src/manifest.webmanifest",
+              "src/firebase-messaging-sw.js",
+              {
+                "glob": "**/*",
+                "input": "node_modules/leaflet/dist/images/",
+                "output": "./assets"
+              }
+            ],
+            "styles": [
+              "src/styles/styles.scss",
+              "src/styles/themes/ndb-theme.scss",
+              "node_modules/leaflet/dist/leaflet.css",
+              "node_modules/leaflet.markercluster/dist/MarkerCluster.css",
+              "node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css"
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "node_modules/",
+                "src/styles"
+              ]
+            },
+            "extractLicenses": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
+              "outputHashing": "all",
+              "namedChunks": false,
+              "extractLicenses": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "serviceWorker": "ngsw-config.json"
+            },
+            "development": {},
+            "testing": {
+              "aot": false,
+              "polyfills": [
+                "src/polyfills.test.ts"
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.spec.ts"
+                }
+              ]
+            }
           },
           "defaultConfiguration": "production"
         },
@@ -104,34 +200,24 @@
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "karmaConfig": "./karma.conf.js",
-            "polyfills": [
-              "src/polyfills.ts",
-              "zone.js/testing"
-            ],
+            "buildTarget": "ndb-core:build-test:testing",
             "tsConfig": "tsconfig.spec.json",
-            "styles": [
-              "src/styles/styles.scss",
-              "src/styles/themes/ndb-theme.scss"
-            ],
-            "stylePreprocessorOptions": {
-              "includePaths": [
-                "node_modules/",
-                "src/styles"
-              ]
-            },
-            "assets": [
-              "src/assets",
-              "src/manifest.webmanifest"
-            ],
-            "fileReplacements": [
-              {
-                "replace": "src/environments/environment.ts",
-                "with": "src/environments/environment.spec.ts"
-              }
+            "runner": "vitest",
+            "runnerConfig": true,
+            "setupFiles": [
+              "src/test-setup.ts"
             ]
+          },
+          "configurations": {
+            "ci": {
+              "watch": false,
+              "coverage": true,
+              "coverageReporters": [
+                "lcovonly"
+              ]
+            }
           }
         },
         "storybook": {

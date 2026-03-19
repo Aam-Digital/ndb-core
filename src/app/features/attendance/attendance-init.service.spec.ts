@@ -1,4 +1,5 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
+import type { Mock } from "vitest";
 import { BehaviorSubject } from "rxjs";
 import { SyncState } from "#src/app/core/session/session-states/sync-state.enum";
 import { SyncStateSubject } from "#src/app/core/session/session-type";
@@ -11,15 +12,18 @@ import { ConfigurableEnum } from "#src/app/core/basic-datatypes/configurable-enu
 describe("AttendanceInitService", () => {
   let service: AttendanceInitService;
   let syncState: BehaviorSubject<SyncState>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockEntityMapper: {
+    load: Mock;
+    save: Mock;
+  };
 
   beforeEach(() => {
     syncState = new BehaviorSubject<SyncState>(SyncState.UNSYNCED);
-    mockEntityMapper = jasmine.createSpyObj("EntityMapperService", [
-      "load",
-      "save",
-    ]);
-    mockEntityMapper.save.and.resolveTo();
+    mockEntityMapper = {
+      load: vi.fn().mockName("EntityMapperService.load"),
+      save: vi.fn().mockName("EntityMapperService.save"),
+    };
+    mockEntityMapper.save.mockResolvedValue(undefined);
 
     TestBed.configureTestingModule({
       providers: [
@@ -32,64 +36,69 @@ describe("AttendanceInitService", () => {
     service = TestBed.inject(AttendanceInitService);
   });
 
-  it("should save default attendance-status enum if none exists after sync completes", fakeAsync(() => {
-    mockEntityMapper.load.and.rejectWith({ status: 404, name: "not_found" });
+  async function flushAsyncWork() {
+    await Promise.resolve();
+    await Promise.resolve();
+  }
+
+  it("should save default attendance-status enum if none exists after sync completes", async () => {
+    mockEntityMapper.load.mockRejectedValue({ status: 404, name: "not_found" });
 
     service.registerDefaultAttendanceStatusEnum();
     syncState.next(SyncState.COMPLETED);
-    tick();
+    await flushAsyncWork();
 
     expect(mockEntityMapper.save).toHaveBeenCalledWith(
-      jasmine.objectContaining({
+      expect.objectContaining({
         _id: `ConfigurableEnum:${ATTENDANCE_STATUS_CONFIG_ID}`,
         values: defaultAttendanceStatusTypes,
       }),
     );
-  }));
+  });
 
-  it("should not save default attendance-status enum if values already exist in DB", fakeAsync(() => {
+  it("should not save default attendance-status enum if values already exist in DB", async () => {
     const existingEnum = new ConfigurableEnum(
       ATTENDANCE_STATUS_CONFIG_ID,
       defaultAttendanceStatusTypes,
     );
-    mockEntityMapper.load.and.resolveTo(existingEnum);
+    mockEntityMapper.load.mockResolvedValue(existingEnum);
 
     service.registerDefaultAttendanceStatusEnum();
     syncState.next(SyncState.COMPLETED);
-    tick();
+    await flushAsyncWork();
 
     expect(mockEntityMapper.save).not.toHaveBeenCalled();
-  }));
+  });
 
-  it("should save defaults if existing enum in DB has empty values", fakeAsync(() => {
+  it("should save defaults if existing enum in DB has empty values", async () => {
     const emptyEnum = new ConfigurableEnum(ATTENDANCE_STATUS_CONFIG_ID, []);
-    mockEntityMapper.load.and.resolveTo(emptyEnum);
+    mockEntityMapper.load.mockResolvedValue(emptyEnum);
 
     service.registerDefaultAttendanceStatusEnum();
     syncState.next(SyncState.COMPLETED);
-    tick();
+    await flushAsyncWork();
 
     expect(mockEntityMapper.save).toHaveBeenCalledWith(emptyEnum);
     expect(emptyEnum.values).toEqual(defaultAttendanceStatusTypes);
-  }));
+  });
 
-  it("should not register defaults before sync completes", fakeAsync(() => {
-    mockEntityMapper.load.and.rejectWith({ status: 404, name: "not_found" });
+  it("should not register defaults before sync completes", async () => {
+    mockEntityMapper.load.mockRejectedValue({ status: 404, name: "not_found" });
 
     service.registerDefaultAttendanceStatusEnum();
     syncState.next(SyncState.STARTED);
-    tick();
+    await flushAsyncWork();
 
     expect(mockEntityMapper.save).not.toHaveBeenCalled();
-  }));
+  });
 
-  it("should abort if load fails with a non-404 error", fakeAsync(() => {
-    mockEntityMapper.load.and.rejectWith(new Error("DB unavailable"));
+  it("should abort if load fails with a non-404 error", async () => {
+    mockEntityMapper.load.mockRejectedValue(new Error("DB unavailable"));
 
     service.registerDefaultAttendanceStatusEnum();
     syncState.next(SyncState.COMPLETED);
-    tick();
+    await flushAsyncWork();
 
     expect(mockEntityMapper.save).not.toHaveBeenCalled();
-  }));
+  });
 });

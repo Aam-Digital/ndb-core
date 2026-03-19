@@ -7,7 +7,7 @@ import {
   WarningLevel,
   warningLevels,
 } from "../../warning-level";
-import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
+import { testEntitySubclass } from "../../../core/entity/model/entity.test-utils";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -105,6 +105,6 @@ describe("Note", () => {
     expect(otherNote).toEqual(note);
     expect(otherNote).toBeInstanceOf(Note);
     otherNote.children = otherNote.children.filter((c) => c !== "5");
-    expect(otherNote.children).toHaveSize(note.children.length - 1);
+    expect(otherNote.children).toHaveLength(note.children.length - 1);
   });
 });

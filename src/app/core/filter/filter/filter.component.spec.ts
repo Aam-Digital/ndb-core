@@ -52,7 +52,7 @@ describe("FilterComponent", () => {
 
     expect(component.filterSelections.length).toBe(1);
     expect(component.filterSelections[0].name).toBe("category");
-    expect(component.filterSelections[0].selectedOptionValues).toBeEmpty();
+    expect(component.filterSelections[0].selectedOptionValues).toHaveLength(0);
   });
 
   it("should load url params and set single filter value", async () => {
@@ -109,7 +109,7 @@ describe("FilterComponent", () => {
 
     expect(component.filterSelections.length).toBe(1);
     expect(component.filterSelections[0].name).toBe("category");
-    expect(component.filterSelections[0].selectedOptionValues).toBeEmpty();
+    expect(component.filterSelections[0].selectedOptionValues).toHaveLength(0);
   });
 
   it("should compute available category options and build filterObj", async () => {

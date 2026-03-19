@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EntitiesTableComponent } from "./entities-table.component";
 import { Entity } from "../../entity/model/entity";
@@ -23,11 +23,13 @@ describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
   let fixture: ComponentFixture<EntitiesTableComponent<Entity>>;
 
-  let mockFormService: jasmine.SpyObj<EntityFormService>;
+  let mockFormService: any;
 
   beforeEach(async () => {
-    mockFormService = jasmine.createSpyObj(["extendFormFieldConfig"]);
-    mockFormService.extendFormFieldConfig.and.callFake((c) =>
+    mockFormService = {
+      extendFormFieldConfig: vi.fn(),
+    };
+    mockFormService.extendFormFieldConfig.mockImplementation((c) =>
       toFormFieldConfig(c),
     );
 
@@ -42,14 +44,19 @@ describe("EntitiesTableComponent", () => {
         FilterService,
         {
           provide: FormDialogService,
-          useValue: jasmine.createSpyObj(["openFormPopup"]),
+          useValue: {
+            openFormPopup: vi.fn(),
+          },
         },
         { provide: CurrentUserSubject, useValue: of(null) },
         {
           provide: Router,
           useValue: (() => {
-            const spy = jasmine.createSpyObj(["navigate", "createUrlTree"]);
-            spy.createUrlTree.and.returnValue({ toString: () => "/?foo=bar" });
+            const spy = {
+              navigate: vi.fn(),
+              createUrlTree: vi.fn(),
+            };
+            spy.createUrlTree.mockReturnValue({ toString: () => "/?foo=bar" });
             return spy;
           })(),
         },
@@ -143,12 +150,11 @@ describe("EntitiesTableComponent", () => {
     expect(sortedIds).toEqual(["note-2", "note-1", "note-3", "note-0"]);
   });
 
-  it("should notify when an entity is clicked", (done) => {
+  it("should notify when an entity is clicked", async () => {
     const child = new TestEntity();
     const mockEvent = new MouseEvent("click");
     component.entityClick.subscribe((entity) => {
       expect(entity).toEqual(child);
-      done();
     });
 
     component.onRowClick({ record: child }, mockEvent);
@@ -192,7 +198,7 @@ describe("EntitiesTableComponent", () => {
     ]);
   });
 
-  it("should remove an entity if it does not pass the filter anymore", fakeAsync(() => {
+  it("should remove an entity if it does not pass the filter anymore", async () => {
     const child = new TestEntity();
     child.category = genders[1];
     component.records = [child];
@@ -204,7 +210,7 @@ describe("EntitiesTableComponent", () => {
     component.records = [child]; // parent component has to update the records Input array
 
     expect(component.recordsDataSource.data).toEqual([]);
-  }));
+  });
 
   it("should only show active relations by default", async () => {
     const active1 = new Entity();
@@ -233,9 +239,9 @@ describe("EntitiesTableComponent", () => {
   it("should set noSorting if dataType cannot be sorted properly", () => {
     component.entityType = Note;
 
-    expect(
-      component._columns.find((c) => c.id === "children").noSorting,
-    ).toBeTrue();
+    expect(component._columns.find((c) => c.id === "children").noSorting).toBe(
+      true,
+    );
   });
 
   it("should navigate to '/new' route on newly created entities", () => {
@@ -243,12 +249,12 @@ describe("EntitiesTableComponent", () => {
     component.clickMode = "navigate";
 
     const child = new TestEntity();
-    expect(child.isNew).toBeTrue();
+    expect(child.isNew).toBe(true);
     component.showEntity(child);
     expect(navigateSpy).toHaveBeenCalledWith([TestEntity.route, "new"]);
 
     child._rev = "1-existing";
-    expect(child.isNew).toBeFalse();
+    expect(child.isNew).toBe(false);
     component.showEntity(child);
     expect(navigateSpy).toHaveBeenCalledWith([
       TestEntity.route,

@@ -6,11 +6,14 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 describe("ConfigurableEnumService", () => {
   let service: ConfigurableEnumService;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockEntityMapper: any;
   beforeEach(async () => {
-    mockEntityMapper = jasmine.createSpyObj(["loadType", "receiveUpdates"]);
-    mockEntityMapper.receiveUpdates.and.returnValue(NEVER);
-    mockEntityMapper.loadType.and.resolveTo([]);
+    mockEntityMapper = {
+      loadType: vi.fn(),
+      receiveUpdates: vi.fn(),
+    };
+    mockEntityMapper.receiveUpdates.mockReturnValue(NEVER);
+    mockEntityMapper.loadType.mockResolvedValue([]);
     await TestBed.configureTestingModule({
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
@@ -35,7 +38,7 @@ describe("ConfigurableEnumService", () => {
   });
 
   it("should not creat a new enum if the user is missing permissions", () => {
-    spyOn(TestBed.inject(EntityAbility), "can").and.returnValue(false);
+    vi.spyOn(TestBed.inject(EntityAbility), "can").mockReturnValue(false);
     expect(service.getEnum("new-id")).toBeUndefined();
   });
 });

@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 
 import {
   ExternalProfileResponseDto,
@@ -20,17 +20,20 @@ import { ExternalProfile } from "./external-profile";
 import { FormControl, FormGroup } from "@angular/forms";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { Skill } from "../skill";
+import { expectArrayWithExactContents } from "../../../utils/test-utils/array-test-utils";
 
 describe("SkillApiService", () => {
   let service: SkillApiService;
 
   let httpTesting: HttpTestingController;
-  let mockEscoApi: jasmine.SpyObj<EscoApiService>;
+  let mockEscoApi: any;
 
   beforeEach(() => {
-    mockEscoApi = jasmine.createSpyObj("EscoApiService", [
-      "loadOrCreateSkillEntity",
-    ]);
+    mockEscoApi = {
+      loadOrCreateSkillEntity: vi
+        .fn()
+        .mockName("EscoApiService.loadOrCreateSkillEntity"),
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -112,13 +115,13 @@ describe("SkillApiService", () => {
       } as ExternalProfileResponseDto);
 
     expect(await result).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         results: mockResults,
       }),
     );
   });
 
-  it("should retry to getExternalProfiles upon error", fakeAsync(() => {
+  it("should retry to getExternalProfiles upon error", async () => {
     const searchParams: ExternalProfileSearchParams = {
       fullName: "John Doe",
     };
@@ -126,29 +129,33 @@ describe("SkillApiService", () => {
       { id: "1", fullName: "John Doe" } as ExternalProfile,
     ];
 
-    const result = firstValueFrom(service.getExternalProfiles(searchParams));
-    tick(1000);
+    vi.useFakeTimers();
+    try {
+      const result = firstValueFrom(service.getExternalProfiles(searchParams));
 
-    httpTesting
-      .expectOne("/api/v1/skill/user-profile?fullName=John%20Doe")
-      .flush(null, { status: 504, statusText: "Gateway timeout" }); // TODO: do we have auto-retries centrally somewhere? or why does this work :-D ?
+      httpTesting
+        .expectOne("/api/v1/skill/user-profile?fullName=John%20Doe")
+        .flush(null, { status: 504, statusText: "Gateway timeout" }); // TODO: do we have auto-retries centrally somewhere? or why does this work :-D ?
 
-    tick(5000);
-    httpTesting
-      .expectOne("/api/v1/skill/user-profile?fullName=John%20Doe")
-      .flush({
-        pagination: {},
-        results: mockResults,
-      } as ExternalProfileResponseDto);
+      await vi.runAllTimersAsync();
+      httpTesting
+        .expectOne("/api/v1/skill/user-profile?fullName=John%20Doe")
+        .flush({
+          pagination: {},
+          results: mockResults,
+        } as ExternalProfileResponseDto);
 
-    expectAsync(result).toBeResolvedTo(
-      jasmine.objectContaining({
-        results: mockResults,
-      }),
-    );
-  }));
+      await expect(result).resolves.toEqual(
+        expect.objectContaining({
+          results: mockResults,
+        }),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-  it("should getExternalProfileById from API", fakeAsync(() => {
+  it("should getExternalProfileById from API", async () => {
     const mockProfile: ExternalProfile = {
       id: "1",
       fullName: "John Doe",
@@ -158,10 +165,10 @@ describe("SkillApiService", () => {
 
     httpTesting.expectOne("/api/v1/skill/user-profile/1").flush(mockProfile);
 
-    expectAsync(result).toBeResolvedTo(mockProfile);
-  }));
+    await expect(result).resolves.toEqual(mockProfile);
+  });
 
-  it("should applyDataFromExternalProfile to target entity (without reloading external profile)", fakeAsync(() => {
+  it("should applyDataFromExternalProfile to target entity (without reloading external profile)", async () => {
     const mockProfile = {
       id: "1",
       x1: "foo",
@@ -176,18 +183,17 @@ describe("SkillApiService", () => {
     };
     const targetEntity = TestEntity.create({ name: "old", other: "old" });
 
-    service.applyDataFromExternalProfile(
+    await service.applyDataFromExternalProfile(
       mockProfile as any,
       testConfig,
       targetEntity,
     );
-    tick();
 
     expect(targetEntity.name).toBe(mockProfile.x1);
     expect(targetEntity.other).toBe(mockProfile.x2);
-  }));
+  });
 
-  it("should applyDataFromExternalProfile after loading external profile by ID", fakeAsync(() => {
+  it("should applyDataFromExternalProfile after loading external profile by ID", async () => {
     const mockProfile = {
       id: "1",
       x1: "foo",
@@ -198,50 +204,52 @@ describe("SkillApiService", () => {
     };
     const targetEntity = TestEntity.create({ name: "old" });
 
-    service.applyDataFromExternalProfile(
+    const applyPromise = service.applyDataFromExternalProfile(
       mockProfile.id,
       testConfig,
       targetEntity,
     );
     httpTesting.expectOne("/api/v1/skill/user-profile/1").flush(mockProfile);
-    tick();
+    await applyPromise;
 
     expect(targetEntity.name).toBe(mockProfile.x1);
-  }));
+  });
 
-  it("should applyDataFromExternalProfile as undefined if API request for external profile fails", fakeAsync(() => {
+  it("should applyDataFromExternalProfile as undefined if API request for external profile fails", async () => {
     const testConfig: ExternalProfileLinkConfig = {
       searchFields: {},
       applyData: [{ from: "x1", to: "name" }],
     };
     const targetEntity = TestEntity.create({ name: "old" });
 
-    const alertSpy = spyOn(TestBed.inject(AlertService), "addWarning");
-    spyOn(service, "getExternalProfileById").and.returnValue(
+    const alertSpy = vi.spyOn(TestBed.inject(AlertService), "addWarning");
+    vi.spyOn(service, "getExternalProfileById").mockReturnValue(
       throwError(() => "API error"),
     );
-    service.applyDataFromExternalProfile("1", testConfig, targetEntity);
-    tick();
+    await service.applyDataFromExternalProfile("1", testConfig, targetEntity);
 
     expect(service.getExternalProfileById).toHaveBeenCalledWith("1");
     expect(alertSpy).toHaveBeenCalled();
     expect(targetEntity.name).toBeUndefined();
-  }));
+  });
 
-  it("should applyDataFromExternalProfile as undefined if external profile is undefined", fakeAsync(() => {
+  it("should applyDataFromExternalProfile as undefined if external profile is undefined", async () => {
     const testConfig: ExternalProfileLinkConfig = {
       searchFields: {},
       applyData: [{ from: "x1", to: "name" }],
     };
     const targetEntity = TestEntity.create({ name: "old" });
 
-    service.applyDataFromExternalProfile(undefined, testConfig, targetEntity);
-    tick();
+    await service.applyDataFromExternalProfile(
+      undefined,
+      testConfig,
+      targetEntity,
+    );
 
     expect(targetEntity.name).toBeUndefined();
-  }));
+  });
 
-  it("should applyDataFromExternalProfile to target formGroup", fakeAsync(() => {
+  it("should applyDataFromExternalProfile to target formGroup", async () => {
     const mockProfile = {
       id: "1",
       fullName: "John Doe",
@@ -260,20 +268,19 @@ describe("SkillApiService", () => {
       other: new FormControl("old"),
     });
 
-    service.applyDataFromExternalProfile(
+    await service.applyDataFromExternalProfile(
       mockProfile as any,
       testConfig,
       targetFromGroup,
     );
-    tick();
 
     expect(targetFromGroup.get("name").value).toBe(mockProfile.x1);
-    expect(targetFromGroup.get("name").dirty).toBeTrue();
+    expect(targetFromGroup.get("name").dirty).toBe(true);
     expect(targetFromGroup.get("other").value).toBe(mockProfile.x2);
-    expect(targetFromGroup.get("other").dirty).toBeTrue();
-  }));
+    expect(targetFromGroup.get("other").dirty).toBe(true);
+  });
 
-  it("should applyDataFromExternalProfile using transformation by Esco Service", fakeAsync(() => {
+  it("should applyDataFromExternalProfile using transformation by Esco Service", async () => {
     const mockProfile: ExternalProfile = {
       id: "1",
       fullName: "John Doe",
@@ -288,12 +295,15 @@ describe("SkillApiService", () => {
     };
     const targetEntity = TestEntity.create({ other: "old" });
 
-    mockEscoApi.loadOrCreateSkillEntity.and.callFake(async (skill) =>
+    mockEscoApi.loadOrCreateSkillEntity.mockImplementation(async (skill) =>
       Skill.create(skill, skill),
     );
 
-    service.applyDataFromExternalProfile(mockProfile, testConfig, targetEntity);
-    tick();
+    await service.applyDataFromExternalProfile(
+      mockProfile,
+      testConfig,
+      targetEntity,
+    );
 
     expect(mockEscoApi.loadOrCreateSkillEntity).toHaveBeenCalledTimes(2);
     expect(mockEscoApi.loadOrCreateSkillEntity).toHaveBeenCalledWith(
@@ -302,12 +312,9 @@ describe("SkillApiService", () => {
     expect(mockEscoApi.loadOrCreateSkillEntity).toHaveBeenCalledWith(
       "https://Angular",
     );
-
-    expect(targetEntity.other).toEqual(
-      jasmine.arrayWithExactContents([
-        "Skill:https://Java",
-        "Skill:https://Angular",
-      ]),
-    );
-  }));
+    expectArrayWithExactContents(targetEntity.other as unknown as string[], [
+      "Skill:https://Java",
+      "Skill:https://Angular",
+    ]);
+  });
 });

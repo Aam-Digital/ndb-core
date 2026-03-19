@@ -64,7 +64,7 @@ jobs:
       - uses: qltysh/qlty-action/coverage@v1
         with:
           oidc: true
-          files: coverage/lcov.info
+          files: coverage/**/lcov.info
 
   test-e2e:
     if: ${{ !inputs.skip-e2e }}

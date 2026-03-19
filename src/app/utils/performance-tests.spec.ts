@@ -1,4 +1,4 @@
-import { TestBed, waitForAsync } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import moment from "moment";
 import { DemoDataService } from "../core/demo-data/demo-data.service";
 import { SessionType } from "../core/session/session-type";
@@ -6,9 +6,9 @@ import { DatabaseTestingModule } from "./database-testing.module";
 import { environment } from "../../environments/environment";
 import { DatabaseResolverService } from "../core/database/database-resolver.service";
 
-xdescribe("Performance Tests", () => {
-  beforeEach(waitForAsync(async () => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
+describe.skip("Performance Tests", () => {
+  beforeEach(async () => {
+    vi.setConfig({ testTimeout: 150000 });
 
     environment.session_type = SessionType.mock; // change to SessionType.local to run performance tests with the InBrowser database
 
@@ -19,7 +19,7 @@ xdescribe("Performance Tests", () => {
     const setup = new Timer();
     await demoDataService.publishDemoData();
     console.log("finished publishing demo data", setup.getDuration());
-  }));
+  });
 
   afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
@@ -49,10 +49,14 @@ async function comparePerformance<V, R>(
       diffs.push(diff);
     }
     const avgDiff = diffs.reduce((sum, cur) => sum + cur, 0) / diffs.length;
-    fail("<" + description + "> Average improvement: " + avgDiff + "ms");
+    throw new Error(
+      "<" + description + "> Average improvement: " + avgDiff + "ms",
+    );
   } else {
     const diff = await getExecutionDiff(currentFunction, improvedFunction);
-    fail("<" + description + "> Execution time improvement " + diff + "ms");
+    throw new Error(
+      "<" + description + "> Execution time improvement " + diff + "ms",
+    );
   }
 }
 
@@ -66,12 +70,11 @@ async function getExecutionDiff<R>(
   const improvedTimer = new Timer();
   const improvedResult = await improvedFunction();
   const improvedDuration = improvedTimer.getDuration();
-  expect(improvedResult)
-    .withContext(
-      `current ${JSON.stringify(currentResult)}
+  expect(
+    improvedResult,
+    `current ${JSON.stringify(currentResult)}
       improved ${JSON.stringify(improvedResult)}`,
-    )
-    .toEqual(currentResult);
+  ).toEqual(currentResult);
   return currentDuration - improvedDuration;
 }
 

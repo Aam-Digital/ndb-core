@@ -1,3 +1,4 @@
+import type { Mock } from "vitest";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EditImportColumnMappingComponent } from "./edit-import-column-mapping.component";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
@@ -14,7 +15,7 @@ import { DiscreteImportConfigComponent } from "../../../basic-datatypes/discrete
 describe("EditImportColumnMappingComponent", () => {
   let component: EditImportColumnMappingComponent;
   let fixture: ComponentFixture<EditImportColumnMappingComponent>;
-  let dialogSpy: jasmine.SpyObj<MatDialog>;
+  let dialogSpy: any;
 
   const columnMapping: ColumnMapping = {
     column: "test",
@@ -28,7 +29,9 @@ describe("EditImportColumnMappingComponent", () => {
   ];
 
   beforeEach(async () => {
-    dialogSpy = jasmine.createSpyObj("MatDialog", ["open"]);
+    dialogSpy = {
+      open: vi.fn().mockName("MatDialog.open"),
+    };
     await TestBed.configureTestingModule({
       imports: [MockedTestingModule, EditImportColumnMappingComponent],
       providers: [
@@ -45,15 +48,15 @@ describe("EditImportColumnMappingComponent", () => {
     component.entityCtor = TestEntity;
     fixture.detectChanges();
 
-    spyOn(component.columnMappingChange, "emit");
+    vi.spyOn(component.columnMappingChange, "emit");
   });
 
   it("should emit changes after popup is closed", async () => {
-    dialogSpy.open.and.returnValue({ afterClosed: () => of(undefined) } as any);
+    dialogSpy.open.mockReturnValue({ afterClosed: () => of(undefined) } as any);
     component.entityCtor = TestEntity;
     component.updateMapping();
 
-    (component.columnMappingChange.emit as jasmine.Spy).calls.reset(); // ignore previous emit calls
+    (component.columnMappingChange.emit as Mock).mockClear(); // ignore previous emit calls
     await component.openMappingComponent();
 
     expect(component.columnMappingChange.emit).toHaveBeenCalled();
@@ -64,7 +67,7 @@ describe("EditImportColumnMappingComponent", () => {
     component.entityCtor = TestEntity;
     component.columnMapping = { column: "gender" };
     component.additionalSettings = { multiValueSeparator: ";" };
-    dialogSpy.open.and.returnValue({ afterClosed: () => of(undefined) } as any);
+    dialogSpy.open.mockReturnValue({ afterClosed: () => of(undefined) } as any);
 
     const genderColumn = component.columnMapping;
     genderColumn.propertyName = "category";
@@ -75,7 +78,7 @@ describe("EditImportColumnMappingComponent", () => {
 
     expect(dialogSpy.open).toHaveBeenCalledWith(
       DiscreteImportConfigComponent,
-      jasmine.objectContaining({
+      expect.objectContaining({
         data: {
           col: genderColumn,
           values: ["male", "female"],
@@ -93,7 +96,7 @@ describe("EditImportColumnMappingComponent", () => {
     component.updateMapping();
 
     expect(component.columnMappingChange.emit).toHaveBeenCalledWith(
-      jasmine.objectContaining({ column: "name" }),
+      expect.objectContaining({ column: "name" }),
     );
   });
 });

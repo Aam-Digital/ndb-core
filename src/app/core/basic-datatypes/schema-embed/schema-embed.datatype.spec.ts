@@ -59,7 +59,8 @@ describe("Schema data type: schema-embed", () => {
     class InnerClass {
       declare static schema: EntitySchema;
 
-      @DatabaseField({ dataType: "month" }) value: Date;
+      @DatabaseField({ dataType: "month" })
+      value: Date;
 
       private _value2: number;
       @DatabaseField()
@@ -112,7 +113,7 @@ describe("Schema data type: schema-embed", () => {
       expect(loadedEntity.embedded.value).toBeInstanceOf(Date);
       expect(
         moment(loadedEntity.embedded.value).isSame("2020-01-01", "day"),
-      ).toBeTrue();
+      ).toBe(true);
     });
 
     it("creates instance of embedded class when loading", () => {
@@ -147,7 +148,7 @@ describe("Schema data type: schema-embed", () => {
       expect(loadedEntity.embedded["valueNew"]).toBeInstanceOf(Date);
       expect(
         moment(loadedEntity.embedded["valueNew"]).isSame("2023-06-01", "day"),
-      ).toBeTrue();
+      ).toBe(true);
       expect(loadedEntity.embedded.value2).toBe(5);
     });
   });
@@ -202,7 +203,7 @@ describe("Schema data type: schema-embed", () => {
       expect(loadedEntity.embedded.value).toBeInstanceOf(Date);
       expect(
         moment(loadedEntity.embedded.value).isSame("2020-01-01", "day"),
-      ).toBeTrue();
+      ).toBe(true);
       expect(loadedEntity.embedded.value2).toEqual(42);
     });
 
@@ -214,7 +215,7 @@ describe("Schema data type: schema-embed", () => {
       entitySchemaService.loadDataIntoEntity(loadedEntity, data);
 
       expect(loadedEntity.embedded).toEqual(
-        jasmine.objectContaining({ value2: 5 }),
+        expect.objectContaining({ value2: 5 }),
       );
       expect(loadedEntity.embedded.constructor).toBe(Object);
     });

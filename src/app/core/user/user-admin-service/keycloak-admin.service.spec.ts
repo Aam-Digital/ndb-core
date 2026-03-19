@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import {
   HttpClientTestingModule,
   HttpTestingController,
@@ -33,10 +33,10 @@ describe("KeycloakAdminService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should delete user", fakeAsync(() => {
+  it("should delete user", async () => {
     // when
     service.deleteUser("test-entity-id").subscribe((response) => {
-      expect(response.userDeleted).toBeTrue();
+      expect(response.userDeleted).toBe(true);
     });
 
     // then
@@ -57,9 +57,9 @@ describe("KeycloakAdminService", () => {
     );
     expect(reqDelete.request.method).toEqual("DELETE");
     reqDelete.flush({});
-  }));
+  });
 
-  it("should create user", fakeAsync(() => {
+  it("should create user", async () => {
     // given
     const mockUser = { id: "test-id", email: "test@example.com" };
 
@@ -68,7 +68,7 @@ describe("KeycloakAdminService", () => {
       .createUser("test-entity-id", "test@example.com", [])
       .subscribe((user) => {
         expect(user).toEqual(
-          jasmine.objectContaining({ email: "test@example.com" }),
+          expect.objectContaining({ email: "test@example.com" }),
         );
       });
 
@@ -99,13 +99,13 @@ describe("KeycloakAdminService", () => {
           req.method === "PUT",
       )
       .flush({});
-  }));
+  });
 
-  it("should log debug if user does not exist in Keycloak during deletion", fakeAsync(() => {
-    const warnSpy = spyOn(Logging, "debug");
+  it("should log debug if user does not exist in Keycloak during deletion", async () => {
+    const warnSpy = vi.spyOn(Logging, "debug");
 
     service.deleteUser("test-id").subscribe((response) => {
-      expect(response.userDeleted).toBeTrue();
+      expect(response.userDeleted).toBe(true);
     });
 
     const reqGet = httpTestingController.expectOne(
@@ -118,9 +118,9 @@ describe("KeycloakAdminService", () => {
     expect(warnSpy).toHaveBeenCalledWith("User not found in Keycloak", {
       userEntityId: "test-id",
     });
-  }));
+  });
 
-  it("should throw well-defined error when created user's email already exists", fakeAsync(() => {
+  it("should throw well-defined error when created user's email already exists", async () => {
     // when
     service
       .createUser("test-entity-id", "test@example.com", [])
@@ -140,9 +140,9 @@ describe("KeycloakAdminService", () => {
       { errorMessage: "User exists with same email" },
       { status: 409, statusText: "Conflict" },
     );
-  }));
+  });
 
-  it("should update user and send email verification again", fakeAsync(() => {
+  it("should update user and send email verification again", async () => {
     // given
     const mockUser = { id: "test-id", email: "test@example.com" };
 
@@ -170,9 +170,9 @@ describe("KeycloakAdminService", () => {
           req.method === "PUT",
       )
       .flush({});
-  }));
+  });
 
-  it("should handle error when updating user", fakeAsync(() => {
+  it("should handle error when updating user", async () => {
     // when
     service
       .updateUser("test-id", { email: "new@example.com" })
@@ -191,9 +191,9 @@ describe("KeycloakAdminService", () => {
       { message: "Failed to update user" },
       { status: 500, statusText: "Server Error" },
     );
-  }));
+  });
 
-  it("should get all roles and filter non-technical roles", fakeAsync(() => {
+  it("should get all roles and filter non-technical roles", async () => {
     // given
     const mockRoles: Role[] = [
       { id: "1", name: "admin" },
@@ -210,9 +210,9 @@ describe("KeycloakAdminService", () => {
     const req = httpTestingController.expectOne(`${BASE_URL}/roles`);
     expect(req.request.method).toEqual("GET");
     req.flush(mockRoles);
-  }));
+  });
 
-  it("should handle network error when server is unreachable", fakeAsync(() => {
+  it("should handle network error when server is unreachable", async () => {
     service.getAllUsers().subscribe({
       next: () => fail("Should have failed"),
       error: (error) => {
@@ -223,9 +223,9 @@ describe("KeycloakAdminService", () => {
     const userReq = httpTestingController.expectOne(`${BASE_URL}/users`);
     expect(userReq.request.method).toEqual("GET");
     userReq.error(new ErrorEvent("Network error"));
-  }));
+  });
 
-  it("should handle permission error (403)", fakeAsync(() => {
+  it("should handle permission error (403)", async () => {
     service.getAllUsers().subscribe({
       next: () => fail("Should have failed"),
       error: (error) => {
@@ -237,9 +237,9 @@ describe("KeycloakAdminService", () => {
     const userReq = httpTestingController.expectOne(`${BASE_URL}/users`);
     expect(userReq.request.method).toEqual("GET");
     userReq.flush("Access denied", { status: 403, statusText: "Forbidden" });
-  }));
+  });
 
-  it("should handle offline scenario", fakeAsync(() => {
+  it("should handle offline scenario", async () => {
     // Simulate being offline by mocking a network connectivity error
     service.getAllUsers().subscribe({
       next: () => fail("Should have failed"),
@@ -255,5 +255,5 @@ describe("KeycloakAdminService", () => {
         message: "No internet connection",
       }),
     );
-  }));
+  });
 });

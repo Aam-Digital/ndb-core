@@ -29,13 +29,11 @@ describe("UiComponent", () => {
   let fixture: ComponentFixture<UiComponent>;
 
   beforeEach(waitForAsync(() => {
-    const mockIndexingService = jasmine.createSpyObj<DatabaseIndexingService>(
-      ["createIndex"],
-      {
-        indicesRegistered: new Subject(),
-      },
-    );
-    mockIndexingService.createIndex.and.resolveTo();
+    const mockIndexingService = {
+      createIndex: vi.fn(),
+      indicesRegistered: new Subject(),
+    };
+    mockIndexingService.createIndex.mockResolvedValue(undefined);
 
     TestBed.configureTestingModule({
       imports: [UiComponent, MockedTestingModule.withState()],

@@ -4,19 +4,32 @@ import { RoutePermissionsService } from "./route-permissions.service";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { EntityPermissionGuard } from "../../permissions/permission-guard/entity-permission.guard";
 import { MenuItem } from "app/core/ui/navigation/menu-item";
+import type { Mock } from "vitest";
+
+type UserRoleGuardMock = {
+  checkRoutePermissions: Mock;
+};
+
+type EntityPermissionGuardMock = {
+  checkRoutePermissions: Mock;
+};
 
 describe("RoutePermissionsService", () => {
   let service: RoutePermissionsService;
 
-  let mockUserRoleGuard: jasmine.SpyObj<UserRoleGuard>;
-  let mockEntityPermissionGuard: jasmine.SpyObj<EntityPermissionGuard>;
+  let mockUserRoleGuard: UserRoleGuardMock;
+  let mockEntityPermissionGuard: EntityPermissionGuardMock;
 
   beforeEach(() => {
-    mockEntityPermissionGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
-    mockEntityPermissionGuard.checkRoutePermissions.and.resolveTo(true);
+    mockEntityPermissionGuard = {
+      checkRoutePermissions: vi.fn(),
+    };
+    mockEntityPermissionGuard.checkRoutePermissions.mockResolvedValue(true);
 
-    mockUserRoleGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
-    mockUserRoleGuard.checkRoutePermissions.and.callFake(
+    mockUserRoleGuard = {
+      checkRoutePermissions: vi.fn(),
+    };
+    mockUserRoleGuard.checkRoutePermissions.mockImplementation(
       async (path: string) => {
         if (path === "allowed") {
           return true;
@@ -133,19 +146,3 @@ describe("RoutePermissionsService", () => {
     expect(filteredItems[0].label).toBe("Section");
   });
 });
-
-/*
-
-Simple:
-  item 1
-  item 2  x
-
-Nested:
-  item 1
-    1.1
-    1.2   x
-
-  item 2  x
-    2.1   x
-
- */

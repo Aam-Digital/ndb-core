@@ -8,11 +8,13 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 describe("AutomatedFieldUpdateComponent", () => {
   let component: AutomatedFieldUpdateComponent;
   let fixture: ComponentFixture<AutomatedFieldUpdateComponent>;
-  let mockFormService: jasmine.SpyObj<EntityFormService>;
+  let mockFormService: any;
 
   beforeEach(async () => {
-    mockFormService = jasmine.createSpyObj(["extendFormFieldConfig"]);
-    mockFormService.extendFormFieldConfig.and.callFake((c) =>
+    mockFormService = {
+      extendFormFieldConfig: vi.fn(),
+    };
+    mockFormService.extendFormFieldConfig.mockImplementation((c) =>
       toFormFieldConfig(c),
     );
     await TestBed.configureTestingModule({
@@ -21,7 +23,7 @@ describe("AutomatedFieldUpdateComponent", () => {
         { provide: MAT_DIALOG_DATA, useValue: { entities: [] } },
         {
           provide: MatDialogRef,
-          useValue: { close: jasmine.createSpy("close") },
+          useValue: { close: vi.fn() },
         },
         { provide: EntityFormService, useValue: mockFormService },
       ],

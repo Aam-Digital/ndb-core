@@ -11,11 +11,13 @@ import { ColumnMapping } from "../../../core/import/column-mapping";
 describe("LocationImportConfigComponent", () => {
   let component: LocationImportConfigComponent;
   let fixture: ComponentFixture<LocationImportConfigComponent>;
-  let mockDialogRef: jasmine.SpyObj<MatDialogRef<any>>;
+  let mockDialogRef: any;
   let mockDialogData: MappingDialogData;
 
   beforeEach(async () => {
-    mockDialogRef = jasmine.createSpyObj("MatDialogRef", ["close"]);
+    mockDialogRef = {
+      close: vi.fn().mockName("MatDialogRef.close"),
+    };
     mockDialogData = {
       col: { column: "address" } as ColumnMapping,
       values: ["123 Main St", "456 Oak Ave"],

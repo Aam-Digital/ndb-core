@@ -19,6 +19,7 @@ import { firstValueFrom } from "rxjs";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "./entity-permission-error";
 import { EntitySchemaService } from "../schema/entity-schema.service";
+import type { Mock } from "vitest";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -36,8 +37,10 @@ describe("EntityMapperService", () => {
 
   beforeEach(waitForAsync(() => {
     const syncStateSubject = new SyncStateSubject();
-    let dbFactory = jasmine.createSpyObj(["createDatabase"]);
-    dbFactory.createDatabase.and.callFake((dbName) => {
+    let dbFactory = {
+      createDatabase: vi.fn(),
+    };
+    dbFactory.createDatabase.mockImplementation((dbName) => {
       const db = new MemoryPouchDatabase(dbName, syncStateSubject);
       db.init();
       return db;
@@ -83,7 +86,7 @@ describe("EntityMapperService", () => {
 
   it("load multiple entities", async () => {
     const loadedEntities = await entityMapper.loadType<Entity>(Entity);
-    expect(loadedEntities).toHaveSize(2);
+    expect(loadedEntities).toHaveLength(2);
 
     const entity1 = loadedEntities[0];
     const entity2 = loadedEntities[1];
@@ -94,7 +97,7 @@ describe("EntityMapperService", () => {
 
   it("rejects promise when loading nonexistent entity", async () => {
     return entityMapper.load<Entity>(Entity, "nonexistent_id").catch((err) => {
-      expect(err).withContext('"not found" error not defined').toBeDefined();
+      expect(err, '"not found" error not defined').toBeDefined();
     });
   });
 
@@ -104,7 +107,7 @@ describe("EntityMapperService", () => {
     }
 
     const result = await entityMapper.loadType<TempTestEntity>(TempTestEntity);
-    expect(result).toBeEmpty();
+    expect(result).toHaveLength(0);
   });
 
   it("saves new entity and loads it", async () => {
@@ -121,7 +124,7 @@ describe("EntityMapperService", () => {
     await entityMapper
       .save<Entity>(duplicateEntity)
       .then(() => {
-        fail("unexpectedly succeeded to overwrite existing entity");
+        throw new Error("unexpectedly succeeded to overwrite existing entity");
       })
       .catch(function (error) {
         expect(error).toBeDefined();
@@ -139,9 +142,9 @@ describe("EntityMapperService", () => {
     const loadedEntity = await entityMapper.load(Entity, existingEntity._id);
     await entityMapper.remove<Entity>(loadedEntity);
 
-    await expectAsync(
+    await expect(
       entityMapper.load(Entity, existingEntity._id),
-    ).toBeRejected();
+    ).rejects.toThrow();
   });
 
   it("rejects promise removing nonexistent entity", () => {
@@ -165,7 +168,7 @@ describe("EntityMapperService", () => {
       testEntity.getId(true),
     );
     expect(loadedByShortId).toBeDefined();
-    expect(loadedByShortId.getId().startsWith(Entity.ENTITY_TYPE)).toBeTrue();
+    expect(loadedByShortId.getId().startsWith(Entity.ENTITY_TYPE)).toBe(true);
 
     const loadedByFullId = await entityMapper.load(
       Entity,
@@ -184,7 +187,7 @@ describe("EntityMapperService", () => {
     await entityMapper.save(testEntity);
     expect(await updatePromise).toEqual({
       type: "new",
-      entity: jasmine.objectContaining({ _id: testId }),
+      entity: expect.objectContaining({ _id: testId }),
     });
 
     let existing = await entityMapper.load<TestEntity>(TestEntity, testId);
@@ -193,7 +196,7 @@ describe("EntityMapperService", () => {
     await entityMapper.save(existing);
     expect(await updatePromise).toEqual({
       type: "update",
-      entity: jasmine.objectContaining({ _id: testId }),
+      entity: expect.objectContaining({ _id: testId }),
     });
 
     existing = await entityMapper.load<TestEntity>(TestEntity, testId);
@@ -201,13 +204,13 @@ describe("EntityMapperService", () => {
     await entityMapper.remove(existing);
     expect(await updatePromise).toEqual({
       type: "remove",
-      entity: jasmine.objectContaining({ _id: testId }),
+      entity: expect.objectContaining({ _id: testId }),
     });
   });
 
   it("correctly behaves when en empty array is given to the saveAll function", async () => {
     const result = await entityMapper.saveAll([]);
-    expect(result).toHaveSize(0);
+    expect(result).toHaveLength(0);
   });
 
   it("correctly saves an array of heterogeneous entities", async () => {
@@ -217,15 +220,15 @@ describe("EntityMapperService", () => {
       new MockEntityA("42"),
     ]);
     expect(result).toEqual([
-      jasmine.objectContaining({
+      expect.objectContaining({
         ok: true,
         id: "EntityA:1",
       }),
-      jasmine.objectContaining({
+      expect.objectContaining({
         ok: true,
         id: "EntityA:10",
       }),
-      jasmine.objectContaining({
+      expect.objectContaining({
         ok: true,
         id: "EntityA:42",
       }),
@@ -239,15 +242,15 @@ describe("EntityMapperService", () => {
       new MockEntityA("42"),
     ]);
     expect(result).toEqual([
-      jasmine.objectContaining({
+      expect.objectContaining({
         ok: true,
         id: "EntityA:1",
       }),
-      jasmine.objectContaining({
+      expect.objectContaining({
         ok: true,
         id: "EntityB:10",
       }),
-      jasmine.objectContaining({
+      expect.objectContaining({
         ok: true,
         id: "EntityA:42",
       }),
@@ -255,14 +258,14 @@ describe("EntityMapperService", () => {
   });
 
   it("sets the entityCreated property on save if it is a new entity & entityUpdated on subsequent saves", async () => {
-    jasmine.clock().install();
+    vi.useFakeTimers();
     const currentUser = new Entity(TEST_USER);
     TestBed.inject(CurrentUserSubject).next(currentUser);
     const id = "test_created";
     const entity = new Entity(id);
 
     const mockTime1 = 1;
-    jasmine.clock().mockDate(new Date(mockTime1));
+    vi.setSystemTime(new Date(mockTime1));
     await entityMapper.save(entity);
     const createdEntity = await entityMapper.load(Entity, id);
 
@@ -272,14 +275,14 @@ describe("EntityMapperService", () => {
     expect(createdEntity.updated?.by).toEqual(currentUser.getId());
 
     const mockTime2 = mockTime1 + 1;
-    jasmine.clock().mockDate(new Date(mockTime2));
+    vi.setSystemTime(new Date(mockTime2));
     await entityMapper.save<Entity>(createdEntity);
     const updatedEntity = await entityMapper.load<Entity>(Entity, id);
 
     expect(updatedEntity.created?.at.getTime()).toEqual(mockTime1);
     expect(updatedEntity.updated?.at.getTime()).toEqual(mockTime2);
 
-    jasmine.clock().uninstall();
+    vi.useRealTimers();
   });
 
   @DatabaseEntity("EntityA")
@@ -291,24 +294,36 @@ describe("EntityMapperService", () => {
 
 describe("EntityMapperService permission checks", () => {
   let entityMapper: EntityMapperService;
-  let mockAbility: jasmine.SpyObj<EntityAbility>;
+  let mockAbility: {
+    can: Mock;
+    cannot: Mock;
+    initialized: boolean;
+  };
+  let mockDbResolver: {
+    getDatabase: Mock;
+  };
 
   beforeEach(() => {
-    mockAbility = jasmine.createSpyObj("EntityAbility", ["can", "cannot"]);
-    mockAbility.cannot.and.returnValue(false);
+    mockAbility = {
+      can: vi.fn().mockName("EntityAbility.can"),
+      cannot: vi.fn().mockName("EntityAbility.cannot"),
+      initialized: true,
+    };
+    mockAbility.cannot.mockReturnValue(false);
     mockAbility.initialized = true;
 
     const mockDb = {
-      put: jasmine.createSpy("put").and.resolveTo({ ok: true, rev: "1-x" }),
-      putAll: jasmine
-        .createSpy("putAll")
-        .and.resolveTo([{ ok: true, rev: "1-x" }]),
-      remove: jasmine.createSpy("remove").and.resolveTo({ ok: true }),
+      put: vi.fn().mockName("put").mockResolvedValue({ ok: true, rev: "1-x" }),
+      putAll: vi
+        .fn()
+        .mockName("putAll")
+        .mockResolvedValue([{ ok: true, rev: "1-x" }]),
+      remove: vi.fn().mockName("remove").mockResolvedValue({ ok: true }),
     };
-    const mockDbResolver = jasmine.createSpyObj("DatabaseResolverService", [
-      "getDatabase",
-    ]);
-    mockDbResolver.getDatabase.and.returnValue(mockDb as any);
+    mockDbResolver = {
+      getDatabase: vi.fn().mockName("DatabaseResolverService.getDatabase"),
+    };
+    mockDbResolver.getDatabase.mockReturnValue(mockDb);
 
     TestBed.configureTestingModule({
       providers: [
@@ -324,22 +339,24 @@ describe("EntityMapperService permission checks", () => {
   });
 
   it("should throw EntityPermissionError when saving a new entity without create permission", async () => {
-    mockAbility.cannot.and.returnValue(true);
+    mockAbility.cannot.mockReturnValue(true);
     const entity = new Entity("test-no-create");
 
-    await expectAsync(entityMapper.save(entity)).toBeRejectedWithError(
+    await expect(entityMapper.save(entity)).rejects.toBeInstanceOf(
       EntityPermissionError,
     );
     expect(mockAbility.cannot).toHaveBeenCalledWith("create", entity);
   });
 
   it("should throw EntityPermissionError when saving an existing entity without update permission", async () => {
-    mockAbility.cannot.and.callFake((action: string) => action === "update");
+    mockAbility.cannot.mockImplementation(
+      (action: string) => action === "update",
+    );
     const entity = new Entity("test-no-update");
     // simulate existing entity (not new)
     entity._rev = "1-abc";
 
-    await expectAsync(entityMapper.save(entity)).toBeRejectedWithError(
+    await expect(entityMapper.save(entity)).rejects.toBeInstanceOf(
       EntityPermissionError,
     );
     expect(mockAbility.cannot).toHaveBeenCalledWith("update", entity);
@@ -348,21 +365,23 @@ describe("EntityMapperService permission checks", () => {
   it("should throw EntityPermissionError in saveAll when any entity lacks permission", async () => {
     const allowed = new Entity("allowed");
     const denied = new Entity("denied");
-    mockAbility.cannot.and.callFake(
+    mockAbility.cannot.mockImplementation(
       (_action: string, e: Entity) => e === denied,
     );
 
-    await expectAsync(
+    await expect(
       entityMapper.saveAll([allowed, denied]),
-    ).toBeRejectedWithError(EntityPermissionError);
+    ).rejects.toBeInstanceOf(EntityPermissionError);
   });
 
   it("should throw EntityPermissionError when removing an entity without delete permission", async () => {
-    mockAbility.cannot.and.callFake((action: string) => action === "delete");
+    mockAbility.cannot.mockImplementation(
+      (action: string) => action === "delete",
+    );
     const entity = new Entity("test-no-delete");
     entity._rev = "1-abc";
 
-    await expectAsync(entityMapper.remove(entity)).toBeRejectedWithError(
+    await expect(entityMapper.remove(entity)).rejects.toBeInstanceOf(
       EntityPermissionError,
     );
     expect(mockAbility.cannot).toHaveBeenCalledWith("delete", entity);

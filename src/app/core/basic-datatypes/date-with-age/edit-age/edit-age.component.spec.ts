@@ -53,7 +53,7 @@ describe("EditAgeComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  xit("should transform Date to DateOfBirth", async () => {
+  it.skip("should transform Date to DateOfBirth", async () => {
     // the updated implementation doesn't support this anymore
     // but has a separate age signal
 
@@ -62,7 +62,9 @@ describe("EditAgeComponent", () => {
     await datepicker.setValue("6/21/2019");
 
     expect(component.formControl.value).toBeInstanceOf(DateWithAge);
-    expect(component.formControl.value).toBeDate("2019-06-21");
+    expect(component.formControl.value?.getTime()).toBe(
+      new Date(2019, 5, 21).getTime(),
+    );
   });
 
   it("should update age when date is changed", async () => {

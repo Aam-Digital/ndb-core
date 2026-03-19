@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
@@ -30,11 +25,12 @@ describe("EditEntityComponent", () => {
   let test1Entities: TestEntity[];
   let test2Entities: Test2Entity[];
   let formControl: FormControl;
+  let loadTypeSpy: ReturnType<typeof vi.spyOn>;
 
   @DatabaseEntity("Test2Entity")
   class Test2Entity extends TestEntity {}
 
-  beforeEach(() => {
+  beforeEach(async () => {
     formControl = new FormControl();
 
     test1Entities = ["Abc", "Bcd", "Abd", "Aba"].map((s) => {
@@ -43,7 +39,7 @@ describe("EditEntityComponent", () => {
     test2Entities = [new Test2Entity(), new Test2Entity()];
     const otherEntities: Entity[] = [createEntityOfType("OtherEntityType")];
 
-    TestBed.configureTestingModule({
+    await TestBed.configureTestingModule({
       imports: [
         EditEntityComponent,
         MockedTestingModule.withState(LoginState.LOGGED_IN, [
@@ -58,13 +54,44 @@ describe("EditEntityComponent", () => {
     fixture = TestBed.createComponent(EditEntityComponent);
     component = fixture.componentInstance;
 
+    const entityMapper = TestBed.inject(EntityMapperService);
+    loadTypeSpy = vi
+      .spyOn(entityMapper, "loadType")
+      .mockImplementation(async (type: string) => {
+        if (type === TestEntity.ENTITY_TYPE) {
+          return test1Entities as any;
+        }
+        if (type === Test2Entity.ENTITY_TYPE) {
+          return test2Entities as any;
+        }
+        return [];
+      });
+    vi.spyOn(entityMapper, "load").mockImplementation(async (_type, id) => {
+      const entity = [...test1Entities, ...test2Entities].find(
+        (e) => e.getId() === id,
+      );
+      if (entity) {
+        return entity as any;
+      }
+      throw new Error(`${id} not found`);
+    });
+
     setupCustomFormControlEditComponent(component, "testProperty", {
       additional: TestEntity.ENTITY_TYPE,
     });
     component.ngControl = { control: formControl } as any;
-
-    fixture.detectChanges();
   });
+
+  async function refreshAvailableEntities() {
+    await vi.waitFor(() =>
+      expect((component as any).allEntities.isLoading()).toBe(false),
+    );
+    component.formControl().setValue(component.formControl().value);
+    fixture.detectChanges();
+    await vi.waitFor(() =>
+      expect(component.availableEntitiesResource.isLoading()).toBe(false),
+    );
+  }
 
   it("should create", () => {
     expect(component).toBeTruthy();
@@ -103,157 +130,200 @@ describe("EditEntityComponent", () => {
     }
 
     expect(applyTextToCreatedEntity(new TestEntity(), "one")).toEqual(
-      jasmine.objectContaining({ firstName: "one" }),
+      expect.objectContaining({ firstName: "one" }),
     );
     expect(applyTextToCreatedEntity(new TestEntity(), "one two")).toEqual(
-      jasmine.objectContaining({ firstName: "one", lastName: "two" }),
+      expect.objectContaining({ firstName: "one", lastName: "two" }),
     );
     expect(applyTextToCreatedEntity(new TestEntity(), "one    two")).toEqual(
-      jasmine.objectContaining({ firstName: "one", lastName: "two" }),
+      expect.objectContaining({ firstName: "one", lastName: "two" }),
     );
     // if more input parts than toStringAttributes, put all remaining parts into last property:
     expect(applyTextToCreatedEntity(new TestEntity(), "one two three")).toEqual(
-      jasmine.objectContaining({ firstName: "one", lastName: "two three" }),
+      expect.objectContaining({ firstName: "one", lastName: "two three" }),
     );
   });
 
-  it("should not be in loading-state when all data is received", fakeAsync(() => {
+  it("should not be in loading-state when all data is received", async () => {
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
     fixture.detectChanges();
     expect(component.loading()).toBe(true);
-    tick();
-    expect(component.loading()).toBe(false);
-  }));
+    await vi.waitFor(() => expect(component.loading()).toBe(false));
+  });
 
-  it("should suggest all entities after an initial load", fakeAsync(() => {
+  it("should suggest all entities after an initial load", async () => {
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
-    fixture.autoDetectChanges();
-    tick();
-    expect(component.availableEntitiesResource.value()).toEqual(
-      jasmine.arrayWithExactContents(test1Entities),
+    fixture.detectChanges();
+    await refreshAvailableEntities();
+    await vi.waitFor(() =>
+      expect(component.availableEntitiesResource.value()).toHaveLength(
+        test1Entities.length,
+      ),
     );
-  }));
 
-  it("suggests all entities of multiple different types if configured", fakeAsync(() => {
+    expect(component.availableEntitiesResource.value()).toHaveLength(
+      test1Entities.length,
+    );
+    expect(component.availableEntitiesResource.value()).toEqual(
+      expect.arrayContaining(test1Entities),
+    );
+  });
+
+  it("suggests all entities of multiple different types if configured", async () => {
     fixture.componentRef.setInput("entityType", [
       TestEntity.ENTITY_TYPE,
       Test2Entity.ENTITY_TYPE,
     ]);
-    fixture.autoDetectChanges();
-    tick();
+    fixture.detectChanges();
+    await refreshAvailableEntities();
+    await vi.waitFor(() =>
+      expect(component.availableEntitiesResource.value()).toHaveLength(
+        test1Entities.length + test2Entities.length,
+      ),
+    );
 
     expect(component.availableEntitiesResource.value()).toEqual(
       [...test1Entities, ...test2Entities].sort((a, b) =>
         a.toString().localeCompare(b.toString()),
       ),
     );
-  }));
+  });
 
-  it("should retain missing entity and show warning", fakeAsync(() => {
-    const warnSpy = spyOn(Logging, "warn");
+  it("should retain missing entity and show warning", async () => {
+    const warnSpy = vi.spyOn(Logging, "warn");
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
     component.formFieldConfig = { id: "test", label: "test label" };
     component
       .formControl()
       .setValue([test1Entities[0].getId(), "missing_user"]);
-    fixture.autoDetectChanges();
-    tick();
+    fixture.detectChanges();
+
+    await refreshAvailableEntities();
+    await vi.waitFor(() => expect(warnSpy).toHaveBeenCalled());
+    await vi.waitFor(() => expect(component.hasInaccessible()).toBe(true));
 
     expect(warnSpy).toHaveBeenCalledWith(
-      jasmine.stringContaining("ENTITY_SELECT"),
+      expect.stringContaining("ENTITY_SELECT"),
       "test label",
       "missing_user",
-      jasmine.anything(),
+      expect.anything(),
     );
     expect(component.formControl().value).toEqual([
       test1Entities[0].getId(),
       "missing_user",
     ]);
-    expect(component.hasInaccessible()).toBeTrue();
-  }));
+    expect(component.hasInaccessible()).toBe(true);
+  });
 
-  it("shows inactive entities according to the includeInactive state", fakeAsync(() => {
+  it("shows inactive entities according to the includeInactive state", async () => {
     test1Entities[0].isActive = false;
     test1Entities[2].isActive = false;
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
-    fixture.autoDetectChanges();
-    tick();
+    fixture.detectChanges();
+    await refreshAvailableEntities();
+    await vi.waitFor(() =>
+      expect(component.availableEntitiesResource.value().length).toEqual(
+        test1Entities.length - 2,
+      ),
+    );
 
     expect(component.availableEntitiesResource.value().length).toEqual(
       test1Entities.length - 2,
     );
     component.toggleIncludeInactive();
-    tick();
+    fixture.detectChanges();
+    await refreshAvailableEntities();
+    await vi.waitFor(() =>
+      expect(component.availableEntitiesResource.value().length).toEqual(
+        test1Entities.length,
+      ),
+    );
     expect(component.availableEntitiesResource.value().length).toEqual(
       test1Entities.length,
     );
 
     test1Entities[2].isActive = true;
     component.toggleIncludeInactive();
-    tick();
+    fixture.detectChanges();
+    await refreshAvailableEntities();
+    await vi.waitFor(() =>
+      expect(component.availableEntitiesResource.value().length).toEqual(3),
+    );
     expect(component.availableEntitiesResource.value().length).toEqual(3);
-  }));
+  });
 
-  it("should update matchingInactive count when autocomplete filter changes", fakeAsync(() => {
+  it("should update matchingInactive count when autocomplete filter changes", async () => {
     const testEntities = [
       TestEntity.create("AB"),
       TestEntity.create("AC"),
       TestEntity.create("X"),
     ];
     testEntities.forEach((e) => (e.inactive = true));
-    spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo(
-      testEntities,
-    );
+    loadTypeSpy.mockResolvedValue(testEntities as any);
 
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
-    fixture.autoDetectChanges();
-    tick();
+    fixture.detectChanges();
+    await vi.waitFor(() =>
+      expect(component.currentlyMatchingInactive()).toBe(3),
+    );
     expect(component.currentlyMatchingInactive()).toBe(3);
 
     component.recalculateMatchingInactive((o) => o["name"].startsWith("A"));
-    tick();
+    await vi.waitFor(() =>
+      expect(component.currentlyMatchingInactive()).toBe(2),
+    );
     expect(component.currentlyMatchingInactive()).toBe(2);
-  }));
+  });
 
-  it("should show selected entities of type that is not configured", fakeAsync(() => {
+  it("should show selected entities of type that is not configured", async () => {
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
     component
       .formControl()
       .setValue([test1Entities[0].getId(), test2Entities[0].getId()]);
-    fixture.autoDetectChanges();
-    tick();
+    fixture.detectChanges();
+    await refreshAvailableEntities();
+    await vi.waitFor(() =>
+      expect(component.availableEntitiesResource.value()).toHaveLength(
+        test1Entities.length + 1,
+      ),
+    );
+
+    expect(component.formControl().value).toHaveLength(2);
 
     expect(component.formControl().value).toEqual(
-      jasmine.arrayWithExactContents([
+      expect.arrayContaining([
         test1Entities[0].getId(),
         test2Entities[0].getId(),
       ]),
     );
-    expect(component.availableEntitiesResource.value()).toEqual(
-      jasmine.arrayWithExactContents([...test1Entities, test2Entities[0]]),
+    expect(component.availableEntitiesResource.value()).toHaveLength(
+      test1Entities.length + 1,
     );
-  }));
+    expect(component.availableEntitiesResource.value()).toEqual(
+      expect.arrayContaining([...test1Entities, test2Entities[0]]),
+    );
+  });
 
   it("should create a new entity when user selects 'add new' and apply input text", async () => {
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
     fixture.detectChanges();
-    const formDialogSpy = spyOn(
+    const formDialogSpy = vi.spyOn(
       TestBed.inject(FormDialogService),
       "openFormPopup",
     );
     const savedEntity = new TestEntity("123");
 
-    formDialogSpy.and.returnValue({ afterClosed: () => of(undefined) } as any);
+    formDialogSpy.mockReturnValue({ afterClosed: () => of(undefined) } as any);
     const resultCancel = await component.createNewEntity("my new record");
     expect(resultCancel).toBeUndefined();
 
-    formDialogSpy.and.returnValue({
+    formDialogSpy.mockReturnValue({
       afterClosed: () => of(savedEntity),
     } as any);
     const resultSave = await component.createNewEntity("my new record");
     expect(resultSave).toEqual(savedEntity);
     expect(formDialogSpy).toHaveBeenCalledWith(
-      jasmine.objectContaining({ name: "my new record" }),
+      expect.objectContaining({ name: "my new record" }),
     );
   });
 });

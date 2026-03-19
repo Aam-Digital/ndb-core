@@ -1,5 +1,6 @@
+import type { Mock } from "vitest";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormControl } from "@angular/forms";
 import { By } from "@angular/platform-browser";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -11,11 +12,13 @@ import { EditTextWithAutocompleteComponent } from "./edit-text-with-autocomplete
 describe("EditTextWithAutocompleteComponent", () => {
   let component: EditTextWithAutocompleteComponent;
   let fixture: ComponentFixture<EditTextWithAutocompleteComponent>;
-  let loadTypeSpy: jasmine.Spy;
-  let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
+  let loadTypeSpy: Mock;
+  let mockConfirmationDialog: any;
 
-  beforeEach(waitForAsync(async () => {
-    mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
+  beforeEach(async () => {
+    mockConfirmationDialog = {
+      getConfirmation: vi.fn(),
+    };
     TestBed.configureTestingModule({
       imports: [
         EditTextWithAutocompleteComponent,
@@ -31,8 +34,8 @@ describe("EditTextWithAutocompleteComponent", () => {
 
     fixture = TestBed.createComponent(EditTextWithAutocompleteComponent);
     component = fixture.componentInstance;
-    loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
-    loadTypeSpy.and.resolveTo([]);
+    loadTypeSpy = vi.spyOn(TestBed.inject(EntityMapperService), "loadType");
+    loadTypeSpy.mockResolvedValue([]);
     const entityFormService = TestBed.inject(EntityFormService);
     const entityForm = await entityFormService.createEntityForm(
       [{ id: "name" }, { id: "other" }, { id: "ref" }, { id: "refMixed" }],
@@ -52,7 +55,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     };
 
     fixture.detectChanges();
-  }));
+  });
 
   it("should create", () => {
     expect(component).toBeTruthy();
@@ -62,7 +65,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     const e1 = TestEntity.create("First Entity");
     const e2 = TestEntity.create("Second Entity");
     const e3 = TestEntity.create("Third Entity");
-    loadTypeSpy.and.resolveTo([e1, e2, e3]);
+    loadTypeSpy.mockResolvedValue([e1, e2, e3]);
 
     await component.ngOnInit();
 
@@ -73,7 +76,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     const e1 = TestEntity.create("First Entity");
     const e2 = TestEntity.create("Second Entity");
     const e3 = TestEntity.create("Third Entity");
-    loadTypeSpy.and.resolveTo([e1, e2, e3]);
+    loadTypeSpy.mockResolvedValue([e1, e2, e3]);
 
     await component.ngOnInit();
     component.formControl.setValue("Second");
@@ -89,7 +92,7 @@ describe("EditTextWithAutocompleteComponent", () => {
       ref: "user1",
       refMixed: ["group1", "group2"],
     });
-    loadTypeSpy.and.resolveTo([e1]);
+    loadTypeSpy.mockResolvedValue([e1]);
     await component.ngOnInit();
 
     await component.selectEntity(e1);
@@ -108,7 +111,7 @@ describe("EditTextWithAutocompleteComponent", () => {
       refMixed: ["group1", "group2"],
       category: { id: "test", label: "Test" },
     });
-    loadTypeSpy.and.resolveTo([e1]);
+    loadTypeSpy.mockResolvedValue([e1]);
     component.parent.get("refMixed").setValue(["testgroup1"]);
     await component.ngOnInit();
     await component.selectEntity(e1);
@@ -129,7 +132,7 @@ describe("EditTextWithAutocompleteComponent", () => {
       name: "First Entity",
       refMixed: ["group1", "group2"],
     });
-    loadTypeSpy.and.resolveTo([e1]);
+    loadTypeSpy.mockResolvedValue([e1]);
     component.additional.relevantProperty = "refMixed";
     component.additional.relatedEntitiesParent = parentEntity;
     await component.ngOnInit();
@@ -146,7 +149,7 @@ describe("EditTextWithAutocompleteComponent", () => {
 
     const e1 = TestEntity.create("First Entity");
     delete e1.refMixed;
-    loadTypeSpy.and.resolveTo([e1]);
+    loadTypeSpy.mockResolvedValue([e1]);
     component.additional.relevantProperty = "refMixed";
     component.additional.relatedEntitiesParent = parentEntity;
     await component.ngOnInit();
@@ -163,7 +166,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     const e1 = TestEntity.create("First Entity");
     const e2 = TestEntity.create("Second Entity");
     component.formControl.setValue(e1.name);
-    loadTypeSpy.and.resolveTo([e1, e2]);
+    loadTypeSpy.mockResolvedValue([e1, e2]);
 
     await component.ngOnInit();
 
@@ -183,8 +186,8 @@ describe("EditTextWithAutocompleteComponent", () => {
       refMixed: ["group1", "group2"],
     });
     const e2 = TestEntity.create("Second Entity");
-    loadTypeSpy.and.resolveTo([e1, e2]);
-    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
+    loadTypeSpy.mockResolvedValue([e1, e2]);
+    mockConfirmationDialog.getConfirmation.mockResolvedValue(true);
 
     await component.ngOnInit();
     component.formControl.setValue("test1");

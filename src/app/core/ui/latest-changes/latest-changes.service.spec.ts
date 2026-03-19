@@ -21,11 +21,16 @@ import { LatestChangesService } from "./latest-changes.service";
 import { AlertService } from "../../alerts/alert.service";
 import { HttpClient } from "@angular/common/http";
 import { of, throwError } from "rxjs";
+import type { Mock } from "vitest";
+
+type AlertServiceMock = Pick<AlertService, "addWarning"> & {
+  addWarning: Mock;
+};
 
 describe("LatestChangesService", () => {
   let service: LatestChangesService;
 
-  let alertService: jasmine.SpyObj<AlertService>;
+  let alertService: AlertServiceMock;
   let http: HttpClient;
 
   const testReleases = [
@@ -57,7 +62,9 @@ describe("LatestChangesService", () => {
   ];
 
   beforeEach(() => {
-    alertService = jasmine.createSpyObj(["addWarning"]);
+    alertService = {
+      addWarning: vi.fn(),
+    };
     http = new HttpClient(null);
 
     TestBed.configureTestingModule({
@@ -75,74 +82,69 @@ describe("LatestChangesService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should return changelog of current version", (done) => {
-    spyOn(http, "get").and.returnValue(of(testReleases));
+  it("should return changelog of current version", async () => {
+    vi.spyOn(http, "get").mockReturnValue(of(testReleases));
 
     service.getChangelogsBetweenVersions("1.1").subscribe((result) => {
-      expect(result).toHaveSize(1);
+      expect(result).toHaveLength(1);
       expect(result[0].name).toBe(testReleases[1].name);
-      done();
     });
   });
 
-  it("should return changelogs between versions excluding previous version", (done) => {
-    spyOn(http, "get").and.returnValue(of(testReleases));
+  it("should return changelogs between versions excluding previous version", async () => {
+    vi.spyOn(http, "get").mockReturnValue(of(testReleases));
 
     service.getChangelogsBetweenVersions("2.0", "1.0").subscribe((result) => {
-      expect(result).toHaveSize(2);
+      expect(result).toHaveLength(2);
       expect(result[0].name).toBe(testReleases[0].name);
       expect(result[1].name).toBe(testReleases[1].name);
-      done();
     });
   });
 
-  it("should return changelogs before version", (done) => {
-    spyOn(http, "get").and.returnValue(of(testReleases));
+  it("should return changelogs before version", async () => {
+    vi.spyOn(http, "get").mockReturnValue(of(testReleases));
 
     service.getChangelogsBeforeVersion("2.0", 3).subscribe((result) => {
       expect(result.length).toBe(2); // cannot return more results than available at api
       expect(result[0].name).toBe(testReleases[1].name);
       expect(result[1].name).toBe(testReleases[2].name);
-      done();
     });
   });
 
-  it("should return empty array if no releases from api", (done) => {
-    spyOn(http, "get").and.returnValue(of([]));
+  it("should return empty array if no releases from api", async () => {
+    vi.spyOn(http, "get").mockReturnValue(of([]));
 
     service.getChangelogsBetweenVersions("1.0").subscribe((result) => {
-      expect(result).toBeEmpty();
-      done();
+      expect(result).toHaveLength(0);
     });
   });
 
-  it("should add Alert on failing to get changelog", (done) => {
-    spyOn(http, "get").and.returnValue(
+  it("should add Alert on failing to get changelog", async () => {
+    vi.spyOn(http, "get").mockReturnValue(
       throwError(() => ({ status: 404, message: "not found" })),
     );
 
     service.getChangelogsBetweenVersions("1.0").subscribe({
       error: () => {
-        expect(alertService.addWarning)
-          .withContext('"not found" error not defined')
-          .toHaveBeenCalledTimes(1);
-        done();
+        expect(
+          alertService.addWarning,
+          '"not found" error not defined',
+        ).toHaveBeenCalledTimes(1);
       },
     });
   });
 
-  it("should not include prereleases", (done) => {
-    spyOn(http, "get").and.returnValue(of(testReleases));
+  it("should not include prereleases", async () => {
+    vi.spyOn(http, "get").mockReturnValue(of(testReleases));
 
     service.getChangelogsBeforeVersion("1.1", 10).subscribe((result) => {
       expect(result).toEqual([testReleases[2]]);
       expect(result[0]["prerelease"]).toBeFalsy();
       expect(result).not.toContain(testReleases[3]);
-      done();
     });
   });
 
-  it("should remove lines from release changelog body that are explicitly hidden by starting with a '.'", (done) => {
+  it("should remove lines from release changelog body that are explicitly hidden by starting with a '.'", async () => {
     const testRelease = {
       name: "test with notes",
       tag_name: "3.0",
@@ -155,7 +157,7 @@ describe("LatestChangesService", () => {
 `,
     };
 
-    spyOn(http, "get").and.returnValue(of([testRelease]));
+    vi.spyOn(http, "get").mockReturnValue(of([testRelease]));
 
     service.getChangelogsBetweenVersions("3.0", "2.9").subscribe((result) => {
       expect(result[0].tag_name).toBe(testRelease.tag_name);
@@ -163,23 +165,21 @@ describe("LatestChangesService", () => {
 # Bugs
 * relevant fix
 `);
-      done();
     });
   });
 
-  it("should remove irrelevant details from release changelog body", (done) => {
+  it("should remove irrelevant details from release changelog body", async () => {
     const testRelease = {
       name: "test with notes",
       tag_name: "3.0",
       body: "* fix ([e03dcca](https://github.com/Aam-Digital/ndb-core/commit/e03dcca7d89e584b8f08cc7fe30621c1ad428dba))",
     };
 
-    spyOn(http, "get").and.returnValue(of([testRelease]));
+    vi.spyOn(http, "get").mockReturnValue(of([testRelease]));
 
     service.getChangelogsBetweenVersions("3.0", "2.9").subscribe((result) => {
       expect(result[0].tag_name).toBe(testRelease.tag_name);
       expect(result[0].body).toBe("* fix");
-      done();
     });
   });
 });
