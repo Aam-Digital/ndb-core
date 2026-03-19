@@ -54,19 +54,8 @@ async function fetchTranslations(
         return await response.json();
       }
     } catch (e) {
-      // CDN fetch failed, fall through to local fallback
+      // CDN fetch failed
     }
-  }
-
-  try {
-    const response = await fetch(
-      "/assets/locale/messages." + locale + ".json",
-    );
-    if (response.ok) {
-      return await response.json();
-    }
-  } catch (e) {
-    // local fetch failed
   }
 
   Logging.warn(
