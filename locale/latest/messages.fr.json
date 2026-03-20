@@ -1310,5 +1310,7 @@
   "5784038046345728785": "Cet élément ne comporte ni lien ni sous-éléments ; il ne sera donc pas accessible aux utilisateurs.",
   "8528162559864710708": "Ajouter comme section parente sans lien",
   "2439123042672626922": "Supprimer le lien ?",
-  "4618177393833402512": "Cet élément contient actuellement un lien. Activer cette option le supprimera. Voulez-vous continuer ?"
+  "4618177393833402512": "Cet élément contient actuellement un lien. Activer cette option le supprimera. Voulez-vous continuer ?",
+  "2999993832814935436": "Pick color",
+  "8028490661906534915": "Please enter a valid hex color code (e.g. #ff0000)"
 }

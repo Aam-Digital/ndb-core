@@ -1310,5 +1310,7 @@
   "5784038046345728785": "Dieser Eintrag hat momentan keine Links und keine Untereinträge – er wird für Benutzer ausgeblendet.",
   "8528162559864710708": "Als übergeordneten Abschnitt ohne Link hinzufügen",
   "2439123042672626922": "Link entfernen?",
-  "4618177393833402512": "Dieser Eintrag ist aktuell verlinkt. Durch Aktivieren dieser Option wird der Link entfernt. Möchten Sie trotzdem fortfahren?"
+  "4618177393833402512": "Dieser Eintrag ist aktuell verlinkt. Durch Aktivieren dieser Option wird der Link entfernt. Möchten Sie trotzdem fortfahren?",
+  "2999993832814935436": "Pick color",
+  "8028490661906534915": "Please enter a valid hex color code (e.g. #ff0000)"
 }
