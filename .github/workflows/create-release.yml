@@ -6,7 +6,11 @@ permissions:
   contents: write  # needed for semantic-release to create tags/releases
 
 jobs:
+  toolchain:
+    uses: ./.github/workflows/_node-toolchain.yml
+
   release:
+    needs: toolchain
     runs-on: ubuntu-latest
     outputs:
       new_release_version: ${{ steps.semantic.outputs.new_release_version }}
@@ -19,6 +23,12 @@ jobs:
 
       - name: Set up node
         uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.toolchain.outputs.node-version }}
+          cache: npm
+
+      - name: Set up npm
+        run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
 
       - name: Semantic Release
         id: semantic

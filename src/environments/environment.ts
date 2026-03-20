@@ -62,4 +62,7 @@ export const environment = {
    * to opt into the new adapter for gradual rollout.
    */
   use_indexeddb_adapter: false,
+
+  /** CDN URL for loading translation files at runtime. Empty string disables CDN loading. */
+  translationsCdnUrl: "https://aam-digital.github.io/ndb-core/locale",
 };

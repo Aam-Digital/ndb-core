@@ -19,4 +19,5 @@ export const environment = {
   SaaS: false,
   userSupportEnabled: false,
   use_indexeddb_adapter: false,
+  translationsCdnUrl: "",
 };
