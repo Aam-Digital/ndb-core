@@ -1,0 +1,117 @@
+name: i18n - Publish translations to GitHub Pages CDN
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag to publish translations for (defaults to latest release)"
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  publish-translations:
+    runs-on: ubuntu-latest
+    env:
+      LANGUAGES: "fr de"
+
+    steps:
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            echo "tag=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
+          elif [ -n "${{ github.event.inputs.version }}" ]; then
+            echo "tag=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            tag=$(gh release view --repo "${{ github.repository }}" --json tagName -q .tagName) || {
+              echo "Error: No releases found and no version specified"
+              exit 1
+            }
+            echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Export translations from POEditor
+        env:
+          POEDITOR_API_TOKEN: ${{ secrets.POEDITOR_API_TOKEN }}
+          POEDITOR_PROJECT_ID: ${{ secrets.POEDITOR_PROJECT_ID }}
+        run: |
+          mkdir -p locale/${{ steps.version.outputs.tag }}
+          for lang in $LANGUAGES; do
+            echo "Exporting translations for language $lang"
+            response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
+              -d "api_token=$POEDITOR_API_TOKEN" \
+              -d "id=$POEDITOR_PROJECT_ID" \
+              -d "language=$lang" \
+              -d "type=key_value_json" \
+              -d "fallback_language=en")
+
+            status=$(echo "$response" | jq -r '.response.status')
+            if [ "$status" != "success" ]; then
+              echo "Error exporting translations for $lang: $response"
+              exit 1
+            fi
+
+            url=$(echo "$response" | jq -r '.result.url')
+            echo "Downloading translations for $lang from $url"
+            outfile="locale/${{ steps.version.outputs.tag }}/messages.$lang.json"
+            if ! curl -sf -o "$outfile" "$url"; then
+              echo "Error downloading translations for $lang from $url"
+              exit 1
+            fi
+
+            # Flatten nested context groups into a flat {id: translation} map
+            # and convert XLIFF placeholders <x id="NAME" .../> to Angular runtime format {$NAME}
+            if ! jq '[to_entries[] | if (.value | type) == "object" then (.value | to_entries[]) else . end] | from_entries
+              | with_entries(.value |= gsub("<x id=\"(?<id>[^\"]*)\"[^/]*/>"; "{$\(.id)}"))' "$outfile" > "$outfile.tmp"; then
+              echo "Error transforming translations for $lang"
+              exit 1
+            fi
+            mv "$outfile.tmp" "$outfile"
+          done
+
+      - name: Deploy versioned translations to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: locale/${{ steps.version.outputs.tag }}
+          destination_dir: locale/${{ steps.version.outputs.tag }}
+
+      - name: Deploy latest translations to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: locale/${{ steps.version.outputs.tag }}
+          destination_dir: locale/latest
+
+      - name: Clean up pre-release translations on stable release
+        if: github.event_name == 'release' && !github.event.release.prerelease
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+
+      - name: Remove pre-release locale directories
+        if: github.event_name == 'release' && !github.event.release.prerelease
+        run: |
+          changed=false
+          for dir in locale/*-*; do
+            if [ -d "$dir" ]; then
+              echo "Removing pre-release translations: $dir"
+              git rm -rf "$dir"
+              changed=true
+            fi
+          done
+
+          if [ "$changed" = true ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git commit -m "chore: clean up pre-release translation directories"
+            git push origin gh-pages
+          else
+            echo "No pre-release translation directories to clean up"
+          fi

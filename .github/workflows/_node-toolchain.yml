@@ -1,0 +1,23 @@
+name: Node Toolchain
+
+on:
+  workflow_call:
+    outputs:
+      node-version:
+        description: Pinned Node.js version for CI jobs
+        value: ${{ jobs.toolchain.outputs.node-version }}
+      npm-version:
+        description: Pinned npm version for CI jobs
+        value: ${{ jobs.toolchain.outputs.npm-version }}
+
+jobs:
+  toolchain:
+    runs-on: ubuntu-latest
+    outputs:
+      node-version: ${{ steps.versions.outputs.node-version }}
+      npm-version: ${{ steps.versions.outputs.npm-version }}
+    steps:
+      - id: versions
+        run: |
+          echo "node-version=22.19.0" >> "$GITHUB_OUTPUT"
+          echo "npm-version=11.7.0" >> "$GITHUB_OUTPUT"
