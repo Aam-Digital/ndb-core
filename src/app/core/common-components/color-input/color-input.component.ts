@@ -7,6 +7,7 @@ import {
   OnInit,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { filter } from "rxjs";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import {
   MatFormFieldControl,
@@ -82,7 +83,10 @@ export class ColorInputComponent
   ngOnInit() {
     if (this.formControl) {
       this.formControl.valueChanges
-        .pipe(takeUntilDestroyed(this.destroyRef))
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          filter(() => !this.formControl.disabled),
+        )
         .subscribe((value) => this.validateHex(value));
     } else {
       this.colorControl.valueChanges
