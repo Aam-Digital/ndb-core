@@ -249,7 +249,7 @@ The settings are applied at runtime.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/site-settings/site-settings.ts:55</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">src/app/core/site-settings/site-settings.ts:64</a></div>
                             </td>
                         </tr>
 
@@ -435,13 +435,13 @@ The settings are applied at runtime.</p>
                         <b>Decorators : </b>
                         <br />
                         <code>
-                            @DatabaseField({label: undefined})<br />
+                            @DatabaseField({label: undefined, editComponent: &#x27;EditColor&#x27;})<br />
                         </code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/site-settings/site-settings.ts:54</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/site-settings/site-settings.ts:63</a></div>
                         </td>
                     </tr>
 
@@ -477,7 +477,7 @@ The settings are applied at runtime.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/site-settings/site-settings.ts:55</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">src/app/core/site-settings/site-settings.ts:64</a></div>
                         </td>
                     </tr>
 
@@ -576,13 +576,13 @@ The settings are applied at runtime.</p>
                         <b>Decorators : </b>
                         <br />
                         <code>
-                            @DatabaseField({label: undefined})<br />
+                            @DatabaseField({label: undefined, editComponent: &#x27;EditColor&#x27;})<br />
                         </code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/core/site-settings/site-settings.ts:52</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/site-settings/site-settings.ts:56</a></div>
                         </td>
                     </tr>
 
@@ -612,13 +612,13 @@ The settings are applied at runtime.</p>
                         <b>Decorators : </b>
                         <br />
                         <code>
-                            @DatabaseField({label: undefined})<br />
+                            @DatabaseField({label: undefined, editComponent: &#x27;EditColor&#x27;})<br />
                         </code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/core/site-settings/site-settings.ts:53</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/core/site-settings/site-settings.ts:61</a></div>
                         </td>
                     </tr>
 
@@ -803,9 +803,18 @@ export class SiteSettings extends Entity {
   })
   logo: string;
 
-  @DatabaseField({ label: $localize&#x60;Primary color&#x60; }) primary: string;
-  @DatabaseField({ label: $localize&#x60;Secondary color&#x60; }) secondary: string;
-  @DatabaseField({ label: $localize&#x60;Error color&#x60; }) error: string;
+  @DatabaseField({
+    label: $localize&#x60;Primary color&#x60;,
+    editComponent: &quot;EditColor&quot;,
+  })
+  primary: string;
+  @DatabaseField({
+    label: $localize&#x60;Secondary color&#x60;,
+    editComponent: &quot;EditColor&quot;,
+  })
+  secondary: string;
+  @DatabaseField({ label: $localize&#x60;Error color&#x60;, editComponent: &quot;EditColor&quot; })
+  error: string;
   @DatabaseField({ label: $localize&#x60;Text font&#x60; }) font: string;
 
   constructor() {

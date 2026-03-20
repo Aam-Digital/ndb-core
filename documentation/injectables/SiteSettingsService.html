@@ -277,8 +277,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="147"
-                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:147</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="154"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:154</a></div>
                         </td>
                     </tr>
 
@@ -911,17 +911,24 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
   private subscribeColorChanges(property: &quot;primary&quot; | &quot;secondary&quot; | &quot;error&quot;) {
     this.getPropertyObservable(property).subscribe((color) &#x3D;&gt; {
       if (color) {
-        const palette &#x3D; materialColours(color);
-        palette[&quot;A100&quot;] &#x3D; palette[&quot;200&quot;];
-        palette[&quot;A200&quot;] &#x3D; palette[&quot;300&quot;];
-        palette[&quot;A400&quot;] &#x3D; palette[&quot;500&quot;];
-        palette[&quot;A700&quot;] &#x3D; palette[&quot;800&quot;];
-        Object.entries(palette).forEach(([key, value]) &#x3D;&gt;
-          document.documentElement.style.setProperty(
-            &#x60;--${property}-${key}&#x60;,
-            &#x60;#${value}&#x60;,
-          ),
-        );
+        try {
+          const palette &#x3D; materialColours(color);
+          palette[&quot;A100&quot;] &#x3D; palette[&quot;200&quot;];
+          palette[&quot;A200&quot;] &#x3D; palette[&quot;300&quot;];
+          palette[&quot;A400&quot;] &#x3D; palette[&quot;500&quot;];
+          palette[&quot;A700&quot;] &#x3D; palette[&quot;800&quot;];
+          Object.entries(palette).forEach(([key, value]) &#x3D;&gt;
+            document.documentElement.style.setProperty(
+              &#x60;--${property}-${key}&#x60;,
+              &#x60;#${value}&#x60;,
+            ),
+          );
+        } catch (e) {
+          Logging.warn(
+            &#x60;SiteSettingsService: invalid color value for &quot;${property}&quot;: ${color}&#x60;,
+            e,
+          );
+        }
       }
     });
   }
