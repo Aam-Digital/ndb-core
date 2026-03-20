@@ -21,7 +21,6 @@ import { CustomFormControlDirective } from "#src/app/core/common-components/basi
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
-import { HEX_COLOR_PATTERN } from "./color-validation.constants";
 
 /**
  * Edit component for color fields.
@@ -67,6 +66,7 @@ export class ColorInputComponent
 
   private readonly destroyRef = inject(DestroyRef);
 
+  HEX_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}$/;
   /**
    * Internal form control for the text input in standalone mode.
    */
@@ -81,16 +81,14 @@ export class ColorInputComponent
 
   ngOnInit() {
     if (this.formControl) {
-      // EditComponent mode: validate via the external form control
       this.formControl.valueChanges
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((value) => this.validateHex(value));
     } else {
-      // Standalone mode: validate internally and only emit valid values
       this.colorControl.valueChanges
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((value) => {
-          if (!value || HEX_COLOR_PATTERN.test(value)) {
+          if (!value || this.HEX_COLOR_PATTERN.test(value)) {
             this.colorControl.setErrors(null);
             this._value = value;
             this.stateChanges.next();
@@ -108,8 +106,6 @@ export class ColorInputComponent
         this.colorControl.setValue(value ?? "", { emitEvent: false });
       }
     }
-    // Update _value and stateChanges without emitting valueChange
-    // (valueChange is only emitted for user-initiated changes)
     if (JSON.stringify(value) === JSON.stringify(this._value)) return;
     this._value = value;
     if (notifyFormControl) {
@@ -127,7 +123,7 @@ export class ColorInputComponent
   }
 
   private validateHex(value: string): void {
-    if (!value || HEX_COLOR_PATTERN.test(value)) {
+    if (!value || this.HEX_COLOR_PATTERN.test(value)) {
       this.formControl?.setErrors(null);
     } else {
       this.formControl?.setErrors({
@@ -140,6 +136,6 @@ export class ColorInputComponent
 
   get colorPickerValue(): string {
     const val = this.formControl?.value ?? this.colorControl.value;
-    return val && HEX_COLOR_PATTERN.test(val) ? val : "#000000";
+    return val && this.HEX_COLOR_PATTERN.test(val) ? val : "#000000";
   }
 }
