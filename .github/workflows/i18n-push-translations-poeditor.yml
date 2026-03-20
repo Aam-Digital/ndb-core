@@ -27,6 +27,9 @@ jobs:
         run: npm run extract-i18n
 
       - name: Upload translations to POEditor
+        env:
+          POEDITOR_API_TOKEN: ${{ secrets.POEDITOR_API_TOKEN }}
+          POEDITOR_PROJECT_ID: ${{ secrets.POEDITOR_PROJECT_ID }}
         run: |
           file="src/assets/locale/messages.xlf"
           echo "Uploading new terms from ${file}"
@@ -34,8 +37,8 @@ jobs:
 
           echo "Uploading for referenc language 'en'"
           response=$(curl -s -X POST https://api.poeditor.com/v2/projects/upload \
-            -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
-            -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
+            -F "api_token=$POEDITOR_API_TOKEN" \
+            -F "id=$POEDITOR_PROJECT_ID" \
             -F "language=en" \
             -F "updating=terms_translations" \
             -F "read_from_source=1" \

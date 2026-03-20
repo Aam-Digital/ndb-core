@@ -3,7 +3,10 @@
 ## Abstract
 
 This guide depicts the workflow one needs to go through to add another language
-(such as _hindi_, _bengali_, _french_ e.t.c.) to the project
+(such as _hindi_, _bengali_, _french_ etc.) to the project.
+
+Translations are managed through [POEditor](https://poeditor.com/join/project/CGn4IA7Ilz)
+and published automatically to a GitHub Pages CDN at release time.
 
 ### 1) Find the correct language code
 
@@ -18,92 +21,43 @@ in the US (`en-US`), Great-Britain (`en-GB`) or Australia (`en-AU`).
 A list of available country codes can be found [here](https://www.iso.org/obp/ui/#search/code/).
 Once you have the language and country code, the resulting code is _language code_-_country code_.
 
-### 2) Let xliffmerge know about the new language
+### 2) Add the language to POEditor
 
-`xliffmerge` is a tool that helps in the translation process. Especially, it is needed to
-update the language files while retaining old translations.
+Add the new language in the [POEditor project](https://poeditor.com/join/project/CGn4IA7Ilz).
+This makes the language available for translators.
 
-Go to [xliffmerge.json](xliffmerge.json) and add your language code to the `languages` section.
-Again, for french, this could look like this:
+### 3) Update the publish workflow
 
-```json
-{
-  ...
-  "languages": [
-    // other languages
-    "fr"
-  ]
-}
+In `.github/workflows/i18n-publish-translations.yml`, add the language code to the `LANGUAGES`
+environment variable so that the export workflow includes the new language:
+
+```yaml
+env:
+  LANGUAGES: "fr de hi"
 ```
 
-### 3) Create a localization-file
+### 4) Add language to the UI
 
-In order to allow the actual translation process to take place, you need to create a
-standardized file that translators can work with. The standard that we use is `xlf`.
+Add the language to the `availableLocales` list in `src/app/core/language/languages.ts`.
+This allows the app to show the language in the language select component.
 
-To generate a file, simply use the script `extract-i18n` located inside the [package.json](package.json)
-file. This will automatically generate the needed file if none exists
+### 5) Register Angular locale data
 
-### 4) Add language icon
+In `src/bootstrap-i18n.ts`, add an `else if` branch for the new locale to import the
+Angular locale data:
 
-Go to the `LanguageService` and add the language to the list of `availableLocales`.
-This allows the app to show the langauge icon in the language select component.
-
-### 5) Include language in bundle
-
-To reduce the bundle size, only supported languages are shipped with the production build.
-To support a language by Angular (dates, units etc.) add the language to the _webpack include_ in the `main.ts`
-file:
-
-```javascript
-const localeModule = await import(
-  /* webpackInclude: /(fr|de)\.mjs/ <-- add language between the brackets sepreated by a pipe symbol */
-  `../node_modules/@angular/common/locales/${locale}`
-);
+```typescript
+} else if (locale == "hi") {
+  localeModule = await import("@angular/common/locales/hi");
+}
 ```
 
 ### 6) Test your build
 
-Run the app.
-You can change the language in the top right corner.
-If you have not added translations, the app will be in english.
-Try to translate some units.
-
-In order to do this, go to the newly created `src/locale/messages.<locale>.xlf` file.
-Inside this file, you will find a lot of"trans-units". These mark single texts that
-you can translate. Translate one or more of these units by replacing the content of
-the `target`. For example:
-
-```xml
-
-<trans-unit id="08c74dc9762957593b91f6eb5d65efdfc975bf48" datatype="html">
-  <source>Username</source>
-  <target state="translated">Nom d'utilisateur</target>
-  <context-group purpose="location">
-    <context context-type="sourcefile">src/app/core/admin/user-list/user-list.component.html</context>
-    <context context-type="linenumber">7,8</context>
-  </context-group>
-  <context-group purpose="location">
-    <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
-    <context context-type="linenumber">32</context>
-  </context-group>
-  <context-group purpose="location">
-    <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-    <context context-type="linenumber">26</context>
-  </context-group>
-</trans-unit>
-```
-
-You can change the state to "translated" as shown in the picture (but this is not required).
-Leave everything else as it is and test the app again. Translations should appear for each
-trans-unit that you have translated.
-
-A more detailed overview can be found in Guide
-[How to edit, update and work with XLF files](work-with-xlf.md).
+Run the app. You can change the language in the top right corner.
+If translations have not yet been added in POEditor, the app will show English fallback text.
 
 ### Conclusion
 
-You have now successfully added the capability to translate the app into the target
-language. You can now take the translation file (`"src/locale/messages.<your locale>.xlf"`) and
-send it to a translator to have it translated. Once this process is done, replace the
-preliminary translation file with the one that comes back from a translator.
+You have now successfully added a new language. Translators can work in POEditor,
+and translations will be automatically exported and published with each release.
