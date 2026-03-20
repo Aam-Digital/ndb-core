@@ -10,6 +10,9 @@ permissions:
   id-token: write  # required for _qa.yaml (QLTY code coverage)
 
 jobs:
+  toolchain:
+    uses: ./.github/workflows/_node-toolchain.yml
+
   qa:
     uses: ./.github/workflows/_qa.yaml
     secrets: inherit
@@ -39,6 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - qa
+      - toolchain
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
@@ -47,6 +51,12 @@ jobs:
 
       - name: Set up node
         uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.toolchain.outputs.node-version }}
+          cache: npm
+
+      - name: Set up npm
+        run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
 
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4
