@@ -293,8 +293,8 @@ export const coreComponents: ComponentTuple[] = [
   [
     "EditColor",
     () =>
-      import("./common-components/color-input/edit-color/edit-color.component").then(
-        (c) => c.EditColorComponent,
+      import("./common-components/color-input/color-input.component").then(
+        (c) => c.ColorInputComponent,
       ),
   ],
 ];
