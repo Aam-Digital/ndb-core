@@ -463,6 +463,9 @@
                             <a href="#PREFIX_VIEW_CONFIG" title="src/app/core/config/dynamic-routing/view-config.interface.ts" ><b>PREFIX_VIEW_CONFIG</b>&nbsp;&nbsp;&nbsp;(src/.../view-config.interface.ts)</a>
                         </li>
                         <li>
+                            <a href="#preloadScheduled" title="src/app/core/config/config.app-initializer.ts" ><b>preloadScheduled</b>&nbsp;&nbsp;&nbsp;(src/.../config.app-initializer.ts)</a>
+                        </li>
+                        <li>
                             <a href="#publicFormRoutes" title="src/app/features/public-form/public-form-routing.ts" ><b>publicFormRoutes</b>&nbsp;&nbsp;&nbsp;(src/.../public-form-routing.ts)</a>
                         </li>
                         <li>
@@ -1435,6 +1438,7 @@ to avoid breaking note details with a default config from AdminModule</p>
     const entityConfigService &#x3D; inject(EntityConfigService);
     const router &#x3D; inject(Router);
     const destroyRef &#x3D; inject(DestroyRef);
+    const componentRegistry &#x3D; inject(ComponentRegistry);
 
     // Re-trigger services that depend on the config when something changes
     configService.configUpdates
@@ -1444,12 +1448,50 @@ to avoid breaking note details with a default config from AdminModule</p>
         entityConfigService.setupEntitiesFromConfig();
         const url &#x3D; router.parseUrl(router.url);
         router.navigateByUrl(url, { skipLocationChange: true });
+
+        // Preload all dynamic component chunks in the background for offline availability
+        preloadDynamicComponents(componentRegistry);
       });
   },
 )</code>
                     </td>
                 </tr>
 
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="preloadScheduled"></a>
+                    <span class="name">
+                        <span ><b>preloadScheduled</b></span>
+                        <a href="#preloadScheduled"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Preload all components registered in the ComponentRegistry so their JS chunks
+are cached by the service worker and available offline even before the user
+has visited every page.</p>
+<p>Runs once in an idle callback to avoid blocking the main thread after login.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
