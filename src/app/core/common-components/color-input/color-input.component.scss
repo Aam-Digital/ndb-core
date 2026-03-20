@@ -1,3 +1,14 @@
+:host {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.color-text-input {
+  flex: 1;
+}
+
 .color-input-overlay {
   position: absolute;
   top: 0;
