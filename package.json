@@ -28,7 +28,7 @@
     "#e2e/*": "./e2e/*"
   },
   "overrides": {
-    "@babel/helper-define-polyfill-provider": "0.6.6"
+    "@babel/helper-define-polyfill-provider": "0.6.8"
   },
   "dependencies": {
     "@angular/animations": "^21.2.4",
