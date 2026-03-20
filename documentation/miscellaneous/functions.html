@@ -241,6 +241,9 @@
                             <a href="#extractHumanReadableLabel" title="src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts" ><b>extractHumanReadableLabel</b>&nbsp;&nbsp;&nbsp;(src/.../entity-count-dashboard.component.ts)</a>
                         </li>
                         <li>
+                            <a href="#fetchTranslations" title="src/bootstrap-i18n.ts" ><b>fetchTranslations</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-i18n.ts)</a>
+                        </li>
+                        <li>
                             <a href="#fieldsIncludingId" title="src/app/core/entity/entity-mapper/entity-relations.service.ts" ><b>fieldsIncludingId</b>&nbsp;&nbsp;&nbsp;(src/.../entity-relations.service.ts)</a>
                         </li>
                         <li>
@@ -476,9 +479,6 @@
                         </li>
                         <li>
                             <a href="#uniquePropertyValidator" title="src/app/core/common-components/entity-form/unique-property-validator/unique-property-validator.ts" ><b>uniquePropertyValidator</b>&nbsp;&nbsp;&nbsp;(src/.../unique-property-validator.ts)</a>
-                        </li>
-                        <li>
-                            <a href="#Unnamed function" title="src/app/utils/parse-xliff-to-js.ts" ><b>Unnamed function</b>&nbsp;&nbsp;&nbsp;(src/.../parse-xliff-to-js.ts)</a>
                         </li>
                         <li>
                             <a href="#waitForChangeTo" title="src/app/core/session/session-states/session-utils.ts" ><b>waitForChangeTo</b>&nbsp;&nbsp;&nbsp;(src/.../session-utils.ts)</a>
@@ -4433,6 +4433,137 @@ still supporting asymmetric matchers such as <code>expect.objectContaining(...)<
             </tr>
         </tbody>
     </table>
+</section>    <h3>src/bootstrap-i18n.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fetchTranslations"></a>
+                    <span class="name">
+                        <span ><b>fetchTranslations</b></span>
+                        <a href="#fetchTranslations"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>fetchTranslations(locale: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>locale</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;Record | undefined&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="initLanguage"></a>
+                    <span class="name">
+                        <span ><b>initLanguage</b></span>
+                        <a href="#initLanguage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>initLanguage(locale?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load translation files and apply them to angular localize system.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>locale</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>(Optional) overwrite the locale to use (otherwise loaded from local storage)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>    <h3>src/app/core/entity/entity-mapper/entity-relations.service.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -6661,76 +6792,6 @@ Please add assets/firebase-config.json with your own Firebase config</p>
             </tr>
         </tbody>
     </table>
-</section>    <h3>src/bootstrap-i18n.ts</h3>
-    <section data-compodoc="block-methods">
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="initLanguage"></a>
-                    <span class="name">
-                        <span ><b>initLanguage</b></span>
-                        <a href="#initLanguage"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>initLanguage(locale?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Load translation files and apply them to angular localize system.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                                <td>Description</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>locale</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    Yes
-                                            </td>
-
-
-                                            <td>
-                                                    <p>(Optional) overwrite the locale to use (otherwise loaded from local storage)</p>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
 </section>    <h3>src/app/core/common-components/entity-form/unique-property-validator/unique-property-validator.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -8377,78 +8438,6 @@ Supports JSON arrays and separator-delimited strings.</p>
 
 
 
-        </tbody>
-    </table>
-</section>    <h3>src/app/utils/parse-xliff-to-js.ts</h3>
-    <section data-compodoc="block-methods">
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="Unnamed function"></a>
-                    <span class="name">
-                        <span ><b>Unnamed function</b></span>
-                        <a href="#Unnamed function"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>Unnamed function(translations: unknown)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Parses a XLIFF text to a JSON object with the structure needed for <code>loadTranslations()</code> by Angular</p>
-<p>can be used with <code>import * as parseXliffToJson from &quot;parse-xliff-to-js&quot;;</code></p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                                <td>Description</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>translations</td>
-                                            <td>
-                                                        <code>unknown</code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                            <td>
-                                                    <p>a XLIFF text</p>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;unknown&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                <p>with the JSON object</p>
-
-                            </div>
-                </td>
-            </tr>
         </tbody>
     </table>
 </section>    <h3>src/app/core/session/session-states/session-utils.ts</h3>
