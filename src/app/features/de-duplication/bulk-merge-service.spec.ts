@@ -23,7 +23,7 @@ import type { Mock } from "vitest";
 
 @DatabaseEntity("TestEntityWithAccounts")
 class TestEntityWithAccounts extends Entity {
-  static override enableUserAccounts = true;
+  static override readonly enableUserAccounts = true;
 }
 
 @DatabaseEntity("EntityWithMergedRelations")
@@ -239,9 +239,10 @@ describe("BulkMergeService", () => {
 
     it("should reorder entities in showMergeDialog so account-holder is primary (index 0)", async () => {
       // Only entityB has an account
+      const notFound$ = throwError(() => ({ status: 404 }));
       mockUserAdminService.getUser.mockImplementation((entityId: string) => {
         if (entityId === entityB.getId()) return of(mockUserAccount);
-        return throwError(() => ({ status: 404 }));
+        return notFound$;
       });
 
       await service.showMergeDialog([entityA, entityB], TestEntityWithAccounts);
