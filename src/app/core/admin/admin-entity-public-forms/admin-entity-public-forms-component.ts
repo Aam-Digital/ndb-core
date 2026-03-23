@@ -22,5 +22,6 @@ export class AdminEntityPublicFormsComponent {
    */
   protected dummyEntity: any = {
     getId: () => this.entityConstructor.ENTITY_TYPE,
+    getType: () => this.entityConstructor.ENTITY_TYPE,
   };
 }
