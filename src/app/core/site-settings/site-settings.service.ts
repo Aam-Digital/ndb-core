@@ -119,17 +119,24 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   private subscribeColorChanges(property: "primary" | "secondary" | "error") {
     this.getPropertyObservable(property).subscribe((color) => {
       if (color) {
-        const palette = materialColours(color);
-        palette["A100"] = palette["200"];
-        palette["A200"] = palette["300"];
-        palette["A400"] = palette["500"];
-        palette["A700"] = palette["800"];
-        Object.entries(palette).forEach(([key, value]) =>
-          document.documentElement.style.setProperty(
-            `--${property}-${key}`,
-            `#${value}`,
-          ),
-        );
+        try {
+          const palette = materialColours(color);
+          palette["A100"] = palette["200"];
+          palette["A200"] = palette["300"];
+          palette["A400"] = palette["500"];
+          palette["A700"] = palette["800"];
+          Object.entries(palette).forEach(([key, value]) =>
+            document.documentElement.style.setProperty(
+              `--${property}-${key}`,
+              `#${value}`,
+            ),
+          );
+        } catch (e) {
+          Logging.warn(
+            `SiteSettingsService: invalid color value for "${property}": ${color}`,
+            e,
+          );
+        }
       }
     });
   }
