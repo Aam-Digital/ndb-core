@@ -156,7 +156,7 @@ describe("NotificationSettingComponent", () => {
     const initialLength =
       component.notificationConfig().notificationRules.length;
 
-    await component.addNewNotificationRule();
+    component.addNewNotificationRule();
 
     expect(component.notificationConfig().notificationRules.length).toBe(
       initialLength + 1,
@@ -166,7 +166,7 @@ describe("NotificationSettingComponent", () => {
   it("should create a new rule with default values", async () => {
     await component.ngOnInit();
 
-    await component.addNewNotificationRule();
+    component.addNewNotificationRule();
 
     const addedRule =
       component.notificationConfig().notificationRules[
@@ -181,7 +181,7 @@ describe("NotificationSettingComponent", () => {
 
   it("should update the notification rule with new values", async () => {
     await component.ngOnInit();
-    await component.addNewNotificationRule();
+    component.addNewNotificationRule();
     const testRule = component.notificationConfig().notificationRules[0];
     vi.spyOn(entityMapper, "save").mockReturnValue(Promise.resolve());
 
@@ -191,7 +191,7 @@ describe("NotificationSettingComponent", () => {
       label: "Test label",
     };
 
-    await component.updateNotificationRule(testRule, updatedRule);
+    component.updateNotificationRule(testRule, updatedRule);
 
     expect(testRule.entityType).toBe("Child");
     expect(testRule.label).toBe("Test label");
@@ -230,8 +230,8 @@ describe("NotificationSettingComponent", () => {
 
   it("should remove rule when user confirms deletion", async () => {
     await component.ngOnInit();
-    await component.addNewNotificationRule();
-    await component.addNewNotificationRule();
+    component.addNewNotificationRule();
+    component.addNewNotificationRule();
     vi.spyOn(entityMapper, "save").mockReturnValue(Promise.resolve());
     mockConfirmationDialog.getConfirmation.mockReturnValue(
       Promise.resolve(true),
@@ -249,7 +249,7 @@ describe("NotificationSettingComponent", () => {
 
   it("should save config after removing rule", async () => {
     await component.ngOnInit();
-    await component.addNewNotificationRule();
+    component.addNewNotificationRule();
     vi.spyOn(entityMapper, "save").mockReturnValue(Promise.resolve());
     mockConfirmationDialog.getConfirmation.mockReturnValue(
       Promise.resolve(true),
