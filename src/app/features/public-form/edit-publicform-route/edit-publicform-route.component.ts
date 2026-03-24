@@ -83,7 +83,7 @@ export class EditPublicformRouteComponent
     this.formControl.setValue(publicFormConfig.route);
 
     this.fullPrefixUrl = `${window.location.origin}/public-form/form/`;
-    this.prefixValue = this.fullPrefixUrl.replace(/^https?:\/\//, "");
+    this.prefixValue = `${window.location.origin}/`;
   }
 
   copyToClipboard(): void {
