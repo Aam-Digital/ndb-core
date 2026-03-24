@@ -68,6 +68,7 @@ export class EditPublicformRouteComponent
   @Input() entity?: Entity;
 
   prefixValue: string;
+  private fullPrefixUrl: string;
 
   get formControl(): FormControl<string> {
     return this.ngControl.control as FormControl<string>;
@@ -81,14 +82,12 @@ export class EditPublicformRouteComponent
     this.formControl.setValidators([Validators.required, noSpecialUrlChars]);
     this.formControl.setValue(publicFormConfig.route);
 
-    this.prefixValue = `${window.location.origin}/public-form/form/`.replace(
-      /^https?:\/\//,
-      "",
-    );
+    this.fullPrefixUrl = `${window.location.origin}/public-form/form/`;
+    this.prefixValue = this.fullPrefixUrl.replace(/^https?:\/\//, "");
   }
 
   copyToClipboard(): void {
-    const fullUrl = this.prefixValue + (this.formControl.value || "");
+    const fullUrl = this.fullPrefixUrl + (this.formControl.value || "");
     navigator.clipboard.writeText(fullUrl).then(() => {
       this.alertService.addInfo("Link copied: " + fullUrl);
     });
