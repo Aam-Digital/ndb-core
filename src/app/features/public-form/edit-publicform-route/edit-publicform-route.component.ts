@@ -81,7 +81,10 @@ export class EditPublicformRouteComponent
     this.formControl.setValidators([Validators.required, noSpecialUrlChars]);
     this.formControl.setValue(publicFormConfig.route);
 
-    this.prefixValue = `${window.location.origin}/public-form/form/`;
+    this.prefixValue = `${window.location.origin}/public-form/form/`.replace(
+      /^https?:\/\//,
+      "",
+    );
   }
 
   copyToClipboard(): void {
