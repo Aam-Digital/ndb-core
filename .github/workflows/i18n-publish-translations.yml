@@ -68,7 +68,7 @@ jobs:
             # Flatten nested context groups into a flat {id: translation} map
             # and convert XLIFF placeholders <x id="NAME" .../> to Angular runtime format {$NAME}
             if ! jq '[to_entries[] | if (.value | type) == "object" then (.value | to_entries[]) else . end] | from_entries
-              | with_entries(.value |= gsub("<x id=\"(?<id>[^\"]*)\"[^/]*/>"; "{$\(.id)}"))' "$outfile" > "$outfile.tmp"; then
+              | with_entries(.value |= gsub("<x id=\"(?<id>[^\"]*)\".*?/>"; "{$\(.id)}"))' "$outfile" > "$outfile.tmp"; then
               echo "Error transforming translations for $lang"
               exit 1
             fi
