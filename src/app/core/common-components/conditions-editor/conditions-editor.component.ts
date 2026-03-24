@@ -97,10 +97,16 @@ export class ConditionsEditorComponent implements OnInit {
     if (conditionIndex < 0 || conditionIndex >= conditions.length) return;
 
     conditions.splice(conditionIndex, 1);
-    this.conditionsSignal.set({ ...this.conditions });
+
+    if (conditions.length === 0) {
+      this.conditions = {};
+      this.conditionsSignal.set({});
+    } else {
+      this.conditionsSignal.set({ ...this.conditions });
+    }
 
     this.rebuildFormConfigs();
-    this.conditionsChange.emit(this.conditions);
+    this.conditionsChange.emit(conditions.length === 0 ? {} : this.conditions);
   }
 
   /**

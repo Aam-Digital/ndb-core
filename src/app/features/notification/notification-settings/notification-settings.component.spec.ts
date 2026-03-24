@@ -25,6 +25,7 @@ import {
   NotificationRule,
 } from "../model/notification-config";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { UnsavedChangesService } from "../../../core/entity-details/form/unsaved-changes.service";
 import type { Mock } from "vitest";
 
 type NotificationServiceMock = Pick<
@@ -196,22 +197,35 @@ describe("NotificationSettingComponent", () => {
     expect(testRule.label).toBe("Test label");
   });
 
-  it("should save the config after updating a rule", async () => {
+  it("should mark unsaved changes pending after updating a rule", async () => {
     await component.ngOnInit();
-    await component.addNewNotificationRule();
+    component.addNewNotificationRule();
     const testRule = component.notificationConfig().notificationRules[0];
-    vi.spyOn(entityMapper, "save").mockReturnValue(Promise.resolve());
+    const unsavedChanges = TestBed.inject(UnsavedChangesService);
 
     const updatedRule: NotificationRule = {
       ...testRule,
       enabled: false,
     };
 
-    await component.updateNotificationRule(testRule, updatedRule);
+    component.updateNotificationRule(testRule, updatedRule);
+
+    expect(unsavedChanges.pending).toBe(true);
+  });
+
+  it("should save the config and clear pending flag when saveSettings is called", async () => {
+    await component.ngOnInit();
+    component.addNewNotificationRule();
+    vi.spyOn(entityMapper, "save").mockReturnValue(Promise.resolve());
+    const unsavedChanges = TestBed.inject(UnsavedChangesService);
+    unsavedChanges.pending = true;
+
+    await component.saveSettings();
 
     expect(entityMapper.save).toHaveBeenCalledWith(
       component.notificationConfig(),
     );
+    expect(unsavedChanges.pending).toBe(false);
   });
 
   it("should remove rule when user confirms deletion", async () => {
