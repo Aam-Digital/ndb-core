@@ -31,4 +31,10 @@
       width: 100%;
     }
   }
+
+  .account-select-cell {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+  }
 }

@@ -251,6 +251,24 @@ describe("BulkMergeService", () => {
       expect(dialogData.entitiesToMerge[0].getId()).toBe(entityB.getId());
       expect(dialogData.entityAccounts[0]).toEqual(mockUserAccount);
       expect(dialogData.entityAccounts[1]).toBeNull();
+      expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
+    });
+
+    it("should warn and abort showMergeDialog if user cancels when one entity has an account", async () => {
+      const notFound$ = throwError(() => ({ status: 404 }));
+      mockUserAdminService.getUser.mockImplementation((entityId: string) => {
+        if (entityId === entityB.getId()) return of(mockUserAccount);
+        return notFound$;
+      });
+      mockConfirmationDialog.getConfirmation.mockResolvedValue(false);
+
+      const result = await service.showMergeDialog(
+        [entityA, entityB],
+        TestEntityWithAccounts,
+      );
+
+      expect(result).toBe(false);
+      expect(mockMatDialog.open).not.toHaveBeenCalled();
     });
 
     it("should warn and abort showMergeDialog if user cancels when both entities have accounts", async () => {
@@ -281,6 +299,7 @@ describe("BulkMergeService", () => {
       await service.showMergeDialog([entityA, entityB], TestEntityWithAccounts);
 
       expect(mockMatDialog.open).toHaveBeenCalled();
+      expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
       const dialogData = mockMatDialog.open.mock.calls[0][1].data;
       expect(dialogData.entityAccounts[0]).toEqual(mockAccountA);
       expect(dialogData.entityAccounts[1]).toEqual(mockUserAccount);

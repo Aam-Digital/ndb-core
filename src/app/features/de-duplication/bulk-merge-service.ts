@@ -69,11 +69,12 @@ export class BulkMergeService {
       entityAccounts.reverse();
     }
 
-    // Warn if both entities have accounts — one will be deleted
-    if (entityAccounts[0] && entityAccounts[1]) {
+    // Warn if any entity has an account and explain outcomes for both single-account and both-account cases.
+    const accountsFound = entityAccounts.filter((account) => account != null);
+    if (accountsFound.length > 0) {
       const confirmed = await this.confirmationDialog.getConfirmation(
-        $localize`:merge account warning title:Warning! Both records have user accounts`,
-        $localize`:merge account warning:Both records have linked user accounts. Merging will delete the user account of "Record B". This cannot be undone.\nAre you sure you want to continue?`,
+        $localize`:merge account warning title:Warning! User account(s) found`,
+        $localize`:merge account warning:At least one selected record has a linked user account.\nIf only one record has an account, that record is kept as "Record A" and the account remains linked after merge.\nIf both records have accounts, the account linked to "Record B" will be deleted.\nAre you sure you want to continue?`,
       );
       if (!confirmed) return false;
     }

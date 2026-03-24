@@ -115,12 +115,14 @@ export class EntityFormService {
    * @param entity
    * @param forTable
    * @param withPermissionCheck if true, fields without 'update' permissions will stay disabled when enabling form
+   * @param withDefaultValues if true, default value strategies are initialized and applied
    */
   public async createEntityForm<T extends Entity>(
     formFields: ColumnConfig[],
     entity: T,
     forTable = false,
     withPermissionCheck = true,
+    withDefaultValues = true,
   ): Promise<EntityForm<T>> {
     const fields = formFields.map((f) =>
       this.extendFormFieldConfig(f, entity.getConstructor(), forTable),
@@ -141,7 +143,9 @@ export class EntityFormService {
       watcher: new Map(),
     };
 
-    await this.defaultValueService.handleEntityForm(entityForm, entity);
+    if (withDefaultValues) {
+      await this.defaultValueService.handleEntityForm(entityForm, entity);
+    }
 
     return entityForm;
   }

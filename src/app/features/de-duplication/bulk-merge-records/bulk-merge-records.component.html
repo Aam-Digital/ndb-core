@@ -12,8 +12,28 @@
           <div class="label-cell">
             <strong i18n>Account Email</strong>
           </div>
-          <div>{{ entityAccounts[0]?.email ?? "-" }}</div>
-          <div>{{ entityAccounts[1]?.email ?? "-" }}</div>
+          <div class="account-select-cell">
+            <mat-radio-group>
+              <mat-radio-button
+                [checked]="isAccountEmailSelected(0)"
+                [disabled]="!hasAccountEmail(0)"
+                (click)="selectAccountEmail(0)"
+              >
+                {{ entityAccounts[0]?.email ?? "-" }}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+          <div class="account-select-cell">
+            <mat-radio-group>
+              <mat-radio-button
+                [checked]="isAccountEmailSelected(1)"
+                [disabled]="!hasAccountEmail(1)"
+                (click)="selectAccountEmail(1)"
+              >
+                {{ entityAccounts[1]?.email ?? "-" }}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
           <div class="preview-cell">
             @if (accountForm) {
               <mat-form-field class="full-width">
@@ -35,8 +55,24 @@
           <div class="label-cell">
             <strong i18n>Account Roles</strong>
           </div>
-          <div>{{ formatRoles(entityAccounts[0]) }}</div>
-          <div>{{ formatRoles(entityAccounts[1]) }}</div>
+          <div class="account-select-cell">
+            <mat-checkbox
+              [checked]="isAccountRolesSelected(0)"
+              [disabled]="!hasAccountRoles(0)"
+              (change)="toggleAccountRoles(0, $event.checked)"
+            >
+              {{ formatRoles(entityAccounts[0]) }}
+            </mat-checkbox>
+          </div>
+          <div class="account-select-cell">
+            <mat-checkbox
+              [checked]="isAccountRolesSelected(1)"
+              [disabled]="!hasAccountRoles(1)"
+              (change)="toggleAccountRoles(1, $event.checked)"
+            >
+              {{ formatRoles(entityAccounts[1]) }}
+            </mat-checkbox>
+          </div>
           <div class="preview-cell">
             @if (accountForm) {
               <mat-form-field class="full-width">

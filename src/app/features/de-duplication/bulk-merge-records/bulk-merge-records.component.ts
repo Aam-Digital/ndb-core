@@ -1,6 +1,7 @@
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
 import {
+  ChangeDetectorRef,
   ChangeDetectionStrategy,
   Component,
   inject,
@@ -23,6 +24,8 @@ import {
 } from "@angular/material/dialog";
 import { MatError, MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatRadioModule } from "@angular/material/radio";
 import { MatSelectModule } from "@angular/material/select";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
@@ -52,6 +55,8 @@ import { lastValueFrom } from "rxjs";
     WarningNotOptimizedForSmallScreenComponent,
     MatFormFieldModule,
     MatInputModule,
+    MatCheckboxModule,
+    MatRadioModule,
     MatSelectModule,
   ],
   templateUrl: "./bulk-merge-records.component.html",
@@ -64,6 +69,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   private readonly entityFormService = inject(EntityFormService);
   private readonly userAdminService = inject(UserAdminService);
   private readonly fb = inject(FormBuilder);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   entityConstructor: EntityConstructor;
   entitiesToMerge: E[];
@@ -75,6 +81,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   /** Reactive form for editing the surviving account's email and roles */
   accountForm: FormGroup | null = null;
   availableRoles: Role[] = [];
+  selectedAccountEmailIndex: number | null = null;
 
   /** whether the entitiesToMerge contain some file attachments that would be lost during a merge */
   hasDiscardedFileOrPhoto: boolean = false;
@@ -94,6 +101,56 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   formatRoles(account: UserAccount | null | undefined): string {
     if (!account?.roles?.length) return "-";
     return account.roles.map((r) => r.name).join(", ");
+  }
+
+  hasAccountEmail(index: number): boolean {
+    return !!this.entityAccounts[index]?.email;
+  }
+
+  isAccountEmailSelected(index: number): boolean {
+    return this.selectedAccountEmailIndex === index;
+  }
+
+  selectAccountEmail(index: number): void {
+    if (!this.hasAccountEmail(index)) {
+      return;
+    }
+
+    this.selectedAccountEmailIndex = index;
+    this.accountEmailControl?.setValue(this.entityAccounts[index]?.email);
+    this.accountEmailControl?.markAsDirty();
+  }
+
+  hasAccountRoles(index: number): boolean {
+    return this.getAccountRoles(index).length > 0;
+  }
+
+  isAccountRolesSelected(index: number): boolean {
+    const selectedRoles = (this.accountRolesControl?.value ?? []) as Role[];
+    const selectedRoleIds = new Set(selectedRoles.map((r) => r.id));
+    const accountRoles = this.getAccountRoles(index);
+
+    if (!accountRoles.length) {
+      return false;
+    }
+
+    return accountRoles.every((role) => selectedRoleIds.has(role.id));
+  }
+
+  toggleAccountRoles(index: number, checked: boolean): void {
+    const selectedRoles = (this.accountRolesControl?.value ?? []) as Role[];
+    const accountRoles = this.getAccountRoles(index);
+    if (!accountRoles.length) return;
+
+    const selectedMap = new Map(selectedRoles.map((r) => [r.id, r]));
+    if (checked) {
+      accountRoles.forEach((role) => selectedMap.set(role.id, role));
+    } else {
+      accountRoles.forEach((role) => selectedMap.delete(role.id));
+    }
+
+    this.accountRolesControl?.setValue(Array.from(selectedMap.values()));
+    this.accountRolesControl?.markAsDirty();
   }
 
   constructor() {
@@ -116,10 +173,17 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     this.mergeForm = await this.entityFormService.createEntityForm(
       this.fieldsToMerge,
       this.mergedEntity,
+      false,
+      true,
+      false,
     );
+    // Render merge preview immediately once core form is ready.
+    this.cdr.detectChanges();
 
     if (this.hasAnyUserAccount) {
       await this.initAccountForm();
+      // Refresh account section after async role/account control initialization.
+      this.cdr.detectChanges();
     }
   }
 
@@ -131,18 +195,49 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
         this.userAdminService.getAllRoles(),
       );
     } catch {
-      this.availableRoles = primaryAccount?.roles ?? [];
+      this.availableRoles = this.uniqueRoles(
+        this.entityAccounts.flatMap((account) => account?.roles ?? []),
+      );
     }
 
-    // Map the current roles to available role objects to ensure reference equality for mat-select
-    const currentRoles = (primaryAccount?.roles ?? [])
-      .map((r) => this.availableRoles.find((ar) => ar.id === r.id))
-      .filter((r): r is Role => r !== undefined);
+    // Map the current roles to available role objects to ensure reference equality for mat-select.
+    const currentRoles = this.getAccountRoles(0);
 
     this.accountForm = this.fb.group({
       email: [primaryAccount?.email ?? "", [Validators.email]],
       roles: new FormControl<Role[]>(currentRoles),
     });
+
+    this.selectedAccountEmailIndex = this.hasAccountEmail(0)
+      ? 0
+      : this.hasAccountEmail(1)
+        ? 1
+        : null;
+    this.accountEmailControl?.valueChanges.subscribe((value) => {
+      if (value === this.entityAccounts[0]?.email) {
+        this.selectedAccountEmailIndex = 0;
+      } else if (value === this.entityAccounts[1]?.email) {
+        this.selectedAccountEmailIndex = 1;
+      } else {
+        this.selectedAccountEmailIndex = null;
+      }
+    });
+  }
+
+  private getAccountRoles(index: number): Role[] {
+    return this.uniqueRoles(
+      (this.entityAccounts[index]?.roles ?? []).map(
+        (role) =>
+          this.availableRoles.find(
+            (availableRole) => availableRole.id === role.id,
+          ) ?? role,
+      ),
+    );
+  }
+
+  private uniqueRoles(roles: Role[]): Role[] {
+    const roleMap = new Map(roles.map((role) => [role.id, role]));
+    return Array.from(roleMap.values());
   }
 
   private initFieldsToMerge(): void {
