@@ -91,6 +91,16 @@ describe("ConditionsEditorComponent", () => {
     expect(component.conditionsArray().length).toBe(0);
   });
 
+  it("should emit {} when the last condition is deleted", () => {
+    component.conditions = { $or: [{ name: "Test" }] };
+    component.ngOnInit();
+    vi.spyOn(component.conditionsChange, "emit");
+
+    component.deleteCondition(0);
+
+    expect(component.conditionsChange.emit).toHaveBeenCalledWith({});
+  });
+
   it("should emit conditionsChange when conditions are modified", () => {
     vi.spyOn(component.conditionsChange, "emit");
     component.addCondition();
