@@ -136,7 +136,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
         for (const control of Object.keys(formGroup.controls)) {
           const formControl = formGroup.get(control);
-          if (formControl && formControl.invalid) {
+          if (formControl?.invalid) {
             // Find the field config to get the label
             const fieldConfig = fieldConfigs.find((f) => f.id === control);
             invalidNames.push(fieldConfig?.label || control);
