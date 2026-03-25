@@ -5,7 +5,13 @@ import {
   Input,
   OnInit,
 } from "@angular/core";
-import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
+import {
+  AbstractControl,
+  FormControl,
+  ReactiveFormsModule,
+  ValidatorFn,
+  Validators,
+} from "@angular/forms";
 import { MatIconButton } from "@angular/material/button";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -18,6 +24,18 @@ import { DynamicComponent } from "../../../core/config/dynamic-components/dynami
 import { EditComponent } from "../../../core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { Entity } from "../../../core/entity/model/entity";
 import { PublicFormConfig } from "../public-form-config";
+
+const noSpecialUrlChars: ValidatorFn = (control: AbstractControl) => {
+  const value: string = control.value;
+  if (value && /[/?#%&+\\]/.test(value)) {
+    return {
+      pattern: {
+        errorMessage: $localize`The link ID must not contain special characters like / ? # % & + \\`,
+      },
+    };
+  }
+  return null;
+};
 
 /**
  * Special Form Field to edit an ID and copy the full public-form URL generated based on this.
@@ -50,6 +68,7 @@ export class EditPublicformRouteComponent
   @Input() entity?: Entity;
 
   prefixValue: string;
+  private fullPrefixUrl: string;
 
   get formControl(): FormControl<string> {
     return this.ngControl.control as FormControl<string>;
@@ -60,14 +79,15 @@ export class EditPublicformRouteComponent
       route: this.formControl.getRawValue(),
     } as Partial<PublicFormConfig> as PublicFormConfig;
 
-    this.formControl.setValidators([Validators.required]);
+    this.formControl.setValidators([Validators.required, noSpecialUrlChars]);
     this.formControl.setValue(publicFormConfig.route);
 
-    this.prefixValue = `${window.location.origin}/public-form/form/`;
+    this.fullPrefixUrl = `${window.location.origin}/public-form/form/`;
+    this.prefixValue = `${window.location.origin}/.../`;
   }
 
   copyToClipboard(): void {
-    const fullUrl = this.prefixValue + (this.formControl.value || "");
+    const fullUrl = this.fullPrefixUrl + (this.formControl.value || "");
     navigator.clipboard.writeText(fullUrl).then(() => {
       this.alertService.addInfo("Link copied: " + fullUrl);
     });
