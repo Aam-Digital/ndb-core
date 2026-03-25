@@ -2,8 +2,8 @@
  * Configuration for the floating primary action button.
  */
 export interface PrimaryActionConfig {
-  /** Whether the floating action button should be rendered. Defaults to true when undefined. */
-  enabled?: boolean;
+  /** Whether the floating action button should be hidden. Defaults to false when undefined. */
+  disabled?: boolean;
   /** FontAwesome icon name (e.g. "plus", "file-alt") */
   icon: string;
   /** "createEntity" or "navigate" */

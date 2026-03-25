@@ -52,7 +52,7 @@ export class AdminPrimaryActionComponent {
 
   actionType: "createEntity" | "navigate";
   entityType: string;
-  enabled: boolean;
+  disabled: boolean;
 
   private initialConfigString: string;
 
@@ -63,7 +63,7 @@ export class AdminPrimaryActionComponent {
 
   private initForm() {
     const current = this.currentConfig;
-    this.enabled = current.enabled !== false;
+    this.disabled = current.disabled ?? false;
     this.actionType = current.actionType;
     this.entityType = current.entityType ?? "Note";
     // Create a completely new object reference to trigger change detection
@@ -87,7 +87,7 @@ export class AdminPrimaryActionComponent {
     return {
       actionType: this.actionType,
       entityType: this.entityType,
-      enabled: this.enabled,
+      disabled: this.disabled,
       icon: this.menuItem.icon,
       route: this.menuItem.link,
     };
@@ -107,7 +107,7 @@ export class AdminPrimaryActionComponent {
 
   save() {
     const config: PrimaryActionConfig = {
-      enabled: this.enabled,
+      disabled: this.disabled,
       icon: this.menuItem.icon,
       actionType: this.actionType,
       entityType:
