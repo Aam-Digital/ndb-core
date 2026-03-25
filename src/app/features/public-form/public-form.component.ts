@@ -65,6 +65,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     }
   > = [];
   error: "not_found" | "no_permissions";
+  validationError = false;
   invalidFieldNames: string[] = [];
 
   ngOnInit() {
@@ -77,6 +78,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   async submit() {
+    this.validationError = false;
     this.invalidFieldNames = [];
     this.publicFormLinkingService.applyLinkedFromForm(this.entityFormEntries);
     if (
@@ -85,6 +87,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       )
     ) {
       // Collect invalid field names for summary message
+      this.validationError = true;
       this.setInvalidFieldSummary();
       return;
     }
@@ -101,6 +104,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     } catch (e) {
       if (e instanceof InvalidFormFieldError) {
         // Collect invalid field names for summary message
+        this.validationError = true;
         this.setInvalidFieldSummary();
         return;
       }
@@ -109,6 +113,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   async reset() {
+    this.validationError = false;
     this.invalidFieldNames = [];
     await this.initForms();
   }
