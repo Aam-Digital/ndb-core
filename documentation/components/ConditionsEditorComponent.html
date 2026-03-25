@@ -334,7 +334,7 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>{ $or: [] }</code>
+                        <i>Default value : </i><code>{}</code>
                     </td>
                 </tr>
                         <tr>
@@ -646,8 +646,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="109"
-                                    class="link-to-prism">src/app/core/common-components/conditions-editor/conditions-editor.component.ts:109</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="115"
+                                    class="link-to-prism">src/app/core/common-components/conditions-editor/conditions-editor.component.ts:115</a></div>
                         </td>
                     </tr>
 
@@ -727,8 +727,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="283"
-                                    class="link-to-prism">src/app/core/common-components/conditions-editor/conditions-editor.component.ts:283</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="289"
+                                    class="link-to-prism">src/app/core/common-components/conditions-editor/conditions-editor.component.ts:289</a></div>
                         </td>
                     </tr>
 
@@ -901,14 +901,14 @@ import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&
   ],
 })
 export class ConditionsEditorComponent implements OnInit {
-  @Input() conditions: any &#x3D; { $or: [] };
+  @Input() conditions: any &#x3D; {};
   @Input() entityConstructor?: EntityConstructor;
   @Input() disabled &#x3D; false;
   @Input() label &#x3D; $localize&#x60;Edit JSON&#x60;;
 
   @Output() conditionsChange &#x3D; new EventEmitter&lt;any&gt;();
 
-  private readonly conditionsSignal &#x3D; signal&lt;any&gt;({ $or: [] });
+  private readonly conditionsSignal &#x3D; signal&lt;any&gt;({});
 
   conditionFormFieldConfigs &#x3D; new Map&lt;string, FormFieldConfig&gt;();
   conditionFormControls &#x3D; new Map&lt;string, FormControl&gt;();
@@ -956,10 +956,16 @@ export class ConditionsEditorComponent implements OnInit {
     if (conditionIndex &lt; 0 || conditionIndex &gt;&#x3D; conditions.length) return;
 
     conditions.splice(conditionIndex, 1);
-    this.conditionsSignal.set({ ...this.conditions });
+
+    if (conditions.length &#x3D;&#x3D;&#x3D; 0) {
+      this.conditions &#x3D; {};
+      this.conditionsSignal.set({});
+    } else {
+      this.conditionsSignal.set({ ...this.conditions });
+    }
 
     this.rebuildFormConfigs();
-    this.conditionsChange.emit(this.conditions);
+    this.conditionsChange.emit(conditions.length &#x3D;&#x3D;&#x3D; 0 ? {} : this.conditions);
   }
 
   /**
@@ -1162,9 +1168,9 @@ export class ConditionsEditorComponent implements OnInit {
    * @param input - The conditions object to normalize
    * @returns Normalized conditions in { $or: [...] } format
    */
-  private normalizeConditions(input: any): { $or: Record&lt;string, any&gt;[] } {
+  private normalizeConditions(input: any): any {
     if (!input || typeof input !&#x3D;&#x3D; &quot;object&quot; || Array.isArray(input)) {
-      return { $or: [] };
+      return {};
     }
 
     const existingOr &#x3D; Array.isArray(input.$or)
@@ -1180,6 +1186,9 @@ export class ConditionsEditorComponent implements OnInit {
     const legacyEntries &#x3D; Object.entries(input).filter(
       ([key]) &#x3D;&gt; key !&#x3D;&#x3D; &quot;$or&quot;,
     );
+    if (legacyEntries.length &#x3D;&#x3D;&#x3D; 0) {
+      return {};
+    }
     return {
       $or: legacyEntries.map(([key, value]) &#x3D;&gt; ({ [key]: value })),
     };
