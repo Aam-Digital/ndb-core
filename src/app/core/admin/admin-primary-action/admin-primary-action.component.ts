@@ -4,6 +4,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { MatButtonModule } from "@angular/material/button";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MenuItemFormComponent } from "../admin-menu/menu-item-form/menu-item-form.component";
 import { ConfigService } from "../../config/config.service";
 import { PrimaryActionConfig } from "./primary-action-config";
@@ -25,6 +26,7 @@ import { HintBoxComponent } from "../../common-components/hint-box/hint-box.comp
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatSlideToggleModule,
     MenuItemFormComponent,
     EntityTypeSelectComponent,
     FormsModule,
@@ -50,6 +52,7 @@ export class AdminPrimaryActionComponent {
 
   actionType: "createEntity" | "navigate";
   entityType: string;
+  enabled: boolean;
 
   private initialConfigString: string;
 
@@ -60,6 +63,7 @@ export class AdminPrimaryActionComponent {
 
   private initForm() {
     const current = this.currentConfig;
+    this.enabled = current.enabled !== false;
     this.actionType = current.actionType;
     this.entityType = current.entityType ?? "Note";
     // Create a completely new object reference to trigger change detection
@@ -83,6 +87,7 @@ export class AdminPrimaryActionComponent {
     return {
       actionType: this.actionType,
       entityType: this.entityType,
+      enabled: this.enabled,
       icon: this.menuItem.icon,
       route: this.menuItem.link,
     };
@@ -102,6 +107,7 @@ export class AdminPrimaryActionComponent {
 
   save() {
     const config: PrimaryActionConfig = {
+      enabled: this.enabled,
       icon: this.menuItem.icon,
       actionType: this.actionType,
       entityType:

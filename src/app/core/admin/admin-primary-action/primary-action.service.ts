@@ -21,6 +21,7 @@ export class PrimaryActionService {
    * Default configuration for the primary action.
    */
   readonly defaultConfig: PrimaryActionConfig = {
+    enabled: true,
     icon: "file-alt",
     actionType: "createEntity",
     entityType: "Note",
