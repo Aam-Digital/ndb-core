@@ -53,8 +53,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   private configService = inject(ConfigService);
   private readonly publicFormLinkingService = inject(PublicFormLinkingService);
 
-  // Track if the last submit attempt failed due to validation
-  validationError = false;
   private ability = inject(EntityAbility);
   private router = inject(Router);
 
@@ -67,6 +65,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     }
   > = [];
   error: "not_found" | "no_permissions";
+  invalidFieldNames: string[] = [];
 
   ngOnInit() {
     this.databaseResolver.initDatabasesForAnonymous();
@@ -78,14 +77,15 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   async submit() {
-    this.validationError = false;
+    this.invalidFieldNames = [];
     this.publicFormLinkingService.applyLinkedFromForm(this.entityFormEntries);
     if (
       this.entityFormEntries.some(
         (entry) => entry.form?.formGroup?.invalid ?? true,
       )
     ) {
-      this.validationError = true;
+      // Collect invalid field names for summary message
+      this.setInvalidFieldSummary();
       return;
     }
     try {
@@ -100,7 +100,8 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       });
     } catch (e) {
       if (e instanceof InvalidFormFieldError) {
-        this.validationError = true;
+        // Collect invalid field names for summary message
+        this.setInvalidFieldSummary();
         return;
       }
       throw e;
@@ -108,8 +109,38 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   async reset() {
-    this.validationError = false;
+    this.invalidFieldNames = [];
     await this.initForms();
+  }
+
+  private setInvalidFieldSummary() {
+    this.invalidFieldNames = [...new Set(this.collectInvalidFieldNames())];
+  }
+
+  /**
+   * Collects the labels of all invalid fields across all form entries.
+   * This provides a summary for forms with many fields where the invalid field might be off-screen.
+   */
+  private collectInvalidFieldNames(): string[] {
+    const invalidNames: string[] = [];
+
+    for (const entry of this.entityFormEntries) {
+      if (entry.form?.formGroup?.invalid) {
+        const formGroup = entry.form.formGroup;
+        const fieldConfigs = entry.form.fieldConfigs;
+
+        for (const control of Object.keys(formGroup.controls)) {
+          const formControl = formGroup.get(control);
+          if (formControl && formControl.invalid) {
+            // Find the field config to get the label
+            const fieldConfig = fieldConfigs.find((f) => f.id === control);
+            invalidNames.push(fieldConfig?.label || control);
+          }
+        }
+      }
+    }
+
+    return invalidNames;
   }
 
   private async loadFormConfig() {
@@ -219,14 +250,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
         [].concat(...entry.fieldGroups.map((group) => group.fields)),
         entry.entity,
       );
-      // Subscribe to form changes and clear validation error when form is valid
-      entry.form.formGroup.valueChanges
-        .pipe(untilDestroyed(this))
-        .subscribe(() => {
-          if (this.validationError && entry.form.formGroup.valid) {
-            this.validationError = false;
-          }
-        });
     }
   }
 
