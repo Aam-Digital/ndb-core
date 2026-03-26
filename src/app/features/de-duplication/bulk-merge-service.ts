@@ -71,16 +71,6 @@ export class BulkMergeService {
       entityAccounts.reverse();
     }
 
-    // Warn if any entity has an account and explain outcomes for both single-account and both-account cases.
-    const accountsFound = entityAccounts.filter((account) => account != null);
-    if (accountsFound.length > 0) {
-      const confirmed = await this.confirmationDialog.getConfirmation(
-        $localize`:merge account warning title:Warning! User account(s) found`,
-        $localize`:merge account warning:At least one selected record has a linked user account.\nIf only one record has an account, that record is kept as "Record A" and the account remains linked after merge.\nIf both records have accounts, the account linked to "Record B" will be deleted.\nAre you sure you want to continue?`,
-      );
-      if (!confirmed) return false;
-    }
-
     const dialogRef = this.matDialog.open(BulkMergeRecordsComponent, {
       maxHeight: "90vh",
       data: {

@@ -140,6 +140,15 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     if (this.mergeForm.formGroup.invalid) return false;
     if (this.accountSection()?.accountForm()?.invalid) return false;
 
+    const accountsFound = this.entityAccounts.filter((a) => a != null);
+    if (accountsFound.length > 0) {
+      const confirmed = await this.confirmationDialog.getConfirmation(
+        $localize`:merge account warning title:Warning! User account(s) found`,
+        $localize`:merge account warning:At least one selected record has a linked user account.\nIf only one record has an account, that record is kept as "Record A" and the account remains linked after merge.\nIf both records have accounts, the account linked to "Record B" will be deleted.\nAre you sure you want to continue?`,
+      );
+      if (!confirmed) return false;
+    }
+
     if (this.hasDiscardedFileOrPhoto) {
       const fileIgnoreConfirmed = await this.confirmationDialog.getConfirmation(
         $localize`:Merge confirmation title:Warning! Some file attachments will be lost`,

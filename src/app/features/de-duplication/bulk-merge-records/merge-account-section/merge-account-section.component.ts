@@ -77,7 +77,6 @@ export class MergeAccountSectionComponent implements OnInit {
     return !!this.entityAccounts()[index]?.email;
   }
 
-
   selectAccountEmail(index: number): void {
     this.selectedAccountEmailIndex.set(index);
     this.accountEmailControl()?.setValue(this.entityAccounts()[index]?.email);
@@ -144,7 +143,8 @@ export class MergeAccountSectionComponent implements OnInit {
 
     const defaultEmail =
       this.selectedAccountEmailIndex() != null
-        ? (this.entityAccounts()[this.selectedAccountEmailIndex()!]?.email ?? "")
+        ? (this.entityAccounts()[this.selectedAccountEmailIndex()!]?.email ??
+          "")
         : "";
 
     // Map the current roles to available role objects to ensure reference equality for mat-select.

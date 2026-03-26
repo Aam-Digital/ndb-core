@@ -43,13 +43,17 @@
   <button
     mat-raised-button
     color="accent"
-    [disabled]="mergeForm?.formGroup.invalid || accountSection()?.accountForm()?.invalid"
+    [disabled]="
+      mergeForm?.formGroup.invalid || accountSection()?.accountForm()?.invalid
+    "
     (click)="confirmAndMergeRecords()"
     i18n
   >
     Merge
   </button>
-  @if (mergeForm?.formGroup.invalid || accountSection()?.accountForm()?.invalid) {
+  @if (
+    mergeForm?.formGroup.invalid || accountSection()?.accountForm()?.invalid
+  ) {
     <mat-error i18n>
       The data you selected to merge is invalid, please check the fields in the
       "Merge Preview" above.
