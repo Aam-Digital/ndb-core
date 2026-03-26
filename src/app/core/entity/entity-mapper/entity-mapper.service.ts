@@ -248,7 +248,9 @@ export class EntityMapperService {
   }
 
   protected setEntityMetadata(entity: Entity) {
-    const metadataBy = this.currentUser.value?.getId() ?? entity.created?.by;
+    const currentUserId = this.currentUser.value?.getId();
+    const metadataBy =
+      currentUserId ?? (entity.isNew ? entity.created?.by : undefined);
     const newMetadata = new UpdateMetadata(metadataBy);
     if (entity.isNew) {
       entity.created = newMetadata;
