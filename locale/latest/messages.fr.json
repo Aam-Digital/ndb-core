@@ -1314,5 +1314,6 @@
   "2999993832814935436": "Pick color",
   "8028490661906534915": "Please enter a valid hex color code (e.g. #ff0000)",
   "1195692991106066960": "Notification settings saved.",
-  "7456247463242961477": "The link ID must not contain special characters like / ? # % & + \\"
+  "7456247463242961477": "The link ID must not contain special characters like / ? # % & + \\",
+  "8024176361057345546": " +{$INTERPOLATION} more "
 }
