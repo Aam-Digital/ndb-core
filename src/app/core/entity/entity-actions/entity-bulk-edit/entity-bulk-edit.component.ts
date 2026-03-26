@@ -45,8 +45,8 @@ import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved
 export class EntityBulkEditComponent<E extends Entity> implements OnInit {
   private dialogRef = inject<MatDialogRef<any>>(MatDialogRef);
   private entityFormService = inject(EntityFormService);
-  private unsavedChanges = inject(UnsavedChangesService);
-  private pendingStateBeforeDialogOpen = this.unsavedChanges.pending;
+  private readonly unsavedChanges = inject(UnsavedChangesService);
+  private readonly pendingStateBeforeDialogOpen = this.unsavedChanges.pending;
 
   entityConstructor: EntityConstructor;
   entitiesToEdit: E[];
