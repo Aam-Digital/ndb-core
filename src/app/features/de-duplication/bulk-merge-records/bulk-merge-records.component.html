@@ -7,93 +7,12 @@
         <div class="header" i18n>Record A</div>
         <div class="header" i18n>Record B</div>
         <div class="header" i18n>Merge Preview</div>
-        @if (entityConstructor.enableUserAccounts && accountLoadError()) {
-          <div class="label-cell"></div>
-          <mat-error class="account-load-error" i18n>
-            User account information could not be loaded. You may be offline or
-            lack account_manager permissions. This merge will proceed without
-            changes to user accounts.
-          </mat-error>
-        }
-        @if (hasAnyUserAccount()) {
-          <!-- Account Email row -->
-          <div class="label-cell">
-            <strong i18n>Account Email</strong>
-          </div>
-          <mat-radio-group
-            class="account-email-radio-group"
-            [value]="selectedAccountEmailIndex"
-            (change)="selectAccountEmail($event.value)"
-          >
-            <div class="account-select-cell">
-              <mat-radio-button [value]="0" [disabled]="!hasAccountEmail(0)">
-                {{ entityAccounts[0]?.email ?? "-" }}
-              </mat-radio-button>
-            </div>
-            <div class="account-select-cell">
-              <mat-radio-button [value]="1" [disabled]="!hasAccountEmail(1)">
-                {{ entityAccounts[1]?.email ?? "-" }}
-              </mat-radio-button>
-            </div>
-          </mat-radio-group>
-          <div class="preview-cell">
-            @if (accountForm) {
-              <mat-form-field class="full-width">
-                <mat-label i18n>Email</mat-label>
-                <input
-                  matInput
-                  type="email"
-                  [formControl]="accountEmailControl"
-                />
-                @if (accountEmailControl?.hasError("email")) {
-                  <mat-error i18n>Please enter a valid email</mat-error>
-                }
-              </mat-form-field>
-            } @else {
-              {{ entityAccounts[0]?.email ?? "-" }}
-            }
-          </div>
-          <!-- Account Roles row -->
-          <div class="label-cell">
-            <strong i18n>Account Roles</strong>
-          </div>
-          <div class="account-select-cell">
-            <mat-checkbox
-              [checked]="isAccountRolesSelected(0)"
-              [disabled]="!hasAccountRoles(0)"
-              (change)="toggleAccountRoles(0, $event.checked)"
-            >
-              {{ formatRoles(entityAccounts[0]) }}
-            </mat-checkbox>
-          </div>
-          <div class="account-select-cell">
-            <mat-checkbox
-              [checked]="isAccountRolesSelected(1)"
-              [disabled]="!hasAccountRoles(1)"
-              (change)="toggleAccountRoles(1, $event.checked)"
-            >
-              {{ formatRoles(entityAccounts[1]) }}
-            </mat-checkbox>
-          </div>
-          <div class="preview-cell">
-            @if (accountForm) {
-              <mat-form-field class="full-width">
-                <mat-label i18n>Roles</mat-label>
-                <mat-select [formControl]="accountRolesControl" multiple>
-                  <mat-select-trigger>
-                    @for (role of accountRolesControl?.value; track role.id) {
-                      <span>{{ role.name }} </span>
-                    }
-                  </mat-select-trigger>
-                  @for (role of availableRoles; track role.id) {
-                    <mat-option [value]="role">{{ role.name }}</mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-            } @else {
-              {{ formatRoles(entityAccounts[0]) }}
-            }
-          </div>
+        @if (entityConstructor.enableUserAccounts) {
+          <app-merge-account-section
+            [entityAccounts]="entityAccounts"
+            [accountLoadError]="accountLoadError"
+            [entityConstructor]="entityConstructor"
+          />
         }
         @for (field of fieldsToMerge; track field.id) {
           <div class="label-cell">
@@ -124,13 +43,13 @@
   <button
     mat-raised-button
     color="accent"
-    [disabled]="mergeForm?.formGroup.invalid || accountForm?.invalid"
+    [disabled]="mergeForm?.formGroup.invalid || accountSection()?.accountForm()?.invalid"
     (click)="confirmAndMergeRecords()"
     i18n
   >
     Merge
   </button>
-  @if (mergeForm?.formGroup.invalid || accountForm?.invalid) {
+  @if (mergeForm?.formGroup.invalid || accountSection()?.accountForm()?.invalid) {
     <mat-error i18n>
       The data you selected to merge is invalid, please check the fields in the
       "Merge Preview" above.
