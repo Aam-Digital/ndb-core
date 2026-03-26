@@ -59,9 +59,11 @@ export class BulkMergeService {
     entitiesToMerge: E[],
     entityType: EntityConstructor,
   ): Promise<boolean> {
-    const entityAccounts = await Promise.all(
+    const accountResults = await Promise.all(
       entitiesToMerge.map((e) => this.getUserAccount(e)),
     );
+    const entityAccounts = accountResults.map((r) => r.account);
+    const accountLoadError = accountResults.some((r) => r.error);
 
     // Ensure the entity with a user account is at index 0 (primary, whose ID is retained)
     if (!entityAccounts[0] && entityAccounts[1]) {
@@ -85,6 +87,7 @@ export class BulkMergeService {
         entityConstructor: entityType,
         entitiesToMerge: entitiesToMerge,
         entityAccounts: entityAccounts,
+        accountLoadError: accountLoadError,
       },
     });
     const mergedEntity: E | undefined = await lastValueFrom(
@@ -93,25 +96,35 @@ export class BulkMergeService {
 
     if (!mergedEntity) return false;
 
-    await this.executeMerge(mergedEntity, entitiesToMerge);
+    await this.executeMerge(mergedEntity, entitiesToMerge, entityAccounts);
     this.unsavedChangesService.pending = false;
     this.alert.addInfo($localize`Records merged successfully.`);
     return true;
   }
 
   /**
-   * Get the user account linked to the given entity, or null if none exists.
+   * Get the user account linked to the given entity.
+   * Returns `{ account, error: false }` on success (account is null if not found),
+   * or `{ account: null, error: true }` if the API is unreachable or access is denied.
    */
-  private async getUserAccount(entity: Entity): Promise<UserAccount | null> {
-    if (!entity.getConstructor()?.enableUserAccounts) return null;
-    return lastValueFrom(
-      this.userAdminService.getUser(entity.getId()).pipe(
-        catchError((err) => {
-          if (err?.status === 404) return of(null);
-          throw err;
-        }),
-      ),
-    );
+  private async getUserAccount(
+    entity: Entity,
+  ): Promise<{ account: UserAccount | null; error: boolean }> {
+    if (!entity.getConstructor()?.enableUserAccounts)
+      return { account: null, error: false };
+    try {
+      const account = await lastValueFrom(
+        this.userAdminService.getUser(entity.getId()).pipe(
+          catchError((err) => {
+            if (err?.status === 404) return of(null);
+            throw err;
+          }),
+        ),
+      );
+      return { account, error: false };
+    } catch {
+      return { account: null, error: true };
+    }
   }
 
   /**
@@ -120,19 +133,26 @@ export class BulkMergeService {
    *
    * @param mergedEntity The merged entity.
    * @param entitiesToMerge
+   * @param entityAccounts Accounts explicitly fetched for each entity; only accounts
+   *   that were actually found will be deleted during merge.
    */
   async executeMerge<E extends Entity>(
     mergedEntity: E,
     entitiesToMerge: E[],
+    entityAccounts?: (UserAccount | null)[],
   ): Promise<void> {
+    const accountByEntityId = new Map<string, UserAccount | null>(
+      entitiesToMerge.map((e, i) => [e.getId(), entityAccounts?.[i] ?? null]),
+    );
+
     await this.entityMapper.save(mergedEntity);
 
     // Process all entities to be deleted
-    for (let e of entitiesToMerge) {
+    for (const e of entitiesToMerge) {
       if (e.getId() === mergedEntity.getId()) continue;
 
-      // Delete any linked user account for the entity being discarded
-      if (e.getConstructor()?.enableUserAccounts) {
+      // Delete linked user account only if one was explicitly found for this entity
+      if (accountByEntityId.get(e.getId())) {
         await lastValueFrom(
           this.userAdminService
             .deleteUser(e.getId())

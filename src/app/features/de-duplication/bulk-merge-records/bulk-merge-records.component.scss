@@ -32,6 +32,11 @@
     }
   }
 
+  mat-error.account-load-error {
+    grid-column: 2 / -1;
+    padding: 0.5rem 0;
+  }
+
   mat-radio-group.account-email-radio-group {
     grid-column: span 2;
     display: grid;

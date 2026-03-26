@@ -220,7 +220,10 @@ describe("BulkMergeService", () => {
       const mergedEntity = Object.assign(new TestEntityWithAccounts(), entityA);
       mergedEntity["_id"] = entityA.getId();
 
-      await service.executeMerge(mergedEntity, [entityA, entityB]);
+      await service.executeMerge(mergedEntity, [entityA, entityB], [
+        null,
+        mockUserAccount,
+      ]);
 
       expect(mockUserAdminService.deleteUser).toHaveBeenCalledWith(
         entityB.getId(),
@@ -230,11 +233,23 @@ describe("BulkMergeService", () => {
       );
     });
 
-    it("should not call deleteUser when entity type does not have enableUserAccounts", async () => {
+    it("should not call deleteUser when no account is linked to the discarded entity", async () => {
       const mergedEntity = TestEntity.create({ ...recordA, name: "A1" });
       await service.executeMerge(mergedEntity, [recordA, recordB]);
 
       expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
+    });
+
+    it("should open dialog with accountLoadError=true when getUser API fails with non-404 error", async () => {
+      mockUserAdminService.getUser.mockReturnValue(
+        throwError(() => ({ status: 500 })),
+      );
+
+      await service.showMergeDialog([entityA, entityB], TestEntityWithAccounts);
+
+      const dialogData = mockMatDialog.open.mock.calls[0][1].data;
+      expect(dialogData.accountLoadError).toBe(true);
+      expect(dialogData.entityAccounts).toEqual([null, null]);
     });
 
     it("should reorder entities in showMergeDialog so account-holder is primary (index 0)", async () => {

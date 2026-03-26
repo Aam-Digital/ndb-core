@@ -7,7 +7,15 @@
         <div class="header" i18n>Record A</div>
         <div class="header" i18n>Record B</div>
         <div class="header" i18n>Merge Preview</div>
-        @if (hasAnyUserAccount) {
+        @if (entityConstructor.enableUserAccounts && accountLoadError()) {
+          <div class="label-cell"></div>
+          <mat-error class="account-load-error" i18n>
+            User account information could not be loaded. You may be offline or
+            lack account_manager permissions. This merge will proceed without
+            changes to user accounts.
+          </mat-error>
+        }
+        @if (hasAnyUserAccount()) {
           <!-- Account Email row -->
           <div class="label-cell">
             <strong i18n>Account Email</strong>

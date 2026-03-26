@@ -6,6 +6,7 @@ import {
   Component,
   inject,
   OnInit,
+  signal,
 } from "@angular/core";
 import {
   FormBuilder,
@@ -87,9 +88,8 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   /** whether the entitiesToMerge contain some file attachments that would be lost during a merge */
   hasDiscardedFileOrPhoto: boolean = false;
 
-  get hasAnyUserAccount(): boolean {
-    return this.entityAccounts.some((a) => a != null);
-  }
+  readonly hasAnyUserAccount = signal(false);
+  readonly accountLoadError = signal(false);
 
   get accountEmailControl(): FormControl {
     return this.accountForm?.get("email") as FormControl;
@@ -155,11 +155,14 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       entityConstructor: EntityConstructor;
       entitiesToMerge: E[];
       entityAccounts?: (UserAccount | null)[];
+      accountLoadError?: boolean;
     }>(MAT_DIALOG_DATA);
 
     this.entityConstructor = data.entityConstructor;
     this.entitiesToMerge = data.entitiesToMerge;
     this.entityAccounts = data.entityAccounts ?? [];
+    this.hasAnyUserAccount.set(this.entityAccounts.some((a) => a != null));
+    this.accountLoadError.set(data.accountLoadError ?? false);
     // Use the primary entity's values as the base so form validators (e.g. uniqueness)
     // treat existing values as the "default" and don't incorrectly flag them as duplicates.
     this.mergedEntity = this.entitiesToMerge[0].copy() as E;
@@ -177,7 +180,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     // Render merge preview immediately once core form is ready.
     this.cdr.detectChanges();
 
-    if (this.hasAnyUserAccount) {
+    if (this.hasAnyUserAccount()) {
       await this.initAccountForm();
       // Refresh account section after async role/account control initialization.
       this.cdr.detectChanges();
