@@ -78,14 +78,9 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   async submit() {
-    this.validationError = false;
-    this.invalidFieldNames = [];
+    this.clearValidationState();
     this.publicFormLinkingService.applyLinkedFromForm(this.entityFormEntries);
-    if (
-      this.entityFormEntries.some(
-        (entry) => entry.form?.formGroup?.invalid ?? true,
-      )
-    ) {
+    if (this.hasInvalidForms()) {
       // Collect invalid field names for summary message
       this.validationError = true;
       this.setInvalidFieldSummary();
@@ -113,13 +108,23 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   async reset() {
+    this.clearValidationState();
+    await this.initForms();
+  }
+
+  private clearValidationState() {
     this.validationError = false;
     this.invalidFieldNames = [];
-    await this.initForms();
   }
 
   private setInvalidFieldSummary() {
     this.invalidFieldNames = [...new Set(this.collectInvalidFieldNames())];
+  }
+
+  private hasInvalidForms(): boolean {
+    return this.entityFormEntries.some(
+      (entry) => entry.form?.formGroup?.invalid ?? true,
+    );
   }
 
   /**
@@ -255,6 +260,21 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
         [].concat(...entry.fieldGroups.map((group) => group.fields)),
         entry.entity,
       );
+
+      entry.form.formGroup.valueChanges
+        .pipe(untilDestroyed(this))
+        .subscribe(() => {
+          if (!this.validationError) {
+            return;
+          }
+
+          if (this.hasInvalidForms()) {
+            this.setInvalidFieldSummary();
+            return;
+          }
+
+          this.clearValidationState();
+        });
     }
   }
 
