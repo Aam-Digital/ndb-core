@@ -12,28 +12,22 @@
           <div class="label-cell">
             <strong i18n>Account Email</strong>
           </div>
-          <div class="account-select-cell">
-            <mat-radio-group>
-              <mat-radio-button
-                [checked]="isAccountEmailSelected(0)"
-                [disabled]="!hasAccountEmail(0)"
-                (click)="selectAccountEmail(0)"
-              >
+          <mat-radio-group
+            class="account-email-radio-group"
+            [value]="selectedAccountEmailIndex"
+            (change)="selectAccountEmail($event.value)"
+          >
+            <div class="account-select-cell">
+              <mat-radio-button [value]="0" [disabled]="!hasAccountEmail(0)">
                 {{ entityAccounts[0]?.email ?? "-" }}
               </mat-radio-button>
-            </mat-radio-group>
-          </div>
-          <div class="account-select-cell">
-            <mat-radio-group>
-              <mat-radio-button
-                [checked]="isAccountEmailSelected(1)"
-                [disabled]="!hasAccountEmail(1)"
-                (click)="selectAccountEmail(1)"
-              >
+            </div>
+            <div class="account-select-cell">
+              <mat-radio-button [value]="1" [disabled]="!hasAccountEmail(1)">
                 {{ entityAccounts[1]?.email ?? "-" }}
               </mat-radio-button>
-            </mat-radio-group>
-          </div>
+            </div>
+          </mat-radio-group>
           <div class="preview-cell">
             @if (accountForm) {
               <mat-form-field class="full-width">
@@ -122,13 +116,13 @@
   <button
     mat-raised-button
     color="accent"
-    [disabled]="mergeForm?.formGroup.invalid"
+    [disabled]="mergeForm?.formGroup.invalid || accountForm?.invalid"
     (click)="confirmAndMergeRecords()"
     i18n
   >
     Merge
   </button>
-  @if (mergeForm?.formGroup.invalid) {
+  @if (mergeForm?.formGroup.invalid || accountForm?.invalid) {
     <mat-error i18n>
       The data you selected to merge is invalid, please check the fields in the
       "Merge Preview" above.

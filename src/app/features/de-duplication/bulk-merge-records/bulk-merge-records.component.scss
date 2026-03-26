@@ -32,6 +32,13 @@
     }
   }
 
+  mat-radio-group.account-email-radio-group {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
   .account-select-cell {
     display: flex;
     align-items: center;

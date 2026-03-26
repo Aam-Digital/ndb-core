@@ -28,6 +28,7 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatRadioModule } from "@angular/material/radio";
 import { MatSelectModule } from "@angular/material/select";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { OkButton } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
@@ -112,10 +113,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   }
 
   selectAccountEmail(index: number): void {
-    if (!this.hasAccountEmail(index)) {
-      return;
-    }
-
     this.selectedAccountEmailIndex = index;
     this.accountEmailControl?.setValue(this.entityAccounts[index]?.email);
     this.accountEmailControl?.markAsDirty();
@@ -282,6 +279,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   async confirmAndMergeRecords(): Promise<boolean> {
     this.mergeForm.formGroup.markAllAsTouched();
     if (this.mergeForm.formGroup.invalid) return false;
+    if (this.accountForm?.invalid) return false;
 
     if (this.hasDiscardedFileOrPhoto) {
       const fileIgnoreConfirmed = await this.confirmationDialog.getConfirmation(
@@ -303,7 +301,16 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       return false;
     }
 
-    await this.applyAccountUpdate();
+    try {
+      await this.applyAccountUpdate();
+    } catch {
+      await this.confirmationDialog.getConfirmation(
+        $localize`:Account update error title:Account update failed`,
+        $localize`:Account update error:The user account could not be updated. Please try again or contact support.`,
+        OkButton,
+      );
+      return false;
+    }
 
     this.dialogRef.close(
       Object.assign(
@@ -333,9 +340,12 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     }
 
     if (Object.keys(update).length > 0) {
-      await lastValueFrom(
+      const result = await lastValueFrom(
         this.userAdminService.updateUser(primaryAccount.id, update),
       );
+      if (!result.userUpdated) {
+        throw new Error("Account update was not applied by the server");
+      }
     }
   }
 }

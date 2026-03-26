@@ -133,10 +133,11 @@ export class BulkMergeService {
 
       // Delete any linked user account for the entity being discarded
       if (e.getConstructor()?.enableUserAccounts) {
-        this.userAdminService.deleteUser(e.getId()).subscribe({
-          next: () => {},
-          error: () => {},
-        });
+        await lastValueFrom(
+          this.userAdminService
+            .deleteUser(e.getId())
+            .pipe(catchError(() => of({ userDeleted: false }))),
+        );
       }
 
       await this.updateRelatedRefId(e, mergedEntity);
