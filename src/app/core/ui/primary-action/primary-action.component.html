@@ -1,14 +1,16 @@
-<button
-  mat-fab
-  class="primary-action"
-  (click)="primaryAction()"
-  angulartics2On="click"
-  angularticsCategory="Navigation"
-  angularticsAction="primary_action_click"
-  *appDisabledEntityOperation="{
-    entity: entityConstructor,
-    operation: 'create',
-  }"
->
-  <fa-icon [icon]="config.icon"></fa-icon>
-</button>
+@if (config.disabled !== true) {
+  <button
+    mat-fab
+    class="primary-action"
+    (click)="primaryAction()"
+    angulartics2On="click"
+    angularticsCategory="Navigation"
+    angularticsAction="primary_action_click"
+    *appDisabledEntityOperation="{
+      entity: entityConstructor,
+      operation: 'create',
+    }"
+  >
+    <fa-icon [icon]="config.icon"></fa-icon>
+  </button>
+}

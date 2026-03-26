@@ -23,6 +23,10 @@
   with a single click.
 </app-hint-box>
 
+<mat-slide-toggle [(ngModel)]="disabled" class="margin-regular" i18n>
+  Disable Primary Action Button
+</mat-slide-toggle>
+
 <mat-form-field appearance="fill" class="full-width">
   <mat-label i18n>Action Type</mat-label>
   <mat-select [(ngModel)]="actionType">
