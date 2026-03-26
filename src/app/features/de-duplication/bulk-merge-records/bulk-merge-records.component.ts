@@ -197,19 +197,24 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       );
     }
 
-    // Map the current roles to available role objects to ensure reference equality for mat-select.
-    const currentRoles = this.getAccountRoles(0);
-
-    this.accountForm = this.fb.group({
-      email: [primaryAccount?.email ?? "", [Validators.email]],
-      roles: new FormControl<Role[]>(currentRoles),
-    });
-
     this.selectedAccountEmailIndex = this.hasAccountEmail(0)
       ? 0
       : this.hasAccountEmail(1)
         ? 1
         : null;
+
+    const defaultEmail =
+      this.selectedAccountEmailIndex != null
+        ? (this.entityAccounts[this.selectedAccountEmailIndex]?.email ?? "")
+        : "";
+
+    // Map the current roles to available role objects to ensure reference equality for mat-select.
+    const currentRoles = this.getAccountRoles(0);
+
+    this.accountForm = this.fb.group({
+      email: [defaultEmail, [Validators.email]],
+      roles: new FormControl<Role[]>(currentRoles),
+    });
     this.accountEmailControl?.valueChanges.subscribe((value) => {
       if (value === this.entityAccounts[0]?.email) {
         this.selectedAccountEmailIndex = 0;
