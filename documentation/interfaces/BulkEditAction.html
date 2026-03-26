@@ -276,6 +276,7 @@ import { EntityFormService } from &quot;app/core/common-components/entity-form/e
 import { FormFieldConfig } from &quot;app/core/common-components/entity-form/FormConfig&quot;;
 import { Entity, EntityConstructor } from &quot;../../model/entity&quot;;
 import { EntityFieldSelectComponent } from &quot;#src/app/core/entity/entity-field-select/entity-field-select.component&quot;;
+import { UnsavedChangesService } from &quot;#src/app/core/entity-details/form/unsaved-changes.service&quot;;
 
 @Component({
   selector: &quot;app-entity-bulk-edit&quot;,
@@ -298,6 +299,8 @@ import { EntityFieldSelectComponent } from &quot;#src/app/core/entity/entity-fie
 export class EntityBulkEditComponent&lt;E extends Entity&gt; implements OnInit {
   private dialogRef &#x3D; inject&lt;MatDialogRef&lt;any&gt;&gt;(MatDialogRef);
   private entityFormService &#x3D; inject(EntityFormService);
+  private readonly unsavedChanges &#x3D; inject(UnsavedChangesService);
+  private readonly pendingStateBeforeDialogOpen &#x3D; this.unsavedChanges.pending;
 
   entityConstructor: EntityConstructor;
   entitiesToEdit: E[];
@@ -322,6 +325,12 @@ export class EntityBulkEditComponent&lt;E extends Entity&gt; implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+
+    this.dialogRef.beforeClosed().subscribe((result) &#x3D;&gt; {
+      if (!result) {
+        this.unsavedChanges.pending &#x3D; this.pendingStateBeforeDialogOpen;
+      }
+    });
   }
 
   private initForm() {

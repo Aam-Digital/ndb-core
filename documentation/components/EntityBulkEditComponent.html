@@ -281,7 +281,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:56</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:59</a></div>
                             </td>
                         </tr>
 
@@ -318,8 +318,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="100"
-                                    class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:100</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="109"
+                                    class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:109</a></div>
                         </td>
                     </tr>
 
@@ -360,7 +360,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:49</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:52</a></div>
                         </td>
                     </tr>
 
@@ -386,7 +386,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:48</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:51</a></div>
                         </td>
                     </tr>
 
@@ -412,7 +412,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:54</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:57</a></div>
                         </td>
                     </tr>
 
@@ -438,7 +438,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:52</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:55</a></div>
                         </td>
                     </tr>
 
@@ -464,7 +464,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:56</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:59</a></div>
                         </td>
                     </tr>
 
@@ -490,7 +490,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:51</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:54</a></div>
                         </td>
                     </tr>
 
@@ -521,7 +521,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:55</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.ts:58</a></div>
                         </td>
                     </tr>
 
@@ -558,6 +558,7 @@ import { EntityFormService } from &quot;app/core/common-components/entity-form/e
 import { FormFieldConfig } from &quot;app/core/common-components/entity-form/FormConfig&quot;;
 import { Entity, EntityConstructor } from &quot;../../model/entity&quot;;
 import { EntityFieldSelectComponent } from &quot;#src/app/core/entity/entity-field-select/entity-field-select.component&quot;;
+import { UnsavedChangesService } from &quot;#src/app/core/entity-details/form/unsaved-changes.service&quot;;
 
 @Component({
   selector: &quot;app-entity-bulk-edit&quot;,
@@ -580,6 +581,8 @@ import { EntityFieldSelectComponent } from &quot;#src/app/core/entity/entity-fie
 export class EntityBulkEditComponent&lt;E extends Entity&gt; implements OnInit {
   private dialogRef &#x3D; inject&lt;MatDialogRef&lt;any&gt;&gt;(MatDialogRef);
   private entityFormService &#x3D; inject(EntityFormService);
+  private readonly unsavedChanges &#x3D; inject(UnsavedChangesService);
+  private readonly pendingStateBeforeDialogOpen &#x3D; this.unsavedChanges.pending;
 
   entityConstructor: EntityConstructor;
   entitiesToEdit: E[];
@@ -604,6 +607,12 @@ export class EntityBulkEditComponent&lt;E extends Entity&gt; implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+
+    this.dialogRef.beforeClosed().subscribe((result) &#x3D;&gt; {
+      if (!result) {
+        this.unsavedChanges.pending &#x3D; this.pendingStateBeforeDialogOpen;
+      }
+    });
   }
 
   private initForm() {
