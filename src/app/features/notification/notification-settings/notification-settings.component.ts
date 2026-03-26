@@ -31,6 +31,7 @@ import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 import { Config } from "../../../core/config/config";
 import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
+import { UnsavedChangesService } from "../../../core/entity-details/form/unsaved-changes.service";
 
 /**
  * UI for current user to configure individual notification settings.
@@ -66,6 +67,7 @@ export class NotificationSettingsComponent implements OnInit {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly notificationService = inject(NotificationService);
   private readonly alertService = inject(AlertService);
+  protected readonly unsavedChanges = inject(UnsavedChangesService);
 
   /**
    * Get the logged-in user id
@@ -171,7 +173,7 @@ export class NotificationSettingsComponent implements OnInit {
     }
   }
 
-  async addNewNotificationRule() {
+  addNewNotificationRule() {
     const config = this.notificationConfig();
     const newRule: NotificationRule = {
       notificationType: "entity_change",
@@ -186,16 +188,21 @@ export class NotificationSettingsComponent implements OnInit {
     }
     config.notificationRules = [...config.notificationRules, newRule];
     this.notificationConfig.set(config);
-
-    // saving this only once the fields are actually edited by the user
+    this.unsavedChanges.pending = true;
   }
 
-  async updateNotificationRule(
+  updateNotificationRule(
     notificationRule: NotificationRule,
     updatedRule: NotificationRule,
   ) {
     Object.assign(notificationRule, updatedRule);
+    this.unsavedChanges.pending = true;
+  }
+
+  async saveSettings() {
     await this.saveNotificationConfig(this.notificationConfig());
+    this.unsavedChanges.pending = false;
+    this.alertService.addInfo($localize`Notification settings saved.`);
   }
 
   async confirmRemoveNotificationRule(index: number) {
@@ -210,6 +217,7 @@ export class NotificationSettingsComponent implements OnInit {
       );
       this.notificationConfig.set(config);
       await this.saveNotificationConfig(config);
+      this.unsavedChanges.pending = false;
       return true;
     }
     return false;
