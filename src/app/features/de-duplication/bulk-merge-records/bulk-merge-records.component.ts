@@ -185,8 +185,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   }
 
   private async initAccountForm(): Promise<void> {
-    const primaryAccount = this.entityAccounts[0];
-
     try {
       this.availableRoles = await lastValueFrom(
         this.userAdminService.getAllRoles(),
