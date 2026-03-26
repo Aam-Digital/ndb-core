@@ -133,7 +133,7 @@ export class EditEntityComponent<
    * Manual recompute trigger for `formControl`.
    * Needed because `ngControl` is not a signal and may appear after first render.
    */
-  private controlSourceRefresh = signal(0);
+  private readonly controlSourceRefresh = signal(0);
 
   /**
    * Explicitly define the entity type(s) to select among.
@@ -324,7 +324,7 @@ export class EditEntityComponent<
 
   override ngDoCheck() {
     super.ngDoCheck();
-    const control = this.ngControl?.control as FormControl<T> | null;
+    const control = this.ngControl?.control;
     if (!control || control === this._formControl) {
       return;
     }
