@@ -1,5 +1,18 @@
 <div class="padding-regular">
-  <h1 i18n>Notifications Settings</h1>
+  <div class="flex-row align-center justify-space-between full-width">
+    <h1 class="no-margin" i18n>Notifications Settings</h1>
+    @if (notificationConfig()) {
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="saveSettings()"
+        [disabled]="!unsavedChanges.pending"
+        i18n
+      >
+        Save
+      </button>
+    }
+  </div>
   <div i18n>
     Notifications alert you to important system events, such as new
     registrations via public forms or tasks assigned to you. They appear in the

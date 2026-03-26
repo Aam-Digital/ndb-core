@@ -42,14 +42,14 @@ import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
   ],
 })
 export class ConditionsEditorComponent implements OnInit {
-  @Input() conditions: any = { $or: [] };
+  @Input() conditions: any = {};
   @Input() entityConstructor?: EntityConstructor;
   @Input() disabled = false;
   @Input() label = $localize`Edit JSON`;
 
   @Output() conditionsChange = new EventEmitter<any>();
 
-  private readonly conditionsSignal = signal<any>({ $or: [] });
+  private readonly conditionsSignal = signal<any>({});
 
   conditionFormFieldConfigs = new Map<string, FormFieldConfig>();
   conditionFormControls = new Map<string, FormControl>();
@@ -97,10 +97,16 @@ export class ConditionsEditorComponent implements OnInit {
     if (conditionIndex < 0 || conditionIndex >= conditions.length) return;
 
     conditions.splice(conditionIndex, 1);
-    this.conditionsSignal.set({ ...this.conditions });
+
+    if (conditions.length === 0) {
+      this.conditions = {};
+      this.conditionsSignal.set({});
+    } else {
+      this.conditionsSignal.set({ ...this.conditions });
+    }
 
     this.rebuildFormConfigs();
-    this.conditionsChange.emit(this.conditions);
+    this.conditionsChange.emit(conditions.length === 0 ? {} : this.conditions);
   }
 
   /**
@@ -303,9 +309,9 @@ export class ConditionsEditorComponent implements OnInit {
    * @param input - The conditions object to normalize
    * @returns Normalized conditions in { $or: [...] } format
    */
-  private normalizeConditions(input: any): { $or: Record<string, any>[] } {
+  private normalizeConditions(input: any): any {
     if (!input || typeof input !== "object" || Array.isArray(input)) {
-      return { $or: [] };
+      return {};
     }
 
     const existingOr = Array.isArray(input.$or)
@@ -321,6 +327,9 @@ export class ConditionsEditorComponent implements OnInit {
     const legacyEntries = Object.entries(input).filter(
       ([key]) => key !== "$or",
     );
+    if (legacyEntries.length === 0) {
+      return {};
+    }
     return {
       $or: legacyEntries.map(([key, value]) => ({ [key]: value })),
     };
