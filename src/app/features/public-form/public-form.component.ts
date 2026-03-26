@@ -54,8 +54,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   private configService = inject(ConfigService);
   private readonly publicFormLinkingService = inject(PublicFormLinkingService);
 
-  // Track if the last submit attempt failed due to validation
-  validationError = false;
   private ability = inject(EntityAbility);
   private router = inject(Router);
 
@@ -68,6 +66,8 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     }
   > = [];
   error: "not_found" | "no_permissions";
+  validationError = false;
+  invalidFieldNames: string[] = [];
 
   ngOnInit() {
     this.databaseResolver.initDatabasesForAnonymous();
@@ -79,15 +79,14 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   async submit() {
-    this.validationError = false;
+    this.clearValidationState();
     const formMetadataBy = `PublicForm:${this.formConfig.getId(true)}`;
     this.publicFormLinkingService.applyLinkedFromForm(this.entityFormEntries);
-    if (
-      this.entityFormEntries.some(
-        (entry) => entry.form?.formGroup?.invalid ?? true,
-      )
-    ) {
+    if (this.hasInvalidForms()) {
+      this.markAllFormsAsTouched();
+      // Collect invalid field names for summary message
       this.validationError = true;
+      this.invalidFieldNames = this.collectInvalidFieldNames();
       return;
     }
     try {
@@ -103,7 +102,10 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       });
     } catch (e) {
       if (e instanceof InvalidFormFieldError) {
+        this.markAllFormsAsTouched();
+        // Collect invalid field names for summary message
         this.validationError = true;
+        this.invalidFieldNames = this.collectInvalidFieldNames();
         return;
       }
       throw e;
@@ -111,8 +113,51 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   async reset() {
-    this.validationError = false;
+    this.clearValidationState();
     await this.initForms();
+  }
+
+  private clearValidationState() {
+    this.validationError = false;
+    this.invalidFieldNames = [];
+  }
+
+  private hasInvalidForms(): boolean {
+    return this.entityFormEntries.some(
+      (entry) => entry.form?.formGroup?.invalid ?? true,
+    );
+  }
+
+  private markAllFormsAsTouched() {
+    this.entityFormEntries.forEach((entry) => {
+      entry.form?.formGroup?.markAllAsTouched();
+    });
+  }
+
+  /**
+   * Collects the labels of all invalid fields across all form entries.
+   * This provides a summary for forms with many fields where the invalid field might be off-screen.
+   */
+  private collectInvalidFieldNames(): string[] {
+    const invalidNames: string[] = [];
+
+    for (const entry of this.entityFormEntries) {
+      if (entry.form?.formGroup?.invalid) {
+        const formGroup = entry.form.formGroup;
+        const fieldConfigs = entry.form.fieldConfigs;
+
+        for (const control of Object.keys(formGroup.controls)) {
+          const formControl = formGroup.get(control);
+          if (formControl?.invalid) {
+            // Find the field config to get the label
+            const fieldConfig = fieldConfigs.find((f) => f.id === control);
+            invalidNames.push(fieldConfig?.label || control);
+          }
+        }
+      }
+    }
+
+    return [...new Set(invalidNames)];
   }
 
   private async loadFormConfig() {
@@ -222,13 +267,20 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
         [].concat(...entry.fieldGroups.map((group) => group.fields)),
         entry.entity,
       );
-      // Subscribe to form changes and clear validation error when form is valid
+
       entry.form.formGroup.valueChanges
         .pipe(untilDestroyed(this))
         .subscribe(() => {
-          if (this.validationError && entry.form.formGroup.valid) {
-            this.validationError = false;
+          if (!this.validationError) {
+            return;
           }
+
+          if (this.hasInvalidForms()) {
+            this.invalidFieldNames = this.collectInvalidFieldNames();
+            return;
+          }
+
+          this.clearValidationState();
         });
     }
   }

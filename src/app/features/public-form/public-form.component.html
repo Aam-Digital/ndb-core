@@ -62,11 +62,20 @@
       <mat-card-footer>
         @if (validationError) {
           <div
-            class="flex-row align-center justify-content-center margin-regular color-error"
+            class="flex-column align-start margin-bottom-regular invalid-fields-container"
             role="alert"
-            i18n
           >
-            Some fields are invalid, please check the form and submit again.
+            <div class="color-error" i18n>
+              Some fields are invalid, please check the form and submit again:
+            </div>
+
+            @if (invalidFieldNames.length > 0) {
+              <ul class="color-error invalid-fields-list">
+                @for (fieldName of invalidFieldNames; track fieldName) {
+                  <li>{{ fieldName }}</li>
+                }
+              </ul>
+            }
           </div>
         }
         <button
