@@ -10,9 +10,12 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "../../database-entity.decorator";
+import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
 import type { Mock } from "vitest";
+import { Subject } from "rxjs";
 
 type DialogRefMock = {
+  beforeClosed: Mock;
   close: Mock;
 };
 
@@ -26,6 +29,8 @@ describe("EntityBulkEditComponent", () => {
   let fixture: ComponentFixture<EntityBulkEditComponent<any>>;
   let mockDialogRef: DialogRefMock;
   let mockEntityFormService: EntityFormServiceMock;
+  let mockUnsavedChanges: { pending: boolean };
+  let beforeClosed$: Subject<unknown>;
 
   const mockEntityConstructor = {
     schema: new Map([
@@ -43,7 +48,9 @@ describe("EntityBulkEditComponent", () => {
   };
 
   beforeEach(async () => {
+    beforeClosed$ = new Subject();
     mockDialogRef = {
+      beforeClosed: vi.fn().mockReturnValue(beforeClosed$.asObservable()),
       close: vi.fn().mockName("MatDialogRef.close"),
     };
     mockEntityFormService = {
@@ -52,6 +59,7 @@ describe("EntityBulkEditComponent", () => {
         .fn()
         .mockName("EntityFormService.extendFormFieldConfig"),
     };
+    mockUnsavedChanges = { pending: false };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -70,6 +78,7 @@ describe("EntityBulkEditComponent", () => {
         },
         { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: EntityFormService, useValue: mockEntityFormService },
+        { provide: UnsavedChangesService, useValue: mockUnsavedChanges },
         FormBuilder,
         AdminEntityService,
         { provide: EntityRegistry, useValue: entityRegistry },
@@ -102,5 +111,13 @@ describe("EntityBulkEditComponent", () => {
     component.save();
 
     expect(mockDialogRef.close).not.toHaveBeenCalled();
+  });
+
+  it("should reset unsaved changes to previous state when dialog closes without save", () => {
+    mockUnsavedChanges.pending = true;
+
+    beforeClosed$.next(undefined);
+
+    expect(mockUnsavedChanges.pending).toBe(false);
   });
 });
