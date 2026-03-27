@@ -114,28 +114,26 @@ export abstract class FileService {
       })
       .pipe(shareReplay());
     this.reportProgress($localize`Loading "${entity[property]}"`, obs);
-    obs
-      .pipe(filter((e) => e.type === HttpEventType.Response))
-      .subscribe({
-        next: (e: HttpResponse<Blob>) => {
-          const fileURL = URL.createObjectURL(e.body);
-          const win = window.open(fileURL, "_blank");
-          if (!win || win.closed || typeof win.closed == "undefined") {
-            // When it takes more than a few (2-5) seconds to open the file, the browser might block the popup
-            this.dialog.open(ShowFileComponent, { data: fileURL });
-          }
-        },
-        error: (err) => {
-          Logging.warn("Could not download file", entity?.getId(), property, err);
+    obs.pipe(filter((e) => e.type === HttpEventType.Response)).subscribe({
+      next: (e: HttpResponse<Blob>) => {
+        const fileURL = URL.createObjectURL(e.body);
+        const win = window.open(fileURL, "_blank");
+        if (!win || win.closed || typeof win.closed == "undefined") {
+          // When it takes more than a few (2-5) seconds to open the file, the browser might block the popup
+          this.dialog.open(ShowFileComponent, { data: fileURL });
+        }
+      },
+      error: (err) => {
+        Logging.warn("Could not download file", entity?.getId(), property, err);
 
-          const errorMessage =
-            err?.status === HttpStatusCode.NotFound
-              ? $localize`:File Download Error Message:File attachment "${entity[property]}" not found.`
-              : $localize`:File Download Error Message:Failed to download file attachment. Please try again.`;
+        const errorMessage =
+          err?.status === HttpStatusCode.NotFound
+            ? $localize`:File Download Error Message:File attachment "${entity[property]}" not found.`
+            : $localize`:File Download Error Message:Failed to download file attachment. Please try again.`;
 
-          this.alertService.addWarning(errorMessage);
-        },
-      });
+        this.alertService.addWarning(errorMessage);
+      },
+    });
   }
   /**
    * Template method to be request a file, so that it can be used in the default showFile implementation
