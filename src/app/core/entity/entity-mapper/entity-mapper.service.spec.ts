@@ -20,6 +20,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "./entity-permission-error";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import type { Mock } from "vitest";
+import { UpdateMetadata } from "../model/update-metadata";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -283,6 +284,18 @@ describe("EntityMapperService", () => {
     expect(updatedEntity.updated?.at.getTime()).toEqual(mockTime2);
 
     vi.useRealTimers();
+  });
+
+  it("keeps explicit created.by value for anonymous creation", async () => {
+    const id = "anonymous_public_form_created";
+    const entity = new Entity(id);
+    entity.created = new UpdateMetadata("PublicForm:form-id");
+
+    await entityMapper.save(entity);
+    const savedEntity = await entityMapper.load(Entity, id);
+
+    expect(savedEntity.created?.by).toBe("PublicForm:form-id");
+    expect(savedEntity.updated?.by).toBe("PublicForm:form-id");
   });
 
   @DatabaseEntity("EntityA")

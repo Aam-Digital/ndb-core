@@ -29,6 +29,7 @@ import {
   PublicFormEntry,
   PublicFormLinkingService,
 } from "./public-form-linking.service";
+import { UpdateMetadata } from "../../core/entity/model/update-metadata";
 
 @UntilDestroy()
 @Component({
@@ -79,6 +80,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
   async submit() {
     this.clearValidationState();
+    const formMetadataBy = `PublicForm:${this.formConfig.getId(true)}`;
     this.publicFormLinkingService.applyLinkedFromForm(this.entityFormEntries);
     if (this.hasInvalidForms()) {
       this.markAllFormsAsTouched();
@@ -89,6 +91,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     }
     try {
       for (const entry of this.entityFormEntries) {
+        entry.entity.created = new UpdateMetadata(formMetadataBy);
         await this.entityFormService.saveChanges(entry.form, entry.entity);
       }
       this.router.navigate(["/public-form/submission-success"], {
