@@ -300,8 +300,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="112"
-                                    class="link-to-prism">src/app/features/public-form/public-form.component.ts:112</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="115"
+                                    class="link-to-prism">src/app/features/public-form/public-form.component.ts:115</a></div>
                         </td>
                     </tr>
 
@@ -339,8 +339,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="80"
-                                    class="link-to-prism">src/app/features/public-form/public-form.component.ts:80</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="81"
+                                    class="link-to-prism">src/app/features/public-form/public-form.component.ts:81</a></div>
                         </td>
                     </tr>
 
@@ -386,7 +386,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/features/public-form/public-form.component.ts:60</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/features/public-form/public-form.component.ts:61</a></div>
                         </td>
                     </tr>
 
@@ -412,7 +412,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/features/public-form/public-form.component.ts:67</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/features/public-form/public-form.component.ts:68</a></div>
                         </td>
                     </tr>
 
@@ -438,7 +438,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/features/public-form/public-form.component.ts:59</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/features/public-form/public-form.component.ts:60</a></div>
                         </td>
                     </tr>
 
@@ -469,7 +469,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/features/public-form/public-form.component.ts:69</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/features/public-form/public-form.component.ts:70</a></div>
                         </td>
                     </tr>
 
@@ -500,7 +500,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/features/public-form/public-form.component.ts:68</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/features/public-form/public-form.component.ts:69</a></div>
                         </td>
                     </tr>
 
@@ -544,6 +544,7 @@ import {
   PublicFormEntry,
   PublicFormLinkingService,
 } from &quot;./public-form-linking.service&quot;;
+import { UpdateMetadata } from &quot;../../core/entity/model/update-metadata&quot;;
 
 @UntilDestroy()
 @Component({
@@ -594,6 +595,7 @@ export class PublicFormComponent&lt;E extends Entity&gt; implements OnInit {
 
   async submit() {
     this.clearValidationState();
+    const formMetadataBy &#x3D; &#x60;PublicForm:${this.formConfig.getId(true)}&#x60;;
     this.publicFormLinkingService.applyLinkedFromForm(this.entityFormEntries);
     if (this.hasInvalidForms()) {
       this.markAllFormsAsTouched();
@@ -604,6 +606,7 @@ export class PublicFormComponent&lt;E extends Entity&gt; implements OnInit {
     }
     try {
       for (const entry of this.entityFormEntries) {
+        entry.entity.created &#x3D; new UpdateMetadata(formMetadataBy);
         await this.entityFormService.saveChanges(entry.form, entry.entity);
       }
       this.router.navigate([&quot;/public-form/submission-success&quot;], {
