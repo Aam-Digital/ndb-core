@@ -134,18 +134,28 @@ describe("BirthdayDashboardComponent", () => {
         birthday: DateWithAge;
       }
 
+      // Use wider day gaps to keep sort order stable across DST/timezones.
+      // Add days before subtracting years and normalize to start of day
+      // to avoid leap-day and local-time edge cases.
+      const birthdayIn1Day = moment()
+        .add(1, "day")
+        .subtract(4, "year")
+        .startOf("day");
+      const birthdayIn3Days = moment()
+        .add(3, "day")
+        .subtract(8, "year")
+        .startOf("day");
+      const birthdayIn5Days = moment()
+        .add(5, "day")
+        .subtract(12, "year")
+        .startOf("day");
+
       const e1 = new BirthdayEntity();
-      e1.birthday = new DateWithAge(
-        moment().add(1, "day").subtract(4, "year").toDate(),
-      );
+      e1.birthday = new DateWithAge(birthdayIn1Day.toDate());
       const e2 = new BirthdayEntity();
-      e2.birthday = new DateWithAge(
-        moment().add(3, "day").subtract(12, "year").toDate(),
-      );
+      e2.birthday = new DateWithAge(birthdayIn5Days.toDate());
       const e3 = new TestEntity();
-      e3.dateOfBirth = new DateWithAge(
-        moment().add(2, "day").subtract(8, "year").toDate(),
-      );
+      e3.dateOfBirth = new DateWithAge(birthdayIn3Days.toDate());
       entityMapper.saveAll([e1, e2, e3]);
 
       component.entities = {
@@ -158,17 +168,17 @@ describe("BirthdayDashboardComponent", () => {
       expect(component.entries).toEqual([
         {
           entity: e1,
-          birthday: moment().add(1, "day").startOf("day").toDate(),
+          birthday: birthdayIn1Day.clone().add(4, "year").toDate(),
           newAge: 4,
         },
         {
           entity: e3,
-          birthday: moment().add(2, "day").startOf("day").toDate(),
+          birthday: birthdayIn3Days.clone().add(8, "year").toDate(),
           newAge: 8,
         },
         {
           entity: e2,
-          birthday: moment().add(3, "day").startOf("day").toDate(),
+          birthday: birthdayIn5Days.clone().add(12, "year").toDate(),
           newAge: 12,
         },
       ]);
