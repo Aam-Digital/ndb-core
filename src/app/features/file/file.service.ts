@@ -15,12 +15,14 @@ import {
   HttpEventType,
   HttpProgressEvent,
   HttpResponse,
+  HttpStatusCode,
 } from "@angular/common/http";
 import { ProgressComponent } from "./progress/progress.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { inject, Injectable } from "@angular/core";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { MatDialog } from "@angular/material/dialog";
+import { AlertService } from "../../core/alerts/alert.service";
 
 /**
  * This service allow handles the logic for files/attachments.
@@ -33,6 +35,7 @@ export abstract class FileService {
   protected httpClient: HttpClient = inject(HttpClient, {
     optional: true,
   });
+  protected alertService = inject(AlertService);
   protected entityMapper = inject(EntityMapperService);
   protected entities = inject(EntityRegistry);
   protected syncState = inject(SyncStateSubject);
@@ -113,13 +116,25 @@ export abstract class FileService {
     this.reportProgress($localize`Loading "${entity[property]}"`, obs);
     obs
       .pipe(filter((e) => e.type === HttpEventType.Response))
-      .subscribe((e: HttpResponse<Blob>) => {
-        const fileURL = URL.createObjectURL(e.body);
-        const win = window.open(fileURL, "_blank");
-        if (!win || win.closed || typeof win.closed == "undefined") {
-          // When it takes more than a few (2-5) seconds to open the file, the browser might block the popup
-          this.dialog.open(ShowFileComponent, { data: fileURL });
-        }
+      .subscribe({
+        next: (e: HttpResponse<Blob>) => {
+          const fileURL = URL.createObjectURL(e.body);
+          const win = window.open(fileURL, "_blank");
+          if (!win || win.closed || typeof win.closed == "undefined") {
+            // When it takes more than a few (2-5) seconds to open the file, the browser might block the popup
+            this.dialog.open(ShowFileComponent, { data: fileURL });
+          }
+        },
+        error: (err) => {
+          Logging.warn("Could not download file", entity?.getId(), property, err);
+
+          const errorMessage =
+            err?.status === HttpStatusCode.NotFound
+              ? $localize`:File Download Error Message:File attachment "${entity[property]}" not found.`
+              : $localize`:File Download Error Message:Failed to download file attachment. Please try again.`;
+
+          this.alertService.addWarning(errorMessage);
+        },
       });
   }
   /**

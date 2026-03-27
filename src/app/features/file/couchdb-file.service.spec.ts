@@ -37,16 +37,19 @@ import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
 import { NotAvailableOfflineError } from "../../core/session/not-available-offline.error";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { SyncedPouchDatabase } from "../../core/database/pouchdb/synced-pouch-database";
+import { AlertService } from "../../core/alerts/alert.service";
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
   let mockHttp: any;
   let mockDialog: any;
   let mockSnackbar: any;
+  let mockAlertService: any;
   let dismiss: Mock;
   let updates: Subject<UpdatedEntity<Entity>>;
   const attachmentUrlPrefix = `${environment.DB_PROXY_PREFIX}/${Entity.DATABASE}-attachments`;
   let mockNavigator;
+  let registeredEntityForTest = false;
 
   beforeEach(() => {
     mockHttp = {
@@ -63,9 +66,16 @@ describe("CouchdbFileService", () => {
     };
     dismiss = vi.fn();
     mockSnackbar.openFromComponent.mockReturnValue({ dismiss } as any);
+    mockAlertService = {
+      addWarning: vi.fn(),
+    };
     Entity.schema.set("testProp", {
       dataType: FileDatatype.dataType,
     });
+    if (!entityRegistry.has("Entity")) {
+      entityRegistry.add("Entity", Entity as any);
+      registeredEntityForTest = true;
+    }
     let mockDb = {
       ensureSynced: vi.fn(),
     };
@@ -78,6 +88,7 @@ describe("CouchdbFileService", () => {
         { provide: HttpClient, useValue: mockHttp },
         { provide: MatSnackBar, useValue: mockSnackbar },
         { provide: MatDialog, useValue: mockDialog },
+        { provide: AlertService, useValue: mockAlertService },
         {
           provide: EntityMapperService,
           useValue: { receiveUpdates: () => updates },
@@ -105,6 +116,10 @@ describe("CouchdbFileService", () => {
 
   afterEach(() => {
     Entity.schema.delete("testProp");
+    if (registeredEntityForTest) {
+      entityRegistry.delete("Entity");
+      registeredEntityForTest = false;
+    }
   });
 
   it("should be created", () => {
@@ -254,6 +269,22 @@ describe("CouchdbFileService", () => {
     expect(mockDialog.open).toHaveBeenCalledWith(ShowFileComponent, {
       data: "dataUrl",
     });
+  });
+
+  it("should show warning alert if file download returns 404", () => {
+    mockHttp.get.mockReturnValue(
+      throwError(
+        () => new HttpErrorResponse({ status: HttpStatusCode.NotFound }),
+      ),
+    );
+    const entity = new Entity("testId");
+    entity["testProp"] = "missing-file.pdf";
+
+    service.showFile(entity, "testProp");
+
+    expect(mockAlertService.addWarning).toHaveBeenCalledWith(
+      expect.stringContaining("not found"),
+    );
   });
 
   it("should delete files document if a entity is deleted", async () => {
