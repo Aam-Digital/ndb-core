@@ -22,9 +22,17 @@
   }
 }
 
+.label-cell ::ng-deep app-entity-block.display-entity {
+  display: block;
+  min-width: 0;
+}
+
 .label-cell ::ng-deep app-entity-block .truncate-text {
-  white-space: normal;
-  overflow-wrap: anywhere;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .navigation-controls {
