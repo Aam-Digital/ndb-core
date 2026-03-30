@@ -84,4 +84,50 @@ describe("MergeAccountSectionComponent", () => {
       expect.objectContaining({ email: "new@test.com" }),
     );
   });
+
+  it("should NOT call updateUser when accountForm is not dirty", async () => {
+    await component.ngOnInit();
+
+    await component.applyAccountUpdate();
+
+    expect(mockUserAdminService.updateUser).not.toHaveBeenCalled();
+  });
+
+  it("should update selectedAccountEmailIndex when selectAccountEmail is called", async () => {
+    await component.ngOnInit();
+
+    component.selectAccountEmail(1);
+
+    expect(component.selectedAccountEmailIndex()).toBe(1);
+    expect(component.accountEmailControl().value).toBe(mockAccount1.email);
+  });
+
+  it("should add roles when toggleAccountRoles is called with checked=true", async () => {
+    await component.ngOnInit();
+    // start with no roles selected
+    component.accountRolesControl().setValue([]);
+
+    component.toggleAccountRoles(1, true);
+
+    const selected = component.accountRolesControl().value as any[];
+    expect(selected.some((r) => r.id === "role-2")).toBe(true);
+  });
+
+  it("should remove roles when toggleAccountRoles is called with checked=false", async () => {
+    await component.ngOnInit();
+
+    component.toggleAccountRoles(0, false);
+
+    const selected = component.accountRolesControl().value as any[];
+    expect(selected.some((r) => r.id === "role-1")).toBe(false);
+  });
+
+  it("should not initialize accountForm when no accounts exist", async () => {
+    fixture.componentRef.setInput("entityAccounts", [null, null]);
+
+    await component.ngOnInit();
+
+    expect(component.accountForm()).toBeNull();
+    expect(component.hasAnyUserAccount()).toBe(false);
+  });
 });

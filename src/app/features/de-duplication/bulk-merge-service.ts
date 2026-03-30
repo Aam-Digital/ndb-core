@@ -80,13 +80,24 @@ export class BulkMergeService {
         accountLoadError: accountLoadError,
       },
     });
-    const mergedEntity: E | undefined = await lastValueFrom(
-      dialogRef.afterClosed(),
+    const dialogResult:
+      | {
+          mergedEntity: E;
+          accountUpdate: {
+            accountId: string;
+            update: Partial<UserAccount>;
+          } | null;
+        }
+      | undefined = await lastValueFrom(dialogRef.afterClosed());
+
+    if (!dialogResult) return false;
+
+    await this.executeMerge(
+      dialogResult.mergedEntity,
+      entitiesToMerge,
+      entityAccounts,
+      dialogResult.accountUpdate,
     );
-
-    if (!mergedEntity) return false;
-
-    await this.executeMerge(mergedEntity, entitiesToMerge, entityAccounts);
     this.unsavedChangesService.pending = false;
     this.alert.addInfo($localize`Records merged successfully.`);
     return true;
@@ -125,11 +136,14 @@ export class BulkMergeService {
    * @param entitiesToMerge
    * @param entityAccounts Accounts explicitly fetched for each entity; only accounts
    *   that were actually found will be deleted during merge.
+   * @param accountUpdate Optional update payload for the surviving account's email/roles.
+   *   Applied after the secondary entity is deleted to ensure no partial state on failure.
    */
   async executeMerge<E extends Entity>(
     mergedEntity: E,
     entitiesToMerge: E[],
     entityAccounts?: (UserAccount | null)[],
+    accountUpdate?: { accountId: string; update: Partial<UserAccount> } | null,
   ): Promise<void> {
     const accountByEntityId = new Map<string, UserAccount | null>(
       entitiesToMerge.map((e, i) => [e.getId(), entityAccounts?.[i] ?? null]),
@@ -153,6 +167,22 @@ export class BulkMergeService {
       await this.updateRelatedRefId(e, mergedEntity);
 
       await this.entityMapper.remove(e);
+    }
+
+    // Apply account update after secondary entity is deleted to avoid partial state on failure
+    if (accountUpdate) {
+      const result = await lastValueFrom(
+        this.userAdminService
+          .updateUser(accountUpdate.accountId, accountUpdate.update)
+          .pipe(catchError(() => of({ userUpdated: false }))),
+      );
+      if (!result.userUpdated) {
+        await this.confirmationDialog.getConfirmation(
+          $localize`:Account update error title:Account update failed`,
+          $localize`:Account update error:The merge completed but the user account could not be updated. Please update it manually or contact support.`,
+          OkButton,
+        );
+      }
     }
   }
 

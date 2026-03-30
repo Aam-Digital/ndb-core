@@ -19,7 +19,6 @@ import {
 } from "@angular/material/dialog";
 import { MatError, MatFormFieldModule } from "@angular/material/form-field";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
-import { OkButton } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
@@ -140,6 +139,14 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     if (this.mergeForm.formGroup.invalid) return false;
     if (this.accountSection()?.accountForm()?.invalid) return false;
 
+    if (this.accountLoadError && this.entityConstructor.enableUserAccounts) {
+      const confirmed = await this.confirmationDialog.getConfirmation(
+        $localize`:merge account load error title:Warning! User account status unknown`,
+        $localize`:merge account load error:User account information could not be loaded (you may be offline or lack account_manager permissions). Proceeding may leave an orphaned user account. Are you sure you want to continue?`,
+      );
+      if (!confirmed) return false;
+    }
+
     const accountsFound = this.entityAccounts.filter((a) => a != null);
     if (accountsFound.length > 0) {
       const confirmed = await this.confirmationDialog.getConfirmation(
@@ -168,22 +175,14 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       return false;
     }
 
-    try {
-      await this.accountSection()?.applyAccountUpdate();
-    } catch {
-      await this.confirmationDialog.getConfirmation(
-        $localize`:Account update error title:Account update failed`,
-        $localize`:Account update error:The user account could not be updated. Please try again or contact support.`,
-        OkButton,
-      );
-      return false;
-    }
+    const accountUpdate = this.accountSection()?.buildAccountUpdate() ?? null;
 
-    this.dialogRef.close(
-      Object.assign(
+    this.dialogRef.close({
+      mergedEntity: Object.assign(
         this.entitiesToMerge[0].copy(),
         this.mergeForm.formGroup.value,
       ),
-    );
+      accountUpdate,
+    });
   }
 }

@@ -186,12 +186,15 @@ export class MergeAccountSectionComponent implements OnInit {
   }
 
   /**
-   * Applies any edits made to the surviving account's email/roles via userAdminService.
-   * Throws if the server rejects the update.
+   * Builds the account update payload from the current form values without making any API calls.
+   * Returns null if there is no primary account or the form has no changes.
    */
-  async applyAccountUpdate(): Promise<void> {
+  buildAccountUpdate(): {
+    accountId: string;
+    update: Partial<UserAccount>;
+  } | null {
     const primaryAccount = this.entityAccounts()[0];
-    if (!primaryAccount?.id || !this.accountForm()?.dirty) return;
+    if (!primaryAccount?.id || !this.accountForm()?.dirty) return null;
 
     const formValue = this.accountForm()!.getRawValue();
     const update: Partial<UserAccount> = {};
@@ -205,13 +208,24 @@ export class MergeAccountSectionComponent implements OnInit {
       update.roles = formValue.roles;
     }
 
-    if (Object.keys(update).length > 0) {
-      const result = await lastValueFrom(
-        this.userAdminService.updateUser(primaryAccount.id, update),
-      );
-      if (!result.userUpdated) {
-        throw new Error("Account update was not applied by the server");
-      }
+    return Object.keys(update).length > 0
+      ? { accountId: primaryAccount.id, update }
+      : null;
+  }
+
+  /**
+   * Applies any edits made to the surviving account's email/roles via userAdminService.
+   * Throws if the server rejects the update.
+   */
+  async applyAccountUpdate(): Promise<void> {
+    const payload = this.buildAccountUpdate();
+    if (!payload) return;
+
+    const result = await lastValueFrom(
+      this.userAdminService.updateUser(payload.accountId, payload.update),
+    );
+    if (!result.userUpdated) {
+      throw new Error("Account update was not applied by the server");
     }
   }
 }

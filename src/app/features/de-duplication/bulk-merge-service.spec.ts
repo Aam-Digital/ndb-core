@@ -64,7 +64,11 @@ describe("BulkMergeService", () => {
   let service: BulkMergeService;
 
   let entityMapper: MockEntityMapperService;
-  let mockUserAdminService: { getUser: Mock; deleteUser: Mock };
+  let mockUserAdminService: {
+    getUser: Mock;
+    deleteUser: Mock;
+    updateUser: Mock;
+  };
   let mockMatDialog: { open: Mock };
   let mockConfirmationDialog: { getConfirmation: Mock };
 
@@ -75,6 +79,7 @@ describe("BulkMergeService", () => {
     mockUserAdminService = {
       getUser: vi.fn().mockReturnValue(throwError(() => ({ status: 404 }))),
       deleteUser: vi.fn().mockReturnValue(of({ userDeleted: true })),
+      updateUser: vi.fn().mockReturnValue(of({ userUpdated: true })),
     };
     mockMatDialog = {
       open: vi.fn().mockReturnValue({ afterClosed: () => of(undefined) }),
@@ -108,6 +113,29 @@ describe("BulkMergeService", () => {
 
   it("should be created", () => {
     expect(service).toBeTruthy();
+  });
+
+  it("should show an error dialog and return false when executeAction is called with != 2 entities", async () => {
+    const result = await service.executeAction([recordA]);
+    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
+    expect(result).toBe(false);
+  });
+
+  it("should return false when merge dialog is closed without confirming", async () => {
+    mockMatDialog.open.mockReturnValue({ afterClosed: () => of(undefined) });
+    const result = await service.showMergeDialog(
+      [recordA, recordB],
+      TestEntity,
+    );
+    expect(result).toBe(false);
+  });
+
+  it("should open dialog with no reordering and no error when no accounts exist", async () => {
+    await service.showMergeDialog([recordA, recordB], TestEntity);
+    const dialogData = mockMatDialog.open.mock.calls[0][1].data;
+    expect(dialogData.entitiesToMerge[0].getId()).toBe(recordA.getId());
+    expect(dialogData.entityAccounts).toEqual([null, null]);
+    expect(dialogData.accountLoadError).toBe(false);
   });
 
   it("should update record_A and delete record_B when merge is confirmed", async () => {
@@ -267,6 +295,26 @@ describe("BulkMergeService", () => {
       expect(dialogData.entitiesToMerge[0].getId()).toBe(entityB.getId());
       expect(dialogData.entityAccounts[0]).toEqual(mockUserAccount);
       expect(dialogData.entityAccounts[1]).toBeNull();
+    });
+
+    it("should call updateUser with accountUpdate payload after secondary entity is deleted", async () => {
+      const mergedEntity = Object.assign(new TestEntityWithAccounts(), entityA);
+      mergedEntity["_id"] = entityA.getId();
+      const accountUpdate = {
+        accountId: "kc-a",
+        update: { email: "new@test.com" },
+      };
+
+      await service.executeMerge(
+        mergedEntity,
+        [entityA, entityB],
+        [null, null],
+        accountUpdate,
+      );
+
+      expect(mockUserAdminService.updateUser).toHaveBeenCalledWith("kc-a", {
+        email: "new@test.com",
+      });
     });
 
     it("should open dialog with both accounts when both entities have accounts", async () => {
