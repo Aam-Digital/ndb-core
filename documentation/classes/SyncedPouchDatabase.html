@@ -506,7 +506,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="260" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:260</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="288" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:288</a></div>
                         </td>
                     </tr>
 
@@ -867,8 +867,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="237"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:237</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="265"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:265</a></div>
                         </td>
                     </tr>
 
@@ -1049,8 +1049,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="262"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:262</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="290"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:290</a></div>
                         </td>
                     </tr>
 
@@ -1088,8 +1088,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="222"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:222</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="250"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:250</a></div>
                         </td>
                     </tr>
 
@@ -2728,11 +2728,23 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
     this.syncState.next(SyncState.STARTED);
 
-    return this.getPouchDB()
-      .sync(this.remoteDatabase.getPouchDB(), {
+    // Track the last batch of synced doc IDs for diagnostics on write failures
+    let lastSyncedDocIds: string[] &#x3D; [];
+
+    const syncHandler &#x3D; this.getPouchDB().sync(
+      this.remoteDatabase.getPouchDB(),
+      {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
         ...options,
-      })
+      },
+    );
+
+    syncHandler.on(&quot;change&quot;, (info) &#x3D;&gt; {
+      lastSyncedDocIds &#x3D;
+        info?.change?.docs?.map((d) &#x3D;&gt; d._id).filter(Boolean) ?? [];
+    });
+
+    return syncHandler
       .then(async (res) &#x3D;&gt; {
         if (res) res[&quot;dbName&quot;] &#x3D; this.dbName; // add for debugging information
         Logging.debug(&quot;sync completed&quot;, res);
@@ -2751,10 +2763,26 @@ export class SyncedPouchDatabase extends PouchDatabase {
           return {};
         }
 
-        Logging.debug(&quot;sync error&quot;, err);
+        if (this.isDocumentWriteError(err)) {
+          Logging.warn(
+            &#x60;sync failed [${this.dbName}]: document write error (possible oversized document). Last synced batch: [${lastSyncedDocIds.join(&quot;, &quot;)}]&#x60;,
+            err,
+          );
+        } else {
+          Logging.warn(&#x60;sync failed [${this.dbName}]&#x60;, err);
+        }
         this.syncState.next(SyncState.FAILED);
         throw err;
       });
+  }
+
+  private isDocumentWriteError(err: any): boolean {
+    const message &#x3D; err?.message || err?.reason || String(err);
+    return (
+      message.includes(&quot;Maximum call stack size exceeded&quot;) ||
+      message.includes(&quot;IDBObjectStore&quot;) ||
+      message.includes(&quot;Failed to execute&quot;)
+    );
   }
 
   /**

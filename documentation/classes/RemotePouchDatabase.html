@@ -667,8 +667,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="177"
-                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:177</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="216"
+                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:216</a></div>
                         </td>
                     </tr>
 
@@ -817,7 +817,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:193</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:232</a></code>
 </div>
                         </td>
                     </tr>
@@ -2169,6 +2169,12 @@ export class RemotePouchDatabase extends PouchDatabase {
     this.databaseInitialized.complete();
   }
 
+  /**
+   * Maximum number of retries for transient network errors (e.g. ERR_NETWORK_CHANGED).
+   */
+  private readonly TRANSIENT_ERROR_RETRIES &#x3D; 2;
+  private readonly TRANSIENT_ERROR_DELAY_MS &#x3D; 1500;
+
   private defaultFetch: Fetch &#x3D; async (url: string | Request, opts: any) &#x3D;&gt; {
     if (typeof url !&#x3D;&#x3D; &quot;string&quot;) {
       const err &#x3D; new Error(&quot;PouchDatabase.fetch: url is not a string&quot;);
@@ -2179,10 +2185,16 @@ export class RemotePouchDatabase extends PouchDatabase {
     const remoteUrl &#x3D;
       environment.DB_PROXY_PREFIX + url.split(environment.DB_PROXY_PREFIX)[1];
     this.authService.addAuthHeader(opts.headers);
+    // bypass Angular service worker to avoid synthetic 504 errors on network blips
+    if (opts.headers?.set &amp;&amp; typeof opts.headers.set &#x3D;&#x3D;&#x3D; &quot;function&quot;) {
+      opts.headers.set(&quot;ngsw-bypass&quot;, &quot;true&quot;);
+    } else if (opts.headers) {
+      opts.headers[&quot;ngsw-bypass&quot;] &#x3D; &quot;true&quot;;
+    }
 
     let result: Response;
     try {
-      result &#x3D; await PouchDB.fetch(remoteUrl, opts);
+      result &#x3D; await this.fetchWithTransientRetry(remoteUrl, opts);
     } catch (err) {
       Logging.debug(&quot;Failed initial fetch from DB&quot;, err);
       Logging.debug(&quot;navigator.onLine&quot;, navigator.onLine);
@@ -2234,6 +2246,33 @@ export class RemotePouchDatabase extends PouchDatabase {
 
     return result;
   };
+
+  /**
+   * Fetch with automatic retry for transient network errors (e.g. ERR_NETWORK_CHANGED).
+   * Network errors manifest as TypeErrors from the Fetch API.
+   */
+  private async fetchWithTransientRetry(
+    url: string,
+    opts: RequestInit,
+  ): Promise&lt;Response&gt; {
+    for (let attempt &#x3D; 0; ; attempt++) {
+      try {
+        return await PouchDB.fetch(url, opts);
+      } catch (err) {
+        const isTransient &#x3D; err instanceof TypeError;
+        if (!isTransient || attempt &gt;&#x3D; this.TRANSIENT_ERROR_RETRIES) {
+          throw err;
+        }
+        Logging.debug(
+          &#x60;Transient network error (attempt ${attempt + 1}/${this.TRANSIENT_ERROR_RETRIES}), retrying...&#x60;,
+          err,
+        );
+        await new Promise((resolve) &#x3D;&gt;
+          setTimeout(resolve, this.TRANSIENT_ERROR_DELAY_MS),
+        );
+      }
+    }
+  }
 
   /**
    * Parse &#x60;lostPermissions&#x60; from a &#x60;_changes&#x60; response and accumulate them
