@@ -7,7 +7,6 @@ import {
   debounceTime,
   filter,
   mergeMap,
-  retry,
   takeUntil,
   takeWhile,
 } from "rxjs/operators";
@@ -16,7 +15,7 @@ import {
   LoginStateSubject,
   SyncStateSubject,
 } from "../../session/session-type";
-import { from, interval, merge, of } from "rxjs";
+import { EMPTY, from, interval, merge, of } from "rxjs";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 import { AlertService } from "../../alerts/alert.service";
@@ -305,13 +304,20 @@ export class SyncedPouchDatabase extends PouchDatabase {
         debounceTime(500),
         mergeMap(() => {
           if (this.syncState.value == SyncState.STARTED) {
-            return of();
+            return EMPTY;
           } else {
-            return from(this.sync());
+            // catch errors so the outer observable stays alive without re-subscribing
+            // (re-subscribing via retry would leak EventEmitter listeners on PouchDB)
+            // sync() already logs errors and updates syncState before re-throwing
+            return from(
+              this.sync().catch((err) => {
+                Logging.debug("liveSync: swallowed sync error", err);
+              }),
+            );
           }
         }),
-        retry({ delay: this.SYNC_INTERVAL }),
         takeWhile(() => this.liveSyncEnabled),
+        takeUntil(this.destroy$),
       )
       .subscribe();
   }
