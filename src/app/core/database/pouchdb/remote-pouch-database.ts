@@ -8,6 +8,7 @@ import { SyncStateSubject } from "app/core/session/session-type";
 import { NgZone } from "@angular/core";
 import { timer } from "rxjs";
 import { exhaustMap, takeUntil } from "rxjs/operators";
+import { AlertService } from "../../alerts/alert.service";
 
 /**
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
@@ -38,11 +39,16 @@ export class RemotePouchDatabase extends PouchDatabase {
    */
   private readonly CHANGES_POLLING_INTERVAL = 10000; // 10 seconds
 
+  /** Cooldown (ms) between user-facing connection issue alerts. */
+  private readonly CONNECTION_ALERT_COOLDOWN_MS = 60000;
+  private lastConnectionAlertTime = 0;
+
   constructor(
     dbName: string,
     private authService: KeycloakAuthService,
     globalSyncState?: SyncStateSubject,
     ngZone?: NgZone,
+    private alertService?: AlertService,
   ) {
     super(dbName, globalSyncState, ngZone);
   }
@@ -86,7 +92,15 @@ export class RemotePouchDatabase extends PouchDatabase {
    * Maximum number of retries for transient network errors (e.g. ERR_NETWORK_CHANGED).
    */
   private readonly TRANSIENT_ERROR_RETRIES = 2;
-  private readonly TRANSIENT_ERROR_DELAY_MS = 1500;
+  private readonly TRANSIENT_ERROR_DELAY_MS = 15000;
+
+  /**
+   * Per-request timeout in ms. If the server sends no response within this
+   * window, the fetch is aborted. This prevents long-idle connections from
+   * being killed unpredictably by Chrome (ERR_NETWORK_CHANGED) or proxies.
+   * PouchDB will retry from its last checkpoint on abort.
+   */
+  private readonly FETCH_TIMEOUT_MS = 30000;
 
   private defaultFetch: Fetch = async (url: string | Request, opts: any) => {
     if (typeof url !== "string") {
@@ -111,6 +125,7 @@ export class RemotePouchDatabase extends PouchDatabase {
     } catch (err) {
       Logging.debug("Failed initial fetch from DB", err);
       Logging.debug("navigator.onLine", navigator.onLine);
+      this.showConnectionIssueAlert();
     }
 
     // retry login if request failed with unauthorized
@@ -161,7 +176,8 @@ export class RemotePouchDatabase extends PouchDatabase {
   };
 
   /**
-   * Fetch with automatic retry for transient network errors (e.g. ERR_NETWORK_CHANGED).
+   * Fetch with automatic retry for transient network errors (e.g. ERR_NETWORK_CHANGED)
+   * and a per-request timeout to abort long-idle connections cleanly.
    * Network errors manifest as TypeErrors from the Fetch API.
    */
   private async fetchWithTransientRetry(
@@ -169,10 +185,17 @@ export class RemotePouchDatabase extends PouchDatabase {
     opts: RequestInit,
   ): Promise<Response> {
     for (let attempt = 0; ; attempt++) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(
+        () => controller.abort(),
+        this.FETCH_TIMEOUT_MS,
+      );
       try {
-        return await PouchDB.fetch(url, opts);
+        const fetchOpts = { ...opts, signal: controller.signal };
+        return await PouchDB.fetch(url, fetchOpts);
       } catch (err) {
-        const isTransient = err instanceof TypeError;
+        const isTransient =
+          err instanceof TypeError || err?.name === "AbortError";
         if (!isTransient || attempt >= this.TRANSIENT_ERROR_RETRIES) {
           throw err;
         }
@@ -183,8 +206,24 @@ export class RemotePouchDatabase extends PouchDatabase {
         await new Promise((resolve) =>
           setTimeout(resolve, this.TRANSIENT_ERROR_DELAY_MS),
         );
+      } finally {
+        clearTimeout(timeoutId);
       }
     }
+  }
+
+  private showConnectionIssueAlert(): void {
+    const now = Date.now();
+    if (
+      now - this.lastConnectionAlertTime <
+      this.CONNECTION_ALERT_COOLDOWN_MS
+    ) {
+      return;
+    }
+    this.lastConnectionAlertTime = now;
+    this.alertService?.addWarning(
+      $localize`We are observing connection issues while syncing your data. Sync continues and retries automatically but may take longer than usual.`,
+    );
   }
 
   /**

@@ -19,6 +19,7 @@ import {
 import { from, interval, merge, of } from "rxjs";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
+import { AlertService } from "../../alerts/alert.service";
 
 /**
  * An alternative implementation of PouchDatabase that additionally
@@ -34,7 +35,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     return SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + this.pouchDB.name;
   }
 
-  POUCHDB_SYNC_BATCH_SIZE = 500;
+  POUCHDB_SYNC_BATCH_SIZE = 100;
   SYNC_INTERVAL = 30000;
 
   private remoteDatabase: RemotePouchDatabase;
@@ -63,6 +64,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     private navigator: Navigator,
     private loginStateSubject: LoginStateSubject,
     ngZone?: NgZone,
+    alertService?: AlertService,
   ) {
     super(dbName, globalSyncState, ngZone);
 
@@ -71,6 +73,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       authService,
       undefined,
       ngZone,
+      alertService,
     );
 
     this.logSyncContext();
