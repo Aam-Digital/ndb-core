@@ -97,56 +97,43 @@ describe("RemotePouchDatabase tests", () => {
   });
 
   it("should throw after exhausting transient retries", async () => {
-    vi.useFakeTimers();
-    try {
-      database.init("");
-      (PouchDB.fetch as Mock).mockReset();
+    (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
 
-      (PouchDB.fetch as Mock).mockImplementation(async () => {
-        throw new TypeError("Failed to fetch");
-      });
+    let callCount = 0;
+    (PouchDB.fetch as Mock).mockImplementation(async () => {
+      callCount++;
+      throw new TypeError("Failed to fetch");
+    });
 
-      const promise = (database as any).fetchWithTransientRetry(
+    await expect(
+      (database as any).fetchWithTransientRetry(
         `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
         { headers: new Headers() },
-      );
+      ),
+    ).rejects.toThrow(TypeError);
 
-      // advance past retry delays
-      await vi.advanceTimersByTimeAsync(5000);
-
-      await expect(promise).rejects.toThrow(TypeError);
-
-      // 1 initial + 2 retries = 3 total
-      expect(PouchDB.fetch).toHaveBeenCalledTimes(3);
-    } finally {
-      vi.useRealTimers();
-    }
+    // 1 initial + 2 retries = 3 total
+    expect(callCount).toBe(3);
   });
 
   it("should not retry on non-TypeError errors", async () => {
-    vi.useFakeTimers();
-    try {
-      database.init("");
-      (PouchDB.fetch as Mock).mockReset();
+    (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
 
-      (PouchDB.fetch as Mock).mockImplementation(async () => {
-        throw new Error("Some other error");
-      });
+    let callCount = 0;
+    (PouchDB.fetch as Mock).mockImplementation(async () => {
+      callCount++;
+      throw new Error("Some other error");
+    });
 
-      const promise = (database as any).fetchWithTransientRetry(
+    await expect(
+      (database as any).fetchWithTransientRetry(
         `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
         { headers: new Headers() },
-      );
+      ),
+    ).rejects.toThrow(Error);
 
-      await vi.advanceTimersByTimeAsync(0);
-
-      await expect(promise).rejects.toThrow(Error);
-
-      // no retries for non-TypeError
-      expect(PouchDB.fetch).toHaveBeenCalledTimes(1);
-    } finally {
-      vi.useRealTimers();
-    }
+    // no retries for non-TypeError
+    expect(callCount).toBe(1);
   });
 
   it("should use periodic polling for changes feed instead of live long-polling", async () => {
