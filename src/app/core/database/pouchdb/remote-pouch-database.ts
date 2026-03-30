@@ -82,6 +82,12 @@ export class RemotePouchDatabase extends PouchDatabase {
     this.databaseInitialized.complete();
   }
 
+  /**
+   * Maximum number of retries for transient network errors (e.g. ERR_NETWORK_CHANGED).
+   */
+  private readonly TRANSIENT_ERROR_RETRIES = 2;
+  private readonly TRANSIENT_ERROR_DELAY_MS = 1500;
+
   private defaultFetch: Fetch = async (url: string | Request, opts: any) => {
     if (typeof url !== "string") {
       const err = new Error("PouchDatabase.fetch: url is not a string");
@@ -92,10 +98,12 @@ export class RemotePouchDatabase extends PouchDatabase {
     const remoteUrl =
       environment.DB_PROXY_PREFIX + url.split(environment.DB_PROXY_PREFIX)[1];
     this.authService.addAuthHeader(opts.headers);
+    // bypass Angular service worker to avoid synthetic 504 errors on network blips
+    opts.headers["ngsw-bypass"] = "true";
 
     let result: Response;
     try {
-      result = await PouchDB.fetch(remoteUrl, opts);
+      result = await this.fetchWithTransientRetry(remoteUrl, opts);
     } catch (err) {
       Logging.debug("Failed initial fetch from DB", err);
       Logging.debug("navigator.onLine", navigator.onLine);
@@ -147,6 +155,33 @@ export class RemotePouchDatabase extends PouchDatabase {
 
     return result;
   };
+
+  /**
+   * Fetch with automatic retry for transient network errors (e.g. ERR_NETWORK_CHANGED).
+   * Network errors manifest as TypeErrors from the Fetch API.
+   */
+  private async fetchWithTransientRetry(
+    url: string,
+    opts: RequestInit,
+  ): Promise<Response> {
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await PouchDB.fetch(url, opts);
+      } catch (err) {
+        const isTransient = err instanceof TypeError;
+        if (!isTransient || attempt >= this.TRANSIENT_ERROR_RETRIES) {
+          throw err;
+        }
+        Logging.debug(
+          `Transient network error (attempt ${attempt + 1}/${this.TRANSIENT_ERROR_RETRIES}), retrying...`,
+          err,
+        );
+        await new Promise((resolve) =>
+          setTimeout(resolve, this.TRANSIENT_ERROR_DELAY_MS),
+        );
+      }
+    }
+  }
 
   /**
    * Parse `lostPermissions` from a `_changes` response and accumulate them
