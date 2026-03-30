@@ -43,27 +43,42 @@
             Edit
           </button>
         } @else {
-          @if (userAccount()?.enabled) {
+          <!-- Three-dots overflow menu for secondary/destructive actions -->
+          <button
+            mat-icon-button
+            color="warn"
+            [matMenuTriggerFor]="userAccountActionsMenu"
+            matTooltip="More actions"
+            i18n-matTooltip
+          >
+            <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
+          </button>
+          <mat-menu #userAccountActionsMenu>
+            @if (userAccount()?.enabled) {
+              <button
+                mat-menu-item
+                (click)="enableAccount(false)"
+                i18n="button to disable a user"
+              >
+                Deactivate user
+              </button>
+            } @else {
+              <button
+                mat-menu-item
+                (click)="enableAccount(true)"
+                i18n="button to enable a user"
+              >
+                Activate user
+              </button>
+            }
             <button
-              mat-stroked-button
-              color="warn"
-              (click)="enableAccount(false)"
-              matTooltip="User will not be able to login again, no information will be lost"
-              i18n="button to update disable a user"
+              mat-menu-item
+              (click)="deleteAccount()"
+              i18n="button to delete user account"
             >
-              Deactivate user
+              Delete user account
             </button>
-          } @else {
-            <button
-              mat-raised-button
-              color="accent"
-              (click)="enableAccount(true)"
-              matTooltip="User can login again with the previously used credentials"
-              i18n="button to enable a user"
-            >
-              Activate user
-            </button>
-          }
+          </mat-menu>
 
           <button
             mat-raised-button

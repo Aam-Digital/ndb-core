@@ -8,6 +8,9 @@ import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
+import { fas } from "@fortawesome/free-solid-svg-icons";
 import { BehaviorSubject, of } from "rxjs";
 import { CoreTestingModule } from "#src/app/utils/core-testing.module";
 import type { SessionInfo } from "../../session/auth/session-info";
@@ -17,6 +20,7 @@ type UserAdminServiceMock = {
   getAllRoles: Mock;
   createUser: Mock;
   updateUser: Mock;
+  deleteUser: Mock;
 };
 
 type AlertServiceMock = {
@@ -37,6 +41,10 @@ type DialogRefMock = {
   close: Mock;
 };
 
+type ConfirmationDialogMock = {
+  getConfirmation: Mock;
+};
+
 describe("UserDetailsComponent", () => {
   let component: UserDetailsComponent;
   let fixture: ComponentFixture<UserDetailsComponent>;
@@ -47,6 +55,7 @@ describe("UserDetailsComponent", () => {
   let mockSessionSubject: BehaviorSubject<SessionInfo | null>;
   let mockCurrentUserSubject: BehaviorSubject<UserAccount | null>;
   let mockDialogRef: DialogRefMock;
+  let mockConfirmationDialog: ConfirmationDialogMock;
 
   const mockRole: Role = {
     id: "test-role",
@@ -67,6 +76,7 @@ describe("UserDetailsComponent", () => {
       getAllRoles: vi.fn().mockName("UserAdminService.getAllRoles"),
       createUser: vi.fn().mockName("UserAdminService.createUser"),
       updateUser: vi.fn().mockName("UserAdminService.updateUser"),
+      deleteUser: vi.fn().mockReturnValue(of({ userDeleted: true })),
     };
     mockUserAdminService.getAllRoles.mockReturnValue(of([mockRole]));
     mockUserAdminService.updateUser.mockReturnValue(of({ userUpdated: true }));
@@ -97,6 +107,10 @@ describe("UserDetailsComponent", () => {
       close: vi.fn().mockName("MatDialogRef.close"),
     };
 
+    mockConfirmationDialog = {
+      getConfirmation: vi.fn().mockResolvedValue(true),
+    };
+
     await TestBed.configureTestingModule({
       imports: [UserDetailsComponent, CoreTestingModule],
       providers: [
@@ -108,8 +122,11 @@ describe("UserDetailsComponent", () => {
         { provide: KeycloakAuthService, useValue: mockKeycloakService },
         { provide: SessionSubject, useValue: mockSessionSubject },
         { provide: CurrentUserSubject, useValue: mockCurrentUserSubject },
+        { provide: ConfirmationDialogService, useValue: mockConfirmationDialog },
       ],
     }).compileComponents();
+
+    TestBed.inject(FaIconLibrary).addIconPacks(fas);
 
     fixture = TestBed.createComponent(UserDetailsComponent);
     component = fixture.componentInstance;
@@ -267,6 +284,50 @@ describe("UserDetailsComponent", () => {
       expect.stringContaining("/admin/clear_local/"),
       undefined,
     );
+  });
+
+  it("should call deleteUser and clear userAccount when confirmed", async () => {
+    fixture.componentRef.setInput("userAccount", {
+      ...mockUserAccount,
+      userEntityId: "User:some-entity-id",
+    });
+    fixture.detectChanges();
+    component.editMode();
+    fixture.detectChanges();
+
+    await component.deleteAccount();
+
+    expect(mockUserAdminService.deleteUser).toHaveBeenCalledWith(
+      "User:some-entity-id",
+    );
+    expect(component.userAccount()).toBeNull();
+  });
+
+  it("should not delete own account and show self-deletion warning", async () => {
+    fixture.componentRef.setInput("userAccount", {
+      ...mockUserAccount,
+      userEntityId: "User:some-entity-id",
+    });
+    mockSessionSubject.next({ id: mockUserAccount.id, name: "test", roles: [] });
+    fixture.detectChanges();
+    component.editMode();
+    fixture.detectChanges();
+
+    await component.deleteAccount();
+
+    expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
+  });
+
+  it("should not deactivate own account and show self-deletion warning", async () => {
+    fixture.componentRef.setInput("userAccount", mockUserAccount);
+    mockSessionSubject.next({ id: mockUserAccount.id, name: "test", roles: [] });
+    fixture.detectChanges();
+    component.editMode();
+    fixture.detectChanges();
+
+    await component.enableAccount(false);
+
+    expect(mockUserAdminService.updateUser).not.toHaveBeenCalled();
   });
 
   it("should not trigger sync reset when only email is updated", () => {

@@ -16,10 +16,12 @@ import {
 import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { throwError } from "rxjs";
+import { BehaviorSubject, of, throwError } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { UserAdminService } from "../../user/user-admin-service/user-admin.service";
+import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
@@ -36,20 +38,29 @@ describe("EntityDeleteService", () => {
     getConfirmation: Mock;
     showProgressDialog: Mock;
   };
-  let mockUserAdminService: { deleteUser: Mock };
+  let mockUserAdminService: { deleteUser: Mock; getUser: Mock };
+  let mockSessionSubject: BehaviorSubject<SessionInfo>;
 
   beforeEach(() => {
     snackBarSpy = {
       open: vi.fn(),
     };
+    mockSessionSubject = new BehaviorSubject<SessionInfo>({
+      id: "session-user-id",
+      name: "test-user",
+      roles: [],
+    });
+
     mockUserAdminService = {
       deleteUser: vi.fn(),
+      getUser: vi.fn(),
     };
     mockUserAdminService.deleteUser.mockReturnValue(
       throwError(() => {
         new Error();
       }),
     );
+    mockUserAdminService.getUser.mockReturnValue(of(null));
 
     mockConfirmationDialog = {
       getConfirmation: vi.fn(),
@@ -66,6 +77,7 @@ describe("EntityDeleteService", () => {
         EntityDeleteService,
         ...mockEntityMapperProvider(allEntities.map((e) => e.copy())),
         { provide: UserAdminService, useValue: mockUserAdminService },
+        { provide: SessionSubject, useValue: mockSessionSubject },
         { provide: MatSnackBar, useValue: snackBarSpy },
         { provide: DefaultDatatype, useClass: AttendanceDatatype, multi: true },
         {
@@ -125,20 +137,137 @@ describe("EntityDeleteService", () => {
     );
   });
 
-  it("should delete several entities and show dialog if keycloak deletion fails", async () => {
-    // given
+  it("should show error dialog if user account deletion fails after confirmation", async () => {
+    // given: account_manager with linked account confirms deletion, but Keycloak returns error
+    mockSessionSubject.next({
+      id: "session-id",
+      name: "test",
+      roles: [UserAdminService.ACCOUNT_MANAGER_ROLE],
+    });
+    mockUserAdminService.getUser.mockReturnValue(of({ id: "kc-user-id" }));
     mockUserAdminService.deleteUser.mockReturnValue(
       throwError(() => new Error()),
     );
+    mockConfirmationDialog.getConfirmation.mockResolvedValue(true);
     const userEntity = new TestEntity();
     TestEntity.enableUserAccounts = true;
 
     // when
-    await service.deleteEntity(userEntity, true);
+    await service.deleteEntity(userEntity);
 
-    // then
+    // then: confirmation dialog + error dialog = 2 calls
+    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalledTimes(2);
+
+    TestEntity.enableUserAccounts = false;
+  });
+
+  it("should skip account deletion silently if current user lacks account_manager role", async () => {
+    const userEntity = new TestEntity();
+    TestEntity.enableUserAccounts = true;
+    mockSessionSubject.next({ id: "session-id", name: "test", roles: [] });
+    mockUserAdminService.getUser.mockReturnValue(of({ id: "kc-user-id" }));
+
+    await service.deleteEntity(userEntity);
+
+    expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
+    expect(mockConfirmationDialog.getConfirmation).not.toHaveBeenCalled();
+    TestEntity.enableUserAccounts = false;
+  });
+
+  it("should ask confirmation and delete account when user has account_manager role and confirms", async () => {
+    const userEntity = new TestEntity();
+    TestEntity.enableUserAccounts = true;
+    mockSessionSubject.next({
+      id: "session-id",
+      name: "test",
+      roles: [UserAdminService.ACCOUNT_MANAGER_ROLE],
+    });
+    mockUserAdminService.getUser.mockReturnValue(of({ id: "kc-user-id" }));
+    mockUserAdminService.deleteUser.mockReturnValue(of({ userDeleted: true }));
+    mockConfirmationDialog.getConfirmation.mockResolvedValue(true);
+
+    await service.deleteEntity(userEntity);
+
     expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalledTimes(1);
+    expect(mockUserAdminService.deleteUser).toHaveBeenCalled();
+    TestEntity.enableUserAccounts = false;
+  });
 
+  it("should not delete account if user declines account deletion confirmation", async () => {
+    const userEntity = new TestEntity();
+    TestEntity.enableUserAccounts = true;
+    mockSessionSubject.next({
+      id: "session-id",
+      name: "test",
+      roles: [UserAdminService.ACCOUNT_MANAGER_ROLE],
+    });
+    mockUserAdminService.getUser.mockReturnValue(of({ id: "kc-user-id" }));
+    mockConfirmationDialog.getConfirmation.mockResolvedValue(false);
+
+    await service.deleteEntity(userEntity);
+
+    expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
+    TestEntity.enableUserAccounts = false;
+  });
+
+  it("should skip account deletion silently if no linked account exists", async () => {
+    const userEntity = new TestEntity();
+    TestEntity.enableUserAccounts = true;
+    mockSessionSubject.next({
+      id: "session-id",
+      name: "test",
+      roles: [UserAdminService.ACCOUNT_MANAGER_ROLE],
+    });
+    mockUserAdminService.getUser.mockReturnValue(of(null));
+
+    await service.deleteEntity(userEntity);
+
+    expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
+    expect(mockConfirmationDialog.getConfirmation).not.toHaveBeenCalled();
+    TestEntity.enableUserAccounts = false;
+  });
+
+  it("should not delete own account and show self-deletion warning (full entity ID)", async () => {
+    const userEntity = new TestEntity();
+    TestEntity.enableUserAccounts = true;
+    mockSessionSubject.next({
+      id: "session-id",
+      name: "test",
+      roles: [UserAdminService.ACCOUNT_MANAGER_ROLE],
+      entityId: userEntity.getId(),
+    });
+    mockUserAdminService.getUser.mockReturnValue(of({ id: "kc-user-id" }));
+
+    await service.deleteEntity(userEntity);
+
+    expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
+    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.stringContaining("own account"),
+      OkButton,
+    );
+    TestEntity.enableUserAccounts = false;
+  });
+
+  it("should not delete own account and show self-deletion warning (short entity ID without type prefix)", async () => {
+    const userEntity = new TestEntity();
+    TestEntity.enableUserAccounts = true;
+    mockSessionSubject.next({
+      id: "session-id",
+      name: "test",
+      roles: [UserAdminService.ACCOUNT_MANAGER_ROLE],
+      entityId: userEntity.getId(true),
+    });
+    mockUserAdminService.getUser.mockReturnValue(of({ id: "kc-user-id" }));
+
+    await service.deleteEntity(userEntity);
+
+    expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
+    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.stringContaining("own account"),
+      OkButton,
+    );
     TestEntity.enableUserAccounts = false;
   });
 

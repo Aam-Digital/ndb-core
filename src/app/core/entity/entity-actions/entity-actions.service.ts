@@ -171,7 +171,7 @@ export class EntityActionsService {
     let result = new CascadingActionResult();
 
     for (let entity of entities) {
-      result.mergeResults(await this.entityDelete.deleteEntity(entity, true));
+      result.mergeResults(await this.entityDelete.deleteEntity(entity));
     }
 
     progressDialogRef.close();

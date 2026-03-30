@@ -22,6 +22,8 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
+import { MatMenuModule } from "@angular/material/menu";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -34,11 +36,14 @@ import { DialogCloseComponent } from "../../common-components/dialog-close/dialo
 import { AlertService } from "../../alerts/alert.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import { SessionSubject } from "../../session/auth/session-info";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { Angulartics2Module } from "angulartics2";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
 import { EditEntityComponent } from "../../basic-datatypes/entity/edit-entity/edit-entity.component";
-import { lastValueFrom, of } from "rxjs";
+import { lastValueFrom, of, firstValueFrom } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { catchError, map } from "rxjs/operators";
@@ -74,6 +79,8 @@ export interface UserDetailsAction {
     MatSelectModule,
     MatTooltipModule,
     MatButtonModule,
+    MatMenuModule,
+    FontAwesomeModule,
     MatDialogModule,
     DialogCloseComponent,
     Angulartics2Module,
@@ -97,6 +104,8 @@ export class UserDetailsComponent {
     optional: true,
   });
   protected currentUser = inject(CurrentUserSubject, { optional: true });
+  private readonly sessionInfo = inject(SessionSubject, { optional: true });
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   userAccount = model<UserAccount | null>(this._dialogData?.userAccount);
   isInDialog = input<boolean>(!!this._dialogData || false);
@@ -365,7 +374,49 @@ export class UserDetailsComponent {
     );
   }
 
+  async deleteAccount() {
+    if (this.sessionInfo?.value?.id === this.userAccount()?.id) {
+      await this.confirmationDialog.getConfirmation(
+        $localize`:self-deletion warning title:Cannot delete own account`,
+        $localize`:self-deletion warning dialog:You cannot delete your own account. Please ask another admin to remove your account if needed.`,
+        OkButton,
+      );
+      return;
+    }
+
+    const confirmed = await this.confirmationDialog.getConfirmation(
+      $localize`:delete account confirmation title:Delete user account?`,
+      $localize`:delete account confirmation dialog:Are you sure you want to permanently delete this user account? This cannot be undone.`,
+    );
+    if (!confirmed) return;
+
+    try {
+      await firstValueFrom(
+        this.userAdminService.deleteUser(this.userAccount().userEntityId),
+      );
+      this.alertService.addInfo(
+        $localize`:delete account success message:User account has been deleted.`,
+      );
+      this.userAccount.set(null);
+    } catch (err) {
+      this.alertService.addDanger(
+        err?.["error"]?.message ||
+          err?.["message"] ||
+          $localize`:Error message:Failed to delete user account`,
+      );
+    }
+  }
+
   async enableAccount(enabled: boolean) {
+    if (!enabled && this.sessionInfo?.value?.id === this.userAccount()?.id) {
+      await this.confirmationDialog.getConfirmation(
+        $localize`:self-deactivation warning title:Cannot disable own account`,
+        $localize`:self-deactivation warning dialog:You cannot disable your own account. Please ask another admin to deactivate your account if needed.`,
+        OkButton,
+      );
+      return;
+    }
+
     const message = enabled
       ? $localize`:Snackbar message:Account has been activated, user can login again.`
       : $localize`:Snackbar message:Account has been disabled, user will not be able to login anymore.`;
