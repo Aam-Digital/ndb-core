@@ -22,6 +22,11 @@
   }
 }
 
+.label-cell ::ng-deep app-entity-block .truncate-text {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 .navigation-controls {
   display: flex;
   align-items: center;
