@@ -19,13 +19,13 @@ import { MatError, MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatRadioModule } from "@angular/material/radio";
 import { MatSelectModule } from "@angular/material/select";
-import { EntityConstructor } from "app/core/entity/model/entity";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { UserAdminService } from "app/core/user/user-admin-service/user-admin.service";
 import {
   Role,
   UserAccount,
 } from "app/core/user/user-admin-service/user-account";
-import { lastValueFrom } from "rxjs";
+import { catchError, lastValueFrom, of } from "rxjs";
 
 @Component({
   selector: "app-merge-account-section",
@@ -47,9 +47,11 @@ export class MergeAccountSectionComponent implements OnInit {
   private readonly userAdminService = inject(UserAdminService);
   private readonly fb = inject(FormBuilder);
 
-  entityAccounts = input.required<(UserAccount | null)[]>();
-  accountLoadError = input<boolean>(false);
+  entitiesToMerge = input.required<Entity[]>();
   entityConstructor = input.required<EntityConstructor>();
+
+  readonly entityAccounts = signal<(UserAccount | null)[]>([null, null]);
+  readonly accountLoadError = signal<boolean>(false);
 
   readonly hasAnyUserAccount = computed(() =>
     this.entityAccounts().some((a) => a != null),
@@ -116,8 +118,38 @@ export class MergeAccountSectionComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    if (!this.hasAnyUserAccount()) return;
-    await this.initAccountForm();
+    await this.loadAccounts();
+    if (this.hasAnyUserAccount()) {
+      await this.initAccountForm();
+    }
+  }
+
+  private async loadAccounts(): Promise<void> {
+    if (!this.entityConstructor().enableUserAccounts) return;
+
+    const results = await Promise.all(
+      this.entitiesToMerge().map((e) => this.fetchUserAccount(e)),
+    );
+    this.entityAccounts.set(results.map((r) => r.account));
+    this.accountLoadError.set(results.some((r) => r.error));
+  }
+
+  private async fetchUserAccount(
+    entity: Entity,
+  ): Promise<{ account: UserAccount | null; error: boolean }> {
+    try {
+      const account = await lastValueFrom(
+        this.userAdminService.getUser(entity.getId()).pipe(
+          catchError((err) => {
+            if (err?.status === 404) return of(null);
+            throw err;
+          }),
+        ),
+      );
+      return { account, error: false };
+    } catch {
+      return { account: null, error: true };
+    }
   }
 
   private async initAccountForm(): Promise<void> {
@@ -214,18 +246,14 @@ export class MergeAccountSectionComponent implements OnInit {
   }
 
   /**
-   * Applies any edits made to the surviving account's email/roles via userAdminService.
-   * Throws if the server rejects the update.
+   * Validates the account form and returns the update payload in a single call.
+   * Returns false if the form is invalid, otherwise the update payload (null if no changes).
    */
-  async applyAccountUpdate(): Promise<void> {
-    const payload = this.buildAccountUpdate();
-    if (!payload) return;
-
-    const result = await lastValueFrom(
-      this.userAdminService.updateUser(payload.accountId, payload.update),
-    );
-    if (!result.userUpdated) {
-      throw new Error("Account update was not applied by the server");
-    }
+  validateAndGetUpdate():
+    | false
+    | null
+    | { accountId: string; update: Partial<UserAccount> } {
+    if (this.accountForm()?.invalid) return false;
+    return this.buildAccountUpdate();
   }
 }

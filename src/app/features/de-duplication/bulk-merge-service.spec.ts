@@ -130,12 +130,10 @@ describe("BulkMergeService", () => {
     expect(result).toBe(false);
   });
 
-  it("should open dialog with no reordering and no error when no accounts exist", async () => {
+  it("should open dialog with no reordering when no accounts exist", async () => {
     await service.showMergeDialog([recordA, recordB], TestEntity);
     const dialogData = mockMatDialog.open.mock.calls[0][1].data;
     expect(dialogData.entitiesToMerge[0].getId()).toBe(recordA.getId());
-    expect(dialogData.entityAccounts).toEqual([null, null]);
-    expect(dialogData.accountLoadError).toBe(false);
   });
 
   it("should update record_A and delete record_B when merge is confirmed", async () => {
@@ -269,18 +267,6 @@ describe("BulkMergeService", () => {
       expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
     });
 
-    it("should open dialog with accountLoadError=true when getUser API fails with non-404 error", async () => {
-      mockUserAdminService.getUser.mockReturnValue(
-        throwError(() => ({ status: 500 })),
-      );
-
-      await service.showMergeDialog([entityA, entityB], TestEntityWithAccounts);
-
-      const dialogData = mockMatDialog.open.mock.calls[0][1].data;
-      expect(dialogData.accountLoadError).toBe(true);
-      expect(dialogData.entityAccounts).toEqual([null, null]);
-    });
-
     it("should reorder entities in showMergeDialog so account-holder is primary (index 0)", async () => {
       // Only entityB has an account
       const notFound$ = throwError(() => ({ status: 404 }));
@@ -293,8 +279,6 @@ describe("BulkMergeService", () => {
 
       const dialogData = mockMatDialog.open.mock.calls[0][1].data;
       expect(dialogData.entitiesToMerge[0].getId()).toBe(entityB.getId());
-      expect(dialogData.entityAccounts[0]).toEqual(mockUserAccount);
-      expect(dialogData.entityAccounts[1]).toBeNull();
     });
 
     it("should call updateUser with accountUpdate payload after secondary entity is deleted", async () => {
@@ -327,9 +311,6 @@ describe("BulkMergeService", () => {
       await service.showMergeDialog([entityA, entityB], TestEntityWithAccounts);
 
       expect(mockMatDialog.open).toHaveBeenCalled();
-      const dialogData = mockMatDialog.open.mock.calls[0][1].data;
-      expect(dialogData.entityAccounts[0]).toEqual(mockAccountA);
-      expect(dialogData.entityAccounts[1]).toEqual(mockUserAccount);
     });
   });
 });

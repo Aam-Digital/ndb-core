@@ -9,8 +9,7 @@
         <div class="header" i18n>Merge Preview</div>
         @if (entityConstructor.enableUserAccounts) {
           <app-merge-account-section
-            [entityAccounts]="entityAccounts"
-            [accountLoadError]="accountLoadError"
+            [entitiesToMerge]="entitiesToMerge"
             [entityConstructor]="entityConstructor"
           />
         }

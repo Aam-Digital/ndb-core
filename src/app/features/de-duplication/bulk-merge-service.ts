@@ -76,8 +76,6 @@ export class BulkMergeService {
       data: {
         entityConstructor: entityType,
         entitiesToMerge: entitiesToMerge,
-        entityAccounts: entityAccounts,
-        accountLoadError: accountLoadError,
       },
     });
     const dialogResult:
@@ -87,6 +85,7 @@ export class BulkMergeService {
             accountId: string;
             update: Partial<UserAccount>;
           } | null;
+          entityAccounts: (UserAccount | null)[];
         }
       | undefined = await lastValueFrom(dialogRef.afterClosed());
 
@@ -95,7 +94,7 @@ export class BulkMergeService {
     await this.executeMerge(
       dialogResult.mergedEntity,
       entitiesToMerge,
-      entityAccounts,
+      dialogResult.entityAccounts,
       dialogResult.accountUpdate,
     );
     this.unsavedChangesService.pending = false;

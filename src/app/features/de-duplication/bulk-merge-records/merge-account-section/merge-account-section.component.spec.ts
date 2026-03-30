@@ -2,8 +2,14 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormBuilder } from "@angular/forms";
 import { MergeAccountSectionComponent } from "./merge-account-section.component";
 import { UserAdminService } from "app/core/user/user-admin-service/user-admin.service";
-import { TestEntity } from "app/utils/test-utils/TestEntity";
 import { of, throwError } from "rxjs";
+import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
+import { Entity } from "app/core/entity/model/entity";
+
+@DatabaseEntity("TestEntityWithUserAccountsSection")
+class TestEntityWithUserAccounts extends Entity {
+  static override readonly enableUserAccounts = true;
+}
 
 describe("MergeAccountSectionComponent", () => {
   let component: MergeAccountSectionComponent;
@@ -23,7 +29,13 @@ describe("MergeAccountSectionComponent", () => {
     roles: [{ id: "role-2", name: "User" }],
   };
 
+  let entity0: TestEntityWithUserAccounts;
+  let entity1: TestEntityWithUserAccounts;
+
   beforeEach(async () => {
+    entity0 = new TestEntityWithUserAccounts();
+    entity1 = new TestEntityWithUserAccounts();
+
     mockUserAdminService = {
       getAllRoles: vi.fn().mockReturnValue(
         of([
@@ -32,6 +44,11 @@ describe("MergeAccountSectionComponent", () => {
         ]),
       ),
       updateUser: vi.fn().mockReturnValue(of({ userUpdated: true })),
+      getUser: vi.fn().mockImplementation((entityId: string) => {
+        if (entityId === entity0.getId()) return of(mockAccount0);
+        if (entityId === entity1.getId()) return of(mockAccount1);
+        return throwError(() => ({ status: 404 }));
+      }),
     };
 
     await TestBed.configureTestingModule({
@@ -44,18 +61,29 @@ describe("MergeAccountSectionComponent", () => {
 
     fixture = TestBed.createComponent(MergeAccountSectionComponent);
     component = fixture.componentInstance;
-    fixture.componentRef.setInput("entityAccounts", [
-      mockAccount0,
-      mockAccount1,
-    ]);
-    fixture.componentRef.setInput("accountLoadError", false);
-    fixture.componentRef.setInput("entityConstructor", TestEntity);
+    fixture.componentRef.setInput("entitiesToMerge", [entity0, entity1]);
+    fixture.componentRef.setInput(
+      "entityConstructor",
+      TestEntityWithUserAccounts,
+    );
   });
 
-  it("should pre-select the email from the account at index 0 by default", async () => {
+  it("should load accounts and pre-select the email from the account at index 0 by default", async () => {
     await component.ngOnInit();
 
+    expect(component.entityAccounts()).toEqual([mockAccount0, mockAccount1]);
     expect(component.selectedAccountEmailIndex()).toBe(0);
+  });
+
+  it("should set accountLoadError when getUser API fails with non-404 error", async () => {
+    mockUserAdminService.getUser.mockReturnValue(
+      throwError(() => ({ status: 500 })),
+    );
+
+    await component.ngOnInit();
+
+    expect(component.accountLoadError()).toBe(true);
+    expect(component.entityAccounts()).toEqual([null, null]);
   });
 
   it("should use fallback roles from accounts when getAllRoles fails", async () => {
@@ -70,27 +98,37 @@ describe("MergeAccountSectionComponent", () => {
     ]);
   });
 
-  it("should call updateUser when accountForm has email changes", async () => {
+  it("should return update payload from buildAccountUpdate when email is changed", async () => {
     await component.ngOnInit();
 
     component.accountEmailControl().setValue("new@test.com");
     component.accountEmailControl().markAsDirty();
     component.accountForm()!.markAsDirty();
 
-    await component.applyAccountUpdate();
+    const result = component.buildAccountUpdate();
 
-    expect(mockUserAdminService.updateUser).toHaveBeenCalledWith(
-      mockAccount0.id,
+    expect(result).toEqual(
+      expect.objectContaining({ accountId: mockAccount0.id }),
+    );
+    expect(result?.update).toEqual(
       expect.objectContaining({ email: "new@test.com" }),
     );
   });
 
-  it("should NOT call updateUser when accountForm is not dirty", async () => {
+  it("should return null from buildAccountUpdate when form is not dirty", async () => {
     await component.ngOnInit();
 
-    await component.applyAccountUpdate();
+    expect(component.buildAccountUpdate()).toBeNull();
+  });
 
-    expect(mockUserAdminService.updateUser).not.toHaveBeenCalled();
+  it("should return false from validateAndGetUpdate when accountForm is invalid", async () => {
+    await component.ngOnInit();
+
+    component.accountEmailControl().setValue("not-an-email");
+    component.accountEmailControl().markAsDirty();
+    component.accountForm()!.markAsDirty();
+
+    expect(component.validateAndGetUpdate()).toBe(false);
   });
 
   it("should update selectedAccountEmailIndex when selectAccountEmail is called", async () => {
@@ -123,7 +161,9 @@ describe("MergeAccountSectionComponent", () => {
   });
 
   it("should not initialize accountForm when no accounts exist", async () => {
-    fixture.componentRef.setInput("entityAccounts", [null, null]);
+    mockUserAdminService.getUser.mockReturnValue(
+      throwError(() => ({ status: 404 })),
+    );
 
     await component.ngOnInit();
 

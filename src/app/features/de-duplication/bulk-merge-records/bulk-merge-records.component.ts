@@ -23,7 +23,6 @@ import { FormFieldConfig } from "app/core/common-components/entity-form/FormConf
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { MergeFieldsComponent } from "./merge-fields/merge-fields.component";
-import { UserAccount } from "app/core/user/user-admin-service/user-account";
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
 import { MergeAccountSectionComponent } from "./merge-account-section/merge-account-section.component";
 
@@ -60,8 +59,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   mergedEntity: E;
   fieldsToMerge: FormFieldConfig[] = [];
   mergeForm: EntityForm<E>;
-  entityAccounts: (UserAccount | null)[] = [];
-  accountLoadError: boolean = false;
 
   /** whether the entitiesToMerge contain some file attachments that would be lost during a merge */
   hasDiscardedFileOrPhoto: boolean = false;
@@ -70,14 +67,10 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     const data = inject<{
       entityConstructor: EntityConstructor;
       entitiesToMerge: E[];
-      entityAccounts?: (UserAccount | null)[];
-      accountLoadError?: boolean;
     }>(MAT_DIALOG_DATA);
 
     this.entityConstructor = data.entityConstructor;
     this.entitiesToMerge = data.entitiesToMerge;
-    this.entityAccounts = data.entityAccounts ?? [];
-    this.accountLoadError = data.accountLoadError ?? false;
     // Use the primary entity's values as the base so form validators (e.g. uniqueness)
     // treat existing values as the "default" and don't incorrectly flag them as duplicates.
     this.mergedEntity = this.entitiesToMerge[0].copy() as E;
@@ -137,9 +130,15 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   async confirmAndMergeRecords(): Promise<boolean> {
     this.mergeForm.formGroup.markAllAsTouched();
     if (this.mergeForm.formGroup.invalid) return false;
-    if (this.accountSection()?.accountForm()?.invalid) return false;
 
-    if (this.accountLoadError && this.entityConstructor.enableUserAccounts) {
+    // Single call: validates account form and returns update payload
+    const accountResult = this.accountSection()?.validateAndGetUpdate();
+    if (accountResult === false) return false;
+
+    if (
+      this.accountSection()?.accountLoadError() &&
+      this.entityConstructor.enableUserAccounts
+    ) {
       const confirmed = await this.confirmationDialog.getConfirmation(
         $localize`:merge account load error title:Warning! User account status unknown`,
         $localize`:merge account load error:User account information could not be loaded (you may be offline or lack account_manager permissions). Proceeding may leave an orphaned user account. Are you sure you want to continue?`,
@@ -147,7 +146,9 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       if (!confirmed) return false;
     }
 
-    const accountsFound = this.entityAccounts.filter((a) => a != null);
+    const accountsFound = (
+      this.accountSection()?.entityAccounts() ?? []
+    ).filter((a) => a != null);
     if (accountsFound.length > 0) {
       const confirmed = await this.confirmationDialog.getConfirmation(
         $localize`:merge account warning title:Warning! User account(s) found`,
@@ -175,14 +176,13 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       return false;
     }
 
-    const accountUpdate = this.accountSection()?.buildAccountUpdate() ?? null;
-
     this.dialogRef.close({
       mergedEntity: Object.assign(
         this.entitiesToMerge[0].copy(),
         this.mergeForm.formGroup.value,
       ),
-      accountUpdate,
+      accountUpdate: accountResult ?? null,
+      entityAccounts: this.accountSection()?.entityAccounts() ?? [],
     });
   }
 }
