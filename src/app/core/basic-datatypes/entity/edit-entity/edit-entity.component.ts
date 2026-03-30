@@ -111,8 +111,8 @@ export class EditEntityComponent<
   /**
    * The accessor used for filtering and when selecting a new entity.
    */
-  @Input() accessor: (e: Entity) => string = (e) =>
-    e instanceof Entity ? e.toString() : "?";
+  @Input() accessor: (e: Entity | string) => string = (e) =>
+    e instanceof Entity ? e.toString() : typeof e === "string" ? e : "?";
   entityToId = (option: E) => option.getId();
 
   additionalFilter: InputSignal<(e: E) => boolean> = input((_) => true);
