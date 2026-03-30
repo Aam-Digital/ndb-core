@@ -64,14 +64,10 @@ export class ConfigService extends LatestEntityLoader<Config> {
       if (err?.status === HttpStatusCode.NotFound) {
         return undefined;
       }
-      if (err?.status && err.status !== HttpStatusCode.NotFound) {
-        this.abortWithError(
-          `Failed to load configuration from the database.`,
-          err,
-        );
-      } else {
-        Logging.error(`Initial loading of Config failed [ConfigService]`, err);
-      }
+      this.abortWithError(
+        `Failed to load configuration from the database.`,
+        err,
+      );
       return undefined;
     }
   }
