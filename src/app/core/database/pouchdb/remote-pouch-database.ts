@@ -99,7 +99,11 @@ export class RemotePouchDatabase extends PouchDatabase {
       environment.DB_PROXY_PREFIX + url.split(environment.DB_PROXY_PREFIX)[1];
     this.authService.addAuthHeader(opts.headers);
     // bypass Angular service worker to avoid synthetic 504 errors on network blips
-    opts.headers["ngsw-bypass"] = "true";
+    if (opts.headers?.set && typeof opts.headers.set === "function") {
+      opts.headers.set("ngsw-bypass", "true");
+    } else if (opts.headers) {
+      opts.headers["ngsw-bypass"] = "true";
+    }
 
     let result: Response;
     try {

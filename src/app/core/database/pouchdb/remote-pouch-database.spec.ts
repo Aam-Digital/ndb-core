@@ -63,6 +63,75 @@ describe("RemotePouchDatabase tests", () => {
     expect(mockAuthService.addAuthHeader).toHaveBeenCalledTimes(2);
   });
 
+  it("should set ngsw-bypass header on fetch requests", async () => {
+    database.init("");
+
+    const headers = new Headers();
+    await (database as any).defaultFetch(
+      `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
+      { headers },
+    );
+
+    expect(headers.get("ngsw-bypass")).toBe("true");
+  });
+
+  it("should retry on transient network errors", async () => {
+    database.init("");
+
+    let callCount = 0;
+    (PouchDB.fetch as Mock).mockImplementation(async () => {
+      callCount++;
+      if (callCount < 3) {
+        throw new TypeError("Failed to fetch");
+      }
+      return new Response("{}", { status: HttpStatusCode.Ok });
+    });
+
+    const result = await (database as any).defaultFetch(
+      `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
+      { headers: new Headers() },
+    );
+
+    expect(callCount).toBe(3);
+    expect(result.status).toBe(HttpStatusCode.Ok);
+  });
+
+  it("should throw after exhausting transient retries", async () => {
+    database.init("");
+
+    (PouchDB.fetch as Mock).mockImplementation(async () => {
+      throw new TypeError("Failed to fetch");
+    });
+
+    await expect(
+      (database as any).defaultFetch(
+        `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
+        { headers: new Headers() },
+      ),
+    ).rejects.toThrow(TypeError);
+
+    // 1 initial + 2 retries = 3 total
+    expect(PouchDB.fetch).toHaveBeenCalledTimes(3);
+  });
+
+  it("should not retry on non-TypeError errors", async () => {
+    database.init("");
+
+    (PouchDB.fetch as Mock).mockImplementation(async () => {
+      throw new Error("Some other error");
+    });
+
+    await expect(
+      (database as any).defaultFetch(
+        `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
+        { headers: new Headers() },
+      ),
+    ).rejects.toThrow("Some other error");
+
+    // no retries for non-TypeError
+    expect(PouchDB.fetch).toHaveBeenCalledTimes(1);
+  });
+
   it("should use periodic polling for changes feed instead of live long-polling", async () => {
     vi.useFakeTimers();
     try {
