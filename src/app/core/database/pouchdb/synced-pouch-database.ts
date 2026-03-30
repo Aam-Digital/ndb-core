@@ -34,7 +34,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     return SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + this.pouchDB.name;
   }
 
-  POUCHDB_SYNC_BATCH_SIZE = 200;
+  POUCHDB_SYNC_BATCH_SIZE = 500;
   SYNC_INTERVAL = 30000;
 
   private remoteDatabase: RemotePouchDatabase;
