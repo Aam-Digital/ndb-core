@@ -122,7 +122,10 @@ describe("UserDetailsComponent", () => {
         { provide: KeycloakAuthService, useValue: mockKeycloakService },
         { provide: SessionSubject, useValue: mockSessionSubject },
         { provide: CurrentUserSubject, useValue: mockCurrentUserSubject },
-        { provide: ConfirmationDialogService, useValue: mockConfirmationDialog },
+        {
+          provide: ConfirmationDialogService,
+          useValue: mockConfirmationDialog,
+        },
       ],
     }).compileComponents();
 
@@ -308,7 +311,11 @@ describe("UserDetailsComponent", () => {
       ...mockUserAccount,
       userEntityId: "User:some-entity-id",
     });
-    mockSessionSubject.next({ id: mockUserAccount.id, name: "test", roles: [] });
+    mockSessionSubject.next({
+      id: mockUserAccount.id,
+      name: "test",
+      roles: [],
+    });
     fixture.detectChanges();
     component.editMode();
     fixture.detectChanges();
@@ -320,7 +327,11 @@ describe("UserDetailsComponent", () => {
 
   it("should not deactivate own account and show self-deletion warning", async () => {
     fixture.componentRef.setInput("userAccount", mockUserAccount);
-    mockSessionSubject.next({ id: mockUserAccount.id, name: "test", roles: [] });
+    mockSessionSubject.next({
+      id: mockUserAccount.id,
+      name: "test",
+      roles: [],
+    });
     fixture.detectChanges();
     component.editMode();
     fixture.detectChanges();
