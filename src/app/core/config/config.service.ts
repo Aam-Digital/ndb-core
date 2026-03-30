@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { HttpStatusCode } from "@angular/common/http";
 import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
 import { shareReplay } from "rxjs/operators";
 import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
@@ -41,11 +42,46 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   override onInit() {
     this.entityUpdated.subscribe(async (config) => {
+      if (!config?.data || typeof config.data !== "object") {
+        this.abortWithError(
+          "Configuration loaded but contains no data. This may indicate a corrupt config document.",
+        );
+        return;
+      }
       this.currentConfig = this.applyMigrations(config);
       this.logConfigRev();
     });
 
     this.startLoading();
+  }
+
+  override async loadOnce(): Promise<Config | undefined> {
+    try {
+      const entity = await this.entityMapper.load(Config, Config.CONFIG_KEY);
+      this.entityUpdated.next(entity);
+      return entity;
+    } catch (err) {
+      if (err?.status === HttpStatusCode.NotFound) {
+        return undefined;
+      }
+      if (err?.status && err.status !== HttpStatusCode.NotFound) {
+        this.abortWithError(
+          `Failed to load configuration from the database.`,
+          err,
+        );
+      } else {
+        Logging.error(`Initial loading of Config failed [ConfigService]`, err);
+      }
+      return undefined;
+    }
+  }
+
+  private abortWithError(message: string, cause?: unknown) {
+    Logging.error(message, cause);
+    alert(
+      $localize`We couldn't load the configuration for your system. Trying to reload the app for you. If this problem persists, please contact your tech support.`,
+    );
+    window.location.reload();
   }
 
   private logConfigRev() {
@@ -69,12 +105,15 @@ export class ConfigService extends LatestEntityLoader<Config> {
   public exportConfig(rawObject: true): Object;
   public exportConfig(rawObject?: false): string;
   public exportConfig(rawObject?: boolean): string | Object {
+    if (!this.currentConfig?.data) {
+      return rawObject ? {} : "{}";
+    }
     const value = JSON.stringify(this.currentConfig.data);
     return rawObject ? JSON.parse(value) : value;
   }
 
   public getConfig<T>(id: string): T | undefined {
-    return this.currentConfig.data[id];
+    return this.currentConfig?.data?.[id];
   }
 
   /**
@@ -84,6 +123,9 @@ export class ConfigService extends LatestEntityLoader<Config> {
    * @param prefix The prefix of config items to return (e.g. "view:" or "entity:")
    */
   public getAllConfigs<T>(prefix: string): T[] {
+    if (!this.currentConfig?.data) {
+      return [];
+    }
     const matchingConfigs = [];
     for (const id of Object.keys(this.currentConfig.data)) {
       if (id.startsWith(prefix)) {
