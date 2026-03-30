@@ -1001,7 +1001,6 @@
   "3111309714762671718": "Vous devez sélectionner au moins un champ à afficher dans la boîte de dialogue de confirmation. ",
   "4906179314046265583": "Afficher le bouton « Soumettre un autre formulaire »",
   "8174679741857264507": "Si cette option est activée, un bouton « Soumettre un autre formulaire » s’affichera après l’envoi d’un formulaire. Cela s’avère utile pour recevoir plusieurs soumissions d’un même utilisateur.",
-  "6079830434388290159": "Certains champs sont invalides, veuillez vérifier le formulaire et le soumettre à nouveau. ",
   "3332002382905079075": "Obtenez de l'aide et des options de personnalisation.",
   "3128155815140583303": "Virtuel",
   "6240846972611376311": "Bonjour ! Besoin d'aide pour configurer ou utiliser l'application ?",
@@ -1311,10 +1310,13 @@
   "8528162559864710708": "Ajouter comme section parente sans lien",
   "2439123042672626922": "Supprimer le lien ?",
   "4618177393833402512": "Cet élément contient actuellement un lien. Activer cette option le supprimera. Voulez-vous continuer ?",
-  "2999993832814935436": "Pick color",
-  "8028490661906534915": "Please enter a valid hex color code (e.g. #ff0000)",
-  "1195692991106066960": "Notification settings saved.",
-  "7456247463242961477": "The link ID must not contain special characters like / ? # % & + \\",
-  "8024176361057345546": " +{$INTERPOLATION} more ",
-  "7128105921090370602": " Disable Primary Action Button\n"
+  "2999993832814935436": "Choisissez une couleur",
+  "8028490661906534915": "Veuillez saisir un code couleur hexadécimal valide (par exemple, #ff0000).",
+  "1195692991106066960": "Paramètres de notification enregistrés.",
+  "7456247463242961477": "L'identifiant du lien ne doit pas contenir de caractères spéciaux tels que / ? # % & + \\",
+  "8024176361057345546": "+{$INTERPOLATION} plus ",
+  "7128105921090370602": "Désactiver le bouton d'action principal\n",
+  "8913412788629110330": "Certains champs sont invalides, veuillez vérifier le formulaire et le soumettre à nouveau : ",
+  "8162581034435576407": "Pièce jointe « {$PH} » introuvable.",
+  "2605754826147233315": "Impossible de télécharger la pièce jointe. Veuillez réessayer."
 }

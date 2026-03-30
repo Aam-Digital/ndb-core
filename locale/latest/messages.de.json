@@ -1001,7 +1001,6 @@
   "3111309714762671718": "Sie sollten mindestens ein Feld auswählen, das im Bestätigungsdialog angezeigt werden soll. ",
   "4906179314046265583": "„Weiteres Formular senden“-Button anzeigen",
   "8174679741857264507": "Wenn diese Option aktiviert ist, wird Benutzern nach erfolgreicher Übermittlung die Option „Weiteres Formular übermitteln“ angezeigt. Dies ist hilfreich, wenn eine Benutzer:in mehrere Formulare abschicken soll.",
-  "6079830434388290159": "Einige Felder sind ungültig. Bitte überprüfen Sie das Formular und senden Sie es erneut ab. ",
   "3332002382905079075": "Unterstützung zur Nutzung und Anpassungsoptionen.",
   "3128155815140583303": "Virtueller",
   "6240846972611376311": "Hallo! Benötigen Sie Hilfe beim Einrichten oder Verwenden der Anwendung?",
@@ -1311,10 +1310,13 @@
   "8528162559864710708": "Als übergeordneten Abschnitt ohne Link hinzufügen",
   "2439123042672626922": "Link entfernen?",
   "4618177393833402512": "Dieser Eintrag ist aktuell verlinkt. Durch Aktivieren dieser Option wird der Link entfernt. Möchten Sie trotzdem fortfahren?",
-  "2999993832814935436": "Pick color",
-  "8028490661906534915": "Please enter a valid hex color code (e.g. #ff0000)",
-  "1195692991106066960": "Notification settings saved.",
-  "7456247463242961477": "The link ID must not contain special characters like / ? # % & + \\",
-  "8024176361057345546": " +{$INTERPOLATION} more ",
-  "7128105921090370602": " Disable Primary Action Button\n"
+  "2999993832814935436": "Farbe auswählen",
+  "8028490661906534915": "Bitte geben Sie einen gültigen Hexadezimal-Farbcode ein (z. B. #ff0000).",
+  "1195692991106066960": "Benachrichtigungseinstellungen gespeichert.",
+  "7456247463242961477": "Die Link-ID darf keine Sonderzeichen wie / ? # % & + \\ enthalten.",
+  "8024176361057345546": "+{$INTERPOLATION} mehr ",
+  "7128105921090370602": "Button deaktivieren",
+  "8913412788629110330": "Einige Felder sind ungültig. Bitte überprüfen Sie das Formular und senden Sie es erneut ab: ",
+  "8162581034435576407": "Dateianhang \"{$PH}\" nicht gefunden.",
+  "2605754826147233315": "Der Download des Dateianhangs ist fehlgeschlagen. Bitte versuchen Sie es erneut."
 }
