@@ -12,8 +12,13 @@
       "command": "npx",
       "args": [
         "-y",
-        "@sentry/mcp-server"
-      ]
+        "@sentry/mcp-server",
+        "--organization-slug",
+        "aam-digital"
+      ],
+      "env": {
+        "SENTRY_ACCESS_TOKEN": "${input:sentryAuthToken}"
+      }
     },
     "github": {
       "command": "npx",
@@ -22,5 +27,13 @@
         "@modelcontextprotocol/server-github"
       ]
     }
-  }
+  },
+  "inputs": [
+    {
+      "id": "sentryAuthToken",
+      "type": "promptString",
+      "description": "Sentry Auth Token",
+      "password": true
+    }
+  ]
 }
