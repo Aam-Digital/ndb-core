@@ -155,14 +155,17 @@ export class SyncedPouchDatabase extends PouchDatabase {
   /**
    * Execute a (one-time) sync between the local and server database.
    */
-  sync(options: PouchDB.Replication.SyncOptions = {}): Promise<SyncResult> {
+  async sync(
+    options: PouchDB.Replication.SyncOptions = {},
+  ): Promise<SyncResult> {
     if (!this.navigator.onLine) {
       Logging.debug("Not syncing because offline");
       this.syncState.next(SyncState.UNSYNCED);
-      return Promise.resolve({});
+      return {};
     }
 
-    const isFirstSync = !localStorage.getItem(this.LAST_SYNC_KEY);
+    const localInfo = await this.getPouchDB().info();
+    const isFirstSync = localInfo.doc_count === 0;
     if (isFirstSync) {
       // On first sync there are no local docs, so skip lost-permission tracking & purge
       this.remoteDatabase.trackLostPermissions = false;

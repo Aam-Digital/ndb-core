@@ -80,6 +80,7 @@ describe("SyncedPouchDatabase", () => {
     mockSyncStateSubject.next(SyncState.UNSYNCED);
     const mockLocalDb = {
       sync: vi.fn().mockReturnValue(mockSyncHandler()),
+      info: vi.fn().mockResolvedValue({ doc_count: 5 }),
     };
 
     const db = service;
@@ -300,17 +301,11 @@ describe("SyncedPouchDatabase", () => {
       const mockLocalDb = {
         name: "unit-test-db",
         sync: vi.fn().mockReturnValue(mockSyncHandler()),
+        info: vi.fn().mockResolvedValue({ doc_count: 5 }),
       };
       service["pouchDB"] = mockLocalDb as any;
       vi.spyOn(service, "getPouchDB").mockReturnValue(mockLocalDb as any);
       purgeSpy = vi.spyOn(service, "purge").mockResolvedValue(true);
-
-      // Simulate a previous sync so purge logic is active (not first sync)
-      localStorage.setItem(service.LAST_SYNC_KEY, "2020-01-01T00:00:00Z");
-    });
-
-    afterEach(() => {
-      localStorage.removeItem(service.LAST_SYNC_KEY);
     });
 
     it("should purge local docs reported in lostPermissions after sync", async () => {
@@ -364,7 +359,10 @@ describe("SyncedPouchDatabase", () => {
     });
 
     it("should skip purge and lost-permission tracking on first sync", async () => {
-      localStorage.removeItem(service.LAST_SYNC_KEY);
+      vi.spyOn(service, "getPouchDB").mockReturnValue({
+        sync: vi.fn().mockReturnValue(mockSyncHandler()),
+        info: vi.fn().mockResolvedValue({ doc_count: 0 }),
+      } as any);
       const collectSpy = vi.spyOn(
         service["remoteDatabase"],
         "collectAndClearLostPermissions",
