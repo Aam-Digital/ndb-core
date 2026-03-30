@@ -22,9 +22,9 @@ export class RemotePouchDatabase extends PouchDatabase {
 
   /**
    * Whether to track docs whose permissions were lost as reported by the server.
-   * @private
+   * Toggled by {@link SyncedPouchDatabase} to skip tracking on first sync.
    */
-  private trackLostPermissions?: boolean;
+  trackLostPermissions?: boolean;
 
   /**
    * Doc IDs whose permissions were lost as reported by the server in `_changes` responses.

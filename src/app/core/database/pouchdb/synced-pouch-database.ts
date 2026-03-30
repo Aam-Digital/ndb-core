@@ -162,6 +162,12 @@ export class SyncedPouchDatabase extends PouchDatabase {
       return Promise.resolve({});
     }
 
+    const isFirstSync = !localStorage.getItem(this.LAST_SYNC_KEY);
+    if (isFirstSync) {
+      // On first sync there are no local docs, so skip lost-permission tracking & purge
+      this.remoteDatabase.trackLostPermissions = false;
+    }
+
     this.syncState.next(SyncState.STARTED);
 
     // Track the last batch of synced doc IDs for diagnostics on write failures
@@ -184,7 +190,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
       .then(async (res) => {
         if (res) res["dbName"] = this.dbName; // add for debugging information
         Logging.debug("sync completed", res);
-        await this.purgeDocsWithLostPermissions();
+        if (!isFirstSync) {
+          await this.purgeDocsWithLostPermissions();
+        }
         this.syncState.next(SyncState.COMPLETED);
         return res as SyncResult;
       })
@@ -209,6 +217,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
         }
         this.syncState.next(SyncState.FAILED);
         throw err;
+      })
+      .finally(() => {
+        if (isFirstSync) {
+          this.remoteDatabase.trackLostPermissions = true;
+        }
       });
   }
 

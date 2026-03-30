@@ -6,7 +6,6 @@ import {
   SyncStateSubject,
 } from "../../session/session-type";
 import { LoginState } from "../../session/session-states/login-state.enum";
-import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { Subject } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase } from "./synced-pouch-database";
@@ -299,10 +298,19 @@ describe("SyncedPouchDatabase", () => {
 
     beforeEach(() => {
       const mockLocalDb = {
+        name: "unit-test-db",
         sync: vi.fn().mockReturnValue(mockSyncHandler()),
       };
+      service["pouchDB"] = mockLocalDb as any;
       vi.spyOn(service, "getPouchDB").mockReturnValue(mockLocalDb as any);
       purgeSpy = vi.spyOn(service, "purge").mockResolvedValue(true);
+
+      // Simulate a previous sync so purge logic is active (not first sync)
+      localStorage.setItem(service.LAST_SYNC_KEY, "2020-01-01T00:00:00Z");
+    });
+
+    afterEach(() => {
+      localStorage.removeItem(service.LAST_SYNC_KEY);
     });
 
     it("should purge local docs reported in lostPermissions after sync", async () => {
@@ -353,6 +361,21 @@ describe("SyncedPouchDatabase", () => {
 
       expect(purgeSpy).toHaveBeenCalledWith("Child:1");
       expect(purgeSpy).toHaveBeenCalledWith("School:2");
+    });
+
+    it("should skip purge and lost-permission tracking on first sync", async () => {
+      localStorage.removeItem(service.LAST_SYNC_KEY);
+      const collectSpy = vi.spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      );
+
+      await service.sync();
+
+      expect(purgeSpy).not.toHaveBeenCalled();
+      expect(collectSpy).not.toHaveBeenCalled();
+      // tracking should be re-enabled for subsequent syncs
+      expect(service["remoteDatabase"].trackLostPermissions).toBe(true);
     });
   });
 });
