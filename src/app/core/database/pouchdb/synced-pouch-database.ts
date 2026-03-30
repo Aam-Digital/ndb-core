@@ -162,11 +162,23 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
     this.syncState.next(SyncState.STARTED);
 
-    return this.getPouchDB()
-      .sync(this.remoteDatabase.getPouchDB(), {
+    // Track the last batch of synced doc IDs for diagnostics on write failures
+    let lastSyncedDocIds: string[] = [];
+
+    const syncHandler = this.getPouchDB().sync(
+      this.remoteDatabase.getPouchDB(),
+      {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
         ...options,
-      })
+      },
+    );
+
+    syncHandler.on("change", (info) => {
+      lastSyncedDocIds =
+        info?.change?.docs?.map((d) => d._id).filter(Boolean) ?? [];
+    });
+
+    return syncHandler
       .then(async (res) => {
         if (res) res["dbName"] = this.dbName; // add for debugging information
         Logging.debug("sync completed", res);
@@ -185,10 +197,26 @@ export class SyncedPouchDatabase extends PouchDatabase {
           return {};
         }
 
-        Logging.debug("sync error", err);
+        if (this.isDocumentWriteError(err)) {
+          Logging.warn(
+            `sync failed [${this.dbName}]: document write error (possible oversized document). Last synced batch: [${lastSyncedDocIds.join(", ")}]`,
+            err,
+          );
+        } else {
+          Logging.warn(`sync failed [${this.dbName}]`, err);
+        }
         this.syncState.next(SyncState.FAILED);
         throw err;
       });
+  }
+
+  private isDocumentWriteError(err: any): boolean {
+    const message = err?.message || err?.reason || String(err);
+    return (
+      message.includes("Maximum call stack size exceeded") ||
+      message.includes("IDBObjectStore") ||
+      message.includes("Failed to execute")
+    );
   }
 
   /**

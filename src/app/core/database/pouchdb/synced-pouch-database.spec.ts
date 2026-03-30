@@ -52,6 +52,26 @@ describe("SyncedPouchDatabase", () => {
   });
 
   /**
+   * Create a mock sync handler that mimics PouchDB's sync return value
+   * (a thenable event emitter).
+   */
+  function mockSyncHandler(result: any = {}, shouldReject = false): any {
+    const handler = {
+      on: vi.fn().mockReturnThis(),
+      then(onFulfilled, onRejected) {
+        const promise = shouldReject
+          ? Promise.reject(result)
+          : Promise.resolve(result);
+        return promise.then(onFulfilled, onRejected);
+      },
+      catch(onRejected) {
+        return this.then(undefined, onRejected);
+      },
+    };
+    return handler;
+  }
+
+  /**
    * Set up a mocked db and localDb for tests and override the TestBed service provider.
    */
   function mockPouchDatabaseService(): {
@@ -60,9 +80,8 @@ describe("SyncedPouchDatabase", () => {
   } {
     mockSyncStateSubject.next(SyncState.UNSYNCED);
     const mockLocalDb = {
-      sync: vi.fn(),
+      sync: vi.fn().mockReturnValue(mockSyncHandler()),
     };
-    mockLocalDb.sync.mockResolvedValue({});
 
     const db = service;
     vi.spyOn(db, "getPouchDB").mockReturnValue(mockLocalDb as any);
@@ -80,14 +99,16 @@ describe("SyncedPouchDatabase", () => {
       expect(mockLocalDb.sync).toHaveBeenCalled();
 
       mockLocalDb.sync.mockClear();
-      mockLocalDb.sync.mockRejectedValue("sync request server error");
+      mockLocalDb.sync.mockReturnValue(
+        mockSyncHandler("sync request server error", true),
+      );
       await vi.advanceTimersByTimeAsync(service.SYNC_INTERVAL);
       expect(mockLocalDb.sync).toHaveBeenCalled();
       // expect no errors thrown in service
 
       // continue sync intervals
       mockLocalDb.sync.mockClear();
-      mockLocalDb.sync.mockResolvedValue({});
+      mockLocalDb.sync.mockReturnValue(mockSyncHandler());
       await vi.advanceTimersByTimeAsync(service.SYNC_INTERVAL);
       expect(mockLocalDb.sync).toHaveBeenCalled();
 
@@ -152,10 +173,14 @@ describe("SyncedPouchDatabase", () => {
       const LONG_SYNC_TIME = 100000;
 
       const { mockLocalDb } = mockPouchDatabaseService();
-      mockLocalDb.sync.mockImplementation(
-        // @ts-ignore
-        async () => await new Promise((r) => setTimeout(r, LONG_SYNC_TIME)),
-      );
+      mockLocalDb.sync.mockImplementation(() => {
+        const handler = mockSyncHandler();
+        handler.then = (onFulfilled, onRejected) => {
+          const promise = new Promise((r) => setTimeout(r, LONG_SYNC_TIME));
+          return promise.then(onFulfilled, onRejected);
+        };
+        return handler;
+      });
 
       service.liveSync();
 
@@ -274,9 +299,8 @@ describe("SyncedPouchDatabase", () => {
 
     beforeEach(() => {
       const mockLocalDb = {
-        sync: vi.fn(),
+        sync: vi.fn().mockReturnValue(mockSyncHandler()),
       };
-      mockLocalDb.sync.mockResolvedValue({});
       vi.spyOn(service, "getPouchDB").mockReturnValue(mockLocalDb as any);
       purgeSpy = vi.spyOn(service, "purge").mockResolvedValue(true);
     });
