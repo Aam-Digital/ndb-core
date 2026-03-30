@@ -92,7 +92,7 @@ export class RemotePouchDatabase extends PouchDatabase {
    * Maximum number of retries for transient network errors (e.g. ERR_NETWORK_CHANGED).
    */
   private readonly TRANSIENT_ERROR_RETRIES = 2;
-  private readonly TRANSIENT_ERROR_DELAY_MS = 15000;
+  private readonly TRANSIENT_ERROR_DELAY_MS = 2000;
 
   /**
    * Per-request timeout in ms. If the server sends no response within this
@@ -100,7 +100,7 @@ export class RemotePouchDatabase extends PouchDatabase {
    * being killed unpredictably by Chrome (ERR_NETWORK_CHANGED) or proxies.
    * PouchDB will retry from its last checkpoint on abort.
    */
-  private readonly FETCH_TIMEOUT_MS = 30000;
+  private readonly FETCH_TIMEOUT_MS = 15000;
 
   private defaultFetch: Fetch = async (url: string | Request, opts: any) => {
     if (typeof url !== "string") {
