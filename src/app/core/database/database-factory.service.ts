@@ -28,7 +28,7 @@ export class DatabaseFactoryService {
   private navigator = inject<Navigator>(NAVIGATOR_TOKEN, { optional: true });
   private loginStateSubject = inject(LoginStateSubject, { optional: true });
   private readonly ngZone = inject(NgZone);
-  private alertService = inject(AlertService);
+  private readonly alertService = inject(AlertService);
 
   createDatabase(dbName: string): Database {
     // only the "primary" (app) database should manage the global login state

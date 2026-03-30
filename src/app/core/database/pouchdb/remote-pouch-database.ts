@@ -48,7 +48,7 @@ export class RemotePouchDatabase extends PouchDatabase {
     private authService: KeycloakAuthService,
     globalSyncState?: SyncStateSubject,
     ngZone?: NgZone,
-    private alertService?: AlertService,
+    private readonly alertService?: AlertService,
   ) {
     super(dbName, globalSyncState, ngZone);
   }
