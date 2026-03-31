@@ -131,31 +131,9 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     this.mergeForm.formGroup.markAllAsTouched();
     if (this.mergeForm.formGroup.invalid) return false;
 
-    // Single call: validates account form and returns update payload
-    const accountResult = this.accountSection()?.validateAndGetUpdate();
+    // Validates account form and shows account-related confirmation dialogs
+    const accountResult = await this.accountSection()?.validateAndGetUpdate();
     if (accountResult === false) return false;
-
-    if (
-      this.accountSection()?.accountLoadError() &&
-      this.entityConstructor.enableUserAccounts
-    ) {
-      const confirmed = await this.confirmationDialog.getConfirmation(
-        $localize`:merge account load error title:Warning! User account status unknown`,
-        $localize`:merge account load error:User account information could not be loaded (you may be offline or lack account_manager permissions). Proceeding may leave an orphaned user account. Are you sure you want to continue?`,
-      );
-      if (!confirmed) return false;
-    }
-
-    const accountsFound = (
-      this.accountSection()?.entityAccounts() ?? []
-    ).filter((a) => a != null);
-    if (accountsFound.length > 0) {
-      const confirmed = await this.confirmationDialog.getConfirmation(
-        $localize`:merge account warning title:Warning! User account(s) found`,
-        $localize`:merge account warning:At least one selected record has a linked user account.\nIf only one record has an account, that record is kept as "Record A" and the account remains linked after merge.\nIf both records have accounts, the account linked to "Record B" will be deleted.\nAre you sure you want to continue?`,
-      );
-      if (!confirmed) return false;
-    }
 
     if (this.hasDiscardedFileOrPhoto) {
       const fileIgnoreConfirmed = await this.confirmationDialog.getConfirmation(

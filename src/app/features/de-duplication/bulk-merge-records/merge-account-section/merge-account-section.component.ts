@@ -19,6 +19,7 @@ import { MatError, MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatRadioModule } from "@angular/material/radio";
 import { MatSelectModule } from "@angular/material/select";
+import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { UserAdminService } from "app/core/user/user-admin-service/user-admin.service";
 import {
@@ -46,6 +47,7 @@ import { catchError, lastValueFrom, of } from "rxjs";
 export class MergeAccountSectionComponent implements OnInit {
   private readonly userAdminService = inject(UserAdminService);
   private readonly fb = inject(FormBuilder);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   entitiesToMerge = input.required<Entity[]>();
   entityConstructor = input.required<EntityConstructor>();
@@ -257,14 +259,34 @@ export class MergeAccountSectionComponent implements OnInit {
   }
 
   /**
-   * Validates the account form and returns the update payload in a single call.
-   * Returns false if the form is invalid, otherwise the update payload (null if no changes).
+   * Validates the account form, shows confirmation dialogs if needed, and returns the update payload.
+   * Returns false if the form is invalid or the user cancels, otherwise the update payload (null if no changes).
    */
-  validateAndGetUpdate():
-    | false
-    | null
-    | { accountId: string; update: Partial<UserAccount> } {
+  async validateAndGetUpdate(): Promise<
+    false | null | { accountId: string; update: Partial<UserAccount> }
+  > {
     if (this.accountForm()?.invalid) return false;
+
+    if (
+      this.accountLoadError() &&
+      this.entityConstructor().enableUserAccounts
+    ) {
+      const confirmed = await this.confirmationDialog.getConfirmation(
+        $localize`:merge account load error title:Warning! User account status unknown`,
+        $localize`:merge account load error:User account information could not be loaded (you may be offline or lack account_manager permissions). Proceeding may leave an orphaned user account. Are you sure you want to continue?`,
+      );
+      if (!confirmed) return false;
+    }
+
+    const accountsFound = this.entityAccounts().filter((a) => a != null);
+    if (accountsFound.length > 0) {
+      const confirmed = await this.confirmationDialog.getConfirmation(
+        $localize`:merge account warning title:Warning! User account(s) found`,
+        $localize`:merge account warning:At least one selected record has a linked user account.\nIf only one record has an account, that record is kept as "Record A" and the account remains linked after merge.\nIf both records have accounts, the account linked to "Record B" will be deleted.\nAre you sure you want to continue?`,
+      );
+      if (!confirmed) return false;
+    }
+
     return this.buildAccountUpdate();
   }
 }

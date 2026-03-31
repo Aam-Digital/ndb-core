@@ -145,7 +145,7 @@ describe("MergeAccountSectionComponent", () => {
     component.accountEmailControl().markAsDirty();
     component.accountForm()!.markAsDirty();
 
-    expect(component.validateAndGetUpdate()).toBe(false);
+    expect(await component.validateAndGetUpdate()).toBe(false);
   });
 
   it("should update selectedAccountEmailIndex when selectAccountEmail is called", async () => {
