@@ -237,8 +237,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="124"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:124</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="140"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:140</a></div>
                         </td>
                     </tr>
 
@@ -306,8 +306,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="147"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:147</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="163"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:163</a></div>
                         </td>
                     </tr>
 
@@ -348,8 +348,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="154"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:154</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="170"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:170</a></div>
                         </td>
                     </tr>
 
@@ -387,8 +387,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="139"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:139</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="155"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:155</a></div>
                         </td>
                     </tr>
 
@@ -426,8 +426,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="162"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:162</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="178"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:178</a></div>
                         </td>
                     </tr>
 
@@ -626,12 +626,8 @@ export class KeycloakAuthService {
         shouldAddToken: ({ url }) &#x3D;&gt; !url.includes(&quot;api.github.com&quot;),
       });
     } catch (err) {
-      if (
-        err?.message?.includes(
-          &quot;Timeout when waiting for 3rd party check iframe message.&quot;,
-        )
-      ) {
-        // this is actually an expected scenario, user&#x27;s internet is slow or not available
+      if (this.isOfflineOrUnavailableError(err)) {
+        Logging.debug(&quot;Keycloak init failed (offline/unavailable)&quot;, err);
         err &#x3D; new RemoteLoginNotAvailableError();
       } else {
         Logging.error(&quot;Keycloak init failed&quot;, err);
@@ -650,6 +646,26 @@ export class KeycloakAuthService {
       }
     });
   });
+
+  private static readonly NETWORK_ERROR_PATTERNS &#x3D; [
+    &quot;Failed to fetch&quot;,
+    &quot;NetworkError&quot;,
+    &quot;Load failed&quot;,
+    &quot;Network request failed&quot;,
+    &quot;Timeout when waiting for 3rd party check iframe message.&quot;,
+  ];
+
+  private isOfflineOrUnavailableError(err: any): boolean {
+    const message &#x3D; err?.message ?? &quot;&quot;;
+    if (
+      KeycloakAuthService.NETWORK_ERROR_PATTERNS.some((pattern) &#x3D;&gt;
+        message.includes(pattern),
+      )
+    ) {
+      return true;
+    }
+    return !navigator.onLine;
+  }
 
   private processToken(token: string): SessionInfo {
     if (!token) {
