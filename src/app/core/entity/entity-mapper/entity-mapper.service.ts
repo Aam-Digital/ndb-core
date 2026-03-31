@@ -30,6 +30,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "./entity-permission-error";
 import { Logging } from "../../logging/logging.service";
 import { EntityActionPermission } from "../../permissions/permission-types";
+import { BoundedEntityCache } from "./bounded-entity-cache";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -49,6 +50,20 @@ export class EntityMapperService {
   private registry = inject(EntityRegistry);
   private readonly ability = inject(EntityAbility, { optional: true });
 
+  private cache = new BoundedEntityCache();
+
+  constructor() {
+    this.dbResolver.changesFeed.subscribe((change) => {
+      if (!change?._id || !change._id.includes(":")) return;
+      const prefix = Entity.extractTypeFromId(change._id) + ":";
+      if (change._deleted) {
+        this.cache.delete(prefix, change._id);
+      } else {
+        this.cache.set(prefix, change._id, change);
+      }
+    });
+  }
+
   /**
    * Load an Entity from the database with the given id or the registered name of that class.
    *
@@ -61,10 +76,16 @@ export class EntityMapperService {
     id: string,
   ): Promise<T> {
     const ctor = this.resolveConstructor(entityType);
+    const prefix = ctor.ENTITY_TYPE + ":";
     const entityId = Entity.createPrefixedId(ctor.ENTITY_TYPE, id);
+    const cached = this.cache.get(prefix, entityId);
+    if (cached) {
+      return this.transformToEntityFormat(cached, ctor);
+    }
     const result = await this.dbResolver
       .getDatabase(ctor.DATABASE)
       .get(entityId);
+    this.cache.set(prefix, entityId, result);
     return this.transformToEntityFormat(result, ctor);
   }
 
@@ -81,10 +102,16 @@ export class EntityMapperService {
     entityType: EntityConstructor<T> | string,
   ): Promise<T[]> {
     const ctor = this.resolveConstructor(entityType);
-    const records = await this.dbResolver
-      .getDatabase(ctor.DATABASE)
-      .getAll(ctor.ENTITY_TYPE + ":");
-    return records.map((rec) => this.transformToEntityFormat(rec, ctor));
+    const prefix = ctor.ENTITY_TYPE + ":";
+    if (!this.cache.isFullyLoaded(prefix)) {
+      const records = await this.dbResolver
+        .getDatabase(ctor.DATABASE)
+        .getAll(prefix);
+      this.cache.setMany(prefix, records, true);
+    }
+    return this.cache
+      .getAll(prefix)
+      .map((rec) => this.transformToEntityFormat(rec, ctor));
   }
 
   private transformToEntityFormat<T extends Entity>(
@@ -157,6 +184,8 @@ export class EntityMapperService {
       .put(rawData, forceUpdate);
     if (result?.ok) {
       entity._rev = result.rev;
+      rawData._rev = result.rev;
+      this.cache.set(entity.getType() + ":", entity.getId(), rawData);
     }
     return result;
   }
@@ -177,31 +206,48 @@ export class EntityMapperService {
     entities.forEach((e) => this.assertPermission(e));
     entities.forEach((e) => this.setEntityMetadata(e));
 
-    // group entities by their DATABASE
-    const groupedEntities = new Map<string, Entity[]>();
-    entities.forEach((e) => {
+    const allRawData = entities.map((e) =>
+      this.entitySchemaService.transformEntityToDatabaseFormat(e),
+    );
+
+    // group by DATABASE index to send batched puts per database
+    const groupedByDb = new Map<string, number[]>();
+    entities.forEach((e, idx) => {
       const db = e.getConstructor().DATABASE;
-      if (!groupedEntities.has(db)) {
-        groupedEntities.set(db, []);
+      if (!groupedByDb.has(db)) {
+        groupedByDb.set(db, []);
       }
-      groupedEntities.get(db).push(e);
+      groupedByDb.get(db).push(idx);
     });
 
-    const savePromises = Array.from(groupedEntities.entries()).map(
-      ([db, entities]) => {
-        const rawData = entities.map((e) =>
-          this.entitySchemaService.transformEntityToDatabaseFormat(e),
-        );
-        return this.dbResolver.getDatabase(db).putAll(rawData, forceUpdate);
+    const savePromises = Array.from(groupedByDb.entries()).map(
+      ([db, indices]) => {
+        const rawBatch = indices.map((i) => allRawData[i]);
+        return this.dbResolver
+          .getDatabase(db)
+          .putAll(rawBatch, forceUpdate)
+          .then((results) =>
+            indices.map((origIdx, i) => ({ origIdx, result: results[i] })),
+          );
       },
     );
 
-    const results = (await Promise.all(savePromises)).flat();
-    results.forEach((res, idx) => {
+    const batchResults = (await Promise.all(savePromises)).flat();
+    // sort back to original order
+    batchResults.sort((a, b) => a.origIdx - b.origIdx);
+
+    const results = batchResults.map(({ origIdx, result: res }) => {
       if (res.ok) {
-        const entity = entities[idx];
+        const entity = entities[origIdx];
         entity._rev = res.rev;
+        allRawData[origIdx]._rev = res.rev;
+        this.cache.set(
+          entity.getType() + ":",
+          entity.getId(),
+          allRawData[origIdx],
+        );
       }
+      return res;
     });
     return results;
   }
@@ -212,6 +258,7 @@ export class EntityMapperService {
    */
   public async remove<T extends Entity>(entity: T): Promise<any> {
     this.assertPermission(entity, "delete");
+    this.cache.delete(entity.getType() + ":", entity.getId());
     return this.dbResolver
       .getDatabase(entity.getConstructor().DATABASE)
       .remove(entity);

@@ -15,12 +15,13 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 import { SyncStateSubject } from "app/core/session/session-type";
 import { DatabaseFactoryService } from "../../database/database-factory.service";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
-import { firstValueFrom } from "rxjs";
+import { firstValueFrom, Subject } from "rxjs";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "./entity-permission-error";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import type { Mock } from "vitest";
 import { UpdateMetadata } from "../model/update-metadata";
+import { BoundedEntityCache } from "./bounded-entity-cache";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -314,6 +315,7 @@ describe("EntityMapperService permission checks", () => {
   };
   let mockDbResolver: {
     getDatabase: Mock;
+    changesFeed: Subject<any>;
   };
 
   beforeEach(() => {
@@ -335,6 +337,7 @@ describe("EntityMapperService permission checks", () => {
     };
     mockDbResolver = {
       getDatabase: vi.fn().mockName("DatabaseResolverService.getDatabase"),
+      changesFeed: new Subject(),
     };
     mockDbResolver.getDatabase.mockReturnValue(mockDb);
 
@@ -398,5 +401,194 @@ describe("EntityMapperService permission checks", () => {
       EntityPermissionError,
     );
     expect(mockAbility.cannot).toHaveBeenCalledWith("delete", entity);
+  });
+});
+
+describe("EntityMapperService caching", () => {
+  let entityMapper: EntityMapperService;
+  let mockDb: {
+    get: Mock;
+    getAll: Mock;
+    put: Mock;
+    putAll: Mock;
+    remove: Mock;
+  };
+  let changesFeed$: Subject<any>;
+
+  beforeEach(() => {
+    mockDb = {
+      get: vi.fn().mockName("get"),
+      getAll: vi.fn().mockName("getAll").mockResolvedValue([]),
+      put: vi.fn().mockName("put").mockResolvedValue({ ok: true, rev: "1-x" }),
+      putAll: vi
+        .fn()
+        .mockName("putAll")
+        .mockResolvedValue([{ ok: true, rev: "1-x" }]),
+      remove: vi.fn().mockName("remove").mockResolvedValue({ ok: true }),
+    };
+    changesFeed$ = new Subject();
+
+    const mockDbResolver = {
+      getDatabase: vi.fn().mockReturnValue(mockDb),
+      changesFeed: changesFeed$.asObservable(),
+    };
+
+    const mockSchemaService = {
+      loadDataIntoEntity: (entity: Entity, data: any) =>
+        Object.assign(entity, data),
+      transformEntityToDatabaseFormat: (entity: Entity) => ({
+        _id: entity.getId(),
+        _rev: entity._rev,
+      }),
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        EntityMapperService,
+        { provide: EntitySchemaService, useValue: mockSchemaService },
+        { provide: EntityRegistry, useValue: entityRegistry },
+        { provide: DatabaseResolverService, useValue: mockDbResolver },
+        CurrentUserSubject,
+      ],
+    });
+    entityMapper = TestBed.inject(EntityMapperService);
+  });
+
+  it("load() caches: second call with same ID does not hit database", async () => {
+    const record = { _id: "Entity:1", _rev: "1-a" };
+    mockDb.get.mockResolvedValue(record);
+
+    await entityMapper.load(Entity, "1");
+    await entityMapper.load(Entity, "1");
+
+    expect(mockDb.get).toHaveBeenCalledTimes(1);
+  });
+
+  it("loadType() populates cache: subsequent load() for same entity uses cache", async () => {
+    const records = [
+      { _id: "Entity:a", _rev: "1-a" },
+      { _id: "Entity:b", _rev: "1-b" },
+    ];
+    mockDb.getAll.mockResolvedValue(records);
+
+    await entityMapper.loadType(Entity);
+
+    // individual load should now be served from cache
+    const result = await entityMapper.load(Entity, "a");
+    expect(result.getId()).toBe("Entity:a");
+    expect(mockDb.get).not.toHaveBeenCalled();
+  });
+
+  it("loadType() caches: second call does not re-fetch from database", async () => {
+    mockDb.getAll.mockResolvedValue([{ _id: "Entity:1", _rev: "1-a" }]);
+
+    await entityMapper.loadType(Entity);
+    await entityMapper.loadType(Entity);
+
+    expect(mockDb.getAll).toHaveBeenCalledTimes(1);
+  });
+
+  it("save() updates cache: load after save returns updated data without DB call", async () => {
+    // seed with initial load
+    mockDb.get.mockResolvedValue({
+      _id: "Entity:1",
+      _rev: "1-a",
+      label: "old",
+    });
+    await entityMapper.load(Entity, "1");
+    mockDb.get.mockClear();
+
+    // save updated entity
+    const entity = new Entity("1");
+    entity._rev = "1-a";
+    mockDb.put.mockResolvedValue({ ok: true, rev: "2-b" });
+    await entityMapper.save(entity);
+
+    // load should use cache, not DB
+    const loaded = await entityMapper.load(Entity, "1");
+    expect(mockDb.get).not.toHaveBeenCalled();
+    expect(loaded._rev).toBe("2-b");
+  });
+
+  it("remove() removes from cache: subsequent load hits database", async () => {
+    mockDb.get.mockResolvedValue({ _id: "Entity:1", _rev: "1-a" });
+    await entityMapper.load(Entity, "1");
+    mockDb.get.mockClear();
+
+    const entity = new Entity("1");
+    entity._rev = "1-a";
+    await entityMapper.remove(entity);
+
+    // next load should go to DB since cache entry was deleted
+    mockDb.get.mockResolvedValue({ _id: "Entity:1", _rev: "3-c" });
+    await entityMapper.load(Entity, "1");
+    expect(mockDb.get).toHaveBeenCalledTimes(1);
+  });
+
+  it("external change via changesFeed updates cached entity", async () => {
+    mockDb.get.mockResolvedValue({
+      _id: "Entity:1",
+      _rev: "1-a",
+      label: "original",
+    });
+    await entityMapper.load(Entity, "1");
+    mockDb.get.mockClear();
+
+    // simulate external sync change
+    changesFeed$.next({ _id: "Entity:1", _rev: "2-b", label: "synced" });
+
+    // load should use updated cache, not hit DB
+    const loaded = await entityMapper.load(Entity, "1");
+    expect(mockDb.get).not.toHaveBeenCalled();
+    expect(loaded._rev).toBe("2-b");
+  });
+
+  it("external delete via changesFeed removes cached entity", async () => {
+    mockDb.get.mockResolvedValue({ _id: "Entity:1", _rev: "1-a" });
+    await entityMapper.load(Entity, "1");
+    mockDb.get.mockClear();
+
+    // simulate external deletion
+    changesFeed$.next({ _id: "Entity:1", _rev: "2-b", _deleted: true });
+
+    // next load should go to DB
+    mockDb.get.mockResolvedValue({ _id: "Entity:1", _rev: "3-c" });
+    await entityMapper.load(Entity, "1");
+    expect(mockDb.get).toHaveBeenCalledTimes(1);
+  });
+
+  it("cache eviction triggers when exceeding maxSize", async () => {
+    // replace cache with a small one
+    (entityMapper as any).cache = new BoundedEntityCache(3);
+
+    mockDb.getAll.mockResolvedValue([
+      { _id: "Entity:1", _rev: "1" },
+      { _id: "Entity:2", _rev: "1" },
+      { _id: "Entity:3", _rev: "1" },
+      { _id: "Entity:4", _rev: "1" },
+    ]);
+
+    await entityMapper.loadType(Entity);
+
+    // cache should have been evicted (4 > 3)
+    // so next loadType should re-fetch from DB
+    mockDb.getAll.mockClear();
+    mockDb.getAll.mockResolvedValue([{ _id: "Entity:1", _rev: "1" }]);
+    await entityMapper.loadType(Entity);
+    expect(mockDb.getAll).toHaveBeenCalledTimes(1);
+  });
+
+  it("loadType() reflects entities added via changesFeed when type was fully loaded", async () => {
+    mockDb.getAll.mockResolvedValue([{ _id: "Entity:1", _rev: "1-a" }]);
+    const result1 = await entityMapper.loadType(Entity);
+    expect(result1).toHaveLength(1);
+
+    // simulate new entity arriving via sync
+    changesFeed$.next({ _id: "Entity:2", _rev: "1-b" });
+
+    // loadType should include the new entity from cache
+    const result2 = await entityMapper.loadType(Entity);
+    expect(result2).toHaveLength(2);
+    expect(mockDb.getAll).toHaveBeenCalledTimes(1); // no re-fetch
   });
 });
