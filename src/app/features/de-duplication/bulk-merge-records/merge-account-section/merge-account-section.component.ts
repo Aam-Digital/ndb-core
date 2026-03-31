@@ -52,6 +52,8 @@ export class MergeAccountSectionComponent implements OnInit {
 
   readonly entityAccounts = signal<(UserAccount | null)[]>([null, null]);
   readonly accountLoadError = signal<boolean>(false);
+  /** Index of the entity whose ID will be retained after merge (the one with the account, if any). */
+  readonly primaryIndex = signal<number>(0);
 
   readonly hasAnyUserAccount = computed(() =>
     this.entityAccounts().some((a) => a != null),
@@ -132,6 +134,13 @@ export class MergeAccountSectionComponent implements OnInit {
     );
     this.entityAccounts.set(results.map((r) => r.account));
     this.accountLoadError.set(results.some((r) => r.error));
+
+    // Entity with account should be primary (index retained after merge)
+    if (!results[0].account && results[1]?.account) {
+      this.primaryIndex.set(1);
+    } else {
+      this.primaryIndex.set(0);
+    }
   }
 
   private async fetchUserAccount(
@@ -165,10 +174,12 @@ export class MergeAccountSectionComponent implements OnInit {
       );
     }
 
-    if (this.hasAccountEmail(0)) {
-      this.selectedAccountEmailIndex.set(0);
-    } else if (this.hasAccountEmail(1)) {
-      this.selectedAccountEmailIndex.set(1);
+    const primaryIdx = this.primaryIndex();
+    const secondaryIdx = primaryIdx === 0 ? 1 : 0;
+    if (this.hasAccountEmail(primaryIdx)) {
+      this.selectedAccountEmailIndex.set(primaryIdx);
+    } else if (this.hasAccountEmail(secondaryIdx)) {
+      this.selectedAccountEmailIndex.set(secondaryIdx);
     } else {
       this.selectedAccountEmailIndex.set(null);
     }
@@ -180,7 +191,7 @@ export class MergeAccountSectionComponent implements OnInit {
         : "";
 
     // Map the current roles to available role objects to ensure reference equality for mat-select.
-    const currentRoles = this.getAccountRoles(0);
+    const currentRoles = this.getAccountRoles(primaryIdx);
 
     this.accountForm.set(
       this.fb.group({
@@ -225,7 +236,7 @@ export class MergeAccountSectionComponent implements OnInit {
     accountId: string;
     update: Partial<UserAccount>;
   } | null {
-    const primaryAccount = this.entityAccounts()[0];
+    const primaryAccount = this.entityAccounts()[this.primaryIndex()];
     if (!primaryAccount?.id || !this.accountForm()?.dirty) return null;
 
     const formValue = this.accountForm()!.getRawValue();

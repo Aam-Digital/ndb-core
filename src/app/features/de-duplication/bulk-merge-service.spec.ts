@@ -267,20 +267,6 @@ describe("BulkMergeService", () => {
       expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
     });
 
-    it("should reorder entities in showMergeDialog so account-holder is primary (index 0)", async () => {
-      // Only entityB has an account
-      const notFound$ = throwError(() => ({ status: 404 }));
-      mockUserAdminService.getUser.mockImplementation((entityId: string) => {
-        if (entityId === entityB.getId()) return of(mockUserAccount);
-        return notFound$;
-      });
-
-      await service.showMergeDialog([entityA, entityB], TestEntityWithAccounts);
-
-      const dialogData = mockMatDialog.open.mock.calls[0][1].data;
-      expect(dialogData.entitiesToMerge[0].getId()).toBe(entityB.getId());
-    });
-
     it("should call updateUser with accountUpdate payload after secondary entity is deleted", async () => {
       const mergedEntity = Object.assign(new TestEntityWithAccounts(), entityA);
       mergedEntity["_id"] = entityA.getId();
@@ -301,13 +287,7 @@ describe("BulkMergeService", () => {
       });
     });
 
-    it("should open dialog with both accounts when both entities have accounts", async () => {
-      const mockAccountA = { id: "kc-a", email: "a@test.com", enabled: true };
-      mockUserAdminService.getUser.mockImplementation((entityId: string) => {
-        if (entityId === entityA.getId()) return of(mockAccountA);
-        return of(mockUserAccount);
-      });
-
+    it("should open dialog for entities with user accounts enabled", async () => {
       await service.showMergeDialog([entityA, entityB], TestEntityWithAccounts);
 
       expect(mockMatDialog.open).toHaveBeenCalled();

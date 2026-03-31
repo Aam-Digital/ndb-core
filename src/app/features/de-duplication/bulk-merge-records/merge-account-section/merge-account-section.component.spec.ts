@@ -75,6 +75,23 @@ describe("MergeAccountSectionComponent", () => {
     expect(component.selectedAccountEmailIndex()).toBe(0);
   });
 
+  it("should set primaryIndex to 1 when only the entity at index 1 has an account", async () => {
+    mockUserAdminService.getUser.mockImplementation((entityId: string) => {
+      if (entityId === entity1.getId()) return of(mockAccount1);
+      return throwError(() => ({ status: 404 }));
+    });
+
+    await component.ngOnInit();
+
+    expect(component.primaryIndex()).toBe(1);
+  });
+
+  it("should set primaryIndex to 0 when entity at index 0 has an account", async () => {
+    await component.ngOnInit();
+
+    expect(component.primaryIndex()).toBe(0);
+  });
+
   it("should set accountLoadError when getUser API fails with non-404 error", async () => {
     mockUserAdminService.getUser.mockReturnValue(
       throwError(() => ({ status: 500 })),

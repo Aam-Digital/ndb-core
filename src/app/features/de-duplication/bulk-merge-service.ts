@@ -48,9 +48,7 @@ export class BulkMergeService {
   }
 
   /**
-   * Opens the merge popup with the selected entities details.
-   * Checks for linked user accounts, ensures the account-holder is the primary
-   * entity (whose ID is retained), and warns if both entities have accounts.
+   * Opens the merge dialog for the selected entities.
    *
    * @param entitiesToMerge The entities to merge.
    * @param entityType The type of the entities.
@@ -59,18 +57,6 @@ export class BulkMergeService {
     entitiesToMerge: E[],
     entityType: EntityConstructor,
   ): Promise<boolean> {
-    const accountResults = await Promise.all(
-      entitiesToMerge.map((e) => this.getUserAccount(e)),
-    );
-    const entityAccounts = accountResults.map((r) => r.account);
-    const accountLoadError = accountResults.some((r) => r.error);
-
-    // Ensure the entity with a user account is at index 0 (primary, whose ID is retained)
-    if (!entityAccounts[0] && entityAccounts[1]) {
-      entitiesToMerge = [entitiesToMerge[1], entitiesToMerge[0]];
-      entityAccounts.reverse();
-    }
-
     const dialogRef = this.matDialog.open(BulkMergeRecordsComponent, {
       maxHeight: "90vh",
       data: {
@@ -100,31 +86,6 @@ export class BulkMergeService {
     this.unsavedChangesService.pending = false;
     this.alert.addInfo($localize`Records merged successfully.`);
     return true;
-  }
-
-  /**
-   * Get the user account linked to the given entity.
-   * Returns `{ account, error: false }` on success (account is null if not found),
-   * or `{ account: null, error: true }` if the API is unreachable or access is denied.
-   */
-  private async getUserAccount(
-    entity: Entity,
-  ): Promise<{ account: UserAccount | null; error: boolean }> {
-    if (!entity.getConstructor()?.enableUserAccounts)
-      return { account: null, error: false };
-    try {
-      const account = await lastValueFrom(
-        this.userAdminService.getUser(entity.getId()).pipe(
-          catchError((err) => {
-            if (err?.status === 404) return of(null);
-            throw err;
-          }),
-        ),
-      );
-      return { account, error: false };
-    } catch {
-      return { account: null, error: true };
-    }
   }
 
   /**

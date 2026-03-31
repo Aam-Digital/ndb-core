@@ -176,9 +176,10 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       return false;
     }
 
+    const primaryIndex = this.accountSection()?.primaryIndex() ?? 0;
     this.dialogRef.close({
       mergedEntity: Object.assign(
-        this.entitiesToMerge[0].copy(),
+        this.entitiesToMerge[primaryIndex].copy(),
         this.mergeForm.formGroup.value,
       ),
       accountUpdate: accountResult ?? null,
