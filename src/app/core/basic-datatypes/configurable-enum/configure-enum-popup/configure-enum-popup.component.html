@@ -19,8 +19,8 @@
 
       <div matSuffix class="flex-row gap-small">
         <app-color-input
-          [color]="v.color"
-          (colorChange)="v.color = $event"
+          [value]="v.color"
+          (valueChange)="v.color = $event"
           [compact]="true"
         ></app-color-input>
 

@@ -1,8 +1,8 @@
 <div class="conditional-color-config">
   <div class="color-row">
     <app-color-input
-      [color]="staticColor"
-      (colorChange)="onStaticColorChange($event)"
+      [value]="staticColor"
+      (valueChange)="onStaticColorChange($event)"
     ></app-color-input>
 
     <button

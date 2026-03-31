@@ -13,6 +13,7 @@ import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { getDefaultConfigEntity } from "../../core/config/testing-config-service";
+import { CurrentUserSubject } from "../../core/session/current-user-subject";
 
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
@@ -149,6 +150,32 @@ describe("PublicFormComponent", () => {
         ["/public-form/submission-success"],
         { queryParams: { showSubmitAnotherButton: false } },
       );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should set created.by metadata from public form id for anonymous submission", async () => {
+    vi.useFakeTimers();
+    try {
+      (TestBed.inject(CurrentUserSubject) as any).next(undefined);
+
+      initComponent();
+      await vi.advanceTimersByTimeAsync(0);
+
+      (
+        component.entityFormEntries[0].form.formGroup.get("name") as any
+      ).setValue("some name");
+
+      await component.submit();
+      await vi.advanceTimersByTimeAsync(0);
+
+      const savedEntity = await TestBed.inject(EntityMapperService).load(
+        TestEntity,
+        component.entityFormEntries[0].entity.getId(),
+      );
+
+      expect(savedEntity.created?.by).toBe(`PublicForm:${FORM_ID}`);
     } finally {
       vi.useRealTimers();
     }

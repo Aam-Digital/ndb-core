@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DoCheck,
   inject,
   Input,
   input,
@@ -72,7 +73,7 @@ export class EditEntityComponent<
   E extends Entity = Entity,
 >
   extends CustomFormControlDirective<T>
-  implements OnInit, EditComponent
+  implements OnInit, DoCheck, EditComponent
 {
   @Input() formFieldConfig?: FormFieldConfig;
 
@@ -110,13 +111,23 @@ export class EditEntityComponent<
   /**
    * The accessor used for filtering and when selecting a new entity.
    */
-  @Input() accessor: (e: Entity) => string = (e) =>
-    e instanceof Entity ? e.toString() : "?";
+  @Input() accessor: (e: Entity | string) => string = (e) => {
+    if (e instanceof Entity) {
+      return e.toString();
+    }
+
+    if (typeof e === "string") {
+      return e;
+    }
+
+    return "?";
+  };
   entityToId = (option: E) => option.getId();
 
   additionalFilter: InputSignal<(e: E) => boolean> = input((_) => true);
 
   formControl: Signal<FormControl<T>> = computed(() => {
+    this.controlSourceRefresh();
     let control = this.ngControl?.control as FormControl<T>;
     if (!control) {
       control = this._formControl ?? new FormControl();
@@ -126,6 +137,12 @@ export class EditEntityComponent<
     return this._formControl;
   });
   private _formControl: FormControl<T>;
+
+  /**
+   * Manual recompute trigger for `formControl`.
+   * Needed because `ngControl` is not a signal and may appear after first render.
+   */
+  private readonly controlSourceRefresh = signal(0);
 
   /**
    * Explicitly define the entity type(s) to select among.
@@ -312,6 +329,18 @@ export class EditEntityComponent<
 
   ngOnInit() {
     this.multi = this.formFieldConfig?.isArray ?? false;
+  }
+
+  override ngDoCheck() {
+    super.ngDoCheck();
+    const control = this.ngControl?.control;
+    if (!control || control === this._formControl) {
+      return;
+    }
+
+    // Force `formControl` recomputation so we stop using the fallback control
+    // and bind to the real parent form control.
+    this.controlSourceRefresh.update((v) => v + 1);
   }
 
   override onContainerClick(event: MouseEvent) {

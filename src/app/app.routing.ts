@@ -16,6 +16,7 @@
  */
 
 import { Routes } from "@angular/router";
+import { inject } from "@angular/core";
 import { NotFoundComponent } from "./core/config/dynamic-routing/not-found/not-found.component";
 import { ProfileComponent } from "./core/user/profile/profile.component";
 import { SupportComponent } from "./core/support/support/support.component";
@@ -24,6 +25,7 @@ import { LoginComponent } from "./core/session/login/login.component";
 import { AdminModule } from "./core/admin/admin.module";
 import { AttendanceModule } from "./features/attendance/attendance.module";
 import { PublicFormModule } from "./features/public-form/public-form.module";
+import { UnsavedChangesService } from "./core/entity-details/form/unsaved-changes.service";
 
 /**
  * All routes configured for the main app routing.
@@ -42,6 +44,7 @@ export const allRoutes: Routes = [
     path: "user-account",
     component: ProfileComponent,
     canActivate: [AuthGuard],
+    canDeactivate: [() => inject(UnsavedChangesService).checkUnsavedChanges()],
   },
   { path: "support", component: SupportComponent },
   // this can't be configured in config as the config is only loaded on login

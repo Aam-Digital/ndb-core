@@ -4,7 +4,7 @@ import {
 } from "./app/core/language/language-statics";
 import { loadTranslations } from "@angular/localize";
 import { registerLocaleData } from "@angular/common";
-import parseXliffToJson from "./app/utils/parse-xliff-to-js";
+import { environment } from "./environments/environment";
 import { Logging } from "#src/app/core/logging/logging.service";
 
 /**
@@ -20,21 +20,9 @@ export async function initLanguage(locale?: string): Promise<void> {
     return;
   }
 
-  const json = await fetch("/assets/locale/messages." + locale + ".json")
-    .then((r) => r.json())
-    .catch(() =>
-      // parse translation at runtime if JSON file is not available
-      fetch("/assets/locale/messages." + locale + ".xlf")
-        .then((r) => r.text())
-        .then((t) => parseXliffToJson(t))
-        .catch((err) => {
-          Logging.error(`Error loading translations for locale ${locale}`, err);
-          return undefined;
-        }),
-    );
+  const json = await fetchTranslations(locale);
 
   if (json === undefined) {
-    // failed to load translations, so abort here
     return;
   }
 
@@ -52,4 +40,30 @@ export async function initLanguage(locale?: string): Promise<void> {
   if (localeModule) {
     registerLocaleData(localeModule.default);
   }
+}
+
+async function fetchTranslations(
+  locale: string,
+): Promise<Record<string, string> | undefined> {
+  const cdnUrl = environment.translationsCdnUrl;
+  if (cdnUrl) {
+    const versionedUrl = `${cdnUrl}/${environment.appVersion}/messages.${locale}.json`;
+    const latestUrl = `${cdnUrl}/latest/messages.${locale}.json`;
+
+    for (const url of [versionedUrl, latestUrl]) {
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          return await response.json();
+        }
+      } catch (e) {
+        Logging.debug(`CDN fetch failed for '${url}':`, e);
+      }
+    }
+  }
+
+  Logging.warn(
+    `Could not load translations for locale '${locale}', falling back to default language.`,
+  );
+  return undefined;
 }

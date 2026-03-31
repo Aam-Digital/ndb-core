@@ -8,6 +8,7 @@ import { SyncStateSubject } from "app/core/session/session-type";
 import { NgZone } from "@angular/core";
 import { timer } from "rxjs";
 import { exhaustMap, takeUntil } from "rxjs/operators";
+import { AlertService } from "../../alerts/alert.service";
 
 /**
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
@@ -21,9 +22,9 @@ export class RemotePouchDatabase extends PouchDatabase {
 
   /**
    * Whether to track docs whose permissions were lost as reported by the server.
-   * @private
+   * Toggled by {@link SyncedPouchDatabase} to skip tracking on first sync.
    */
-  private trackLostPermissions?: boolean;
+  trackLostPermissions?: boolean;
 
   /**
    * Doc IDs whose permissions were lost as reported by the server in `_changes` responses.
@@ -38,11 +39,16 @@ export class RemotePouchDatabase extends PouchDatabase {
    */
   private readonly CHANGES_POLLING_INTERVAL = 10000; // 10 seconds
 
+  /** Cooldown (ms) between user-facing connection issue alerts. */
+  private readonly CONNECTION_ALERT_COOLDOWN_MS = 60000;
+  private lastConnectionAlertTime = 0;
+
   constructor(
     dbName: string,
     private authService: KeycloakAuthService,
     globalSyncState?: SyncStateSubject,
     ngZone?: NgZone,
+    private readonly alertService?: AlertService,
   ) {
     super(dbName, globalSyncState, ngZone);
   }
@@ -82,6 +88,20 @@ export class RemotePouchDatabase extends PouchDatabase {
     this.databaseInitialized.complete();
   }
 
+  /**
+   * Maximum number of retries for transient network errors (e.g. ERR_NETWORK_CHANGED).
+   */
+  private readonly TRANSIENT_ERROR_RETRIES = 2;
+  private readonly TRANSIENT_ERROR_DELAY_MS = 2000;
+
+  /**
+   * Per-request timeout in ms. If the server sends no response within this
+   * window, the fetch is aborted. This prevents long-idle connections from
+   * being killed unpredictably by Chrome (ERR_NETWORK_CHANGED) or proxies.
+   * PouchDB will retry from its last checkpoint on abort.
+   */
+  private readonly FETCH_TIMEOUT_MS = 15000;
+
   private defaultFetch: Fetch = async (url: string | Request, opts: any) => {
     if (typeof url !== "string") {
       const err = new Error("PouchDatabase.fetch: url is not a string");
@@ -92,13 +112,20 @@ export class RemotePouchDatabase extends PouchDatabase {
     const remoteUrl =
       environment.DB_PROXY_PREFIX + url.split(environment.DB_PROXY_PREFIX)[1];
     this.authService.addAuthHeader(opts.headers);
+    // bypass Angular service worker to avoid synthetic 504 errors on network blips
+    if (opts.headers?.set && typeof opts.headers.set === "function") {
+      opts.headers.set("ngsw-bypass", "true");
+    } else if (opts.headers) {
+      opts.headers["ngsw-bypass"] = "true";
+    }
 
     let result: Response;
     try {
-      result = await PouchDB.fetch(remoteUrl, opts);
+      result = await this.fetchWithTransientRetry(remoteUrl, opts);
     } catch (err) {
       Logging.debug("Failed initial fetch from DB", err);
       Logging.debug("navigator.onLine", navigator.onLine);
+      this.showConnectionIssueAlert();
     }
 
     // retry login if request failed with unauthorized
@@ -147,6 +174,57 @@ export class RemotePouchDatabase extends PouchDatabase {
 
     return result;
   };
+
+  /**
+   * Fetch with automatic retry for transient network errors (e.g. ERR_NETWORK_CHANGED)
+   * and a per-request timeout to abort long-idle connections cleanly.
+   * Network errors manifest as TypeErrors from the Fetch API.
+   */
+  private async fetchWithTransientRetry(
+    url: string,
+    opts: RequestInit,
+  ): Promise<Response> {
+    for (let attempt = 0; ; attempt++) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(
+        () => controller.abort(),
+        this.FETCH_TIMEOUT_MS,
+      );
+      try {
+        const fetchOpts = { ...opts, signal: controller.signal };
+        return await PouchDB.fetch(url, fetchOpts);
+      } catch (err) {
+        const isTransient =
+          err instanceof TypeError || err?.name === "AbortError";
+        if (!isTransient || attempt >= this.TRANSIENT_ERROR_RETRIES) {
+          throw err;
+        }
+        Logging.debug(
+          `Transient network error (attempt ${attempt + 1}/${this.TRANSIENT_ERROR_RETRIES}), retrying...`,
+          err,
+        );
+        await new Promise((resolve) =>
+          setTimeout(resolve, this.TRANSIENT_ERROR_DELAY_MS),
+        );
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    }
+  }
+
+  private showConnectionIssueAlert(): void {
+    const now = Date.now();
+    if (
+      now - this.lastConnectionAlertTime <
+      this.CONNECTION_ALERT_COOLDOWN_MS
+    ) {
+      return;
+    }
+    this.lastConnectionAlertTime = now;
+    this.alertService?.addWarning(
+      $localize`We are observing connection issues while syncing your data. Sync continues and retries automatically but may take longer than usual.`,
+    );
+  }
 
   /**
    * Parse `lostPermissions` from a `_changes` response and accumulate them

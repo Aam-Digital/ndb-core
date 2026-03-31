@@ -27,9 +27,6 @@
   "imports": {
     "#e2e/*": "./e2e/*"
   },
-  "overrides": {
-    "@babel/helper-define-polyfill-provider": "0.6.6"
-  },
   "dependencies": {
     "@angular/animations": "^21.2.4",
     "@angular/cdk": "^21.2.2",
@@ -129,7 +126,6 @@
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.1",
-    "vitest": "^4.0.18",
-    "xliff": "^6.3.0"
+    "vitest": "^4.0.18"
   }
 }

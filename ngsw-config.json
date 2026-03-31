@@ -53,6 +53,17 @@
       }
     },
     {
+      "name": "translations-cdn",
+      "urls": [
+        "https://aam-digital.github.io/ndb-core/locale/**"
+      ],
+      "cacheConfig": {
+        "maxSize": 10,
+        "maxAge": "30d",
+        "strategy": "freshness"
+      }
+    },
+    {
       "name": "attachments",
       "urls": [
         "**/app-attachments/*/*"

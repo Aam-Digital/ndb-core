@@ -290,4 +290,11 @@ export const coreComponents: ComponentTuple[] = [
         (c) => c.EditDateFormatComponent,
       ),
   ],
+  [
+    "EditColor",
+    () =>
+      import("./common-components/color-input/color-input.component").then(
+        (c) => c.ColorInputComponent,
+      ),
+  ],
 ];

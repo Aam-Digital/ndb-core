@@ -19,16 +19,20 @@ permissions:
   id-token: write # for QLTY code coverage (https://docs.qlty.sh/migration/coverage)
 
 jobs:
+  toolchain:
+    uses: ./.github/workflows/_node-toolchain.yml
+
   code-quality:
+    needs: toolchain
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: ${{ needs.toolchain.outputs.node-version }}
           cache: npm
 
-      - run: npm install -g npm@11
+      - run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
       - run: npm install --ci
       - run: npx eslint --max-warnings=0
       - run: npx tsc -p .
@@ -39,6 +43,7 @@ jobs:
           ./actionlint -color
 
   test-unit:
+    needs: toolchain
     runs-on: ubuntu-latest
     env:
       TZ: Europe/Berlin
@@ -48,10 +53,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: ${{ needs.toolchain.outputs.node-version }}
           cache: npm
 
-      - run: npm install -g npm@11
+      - run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
       - run: npm ci --no-progress
 
       - name: Cache angular
@@ -67,6 +72,7 @@ jobs:
           files: coverage/**/lcov.info
 
   test-e2e:
+    needs: toolchain
     if: ${{ !inputs.skip-e2e }}
     runs-on: ubuntu-latest
     env:
@@ -77,10 +83,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: ${{ needs.toolchain.outputs.node-version }}
           cache: npm
 
-      - run: npm install -g npm@11
+      - run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
       - run: npm install --ci
       - name: Cache playwright
         id: cache-playwright

@@ -34,8 +34,11 @@ jobs:
             git push --delete origin "$tag" || true
           done
 
+  toolchain:
+    uses: ./.github/workflows/_node-toolchain.yml
+
   release:
-    needs: pre-releases-cleanup
+    needs: [pre-releases-cleanup, toolchain]
     runs-on: ubuntu-latest
     outputs:
       new_release_version: ${{ steps.semantic.outputs.new_release_version }}
@@ -48,6 +51,12 @@ jobs:
 
       - name: Set up node
         uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.toolchain.outputs.node-version }}
+          cache: npm
+
+      - name: Set up npm
+        run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
 
       - name: Semantic Release
         id: semantic

@@ -1,12 +1,13 @@
 <!-- Color Picker Button -->
-<ng-template #colorPicker>
+<ng-template #colorPickerButton>
   <button
     mat-icon-button
     type="button"
-    [style.color]="color"
+    [style.color]="colorPickerValue"
     (click)="colorInput.click()"
     tabindex="-1"
     matTooltip="Pick color"
+    i18n-matTooltip
   >
     <fa-icon icon="palette"></fa-icon>
   </button>
@@ -14,17 +15,26 @@
     #colorInput
     type="color"
     class="color-input-overlay"
-    [value]="color"
-    (input)="onColorChange($event.target.value)"
+    [value]="colorPickerValue"
+    (input)="onColorPickerChange($any($event.target).value)"
     (click)="$event.stopPropagation()"
   />
 </ng-template>
 
-@if (compact) {
-  <!-- only color picker button -->
-  <ng-container *ngTemplateOutlet="colorPicker"></ng-container>
+@if (ngControl) {
+  <!-- EditComponent mode: entity form provides the outer mat-form-field -->
+  <input
+    matInput
+    [formControl]="formControl"
+    placeholder="#RRGGBB"
+    class="color-text-input"
+  />
+  <ng-container *ngTemplateOutlet="colorPickerButton"></ng-container>
+} @else if (compact) {
+  <!-- Compact standalone mode: just the color picker button -->
+  <ng-container *ngTemplateOutlet="colorPickerButton"></ng-container>
 } @else {
-  <!-- full form field with picker -->
+  <!-- Full standalone mode: own mat-form-field with label and error -->
   <mat-form-field class="full-width" floatLabel="always">
     <mat-label>
       <span>{{ label }}</span>
@@ -38,12 +48,16 @@
     <input
       matInput
       [formControl]="colorControl"
-      (input)="onColorChange(colorControl.value)"
       style="width: 100px"
       placeholder="#RRGGBB"
     />
     <span matSuffix>
-      <ng-container *ngTemplateOutlet="colorPicker"></ng-container>
+      <ng-container *ngTemplateOutlet="colorPickerButton"></ng-container>
     </span>
+    @if (colorControl.hasError("pattern")) {
+      <mat-error i18n
+        >Please enter a valid hex color code (e.g. #ff0000)</mat-error
+      >
+    }
   </mat-form-field>
 }
