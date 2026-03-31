@@ -56,12 +56,8 @@ export class KeycloakAuthService {
         shouldAddToken: ({ url }) => !url.includes("api.github.com"),
       });
     } catch (err) {
-      if (
-        err?.message?.includes(
-          "Timeout when waiting for 3rd party check iframe message.",
-        )
-      ) {
-        // this is actually an expected scenario, user's internet is slow or not available
+      if (this.isOfflineOrUnavailableError(err)) {
+        Logging.debug("Keycloak init failed (offline/unavailable)", err);
         err = new RemoteLoginNotAvailableError();
       } else {
         Logging.error("Keycloak init failed", err);
@@ -80,6 +76,26 @@ export class KeycloakAuthService {
       }
     });
   });
+
+  private static readonly NETWORK_ERROR_PATTERNS = [
+    "Failed to fetch",
+    "NetworkError",
+    "Load failed",
+    "Network request failed",
+    "Timeout when waiting for 3rd party check iframe message.",
+  ];
+
+  private isOfflineOrUnavailableError(err: any): boolean {
+    const message = err?.message ?? "";
+    if (
+      KeycloakAuthService.NETWORK_ERROR_PATTERNS.some((pattern) =>
+        message.includes(pattern),
+      )
+    ) {
+      return true;
+    }
+    return !navigator.onLine;
+  }
 
   private processToken(token: string): SessionInfo {
     if (!token) {
