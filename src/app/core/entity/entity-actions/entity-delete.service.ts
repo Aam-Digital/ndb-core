@@ -22,7 +22,7 @@ import { firstValueFrom } from "rxjs";
 export class EntityDeleteService extends CascadingEntityAction {
   private userAdminService = inject(UserAdminService);
   private confirmationDialog = inject(ConfirmationDialogService);
-  private sessionInfo = inject(SessionSubject);
+  private readonly sessionInfo = inject(SessionSubject, { optional: true });
 
   /**
    * The actual delete action without user interactions.
