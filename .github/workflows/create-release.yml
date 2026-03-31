@@ -6,11 +6,39 @@ permissions:
   contents: write  # needed for semantic-release to create tags/releases
 
 jobs:
+  pre-releases-cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Delete previous pre-release releases and tags
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          # Delete all pre-release releases and their tags
+          gh release list --repo "$GITHUB_REPOSITORY" --limit 1000 \
+            --json tagName,isPrerelease \
+            --jq '.[] | select(.isPrerelease) | .tagName' \
+            | while read -r tag; do
+                echo "Deleting release and tag: $tag"
+                gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag
+              done
+
+          # Delete any remaining orphaned pre-release git tags (semantic-release format: x.y.z-master.n)
+          git fetch --tags
+          git tag -l '*-master.*' | while read -r tag; do
+            echo "Deleting orphaned tag: $tag"
+            git push --delete origin "$tag" || true
+          done
+
   toolchain:
     uses: ./.github/workflows/_node-toolchain.yml
 
   release:
-    needs: toolchain
+    needs: [pre-releases-cleanup, toolchain]
     runs-on: ubuntu-latest
     outputs:
       new_release_version: ${{ steps.semantic.outputs.new_release_version }}
@@ -32,7 +60,7 @@ jobs:
 
       - name: Semantic Release
         id: semantic
-        uses: cycjimmy/semantic-release-action@v4
+        uses: cycjimmy/semantic-release-action@16ca923e6ccbb50770c415a0ccd43709a8c5f7a4 # v4.2.2
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -6,7 +6,6 @@ import {
   SyncStateSubject,
 } from "../../session/session-type";
 import { LoginState } from "../../session/session-states/login-state.enum";
-import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { Subject } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase } from "./synced-pouch-database";
@@ -81,6 +80,7 @@ describe("SyncedPouchDatabase", () => {
     mockSyncStateSubject.next(SyncState.UNSYNCED);
     const mockLocalDb = {
       sync: vi.fn().mockReturnValue(mockSyncHandler()),
+      info: vi.fn().mockResolvedValue({ doc_count: 5 }),
     };
 
     const db = service;
@@ -299,8 +299,11 @@ describe("SyncedPouchDatabase", () => {
 
     beforeEach(() => {
       const mockLocalDb = {
+        name: "unit-test-db",
         sync: vi.fn().mockReturnValue(mockSyncHandler()),
+        info: vi.fn().mockResolvedValue({ doc_count: 5 }),
       };
+      service["pouchDB"] = mockLocalDb as any;
       vi.spyOn(service, "getPouchDB").mockReturnValue(mockLocalDb as any);
       purgeSpy = vi.spyOn(service, "purge").mockResolvedValue(true);
     });
@@ -353,6 +356,24 @@ describe("SyncedPouchDatabase", () => {
 
       expect(purgeSpy).toHaveBeenCalledWith("Child:1");
       expect(purgeSpy).toHaveBeenCalledWith("School:2");
+    });
+
+    it("should skip purge and lost-permission tracking on first sync", async () => {
+      vi.spyOn(service, "getPouchDB").mockReturnValue({
+        sync: vi.fn().mockReturnValue(mockSyncHandler()),
+        info: vi.fn().mockResolvedValue({ doc_count: 0 }),
+      } as any);
+      const collectSpy = vi.spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      );
+
+      await service.sync();
+
+      expect(purgeSpy).not.toHaveBeenCalled();
+      expect(collectSpy).not.toHaveBeenCalled();
+      // tracking should be re-enabled for subsequent syncs
+      expect(service["remoteDatabase"].trackLostPermissions).toBe(true);
     });
   });
 });

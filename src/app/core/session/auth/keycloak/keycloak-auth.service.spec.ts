@@ -198,6 +198,57 @@ describe("KeycloakAuthService", () => {
     }
   });
 
+  it("should throw RemoteLoginNotAvailableError on network errors (e.g. Failed to fetch)", async () => {
+    const fetchError = new TypeError("Failed to fetch");
+    mockKeycloak.init.mockRejectedValue(fetchError);
+
+    await expect(service.login()).rejects.toBeInstanceOf(
+      RemoteLoginNotAvailableError,
+    );
+  });
+
+  it("should throw RemoteLoginNotAvailableError on any error when offline", async () => {
+    const originalOnLine = Object.getOwnPropertyDescriptor(
+      Navigator.prototype,
+      "onLine",
+    );
+    Object.defineProperty(Navigator.prototype, "onLine", {
+      get: () => false,
+      configurable: true,
+    });
+
+    try {
+      const serverError = new Error("Unexpected server error");
+      mockKeycloak.init.mockRejectedValue(serverError);
+
+      await expect(service.login()).rejects.toBeInstanceOf(
+        RemoteLoginNotAvailableError,
+      );
+    } finally {
+      Object.defineProperty(Navigator.prototype, "onLine", originalOnLine!);
+    }
+  });
+
+  it("should throw original error for non-network errors when online", async () => {
+    const originalOnLine = Object.getOwnPropertyDescriptor(
+      Navigator.prototype,
+      "onLine",
+    );
+    Object.defineProperty(Navigator.prototype, "onLine", {
+      get: () => true,
+      configurable: true,
+    });
+
+    try {
+      const configError = new Error("Invalid realm configuration");
+      mockKeycloak.init.mockRejectedValue(configError);
+
+      await expect(service.login()).rejects.toEqual(configError);
+    } finally {
+      Object.defineProperty(Navigator.prototype, "onLine", originalOnLine!);
+    }
+  });
+
   it.skip("should gracefully handle failed re-authorization", async () => {
     vi.useFakeTimers();
     try {
