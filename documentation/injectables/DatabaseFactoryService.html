@@ -205,8 +205,8 @@ depending on context and environment configuration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="31"
-                                    class="link-to-prism">src/app/core/database/database-factory.service.ts:31</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="33"
+                                    class="link-to-prism">src/app/core/database/database-factory.service.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -272,8 +272,8 @@ depending on context and environment configuration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="52"
-                                    class="link-to-prism">src/app/core/database/database-factory.service.ts:52</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="55"
+                                    class="link-to-prism">src/app/core/database/database-factory.service.ts:55</a></div>
                         </td>
                     </tr>
 
@@ -340,6 +340,7 @@ import { RemotePouchDatabase } from &quot;./pouchdb/remote-pouch-database&quot;;
 import { SyncedPouchDatabase } from &quot;./pouchdb/synced-pouch-database&quot;;
 import { NAVIGATOR_TOKEN } from &quot;../../utils/di-tokens&quot;;
 import { Entity } from &quot;../entity/model/entity&quot;;
+import { AlertService } from &quot;../alerts/alert.service&quot;;
 
 /**
  * Provides a method to generate Database instances
@@ -354,6 +355,7 @@ export class DatabaseFactoryService {
   private navigator &#x3D; inject&lt;Navigator&gt;(NAVIGATOR_TOKEN, { optional: true });
   private loginStateSubject &#x3D; inject(LoginStateSubject, { optional: true });
   private readonly ngZone &#x3D; inject(NgZone);
+  private readonly alertService &#x3D; inject(AlertService);
 
   createDatabase(dbName: string): Database {
     // only the &quot;primary&quot; (app) database should manage the global login state
@@ -368,6 +370,7 @@ export class DatabaseFactoryService {
         this.navigator,
         this.loginStateSubject,
         this.ngZone,
+        this.alertService,
       );
     } else if (environment.session_type &#x3D;&#x3D;&#x3D; SessionType.local) {
       return new PouchDatabase(dbName, syncState, this.ngZone);
@@ -386,6 +389,7 @@ export class DatabaseFactoryService {
       this.authService,
       syncState,
       this.ngZone,
+      this.alertService,
     );
     db.init(dbName);
     return db;

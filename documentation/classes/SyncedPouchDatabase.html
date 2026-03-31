@@ -245,6 +245,7 @@ provides functionality to sync with a remote CouchDB.</p>
                                 <a href="#subscribeChanges" >subscribeChanges</a>
                             </li>
                             <li>
+                                    <span class="modifier">Async</span>
                                 <a href="#sync" >sync</a>
                             </li>
                             <li>
@@ -347,7 +348,7 @@ provides functionality to sync with a remote CouchDB.</p>
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(dbName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, authService: <a href="../injectables/KeycloakAuthService.html" target="_self">KeycloakAuthService</a>, globalSyncState: <a href="../injectables/SyncStateSubject.html" target="_self">SyncStateSubject</a>, navigator: Navigator, loginStateSubject: <a href="../injectables/LoginStateSubject.html" target="_self">LoginStateSubject</a>, ngZone?: <a href="https://angular.io/api/core/NgZone" target="_blank">NgZone</a>)</code>
+<code>constructor(dbName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, authService: <a href="../injectables/KeycloakAuthService.html" target="_self">KeycloakAuthService</a>, globalSyncState: <a href="../injectables/SyncStateSubject.html" target="_self">SyncStateSubject</a>, navigator: Navigator, loginStateSubject: <a href="../injectables/LoginStateSubject.html" target="_self">LoginStateSubject</a>, ngZone?: <a href="https://angular.io/api/core/NgZone" target="_blank">NgZone</a>, alertService?: <a href="../injectables/AlertService.html" target="_self">AlertService</a>)</code>
                     </td>
                 </tr>
                         <tr>
@@ -441,6 +442,18 @@ provides functionality to sync with a remote CouchDB.</p>
                                                     </td>
                                                     
                                                 </tr>
+                                                <tr>
+                                                        <td>alertService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AlertService.html" target="_self" >AlertService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            Yes
+                                                    </td>
+                                                    
+                                                </tr>
                                         </tbody>
                                     </table>
                             </div>
@@ -506,7 +519,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="288" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:288</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="306" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:306</a></div>
                         </td>
                     </tr>
 
@@ -538,7 +551,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>500</code>
+                        <i>Default value : </i><code>100</code>
                     </td>
                 </tr>
                     <tr>
@@ -867,8 +880,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="265"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:265</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="283"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:283</a></div>
                         </td>
                     </tr>
 
@@ -957,7 +970,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:107</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:109</a></code>
 </div>
                         </td>
                     </tr>
@@ -1049,8 +1062,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="290"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:290</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="308"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:308</a></div>
                         </td>
                     </tr>
 
@@ -1088,8 +1101,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="250"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:250</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="268"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:268</a></div>
                         </td>
                     </tr>
 
@@ -1138,7 +1151,7 @@ Uses <code>checkpoint: false</code> once so PouchDB ignores previous checkpoints
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:141</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:143</a></code>
 </div>
                         </td>
                     </tr>
@@ -1161,6 +1174,7 @@ Uses <code>checkpoint: false</code> once so PouchDB ignores previous checkpoints
                 <td class="col-md-4">
                     <a name="sync"></a>
                     <span class="name">
+                            <span class="modifier">Async</span>
                         <span ><b>sync</b></span>
                         <a href="#sync"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -1168,15 +1182,16 @@ Uses <code>checkpoint: false</code> once so PouchDB ignores previous checkpoints
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>sync(options: PouchDB.Replication.SyncOptions)</code>
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>sync(options: PouchDB.Replication.SyncOptions)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="156"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:156</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="158"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:158</a></div>
                         </td>
                     </tr>
 
@@ -2542,7 +2557,7 @@ Useful for observing when this specific database&#39;s sync completes.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="137" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:137</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="139" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:139</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -2573,7 +2588,6 @@ import {
   debounceTime,
   filter,
   mergeMap,
-  retry,
   takeUntil,
   takeWhile,
 } from &quot;rxjs/operators&quot;;
@@ -2582,9 +2596,10 @@ import {
   LoginStateSubject,
   SyncStateSubject,
 } from &quot;../../session/session-type&quot;;
-import { from, interval, merge, of } from &quot;rxjs&quot;;
+import { EMPTY, from, interval, merge, of } from &quot;rxjs&quot;;
 import { LoginState } from &quot;../../session/session-states/login-state.enum&quot;;
 import { NotAvailableOfflineError } from &quot;../../session/not-available-offline.error&quot;;
+import { AlertService } from &quot;../../alerts/alert.service&quot;;
 
 /**
  * An alternative implementation of PouchDatabase that additionally
@@ -2600,7 +2615,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     return SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + this.pouchDB.name;
   }
 
-  POUCHDB_SYNC_BATCH_SIZE &#x3D; 500;
+  POUCHDB_SYNC_BATCH_SIZE &#x3D; 100;
   SYNC_INTERVAL &#x3D; 30000;
 
   private remoteDatabase: RemotePouchDatabase;
@@ -2629,6 +2644,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     private navigator: Navigator,
     private loginStateSubject: LoginStateSubject,
     ngZone?: NgZone,
+    alertService?: AlertService,
   ) {
     super(dbName, globalSyncState, ngZone);
 
@@ -2637,6 +2653,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       authService,
       undefined,
       ngZone,
+      alertService,
     );
 
     this.logSyncContext();
@@ -2719,11 +2736,20 @@ export class SyncedPouchDatabase extends PouchDatabase {
   /**
    * Execute a (one-time) sync between the local and server database.
    */
-  sync(options: PouchDB.Replication.SyncOptions &#x3D; {}): Promise&lt;SyncResult&gt; {
+  async sync(
+    options: PouchDB.Replication.SyncOptions &#x3D; {},
+  ): Promise&lt;SyncResult&gt; {
     if (!this.navigator.onLine) {
       Logging.debug(&quot;Not syncing because offline&quot;);
       this.syncState.next(SyncState.UNSYNCED);
-      return Promise.resolve({});
+      return {};
+    }
+
+    const localInfo &#x3D; await this.getPouchDB().info();
+    const isFirstSync &#x3D; localInfo.doc_count &#x3D;&#x3D;&#x3D; 0;
+    if (isFirstSync) {
+      // On first sync there are no local docs, so skip lost-permission tracking &amp; purge
+      this.remoteDatabase.trackLostPermissions &#x3D; false;
     }
 
     this.syncState.next(SyncState.STARTED);
@@ -2748,7 +2774,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
       .then(async (res) &#x3D;&gt; {
         if (res) res[&quot;dbName&quot;] &#x3D; this.dbName; // add for debugging information
         Logging.debug(&quot;sync completed&quot;, res);
-        await this.purgeDocsWithLostPermissions();
+        if (!isFirstSync) {
+          await this.purgeDocsWithLostPermissions();
+        }
         this.syncState.next(SyncState.COMPLETED);
         return res as SyncResult;
       })
@@ -2773,6 +2801,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
         }
         this.syncState.next(SyncState.FAILED);
         throw err;
+      })
+      .finally(() &#x3D;&gt; {
+        if (isFirstSync) {
+          this.remoteDatabase.trackLostPermissions &#x3D; true;
+        }
       });
   }
 
@@ -2868,13 +2901,20 @@ export class SyncedPouchDatabase extends PouchDatabase {
         debounceTime(500),
         mergeMap(() &#x3D;&gt; {
           if (this.syncState.value &#x3D;&#x3D; SyncState.STARTED) {
-            return of();
+            return EMPTY;
           } else {
-            return from(this.sync());
+            // catch errors so the outer observable stays alive without re-subscribing
+            // (re-subscribing via retry would leak EventEmitter listeners on PouchDB)
+            // sync() already logs errors and updates syncState before re-throwing
+            return from(
+              this.sync().catch((err) &#x3D;&gt; {
+                Logging.debug(&quot;liveSync: swallowed sync error&quot;, err);
+              }),
+            );
           }
         }),
-        retry({ delay: this.SYNC_INTERVAL }),
         takeWhile(() &#x3D;&gt; this.liveSyncEnabled),
+        takeUntil(this.destroy$),
       )
       .subscribe();
   }

@@ -171,6 +171,10 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#trackLostPermissions" >trackLostPermissions</a>
+                            </li>
+                            <li>
                                 <a href="#adapter" >adapter</a>
                             </li>
                             <li>
@@ -299,12 +303,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(dbName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, authService: <a href="../injectables/KeycloakAuthService.html" target="_self">KeycloakAuthService</a>, globalSyncState?: <a href="../injectables/SyncStateSubject.html" target="_self">SyncStateSubject</a>, ngZone?: <a href="https://angular.io/api/core/NgZone" target="_blank">NgZone</a>)</code>
+<code>constructor(dbName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, authService: <a href="../injectables/KeycloakAuthService.html" target="_self">KeycloakAuthService</a>, globalSyncState?: <a href="../injectables/SyncStateSubject.html" target="_self">SyncStateSubject</a>, ngZone?: <a href="https://angular.io/api/core/NgZone" target="_blank">NgZone</a>, alertService?: <a href="../injectables/AlertService.html" target="_self">AlertService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:39</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:44</a></div>
                             </td>
                         </tr>
 
@@ -369,6 +373,18 @@
                                                     </td>
                                                     
                                                 </tr>
+                                                <tr>
+                                                        <td>alertService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AlertService.html" target="_self" >AlertService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            Yes
+                                                    </td>
+                                                    
+                                                </tr>
                                         </tbody>
                                     </table>
                             </div>
@@ -383,6 +399,40 @@
     <h3 id="inputs">
         Properties
     </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="trackLostPermissions"></a>
+                    <span class="name">
+                            <span class="modifier">Optional</span>
+                        <span ><b>trackLostPermissions</b></span>
+                        <a href="#trackLostPermissions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:27</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether to track docs whose permissions were lost as reported by the server.
+Toggled by <a href="../classes/SyncedPouchDatabase.html">SyncedPouchDatabase</a> to skip tracking on first sync.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
     <table class="table table-sm table-bordered">
         <tbody>
             <tr>
@@ -667,8 +717,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="216"
-                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:216</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="255"
+                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:255</a></div>
                         </td>
                     </tr>
 
@@ -716,7 +766,7 @@ and resets the internal list.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:56</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:62</a></code>
 </div>
                         </td>
                     </tr>
@@ -817,7 +867,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:232</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:271</a></code>
 </div>
                         </td>
                     </tr>
@@ -2095,6 +2145,7 @@ import { SyncStateSubject } from &quot;app/core/session/session-type&quot;;
 import { NgZone } from &quot;@angular/core&quot;;
 import { timer } from &quot;rxjs&quot;;
 import { exhaustMap, takeUntil } from &quot;rxjs/operators&quot;;
+import { AlertService } from &quot;../../alerts/alert.service&quot;;
 
 /**
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
@@ -2108,9 +2159,9 @@ export class RemotePouchDatabase extends PouchDatabase {
 
   /**
    * Whether to track docs whose permissions were lost as reported by the server.
-   * @private
+   * Toggled by {@link SyncedPouchDatabase} to skip tracking on first sync.
    */
-  private trackLostPermissions?: boolean;
+  trackLostPermissions?: boolean;
 
   /**
    * Doc IDs whose permissions were lost as reported by the server in &#x60;_changes&#x60; responses.
@@ -2125,11 +2176,16 @@ export class RemotePouchDatabase extends PouchDatabase {
    */
   private readonly CHANGES_POLLING_INTERVAL &#x3D; 10000; // 10 seconds
 
+  /** Cooldown (ms) between user-facing connection issue alerts. */
+  private readonly CONNECTION_ALERT_COOLDOWN_MS &#x3D; 60000;
+  private lastConnectionAlertTime &#x3D; 0;
+
   constructor(
     dbName: string,
     private authService: KeycloakAuthService,
     globalSyncState?: SyncStateSubject,
     ngZone?: NgZone,
+    private readonly alertService?: AlertService,
   ) {
     super(dbName, globalSyncState, ngZone);
   }
@@ -2173,7 +2229,15 @@ export class RemotePouchDatabase extends PouchDatabase {
    * Maximum number of retries for transient network errors (e.g. ERR_NETWORK_CHANGED).
    */
   private readonly TRANSIENT_ERROR_RETRIES &#x3D; 2;
-  private readonly TRANSIENT_ERROR_DELAY_MS &#x3D; 1500;
+  private readonly TRANSIENT_ERROR_DELAY_MS &#x3D; 2000;
+
+  /**
+   * Per-request timeout in ms. If the server sends no response within this
+   * window, the fetch is aborted. This prevents long-idle connections from
+   * being killed unpredictably by Chrome (ERR_NETWORK_CHANGED) or proxies.
+   * PouchDB will retry from its last checkpoint on abort.
+   */
+  private readonly FETCH_TIMEOUT_MS &#x3D; 15000;
 
   private defaultFetch: Fetch &#x3D; async (url: string | Request, opts: any) &#x3D;&gt; {
     if (typeof url !&#x3D;&#x3D; &quot;string&quot;) {
@@ -2198,6 +2262,7 @@ export class RemotePouchDatabase extends PouchDatabase {
     } catch (err) {
       Logging.debug(&quot;Failed initial fetch from DB&quot;, err);
       Logging.debug(&quot;navigator.onLine&quot;, navigator.onLine);
+      this.showConnectionIssueAlert();
     }
 
     // retry login if request failed with unauthorized
@@ -2248,7 +2313,8 @@ export class RemotePouchDatabase extends PouchDatabase {
   };
 
   /**
-   * Fetch with automatic retry for transient network errors (e.g. ERR_NETWORK_CHANGED).
+   * Fetch with automatic retry for transient network errors (e.g. ERR_NETWORK_CHANGED)
+   * and a per-request timeout to abort long-idle connections cleanly.
    * Network errors manifest as TypeErrors from the Fetch API.
    */
   private async fetchWithTransientRetry(
@@ -2256,10 +2322,17 @@ export class RemotePouchDatabase extends PouchDatabase {
     opts: RequestInit,
   ): Promise&lt;Response&gt; {
     for (let attempt &#x3D; 0; ; attempt++) {
+      const controller &#x3D; new AbortController();
+      const timeoutId &#x3D; setTimeout(
+        () &#x3D;&gt; controller.abort(),
+        this.FETCH_TIMEOUT_MS,
+      );
       try {
-        return await PouchDB.fetch(url, opts);
+        const fetchOpts &#x3D; { ...opts, signal: controller.signal };
+        return await PouchDB.fetch(url, fetchOpts);
       } catch (err) {
-        const isTransient &#x3D; err instanceof TypeError;
+        const isTransient &#x3D;
+          err instanceof TypeError || err?.name &#x3D;&#x3D;&#x3D; &quot;AbortError&quot;;
         if (!isTransient || attempt &gt;&#x3D; this.TRANSIENT_ERROR_RETRIES) {
           throw err;
         }
@@ -2270,8 +2343,24 @@ export class RemotePouchDatabase extends PouchDatabase {
         await new Promise((resolve) &#x3D;&gt;
           setTimeout(resolve, this.TRANSIENT_ERROR_DELAY_MS),
         );
+      } finally {
+        clearTimeout(timeoutId);
       }
     }
+  }
+
+  private showConnectionIssueAlert(): void {
+    const now &#x3D; Date.now();
+    if (
+      now - this.lastConnectionAlertTime &lt;
+      this.CONNECTION_ALERT_COOLDOWN_MS
+    ) {
+      return;
+    }
+    this.lastConnectionAlertTime &#x3D; now;
+    this.alertService?.addWarning(
+      $localize&#x60;We are observing connection issues while syncing your data. Sync continues and retries automatically but may take longer than usual.&#x60;,
+    );
   }
 
   /**
