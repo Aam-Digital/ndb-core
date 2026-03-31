@@ -20,7 +20,10 @@ import { BehaviorSubject, of, throwError } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
-import { UserAdminService } from "../../user/user-admin-service/user-admin.service";
+import {
+  UserAdminApiError,
+  UserAdminService,
+} from "../../user/user-admin-service/user-admin.service";
 import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
@@ -56,9 +59,7 @@ describe("EntityDeleteService", () => {
       getUser: vi.fn(),
     };
     mockUserAdminService.deleteUser.mockReturnValue(
-      throwError(() => {
-        new Error();
-      }),
+      throwError(() => new UserAdminApiError(500)),
     );
     mockUserAdminService.getUser.mockReturnValue(of(null));
 
@@ -146,7 +147,7 @@ describe("EntityDeleteService", () => {
     });
     mockUserAdminService.getUser.mockReturnValue(of({ id: "kc-user-id" }));
     mockUserAdminService.deleteUser.mockReturnValue(
-      throwError(() => new Error()),
+      throwError(() => new UserAdminApiError(500)),
     );
     mockConfirmationDialog.getConfirmation.mockResolvedValue(true);
     const userEntity = new TestEntity();
@@ -169,6 +170,7 @@ describe("EntityDeleteService", () => {
 
     await service.deleteEntity(userEntity);
 
+    expect(mockUserAdminService.getUser).not.toHaveBeenCalled();
     expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
     expect(mockConfirmationDialog.getConfirmation).not.toHaveBeenCalled();
     TestEntity.enableUserAccounts = false;
@@ -229,6 +231,7 @@ describe("EntityDeleteService", () => {
 
   it("should not delete own account and show self-deletion warning (full entity ID)", async () => {
     const userEntity = new TestEntity();
+    const removeSpy = vi.spyOn(entityMapper, "remove");
     TestEntity.enableUserAccounts = true;
     mockSessionSubject.next({
       id: "session-id",
@@ -238,9 +241,12 @@ describe("EntityDeleteService", () => {
     });
     mockUserAdminService.getUser.mockReturnValue(of({ id: "kc-user-id" }));
 
-    await service.deleteEntity(userEntity);
+    await expect(service.deleteEntity(userEntity)).rejects.toThrow(
+      "Entity deletion aborted by user",
+    );
 
     expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
+    expect(removeSpy).not.toHaveBeenCalled();
     expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalledWith(
       expect.any(String),
       expect.stringContaining("own account"),
@@ -251,6 +257,7 @@ describe("EntityDeleteService", () => {
 
   it("should not delete own account and show self-deletion warning (short entity ID without type prefix)", async () => {
     const userEntity = new TestEntity();
+    const removeSpy = vi.spyOn(entityMapper, "remove");
     TestEntity.enableUserAccounts = true;
     mockSessionSubject.next({
       id: "session-id",
@@ -260,14 +267,38 @@ describe("EntityDeleteService", () => {
     });
     mockUserAdminService.getUser.mockReturnValue(of({ id: "kc-user-id" }));
 
-    await service.deleteEntity(userEntity);
+    await expect(service.deleteEntity(userEntity)).rejects.toThrow(
+      "Entity deletion aborted by user",
+    );
 
     expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
+    expect(removeSpy).not.toHaveBeenCalled();
     expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalledWith(
       expect.any(String),
       expect.stringContaining("own account"),
       OkButton,
     );
+    TestEntity.enableUserAccounts = false;
+  });
+
+  it("should abort entity deletion when account confirmation is cancelled", async () => {
+    const userEntity = new TestEntity();
+    const removeSpy = vi.spyOn(entityMapper, "remove");
+    TestEntity.enableUserAccounts = true;
+    mockSessionSubject.next({
+      id: "session-id",
+      name: "test",
+      roles: [UserAdminService.ACCOUNT_MANAGER_ROLE],
+    });
+    mockUserAdminService.getUser.mockReturnValue(of({ id: "kc-user-id" }));
+    mockConfirmationDialog.getConfirmation.mockResolvedValue(undefined);
+
+    await expect(service.deleteEntity(userEntity)).rejects.toThrow(
+      "Entity deletion aborted by user",
+    );
+
+    expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
+    expect(removeSpy).not.toHaveBeenCalled();
     TestEntity.enableUserAccounts = false;
   });
 

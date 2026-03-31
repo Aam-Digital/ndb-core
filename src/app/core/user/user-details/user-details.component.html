@@ -30,9 +30,7 @@
       </div>
     } @else {
       <!-- Actions editing existing account -->
-      <div
-        class="padding-bottom-small flex-row gap-small align-self-end flex-wrap padding-top-small"
-      >
+      <div class="user-account-actions padding-bottom-small padding-top-small">
         @if (formDisabled()) {
           <button
             mat-raised-button
@@ -43,42 +41,25 @@
             Edit
           </button>
         } @else {
-          <!-- Three-dots overflow menu for secondary/destructive actions -->
-          <button
-            mat-icon-button
-            color="warn"
-            [matMenuTriggerFor]="userAccountActionsMenu"
-            matTooltip="More actions"
-            i18n-matTooltip
-          >
-            <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
-          </button>
-          <mat-menu #userAccountActionsMenu>
-            @if (userAccount()?.enabled) {
-              <button
-                mat-menu-item
-                (click)="enableAccount(false)"
-                i18n="button to disable a user"
-              >
-                Deactivate user
-              </button>
-            } @else {
-              <button
-                mat-menu-item
-                (click)="enableAccount(true)"
-                i18n="button to enable a user"
-              >
-                Activate user
-              </button>
-            }
+          @if (userAccount()?.enabled) {
             <button
-              mat-menu-item
-              (click)="deleteAccount()"
-              i18n="button to delete user account"
+              mat-stroked-button
+              class="action-button"
+              (click)="enableAccount(false)"
+              i18n="button to disable a user account"
             >
-              Delete user account
+              Deactivate account
             </button>
-          </mat-menu>
+          } @else {
+            <button
+              mat-stroked-button
+              class="action-button"
+              (click)="enableAccount(true)"
+              i18n="button to enable a user account"
+            >
+              Activate account
+            </button>
+          }
 
           <button
             mat-raised-button
@@ -98,6 +79,26 @@
           >
             Cancel
           </button>
+          <!-- Three-dots overflow menu for secondary/destructive actions -->
+          <button
+            mat-icon-button
+            color="warn"
+            class="more-actions-button"
+            [matMenuTriggerFor]="userAccountActionsMenu"
+            matTooltip="More actions"
+            i18n-matTooltip
+          >
+            <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
+          </button>
+          <mat-menu #userAccountActionsMenu>
+            <button
+              mat-menu-item
+              (click)="deleteAccount()"
+              i18n="button to delete user account"
+            >
+              Delete account
+            </button>
+          </mat-menu>
         }
       </div>
     }

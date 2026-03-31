@@ -36,9 +36,7 @@ import { DialogCloseComponent } from "../../common-components/dialog-close/dialo
 import { AlertService } from "../../alerts/alert.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { SessionSubject } from "../../session/auth/session-info";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { Angulartics2Module } from "angulartics2";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
@@ -47,6 +45,7 @@ import { lastValueFrom, of, firstValueFrom } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { catchError, map } from "rxjs/operators";
+import { UserAccountActionGuardService } from "../user-admin-service/user-account-action-guard.service";
 
 /**
  * Options as input to the UserDetailsComponent when it is opened in a dialog.
@@ -104,7 +103,7 @@ export class UserDetailsComponent {
     optional: true,
   });
   protected currentUser = inject(CurrentUserSubject, { optional: true });
-  private readonly sessionInfo = inject(SessionSubject, { optional: true });
+  private readonly accountActionGuard = inject(UserAccountActionGuardService);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   userAccount = model<UserAccount | null>(this._dialogData?.userAccount);
@@ -375,11 +374,19 @@ export class UserDetailsComponent {
   }
 
   async deleteAccount() {
-    if (this.sessionInfo?.value?.id === this.userAccount()?.id) {
-      await this.confirmationDialog.getConfirmation(
-        $localize`:self-deletion warning title:Cannot delete own account`,
-        $localize`:self-deletion warning dialog:You cannot delete your own account. Please ask another admin to remove your account if needed.`,
-        OkButton,
+    const currentAccount = this.userAccount();
+    if (!currentAccount?.userEntityId) {
+      return;
+    }
+
+    if (
+      this.accountActionGuard.isOwnAccount({
+        userAccountId: currentAccount.id,
+        userEntityId: currentAccount.userEntityId,
+      })
+    ) {
+      await this.accountActionGuard.showSelfAccountActionBlockedWarning(
+        "delete",
       );
       return;
     }
@@ -392,7 +399,7 @@ export class UserDetailsComponent {
 
     try {
       await firstValueFrom(
-        this.userAdminService.deleteUser(this.userAccount().userEntityId),
+        this.userAdminService.deleteUser(currentAccount.userEntityId),
       );
       this.alertService.addInfo(
         $localize`:delete account success message:User account has been deleted.`,
@@ -408,11 +415,15 @@ export class UserDetailsComponent {
   }
 
   async enableAccount(enabled: boolean) {
-    if (!enabled && this.sessionInfo?.value?.id === this.userAccount()?.id) {
-      await this.confirmationDialog.getConfirmation(
-        $localize`:self-deactivation warning title:Cannot disable own account`,
-        $localize`:self-deactivation warning dialog:You cannot disable your own account. Please ask another admin to deactivate your account if needed.`,
-        OkButton,
+    if (
+      !enabled &&
+      this.accountActionGuard.isOwnAccount({
+        userAccountId: this.userAccount()?.id,
+        userEntityId: this.userAccount()?.userEntityId,
+      })
+    ) {
+      await this.accountActionGuard.showSelfAccountActionBlockedWarning(
+        "deactivate",
       );
       return;
     }

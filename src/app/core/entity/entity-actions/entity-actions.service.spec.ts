@@ -11,7 +11,10 @@ import { Entity } from "../model/entity";
 import { NEVER, Observable, of, Subject } from "rxjs";
 import { Router } from "@angular/router";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
-import { EntityDeleteService } from "./entity-delete.service";
+import {
+  EntityDeleteService,
+  EntityDeletionAbortedError,
+} from "./entity-delete.service";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { CascadingActionResult } from "./cascading-entity-action";
 import { PublicFormsService } from "app/features/public-form/public-forms.service";
@@ -166,6 +169,17 @@ describe("EntityActionsService", () => {
     expect(result).toBe(false);
     expect(snackBarSpy.open).not.toHaveBeenCalled();
     expect(mockedEntityDeleteService.deleteEntity).not.toHaveBeenCalled();
+  });
+
+  it("should return false when deletion is aborted in account confirmation", async () => {
+    mockedEntityDeleteService.deleteEntity.mockRejectedValue(
+      new EntityDeletionAbortedError(),
+    );
+
+    const result = await service.delete(new Entity());
+
+    expect(result).toBe(false);
+    expect(snackBarSpy.open).not.toHaveBeenCalled();
   });
 
   it("should delete a single entity, show snackbar confirmation and navigate back", async () => {
