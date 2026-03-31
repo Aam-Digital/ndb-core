@@ -136,6 +136,7 @@ export const adminRoutes: Routes = [
                     {
                       fields: [
                         "siteName",
+                        "hideSiteNameInToolbar",
                         "defaultLanguage",
                         "displayLanguageSelect",
                         "dateFormat",

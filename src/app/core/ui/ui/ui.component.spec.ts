@@ -23,6 +23,7 @@ import { ConfigService } from "../../config/config.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
+import { SiteSettings } from "../../site-settings/site-settings";
 
 describe("UiComponent", () => {
   let component: UiComponent;
@@ -58,5 +59,28 @@ describe("UiComponent", () => {
 
   it("should be created", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should render site name in toolbar based on hide flag", () => {
+    component.sideNavMode = "side";
+    component.siteSettings = SiteSettings.create({
+      siteName: "Aam Digital",
+      hideSiteNameInToolbar: false,
+    });
+
+    fixture.detectChanges();
+
+    let title = fixture.nativeElement.querySelector(".header-title");
+    expect(title?.textContent).toContain("Aam Digital");
+
+    component.siteSettings = SiteSettings.create({
+      siteName: "Aam Digital",
+      hideSiteNameInToolbar: true,
+    });
+
+    fixture.detectChanges();
+
+    title = fixture.nativeElement.querySelector(".header-title");
+    expect(title).toBeNull();
   });
 });
