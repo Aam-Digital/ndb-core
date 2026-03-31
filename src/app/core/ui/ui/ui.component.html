@@ -27,7 +27,7 @@
       </span>
     }
 
-    @if (sideNavMode !== "over") {
+    @if (sideNavMode !== "over" && !siteSettings.hideSiteNameInToolbar) {
       <a
         [routerLink]="['']"
         class="header-title"
