@@ -11,6 +11,7 @@ import { AttendanceDatatype } from "./model/attendance.datatype";
 import { AttendanceItem } from "./model/attendance-item";
 import { getReadableValue } from "#src/app/core/common-components/entities-table/value-accessor/value-accessor";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+import moment from "moment";
 
 /**
  * Exports attendance lists as CSV for entities with attendance-typed fields.
@@ -148,6 +149,11 @@ export class AttendanceExportService {
 
   private toCsvValue(value: any): any {
     const readableValue = getReadableValue(value);
+
+    if (readableValue instanceof Date) {
+      return moment(readableValue).format("YYYY-MM-DD");
+    }
+
     return Array.isArray(readableValue)
       ? readableValue.join(", ")
       : readableValue;

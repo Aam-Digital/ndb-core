@@ -232,7 +232,8 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
    * Each returned column contributes a CSV header and its own value resolver.
    * The returned `keySuffix` is appended to the field id to form the exported column key.
    *
-   * The default implementation returns a single column with the readable value.
+   * The default implementation returns a single column with the raw field value.
+   * Readable formatting can be applied by callers during CSV transformation.
    * Override this to provide custom or additional columns (e.g. entity references
    * can add a human-readable name column alongside the ID column).
    */

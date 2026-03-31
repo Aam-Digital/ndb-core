@@ -183,9 +183,7 @@ export class DownloadService {
     }
 
     const exportEntities = await Promise.all(
-      data.map((item) =>
-        this.mapEntityToExportRow(item, columnLabels, columnResolvers),
-      ),
+      data.map((item) => this.mapEntityToExportRow(item, columnResolvers)),
     );
 
     const columnKeys: string[] = Array.from(columnLabels.keys());
@@ -208,7 +206,6 @@ export class DownloadService {
 
   private async mapEntityToExportRow(
     item: any,
-    columnLabels: Map<string, string>,
     columnResolvers: Map<string, ExportColumnResolver>,
   ): Promise<Object> {
     const newItem = {};
@@ -219,14 +216,6 @@ export class DownloadService {
         resolver.schemaField,
       );
       newItem[columnId] = this.ensureCsvFriendlyValue(formattedValue);
-    }
-
-    // Include any remaining keys that have a column label but no resolver
-    // (e.g. fields whose datatype returned no export columns)
-    for (const key in item) {
-      if (columnLabels.has(key) && !(key in newItem)) {
-        newItem[key] = this.ensureCsvFriendlyValue(item[key]);
-      }
     }
 
     return newItem;

@@ -56,6 +56,21 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
 
     return [
       {
+        keySuffix: "",
+        label: schemaField.label + " (participation details)",
+        resolveValue: async (value: AttendanceItem[]) => {
+          const attendance = Array.isArray(value) ? value : [];
+          const participantCache = new Map<string, Promise<string>>();
+
+          const details = await Promise.all(
+            attendance.map((attendanceItem) =>
+              this.toParticipationDetails(attendanceItem, participantCache),
+            ),
+          );
+          return details.join(", ");
+        },
+      },
+      {
         keySuffix: "_participant_count",
         label: schemaField.label + " (number of participants)",
         resolveValue: (value: AttendanceItem[]) => {
@@ -63,44 +78,55 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
           return attendance.length;
         },
       },
-      {
-        keySuffix: "_participation_details",
-        label: schemaField.label + " (participation details)",
-        resolveValue: async (value: AttendanceItem[]) => {
-          const attendance = Array.isArray(value) ? value : [];
-
-          const details = await Promise.all(
-            attendance.map((attendanceItem) =>
-              this.toParticipationDetails(attendanceItem),
-            ),
-          );
-          return details.join(", ");
-        },
-      },
     ];
   }
 
   private async toParticipationDetails(
     attendanceItem: AttendanceItem,
+    participantCache: Map<string, Promise<string>>,
   ): Promise<string> {
-    const participant = await this.getParticipantReadable(attendanceItem);
+    const participant = await this.getParticipantReadable(
+      attendanceItem,
+      participantCache,
+    );
     const statusLabel = this.getStatusLabel(attendanceItem);
-    return `${participant} (${statusLabel})`;
+
+    if (participant && statusLabel) {
+      return `${participant} (${statusLabel})`;
+    }
+
+    if (participant) {
+      return participant;
+    }
+
+    if (statusLabel) {
+      return statusLabel;
+    }
+
+    return "";
   }
 
   private async getParticipantReadable(
     attendanceItem: AttendanceItem,
+    participantCache: Map<string, Promise<string>>,
   ): Promise<string> {
     const participantId = attendanceItem?.participant;
     if (!participantId) {
       return "";
     }
 
-    return (
-      await this.entityMapper
-        .load(Entity.extractTypeFromId(participantId), participantId)
-        .catch(() => "<not_found>")
-    ).toString();
+    const cachedResult = participantCache.get(participantId);
+    if (cachedResult) {
+      return cachedResult;
+    }
+
+    const readableResultPromise = this.entityMapper
+      .load(Entity.extractTypeFromId(participantId), participantId)
+      .then((entity) => entity.toString())
+      .catch(() => "<not_found>");
+
+    participantCache.set(participantId, readableResultPromise);
+    return readableResultPromise;
   }
 
   private getStatusLabel(attendanceItem: AttendanceItem): string {
