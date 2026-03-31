@@ -7,7 +7,6 @@ import {
   debounceTime,
   filter,
   mergeMap,
-  retry,
   takeUntil,
   takeWhile,
 } from "rxjs/operators";
@@ -16,9 +15,10 @@ import {
   LoginStateSubject,
   SyncStateSubject,
 } from "../../session/session-type";
-import { from, interval, merge, of } from "rxjs";
+import { EMPTY, from, interval, merge, of } from "rxjs";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
+import { AlertService } from "../../alerts/alert.service";
 
 /**
  * An alternative implementation of PouchDatabase that additionally
@@ -34,7 +34,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     return SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + this.pouchDB.name;
   }
 
-  POUCHDB_SYNC_BATCH_SIZE = 500;
+  POUCHDB_SYNC_BATCH_SIZE = 100;
   SYNC_INTERVAL = 30000;
 
   private remoteDatabase: RemotePouchDatabase;
@@ -63,6 +63,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     private navigator: Navigator,
     private loginStateSubject: LoginStateSubject,
     ngZone?: NgZone,
+    alertService?: AlertService,
   ) {
     super(dbName, globalSyncState, ngZone);
 
@@ -71,6 +72,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       authService,
       undefined,
       ngZone,
+      alertService,
     );
 
     this.logSyncContext();
@@ -153,11 +155,20 @@ export class SyncedPouchDatabase extends PouchDatabase {
   /**
    * Execute a (one-time) sync between the local and server database.
    */
-  sync(options: PouchDB.Replication.SyncOptions = {}): Promise<SyncResult> {
+  async sync(
+    options: PouchDB.Replication.SyncOptions = {},
+  ): Promise<SyncResult> {
     if (!this.navigator.onLine) {
       Logging.debug("Not syncing because offline");
       this.syncState.next(SyncState.UNSYNCED);
-      return Promise.resolve({});
+      return {};
+    }
+
+    const localInfo = await this.getPouchDB().info();
+    const isFirstSync = localInfo.doc_count === 0;
+    if (isFirstSync) {
+      // On first sync there are no local docs, so skip lost-permission tracking & purge
+      this.remoteDatabase.trackLostPermissions = false;
     }
 
     this.syncState.next(SyncState.STARTED);
@@ -182,7 +193,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
       .then(async (res) => {
         if (res) res["dbName"] = this.dbName; // add for debugging information
         Logging.debug("sync completed", res);
-        await this.purgeDocsWithLostPermissions();
+        if (!isFirstSync) {
+          await this.purgeDocsWithLostPermissions();
+        }
         this.syncState.next(SyncState.COMPLETED);
         return res as SyncResult;
       })
@@ -207,6 +220,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
         }
         this.syncState.next(SyncState.FAILED);
         throw err;
+      })
+      .finally(() => {
+        if (isFirstSync) {
+          this.remoteDatabase.trackLostPermissions = true;
+        }
       });
   }
 
@@ -302,13 +320,20 @@ export class SyncedPouchDatabase extends PouchDatabase {
         debounceTime(500),
         mergeMap(() => {
           if (this.syncState.value == SyncState.STARTED) {
-            return of();
+            return EMPTY;
           } else {
-            return from(this.sync());
+            // catch errors so the outer observable stays alive without re-subscribing
+            // (re-subscribing via retry would leak EventEmitter listeners on PouchDB)
+            // sync() already logs errors and updates syncState before re-throwing
+            return from(
+              this.sync().catch((err) => {
+                Logging.debug("liveSync: swallowed sync error", err);
+              }),
+            );
           }
         }),
-        retry({ delay: this.SYNC_INTERVAL }),
         takeWhile(() => this.liveSyncEnabled),
+        takeUntil(this.destroy$),
       )
       .subscribe();
   }
