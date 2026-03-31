@@ -12,7 +12,10 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { GeoLocation } from "app/features/location/geo-location";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { Papa } from "ngx-papaparse";
-import { unparse } from "papaparse";
+import { parse, unparse } from "papaparse";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
+import { AttendanceDatatype } from "../../../features/attendance/model/attendance.datatype";
 
 describe("DownloadService", () => {
   let service: DownloadService;
@@ -47,6 +50,20 @@ describe("DownloadService", () => {
           useValue: mockDataTransformationService,
         },
         { provide: EntityMapperService, useValue: mockedEntityMapper },
+        {
+          provide: EntityActionsService,
+          useValue: { anonymize: vi.fn() },
+        },
+        {
+          provide: DefaultDatatype,
+          useClass: EntityDatatype,
+          multi: true,
+        },
+        {
+          provide: DefaultDatatype,
+          useClass: AttendanceDatatype,
+          multi: true,
+        },
         {
           provide: Papa,
           useValue: {
@@ -211,6 +228,66 @@ describe("DownloadService", () => {
     expect(rows[1]).toBe(
       `"undefined-id,${testChild.getId()}","<not_found>,${testChild.toString()}"`,
     );
+  });
+
+  it("should add participant count and participation details columns in export", async () => {
+    class AttendanceDownloadTestEntity extends Entity {
+      @DatabaseField({
+        dataType: AttendanceDatatype.dataType,
+        isArray: true,
+        label: "attendance",
+      })
+      attendance: any[];
+    }
+
+    const testEntity = new AttendanceDownloadTestEntity();
+    testEntity.attendance = [
+      {
+        participant: testSchool.getId(),
+        status: { label: "Present" },
+        remarks: "",
+      },
+      {
+        participant: testChild.getId(),
+        status: { label: "Absent" },
+        remarks: "Sick",
+      },
+    ];
+
+    const csvExport = await service.createCsv([testEntity]);
+    const parsed = parse<Record<string, string>>(csvExport, {
+      header: true,
+      skipEmptyLines: true,
+    });
+
+    expect(parsed.errors).toHaveLength(0);
+    expect(parsed.data).toHaveLength(1);
+    expect(parsed.meta.fields).toContain("attendance (number of participants)");
+    expect(parsed.meta.fields).toContain("attendance (participation details)");
+
+    expect(parsed.data[0]["attendance (number of participants)"]).toBe("2");
+    expect(parsed.data[0]["attendance (participation details)"]).toBe(
+      `${testSchool.toString()} (Present), ${testChild.toString()} (Absent)`,
+    );
+  });
+
+  it("should stringify object values when csv output would otherwise be [object Object]", async () => {
+    @DatabaseEntity("ObjectFieldDownloadTestEntity")
+    class ObjectFieldDownloadTestEntity extends Entity {
+      @DatabaseField({ label: "details" })
+      details: any;
+    }
+
+    const testEntity = new ObjectFieldDownloadTestEntity();
+    testEntity.details = { a: 1, nested: { b: "x" } };
+
+    const csvExport = await service.createCsv([testEntity]);
+    const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
+
+    expect(rows).toHaveLength(1 + 1); // includes 1 header line
+    expect(rows[1]).not.toContain("[object Object]");
+    expect(rows[1]).toContain('""a"":1');
+    expect(rows[1]).toContain('""nested"":{');
   });
 
   it("should export all properties using object keys as headers, if no schema is available", async () => {

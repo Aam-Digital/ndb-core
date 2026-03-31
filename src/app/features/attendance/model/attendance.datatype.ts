@@ -1,10 +1,14 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { SchemaEmbedDatatype } from "#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype";
 import { AttendanceItem } from "./attendance-item";
 import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EventAttendanceMapDatatype } from "../deprecated/event-attendance-map.datatype";
-import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import {
+  ExportColumnMapping,
+  DefaultDatatype,
+} from "#src/app/core/entity/default-datatype/default.datatype";
 
 /**
  * Datatype for attendance tracking on any entity.
@@ -26,6 +30,8 @@ import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.d
  */
 @Injectable()
 export class AttendanceDatatype extends SchemaEmbedDatatype {
+  private entityMapper = inject(EntityMapperService);
+
   static override readonly dataType = "attendance";
   static override label: string = $localize`:datatype-label:attendance (participants with status)`;
 
@@ -39,6 +45,79 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
   ): EntitySchemaField {
     // attendance always requires isArray
     return { ...schemaField, isArray: true };
+  }
+
+  override getExportColumns(
+    schemaField: EntitySchemaField,
+  ): ExportColumnMapping[] {
+    if (!schemaField.label) {
+      return [];
+    }
+
+    return [
+      {
+        keySuffix: "_participant_count",
+        label: schemaField.label + " (number of participants)",
+        resolveValue: (value: AttendanceItem[]) => {
+          const attendance = Array.isArray(value) ? value : [];
+          return attendance.length;
+        },
+      },
+      {
+        keySuffix: "_participation_details",
+        label: schemaField.label + " (participation details)",
+        resolveValue: async (value: AttendanceItem[]) => {
+          const attendance = Array.isArray(value) ? value : [];
+
+          const details = await Promise.all(
+            attendance.map((attendanceItem) =>
+              this.toParticipationDetails(attendanceItem),
+            ),
+          );
+          return details.join(", ");
+        },
+      },
+    ];
+  }
+
+  private async toParticipationDetails(
+    attendanceItem: AttendanceItem,
+  ): Promise<string> {
+    const participant = await this.getParticipantReadable(attendanceItem);
+    const statusLabel = this.getStatusLabel(attendanceItem);
+    return `${participant} (${statusLabel})`;
+  }
+
+  private async getParticipantReadable(
+    attendanceItem: AttendanceItem,
+  ): Promise<string> {
+    const participantId = attendanceItem?.participant;
+    if (!participantId) {
+      return "";
+    }
+
+    return (
+      await this.entityMapper
+        .load(Entity.extractTypeFromId(participantId), participantId)
+        .catch(() => "<not_found>")
+    ).toString();
+  }
+
+  private getStatusLabel(attendanceItem: AttendanceItem): string {
+    const status = attendanceItem?.status;
+    if (!status) {
+      return "";
+    }
+
+    if (typeof status === "string") {
+      return status;
+    }
+
+    if (typeof status === "object" && "label" in status) {
+      return status.label ?? "";
+    }
+
+    return "";
   }
 
   private static readonly ATTENDANCE_DATATYPES = [

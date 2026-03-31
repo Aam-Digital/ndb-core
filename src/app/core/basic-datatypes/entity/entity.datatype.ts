@@ -23,6 +23,8 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
 import { Logging } from "app/core/logging/logging.service";
 import { ImportProcessingContext } from "../../import/import-processing-context";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { Entity } from "../../entity/model/entity";
+import { ExportColumnMapping } from "../../entity/default-datatype/default.datatype";
 
 /**
  * Datatype for the EntitySchemaService to handle a single reference to another entity.
@@ -44,6 +46,28 @@ export class EntityDatatype extends StringDatatype {
   override viewComponent = "DisplayEntity";
   override importConfigComponent = "EntityImportConfig";
   override importAllowsMultiMapping = true;
+
+  override getExportColumns(
+    schemaField: EntitySchemaField,
+  ): ExportColumnMapping[] {
+    if (!schemaField.label) {
+      return [];
+    }
+
+    return [
+      {
+        keySuffix: "",
+        label: schemaField.label,
+        resolveValue: (value) => value,
+      },
+      {
+        keySuffix: "_readable",
+        label: schemaField.label + " (readable)",
+        resolveValue: async (value: string | string[]) =>
+          this.loadRelatedEntitiesToString(value),
+      },
+    ];
+  }
 
   /**
    * Maps a value from an import to an actual entity in the database by comparing the value with the given field of entities.
@@ -144,6 +168,27 @@ export class EntityDatatype extends StringDatatype {
 
     await this.removeService.anonymize(referencedEntity);
     return value;
+  }
+
+  private async loadRelatedEntitiesToString(
+    value: string | string[],
+  ): Promise<string[]> {
+    if (!value) return [];
+
+    const relatedEntitiesToStrings: string[] = [];
+
+    const relatedEntitiesIds: string[] = Array.isArray(value) ? value : [value];
+    for (const relatedEntityId of relatedEntitiesIds) {
+      relatedEntitiesToStrings.push(
+        (
+          await this.entityMapper
+            .load(Entity.extractTypeFromId(relatedEntityId), relatedEntityId)
+            .catch(() => "<not_found>")
+        ).toString(),
+      );
+    }
+
+    return relatedEntitiesToStrings;
   }
 }
 

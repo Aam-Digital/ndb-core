@@ -7,6 +7,9 @@ import { DatabaseEntity } from "#src/app/core/entity/database-entity.decorator";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { AttendanceItem } from "./model/attendance-item";
 import { NullAttendanceStatusType } from "./model/attendance-status";
+import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
+import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype";
+import { EntityActionsService } from "#src/app/core/entity/entity-actions/entity-actions.service";
 
 @DatabaseEntity("AttendanceTestEntity")
 class AttendanceTestEntity extends Entity {
@@ -43,6 +46,7 @@ describe("AttendanceExportService", () => {
   let service: AttendanceExportService;
   let mockEntityMapper: { load: ReturnType<typeof vi.fn> };
   let mockDownloadService: { triggerDownload: ReturnType<typeof vi.fn> };
+  let mockEntityActionsService: { anonymize: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     mockEntityMapper = {
@@ -51,12 +55,17 @@ describe("AttendanceExportService", () => {
     mockDownloadService = {
       triggerDownload: vi.fn().mockResolvedValue(undefined),
     };
+    mockEntityActionsService = {
+      anonymize: vi.fn(),
+    };
 
     TestBed.configureTestingModule({
       providers: [
         AttendanceExportService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: DownloadService, useValue: mockDownloadService },
+        { provide: EntityActionsService, useValue: mockEntityActionsService },
+        { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
       ],
     });
 
@@ -180,7 +189,7 @@ describe("AttendanceExportService", () => {
       );
 
       const [rows] = mockDownloadService.triggerDownload.mock.calls[0];
-      expect(rows[0]["participant (readable)"]).toBe("Child:unknown-1");
+      expect(rows[0]["participant (readable)"]).toBe("<not_found>");
     });
 
     it("should include entity-reference readable column for linked entity fields", async () => {

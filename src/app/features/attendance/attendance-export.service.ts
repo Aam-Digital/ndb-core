@@ -2,23 +2,23 @@ import { inject, Injectable } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
 import { EntitySchema } from "#src/app/core/entity/schema/entity-schema";
-import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { DownloadService } from "#src/app/core/export/download-service/download.service";
+import {
+  ExportColumnResolver,
+  buildExportColumnResolvers,
+  DownloadService,
+} from "#src/app/core/export/download-service/download.service";
 import { AttendanceDatatype } from "./model/attendance.datatype";
 import { AttendanceItem } from "./model/attendance-item";
-import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype";
-import {
-  getReadableValue,
-  transformToReadableFormat,
-} from "#src/app/core/common-components/entities-table/value-accessor/value-accessor";
+import { getReadableValue } from "#src/app/core/common-components/entities-table/value-accessor/value-accessor";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 
 /**
  * Exports attendance lists as CSV for entities with attendance-typed fields.
  */
 @Injectable({ providedIn: "root" })
 export class AttendanceExportService {
-  private entityMapper = inject(EntityMapperService);
-  private downloadService = inject(DownloadService);
+  private readonly downloadService = inject(DownloadService);
+  private readonly entitySchemaService = inject(EntitySchemaService);
 
   /**
    * Detect all attendance fields on the given entity.
@@ -49,6 +49,11 @@ export class AttendanceExportService {
     const attendanceSchema = this.getEffectiveAttendanceSchema(
       entity.getConstructor().schema.get(fieldId),
     );
+    const attendanceColumnResolvers = buildExportColumnResolvers(
+      attendanceSchema,
+      this.entitySchemaService,
+      true,
+    );
 
     const rows: Record<string, any>[] = [];
     for (const item of items) {
@@ -58,11 +63,13 @@ export class AttendanceExportService {
       for (const [key, field] of attendanceSchema.entries()) {
         const label = field.label || key;
         row[label] = getReadableValue(item[key]);
-
-        if (field.dataType === EntityDatatype.dataType) {
-          row[label + " (readable)"] = await this.resolveEntityName(item[key]);
-        }
       }
+
+      await this.resolveExportColumns(
+        row,
+        item as Record<string, any>,
+        attendanceColumnResolvers,
+      );
 
       // event entity fields (duplicated for each row)
       Object.assign(row, entityRow);
@@ -113,43 +120,37 @@ export class AttendanceExportService {
     for (const [id, field] of columns.entries()) {
       raw[id] = entity[id];
     }
-    const readable = transformToReadableFormat(raw);
+    const columnResolvers = buildExportColumnResolvers(
+      columns,
+      this.entitySchemaService,
+    );
 
     const row: Record<string, any> = {};
-    for (const [id, field] of columns.entries()) {
-      row[field.label] = readable[id];
-
-      if (field.dataType === EntityDatatype.dataType) {
-        row[field.label + " (readable)"] = await this.resolveEntityName(
-          entity[id],
-        );
-      }
-    }
+    await this.resolveExportColumns(row, raw, columnResolvers);
 
     return row;
   }
 
-  private async resolveEntityName(
-    value: string | string[] | undefined,
-  ): Promise<string> {
-    if (!value) return "";
+  private async resolveExportColumns(
+    row: Record<string, any>,
+    source: Record<string, any>,
+    columnResolvers: ExportColumnResolver[],
+  ): Promise<void> {
+    for (const resolver of columnResolvers) {
+      const resolvedValue = await resolver.column.resolveValue(
+        source[resolver.sourceFieldId],
+        resolver.schemaField,
+      );
 
-    const ids = Array.isArray(value) ? value : [value];
-    const names: string[] = [];
-
-    for (const id of ids) {
-      try {
-        const loaded = await this.entityMapper.load(
-          Entity.extractTypeFromId(id),
-          id,
-        );
-        names.push(loaded.toString());
-      } catch {
-        names.push(id);
-      }
+      row[resolver.column.label] = this.toCsvValue(resolvedValue);
     }
+  }
 
-    return names.join(", ");
+  private toCsvValue(value: any): any {
+    const readableValue = getReadableValue(value);
+    return Array.isArray(readableValue)
+      ? readableValue.join(", ")
+      : readableValue;
   }
 
   private buildFilename(entity: Entity, fieldLabel: string): string {
