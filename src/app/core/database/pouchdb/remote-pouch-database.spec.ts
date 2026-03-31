@@ -63,6 +63,82 @@ describe("RemotePouchDatabase tests", () => {
     expect(mockAuthService.addAuthHeader).toHaveBeenCalledTimes(2);
   });
 
+  it("should set ngsw-bypass header on fetch requests", async () => {
+    database.init("");
+
+    const headers = new Headers();
+    await (database as any).defaultFetch(
+      `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
+      { headers },
+    );
+
+    expect(headers.get("ngsw-bypass")).toBe("true");
+  });
+
+  it("should retry on transient network errors", async () => {
+    (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
+    (database as any).FETCH_TIMEOUT_MS = 60000;
+
+    let callCount = 0;
+    (PouchDB.fetch as Mock).mockImplementation(async () => {
+      callCount++;
+      if (callCount < 3) {
+        throw new TypeError("Failed to fetch");
+      }
+      return new Response("{}", { status: HttpStatusCode.Ok });
+    });
+
+    const result = await (database as any).fetchWithTransientRetry(
+      `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
+      { headers: new Headers() },
+    );
+
+    expect(callCount).toBe(3);
+    expect(result.status).toBe(HttpStatusCode.Ok);
+  });
+
+  it("should throw after exhausting transient retries", async () => {
+    (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
+    (database as any).FETCH_TIMEOUT_MS = 60000;
+
+    let callCount = 0;
+    (PouchDB.fetch as Mock).mockImplementation(async () => {
+      callCount++;
+      throw new TypeError("Failed to fetch");
+    });
+
+    await expect(
+      (database as any).fetchWithTransientRetry(
+        `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
+        { headers: new Headers() },
+      ),
+    ).rejects.toThrow(TypeError);
+
+    // 1 initial + 2 retries = 3 total
+    expect(callCount).toBe(3);
+  });
+
+  it("should not retry on non-TypeError errors", async () => {
+    (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
+    (database as any).FETCH_TIMEOUT_MS = 60000;
+
+    let callCount = 0;
+    (PouchDB.fetch as Mock).mockImplementation(async () => {
+      callCount++;
+      throw new Error("Some other error");
+    });
+
+    await expect(
+      (database as any).fetchWithTransientRetry(
+        `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
+        { headers: new Headers() },
+      ),
+    ).rejects.toThrow(Error);
+
+    // no retries for non-TypeError
+    expect(callCount).toBe(1);
+  });
+
   it("should use periodic polling for changes feed instead of live long-polling", async () => {
     vi.useFakeTimers();
     try {
@@ -122,6 +198,59 @@ describe("RemotePouchDatabase tests", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("should show alert when fetch fails after retries", async () => {
+    const mockAlertService = { addWarning: vi.fn() };
+    (database as any).alertService = mockAlertService;
+    (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
+    (database as any).FETCH_TIMEOUT_MS = 60000;
+
+    (PouchDB.fetch as Mock).mockImplementation(async () => {
+      throw new TypeError("Failed to fetch");
+    });
+
+    // defaultFetch catches the error and shows alert
+    await expect(
+      (database as any).defaultFetch(
+        `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
+        { headers: {} },
+      ),
+    ).rejects.toThrow();
+
+    expect(mockAlertService.addWarning).toHaveBeenCalledTimes(1);
+    expect(mockAlertService.addWarning).toHaveBeenCalledWith(
+      expect.stringContaining("connection issues"),
+    );
+  });
+
+  it("should throttle connection issue alerts", async () => {
+    const mockAlertService = { addWarning: vi.fn() };
+    (database as any).alertService = mockAlertService;
+    (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
+    (database as any).FETCH_TIMEOUT_MS = 60000;
+
+    (PouchDB.fetch as Mock).mockImplementation(async () => {
+      throw new TypeError("Failed to fetch");
+    });
+
+    // First call shows alert
+    await expect(
+      (database as any).defaultFetch(
+        `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
+        { headers: {} },
+      ),
+    ).rejects.toThrow();
+
+    // Second call within cooldown should not show another alert
+    await expect(
+      (database as any).defaultFetch(
+        `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
+        { headers: {} },
+      ),
+    ).rejects.toThrow();
+
+    expect(mockAlertService.addWarning).toHaveBeenCalledTimes(1);
   });
 
   it("should handle errors in periodic changes polling gracefully", async () => {

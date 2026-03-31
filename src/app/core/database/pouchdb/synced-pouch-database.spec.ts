@@ -6,7 +6,6 @@ import {
   SyncStateSubject,
 } from "../../session/session-type";
 import { LoginState } from "../../session/session-states/login-state.enum";
-import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { Subject } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase } from "./synced-pouch-database";
@@ -52,6 +51,26 @@ describe("SyncedPouchDatabase", () => {
   });
 
   /**
+   * Create a mock sync handler that mimics PouchDB's sync return value
+   * (a thenable event emitter).
+   */
+  function mockSyncHandler(result: any = {}, shouldReject = false): any {
+    const handler = {
+      on: vi.fn().mockReturnThis(),
+      then(onFulfilled, onRejected) {
+        const promise = shouldReject
+          ? Promise.reject(result)
+          : Promise.resolve(result);
+        return promise.then(onFulfilled, onRejected);
+      },
+      catch(onRejected) {
+        return this.then(undefined, onRejected);
+      },
+    };
+    return handler;
+  }
+
+  /**
    * Set up a mocked db and localDb for tests and override the TestBed service provider.
    */
   function mockPouchDatabaseService(): {
@@ -60,9 +79,9 @@ describe("SyncedPouchDatabase", () => {
   } {
     mockSyncStateSubject.next(SyncState.UNSYNCED);
     const mockLocalDb = {
-      sync: vi.fn(),
+      sync: vi.fn().mockReturnValue(mockSyncHandler()),
+      info: vi.fn().mockResolvedValue({ doc_count: 5 }),
     };
-    mockLocalDb.sync.mockResolvedValue({});
 
     const db = service;
     vi.spyOn(db, "getPouchDB").mockReturnValue(mockLocalDb as any);
@@ -80,14 +99,16 @@ describe("SyncedPouchDatabase", () => {
       expect(mockLocalDb.sync).toHaveBeenCalled();
 
       mockLocalDb.sync.mockClear();
-      mockLocalDb.sync.mockRejectedValue("sync request server error");
+      mockLocalDb.sync.mockReturnValue(
+        mockSyncHandler("sync request server error", true),
+      );
       await vi.advanceTimersByTimeAsync(service.SYNC_INTERVAL);
       expect(mockLocalDb.sync).toHaveBeenCalled();
       // expect no errors thrown in service
 
       // continue sync intervals
       mockLocalDb.sync.mockClear();
-      mockLocalDb.sync.mockResolvedValue({});
+      mockLocalDb.sync.mockReturnValue(mockSyncHandler());
       await vi.advanceTimersByTimeAsync(service.SYNC_INTERVAL);
       expect(mockLocalDb.sync).toHaveBeenCalled();
 
@@ -152,10 +173,14 @@ describe("SyncedPouchDatabase", () => {
       const LONG_SYNC_TIME = 100000;
 
       const { mockLocalDb } = mockPouchDatabaseService();
-      mockLocalDb.sync.mockImplementation(
-        // @ts-ignore
-        async () => await new Promise((r) => setTimeout(r, LONG_SYNC_TIME)),
-      );
+      mockLocalDb.sync.mockImplementation(() => {
+        const handler = mockSyncHandler();
+        handler.then = (onFulfilled, onRejected) => {
+          const promise = new Promise((r) => setTimeout(r, LONG_SYNC_TIME));
+          return promise.then(onFulfilled, onRejected);
+        };
+        return handler;
+      });
 
       service.liveSync();
 
@@ -274,9 +299,11 @@ describe("SyncedPouchDatabase", () => {
 
     beforeEach(() => {
       const mockLocalDb = {
-        sync: vi.fn(),
+        name: "unit-test-db",
+        sync: vi.fn().mockReturnValue(mockSyncHandler()),
+        info: vi.fn().mockResolvedValue({ doc_count: 5 }),
       };
-      mockLocalDb.sync.mockResolvedValue({});
+      service["pouchDB"] = mockLocalDb as any;
       vi.spyOn(service, "getPouchDB").mockReturnValue(mockLocalDb as any);
       purgeSpy = vi.spyOn(service, "purge").mockResolvedValue(true);
     });
@@ -329,6 +356,24 @@ describe("SyncedPouchDatabase", () => {
 
       expect(purgeSpy).toHaveBeenCalledWith("Child:1");
       expect(purgeSpy).toHaveBeenCalledWith("School:2");
+    });
+
+    it("should skip purge and lost-permission tracking on first sync", async () => {
+      vi.spyOn(service, "getPouchDB").mockReturnValue({
+        sync: vi.fn().mockReturnValue(mockSyncHandler()),
+        info: vi.fn().mockResolvedValue({ doc_count: 0 }),
+      } as any);
+      const collectSpy = vi.spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      );
+
+      await service.sync();
+
+      expect(purgeSpy).not.toHaveBeenCalled();
+      expect(collectSpy).not.toHaveBeenCalled();
+      // tracking should be re-enabled for subsequent syncs
+      expect(service["remoteDatabase"].trackLostPermissions).toBe(true);
     });
   });
 });
