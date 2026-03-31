@@ -131,9 +131,11 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     this.mergeForm.formGroup.markAllAsTouched();
     if (this.mergeForm.formGroup.invalid) return false;
 
-    // Validates account form and shows account-related confirmation dialogs
-    const accountResult = await this.accountSection()?.validateAndGetUpdate();
-    if (accountResult === false) return false;
+    const accountDecision =
+      await this.accountSection()?.validateAndGetDecision();
+    if (accountDecision === false) {
+      return false;
+    }
 
     if (this.hasDiscardedFileOrPhoto) {
       const fileIgnoreConfirmed = await this.confirmationDialog.getConfirmation(
@@ -160,8 +162,9 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
         this.entitiesToMerge[primaryIndex].copy(),
         this.mergeForm.formGroup.value,
       ),
-      accountUpdate: accountResult ?? null,
       entityAccounts: this.accountSection()?.entityAccounts() ?? [],
+      accountUpdate: accountDecision?.accountUpdate ?? null,
+      deleteSecondaryAccount: accountDecision?.deleteSecondaryAccount ?? true,
     });
   }
 }

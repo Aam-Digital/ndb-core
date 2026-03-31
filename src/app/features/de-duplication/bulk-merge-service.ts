@@ -71,6 +71,7 @@ export class BulkMergeService {
             accountId: string;
             update: Partial<UserAccount>;
           } | null;
+          deleteSecondaryAccount: boolean;
           entityAccounts: (UserAccount | null)[];
         }
       | undefined = await lastValueFrom(dialogRef.afterClosed());
@@ -81,6 +82,7 @@ export class BulkMergeService {
       dialogResult.mergedEntity,
       entitiesToMerge,
       dialogResult.entityAccounts,
+      dialogResult.deleteSecondaryAccount,
       dialogResult.accountUpdate,
     );
     this.unsavedChangesService.pending = false;
@@ -96,13 +98,15 @@ export class BulkMergeService {
    * @param entitiesToMerge
    * @param entityAccounts Accounts explicitly fetched for each entity; only accounts
    *   that were actually found will be deleted during merge.
-   * @param accountUpdate Optional update payload for the surviving account's email/roles.
-   *   Applied after the secondary entity is deleted to ensure no partial state on failure.
+   * @param deleteSecondaryAccount Whether account of the discarded record should be deleted.
+   *   If false, the account remains and may become orphaned.
+   * @param accountUpdate Optional update payload for the surviving account (e.g. role changes).
    */
   async executeMerge<E extends Entity>(
     mergedEntity: E,
     entitiesToMerge: E[],
     entityAccounts?: (UserAccount | null)[],
+    deleteSecondaryAccount: boolean = true,
     accountUpdate?: { accountId: string; update: Partial<UserAccount> } | null,
   ): Promise<void> {
     const accountByEntityId = new Map<string, UserAccount | null>(
@@ -115,8 +119,8 @@ export class BulkMergeService {
     for (const e of entitiesToMerge) {
       if (e.getId() === mergedEntity.getId()) continue;
 
-      // Delete linked user account only if one was explicitly found for this entity
-      if (accountByEntityId.get(e.getId())) {
+      // Delete linked user account only if requested and one was explicitly found
+      if (deleteSecondaryAccount && accountByEntityId.get(e.getId())) {
         await lastValueFrom(
           this.userAdminService
             .deleteUser(e.getId())
@@ -129,7 +133,6 @@ export class BulkMergeService {
       await this.entityMapper.remove(e);
     }
 
-    // Apply account update after secondary entity is deleted to avoid partial state on failure
     if (accountUpdate) {
       const result = await lastValueFrom(
         this.userAdminService
@@ -139,7 +142,7 @@ export class BulkMergeService {
       if (!result.userUpdated) {
         await this.confirmationDialog.getConfirmation(
           $localize`:Account update error title:Account update failed`,
-          $localize`:Account update error:The merge completed but the user account could not be updated. Please update it manually or contact support.`,
+          $localize`:Account update error:The merge completed but the user account roles could not be updated. Please update them manually or contact support.`,
           OkButton,
         );
       }

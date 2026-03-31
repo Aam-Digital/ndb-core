@@ -1,84 +1,117 @@
-@if (entityConstructor().enableUserAccounts && accountLoadError()) {
-  <div class="label-cell"></div>
-  <mat-error class="account-load-error" i18n>
-    User account information could not be loaded. You may be offline or lack
-    account_manager permissions. This merge will proceed without changes to user
-    accounts.
-  </mat-error>
-}
-@if (hasAnyUserAccount()) {
-  <!-- Account Email row -->
-  <div class="label-cell">
-    <strong i18n>Account Email</strong>
-  </div>
-  <mat-radio-group
-    class="account-email-radio-group"
-    [value]="selectedAccountEmailIndex()"
-    (change)="selectAccountEmail($event.value)"
-  >
-    <div class="account-select-cell">
-      <mat-radio-button [value]="0" [disabled]="!hasAccountEmail(0)">
-        {{ entityAccounts()[0]?.email ?? "-" }}
-      </mat-radio-button>
-    </div>
-    <div class="account-select-cell">
-      <mat-radio-button [value]="1" [disabled]="!hasAccountEmail(1)">
-        {{ entityAccounts()[1]?.email ?? "-" }}
-      </mat-radio-button>
-    </div>
-  </mat-radio-group>
-  <div class="preview-cell">
-    @if (accountForm()) {
-      <mat-form-field class="full-width">
-        <mat-label i18n>Email</mat-label>
-        <input matInput type="email" [formControl]="accountEmailControl()" />
-        @if (accountEmailControl()?.hasError("email")) {
-          <mat-error i18n>Please enter a valid email</mat-error>
-        }
-      </mat-form-field>
-    } @else {
-      {{ entityAccounts()[0]?.email ?? "-" }}
-    }
-  </div>
-  <!-- Account Roles row -->
-  <div class="label-cell">
-    <strong i18n>Account Roles</strong>
-  </div>
-  <div class="account-select-cell">
-    <mat-checkbox
-      [checked]="isAccountRolesSelected(0)"
-      [disabled]="!hasAccountRoles(0)"
-      (change)="toggleAccountRoles(0, $event.checked)"
-    >
-      {{ formatRoles(entityAccounts()[0]) }}
-    </mat-checkbox>
-  </div>
-  <div class="account-select-cell">
-    <mat-checkbox
-      [checked]="isAccountRolesSelected(1)"
-      [disabled]="!hasAccountRoles(1)"
-      (change)="toggleAccountRoles(1, $event.checked)"
-    >
-      {{ formatRoles(entityAccounts()[1]) }}
-    </mat-checkbox>
-  </div>
-  <div class="preview-cell">
-    @if (accountForm()) {
-      <mat-form-field class="full-width">
-        <mat-label i18n>Roles</mat-label>
-        <mat-select [formControl]="accountRolesControl()" multiple>
-          <mat-select-trigger>
-            @for (role of accountRolesControl()?.value; track role.id) {
-              <span>{{ role.name }} </span>
+@if (
+  entityConstructor().enableUserAccounts &&
+  (hasAnyUserAccount() || accountLoadError())
+) {
+  <div class="account-panel-wrapper">
+    <mat-expansion-panel [expanded]="hasAnyUserAccount()">
+      <mat-expansion-panel-header>
+        <mat-panel-title i18n>User Account Fields</mat-panel-title>
+        <mat-panel-description i18n>
+          Login account fields (different from entity profile fields)
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      @if (accountLoadError()) {
+        <mat-error class="account-load-error" i18n>
+          User account information could not be loaded. You may be offline or
+          lack account_manager permissions. This merge will proceed without
+          changes to user accounts.
+        </mat-error>
+      }
+
+      @if (hasAnyUserAccount()) {
+        <div class="account-grid">
+          <div class="label-cell">
+            <strong i18n>Account To Keep</strong>
+          </div>
+          <mat-radio-group
+            class="account-select-radio-group"
+            [value]="selectedAccountIndexValue()"
+            (change)="selectAccountToKeep($event.value)"
+          >
+            <div class="account-select-cell">
+              @if (hasSelectableAccount(0) && hasAccountEmail(0)) {
+                <mat-radio-button value="0">
+                  {{ entityAccounts()[0]?.email }}
+                </mat-radio-button>
+              } @else {
+                <span class="aligned-text">-</span>
+              }
+            </div>
+            <div class="account-select-cell">
+              @if (hasSelectableAccount(1) && hasAccountEmail(1)) {
+                <mat-radio-button value="1">
+                  {{ entityAccounts()[1]?.email }}
+                </mat-radio-button>
+              } @else {
+                <span class="aligned-text">-</span>
+              }
+            </div>
+          </mat-radio-group>
+          <div class="preview-cell account-preview">
+            {{ selectedAccountEmail() }}
+          </div>
+
+          <div class="label-cell">
+            <strong i18n>Account Roles</strong>
+          </div>
+          <div class="account-select-cell">
+            @if (hasAccountRoles(0)) {
+              <mat-checkbox
+                [checked]="isAccountRolesSelected(0)"
+                (change)="toggleAccountRoles(0, $event.checked)"
+              >
+                {{ formatRoles(entityAccounts()[0]) }}
+              </mat-checkbox>
+            } @else {
+              <span class="aligned-text">-</span>
             }
-          </mat-select-trigger>
-          @for (role of availableRoles(); track role.id) {
-            <mat-option [value]="role">{{ role.name }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    } @else {
-      {{ formatRoles(entityAccounts()[0]) }}
-    }
+          </div>
+          <div class="account-select-cell">
+            @if (hasAccountRoles(1)) {
+              <mat-checkbox
+                [checked]="isAccountRolesSelected(1)"
+                (change)="toggleAccountRoles(1, $event.checked)"
+              >
+                {{ formatRoles(entityAccounts()[1]) }}
+              </mat-checkbox>
+            } @else {
+              <span class="aligned-text">-</span>
+            }
+          </div>
+          <div class="preview-cell preview-field-cell">
+            <mat-form-field class="full-width">
+              <mat-select [formControl]="selectedRolesControl()" multiple>
+                <mat-select-trigger>
+                  @for (role of selectedRolesControl()?.value; track role.id) {
+                    <span>{{ role.name }} </span>
+                  }
+                </mat-select-trigger>
+                @for (role of availableRoles(); track role.id) {
+                  <mat-option [value]="role">{{ role.name }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="label-cell">
+            <strong i18n>Account Status</strong>
+          </div>
+          <div class="account-select-cell">
+            <span class="aligned-text">{{
+              formatAccountStatus(entityAccounts()[0])
+            }}</span>
+          </div>
+          <div class="account-select-cell">
+            <span class="aligned-text">{{
+              formatAccountStatus(entityAccounts()[1])
+            }}</span>
+          </div>
+          <div class="preview-cell account-preview">
+            {{ formatSelectedAccountStatus() }}
+          </div>
+        </div>
+      }
+    </mat-expansion-panel>
   </div>
 }

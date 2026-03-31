@@ -7,18 +7,13 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatExpansionModule } from "@angular/material/expansion";
 import { MatError, MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
 import { MatRadioModule } from "@angular/material/radio";
 import { MatSelectModule } from "@angular/material/select";
+import { YesNoCancelButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { UserAdminService } from "app/core/user/user-admin-service/user-admin.service";
@@ -28,6 +23,14 @@ import {
 } from "app/core/user/user-admin-service/user-account";
 import { catchError, lastValueFrom, of } from "rxjs";
 
+export interface AccountMergeDecision {
+  accountUpdate: {
+    accountId: string;
+    update: Partial<UserAccount>;
+  } | null;
+  deleteSecondaryAccount: boolean;
+}
+
 @Component({
   selector: "app-merge-account-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,10 +38,10 @@ import { catchError, lastValueFrom, of } from "rxjs";
   imports: [
     ReactiveFormsModule,
     MatError,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCheckboxModule,
     MatRadioModule,
+    MatExpansionModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
     MatSelectModule,
   ],
   templateUrl: "./merge-account-section.component.html",
@@ -46,7 +49,6 @@ import { catchError, lastValueFrom, of } from "rxjs";
 })
 export class MergeAccountSectionComponent implements OnInit {
   private readonly userAdminService = inject(UserAdminService);
-  private readonly fb = inject(FormBuilder);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   entitiesToMerge = input.required<Entity[]>();
@@ -54,78 +56,31 @@ export class MergeAccountSectionComponent implements OnInit {
 
   readonly entityAccounts = signal<(UserAccount | null)[]>([null, null]);
   readonly accountLoadError = signal<boolean>(false);
-  /** Index of the entity whose ID will be retained after merge (the one with the account, if any). */
+  /** Index of the entity whose ID will be retained after merge. */
   readonly primaryIndex = signal<number>(0);
+  readonly selectedAccountIndex = signal<number | null>(null);
+  readonly availableRoles = signal<Role[]>([]);
+  readonly selectedRolesControl = signal<FormControl<Role[]> | null>(null);
+  readonly deleteSecondaryAccount = signal<boolean>(true);
 
   readonly hasAnyUserAccount = computed(() =>
     this.entityAccounts().some((a) => a != null),
   );
+  readonly selectedAccountIndexValue = computed(() => {
+    const selectedIndex = this.selectedAccountIndex();
+    return selectedIndex == null ? null : String(selectedIndex);
+  });
 
-  /** Reactive form for editing the surviving account's email and roles */
-  readonly accountForm = signal<FormGroup | null>(null);
-  readonly availableRoles = signal<Role[]>([]);
-  readonly selectedAccountEmailIndex = signal<number | null>(null);
-
-  readonly accountEmailControl = computed(
-    () => this.accountForm()?.get("email") as FormControl,
-  );
-
-  readonly accountRolesControl = computed(
-    () => this.accountForm()?.get("roles") as FormControl,
-  );
-
-  formatRoles(account: UserAccount | null | undefined): string {
-    if (!account?.roles?.length) return "-";
-    return account.roles.map((r) => r.name).join(", ");
+  ngOnInit(): Promise<void> {
+    return this.initializeAccountData();
   }
 
-  hasAccountEmail(index: number): boolean {
-    return !!this.entityAccounts()[index]?.email;
-  }
-
-  selectAccountEmail(index: number): void {
-    this.selectedAccountEmailIndex.set(index);
-    this.accountEmailControl()?.setValue(this.entityAccounts()[index]?.email);
-    this.accountEmailControl()?.markAsDirty();
-  }
-
-  hasAccountRoles(index: number): boolean {
-    return this.getAccountRoles(index).length > 0;
-  }
-
-  isAccountRolesSelected(index: number): boolean {
-    const selectedRoles = (this.accountRolesControl()?.value ?? []) as Role[];
-    const selectedRoleIds = new Set(selectedRoles.map((r) => r.id));
-    const accountRoles = this.getAccountRoles(index);
-
-    if (!accountRoles.length) {
-      return false;
-    }
-
-    return accountRoles.every((role) => selectedRoleIds.has(role.id));
-  }
-
-  toggleAccountRoles(index: number, checked: boolean): void {
-    const selectedRoles = (this.accountRolesControl()?.value ?? []) as Role[];
-    const accountRoles = this.getAccountRoles(index);
-    if (!accountRoles.length) return;
-
-    const selectedMap = new Map(selectedRoles.map((r) => [r.id, r]));
-    if (checked) {
-      accountRoles.forEach((role) => selectedMap.set(role.id, role));
-    } else {
-      accountRoles.forEach((role) => selectedMap.delete(role.id));
-    }
-
-    this.accountRolesControl()?.setValue(Array.from(selectedMap.values()));
-    this.accountRolesControl()?.markAsDirty();
-  }
-
-  async ngOnInit(): Promise<void> {
+  private async initializeAccountData(): Promise<void> {
     await this.loadAccounts();
-    if (this.hasAnyUserAccount()) {
-      await this.initAccountForm();
-    }
+    if (!this.hasAnyUserAccount()) return;
+
+    await this.loadAvailableRoles();
+    this.setPrimaryIndex(this.primaryIndex());
   }
 
   private async loadAccounts(): Promise<void> {
@@ -137,7 +92,6 @@ export class MergeAccountSectionComponent implements OnInit {
     this.entityAccounts.set(results.map((r) => r.account));
     this.accountLoadError.set(results.some((r) => r.error));
 
-    // Entity with account should be primary (index retained after merge)
     if (!results[0].account && results[1]?.account) {
       this.primaryIndex.set(1);
     } else {
@@ -163,7 +117,7 @@ export class MergeAccountSectionComponent implements OnInit {
     }
   }
 
-  private async initAccountForm(): Promise<void> {
+  private async loadAvailableRoles(): Promise<void> {
     try {
       this.availableRoles.set(
         await lastValueFrom(this.userAdminService.getAllRoles()),
@@ -175,43 +129,95 @@ export class MergeAccountSectionComponent implements OnInit {
         ),
       );
     }
+  }
 
-    const primaryIdx = this.primaryIndex();
-    const secondaryIdx = primaryIdx === 0 ? 1 : 0;
-    if (this.hasAccountEmail(primaryIdx)) {
-      this.selectedAccountEmailIndex.set(primaryIdx);
-    } else if (this.hasAccountEmail(secondaryIdx)) {
-      this.selectedAccountEmailIndex.set(secondaryIdx);
-    } else {
-      this.selectedAccountEmailIndex.set(null);
+  hasSelectableAccount(index: number): boolean {
+    return this.entityAccounts()[index] != null;
+  }
+
+  hasAccountEmail(index: number): boolean {
+    return !!this.entityAccounts()[index]?.email;
+  }
+
+  selectAccountToKeep(index: number | string): void {
+    const parsedIndex = Number(index);
+    if (
+      !Number.isInteger(parsedIndex) ||
+      !this.hasSelectableAccount(parsedIndex)
+    ) {
+      return;
+    }
+    this.setPrimaryIndex(parsedIndex);
+  }
+
+  private setPrimaryIndex(index: number): void {
+    this.primaryIndex.set(index);
+    this.selectedAccountIndex.set(index);
+    this.resetSelectedRolesForIndex(index);
+  }
+
+  private resetSelectedRolesForIndex(index: number): void {
+    const roles = this.getAccountRoles(index);
+    const control = this.selectedRolesControl();
+
+    if (!control) {
+      this.selectedRolesControl.set(new FormControl<Role[]>(roles));
+      return;
     }
 
-    const defaultEmail =
-      this.selectedAccountEmailIndex() != null
-        ? (this.entityAccounts()[this.selectedAccountEmailIndex()!]?.email ??
-          "")
-        : "";
+    control.setValue(roles);
+    control.markAsPristine();
+  }
 
-    // Map the current roles to available role objects to ensure reference equality for mat-select.
-    const currentRoles = this.getAccountRoles(primaryIdx);
+  formatRoles(account: UserAccount | null | undefined): string {
+    if (!account?.roles?.length) return "-";
+    return account.roles.map((r) => r.name).join(", ");
+  }
 
-    this.accountForm.set(
-      this.fb.group({
-        email: [defaultEmail, [Validators.email]],
-        roles: new FormControl<Role[]>(currentRoles),
-      }),
-    );
+  formatAccountStatus(account: UserAccount | null | undefined): string {
+    if (!account) return "-";
+    return account.enabled ? $localize`Enabled` : $localize`Disabled`;
+  }
 
-    this.accountEmailControl()?.valueChanges.subscribe((value) => {
-      const accounts = this.entityAccounts();
-      if (value === accounts[0]?.email) {
-        this.selectedAccountEmailIndex.set(0);
-      } else if (value === accounts[1]?.email) {
-        this.selectedAccountEmailIndex.set(1);
-      } else {
-        this.selectedAccountEmailIndex.set(null);
-      }
-    });
+  formatSelectedAccountStatus(): string {
+    const selectedIndex = this.selectedAccountIndex();
+    if (selectedIndex == null) return "-";
+    return this.formatAccountStatus(this.entityAccounts()[selectedIndex]);
+  }
+
+  selectedAccountEmail(): string {
+    const selectedIndex = this.selectedAccountIndex();
+    if (selectedIndex == null) return "-";
+    return this.entityAccounts()[selectedIndex]?.email ?? "-";
+  }
+
+  hasAccountRoles(index: number): boolean {
+    return this.getAccountRoles(index).length > 0;
+  }
+
+  isAccountRolesSelected(index: number): boolean {
+    const selectedRoles = this.selectedRolesControl()?.value ?? [];
+    const selectedRoleIds = new Set(selectedRoles.map((r) => r.id));
+    const accountRoles = this.getAccountRoles(index);
+
+    if (!accountRoles.length) return false;
+    return accountRoles.every((role) => selectedRoleIds.has(role.id));
+  }
+
+  toggleAccountRoles(index: number, checked: boolean): void {
+    const selectedRoles = this.selectedRolesControl()?.value ?? [];
+    const accountRoles = this.getAccountRoles(index);
+    if (!accountRoles.length) return;
+
+    const selectedMap = new Map(selectedRoles.map((r) => [r.id, r]));
+    if (checked) {
+      accountRoles.forEach((role) => selectedMap.set(role.id, role));
+    } else {
+      accountRoles.forEach((role) => selectedMap.delete(role.id));
+    }
+
+    this.selectedRolesControl()?.setValue(Array.from(selectedMap.values()));
+    this.selectedRolesControl()?.markAsDirty();
   }
 
   private getAccountRoles(index: number): Role[] {
@@ -230,42 +236,38 @@ export class MergeAccountSectionComponent implements OnInit {
     return Array.from(roleMap.values());
   }
 
-  /**
-   * Builds the account update payload from the current form values without making any API calls.
-   * Returns null if there is no primary account or the form has no changes.
-   */
-  buildAccountUpdate(): {
+  private buildAccountUpdate(): {
     accountId: string;
     update: Partial<UserAccount>;
   } | null {
-    const primaryAccount = this.entityAccounts()[this.primaryIndex()];
-    if (!primaryAccount?.id || !this.accountForm()?.dirty) return null;
+    const selectedIndex = this.selectedAccountIndex();
+    if (selectedIndex == null) return null;
 
-    const formValue = this.accountForm()!.getRawValue();
-    const update: Partial<UserAccount> = {};
+    const selectedAccount = this.entityAccounts()[selectedIndex];
+    if (!selectedAccount?.id) return null;
 
-    if (formValue.email !== primaryAccount.email) {
-      update.email = formValue.email;
-    }
-    if (
-      JSON.stringify(formValue.roles) !== JSON.stringify(primaryAccount.roles)
-    ) {
-      update.roles = formValue.roles;
-    }
+    const control = this.selectedRolesControl();
+    if (!control?.dirty) return null;
 
-    return Object.keys(update).length > 0
-      ? { accountId: primaryAccount.id, update }
-      : null;
+    const selectedRoles = control.value ?? [];
+    const existingRoles = selectedAccount.roles ?? [];
+
+    const selectedIds = new Set(selectedRoles.map((r) => r.id));
+    const existingIds = new Set(existingRoles.map((r) => r.id));
+    const rolesChanged =
+      selectedIds.size !== existingIds.size ||
+      [...selectedIds].some((id) => !existingIds.has(id));
+
+    if (!rolesChanged) return null;
+
+    return {
+      accountId: selectedAccount.id,
+      update: { roles: selectedRoles },
+    };
   }
 
-  /**
-   * Validates the account form, shows confirmation dialogs if needed, and returns the update payload.
-   * Returns false if the form is invalid or the user cancels, otherwise the update payload (null if no changes).
-   */
-  async validateAndGetUpdate(): Promise<
-    false | null | { accountId: string; update: Partial<UserAccount> }
-  > {
-    if (this.accountForm()?.invalid) return false;
+  async validateAndGetDecision(): Promise<false | AccountMergeDecision> {
+    this.deleteSecondaryAccount.set(true);
 
     if (
       this.accountLoadError() &&
@@ -279,14 +281,36 @@ export class MergeAccountSectionComponent implements OnInit {
     }
 
     const accountsFound = this.entityAccounts().filter((a) => a != null);
-    if (accountsFound.length > 0) {
+    if (accountsFound.length === 1) {
       const confirmed = await this.confirmationDialog.getConfirmation(
         $localize`:merge account warning title:Warning! User account(s) found`,
-        $localize`:merge account warning:At least one selected record has a linked user account.\nIf only one record has an account, that record is kept as "Record A" and the account remains linked after merge.\nIf both records have accounts, the account linked to "Record B" will be deleted.\nAre you sure you want to continue?`,
+        $localize`:merge account warning one account:One of the records has a linked user account. This account will remain linked as a login for the merged record.\nAre you sure you want to continue?`,
       );
       if (!confirmed) return false;
     }
 
-    return this.buildAccountUpdate();
+    if (accountsFound.length === 2) {
+      const selectedIndex = this.selectedAccountIndex() ?? this.primaryIndex();
+      const secondaryIndex = selectedIndex === 0 ? 1 : 0;
+      const selectedEmail = this.entityAccounts()[selectedIndex]?.email ?? "-";
+      const secondaryEmail =
+        this.entityAccounts()[secondaryIndex]?.email ?? "-";
+
+      const result = await this.confirmationDialog.getConfirmation(
+        $localize`:merge account warning title:Warning! User account(s) found`,
+        $localize`:merge account warning both accounts:Both records have a linked user account. You have selected the account for ${selectedEmail}:selectedEmail: to remain linked to the merged record.\nDo you want to delete the second account ${secondaryEmail}:secondaryEmail: (which will not have a linked record after this merge)?`,
+        YesNoCancelButtons,
+      );
+
+      if (result === undefined) {
+        return false;
+      }
+      this.deleteSecondaryAccount.set(result === true);
+    }
+
+    return {
+      accountUpdate: this.buildAccountUpdate(),
+      deleteSecondaryAccount: this.deleteSecondaryAccount(),
+    };
   }
 }

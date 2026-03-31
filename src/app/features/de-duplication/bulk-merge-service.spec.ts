@@ -267,23 +267,37 @@ describe("BulkMergeService", () => {
       expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
     });
 
-    it("should call updateUser with accountUpdate payload after secondary entity is deleted", async () => {
+    it("should not delete secondary account when deleteSecondaryAccount is false", async () => {
       const mergedEntity = Object.assign(new TestEntityWithAccounts(), entityA);
       mergedEntity["_id"] = entityA.getId();
-      const accountUpdate = {
-        accountId: "kc-a",
-        update: { email: "new@test.com" },
-      };
+
+      await service.executeMerge(
+        mergedEntity,
+        [entityA, entityB],
+        [null, mockUserAccount],
+        false,
+      );
+
+      expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
+    });
+
+    it("should update selected account when accountUpdate payload is provided", async () => {
+      const mergedEntity = Object.assign(new TestEntityWithAccounts(), entityA);
+      mergedEntity["_id"] = entityA.getId();
 
       await service.executeMerge(
         mergedEntity,
         [entityA, entityB],
         [null, null],
-        accountUpdate,
+        true,
+        {
+          accountId: "kc-1",
+          update: { roles: [{ id: "role-1", name: "Admin" }] },
+        },
       );
 
-      expect(mockUserAdminService.updateUser).toHaveBeenCalledWith("kc-a", {
-        email: "new@test.com",
+      expect(mockUserAdminService.updateUser).toHaveBeenCalledWith("kc-1", {
+        roles: [{ id: "role-1", name: "Admin" }],
       });
     });
 
